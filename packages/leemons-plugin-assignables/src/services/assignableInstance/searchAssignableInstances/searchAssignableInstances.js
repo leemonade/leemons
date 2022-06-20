@@ -14,23 +14,23 @@ Filters
   Search Query: (Assignable Asset Search Query) ✅
 
 Estudiante Sort
-1º Nuevas
-2º Corregidas pero no vistas su corrección
-3º Terminan pronto (Siempre y cuando no hayan sido entregadas) [En el NYA nunca se ven las entregadas]
-4º Fecha start
-5º Fecha visibility (Si no han sido ya abiertas)
+1º Nuevas ✅
+2º Corregidas pero no vistas su corrección ❌
+3º Terminan pronto (Siempre y cuando no hayan sido entregadas) [En el NYA nunca se ven las entregadas] ✅
+4º Fecha start ✅
+5º Fecha visibility (Si no han sido ya abiertas) ✅
 
 Teacher Sort
 // 1º Corregidas
-1º Corrección límite termina pronto
-2º Fecha Cierre
-2º Fecha Deadline
-3º Fecha start
-4º Fecha visibility
+1º Corrección límite termina pronto ✅
+2º Fecha Cierre ✅
+2º Fecha Deadline ✅
+3º Fecha start ✅
+4º Fecha visibility ✅
 
  */
 
-const { map, uniq, uniqBy, set, flattenDeep, isNil } = require('lodash');
+const { map, uniq, set, flattenDeep, isNil, pull } = require('lodash');
 const dayjs = require('dayjs');
 const leebrary = require('../../leebrary/leebrary');
 const {
@@ -42,6 +42,7 @@ const {
   dates,
   assignables,
 } = require('../../tables');
+const getGrade = require('../../grades/getGrade');
 
 async function getActivitiesByProfile({ userSession, transacting }) {
   const userAgents = userSession.userAgents.map((userAgent) => userAgent.id);
@@ -72,25 +73,16 @@ async function getActivitiesByProfile({ userSession, transacting }) {
   };
 }
 
-async function filterByAssignableInstanceDates(query, assignableInstancesIds, { transacting }) {
-  if (
-    !(isNil(query.closed) || isNil(query.opened || isNil(query.archived)) || isNil(query.visible))
-  ) {
-    return assignableInstancesIds;
-  }
-
+async function getInstanceDates(instances, { transacting }) {
   const assignableInstancesDates = await dates.find(
     {
-      instance_$in: assignableInstancesIds,
+      instance_$in: instances,
       type: 'assignableInstance',
     },
     { transacting }
   );
 
-  console.log('result of searching', assignableInstancesDates);
-  const now = dayjs();
-
-  const instancesWithDates = assignableInstancesDates.reduce((acc, dateObject) => {
+  return assignableInstancesDates.reduce((acc, dateObject) => {
     const { name, date, instance } = dateObject;
 
     return {
@@ -101,54 +93,75 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
       },
     };
   }, {});
+}
 
-  Object.entries(assignableInstancesIds).forEach(
-    ([instanceId, { open, close, archive, visibility }]) => {
-      console.log('checking instance', instanceId, { open, close, archive, visibility });
-      if (query.closed && close && dayjs(close).isAfter(now)) {
-        console.log('removing instance due to closed', instanceId);
+async function filterByAssignableInstanceDates(query, assignableInstancesIds, { transacting }) {
+  if (
+    !(isNil(query.closed) || isNil(query.opened || isNil(query.archived)) || isNil(query.visible))
+  ) {
+    return assignableInstancesIds;
+  }
+
+  const instancesWithDates = await getInstanceDates(assignableInstancesIds, { transacting });
+  const instancesWithoutDates = assignableInstancesIds.filter((id) => !instancesWithDates[id]);
+
+  const now = dayjs();
+
+  Object.entries(instancesWithDates).forEach(
+    ([instanceId, { start, close, archived, visibility, deadline }]) => {
+      if (query.deadline && (!deadline || dayjs(deadline).isAfter(now))) {
+        delete instancesWithDates[instanceId];
+        return;
+      }
+      if (query.deadline === false && deadline && !dayjs(deadline).isAfter(now)) {
+        delete instancesWithDates[instanceId];
+        return;
+      }
+
+      if (query.closed && (!close || dayjs(close).isAfter(now))) {
         delete instancesWithDates[instanceId];
         return;
       }
       if (query.closed === false && close && !dayjs(close).isAfter(now)) {
-        console.log('removing instance due to not closed', instanceId);
         delete instancesWithDates[instanceId];
         return;
       }
 
-      if (query.opened && open && dayjs(open).isAfter(now)) {
-        console.log('removing instance due to opened', instanceId);
+      if (query.opened && start && dayjs(start).isAfter(now)) {
         delete instancesWithDates[instanceId];
         return;
       }
-      if (query.opened === false && open && !dayjs(open).isAfter(now)) {
-        console.log('removing instance due to not opened', instanceId);
-        delete instancesWithDates[instanceId];
-        return;
-      }
-
-      if (query.archived && archive && dayjs(archive).isAfter(now)) {
-        console.log('removing instance due to archived', instanceId);
-        delete instancesWithDates[instanceId];
-        return;
-      }
-      if (query.archived === false && archive && !dayjs(archive).isAfter(now)) {
-        console.log('removing instance due to not archived', instanceId);
+      if (query.opened === false && start && !dayjs(start).isAfter(now)) {
         delete instancesWithDates[instanceId];
         return;
       }
 
-      if (query.visible && visibility && dayjs(visibility).isAfter(now)) {
-        console.log('removing instance due to visible', instanceId);
+      if (query.archived && (!archived || dayjs(archived).isAfter(now))) {
         delete instancesWithDates[instanceId];
-      } else if (query.visible === false && visibility && !dayjs(visibility).isAfter(now)) {
-        console.log('removing instance due to not visible', instanceId);
+        return;
+      }
+      if (query.archived === false && archived && !dayjs(archived).isAfter(now)) {
+        delete instancesWithDates[instanceId];
+        return;
+      }
+
+      // EN: If no visibility date is set, it is assumed that the instance is visible when started.
+      // ES: Si no se establece una fecha de visibilidad, se asume que la instancia es visible cuando se inicia.
+      if (
+        (query.visible && visibility && dayjs(visibility).isAfter(now)) ||
+        (query.visible && start && dayjs(start).isAfter(now))
+      ) {
+        delete instancesWithDates[instanceId];
+      } else if (
+        (query.visible === false && visibility && !dayjs(visibility).isAfter(now)) ||
+        (query.visible === false && start && !dayjs(start).isAfter(now))
+      ) {
         delete instancesWithDates[instanceId];
       }
     }
   );
 
-  return Object.keys(instancesWithDates);
+  return [...Object.keys(instancesWithDates), ...instancesWithoutDates];
 }
 
 async function filterByClasses(query, assignableInstancesIds, { transacting, userSession }) {
@@ -186,8 +199,6 @@ async function filterByClasses(query, assignableInstancesIds, { transacting, use
       );
     }
   }
-
-  console.log('classesToSearch', classesToSearch);
 
   const results = await classes.find(
     {
@@ -238,6 +249,160 @@ function filterByRole(assignablesByAssignableInstance, query) {
   return uniq(map(assignablesByAssignableInstanceWithRole, 'assignable'));
 }
 
+async function getInstancesSubjects(instances, { transacting, userSession }) {
+  const instancesClasses = await classes.find(
+    {
+      assignableInstance_$in: instances,
+    },
+    {
+      transacting,
+      columns: ['assignableInstance', 'class'],
+    }
+  );
+
+  const dedupedClasses = uniq(map(instancesClasses, 'class'));
+
+  const apClasses = await leemons
+    .getPlugin('academic-portfolio')
+    .services.classes.classByIds(dedupedClasses, { transacting, userSession });
+
+  const subjectsPerClass = apClasses.reduce(
+    (acc, klass) => ({
+      ...acc,
+      [klass.id]: klass.subject.id,
+    }),
+    {}
+  );
+
+  const instancesSubjects = instancesClasses.reduce(
+    (acc, instance) => ({
+      ...acc,
+      [instance.assignableInstance]: [
+        ...(acc[instance.assignableInstance] || []),
+        subjectsPerClass[instance.class],
+      ],
+    }),
+    {}
+  );
+
+  return instancesSubjects;
+}
+
+async function filterByGraded(objects, query, isTeacher, { transacting, userSession }) {
+  if (query.evaluated === undefined) {
+    return objects;
+  }
+
+  let instances = objects;
+  if (!isTeacher) {
+    instances = map(objects, 'instance');
+  }
+
+  // EN: Get the instance classes.
+  // ES: Obtener las clases de la instancia.
+  const instancesSubjects = await getInstancesSubjects(instances, { transacting, userSession });
+
+  if (!isTeacher) {
+    const assignationsWithGrades = await Promise.all(
+      objects.map(async (assignation) => {
+        const studentGrades = await getGrade(
+          {
+            assignation: assignation.id,
+            visibleToStudent: true,
+            type: 'main',
+          },
+          { transacting }
+        );
+        const gradedSubjects = uniq(map(studentGrades, 'subject'));
+
+        return {
+          ...assignation,
+          grades: studentGrades,
+          fullyGraded: gradedSubjects.length === instancesSubjects[assignation.instance]?.length,
+        };
+      })
+    );
+
+    return map(
+      assignationsWithGrades.filter(({ fullyGraded }) => {
+        if (query.evaluated) {
+          return fullyGraded;
+        }
+        if (!query.evaluated) {
+          return !fullyGraded;
+        }
+
+        return true;
+      }),
+      'instance'
+    );
+  }
+
+  // EN: Get all the students assignations
+  // ES: Obtener todas las asignaciones de los estudiantes.
+  const studentsAssignations = await assignations.find(
+    {
+      instance_$in: instances,
+    },
+    {
+      transacting,
+      columns: ['instance', 'id'],
+    }
+  );
+
+  // EN: Get all the students grades
+  // ES: Obtener todas las calificaciones de los estudiantes.
+  const studentsGrades = await Promise.all(
+    studentsAssignations.map(async (assignation) => {
+      const studentGrades = await getGrade(
+        {
+          assignation: assignation.id,
+          visibleToStudent: false,
+          type: 'main',
+        },
+        {
+          transacting,
+        }
+      );
+
+      return {
+        ...assignation,
+        grades: studentGrades,
+        fullyGraded: studentGrades.length === instancesSubjects[assignation.instance]?.length,
+      };
+    })
+  );
+
+  // EN: Group the students grades by assignableInstance
+  // ES: Agrupar las calificaciones de los estudiantes por instancia.
+  const studentsGradesByAssignableInstance = studentsGrades.reduce(
+    (acc, assignation) => ({
+      ...acc,
+      [assignation.instance]: [...(acc[assignation.instance] || []), assignation.fullyGraded],
+    }),
+    {}
+  );
+
+  // EN: Filter the assignations by the query.evaluated
+  // ES: Filtrar las asignaciones por query.evaluated.
+  return Object.entries(studentsGradesByAssignableInstance)
+    .filter(([, studentsFullyGraded]) => {
+      if (query.evaluated) {
+        return !studentsFullyGraded.some((grade) => !grade);
+      }
+      return studentsFullyGraded.some((grade) => !grade);
+    })
+    .map(([assignableInstance]) => assignableInstance);
+
+  // if (query.graded) {
+  //   return objects.filter((object) => object.graded);
+  // }
+
+  // if (!query.graded) {
+  //   return objects.filter((object) => !object.graded);
+  // }
+}
+
 async function searchByAsset(assignablesByAssignableInstance, query, { transacting, userSession }) {
   if (!query.search) {
     return null;
@@ -267,6 +432,50 @@ async function searchByAsset(assignablesByAssignableInstance, query, { transacti
   return uniq(map(matchingAssets, 'asset'));
 }
 
+async function getAssignationsDates(assignations, { transacting }) {
+  const datesFound = await dates.find(
+    {
+      type: 'assignation',
+      instance_$in: assignations,
+    },
+    {
+      transacting,
+      columns: ['instance', 'name', 'date'],
+    }
+  );
+
+  return datesFound.reduce((acc, date) => {
+    acc[date.instance] = {
+      ...acc[date.instance],
+      [date.name]: date.date,
+    };
+    return acc;
+  }, {});
+}
+
+function sortByDates(instances, datesToSort) {
+  // Sort by the given dates, if they are the same, use the next one.
+  const datesToSortLength = datesToSort.length;
+  return instances.sort((a, b) => {
+    for (let i = 0; i < datesToSortLength; i++) {
+      const dateToSort = datesToSort[i];
+      const aDate = a[dateToSort];
+      const bDate = b[dateToSort];
+      if (aDate && bDate) {
+        const aDateMoment = dayjs(aDate);
+        const bDateMoment = dayjs(bDate);
+        if (aDateMoment.isAfter(bDateMoment)) {
+          return 1;
+        }
+        if (aDateMoment.isBefore(bDateMoment)) {
+          return -1;
+        }
+      }
+    }
+    return 0;
+  });
+}
+
 module.exports = async function searchAssignableInstances(
   query,
   { userSession, transacting } = {}
@@ -278,13 +487,19 @@ module.exports = async function searchAssignableInstances(
   }
 
   const { isTeacher } = activitiesByProfile;
+
   let { assignableInstances: assignableInstancesFound, assignations: assignationsFound } =
     activitiesByProfile;
 
   if (!isTeacher) {
+    if (!assignationsFound?.length) {
+      return [];
+    }
     assignableInstancesFound = uniq(map(assignationsFound, 'instance'));
 
     set(query, 'visible', true);
+  } else if (!assignableInstancesFound?.length) {
+    return [];
   }
 
   /*
@@ -298,6 +513,7 @@ module.exports = async function searchAssignableInstances(
         transacting,
       }
     );
+
     assignableInstancesFound = await filterByClasses(query, assignableInstancesFound, {
       transacting,
       userSession,
@@ -323,9 +539,26 @@ module.exports = async function searchAssignableInstances(
     }
 
     assignableInstancesFound = map(assignablesFound, 'id');
+
     if (!isTeacher) {
       assignationsFound = assignationsFound.filter((assignation) =>
-        assignableInstances.includes(assignation.instance)
+        assignableInstancesFound.includes(assignation.instance)
+      );
+    }
+
+    assignableInstancesFound = await filterByGraded(
+      isTeacher ? assignableInstancesFound : assignationsFound,
+      query,
+      isTeacher,
+      {
+        transacting,
+        userSession,
+      }
+    );
+
+    if (!isTeacher) {
+      assignationsFound = assignationsFound.filter((assignation) =>
+        assignableInstancesFound.includes(assignation.instance)
       );
     }
   } catch (e) {
@@ -335,10 +568,52 @@ module.exports = async function searchAssignableInstances(
     --- ORDER ---
   */
 
-  if (isTeacher) {
-    return assignableInstancesFound;
+  try {
+    if (!isTeacher) {
+      const sorted = [];
+      const assignationDates = await getAssignationsDates(map(assignationsFound, 'id'), {
+        transacting,
+      });
+      const instanceDates = await getInstanceDates(assignableInstancesFound, { transacting });
+
+      const assignationsLeft = map(assignationsFound, (instance) => ({
+        ...instance,
+        ...instanceDates[instance.instance],
+      }));
+
+      // EN: Sort new first
+      // ES: Ordena primero las nuevas
+      const newAssignations = assignationsLeft
+        .filter((assignation) => !assignationDates[assignation.id]?.open)
+        .map((assignation) => {
+          pull(assignationsLeft, assignation);
+          return assignation;
+        });
+
+      if (newAssignations.length > 0) {
+        sorted.push(...sortByDates(newAssignations, ['deadline', 'start', 'visibility']));
+      }
+
+      // EN: Sort non-new activities
+      // ES: Ordena las actividades no nuevas
+      sorted.push(...sortByDates(assignationsLeft, ['deadline', 'start', 'visibility']));
+
+      return map(sorted, 'instance');
+    }
+    const instanceDates = await getInstanceDates(assignableInstancesFound, { transacting });
+
+    const instancesToSort = map(assignableInstancesFound, (instance) => ({
+      id: instance,
+      ...instanceDates[instance],
+    }));
+
+    return map(
+      sortByDates(instancesToSort, ['close', 'closed', 'deadline', 'start', 'visibility']),
+      'id'
+    );
+  } catch (e) {
+    throw new Error(`Failed to order activities ${e.message}`);
   }
-  return map(assignationsFound, 'id');
 };
 
 // query = {
