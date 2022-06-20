@@ -6,6 +6,7 @@ import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
 import { find } from 'lodash';
+import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
 
 export default function DetailContent({ store, form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
@@ -46,10 +47,11 @@ export default function DetailContent({ store, form, t, onNext, onPrev }) {
         <Curriculum
           program={form.getValues('program')}
           subjects={form.getValues('subjects')}
-          name="curriculum"
+          name="curriculum.curriculum"
           control={form.control}
           addLabel={t('addFromCurriculum')}
         />
+        <Objectives form={form} name={`curriculum.objectives`} label={t('objectivesCurriculum')} />
       </ContextContainer>
       <Stack justifyContent="space-between">
         <Box>
