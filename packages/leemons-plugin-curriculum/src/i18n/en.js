@@ -4,6 +4,8 @@ module.exports = {
     delete: 'Delete',
     deleted: 'Curriculum deleted',
     page_title: 'Curriculum Library',
+    published: 'Published',
+    draft: 'Draft',
     page_description: 'These are the curricula of the programmes you deliver.',
   },
   addCurriculum: {
@@ -44,7 +46,7 @@ module.exports = {
     description1:
       'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
     description2:
-      'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content.',
+      'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content. (subject level is mandatory)',
     saveButtonLabel: 'Continue',
     program: 'Program',
     courses: 'Course',
@@ -150,6 +152,7 @@ module.exports = {
     description1:
       'Now you can add content to each block typology, remember that the contents of the block marked with a star can be linked to evaluable or gradable activities and travel to the final grading system.',
     publish: 'Publish curriculum',
+    published: 'Curriculum published',
     starDescription: 'The blocks marked with a star correspond to evaluation criteria.',
     newBranchValue: {
       nameLabel: 'Name',
@@ -157,6 +160,8 @@ module.exports = {
       namePlaceholder: 'Name...',
       saveButtonLabel: 'Save',
       nameRequired: 'Field required',
+      noSubjectsFound:
+        'All available subjects are currently added to the curriculum, if you wish to create new subjects, you must do so in the Academic Portfolio section and then add them here to complete your curriculum.',
     },
   },
   selectContentModal: {

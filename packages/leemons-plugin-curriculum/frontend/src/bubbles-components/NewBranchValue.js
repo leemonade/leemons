@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
   ActionButton,
+  Alert,
   Button,
   ContextContainer,
   Select,
@@ -16,6 +17,7 @@ export const NEW_BRANCH_VALUE_MESSAGES = {
   subjectLabel: 'Subject',
   namePlaceholder: 'Branch name...',
   saveButtonLabel: 'Save config',
+  noSubjectsFound: 'No subjects found',
 };
 
 export const NEW_BRANCH_VALUE_ERROR_MESSAGES = {
@@ -57,36 +59,47 @@ function NewBranchValue({
 
         <ContextContainer>
           {isSubject ? (
+            <>
+              {subjectData && subjectData.length ? (
+                <Controller
+                  name="academicItem"
+                  control={control}
+                  render={({ field }) => (
+                    <Select label={messages.subjectLabel} data={subjectData} {...field} />
+                  )}
+                />
+              ) : (
+                <Alert severity="error" closeable={false}>
+                  {messages.noSubjectsFound}
+                </Alert>
+              )}
+            </>
+          ) : (
             <Controller
-              name="academicItem"
+              name="name"
               control={control}
+              rules={{
+                required: errorMessages.nameRequired,
+              }}
               render={({ field }) => (
-                <Select label={messages.subjectLabel} data={subjectData} {...field} />
+                <TextInput
+                  label={messages.nameLabel}
+                  placeholder={messages.namePlaceholder}
+                  error={errors.name}
+                  required
+                  {...field}
+                />
               )}
             />
-          ) : null}
-          <Controller
-            name="name"
-            control={control}
-            rules={{
-              required: errorMessages.nameRequired,
-            }}
-            render={({ field }) => (
-              <TextInput
-                label={messages.nameLabel}
-                placeholder={messages.namePlaceholder}
-                error={errors.name}
-                required
-                {...field}
-              />
-            )}
-          />
+          )}
         </ContextContainer>
-        <Stack justifyContent="end">
-          <Button loading={isLoading} type="submit">
-            {messages.saveButtonLabel}
-          </Button>
-        </Stack>
+        {!isSubject || (isSubject && subjectData.length) ? (
+          <Stack justifyContent="end">
+            <Button loading={isLoading} type="submit">
+              {messages.saveButtonLabel}
+            </Button>
+          </Stack>
+        ) : null}
       </ContextContainer>
     </form>
   );

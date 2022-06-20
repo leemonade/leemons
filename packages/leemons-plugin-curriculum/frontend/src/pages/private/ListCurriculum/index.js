@@ -166,7 +166,7 @@ function ListCurriculum() {
 
       <Box style={{ flex: 1 }}>
         <Tabs usePageLayout={true} fullHeight>
-          <TabPanel label="Published">
+          <TabPanel label={t('published')}>
             <Box
               style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
             >
@@ -192,7 +192,7 @@ function ListCurriculum() {
               )}
             </Box>
           </TabPanel>
-          <TabPanel label="Draft">
+          <TabPanel label={t('draft')}>
             <Box
               style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
             >

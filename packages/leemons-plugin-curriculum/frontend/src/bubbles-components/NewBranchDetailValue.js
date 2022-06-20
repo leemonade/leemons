@@ -13,6 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import * as _ from 'lodash';
+import { find } from 'lodash';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -42,6 +43,7 @@ function NewBranchDetailValue({
     reset,
     control,
     handleSubmit,
+    setValue,
     watch,
     formState: { errors },
   } = useForm();
@@ -105,26 +107,37 @@ function NewBranchDetailValue({
                 name="academicItem"
                 control={control}
                 render={({ field }) => (
-                  <Select label={messages.subjectLabel} data={subjectData} {...field} />
+                  <Select
+                    label={messages.subjectLabel}
+                    data={subjectData}
+                    readOnly
+                    {...field}
+                    onChange={(e) => {
+                      const { label } = find(subjectData, { value: e });
+                      setValue('name', label);
+                      field.onChange(e);
+                    }}
+                  />
                 )}
               />
-            ) : null}
-            <Controller
-              name="name"
-              control={control}
-              rules={{
-                required: errorMessages.nameRequired,
-              }}
-              render={({ field }) => (
-                <TextInput
-                  label={messages.nameLabel}
-                  placeholder={messages.namePlaceholder}
-                  error={errors.name}
-                  required
-                  {...field}
-                />
-              )}
-            />
+            ) : (
+              <Controller
+                name="name"
+                control={control}
+                rules={{
+                  required: errorMessages.nameRequired,
+                }}
+                render={({ field }) => (
+                  <TextInput
+                    label={messages.nameLabel}
+                    placeholder={messages.namePlaceholder}
+                    error={errors.name}
+                    required
+                    {...field}
+                  />
+                )}
+              />
+            )}
           </ContextContainer>
         </form>
       ) : (
@@ -135,7 +148,7 @@ function NewBranchDetailValue({
 
       {!readonly ? (
         <Stack justifyContent="end">
-          <Button loading={isLoading} onClick={save}>
+          <Button variant="outline" loading={isLoading} onClick={save}>
             {messages.saveButtonLabel}
           </Button>
         </Stack>

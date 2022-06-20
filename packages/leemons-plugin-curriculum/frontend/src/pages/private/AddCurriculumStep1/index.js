@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { find, forEach } from 'lodash';
+import { find, forEach, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
@@ -70,7 +70,9 @@ function AddCurriculumStep1() {
           <Checkbox
             label={t('courses')}
             checked={nodeLevels.indexOf('courses') >= 0}
-            onChange={(e) => onCheckboxChange(e, 'courses', 2)}
+            onChange={(e, event) => {
+              onCheckboxChange(e, 'courses', 2);
+            }}
           />
         ),
       },
@@ -82,7 +84,9 @@ function AddCurriculumStep1() {
           <Checkbox
             label={t('groups')}
             checked={nodeLevels.indexOf('groups') >= 0}
-            onChange={(e) => onCheckboxChange(e, 'groups', 3)}
+            onChange={(e, event) => {
+              onCheckboxChange(e, 'groups', 3);
+            }}
           />
         ),
       },
@@ -94,7 +98,9 @@ function AddCurriculumStep1() {
           <Checkbox
             label={t('knowledges')}
             checked={nodeLevels.indexOf('knowledges') >= 0}
-            onChange={(e) => onCheckboxChange(e, 'knowledges', 4)}
+            onChange={(e, event) => {
+              onCheckboxChange(e, 'knowledges', 4);
+            }}
           />
         ),
       },
@@ -106,7 +112,9 @@ function AddCurriculumStep1() {
           <Checkbox
             label={t('subjectType')}
             checked={nodeLevels.indexOf('subjectType') >= 0}
-            onChange={(e) => onCheckboxChange(e, 'subjectType', 5)}
+            onChange={(e, event) => {
+              onCheckboxChange(e, 'subjectType', 5);
+            }}
           />
         ),
       },
@@ -191,7 +199,13 @@ function AddCurriculumStep1() {
               <ContextContainer>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
-                    <Tree {...tree} rootId={0} />
+                    <Tree
+                      {...tree}
+                      rootId={0}
+                      initialOpen={map(tree.treeData, 'id')}
+                      canToggleItems={false}
+                      canSelectItems={false}
+                    />
                   </ContextContainer>
                 </Paper>
                 <Alert severity="warning" closeable={false} title={t('alertTitle')}>
