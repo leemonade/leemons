@@ -7,14 +7,17 @@ import {
   Box,
   Button,
   ContextContainer,
+  Select,
   Stack,
   TextInput,
 } from '@bubbles-ui/components';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import * as _ from 'lodash';
+import { find } from 'lodash';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
+  subjectLabel: 'Subject',
   namePlaceholder: 'Branch name...',
   saveButtonLabel: 'Save config',
 };
@@ -24,6 +27,8 @@ export const NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES = {
 };
 
 function NewBranchDetailValue({
+  isSubject,
+  subjectData,
   messages,
   errorMessages,
   isLoading,
@@ -38,13 +43,14 @@ function NewBranchDetailValue({
     reset,
     control,
     handleSubmit,
+    setValue,
     watch,
     formState: { errors },
   } = useForm();
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues]);
+  }, [JSON.stringify(defaultValues)]);
 
   const datasetProps = useMemo(
     () => ({ formData: schemaFormValues }),
@@ -95,24 +101,44 @@ function NewBranchDetailValue({
       </Stack>
       {!readonly ? (
         <form autoComplete="off">
-          <Box>
-            <Controller
-              name="name"
-              control={control}
-              rules={{
-                required: errorMessages.nameRequired,
-              }}
-              render={({ field }) => (
-                <TextInput
-                  label={messages.nameLabel}
-                  placeholder={messages.namePlaceholder}
-                  error={errors.name}
-                  required
-                  {...field}
-                />
-              )}
-            />
-          </Box>
+          <ContextContainer>
+            {isSubject ? (
+              <Controller
+                name="academicItem"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label={messages.subjectLabel}
+                    data={subjectData}
+                    readOnly
+                    {...field}
+                    onChange={(e) => {
+                      const { label } = find(subjectData, { value: e });
+                      setValue('name', label);
+                      field.onChange(e);
+                    }}
+                  />
+                )}
+              />
+            ) : (
+              <Controller
+                name="name"
+                control={control}
+                rules={{
+                  required: errorMessages.nameRequired,
+                }}
+                render={({ field }) => (
+                  <TextInput
+                    label={messages.nameLabel}
+                    placeholder={messages.namePlaceholder}
+                    error={errors.name}
+                    required
+                    {...field}
+                  />
+                )}
+              />
+            )}
+          </ContextContainer>
         </form>
       ) : (
         <Box>{watch('name')}</Box>
@@ -122,7 +148,7 @@ function NewBranchDetailValue({
 
       {!readonly ? (
         <Stack justifyContent="end">
-          <Button loading={isLoading} onClick={save}>
+          <Button variant="outline" loading={isLoading} onClick={save}>
             {messages.saveButtonLabel}
           </Button>
         </Stack>
@@ -140,8 +166,11 @@ NewBranchDetailValue.defaultProps = {
 };
 
 NewBranchDetailValue.propTypes = {
+  isSubject: PropTypes.bool,
+  subjectData: PropTypes.any,
   messages: PropTypes.shape({
     nameLabel: PropTypes.string,
+    subjectLabel: PropTypes.string,
     namePlaceholder: PropTypes.string,
     saveButtonLabel: PropTypes.string,
   }),

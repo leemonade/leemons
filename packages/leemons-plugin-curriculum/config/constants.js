@@ -2,6 +2,11 @@ const pluginName = 'plugins.curriculum';
 
 const permissions = [
   {
+    permissionName: `${pluginName}.curriculum-menu`,
+    actions: ['view'],
+    localizationName: { es: 'Curriculum Menu', en: 'Curriculum Menu' },
+  },
+  {
     permissionName: `${pluginName}.curriculum`,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
     localizationName: { es: 'Curriculum', en: 'Curriculum' },
@@ -22,8 +27,8 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: `${pluginName}.curriculum`,
-        actionNames: ['admin'],
+        permissionName: `${pluginName}.curriculum-menu`,
+        actionNames: ['view'],
       },
     ],
   },
@@ -56,8 +61,8 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: `${pluginName}.curriculum`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        permissionName: `${pluginName}.curriculum-menu`,
+        actionNames: ['view'],
       },
     ],
   },

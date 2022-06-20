@@ -30,9 +30,12 @@ module.exports = {
       },
     },
     curriculum: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_curriculum::curriculums',
       },
+       */
     },
   },
   primaryKey: {

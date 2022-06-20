@@ -15,6 +15,7 @@ const {
 const { getTranslationKey, translations } = require('../translations');
 const { validateLocationAndPlugin } = require('../../validations/dataset-location');
 const { table } = require('../tables');
+const deleteValues = require('../dataset-values/deleteValues');
 
 /** *
  *  ES:
@@ -30,7 +31,11 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<boolean>} Return true if delete is ok
  *  */
-async function deleteSchema(locationName, pluginName, { transacting: _transacting } = {}) {
+async function deleteSchema(
+  locationName,
+  pluginName,
+  { deleteValues: _deleteValues, transacting: _transacting } = {}
+) {
   validateLocationAndPlugin(locationName, pluginName);
   validatePluginName(pluginName, this.calledFrom);
   await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
@@ -51,6 +56,10 @@ async function deleteSchema(locationName, pluginName, { transacting: _transactin
           getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
           `${locationName}.${pluginName}`
         );
+
+      if (_deleteValues) {
+        await deleteValues.call(this, locationName, pluginName, { transacting });
+      }
 
       const promises = [
         table.dataset.update(

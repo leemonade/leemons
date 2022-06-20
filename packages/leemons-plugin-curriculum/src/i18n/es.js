@@ -1,6 +1,11 @@
 module.exports = {
   listCurriculum: {
+    view: 'Ver',
+    delete: 'Borrar',
+    deleted: 'Curriculum borrado',
     page_title: 'Biblioteca de Curricula',
+    published: 'Publicados',
+    draft: 'Borradores',
     page_description:
       'Estos son los planes de estudio de los programas que se imparten en el centro.',
   },
@@ -42,23 +47,23 @@ module.exports = {
     description1:
       'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
     description2:
-      'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular.',
+      'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular. (el nivel de asignatura es obligatorio)',
     saveButtonLabel: 'Continuar',
     program: 'Programa',
     courses: 'Curso',
     groups: 'Grupo',
     subjectType: 'Tipo',
     knowledges: 'Area',
-    subjects: 'Asignatura',
+    subject: 'Asignatura',
     alertTitle: 'Importante:',
     alertDescription:
       'Para poder vincular el Curriculum con actividades evaluables o calificables, <strong>es necesario que exista un nivel de asignatura</strong> y anidar dentro los contenidos, criterios de evaluación o estándares de aprendizaje.<br/> <strong>Si el programa seleccionado es de asignatura única</strong>, se pueden anidar directamente dichos items debajo de este nivel.',
   },
   addCurriculumStep2: {
     description1:
-      'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
+      'Ahora puedes añadir ramas adicionales al árbol y pulsando en el icono de editar, añadir nuevos tipos de bloques (contenidos curriculares, criterios de evaluación, estándares de aprendizaje, objetivos...).',
     description2:
-      'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular.',
+      'En el siguiente paso puedes rellenar dichos bloques por cada asignatura o nivel del árbol seleccionado.',
     continueButtonLabel: 'Continuar',
     addBranchButtonLabel: 'Añadir rama',
     title: 'Configuración de la rama',
@@ -67,6 +72,7 @@ module.exports = {
     orderedLabel: 'Orden:',
     orderedPlaceholder: 'Seleccionar...',
     orderedNothingFound: 'Sin datos',
+    evaluationCriteriaLabel: 'Este bloque contiene criterios de evaluación',
     saveButtonLabel: 'Guardar configuración',
     nameRequired: 'Campo necesario',
     orderedRequired: 'Campo necesario',
@@ -104,7 +110,7 @@ module.exports = {
       autocomposed: 'Automático',
     },
     codeFieldNumbering: 'Numeración',
-    addContent: 'Añadir contenido',
+    addContent: 'Añadir nuevo bloque',
     blockNameLabel: 'Nombre',
     blockNamePlaceholder: 'Nombre del bloque de contenido',
     blockTypeLabel: 'Tipo',
@@ -121,7 +127,9 @@ module.exports = {
     fieldMinPlaceholder: 'Mín...',
     fieldMaxLabel: 'Max',
     fieldMaxPlaceholder: 'Max...',
-    blockSaveConfigButtonLabel: 'Guardar configuración',
+    blockSaveConfigButtonLabel: 'Guardar bloque',
+    numerationLabel: 'Numeración',
+    subTypeLabel: 'Sub-tipo',
     codeTypePlaceholder: 'Seleccionar...',
     codeTypeNothingFound: 'No hay datos',
     codeComposerLabel: 'Compositor de código',
@@ -141,11 +149,20 @@ module.exports = {
   },
   addCurriculumStep3: {
     addNode: 'Añadir {name}',
+    description1:
+      'Ahora se pueden añadir contenidos a cada tipología de bloque, recuerda que los contenidos del bloque marcado con una estrella podrán vincularse con actividades evaluables o calificables y viajar al sistema de calificaciones finales.',
+    publish: 'Publicar curriculum',
+    published: 'Curriculum publicado',
+    starDescription:
+      'Los bloques marcados con una estrella corresponden a criterios de evaluación.',
     newBranchValue: {
       nameLabel: 'Nombre',
+      subjectLabel: 'Asignatura',
       namePlaceholder: 'Nombre...',
       saveButtonLabel: 'Guardar',
       nameRequired: 'Campo necesario',
+      noSubjectsFound:
+        'Todas las asignaturas disponibles están actualmente añadidas al curriculum, si desea crear asignaturas nuevas, debe hacer en la sección de Portafolio Académico y, posteriormente, añadirlas aquí para completar su curriculum.',
     },
   },
   selectContentModal: {

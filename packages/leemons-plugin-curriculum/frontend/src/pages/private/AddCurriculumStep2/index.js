@@ -6,14 +6,16 @@ import { listCentersRequest } from '@users/request';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   Box,
+  Button,
   Col,
   ContextContainer,
   Grid,
+  LoadingOverlay,
   PageContainer,
   Paper,
+  Stack,
   Tree,
   useTree,
-  LoadingOverlay
 } from '@bubbles-ui/components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useStore } from '@common';
@@ -215,6 +217,7 @@ function AddCurriculumStep2() {
       });
     });
 
+    /*
     items.push({
       id: 'add-button',
       parent: items.length ? items[items.length - 1].id : 0,
@@ -225,6 +228,8 @@ function AddCurriculumStep2() {
         action: 'add',
       },
     });
+
+     */
 
     tree.setTreeData(items);
   }, [store.curriculum]);
@@ -450,9 +455,6 @@ function AddCurriculumStep2() {
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
-        loading={store.generating ? 'edit' : null}
-        buttons={{ edit: t('continueButtonLabel') }}
-        onEdit={goStep3}
         values={{
           title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
           description: t('description1') + t('description2'),
@@ -461,7 +463,7 @@ function AddCurriculumStep2() {
 
       <Paper fullHeight color="solid" shadow="none" padding={0}>
         <PageContainer>
-          <ContextContainer padded="vertical">
+          <ContextContainer divided padded="vertical">
             <Grid grow>
               <Col span={5}>
                 <Paper fullWidth padding={5}>
@@ -479,6 +481,7 @@ function AddCurriculumStep2() {
                         store.activeRightSection = 'edit-branch';
                         render();
                       }}
+                      initialOpen={map(tree.treeData, 'id')}
                       selectedNode={store.activeNodeLevel?.id}
                       onSelect={onSelect}
                     />
@@ -495,6 +498,11 @@ function AddCurriculumStep2() {
                 ) : null}
               </Col>
             </Grid>
+            <Stack justifyContent="end">
+              <Button loading={store.generating} onClick={goStep3}>
+                {t('continueButtonLabel')}
+              </Button>
+            </Stack>
           </ContextContainer>
         </PageContainer>
       </Paper>

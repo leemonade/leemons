@@ -24,7 +24,11 @@ async function saveTest(data, { userSession, transacting: _transacting } = {}) {
           public: true, // TODO Cambiar a false despues de la demo
         },
         role: 'tests',
-        subjects: _.map(data.subjects, (subject) => ({ subject, program: data.program })),
+        subjects: _.map(data.subjects, (subject) => ({
+          subject,
+          program: data.program,
+          curriculum: data.curriculum,
+        })),
         statement: data.statement,
         instructionsForTeachers: data.instructionsForTeachers,
         instructionsForStudents: data.instructionsForStudents,

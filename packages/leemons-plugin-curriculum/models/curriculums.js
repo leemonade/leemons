@@ -39,6 +39,12 @@ module.exports = {
       },
       */
     },
+    step: {
+      type: 'integer',
+    },
+    published: {
+      type: 'boolean',
+    },
     status: {
       type: 'string',
       enum: ['draft', 'published', 'archived'],
