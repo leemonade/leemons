@@ -4,6 +4,8 @@ module.exports = {
     delete: 'Borrar',
     deleted: 'Curriculum borrado',
     page_title: 'Biblioteca de Curricula',
+    published: 'Publicados',
+    draft: 'Borradores',
     page_description:
       'Estos son los planes de estudio de los programas que se imparten en el centro.',
   },
@@ -45,7 +47,7 @@ module.exports = {
     description1:
       'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
     description2:
-      'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular.',
+      'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular. (el nivel de asignatura es obligatorio)',
     saveButtonLabel: 'Continuar',
     program: 'Programa',
     courses: 'Curso',
@@ -150,6 +152,7 @@ module.exports = {
     description1:
       'Ahora se pueden añadir contenidos a cada tipología de bloque, recuerda que los contenidos del bloque marcado con una estrella podrán vincularse con actividades evaluables o calificables y viajar al sistema de calificaciones finales.',
     publish: 'Publicar curriculum',
+    published: 'Curriculum publicado',
     starDescription:
       'Los bloques marcados con una estrella corresponden a criterios de evaluación.',
     newBranchValue: {
@@ -158,6 +161,8 @@ module.exports = {
       namePlaceholder: 'Nombre...',
       saveButtonLabel: 'Guardar',
       nameRequired: 'Campo necesario',
+      noSubjectsFound:
+        'Todas las asignaturas disponibles están actualmente añadidas al curriculum, si desea crear asignaturas nuevas, debe hacer en la sección de Portafolio Académico y, posteriormente, añadirlas aquí para completar su curriculum.',
     },
   },
   selectContentModal: {

@@ -21,10 +21,11 @@ import {
   useTree,
 } from '@bubbles-ui/components';
 
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { useStore } from '@common';
 import { CurriculumProp } from '@curriculum/components/CurriculumSelectContentsModal/components/CurriculumProp';
+import { addSuccessAlert } from '@layout/alert';
 import {
   addNodeRequest,
   detailCurriculumRequest,
@@ -43,6 +44,7 @@ function AddCurriculumStep3() {
   });
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep3'));
 
+  const history = useHistory();
   const tree = useTree();
   const { id } = useParams();
 
@@ -156,7 +158,7 @@ function AddCurriculumStep3() {
     }
   }, [store.curriculum]);
 
-  async function onSelect({ node }) {
+  function getDataForNode() {
     const nodeLevelsById = keyBy(store.curriculum.nodeLevels, 'id');
 
     const academicItemIds = [];
@@ -174,6 +176,11 @@ function AddCurriculumStep3() {
       store.curriculum.program.subjects,
       (a) => !academicItemIds.includes(a.id)
     );
+    return { unUsedSubjects, nodeLevelsById };
+  }
+
+  async function onSelect({ node }) {
+    const { nodeLevelsById, unUsedSubjects } = getDataForNode();
 
     store.activeNode = {
       ...node,
@@ -213,18 +220,37 @@ function AddCurriculumStep3() {
   }
 
   async function onAdd({ node }) {
-    store.activeNode = node;
+    const { nodeLevelsById, unUsedSubjects } = getDataForNode();
+
+    const parentNodeLevelIndex = findIndex(store.curriculum.nodeLevels, {
+      id: node.nodeLevel,
+    });
+    const nodeLevelId = store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
+
+    store.activeNode = {
+      ...node,
+      nodeLevel: nodeLevelsById[nodeLevelId],
+      unUsedSubjects: map(unUsedSubjects, (sub) => ({ label: sub.name, value: sub.id })),
+    };
+    store.activeNode.isSubject = store.activeNode.nodeLevel.type === 'subject';
+
     store.activeRightSection = 'add-branch-value';
     render();
   }
 
   async function publish() {
     try {
-      store.publishing = true;
-      render();
-      await publishCurriculumRequest(store.curriculum.id);
-      store.curriculum.published = true;
-      render();
+      if (store.curriculum.published) {
+        addSuccessAlert(t('published'));
+      } else {
+        store.publishing = true;
+        render();
+        await publishCurriculumRequest(store.curriculum.id);
+        addSuccessAlert(t('published'));
+        store.curriculum.published = true;
+        render();
+      }
+      history.push('/private/curriculum/list');
     } catch (e) {}
   }
 
@@ -384,7 +410,7 @@ function AddCurriculumStep3() {
 
       <Paper fullHeight color="solid" shadow="none" padding={0}>
         <PageContainer>
-          <ContextContainer divided={!store.curriculum.published}>
+          <ContextContainer divided>
             <ContextContainer padded="vertical">
               <Grid grow>
                 <Col span={5}>
@@ -397,6 +423,7 @@ function AddCurriculumStep3() {
                         onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
                         onEdit={(node) => alert(`Editing ${node.id}`)}
                         onSelect={onSelect}
+                        initialOpen={tree.treeData ? [tree.treeData?.[0]?.id] : []}
                         selectedNode={store.activeNode?.id}
                       />
                     </ContextContainer>
@@ -427,15 +454,13 @@ function AddCurriculumStep3() {
                 </Col>
               </Grid>
             </ContextContainer>
-            {!store.curriculum.published ? (
-              <Box sx={(theme) => ({ marginBottom: theme.spacing[10] })}>
-                <Stack justifyContent="end" fullWidth>
-                  <Button onClick={publish} loading={store.publishing}>
-                    {t('publish')}
-                  </Button>
-                </Stack>
-              </Box>
-            ) : null}
+            <Box sx={(theme) => ({ marginBottom: theme.spacing[10] })}>
+              <Stack justifyContent="end" fullWidth>
+                <Button onClick={publish} loading={store.publishing}>
+                  {t('publish')}
+                </Button>
+              </Stack>
+            </Box>
           </ContextContainer>
         </PageContainer>
       </Paper>

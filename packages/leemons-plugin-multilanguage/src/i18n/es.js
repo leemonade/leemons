@@ -66,4 +66,7 @@ module.exports = {
     help: 'El contenido sin traducir aparecerá en el idioma predeterminado',
     title: 'Configuración e idiomas',
   },
+  formWithTheme: {
+    add: 'Añadir',
+  },
 };

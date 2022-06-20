@@ -67,4 +67,7 @@ module.exports = {
     help: 'Untranslated content will appear in the default language',
     title: 'Configuration & languages',
   },
+  formWithTheme: {
+    add: 'Add',
+  },
 };
