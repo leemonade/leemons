@@ -135,8 +135,9 @@ const saveTestSchema = {
     questionBank: stringSchemaNullable,
     program: stringSchemaNullable,
     curriculum: {
-      type: 'array',
-      items: stringSchema,
+      type: 'object',
+      additionalProperties: true,
+      nullable: true,
     },
     subjects: {
       type: 'array',
