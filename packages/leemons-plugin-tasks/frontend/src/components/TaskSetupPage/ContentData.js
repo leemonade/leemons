@@ -194,7 +194,7 @@ function ContentData({
                       <TabPanel key={index} label={subject?.label}>
                         <Box className={classes.tabPane}>
                           <ContextContainer>
-                            <Controller
+                            {/* <Controller
                               control={control}
                               name="program"
                               render={({ field: { value: program } }) => (
@@ -207,18 +207,18 @@ function ContentData({
                                   type="content"
                                 />
                               )}
-                            />
+                            /> */}
                             <Controller
                               control={control}
                               name="program"
                               render={({ field: { value: program } }) => (
                                 <Curriculum
-                                  label={labels?.assessmentCriteria || ''}
+                                  // label={labels?.assessmentCriteria || ''}
                                   addLabel={labels?.addFromCurriculum}
                                   program={program}
                                   subjects={subject.value}
-                                  name={`curriculum.${subject.value}.assessmentCriteria`}
-                                  type="assessmentCriteria"
+                                  name={`curriculum.${subject.value}.curriculum`}
+                                  type="curriculum"
                                 />
                               )}
                             />
