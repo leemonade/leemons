@@ -83,11 +83,20 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
 
       // ES: Creamos los cursos del programa
       const promises = [];
-      for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
+      if (data.maxNumberOfCourses) {
+        for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
+          promises.push(
+            addCourse(
+              { program: program.id, number: data.courseCredits ? data.courseCredits : 0 },
+              { index: i + 1, transacting }
+            )
+          );
+        }
+      } else {
         promises.push(
           addCourse(
             { program: program.id, number: data.courseCredits ? data.courseCredits : 0 },
-            { index: i + 1, transacting }
+            { index: 1, transacting }
           )
         );
       }
