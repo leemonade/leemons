@@ -8,14 +8,6 @@ import SelectProgram from './components/PickSubject/SelectProgram';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
 
-function getInitialProgram(sharedData) {
-  if (sharedData?.subjects?.length > 0) {
-    return sharedData.subjects[0].program;
-  }
-
-  return null;
-}
-
 function ConfigData({
   labels,
   placeholders,
@@ -35,7 +27,6 @@ function ConfigData({
   const defaultValues = {
     subjects: [],
     ...sharedData,
-    program: getInitialProgram(sharedData),
   };
 
   const formData = useForm({ defaultValues });
