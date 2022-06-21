@@ -147,7 +147,7 @@ module.exports = {
           submission: {
             // EVERYTHING NEW
             gradable: 'Esta tarea es calificable',
-            title: 'Evaluación',
+            title: 'Entregables',
             checkDescription:
               'Esta tarea require la entrega de algún tipo de archivo, documento o enlace',
             type: 'Tipo de entrega',

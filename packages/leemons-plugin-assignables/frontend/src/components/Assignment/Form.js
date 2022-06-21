@@ -10,6 +10,7 @@ import {
   DatePicker,
   Grid,
   InputWrapper,
+  Loader,
   Radio,
   RadioGroup,
   Switch,
@@ -18,10 +19,13 @@ import {
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
+import { useQuery } from 'react-query';
 
 // TODO: Move to assignables
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
+import { detailCurriculumRequest, listCurriculumsByProgramRequest } from '@curriculum/request';
+import { RatingStarIcon } from '@bubbles-ui/icons/outline';
 import prefixPN from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';
 
@@ -119,6 +123,64 @@ function GradeVariation({
   );
 }
 
+function useAssignableCurriculum(program) {
+  const [curriculum, setCurriculum] = React.useState(null);
+
+  React.useEffect(async () => {
+    if (!program) {
+      return;
+    }
+
+    const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
+
+    if (curriculumData.count) {
+      setCurriculum(curriculumData.items[0]);
+    }
+  }, program);
+
+  return curriculum;
+}
+
+function useCurriculumFields({ assignable }) {
+  const program = useMemo(() => {
+    if (assignable?.program) {
+      return assignable.program;
+    }
+    return assignable?.subjects?.[0]?.program;
+  }, [assignable]);
+
+  const curriculum = useAssignableCurriculum(program);
+  const query = useQuery(['curriculumDetail', { id: curriculum?.id }], () =>
+    detailCurriculumRequest(curriculum?.id)
+  );
+
+  const { data, isLoading } = query;
+
+  const curriculumDetails = data?.curriculum;
+
+  return useMemo(() => {
+    if (!curriculumDetails || isLoading) {
+      return { ...query, data: null };
+    }
+
+    const subjectLevel = curriculumDetails.nodeLevels.find((level) => level.type === 'subject');
+
+    if (subjectLevel) {
+      const curriculumFields = subjectLevel.schema.compileJsonSchema.properties;
+
+      const parsedCurriculumFields = Object.entries(curriculumFields).map(([id, field]) => ({
+        id,
+        label: field.title,
+        isEvaluationCriteria: field.frontConfig.blockData.evaluationCriteria,
+      }));
+
+      return { ...query, data: parsedCurriculumFields };
+    }
+
+    return { ...query, data: null };
+  }, [curriculumDetails]);
+}
+
 export default function Form({
   defaultValues = {},
   onSubmit: parentSubmit,
@@ -200,6 +262,8 @@ export default function Form({
     if (e) e.setHours(23, 59, 59);
     setValue('dates.deadline', e);
   }
+
+  const curriculumFields = useCurriculumFields({ assignable });
 
   const isAllDay = watch('isAllDay');
   const deadline = watch('dates.deadline');
@@ -428,34 +492,79 @@ export default function Form({
             <ConditionalInput
               {...showField}
               label={labels?.showCurriculumToogle}
-              render={() => (
-                <>
-                  <Controller
-                    control={control}
-                    name="curriculum.content"
-                    shouldUnregister={true}
-                    render={({ field }) => (
-                      <Switch {...field} checked={field.value} label={labels?.content} />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="curriculum.assessmentCriteria"
-                    shouldUnregister={true}
-                    render={({ field }) => (
-                      <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="curriculum.objectives"
-                    shouldUnregister={true}
-                    render={({ field }) => (
-                      <Switch {...field} checked={field.value} label={labels?.objectives} />
-                    )}
-                  />
-                </>
-              )}
+              render={
+                () =>
+                  !curriculumFields.data ? (
+                    <Loader />
+                  ) : (
+                    <>
+                      {curriculumFields.data.map((curriculumField) => (
+                        <Controller
+                          key={curriculumField.id}
+                          control={control}
+                          name={`curriculum.${curriculumField.id}`}
+                          shouldUnregister={true}
+                          render={({ field }) => (
+                            <Switch
+                              {...field}
+                              checked={field.value}
+                              label={
+                                <Box
+                                  sx={(theme) => ({
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: theme.spacing[1],
+                                  })}
+                                >
+                                  {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
+                                  <Text>{curriculumField.label}</Text>
+                                </Box>
+                              }
+                            />
+                          )}
+                        />
+                      ))}
+                      <Controller
+                        control={control}
+                        name="curriculum.objectives"
+                        shouldUnregister={true}
+                        render={({ field }) => (
+                          <Switch
+                            {...field}
+                            checked={field.value}
+                            label={<Text>{labels?.objectives}</Text>}
+                          />
+                        )}
+                      />
+                    </>
+                  )
+                // <>
+                //   <Controller
+                //     control={control}
+                //     name="curriculum.content"
+                //     shouldUnregister={true}
+                //     render={({ field }) => (
+                //       <Switch {...field} checked={field.value} label={labels?.content} />
+                //     )}
+                //   />
+                //   <Controller
+                //     control={control}
+                //     name="curriculum.assessmentCriteria"
+                //     shouldUnregister={true}
+                //     render={({ field }) => (
+                //       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
+                //     )}
+                //   />
+                //   <Controller
+                //     control={control}
+                //     name="curriculum.objectives"
+                //     shouldUnregister={true}
+                //     render={({ field }) => (
+                //       <Switch {...field} checked={field.value} label={labels?.objectives} />
+                //     )}
+                //   />
+                // </>
+              }
             />
           )}
         />

@@ -11,25 +11,42 @@ import {
 } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import prepareAsset, { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from 'react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
-  const {
-    content: showContent,
-    objectives: showObjectives,
-    assessmentCriteria: showAssessmentCriteria,
-  } = showCurriculumObj;
+  const curriculumKeysToShow = Object.entries(showCurriculumObj)
+    .filter(([, value]) => value)
+    .map(([key]) => key);
 
-  const showCurriculum = showContent || showObjectives || showAssessmentCriteria;
-
-  const { instance } = assignation;
-  const { assignable } = instance;
+  const showCurriculum = curriculumKeysToShow?.length > 0;
 
   if (!showCurriculum) {
     return null;
   }
+
+  const { instance } = assignation;
+  const { assignable } = instance;
+
+  const curriculumValuesToShow = assignable.subjects.map((subject) => {
+    const curriculum = {};
+
+    if (curriculumKeysToShow.includes('objectives')) {
+      curriculum.objectives = subject.curriculum.objectives;
+    }
+
+    if (subject.curriculum.curriculum) {
+      curriculum.curriculum = subject.curriculum.curriculum.filter((key) => {
+        const regex = new RegExp(`${curriculumKeysToShow.join('|')}`, 'i');
+        return regex.test(key);
+      });
+    }
+    return {
+      ...subject,
+      curriculum,
+    };
+  });
 
   const subjects = useClassesSubjects(instance.classes);
 
@@ -40,7 +57,7 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
       </Title>
       <Tabs>
         {subjects.map(({ id, name }) => {
-          const { curriculum } = assignable.subjects.find((s) => s.subject === id);
+          const { curriculum } = curriculumValuesToShow.find((s) => s.subject === id);
           const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
           return (
             <TabPanel key={id} label={name}>
@@ -57,27 +74,14 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                   gap: theme.spacing[4],
                 })}
               >
-                {showContent && curriculum?.contents?.length && (
+                {curriculum?.curriculum?.length && (
                   <Box sx={tabPanelStyle}>
                     <Box>
-                      <Title color="primary" order={5}>
-                        {labels?.content}
-                      </Title>
-                      <CurriculumListContents value={curriculum?.contents} />
+                      <CurriculumListContents value={curriculum?.curriculum} />
                     </Box>
                   </Box>
                 )}
-                {showAssessmentCriteria && curriculum?.assessmentCriteria?.length && (
-                  <Box sx={tabPanelStyle}>
-                    <Box>
-                      <Title color="primary" order={5}>
-                        {labels?.assessmentCriteria}
-                      </Title>
-                      <CurriculumListContents value={curriculum?.assessmentCriteria} />
-                    </Box>
-                  </Box>
-                )}
-                {!!showObjectives && !!curriculum?.objectives?.length && (
+                {!!curriculumKeysToShow.includes('objectives') && !!curriculum?.objectives?.length && (
                   <Box sx={tabPanelStyle}>
                     <Box>
                       <Title color="primary" order={5}>
