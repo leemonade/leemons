@@ -50,7 +50,7 @@ async function importAcademicPortfolioPrograms(centers, grades) {
     if (program.subjectsFirstDigit) {
       program.subjectsFirstDigit = 'course';
     } else {
-      program.subjectsFirstDigit = '';
+      program.subjectsFirstDigit = 'none';
     }
 
     items[key] = program;

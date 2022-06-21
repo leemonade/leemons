@@ -36,5 +36,12 @@
         "required": "Por favor, introduce tu contraseña"
       }
     }
+  },
+  "setup": {
+    "title": "Instalación de Leemons",
+    "languages": {
+      "title": "Idiomas",
+      "description": "¿Qué idiomas se usarán en tu centro(s)?"
+    }
   }
 }

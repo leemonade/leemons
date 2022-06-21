@@ -1,7 +1,7 @@
 module.exports = {
   translations: () => {
     const multilanguage = leemons.getPlugin('multilanguage');
-    if (multilanguage) {
+    if (multilanguage && multilanguage.services) {
       const { services } = multilanguage;
       return {
         common: services.common.getProvider(),

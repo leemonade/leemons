@@ -11,7 +11,15 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
   return global.utils.withTransaction(
     async (transacting) => {
       validateAddProgram(data);
-      const { centers, image, substages: _substages, customSubstages, ...programData } = data;
+      const {
+        centers,
+        image,
+        substages: _substages,
+        customSubstages,
+        names,
+        coursesOffset,
+        ...programData
+      } = data;
       let substages = _substages;
       // ES: Si se ha marcado que hay substages y usar los valores por defecto generamos los substages
       if (programData.haveSubstagesPerCourse) {
@@ -83,16 +91,25 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
 
       // ES: Creamos los cursos del programa
       const promises = [];
+      const coursesNames = names || [];
+      const offset = coursesOffset || 0;
+
       for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
+        const courseIndex = i + 1 + offset;
+
         promises.push(
           addCourse(
-            { program: program.id, number: data.courseCredits ? data.courseCredits : 0 },
-            { index: i + 1, transacting }
+            {
+              program: program.id,
+              number: data.courseCredits ? data.courseCredits : 0,
+              name: coursesNames[i] || `${courseIndex}`,
+            },
+            { index: courseIndex, transacting }
           )
         );
       }
       promises.push(
-        addNextCourseIndex(program.id, { index: data.maxNumberOfCourses, transacting })
+        addNextCourseIndex(program.id, { index: data.maxNumberOfCourses + offset, transacting })
       );
 
       await Promise.all(promises);

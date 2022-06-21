@@ -1,9 +1,15 @@
-const init = require('./init');
 const constants = require('./config/constants');
+const { addLocales } = require('./src/services/locales/addLocales');
+
 module.exports = async (isInstalled) => {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    init();
+    await addLocales(['es', 'en']);
   });
+
+  leemons.events.once('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
+  });
+
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       leemons.getPlugin('users').services.permissions.addMany(constants.defaultPermissions);

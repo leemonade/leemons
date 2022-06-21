@@ -2,14 +2,15 @@ module.exports = {
   translations: () => {
     const multilanguage = leemons.getPlugin('multilanguage');
     if (multilanguage && multilanguage.services) {
+      const { services } = multilanguage;
       return {
-        common: multilanguage.services.common.getProvider(),
-        contents: multilanguage.services.contents.getProvider(),
-        locales: multilanguage.services.locales.getProvider(),
+        common: services.common.getProvider(),
+        contents: services.contents.getProvider(),
+        locales: services.locales.getProvider(),
         functions: {
-          isValidLocaleCode: multilanguage.services.locales.isValidLocaleCode,
-          localeRegex: multilanguage.services.locales.localeRegex,
-          localeRegexString: multilanguage.services.locales.localeRegexString,
+          isValidLocaleCode: services.locales.isValidLocaleCode,
+          localeRegex: services.locales.localeRegex,
+          localeRegexString: services.locales.localeRegexString,
         },
       };
     }

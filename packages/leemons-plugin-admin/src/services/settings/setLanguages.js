@@ -21,9 +21,27 @@ async function setLanguages(langs, defaultLang, { transacting: _transacting } = 
 
       const { services: userService } = leemons.getPlugin('users');
       const locales = flattenDeep([langs]);
+      const currentLocales = await userService.platform.getLocales({ transacting });
+
+      console.log('currentLocales:');
+      console.dir(currentLocales, { depth: null });
+
+      const localesToAdd = locales.filter(
+        (locale) => !currentLocales.find((l) => l.code === locale.code)
+      );
+
+      console.log('localesToAdd:');
+      console.dir(localesToAdd, { depth: null });
+
+      const localesToRemove = currentLocales.filter(
+        (locale) => !locales.find((l) => l.code === locale.code)
+      );
+
+      console.log('localesToRemove:');
+      console.dir(localesToRemove, { depth: null });
 
       const localesAdded = await Promise.all(
-        locales.map((lang) => userService.platform.addLocale(lang.code, lang.name))
+        localesToAdd.map((lang) => userService.platform.addLocale(lang.code, lang.name))
       );
 
       // await addLocales(localesAdded.map((locale) => locale.code));

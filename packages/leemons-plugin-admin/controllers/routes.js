@@ -38,6 +38,11 @@ module.exports = [
     handler: 'settings.setLanguages',
   },
   {
+    path: '/settings/languages',
+    method: 'GET',
+    handler: 'settings.getLanguages',
+  },
+  {
     path: '/settings/signup',
     method: 'POST',
     handler: 'settings.signup',

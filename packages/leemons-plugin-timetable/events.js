@@ -1,6 +1,6 @@
 const { pluginName, menuItems, permissions } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
-const init = require('./init');
+const { addLocales } = require('./src/services/locales/addLocales');
 
 async function initMenuBuilder() {
   const [mainItem, ...items] = menuItems;
@@ -12,7 +12,11 @@ async function initMenuBuilder() {
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    init();
+    await addLocales(['es', 'en']);
+  });
+
+  leemons.events.once('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
   });
 
   if (!isInstalled) {

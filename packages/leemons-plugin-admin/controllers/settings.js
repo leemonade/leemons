@@ -1,6 +1,17 @@
 const settingsService = require('../src/services/settings');
 const settingsSchema = require('../models/settings');
 
+async function getLanguages(ctx) {
+  try {
+    const langs = await settingsService.getLanguages();
+    ctx.status = 200;
+    ctx.body = { status: 200, langs };
+  } catch (e) {
+    ctx.status = 400;
+    ctx.body = { status: 400, error: e.message };
+  }
+}
+
 async function setLanguages(ctx) {
   const { langs, defaultLang } = ctx.request.body;
 
@@ -66,4 +77,5 @@ module.exports = {
   },
   signup: registerAdmin,
   setLanguages,
+  getLanguages,
 };

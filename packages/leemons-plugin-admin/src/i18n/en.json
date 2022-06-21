@@ -33,5 +33,19 @@
       },
       "password": { "notMatch": "Passwords not match", "required": "Please enter your password" }
     }
+  },
+  "setup": {
+    "title": "Leemons installation",
+    "common": {
+      "labels": {
+        "selectLanguage": "Select language"
+      }
+    },
+    "languages": {
+      "title": "Languages",
+      "description": "Which languages will be used in your center(s)?",
+      "intro": "Please choose the languages you wish to display on the platform. Currently the user interface supports English and Spanish.",
+      "collaborate": "If you want to help us translate the UI into more languages, please follow our guidelines on"
+    }
   }
 }

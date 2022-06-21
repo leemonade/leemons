@@ -18,6 +18,10 @@ async function updateSettings(values) {
   return leemons.api(`${PLUGIN_NAME}/settings`, { method: 'POST', body });
 }
 
+async function getLanguages() {
+  return leemons.api(`${PLUGIN_NAME}/settings/languages`);
+}
+
 async function setLanguages(langs, defaultLang) {
   const body = { langs, defaultLang };
 
@@ -38,5 +42,6 @@ export {
   getSettings as getSettingsRequest,
   updateSettings as updateSettingsRequest,
   setLanguages as setLanguagesRequest,
+  getLanguages as getLanguagesRequest,
   signup as signupRequest,
 };

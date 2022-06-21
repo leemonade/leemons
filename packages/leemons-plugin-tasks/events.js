@@ -1,8 +1,6 @@
-const _ = require('lodash');
 const { pluginName, permissions, menuItems } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
-const init = require('./init');
-const constants = require('./config/constants');
+const { addLocales } = require('./src/services/locales/addLocales');
 
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
@@ -16,7 +14,11 @@ async function initMenuBuilder() {
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    init();
+    await addLocales(['es', 'en']);
+  });
+
+  leemons.events.once('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
   });
 
   if (!isInstalled) {

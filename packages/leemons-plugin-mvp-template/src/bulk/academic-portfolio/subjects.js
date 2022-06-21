@@ -58,11 +58,30 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
       });
 
     // Course
-    const courseIndex = Number(item.course);
-    items[key].course = find(program.courses, {
-      index: courseIndex,
-      type: 'course',
-    })?.id;
+    const courseIndexes = item.course
+      .split('|')
+      .map((val) => trim(val))
+      .filter((val) => !isEmpty(val))
+      .map(Number);
+
+    items[key].courses = courseIndexes.map(
+      (index) =>
+        find(program.courses, {
+          index,
+          type: 'course',
+        })?.id
+    );
+
+    if (program.subjectsFirstDigit !== 'none') {
+      [items[key].course] = items[key].courses;
+    } else {
+      items[key].course = null;
+      delete items[key].course;
+    }
+
+    if (items[key].credits && !isEmpty(items[key].credits)) {
+      items[key].credits = Number(items[key].credits);
+    }
 
     // ·····················································
     // CLASSES CONFIG
@@ -71,7 +90,7 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
       const classroom = {
         program: programID,
         group,
-        course: items[key].course,
+        course: items[key].courses,
         color: items[key].color,
       };
 

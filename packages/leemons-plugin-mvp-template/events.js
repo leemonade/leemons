@@ -109,7 +109,7 @@ async function events(isInstalled) {
       ],
       async () => {
         console.log('MVP - Iniciando el plugin de Leebrary');
-        config.assets = await initLibrary(config);
+        // config.assets = await initLibrary(config);
         leemons.events.emit('init-leebrary', config.assets);
         console.log('MVP - Plugin de Leebrary inicializado!');
       }
@@ -181,7 +181,7 @@ async function events(isInstalled) {
       async () => {
         try {
           console.log('MVP - Iniciando el plugin de Tests');
-          config.tests = await initTests(config);
+          // config.tests = await initTests(config);
           leemons.events.emit('init-tests', config.tests);
           console.log('MVP - Plugin de Tests inicializado!');
         } catch (e) {
@@ -203,7 +203,7 @@ async function events(isInstalled) {
       async () => {
         try {
           console.log('MVP - Iniciando el plugin de Tasks');
-          config.tasks = await initTasks(config);
+          // config.tasks = await initTasks(config);
           console.log('MVP - Plugin de Tasks inicializado!');
         } catch (e) {
           console.error(e);
