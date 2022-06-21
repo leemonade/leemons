@@ -5,16 +5,7 @@ import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { ChevRightIcon, ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import SelectProgram from './components/PickSubject/SelectProgram';
-import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 import SelectSubjects from './components/PickSubject/SelectSubjects';
-
-function getInitialProgram(sharedData) {
-  if (sharedData?.subjects?.length > 0) {
-    return sharedData.subjects[0].program;
-  }
-
-  return null;
-}
 
 function ConfigData({
   labels,
@@ -35,7 +26,6 @@ function ConfigData({
   const defaultValues = {
     subjects: [],
     ...sharedData,
-    program: getInitialProgram(sharedData),
   };
 
   const formData = useForm({ defaultValues });
@@ -163,19 +153,6 @@ function ConfigData({
                     errorMessages={errorMessages}
                     errors={errors}
                     program={program}
-                  />
-                )}
-              />
-            </ContextContainer>
-            <ContextContainer>
-              <Controller
-                control={control}
-                name="duration"
-                render={({ field }) => (
-                  <TimeUnitsInput
-                    {...field}
-                    label={labels.recommendedDuration}
-                    error={errors.recommendedDuration}
                   />
                 )}
               />

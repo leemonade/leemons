@@ -127,10 +127,10 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     }
 
     if (filters?.tab === 'ongoing') {
-      q.closed = false;
+      q.archived = false;
       q.evaluated = false;
     } else if (filters?.tab === 'history') {
-      q.closed = true;
+      q.archived = true;
     } else if (filters?.tab === 'evaluated') {
       q.evaluated = true;
     }

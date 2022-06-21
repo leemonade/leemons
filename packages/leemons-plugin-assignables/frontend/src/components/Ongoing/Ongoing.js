@@ -5,7 +5,7 @@ import AssignmentList from './AssignmentList';
 export default function Ongoing({ closed = false, ...props }) {
   return (
     <>
-      <AssignmentList closed={closed} {...props} />
+      <AssignmentList archived={closed} {...props} />
     </>
   );
 }
