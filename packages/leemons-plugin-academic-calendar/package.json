@@ -1,5 +1,5 @@
 {
-  "name": "leemons-plugin-academic-portfolio",
+  "name": "leemons-plugin-academic-calendar",
   "version": "1.0.0",
   "main": "lib/index.js",
   "license": "MIT",

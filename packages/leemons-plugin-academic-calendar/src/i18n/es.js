@@ -1,1 +1,37 @@
-module.exports = {};
+module.exports = {
+  configList: {
+    title: 'Academic calendar',
+    description:
+      'Define las fechas para inicio y fin de cada programa y curso, así como las horas lectivas habituales.',
+    select_center: 'Seleccionar centro',
+  },
+  configDetail: {
+    title: 'Configurar {name}',
+    switchAllCourses: 'Todos los cursos (x{n}) tienen la misma configuración',
+    initEndCourse: 'Inicio y fin de curso',
+    allCoursesSameDate: 'Todos los cursos comparten estas fechas',
+    startDate: 'Fecha de inicio',
+    endDate: 'Fecha fin',
+    schoolDays: 'Días lectivos',
+    allCoursesSameDays: 'Todos los cursos comparten estas días ',
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miercoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sabado',
+    domingo: 'Domingo',
+    schoolHour: 'Horas lectivas (puede incluir extra-escolares)',
+    allCoursesSameHours: 'Mismo horario para todos los cursos',
+    sameHoursForAllDays: 'Mismo horario para todos los días',
+    course: 'Curso',
+    from: 'Desde',
+    to: 'Hasta',
+    breaks: 'Descansos',
+    name: 'Nombre',
+    addBreak: 'Añadir descanso',
+    save: 'Guardar',
+    fieldRequired: 'Campo necesario',
+    configSaved: 'Configuración guardada',
+  },
+};

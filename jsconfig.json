@@ -6,6 +6,9 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
+      "@academic-calendar/*": [
+        "./packages/leemons-plugin-academic-calendar/frontend/src/*"
+      ],
       "@academic-portfolio/*": [
         "./packages/leemons-plugin-academic-portfolio/frontend/src/*"
       ],

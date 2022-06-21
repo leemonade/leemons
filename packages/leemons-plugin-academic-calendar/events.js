@@ -8,7 +8,6 @@ const constants = require('./config/constants');
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
 async function initMenuBuilder() {
   const [mainItem, ...items] = menuItems;
-  // await addMain();
   await addMenuItems(mainItem);
   leemons.events.emit('init-menu');
   await addMenuItems(items);

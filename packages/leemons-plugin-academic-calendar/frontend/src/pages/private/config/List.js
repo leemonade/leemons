@@ -16,18 +16,18 @@ import { SelectCenter } from '@users/components/SelectCenter';
 import { LayoutContext } from '@layout/context/layout';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from '@academic-calendar/helpers/prefixPN';
 import {
   createProgramRequest,
-  detailProgramRequest,
   listProgramsRequest,
   updateProgramRequest,
 } from '@academic-portfolio/request';
 import { ProgramItem } from '@academic-portfolio/components';
 import { useStore } from '@common';
+import AcademicCalendarDetail from '@academic-calendar/components/AcademicCalendarDetail';
 
 export default function List() {
-  const [t, , , loading] = useTranslateLoader(prefixPN('programs_page'));
+  const [t, , , loading] = useTranslateLoader(prefixPN('configList'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [centerId, setCenterId] = useState(null);
@@ -157,8 +157,7 @@ export default function List() {
   const handleOnEditProgram = (e) => {
     scrollTo({ top: 0 });
     handleShowDetail(async () => {
-      const { program } = await detailProgramRequest(e.program.id);
-      store.currentProgram = program;
+      store.selectedProgram = e.program;
       treeProps.setSelectedNode(e.id);
     });
   };
@@ -168,8 +167,8 @@ export default function List() {
 
   const headerValues = useMemo(
     () => ({
-      title: t('page_title'),
-      description: t('page_description'),
+      title: t('title'),
+      description: t('description'),
     }),
     [t]
   );
@@ -187,7 +186,7 @@ export default function List() {
                   <ContextContainer divided>
                     <Box>
                       <SelectCenter
-                        label={t('common.select_center')}
+                        label={t('select_center')}
                         onChange={handleOnSelectCenter}
                         firstSelected
                       />
@@ -206,9 +205,11 @@ export default function List() {
                 </Paper>
               </Col>
               <Col span={7}>
-                <Paper fullWidth padding={5}>
-                  Gatitos
-                </Paper>
+                {store.selectedProgram ? (
+                  <Paper fullWidth padding={5}>
+                    <AcademicCalendarDetail program={store.selectedProgram} />
+                  </Paper>
+                ) : null}
               </Col>
             </Grid>
           </ContextContainer>

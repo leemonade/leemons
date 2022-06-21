@@ -98,5 +98,9 @@
   {
     "name": "assignables",
     "path": "../../packages/leemons-plugin-assignables/frontend"
+  },
+  {
+    "name": "academic-calendar",
+    "path": "../../packages/leemons-plugin-academic-calendar/frontend"
   }
 ]

@@ -29,13 +29,13 @@ module.exports = [
     method: 'GET',
     handler: 'config.get',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.profiles, ['view']),
+    allowedPermissions: getPermissions(permissions.config, ['view']),
   },
   {
     path: '/config',
     method: 'POST',
     handler: 'config.save',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.profiles, ['create', 'update']),
+    allowedPermissions: getPermissions(permissions.config, ['create', 'update']),
   },
 ];

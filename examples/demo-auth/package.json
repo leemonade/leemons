@@ -36,6 +36,7 @@
     "leemons-plugin-tests": "1.0.0",
     "leemons-plugin-timetable": "1.0.0",
     "leemons-plugin-users": "1.0.0",
+    "leemons-plugin-academic-calendar": "1.0.0",
     "leemons-plugin-widgets": "1.0.0",
     "leemons-provider-emails-amazon-ses": "1.0.0",
     "leemons-provider-leebrary-assignables": "1.0.0",

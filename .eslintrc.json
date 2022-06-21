@@ -31,6 +31,7 @@
       2,
       {
         "ignore": [
+          "@academic-calendar",
           "@academic-portfolio",
           "@assets",
           "@assignables",

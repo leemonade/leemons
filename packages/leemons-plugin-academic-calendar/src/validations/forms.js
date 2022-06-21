@@ -19,29 +19,31 @@ const saveConfigSchema = {
     allCoursesHaveSameDates: booleanSchemaNullable,
     courseDates: {
       type: 'object',
-      additionalProperties: false,
+      additionalProperties: true,
     },
     allCoursesHaveSameDays: booleanSchemaNullable,
     courseDays: {
       type: 'object',
-      additionalProperties: false,
+      additionalProperties: true,
+      nullable: true,
     },
     allCoursesHaveSameHours: booleanSchemaNullable,
     allDaysHaveSameHours: booleanSchemaNullable,
     courseHours: {
       type: 'object',
-      additionalProperties: false,
+      additionalProperties: true,
+      nullable: true,
     },
     breaks: {
       type: 'array',
       items: {
         type: 'object',
-        additionalProperties: false,
+        additionalProperties: true,
       },
       nullable: true,
     },
   },
-  required: ['program', 'courseDates', 'courseDays', 'courseHours'],
+  required: ['program', 'courseDates'],
   additionalProperties: false,
 };
 
