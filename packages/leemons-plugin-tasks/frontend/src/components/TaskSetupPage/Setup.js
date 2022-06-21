@@ -3,8 +3,19 @@ import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
 import { VerticalStepperContainer } from '@bubbles-ui/components';
 
+function getInitialProgram(sharedData) {
+  if (sharedData?.subjects?.length > 0) {
+    return sharedData.subjects[0].program;
+  }
+
+  return null;
+}
+
 function Setup({ labels, steps, values, editable, onSave, useObserver, ...props }) {
-  const [sharedData, setSharedData] = useState(values);
+  const [sharedData, setSharedData] = useState({
+    ...values,
+    program: getInitialProgram(values),
+  });
   const [active, setActive] = useState(0);
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
@@ -34,7 +45,7 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
 
   useEffect(() => {
     if (!isNil(values) && JSON.stringify(sharedData) !== JSON.stringify(values)) {
-      setSharedData(values);
+      setSharedData({ ...values, program: getInitialProgram(values) });
     }
   }, [values]);
 

@@ -91,23 +91,38 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
 
       // ES: Creamos los cursos del programa
       const promises = [];
+
       const coursesNames = names || [];
       const offset = coursesOffset || 0;
 
-      for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
-        const courseIndex = i + 1 + offset;
+      if (data.maxNumberOfCourses) {
+        for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
+          const courseIndex = i + 1 + offset;
 
+          promises.push(
+            addCourse(
+              {
+                program: program.id,
+                number: data.courseCredits ? data.courseCredits : 0,
+                name: coursesNames[i] || `${courseIndex}`,
+              },
+              { index: courseIndex, transacting }
+            )
+          );
+        }
+      } else {
         promises.push(
           addCourse(
             {
               program: program.id,
               number: data.courseCredits ? data.courseCredits : 0,
-              name: coursesNames[i] || `${courseIndex}`,
+              name: coursesNames[0] || `${1 + offset}`,
             },
-            { index: courseIndex, transacting }
+            { index: 1 + offset, transacting }
           )
         );
       }
+
       promises.push(
         addNextCourseIndex(program.id, { index: data.maxNumberOfCourses + offset, transacting })
       );

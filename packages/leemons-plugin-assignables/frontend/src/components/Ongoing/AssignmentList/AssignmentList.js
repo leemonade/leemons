@@ -8,7 +8,7 @@ import { useAssignmentListStyle } from './AssignmentList.style';
 import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
 
-function parseTitleKey(title, closed) {
+function parseTitleKey(title, archived) {
   if (title === null) {
     return null;
   }
@@ -17,14 +17,14 @@ function parseTitleKey(title, closed) {
     return title;
   }
 
-  if (closed) {
+  if (archived) {
     return prefixPN('ongoing.history');
   }
   return prefixPN('ongoing.ongoing');
 }
 
 export default function AssignmentList({
-  closed,
+  archived,
   title,
   titleComponent,
   filters: filtersProps,
@@ -32,7 +32,7 @@ export default function AssignmentList({
   fullWidth,
   ...props
 }) {
-  const titleKey = parseTitleKey(title, closed);
+  const titleKey = parseTitleKey(title, archived);
   const keys = [prefixPN('activities_filters')];
   if (titleKey) {
     keys.push(titleKey);
@@ -51,7 +51,7 @@ export default function AssignmentList({
   const [filters, setFilters] = useState(defaultFilters);
 
   const tabs = useMemo(() => {
-    if (!closed) {
+    if (!archived) {
       return [
         {
           label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
@@ -74,7 +74,7 @@ export default function AssignmentList({
         value: 'evaluated',
       },
     ];
-  }, [labels, closed]);
+  }, [labels, archived]);
 
   const { classes, cx } = useAssignmentListStyle();
   return (

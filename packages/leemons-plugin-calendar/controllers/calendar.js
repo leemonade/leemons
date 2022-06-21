@@ -11,6 +11,12 @@ async function getCalendar(ctx) {
   ctx.body = { status: 200, ...data };
 }
 
+async function getSchedule(ctx) {
+  const data = await calendarService.getScheduleToFrontend(ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, ...data };
+}
+
 async function getEventTypes(ctx) {
   const eventTypes = await eventTypesService.list();
   ctx.status = 200;
@@ -151,6 +157,7 @@ module.exports = {
   removeEvent,
   updateEvent,
   getCalendar,
+  getSchedule,
   getEventTypes,
   addConfigEvent,
   listKanbanColumns,

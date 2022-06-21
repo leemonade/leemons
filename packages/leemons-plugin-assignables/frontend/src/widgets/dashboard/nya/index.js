@@ -135,7 +135,7 @@ export default function NYA({ classe, program }) {
   const query = useMemo(() => {
     const q = {
       limit: 9,
-      closed: false,
+      archived: false,
     };
 
     if (classe) {

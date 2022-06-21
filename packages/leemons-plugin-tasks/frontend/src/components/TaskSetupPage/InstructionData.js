@@ -4,8 +4,8 @@ import { isFunction, uniq } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 
 function InstructionData({
   labels,
@@ -160,6 +160,19 @@ function InstructionData({
               )}
             />
           </Box>
+        </ContextContainer>
+        <ContextContainer>
+          <Controller
+            control={control}
+            name="duration"
+            render={({ field }) => (
+              <TimeUnitsInput
+                {...field}
+                label={labels.recommendedDuration}
+                error={errors.recommendedDuration}
+              />
+            )}
+          />
         </ContextContainer>
         <Stack fullWidth justifyContent="space-between">
           <Box>

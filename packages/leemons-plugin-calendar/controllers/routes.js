@@ -13,6 +13,17 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/schedule',
+    method: 'POST',
+    handler: 'calendar.getSchedule',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.calendar.calendar': {
+        actions: ['view', 'admin'],
+      },
+    },
+  },
   /**
    * Event types
    * */

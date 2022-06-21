@@ -5,7 +5,7 @@ import AssignmentList from '../../../components/Ongoing/AssignmentList';
 export default function Ongoing({ classe }) {
   return (
     <AssignmentList
-      closed={false}
+      archived={false}
       defaultFilters={{ class: classe?.id, closed: false }}
       filters={{ hideSubject: true }}
       fullWidth

@@ -74,6 +74,12 @@ module.exports = {
         query.evaluated = false;
       }
 
+      if (query.archived === 'true') {
+        query.archived = true;
+      } else if (query.archived === 'false') {
+        query.archived = false;
+      }
+
       const assignableInstances = await services.searchAssignableInstances(query, {
         userSession: ctx.state.userSession,
       });

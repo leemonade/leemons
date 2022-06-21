@@ -34,6 +34,7 @@ const { verifyJWTToken } = require('./jwt/verifyJWTToken');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { getJWTPrivateKey } = require('./jwt/getJWTPrivateKey');
 const { generateJWTPrivateKey } = require('./jwt/generateJWTPrivateKey');
+const { updateSessionConfig } = require('./updateSessionConfig');
 
 module.exports = {
   add,
@@ -59,6 +60,7 @@ module.exports = {
   hasPermissionCTX,
   centerProfileToken,
   canRegisterPassword,
+  updateSessionConfig,
   getSuperAdminUserIds,
   addFirstSuperAdminUser,
   sendWelcomeEmailToUser,

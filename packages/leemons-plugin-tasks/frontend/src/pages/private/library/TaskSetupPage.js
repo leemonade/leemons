@@ -48,9 +48,8 @@ export default function TaskSetupPage() {
           ...subject,
           curriculum: curriculum && {
             objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
-            contents: curriculum[subject.subject]?.contents?.map(({ content }) => content),
-            assessmentCriteria: curriculum[subject.subject]?.assessmentCriteria?.map(
-              ({ assessmentCriteria }) => assessmentCriteria
+            curriculum: curriculum[subject.subject]?.curriculum?.map(
+              ({ curriculum }) => curriculum
             ),
           },
         })),
@@ -127,10 +126,7 @@ export default function TaskSetupPage() {
         const { curriculum } = subject;
         task.curriculum[subject.subject] = {
           objectives: curriculum?.objectives?.map((objective) => ({ objective })),
-          contents: curriculum?.contents?.map((content) => ({ content })),
-          assessmentCriteria: curriculum?.assessmentCriteria?.map((assessmentCriteria) => ({
-            assessmentCriteria,
-          })),
+          curriculum: curriculum?.curriculum?.map((curriculum) => ({ curriculum })),
         };
       });
       return task;
