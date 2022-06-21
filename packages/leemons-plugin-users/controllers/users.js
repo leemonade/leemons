@@ -444,6 +444,12 @@ async function updateUserAgent(ctx) {
   }
 }
 
+async function updateSessionConfig(ctx) {
+  const data = await usersService.updateSessionConfig(ctx);
+  ctx.status = 200;
+  ctx.body = { status: 200, data };
+}
+
 module.exports = {
   list,
   reset,
@@ -465,6 +471,7 @@ module.exports = {
   getUserAgentsInfo,
   agentDetailForPage,
   setRememberLogin,
+  updateSessionConfig,
   getRememberLogin,
   removeRememberLogin,
   centerProfileToken,

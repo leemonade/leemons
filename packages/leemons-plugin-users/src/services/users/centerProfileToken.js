@@ -12,6 +12,14 @@ async function centerProfileToken(user, centerId, profileId, { transacting } = {
 
   const userAgents = await table.userAgent.find({ user }, { columns: ['id', 'role'], transacting });
 
+  const classes = await leemons
+    .getPlugin('academic-portfolio')
+    .services.classes.listSessionClasses({ userAgents }, undefined, { transacting });
+  const sessionConfig = {};
+  if (classes && classes.length) {
+    sessionConfig.program = classes[0].program;
+  }
+
   const profileRoles = await table.profileRole.find(
     {
       profile: profile.id,
@@ -27,12 +35,19 @@ async function centerProfileToken(user, centerId, profileId, { transacting } = {
 
   const userAgent = _.find(userAgents, { role: roleCenter.role });
 
-  const promises = [generateJWTToken({ id: user }), generateJWTToken({ userAgent: userAgent.id })];
+  const promises = [
+    generateJWTToken({ sessionConfig, id: user }),
+    generateJWTToken({
+      sessionConfig,
+      userAgent: userAgent.id,
+    }),
+  ];
 
   const [userToken, useAgentToken] = await Promise.all(promises);
 
   return {
     userToken,
+    sessionConfig,
     centers: [
       {
         ...center,

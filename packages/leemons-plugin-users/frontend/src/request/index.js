@@ -1,3 +1,4 @@
+import updateSessionConfig from '@users/request/updateSessionConfig';
 import login from './login';
 import reset from './reset';
 import addRole from './addRole';
@@ -60,6 +61,7 @@ export const addUsersBulkRequest = addUsersBulk;
 export const listProfilesRequest = listProfiles;
 export const updateProfileRequest = updateProfile;
 export const getUserCentersRequest = getUserCenters;
+export const updateSessionConfigRequest = updateSessionConfig;
 export const listPermissionsRequest = listPermissions;
 export const getUserProfilesRequest = getUserProfiles;
 export const updateUserAgentRequest = updateUserAgent;

@@ -1,10 +1,12 @@
 import * as _ from 'lodash';
+import { keyBy } from 'lodash';
 import { useContext, useEffect } from 'react';
 import { SessionContext } from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import { useHistory } from 'react-router-dom';
 import hooks from 'leemons-hooks';
+import { updateSessionConfigRequest } from '@users/request';
 
 /**
  * @private
@@ -68,6 +70,27 @@ export function getCookieToken(onlyCookie) {
 export function getCentersWithToken() {
   const token = getCookieToken(true);
   return _.isString(token) ? null : token?.centers;
+}
+
+export function getSessionConfig() {
+  const token = getCookieToken(true);
+  return _.isString(token) ? {} : token?.sessionConfig || {};
+}
+
+export async function updateSessionConfig(config) {
+  const { data } = await updateSessionConfigRequest(config);
+  const cookieToken = getCookieToken(true);
+  const dataByOld = keyBy(data, 'old');
+  if (!_.isObject(cookieToken.sessionConfig)) cookieToken.sessionConfig = {};
+  cookieToken.sessionConfig = { ...cookieToken.sessionConfig, ...config };
+  if (cookieToken.centers) {
+    _.forEach(cookieToken.centers, ({ token }, i) => {
+      if (dataByOld[token]) {
+        cookieToken.centers[i].token = dataByOld[token].new;
+      }
+    });
+  }
+  Cookies.set('token', cookieToken);
 }
 
 export function getAuthorizationTokenForAllCenters() {
