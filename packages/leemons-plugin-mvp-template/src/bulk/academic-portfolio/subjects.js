@@ -116,6 +116,14 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
     delete items[key].teachers;
     delete items[key].subjectType;
     delete items[key].knowledge;
+    delete items[key][' '];
+
+    // Cleans empty keys
+    keys(items[key]).forEach((prop) => {
+      if (isEmpty(trim(prop))) {
+        delete items[key][prop];
+      }
+    });
   });
 
   // console.dir(items, { depth: null });

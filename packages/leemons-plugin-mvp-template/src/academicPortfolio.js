@@ -73,13 +73,6 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
       const { classes, seats, creator, students: rawStudents, courses, ...subject } = subjects[key];
 
       try {
-        console.log('----------------------');
-        console.log('Name:', subject.name);
-        console.log('Courses:');
-        console.dir(courses, { depth: null });
-        console.log('Course:');
-        console.dir(subject.course, { depth: null });
-
         const subjectData = await services.subjects.addSubject(subject, {
           userSession: users[creator],
         });

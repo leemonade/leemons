@@ -64,6 +64,7 @@ async function events(isInstalled) {
         try {
           await addAWSS3AsProvider();
 
+          leemons.log.debug('MVP - Starting Users plugin ...');
           config.centers = await initCenters();
           leemons.events.emit('init-centers', config.centers);
 
@@ -72,9 +73,12 @@ async function events(isInstalled) {
 
           config.users = await initUsers(config.centers, config.profiles);
           leemons.events.emit('init-users', config.users);
+          leemons.log.info('MVP - STARTED Users plugin');
 
+          leemons.log.debug('MVP - Starting Academic Rules plugin ...');
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
+          leemons.log.info('MVP - STARTED Academic Rules plugin');
 
           await initAdmin();
         } catch (e) {
@@ -108,10 +112,10 @@ async function events(isInstalled) {
         'plugins.mvp-template:init-users',
       ],
       async () => {
-        console.log('MVP - Iniciando el plugin de Leebrary');
-        // config.assets = await initLibrary(config);
+        leemons.log.debug('MVP - Starting Leebrary plugin ...');
+        config.assets = await initLibrary(config);
         leemons.events.emit('init-leebrary', config.assets);
-        console.log('MVP - Plugin de Leebrary inicializado!');
+        leemons.log.info('MVP - STARTED Leebrary plugin');
       }
     );
 
@@ -142,10 +146,10 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
-          console.log('MVP - Iniciando el plugin de Academic Portfolio');
+          leemons.log.debug('MVP - Starting Academic Portfolio plugin ...');
           config.programs = await initAcademicPortfolio(config);
           leemons.events.emit('init-academic-portfolio', config.programs);
-          console.log('MVP - Plugin de Academic Portfolio inicializado!');
+          leemons.log.info('MVP - STARTED Academic Portfolio plugin');
         } catch (e) {
           console.error(e);
         }
@@ -159,9 +163,9 @@ async function events(isInstalled) {
       ['plugins.calendar:pluginDidLoadServices', 'plugins.mvp-template:init-academic-portfolio'],
       async () => {
         try {
-          console.log('MVP - Iniciando el plugin de Calendar');
+          leemons.log.debug('MVP - Starting Calendar plugin ...');
           await initCalendar(config);
-          console.log('MVP - Plugin de Calendar inicializado!');
+          leemons.log.info('MVP - STARTED Calendar plugin');
         } catch (e) {
           console.error(e);
         }
@@ -180,10 +184,10 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
-          console.log('MVP - Iniciando el plugin de Tests');
+          leemons.log.debug('MVP - Starting Tests plugin ...');
           // config.tests = await initTests(config);
           leemons.events.emit('init-tests', config.tests);
-          console.log('MVP - Plugin de Tests inicializado!');
+          leemons.log.info('MVP - STARTED Tests plugin');
         } catch (e) {
           console.error(e);
         }
@@ -202,9 +206,9 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
-          console.log('MVP - Iniciando el plugin de Tasks');
+          leemons.log.debug('MVP - Starting Tasks plugin ...');
           // config.tasks = await initTasks(config);
-          console.log('MVP - Plugin de Tasks inicializado!');
+          leemons.log.info('MVP - STARTED Tasks plugin');
         } catch (e) {
           console.error(e);
         }

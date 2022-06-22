@@ -31,8 +31,10 @@ async function initUsers(centers, profiles) {
 
       // console.log('Vamos a crear el usuario:');
       // console.dir({ ...item, active: true }, { depth: null });
-
+      leemons.log.debug(`Adding user: ${item.name}`);
       const itemData = await services.users.add({ ...item, active: true }, map(itemRoles, 'id'));
+      leemons.log.info(`User ADDED: ${item.name}`);
+
       const userProfiles = roles.map((rol) => rol.profileKey);
 
       users[itemKey] = { ...itemData, profiles: uniq(userProfiles) };

@@ -24,6 +24,8 @@ const ADMITTED_METADATA = [
   // 'channels',
 ];
 
+let mediainfo;
+
 // -----------------------------------------------------------------------------
 // HELPERS
 
@@ -176,8 +178,6 @@ async function upload(file, { name }, { transacting } = {}) {
   // MEDIAINFO
 
   if (['image', 'audio', 'video'].includes(fileType)) {
-    let mediainfo;
-
     const readChunk = async (size, offset) => {
       const buffer = Buffer.alloc(size);
       await fileHandle.read(buffer, 0, size, offset);
@@ -185,8 +185,11 @@ async function upload(file, { name }, { transacting } = {}) {
     };
 
     try {
-      mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
+      if (!mediainfo) {
+        mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
+      }
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
+
       const { track: tracks } = JSON.parse(metainfo).media;
       tracks.forEach((track) => {
         metadata = getMetaProps(track, metadata);
@@ -200,7 +203,8 @@ async function upload(file, { name }, { transacting } = {}) {
         metadata.duration = getReadableDuration(Number(metadata.duration) * 1000);
       }
     } catch (err) {
-      //
+      console.error('-- ERROR: obtaining metadata --');
+      console.log(err);
     }
 
     if (fileHandle) await fileHandle.close();
