@@ -12,8 +12,13 @@ async function addLocales(langs) {
 
     for (let i = 0, len = locales.length; i < len; i++) {
       const locale = locales[i];
-      // eslint-disable-next-line import/no-dynamic-require
-      localesData[locale] = require(path.resolve(__dirname, `../../i18n/${locale}.js`));
+      const localePath = path.resolve(__dirname, `../../i18n/${locale}.js`);
+      try {
+        // eslint-disable-next-line import/no-dynamic-require
+        localesData[locale] = require(localePath);
+      } catch (err) {
+        leemons.log.error(`Unable to load locale: ${localePath}`);
+      }
     }
 
     await languageService.common.setManyByJSON(localesData, leemons.plugin.prefixPN(''));

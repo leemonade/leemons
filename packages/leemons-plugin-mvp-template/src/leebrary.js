@@ -3,7 +3,7 @@ const { keys } = require('lodash');
 const importLibrary = require('./bulk/library');
 const config = require('../config/awsS3Config');
 
-function delay(time) {
+function _delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
@@ -38,7 +38,7 @@ async function initLibrary({ users }) {
           console.error(e);
         }
 
-        await delay(1000);
+        await _delay(1000);
       }
     }
 

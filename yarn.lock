@@ -3237,6 +3237,13 @@ async-memoize-one@~1.1.1:
   dependencies:
     fast-deep-equal "~3.1.3"
 
+async-promise-pool@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/async-promise-pool/-/async-promise-pool-1.0.6.tgz#eea75c1bd4cef05225d5d1835b68b6ccb88ae595"
+  integrity sha512-44DZ4fOHtnioeblfWNgf2EoOFTf0B72t/j4vY4ZnG+3AcWOkQKaByUfDhZUz647zBZFvlGEBvJgbJJyg/lTWZw==
+  dependencies:
+    babel-runtime "^6.26.0"
+
 async-value-promise@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/async-value-promise/-/async-value-promise-1.1.1.tgz#68957819e3eace804f3b4b69477e2bd276c15378"
@@ -3449,6 +3456,14 @@ babel-preset-jest@^26.6.2:
   dependencies:
     babel-plugin-jest-hoist "^26.6.2"
     babel-preset-current-node-syntax "^1.0.0"
+
+babel-runtime@^6.26.0:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
+  integrity sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.11.0"
 
 bail@^1.0.0:
   version "1.0.5"
@@ -4553,6 +4568,11 @@ core-js-pure@^3.8.1:
   version "3.23.0"
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.23.0.tgz#f27426a6144a37484cfc5fd8b56eecc5180cd393"
   integrity sha512-ksjJc/xVTQzT2q6trPja2qWynMEaGO36rDui2SiqLPYab9TmPgT8nIVcre/yscviPCSweUdCDGKe4MsQA9w1zQ==
+
+core-js@^2.4.0:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 core-js@^3.0.1, core-js@^3.21.0, core-js@^3.6.0, core-js@^3.8.3:
   version "3.23.0"
@@ -6224,6 +6244,11 @@ fastest-levenshtein@^1.0.12:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/fastest-levenshtein/-/fastest-levenshtein-1.0.12.tgz#9990f7d3a88cc5a9ffd1f1745745251700d497e2"
   integrity sha512-On2N+BpYJ15xIC974QNVuYGMOlEVt4s0EOI3wwMqOmK1fdDY+FN/zltPV8vosq4ad4c/gJ1KHScUn/6AWIgiow==
+
+fastpriorityqueue@^0.7.1:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/fastpriorityqueue/-/fastpriorityqueue-0.7.2.tgz#64dfee2c2adbc18c076cf7552dc4bfbef7befe3f"
+  integrity sha512-5DtIKh6vtOmEGkYdEPNNb+mxeYCnBiKbK3s4gq52l6cX8I5QaTDWWw0Wx/iYo80fVOblSycHu1/iJeqeNxG8Jw==
 
 fastq@^1.6.0:
   version "1.13.0"
@@ -11272,6 +11297,13 @@ promise-inflight@^1.0.1:
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==
 
+promise-pool-js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/promise-pool-js/-/promise-pool-js-1.0.2.tgz#c3e8b3f34cdd9c0a96220c4edfc3d52311537953"
+  integrity sha512-UiTSVgPFReEC1z5jAMAhtDSH4E0fzAHwO4H4K8d+HgIQS9Ttc33TOWZHSqeXpGq3/IoG99Gsfd6bcg6WQ6saQg==
+  dependencies:
+    fastpriorityqueue "^0.7.1"
+
 promise-retry@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/promise-retry/-/promise-retry-2.0.1.tgz#ff747a13620ab57ba688f5fc67855410c370da22"
@@ -11858,6 +11890,11 @@ regenerate@^1.4.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
+
+regenerator-runtime@^0.11.0:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
+  integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
 
 regenerator-runtime@^0.13.4, regenerator-runtime@^0.13.7:
   version "0.13.9"

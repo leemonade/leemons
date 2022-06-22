@@ -4,9 +4,10 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "async-promise-pool": "^1.0.6",
     "leemons-utils": "0.0.1-beta.0",
     "lodash": "^4.17.21",
-    "showdown": "^2.1.0",
-    "mime": "^2.0.3"
+    "mime": "^2.0.3",
+    "showdown": "^2.1.0"
   }
 }

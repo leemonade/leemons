@@ -1,5 +1,4 @@
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
-const initMultilanguage = require('./src/config/multilanguage/init');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { addLocales } = require('./src/services/locales/addLocales');
 
@@ -39,16 +38,6 @@ function initPermissions(isInstalled) {
   }
 }
 
-function initLocalizations() {
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    initMultilanguage();
-  });
-
-  leemons.events.once('plugins.multilanguage:newLocale', async (event, locale) => {
-    await addLocales(locale.code);
-  });
-}
-
 function initWidgets(isInstalled) {
   if (!isInstalled) {
     leemons.events.once('plugins.dashboard:init-widget-zones', async () => {
@@ -86,6 +75,14 @@ function initWidgets(isInstalled) {
 }
 
 async function events(isInstalled) {
+  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+    await addLocales(['es', 'en']);
+  });
+
+  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
+  });
+
   leemons.events.once(
     [
       'plugins.assignables:pluginDidLoadServices',
@@ -101,7 +98,6 @@ async function events(isInstalled) {
     }
   );
 
-  initLocalizations();
   initPermissions(isInstalled);
   initMenuBuilder(isInstalled);
   initWidgets(isInstalled);

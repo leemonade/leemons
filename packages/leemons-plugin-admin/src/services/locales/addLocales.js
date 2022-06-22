@@ -11,12 +11,14 @@ async function addLocales(langs) {
 
     for (let i = 0, len = locales.length; i < len; i++) {
       const locale = locales[i];
-      // eslint-disable-next-line no-await-in-loop
-      localesData[locale] = await leemons.fs.readFile(
-        path.resolve(__dirname, `../../i18n/${locale}.json`),
-        'utf8'
-      );
-      localesData[locale] = JSON.parse(localesData[locale]);
+      const localePath = path.resolve(__dirname, `../../i18n/${locale}.json`);
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        localesData[locale] = await leemons.fs.readFile(localePath, 'utf8');
+        localesData[locale] = JSON.parse(localesData[locale]);
+      } catch (err) {
+        leemons.log.error(`Unable to load locale: ${localePath}`);
+      }
     }
 
     await languageService.common.setManyByJSON(localesData, leemons.plugin.prefixPN(''));

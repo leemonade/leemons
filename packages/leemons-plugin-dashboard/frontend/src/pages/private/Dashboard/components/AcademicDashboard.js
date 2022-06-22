@@ -8,7 +8,7 @@ import prefixPN from '@dashboard/helpers/prefixPN';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import { ZoneWidgets } from '@widgets';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { find, map } from 'lodash';
+import { find, map, isNil } from 'lodash';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 
 const rightZoneWidth = '320px';
@@ -45,6 +45,9 @@ export default function AcademicDashboard({ session }) {
   async function init() {
     const { programs } = await getUserProgramsRequest();
     store.programs = programs;
+
+    console.log('programs', programs);
+
     if (store.programs.length >= 1) {
       const sessionConfig = getSessionConfig();
       if (sessionConfig.program) {
@@ -79,7 +82,9 @@ export default function AcademicDashboard({ session }) {
 
   if (store.loading) return null;
 
-  const programImage = store.selectedProgram?.imageUrl;
+  const programImage = !isNil(store.selectedProgram?.image.cover)
+    ? store.selectedProgram?.imageUrl
+    : undefined;
   const headerProps = {};
   if (programImage) {
     headerProps.blur = 10;
@@ -95,9 +100,10 @@ export default function AcademicDashboard({ session }) {
   store.programsSelect = map(store.programs, (program) => ({
     id: program.id,
     color: program.color,
-    image: program.imageUrl,
+    image: !isNil(program.image?.cover) ? program.imageUrl : undefined,
     label: program.name,
     description: program.description || '',
+    icon: program.icon,
   }));
 
   return (

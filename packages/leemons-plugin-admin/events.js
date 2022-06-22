@@ -15,7 +15,7 @@ async function events(isInstalled) {
     await addLocales(['es', 'en']);
   });
 
-  leemons.events.once('plugins.multilanguage:newLocale', async (event, locale) => {
+  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
 

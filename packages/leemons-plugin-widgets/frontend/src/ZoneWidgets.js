@@ -19,6 +19,7 @@ function ZoneWidgets({ zone, container = <Box />, onGetZone = () => {}, children
   async function load() {
     store.zoneLoaded = zone;
     const data = await getZoneRequest(zone);
+    console.log('data:', data);
     store.zone = data.zone;
     onGetZone(store.zone);
     render();

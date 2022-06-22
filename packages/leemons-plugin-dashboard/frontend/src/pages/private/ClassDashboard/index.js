@@ -119,6 +119,9 @@ export default function ClassDashboard({ session }) {
     render();
     store.idLoaded = id;
     const { classe, programClasses } = await classDetailForDashboardRequest(id);
+    console.log('id:', id);
+    console.log('classe:', classe);
+    console.log('programClasses:', programClasses);
 
     store.class = classe;
     store.programClasses = programClasses;
@@ -142,6 +145,7 @@ export default function ClassDashboard({ session }) {
     });
 
     store.loading = false;
+    console.log('store:', store);
     render();
 
     setTimeout(() => {
@@ -262,22 +266,23 @@ export default function ClassDashboard({ session }) {
           </Box>
         </Stack>
         */}
-
-        <ZoneWidgets
-          zone="plugins.dashboard.class.tabs"
-          onGetZone={onGetZone}
-          container={
-            <Tabs
-              onChange={(key) => {
-                store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
-                render();
-              }}
-              style={{ width: '100%' }}
-            />
-          }
-        >
-          {classTabs}
-        </ZoneWidgets>
+        {!store.loading ? (
+          <ZoneWidgets
+            zone="plugins.dashboard.class.tabs"
+            onGetZone={onGetZone}
+            container={
+              <Tabs
+                onChange={(key) => {
+                  store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
+                  render();
+                }}
+                style={{ width: '100%' }}
+              />
+            }
+          >
+            {classTabs}
+          </ZoneWidgets>
+        ) : null}
       </Box>
       <Box className={styles.rightSide}>
         {store.rightWidgetSelect ? (
@@ -294,9 +299,11 @@ export default function ClassDashboard({ session }) {
         ) : null}
 
         <Box className={styles.rightSidewidgetsContainer}>
-          <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
-            {classRightTabs}
-          </ZoneWidgets>
+          {!store.loading ? (
+            <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
+              {classRightTabs}
+            </ZoneWidgets>
+          ) : null}
         </Box>
       </Box>
     </>
