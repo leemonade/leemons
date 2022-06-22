@@ -34,9 +34,9 @@ export default function useTeacherClasses() {
     ).map((_class) => ({
       id: _class.id,
       // TODO: Update to standard class name
-      label: `${_class.courses.name || _class.courses.index} - ${_class.subject.name} (${
-        _class.groups?.abbreviation
-      })`,
+      label: `${
+        Array.isArray(_class.courses) ? '' : `${_class.courses.name || _class.courses.index} - `
+      }${_class.subject.name} (${_class.groups?.abbreviation})`,
       subject: _class.subject.id,
       teachers: _class.teachers,
       c: _class,
