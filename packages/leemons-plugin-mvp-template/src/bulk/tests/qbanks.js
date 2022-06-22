@@ -25,9 +25,12 @@ async function importQbanks(programs) {
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val));
 
+    qbank.tags = qbank.tags || [];
+
     items[key] = qbank;
   });
 
+  /*
   const mock = {
     name: 'Qbank 3',
     tagline: 'Qbank 3 - Subtítulo',
@@ -57,6 +60,7 @@ async function importQbanks(programs) {
       },
     ],
   };
+  */
 
   // console.dir(items, { depth: null });
   return items;

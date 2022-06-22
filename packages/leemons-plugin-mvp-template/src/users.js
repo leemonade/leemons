@@ -39,9 +39,9 @@ async function initUsers(centers, profiles) {
       pool.add(() => _addUser(itemKey, users));
     }
 
-    console.log('Vamos a procesar los usuarios de 5 en 5...');
+    leemons.log.debug('Batch processing users ...');
     await pool.all();
-    console.log('Toma yaaaa!!!');
+    leemons.log.info('Users CREATED');
 
     return users;
   } catch (err) {

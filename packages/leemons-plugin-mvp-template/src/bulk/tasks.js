@@ -34,6 +34,7 @@ function getDataType(extensions) {
 async function importTasks({ users, centers, programs, assets }) {
   const filePath = path.resolve(__dirname, 'data.xlsx');
   const items = await itemsImport(filePath, 'ta_tasks', 40);
+  const subjects = await itemsImport(filePath, 'ta_task_subjects', 40);
 
   keys(items).forEach((key) => {
     const task = items[key];
@@ -41,6 +42,20 @@ async function importTasks({ users, centers, programs, assets }) {
     task.center = centers[task.center]?.id;
     const program = programs[task.program];
 
+    task.subjects = Object.entries(subjects)
+      .filter(([, item]) => item.task === key)
+      .map(([, item]) => ({
+        subject: program.subjects[item.subject]?.id,
+        level: item.level,
+        program: program.id,
+        curriculum: {
+          objectives: (item.objectives || '')
+            .split('\n')
+            .map((val) => `<p style="margin-left: 0px!important;">${trim(val)}</p>`),
+        },
+      }));
+
+    /*
     task.subjects = (task.subjects || '')
       .split(',')
       .map((val) => trim(val))
@@ -60,6 +75,7 @@ async function importTasks({ users, centers, programs, assets }) {
           },
         };
       });
+      */
 
     task.resources = (task.resources || '')
       .split(',')
@@ -112,7 +128,7 @@ async function importTasks({ users, centers, programs, assets }) {
       subjects: task.subjects,
       statement: converter.makeHtml(task.statement || ''),
       development: isEmpty(task.development) ? null : converter.makeHtml(task.development),
-      duration: task.duration,
+      duration: task.duration || null,
       submission,
       gradable: task.gradable,
       creator: users[task.creator],

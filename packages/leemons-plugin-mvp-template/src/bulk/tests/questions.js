@@ -1,5 +1,5 @@
 const path = require('path');
-const { keys, trim, isEmpty, find } = require('lodash');
+const { keys, trim, isEmpty } = require('lodash');
 const showdown = require('showdown');
 const itemsImport = require('../helpers/simpleListImport');
 
@@ -19,6 +19,8 @@ async function importQuestions() {
       .split(',')
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val));
+
+    question.tags = question.tags || [];
 
     question.clues = (question.clues || '')
       .split('|')
@@ -59,40 +61,47 @@ async function importQuestions() {
     const imageResponses = Boolean(question.withImages && question.answers_images);
     const responseBreak = imageResponses ? ',' : '|';
 
-    properties.responses = (
-      (imageResponses ? question.answers_images : question.answers) ||
-      question.answers ||
-      ''
-    )
-      .split(responseBreak)
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((answer, index) => {
-        const { feedback } = feedbacks.find((item) => item.answer === index + 1) || {};
-        const hideOnHelp = answer.slice(-1) === '@';
-        let response = answer;
+    try {
+      properties.responses = String(
+        (imageResponses ? question.answers_images : question.answers) || question.answers || ''
+      )
+        .split(responseBreak)
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val))
+        .map((answer, index) => {
+          const { feedback } = feedbacks.find((item) => item.answer === index + 1) || {};
+          const hideOnHelp = answer.slice(-1) === '@';
+          let response = answer;
 
-        if (hideOnHelp) {
-          response = answer.slice(0, -1);
-        }
+          if (hideOnHelp) {
+            response = answer.slice(0, -1);
+          }
 
-        const value = {
-          explanation: feedback || null,
-          isCorrectResponse: Number(question.answer_correct) === index + 1,
-          hideOnHelp,
-        };
+          const value = {
+            explanation: feedback || null,
+            isCorrectResponse: Number(question.answer_correct) === index + 1,
+            hideOnHelp,
+          };
 
-        if (imageResponses) {
-          const [url, caption] = response.split('|');
-          value.image = url;
-          value.imageDescription = caption;
-        } else {
-          value.response = response;
-        }
+          if (imageResponses) {
+            const [url, caption] = response.split('|');
+            value.image = url;
+            value.imageDescription = caption;
+          } else {
+            value.response = response;
+          }
 
-        return { value };
-      });
-
+          return { value };
+        });
+    } catch (e) {
+      console.log('ERROR ---------------------------------');
+      console.log(e);
+      console.log('imageResponses:', imageResponses);
+      console.log('question.answers_images:', question.answers_images);
+      console.log('question.answers:', question.answers);
+      console.log('---------------------------------');
+      properties.responses = [];
+    }
     // ·····················································
     // QUESTION MAP
 

@@ -16,6 +16,7 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
   const { classes, seats, creator, students: rawStudents, courses, ...subject } = subjects[key];
 
   try {
+    leemons.log.debug(`Adding subject: ${subject.name}`);
     const subjectData = await services.subjects.addSubject(subject, {
       userSession: users[creator],
     });
@@ -29,6 +30,7 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
     // ·····················································
     // CLASSES
 
+    leemons.log.debug(`Adding groups ...`);
     const groups = classes.map((classroom) => classroom.group);
 
     // First create the class group
@@ -38,6 +40,8 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
 
     // Then create the classes
     const classesData = [];
+
+    leemons.log.debug(`Adding classrooms ...`);
 
     for (let j = 0, l = classes.length; j < l; j++) {
       const { program, teachers, students, ...rest } = classes[j];
@@ -103,10 +107,11 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
         }
       }
     }
+    leemons.log.debug(`Subject ADDED: ${subject.name}`);
 
     subjects[key].classes = classesData;
   } catch (error) {
-    console.log('-- ERROR: No se ha podido importar la asignatura');
+    console.log('-- ERROR: Subject cannot be imported');
     console.log(error);
   }
 }
@@ -177,9 +182,9 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
       pool.add(() => _addSubjectAndClassroom(key, subjects, users, programs, apProfiles));
     }
 
-    console.log('Vamos a procesar las subjects de 5 en 5...');
+    leemons.log.debug('Batch processing Subjects & Classrooms ...');
     await pool.all();
-    console.log('Toma yaaaa!!!');
+    leemons.log.info('Classrooms CREATED');
 
     // ·····················································
     // MENU BUILDER

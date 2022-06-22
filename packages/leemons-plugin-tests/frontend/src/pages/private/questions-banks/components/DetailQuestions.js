@@ -100,7 +100,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     },
   ];
 
-  console.log(form.formState.errors.questions);
+  // console.log(form.formState.errors.questions);
 
   return (
     <>
