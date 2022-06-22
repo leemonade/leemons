@@ -271,6 +271,46 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ),
   };
 
+  // Si el usuario esta contextualizado por el programa, quitamos los calendarios y eventos que no pertemezcan a dicho programa
+  if (userSession.sessionConfig?.program) {
+    let usedCalendarIds = _.map(result.ownerCalendars, 'id');
+    usedCalendarIds = usedCalendarIds.concat(_.map(result.calendars, 'id'));
+    usedCalendarIds = _.uniq(usedCalendarIds);
+    // Cogemos las ids de los calendarios que entre los que tenemos sabemos que no pertenecen a nuestro programa
+    const [noClassCalendars, noProgramCalendars] = await Promise.all([
+      table.classCalendar.find(
+        {
+          calendar_$in: usedCalendarIds,
+          program_$ne: userSession.sessionConfig?.program,
+        },
+        { transacting }
+      ),
+      table.programCalendar.find(
+        {
+          calendar_$in: usedCalendarIds,
+          program_$ne: userSession.sessionConfig?.program,
+        },
+        { transacting }
+      ),
+    ]);
+    const calendarIdsToRemove = _.map(noClassCalendars, 'calendar').concat(
+      _.map(noProgramCalendars, 'calendar')
+    );
+    result.ownerCalendars = _.filter(
+      result.ownerCalendars,
+      ({ id }) => !calendarIdsToRemove.includes(id)
+    );
+    result.calendars = _.filter(result.calendars, ({ id }) => !calendarIdsToRemove.includes(id));
+    result.events = _.filter(result.events, ({ calendar, data }) => {
+      if (data && _.isArray(data.classes) && data.classes.length) {
+        if (_.intersection(data.classes, calendarIdsToRemove).length > 0) {
+          return false;
+        }
+      }
+      return !calendarIdsToRemove.includes(calendar);
+    });
+  }
+
   const permissionNames = [];
 
   _.forEach(result.events, (event) => {
