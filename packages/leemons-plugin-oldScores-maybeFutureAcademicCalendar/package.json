@@ -1,5 +1,5 @@
 {
-  "name": "leemons-plugin-scores",
+  "name": "leemons-plugin-oldscores",
   "version": "1.0.0",
   "main": "lib/index.js",
   "license": "MIT",

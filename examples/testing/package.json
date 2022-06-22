@@ -27,7 +27,7 @@
     "leemons-plugin-multilanguage": "1.0.0",
     "leemons-plugin-onboarding": "1.0.0",
     "leemons-plugin-package-manager": "1.0.0",
-    "leemons-plugin-scores": "1.0.0",
+    "leemons-plugin-scores": "0.0.1",
     "leemons-plugin-socket-io": "1.0.0",
     "leemons-plugin-tasks": "1.0.0",
     "leemons-plugin-tests": "1.0.0",
