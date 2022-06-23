@@ -19,9 +19,9 @@ export default function transformEvent(_event, calendars, { t, session }) {
     if (!calendar) {
       calendar = calendarsByKey[event.calendar];
     }
-    event.icon = calendar.icon;
-    event.bgColor = calendar.bgColor;
-    event.borderColor = calendar.borderColor;
+    event.icon = event.icon || calendar.icon;
+    event.bgColor = event.bgColor || calendar.bgColor;
+    event.borderColor = event.borderColor || calendar.borderColor;
     event.calendarName = calendar.name;
     if (calendar.isUserCalendar && !classes.length) {
       event.image = calendar.image;
@@ -31,6 +31,9 @@ export default function transformEvent(_event, calendars, { t, session }) {
       event.icon = '/public/assets/svgs/alarm-bell.svg';
     }
   }
+  event.title = event.title.replace('{-_start_-}', t('start')).replace('{-_end_-}', t('end'));
   // }
+
+  console.log(event);
   return event;
 }

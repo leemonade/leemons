@@ -12,6 +12,8 @@ module.exports = {
   eventTitleLabel: 'Name of event',
   transformEvent: {
     multiSubject: 'Multi-Subject',
+    start: 'Start',
+    end: 'End',
   },
   calendar: {
     month: 'Month',

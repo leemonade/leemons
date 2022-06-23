@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateSaveConfig } = require('../../validations/forms');
@@ -6,6 +7,11 @@ const { getConfig } = require('./getConfig');
 async function saveConfig(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      delete data.deleted_at;
+      delete data.updated_at;
+      delete data.created_at;
+      delete data.deleted;
+      delete data.id;
       validateSaveConfig(data);
       await table.config.set(
         { program: data.program },

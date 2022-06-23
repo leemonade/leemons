@@ -430,7 +430,7 @@ function Calendar({ session }) {
               maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
               minHour={store.schedule.calendarConfig.minHour}
               maxHour={store.schedule.calendarConfig.maxHour}
-              timeslots={1}
+              timeslots={2}
               timeslotHeight={100}
               hideAllDayCells={true}
               forceBgColorToEvents={true}

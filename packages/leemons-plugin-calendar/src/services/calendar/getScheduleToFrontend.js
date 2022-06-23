@@ -19,13 +19,22 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
 
     classes = _.filter(classes, ({ schedule }) => schedule && schedule.length);
 
+    const week = [...Array(7).keys()];
+    const firstDayOfWeek = 1;
+
+    if (firstDayOfWeek > 0) {
+      const e = [...Array(firstDayOfWeek).keys()];
+      _.forEach(e, () => {
+        week.push(week.shift());
+      });
+    }
+
     let courses = [];
-    let minDayWeek = null;
-    let maxDayWeek = null;
     let minHour = null;
     let maxHour = null;
     let minHourDate = null;
     let maxHourDate = null;
+    const dayWeeks = [];
     const configByCourse = {};
 
     const start = new Date();
@@ -37,60 +46,52 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
       const cId = classCourses[0].id;
       courses = courses.concat(classCourses);
       if (!_.isObject(configByCourse[cId])) {
-        configByCourse[cId] = {};
+        configByCourse[cId] = {
+          dayWeeks: [],
+        };
       }
       _.forEach(classe.schedule, (schedule) => {
-        console.log(schedule);
         startSplit = schedule.start.split(':');
         endSplit = schedule.end.split(':');
-        start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10));
-        end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10));
+        start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0);
+        end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 59);
+        configByCourse[cId].dayWeeks.push(schedule.dayWeek);
+        dayWeeks.push(schedule.dayWeek);
         // Por curso
-        if (
-          !_.isNumber(configByCourse[cId].minDayWeek) ||
-          schedule.dayWeek < configByCourse[cId].minDayWeek
-        ) {
-          configByCourse[cId].minDayWeek = schedule.dayWeek;
-        }
-        if (
-          !_.isNumber(configByCourse[cId].maxDayWeek) ||
-          schedule.dayWeek > configByCourse[cId].maxDayWeek
-        ) {
-          configByCourse[cId].maxDayWeek = schedule.dayWeek;
-        }
         if (!configByCourse[cId].minHour || start < configByCourse[cId].minHourDate) {
           configByCourse[cId].minHour = schedule.start;
-          configByCourse[cId].minHourDate = start;
+          configByCourse[cId].minHourDate = new Date(start);
         }
         if (!configByCourse[cId].maxHour || end > configByCourse[cId].maxHourDate) {
           configByCourse[cId].maxHour = schedule.end;
-          configByCourse[cId].maxHourDate = end;
+          configByCourse[cId].maxHourDate = new Date(end);
         }
 
         // General
-        if (!_.isNumber(minDayWeek) || schedule.dayWeek < minDayWeek) {
-          minDayWeek = schedule.dayWeek;
-        }
-        if (!_.isNumber(maxDayWeek) || schedule.dayWeek > maxDayWeek) {
-          maxDayWeek = schedule.dayWeek;
-        }
         if (!minHour || start < minHourDate) {
           minHour = schedule.start;
-          minHourDate = start;
+          minHourDate = new Date(start);
         }
         if (!maxHour || end > maxHourDate) {
           maxHour = schedule.end;
-          maxHourDate = end;
+          maxHourDate = new Date(end);
         }
       });
     });
 
+    _.forIn(configByCourse, (conf, key) => {
+      const scheduleDays = conf.dayWeeks.map((item) => week.indexOf(item));
+      configByCourse[key].minDayWeek = Math.min(...scheduleDays);
+      configByCourse[key].maxDayWeek = Math.max(...scheduleDays);
+    });
+
     courses = _.sortBy(_.uniqBy(courses, 'id'), ['index']);
+    const scheduleDays = dayWeeks.map((item) => week.indexOf(item));
 
     return {
       calendarConfig: {
-        minDayWeek,
-        maxDayWeek,
+        minDayWeek: Math.min(...scheduleDays),
+        maxDayWeek: Math.max(...scheduleDays),
         minHour,
         maxHour,
         minHourDate,

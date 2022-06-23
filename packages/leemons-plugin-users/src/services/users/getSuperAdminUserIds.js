@@ -13,10 +13,13 @@ async function getSuperAdminUserIds({ transacting } = {}) {
     { columns: ['role'], transacting }
   );
 
-  const userAgents = await table.userAgent.find(
-    { role: profile.role },
-    { columns: ['user'], transacting }
-  );
+  let userAgents = [];
+  if (profile) {
+    userAgents = await table.userAgent.find(
+      { role: profile.role },
+      { columns: ['user'], transacting }
+    );
+  }
 
   return _.map(userAgents, 'user');
 }

@@ -277,7 +277,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     usedCalendarIds = usedCalendarIds.concat(_.map(result.calendars, 'id'));
     usedCalendarIds = _.uniq(usedCalendarIds);
     // Cogemos las ids de los calendarios que entre los que tenemos sabemos que no pertenecen a nuestro programa
-    const [noClassCalendars, noProgramCalendars] = await Promise.all([
+    const [noClassCalendars, noProgramCalendars, calendarConfig] = await Promise.all([
       table.classCalendar.find(
         {
           calendar_$in: usedCalendarIds,
@@ -293,6 +293,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         { transacting }
       ),
     ]);
+
     const calendarIdsToRemove = _.map(noClassCalendars, 'calendar').concat(
       _.map(noProgramCalendars, 'calendar')
     );
@@ -310,6 +311,123 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       return !calendarIdsToRemove.includes(calendar);
     });
   }
+
+  const calendarByProgramId = {};
+  let programIds = [];
+  const allCalendars = result.calendars.concat(result.ownerCalendars);
+  _.forEach(allCalendars, ({ id, section, key }) => {
+    if (key.startsWith('plugins.calendar.program.')) {
+      const split = key.split('.');
+      programIds.push(split[split.length - 1]);
+      calendarByProgramId[split[split.length - 1]] = id;
+    }
+  });
+
+  programIds = _.uniq(programIds);
+
+  const [programs, isAcademic, ...calendarConfigs] = await Promise.all([
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.programsByIds(programIds, { transacting }),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.config.userSessionIsAcademic(userSession, { transacting }),
+    ..._.map(programIds, (programId) =>
+      leemons.getPlugin('academic-calendar').services.config.getConfig(programId, { transacting })
+    ),
+  ]);
+
+  let courses = [];
+
+  if (isAcademic) {
+    let classes = await Promise.all(
+      _.map(programs, (program) =>
+        leemons
+          .getPlugin('academic-portfolio')
+          .services.classes.listSessionClasses(
+            userSession,
+            { program: program.id },
+            { transacting }
+          )
+      )
+    );
+    classes = _.flatten(classes);
+    _.forEach(classes, (classe) => {
+      if (_.isArray(classe.courses)) {
+        courses = courses.concat(classe.courses);
+      } else {
+        courses.push(classe.courses);
+      }
+    });
+
+    courses = _.uniqBy(courses, 'id');
+  }
+
+  const programById = _.keyBy(programs, 'id');
+  const coursesById = _.keyBy(courses, 'id');
+
+  const { getCourseName } = leemons.getPlugin('academic-portfolio').services.courses;
+
+  _.forEach(calendarConfigs, (config) => {
+    if (config) {
+      _.forIn(config.courseDates, (value, key) => {
+        let good = true;
+        if (isAcademic) {
+          good = !!coursesById[key];
+        }
+        if (good) {
+          const course = _.find(programById[config.program].courses, { id: key });
+          const startEvent = {
+            id: null,
+            title: `{-_start_-}: ${getCourseName(course)} ${programById[config.program].name}`,
+            startDate: value.startDate,
+            endDate: value.startDate,
+            isAllDay: 1,
+            repeat: 'dont_repeat',
+            type: 'plugins.calendar.event',
+            status: 'active',
+            data: { hideInCalendar: false },
+            isPrivate: 0,
+            calendar: calendarByProgramId[config.program],
+            fromCalendar: true,
+            // bgColor: '#485264',
+            // borderColor: '#485264',
+            icon: '/public/calendar/arrow-chev-right.svg',
+            canNotOpened: true,
+          };
+          result.events.push(startEvent);
+          result.events.push({
+            ...startEvent,
+            title: `{-_end_-}: ${getCourseName(course)} ${programById[config.program].name}`,
+            startDate: value.endDate,
+            endDate: value.endDate,
+            icon: '/public/calendar/arrow-chev-left.svg',
+          });
+        }
+      });
+    }
+  });
+
+  /*
+  * {
+  id: '202f491f-9fbe-42cc-bb16-0e569d0fa0f4',
+  title: 'Inicio de curso',
+  startDate: 2021-09-08T00:00:00.000Z,
+  endDate: 2021-09-08T00:00:00.000Z,
+  isAllDay: 1,
+  repeat: 'dont_repeat',
+  type: 'plugins.calendar.event',
+  status: 'active',
+  data: { hideInCalendar: false },
+  isPrivate: 0,
+  deleted: 0,
+  created_at: 2022-06-20T13:54:12.000Z,
+  updated_at: 2022-06-20T13:54:12.000Z,
+  deleted_at: null,
+  calendar: '02d9f2cc-c3db-4a82-af8e-9b24c36ef980',
+  fromCalendar: true
+}
+*/
 
   const permissionNames = [];
 

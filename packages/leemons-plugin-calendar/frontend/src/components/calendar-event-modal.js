@@ -22,7 +22,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import hooks from 'leemons-hooks';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { getLocale } from '@common';
+import { getLocale, useStore } from '@common';
 import getUTCString from '../helpers/getUTCString';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import {
@@ -467,32 +467,44 @@ NewCalendarEventModal.propTypes = {
 };
 
 export const useCalendarEventModal = () => {
-  const [opened, setOpened] = useState(false);
+  const [store, render] = useStore({
+    opened: false,
+  });
   const ref = useRef({ loading: false });
   const ref2 = useRef({});
   const element = (
     <NewCalendarEventModal
       ref2={ref2}
       reff={ref}
-      opened={opened}
-      onClose={() => setOpened(false)}
+      opened={store.opened}
+      onClose={() => {
+        store.opened = false;
+        render();
+      }}
     />
   );
 
   return [
     function toggle() {
-      setOpened(!opened);
+      store.opened = !store.opened;
+      render();
     },
     function Component(data) {
+      if (data?.event?.canNotOpened) {
+        store.opened = false;
+        return null;
+      }
       return React.cloneElement(element, data);
     },
     {
-      opened,
+      opened: store.opened,
       openModal: () => {
-        setOpened(true);
+        store.opened = true;
+        render();
       },
       closeModal: () => {
-        setOpened(false);
+        store.opened = false;
+        render();
       },
     },
   ];
