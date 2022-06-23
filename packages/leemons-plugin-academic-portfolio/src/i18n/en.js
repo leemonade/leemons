@@ -3,7 +3,8 @@ module.exports = {
     page_title: 'Academic Portfolio',
     page_description:
       'Portfolio allows the creation of programs or educational stages, and the addition of subjects with courses, groups, professors, and more. With this information, a visual tree is created in order to manage the portfolio, assign students, create clusters, edit rules and much more.',
-    hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
+    hide_info_label:
+      "Ok, I've got it. When the configuration is complete, don't show this info anymore",
     step_profiles: {
       title: 'Match profiles',
       description:
@@ -75,10 +76,18 @@ module.exports = {
           maxGroupAbbreviation: '(i.e: G01, G02, G03…)',
         },
         errorMessages: {
-          name: { required: 'Required field' },
-          abbreviation: { required: 'Required field' },
-          evaluationSystem: { required: 'Required field' },
-          maxGroupAbbreviation: { required: 'Required field' },
+          name: {
+            required: 'Required field',
+          },
+          abbreviation: {
+            required: 'Required field',
+          },
+          evaluationSystem: {
+            required: 'Required field',
+          },
+          maxGroupAbbreviation: {
+            required: 'Required field',
+          },
         },
       },
       coursesData: {
@@ -106,12 +115,24 @@ module.exports = {
           substagesFrequency: 'Select frequency',
         },
         errorMessages: {
-          useDefaultSubstagesName: { required: 'Required field' },
-          maxNumberOfCourses: { required: 'Required field' },
-          courseCredits: { required: 'Required field' },
-          substagesFrequency: { required: 'Required field' },
-          numberOfSubstages: { required: 'Required field' },
-          maxSubstageAbbreviation: { required: 'Required field' },
+          useDefaultSubstagesName: {
+            required: 'Required field',
+          },
+          maxNumberOfCourses: {
+            required: 'Required field',
+          },
+          courseCredits: {
+            required: 'Required field',
+          },
+          substagesFrequency: {
+            required: 'Required field',
+          },
+          numberOfSubstages: {
+            required: 'Required field',
+          },
+          maxSubstageAbbreviation: {
+            required: 'Required field',
+          },
         },
       },
       subjectsData: {
@@ -141,9 +162,15 @@ module.exports = {
           maxKnowledgeAbbreviation: '(i.e: MKTG, MATH, HIST…)',
         },
         errorMessages: {
-          periodName: { required: 'Required field' },
-          numOfPeriods: { required: 'Required field' },
-          substagesFrequency: { required: 'Required field' },
+          periodName: {
+            required: 'Required field',
+          },
+          numOfPeriods: {
+            required: 'Required field',
+          },
+          substagesFrequency: {
+            required: 'Required field',
+          },
         },
       },
       frequencies: {
