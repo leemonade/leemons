@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@bubbles-ui/components": "^1.0.36",
-    "@bubbles-ui/leemons": "^1.0.36",
+    "@bubbles-ui/leemons": "^1.0.37",
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2"
   },

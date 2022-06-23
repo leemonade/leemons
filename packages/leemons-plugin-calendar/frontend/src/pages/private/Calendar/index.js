@@ -1,8 +1,16 @@
 import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, ImageLoader, LoadingOverlay, Title } from '@bubbles-ui/components';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Box,
+  ImageLoader,
+  LoadingOverlay,
+  Select,
+  Stack,
+  Text,
+  Title,
+} from '@bubbles-ui/components';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
@@ -14,24 +22,22 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import hooks from 'leemons-hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
-import { useLocale } from '@common';
+import { useLocale, useStore } from '@common';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
+import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
+import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Calendar({ session }) {
   const locale = useLocale();
-  const ref = useRef({ loading: true });
+  const [store, render] = useStore({ loading: true });
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [, setR] = useState(null);
 
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
-
-  function render() {
-    setR(new Date().getTime());
-  }
 
   async function getCalendarsForCenter(center) {
     const [{ calendars, events, userCalendar, ownerCalendars, calendarConfig }, schedule] =
@@ -40,7 +46,10 @@ function Calendar({ session }) {
         getScheduleToFrontendRequest(center.token),
       ]);
 
-    console.log(schedule);
+    if (!_.isObject(store.scheduleCenter)) {
+      store.scheduleCenter = {};
+    }
+    store.scheduleCenter[center.id] = schedule;
 
     return {
       calendars: map(calendars, (calendar, index) => {
@@ -118,26 +127,26 @@ function Calendar({ session }) {
     );
 
   async function init() {
-    ref.current.centers = getCentersWithToken();
-    if (ref.current.centers) {
-      ref.current.centersSelect = map(ref.current.centers, ({ name, id }) => ({
+    store.centers = getCentersWithToken();
+    if (store.centers) {
+      store.centersSelect = map(store.centers, ({ name, id }) => ({
         label: name,
         value: id,
       }));
-      [ref.current.center] = ref.current.centers;
+      [store.center] = store.centers;
       const centersData = await Promise.all(
-        map(ref.current.centers, (center) => getCalendarsForCenter(center))
+        map(store.centers, (center) => getCalendarsForCenter(center))
       );
 
-      ref.current.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
-      ref.current.calendarSectionNamesTranslations = await getTranslationSections(centersData);
+      store.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
+      store.calendarSectionNamesTranslations = await getTranslationSections(centersData);
 
       forEach(centersData, (data) => {
         forEach(data.calendars, (calendar) => {
           // eslint-disable-next-line no-param-reassign
           calendar.name = getCalendarName(
             calendar.name,
-            ref.current.calendarNamesTranslations,
+            store.calendarNamesTranslations,
             calendar,
             data
           );
@@ -164,24 +173,74 @@ function Calendar({ session }) {
         _.forIn(calendarsBySection, (calendars, sectionName) => {
           calendarSections.push({
             calendars,
-            sectionName: getSectionName(sectionName, ref.current.calendarSectionNamesTranslations),
+            sectionName: getSectionName(sectionName, store.calendarSectionNamesTranslations),
           });
         });
         centersDataValues[data.center].sections = calendarSections;
       });
 
-      ref.current.centersDataById = centersDataValues;
+      store.centersDataById = centersDataValues;
     }
-    ref.current.loading = false;
+    store.loading = false;
     render();
   }
 
+  function getScheduleConfig() {
+    const schedule = store.scheduleCenter[store.center.id];
+    store.schedule = {};
+    if (!schedule.selectedCourseId) {
+      store.schedule.selectedCourse = schedule.config.allCoursesHaveSameConfig
+        ? null
+        : schedule.courses[0];
+    } else {
+      store.schedule.selectedCourse = _.find(schedule.courses, {
+        id: schedule.selectedCourseId,
+      });
+    }
+    store.schedule.showCourseSelect = true;
+    if (schedule.courses.length === 1 || schedule.config.allCoursesHaveSameConfig) {
+      store.schedule.showCourseSelect = false;
+    }
+    store.schedule.courseData = _.map(schedule.courses, (course) => ({
+      label: getCourseName(course),
+      value: course.id,
+    }));
+
+    const classes = _.filter(schedule.classes, (classe) => {
+      if (store.schedule.selectedCourse) {
+        if (_.isArray(classe)) {
+          return _.map(classe.courses, 'id').includes(store.schedule.selectedCourse.id);
+        }
+        return classe.courses.id === store.schedule.selectedCourse.id;
+      }
+      return true;
+    });
+
+    store.schedule.calendarConfig = store.schedule.selectedCourse
+      ? schedule.calendarConfig
+      : schedule.calendarConfigByCourse[store.schedule.selectedCourse];
+    store.schedule.sections = [
+      {
+        sectionName: t('classes'),
+        calendars: _.map(classes, (classe) => ({
+          ...classe,
+          bgColor: classe.color,
+          borderColor: classe.color,
+          fullName: `${classe.subject.name} (${classe.groups.abbreviation})`,
+          name: `${classe.subject.name} (${classe.groups.abbreviation})`,
+          showEvents: true,
+          icon: classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null,
+        })),
+      },
+    ];
+
+    store.schedule.events = getClassScheduleAsEvents(store.schedule.sections[0].calendars);
+  }
+
   async function reloadCalendar() {
-    ref.current.centersDataById[ref.current.center.id].data = await getCalendarsForCenter(
-      ref.current.center
-    );
-    ref.current.centersDataById[ref.current.center.id].events = getFilteredEvents(
-      ref.current.centersDataById[ref.current.center.id].data
+    store.centersDataById[store.center.id].data = await getCalendarsForCenter(store.center);
+    store.centersDataById[store.center.id].events = getFilteredEvents(
+      store.centersDataById[store.center.id].data
     );
     render();
   }
@@ -211,14 +270,15 @@ function Calendar({ session }) {
   }
 
   function changePage(event) {
-    ref.current.activePage = event;
+    store.activePage = event;
+    getScheduleConfig();
     render();
   }
 
   const fullCalendarConfigs = useMemo(() => {
     const config = {};
-    if (!ref.current.loading) {
-      const { data } = ref.current.centersDataById[ref.current.center.id];
+    if (!store.loading) {
+      const { data } = store.centersDataById[store.center.id];
       if (data && data.calendarConfig) {
         config.firstDay = data.calendarConfig.weekday;
         config.validRange = {
@@ -228,16 +288,16 @@ function Calendar({ session }) {
       }
     }
     return config;
-  }, [ref.current.center, ref.current.loading]);
+  }, [store.center, store.loading]);
 
-  if (ref.current.loading) return <LoadingOverlay visible />;
+  if (store.loading) return <LoadingOverlay visible />;
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
       <Box style={{ width: '250px', height: '100vh' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
-          showPageControl={true}
+          showPageControl={store.scheduleCenter?.[store.center?.id]?.classes?.length}
           messages={{
             title: t('calendar'),
             centers: t('centers'),
@@ -248,44 +308,58 @@ function Calendar({ session }) {
             { label: t('schedule'), value: 'schedule' },
           ]}
           pageOnChange={changePage}
-          value={ref.current.centersDataById[ref.current.center.id].sections}
+          value={
+            store.activePage === 'schedule'
+              ? store.schedule.sections
+              : store.centersDataById[store.center.id].sections
+          }
           onChange={(event) => {
-            ref.current.centersDataById[ref.current.center.id].sections = event;
+            if (store.activePage === 'schedule') {
+              store.schedule.sections = event;
+              store.schedule.events = getClassScheduleAsEvents(
+                store.schedule.sections[0].calendars
+              );
+              render();
+            } else {
+              store.centersDataById[store.center.id].sections = event;
 
-            ref.current.centersDataById[ref.current.center.id].data.calendars = flatten(
-              map(event, 'calendars')
-            );
-            ref.current.centersDataById[ref.current.center.id].events = getFilteredEvents(
-              ref.current.centersDataById[ref.current.center.id].data
-            );
+              store.centersDataById[store.center.id].data.calendars = flatten(
+                map(event, 'calendars')
+              );
+              store.centersDataById[store.center.id].events = getFilteredEvents(
+                store.centersDataById[store.center.id].data
+              );
+            }
             render();
           }}
-          centers={ref.current.centersSelect}
-          centerValue={ref.current.center.id}
+          centers={store.centersSelect}
+          centerValue={store.center.id}
           centerOnChange={(id) => {
-            ref.current.center = find(ref.current.centers, { id });
+            store.center = find(store.centers, { id });
+            getScheduleConfig();
             render();
           }}
         />
       </Box>
 
       <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', height: '100vh' })}>
-        {ref.current.center ? (
+        {store.center ? (
           <EventModal
-            centerToken={ref.current.center.token}
+            centerToken={store.center.token}
             event={selectedEvent}
             close={toggleEventModal}
-            classCalendars={ref.current.centersDataById[ref.current.center.id].data.classCalendars}
+            classCalendars={store.centersDataById[store.center.id].data.classCalendars}
           />
         ) : null}
 
-        {!ref.current.activePage || ref.current.activePage === 'calendar' ? (
+        {!store.activePage || store.activePage === 'calendar' ? (
           <BigCalendar
+            key="1"
             style={{ height: '100%' }}
             currentView="month"
             eventClick={onEventClick}
             addEventClick={onNewEvent}
-            events={ref.current.centersDataById[ref.current.center.id].events}
+            events={store.centersDataById[store.center.id].events}
             {...fullCalendarConfigs}
             locale={locale}
             messages={{
@@ -318,7 +392,69 @@ function Calendar({ session }) {
               ),
             }}
           />
-        ) : null}
+        ) : (
+          <>
+            <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+              <Stack fullWidth justifyContent="space-between">
+                <Box>
+                  <Text color="primary" size="xl">
+                    {t('weekSchedule')}
+                  </Text>
+                </Box>
+                <Box>
+                  {store.schedule.showCourseSelect ? (
+                    <Stack alignItems="center">
+                      <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                        <Text color="primary">{t('course')}</Text>
+                      </Box>
+                      <Select
+                        value={store.schedule.selectedCourse?.id}
+                        data={store.schedule.courseData}
+                        onChange={(e) => {
+                          store.scheduleCenter[store.center.id].selectedCourseId = e;
+                          getScheduleConfig();
+                          render();
+                        }}
+                      />
+                    </Stack>
+                  ) : null}
+                </Box>
+              </Stack>
+            </Box>
+            <BigCalendar
+              key="2"
+              style={{ height: '90%' }}
+              currentView="week"
+              hideToolbar={true}
+              minWeekDay={store.schedule.calendarConfig.minDayWeek}
+              maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
+              minHour={store.schedule.calendarConfig.minHour}
+              maxHour={store.schedule.calendarConfig.maxHour}
+              timeslots={1}
+              timeslotHeight={100}
+              hideAllDayCells={true}
+              forceBgColorToEvents={true}
+              locale={locale}
+              events={store.schedule.events}
+              messages={{
+                month: t('month'),
+                week: t('week'),
+                day: t('day'),
+                agenda: t('agenda'),
+                today: t('today'),
+                previous: t('previous'),
+                next: t('next'),
+                showWeekends: t('showWeekends'),
+                allDay: t('allDay'),
+                init: t('init'),
+                end: t('end'),
+                date: t('date'),
+                time: t('time'),
+                event: t('event'),
+              }}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );

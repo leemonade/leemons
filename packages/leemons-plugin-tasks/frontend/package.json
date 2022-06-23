@@ -7,7 +7,7 @@
     "@bubbles-ui/components": "^1.0.36",
     "@bubbles-ui/editors": "^1.0.26",
     "@bubbles-ui/icons": "^1.0.25",
-    "@bubbles-ui/leemons": "^1.0.36",
+    "@bubbles-ui/leemons": "^1.0.37",
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
     "react-hook-form": "^7.27.1",
