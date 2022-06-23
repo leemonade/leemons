@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 
 /**
  * Return the user for the id provided
@@ -9,7 +10,7 @@ const { table } = require('../tables');
  * @return {Promise<User>}
  * */
 async function detail(userId, { transacting } = {}) {
-  const users = await table.users.find(
+  let users = await table.users.find(
     { id_$in: _.isArray(userId) ? userId : [userId] },
     { transacting }
   );
@@ -20,6 +21,9 @@ async function detail(userId, { transacting } = {}) {
       throw new Error('No user found for the id provided');
     }
   }
+
+  const superAdminUsersIds = await getSuperAdminUserIds({ transacting });
+  users = users.map((user) => ({ ...user, isSuperAdmin: superAdminUsersIds.includes(user.id) }));
 
   return _.isArray(userId) ? users : users[0];
 }

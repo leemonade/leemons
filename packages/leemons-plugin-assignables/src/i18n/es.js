@@ -212,7 +212,6 @@ module.exports = {
     upperIntermediate: 'Intermedio alto',
     advanced: 'Avanzado',
   },
-  multiSubject: 'Multi-asignatura',
   assignment_list: {
     teacher: {
       task: 'Tarea',
@@ -234,6 +233,7 @@ module.exports = {
       submission: 'Entrega',
     },
   },
+  multiSubject: 'Multi-asignatura',
   activities_filters: {
     ongoing: 'En curso {{count}}',
     evaluated: 'Evaluadas {{count}}',

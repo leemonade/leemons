@@ -147,7 +147,7 @@ export default function StudentInstance() {
       store.idLoaded = params.id;
       store.loading = false;
 
-      console.log(store);
+      // console.log(store);
 
       render();
     } catch (error) {
@@ -157,7 +157,7 @@ export default function StudentInstance() {
   }
 
   async function finishTest() {
-    console.log('finishTest');
+    // console.log('finishTest');
     store.showFinishModal = false;
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
     store.timestamps = timestamps;

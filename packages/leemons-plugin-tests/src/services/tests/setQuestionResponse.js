@@ -81,7 +81,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         }
       );
 
-      console.log(questions);
+      // console.log(questions);
 
       result = await table.userAgentAssignableInstanceResponses.set(
         {

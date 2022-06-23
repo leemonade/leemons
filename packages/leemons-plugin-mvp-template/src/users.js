@@ -1,41 +1,47 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
-const { keys, map, uniq } = require('lodash');
+const { keys, map, uniq, isEmpty } = require('lodash');
+const Pool = require('async-promise-pool');
 const importUsers = require('./bulk/users');
 
-async function initUsers(centers, profiles) {
-  const { services } = leemons.getPlugin('users');
+const pool = new Pool({ concurrency: 5 });
 
+async function _addUser(key, users) {
+  const { services } = leemons.getPlugin('users');
+  const { roles, ...item } = users[key];
+
+  let itemRoles = await Promise.all(
+    roles
+      .filter((rol) => rol.center)
+      .map((rol) => services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center))
+  );
+
+  if (isEmpty(itemRoles)) {
+    itemRoles = roles.map((rol) => ({ id: rol.profileRole }));
+  }
+
+  leemons.log.debug(`Adding user: ${item.name}`);
+  const itemData = await services.users.add({ ...item, active: true }, map(itemRoles, 'id'));
+  leemons.log.info(`User ADDED: ${item.name}`);
+
+  const userProfiles = roles.map((rol) => rol.profileKey);
+
+  users[key] = { ...itemData, profiles: uniq(userProfiles) };
+}
+
+async function initUsers(centers, profiles) {
   try {
     const users = await importUsers(centers, profiles);
     const itemsKeys = keys(users);
 
-    // console.log('------ USERS ------');
-
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
-      const { roles, ...item } = users[itemKey];
-
-      // console.log('user roles:', roles);
-
-      const itemRoles = await Promise.all(
-        roles.map((rol) =>
-          services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center)
-        )
-      );
-
-      // console.log('user roles created:', itemRoles);
-
-      // console.log('Vamos a crear el usuario:');
-      // console.dir({ ...item, active: true }, { depth: null });
-
-      const itemData = await services.users.add({ ...item, active: true }, map(itemRoles, 'id'));
-      const userProfiles = roles.map((rol) => rol.profileKey);
-
-      users[itemKey] = { ...itemData, profiles: uniq(userProfiles) };
+      pool.add(() => _addUser(itemKey, users));
     }
 
-    // console.log('tenemos los usuarios creados:');
-    // console.dir(users, { depth: null });
+    leemons.log.debug('Batch processing users ...');
+    await pool.all();
+    leemons.log.info('Users CREATED');
 
     return users;
   } catch (err) {

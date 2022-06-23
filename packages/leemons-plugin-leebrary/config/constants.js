@@ -97,6 +97,7 @@ const categories = [
   {
     key: CATEGORIES.BOOKMARKS,
     creatable: true,
+    duplicable: true,
     provider: 'leebrary',
     canUse: '*',
     menu: {

@@ -22,7 +22,7 @@ async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAgent) {
     if (forceOnlyUserAgent) return userAgent;
     const user = await table.users.findOne({ id: userAgent.user });
     if (!user) throw new Error('No user found for the id provided');
-    if (forceOnlyUser) return user;
+    if (forceOnlyUser) return { ...user, sessionConfig: payload.sessionConfig || {} };
     result = user;
     result.userAgents = [userAgent];
   } else {
@@ -31,6 +31,8 @@ async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAgent) {
     result = user;
     result.userAgents = [];
   }
+
+  result.sessionConfig = payload.sessionConfig;
 
   return result;
 }

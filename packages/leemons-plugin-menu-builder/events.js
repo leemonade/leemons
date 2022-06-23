@@ -1,9 +1,14 @@
-const init = require('./init');
+const { addLocales } = require('./src/services/locales/addLocales');
 
 module.exports = async (isInstalled) => {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    init();
+    await addLocales(['es', 'en']);
   });
+
+  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
+  });
+
   if (!isInstalled) {
     const addMenu = async () => {
       await leemons.plugin.services.menu.add(leemons.plugin.config.constants.mainMenuKey);

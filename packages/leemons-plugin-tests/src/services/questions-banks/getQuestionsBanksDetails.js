@@ -90,7 +90,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       })),
     };
   });
-  console.log(result);
+  // console.log(result);
   return result;
 }
 

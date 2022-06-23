@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const _ = require('lodash');
 const constants = require('./config/constants');
 const recoverEmail = require('./emails/recoverPassword');
@@ -11,11 +12,15 @@ const {
   addUserData,
   addUsers,
 } = require('./src/services/menu-builder');
-const init = require('./init');
+const { addLocales } = require('./src/services/locales/addLocales');
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    init();
+    await addLocales(['es', 'en']);
+  });
+
+  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
   });
   leemons.events.once('plugins.dataset:save-field', async (a, event) => {
     const {

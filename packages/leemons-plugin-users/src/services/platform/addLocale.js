@@ -13,7 +13,6 @@ async function addLocale(locale, name, { transacting } = {}) {
   const trans = translations();
 
   if (await trans.locales.has(locale, { transacting })) {
-    console.log('Ya existe el locale', locale);
     return trans.locales.get(locale, { transacting });
   }
   // console.log('añadimos el locale', locale);

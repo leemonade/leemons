@@ -1,9 +1,6 @@
 const _ = require('lodash');
 const constants = require('./config/constants');
 const { add: addMenuItem } = require('./src/services/menu-builder/add');
-const { translations } = require('./src/translations');
-const es = require('./src/i18n/es');
-const en = require('./src/i18n/en');
 const {
   onAcademicPortfolioAddClass,
   onAcademicPortfolioRemoveClasses,
@@ -22,18 +19,15 @@ const {
 const {
   onAcademicPortfolioRemoveClassTeachers,
 } = require('./src/services/pluginEvents/class/onAcademicPortfolioRemoveClassTeachers');
+const { addLocales } = require('./src/services/locales/addLocales');
 
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    if (translations()) {
-      await translations().common.setManyByJSON(
-        {
-          es,
-          en,
-        },
-        leemons.plugin.prefixPN('')
-      );
-    }
+    await addLocales(['es', 'en']);
+  });
+
+  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
   });
 
   // --- Classes ---

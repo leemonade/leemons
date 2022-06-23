@@ -1,10 +1,14 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function list(page, size, { withRoles, transacting } = {}) {
-  const results = await global.utils.paginate(table.profiles, page, size, undefined, {
+async function list(page, size, { withRoles, transacting, indexable = true } = {}) {
+  const query = { indexable };
+  if (indexable === 'all') delete query.indexable;
+
+  const results = await global.utils.paginate(table.profiles, page, size, query, {
     transacting,
   });
+
   if (withRoles) {
     const profileRoles = await table.profileRole.find(
       { profile_$in: _.map(results.items, 'id') },

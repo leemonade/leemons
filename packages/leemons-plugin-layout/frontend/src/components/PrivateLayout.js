@@ -44,14 +44,21 @@ const PrivateLayout = ({ children }) => {
     try {
       const profileState = { profileChecked: true, isAcademicMode: true };
       const token = getCookieToken(true);
+
       if (!isEmpty(token?.profile)) {
-        const { profiles: academicProfiles } = await getProfilesRequest();
+        try {
+          const { profiles: academicProfiles } = await getProfilesRequest();
 
-        profileState.isAcademicMode = [academicProfiles.teacher, academicProfiles.student].includes(
-          token?.profile
-        );
+          profileState.isAcademicMode = [
+            academicProfiles.teacher,
+            academicProfiles.student,
+          ].includes(token?.profile);
+        } catch (error) {
+          leemons.log.debug(error);
+          // Possible super admin
+          profileState.isAcademicMode = false;
+        }
       }
-
       setState(profileState);
     } catch (error) {
       history.push('/users/login');

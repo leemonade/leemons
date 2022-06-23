@@ -11,7 +11,7 @@ async function setInstanceTimestamp(
     async (transacting) => {
       const { assignations: assignationsService } = leemons.getPlugin('assignables').services;
 
-      console.log(user, userSession.userAgents[0].id);
+      // console.log(user, userSession.userAgents[0].id);
 
       const asignation = await assignationsService.getAssignation(instanceId, user, {
         userSession,

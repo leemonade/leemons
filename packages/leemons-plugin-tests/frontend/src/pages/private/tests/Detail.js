@@ -108,7 +108,7 @@ export default function Detail() {
       store.currentId = params.id;
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
       const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
-      console.log(test);
+      // console.log(test);
       store.test = test;
       store.stats = getStats();
       store.test.questionResponses = {};

@@ -42,7 +42,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
         }
       }
 
-      console.log(question.questionImage, data.questionImage);
+      // console.log(question.questionImage, data.questionImage);
 
       // --- Question image
       if (question.questionImage) {

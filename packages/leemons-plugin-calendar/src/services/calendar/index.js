@@ -5,6 +5,7 @@ const { remove } = require('./remove');
 const { existByKey } = require('./existByKey');
 const { detailByKey } = require('./detailByKey');
 const { getPermissionConfig } = require('./getPermissionConfig');
+const { getScheduleToFrontend } = require('./getScheduleToFrontend');
 const { getCalendarsToFrontend } = require('./getCalendarsToFrontend');
 const { grantAccessUserAgentToCalendar } = require('./grantAccessUserAgentToCalendar');
 const { unGrantAccessUserAgentToCalendar } = require('./unGrantAccessUserAgentToCalendar');
@@ -17,6 +18,7 @@ module.exports = {
   existByKey,
   detailByKey,
   getPermissionConfig,
+  getScheduleToFrontend,
   getCalendarsToFrontend,
   grantAccessUserAgentToCalendar,
   unGrantAccessUserAgentToCalendar,

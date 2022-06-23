@@ -14,6 +14,9 @@ export default function MainMenu({ subNavWidth, ...props }) {
   const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
 
+  const sessionId = React.useRef(session?.id);
+  const forceReload = React.useRef(false);
+
   const reloadMenu = () => {
     setLoadMenu(true);
   };
@@ -30,15 +33,27 @@ export default function MainMenu({ subNavWidth, ...props }) {
   }, []);
 
   useEffect(() => {
+    // ES: Reiniciamos el menu cuando cambia el id de la sesion
+    // EN: Reset the menu when the session id changes
+    if (sessionId.current !== session?.id) {
+      forceReload.current = true;
+      setMenuData([]);
+      reloadMenu();
+      sessionId.current = session?.id;
+    }
+  }, [session]);
+
+  useEffect(() => {
     let mounted = true;
     (async () => {
       if (loadMenu) {
         setIsLoading(true);
-        const menu = await getMenu('plugins.menu-builder.main');
+        const menu = await getMenu('plugins.menu-builder.main', forceReload.current);
         if (mounted) {
           setMenuData(menu);
           setIsLoading(false);
           setLoadMenu(false);
+          forceReload.current = false;
         }
       }
     })();
@@ -46,6 +61,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
       mounted = false;
     };
   }, [loadMenu]);
+
+  if (!session) return null;
 
   return (
     <MainNav
@@ -55,27 +72,36 @@ export default function MainMenu({ subNavWidth, ...props }) {
       subNavWidth={subNavWidth}
       hideSubNavOnClose={false}
       useRouter={true}
-      session={session}
+      session={{
+        ...session,
+        ...(session.isSuperAdmin
+          ? { name: '', surnames: '' }
+          : { name: session.name, surnames: session.surnames }),
+      }}
       sessionMenu={{
         id: 'menu-0',
         label: t('label'),
         children: [
-          {
-            id: 'menu-1',
-            label: t('accountInfo'),
-            order: 0,
-            url: '/private/users/detail',
-            window: 'SELF',
-            disabled: null,
-          },
-          {
-            id: 'menu-2',
-            label: t('switchProfile'),
-            order: 1,
-            url: '/private/users/select-profile',
-            window: 'SELF',
-            disabled: null,
-          },
+          ...(session.isSuperAdmin
+            ? []
+            : [
+                {
+                  id: 'menu-1',
+                  label: t('accountInfo'),
+                  order: 0,
+                  url: '/private/users/detail',
+                  window: 'SELF',
+                  disabled: null,
+                },
+                {
+                  id: 'menu-2',
+                  label: t('switchProfile'),
+                  order: 1,
+                  url: '/private/users/select-profile',
+                  window: 'SELF',
+                  disabled: null,
+                },
+              ]),
           {
             id: 'menu-3',
             label: t('logout'),

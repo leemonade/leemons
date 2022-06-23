@@ -6,7 +6,7 @@ import { Box, ImageLoader, LoadingOverlay, Title } from '@bubbles-ui/components'
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
-import { getCalendarsToFrontendRequest } from '@calendar/request';
+import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -34,8 +34,13 @@ function Calendar({ session }) {
   }
 
   async function getCalendarsForCenter(center) {
-    const { calendars, events, userCalendar, ownerCalendars, calendarConfig } =
-      await getCalendarsToFrontendRequest(center.token);
+    const [{ calendars, events, userCalendar, ownerCalendars, calendarConfig }, schedule] =
+      await Promise.all([
+        getCalendarsToFrontendRequest(center.token),
+        getScheduleToFrontendRequest(center.token),
+      ]);
+
+    console.log(schedule);
 
     return {
       calendars: map(calendars, (calendar, index) => {
@@ -192,18 +197,23 @@ function Calendar({ session }) {
     if (session && !evLoading) init();
   }, [session, evLoading]);
 
-  const onEventClick = (info) => {
+  function onEventClick(info) {
     if (info.originalEvent) {
       const { bgColor, icon, borderColor, ...e } = info.originalEvent;
       setSelectedEvent(e);
       openEventModal();
     }
-  };
+  }
 
-  const onNewEvent = () => {
+  function onNewEvent() {
     setSelectedEvent(null);
     openEventModal();
-  };
+  }
+
+  function changePage(event) {
+    ref.current.activePage = event;
+    render();
+  }
 
   const fullCalendarConfigs = useMemo(() => {
     const config = {};
@@ -227,6 +237,7 @@ function Calendar({ session }) {
       <Box style={{ width: '250px', height: '100vh' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
+          showPageControl={true}
           messages={{
             title: t('calendar'),
             centers: t('centers'),
@@ -236,6 +247,7 @@ function Calendar({ session }) {
             { label: t('calendar'), value: 'calendar' },
             { label: t('schedule'), value: 'schedule' },
           ]}
+          pageOnChange={changePage}
           value={ref.current.centersDataById[ref.current.center.id].sections}
           onChange={(event) => {
             ref.current.centersDataById[ref.current.center.id].sections = event;
@@ -267,44 +279,46 @@ function Calendar({ session }) {
           />
         ) : null}
 
-        <BigCalendar
-          style={{ height: '100%' }}
-          currentView="month"
-          eventClick={onEventClick}
-          addEventClick={onNewEvent}
-          events={ref.current.centersDataById[ref.current.center.id].events}
-          {...fullCalendarConfigs}
-          locale={locale}
-          messages={{
-            month: t('month'),
-            week: t('week'),
-            day: t('day'),
-            agenda: t('agenda'),
-            today: t('today'),
-            previous: t('previous'),
-            next: t('next'),
-            showWeekends: t('showWeekends'),
-            allDay: t('allDay'),
-            init: t('init'),
-            end: t('end'),
-            date: t('date'),
-            time: t('time'),
-            event: t('event'),
-            noEventsInRange: (
-              <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
-                <Title order={2}>{t('empty')}</Title>
-                <Box sx={(theme) => ({ display: 'flex', marginTop: theme.spacing[12] })}>
-                  <ImageLoader
-                    src={'/public/calendar/no-events.png'}
-                    imageStyles={{ margin: '0px auto' }}
-                    width={300}
-                    height={240}
-                  />
+        {!ref.current.activePage || ref.current.activePage === 'calendar' ? (
+          <BigCalendar
+            style={{ height: '100%' }}
+            currentView="month"
+            eventClick={onEventClick}
+            addEventClick={onNewEvent}
+            events={ref.current.centersDataById[ref.current.center.id].events}
+            {...fullCalendarConfigs}
+            locale={locale}
+            messages={{
+              month: t('month'),
+              week: t('week'),
+              day: t('day'),
+              agenda: t('agenda'),
+              today: t('today'),
+              previous: t('previous'),
+              next: t('next'),
+              showWeekends: t('showWeekends'),
+              allDay: t('allDay'),
+              init: t('init'),
+              end: t('end'),
+              date: t('date'),
+              time: t('time'),
+              event: t('event'),
+              noEventsInRange: (
+                <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
+                  <Title order={2}>{t('empty')}</Title>
+                  <Box sx={(theme) => ({ display: 'flex', marginTop: theme.spacing[12] })}>
+                    <ImageLoader
+                      src={'/public/calendar/no-events.png'}
+                      imageStyles={{ margin: '0px auto' }}
+                      width={300}
+                      height={240}
+                    />
+                  </Box>
                 </Box>
-              </Box>
-            ),
-          }}
-        />
+              ),
+            }}
+          />
+        ) : null}
       </Box>
     </Box>
   );

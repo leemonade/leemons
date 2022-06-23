@@ -3,7 +3,7 @@ const { keys } = require('lodash');
 const importLibrary = require('./bulk/library');
 const config = require('../config/awsS3Config');
 
-function delay(time) {
+function _delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
@@ -22,21 +22,24 @@ async function initLibrary({ users }) {
 
     for (let i = 0, len = assetsKeys.length; i < len; i++) {
       const key = assetsKeys[i];
-      const { creator, ...asset } = assets[key];
+      const { creator, enabled, ...asset } = assets[key];
 
-      try {
-        const assetData = await services.assets.add(asset, { userSession: creator });
-        assets[key] = { ...assetData };
+      if (enabled !== false && enabled !== 'No') {
+        try {
+          leemons.log.debug(`Adding asset: ${asset.name}`);
+          const assetData = await services.assets.add(asset, { userSession: creator });
+          assets[key] = { ...assetData };
 
-        console.log('-- Asset added:', asset.name);
-      } catch (e) {
-        console.log('-- CREATOR ERROR --');
-        console.dir(asset, { depth: null });
-        console.dir(creator, { depth: null });
-        console.error(e);
+          leemons.log.info(`Asset ADDED: ${asset.name}`);
+        } catch (e) {
+          console.log('-- CREATOR ERROR --');
+          console.dir(asset, { depth: null });
+          console.dir(creator, { depth: null });
+          console.error(e);
+        }
+
+        await _delay(1000);
       }
-
-      await delay(3000);
     }
 
     // console.log('------ ASSETS ------');

@@ -1,4 +1,4 @@
-const { range, keys, findIndex, trim, isEmpty } = require('lodash');
+const { range, keys, findIndex, trim, isEmpty, toLower } = require('lodash');
 const path = require('path');
 const getColumns = require('./helpers/getColumns');
 const DataImporter = require('./helpers/getXlsImporter')();
@@ -59,6 +59,8 @@ async function importProfiles() {
       range(fieldStartColumn, fieldStopColumn).forEach((index) => {
         item[fields[index]] = profile[fieldStartColumn + index];
       });
+
+      item.indexable = toLower(String(item.indexable)) === 'yes' || Number(item.indexable) === 1;
 
       // Profile can accessTo
       item.accessTo = profile[accessToColumn]

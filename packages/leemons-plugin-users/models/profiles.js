@@ -27,6 +27,13 @@ module.exports = {
         collection: 'plugins_users::roles',
       },
     },
+    indexable: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

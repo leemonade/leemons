@@ -4,6 +4,10 @@
     "path": "../../packages/leemons-plugin-users/frontend"
   },
   {
+    "name": "admin",
+    "path": "../../packages/leemons-plugin-admin/frontend"
+  },
+  {
     "name": "layout",
     "path": "../../packages/leemons-plugin-layout/frontend"
   },
@@ -98,5 +102,9 @@
   {
     "name": "assignables",
     "path": "../../packages/leemons-plugin-assignables/frontend"
+  },
+  {
+    "name": "academic-calendar",
+    "path": "../../packages/leemons-plugin-academic-calendar/frontend"
   }
 ]

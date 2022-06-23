@@ -1,0 +1,47 @@
+{
+  "welcome": {
+    "title": "Instalación de Leemons",
+    "description": "Por favor, selecciona un idioma para el proceso de instalación.",
+    "disclaimer": "Podrás configurar los idiomas predeterminados para la plataforma durante el proceso de instalación.",
+    "selectLanguage": "Selecciona idioma",
+    "next": "Empezar instalación",
+    "quote": {
+      "title": "Bienvenid@ a Leemons",
+      "description": "La plataforma de aprendizaje potente, flexible, sencilla y gratuita."
+    }
+  },
+  "signup": {
+    "title": "Registro del Administrador",
+    "description": "Vamos a configurar la cuenta del administrador de la plataforma.",
+    "labels": {
+      "nextButton": "Siguiente",
+      "email": "Email",
+      "password": "Contraseña",
+      "repeatPassword": "Repetir contraseña",
+      "lang": "Selecciona tu idioma"
+    },
+    "placeholders": {
+      "email": "Tu email",
+      "password": "Tu contraseña",
+      "repeatPassword": "Repite tu contraseña",
+      "lang": "Seleecionar idioma"
+    },
+    "errorMessages": {
+      "email": {
+        "invalidFormat": "Por favor, introduce un email válido",
+        "required": "Por favor, introduce un email"
+      },
+      "password": {
+        "notMatch": "Las contraseñas no coinciden",
+        "required": "Por favor, introduce tu contraseña"
+      }
+    }
+  },
+  "setup": {
+    "title": "Instalación de Leemons",
+    "languages": {
+      "title": "Idiomas",
+      "description": "¿Qué idiomas se usarán en tu centro(s)?"
+    }
+  }
+}

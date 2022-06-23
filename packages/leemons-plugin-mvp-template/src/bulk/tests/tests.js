@@ -35,6 +35,8 @@ async function importTests({ programs, qbanks, questions }) {
       .map((val) => trim(val))
       .filter((val) => !isEmpty(val));
 
+    test.tags = test.tags || [];
+
     if (test.questionBank) test.questionBank = qbanks[test.questionBank]?.id;
     if (test.statement) test.statement = converter.makeHtml(test.statement || '');
 
@@ -53,6 +55,7 @@ async function importTests({ programs, qbanks, questions }) {
     items[key] = test;
   });
 
+  /*
   const mock = {
     name: 'Repasamos demografía',
     description: null,
@@ -76,6 +79,7 @@ async function importTests({ programs, qbanks, questions }) {
     type: 'learn',
     published: false,
   };
+  */
 
   // console.dir(items, { depth: null });
   return items;

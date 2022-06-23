@@ -223,6 +223,8 @@ class Leemons {
           authorization = JSON.parse(authorization);
         } catch (e) {}
 
+        ctx.state.authorization = authorization;
+
         if (_.isString(authorization)) {
           const user = await this.plugins.users.services.users.detailForJWT(authorization);
           if (user) {

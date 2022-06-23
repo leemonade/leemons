@@ -2,19 +2,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
-import {
-  Box,
-  COLORS,
-  ContextContainer,
-  createStyles,
-  PageContainer,
-  Title,
-} from '@bubbles-ui/components';
+import { Box, ContextContainer, createStyles, PageContainer } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import { ZoneWidgets } from '@widgets';
-import { HeaderBackground } from '@bubbles-ui/leemons';
+import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
+import { find, map, isNil } from 'lodash';
+import { getSessionConfig, updateSessionConfig } from '@users/session';
 
 const rightZoneWidth = '320px';
 const Styles = createStyles((theme) => ({
@@ -30,10 +25,6 @@ const Styles = createStyles((theme) => ({
     left: 0,
     right: '50%',
     zIndex: 5,
-    backgroundColor: COLORS.mainWhite,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: '24px 24px 24px 26px',
     alignItems: 'center',
   },
 }));
@@ -41,24 +32,32 @@ const Styles = createStyles((theme) => ({
 export default function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
-    isAcademicMode: false,
   });
   const { classes: styles } = Styles();
   const [t] = useTranslateLoader(prefixPN('dashboard'));
 
-  async function init() {
-    const { programs } = await getUserProgramsRequest();
-    store.programs = programs;
-    if (store.programs.length >= 1) {
-      [store.selectedProgram] = store.programs;
-    }
-
-    store.loading = false;
+  function selectProgram(program) {
+    store.selectedProgram = find(store.programs, { id: program.id });
+    updateSessionConfig({ program: program.id });
     render();
   }
 
-  function selectProgram(program) {
-    store.selectedProgram = program;
+  async function init() {
+    const { programs } = await getUserProgramsRequest();
+    store.programs = programs;
+
+    console.log('programs', programs);
+
+    if (store.programs.length >= 1) {
+      const sessionConfig = getSessionConfig();
+      if (sessionConfig.program) {
+        selectProgram({ id: sessionConfig.program });
+      } else {
+        selectProgram(store.programs[0]);
+      }
+    }
+
+    store.loading = false;
     render();
   }
 
@@ -83,7 +82,9 @@ export default function AcademicDashboard({ session }) {
 
   if (store.loading) return null;
 
-  const programImage = store.selectedProgram?.imageUrl;
+  const programImage = !isNil(store.selectedProgram?.image.cover)
+    ? store.selectedProgram?.imageUrl
+    : undefined;
   const headerProps = {};
   if (programImage) {
     headerProps.blur = 10;
@@ -96,7 +97,14 @@ export default function AcademicDashboard({ session }) {
     headerProps.color = store.selectedProgram?.color || 'rgb(255, 204, 153)';
   }
 
-  // TODO: Añadir en el header que se puedan seleccionar los programas
+  store.programsSelect = map(store.programs, (program) => ({
+    id: program.id,
+    color: program.color,
+    image: !isNil(program.image?.cover) ? program.imageUrl : undefined,
+    label: program.name,
+    description: program.description || '',
+    icon: program.icon,
+  }));
 
   return (
     <>
@@ -108,13 +116,11 @@ export default function AcademicDashboard({ session }) {
         <Box className={styles.header}>
           <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
           <Box className={styles.programSelectorContainer}>
-            <Title order={3}>
-              {store.isAcademicMode && store.programs.length
-                ? store.selectedProgram
-                  ? store.selectedProgram.name
-                  : t('selectYourProgram')
-                : t('dashboard')}
-            </Title>
+            <HeaderDropdown
+              value={store.selectedProgram.id}
+              data={store.programsSelect}
+              onChange={selectProgram}
+            />
           </Box>
         </Box>
 

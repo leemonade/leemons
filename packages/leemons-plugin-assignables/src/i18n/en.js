@@ -182,4 +182,40 @@ module.exports = {
       timeReference: 'Time reference',
     },
   },
+  multiSubject: 'Multi-subject',
+  activities_filters: {
+    ongoing: 'Ongoing {{count}}',
+    evaluated: 'Evaluated {{count}}',
+    history: 'History {{count}}',
+    search: 'Search activities in progress',
+    subject: 'Subject',
+    status: 'Status',
+    type: 'Type',
+    seeAll: 'See all',
+  },
+  ongoing: {
+    ongoing: 'Ongoing activities',
+    history: 'History',
+    activities: 'Activities',
+  },
+  dates: {
+    visualization: 'Visualization',
+    start: 'Start',
+    deadline: 'Deadline',
+    close: 'Close',
+    closed: 'Closed',
+  },
+  need_your_attention: {
+    title: 'Need your attention',
+    new: 'New',
+    assigment: {
+      subject: 'Subject',
+      submission: 'Submissions',
+      avgTime: 'Avg. time',
+    },
+  },
+  pagination: {
+    show: 'Show',
+    goTo: 'Go to',
+  },
 };

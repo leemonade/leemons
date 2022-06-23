@@ -24,6 +24,7 @@ module.exports = (Base) =>
               const dbLocale = await this.model.create(locale, { transacting: t });
 
               leemons.log.info(`New locale added: ${dbLocale.code} | ${dbLocale.name}`);
+              leemons.events.emit('newLocale', dbLocale);
 
               return dbLocale;
             }

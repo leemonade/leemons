@@ -55,6 +55,12 @@ module.exports = [
    * Users
    * */
   {
+    path: '/user/session/config',
+    method: 'POST',
+    handler: 'users.updateSessionConfig',
+    authenticated: true,
+  },
+  {
     path: '/user/login',
     method: 'POST',
     handler: 'users.login',
