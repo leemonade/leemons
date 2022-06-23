@@ -651,21 +651,28 @@ async function validateAddSubject(data, { transacting } = {}) {
 
   // ES: Comprobamos si el programa tiene o puede tener cursos asignados
   // EN: Check if the program has or can have courses assigned
-  const needCourse = await subjectNeedCourseForAdd(data.program, { transacting });
+  const [needCourse, haveMultiCourses] = await Promise.all([
+    subjectNeedCourseForAdd(data.program, { transacting }),
+    programHaveMultiCourses(data.program, { transacting }),
+  ]);
 
   // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
   // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
-  if (needCourse) {
-    if (!data.course) throw new Error('The course is required');
-    const course = await table.groups.findOne({ id: data.course, type: 'course' }, { transacting });
-    if (!course) throw new Error('The course does not exist');
+  if (!haveMultiCourses) {
+    if (needCourse) {
+      if (!data.course) throw new Error('The course is required');
+      const course = await table.groups.findOne(
+        { id: data.course, type: 'course' },
+        { transacting }
+      );
+      if (!course) throw new Error('The course does not exist');
+    }
+    // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
+    // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
+    else if (data.course) {
+      throw new Error('The course is not required');
+    }
   }
-  // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
-  // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
-  else if (data.course) {
-    throw new Error('The course is not required');
-  }
-
   await validateInternalIdHaveGoodFormat(data.program, data.internalId, { transacting });
 
   await validateProgramNotUsingInternalId(
