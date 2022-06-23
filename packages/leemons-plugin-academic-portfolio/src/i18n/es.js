@@ -3,7 +3,7 @@ module.exports = {
     page_title: 'Portafolio académico',
     page_description:
       'Portafolio permite trasladar fielmente la estructura organizativa de los programas del centro a Leemons. Esta herramienta permite crear programas educativos, etapas, cursos, grupos y asignaturas. Un vez configurados, a través del árbol de portafolio, se podrán asignar estudiantes y profesores, definir segmentos y aplicar reglas de funcionamiento.',
-    hide_info_label: `¡Entendido!. No mostrar más una vez finalizada la configuración.`,
+    hide_info_label: '¡Entendido!. No mostrar más una vez finalizada la configuración.',
     step_profiles: {
       title: 'Conectar perfiles',
       description:
@@ -75,10 +75,18 @@ module.exports = {
           maxGroupAbbreviation: '(p.e. G01, G02, G03…)',
         },
         errorMessages: {
-          name: { required: 'Campo necesario' },
-          abbreviation: { required: 'Campo necesario' },
-          evaluationSystem: { required: 'Campo necesario' },
-          maxGroupAbbreviation: { required: 'Campo necesario' },
+          name: {
+            required: 'Campo necesario',
+          },
+          abbreviation: {
+            required: 'Campo necesario',
+          },
+          evaluationSystem: {
+            required: 'Campo necesario',
+          },
+          maxGroupAbbreviation: {
+            required: 'Campo necesario',
+          },
         },
       },
       coursesData: {
@@ -106,12 +114,24 @@ module.exports = {
           substagesFrequency: 'Seleccionar frecuencia',
         },
         errorMessages: {
-          useDefaultSubstagesName: { required: 'Campo necesario' },
-          maxNumberOfCourses: { required: 'Campo necesario' },
-          courseCredits: { required: 'Campo necesario' },
-          substagesFrequency: { required: 'Campo necesario' },
-          numberOfSubstages: { required: 'Campo necesario' },
-          maxSubstageAbbreviation: { required: 'Campo necesario' },
+          useDefaultSubstagesName: {
+            required: 'Campo necesario',
+          },
+          maxNumberOfCourses: {
+            required: 'Campo necesario',
+          },
+          courseCredits: {
+            required: 'Campo necesario',
+          },
+          substagesFrequency: {
+            required: 'Campo necesario',
+          },
+          numberOfSubstages: {
+            required: 'Campo necesario',
+          },
+          maxSubstageAbbreviation: {
+            required: 'Campo necesario',
+          },
         },
       },
       subjectsData: {
@@ -141,9 +161,15 @@ module.exports = {
           maxKnowledgeAbbreviation: '(p.e.: LENG, ENG, HIST…)',
         },
         errorMessages: {
-          periodName: { required: 'Campo necesario' },
-          numOfPeriods: { required: 'Campo necesario' },
-          substagesFrequency: { required: 'Campo necesario' },
+          periodName: {
+            required: 'Campo necesario',
+          },
+          numOfPeriods: {
+            required: 'Campo necesario',
+          },
+          substagesFrequency: {
+            required: 'Campo necesario',
+          },
         },
       },
       frequencies: {

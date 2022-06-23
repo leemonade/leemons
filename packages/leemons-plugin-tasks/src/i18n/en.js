@@ -23,7 +23,8 @@ module.exports = {
     page_title: 'Tasks',
     page_description:
       'Thanks to the tasks module you can create new tasks, assign them to groups of students or individuals, monitor their current status and start evaluations of completed tasks.',
-    hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
+    hide_info_label:
+      "Ok, I've got it. When the configuration is complete, don't show this info anymore",
     step_profiles: {
       title: 'Link profiles',
       description: 'Identify which profiles match the teachers and students',
@@ -43,7 +44,7 @@ module.exports = {
     },
     step_history: {
       title: 'History',
-      description: `View completed tasks, their evaluations and the student's feedback.`,
+      description: "View completed tasks, their evaluations and the student's feedback.",
       btn: 'View tasks history',
     },
   },
@@ -79,8 +80,12 @@ module.exports = {
           description: 'What is this assignment about?',
         },
         errorMessages: {
-          name: { required: 'Field required' },
-          tagline: { required: 'Required field' },
+          name: {
+            required: 'Field required',
+          },
+          tagline: {
+            required: 'Required field',
+          },
         },
       },
       configData: {
@@ -110,21 +115,37 @@ module.exports = {
               greater: 'Pass the test with a score higher than',
             },
           },
+          title: 'Configuración',
+          subjects: 'Asignaturas',
+          showOtherSubjects: 'Añadir otras asignaturas en las que colaboro',
         },
-
         placeholders: {
           center: 'Select...',
           program: 'Select...',
           course: 'Select...',
           subject: 'Select...',
           level: 'Select...',
+          addSubject: 'Añadir asignatura',
         },
         errorMessages: {
-          program: { required: 'Required field' },
-          course: { required: 'Required field' },
-          subjects: { required: 'Required field' },
-          level: { required: 'Required field' },
-          summary: { required: 'Required field' },
+          program: {
+            required: 'Required field',
+          },
+          course: {
+            required: 'Required field',
+          },
+          subjects: {
+            required: 'Required field',
+          },
+          level: {
+            required: 'Required field',
+          },
+          summary: {
+            required: 'Required field',
+          },
+          subject: {
+            required: 'Campo necesario',
+          },
         },
       },
       contentData: {
@@ -158,11 +179,18 @@ module.exports = {
               type: 'Type',
               typePlaceholder: 'Add extension',
               maxSize: 'Max size',
+              required: 'Campo necesario',
             },
           },
+          attachmentsTitle: 'Recursos',
+          supportImage: 'Imagen de apoyo',
+          searchFromLibrary: 'Buscar en la librería',
+          searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia',
         },
         errorMessages: {
-          statement: { required: 'Required field' },
+          statement: {
+            required: 'Required field',
+          },
         },
       },
       instructionData: {
@@ -288,7 +316,6 @@ module.exports = {
   history_page: {
     page_title: 'History',
   },
-  // FROM HERE TO BOTTOM EVERYTHING NEW
   teacher_assignments: {
     table: {
       headers: {
@@ -311,6 +338,7 @@ module.exports = {
     edit: 'Edit',
     assign: 'Assign',
     delete: 'Delete',
+    duplicate: 'Duplicar',
   },
   task_realization: {
     confirmation_modal: {
@@ -363,6 +391,7 @@ module.exports = {
         },
         link: {
           link: 'Submission link',
+          invalidURL: 'El enlace no es válido',
         },
       },
       submission_state: {
@@ -384,6 +413,20 @@ module.exports = {
         },
       },
       submission: 'Submission',
+    },
+    limitedTimeAlert: {
+      beforeStart: 'Antes de empezar',
+      noTimeLimit: 'Sin límite de tiempo',
+      withoutPause: 'Sin pausa',
+      howItWorks: '¿Cómo funciona?',
+      limitedTimeTitle: 'Tiempo limitado',
+      limitedTime:
+        'Una vez comenzado tienes {{time}} para finalizar esta tarea, deberás hacer la entrega antes de que este tiempo termine.',
+      pauseTitle: 'La tarea no se puede pausar',
+      pause:
+        'Si sales de la aplicación con la tarea en proceso, esta se dará por finalizada y se enviará automáticamente la última entrega guardada antes del momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la tarea, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizarla.',
+      closedTaskFirstLine: 'Esta actividad está en modo "solo consulta".',
+      closedTaskSecondLine: 'La fecha de inicio para poder realizar esta actividad es: {{time}}',
     },
   },
   task_correction: {

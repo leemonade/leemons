@@ -188,8 +188,6 @@ module.exports = {
     submitted: 'Entregada',
     notSubmitted: 'No entregada',
     noLimit: 'Sin límite de tiempo',
-    // toBeEvaluated: 'Para evaluar',
-    // endingSoon: 'Termina pronto',
   },
   teacher_actions: {
     sendReminder: 'Enviar recordatorio',

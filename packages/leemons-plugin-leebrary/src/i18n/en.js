@@ -64,10 +64,19 @@ module.exports = {
         color: 'Select a color',
       },
       errorMessages: {
-        name: { required: 'Name is required' },
-        url: { required: 'URL is required' },
-        file: { required: 'File is required', rejected: 'File was rejected' },
-        tags: { required: 'Write a tag to add it' },
+        name: {
+          required: 'Name is required',
+        },
+        url: {
+          required: 'URL is required',
+        },
+        file: {
+          required: 'File is required',
+          rejected: 'File was rejected',
+        },
+        tags: {
+          required: 'Write a tag to add it',
+        },
       },
     },
     permissionsData: {

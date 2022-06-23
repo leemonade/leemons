@@ -3,8 +3,7 @@ module.exports = {
     page_title: 'Reglas académicas',
     page_description:
       '"Reglas Académicas" permite crear reglas personalizadas para los programas y cursos: máximo o mínimo de créditos básicos/electivos, materias obligatorias, cursos electivos... para extraer informes de notas y definir qué estudiantes serán promocionados.',
-    hide_info_label:
-      '¡Entendido!. No mostrar más, una vez finalizada la configuración.',
+    hide_info_label: '¡Entendido!. No mostrar más, una vez finalizada la configuración.',
     step_evaluations: {
       title: 'Sistemas de evaluación.',
       description:
@@ -50,8 +49,7 @@ module.exports = {
       minScaleToPromoteLabel: 'Valor mínimo para aprobar/promocionar',
       minScaleToPromotePlaceholder: 'Seleccionar valor...',
       otherTagsLabel: 'Otras etiquetas',
-      otherTagsDescription:
-        'Etiquetas personalizadas para clasificar condiciones especiales.',
+      otherTagsDescription: 'Etiquetas personalizadas para clasificar condiciones especiales.',
       otherTagsRelationScaleLabel: 'Corelación con otro valor de escala',
       tableAdd: 'Añadir',
       tableRemove: 'Borrar',

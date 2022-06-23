@@ -33,5 +33,12 @@ module.exports = {
     save: 'Save',
     fieldRequired: 'Field required',
     configSaved: 'Saved configuration',
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miercoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sabado',
+    domingo: 'Domingo',
   },
 };

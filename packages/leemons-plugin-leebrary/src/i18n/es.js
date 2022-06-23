@@ -64,10 +64,19 @@ module.exports = {
         url: 'Enlace web',
       },
       errorMessages: {
-        name: { required: 'Nombre es necesario' },
-        file: { required: 'Archivo es necesario', rejected: 'Archivo no permitido' },
-        tags: { required: 'Escribir etiqueta' },
-        url: { required: 'URL es necesaria' },
+        name: {
+          required: 'Nombre es necesario',
+        },
+        file: {
+          required: 'Archivo es necesario',
+          rejected: 'Archivo no permitido',
+        },
+        tags: {
+          required: 'Escribir etiqueta',
+        },
+        url: {
+          required: 'URL es necesaria',
+        },
       },
     },
     permissionsData: {
@@ -96,9 +105,15 @@ module.exports = {
         userRole: 'Seleccionar rol',
       },
       errorMessages: {
-        user: { required: 'Usuario es necesario' },
-        userRole: { required: 'Rol es necesario' },
-        share: { required: 'Sin permisos para compartir el recurso' },
+        user: {
+          required: 'Usuario es necesario',
+        },
+        userRole: {
+          required: 'Rol es necesario',
+        },
+        share: {
+          required: 'Sin permisos para compartir el recurso',
+        },
       },
     },
     roleLabels: {
