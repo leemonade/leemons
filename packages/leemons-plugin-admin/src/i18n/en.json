@@ -3,7 +3,7 @@
     "title": "Leemons installation",
     "description": "Please select a language for the installation process.",
     "selectLanguage": "Select language",
-    "disclaimer": "You can configure the default languages for the platform during the installation process.",
+    "disclaimer": "The default languages for the platform can be configured during the installation process.",
     "next": "Start installation",
     "quote": {
       "title": "Welcome to Leemons",
@@ -31,7 +31,7 @@
         "invalidFormat": "Please enter a valid email address",
         "required": "Please enter your email address"
       },
-      "password": { "notMatch": "Passwords not match", "required": "Please enter your password" }
+      "password": { "notMatch": "Passwords do not match", "required": "Please enter your password" }
     }
   },
   "setup": {
