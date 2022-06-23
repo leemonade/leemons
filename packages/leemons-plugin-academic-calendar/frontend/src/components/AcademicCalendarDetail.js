@@ -46,8 +46,7 @@ export default function AcademicCalendarDetail({ program: { id } }) {
       try {
         store.saving = true;
         render();
-        const a = await saveConfigRequest({ ...data, program: store.program.id });
-        console.log(a);
+        await saveConfigRequest({ ...data, program: store.program.id });
         addSuccessAlert(t('configSaved'));
       } catch (e) {
         addErrorAlert(getErrorMessage(e));
@@ -67,6 +66,9 @@ export default function AcademicCalendarDetail({ program: { id } }) {
       ]);
       store.program = program;
       store.config = config;
+      if (store.program.moreThanOneAcademicYear) {
+        store.config.allCoursesHaveSameConfig = true;
+      }
       form.reset(store.config);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -109,6 +111,7 @@ export default function AcademicCalendarDetail({ program: { id } }) {
             render={({ field }) => (
               <Switch
                 {...field}
+                disabled={store.program.moreThanOneAcademicYear}
                 checked={field.value}
                 label={t('switchAllCourses', { n: store.program.courses.length })}
               />

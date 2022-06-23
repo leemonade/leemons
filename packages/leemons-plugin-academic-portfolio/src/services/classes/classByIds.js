@@ -43,9 +43,19 @@ async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, t
 
   const imagesById = _.keyBy(images, 'id');
 
-  let haveMultiCourses = false;
-  if (classes[0]) {
-    haveMultiCourses = await programHaveMultiCourses(classes[0].program, { transacting });
+  let classPrograms = [];
+  _.forEach(classes, ({ program }) => {
+    classPrograms.push(program);
+  });
+  classPrograms = _.uniq(classPrograms);
+  const haveMultiCoursesByProgram = {};
+  if (classPrograms.length) {
+    const haveMultiCourses = await Promise.all(
+      _.map(classPrograms, (classProgram) => programHaveMultiCourses(classProgram, { transacting }))
+    );
+    _.forEach(classPrograms, (classProgram, index) => {
+      haveMultiCoursesByProgram[classProgram] = haveMultiCourses[index];
+    });
   }
   const [
     originalSubjectTypes,
@@ -127,7 +137,7 @@ async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, t
       substages: substagesByClass[id] ? substagesById[substagesByClass[id][0].substage] : null,
       // eslint-disable-next-line no-nested-ternary
       courses: coursesByClass[id]
-        ? haveMultiCourses
+        ? haveMultiCoursesByProgram[rest.program]
           ? map(coursesByClass[id], ({ course }) => coursesById[course])
           : coursesById[coursesByClass[id][0].course]
         : null,

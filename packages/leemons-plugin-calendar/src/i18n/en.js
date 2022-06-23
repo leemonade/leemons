@@ -33,6 +33,9 @@ module.exports = {
     time: 'Time',
     event: 'Event',
     empty: 'There are no events',
+    classes: 'Classes',
+    weekSchedule: 'Weekly schedule',
+    course: 'Course',
   },
   event_modal: {
     name: 'Name',
