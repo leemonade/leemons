@@ -2,29 +2,28 @@ module.exports = {
   welcome_page: {
     page_title: 'Academic Portfolio',
     page_description:
-      'Portfolio allow you to create programs or educational stages and add subjects with course, group, professors… within this information, we create a visual tree in order to manage the portfolio, assign students, create clusters, edit rules and much more.',
-    hide_info_label:
-      "Ok, I've got it. When the configuration is complete, don't show this info anymore",
+      'Portfolio allows the creation of programs or educational stages, and the addition of subjects with courses, groups, professors, and more. With this information, a visual tree is created in order to manage the portfolio, assign students, create clusters, edit rules and much more.',
+    hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
     step_profiles: {
       title: 'Match profiles',
       description:
-        'Academic portfolio needs to clarify which are the key profiles to work on. You will only need to do this once.',
+        'Academic portfolio needs clarification regarding which are the key profiles to work on. This will only need to be done once.',
       btn: 'Match profiles',
     },
     step_programs: {
       title: 'Create programs',
       description:
-        'Elementary, High School, Bachelor, Masters… define the programs and courses offered in your organization.',
+        'Elementary, High School, GCSE, A Levels, Bachelors, Masters, and more. Define the programs and courses offered in your organization.',
       btn: 'Create programs',
     },
     step_subjects: {
       title: 'Add subjects',
       description:
-        'With bulk upload or manually, create your subjects portfolio related with an specific program and course.',
+        'With bulk or manual upload, a subject portfolio can be created that relates to a specific program and course.',
       btn: 'Add subjects',
     },
     step_tree: {
-      title: 'Manage your academic portfolio',
+      title: 'Manage academic portfolio',
       description:
         'Define the kind of tree for your specific education system and asssing students, create clusters or edit information.',
       btn: 'Create your tree',
@@ -33,7 +32,7 @@ module.exports = {
   programs_page: {
     page_title: 'Learning programs',
     page_description:
-      'Elementary, High School, Bachelor, Masters… define the programs and courses offered in your organization. If you do not have traditional stages, you can create simple programs or courses instead.',
+      'Elementary, High School, Bachelor, Masters, and more. Define the programs and courses offered in your organization. If you do not have traditional stages, you can create simple programs or courses instead.',
     errorNoEvaluationSystems:
       'There are no evaluation systems defined. Please, create one or more evaluation systems.',
     errorNoEvaluationSystemsGoTo: 'Go to evaluation systems',
@@ -65,7 +64,7 @@ module.exports = {
         },
         descriptions: {
           maxGroupAbbreviation:
-            'If you need to create more than one group of students (classrooms) per subject, this configuration allow you to define the alphanumeric ID format.',
+            'If the creation of more than one group of students (classrooms) is needed per subject, this configuration allows the possibility to define the alphanumeric ID format.',
         },
         placeholders: {
           name: 'My awesome program',
@@ -76,18 +75,10 @@ module.exports = {
           maxGroupAbbreviation: '(i.e: G01, G02, G03…)',
         },
         errorMessages: {
-          name: {
-            required: 'Required field',
-          },
-          abbreviation: {
-            required: 'Required field',
-          },
-          evaluationSystem: {
-            required: 'Required field',
-          },
-          maxGroupAbbreviation: {
-            required: 'Required field',
-          },
+          name: { required: 'Required field' },
+          abbreviation: { required: 'Required field' },
+          evaluationSystem: { required: 'Required field' },
+          maxGroupAbbreviation: { required: 'Required field' },
         },
       },
       coursesData: {
@@ -115,24 +106,12 @@ module.exports = {
           substagesFrequency: 'Select frequency',
         },
         errorMessages: {
-          useDefaultSubstagesName: {
-            required: 'Required field',
-          },
-          maxNumberOfCourses: {
-            required: 'Required field',
-          },
-          courseCredits: {
-            required: 'Required field',
-          },
-          substagesFrequency: {
-            required: 'Required field',
-          },
-          numberOfSubstages: {
-            required: 'Required field',
-          },
-          maxSubstageAbbreviation: {
-            required: 'Required field',
-          },
+          useDefaultSubstagesName: { required: 'Required field' },
+          maxNumberOfCourses: { required: 'Required field' },
+          courseCredits: { required: 'Required field' },
+          substagesFrequency: { required: 'Required field' },
+          numberOfSubstages: { required: 'Required field' },
+          maxSubstageAbbreviation: { required: 'Required field' },
         },
       },
       subjectsData: {
@@ -147,7 +126,7 @@ module.exports = {
           numOfPeriods: 'N. periods',
           substagesFrequency: 'Frecuency',
           knowledgeAreas: 'Knowledge areas abbreviation',
-          haveKnowledge: 'Program have Knowledge areas',
+          haveKnowledge: 'Program has Knowledge areas',
           maxKnowledgeAbbreviation: 'Max abbreviation length for areas:',
           maxKnowledgeAbbreviationIsOnlyNumbers: 'Only numbers',
           subjectsIDConfig: 'Subjects ID configuration',
@@ -162,15 +141,9 @@ module.exports = {
           maxKnowledgeAbbreviation: '(i.e: MKTG, MATH, HIST…)',
         },
         errorMessages: {
-          periodName: {
-            required: 'Required field',
-          },
-          numOfPeriods: {
-            required: 'Required field',
-          },
-          substagesFrequency: {
-            required: 'Required field',
-          },
+          periodName: { required: 'Required field' },
+          numOfPeriods: { required: 'Required field' },
+          substagesFrequency: { required: 'Required field' },
         },
       },
       frequencies: {
@@ -191,7 +164,7 @@ module.exports = {
   subject_page: {
     page_title: 'Subjects configuration',
     page_description:
-      'Configure your knowledge areas/topics and type (core, electives…), then you can upload your subject database or add them manually. After this, you are ready to create your tree portfolio schema.',
+      'Configure knowledge areas/topics and type (core, electives…), then it is possible to upload the subject database or add them manually. After this, you are ready to create your tree portfolio schema.',
     centerLabel: 'Center',
     centerPlaceholder: 'Select a center',
     programLabel: 'Program',
@@ -264,10 +237,10 @@ module.exports = {
     programTreeType: {
       title: 'Portfolio tree schema',
       description1:
-        'Config your portfolio tree view in order to adapt them to your specific program characteristics. You can change this setting whenever you need to.',
+        'Configure portfolio tree view in order to adapt it to your specific program characteristics. This setting can be changed whenever needed.',
       note: 'NOTE:',
       description2:
-        'You only see the schemas that fit with your previous configuration. “Group visibility” (from Subject type configuration), will be respect independent of tree schema chosen.',
+        'See only the schemas that fit with previous configuration. “Group visibility” (from Subject type configuration), will be respected independent of tree schema chosen.',
       opt1Label: 'Classroom first',
       opt1Description: 'Program > Course > Group > Type > Area > Subject',
       opt1DescriptionNoCourse: 'Program > Group > Type > Area > Subject',
@@ -284,7 +257,7 @@ module.exports = {
   profiles_page: {
     page_title: 'Academic portfolio - Profiles setup',
     page_description:
-      'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
+      'First of all, it is necessary to match the system profiles with the custom profiles that have been created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
     save: 'Save',
     profileSaved: 'Saved profiles',
     profiles: 'Profiles',
@@ -299,7 +272,7 @@ module.exports = {
   tree_page: {
     page_title: 'Academic Portofolio Tree',
     page_description:
-      'This is your Portfolio Tree, you can edit, duplicate or create new elements for your program. You also can assign students at any level (all subjects under it will inherit this task).',
+      'This is your Portfolio Tree, it can be edited, duplicated or used to create new elements for your program. Students can also be assigned at any level (all subjects under it will inherit this task).',
     centerLabel: 'Select center',
     programLabel: 'Select program',
     programUpdated: 'Program updated',
@@ -330,7 +303,7 @@ module.exports = {
         'Assign students to all classrooms nested on this level from the students database.',
       note: 'NOTE:',
       noteDescription:
-        'selected students will be added to the current student lists for each classroom. If you want to consult or edit a group of students, you must do it directly in each classroom.',
+        'selected students will be added to the current student lists for each classroom. If consultation or editing of a group of students is needed, it must be done directly in each classroom.',
       byTag: 'Select by tag',
       byData: 'Search by user data',
       addTag: 'Add tag',
@@ -341,12 +314,12 @@ module.exports = {
       studentsFound: 'We have found {{count}} Students',
       selected: '{{count}} Selected',
       studentsError:
-        '{{count}} students are already included in all classes and you can not add them again',
+        '{{count}} students are already included in all classes and cannot be added again',
       studentsWarning:
-        '{{count}} students are already included in one of the classes and you can add them to the rest of the classes.',
+        '{{count}} students are already included in one of the classes and can be added to the rest of the classes.',
       seatsError1: 'The following classes are already fully booked:',
       seatsError2:
-        'Please access each class individually and add as many students as you need, or reduce the number of students.',
+        'Please access each class individually and add as many students as needed, or reduce the number of students.',
       seatsClassError: '- {{className}} ({{seats}} seats left)',
       addStudent: 'Add student',
       userAlreadySelected: 'User already selected',
@@ -361,7 +334,7 @@ module.exports = {
       nameRequired: 'Required field',
       abbreviationRequired: 'Required field',
       creditsRequired: 'Required field',
-      visitProgramDescription: 'For further configuration you have to visit',
+      visitProgramDescription: 'For further configuration it is necessary to visit',
       visitProgramLabel: '“Educational Programs”',
       save: 'Save',
     },
@@ -371,7 +344,7 @@ module.exports = {
       nameLabel: 'Course alias:',
       nameHelper: 'i.e. “1st Grade”',
       creditsLabel: 'Minimum credits:',
-      visitProgramDescription: 'For further configuration you have to visit',
+      visitProgramDescription: 'For further configuration it is necessary to visit',
       visitProgramLabel: '“Educational Programs”',
       save: 'Save',
     },
@@ -379,7 +352,7 @@ module.exports = {
       titleNew: 'New group',
       duplicateTitle: 'Duplicate group',
       duplicateWarning:
-        'Al duplicar un grupo se crean nuevas aulas que heredan la configuración básica de las asignaturas anidadas en el grupo actual (como el tipo, o el área de conocimiento), pero hay que especificar un nuevo conjunto de alumnos, profesores, plazas, etc... para estas nuevas aulas.',
+        'When duplicating a group, new classrooms are created that inherit the basic configuration of the subjects nested in the current group (such as the type, or the area of knowledge), but a new set of students, teachers, places, etc. must be specified for these new classrooms.',
       title: 'Group configuration',
       abbreviationLabel: 'Group abbreviation:',
       abbreviationHelper: '3 char. max',
@@ -392,10 +365,10 @@ module.exports = {
       assignSubjects: {
         title: 'Assign subjects',
         description1:
-          'We will create new classrooms for this group from the selected subjects, latter you could assign new students and modify its properties.',
+          'New classrooms will be created for this group from the selected subjects, later, new students can be assigned and its properties modified.',
         notes: 'NOTE:',
         description2:
-          ' If you wish to create a new group keeping all settings except assigned students, please use the "duplicate" option instead.',
+          ' In order to create a new group keeping all settings except assigned students, please use the "duplicate" option instead.',
       },
     },
     subjectType: {
@@ -410,7 +383,7 @@ module.exports = {
       assignSubjects: {
         title: 'Assign/Re-asssign subjects',
         description:
-          'We will modify or add the new type to the selected subjects, keeping the remaining information. You can do this manually by dragging the existing subjects to this new type in the tree.',
+          'The new type will be modified or added to the selected subjects, keeping the remaining information. This can be done manually by dragging the existing subjects to this new type in the tree.',
       },
     },
     knowledge: {
@@ -430,7 +403,7 @@ module.exports = {
       assignSubjects: {
         title: 'Assign/Re-asssign subjects',
         description:
-          'We will modify or add the new area to the selected subjects, keeping the remaining information. You can do this manually by dragging the existing subjects to this new area in the tree.',
+          'The new area will be modified or added to the selected subjects, keeping the remaining information. This can be done manually by dragging the existing subjects to this new area in the tree.',
       },
     },
     class: {
