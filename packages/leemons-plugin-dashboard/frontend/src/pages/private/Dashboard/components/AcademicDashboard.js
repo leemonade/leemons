@@ -38,23 +38,31 @@ export default function AcademicDashboard({ session }) {
 
   function selectProgram(program) {
     store.selectedProgram = find(store.programs, { id: program.id });
-    updateSessionConfig({ program: program.id });
+    if (isNil(store.selectedProgram)) {
+      [store.selectedProgram] = store.programs;
+    }
+    updateSessionConfig({ program: store.selectedProgram.id });
     render();
   }
+
+  // ·································································
+  // FIRST LOAD
 
   async function init() {
     const { programs } = await getUserProgramsRequest();
     store.programs = programs;
 
-    console.log('programs', programs);
-
-    if (store.programs.length >= 1) {
-      const sessionConfig = getSessionConfig();
-      if (sessionConfig.program) {
-        selectProgram({ id: sessionConfig.program });
-      } else {
-        selectProgram(store.programs[0]);
+    try {
+      if (store.programs.length > 0) {
+        const sessionConfig = getSessionConfig();
+        if (sessionConfig.program) {
+          selectProgram({ id: sessionConfig.program });
+        } else {
+          selectProgram(store.programs[0]);
+        }
       }
+    } catch (e) {
+      //
     }
 
     store.loading = false;
@@ -64,6 +72,9 @@ export default function AcademicDashboard({ session }) {
   React.useEffect(() => {
     init();
   }, []);
+
+  // ·································································
+  // RENDER
 
   const widgets = React.useCallback(
     ({ Component, key }) => (
@@ -86,6 +97,7 @@ export default function AcademicDashboard({ session }) {
     ? store.selectedProgram?.imageUrl
     : undefined;
   const headerProps = {};
+
   if (programImage) {
     headerProps.blur = 10;
     headerProps.withBlur = true;
