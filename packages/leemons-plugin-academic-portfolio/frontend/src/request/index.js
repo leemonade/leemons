@@ -36,6 +36,7 @@ import {
   createClassInstance,
   haveClasses,
   listClasses,
+  listSubjectClasses,
   listSessionClasses,
   listStudentClasses,
   listTeacherClasses,
@@ -68,6 +69,7 @@ export const listClassesRequest = listClasses;
 export const createClassRequest = createClass;
 export const updateClassRequest = updateClass;
 export const removeClassRequest = removeClass;
+export const listSubjectClassesRequest = listSubjectClasses;
 export const getProgramEvaluationSystemRequest = getProgramEvaluationSystem;
 export const updateClassManyRequest = updateClassMany;
 export const listSessionClassesRequest = listSessionClasses;

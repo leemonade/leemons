@@ -278,6 +278,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/subjects/class',
+    method: 'GET',
+    handler: 'class.listSubjectClasses',
+    authenticated: true,
+  },
+  {
     path: '/classes/have',
     method: 'GET',
     handler: 'class.haveClasses',
