@@ -38,14 +38,26 @@
     "title": "Leemons installation",
     "common": {
       "labels": {
-        "selectLanguage": "Select language"
+        "selectLanguage": "Select language",
+        "saveAndNextButton": "Save and continue",
+        "nextButton": "Continue"
       }
     },
+    "welcome": {
+      "label": "Welcome",
+      "title": "Platform setup",
+      "description": "This brief guide explain the main points of each mandatory step in order to setup the platform for a super-admin user like you."
+    },
     "languages": {
+      "label": "Languages",
       "title": "Languages",
       "description": "Which languages will be used in your center(s)?",
       "intro": "Please choose the languages you wish to display on the platform. Currently the user interface supports English and Spanish.",
-      "collaborate": "If you want to help us translate the UI into more languages, please follow our guidelines on"
+      "collaborate": "If you want to help us translate the UI into more languages, please follow our guidelines on",
+      "defaultLang": {
+        "title": "Default language",
+        "description": "Select the default language that will be used by the platform."
+      }
     }
   }
 }

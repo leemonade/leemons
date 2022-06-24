@@ -6,7 +6,7 @@ import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
-import { Summary } from './components/Summary';
+import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
 // Pagina a la que solo tendra acceso el super admin
@@ -20,11 +20,7 @@ function Setup({ session }) {
     loading: false,
     currentStep: 0,
     headerHeight: null,
-    steps: [
-      { label: 'Welcome', status: 'OK' },
-      { label: 'Languages', status: 'OK' },
-      { label: 'Step 2', status: 'OK' },
-    ],
+    steps: 3,
   });
 
   // ····················································
@@ -36,7 +32,7 @@ function Setup({ session }) {
   };
 
   const handleOnNext = () => {
-    if (store.currentStep < store.steps.length - 1) {
+    if (store.currentStep < store.steps - 1) {
       store.currentStep += 1;
     } else {
       //
@@ -69,12 +65,24 @@ function Setup({ session }) {
           <VerticalStepperContainer
             currentStep={store.currentStep}
             stickyAt={store.headerHeight}
-            data={store.steps}
+            data={[
+              { label: t('welcome.label'), status: 'OK' },
+              { label: t('languages.label'), status: 'OK' },
+              { label: 'Step 2', status: 'OK' },
+            ]}
           >
             {
               [
-                <Summary key="s1" onNext={handleOnNext} />,
-                <Locales key="s2" onNext={handleOnNext} />,
+                <Start
+                  key="s1"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.nextButton')}
+                />,
+                <Locales
+                  key="s2"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
               ][store.currentStep]
             }
           </VerticalStepperContainer>
