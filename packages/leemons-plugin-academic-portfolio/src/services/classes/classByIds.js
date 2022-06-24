@@ -10,7 +10,10 @@ const { getByClass: getGroupByClass } = require('./group/getByClass');
 const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
 const { subjectByIds } = require('../subjects');
 
-async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, transacting } = {}) {
+async function classByIds(
+  ids,
+  { withProgram, withTeachers, userSession, noSearchChilds, noSearchParents, transacting } = {}
+) {
   const timetableService = leemons.getPlugin('timetable').services.timetable;
   const [
     classes,
@@ -33,6 +36,22 @@ async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, t
     table.class.find({ class_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
     timetableService.listByClassIds(ids, { transacting }),
   ]);
+
+  let programByIds = {};
+  if (withProgram) {
+    const programIds = _.uniq(_.map(classes, 'program'));
+    const programs = await table.programs.find({ id_$in: programIds }, { transacting });
+    programByIds = _.keyBy(programs, 'id');
+  }
+
+  let teacherByIds = {};
+  if (withTeachers) {
+    const teacherIds = _.uniq(_.map(teachers, 'teacher'));
+    const _teachers = await leemons
+      .getPlugin('users')
+      .services.users.getUserAgentsInfo(teacherIds, { transacting });
+    teacherByIds = _.keyBy(_teachers, 'id');
+  }
 
   const assetService = leemons.getPlugin('leebrary').services.assets;
   const images = await assetService.getByIds(_.map(classes, 'image'), {
@@ -128,6 +147,7 @@ async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, t
     return {
       id,
       ...rest,
+      program: programByIds[rest.program] ? programByIds[rest.program] : rest.program,
       subject: subjectsById[subject],
       subjectType: subjectTypesById[subjectType],
       classes: childClassesByClass[id],
@@ -146,7 +166,10 @@ async function classByIds(ids, { userSession, noSearchChilds, noSearchParents, t
       parentStudents: _.uniq(parentStudents),
       schedule: timetablesByClass[id] ? timetablesByClass[id] : [],
       teachers: teachersByClass[id]
-        ? _.map(teachersByClass[id], ({ teacher, type }) => ({ teacher, type }))
+        ? _.map(teachersByClass[id], ({ teacher, type }) => ({
+            teacher: teacherByIds[teacher] ? teacherByIds[teacher] : teacher,
+            type,
+          }))
         : [],
     };
   });

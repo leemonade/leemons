@@ -38,6 +38,10 @@ module.exports = {
     classes: 'Classes',
     weekSchedule: 'Weekly schedule',
     course: 'Course',
+    attendanceControl: 'Go to the subject dashboard',
+    mainTeacher: '(main teacher)',
+    everyWeekInWorkdays: 'Every week on working days',
+    group: 'Group',
   },
   event_modal: {
     name: 'Name',

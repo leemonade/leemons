@@ -33,6 +33,7 @@ export default function getClassScheduleAsEvents(_classe) {
             bgColor: classe.color,
             borderColor: classe.color,
             icon,
+            classe,
             calendar: {
               bgColor: classe.color,
               borderColor: classe.color,

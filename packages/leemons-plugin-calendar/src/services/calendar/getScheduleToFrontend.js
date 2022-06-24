@@ -10,7 +10,7 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
         .services.classes.listSessionClasses(
           userSession,
           { program: userSession.sessionConfig.program },
-          { transacting }
+          { withProgram: true, withTeachers: true, transacting }
         ),
       leemons
         .getPlugin('academic-calendar')

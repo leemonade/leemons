@@ -12,7 +12,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { BigCalendar } from '@bubbles-ui/calendars';
-import { CalendarSubNavFilters } from '@bubbles-ui/leemons';
+import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
@@ -26,11 +26,13 @@ import { useLocale, useStore } from '@common';
 import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
+import { useHistory } from 'react-router-dom';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Calendar({ session }) {
   const locale = useLocale();
+  const history = useHistory();
   const [store, render] = useStore({ loading: true });
 
   const [transformEv, evLoading] = useTransformEvent();
@@ -275,6 +277,31 @@ function Calendar({ session }) {
     render();
   }
 
+  function onScheduleClick(e) {
+    const event = e.originalEvent;
+    const { classe } = event;
+    const mainTeacher = _.find(classe.teachers, { type: 'main-teacher' }).teacher;
+    store.activeSchedule = {
+      id: classe.id,
+      title: `${classe.subject.name} - ${classe.groups?.abbreviation || ''}`,
+      dateRange: [e.start, e.end],
+      period: t('everyWeekInWorkdays'),
+      classGroup: `${classe.program.name} - ${t('group')} ${classe.groups.abbreviation}`,
+      subject: {
+        name: classe.subject.name,
+        icon: classe.subject.icon?.cover ? getAssetUrl(classe.subject.icon.id) : null,
+      },
+      teacher: {
+        image: mainTeacher.user.avatar,
+        name: mainTeacher.user.name,
+        surnames: mainTeacher.user.surnames + (mainTeacher.user.secondSurname || ''),
+      },
+      classroom: classe.virtualUrl,
+      location: classe.address,
+    };
+    render();
+  }
+
   const fullCalendarConfigs = useMemo(() => {
     const config = {};
     if (!store.loading) {
@@ -394,6 +421,23 @@ function Calendar({ session }) {
           />
         ) : (
           <>
+            <EventDetailPanel
+              labels={{
+                attendanceControl: t('attendanceControl'),
+                mainTeacher: t('mainTeacher'),
+              }}
+              locale={locale}
+              event={store.activeSchedule}
+              opened={!!store.activeSchedule}
+              onClose={() => {
+                store.activeSchedule = null;
+                render();
+              }}
+              onControl={() => {
+                history.push(`/private/dashboard/class/${store.activeSchedule.id}`);
+              }}
+            />
+
             <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
               <Stack fullWidth justifyContent="space-between">
                 <Box>
@@ -436,6 +480,7 @@ function Calendar({ session }) {
               forceBgColorToEvents={true}
               locale={locale}
               events={store.schedule.events}
+              eventClick={onScheduleClick}
               messages={{
                 month: t('month'),
                 week: t('week'),

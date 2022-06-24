@@ -2,7 +2,11 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 
-async function listSessionClasses(userSession, { program, type } = {}, { transacting } = {}) {
+async function listSessionClasses(
+  userSession,
+  { program, type } = {},
+  { withProgram, withTeachers, transacting } = {}
+) {
   let typeQuery = {};
   if (Array.isArray(type)) {
     typeQuery = {
@@ -37,7 +41,7 @@ async function listSessionClasses(userSession, { program, type } = {}, { transac
     classIds = _.map(programClasses, 'id');
   }
 
-  const classes = await classByIds(classIds, { transacting });
+  const classes = await classByIds(classIds, { withProgram, withTeachers, transacting });
 
   if (program) {
     const subjectIds = _.uniq(_.map(classes, (classe) => classe.subject.id));

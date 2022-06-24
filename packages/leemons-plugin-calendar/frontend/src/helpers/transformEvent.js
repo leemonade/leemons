@@ -34,6 +34,5 @@ export default function transformEvent(_event, calendars, { t, session }) {
   event.title = event.title.replace('{-_start_-}', t('start')).replace('{-_end_-}', t('end'));
   // }
 
-  console.log(event);
   return event;
 }
