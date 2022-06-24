@@ -48,8 +48,7 @@ module.exports = {
   },
   list_page: {
     title: 'Lista de familias',
-    description:
-      'Familias facilita la gestión de la organización de grupos de padres y alumnos.',
+    description: 'Familias facilita la gestión de la organización de grupos de padres y alumnos.',
     families: '{n} Familias',
     search: 'Buscar familia',
     families_found: 'Hemos encontrado {n} familias con el nombre {name}',

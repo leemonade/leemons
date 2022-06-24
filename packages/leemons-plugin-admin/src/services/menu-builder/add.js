@@ -1,26 +1,37 @@
 const getMenuBuilder = require('./getMenuBuilder');
 
-async function addMenuItem({ menuItem, config }, { item, permissions }) {
-  const checkMenuItem = await menuItem.exist(
-    config.constants.mainMenuKey,
-    leemons.plugin.prefixPN(item.key)
-  );
+async function addMenuItem({ menuItem: menuItemService, config }, { item, permissions }) {
+  const menuKey = config.constants.mainMenuKey;
+  const key = leemons.plugin.prefixPN(item.key);
 
-  if (!checkMenuItem) {
-    return menuItem.add(
+  const existMenuItem = await menuItemService.exist(menuKey, key);
+
+  if (!existMenuItem) {
+    // console.log('Not existMenuItem: ', existMenuItem);
+    // console.log('menuKey:', menuKey);
+    // console.log('key:', key);
+
+    return menuItemService.add(
       {
         ...item,
-        menuKey: config.constants.mainMenuKey,
-        key: leemons.plugin.prefixPN(item.key),
+        menuKey,
+        key,
         parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined,
       },
       permissions
     );
   }
 
-  return menuItem.update(
-    config.constants.mainMenuKey,
-    leemons.plugin.prefixPN(item.key),
+  // const currentItem = await menuItemService.getByMenuAndKey(menuKey, key);
+  // console.log('currentItem:');
+  // console.dir(currentItem, { depth: null });
+
+  // console.log('newItem:');
+  // console.dir(item, { depth: null });
+
+  return menuItemService.update(
+    menuKey,
+    key,
     { ...item, parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined },
     permissions
   );

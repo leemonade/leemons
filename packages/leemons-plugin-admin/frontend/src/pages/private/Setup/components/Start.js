@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Button, ContextContainer, Paragraph } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@admin/helpers/prefixPN';
 
-const Summary = ({ onNextLabel, onNext = () => {} }) => {
+const Start = ({ onNextLabel, onNext = () => {} }) => {
+  const [t] = useTranslateLoader(prefixPN('setup'));
+
   // ····················································
   // HANDLERS
   const handleOnNext = () => {
@@ -11,12 +15,9 @@ const Summary = ({ onNextLabel, onNext = () => {} }) => {
 
   return (
     <Box>
-      <ContextContainer title="Super-admin setup" divided>
+      <ContextContainer title={t('welcome.title')} divided>
         <Box>
-          <Paragraph>
-            This brief guide explain the main points of each mandatory step in order to setup the
-            platform for a super-admin user like you.
-          </Paragraph>
+          <Paragraph>{t('welcome.description')}</Paragraph>
         </Box>
         <Stack justifyContent="end">
           <Button onClick={handleOnNext}>{onNextLabel}</Button>
@@ -26,13 +27,13 @@ const Summary = ({ onNextLabel, onNext = () => {} }) => {
   );
 };
 
-Summary.defaultProps = {
+Start.defaultProps = {
   onNextLabel: 'Continue',
 };
-Summary.propTypes = {
+Start.propTypes = {
   onNext: PropTypes.func,
   onNextLabel: PropTypes.string,
 };
 
-export { Summary };
-export default Summary;
+export { Start };
+export default Start;

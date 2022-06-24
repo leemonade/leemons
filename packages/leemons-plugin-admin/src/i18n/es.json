@@ -39,9 +39,28 @@
   },
   "setup": {
     "title": "Instalación de Leemons",
+    "common": {
+      "labels": {
+        "selectLanguage": "Seleccionar idioma",
+        "saveAndNextButton": "Guardar y continuar",
+        "nextButton": "Continuar"
+      }
+    },
+    "welcome": {
+      "label": "Inicio",
+      "title": "Configuración de la plataforma",
+      "description": "Esta breve guía explica los puntos principales de cada paso obligatorio para configurar la plataforma para un usuario super-admin como tú."
+    },
     "languages": {
+      "label": "Idiomas",
       "title": "Idiomas",
-      "description": "¿Qué idiomas se usarán en tu centro(s)?"
+      "description": "¿Qué idiomas se usarán en tu centro(s)?",
+      "intro": "Por favor, selecciona los idiomas que se usarán en tu centro(s). Actualmente la interfaz de usuario soporta inglés y español.",
+      "collaborate": "Si quieres ayudarnos a traducir la interfaz de usuario a más idiomas, por favor sigue nuestra guía de colaboración en ",
+      "defaultLang": {
+        "title": "Idioma predeterminado",
+        "description": "Selecciona el idioma predeterminado que se usará en la interfaz de usuario y en el sistema."
+      }
     }
   }
 }

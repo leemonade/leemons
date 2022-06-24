@@ -27,12 +27,14 @@ const Signup = () => {
   const history = useHistory();
 
   const t = React.useMemo(() => {
+    const empty = { welcome: {}, signup: {} };
+
     if (!translations?.items) {
-      return { welcome: {}, signup: {} };
+      return empty;
     }
 
     const items = unflatten(translations?.items);
-    return items.plugins.admin;
+    return items?.plugins?.admin || empty;
   }, [translations]);
 
   // ·····················································

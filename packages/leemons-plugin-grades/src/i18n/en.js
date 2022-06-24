@@ -3,7 +3,8 @@ module.exports = {
     page_title: 'Academic Rules',
     page_description:
       '"Academic Rules" allows you to create custom rules for your programs and courses: maximum or minimum core/elective credits, required subject areas, elective courses... thanks to these rules you will be able to create grade reports and know which students will be promoted.',
-    hide_info_label: `Ok, I've got it. When the configuration is complete, don't show this info anymore`,
+    hide_info_label:
+      "Ok, I've got it. When the configuration is complete, don't show this info anymore",
     step_evaluations: {
       title: 'Evaluation Systems',
       description:

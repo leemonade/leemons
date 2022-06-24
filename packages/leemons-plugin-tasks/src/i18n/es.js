@@ -1,6 +1,5 @@
 module.exports = {
   tableInput: {
-    // EVERYTHING NEW
     add: 'Añadir',
     remove: 'Eliminar',
     edit: 'Editar',
@@ -8,7 +7,6 @@ module.exports = {
     cancel: 'Cancelar',
   },
   methodology: {
-    // EVERYTHING NEW
     directInstruction: 'Instrucción directa',
     flippedClassroom: 'Aula invertida',
     projectBasedLearning: 'Aprendizaje basado en proyectos',
@@ -25,7 +23,7 @@ module.exports = {
     page_title: 'Tareas',
     page_description:
       'El módulo de tareas permite crear nuevas actividades, asignarlas a grupos de estudiantes o individuos, controlar su estado en todo momento y evaluarlas una vez completadas.',
-    hide_info_label: `¡Entendido!. No mostrar más, una vez finalizada la configuración.`,
+    hide_info_label: '¡Entendido!. No mostrar más, una vez finalizada la configuración.',
     step_profiles: {
       title: 'Conectar perfiles',
       description:
@@ -46,7 +44,8 @@ module.exports = {
     },
     step_history: {
       title: 'Histórico',
-      description: `Listado de tareas finalizadas y cerradas con acceso a sus evaluaciones y los comentarios de los estudiantes.`,
+      description:
+        'Listado de tareas finalizadas y cerradas con acceso a sus evaluaciones y los comentarios de los estudiantes.',
       btn: 'Ver histórico de tareas',
     },
   },
@@ -63,9 +62,9 @@ module.exports = {
       create_done: 'Tarea creada con éxito',
       update_done: 'Tarea actualizada con éxito',
       publish_done: 'Tarea publicada con éxito',
-      no_id_error: 'No se ha provisto el id de la tarea', // NEW
-      save: 'Guardar borrador', // NEW
-      publish: 'Publicar', // NEW
+      no_id_error: 'No se ha provisto el id de la tarea',
+      save: 'Guardar borrador',
+      publish: 'Publicar',
     },
     setup: {
       basicData: {
@@ -82,8 +81,12 @@ module.exports = {
           description: '¿De qué trata esta tarea?',
         },
         errorMessages: {
-          name: { required: 'Campo necesario' },
-          tagline: { required: 'Campo necesario' },
+          name: {
+            required: 'Campo necesario',
+          },
+          tagline: {
+            required: 'Campo necesario',
+          },
         },
       },
       configData: {
@@ -94,7 +97,7 @@ module.exports = {
           program: 'Programa',
           course: 'Curso',
           subjects: 'Asignaturas',
-          showOtherSubjects: 'Añadir otras asignaturas en las que colaboro', // NEW
+          showOtherSubjects: 'Añadir otras asignaturas en las que colaboro',
           subject: 'Asignatura',
           recommendedDuration: 'Duración recomendada',
           level: 'Nivel',
@@ -119,33 +122,40 @@ module.exports = {
           level: 'Seleccionar...',
         },
         errorMessages: {
-          program: { required: 'Campo necesario' },
-          course: { required: 'Campo necesario' },
-          subject: { required: 'Campo necesario' },
-          level: { required: 'Campo necesario' },
+          program: {
+            required: 'Campo necesario',
+          },
+          course: {
+            required: 'Campo necesario',
+          },
+          subject: {
+            required: 'Campo necesario',
+          },
+          level: {
+            required: 'Campo necesario',
+          },
         },
       },
       contentData: {
         step_label: 'Contenido',
         labels: {
           title: 'Contenido',
-          subjects: 'Curriculum por asignatura', // NEW
+          subjects: 'Curriculum por asignatura',
           methodology: 'Metodología',
           statement: 'Enunciado de la tarea',
           development: 'Desarrollo de la tarea',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
-          attachmentsTitle: 'Recursos', // NEW
-          supportImage: 'Imagen de apoyo', // NEW
-          searchFromLibrary: 'Buscar en la librería', // NEW
-          searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia', // NEW
-          content: 'Contenidos', // NEW
-          assessmentCriteria: 'Criterios de evaluación', // NEW
-          objectives: 'Objetivos personalizados', // NEW
-          addFromCurriculum: 'Añadir del curriculum', // NEW
+          attachmentsTitle: 'Recursos',
+          supportImage: 'Imagen de apoyo',
+          searchFromLibrary: 'Buscar en la librería',
+          searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia',
+          content: 'Contenidos',
+          assessmentCriteria: 'Criterios de evaluación',
+          objectives: 'Objetivos personalizados',
+          addFromCurriculum: 'Añadir del curriculum',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
           submission: {
-            // EVERYTHING NEW
             gradable: 'Esta tarea es calificable',
             title: 'Entregables',
             checkDescription:
@@ -166,7 +176,9 @@ module.exports = {
           },
         },
         errorMessages: {
-          statement: { required: 'Campo necesario' },
+          statement: {
+            required: 'Campo necesario',
+          },
         },
       },
       instructionData: {
@@ -213,37 +225,35 @@ module.exports = {
       limitedExecutionToogle: 'Tiempo limitado',
       limitedExecution: 'Tiempo de ejecución',
       alwaysOpenToogle:
-        'Esta tarea siempre está disponible y puede realizarse en cualquier momento', // NEW
-      closeDateToogle: 'Fecha límite para la evaluación del profesor', // NEW
-      closeDate: 'Fecha límite', // NEW
+        'Esta tarea siempre está disponible y puede realizarse en cualquier momento',
+      closeDateToogle: 'Fecha límite para la evaluación del profesor',
+      closeDate: 'Fecha límite',
       messageToStudentsToogle: 'Añadir un mensaje para los estudiantes',
       messageToStudents: 'Mensaje para los estudiantes',
-      showCurriculumToogle: 'Mostrar el curriculum', // NEW
-      content: 'Contenido', // NEW
-      objectives: 'Objetivos', // NEW
-      assessmentCriteria: 'Criterios de evaluación', // NEW
-      submit: 'Asignar', // NEW
-      add: 'Añadir', // NEW
+      showCurriculumToogle: 'Mostrar el curriculum',
+      content: 'Contenido',
+      objectives: 'Objetivos',
+      assessmentCriteria: 'Criterios de evaluación',
+      submit: 'Asignar',
+      add: 'Añadir',
       assignTo: {
-        // EVERYTHING NEW
         class: 'Clase',
         customGroups: 'Grupos personalizados',
         session: 'Sesión',
       },
-      selectStudentsTitle: '¿Quién va a realizar la tarea?', // NEW
-      excludeStudents: 'Excluir estudiantes', // NEW
+      selectStudentsTitle: '¿Quién va a realizar la tarea?',
+      excludeStudents: 'Excluir estudiantes',
       subjects: {
-        // EVERYTHING NEW
         title: 'Asignaturas que se asignarán a la tarea',
         subtitle: 'NOTA: Mínimo una asignatura',
       },
       unableToAssignStudentsMessage:
-        'Los estudiantes que no estén inscrito en todas las asignaturas seleccionadas no se asignarán a la tarea.', // NEW
-      matchingStudents: 'Estudiantes que coinciden', // NEW
-      groupName: 'Nombre del grupo', // NEW
-      students: 'Estudiantes', // NEW
+        'Los estudiantes que no estén inscrito en todas las asignaturas seleccionadas no se asignarán a la tarea.',
+      matchingStudents: 'Estudiantes que coinciden',
+      groupName: 'Nombre del grupo',
+      students: 'Estudiantes',
       noStudentsToAssign:
-        'No hay estudiantes inscritos en todas las asignaturas seleccionadas, elige otra combinación', // NEW
+        'No hay estudiantes inscritos en todas las asignaturas seleccionadas, elige otra combinación',
     },
     placeholders: {
       date: 'dd/mm/aaaa',
@@ -254,10 +264,10 @@ module.exports = {
       messageToStudents:
         'Mensaje predeterminado para la tarea (es posible cambiarlo individualmente en cada asignación).',
       visualizationDate:
-        'NOTA: La nota estará disponible para visualización, pero no podrá comenzarse hasta la fecha de inicio.', // NEW
-      closeDateToogle: 'NOTA: Después de esta fecha, la tarea no podrá ser evaluada.', // NEW
+        'NOTA: La nota estará disponible para visualización, pero no podrá comenzarse hasta la fecha de inicio.',
+      closeDateToogle: 'NOTA: Después de esta fecha, la tarea no podrá ser evaluada.',
       limitedExecution:
-        'NOTA: Este es el tiempo desde la revisión del resumen de la tarea hasta la entrega de la misma.', // NEW
+        'NOTA: Este es el tiempo desde la revisión del resumen de la tarea hasta la entrega de la misma.',
     },
     assignTo: {
       student: 'Estudiante',
@@ -295,7 +305,6 @@ module.exports = {
   history_page: {
     page_title: 'Tareas finalizadas',
   },
-  // FROM HERE TO BOTTOM EVERYTHING NEW
   teacher_assignments: {
     table: {
       headers: {

@@ -8,6 +8,7 @@ const addItemsFromPlugin = require('./addItemsFromPlugin');
 const removeCustomForUser = require('./removeCustomForUser');
 const updateCustomForUser = require('./updateCustomForUser');
 const reOrderCustomUserItems = require('./reOrderCustomUserItems');
+const getByMenuAndKey = require('./getByMenuAndKey');
 const { addCustomForUserWithProfile } = require('./addCustomForUserWithProfile');
 
 module.exports = {
@@ -16,6 +17,7 @@ module.exports = {
   remove,
   update,
   removeAll,
+  getByMenuAndKey,
   addCustomForUser,
   addItemsFromPlugin,
   removeCustomForUser,

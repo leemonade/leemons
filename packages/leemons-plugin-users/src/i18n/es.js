@@ -10,7 +10,6 @@ module.exports = {
       system_data: 'Datos del sistema',
       common_fields: 'Campos comunes',
     },
-
     systemData: {
       save: 'Guardar',
       saveSuccess: 'Guardado con éxito',

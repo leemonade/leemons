@@ -224,6 +224,7 @@ module.exports = {
     toggle: 'Close',
     open: 'Open',
     duplicate: 'Duplicate',
+    dupliacte: 'Duplicar',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',
@@ -233,7 +234,6 @@ module.exports = {
     prev: 'Previous',
     next: 'Continue',
     development: 'Instructions',
-    // ----- Test
     test: 'TEST',
     instructionsForTest: 'Instructions for this test',
     questions: 'Questions',
@@ -334,6 +334,7 @@ module.exports = {
     clueNoImpact: 'No impact',
     categoriesLabel: 'Categories',
     noRequiredQuestions: 'The filtered questions are fewer than those requested',
+    level: 'Nivel',
   },
   testResult: {
     testResult: 'Statistics by type of question',

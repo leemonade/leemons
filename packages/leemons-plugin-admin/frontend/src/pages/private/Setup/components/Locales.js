@@ -9,6 +9,7 @@ import {
   Anchor,
   TableInput,
   Select,
+  Alert,
 } from '@bubbles-ui/components';
 import { isEmpty } from 'lodash';
 import LocalePicker from '@admin/components/LocalePicker';
@@ -50,8 +51,12 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
 
   const saveLanguages = async () => {
     setLoading(true);
+    const localesToSave = localesData
+      .filter((item) => locales.map((lang) => lang.code).includes(item.value))
+      .map((item) => ({ code: item.value, name: item.label }));
+
     try {
-      await setLanguagesRequest(locales, defaultLocale);
+      await setLanguagesRequest(localesToSave, defaultLocale);
 
       if (mounted.current) {
         onNext();
@@ -74,7 +79,7 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
 
   const handleOnChange = (data) => {
     setLocales(data);
-    if (data.length === 1) {
+    if (data?.length === 1) {
       setDefaultLocale(data[0].code);
     }
   };
@@ -94,16 +99,15 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
         divided
       >
         <ContextContainer>
-          <Box>
-            <Paragraph>{t('languages.intro')}</Paragraph>
-          </Box>
+          <Paragraph>{t('languages.intro')}</Paragraph>
+
           <Box style={{ maxWidth: 400 }}>
             <TableInput
               showHeaders={false}
               sortable={false}
               columns={[
                 {
-                  Header: 'Select language',
+                  Header: t('common.labels.selectLanguage'),
                   accessor: 'code',
                   input: {
                     node: <LocalePicker onLoadData={setLocalesData} />,
@@ -121,26 +125,27 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
                 remove: 'Remove',
               }}
               data={locales}
-              onBeforeRemove={() => locales.length > 1}
+              onBeforeRemove={() => locales?.length > 1}
               onBeforeAdd={(e) => !locales.find((item) => item.code === e.code)}
               onChange={handleOnChange}
             />
           </Box>
-          <Paragraph>
+          {!isEmpty(locales) && (
+            <Select
+              label={t('languages.defaultLang.title')}
+              description={t('languages.defaultLang.description')}
+              data={localesData.filter((item) => locales.find((l) => l.code === item.value))}
+              value={defaultLocale}
+              onChange={setDefaultLocale}
+              contentStyle={{ maxWidth: 262 }}
+            />
+          )}
+          <Alert type="info" closeable={false}>
             {t('languages.collaborate')}
             <Anchor href="https://github.io" target="_blank" external>
               Github
             </Anchor>
-          </Paragraph>
-          {!isEmpty(locales) && (
-            <Select
-              label="Default language"
-              description="Select the default language that will be used by the platform."
-              data={localesData.filter((item) => locales.find((l) => l.code === item.value))}
-              value={defaultLocale}
-              onChange={setDefaultLocale}
-            />
-          )}
+          </Alert>
         </ContextContainer>
         <Stack justifyContent="end">
           <Button onClick={handleOnNext} loading={loading}>

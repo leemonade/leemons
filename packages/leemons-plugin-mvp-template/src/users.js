@@ -4,7 +4,7 @@ const { keys, map, uniq, isEmpty } = require('lodash');
 const Pool = require('async-promise-pool');
 const importUsers = require('./bulk/users');
 
-const pool = new Pool({ concurrency: 5 });
+const pool = new Pool({ concurrency: 1 });
 
 async function _addUser(key, users) {
   const { services } = leemons.getPlugin('users');

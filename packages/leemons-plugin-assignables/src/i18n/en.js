@@ -17,7 +17,7 @@ module.exports = {
       limitedExecution: 'Limited execution time',
       alwaysOpenToogle: 'This activity is always available and can be performed at any time.',
       closeDateToogle: 'Deadline for teacher corrections',
-      closeDate: 'Close date',
+      closeDate: 'Closing date',
       messageToStudentsToogle: 'Add a message to the students',
       messageToStudents: 'Message to the students',
       showCurriculumToogle: 'Show curriculum',
@@ -40,10 +40,12 @@ module.exports = {
       unableToAssignStudentsMessage:
         'The students which are not enrolled in all the selected subjects will not be assigned',
       matchingStudents: 'matching students',
-      groupName: "Group's name",
+      groupName: 'Name of group',
       students: 'Students',
       noStudentsToAssign:
-        'There are no students enrrolled in the selected subjects, please select other combination',
+        'There are no students enrolled in the selected subjects, please select other combination',
+      showToStudents: 'Ocultar nombre del grupo a los estudiantes',
+      required: 'Campo requerido',
     },
     placeholders: {
       date: 'dd/mm/yyyy',
@@ -52,12 +54,12 @@ module.exports = {
     },
     descriptions: {
       messageToStudents:
-        'If you assign this activity to other groups in this step, this message will be the default message for all activities (although you can change it individually if you wish).',
+        'If this activity is assigned to other groups at this step, this message will be the default message for all activities (although it can be changed individually if desired).',
       visualizationDate:
         'NOTE: The activity will be available for review, but cannot be completed until the start date.',
       closeDateToogle: 'NOTE: After this date, no corrections can be made',
       limitedExecution:
-        'NOTE: This is the time interval after reviewing the activity summary until the submission of the deliverable.',
+        'NOTE: This is the time interval that begins after the activity statement is reviewed and ends at the submission of the activity.',
       isAllDay:
         'NOTE: Students will have until 23:59h to submit, but will see the deadline as a daily event in their calendar.',
     },
@@ -75,6 +77,27 @@ module.exports = {
       minutes: 'minutes',
       days: 'days',
     },
+    gradeVariations: {
+      title: 'Tipo de actividad',
+      calificable: {
+        label: 'Calificable',
+        description:
+          'La puntuación será tenida en cuenta para la nota final, se admiten comentarios',
+      },
+      punctuationEvaluable: {
+        label: 'Evaluable con puntuación',
+        description:
+          'Se pide una puntuación pero no serña tenida en cuenta para la nota final, se admiten comentarios',
+      },
+      evaluable: {
+        label: 'Evaluable sin puntuación',
+        description: 'Solo se devuelven comentarios',
+      },
+      notEvaluable: {
+        label: 'No evaluable',
+        description: 'El alumno no recibe ninguna retro-alimentación',
+      },
+    },
   },
   activity_deadline_header: {
     deadline: 'Deadline',
@@ -82,6 +105,7 @@ module.exports = {
     closeTask: 'Close activity',
     save: 'Save',
     cancel: 'Cancel',
+    archiveTask: 'Archivar actividad',
   },
   activity_dashboard: {
     closeAction: {
@@ -117,6 +141,18 @@ module.exports = {
         score: 'Score',
       },
     },
+    archiveAction: {
+      verbs: {
+        archiving: 'Archivando',
+        archived: 'Archivada',
+        unarchiving: 'Desarchivando',
+        unarchived: 'Desarchivada',
+      },
+      messages: {
+        success: 'Actividad {{verb}}',
+        error: 'Error {{verb}} actividad: {{error}}',
+      },
+    },
   },
   studentsList: {
     labels: {
@@ -148,10 +184,18 @@ module.exports = {
     ongoing: 'Ongoing',
     opened: 'Opened',
     notOpened: 'Not opened',
+    assigned: 'Programada',
+    started: 'Empezada',
+    closed: 'Cerrada',
+    evaluated: 'Evaluada',
+    submitted: 'Entregada',
+    notSubmitted: 'No entregada',
+    noLimit: 'Sin límite de tiempo',
   },
   teacher_actions: {
     sendReminder: 'Send reminder',
     evaluate: 'Evaluate',
+    review: 'Revisar',
   },
   levelsOfDifficulty: {
     beginner: 'Beginner',
@@ -180,6 +224,7 @@ module.exports = {
       deadline: 'Due date',
       status: 'Status',
       timeReference: 'Time reference',
+      submission: 'Entrega',
     },
   },
   multiSubject: 'Multi-subject',
@@ -217,5 +262,13 @@ module.exports = {
   pagination: {
     show: 'Show',
     goTo: 'Go to',
+  },
+  student_actions: {
+    continue: 'Continuar',
+    start: 'Empezar',
+    view: 'Ver',
+    notSubmitted: 'No entregado',
+    correction: 'Revisar',
+    review: 'Revisar',
   },
 };

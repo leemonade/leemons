@@ -6,9 +6,6 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@academic-calendar/*": [
-        "./packages/leemons-plugin-academic-calendar/frontend/src/*"
-      ],
       "@academic-portfolio/*": [
         "./packages/leemons-plugin-academic-portfolio/frontend/src/*"
       ],
@@ -41,9 +38,6 @@
       ],
       "@emails/*": [
         "./packages/leemons-plugin-emails/frontend/src/*"
-      ],
-      "@emails-amazon-ses/*": [
-        "./packages/leemons-provider-emails-amazon-ses/frontend/src/*"
       ],
       "@grades/*": [
         "./packages/leemons-plugin-grades/frontend/src/*"
