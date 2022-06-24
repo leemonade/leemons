@@ -10,7 +10,7 @@ export function useStore(defaultValue = {}) {
 
   function render() {
     if (ref.current.mounted) {
-      setR(new Date().getTime());
+      setR(new Date().getTime() + Math.floor(Math.random() * 1000000 + 1));
     }
   }
 

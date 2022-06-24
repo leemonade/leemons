@@ -8,7 +8,7 @@ import prefixPN from '@dashboard/helpers/prefixPN';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import { ZoneWidgets } from '@widgets';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { find, map, isNil } from 'lodash';
+import { find, isNil, map } from 'lodash';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 
 const rightZoneWidth = '320px';
@@ -88,7 +88,7 @@ export default function AcademicDashboard({ session }) {
         <Component program={store.selectedProgram} session={session} />
       </Box>
     ),
-    [store.selectedProgram, session]
+    [JSON.stringify(store.selectedProgram), session]
   );
 
   if (store.loading) return null;
@@ -129,7 +129,7 @@ export default function AcademicDashboard({ session }) {
           <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
           <Box className={styles.programSelectorContainer}>
             <HeaderDropdown
-              value={store.selectedProgram.id}
+              value={store.selectedProgram}
               data={store.programsSelect}
               onChange={selectProgram}
             />

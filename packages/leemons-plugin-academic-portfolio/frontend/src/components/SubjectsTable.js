@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, forwardRef } from 'react';
+import React, { forwardRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { ScheduleInput } from '@timetable/components';
 import {
@@ -253,7 +253,7 @@ function SubjectsTable({
     valueRender: (value) => <>{value?.name}</>,
   });
 
-  if (program.maxNumberOfCourses > 0) {
+  if (program.maxNumberOfCourses > 1) {
     columns.push({
       Header: messages.course,
       accessor: 'courses',

@@ -822,7 +822,7 @@ const addClassSchema = {
   properties: {
     program: stringSchema,
     course: {
-      oneOf: [stringSchema, arrayStringSchema],
+      oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
     },
     group: stringSchema,
     subject: stringSchema,
