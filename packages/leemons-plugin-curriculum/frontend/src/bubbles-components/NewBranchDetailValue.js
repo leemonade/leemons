@@ -86,6 +86,7 @@ function NewBranchDetailValue({
         fErrors = formActions.getErrors();
 
         toSend.datasetValues = formActions.getValues();
+        console.log(toSend.datasetValues);
       }
 
       if (!fErrors.length) {

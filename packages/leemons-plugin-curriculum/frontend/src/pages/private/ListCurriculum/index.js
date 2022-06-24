@@ -6,12 +6,17 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
+import {
+  getPermissionsWithActionsIfIHaveRequest,
+  getPlatformLocalesRequest,
+  listCentersRequest,
+} from '@users/request';
 import { Box, LoadingOverlay, PaginatedList, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
 import { AdminPageHeader, LibraryCard } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useStore } from '@common';
 import { deleteCurriculumRequest, listCurriculumRequest } from '../../../request';
 
 function getAsset(curriculum) {
@@ -29,6 +34,9 @@ function getAsset(curriculum) {
 function ListCurriculum() {
   const [t] = useTranslateLoader(prefixPN('listCurriculum'));
   const { t: tCommon } = useCommonTranslate('page_header');
+  const [store, render] = useStore({
+    canAdd: false,
+  });
   const [curriculums, setCurriculums] = useState([]);
   const [loading, setLoading] = useState(true);
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
@@ -47,11 +55,28 @@ function ListCurriculum() {
           data: { items: centers },
         },
         { locales },
+        { permissions },
       ] = await Promise.all([
         listCurriculumRequest({ page: 0, size: 999999, canListUnpublished: true }),
         listCentersRequest({ page: 0, size: 999999 }),
         getPlatformLocalesRequest(),
+        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
       ]);
+
+      if (
+        permissions[0] &&
+        (permissions[0].actionNames.includes('admin') ||
+          permissions[0].actionNames.includes('create'))
+      ) {
+        store.canAdd = true;
+      }
+      if (
+        permissions[0] &&
+        (permissions[0].actionNames.includes('admin') ||
+          permissions[0].actionNames.includes('delete'))
+      ) {
+        store.canDelete = true;
+      }
 
       const localesByCode = keyBy(locales, 'code');
       const centersById = keyBy(centers, 'id');
@@ -105,7 +130,9 @@ function ListCurriculum() {
               handleOnSelect(p.item.original);
             },
           },
-          {
+        ];
+        if (store.canDelete) {
+          menuItems.push({
             icon: <DeleteBinIcon />,
             children: t('delete'),
             onClick: (e) => {
@@ -122,8 +149,8 @@ function ListCurriculum() {
                 },
               })();
             },
-          },
-        ];
+          });
+        }
         return (
           <Box onClick={onClick} style={{ cursor: 'pointer' }}>
             <LibraryCard
@@ -140,7 +167,7 @@ function ListCurriculum() {
       spacing: 4,
       paperProps: { shadow: 'none', color: 'none', padding: 0 },
     }),
-    [t]
+    [t, store.canDelete]
   );
 
   const serverData = useMemo(
@@ -154,13 +181,11 @@ function ListCurriculum() {
     [curriculums]
   );
 
-  console.log(serverData);
-
   return (
     <Stack direction="column" fullWidth fullHeight>
       <AdminPageHeader
         values={headerValues}
-        buttons={{ new: tCommon('new') }}
+        buttons={store.canAdd ? { new: tCommon('new') } : {}}
         onNew={() => history.push(`/private/curriculum/new`)}
       />
 

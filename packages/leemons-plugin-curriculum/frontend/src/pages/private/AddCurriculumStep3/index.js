@@ -238,6 +238,10 @@ function AddCurriculumStep3() {
     render();
   }
 
+  function back() {
+    history.push(`/private/curriculum/${store.curriculum.id}/step/2`);
+  }
+
   async function publish() {
     try {
       if (store.curriculum.published) {
@@ -455,7 +459,10 @@ function AddCurriculumStep3() {
               </Grid>
             </ContextContainer>
             <Box sx={(theme) => ({ marginBottom: theme.spacing[10] })}>
-              <Stack justifyContent="end" fullWidth>
+              <Stack justifyContent="space-between" fullWidth>
+                <Button variant="outline" onClick={back} loading={store.publishing}>
+                  {t('back')}
+                </Button>
                 <Button onClick={publish} loading={store.publishing}>
                   {t('publish')}
                 </Button>

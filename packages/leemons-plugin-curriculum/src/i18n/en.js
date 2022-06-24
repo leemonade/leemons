@@ -152,6 +152,7 @@ module.exports = {
     description1:
       'Now you can add content to each block typology, remember that the contents of the block marked with a star can be linked to evaluable or gradable activities and travel to the final grading system.',
     publish: 'Publish curriculum',
+    back: 'Back',
     published: 'Curriculum published',
     starDescription: 'The blocks marked with a star correspond to evaluation criteria.',
     newBranchValue: {

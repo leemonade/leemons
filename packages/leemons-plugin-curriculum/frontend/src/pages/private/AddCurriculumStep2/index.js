@@ -20,7 +20,8 @@ import {
 import { useHistory, useParams } from 'react-router-dom';
 import { useStore } from '@common';
 import { detailProgramRequest } from '@academic-portfolio/request';
-import { saveDatasetFieldRequest } from '@dataset/request';
+import { removeDatasetFieldRequest, saveDatasetFieldRequest } from '@dataset/request';
+import { useLayout } from '@layout/context';
 import {
   addNodeLevelsRequest,
   detailCurriculumRequest,
@@ -45,7 +46,7 @@ function AddCurriculumStep2() {
     curriculum: {},
   });
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep2'));
-
+  const { openDeleteConfirmationModal } = useLayout();
   const tree = useTree();
   const history = useHistory();
   const { id } = useParams();
@@ -382,6 +383,27 @@ function AddCurriculumStep2() {
     render();
   }
 
+  function onRemoveBlock(e) {
+    openDeleteConfirmationModal({
+      onConfirm: async () => {
+        try {
+          store.removing = true;
+          render();
+          await removeDatasetFieldRequest(
+            `node-level-${store.activeNodeLevel.id}`,
+            'plugins.curriculum',
+            e.id
+          );
+          await load(true);
+          onSelect(store.activeNodeLevel);
+        } catch (e) {}
+
+        store.removing = false;
+        render();
+      },
+    })();
+  }
+
   let rightSection;
 
   if (store.activeRightSection === 'new-branch' || store.activeRightSection === 'edit-branch') {
@@ -428,6 +450,7 @@ function AddCurriculumStep2() {
           isLoading={store.saving}
           branch={store.activeNodeLevel}
           onSaveBlock={onSaveBlock}
+          onRemoveBlock={onRemoveBlock}
           onCloseBranch={onCloseBranch}
         />
       </Box>
@@ -436,6 +459,10 @@ function AddCurriculumStep2() {
 
   async function goStep3() {
     try {
+      if (store.curriculum.step === 3) {
+        await history.push(`/private/curriculum/${store.curriculum.id}/step/3`);
+        return null;
+      }
       store.generating = true;
       render();
       await generateNodesFromAcademicPortfolioRequest(store.curriculum.id);
@@ -464,6 +491,7 @@ function AddCurriculumStep2() {
       <Paper fullHeight color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer divided padded="vertical">
+            {store.removing ? <LoadingOverlay visible /> : null}
             <Grid grow>
               <Col span={5}>
                 <Paper fullWidth padding={5}>

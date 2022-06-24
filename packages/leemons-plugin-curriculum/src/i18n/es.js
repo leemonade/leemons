@@ -152,6 +152,7 @@ module.exports = {
     description1:
       'Ahora se pueden añadir contenidos a cada tipología de bloque, recuerda que los contenidos del bloque marcado con una estrella podrán vincularse con actividades evaluables o calificables y viajar al sistema de calificaciones finales.',
     publish: 'Publicar curriculum',
+    back: 'Volver',
     published: 'Curriculum publicado',
     starDescription:
       'Los bloques marcados con una estrella corresponden a criterios de evaluación.',
