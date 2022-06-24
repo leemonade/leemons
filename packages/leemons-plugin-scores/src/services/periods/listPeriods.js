@@ -2,11 +2,11 @@ const { map } = require('lodash');
 const { periods } = require('../tables');
 
 module.exports = async function listPeriods(
-  { query, sort, page, size },
+  { sort, page, size, ...query },
   { transacting, userSession }
 ) {
   const q = {
-    $where: [{ ...query }],
+    $where: [query],
     $sort: sort,
   };
 

@@ -1,11 +1,250 @@
 import React from 'react';
-import { map, slice, uniq } from 'lodash';
-import { Box, PaginatedList } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import { map, slice, isFunction } from 'lodash';
+import { useForm, Controller } from 'react-hook-form';
+import {
+  Box,
+  Button,
+  createStyles,
+  PaginatedList,
+  SearchInput,
+  Select,
+} from '@bubbles-ui/components';
 import { LocaleDate } from '@common';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { usePeriods } from '@scores/hooks';
 
-export default function PeriodList({ periods }) {
+const useStyle = createStyles((theme) => ({
+  paginatedList: {
+    width: '100%',
+    marginTop: theme.spacing[5],
+    marginRight: theme.spacing[13],
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[7],
+  },
+  filters: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[7],
+  },
+  filtersTop: {
+    width: 613,
+  },
+  filtersBot: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.spacing[7],
+  },
+}));
+
+function CenterAlignedSelect(props) {
+  const { theme } = useStyle();
+  return (
+    <Select
+      {...props}
+      orientation="horizontal"
+      style={{
+        display: 'flex',
+        flexDirecton: 'row',
+        alignItems: 'center',
+        gap: theme.spacing[4],
+      }}
+      headerStyle={{
+        width: 'auto',
+      }}
+    />
+  );
+}
+
+function PeriodFilters({ centers, programs, onChange }) {
+  /*
+    --- Form Handling ---
+  */
+  const { control, watch } = useForm({
+    defaultValues: {
+      search: '',
+      center: null,
+      program: null,
+      course: null,
+    },
+  });
+
+  React.useEffect(() => {
+    if (isFunction(onChange)) {
+      let timer;
+      const subscription = watch((v) => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          onChange(v);
+        }, 500);
+      });
+
+      return () => subscription.unsubscribe();
+    }
+  }, [onChange, watch]);
+  /*
+    --- Styles ---
+  */
+  const { classes } = useStyle();
+
+  /*
+      --- Render ---
+    */
+  return (
+    <Box className={classes.filters}>
+      <Box className={classes.filtersTop}>
+        <Controller
+          control={control}
+          name="search"
+          render={({ field }) => (
+            <SearchInput placeholder="Buscar por nombre de periodo" variant="filled" {...field} />
+          )}
+        />
+      </Box>
+      <Box className={classes.filtersBot}>
+        <Controller
+          name="center"
+          control={control}
+          render={({ field }) => {
+            const data = React.useMemo(
+              () =>
+                centers?.map((center) => ({
+                  label: center.name,
+                  value: center.id,
+                })),
+              [centers]
+            );
+
+            React.useEffect(() => {
+              if (field.value && !data.some((d) => d.value === field.value)) {
+                field.onChange(null);
+              }
+            }, [data]);
+
+            return (
+              <CenterAlignedSelect
+                label="Centro"
+                disabled={!centers?.length}
+                data={data}
+                {...field}
+              />
+            );
+          }}
+        />
+        <Controller
+          name="program"
+          control={control}
+          render={({ field }) => {
+            const center = watch('center');
+
+            const programsMatchingCenter = React.useMemo(
+              () =>
+                !center ? programs : programs.filter((program) => program.centers.includes(center)),
+              [center, programs]
+            );
+
+            const data = React.useMemo(
+              () =>
+                programsMatchingCenter.map((program) => ({
+                  label: program.name,
+                  value: program.id,
+                })),
+              [programsMatchingCenter]
+            );
+
+            React.useEffect(() => {
+              if (field.value && !data.some((d) => d.value === field.value)) {
+                field.onChange(null);
+              }
+            }, [data]);
+
+            return (
+              <CenterAlignedSelect
+                label="Programa"
+                disabled={!data?.length}
+                data={data}
+                {...field}
+              />
+            );
+          }}
+        />
+
+        <Controller
+          name="course"
+          control={control}
+          render={({ field }) => {
+            const program = watch('program');
+
+            const { data: programObj } = useProgramDetail(program, { enabled: !!program });
+            // const programObj =
+            //   !program || !programs?.length ? null : programs.find((p) => p.id === program);
+
+            const courses = React.useMemo(
+              () =>
+                programObj?.courses?.map((course) => ({
+                  label: course.name || course.index,
+                  value: course.id,
+                })),
+              [programObj]
+            );
+
+            React.useEffect(() => {
+              if (field.value && !courses?.some((course) => course.value === field.value)) {
+                field.onChange(null);
+              }
+            }, [courses]);
+
+            return (
+              <CenterAlignedSelect label="Curso" disabled={!programObj} data={courses} {...field} />
+            );
+          }}
+        />
+      </Box>
+    </Box>
+  );
+}
+
+function PeriodActions({ period, onRemove }) {
+  return (
+    <Button
+      iconOnly
+      variant="link"
+      color="primary"
+      rightIcon={<DeleteBinIcon />}
+      onClick={() => {
+        if (isFunction(onRemove)) {
+          onRemove(period);
+        }
+      }}
+    />
+  );
+}
+
+PeriodActions.propTypes = {
+  period: PropTypes.object.isRequired,
+  onRemove: PropTypes.func,
+};
+
+export default function PeriodList({ onRemove, className }) {
+  /*
+    --- Pagination ---
+  */
+  const [page, setPage] = React.useState(1);
+  const [size, setSize] = React.useState(10);
+
+  /*
+    --- Filters ---
+  */
+  const [filters, setFilters] = React.useState({});
+
+  /*
+    --- Table ---
+  */
   const columns = React.useMemo(
     () => [
       {
@@ -32,27 +271,46 @@ export default function PeriodList({ periods }) {
         Header: 'End Date',
         accessor: 'endDate',
       },
+      {
+        Header: '',
+        accessor: 'actions',
+      },
     ],
     []
   );
 
-  const page = 1;
-  const size = 10;
+  /*
+    --- Data fetching ---
+  */
 
-  const periodsInPage = React.useMemo(
-    () => slice(periods, (page - 1) * size, page * size),
-    [periods, page, size]
-  );
-  const programsIds = React.useMemo(() => uniq(map(periodsInPage, 'program')), [periods]);
+  const { data: centers } = useUserCenters();
+  const programsByCenter = useCenterPrograms(map(centers, 'id'));
+  const programs = React.useMemo(() => {
+    const data = map(programsByCenter, 'data').filter(Boolean);
 
-  const centers = useUserCenters();
-  const programs = useProgramDetail(programsIds);
+    return data.flat();
+  }, [programsByCenter]);
 
+  const { data: periods } = usePeriods({
+    page: page - 1,
+    size,
+    sort: 'center:ASC,program:ASC,course:ASC,startDate:ASC,endDate:ASC,name:ASC,id:ASC',
+    query: {
+      center: filters.center || undefined,
+      program: filters.program || undefined,
+      course: filters.course || undefined,
+      name_$contains: filters.search || undefined,
+    },
+  });
+
+  /*
+    --- Table Formatting ---
+  */
   const items = React.useMemo(
     () =>
-      slice(periods, (page - 1) * size, page * size).map((period) => {
-        const center = centers.data?.find((c) => c.id === period.center);
-        const program = programs.find((p) => p.data?.id === period.program)?.data;
+      slice(periods?.items || [], (page - 1) * size, page * size).map((period) => {
+        const center = centers?.find((c) => c.id === period.center);
+        const program = programs.find((p) => p.id === period.program);
         const course = program?.courses?.find((c) => c.id === period.course);
 
         return {
@@ -62,21 +320,38 @@ export default function PeriodList({ periods }) {
           course: course?.name || course?.index || '-',
           startDate: <LocaleDate date={period.startDate} />,
           endDate: <LocaleDate date={period.endDate} />,
+          actions: <PeriodActions period={period} onRemove={onRemove} />,
         };
       }),
-    [periods, page, size, centers.data, ...map(programs, 'data')]
+    [periods, page, size, centers, programs]
   );
 
+  /*
+    --- Styles ---
+  */
+  const { classes, cx } = useStyle();
+
+  /*
+    --- Render ---
+  */
   return (
-    <Box>
+    <Box className={cx(classes.paginatedList, className)}>
+      <PeriodFilters centers={centers} programs={programs} onChange={setFilters} />
       <PaginatedList
         items={items}
         columns={columns}
         page={page}
         size={size}
-        totalCount={periods.length}
-        totalPages={periods.length / size}
+        totalCount={periods?.totalCount || 0}
+        totalPages={periods?.TotalPages || 0}
+        onPageChange={setPage}
+        onSizeChange={setSize}
       />
     </Box>
   );
 }
+
+PeriodList.propTypes = {
+  periods: PropTypes.array.isRequired,
+  onRemove: PropTypes.func,
+};

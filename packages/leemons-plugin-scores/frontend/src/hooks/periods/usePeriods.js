@@ -18,7 +18,15 @@ export default function usePeriods({ page, size, query: q, sort }) {
     async () => {
       const response = await listPeriodsRequest({ page, size, query: q, sort });
 
-      return response.data;
+      const { data } = response;
+
+      data.items = data.items.map((period) => ({
+        ...period,
+        startDate: new Date(period.startDate),
+        endDate: new Date(period.endDate),
+      }));
+
+      return data;
     }
   );
   return query;

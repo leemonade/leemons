@@ -23,4 +23,15 @@ module.exports = [
       },
     },
   },
+  {
+    method: 'DELETE',
+    path: '/periods/:id',
+    handler: 'periods.remove',
+    authenticated: true,
+    allowedPermissions: {
+      [permissionNames.periods]: {
+        actions: ['delete', 'admin'],
+      },
+    },
+  },
 ];

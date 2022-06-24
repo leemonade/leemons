@@ -53,26 +53,61 @@ export default function PeriodSelector({
   const { classes } = useStyle({ isOpened: opened });
 
   const [center, setCenter] = React.useState(null);
+  const [allowCenterChange, setAllowCenterChange] = React.useState(true);
   const [program, setProgram] = React.useState(null);
   const [course, setCourse] = React.useState(null);
   const [subject, setSubject] = React.useState(null);
 
   const labels = {
-    startDate: 'Start date',
-    endDate: 'End date',
-    submit: 'Search',
-    newPeriod: 'New period',
-    addPeriod: 'Add new period',
-    shareWithTeachers: 'Share with teachers',
-    saveButton: 'Save time period',
-    periodName: 'Nombre',
+    form: {
+      startDate: 'Fecha inicio',
+      endDate: 'Fecha fin',
+      submit: 'Buscar',
+      newPeriod: 'Nuevo periodo',
+      addPeriod: 'Añadir periodo',
+      shareWithTeachers: 'Compartir con profesores',
+      saveButton: 'Guardar periodo',
+      periodName: 'Nombre del periodo',
+      center: {
+        label: 'Centro',
+        placeholder: 'Selecciona un centro',
+        error: 'El centro es requerido',
+      },
+      program: {
+        label: 'Programa',
+        placeholder: 'Selecciona un programa',
+        error: 'El programa es requerido',
+      },
+      course: {
+        label: 'Curso',
+        placeholder: 'Selecciona un curso',
+        error: 'El curso es requerido',
+      },
+      subject: {
+        label: 'Asignatura',
+        placeholder: 'Selecciona una asignatura',
+        error: 'La asignatura es requerida',
+      },
+      group: {
+        label: 'Grupo',
+        placeholder: 'Selecciona un grupo',
+        error: 'El grupo es requerido',
+      },
+    },
+    drawer: {
+      title: 'Scores/Puntuaciones',
+      description:
+        'Como administrador, puedes crear periódos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periódos de evaluación por programa y curso.',
+      new: 'Nuevo periodo',
+    },
   };
 
   const errorMessages = {
-    startDate: 'Required start date',
-    endDate: 'Required end date',
-    validateStartDate: 'Start date is greater than end date',
-    validateEndDate: 'End date is smaller than start date',
+    startDate: 'La fecha de inicio es requerida',
+    endDate: 'La fecha de fin es requerida',
+    validateStartDate: 'La fecha de inicio debe ser anterior a la fecha de fin',
+    validateEndDate: 'La fecha de fin debe ser posterior a la fecha de inicio',
+    periodName: 'El nombre del periodo es requerido',
   };
 
   const { data: centers, isLoading: isLoadingCenters } = useUserCenters({
@@ -91,39 +126,42 @@ export default function PeriodSelector({
     if (fields.center === 'all') {
       fieldsToReturn.push({
         name: 'center',
-        label: 'Center',
-        placeholder: 'Select center',
+        label: labels.form.center.label,
+        placeholder: labels.form.center.placeholder,
         disabled: !centers?.length,
         data: (centers || []).map(({ id, name }) => ({ label: name, value: id })),
-        required: requiredFields.includes('center'),
+        required: requiredFields.includes('center') && labels.form.center.error,
       });
+      setAllowCenterChange(true);
     } else {
       const centersWithToken = getCentersWithToken();
       if (centersWithToken.length > 1) {
         fieldsToReturn.push({
           name: 'center',
-          label: 'Center',
-          placeholder: 'Select center',
+          label: labels.form.center.label,
+          placeholder: labels.form.center.placeholder,
           disabled: !centersWithToken.length,
           data: centersWithToken.map(({ id, name }) => ({ label: name, value: id })),
-          required: requiredFields.includes('center'),
+          required: requiredFields.includes('center') && labels.form.center.error,
         });
+        setAllowCenterChange(true);
       } else if (centersWithToken[0].id !== center) {
         setCenter(centersWithToken[0].id);
+        setAllowCenterChange(false);
       }
     }
 
     if (fields.program) {
       fieldsToReturn.push({
         name: 'program',
-        label: 'Program',
-        placeholder: 'Select program',
+        label: labels.form.program.label,
+        placeholder: labels.form.program.placeholder,
         disabled: !center || !programs?.length,
         data: (programs || []).map(({ name, id }) => ({
           label: name,
           value: id,
         })),
-        required: requiredFields.includes('program'),
+        required: requiredFields.includes('program') && labels.form.program.error,
       });
     }
 
@@ -132,14 +170,14 @@ export default function PeriodSelector({
     if (fields.course) {
       fieldsToReturn.push({
         name: 'course',
-        label: 'Course',
-        placeholder: 'Select course',
+        label: labels.form.course.label,
+        placeholder: labels.form.course.placeholder,
         disabled: !program || !programData?.courses?.length,
         data: (programData?.courses || []).map(({ name, index, id }) => ({
           label: name || index,
           value: id,
         })),
-        required: couseIsRequired,
+        required: couseIsRequired && labels.form.course.error,
       });
     }
 
@@ -153,25 +191,25 @@ export default function PeriodSelector({
     if (fields.subject) {
       fieldsToReturn.push({
         name: 'subject',
-        label: 'Subject',
-        placeholder: 'Select subject',
+        label: labels.form.subject.label,
+        placeholder: labels.form.subject.placeholder,
         disabled: (couseIsRequired && !course) || !subjects?.length,
         data: subjects,
-        required: requiredFields.includes('subject'),
+        required: requiredFields.includes('subject') && labels.form.subject.error,
       });
     }
 
     if (fields.group) {
       fieldsToReturn.push({
         name: 'group',
-        label: 'Group',
-        placeholder: 'Select group',
+        label: labels.form.group.label,
+        placeholder: labels.form.group.placeholder,
         disabled: !subject || !apClasses?.length || !course || !subjects?.length,
         data: (apClasses || []).map(({ groups, id }) => ({
           label: groups.name,
           value: id,
         })),
-        required: requiredFields.includes('group'),
+        required: requiredFields.includes('group') && labels.form.group.error,
       });
     }
 
@@ -188,16 +226,14 @@ export default function PeriodSelector({
         <Box className={classes.drawerTitle}>
           <Box className={classes.titleTop}>
             <PluginScoresBasicIcon width={16} height={16} />
-            <Text size="md">Scores</Text>
+            <Text size="md">{labels.drawer.title}</Text>
           </Box>
-          <Text size="md" style={{ marginLeft: 24 }} strong>
+          {/* <Text size="md" style={{ marginLeft: 24 }} strong>
             Scores Basic (admin)
-          </Text>
+          </Text> */}
         </Box>
         <Text className={classes.drawerText} role="productive">
-          Scores allow you to rating grading and non-grading task and attendance control. Select the
-          program and class, then you can filter by time periods, you can save these periods so that
-          teachers can use them as evaluation stages.
+          {labels.drawer.description}
         </Text>
         <Text
           className={classes.formTitle}
@@ -207,10 +243,10 @@ export default function PeriodSelector({
           size="xs"
           transform="uppercase"
         >
-          Search period
+          {labels.drawer.new}
         </Text>
         <ScoresPeriodForm
-          labels={labels}
+          labels={labels.form}
           errorMessages={errorMessages}
           fields={fieldsToUse}
           allowCreate={allowCreate}
@@ -227,7 +263,7 @@ export default function PeriodSelector({
           })}
           onSave={onPeriodSave}
           onChange={(v) => {
-            if (v.center !== center) {
+            if (v.center !== center && allowCenterChange) {
               setCenter(v.center);
               setProgram(null);
               setCourse(null);
