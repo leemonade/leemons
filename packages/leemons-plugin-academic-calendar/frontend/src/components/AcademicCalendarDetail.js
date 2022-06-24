@@ -10,8 +10,12 @@ import {
   Grid,
   InputWrapper,
   LoadingOverlay,
+  MultiSelect,
   Stack,
   Switch,
+  TableInput,
+  TextInput,
+  TimeInput,
   Title,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -40,6 +44,57 @@ export default function AcademicCalendarDetail({ program: { id } }) {
   const coursesForDates = allCoursesHaveSameDates
     ? [store.program?.courses[0]]
     : store.program?.courses;
+
+  const columns = [];
+  columns.push({
+    Header: t('name'),
+    accessor: 'name',
+    input: {
+      node: <TextInput required />,
+      rules: { required: t('fieldRequired') },
+    },
+  });
+
+  if (store.program && !store.program.moreThanOneAcademicYear && store.program.courses.length > 1) {
+    const courseData = map(store.program.courses, (course) => ({
+      label: getCourseName(course),
+      value: course.id,
+    }));
+    columns.push({
+      Header: t('course'),
+      accessor: 'courses',
+      input: {
+        node: <MultiSelect data={courseData} />,
+        rules: { required: t('fieldRequired') },
+      },
+      valueRender: (value) => {
+        if (value.length === courseData.length) {
+          return t('allCourses');
+        }
+        return <MultiSelect readOnly data={courseData} value={value} />;
+      },
+    });
+  }
+
+  columns.push({
+    Header: t('from'),
+    accessor: 'startDate',
+    input: {
+      node: <TimeInput required />,
+      rules: { required: t('fieldRequired') },
+    },
+    valueRender: (value) => `${new Date(value).getHours()}:${new Date(value).getMinutes()}`,
+  });
+
+  columns.push({
+    Header: t('to'),
+    accessor: 'endDate',
+    input: {
+      node: <TimeInput required />,
+      rules: { required: t('fieldRequired') },
+    },
+    valueRender: (value) => `${new Date(value).getHours()}:${new Date(value).getMinutes()}`,
+  });
 
   function submit() {
     form.handleSubmit(async (data) => {
@@ -197,6 +252,30 @@ export default function AcademicCalendarDetail({ program: { id } }) {
               </Grid>
             ))}
           </Box>
+
+          <Title order={5}>{t('breaks')}</Title>
+
+          <Controller
+            name={`breaks`}
+            control={form.control}
+            render={({ field }) => (
+              <TableInput
+                data={field.value || []}
+                onChange={(e) => {
+                  if (!e.courses) e.courses = map(store.program.courses, 'id');
+                  field.onChange(e);
+                }}
+                columns={columns}
+                sortable={false}
+                removable={false}
+                labels={{
+                  add: t('tableAdd'),
+                  remove: t('tableRemove'),
+                }}
+              />
+            )}
+          />
+
           <Stack justifyContent="end">
             <Button loading={store.saving} onClick={submit}>
               {t('save')}

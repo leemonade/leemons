@@ -218,6 +218,13 @@ function Calendar({ session }) {
       return true;
     });
 
+    store.schedule.breaks = _.filter(schedule.config.breaks, (bbreak) => {
+      if (!store.schedule.selectedCourse) {
+        return true;
+      }
+      return bbreak.courses.includes(store.schedule.selectedCourse.id);
+    });
+
     store.schedule.calendarConfig = store.schedule.selectedCourse
       ? schedule.calendarConfig
       : schedule.calendarConfigByCourse[store.schedule.selectedCourse];
@@ -236,7 +243,10 @@ function Calendar({ session }) {
       },
     ];
 
-    store.schedule.events = getClassScheduleAsEvents(store.schedule.sections[0].calendars);
+    store.schedule.events = getClassScheduleAsEvents(
+      store.schedule.sections[0].calendars,
+      store.schedule.breaks
+    );
   }
 
   async function reloadCalendar() {
@@ -278,28 +288,30 @@ function Calendar({ session }) {
   }
 
   function onScheduleClick(e) {
-    const event = e.originalEvent;
-    const { classe } = event;
-    const mainTeacher = _.find(classe.teachers, { type: 'main-teacher' }).teacher;
-    store.activeSchedule = {
-      id: classe.id,
-      title: `${classe.subject.name} - ${classe.groups?.abbreviation || ''}`,
-      dateRange: [e.start, e.end],
-      period: t('everyWeekInWorkdays'),
-      classGroup: `${classe.program.name} - ${t('group')} ${classe.groups.abbreviation}`,
-      subject: {
-        name: classe.subject.name,
-        icon: classe.subject.icon?.cover ? getAssetUrl(classe.subject.icon.id) : null,
-      },
-      teacher: {
-        image: mainTeacher.user.avatar,
-        name: mainTeacher.user.name,
-        surnames: mainTeacher.user.surnames + (mainTeacher.user.secondSurname || ''),
-      },
-      classroom: classe.virtualUrl,
-      location: classe.address,
-    };
-    render();
+    if (e.display !== 'background') {
+      const event = e.originalEvent;
+      const { classe } = event;
+      const mainTeacher = _.find(classe.teachers, { type: 'main-teacher' }).teacher;
+      store.activeSchedule = {
+        id: classe.id,
+        title: `${classe.subject.name} - ${classe.groups?.abbreviation || ''}`,
+        dateRange: [e.start, e.end],
+        period: t('everyWeekInWorkdays'),
+        classGroup: `${classe.program.name} - ${t('group')} ${classe.groups.abbreviation}`,
+        subject: {
+          name: classe.subject.name,
+          icon: classe.subject.icon?.cover ? getAssetUrl(classe.subject.icon.id) : null,
+        },
+        teacher: {
+          image: mainTeacher.user.avatar,
+          name: mainTeacher.user.name,
+          surnames: mainTeacher.user.surnames + (mainTeacher.user.secondSurname || ''),
+        },
+        classroom: classe.virtualUrl,
+        location: classe.address,
+      };
+      render();
+    }
   }
 
   const fullCalendarConfigs = useMemo(() => {
@@ -344,7 +356,8 @@ function Calendar({ session }) {
             if (store.activePage === 'schedule') {
               store.schedule.sections = event;
               store.schedule.events = getClassScheduleAsEvents(
-                store.schedule.sections[0].calendars
+                store.schedule.sections[0].calendars,
+                store.schedule.breaks
               );
               render();
             } else {

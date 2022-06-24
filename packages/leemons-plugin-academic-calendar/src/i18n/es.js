@@ -33,5 +33,8 @@ module.exports = {
     save: 'Guardar',
     fieldRequired: 'Campo necesario',
     configSaved: 'Configuración guardada',
+    tableAdd: 'Añadir descanso',
+    tableRemove: 'Eliminar',
+    allCourses: 'Todos los cursos',
   },
 };

@@ -1,7 +1,9 @@
+import React from 'react';
 import _ from 'lodash';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
+import { Box, Text } from '@bubbles-ui/components';
 
-export default function getClassScheduleAsEvents(_classe) {
+export default function getClassScheduleAsEvents(_classe, breaks) {
   const classes = _.isArray(_classe) ? _classe : [_classe];
   const events = [];
   const curr = new Date(); // get current date
@@ -44,5 +46,39 @@ export default function getClassScheduleAsEvents(_classe) {
       });
     }
   });
+  if (_.isArray(breaks) && breaks.length) {
+    _.forEach(breaks, (bbreak, i) => {
+      events.push({
+        id: `break-${i}`,
+        title: bbreak.name,
+        allDay: false,
+        start: new Date(bbreak.startDate),
+        end: new Date(bbreak.endDate),
+        display: 'background',
+        component: (
+          <Box
+            sx={(theme) => ({
+              display: 'flex',
+              width: 'calc(100% + 0.5rem)',
+              height: 'calc(100% + 0.5rem)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.colors.interactive03h,
+              margin: '-0.25rem',
+            })}
+          >
+            <Text size="lg" role="productive">
+              {bbreak.name}
+            </Text>
+          </Box>
+        ),
+        originalEvent: {
+          title: bbreak.name,
+          break: bbreak,
+          calendar: {},
+        },
+      });
+    });
+  }
   return events;
 }

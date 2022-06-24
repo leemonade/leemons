@@ -33,5 +33,8 @@ module.exports = {
     save: 'Save',
     fieldRequired: 'Field required',
     configSaved: 'Saved configuration',
+    tableAdd: 'Add break',
+    tableRemove: 'Remove',
+    allCourses: 'All courses',
   },
 };
