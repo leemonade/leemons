@@ -166,6 +166,25 @@ module.exports = {
     passwordMatch: 'Passwords not match',
     tokenError: 'The code to set the password has expired or is not valid, contact your center.',
   },
+  recover: {
+    title: 'Forgot my password',
+    description:
+      'Enter the email address associated with your account and we will send you a link to reset your password.',
+    email: 'Email',
+    resetPassword: 'Reset password',
+    returnLogin: 'Return to login',
+    emailSendTo: 'We have sent you an email to: {email}',
+    emailRequired: 'Email required',
+  },
+  reset: {
+    title: 'Create new password',
+    description: 'Enter a new password to access leemons.',
+    tokenNoValid: 'The reset token has expired or is invalid.',
+    password: 'Password',
+    resetPassword: 'Reset password',
+    returnLogin: 'Return to login',
+    passwordRequired: 'Password required',
+  },
   selectProfile: {
     title: 'Hi {name}',
     number_of_profiles:

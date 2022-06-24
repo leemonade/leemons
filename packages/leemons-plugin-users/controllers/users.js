@@ -51,7 +51,7 @@ async function reset(ctx) {
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    const user = await usersService.reset(ctx.request.body.token, ctx.request.body.password);
+    const user = await usersService.reset(ctx.request.body.token, ctx.request.body.password, ctx);
     ctx.status = 200;
     ctx.body = { status: 200, user };
   } else {
@@ -91,9 +91,15 @@ async function recover(ctx) {
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.body)) {
-    await usersService.recover(ctx.request.body.email, ctx);
-    ctx.status = 200;
-    ctx.body = { status: 200, message: 'Email sent' };
+    try {
+      await usersService.recover(ctx.request.body.email, ctx);
+      ctx.status = 200;
+      ctx.body = { status: 200, message: 'Email sent' };
+    } catch (e) {
+      // Always send 200 so hackers can't know if the email exists
+      ctx.status = 200;
+      ctx.body = { status: 200, message: 'Email sent' };
+    }
   } else {
     throw validator.error;
   }

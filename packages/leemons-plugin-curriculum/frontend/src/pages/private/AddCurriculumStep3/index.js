@@ -408,7 +408,7 @@ function AddCurriculumStep3() {
       <AdminPageHeader
         values={{
           title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
-          description: t('description1'),
+          description: store.isEditMode ? t('description1') : null,
         }}
       />
 
@@ -458,16 +458,18 @@ function AddCurriculumStep3() {
                 </Col>
               </Grid>
             </ContextContainer>
-            <Box sx={(theme) => ({ marginBottom: theme.spacing[10] })}>
-              <Stack justifyContent="space-between" fullWidth>
-                <Button variant="outline" onClick={back} loading={store.publishing}>
-                  {t('back')}
-                </Button>
-                <Button onClick={publish} loading={store.publishing}>
-                  {t('publish')}
-                </Button>
-              </Stack>
-            </Box>
+            {store.isEditMode ? (
+              <Box sx={(theme) => ({ marginBottom: theme.spacing[10] })}>
+                <Stack justifyContent="space-between" fullWidth>
+                  <Button variant="outline" onClick={back} loading={store.publishing}>
+                    {t('back')}
+                  </Button>
+                  <Button onClick={publish} loading={store.publishing}>
+                    {t('publish')}
+                  </Button>
+                </Stack>
+              </Box>
+            ) : null}
           </ContextContainer>
         </PageContainer>
       </Paper>

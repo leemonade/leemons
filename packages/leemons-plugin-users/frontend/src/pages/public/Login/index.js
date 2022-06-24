@@ -6,9 +6,9 @@ import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginForm } from '@bubbles-ui/leemons';
 import {
   getRememberLoginRequest,
-  loginRequest,
   getUserProfilesRequest,
   getUserProfileTokenRequest,
+  loginRequest,
 } from '@users/request';
 import { getCookieToken, useSession } from '@users/session';
 import { goRecoverPage } from '@users/navigate';
@@ -56,8 +56,6 @@ export default function Login() {
       setFormStatus('loading');
       setFormError(null);
       const response = await loginRequest(data);
-
-      console.log('response:', response);
 
       try {
         if (response?.user?.isSuperAdmin) {

@@ -166,6 +166,25 @@ module.exports = {
     tokenError:
       'El código para configurar la contraseña ha caducado o no es valido, contactar con el centro.',
   },
+  recover: {
+    title: 'He olvidado mi contraseña',
+    description:
+      'Introduzca la dirección de correo electrónico asociada a su cuenta y le enviaremos un enlace para restablecer su contraseña.',
+    email: 'Email',
+    resetPassword: 'Recuperar contraseña',
+    returnLogin: 'Volver al login',
+    emailSendTo: 'Te hemos enviado un email a: {email}',
+    emailRequired: 'Email necesario',
+  },
+  reset: {
+    title: 'Crear nueva contraseña',
+    description: 'Introduce una nueva contraseña para acceder a leemons.',
+    tokenNoValid: 'El token para resetear a caducado o no es valido',
+    password: 'Contraseña',
+    resetPassword: 'Restablecer contraseña',
+    returnLogin: 'Volver al login',
+    passwordRequired: 'Contraseña necesaria',
+  },
   selectProfile: {
     title: 'Hola, {name}',
     number_of_profiles:

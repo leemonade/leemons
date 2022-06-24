@@ -48,35 +48,41 @@ export default function getClassScheduleAsEvents(_classe, breaks) {
   });
   if (_.isArray(breaks) && breaks.length) {
     _.forEach(breaks, (bbreak, i) => {
-      events.push({
-        id: `break-${i}`,
-        title: bbreak.name,
-        allDay: false,
-        start: new Date(bbreak.startDate),
-        end: new Date(bbreak.endDate),
-        display: 'background',
-        component: (
-          <Box
-            sx={(theme) => ({
-              display: 'flex',
-              width: 'calc(100% + 0.5rem)',
-              height: 'calc(100% + 0.5rem)',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.colors.interactive03h,
-              margin: '-0.25rem',
-            })}
-          >
-            <Text size="lg" role="productive">
-              {bbreak.name}
-            </Text>
-          </Box>
-        ),
-        originalEvent: {
+      _.forEach([...new Array(10).keys()], (index) => {
+        const start = new Date(bbreak.startDate);
+        const end = new Date(bbreak.endDate);
+        start.setDate(first + index);
+        end.setDate(first + index);
+        events.push({
+          id: `break-${i}`,
           title: bbreak.name,
-          break: bbreak,
-          calendar: {},
-        },
+          allDay: false,
+          start,
+          end,
+          display: 'background',
+          component: (
+            <Box
+              sx={(theme) => ({
+                display: 'flex',
+                width: 'calc(100% + 0.5rem)',
+                height: 'calc(100% + 0.5rem)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.colors.interactive03h,
+                margin: '-0.25rem',
+              })}
+            >
+              <Text size="lg" role="productive">
+                {bbreak.name}
+              </Text>
+            </Box>
+          ),
+          originalEvent: {
+            title: bbreak.name,
+            break: bbreak,
+            calendar: {},
+          },
+        });
       });
     });
   }

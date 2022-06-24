@@ -217,32 +217,34 @@ function ListCurriculum() {
               )}
             </Box>
           </TabPanel>
-          <TabPanel label={t('draft')}>
-            <Box
-              style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
-            >
-              <LoadingOverlay visible={loading} overlayOpacity={0} />
-              {!loading && !isEmpty(curriculums) && (
-                <Box
-                  sx={(theme) => ({
-                    paddingBottom: theme.spacing[5],
-                    paddingTop: theme.spacing[5],
-                  })}
-                >
-                  <PaginatedList
-                    {...serverData}
-                    {...listProps}
-                    items={filter(serverData.items, { published: false })}
-                    selectable
-                    columns={columns}
-                    loading={loading}
-                    layout="grid"
-                    onSelect={handleOnSelect}
-                  />
-                </Box>
-              )}
-            </Box>
-          </TabPanel>
+          {store.canAdd ? (
+            <TabPanel label={t('draft')}>
+              <Box
+                style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
+              >
+                <LoadingOverlay visible={loading} overlayOpacity={0} />
+                {!loading && !isEmpty(curriculums) && (
+                  <Box
+                    sx={(theme) => ({
+                      paddingBottom: theme.spacing[5],
+                      paddingTop: theme.spacing[5],
+                    })}
+                  >
+                    <PaginatedList
+                      {...serverData}
+                      {...listProps}
+                      items={filter(serverData.items, { published: false })}
+                      selectable
+                      columns={columns}
+                      loading={loading}
+                      layout="grid"
+                      onSelect={handleOnSelect}
+                    />
+                  </Box>
+                )}
+              </Box>
+            </TabPanel>
+          ) : null}
         </Tabs>
       </Box>
     </Stack>
