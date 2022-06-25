@@ -43,7 +43,7 @@ class Email {
   static providers() {
     const providers = [];
     let newValue;
-    _.forIn(leemons.plugin.providers, (value, key) => {
+    _.forIn(leemons.listProviders(), (value, key) => {
       newValue = value;
       if (newValue.config && newValue.config.data) {
         newValue.config.data.providerName = key;
@@ -72,11 +72,12 @@ class Email {
    * @return {Promise<any>} nodemailer transporters
    * */
   static async sendTest(data) {
-    if (!leemons.plugin.providers[data.providerName])
+    const providersByName = _.keyBy(leemons.listProviders(), 'name');
+    if (!providersByName[data.providerName])
       throw new Error(`No provider with the name ${data.providerName}`);
-    const transporter = leemons.plugin.providers[
-      data.providerName
-    ].services.email.getTransporterByConfig(data.config);
+    const transporter = providersByName[data.providerName].services.email.getTransporterByConfig(
+      data.config
+    );
 
     // TODO Email Sacar idioma principal seleccionado
     const language = 'es';
@@ -105,7 +106,8 @@ class Email {
    * */
   static async getTransporters() {
     const promises = [];
-    _.forIn(leemons.plugin.providers, (value) => {
+
+    _.forIn(leemons.listProviders(), (value) => {
       if (
         value.services &&
         value.services.email &&
@@ -329,14 +331,16 @@ class Email {
     if (index < transporters.length) {
       try {
         const info = await transporters[index].sendMail({
-          from,
+          from: from || 'dev@leemons.io',
           to,
           subject: email.subject,
           html: email.html,
         });
+
         info.error = false;
         return info;
       } catch (err) {
+        console.error(err);
         return Email.startToTrySendEmail(from, to, email, transporters, index + 1);
       }
     }
