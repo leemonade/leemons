@@ -16,11 +16,7 @@ const useStyle = createStyles((theme) => ({
 
 export default function PeriodsPage() {
   const { mutateAsync } = usePeriodMutation();
-  const { data: periods } = usePeriods({
-    page: 0,
-    size: 9999,
-    sort: 'center:ASC',
-  });
+
   const { classes } = useStyle();
   const locale = useLocale();
 
@@ -36,7 +32,6 @@ export default function PeriodsPage() {
       <PeriodSelector
         opened
         allowCreate
-        periods={periods?.items || []}
         onPeriodSave={(name, share, data) => {
           const period = {
             name,
@@ -66,7 +61,6 @@ export default function PeriodsPage() {
       />
 
       <PeriodList
-        periods={periods?.items || []}
         onRemove={(period, onSuccess, onError) =>
           mutateAsync({ period, action: 'remove' })
             .then((result) => {

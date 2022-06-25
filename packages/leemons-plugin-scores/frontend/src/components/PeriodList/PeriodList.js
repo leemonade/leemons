@@ -72,6 +72,18 @@ function PeriodFilters({ centers, programs, onChange }) {
     },
   });
 
+  const labels = {
+    center: 'Centro',
+    program: 'Programa',
+    course: 'Curso',
+    search: 'Buscar',
+
+    centerPlaceholder: 'Selecciona un centro',
+    programPlaceholder: 'Selecciona un programa',
+    coursePlaceholder: 'Selecciona un curso',
+    search: 'Buscar por nombre de periodo',
+  };
+
   React.useEffect(() => {
     if (isFunction(onChange)) {
       let timer;
@@ -102,7 +114,7 @@ function PeriodFilters({ centers, programs, onChange }) {
           control={control}
           name="search"
           render={({ field }) => (
-            <SearchInput placeholder="Buscar por nombre de periodo" variant="filled" {...field} />
+            <SearchInput placeholder={labels.search} variant="filled" {...field} />
           )}
         />
       </Box>
@@ -128,7 +140,8 @@ function PeriodFilters({ centers, programs, onChange }) {
 
             return (
               <CenterAlignedSelect
-                label="Centro"
+                label={labels.center}
+                placeholder={labels.centerPlaceholder}
                 disabled={!centers?.length}
                 data={data}
                 {...field}
@@ -165,7 +178,8 @@ function PeriodFilters({ centers, programs, onChange }) {
 
             return (
               <CenterAlignedSelect
-                label="Programa"
+                label={labels.program}
+                placeholder={labels.programPlaceholder}
                 disabled={!data?.length}
                 data={data}
                 {...field}
@@ -181,8 +195,6 @@ function PeriodFilters({ centers, programs, onChange }) {
             const program = watch('program');
 
             const { data: programObj } = useProgramDetail(program, { enabled: !!program });
-            // const programObj =
-            //   !program || !programs?.length ? null : programs.find((p) => p.id === program);
 
             const courses = React.useMemo(
               () =>
@@ -200,7 +212,13 @@ function PeriodFilters({ centers, programs, onChange }) {
             }, [courses]);
 
             return (
-              <CenterAlignedSelect label="Curso" disabled={!programObj} data={courses} {...field} />
+              <CenterAlignedSelect
+                label={labels.course}
+                placeholder={labels.coursePlaceholder}
+                disabled={!programObj}
+                data={courses}
+                {...field}
+              />
             );
           }}
         />
@@ -245,30 +263,38 @@ export default function PeriodList({ onRemove, className }) {
   /*
     --- Table ---
   */
+  const columnLabels = {
+    center: 'Centro',
+    program: 'Programa',
+    course: 'Curso',
+    name: 'Nombre',
+    startDate: 'Fecha de inicio',
+    endDate: 'Fecha de fin',
+  };
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Center',
+        Header: columnLabels.center,
         accessor: 'center',
       },
       {
-        Header: 'Program',
+        Header: columnLabels.program,
         accessor: 'program',
       },
       {
-        Header: 'Course',
+        Header: columnLabels.course,
         accessor: 'course',
       },
       {
-        Header: 'Name',
+        Header: columnLabels.name,
         accessor: 'name',
       },
       {
-        Header: 'Start Date',
+        Header: columnLabels.startDate,
         accessor: 'startDate',
       },
       {
-        Header: 'End Date',
+        Header: columnLabels.endDate,
         accessor: 'endDate',
       },
       {
@@ -276,7 +302,7 @@ export default function PeriodList({ onRemove, className }) {
         accessor: 'actions',
       },
     ],
-    []
+    [columnLabels]
   );
 
   /*
