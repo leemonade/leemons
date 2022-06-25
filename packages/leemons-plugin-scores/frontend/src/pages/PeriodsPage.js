@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, createStyles } from '@bubbles-ui/components';
 import PeriodSelector from '@scores/components/PeriodSelector/PeriodSelector';
 import PeriodList from '@scores/components/PeriodList/PeriodList';
-import { useLocale } from '@common';
+import { useLocale, unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { usePeriodMutation, usePeriods } from '@scores/hooks';
-import { isFunction } from 'lodash';
+import { usePeriodMutation } from '@scores/hooks';
+import _, { isFunction } from 'lodash';
+
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '@scores/helpers';
 
 const useStyle = createStyles((theme) => ({
   root: {
@@ -20,12 +23,20 @@ export default function PeriodsPage() {
   const { classes } = useStyle();
   const locale = useLocale();
 
-  const labels = {
-    removeSuccess: 'Periodo "{{name}}" eliminado correctamente',
-    removeError: 'Error eliminando el periodo "{{name}}": {{error}}',
-    addSuccess: 'Periodo "{{name}}" añadido correctamente',
-    addError: 'Error añadiendo el periodo "{{name}}": {{error}}',
-  };
+  const [, translations] = useTranslateLoader(prefixPN('periods.alerts'));
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('periods.alerts'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   return (
     <Box className={classes.root}>

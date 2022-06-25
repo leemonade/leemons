@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { map, slice, isFunction } from 'lodash';
+import _, { map, slice, isFunction } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
@@ -10,11 +10,14 @@ import {
   SearchInput,
   Select,
 } from '@bubbles-ui/components';
-import { LocaleDate } from '@common';
+import { LocaleDate, unflatten } from '@common';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { usePeriods } from '@scores/hooks';
+
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '@scores/helpers';
 
 const useStyle = createStyles((theme) => ({
   paginatedList: {
@@ -72,17 +75,20 @@ function PeriodFilters({ centers, programs, onChange }) {
     },
   });
 
-  const labels = {
-    center: 'Centro',
-    program: 'Programa',
-    course: 'Curso',
-    search: 'Buscar',
+  const [, translations] = useTranslateLoader(prefixPN('periods.periodListFilters'));
 
-    centerPlaceholder: 'Selecciona un centro',
-    programPlaceholder: 'Selecciona un programa',
-    coursePlaceholder: 'Selecciona un curso',
-    search: 'Buscar por nombre de periodo',
-  };
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('periods.periodListFilters'), {});
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   React.useEffect(() => {
     if (isFunction(onChange)) {
@@ -114,7 +120,7 @@ function PeriodFilters({ centers, programs, onChange }) {
           control={control}
           name="search"
           render={({ field }) => (
-            <SearchInput placeholder={labels.search} variant="filled" {...field} />
+            <SearchInput placeholder={labels?.search} variant="filled" {...field} />
           )}
         />
       </Box>
@@ -140,8 +146,8 @@ function PeriodFilters({ centers, programs, onChange }) {
 
             return (
               <CenterAlignedSelect
-                label={labels.center}
-                placeholder={labels.centerPlaceholder}
+                label={labels?.center}
+                placeholder={labels?.centerPlaceholder}
                 disabled={!centers?.length}
                 data={data}
                 {...field}
@@ -178,8 +184,8 @@ function PeriodFilters({ centers, programs, onChange }) {
 
             return (
               <CenterAlignedSelect
-                label={labels.program}
-                placeholder={labels.programPlaceholder}
+                label={labels?.program}
+                placeholder={labels?.programPlaceholder}
                 disabled={!data?.length}
                 data={data}
                 {...field}
@@ -213,8 +219,8 @@ function PeriodFilters({ centers, programs, onChange }) {
 
             return (
               <CenterAlignedSelect
-                label={labels.course}
-                placeholder={labels.coursePlaceholder}
+                label={labels?.course}
+                placeholder={labels?.coursePlaceholder}
                 disabled={!programObj}
                 data={courses}
                 {...field}
@@ -263,38 +269,46 @@ export default function PeriodList({ onRemove, className }) {
   /*
     --- Table ---
   */
-  const columnLabels = {
-    center: 'Centro',
-    program: 'Programa',
-    course: 'Curso',
-    name: 'Nombre',
-    startDate: 'Fecha de inicio',
-    endDate: 'Fecha de fin',
-  };
+
+  const [, translations] = useTranslateLoader(prefixPN('periods.periodListColumns'));
+
+  const columnLabels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('periods.periodListColumns'), {});
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
   const columns = React.useMemo(
     () => [
       {
-        Header: columnLabels.center,
+        Header: columnLabels?.center || '',
         accessor: 'center',
       },
       {
-        Header: columnLabels.program,
+        Header: columnLabels?.program || '',
         accessor: 'program',
       },
       {
-        Header: columnLabels.course,
+        Header: columnLabels?.course || '',
         accessor: 'course',
       },
       {
-        Header: columnLabels.name,
+        Header: columnLabels?.name || '',
         accessor: 'name',
       },
       {
-        Header: columnLabels.startDate,
+        Header: columnLabels?.startDate || '',
         accessor: 'startDate',
       },
       {
-        Header: columnLabels.endDate,
+        Header: columnLabels?.endDate || '',
         accessor: 'endDate',
       },
       {

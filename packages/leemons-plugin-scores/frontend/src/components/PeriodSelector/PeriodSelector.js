@@ -9,6 +9,11 @@ import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { getCentersWithToken } from '@users/session';
 
+import _ from 'lodash';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '@scores/helpers';
+
 const useStyle = createStyles((theme, { isOpened }) => ({
   drawer: {
     height: '100vh',
@@ -58,57 +63,77 @@ export default function PeriodSelector({
   const [course, setCourse] = React.useState(null);
   const [subject, setSubject] = React.useState(null);
 
-  const labels = {
-    form: {
-      startDate: 'Fecha inicio',
-      endDate: 'Fecha fin',
-      submit: 'Buscar',
-      newPeriod: 'Nuevo periodo',
-      addPeriod: 'Añadir periodo',
-      shareWithTeachers: 'Compartir con profesores',
-      saveButton: 'Guardar periodo',
-      periodName: 'Nombre del periodo',
-      center: {
-        label: 'Centro',
-        placeholder: 'Selecciona un centro',
-        error: 'El centro es requerido',
-      },
-      program: {
-        label: 'Programa',
-        placeholder: 'Selecciona un programa',
-        error: 'El programa es requerido',
-      },
-      course: {
-        label: 'Curso',
-        placeholder: 'Selecciona un curso',
-        error: 'El curso es requerido',
-      },
-      subject: {
-        label: 'Asignatura',
-        placeholder: 'Selecciona una asignatura',
-        error: 'La asignatura es requerida',
-      },
-      group: {
-        label: 'Grupo',
-        placeholder: 'Selecciona un grupo',
-        error: 'El grupo es requerido',
-      },
-    },
-    drawer: {
-      title: 'Scores/Puntuaciones',
-      description:
-        'Como administrador, puedes crear periódos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periódos de evaluación por programa y curso.',
-      new: 'Nuevo periodo',
-    },
-  };
+  const [, translations] = useTranslateLoader([
+    prefixPN('periods.periodForm'),
+    prefixPN('periods.periodFormErrorMessages'),
+    prefixPN(allowCreate ? 'periods.adminDrawer' : 'periods.teacherDrawer'),
+  ]);
 
-  const errorMessages = {
-    startDate: 'La fecha de inicio es requerida',
-    endDate: 'La fecha de fin es requerida',
-    validateStartDate: 'La fecha de inicio debe ser anterior a la fecha de fin',
-    validateEndDate: 'La fecha de fin debe ser posterior a la fecha de inicio',
-    periodName: 'El nombre del periodo es requerido',
-  };
+  const { errorMessages, ...labels } = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+
+      return {
+        form: _.get(res, prefixPN('periods.periodForm')),
+        drawer: _.get(res, prefixPN(allowCreate ? 'periods.adminDrawer' : 'periods.teacherDrawer')),
+        errorMessages: _.get(res, prefixPN('periods.periodFormErrorMessages')),
+      };
+    }
+
+    return {};
+  }, [translations]);
+
+  // const labels = {
+  //   form: {
+  //     startDate: 'Fecha inicio',
+  //     endDate: 'Fecha fin',
+  //     submit: 'Buscar',
+  //     newPeriod: 'Nuevo periodo',
+  //     addPeriod: 'Añadir periodo',
+  //     shareWithTeachers: 'Compartir con profesores',
+  //     saveButton: 'Guardar periodo',
+  //     periodName: 'Nombre del periodo',
+  //     center: {
+  //       label: 'Centro',
+  //       placeholder: 'Selecciona un centro',
+  //       error: 'El centro es requerido',
+  //     },
+  //     program: {
+  //       label: 'Programa',
+  //       placeholder: 'Selecciona un programa',
+  //       error: 'El programa es requerido',
+  //     },
+  //     course: {
+  //       label: 'Curso',
+  //       placeholder: 'Selecciona un curso',
+  //       error: 'El curso es requerido',
+  //     },
+  //     subject: {
+  //       label: 'Asignatura',
+  //       placeholder: 'Selecciona una asignatura',
+  //       error: 'La asignatura es requerida',
+  //     },
+  //     group: {
+  //       label: 'Grupo',
+  //       placeholder: 'Selecciona un grupo',
+  //       error: 'El grupo es requerido',
+  //     },
+  //   },
+  //   drawer: {
+  //     title: 'Scores/Puntuaciones',
+  //     description:
+  //       'Como administrador, puedes crear periódos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periódos de evaluación por programa y curso.',
+  //     new: 'Nuevo periodo',
+  //   },
+  // };
+
+  // const errorMessages = {
+  //   startDate: 'La fecha de inicio es requerida',
+  //   endDate: 'La fecha de fin es requerida',
+  //   validateStartDate: 'La fecha de inicio debe ser anterior a la fecha de fin',
+  //   validateEndDate: 'La fecha de fin debe ser posterior a la fecha de inicio',
+  //   periodName: 'El nombre del periodo es requerido',
+  // };
 
   const { data: centers, isLoading: isLoadingCenters } = useUserCenters({
     enabled: fields.center === 'all',
@@ -126,11 +151,11 @@ export default function PeriodSelector({
     if (fields.center === 'all') {
       fieldsToReturn.push({
         name: 'center',
-        label: labels.form.center.label,
-        placeholder: labels.form.center.placeholder,
+        label: labels?.form?.center?.label,
+        placeholder: labels?.form?.center?.placeholder,
         disabled: !centers?.length,
         data: (centers || []).map(({ id, name }) => ({ label: name, value: id })),
-        required: requiredFields.includes('center') && labels.form.center.error,
+        required: requiredFields.includes('center') && labels?.form?.center?.error,
       });
       setAllowCenterChange(true);
     } else {
@@ -138,11 +163,11 @@ export default function PeriodSelector({
       if (centersWithToken.length > 1) {
         fieldsToReturn.push({
           name: 'center',
-          label: labels.form.center.label,
-          placeholder: labels.form.center.placeholder,
+          label: labels?.form?.center?.label,
+          placeholder: labels?.form?.center?.placeholder,
           disabled: !centersWithToken.length,
           data: centersWithToken.map(({ id, name }) => ({ label: name, value: id })),
-          required: requiredFields.includes('center') && labels.form.center.error,
+          required: requiredFields.includes('center') && labels?.form?.center?.error,
         });
         setAllowCenterChange(true);
       } else if (centersWithToken[0].id !== center) {
@@ -154,14 +179,14 @@ export default function PeriodSelector({
     if (fields.program) {
       fieldsToReturn.push({
         name: 'program',
-        label: labels.form.program.label,
-        placeholder: labels.form.program.placeholder,
+        label: labels?.form?.program?.label,
+        placeholder: labels?.form?.program?.placeholder,
         disabled: !center || !programs?.length,
         data: (programs || []).map(({ name, id }) => ({
           label: name,
           value: id,
         })),
-        required: requiredFields.includes('program') && labels.form.program.error,
+        required: requiredFields.includes('program') && labels?.form?.program?.error,
       });
     }
 
@@ -170,14 +195,14 @@ export default function PeriodSelector({
     if (fields.course) {
       fieldsToReturn.push({
         name: 'course',
-        label: labels.form.course.label,
-        placeholder: labels.form.course.placeholder,
+        label: labels?.form?.course?.label,
+        placeholder: labels?.form?.course?.placeholder,
         disabled: !program || !programData?.courses?.length,
         data: (programData?.courses || []).map(({ name, index, id }) => ({
           label: name || index,
           value: id,
         })),
-        required: couseIsRequired && labels.form.course.error,
+        required: couseIsRequired && labels?.form?.course?.error,
       });
     }
 
@@ -191,25 +216,25 @@ export default function PeriodSelector({
     if (fields.subject) {
       fieldsToReturn.push({
         name: 'subject',
-        label: labels.form.subject.label,
-        placeholder: labels.form.subject.placeholder,
+        label: labels?.form?.subject?.label,
+        placeholder: labels?.form?.subject?.placeholder,
         disabled: (couseIsRequired && !course) || !subjects?.length,
         data: subjects,
-        required: requiredFields.includes('subject') && labels.form.subject.error,
+        required: requiredFields.includes('subject') && labels?.form?.subject?.error,
       });
     }
 
     if (fields.group) {
       fieldsToReturn.push({
         name: 'group',
-        label: labels.form.group.label,
-        placeholder: labels.form.group.placeholder,
+        label: labels?.form?.group?.label,
+        placeholder: labels?.form?.group?.placeholder,
         disabled: !subject || !apClasses?.length || !course || !subjects?.length,
         data: (apClasses || []).map(({ groups, id }) => ({
           label: groups.name,
           value: id,
         })),
-        required: requiredFields.includes('group') && labels.form.group.error,
+        required: requiredFields.includes('group') && labels?.form?.group?.error,
       });
     }
 
@@ -226,14 +251,14 @@ export default function PeriodSelector({
         <Box className={classes.drawerTitle}>
           <Box className={classes.titleTop}>
             <PluginScoresBasicIcon width={16} height={16} />
-            <Text size="md">{labels.drawer.title}</Text>
+            <Text size="md">{labels?.drawer?.title}</Text>
           </Box>
           {/* <Text size="md" style={{ marginLeft: 24 }} strong>
             Scores Basic (admin)
           </Text> */}
         </Box>
         <Text className={classes.drawerText} role="productive">
-          {labels.drawer.description}
+          {labels?.drawer?.description}
         </Text>
         <Text
           className={classes.formTitle}
@@ -243,10 +268,10 @@ export default function PeriodSelector({
           size="xs"
           transform="uppercase"
         >
-          {labels.drawer.new}
+          {labels?.drawer?.new}
         </Text>
         <ScoresPeriodForm
-          labels={labels.form}
+          labels={labels?.form}
           errorMessages={errorMessages}
           fields={fieldsToUse}
           allowCreate={allowCreate}
