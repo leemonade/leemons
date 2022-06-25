@@ -1,7 +1,9 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
-import { Box, HtmlText, Title } from '@bubbles-ui/components';
+import { Box, HtmlText, TabPanel, Tabs, Title } from '@bubbles-ui/components';
+import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -16,6 +18,11 @@ export default function Resume(props) {
       canStart = false;
     }
   }
+  console.log(store);
+
+  const subjects = useClassesSubjects(store.instance.classes);
+
+  const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
@@ -27,6 +34,57 @@ export default function Resume(props) {
           </Box>
         </>
       ) : null}
+
+      {store.instance?.assignable?.subjects?.[0].curriculum ? (
+        <Tabs>
+          <TabPanel label={subjects?.[0]?.name}>
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
+            <Box
+              sx={(theme) => ({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: theme.spacing[4],
+              })}
+            >
+              {store.instance.assignable.subjects[0].curriculum.curriculum?.length ? (
+                <Box sx={tabPanelStyle}>
+                  <Box>
+                    <CurriculumListContents
+                      value={store.instance.assignable.subjects[0].curriculum.curriculum}
+                    />
+                  </Box>
+                </Box>
+              ) : null}
+              {!!store.instance.assignable.subjects[0].curriculum.objectives &&
+              !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
+                <Box sx={tabPanelStyle}>
+                  <Box>
+                    <Title color="primary" order={5}>
+                      {t('objectives')}
+                    </Title>
+                    {/* TODO: Use react lists */}
+                    <HtmlText>
+                      {`
+                      <ul>
+                      ${store.instance.assignable.subjects[0].curriculum.objectives
+                        ?.map(
+                          ({ objective }) =>
+                            `<li>
+                            ${objective}
+                          </li>`
+                        )
+                        ?.join('')}
+                      </ul>
+                    `}
+                    </HtmlText>
+                  </Box>
+                </Box>
+              ) : null}
+            </Box>
+          </TabPanel>
+        </Tabs>
+      ) : null}
+
       {canStart ? (
         <ButtonNavigation {...props} />
       ) : (

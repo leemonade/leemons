@@ -144,7 +144,7 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
     <ContextContainer divided>
       <ContextContainer>
         <Title order={3}>{t('configTitle')}</Title>
-        <Text>{t('configDescription')}</Text>
+
         <Text size="md">
           {t('totalQuestions', { n: test.questions.length })}
           {useAllQuestions || (!useAllQuestions && nQuestions) ? (
@@ -165,9 +165,10 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
           ) : null}
         </Text>
 
+        <Text>{t('configDescription')}</Text>
+
         <Box>
           <InputWrapper
-            label={t('nOfQuestions')}
             description={
               <Controller
                 control={form.control}
@@ -197,7 +198,12 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
                   },
                 }}
                 render={({ field }) => (
-                  <NumberInput required error={form.formState.errors.nQuestions} {...field} />
+                  <NumberInput
+                    label={t('nOfQuestions')}
+                    required
+                    error={form.formState.errors.nQuestions}
+                    {...field}
+                  />
                 )}
               />
             ) : null}
