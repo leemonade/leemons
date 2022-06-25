@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ContextContainer, Select, Stack, Switch } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, Select, Stack } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useTestsTypes } from '../../../../helpers/useTestsTypes';
@@ -72,6 +72,7 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
           )}
         />
 
+        {/*
         {selectedType && selectedType.canGradable ? (
           <Controller
             control={form.control}
@@ -81,6 +82,7 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
             )}
           />
         ) : null}
+        */}
       </ContextContainer>
       <Stack fullWidth justifyContent="space-between">
         <Box>

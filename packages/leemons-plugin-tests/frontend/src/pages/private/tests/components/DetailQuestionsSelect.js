@@ -1,14 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Alert,
-  Box,
-  Button,
-  ContextContainer,
-  InputWrapper,
-  Stack,
-  Title,
-} from '@bubbles-ui/components';
+import { Alert, Box, Button, ContextContainer, InputWrapper, Stack } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import QuestionsTable from './QuestionsTable';
 
@@ -25,12 +17,6 @@ export default function DetailQuestionsSelect({
   return (
     <ContextContainer divided>
       <ContextContainer>
-        {questions && questions.length > 0 ? (
-          <Title order={6}>
-            {t('nQuestions', { n: reorderMode ? value.length : questions.length })}
-          </Title>
-        ) : null}
-
         {/*
         // Juanjo: quitar que no aporta nada: https://www.notion.so/leemons/Redise-o-m-nimo-test-botones-y-poco-m-s-de26307f47554dd2b52f6c1b697e03d8#16f056fd83434061982b04a7cf918791
         <Box>
@@ -59,6 +45,7 @@ export default function DetailQuestionsSelect({
               value={value}
               onChange={(e) => onChange(e)}
               reorderMode={reorderMode}
+              hideOpenIcon
             />
           </Box>
         ) : (

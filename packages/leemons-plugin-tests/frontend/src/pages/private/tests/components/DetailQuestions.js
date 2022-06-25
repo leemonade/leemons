@@ -110,10 +110,22 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
     return null;
   }
 
+  const reorderMode = questions?.length && store.reorderPage;
+  let nQuestions = store.questionBank.questions.length;
+  if (!isNil(store.questionsFiltered)) {
+    nQuestions = reorderMode ? questions.length : store.questionsFiltered.length;
+  }
+
   return (
     <ContextContainer>
-      <Paragraph>{t('questionsDescription')}</Paragraph>
       <Title order={4}>{t('questionBank', { name: store.questionBank.name })}</Title>
+
+      <Title order={6}>{t('nQuestions', { n: nQuestions })}</Title>
+
+      <Paragraph>
+        {t(reorderMode ? 'questionsDescriptionReorder' : 'questionsDescription')}
+      </Paragraph>
+
       {!isNil(store.questionsFiltered) ? (
         <Controller
           key={1}
@@ -127,7 +139,7 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
               next={questionsSelected}
               back={returnToFilters}
               error={isDirty ? form.formState.errors.questions : null}
-              reorderMode={questions?.length && store.reorderPage}
+              reorderMode={reorderMode}
               {...field}
             />
           )}

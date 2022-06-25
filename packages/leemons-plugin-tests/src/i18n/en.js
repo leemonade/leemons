@@ -158,8 +158,10 @@ module.exports = {
     published: 'Published',
     questionsDescription:
       'Select the questions you want to add to this test question bank to use in this test.',
+    questionsDescriptionReorder:
+      'You can now modify the order in which the student will answer the questions. Drag and drop the questions to reorder them.',
     questionBank: 'Question Bank: {name}',
-    nQuestions: '{n} questions',
+    nQuestions: '({n} questions)',
     questionFiltersDescription1:
       'The system allows, by default, automatic filtering by question type, category and level.',
     questionFiltersDescription2:

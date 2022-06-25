@@ -154,6 +154,8 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
   return (
     <ContextContainer divided>
       <ContextContainer>
+        <Title order={4}>{t('questionsBanks')}</Title>
+
         <Stack justifyContent="space-between" alignItems="center" fullWidth>
           <Box>
             <Paragraph>{t('questionsBanksDescription')}</Paragraph>
@@ -164,8 +166,6 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
             </ContextContainer>
           </Box>
         </Stack>
-
-        <Title order={4}>{t('questionsBanks')}</Title>
 
         {tableItems.length ? (
           <>

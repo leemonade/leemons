@@ -156,9 +156,11 @@ module.exports = {
       'No hay ningún banco de preguntas disponible para las asignaturas seleccionadas',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
-    questionsDescription: 'Seleccionar las preguntas del banco para utilizar en este test',
-    questionBank: 'Banco de preguntas: {{name}}',
-    nQuestions: '{{n}} preguntas',
+    questionsDescription: 'Selecciona las preguntas del banco para utilizar en este test',
+    questionsDescriptionReorder:
+      'Ahora puedes modificar el orden en el que el alumno responderá las preguntas. Arrastra y suelta las preguntas para re-ordenarlas.',
+    questionBank: 'Banco de preguntas: {name}',
+    nQuestions: '({n} preguntas)',
     questionFiltersDescription1:
       'El sistema permite, por defecto, filtrar automáticamente por tipo de pregunta, categoría y nivel.',
     questionFiltersDescription2:

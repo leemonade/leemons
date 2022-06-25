@@ -14,6 +14,7 @@ export default function QuestionsTable({
   onChange,
   value = [],
   reorderMode,
+  hideOpenIcon,
   withStyle = false,
   hideCheckbox = false,
 }) {
@@ -63,12 +64,14 @@ export default function QuestionsTable({
         accessor: 'type',
         className: styles.tableHeader,
       },
-      {
+    ]);
+    if (!hideOpenIcon) {
+      result.push({
         Header: t('actionsHeader'),
         accessor: 'actions',
         className: styles.tableHeader,
-      },
-    ]);
+      });
+    }
     return result;
   }, [t, reorderMode]);
 

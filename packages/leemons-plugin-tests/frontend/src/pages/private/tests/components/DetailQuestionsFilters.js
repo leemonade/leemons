@@ -10,7 +10,6 @@ import {
   NumberInput,
   Paragraph,
   Stack,
-  Title,
 } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
 import { forIn, map } from 'lodash';
@@ -44,110 +43,116 @@ export default function DetailQuestionsFilters({ defaultValues, back, questionBa
   }
 
   return (
-    <ContextContainer>
-      <Title order={6}>{t('nQuestions', { n: questionBank.questions.length })}</Title>
-      <Box>
-        <Paragraph>{t('questionFiltersDescription1')}</Paragraph>
-        <Paragraph>{t('questionFiltersDescription2')}</Paragraph>
-      </Box>
+    <ContextContainer divided>
+      <ContextContainer>
+        <Box>
+          <Paragraph>{t('questionFiltersDescription1')}</Paragraph>
+          <Paragraph>{t('questionFiltersDescription2')}</Paragraph>
+        </Box>
 
-      <Box>
-        <Controller
-          control={form.control}
-          name="useAllQuestions"
-          render={({ field }) => (
-            <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
-          )}
-        />
-      </Box>
+        <Box>
+          <Controller
+            control={form.control}
+            name="useAllQuestions"
+            render={({ field }) => (
+              <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
+            )}
+          />
+        </Box>
 
-      <Box>
-        {!useAllQuestions ? (
-          <InputWrapper label={t('numberOfQuestions')}>
-            <Controller
-              control={form.control}
-              name="nQuestions"
-              shouldUnregister
-              rules={{
-                required: t('nQuestionsRequired'),
-                min: {
-                  value: 1,
-                  message: t('minOneQuestion'),
-                },
-              }}
-              render={({ field }) => (
-                <NumberInput required min={0} error={form.formState.errors.nQuestions} {...field} />
-              )}
-            />
-          </InputWrapper>
-        ) : null}
-      </Box>
-      {!useAllQuestions
-        ? [
-            <Box key={1}>
+        <Box>
+          {!useAllQuestions ? (
+            <InputWrapper label={t('numberOfQuestions')}>
               <Controller
                 control={form.control}
-                name="type"
+                name="nQuestions"
                 shouldUnregister
+                rules={{
+                  required: t('nQuestionsRequired'),
+                  min: {
+                    value: 1,
+                    message: t('minOneQuestion'),
+                  },
+                }}
                 render={({ field }) => (
-                  <MultiSelect
-                    placeholder={t('all')}
-                    label={t('typeLabel')}
-                    data={questionTypes}
+                  <NumberInput
+                    required
+                    min={0}
+                    error={form.formState.errors.nQuestions}
                     {...field}
                   />
                 )}
               />
-            </Box>,
-            categoriesData.length > 0 ? (
-              <Box key={2}>
+            </InputWrapper>
+          ) : null}
+        </Box>
+        {!useAllQuestions
+          ? [
+              <Box key={1}>
                 <Controller
                   control={form.control}
-                  name="categories"
+                  name="type"
                   shouldUnregister
                   render={({ field }) => (
                     <MultiSelect
                       placeholder={t('all')}
-                      label={t('categoriesLabel')}
-                      data={categoriesData}
+                      label={t('typeLabel')}
+                      data={questionTypes}
                       {...field}
                     />
                   )}
                 />
-              </Box>
-            ) : null,
-            <Box key={3}>
-              <Controller
-                control={form.control}
-                name="level"
-                shouldUnregister
-                render={({ field }) => (
-                  <MultiSelect
-                    placeholder={t('all')}
-                    label={t('levelLabel')}
-                    data={levels}
-                    {...field}
+              </Box>,
+              categoriesData.length > 0 ? (
+                <Box key={2}>
+                  <Controller
+                    control={form.control}
+                    name="categories"
+                    shouldUnregister
+                    render={({ field }) => (
+                      <MultiSelect
+                        placeholder={t('all')}
+                        label={t('categoriesLabel')}
+                        data={categoriesData}
+                        {...field}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Box>,
-            <Box key={4}>
-              <Controller
-                control={form.control}
-                name="tags"
-                shouldUnregister
-                render={({ field }) => (
-                  <TagsAutocomplete
-                    pluginName="tests"
-                    label={t('selectByTag')}
-                    labels={{ addButton: t('addTag') }}
-                    {...field}
-                  />
-                )}
-              />
-            </Box>,
-          ]
-        : null}
+                </Box>
+              ) : null,
+              <Box key={3}>
+                <Controller
+                  control={form.control}
+                  name="level"
+                  shouldUnregister
+                  render={({ field }) => (
+                    <MultiSelect
+                      placeholder={t('all')}
+                      label={t('levelLabel')}
+                      data={levels}
+                      {...field}
+                    />
+                  )}
+                />
+              </Box>,
+              <Box key={4}>
+                <Controller
+                  control={form.control}
+                  name="tags"
+                  shouldUnregister
+                  render={({ field }) => (
+                    <TagsAutocomplete
+                      pluginName="tests"
+                      label={t('selectByTag')}
+                      labels={{ addButton: t('addTag') }}
+                      {...field}
+                    />
+                  )}
+                />
+              </Box>,
+            ]
+          : null}
+      </ContextContainer>
       <Stack justifyContent="space-between">
         <Box>
           <Button
