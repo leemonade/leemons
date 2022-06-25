@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { forEach, map, forIn, filter, find, uniqBy, orderBy, findIndex, isFunction } from 'lodash';
+import {
+  forEach,
+  map,
+  forIn,
+  filter,
+  find,
+  uniqBy,
+  orderBy,
+  findIndex,
+  isNil,
+  isEmpty,
+} from 'lodash';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
@@ -190,8 +201,9 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
     ];
     if (actions && actionT) {
       forIn(actions, (action) => {
+        const key = getTranslationKeyActions(action.actionName, 'name');
         result.push({
-          Header: actionT[getTranslationKeyActions(action.actionName, 'name')],
+          Header: actionT[key] || '',
           accessor: action.actionName,
           // className: 'text-center',
           style: { textAlign: 'center', width: `${Math.round(60 / actions.length)}%` },
@@ -228,11 +240,13 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
       </Box>
 
       <Box>
-        <Table
-          columns={tableHeaders}
-          data={tableData}
-          onChangeData={(val) => (isEditMode ? updateTableData(val.newData) : null)}
-        />
+        {!isNil(tableData) && !isEmpty(tableData) ? (
+          <Table
+            columns={tableHeaders}
+            data={tableData}
+            onChangeData={(val) => (isEditMode ? updateTableData(val.newData) : null)}
+          />
+        ) : null}
       </Box>
     </Stack>
   );

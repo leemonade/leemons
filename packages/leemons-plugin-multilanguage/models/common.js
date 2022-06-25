@@ -15,10 +15,7 @@ module.exports = {
       },
     },
     locale: {
-      references: {
-        collection: 'plugins_multilanguage::locales',
-        field: 'code',
-      },
+      type: 'string',
       options: {
         unique: false,
       },
