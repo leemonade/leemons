@@ -5,6 +5,7 @@ import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Statement(props) {
   const { classes, cx, t, store } = props;
+
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
       {store.instance.assignable.statement ? (

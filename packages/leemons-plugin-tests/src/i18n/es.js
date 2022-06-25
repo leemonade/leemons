@@ -229,6 +229,7 @@ module.exports = {
     multiSubject: 'Multi-Asignatura',
     delivery: 'Entrega',
     resume: 'Enunciado',
+    objectives: 'Objetivos personalizados',
     statement: 'Enunciado',
     prev: 'Anterior',
     next: 'Continuar',

@@ -230,6 +230,7 @@ module.exports = {
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',
+    objectives: 'Customized objectives',
     delivery: 'Delivery',
     resume: 'Statement',
     statement: 'Statement',

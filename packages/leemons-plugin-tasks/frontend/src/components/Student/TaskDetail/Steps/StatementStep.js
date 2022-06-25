@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Box,
   ContextContainer,
   HtmlText,
-  Box,
-  Tabs,
-  TabPanel,
-  Title,
   ImageLoader,
+  TabPanel,
+  Tabs,
+  Title,
 } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
@@ -65,7 +65,7 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                 EN: Box to add margin
                 ES: Box para agregar margen
               */}
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}></Box>
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
 
               <Box
                 sx={(theme) => ({
@@ -137,6 +137,7 @@ function useSupportImage(assignable) {
 
   return query;
 }
+
 export default function StatementStep({ assignation, labels: _labels }) {
   const labels = _labels.statement_step;
 
