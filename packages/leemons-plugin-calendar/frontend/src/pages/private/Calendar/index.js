@@ -336,7 +336,10 @@ function Calendar({ session }) {
       <Box style={{ width: '250px', height: '100vh' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
-          showPageControl={store.scheduleCenter?.[store.center?.id]?.classes?.length}
+          showPageControl={
+            store.scheduleCenter?.[store.center?.id]?.classes?.length &&
+            store.scheduleCenter?.[store.center?.id]?.config
+          }
           messages={{
             title: t('calendar'),
             centers: t('centers'),
