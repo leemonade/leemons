@@ -23,7 +23,7 @@ import { filter, forEach, includes, map } from 'lodash';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { Controller, useForm } from 'react-hook-form';
 
-export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSend }) {
+export default function AssignConfig({ defaultValues: dv, test, t, configs = [], onBack, onSend }) {
   let defaultValues = {
     clues: [
       { type: 'note', name: t('clueExtraInfo'), value: 0, canUse: true },
@@ -265,7 +265,10 @@ export default function AssignConfig({ defaultValues: dv, test, t, onBack, onSen
                 shouldUnregister
                 render={({ field }) => (
                   <Select
-                    data={[{ label: t('new'), value: 'new' }]}
+                    data={[
+                      { label: t('new'), value: 'new' },
+                      ...map(configs, (config) => ({ value: config.id, label: config.name })),
+                    ]}
                     {...field}
                     label={t('useSettings')}
                   />
@@ -444,5 +447,6 @@ AssignConfig.propTypes = {
   t: PropTypes.func,
   onBack: PropTypes.func,
   onSend: PropTypes.func,
+  configs: PropTypes.any,
   defaultValues: PropTypes.any,
 };
