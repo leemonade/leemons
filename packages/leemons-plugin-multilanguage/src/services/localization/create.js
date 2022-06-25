@@ -43,7 +43,8 @@ module.exports = (Base) =>
             // Check if the localization exists
             if (!(await this.has(_key, _locale, { transacting: t }))) {
               // Check if the locale exists
-              if (await this.hasLocale(_locale, { transacting: t })) {
+              const localeChecked = await this.hasLocale(_locale, { transacting: t });
+              if (localeChecked || ['es', 'en'].includes(_locale)) {
                 // Create the new localization
                 return this.model.create({ key: _key, locale: _locale, value }, { transacting: t });
               }
@@ -82,7 +83,8 @@ module.exports = (Base) =>
         async (t) => {
           const existingLocales = Object.entries(await this.hasLocales(locales, { transacting: t }))
             .filter(([, exists]) => exists)
-            .map(([locale]) => locale);
+            .map(([locale]) => locale)
+            .concat(['es', 'en']);
 
           // Get the localizations for the existing locales (flat array)
           let localizations = _.flatten(
@@ -205,7 +207,8 @@ module.exports = (Base) =>
         async (t) => {
           const existingLocales = Object.entries(await this.hasLocales(locales, { transacting: t }))
             .filter(([, exists]) => exists)
-            .map(([locale]) => locale);
+            .map(([locale]) => locale)
+            .concat(['es', 'en']);
 
           // Get the localizations for the existing locales (flat array)
           const localizations = _.flatten(

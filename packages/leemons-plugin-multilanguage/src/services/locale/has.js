@@ -44,7 +44,11 @@ module.exports = (Base) =>
             existingLocales = existingLocales.map((locale) => locale.code);
 
             // Generate an object of {locale: boolean}
-            return _.fromPairs(_codes.map((code) => [code, existingLocales.includes(code)]));
+            const result = _.fromPairs(
+              _codes.map((code) => [code, existingLocales.includes(code)])
+            );
+
+            return { ...result };
           },
           this.model,
           transacting
