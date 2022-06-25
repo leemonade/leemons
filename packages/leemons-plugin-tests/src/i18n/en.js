@@ -305,8 +305,9 @@ module.exports = {
     configTitle: 'Selection of test content',
     advancedSettings: 'Advanced settings',
     allowAdvancedSettings: 'Allow advanced settings',
-    useSettings: 'Use settings',
-    configDescription: 'Create groups and then assign the options to them',
+    useSettings: 'Selects a previously saved preset or creates a new configuration',
+    configDescription:
+      'You can select a random subset of questions from this test according to their category or level. If you want to use all questions, check "Use all questions".',
     totalQuestions: '{n} questions',
     requirementsQuestions: '{n} meet requirements',
     nOfQuestions: 'Number of questions',
