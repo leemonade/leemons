@@ -4,10 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/components": "^1.0.36",
-    "@bubbles-ui/icons": "^1.0.25",
+    "@bubbles-ui/components": "^1.0.37",
+    "@bubbles-ui/icons": "^1.0.26",
     "lodash": "^4.17.21"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

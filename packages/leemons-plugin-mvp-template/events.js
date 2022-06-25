@@ -1,3 +1,4 @@
+const initPlatform = require('./src/platform');
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
 const initLocales = require('./src/locales');
@@ -38,6 +39,9 @@ async function events(isInstalled) {
       async () => {
         await initLocales();
         leemons.events.emit('init-locales');
+
+        await initPlatform();
+        leemons.events.emit('init-platform');
       }
     );
 

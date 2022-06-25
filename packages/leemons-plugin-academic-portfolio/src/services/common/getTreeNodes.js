@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const { getTree } = require('./getTree');
 
-async function getTreeNodes(nodeTypes, nodeType, nodeId, { transacting } = {}) {
+async function getTreeNodes(nodeTypes, nodeType, nodeId, { program, transacting } = {}) {
   if (!_.isUndefined(this) && this.calledFrom !== 'plugins.curriculum')
     throw new Error('getTreeNodes only can be called by curriculum plugin');
 
   const nodeIds = _.isArray(nodeId) ? nodeId : [nodeId];
-  const tree = await getTree(nodeTypes, { transacting });
+  const tree = await getTree(nodeTypes, { program, transacting });
 
   const getParentNodes = (nodes) => {
     let pNodes = [];

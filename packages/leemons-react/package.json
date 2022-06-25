@@ -10,7 +10,7 @@
     "clear": "rimraf build"
   },
   "dependencies": {
-    "@bubbles-ui/components": "^1.0.35",
+    "@bubbles-ui/components": "^1.0.37",
     "@loadable/component": "^5.15.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
     "@svgr/webpack": "^5.5.0",

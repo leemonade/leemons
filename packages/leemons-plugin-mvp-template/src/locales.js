@@ -11,12 +11,9 @@ async function initLocales() {
 
     for (let i = 0, len = itemKeys.length; i < len; i++) {
       const itemKey = itemKeys[i];
-      const { code, name, default: isDefault } = locales[itemKey];
+      const { code, name } = locales[itemKey];
       const localeData = await services.platform.addLocale(code, name);
 
-      if (isDefault) {
-        await services.platform.setDefaultLocale(code);
-      }
       locales[itemKey] = localeData;
     }
 

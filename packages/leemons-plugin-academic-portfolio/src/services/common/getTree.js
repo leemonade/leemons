@@ -8,8 +8,13 @@ const { getProgramKnowledges } = require('../programs/getProgramKnowledges');
 const { getProgramSubjects } = require('../programs/getProgramSubjects');
 const { getProgramSubjectTypes } = require('../programs/getProgramSubjectTypes');
 
-async function getTree(nodeTypes, { transacting } = {}) {
-  const programCenter = await table.programCenter.find({}, { transacting });
+async function getTree(nodeTypes, { program, transacting } = {}) {
+  const query = {};
+  if (program && !_.isEmpty(program)) {
+    query.program = program;
+  }
+
+  const programCenter = await table.programCenter.find(query, { transacting });
   const programIds = _.map(programCenter, 'program');
   const [
     programs,
@@ -165,7 +170,11 @@ async function getTree(nodeTypes, { transacting } = {}) {
       });
     }
 
-    return _.sortBy(nodes, (n) => n.value.index || n.value.name);
+    // TODO: Check if just "filtering" nodes, is enough
+    return _.sortBy(
+      nodes.filter((n) => !_.isNil(n)),
+      (n) => n.value.index || n.value.name
+    );
   };
 
   function setTreeIds(nodes, parentId) {

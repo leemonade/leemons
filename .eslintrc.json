@@ -31,6 +31,7 @@
       2,
       {
         "ignore": [
+          "@academic-calendar",
           "@academic-portfolio",
           "@admin",
           "@assets",
@@ -41,6 +42,7 @@
           "@dashboard",
           "@dataset",
           "@emails",
+          "@emails-amazon-ses",
           "@grades",
           "@layout",
           "@leebrary",

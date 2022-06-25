@@ -28,6 +28,7 @@ async function listClassSubjects(ctx) {
 }
 
 async function getTree(ctx) {
+  const { program } = ctx.request.query;
   let { nodeTypes } = ctx.request.query;
   if (typeof nodeTypes === 'string') {
     nodeTypes = ctx.request.query.nodeTypes
@@ -38,7 +39,7 @@ async function getTree(ctx) {
       .replaceAll(' ', '')
       .split(',');
   }
-  const tree = await commonService.getTree(nodeTypes);
+  const tree = await commonService.getTree(nodeTypes, { program });
   ctx.status = 200;
   ctx.body = { status: 200, tree };
 }
