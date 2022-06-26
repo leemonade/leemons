@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map, isEmpty, isString } = require('lodash');
 const { periods } = require('../tables');
 
 module.exports = async function listPeriods(
@@ -7,8 +7,11 @@ module.exports = async function listPeriods(
 ) {
   const q = {
     $where: [query],
-    $sort: sort,
   };
+
+  if (!isEmpty(sort) && isString(sort)) {
+    q.$sort = sort;
+  }
 
   if (q.public === false) {
     q.$where.push({

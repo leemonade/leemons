@@ -6,23 +6,24 @@ import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';
 import { ScoresPeriodForm } from '@bubbles-ui/leemons';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
-import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { getCentersWithToken } from '@users/session';
 
-import _ from 'lodash';
+import _, { isFunction, uniqBy } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 
 const useStyle = createStyles((theme, { isOpened }) => ({
   drawer: {
     height: '100vh',
-    padding: isOpened && 32,
-    paddingLeft: isOpened && 48,
+    padding: isOpened && theme.spacing[7],
+    paddingLeft: isOpened && theme.spacing[10],
     borderRight: isOpened && `1px solid ${theme.colors.ui01}`,
+    marginBottom: theme.spacing[7],
   },
   drawerTitle: {
-    marginBottom: 34,
+    marginBottom: theme.spacing[7],
     '*': {
       color: theme.colors.text04,
     },
@@ -30,19 +31,50 @@ const useStyle = createStyles((theme, { isOpened }) => ({
   titleTop: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
+    gap: theme.spacing[2],
   },
   drawerText: {
     display: 'block',
-    marginBottom: 48,
+    marginBottom: theme.spacing[10],
     lineHeight: '22.4px',
   },
 
   formTitle: {
     display: 'block',
-    marginBottom: 24,
+    marginBottom: theme.spacing[5],
+  },
+  form: {
+    paddingBottom: theme.spacing[7] * 2,
   },
 }));
+
+function getMostSpecificPeriod(filters, periods) {
+  const periodsWithSpecificity = periods
+    .filter(
+      (period) =>
+        period.startDate.getTime() === filters.startDate.getTime() &&
+        period.endDate.getTime() === filters.endDate.getTime()
+    )
+    .map((period) => {
+      // eslint-disable-next-line no-shadow
+      let specificity = 0;
+      if (filters.center === period.center) {
+        specificity += 1;
+      }
+      if (filters.program === period.program) {
+        specificity += 1;
+      }
+      if (filters.course === period.course) {
+        specificity += 1;
+      }
+
+      return { ...period, specificity };
+    });
+
+  const mostSpecificPeriod = _.maxBy(periodsWithSpecificity, 'specificity');
+
+  return _.omit(mostSpecificPeriod, 'specificity');
+}
 
 export default function PeriodSelector({
   opened,
@@ -51,6 +83,8 @@ export default function PeriodSelector({
   allowCreate,
   periods,
   onPeriodSave,
+  onPeriodSubmit,
+  onPeriodChange,
   locale,
   fields = {},
   requiredFields = [],
@@ -83,58 +117,6 @@ export default function PeriodSelector({
     return {};
   }, [translations]);
 
-  // const labels = {
-  //   form: {
-  //     startDate: 'Fecha inicio',
-  //     endDate: 'Fecha fin',
-  //     submit: 'Buscar',
-  //     newPeriod: 'Nuevo periodo',
-  //     addPeriod: 'Añadir periodo',
-  //     shareWithTeachers: 'Compartir con profesores',
-  //     saveButton: 'Guardar periodo',
-  //     periodName: 'Nombre del periodo',
-  //     center: {
-  //       label: 'Centro',
-  //       placeholder: 'Selecciona un centro',
-  //       error: 'El centro es requerido',
-  //     },
-  //     program: {
-  //       label: 'Programa',
-  //       placeholder: 'Selecciona un programa',
-  //       error: 'El programa es requerido',
-  //     },
-  //     course: {
-  //       label: 'Curso',
-  //       placeholder: 'Selecciona un curso',
-  //       error: 'El curso es requerido',
-  //     },
-  //     subject: {
-  //       label: 'Asignatura',
-  //       placeholder: 'Selecciona una asignatura',
-  //       error: 'La asignatura es requerida',
-  //     },
-  //     group: {
-  //       label: 'Grupo',
-  //       placeholder: 'Selecciona un grupo',
-  //       error: 'El grupo es requerido',
-  //     },
-  //   },
-  //   drawer: {
-  //     title: 'Scores/Puntuaciones',
-  //     description:
-  //       'Como administrador, puedes crear periódos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periódos de evaluación por programa y curso.',
-  //     new: 'Nuevo periodo',
-  //   },
-  // };
-
-  // const errorMessages = {
-  //   startDate: 'La fecha de inicio es requerida',
-  //   endDate: 'La fecha de fin es requerida',
-  //   validateStartDate: 'La fecha de inicio debe ser anterior a la fecha de fin',
-  //   validateEndDate: 'La fecha de fin debe ser posterior a la fecha de inicio',
-  //   periodName: 'El nombre del periodo es requerido',
-  // };
-
   const { data: centers, isLoading: isLoadingCenters } = useUserCenters({
     enabled: fields.center === 'all',
   });
@@ -143,7 +125,7 @@ export default function PeriodSelector({
   const { data: programData } = useProgramDetail(program, {
     enabled: (fields.course || fields.subject) && !!program,
   });
-  const { data: apClasses } = useSubjectClasses(subject, { enabled: fields.group && !!subject });
+  const { data: teacherClasses } = useSessionClasses({ program }, { enabled: !!program });
 
   const fieldsToUse = useMemo(() => {
     const fieldsToReturn = [];
@@ -206,12 +188,16 @@ export default function PeriodSelector({
       });
     }
 
-    const subjects = (programData?.subjects || [])
-      .filter(({ course: subjectCourse }) => subjectCourse === course || !course)
-      .map(({ name, id }) => ({
-        label: name,
-        value: id,
-      }));
+    const subjects = uniqBy(
+      (teacherClasses || [])
+        .map((d) => d.subject)
+        .filter(({ course: subjectCourse }) => subjectCourse === course || !course)
+        .map(({ name, id, subject: sid }) => ({
+          label: name,
+          value: sid || id,
+        })),
+      'value'
+    );
 
     if (fields.subject) {
       fieldsToReturn.push({
@@ -225,21 +211,28 @@ export default function PeriodSelector({
     }
 
     if (fields.group) {
+      const groups = uniqBy(
+        (teacherClasses || [])
+          .filter((d) => d.subject.id === subject || d.subject.subject === subject)
+          .map(({ groups: g }) => ({
+            label: g.name,
+            value: g.id,
+          })),
+        'value'
+      );
+
       fieldsToReturn.push({
         name: 'group',
         label: labels?.form?.group?.label,
         placeholder: labels?.form?.group?.placeholder,
-        disabled: !subject || !apClasses?.length || !course || !subjects?.length,
-        data: (apClasses || []).map(({ groups, id }) => ({
-          label: groups.name,
-          value: id,
-        })),
+        disabled: !subject || !groups?.length || !course || !subjects?.length,
+        data: groups,
         required: requiredFields.includes('group') && labels?.form?.group?.error,
       });
     }
 
     return fieldsToReturn;
-  }, [fields, centers, programs, programData, center, course, subject, apClasses]);
+  }, [fields, centers, programs, programData, center, course, subject, teacherClasses]);
 
   if (isLoadingCenters) {
     return <Loader />;
@@ -270,47 +263,59 @@ export default function PeriodSelector({
         >
           {labels?.drawer?.new}
         </Text>
-        <ScoresPeriodForm
-          labels={labels?.form}
-          errorMessages={errorMessages}
-          fields={fieldsToUse}
-          allowCreate={allowCreate}
-          periods={periods?.filter((period) => {
-            if (period.center !== center || period.program !== program) {
-              return false;
-            }
+        <Box className={classes.form}>
+          <ScoresPeriodForm
+            labels={labels?.form}
+            errorMessages={errorMessages}
+            fields={fieldsToUse}
+            allowCreate={allowCreate}
+            periods={periods?.filter((period) => {
+              if (period.center !== center || period.program !== program) {
+                return false;
+              }
 
-            if (period.course && period.course !== course) {
-              return false;
-            }
+              if (period.course && period.course !== course) {
+                return false;
+              }
 
-            return true;
-          })}
-          onSave={onPeriodSave}
-          onChange={(v) => {
-            if (v.center !== center && allowCenterChange) {
-              setCenter(v.center);
-              setProgram(null);
-              setCourse(null);
-              setSubject(null);
-            }
-            if (v.program !== program) {
-              setProgram(v.program);
-              setCourse(null);
-              setSubject(null);
-            }
+              return true;
+            })}
+            onSave={onPeriodSave}
+            onChange={(v) => {
+              if (isFunction(onPeriodChange)) {
+                onPeriodChange(v);
+              }
+              if (v.center !== center && allowCenterChange) {
+                setCenter(v.center);
+                setProgram(null);
+                setCourse(null);
+                setSubject(null);
+              }
+              if (v.program !== program) {
+                setProgram(v.program);
+                setCourse(null);
+                setSubject(null);
+              }
 
-            if (v.course !== course) {
-              setCourse(v.course);
-              setSubject(null);
-            }
+              if (v.course !== course) {
+                setCourse(v.course);
+                setSubject(null);
+              }
 
-            if (v.subject !== subject) {
-              setSubject(v.subject);
-            }
-          }}
-          locale={locale}
-        />
+              if (v.subject !== subject) {
+                setSubject(v.subject);
+              }
+            }}
+            onSubmit={(v) => {
+              const period = getMostSpecificPeriod(v, periods);
+
+              if (isFunction(onPeriodSubmit)) {
+                onPeriodSubmit({ ...v, period });
+              }
+            }}
+            locale={locale}
+          />
+        </Box>
       </Box>
     </DrawerPush>
   );
@@ -323,6 +328,8 @@ PeriodSelector.propTypes = {
   allowCreate: PropTypes.bool,
   periods: PropTypes.array,
   onPeriodSave: PropTypes.func,
+  onPeriodSubmit: PropTypes.func,
+  onPeriodChange: PropTypes.func,
   locale: PropTypes.string,
   fields: PropTypes.object,
   requiredFields: PropTypes.array,

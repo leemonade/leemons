@@ -79,4 +79,9 @@ module.exports = {
       endDate: 'Fecha de fin',
     },
   },
+  notebook: {
+    header: {
+      export: 'Exportar notas a csv',
+    },
+  },
 };

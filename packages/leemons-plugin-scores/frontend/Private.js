@@ -4,7 +4,7 @@ import loadable from '@loadable/component';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const ScoresPage = loadable(() => import('@scores/components/ScoresPage'));
+const ScoresPage = loadable(() => import('@scores/pages/ScoresPage'));
 const PeriodsPage = loadable(() => import('@scores/pages/PeriodsPage'));
 
 export default function Private() {
@@ -15,6 +15,9 @@ export default function Private() {
     <Switch>
       <Route exact path={`${path}/periods`}>
         <PeriodsPage />
+      </Route>
+      <Route exact path={`${path}/notebook`}>
+        <ScoresPage />
       </Route>
       {/* <Route exact path={`${path}/`}>
         <ScoresPage />
