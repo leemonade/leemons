@@ -83,7 +83,11 @@ export default function AcademicCalendarDetail({ program: { id } }) {
       node: <TimeInput required />,
       rules: { required: t('fieldRequired') },
     },
-    valueRender: (value) => `${new Date(value).getHours()}:${new Date(value).getMinutes()}`,
+    valueRender: (value) => {
+      const hours = new Date(value).getHours();
+      const minutes = new Date(value).getMinutes();
+      return `${hours > 9 ? '' : '0'}${hours}:${minutes > 9 ? '' : '0'}${minutes}`;
+    },
   });
 
   columns.push({
@@ -93,7 +97,11 @@ export default function AcademicCalendarDetail({ program: { id } }) {
       node: <TimeInput required />,
       rules: { required: t('fieldRequired') },
     },
-    valueRender: (value) => `${new Date(value).getHours()}:${new Date(value).getMinutes()}`,
+    valueRender: (value) => {
+      const hours = new Date(value).getHours();
+      const minutes = new Date(value).getMinutes();
+      return `${hours > 9 ? '' : '0'}${hours}:${minutes > 9 ? '' : '0'}${minutes}`;
+    },
   });
 
   function submit() {
@@ -120,7 +128,7 @@ export default function AcademicCalendarDetail({ program: { id } }) {
         detailProgram(id),
       ]);
       store.program = program;
-      store.config = config;
+      store.config = config || {};
       if (store.program.moreThanOneAcademicYear) {
         store.config.allCoursesHaveSameConfig = true;
       }
@@ -267,7 +275,7 @@ export default function AcademicCalendarDetail({ program: { id } }) {
                 }}
                 columns={columns}
                 sortable={false}
-                removable={false}
+                removable={true}
                 labels={{
                   add: t('tableAdd'),
                   remove: t('tableRemove'),

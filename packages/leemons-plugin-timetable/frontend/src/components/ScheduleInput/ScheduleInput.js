@@ -1,12 +1,10 @@
-import React, { useEffect, useState, forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isNil, isString, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SchedulePicker } from '@bubbles-ui/leemons';
 import { unflatten } from '@common';
 import { prefixPN } from '../../helpers';
-
-const dayWeeks = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   const [pickerProps, setPickerProps] = useState(null);
@@ -29,7 +27,7 @@ const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   let value;
   if (props.value && isArray(props.value.days)) {
     value = { ...props.value };
-    value.days = map(value.days, (day) => ({ ...day, dayWeek: dayWeeks.indexOf(day.day) }));
+    value.days = map(value.days, (day) => ({ ...day }));
   }
 
   return !isNil(pickerProps) ? (

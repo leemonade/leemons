@@ -1,6 +1,29 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
+function getBreakData(breaks) {
+  const start = new Date();
+  const end = new Date();
+  const bStart = new Date(breaks.startDate);
+  const bEnd = new Date(breaks.endDate);
+  let sHour = bStart.getHours();
+  let sMinute = bStart.getMinutes();
+  let eHour = bEnd.getHours();
+  let eMinute = bEnd.getMinutes();
+  start.setHours(sHour, sMinute, 0);
+  end.setHours(eHour, eMinute, 59);
+  sHour = `${sHour > 9 ? '' : '0'}${sHour}`;
+  sMinute = `${sMinute > 9 ? '' : '0'}${sMinute}`;
+  eHour = `${eHour > 9 ? '' : '0'}${eHour}`;
+  eMinute = `${eMinute > 9 ? '' : '0'}${eMinute}`;
+  return {
+    minHour: `${sHour}:${sMinute}`,
+    minHourDate: start,
+    maxHour: `${eHour}:${eMinute}`,
+    maxHourDate: end,
+  };
+}
+
 async function getScheduleToFrontend(userSession, { transacting } = {}) {
   if (userSession.sessionConfig?.program) {
     // eslint-disable-next-line prefer-const
@@ -41,6 +64,21 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
     const end = new Date();
     let startSplit = null;
     let endSplit = null;
+
+    if (config?.breaks?.length) {
+      _.forEach(config.breaks, (breaks) => {
+        const breakData = getBreakData(breaks);
+        if (!minHour || breakData.minHourDate < minHourDate) {
+          minHour = breakData.minHour;
+          minHourDate = new Date(breakData.minHourDate);
+        }
+        if (!maxHour || breakData.maxHourDate > maxHourDate) {
+          maxHour = breakData.maxHour;
+          maxHourDate = new Date(breakData.maxHourDate);
+        }
+      });
+    }
+
     _.forEach(classes, (classe) => {
       const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
       const cId = classCourses[0].id;
@@ -49,6 +87,25 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
         configByCourse[cId] = {
           dayWeeks: [],
         };
+        if (config?.breaks?.length) {
+          _.forEach(config.breaks, (breaks) => {
+            const breakData = getBreakData(breaks);
+            if (
+              !configByCourse[cId].minHour ||
+              breakData.minHourDate < configByCourse[cId].minHourDate
+            ) {
+              configByCourse[cId].minHour = breakData.minHour;
+              configByCourse[cId].minHourDate = breakData.minHourDate;
+            }
+            if (
+              !configByCourse[cId].maxHour ||
+              breakData.maxHourDate > configByCourse[cId].maxHourDate
+            ) {
+              configByCourse[cId].maxHour = breakData.maxHour;
+              configByCourse[cId].maxHourDate = breakData.maxHourDate;
+            }
+          });
+        }
       }
       _.forEach(classe.schedule, (schedule) => {
         startSplit = schedule.start.split(':');
@@ -87,6 +144,9 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
 
     courses = _.sortBy(_.uniqBy(courses, 'id'), ['index']);
     const scheduleDays = dayWeeks.map((item) => week.indexOf(item));
+
+    console.log('dayWeeks', dayWeeks);
+    console.log('scheduleDays', scheduleDays);
 
     return {
       calendarConfig: {

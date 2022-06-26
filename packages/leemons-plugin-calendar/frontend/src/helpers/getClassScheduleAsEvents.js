@@ -3,28 +3,39 @@ import _ from 'lodash';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { Box, Text } from '@bubbles-ui/components';
 
-export default function getClassScheduleAsEvents(_classe, breaks) {
+export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWeek = 1 } = {}) {
   const classes = _.isArray(_classe) ? _classe : [_classe];
   const events = [];
-  const curr = new Date(); // get current date
-  const first = curr.getDate() - curr.getDay();
+  let curr = new Date(); // get current date
+
+  const day = curr.getDay();
+  const first = curr.getDate() - day;
 
   _.forEach(classes, (classe) => {
     if (classe.showEvents) {
       const title = `${classe.subject.name} (${classe.groups.abbreviation})`;
       const icon = classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null;
       _.forEach(classe.schedule, (schedule, i) => {
-        let { dayWeek } = schedule;
-        if (dayWeek === 0) {
-          dayWeek = 7;
+        function getDates(dayWeek) {
+          curr = new Date();
+          curr.setDate(first + dayWeek);
+          const start = new Date(curr);
+          const end = new Date(curr);
+          const startSplit = schedule.start.split(':');
+          const endSplit = schedule.end.split(':');
+          start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0);
+          end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 59);
+          return {
+            start,
+            end,
+          };
         }
-        const start = new Date(curr.setDate(first + dayWeek));
-        const end = new Date(curr.setDate(first + dayWeek));
-        const startSplit = schedule.start.split(':');
-        const endSplit = schedule.end.split(':');
-        start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0);
-        end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 59);
-        events.push({
+
+        const { dayWeek } = schedule;
+
+        const { start, end } = getDates(dayWeek);
+
+        const newEvent = {
           id: `${classe.id}-${i}`,
           title,
           allDay: false,
@@ -42,17 +53,31 @@ export default function getClassScheduleAsEvents(_classe, breaks) {
               icon,
             },
           },
+        };
+
+        events.push(newEvent);
+        const { start: s1, end: e1 } = getDates(dayWeek - 7);
+        events.push({
+          ...newEvent,
+          start: s1,
+          end: e1,
+        });
+        const { start: s2, end: e2 } = getDates(dayWeek + 7);
+        events.push({
+          ...newEvent,
+          start: s2,
+          end: e2,
         });
       });
     }
   });
   if (_.isArray(breaks) && breaks.length) {
     _.forEach(breaks, (bbreak, i) => {
-      _.forEach([...new Array(10).keys()], (index) => {
+      _.forEach([...new Array(21).keys()], (index) => {
         const start = new Date(bbreak.startDate);
         const end = new Date(bbreak.endDate);
-        start.setDate(first + index);
-        end.setDate(first + index);
+        start.setDate(first + index - 7);
+        end.setDate(first + index - 7);
         events.push({
           id: `break-${i}`,
           title: bbreak.name,
@@ -86,5 +111,6 @@ export default function getClassScheduleAsEvents(_classe, breaks) {
       });
     });
   }
+  console.log(events);
   return events;
 }

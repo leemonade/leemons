@@ -245,7 +245,8 @@ function Calendar({ session }) {
 
     store.schedule.events = getClassScheduleAsEvents(
       store.schedule.sections[0].calendars,
-      store.schedule.breaks
+      store.schedule.breaks,
+      { firstDayOfWeek: 1 }
     );
   }
 
@@ -331,6 +332,8 @@ function Calendar({ session }) {
 
   if (store.loading) return <LoadingOverlay visible />;
 
+  console.log(store.schedule?.calendarConfig);
+
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
       <Box style={{ width: '250px', height: '100vh' }}>
@@ -360,7 +363,8 @@ function Calendar({ session }) {
               store.schedule.sections = event;
               store.schedule.events = getClassScheduleAsEvents(
                 store.schedule.sections[0].calendars,
-                store.schedule.breaks
+                store.schedule.breaks,
+                { firstDayOfWeek: 1 }
               );
               render();
             } else {
@@ -485,7 +489,7 @@ function Calendar({ session }) {
               key="2"
               style={{ height: '90%' }}
               currentView="week"
-              hideToolbar={true}
+              hideToolbar={false}
               minWeekDay={store.schedule.calendarConfig.minDayWeek}
               maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
               minHour={store.schedule.calendarConfig.minHour}
