@@ -4,13 +4,13 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { AssignIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { deleteTestRequest } from '../../request';
+import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -24,7 +24,11 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
 const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { classes } = ListCardStyles({ selected });
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const {
+    openConfirmationModal,
+    openDeleteConfirmationModal,
+    setLoading: setAppLoading,
+  } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
@@ -63,6 +67,30 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
+
+      if (asset.duplicable && asset.providerData) {
+        items.push({
+          icon: <DuplicateIcon />,
+          children: t('duplicate'),
+          onClick: (e) => {
+            e.stopPropagation();
+            openConfirmationModal({
+              onConfirm: async () => {
+                try {
+                  setAppLoading(true);
+                  await duplicateRequest(asset.providerData.id, asset.providerData.published);
+                  addSuccessAlert(t('duplicated'));
+                  onRefresh();
+                } catch (err) {
+                  addErrorAlert(getErrorMessage(err));
+                }
+                setAppLoading(false);
+              },
+            })();
+          },
+        });
+      }
+
       if (asset.deleteable) {
         items.push({
           icon: <DeleteBinIcon />,
@@ -72,12 +100,14 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
             openDeleteConfirmationModal({
               onConfirm: async () => {
                 try {
+                  setAppLoading(true);
                   await deleteTestRequest(asset.providerData.id);
                   addSuccessAlert(t('deleted'));
                   onRefresh();
                 } catch (err) {
                   addErrorAlert(getErrorMessage(err));
                 }
+                setAppLoading(false);
               },
             })();
           },

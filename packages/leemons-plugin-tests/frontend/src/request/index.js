@@ -17,6 +17,7 @@ export {
   getFeedback as getFeedbackRequest,
   setFeedback as setFeedbackRequest,
   getAssignConfigs as getAssignConfigsRequest,
+  duplicate as duplicateRequest,
 } from './tests';
 
 export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

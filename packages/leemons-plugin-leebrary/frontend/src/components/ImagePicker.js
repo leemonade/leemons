@@ -40,6 +40,9 @@ const ImagePicker = ({
       } else if (!isEmpty(valueProp.name) && !isEmpty(valueProp.path)) {
         const imageSrc = URL.createObjectURL(valueProp);
         setAssetUrl(imageSrc);
+      } else {
+        setAssetUrl(null);
+        setAsset(null);
       }
     }
   }, [valueProp]);

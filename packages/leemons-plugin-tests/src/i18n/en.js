@@ -226,7 +226,7 @@ module.exports = {
     toggle: 'Close',
     open: 'Open',
     duplicate: 'Duplicate',
-    dupliacte: 'Duplicar',
+    duplicated: 'Duplicated',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',

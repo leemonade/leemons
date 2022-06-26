@@ -104,6 +104,13 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
   },
   {
+    path: '/tests/duplicate',
+    method: 'POST',
+    handler: 'tests.duplicate',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.tests, ['create', 'update']),
+  },
+  {
     path: '/questions/details',
     method: 'POST',
     handler: 'questions.getDetails',

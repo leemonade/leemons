@@ -15,7 +15,7 @@ import {
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { useStore } from '@common';
-import { forEach, map } from 'lodash';
+import { forEach, isString, map } from 'lodash';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
@@ -52,8 +52,8 @@ const TreeClassDetail = ({
       if (subjectType == null && item.subjectType) {
         subjectType = item.subjectType.id;
       }
-      if (knowledge == null && item.knowledge) {
-        knowledge = item.knowledge.id;
+      if (knowledge == null && item.knowledges) {
+        knowledge = isString(item.knowledges) ? item.knowledges : item.knowledges.id;
       }
     });
     reset({
@@ -61,7 +61,7 @@ const TreeClassDetail = ({
       subjectType,
       knowledge,
     });
-  }, [classe.subject]);
+  }, [classe.subject, classes]);
 
   const tabs = [];
 

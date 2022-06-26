@@ -223,7 +223,8 @@ module.exports = {
     task: 'Tarea',
     toggle: 'Cerrar',
     open: 'Abrir',
-    dupliacte: 'Duplicar',
+    duplicate: 'Duplicar',
+    duplicated: 'Duplicado',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',

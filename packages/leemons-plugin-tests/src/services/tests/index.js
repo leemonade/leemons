@@ -9,9 +9,11 @@ const { assignTest } = require('./assignTest');
 const { getInstanceFeedback } = require('./getInstanceFeedback');
 const { setInstanceFeedback } = require('./setInstanceFeedback');
 const { getAssignSavedConfigs } = require('./getAssignSavedConfigs');
+const { duplicate } = require('./duplicate');
 
 module.exports = {
   assignTest,
+  duplicate,
   setInstanceFeedback,
   getInstanceFeedback,
   setFeedback: setInstanceFeedback,

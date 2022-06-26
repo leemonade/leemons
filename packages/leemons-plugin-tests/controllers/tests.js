@@ -122,6 +122,28 @@ async function getAssignConfigs(ctx) {
   ctx.body = { status: 200, configs };
 }
 
+async function duplicate(ctx) {
+  try {
+    const { published, id } = ctx.request.body;
+    const test = await testsService.duplicate(id, {
+      published,
+      userSession: ctx.state.userSession,
+    });
+
+    ctx.status = 201;
+    ctx.body = {
+      status: 201,
+      test,
+    };
+  } catch (error) {
+    ctx.status = 400;
+    ctx.body = {
+      status: 400,
+      error: error.message,
+    };
+  }
+}
+
 module.exports = {
   getUserQuestionResponses,
   setInstanceTimestamp,
@@ -131,6 +153,7 @@ module.exports = {
   getAssignConfigs,
   assignTest,
   deleteTest,
+  duplicate,
   listTests,
   saveTest,
   getTest,

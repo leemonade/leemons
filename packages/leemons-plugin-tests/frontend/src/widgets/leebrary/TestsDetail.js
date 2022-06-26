@@ -8,12 +8,16 @@ import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { deleteTestRequest } from '../../request';
+import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const TestsDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('testsCard'));
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const {
+    openConfirmationModal,
+    openDeleteConfirmationModal,
+    setLoading: setAppLoading,
+  } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const toolbarItems = { toggle: t('toggle'), open: t('open') };
 
@@ -30,6 +34,10 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
     if (asset.providerData?.published) {
       toolbarItems.assign = t('assign');
     }
+    if (asset.duplicable) {
+      toolbarItems.duplicate = t('duplicate');
+    }
+    // duplicateRequest
   }
 
   const handleView = () => {
@@ -44,12 +52,30 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
     openDeleteConfirmationModal({
       onConfirm: async () => {
         try {
+          setAppLoading(true);
           await deleteTestRequest(asset.providerData.id);
           addSuccessAlert(t('deleted'));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
         }
+        setAppLoading(false);
+      },
+    })();
+  };
+
+  const handleDuplicate = () => {
+    openConfirmationModal({
+      onConfirm: async () => {
+        try {
+          setAppLoading(true);
+          await duplicateRequest(asset.providerData.id, asset.providerData.published);
+          addSuccessAlert(t('duplicated'));
+          onRefresh();
+        } catch (err) {
+          addErrorAlert(getErrorMessage(err));
+        }
+        setAppLoading(false);
       },
     })();
   };
@@ -94,6 +120,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}
+      onDuplicate={handleDuplicate}
     />
   );
 };

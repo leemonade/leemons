@@ -115,12 +115,24 @@ async function setFeedback(instance, user, feedback) {
   });
 }
 
+async function duplicate(instance, published = false) {
+  return leemons.api(`tests/tests/duplicate`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id: instance,
+      published,
+    },
+  });
+}
+
 export {
   listTests,
   saveTest,
   getTest,
   deleteTest,
   assignTest,
+  duplicate,
   getFeedback,
   setFeedback,
   getAssignConfigs,
