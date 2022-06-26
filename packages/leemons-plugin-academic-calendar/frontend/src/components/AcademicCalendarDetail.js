@@ -269,9 +269,13 @@ export default function AcademicCalendarDetail({ program: { id } }) {
             render={({ field }) => (
               <TableInput
                 data={field.value || []}
-                onChange={(e) => {
-                  if (!e.courses) e.courses = map(store.program.courses, 'id');
-                  field.onChange(e);
+                onChange={(ev) => {
+                  const courseIds = map(store.program.courses, 'id');
+                  field.onChange(
+                    map(ev, (e) => {
+                      if (!e.courses) e.courses = courseIds;
+                    })
+                  );
                 }}
                 columns={columns}
                 sortable={false}

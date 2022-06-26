@@ -222,7 +222,7 @@ function Calendar({ session }) {
       if (!store.schedule.selectedCourse) {
         return true;
       }
-      return bbreak.courses.includes(store.schedule.selectedCourse.id);
+      return bbreak.courses?.includes(store.schedule.selectedCourse.id);
     });
 
     store.schedule.calendarConfig = store.schedule.selectedCourse
@@ -331,8 +331,6 @@ function Calendar({ session }) {
   }, [store.center, store.loading]);
 
   if (store.loading) return <LoadingOverlay visible />;
-
-  console.log(store.schedule?.calendarConfig);
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
