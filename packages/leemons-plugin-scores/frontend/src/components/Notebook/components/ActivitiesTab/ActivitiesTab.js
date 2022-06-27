@@ -163,7 +163,7 @@ function useTableData({ filters }) {
 
   return {
     activitiesData,
-    grades: evaluationSystem?.scales,
+    grades: evaluationSystem?.scales.sort((a, b) => a.number - b.number),
   };
 }
 
