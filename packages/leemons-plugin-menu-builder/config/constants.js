@@ -4,6 +4,7 @@ module.exports = {
     'leebrary',
     'grades',
     'academic-portfolio',
+    'academic-calendar',
     'scores',
     'curriculum',
     'tasks',
