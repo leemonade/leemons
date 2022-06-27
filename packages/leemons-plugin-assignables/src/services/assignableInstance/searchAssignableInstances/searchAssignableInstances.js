@@ -149,8 +149,14 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
         return;
       }
       if (query.finished) {
-        const from = dayjs(query.finished_$gt || null);
-        const to = dayjs(query.finished_$lt || null);
+        const from = dayjs(query.finished_$gt || null)
+          .set('hours', 0)
+          .set('minutes', 0)
+          .set('seconds', 0);
+        const to = dayjs(query.finished_$lt || null)
+          .set('hours', 23)
+          .set('minutes', 59)
+          .set('seconds', 59);
 
         if (from.isValid() && to.isValid()) {
           const deadlineDate = dayjs(deadline || null);
@@ -184,9 +190,9 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
     }
   );
 
-  if (query.archived === true) {
-    // EN: If an instance does not have dates, it is assumed that it is not archived.
-    // ES: Si una instancia no tiene fechas, se asume que no está archivada.
+  if (query.archived === true || query.finished) {
+    // EN: If an instance does not have dates, it is assumed that it is not archived not finished.
+    // ES: Si una instancia no tiene fechas, se asume que no está archivada ni finalizada.
     return [...Object.keys(instancesWithDates)];
   }
 

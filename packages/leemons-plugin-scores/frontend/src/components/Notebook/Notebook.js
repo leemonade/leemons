@@ -21,12 +21,18 @@ export default function Notebook({ isOpened, onOpenChange, filters }) {
     activitiesTab: 'Actividades evaluadas',
   };
 
+  // const { data } = useSearchAssignableInstances({
+  //   finished: true,
+  //   finished_$gt: new Date('1-1-1970'),
+  //   finished_$lt: new Date('27-june-2022'),
+  // });
+
   return (
     <Box className={classes.root}>
       <Header isOpened={isOpened} onOpenChange={onOpenChange} filters={filters} />
       <Tabs className={classes.tabHeader}>
         <TabPanel label={labels.activitiesTab}>
-          <ActivitiesTab />
+          <ActivitiesTab filters={filters} />
         </TabPanel>
       </Tabs>
     </Box>

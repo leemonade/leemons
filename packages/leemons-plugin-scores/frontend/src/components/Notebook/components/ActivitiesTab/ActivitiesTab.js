@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  createStyles,
-  SearchInput,
-  Select,
-  Switch,
-  TabPanel,
-  Tabs,
-} from '@bubbles-ui/components';
+import { Box, Button, createStyles, SearchInput, Select, Switch } from '@bubbles-ui/components';
 import { ScoresBasicTable } from '@bubbles-ui/leemons';
+
+import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
+import { map, uniq } from 'lodash';
+import { useUserAgentsInfo } from '@users/hooks';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 
 const useStyles = createStyles((theme) => ({
   filters: {
@@ -65,20 +63,112 @@ function Filters() {
     </Box>
   );
 }
-function ScoresTable() {
-  const generateRandomActivities = () => {
-    const activities = [];
-    for (let i = 1; i <= 6; i++) {
-      const shouldSkip = Math.random() > 0.7;
-      if (shouldSkip) continue;
-      activities.push({
-        id: `a-0${i}`,
-        score: Math.floor(Math.random() * 10),
-      });
+
+function useTableData({ filters }) {
+  const { data: sessionClasses } = useSessionClasses(
+    { program: filters.program },
+    { enabled: !!filters.program }
+  );
+  const selectedClasses = React.useMemo(() => {
+    if (!sessionClasses) {
+      return [];
     }
-    return activities;
+
+    const classesMatchingFilters = sessionClasses
+      .filter(
+        (klass) =>
+          (klass.subject.subject === filters.subject || klass.subject.id === filters.subject) &&
+          (!filters.group || klass.groups.id === filters.group)
+      )
+      .map((klass) => klass.id);
+
+    return classesMatchingFilters;
+  }, [sessionClasses, filters]);
+
+  const { data: activities } = useSearchAssignableInstances(
+    {
+      finished: true,
+      finished_$gt: filters.startDate,
+      finished_$lt: filters.endDate,
+      classes: JSON.stringify(selectedClasses),
+    },
+    { enabled: !!selectedClasses.length }
+  );
+
+  const assignableInstancesQueries = useAssignableInstances({ id: activities || [] });
+
+  const assignableInstances = React.useMemo(
+    () => map(assignableInstancesQueries, 'data').filter(Boolean),
+    [assignableInstancesQueries]
+  );
+
+  const students = React.useMemo(() => {
+    const stdnts = assignableInstances.flatMap((assignableInstance) => assignableInstance.students);
+    return uniq(map(stdnts, 'user'));
+  }, [assignableInstances]);
+
+  const { data: studentsData } = useUserAgentsInfo(students, { enabled: !!students.length });
+  const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0]);
+
+  const activitiesData = React.useMemo(() => {
+    if (!studentsData?.length || !activities?.length) {
+      return {};
+    }
+
+    const values = assignableInstances.reduce((studentsValues, activity) => {
+      activity.students.forEach((student) => {
+        const grade = student.grades.find(
+          (g) => g.type === 'main' && g.subject === filters.subject
+        );
+
+        if (!grade) {
+          return;
+        }
+
+        // eslint-disable-next-line no-param-reassign
+        studentsValues[student.user] = {
+          activities: [
+            ...(studentsValues[student.user] || []),
+            {
+              id: activity.id,
+              score: grade.grade,
+            },
+          ],
+        };
+      });
+
+      return studentsValues;
+    }, {});
+
+    studentsData.forEach((student) => {
+      values[student.id] = {
+        activities: values[student.id]?.activities || [],
+        id: student.id,
+        name: student.user.name,
+        surname: student.user.surnames,
+        image: student.user.avatar,
+      };
+    });
+
+    const tableData = {
+      activities: assignableInstances.map((activity) => ({
+        id: activity.id,
+        name: activity.assignable.asset.name,
+        deadline: activity.dates.deadline || null,
+      })),
+      value: Object.values(values),
+    };
+    return tableData;
+  }, [assignableInstances, students]);
+
+  return {
+    activitiesData,
+    grades: evaluationSystem?.scales,
   };
-  const tableData = React.useMemo(
+}
+
+function ScoresTable({ activitiesData, grades }) {
+  const data = React.useMemo(
     () => ({
       labels: {
         students: 'Estudiante',
@@ -87,183 +177,30 @@ function ScoresTable() {
         gradingTasks: 'Grading tasks',
         attendance: 'Attendance',
       },
-      grades: [
-        { number: 0, letter: 'F' },
-        { number: 1, letter: 'E' },
-        { number: 2, letter: 'E+' },
-        { number: 3, letter: 'D' },
-        { number: 4, letter: 'D+' },
-        { number: 5, letter: 'C' },
-        { number: 6, letter: 'C+' },
-        { number: 7, letter: 'B' },
-        { number: 8, letter: 'B+' },
-        { number: 9, letter: 'A' },
-        { number: 10, letter: 'A+' },
-      ],
-      activities: [
-        { id: 'a-01', name: 'Test Moriscos', deadline: '2020-01-01' },
-        { id: 'a-02', name: 'La historia detras del cuadro', deadline: '2020-02-20' },
-        { id: 'a-03', name: 'Patios moriscos', deadline: '2020-03-10' },
-        { id: 'a-04', name: 'Examen siglo XVII', deadline: '2020-04-20' },
-        { id: 'a-05', name: 'La edad del bronze', deadline: '2020-05-09' },
-        { id: 'a-06', name: 'La edad media', deadline: '2020-06-30' },
-      ],
-      value: [
-        {
-          id: 's-01',
-          name: 'Michael',
-          surname: 'Scott',
-          image: 'https://areajugones.sport.es/wp-content/uploads/2021/05/the-office-2.jpg',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-02',
-          name: 'Dwight',
-          surname: 'Schrute',
-          image: 'https://pbs.twimg.com/profile_images/1434184964866723852/M5c8uqF7_400x400.jpg',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-03',
-          name: 'Jim',
-          surname: 'Halpert',
-          image:
-            'https://en.meming.world/images/en/thumb/6/6d/Jim_Halpert_Smiling_Through_Blinds.jpg/300px-Jim_Halpert_Smiling_Through_Blinds.jpg',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-04',
-          name: 'Pam',
-          surname: 'Beesly',
-          image:
-            'https://gcdn.lanetaneta.com/wp-content/uploads/2019/09/The-Office-10-veces-que-Pam-recibió-un-trato-mucho-780x405.jpg',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-05',
-          name: 'Ryan',
-          surname: 'Howard',
-          image:
-            'https://vader.news/__export/1616206384907/sites/gadgets/img/2021/03/19/ryan_howard.jpg_1962491361.jpg',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-06',
-          name: 'Kelly',
-          surname: 'Kapoor',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-07',
-          name: 'Angela',
-          surname: 'Martin',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-08',
-          name: 'Oscar',
-          surname: 'Martinez',
-          image: 'https://poptv.orange.es/wp-content/uploads/sites/3/2020/08/oscar-nuncc83ez.jpeg',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-09',
-          name: 'Phyllis',
-          surname: 'Lapin',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-10',
-          name: 'Stanley',
-          surname: 'Hudson',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-11',
-          name: 'Meredith',
-          surname: 'Palmer',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-12',
-          name: 'Creed',
-          surname: 'Bratton',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-13',
-          name: 'Darryl',
-          surname: 'Philbin',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-14',
-          name: 'Kelly',
-          surname: 'Kapoor',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-15',
-          name: 'Angela',
-          surname: 'Martin',
-          activities: generateRandomActivities(),
-        },
-
-        {
-          id: 's-16',
-          name: 'Oscar',
-          surname: 'Martinez',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-17',
-          name: 'Phyllis',
-          surname: 'Lapin',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-18',
-          name: 'Stanley',
-          surname: 'Hudson',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-19',
-          name: 'Meredith',
-          surname: 'Palmer',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-20',
-          name: 'Creed',
-          surname: 'Bratton',
-          activities: generateRandomActivities(),
-        },
-        {
-          id: 's-21',
-          name: 'Darryl',
-          surname: 'Philbin',
-          activities: generateRandomActivities(),
-        },
-      ],
+      grades,
+      ...activitiesData,
     }),
-    []
+    [grades, activitiesData]
   );
 
+  if (!data.grades?.length || !data.activities?.length) {
+    return null;
+  }
   return (
     <Box>
-      <ScoresBasicTable {...tableData} />
+      <ScoresBasicTable {...data} />
     </Box>
   );
 }
 
-export default function ActivitiesTab() {
+export default function ActivitiesTab({ filters }) {
   const { classes } = useStyles();
   const labels = {};
+  const { activitiesData, grades } = useTableData({ filters });
   return (
     <Box>
       <Filters />
-      <ScoresTable />
+      <ScoresTable activitiesData={activitiesData} grades={grades} />
     </Box>
   );
 }

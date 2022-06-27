@@ -7,6 +7,7 @@ import { LocaleDate, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 
 const useStyles = createStyles((theme, { isOpened } = {}) => ({
   root: {
