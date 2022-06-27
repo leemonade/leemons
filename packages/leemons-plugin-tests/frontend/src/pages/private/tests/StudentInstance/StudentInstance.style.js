@@ -24,8 +24,9 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   pages: {
     flex: 1,
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'start',
     padding: `${theme.spacing[8]}px ${theme.spacing[12]}px`,
+    paddingLeft: theme.spacing[13],
     overflow: 'auto',
   },
   pagesContent: {

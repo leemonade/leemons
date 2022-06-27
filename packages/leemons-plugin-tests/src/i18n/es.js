@@ -237,6 +237,10 @@ module.exports = {
     development: 'Instrucciones',
     test: 'TEST',
     instructionsForTest: 'Instrucciones para hacer este test',
+    clueWithoutPer:
+      'El uso de pistas no resta ninguna puntuación, es decir, puedes pedir pistas sin penalización.',
+    clueWithPer:
+      'El uso de pistas resta un {per}% de la pregunta, es decir, restarán {points} por cada pista utilizada.',
     questions: 'Preguntas',
     perQuestion: 'Cada pregunta',
     totalPoints: 'Puntuación total',

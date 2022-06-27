@@ -8,6 +8,7 @@ import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import { useSession } from '@users/session';
 import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 
+import { find } from 'lodash';
 import InfoCard from './InfoCard';
 
 dayjs.extend(duration);
@@ -23,6 +24,30 @@ export default function Development(props) {
     }
     return null;
   }, [store.instance]);
+
+  let clueEl = null;
+  const cluePer = find(store.config.clues, (cl) => cl.canUse);
+
+  if (cluePer) {
+    const cluePoints = store.questionsInfo.perQuestionNumber * (cluePer.value / 100);
+    clueEl = (
+      <Box className={styles.resumeBoxContainer}>
+        <InfoCard
+          cx={cx}
+          icon="/public/tests/hint.png"
+          styles={styles}
+          label={
+            cluePer.value !== 0
+              ? t('clueWithPer', {
+                  per: cluePer.value,
+                  points: `-${cluePoints.toFixed(2)}`,
+                })
+              : t('clueWithoutPer')
+          }
+        />
+      </Box>
+    );
+  }
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
@@ -51,12 +76,9 @@ export default function Development(props) {
           number={store.questionsInfo.perQuestion}
           label={t('perQuestion')}
         />
-      </Box>
-      <Box className={styles.resumeBoxContainer}>
         {store.questionsInfo.minPoints !== 0 ? (
           <InfoCard
             cx={cx}
-            reverse
             styles={styles}
             number={store.questionsInfo.minPoints}
             label={t('minScore')}
@@ -64,14 +86,12 @@ export default function Development(props) {
         ) : null}
         <InfoCard
           cx={cx}
-          reverse
           styles={styles}
           number={store.questionsInfo.totalPoints}
           label={t('maxScore')}
         />
         <InfoCard
           cx={cx}
-          reverse
           styles={styles}
           number={store.questionsInfo.minToApprove}
           label={t('minToApprove')}
@@ -108,6 +128,8 @@ export default function Development(props) {
           })}
         />
       </Box>
+
+      {clueEl}
 
       <Box className={styles.timeLimitContainer}>
         <Title order={5}>{t('beforeStart')}</Title>

@@ -239,6 +239,10 @@ module.exports = {
     development: 'Instructions',
     test: 'TEST',
     instructionsForTest: 'Instructions for this test',
+    clueWithoutPer:
+      'The use of hints does not subtract any score, i.e., you can ask for hints without penalty.',
+    clueWithPer:
+      'The use of clues subtracts {per}% of the question, i.e. {points} for each clue used.',
     questions: 'Questions',
     perQuestion: 'Per question',
     totalPoints: 'Total points',

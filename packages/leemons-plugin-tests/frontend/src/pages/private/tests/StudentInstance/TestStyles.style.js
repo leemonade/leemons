@@ -3,7 +3,7 @@ import { createStyles, getFontProductive } from '@bubbles-ui/components';
 export const TestStyles = createStyles((theme, {}) => ({
   timeLimitContainer: {
     paddingTop: theme.spacing[6],
-    width: 500,
+    width: '100%',
     margin: '0px auto',
     paddingBottom: theme.spacing[5],
   },
@@ -48,7 +48,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     marginBottom: theme.spacing[2],
   },
   resumeBox: {
-    width: 162,
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -60,9 +60,10 @@ export const TestStyles = createStyles((theme, {}) => ({
     backgroundColor: theme.colors.uiBackground02,
   },
   resumeBoxBig: {
-    width: 335,
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
     gap: theme.spacing[3],
     textAlign: 'left',
   },
@@ -81,7 +82,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     textAlign: 'left',
   },
   resumeLabelBig: {
-    width: 230,
+    width: 'calc(100% - 80px)',
     fontSize: theme.fontSizes[2],
     textAlign: 'left',
   },
