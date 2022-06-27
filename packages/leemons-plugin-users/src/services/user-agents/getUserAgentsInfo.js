@@ -74,10 +74,10 @@ async function getUserAgentsInfo(
 
   return _.map(userAgents, (userAgent) => {
     userAgent.user = usersById[userAgent.user];
-    if (profileRoleByRole && profilesById) {
+    if (profileRoleByRole && profilesById && profileRoleByRole[userAgent.role]) {
       userAgent.profile = profilesById[profileRoleByRole[userAgent.role].profile];
     }
-    if (roleCentersByRole && centerById) {
+    if (roleCentersByRole && centerById && roleCentersByRole[userAgent.role]) {
       userAgent.center = centerById[roleCentersByRole[userAgent.role].center];
     }
     return userAgent;

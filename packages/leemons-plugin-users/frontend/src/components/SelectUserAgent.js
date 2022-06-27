@@ -6,14 +6,14 @@ import {
   cloneDeep,
   find,
   findIndex,
-  map,
-  isEmpty,
-  isArray,
   flattenDeep,
-  uniq,
+  isArray,
+  isEmpty,
   isNil,
+  map,
+  uniq,
 } from 'lodash';
-import { ActionButton, Box, Stack, MultiSelect, UserDisplayItem } from '@bubbles-ui/components';
+import { ActionButton, Box, Select, Stack, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -88,8 +88,8 @@ const SelectUserAgent = forwardRef(
         const data = map(response.userAgents, (item) => ({
           ...item.user,
           variant: 'rol',
-          rol: item.profile.name,
-          center: item.center.name,
+          rol: item.profile?.name,
+          center: item.center?.name,
           value: item.id,
           label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
         }));
@@ -97,6 +97,7 @@ const SelectUserAgent = forwardRef(
         store.data = data;
         render();
       } catch (err) {
+        console.error(err);
         addErrorAlert(getErrorMessage(err));
       }
     }
@@ -117,6 +118,7 @@ const SelectUserAgent = forwardRef(
       */
 
       let values = value || [];
+      values = isArray(values) ? values : [values];
 
       if (returnItem) {
         values = values.map((item) => find(store.data, { value: item }));
@@ -266,7 +268,7 @@ const SelectUserAgent = forwardRef(
     }, [inputValue]);
 
     return (
-      <MultiSelect
+      <Select
         {...props}
         ref={ref}
         searchable

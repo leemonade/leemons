@@ -6,6 +6,7 @@ import { MainNav } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@menu-builder/helpers/prefixPN';
+import SocketIoService from '@socket-io/service';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
@@ -20,6 +21,10 @@ export default function MainMenu({ subNavWidth, ...props }) {
   const reloadMenu = () => {
     setLoadMenu(true);
   };
+
+  SocketIoService.useOn('USER_CHANGE_LOCALE', (e, event) => {
+    reloadMenu();
+  });
 
   useEffect(() => {
     hooks.addAction('menu-builder:reload-menu', reloadMenu);
@@ -104,6 +109,14 @@ export default function MainMenu({ subNavWidth, ...props }) {
               ]),
           {
             id: 'menu-3',
+            label: t('changeLanguage'),
+            order: 2,
+            url: '/private/users/language',
+            window: 'SELF',
+            disabled: null,
+          },
+          {
+            id: 'menu-4',
             label: t('logout'),
             order: 2,
             url: '/private/users/logout',

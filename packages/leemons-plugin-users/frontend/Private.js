@@ -13,6 +13,9 @@ const SelectProfile = loadable(() => pMinDelay(import('./src/pages/private/Selec
 const UserData = loadable(() => pMinDelay(import('./src/pages/private/UserData'), 1000));
 const Welcome = loadable(() => pMinDelay(import('./src/pages/private/Welcome'), 1000));
 const SocketTest = loadable(() => pMinDelay(import('./src/pages/private/SocketTest'), 1000));
+const ChangeLanguage = loadable(() =>
+  pMinDelay(import('./src/pages/private/ChangeLanguage'), 1000)
+);
 
 const ListProfiles = loadable(() =>
   pMinDelay(import('./src/pages/private/profiles/ListProfiles'), 1000)
@@ -48,6 +51,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/create`}>
         <CreateUsers session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/language`}>
+        <ChangeLanguage session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/select-profile`}>
         <SelectProfile session={session} fallback={<LoadingOverlay visible />} />

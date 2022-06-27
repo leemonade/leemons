@@ -4,6 +4,7 @@ module.exports = {
     accountInfo: 'Account info',
     switchProfile: 'Switch profile',
     logout: 'Logout',
+    changeLanguage: 'Change language',
   },
   menu: {
     menu_constructor: {

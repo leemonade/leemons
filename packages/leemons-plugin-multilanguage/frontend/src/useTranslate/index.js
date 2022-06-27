@@ -1,5 +1,7 @@
+import React from 'react';
 import useSWR from 'swr';
 import * as _ from 'lodash';
+import SocketIoService from '@socket-io/service';
 
 function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
   // Get deduplicated keys
@@ -55,6 +57,16 @@ export function getLocalizationsByArrayOfItems(items, reducer, locale) {
 }
 
 export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
+  const [userLocale, setUserLocale] = React.useState(null);
+  SocketIoService.useOn('USER_CHANGE_LOCALE', (e, event) => {
+    setUserLocale(event.new);
+  });
+
+  if (!locale && userLocale) {
+    // eslint-disable-next-line no-param-reassign
+    locale = userLocale;
+  }
+
   const jsonKey = JSON.stringify({ keys, keysStartsWith, locale });
 
   // Let swr handle data fetching and caching

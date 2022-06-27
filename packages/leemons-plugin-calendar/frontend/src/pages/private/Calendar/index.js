@@ -226,8 +226,8 @@ function Calendar({ session }) {
     });
 
     store.schedule.calendarConfig = store.schedule.selectedCourse
-      ? schedule.calendarConfig
-      : schedule.calendarConfigByCourse[store.schedule.selectedCourse];
+      ? schedule.calendarConfigByCourse[store.schedule.selectedCourse.id]
+      : schedule.calendarConfig;
     store.schedule.sections = [
       {
         sectionName: t('classes'),
@@ -487,7 +487,7 @@ function Calendar({ session }) {
               key="2"
               style={{ height: '90%' }}
               currentView="week"
-              hideToolbar={false}
+              hideToolbar={true}
               minWeekDay={store.schedule.calendarConfig.minDayWeek}
               maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
               minHour={store.schedule.calendarConfig.minHour}

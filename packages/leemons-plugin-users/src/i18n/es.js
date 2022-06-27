@@ -280,4 +280,11 @@ module.exports = {
     gender: 'Género',
     rol: 'Rol',
   },
+  changeLanguage: {
+    title: 'Configuración de idiomas',
+    interface: 'Idioma de la interfaz',
+    selectLocale: 'Seleccione un idioma',
+    save: 'Guardar',
+    success: 'Idioma cambiado',
+  },
 };

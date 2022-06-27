@@ -81,48 +81,53 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
 
     _.forEach(classes, (classe) => {
       const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
-      const cId = classCourses[0].id;
+      const cIds = _.map(classCourses, 'id');
       courses = courses.concat(classCourses);
-      if (!_.isObject(configByCourse[cId])) {
-        configByCourse[cId] = {
-          dayWeeks: [],
-        };
-        if (config?.breaks?.length) {
-          _.forEach(config.breaks, (breaks) => {
-            const breakData = getBreakData(breaks);
-            if (
-              !configByCourse[cId].minHour ||
-              breakData.minHourDate < configByCourse[cId].minHourDate
-            ) {
-              configByCourse[cId].minHour = breakData.minHour;
-              configByCourse[cId].minHourDate = breakData.minHourDate;
-            }
-            if (
-              !configByCourse[cId].maxHour ||
-              breakData.maxHourDate > configByCourse[cId].maxHourDate
-            ) {
-              configByCourse[cId].maxHour = breakData.maxHour;
-              configByCourse[cId].maxHourDate = breakData.maxHourDate;
-            }
-          });
+      _.forEach(cIds, (cId) => {
+        if (!_.isObject(configByCourse[cId])) {
+          configByCourse[cId] = {
+            dayWeeks: [],
+          };
+          if (config?.breaks?.length) {
+            _.forEach(config.breaks, (breaks) => {
+              const breakData = getBreakData(breaks);
+              if (
+                !configByCourse[cId].minHour ||
+                breakData.minHourDate < configByCourse[cId].minHourDate
+              ) {
+                configByCourse[cId].minHour = breakData.minHour;
+                configByCourse[cId].minHourDate = breakData.minHourDate;
+              }
+              if (
+                !configByCourse[cId].maxHour ||
+                breakData.maxHourDate > configByCourse[cId].maxHourDate
+              ) {
+                configByCourse[cId].maxHour = breakData.maxHour;
+                configByCourse[cId].maxHourDate = breakData.maxHourDate;
+              }
+            });
+          }
         }
-      }
+      });
+
       _.forEach(classe.schedule, (schedule) => {
         startSplit = schedule.start.split(':');
         endSplit = schedule.end.split(':');
         start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0);
         end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 59);
-        configByCourse[cId].dayWeeks.push(schedule.dayWeek);
         dayWeeks.push(schedule.dayWeek);
-        // Por curso
-        if (!configByCourse[cId].minHour || start < configByCourse[cId].minHourDate) {
-          configByCourse[cId].minHour = schedule.start;
-          configByCourse[cId].minHourDate = new Date(start);
-        }
-        if (!configByCourse[cId].maxHour || end > configByCourse[cId].maxHourDate) {
-          configByCourse[cId].maxHour = schedule.end;
-          configByCourse[cId].maxHourDate = new Date(end);
-        }
+        _.forEach(cIds, (cId) => {
+          configByCourse[cId].dayWeeks.push(schedule.dayWeek);
+          // Por curso
+          if (!configByCourse[cId].minHour || start < configByCourse[cId].minHourDate) {
+            configByCourse[cId].minHour = schedule.start;
+            configByCourse[cId].minHourDate = new Date(start);
+          }
+          if (!configByCourse[cId].maxHour || end > configByCourse[cId].maxHourDate) {
+            configByCourse[cId].maxHour = schedule.end;
+            configByCourse[cId].maxHourDate = new Date(end);
+          }
+        });
 
         // General
         if (!minHour || start < minHourDate) {
@@ -144,9 +149,6 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
 
     courses = _.sortBy(_.uniqBy(courses, 'id'), ['index']);
     const scheduleDays = dayWeeks.map((item) => week.indexOf(item));
-
-    console.log('dayWeeks', dayWeeks);
-    console.log('scheduleDays', scheduleDays);
 
     return {
       calendarConfig: {

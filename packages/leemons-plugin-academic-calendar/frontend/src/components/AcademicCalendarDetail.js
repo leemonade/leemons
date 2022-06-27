@@ -68,10 +68,13 @@ export default function AcademicCalendarDetail({ program: { id } }) {
         rules: { required: t('fieldRequired') },
       },
       valueRender: (value) => {
-        if (value.length === courseData.length) {
-          return t('allCourses');
+        if (value) {
+          if (value.length === courseData.length) {
+            return t('allCourses');
+          }
+          return <MultiSelect readOnly data={courseData} value={value} />;
         }
-        return <MultiSelect readOnly data={courseData} value={value} />;
+        return null;
       },
     });
   }
@@ -274,6 +277,7 @@ export default function AcademicCalendarDetail({ program: { id } }) {
                   field.onChange(
                     map(ev, (e) => {
                       if (!e.courses) e.courses = courseIds;
+                      return e;
                     })
                   );
                 }}
