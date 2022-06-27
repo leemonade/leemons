@@ -1,6 +1,17 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Button, createStyles, SearchInput, Select, Switch } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  createStyles,
+  ImageLoader,
+  SearchInput,
+  Select,
+  Switch,
+  Text,
+  Title,
+  useResizeObserver,
+} from '@bubbles-ui/components';
 import { ScoresBasicTable } from '@bubbles-ui/leemons';
 
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
@@ -9,6 +20,9 @@ import useAssignableInstances from '@assignables/hooks/assignableInstance/useAss
 import { map, uniq, isFunction } from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import noResults from '../../assets/noResults.png';
 
 const useStyles = createStyles((theme) => ({
   filters: {
@@ -193,10 +207,11 @@ function useTableData({ filters, localFilters }) {
         // eslint-disable-next-line no-param-reassign
         studentsValues[student.user] = {
           activities: [
-            ...(studentsValues[student.user] || []),
+            ...(studentsValues[student.user]?.activities || []),
             {
               id: activity.id,
               score: grade.grade,
+              grade,
             },
           ],
         };
@@ -245,7 +260,8 @@ function useTableData({ filters, localFilters }) {
   };
 }
 
-function ScoresTable({ activitiesData, grades }) {
+function ScoresTable({ activitiesData, grades, filters }) {
+  const { mutateAsync } = useStudentAssignationMutation();
   const data = React.useMemo(
     () => ({
       labels: {
@@ -261,12 +277,98 @@ function ScoresTable({ activitiesData, grades }) {
     [grades, activitiesData]
   );
 
-  if (!data.grades?.length || !data.activities?.length || !data.value?.length) {
-    return null;
-  }
   return (
     <Box>
-      <ScoresBasicTable {...data} />
+      <ScoresBasicTable
+        {...data}
+        onDataChange={(v) => {
+          const student = data.value.find((student) => student.id === v.rowId);
+          const activity = data.activities.find((activity) => activity.id === v.columnId);
+          const grade = data.grades.find((g) => g.number === parseInt(v.value, 10));
+
+          console.log(
+            'student',
+            student,
+            'activity',
+            activity,
+            'grade',
+            grade,
+            data.grades,
+            v.value
+          );
+
+          mutateAsync({
+            instance: v.columnId,
+            student: v.rowId,
+            grades: [
+              {
+                type: 'main',
+                grade: grade.number,
+                subject: filters.subject,
+              },
+            ],
+          })
+            .then(() =>
+              addSuccessAlert(
+                `Updated ${student.name} ${student.surname}'s score for ${activity.name} to a ${
+                  grade.letter || grade.number
+                }`
+              )
+            )
+            .catch((e) =>
+              addErrorAlert(
+                `Error updating ${student.name} ${student.surname}'s score for ${
+                  activity.name
+                } to a ${grade.letter || grade.number}: ${e.message}`
+              )
+            );
+        }}
+      />
+    </Box>
+  );
+}
+
+function EmptyState() {
+  const [ref, rect] = useResizeObserver();
+
+  const top = React.useMemo(() => ref.current?.getBoundingClientRect()?.top, [ref, rect]);
+
+  return (
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: `calc(100vh - ${top}px)`,
+        width: '100%',
+        backgroundColor: theme.white,
+      })}
+      ref={ref}
+    >
+      {ref.current && (
+        <Box
+          sx={(theme) => ({
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: theme.spacing[4],
+          })}
+        >
+          <ImageLoader
+            src={noResults}
+            imageStyles={{
+              width: 573,
+            }}
+            height="100%"
+          />
+          <Box sx={{ maxWidth: 250 }}>
+            <Title>No results copy</Title>
+            <Text>
+              Scores allow you to rating grading and non-grading task and attendance control.
+            </Text>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 }
@@ -279,7 +381,11 @@ export default function ActivitiesTab({ filters }) {
   return (
     <Box>
       <Filters onChange={setLocalFilters} />
-      <ScoresTable activitiesData={activitiesData} grades={grades} />
+      {activitiesData?.activities?.length && grades?.length && activitiesData?.value?.length ? (
+        <ScoresTable activitiesData={activitiesData} grades={grades} filters={filters} />
+      ) : (
+        <EmptyState />
+      )}
     </Box>
   );
 }
