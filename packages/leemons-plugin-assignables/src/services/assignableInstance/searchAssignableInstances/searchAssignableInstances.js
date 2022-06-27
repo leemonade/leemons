@@ -184,6 +184,12 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
     }
   );
 
+  if (query.archived === true) {
+    // EN: If an instance does not have dates, it is assumed that it is not archived.
+    // ES: Si una instancia no tiene fechas, se asume que no está archivada.
+    return [...Object.keys(instancesWithDates)];
+  }
+
   return [...Object.keys(instancesWithDates), ...instancesWithoutDates];
 }
 
