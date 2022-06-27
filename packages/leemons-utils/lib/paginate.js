@@ -1,9 +1,15 @@
-async function paginate(table, page, size, query, { columns, transacting } = {}) {
+async function paginate(
+  table,
+  page,
+  size,
+  query,
+  { columns, forceColumnsOnCount = false, transacting } = {}
+) {
   const _query = { ...query };
   _query.$offset = page * size;
   _query.$limit = size;
   const [count, items] = await Promise.all([
-    table.count(query || {}, { transacting }),
+    table.count(query || {}, { columns: forceColumnsOnCount ? columns : undefined, transacting }),
     table.find(_query, { columns, transacting }),
   ]);
 

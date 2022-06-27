@@ -1,117 +1,121 @@
 const pluginName = 'plugins.scores';
 
+const permissionNames = {
+  periods: `${pluginName}.periods`,
+  noteBook: `${pluginName}.notebook`,
+  scores: `${pluginName}.scores`,
+  scoresMenu: `${pluginName}.scoresMenu`,
+};
+
 const permissions = [
   {
-    permissionName: `${pluginName}.scores`,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Puntuaciones', en: 'Scores' },
+    permissionName: permissionNames.periods,
+    actions: ['view', 'create', 'update', 'delete', 'admin'],
+    localizationName: {
+      es: 'Periodos',
+      en: 'Periods',
+    },
   },
   {
-    permissionName: `${pluginName}.scores-program-config`,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Puntuaciones - Configuración', en: 'Scores - Setup' },
+    permissionName: permissionNames.noteBook,
+    actions: ['view', 'create', 'update', 'delete', 'admin'],
+    localizationName: {
+      es: 'Cuaderno de notas',
+      en: 'Notebook',
+    },
   },
   {
-    permissionName: `${pluginName}.scores-teacher`,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Puntuaciones - Profesor', en: 'Scores - Teacher' },
+    permissionName: permissionNames.scores,
+    actions: ['view'],
+    localizationName: {
+      es: 'Notas',
+      en: 'Scores',
+    },
   },
   {
-    permissionName: `${pluginName}.scores-student`,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Puntuaciones - Estudiante', en: 'Scores - Student' },
-  },
-  {
-    permissionName: `${pluginName}.scores-review`,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Puntuaciones - Revisión', en: 'Scores - Review' },
+    permissionName: permissionNames.scoresMenu,
+    actions: ['view'],
+    localizationName: {
+      es: 'Notas (menú)',
+      en: 'Scores (menu)',
+    },
   },
 ];
 
+/*
+  --- Menu-Builder ---
+*/
 const menuItems = [
   {
-    config: {
+    item: {
       key: 'scores',
-      order: 14,
-      iconSvg: '/public/assets/svgs/curriculum.svg',
-      activeIconSvg: '/public/assets/svgs/curriculum.svg',
+      // TODO: Add scores order
+      // order: 10,
+      iconSvg: '/public/scores/menu-icon.svg',
+      activeIconSvg: '/public/scores/menu-icon.svg',
       label: {
         en: 'Scores',
-        es: 'Puntuaciones',
+        es: 'Notas',
       },
     },
     permissions: [
       {
-        permissionName: `${pluginName}.scores`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        permissionName: permissionNames.scoresMenu,
+        actionNames: ['view'],
       },
     ],
   },
   {
-    config: {
-      key: 'scores-program-config',
-      parentKey: `${pluginName}.scores`,
-      url: '/private/scores/setup',
+    item: {
+      key: 'scores.periods',
+      order: 1,
+      parentKey: 'scores',
+      url: '/private/scores/periods',
       label: {
-        en: 'Scores setup',
-        es: 'Configuración de puntuaciones',
+        en: 'Periods',
+        es: 'Periodos',
       },
     },
     permissions: [
       {
-        permissionName: `${pluginName}.scores-program-config`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        permissionName: permissionNames.periods,
+        actionNames: ['create', 'update', 'delete', 'admin'],
       },
     ],
   },
   {
-    config: {
-      key: 'scores-teacher',
-      parentKey: `${pluginName}.scores`,
-      url: '/private/scores/teacher',
+    item: {
+      key: 'scores.notebook',
+      order: 2,
+      parentKey: 'scores',
+      url: '/private/scores/notebook',
       label: {
-        en: 'Teacher Scores',
-        es: 'Puntuaciones del profesor',
+        en: 'Notebook',
+        es: 'Cuaderno de notas',
       },
     },
     permissions: [
       {
-        permissionName: `${pluginName}.scores-teacher`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        permissionName: permissionNames.noteBook,
+        actionNames: ['view'],
       },
     ],
   },
   {
-    config: {
-      key: 'scores-student',
-      parentKey: `${pluginName}.scores`,
-      url: '/private/scores/student',
+    item: {
+      key: 'scores.scores',
+      order: 3,
+      parentKey: 'scores',
+      url: '/private/scores/scores',
       label: {
-        en: 'Student Scores',
-        es: 'Puntuaciones del estudiante',
+        en: 'Scores',
+        es: 'Notas',
       },
     },
     permissions: [
       {
-        permissionName: `${pluginName}.scores-student`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
-      },
-    ],
-  },
-  {
-    config: {
-      key: 'scores-review',
-      parentKey: `${pluginName}.scores`,
-      url: '/private/scores/review',
-      label: {
-        en: 'Review Scores',
-        es: 'Revisar puntuaciones',
-      },
-    },
-    permissions: [
-      {
-        permissionName: `${pluginName}.scores-review`,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        permissionName: permissionNames.scores,
+        actionNames: ['view'],
       },
     ],
   },
@@ -119,6 +123,9 @@ const menuItems = [
 
 module.exports = {
   pluginName,
+
+  permissionNames,
   permissions,
+
   menuItems,
 };

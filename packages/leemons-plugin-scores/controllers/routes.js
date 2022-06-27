@@ -1,16 +1,37 @@
-// TODO [Importante]: Añadir autenticación y permisos
+const { permissionNames } = require('../config/constants');
+
 module.exports = [
-  // Program config
   {
-    path: '/program-config/:id',
-    method: 'GET',
-    handler: 'programConfig.getProgramConfig',
+    method: 'POST',
+    path: '/periods',
+    handler: 'periods.add',
     authenticated: true,
+    allowedPermissions: {
+      [permissionNames.periods]: {
+        actions: ['create', 'admin'],
+      },
+    },
   },
   {
-    path: '/program-config/have-calendar/:id',
     method: 'GET',
-    handler: 'programConfig.haveAcademicCalendarConfigForProgram',
+    path: '/periods',
+    handler: 'periods.list',
     authenticated: true,
+    allowedPermissions: {
+      [permissionNames.periods]: {
+        actions: ['view', 'admin'],
+      },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/periods/:id',
+    handler: 'periods.remove',
+    authenticated: true,
+    allowedPermissions: {
+      [permissionNames.periods]: {
+        actions: ['delete', 'admin'],
+      },
+    },
   },
 ];

@@ -63,6 +63,37 @@ async function listClass(ctx) {
   }
 }
 
+async function listSubjectClasses(ctx) {
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      page: { type: ['number', 'string'] },
+      size: { type: ['number', 'string'] },
+      subject: { type: 'string', format: 'uuid' },
+    },
+    required: ['page', 'size', 'subject'],
+    additionalProperties: false,
+  });
+
+  if (validator.validate(ctx.request.query)) {
+    const { page, size, subject } = ctx.request.query;
+
+    const data = await classService.listSubjectClasses(
+      parseInt(page, 10),
+      parseInt(size, 10),
+      subject,
+      {
+        userSession: ctx.state.userSession,
+      }
+    );
+
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
+}
+
 async function postClassStudents(ctx) {
   if (process.env.NODE_ENV !== 'production') {
     if (!_.isArray(ctx.request.body.students)) {
@@ -194,6 +225,7 @@ module.exports = {
   postClassInstance,
   postClassStudents,
   postClassTeachers,
+  listSubjectClasses,
   listSessionClasses,
   listStudentClasses,
   listTeacherClasses,

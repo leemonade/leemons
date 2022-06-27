@@ -1,1 +1,1 @@
-export prefixPN from './prefixPN';
+export * from './prefixPN';

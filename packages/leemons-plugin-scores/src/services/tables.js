@@ -1,5 +1,7 @@
-const table = {
-  programConfigs: leemons.query('plugins_scores::program-configs'),
-};
+const { pluginName } = require('../../config/constants');
 
-module.exports = { table };
+const pluginNameForTables = pluginName.replace(/\./g, '_');
+
+module.exports = {
+  periods: leemons.query(`${pluginNameForTables}::periods`),
+};
