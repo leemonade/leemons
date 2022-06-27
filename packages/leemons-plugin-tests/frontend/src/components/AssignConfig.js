@@ -133,7 +133,9 @@ export default function AssignConfig({ defaultValues: dv, test, t, configs = [],
         value={clue.value}
         onChange={(e) => {
           const _clues = form.getValues('clues');
-          _clues[index].value = e;
+          forEach(_clues, (v, i) => {
+            _clues[i].value = e;
+          });
           form.setValue('clues', _clues);
         }}
       />
