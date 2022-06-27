@@ -14,6 +14,84 @@ const {
 } = require('./src/services/menu-builder');
 const { addLocales } = require('./src/services/locales/addLocales');
 
+async function initEmails() {
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-recover-password',
+      'es-ES',
+      'Recuperar contraseña',
+      recoverEmail.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-recover-password',
+      'en',
+      'Recover password',
+      recoverEmail.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  leemons.events.emit('init-email-recover-password');
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-reset-password',
+      'es-ES',
+      'Su contraseña fue restablecida',
+      resetPassword.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-reset-password',
+      'en',
+      'Your password was reset',
+      resetPassword.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-welcome',
+      'es-ES',
+      'Bienvenida',
+      welcomeEmail.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-welcome',
+      'en',
+      'Welcome',
+      welcomeEmail.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-new-profile-added',
+      'es-ES',
+      'Nuevo perfil',
+      newProfileAdded.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-new-profile-added',
+      'en',
+      'New profile',
+      newProfileAdded.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  leemons.events.emit('init-email-reset-password');
+  leemons.events.emit('init-emails');
+}
+
 async function events(isInstalled) {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
@@ -79,81 +157,7 @@ async function events(isInstalled) {
 
     // Emails
     leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-recover-password',
-          'es-ES',
-          'Recuperar contraseña',
-          recoverEmail.es,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-recover-password',
-          'en',
-          'Recover password',
-          recoverEmail.en,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      leemons.events.emit('init-email-recover-password');
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-reset-password',
-          'es-ES',
-          'Su contraseña fue restablecida',
-          resetPassword.es,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-reset-password',
-          'en',
-          'Your password was reset',
-          resetPassword.en,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-welcome',
-          'es-ES',
-          'Bienvenida',
-          welcomeEmail.es,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-welcome',
-          'en',
-          'Welcome',
-          welcomeEmail.en,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-new-profile-added',
-          'es-ES',
-          'Nuevo perfil',
-          newProfileAdded.es,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      await leemons
-        .getPlugin('emails')
-        .services.email.addIfNotExist(
-          'user-new-profile-added',
-          'en',
-          'New profile',
-          newProfileAdded.en,
-          leemons.getPlugin('emails').services.email.types.active
-        );
-      leemons.events.emit('init-email-reset-password');
-      leemons.events.emit('init-emails');
+      await initEmails();
     });
 
     leemons.events.once('plugins.menu-builder:init-main-menu', async () => {

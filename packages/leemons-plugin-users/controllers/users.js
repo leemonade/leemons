@@ -96,6 +96,7 @@ async function recover(ctx) {
       ctx.status = 200;
       ctx.body = { status: 200, message: 'Email sent' };
     } catch (e) {
+      console.error(e);
       // Always send 200 so hackers can't know if the email exists
       ctx.status = 200;
       ctx.body = { status: 200, message: 'Email sent' };
