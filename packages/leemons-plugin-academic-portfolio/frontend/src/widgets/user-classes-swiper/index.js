@@ -16,6 +16,7 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { listSessionClassesRequest } from '../../request';
 import { getClassImage } from '../../helpers/getClassImage';
 import { getClassIcon } from '../../helpers/getClassIcon';
@@ -138,7 +139,7 @@ function UserClassesSwiperWidget({ program }) {
           const course = isArray(classe.courses)
             ? t('multiCourse')
             : classe.courses
-            ? `${classe.courses.index}º`
+            ? getCourseName(classe.courses)
             : null;
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }

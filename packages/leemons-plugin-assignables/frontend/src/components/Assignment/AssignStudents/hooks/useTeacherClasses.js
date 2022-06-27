@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import { listTeacherClassesRequest } from '@academic-portfolio/request';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import useUserAgents from './useUserAgents';
 
 // EN: Gets all the classes of the teacher
@@ -34,7 +35,7 @@ export default function useTeacherClasses() {
     ).map((_class) => ({
       id: _class.id,
       // TODO: Update to standard class name
-      label: `${_class.courses.name || _class.courses.index} - ${_class.subject.name} (${
+      label: `${getCourseName(_class.courses)} - ${_class.subject.name} (${
         _class.groups?.abbreviation
       })`,
       subject: _class.subject.id,
