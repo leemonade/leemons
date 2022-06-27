@@ -38,7 +38,6 @@ const {
   assignations,
   classes,
   assignableInstances,
-  grades,
   dates,
   assignables,
 } = require('../../tables');
@@ -97,7 +96,12 @@ async function getInstanceDates(instances, { transacting }) {
 
 async function filterByAssignableInstanceDates(query, assignableInstancesIds, { transacting }) {
   if (
-    !(isNil(query.closed) || isNil(query.opened || isNil(query.archived)) || isNil(query.visible))
+    !(
+      isNil(query.closed) ||
+      isNil(query.opened || isNil(query.archived)) ||
+      isNil(query.visible) ||
+      isNil(query.finished)
+    )
   ) {
     return assignableInstancesIds;
   }
@@ -108,7 +112,7 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
   const now = dayjs();
 
   Object.entries(instancesWithDates).forEach(
-    ([instanceId, { start, close, archived, visibility, deadline }]) => {
+    ([instanceId, { start, closed, archived, visualization: visibility, deadline }]) => {
       if (query.deadline && (!deadline || dayjs(deadline).isAfter(now))) {
         delete instancesWithDates[instanceId];
         return;
@@ -118,11 +122,11 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
         return;
       }
 
-      if (query.closed && (!close || dayjs(close).isAfter(now))) {
+      if (query.closed && (!closed || dayjs(closed).isAfter(now))) {
         delete instancesWithDates[instanceId];
         return;
       }
-      if (query.closed === false && close && !dayjs(close).isAfter(now)) {
+      if (query.closed === false && closed && !dayjs(closed).isAfter(now)) {
         delete instancesWithDates[instanceId];
         return;
       }
@@ -144,12 +148,31 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
         delete instancesWithDates[instanceId];
         return;
       }
+      if (query.finished) {
+        const from = dayjs(query.finished_$gt || null);
+        const to = dayjs(query.finished_$lt || null);
+
+        if (from.isValid() && to.isValid()) {
+          const deadlineDate = dayjs(deadline || null);
+          const closeDate = dayjs(closed || null);
+          if (
+            (!deadlineDate.isValid() && !closeDate.isValid()) ||
+            deadlineDate.isBefore(from) ||
+            deadlineDate.isAfter(to) ||
+            closeDate.isBefore(from) ||
+            closeDate.isAfter(to)
+          ) {
+            delete instancesWithDates[instanceId];
+            return;
+          }
+        }
+      }
 
       // EN: If no visibility date is set, it is assumed that the instance is visible when started.
       // ES: Si no se establece una fecha de visibilidad, se asume que la instancia es visible cuando se inicia.
       if (
         (query.visible && visibility && dayjs(visibility).isAfter(now)) ||
-        (query.visible && start && dayjs(start).isAfter(now))
+        (query.visible && !visibility && start && dayjs(start).isAfter(now))
       ) {
         delete instancesWithDates[instanceId];
       } else if (
@@ -294,13 +317,12 @@ async function getInstancesSubjects(instances, { transacting, userSession }) {
 }
 
 async function filterByGraded(objects, query, isTeacher, { transacting, userSession }) {
-  if (query.evaluated === undefined) {
-    return objects;
-  }
-
   let instances = objects;
   if (!isTeacher) {
     instances = map(objects, 'instance');
+  }
+  if (query.evaluated === undefined) {
+    return instances;
   }
 
   // EN: Get the instance classes.
@@ -581,10 +603,14 @@ module.exports = async function searchAssignableInstances(
   try {
     if (!isTeacher) {
       const sorted = [];
+
       const assignationDates = await getAssignationsDates(map(assignationsFound, 'id'), {
         transacting,
       });
-      const instanceDates = await getInstanceDates(assignableInstancesFound, { transacting });
+
+      const instanceDates = await getInstanceDates(assignableInstancesFound, {
+        transacting,
+      });
 
       const assignationsLeft = map(assignationsFound, (instance) => ({
         ...instance,
@@ -601,15 +627,16 @@ module.exports = async function searchAssignableInstances(
         });
 
       if (newAssignations.length > 0) {
-        sorted.push(...sortByDates(newAssignations, ['deadline', 'start', 'visibility']));
+        sorted.push(...sortByDates(newAssignations, ['deadline', 'start', 'visualization']));
       }
 
       // EN: Sort non-new activities
       // ES: Ordena las actividades no nuevas
-      sorted.push(...sortByDates(assignationsLeft, ['deadline', 'start', 'visibility']));
+      sorted.push(...sortByDates(assignationsLeft, ['deadline', 'start', 'visualization']));
 
       return map(sorted, 'instance');
     }
+
     const instanceDates = await getInstanceDates(assignableInstancesFound, { transacting });
 
     const instancesToSort = map(assignableInstancesFound, (instance) => ({
