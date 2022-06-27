@@ -70,7 +70,7 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
     const className = subjectGroupToUse.groups.name;
 
     return (
-      <Text className={classes.title}>
+      <Text>
         {periodName}: {subjectName} - {className}
       </Text>
     );
@@ -95,7 +95,7 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
         />
       )}
 
-      {title}
+      <Box className={classes.title}>{title}</Box>
       <Button variant="outline" size="xs" position="center" leftIcon={<DownloadIcon />}>
         {labels.export}
       </Button>

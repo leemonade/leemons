@@ -141,9 +141,12 @@ export default function NYA({ classe, program }) {
     if (classe) {
       q.classes = JSON.stringify([classe?.id]);
     }
+    if (program) {
+      q.programs = JSON.stringify([program?.id]);
+    }
 
     return q;
-  }, []);
+  }, [classe, program]);
 
   const { data: nyaInstances, isLoading: nyaInstancesIsLoading } =
     useSearchAssignableInstances(query);

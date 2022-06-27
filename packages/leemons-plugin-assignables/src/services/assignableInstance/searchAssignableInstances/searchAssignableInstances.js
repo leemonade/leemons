@@ -165,11 +165,11 @@ async function filterByAssignableInstanceDates(query, assignableInstancesIds, { 
 }
 
 async function filterByClasses(query, assignableInstancesIds, { transacting, userSession }) {
-  if (!(query.classes?.length || query.subjects?.length)) {
+  if (!(query.classes?.length || query.subjects?.length || query.programs?.length)) {
     return assignableInstancesIds;
   }
   let classesToSearch = query.classes || [];
-  if (query.subjects?.length) {
+  if (query.subjects?.length || query.programs?.length) {
     if (!classes?.length) {
       let classesFound = await classes.find(
         {
@@ -190,11 +190,16 @@ async function filterByClasses(query, assignableInstancesIds, { transacting, use
         return {
           id: classFound,
           subject: klass.subject.id,
+          program: klass.program,
         };
       });
 
       classesToSearch = map(
-        classesFound.filter((klass) => query.subjects.includes(klass.subject)),
+        classesFound.filter(
+          (klass) =>
+            (query.subjects?.length && query.subjects.includes(klass.subject)) ||
+            (query.programs?.length && query.programs.includes(klass.program))
+        ),
         'id'
       );
     }
@@ -461,15 +466,20 @@ function sortByDates(instances, datesToSort) {
       const dateToSort = datesToSort[i];
       const aDate = a[dateToSort];
       const bDate = b[dateToSort];
-      if (aDate && bDate) {
-        const aDateMoment = dayjs(aDate);
-        const bDateMoment = dayjs(bDate);
-        if (aDateMoment.isAfter(bDateMoment)) {
-          return 1;
-        }
-        if (aDateMoment.isBefore(bDateMoment)) {
-          return -1;
-        }
+      const aDateMoment = dayjs(aDate || null);
+      const bDateMoment = dayjs(bDate || null);
+      if (aDateMoment.isValid() && !bDateMoment.isValid()) {
+        return -1;
+      }
+      if (!aDateMoment.isValid() && bDateMoment.isValid()) {
+        return 1;
+      }
+
+      if (aDateMoment.isAfter(bDateMoment)) {
+        return 1;
+      }
+      if (aDateMoment.isBefore(bDateMoment)) {
+        return -1;
       }
     }
     return 0;
