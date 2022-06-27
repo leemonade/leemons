@@ -1,11 +1,12 @@
 import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, createStyles, SearchInput, Select, Switch } from '@bubbles-ui/components';
 import { ScoresBasicTable } from '@bubbles-ui/leemons';
 
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
-import { map, uniq } from 'lodash';
+import { map, uniq, isFunction } from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 
@@ -24,8 +25,15 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function Filters() {
+function Filters({ onChange }) {
   const { classes } = useStyles();
+  const { control, watch } = useForm({
+    defaultValues: {
+      search: '',
+      filterBy: null,
+      showNonCalificables: false,
+    },
+  });
 
   const filterBy = React.useMemo(
     () => [
@@ -41,6 +49,25 @@ function Filters() {
     []
   );
 
+  React.useEffect(() => {
+    if (isFunction(onChange)) {
+      let timer;
+      const unSubscribe = watch((values) => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          onChange(values);
+        }, 500);
+      });
+
+      return () => {
+        unSubscribe();
+      };
+    }
+    return () => {};
+  }, [onChange, watch]);
+
   const filterByLength = React.useMemo(
     () => filterBy.reduce((maxLength, filter) => Math.max(maxLength, filter.label.length), 0),
     [filterBy]
@@ -49,22 +76,39 @@ function Filters() {
   return (
     <Box className={classes.filters}>
       <Box className={classes.leftFilters}>
-        <Select
-          variant="unstyled"
-          placeholder="Filter by"
-          style={{ width: `${filterByLength + 5}ch` }}
-          data={filterBy}
+        <Controller
+          control={control}
+          name="filterBy"
+          render={({ field }) => (
+            <Select
+              variant="unstyled"
+              placeholder="Filter by"
+              style={{ width: `${filterByLength + 5}ch` }}
+              data={filterBy}
+              {...field}
+            />
+          )}
         />
-        <SearchInput placeholder="Search" />
-        <Switch size="md" label="Ver no calificables" />
-        <Switch size="md" label="Asessment criteria" />
+        <Controller
+          control={control}
+          name="search"
+          render={({ field }) => <SearchInput placeholder="Search" {...field} />}
+        />
+        <Controller
+          control={control}
+          name="showNonCalificables"
+          render={({ field }) => (
+            <Switch size="md" label="Ver no calificables" {...field} checked={field.value} />
+          )}
+        />
+        {/* <Switch size="md" label="Asessment criteria" /> */}
       </Box>
       <Button>Guardar notas</Button>
     </Box>
   );
 }
 
-function useTableData({ filters }) {
+function useTableData({ filters, localFilters }) {
   const { data: sessionClasses } = useSessionClasses(
     { program: filters.program },
     { enabled: !!filters.program }
@@ -97,7 +141,7 @@ function useTableData({ filters }) {
 
   const assignableInstancesQueries = useAssignableInstances({ id: activities || [] });
 
-  const assignableInstances = React.useMemo(
+  let assignableInstances = React.useMemo(
     () => map(assignableInstancesQueries, 'data').filter(Boolean),
     [assignableInstancesQueries]
   );
@@ -115,7 +159,28 @@ function useTableData({ filters }) {
       return {};
     }
 
-    const values = assignableInstances.reduce((studentsValues, activity) => {
+    if (
+      (localFilters.filterBy === 'activity' && localFilters.search?.length) ||
+      !localFilters.showNonCalificables
+    ) {
+      assignableInstances = assignableInstances.filter((assignableInstance) => {
+        if (
+          localFilters.filterBy === 'activity' &&
+          localFilters.search?.length &&
+          !assignableInstance.assignable.asset.name
+            .toLowerCase()
+            .includes(localFilters.search.toLowerCase())
+        ) {
+          return false;
+        }
+        if (!localFilters.showNonCalificables && !assignableInstance.gradable) {
+          return false;
+        }
+        return true;
+      });
+    }
+
+    let values = assignableInstances.reduce((studentsValues, activity) => {
       activity.students.forEach((student) => {
         const grade = student.grades.find(
           (g) => g.type === 'main' && g.subject === filters.subject
@@ -150,16 +215,29 @@ function useTableData({ filters }) {
       };
     });
 
+    values = Object.values(values);
+
+    if (localFilters.filterBy === 'student' && localFilters.search?.length) {
+      values = values.filter(
+        (student) =>
+          student.name.toLowerCase().includes(localFilters.search.toLowerCase()) ||
+          student.surname.toLowerCase().includes(localFilters.search.toLowerCase()) ||
+          `${student.name.toLowerCase()} ${student.surname.toLowerCase()}`.includes(
+            localFilters.search.toLowerCase()
+          )
+      );
+    }
+
     const tableData = {
       activities: assignableInstances.map((activity) => ({
         id: activity.id,
         name: activity.assignable.asset.name,
         deadline: activity.dates.deadline || null,
       })),
-      value: Object.values(values),
+      value: values,
     };
     return tableData;
-  }, [assignableInstances, students]);
+  }, [assignableInstances, studentsData, localFilters, filters]);
 
   return {
     activitiesData,
@@ -183,7 +261,7 @@ function ScoresTable({ activitiesData, grades }) {
     [grades, activitiesData]
   );
 
-  if (!data.grades?.length || !data.activities?.length) {
+  if (!data.grades?.length || !data.activities?.length || !data.value?.length) {
     return null;
   }
   return (
@@ -196,10 +274,11 @@ function ScoresTable({ activitiesData, grades }) {
 export default function ActivitiesTab({ filters }) {
   const { classes } = useStyles();
   const labels = {};
-  const { activitiesData, grades } = useTableData({ filters });
+  const [localFilters, setLocalFilters] = React.useState({});
+  const { activitiesData, grades } = useTableData({ filters, localFilters });
   return (
     <Box>
-      <Filters />
+      <Filters onChange={setLocalFilters} />
       <ScoresTable activitiesData={activitiesData} grades={grades} />
     </Box>
   );
