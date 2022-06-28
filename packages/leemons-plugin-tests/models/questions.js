@@ -23,7 +23,7 @@ module.exports = {
       type: 'string',
     },
     question: {
-      type: 'string',
+      type: 'text',
       required: true,
     },
     questionImage: {
