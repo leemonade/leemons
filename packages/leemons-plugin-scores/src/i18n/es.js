@@ -89,9 +89,8 @@ module.exports = {
         'El cuaderno de evaluación te permiten evaluar las tareas calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
-      title: 'No results copy ES',
-      description:
-        'Notas te permite poner notas en tarea calificables y no-calificables y controlar asistencia.',
+      title: 'Sin resultados',
+      description: 'No hemos encontrado resultados para tu búsqueda.',
     },
   },
 };

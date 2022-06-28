@@ -84,14 +84,13 @@ module.exports = {
       export: 'Export grades to csv',
     },
     noClassSelected: {
-      title: 'Copy scores',
+      title: 'Notebook',
       description:
-        'Scores allow you to rating grading and non-grading task and attendance control. Select the program and class, then you can filter by time periods, you can save these periods so that teachers can use them as evaluation stages.',
+        'The notebook is a place where you can evaluate the tasks that are not graded and the tasks that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
     },
     noResults: {
-      title: 'No results copy',
-      description:
-        'Scores allow you to rating grading and non-grading task and attendance control.',
+      title: 'No results',
+      description: 'We have not found results for your search.',
     },
   },
 };
