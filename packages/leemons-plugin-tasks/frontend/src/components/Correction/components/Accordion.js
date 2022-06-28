@@ -185,6 +185,7 @@ Accordion.propTypes = {
   evaluationSystem: PropTypes.object,
   classes: PropTypes.object,
   scoreInputProps: PropTypes.object,
+  instance: PropTypes.object,
   subject: PropTypes.string,
   context: PropTypes.object,
 };
