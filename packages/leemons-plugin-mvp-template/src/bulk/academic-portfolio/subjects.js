@@ -14,6 +14,9 @@ async function importAcademicPortfolioSubjects({
 
   const now = new Date();
 
+  console.log('-- WEEKDAYS --');
+  console.dir(weekdays, { depth: null });
+
   keys(items).forEach((key) => {
     const item = items[key];
     const programKey = item.program;
@@ -173,7 +176,7 @@ async function importAcademicPortfolioSubjects({
     });
   });
 
-  // console.dir(items, { depth: null });
+  console.dir(items.subject20, { depth: null });
   return items;
 }
 
