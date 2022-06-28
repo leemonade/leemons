@@ -126,7 +126,7 @@ module.exports = {
     'Este enlace caducará en {{it.expDays}} días y sólo puede utilizarse una vez.',
     'Si el botón anterior no funciona, pegue este enlace en su navegador web',
     'Si no ha hecho esta solicitud, puede ignorar este correo electrónico.',
-    'Política de privacidad'
+    '' // Política de privacidad
   ),
   en: welcome(
     'Welcome to {{it.__platformName}}',
@@ -135,6 +135,6 @@ module.exports = {
     'This link will expire in {{it.expDays}} days and can only be used once.',
     'If the button above doesn’t work, paste this link into your web browser',
     'If you did not make this request, you can safely ignore this email.',
-    'Privacy policy'
+    '' // Privacy policy
   ),
 };

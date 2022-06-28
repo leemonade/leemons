@@ -23,6 +23,12 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl) {
 
      */
 
+    const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    const date1 = new Date(instance.dates.deadline);
+
+    const dateTimeFormat2 = new Intl.DateTimeFormat(userAgentByIds[user].user.locale, options1);
+    const date = dateTimeFormat2.format(date1);
+
     leemons
       .getPlugin('emails')
       .services.email.sendAsEducationalCenter(
@@ -33,9 +39,7 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl) {
           instance,
           classes,
           btnUrl,
-          taskDate: dayjs(instance.dates.deadline)
-            .locale(userAgentByIds[user].user.locale)
-            .format('l'),
+          taskDate: date,
         },
         userAgentByIds[user].center.id
       )
@@ -112,8 +116,6 @@ module.exports = async function createAssignation(
               },
               { transacting }
             );
-
-            console.log(instance);
 
             if (instance.dates.deadline) {
               sendEmail(

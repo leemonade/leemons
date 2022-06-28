@@ -505,7 +505,7 @@ module.exports = {
     'Revisar mis actividades',
     'Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.',
     'Enviado por {{it.__from}}',
-    'Política de privacidad',
+    '', // Política de privacidad
     {
       new: 'NUEVA',
       delivery: 'Entrega',
@@ -521,7 +521,7 @@ module.exports = {
     'Review my activities',
     'You can change your email preferences from your user account',
     'Sent to {{it.__from}}',
-    'Privacy policy',
+    '', // Privacy policy
     {
       new: 'NEW',
       delivery: 'Delivery',
