@@ -105,9 +105,15 @@ module.exports = {
         userRole: 'Select role',
       },
       errorMessages: {
-        user: 'User is required',
-        userRole: 'Role is required',
-        share: 'You are not allowed to share this resource',
+        user: {
+          required: 'User is required',
+        },
+        userRole: {
+          required: 'Role is required',
+        },
+        share: {
+          required: 'You are not allowed to share this resource',
+        },
       },
     },
     roleLabels: {
