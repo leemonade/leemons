@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
@@ -17,11 +17,15 @@ import { ScoresBasicTable } from '@bubbles-ui/leemons';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
-import { map, uniq, isFunction } from 'lodash';
+import _, { map, uniq, isFunction } from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '@scores/helpers';
 import noResults from '../../assets/noResults.png';
 
 const useStyles = createStyles((theme) => ({
@@ -66,7 +70,7 @@ function Filters({ onChange }) {
   React.useEffect(() => {
     if (isFunction(onChange)) {
       let timer;
-      const unSubscribe = watch((values) => {
+      const subscription = watch((values) => {
         if (timer) {
           clearTimeout(timer);
         }
@@ -75,9 +79,7 @@ function Filters({ onChange }) {
         }, 500);
       });
 
-      return () => {
-        unSubscribe();
-      };
+      return subscription.unsubscribe;
     }
     return () => {};
   }, [onChange, watch]);
@@ -331,6 +333,21 @@ function EmptyState() {
 
   const top = React.useMemo(() => ref.current?.getBoundingClientRect()?.top, [ref, rect]);
 
+  const [, translations] = useTranslateLoader(prefixPN('notebook.noResults'));
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('notebook.noResults'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
   return (
     <Box
       sx={(theme) => ({
@@ -360,10 +377,8 @@ function EmptyState() {
             height="100%"
           />
           <Box sx={{ maxWidth: 250 }}>
-            <Title>No results copy</Title>
-            <Text>
-              Scores allow you to rating grading and non-grading task and attendance control.
-            </Text>
+            <Title>{labels.title}</Title>
+            <Text>{labels.description}</Text>
           </Box>
         </Box>
       )}

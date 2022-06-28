@@ -172,8 +172,9 @@ export default function PeriodSelector({
       });
     }
 
-    const couseIsRequired =
+    const courseIsRequired =
       requiredFields.includes('course') && !programData?.moreThanOneAcademicYear;
+
     if (fields.course) {
       fieldsToReturn.push({
         name: 'course',
@@ -184,7 +185,7 @@ export default function PeriodSelector({
           label: name || index,
           value: id,
         })),
-        required: couseIsRequired && labels?.form?.course?.error,
+        required: courseIsRequired && labels?.form?.course?.error,
       });
     }
 
@@ -204,7 +205,7 @@ export default function PeriodSelector({
         name: 'subject',
         label: labels?.form?.subject?.label,
         placeholder: labels?.form?.subject?.placeholder,
-        disabled: (couseIsRequired && !course) || !subjects?.length,
+        disabled: (courseIsRequired && !course) || !subjects?.length,
         data: subjects,
         required: requiredFields.includes('subject') && labels?.form?.subject?.error,
       });
@@ -225,7 +226,7 @@ export default function PeriodSelector({
         name: 'group',
         label: labels?.form?.group?.label,
         placeholder: labels?.form?.group?.placeholder,
-        disabled: !subject || !groups?.length || !course || !subjects?.length,
+        disabled: !subject || !groups?.length || (!course && courseIsRequired) || !subjects?.length,
         data: groups,
         required: requiredFields.includes('group') && labels?.form?.group?.error,
       });

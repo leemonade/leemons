@@ -83,5 +83,15 @@ module.exports = {
     header: {
       export: 'Exportar notas a csv',
     },
+    noClassSelected: {
+      title: 'Copy scores ES',
+      description:
+        'Notas te permite calificar tareas de evaluación y control de asistencia. Selecciona el programa y la clase, luego puedes filtrar por períodos de tiempo, puedes guardar estos períodos para que los profesores puedan utilizarlos como fases de evaluación.',
+    },
+    noResults: {
+      title: 'No results copy ES',
+      description:
+        'Notas te permite poner notas en tarea calificables y no-calificables y controlar asistencia.',
+    },
   },
 };
