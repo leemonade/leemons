@@ -174,6 +174,7 @@ export default function Correction({ assignation, instance, loading }) {
             classes={classes}
             evaluationSystem={evaluationSystem}
             labels={labels}
+            instance={instance}
             scoreInputProps={scoreInputProps}
           />
         </SubjectTabs>
