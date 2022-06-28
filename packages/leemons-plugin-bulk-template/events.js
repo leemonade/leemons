@@ -270,7 +270,11 @@ async function events(isInstalled) {
       () => {
         leemons.log.info(chalk`{cyan.bold BULK DONE} Template loaded`);
         if (process.env.PORT) {
-          leemons.log.info(`Listening on http://localhost:${process.env.PORT}`);
+          leemons.log.info(
+            `Listening on http://${process.env.host || process.env.HOST || 'localhost'}:${
+              process.env.PORT
+            }`
+          );
         }
       }
     );
