@@ -1,8 +1,5 @@
-const dayjs = require('dayjs');
-dayjs.extend(require('dayjs/plugin/localeData'));
+const getWeekdays = require('./getWeekdays');
 
-module.exports = dayjs()
-  .locale('en')
-  .localeData()
-  .weekdays()
-  .map((day) => day.toLowerCase());
+const WEEK_DAYS = getWeekdays();
+
+module.exports = WEEK_DAYS;
