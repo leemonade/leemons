@@ -9,8 +9,9 @@ async function importEvents({ users, programs }) {
 
   const { services } = leemons.getPlugin('calendar');
   const kanbanColumns = await services.kanban.listColumns();
+  const kanbanCols = ['', 'backlog', 'todo', 'inprogress', 'underreview', 'done'];
 
-  console.dir(kanbanColumns, { depth: null });
+  // console.dir(kanbanColumns, { depth: null });
 
   const calendars = {};
   const itemsKeys = keys(items);
@@ -58,10 +59,14 @@ async function importEvents({ users, programs }) {
     // KANBAN
 
     if (event.column) {
+      const columnIndex = kanbanCols.indexOf(event.column);
       event.data = {
         ...(event.data || {}),
-        column: kanbanColumns.find((column) => column.order === event.column)?.id,
+        column: kanbanColumns.find((column) => column.order === columnIndex)?.id,
       };
+
+      console.log('--- EVENT DATA ---');
+      console.dir(event.data, { depth: null });
     }
 
     // ·······························································
