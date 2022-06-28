@@ -1,1 +1,0 @@
-export prefixPN from './prefixPN';

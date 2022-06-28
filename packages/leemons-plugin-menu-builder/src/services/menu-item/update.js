@@ -68,8 +68,8 @@ async function update(
         }
       }
 
-      console.log('MenuItem > update > this.calledFrom:', this.calledFrom);
-      console.log('MenuItem > update > data.pluginName:', data.pluginName);
+      // console.log('MenuItem > update > this.calledFrom:', this.calledFrom);
+      // console.log('MenuItem > update > data.pluginName:', data.pluginName);
 
       // eslint-disable-next-line no-param-reassign
       data.pluginName = this.calledFrom;
