@@ -151,6 +151,7 @@ function PeriodFilters({ centers, programs, onChange }) {
                 placeholder={labels?.centerPlaceholder}
                 disabled={!centers?.length}
                 data={data}
+                clearable="clear"
                 {...field}
               />
             );
@@ -189,6 +190,7 @@ function PeriodFilters({ centers, programs, onChange }) {
                 placeholder={labels?.programPlaceholder}
                 disabled={!data?.length}
                 data={data}
+                clearable="clear"
                 {...field}
               />
             );
@@ -224,6 +226,7 @@ function PeriodFilters({ centers, programs, onChange }) {
                 placeholder={labels?.coursePlaceholder}
                 disabled={!programObj}
                 data={courses}
+                clearable="clear"
                 {...field}
               />
             );
@@ -337,7 +340,8 @@ export default function PeriodList({ onRemove, className }) {
     size,
     sort: 'center:ASC,program:ASC,course:ASC,startDate:ASC,endDate:ASC,name:ASC,id:ASC',
     query: {
-      center: filters.center || centers,
+      center: filters.center || undefined,
+      center_$in: JSON.stringify(map(centers, 'id')),
       program: filters.program || undefined,
       course: filters.course || undefined,
       name_$contains: filters.search || undefined,
