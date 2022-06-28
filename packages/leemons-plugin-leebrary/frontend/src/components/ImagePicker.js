@@ -51,7 +51,7 @@ const ImagePicker = ({
   // LABELS & STATICS
 
   const formLabels = useMemo(() => {
-    if (!isEmpty(translations)) {
+    if (translations && translations.items) {
       const items = unflatten(translations.items);
       const data = items.plugins.leebrary.assetSetup.basicData;
       return {
