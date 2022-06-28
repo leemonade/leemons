@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, COLORS, ImageLoader, Text } from '@bubbles-ui/components';
-import { htmlToText } from '../helpers/htmlToText';
+import { Box, COLORS, HtmlText, ImageLoader, Text } from '@bubbles-ui/components';
 
 export default function QuestionTitle(props) {
   const { styles, question, store, cx, t } = props;
@@ -24,7 +23,7 @@ export default function QuestionTitle(props) {
       </Box>
       <Box className={styles.questionTitleText}>
         <Text size="md" role="productive" color="primary" strong>
-          {htmlToText(question.question)}
+          <HtmlText>{question.question}</HtmlText>
         </Text>
       </Box>
       {store.embedded && store.viewMode ? (

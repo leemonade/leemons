@@ -1,4 +1,7 @@
 const _ = require('lodash');
+const {
+  generateJWTToken,
+} = require('leemons-plugin-users/src/services/users/jwt/generateJWTToken');
 const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
 const { registerDates } = require('../dates');
 const { assignations } = require('../tables');
@@ -26,10 +29,19 @@ module.exports = async function createAssignation(
 
       // EN: Get the assignable instance, if not permissions, it will throw an error
       // ES: Obtiene la instancia asignable, si no tiene permisos, lanzará un error
-      await getAssignableInstance.call(this, assignableInstanceId, {
-        userSession,
-        transacting,
-      });
+      const [instance, userAgents] = await Promise.all([
+        getAssignableInstance.call(this, assignableInstanceId, {
+          userSession,
+          details: true,
+          transacting,
+        }),
+        leemons.getPlugin('users').services.users.getUserAgentsInfo(users, {
+          withCenter: true,
+          transacting,
+        }),
+      ]);
+
+      const userAgentByIds = _.keyBy(userAgents, 'id');
 
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
@@ -50,6 +62,20 @@ module.exports = async function createAssignation(
               },
               { transacting }
             );
+
+            leemons
+              .getPlugin('emails')
+              .services.email.sendAsEducationalCenter(
+                userAgentByIds[user].email,
+                'user-create-assignation',
+                userAgentByIds[user].locale,
+                {
+                  a: 'a',
+                },
+                userAgentByIds[user].center.id
+              )
+              .then(() => {})
+              .catch(() => {});
 
             // EN: Save the timestamps
             // ES: Guarda los timestamps

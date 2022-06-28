@@ -22,7 +22,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
     setLoadMenu(true);
   };
 
-  SocketIoService.useOn('USER_CHANGE_LOCALE', (e, event) => {
+  SocketIoService.useOn('USER_CHANGE_LOCALE', () => {
+    forceReload.current = true;
     reloadMenu();
   });
 
