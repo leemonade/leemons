@@ -83,5 +83,14 @@ module.exports = {
     header: {
       export: 'Exportar notas a csv',
     },
+    noClassSelected: {
+      title: 'Cuaderno de evaluación',
+      description:
+        'El cuaderno de evaluación te permiten evaluar las tareas calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
+    },
+    noResults: {
+      title: 'Sin resultados',
+      description: 'No hemos encontrado resultados para tu búsqueda.',
+    },
   },
 };

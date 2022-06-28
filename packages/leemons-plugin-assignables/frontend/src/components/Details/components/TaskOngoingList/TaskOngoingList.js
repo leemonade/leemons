@@ -83,7 +83,7 @@ const TaskOngoingList = ({ instance }) => {
     const newDates = {
       archived: archived ? new Date() : null,
       // TODO: Do not close if not closable
-      closed: archived ? new Date() : undefined,
+      closed: archived && !instance.dates.deadline ? new Date() : undefined,
     };
 
     try {
@@ -187,12 +187,14 @@ const TaskOngoingList = ({ instance }) => {
             <ScoresBar {...instanceData.leftScoresBar} />
           </Box>
         </Box>
-        <Box className={classes.rightSide}>
-          <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.grades}</Text>
-          <Box className={classes.rightScoreBarWrapper}>
-            {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
+        {!!instance?.requiresScoring && (
+          <Box className={classes.rightSide}>
+            <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.grades}</Text>
+            <Box className={classes.rightScoreBarWrapper}>
+              {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </Box>
   );

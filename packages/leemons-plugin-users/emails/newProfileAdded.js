@@ -83,11 +83,11 @@ module.exports = {
   es: newProfileAdded(
     'Hola, {{it.userName}}',
     'Te han añadido al perfil de {{it.profileName}}',
-    'Política de privacidad'
+    '' // Política de privacidad
   ),
   en: newProfileAdded(
     'Hi, {{it.userName}}',
     'You have been added to the profile of {{it.profileName}}',
-    'Privacy policy'
+    '' // Privacy policy
   ),
 };

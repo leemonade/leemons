@@ -99,7 +99,6 @@ module.exports = {
           subjects: 'Asignaturas',
           showOtherSubjects: 'Añadir otras asignaturas en las que colaboro',
           subject: 'Asignatura',
-          recommendedDuration: 'Duración recomendada',
           level: 'Nivel',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
@@ -187,6 +186,7 @@ module.exports = {
           title: 'Instrucciones',
           forTeacher: 'Instrucciones para Profesores',
           forStudent: 'Instructions para Estudiantes',
+          recommendedDuration: 'Duración recomendada',
           buttonPublish: 'Solo publicar',
           buttonNext: 'Publicar y asignar',
           buttonPrev: 'Anterior',
@@ -434,6 +434,11 @@ module.exports = {
           noSubmission: 'No se ha entregado ningún archivo',
         },
       },
+    },
+    types: {
+      calificable: 'Calificable',
+      evaluable: 'Evaluable con puntuación',
+      noPunctuationEvaluable: 'Evaluable sin puntuación',
     },
     contactTeacher: {
       title: '¿Quieres hacer alguna consulta sobre esta evaluación?',

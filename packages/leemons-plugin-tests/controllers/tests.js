@@ -90,7 +90,10 @@ async function deleteTest(ctx) {
 }
 
 async function assignTest(ctx) {
-  const test = await testsService.assign(ctx.request.body, { userSession: ctx.state.userSession });
+  const test = await testsService.assign(ctx.request.body, {
+    userSession: ctx.state.userSession,
+    ctx,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, test };
 }

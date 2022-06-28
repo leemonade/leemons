@@ -19,7 +19,7 @@ async function initEmails() {
     .getPlugin('emails')
     .services.email.addIfNotExist(
       'user-recover-password',
-      'es-ES',
+      'es',
       'Recuperar contraseña',
       recoverEmail.es,
       leemons.getPlugin('emails').services.email.types.active
@@ -38,7 +38,7 @@ async function initEmails() {
     .getPlugin('emails')
     .services.email.addIfNotExist(
       'user-reset-password',
-      'es-ES',
+      'es',
       'Su contraseña fue restablecida',
       resetPassword.es,
       leemons.getPlugin('emails').services.email.types.active
@@ -56,7 +56,7 @@ async function initEmails() {
     .getPlugin('emails')
     .services.email.addIfNotExist(
       'user-welcome',
-      'es-ES',
+      'es',
       'Bienvenida',
       welcomeEmail.es,
       leemons.getPlugin('emails').services.email.types.active
@@ -74,7 +74,7 @@ async function initEmails() {
     .getPlugin('emails')
     .services.email.addIfNotExist(
       'user-new-profile-added',
-      'es-ES',
+      'es',
       'Nuevo perfil',
       newProfileAdded.es,
       leemons.getPlugin('emails').services.email.types.active

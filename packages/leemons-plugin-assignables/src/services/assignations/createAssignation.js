@@ -1,19 +1,62 @@
 const _ = require('lodash');
-const {
-  generateJWTToken,
-} = require('leemons-plugin-users/src/services/users/jwt/generateJWTToken');
+const dayjs = require('dayjs');
+dayjs.extend(require('dayjs/plugin/localeData'));
 const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
 const { registerDates } = require('../dates');
 const { assignations } = require('../tables');
 const registerGrade = require('../grades/registerGrade');
-const addPermissionToUser = require('../assignableInstance/permissions/assignableInstance/users/addPermissionToUser');
 const { validateAssignation } = require('../../helpers/validators/assignation');
+
+async function sendEmail(instance, userAgentByIds, user, classes, btnUrl) {
+  try {
+    /*
+    const userAssignableInstances = await searchAssignableInstances(
+      {
+        limit: 4,
+        archived: false,
+        evaluated: false,
+      },
+      {
+        userSession: { userAgents: [{ id: user }] },
+      }
+    );
+
+     */
+
+    const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    const date1 = new Date(instance.dates.deadline);
+
+    const dateTimeFormat2 = new Intl.DateTimeFormat(userAgentByIds[user].user.locale, options1);
+    const date = dateTimeFormat2.format(date1);
+
+    leemons
+      .getPlugin('emails')
+      .services.email.sendAsEducationalCenter(
+        userAgentByIds[user].user.email,
+        'user-create-assignation',
+        userAgentByIds[user].user.locale,
+        {
+          instance,
+          classes,
+          btnUrl,
+          taskDate: date,
+        },
+        userAgentByIds[user].center.id
+      )
+      .then(() => {
+        console.log(`Email enviado a ${userAgentByIds[user].email}`);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  } catch (e) {}
+}
 
 module.exports = async function createAssignation(
   assignableInstanceId,
   users,
   options,
-  { userSession, transacting: t } = {}
+  { userSession, transacting: t, ctx } = {}
 ) {
   // TODO: Permissions like `task.${taskId}.instance.${instanceId}` to allow assignation removals and permissions changes
   return global.utils.withTransaction(
@@ -37,10 +80,21 @@ module.exports = async function createAssignation(
         }),
         leemons.getPlugin('users').services.users.getUserAgentsInfo(users, {
           withCenter: true,
+          userColumns: ['id', 'email', 'locale'],
           transacting,
         }),
       ]);
 
+      const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
+      const classesData = await academicPortfolioServices.classes.classByIds(instance.classes, {
+        userSession,
+        transacting,
+      });
+
+      instance.assignable.asset.url =
+        ctx.request.header.origin +
+        leemons.getPlugin('leebrary').services.assets.getCoverUrl(instance.assignable.asset.id);
+      const _classes = _.uniqBy(classesData, 'subject.id');
       const userAgentByIds = _.keyBy(userAgents, 'id');
 
       try {
@@ -63,19 +117,15 @@ module.exports = async function createAssignation(
               { transacting }
             );
 
-            leemons
-              .getPlugin('emails')
-              .services.email.sendAsEducationalCenter(
-                userAgentByIds[user].email,
-                'user-create-assignation',
-                userAgentByIds[user].locale,
-                {
-                  a: 'a',
-                },
-                userAgentByIds[user].center.id
-              )
-              .then(() => {})
-              .catch(() => {});
+            if (instance.dates.deadline) {
+              sendEmail(
+                instance,
+                userAgentByIds,
+                user,
+                _classes,
+                `${ctx.request.header.origin}/private/assignables/ongoing`
+              );
+            }
 
             // EN: Save the timestamps
             // ES: Guarda los timestamps

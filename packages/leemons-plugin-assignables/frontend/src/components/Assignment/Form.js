@@ -158,9 +158,9 @@ function useCurriculumFields({ assignable }) {
 
   const curriculumDetails = data?.curriculum;
 
-  return useMemo(() => {
+  const finalData = useMemo(() => {
     if (!curriculumDetails || isLoading) {
-      return { ...query, data: null };
+      return null;
     }
 
     const subjectLevel = curriculumDetails.nodeLevels.find((level) => level.type === 'subject');
@@ -174,11 +174,13 @@ function useCurriculumFields({ assignable }) {
         isEvaluationCriteria: field.frontConfig.blockData.evaluationCriteria,
       }));
 
-      return { ...query, data: parsedCurriculumFields };
+      return parsedCurriculumFields;
     }
 
-    return { ...query, data: null };
+    return null;
   }, [curriculumDetails]);
+
+  return { ...query, data: finalData };
 }
 
 export default function Form({
@@ -494,36 +496,38 @@ export default function Form({
               label={labels?.showCurriculumToogle}
               render={
                 () =>
-                  !curriculumFields.data ? (
+                  curriculumFields.isLoading ? (
                     <Loader />
                   ) : (
                     <>
-                      {curriculumFields.data.map((curriculumField) => (
-                        <Controller
-                          key={curriculumField.id}
-                          control={control}
-                          name={`curriculum.${curriculumField.id}`}
-                          shouldUnregister={true}
-                          render={({ field }) => (
-                            <Switch
-                              {...field}
-                              checked={field.value}
-                              label={
-                                <Box
-                                  sx={(theme) => ({
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: theme.spacing[1],
-                                  })}
-                                >
-                                  {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
-                                  <Text>{curriculumField.label}</Text>
-                                </Box>
-                              }
+                      {!curriculumFields?.data
+                        ? null
+                        : curriculumFields.data.map((curriculumField) => (
+                            <Controller
+                              key={curriculumField.id}
+                              control={control}
+                              name={`curriculum.${curriculumField.id}`}
+                              shouldUnregister={true}
+                              render={({ field }) => (
+                                <Switch
+                                  {...field}
+                                  checked={field.value}
+                                  label={
+                                    <Box
+                                      sx={(theme) => ({
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        gap: theme.spacing[1],
+                                      })}
+                                    >
+                                      {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
+                                      <Text>{curriculumField.label}</Text>
+                                    </Box>
+                                  }
+                                />
+                              )}
                             />
-                          )}
-                        />
-                      ))}
+                          ))}
                       <Controller
                         control={control}
                         name="curriculum.objectives"

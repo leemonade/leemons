@@ -19,6 +19,7 @@ export default function Accordion({
   classes,
   scoreInputProps,
   subject,
+  instance,
   context,
 }) {
   const { control } = useFormContext();
@@ -42,67 +43,141 @@ export default function Accordion({
     return state;
   }, []);
 
-  return (
-    <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-      <ActivityAccordionPanel
-        label={labels?.punctuation}
-        icon={<RatingStarIcon />}
-        rightSection={
-          <Badge
-            label={
-              <ContextContainer direction="row" spacing={1}>
-                <Text>{labels?.minToPromote}</Text>
-                <Badge
-                  label={
-                    evaluationSystem?.minScaleToPromote?.letter ||
-                    evaluationSystem?.minScaleToPromote?.number
-                  }
-                  closable={false}
-                  severity="warning"
-                />
-              </ContextContainer>
-            }
-            closable={false}
-          />
-        }
-      >
-        <Box className={classes.accordionPanel}>
-          {evaluationSystem && scoreInputProps && (
-            <Controller
-              key={`${subject}.score`}
-              control={control}
-              name={`${subject}.score`}
-              render={({ field }) => (
-                <ScoreInput
-                  {...scoreInputProps}
-                  tags={[]}
-                  value={{ score: field?.value }}
-                  decimalPrecision={2}
-                  decimalSeparator=","
-                  direction="ltr"
-                  onChange={(newValue) => field.onChange(newValue.score)}
-                />
-              )}
+  if (instance?.requiresScoring && instance?.allowFeedback) {
+    return (
+      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
+        <ActivityAccordionPanel
+          label={labels?.punctuation}
+          icon={<RatingStarIcon />}
+          rightSection={
+            <Badge
+              label={
+                <ContextContainer direction="row" spacing={1}>
+                  <Text>{labels?.minToPromote}</Text>
+                  <Badge
+                    label={
+                      evaluationSystem?.minScaleToPromote?.letter ||
+                      evaluationSystem?.minScaleToPromote?.number
+                    }
+                    closable={false}
+                    severity="warning"
+                  />
+                </ContextContainer>
+              }
+              closable={false}
             />
-          )}
-        </Box>
-      </ActivityAccordionPanel>
-      <ActivityAccordionPanel
-        label={labels?.feedbackForStudent}
-        icon={<PluginComunicaIcon />}
-        rightSection={<Badge label={labels?.optional} closable={false} />}
-      >
-        <Box className={classes.accordionPanel}>
-          <Controller
-            key={`${subject}.feedback`}
-            control={control}
-            name={`${subject}.feedback`}
-            render={({ field }) => <TextEditorInput {...field} />}
-          />
-        </Box>
-      </ActivityAccordionPanel>
-    </ActivityAccordion>
-  );
+          }
+        >
+          <Box className={classes.accordionPanel}>
+            {evaluationSystem && scoreInputProps && (
+              <Controller
+                key={`${subject}.score`}
+                control={control}
+                name={`${subject}.score`}
+                render={({ field }) => (
+                  <ScoreInput
+                    {...scoreInputProps}
+                    tags={[]}
+                    value={{ score: field?.value }}
+                    decimalPrecision={2}
+                    decimalSeparator=","
+                    direction="ltr"
+                    onChange={(newValue) => field.onChange(newValue.score)}
+                  />
+                )}
+              />
+            )}
+          </Box>
+        </ActivityAccordionPanel>
+
+        <ActivityAccordionPanel
+          label={labels?.feedbackForStudent}
+          icon={<PluginComunicaIcon />}
+          rightSection={<Badge label={labels?.optional} closable={false} />}
+        >
+          <Box className={classes.accordionPanel}>
+            <Controller
+              key={`${subject}.feedback`}
+              control={control}
+              name={`${subject}.feedback`}
+              render={({ field }) => <TextEditorInput {...field} />}
+            />
+          </Box>
+        </ActivityAccordionPanel>
+      </ActivityAccordion>
+    );
+  }
+  if (instance?.requiresScoring && !instance?.allowFeedback) {
+    return (
+      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
+        <ActivityAccordionPanel
+          label={labels?.punctuation}
+          icon={<RatingStarIcon />}
+          rightSection={
+            <Badge
+              label={
+                <ContextContainer direction="row" spacing={1}>
+                  <Text>{labels?.minToPromote}</Text>
+                  <Badge
+                    label={
+                      evaluationSystem?.minScaleToPromote?.letter ||
+                      evaluationSystem?.minScaleToPromote?.number
+                    }
+                    closable={false}
+                    severity="warning"
+                  />
+                </ContextContainer>
+              }
+              closable={false}
+            />
+          }
+        >
+          <Box className={classes.accordionPanel}>
+            {evaluationSystem && scoreInputProps && (
+              <Controller
+                key={`${subject}.score`}
+                control={control}
+                name={`${subject}.score`}
+                render={({ field }) => (
+                  <ScoreInput
+                    {...scoreInputProps}
+                    tags={[]}
+                    value={{ score: field?.value }}
+                    decimalPrecision={2}
+                    decimalSeparator=","
+                    direction="ltr"
+                    onChange={(newValue) => field.onChange(newValue.score)}
+                  />
+                )}
+              />
+            )}
+          </Box>
+        </ActivityAccordionPanel>
+      </ActivityAccordion>
+    );
+  }
+  if (!instance?.requiresScoring && instance?.allowFeedback) {
+    return (
+      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
+        <ActivityAccordionPanel
+          label={labels?.feedbackForStudent}
+          icon={<PluginComunicaIcon />}
+          rightSection={<Badge label={labels?.optional} closable={false} />}
+        >
+          <Box className={classes.accordionPanel}>
+            <Controller
+              key={`${subject}.feedback`}
+              control={control}
+              name={`${subject}.feedback`}
+              render={({ field }) => <TextEditorInput {...field} />}
+            />
+          </Box>
+        </ActivityAccordionPanel>
+      </ActivityAccordion>
+    );
+  }
+
+  return null;
 }
 
 Accordion.propTypes = {
@@ -110,6 +185,7 @@ Accordion.propTypes = {
   evaluationSystem: PropTypes.object,
   classes: PropTypes.object,
   scoreInputProps: PropTypes.object,
+  instance: PropTypes.object,
   subject: PropTypes.string,
   context: PropTypes.object,
 };

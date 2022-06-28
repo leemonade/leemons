@@ -15,6 +15,13 @@ export const CorrectionStyles = createStyles((theme) => ({
   accordionPanel: {
     padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
   },
+  type: {
+    padding: theme.spacing[4],
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: theme.spacing[1],
+  },
 }));
 
 export default CorrectionStyles;

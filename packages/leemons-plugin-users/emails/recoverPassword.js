@@ -129,7 +129,7 @@ module.exports = {
     'Si el botón anterior no funciona, pegue este enlace en su navegador web',
     'Si no ha hecho esta solicitud, puede ignorar este correo electrónico.',
     'Enviado por {{it.__from}}',
-    'Política de privacidad'
+    '' // Política de privacidad
   ),
   en: welcome(
     '{{it.__platformName}}',
@@ -139,7 +139,7 @@ module.exports = {
     'If the above button does not work, paste this link into your web browser.',
     'If you have not made this request, you may ignore this email.',
     'Sent by {{it.__from}}',
-    'Privacy Policy.'
+    '' // Privacy Policy.
   ),
 };
 

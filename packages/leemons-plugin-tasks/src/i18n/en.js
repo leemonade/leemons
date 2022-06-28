@@ -96,7 +96,6 @@ module.exports = {
           program: 'Program',
           course: 'Course',
           subjectsTitle: 'Subjects',
-          recommendedDuration: 'Recommended duration',
           subject: 'Subject',
           addSubject: 'Add subject',
           level: 'Level',
@@ -199,6 +198,7 @@ module.exports = {
           title: 'Instructions',
           forTeacher: 'Instructions for Teacher',
           forStudent: 'Instructions for Student',
+          recommendedDuration: 'Recommended duration',
           buttonPublish: 'Only publish',
           buttonNext: 'Publish and assign',
           buttonPrev: 'Previous',
@@ -444,6 +444,11 @@ module.exports = {
           noSubmission: 'No submission was made yet',
         },
       },
+    },
+    types: {
+      calificable: 'Calificable',
+      evaluable: 'Evaluable with punctuation',
+      noPunctuationEvaluable: 'Evaluable without punctuation',
     },
     contactTeacher: {
       title: 'Do you want to contact the teacher?',

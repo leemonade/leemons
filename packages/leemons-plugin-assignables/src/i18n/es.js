@@ -100,6 +100,7 @@ module.exports = {
     },
   },
   activity_deadline_header: {
+    noDeadline: 'Sin fecha límite',
     deadline: 'Fecha límite',
     deadlineExtraTime: 'Añadir tiempo extra',
     closeTask: 'Cerrar actividad',
