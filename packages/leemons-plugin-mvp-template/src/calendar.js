@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { map, keys } = require('lodash');
+const { map, keys, isEmpty } = require('lodash');
 const importEvents = require('./bulk/calendar');
 
 const startDate1 = new Date();
@@ -106,17 +106,22 @@ async function initCalendar({ users, programs }) {
 
     for (let i = 0, len = eventKeys.length; i < len; i++) {
       const key = eventKeys[i];
-      const { creator, calendar, ...event } = events[key];
 
-      try {
-        if (calendar.indexOf('.') > -1) {
-          const eventData = await services.calendar.addEvent(calendar, event, {
-            userSession: users[creator],
-          });
-          events[key] = { ...eventData };
+      if (key && !isEmpty(key)) {
+        const { creator, calendar, ...event } = events[key];
+
+        if (creator && !isEmpty(creator)) {
+          try {
+            if (calendar.indexOf('.') > -1) {
+              const eventData = await services.calendar.addEvent(calendar, event, {
+                userSession: users[creator],
+              });
+              events[key] = { ...eventData };
+            }
+          } catch (e) {
+            //
+          }
         }
-      } catch (e) {
-        //
       }
     }
 

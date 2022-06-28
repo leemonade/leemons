@@ -13,6 +13,7 @@ const pool = new Pool({ concurrency: 1 });
 
 async function _addSubjectAndClassroom(key, subjects, users, programs, apProfiles) {
   const { services } = leemons.getPlugin('academic-portfolio');
+  const { services: userService } = leemons.getPlugin('users');
   const { classes, seats, creator, students: rawStudents, courses, ...subject } = subjects[key];
 
   try {
@@ -51,9 +52,7 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
       const teachersData = await Promise.all(
         // eslint-disable-next-line no-loop-func
         teachers.map(({ teacher }) =>
-          leemons
-            .getPlugin('users')
-            .services.users.getUserAgentByCenterProfile(teacher, center, apProfiles.teacher)
+          userService.users.getUserAgentByCenterProfile(teacher, center, apProfiles.teacher)
         )
       );
 
@@ -149,7 +148,10 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     for (let i = 0, len = knowledgeAreasKeys.length; i < len; i++) {
       const key = knowledgeAreasKeys[i];
       const knowledgeArea = knowledgeAreas[key];
-      const knowledgeAreaData = await services.knowledges.addKnowledge(knowledgeArea);
+      const knowledgeAreaData = await services.knowledges.addKnowledge({
+        ...knowledgeArea,
+        credits_program: null,
+      });
       knowledgeAreas[key] = { ...knowledgeAreaData };
     }
 

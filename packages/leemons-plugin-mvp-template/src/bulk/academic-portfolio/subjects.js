@@ -6,6 +6,10 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
   const filePath = path.resolve(__dirname, '../data.xlsx');
   const items = await itemsImport(filePath, 'ap_subjects', 30, false, false);
 
+  const now = new Date();
+  const { timetable } = leemons.getPlugin('timetable').services;
+  const { weekdays } = timetable;
+
   keys(items).forEach((key) => {
     const item = items[key];
     const programKey = item.program;
@@ -18,6 +22,44 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
       if (isEmpty(items[key][prop])) {
         delete items[key][prop];
       }
+    });
+
+    // Schedule
+    const schedule = {};
+
+    /*
+    const schedule_mock = [
+      { start: '08:30', end: '09:25', duration: 55, day: 'tuesday', dayWeek: 1 },
+      { start: '11:00', end: '12:30', duration: 90, day: 'thursday', dayWeek: 3 },
+      { start: '07:00', end: '08:25', duration: 85, day: 'friday', dayWeek: 4 },
+    ];
+    */
+
+    [...Array(7).keys()].forEach((day) => {
+      const dayKey = `timetable.${day}`;
+      const dayValue = items[key][dayKey];
+
+      if (dayValue && !isEmpty(dayValue)) {
+        const [group, durationRaw] = dayValue.split('@');
+        const [start, end] = durationRaw.split('|');
+
+        const [startH, startM] = start.split(':');
+        const [endH, endM] = end.split(':');
+
+        const startDate = new Date(new Date(now.setHours(startH)).setMinutes(startM));
+        const endDate = new Date(new Date(now.setHours(endH)).setMinutes(endM));
+
+        const duration = new Date(endDate - startDate).getTime() / (60 * 1000);
+
+        if (!schedule[group]) {
+          schedule[group] = [];
+        }
+
+        schedule[group].push({ dayWeek: day, start, end, duration, day: weekdays[day] });
+        // { day: 1, value: 'G01@11:05|11:55' },
+      }
+
+      delete items[key][dayKey];
     });
 
     // Teachers
@@ -92,6 +134,7 @@ async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas
         group,
         course: items[key].courses,
         color: items[key].color,
+        schedule: schedule[group.abbreviation],
       };
 
       const subjectTypeKey = item.subjectType;

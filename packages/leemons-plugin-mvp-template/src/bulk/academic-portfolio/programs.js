@@ -57,6 +57,34 @@ async function importAcademicPortfolioPrograms(centers, grades) {
   });
 
   // console.dir(items, { depth: null });
+  /*
+  const mock = {
+    name: 'Leemons Corporate Training',
+    abbreviation: 'LCT',
+    color: '#6989bf',
+    credits: null,
+    creditSystem: false,
+    maxNumberOfCourses: 1,
+    courseCredits: 0,
+    hideCoursesInTree: false,
+    customSubstages: [],
+    haveKnowledge: true,
+    maxKnowledgeAbbreviation: 3,
+    maxKnowledgeAbbreviationIsOnlyNumbers: false,
+    useOneStudentGroup: false,
+    allSubjectsSameDuration: true,
+    maxGroupAbbreviation: 3,
+    maxGroupAbbreviationIsOnlyNumbers: false,
+    subjectsDigits: 0,
+    oneStudentGroup: false,
+    evaluationSystem: '222e7f49-90c0-43fc-95a3-9f7dca818dad',
+    haveSubstagesPerCourse: false,
+    moreThanOneAcademicYear: false,
+    subjectsFirstDigit: 'none',
+    centers: ['f4de5323-611d-466f-b551-34b6c7c8fb5a'],
+  };
+  */
+
   return items;
 }
 

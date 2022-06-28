@@ -189,7 +189,7 @@ async function events(isInstalled) {
       async () => {
         try {
           leemons.log.debug('MVP - Starting Tests plugin ...');
-          config.tests = await initTests(config);
+          // config.tests = await initTests(config);
           leemons.events.emit('init-tests', config.tests);
           leemons.log.info('MVP - STARTED Tests plugin');
         } catch (e) {

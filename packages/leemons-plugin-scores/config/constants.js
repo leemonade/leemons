@@ -49,8 +49,7 @@ const menuItems = [
   {
     item: {
       key: 'scores',
-      // TODO: Add scores order
-      // order: 10,
+      order: 10,
       iconSvg: '/public/scores/menu-icon.svg',
       activeIconSvg: '/public/scores/menu-icon.svg',
       label: {
