@@ -172,7 +172,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
 
     // TODO: Check if just "filtering" nodes, is enough
     return _.sortBy(
-      nodes.filter((n) => !_.isNil(n)),
+      nodes.filter((n) => !_.isNil(n) && !_.isNil(n.value)),
       (n) => n.value.index || n.value.name
     );
   };

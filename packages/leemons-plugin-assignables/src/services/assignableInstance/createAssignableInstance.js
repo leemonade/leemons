@@ -26,7 +26,7 @@ async function getTeachersOfGivenClasses(classes, { userSession, transacting } =
 
 module.exports = async function createAssignableInstance(
   assignableInstance,
-  { userSession, transacting } = {}
+  { userSession, transacting, ctx } = {}
 ) {
   // EN: Validate the assignable instance properties
   // ES: Validar las propiedades del asignable instance
@@ -129,6 +129,10 @@ module.exports = async function createAssignableInstance(
       });
   }
 
+  // EN: Save the dates
+  // ES: Guarda las fechas
+  await registerDates('assignableInstance', id, dates, { userSession, transacting });
+
   if (students.length) {
     // EN: Grant users to access event
     // ES: Da permiso a los usuarios para ver el evento
@@ -149,13 +153,9 @@ module.exports = async function createAssignableInstance(
       id,
       students,
       { indexable: false },
-      { userSession, transacting }
+      { userSession, transacting, ctx }
     );
   }
-
-  // EN: Save the dates
-  // ES: Guarda las fechas
-  await registerDates('assignableInstance', id, dates, { userSession, transacting });
 
   return {
     ...assignableInstanceObj,

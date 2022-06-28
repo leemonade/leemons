@@ -176,10 +176,24 @@ class Email {
         },
         { transacting }
       );
-      if (detail)
-        throw new Error(
-          `The ${templateName} email template already have the language ${language} of type ${type}`
+      if (detail) {
+        return table.emailTemplateDetail.update(
+          { template: template.id, language, type },
+          {
+            template: template.id,
+            language,
+            subject,
+            html,
+            type,
+          },
+          { transacting }
         );
+        /*
+        * throw new Error(
+          `The ${templateName} email template already have the language ${language} of type ${type}`
+        ); */
+      }
+
       leemons.log.info(
         `Adding email template Name: ${templateName} Language: ${language} Type: ${type}`
       );

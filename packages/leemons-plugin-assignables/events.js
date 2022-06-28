@@ -1,6 +1,30 @@
-const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
-const addMenuItems = require('./src/services/menu-builder/add');
+const newActivity = require('./emails/userCreateAssignation');
 const { addLocales } = require('./src/services/locales/addLocales');
+const addMenuItems = require('./src/services/menu-builder/add');
+const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
+
+async function initEmails() {
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-create-assignation',
+      'es-ES',
+      'Nueva actividad',
+      newActivity.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-create-assignation',
+      'en',
+      'New activity',
+      newActivity.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  leemons.events.emit('init-email-recover-password');
+  leemons.events.emit('init-emails');
+}
 
 function initMenuBuilder(isInstalled) {
   if (!isInstalled) {
@@ -81,6 +105,11 @@ async function events(isInstalled) {
 
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
+  });
+
+  // Emails
+  leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
+    await initEmails();
   });
 
   leemons.events.once(
