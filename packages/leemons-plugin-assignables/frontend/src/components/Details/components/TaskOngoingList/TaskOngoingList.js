@@ -83,7 +83,7 @@ const TaskOngoingList = ({ instance }) => {
     const newDates = {
       archived: archived ? new Date() : null,
       // TODO: Do not close if not closable
-      closed: archived ? new Date() : undefined,
+      closed: archived && !instance.dates.deadline ? new Date() : undefined,
     };
 
     try {
