@@ -169,7 +169,7 @@ export const TestStyles = createStyles((theme, {}) => ({
   },
   questionTitle: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'top',
     marginBottom: theme.spacing[4],
   },
   questionTitleIcon: {
