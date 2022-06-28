@@ -29,8 +29,20 @@ module.exports = {
     const { query } = ctx.request;
     const { userSession } = ctx.state;
 
+    const q = Object.fromEntries(
+      Object.entries(query).map(([key, value]) => {
+        try {
+          const jsonValue = JSON.parse(value);
+
+          return [key, jsonValue];
+        } catch (e) {
+          return [key, value];
+        }
+      })
+    );
+
     try {
-      const periods = await listPeriods(query, {
+      const periods = await listPeriods(q, {
         userSession,
       });
 

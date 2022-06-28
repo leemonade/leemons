@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import _, { map, slice, isFunction } from 'lodash';
+import _, { map, uniq, isFunction } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
@@ -18,6 +18,7 @@ import { usePeriods } from '@scores/hooks';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
 
 const useStyle = createStyles((theme) => ({
   paginatedList: {
@@ -150,6 +151,7 @@ function PeriodFilters({ centers, programs, onChange }) {
                 placeholder={labels?.centerPlaceholder}
                 disabled={!centers?.length}
                 data={data}
+                clearable="clear"
                 {...field}
               />
             );
@@ -188,6 +190,7 @@ function PeriodFilters({ centers, programs, onChange }) {
                 placeholder={labels?.programPlaceholder}
                 disabled={!data?.length}
                 data={data}
+                clearable="clear"
                 {...field}
               />
             );
@@ -205,7 +208,7 @@ function PeriodFilters({ centers, programs, onChange }) {
             const courses = React.useMemo(
               () =>
                 programObj?.courses?.map((course) => ({
-                  label: course.name || course.index,
+                  label: getCourseName(course),
                   value: course.id,
                 })),
               [programObj]
@@ -223,6 +226,7 @@ function PeriodFilters({ centers, programs, onChange }) {
                 placeholder={labels?.coursePlaceholder}
                 disabled={!programObj}
                 data={courses}
+                clearable="clear"
                 {...field}
               />
             );
@@ -337,27 +341,41 @@ export default function PeriodList({ onRemove, className }) {
     sort: 'center:ASC,program:ASC,course:ASC,startDate:ASC,endDate:ASC,name:ASC,id:ASC',
     query: {
       center: filters.center || undefined,
+      center_$in: JSON.stringify(map(centers, 'id')),
       program: filters.program || undefined,
       course: filters.course || undefined,
       name_$contains: filters.search || undefined,
     },
   });
 
+  const programsToFetchDetails = React.useMemo(
+    () => uniq(map(periods?.items || [], 'program')),
+    [periods?.items]
+  );
+  const programDetails = useProgramDetail(programsToFetchDetails, {
+    enabled: programsToFetchDetails?.length > 0,
+  });
+
+  const courses = React.useMemo(() => {
+    const programsData = map(programDetails, 'data').filter(Boolean);
+    return map(programsData, 'courses').flat();
+  }, [programDetails]);
+
   /*
     --- Table Formatting ---
   */
   const items = React.useMemo(
     () =>
-      slice(periods?.items || [], (page - 1) * size, page * size).map((period) => {
+      (periods?.items || []).map((period) => {
         const center = centers?.find((c) => c.id === period.center);
         const program = programs.find((p) => p.id === period.program);
-        const course = program?.courses?.find((c) => c.id === period.course);
+        const course = courses?.find((c) => c.id === period.course);
 
         return {
           ...period,
           center: center?.name,
           program: program?.name,
-          course: course?.name || course?.index || '-',
+          course: course ? getCourseName(course) : '-',
           startDate: <LocaleDate date={period.startDate} />,
           endDate: <LocaleDate date={period.endDate} />,
           actions: <PeriodActions period={period} onRemove={onRemove} />,
