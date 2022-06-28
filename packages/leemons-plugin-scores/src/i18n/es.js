@@ -84,9 +84,9 @@ module.exports = {
       export: 'Exportar notas a csv',
     },
     noClassSelected: {
-      title: 'Copy scores ES',
+      title: 'Cuaderno de evaluación',
       description:
-        'Notas te permite calificar tareas de evaluación y control de asistencia. Selecciona el programa y la clase, luego puedes filtrar por períodos de tiempo, puedes guardar estos períodos para que los profesores puedan utilizarlos como fases de evaluación.',
+        'El cuaderno de evaluación te permiten evaluar las tareas calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
       title: 'No results copy ES',

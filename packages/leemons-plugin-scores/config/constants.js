@@ -20,15 +20,15 @@ const permissions = [
     permissionName: permissionNames.noteBook,
     actions: ['view', 'create', 'update', 'delete', 'admin'],
     localizationName: {
-      es: 'Cuaderno de notas',
-      en: 'Notebook',
+      es: 'Cuaderno de evaluación',
+      en: 'Evaluation notebook',
     },
   },
   {
     permissionName: permissionNames.scores,
     actions: ['view'],
     localizationName: {
-      es: 'Notas',
+      es: 'Evaluaciones',
       en: 'Scores',
     },
   },
@@ -36,7 +36,7 @@ const permissions = [
     permissionName: permissionNames.scoresMenu,
     actions: ['view'],
     localizationName: {
-      es: 'Notas (menú)',
+      es: 'Evaluaciones (menú)',
       en: 'Scores (menu)',
     },
   },
@@ -54,7 +54,7 @@ const menuItems = [
       activeIconSvg: '/public/scores/menu-icon.svg',
       label: {
         en: 'Scores',
-        es: 'Notas',
+        es: 'Evaluaciones',
       },
     },
     permissions: [
