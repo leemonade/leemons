@@ -23,8 +23,8 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
           const end = new Date(curr);
           const startSplit = schedule.start.split(':');
           const endSplit = schedule.end.split(':');
-          start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0);
-          end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 59);
+          start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0, 0);
+          end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 0, 0);
           return {
             start,
             end,
@@ -78,6 +78,9 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
         const end = new Date(bbreak.endDate);
         start.setDate(first + index - 7);
         end.setDate(first + index - 7);
+        start.setSeconds(0, 0);
+        end.setSeconds(0, 0);
+
         events.push({
           id: `break-${i}`,
           title: bbreak.name,
@@ -111,6 +114,5 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
       });
     });
   }
-  console.log(events);
   return events;
 }
