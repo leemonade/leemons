@@ -173,26 +173,24 @@ function useTableData({ filters, localFilters }) {
       return {};
     }
 
-    if (
-      (localFilters.filterBy === 'activity' && localFilters.search?.length) ||
-      !localFilters.showNonCalificables
-    ) {
-      assignableInstances = assignableInstances.filter((assignableInstance) => {
-        if (
-          localFilters.filterBy === 'activity' &&
-          localFilters.search?.length &&
-          !assignableInstance.assignable.asset.name
-            .toLowerCase()
-            .includes(localFilters.search.toLowerCase())
-        ) {
-          return false;
-        }
-        if (!localFilters.showNonCalificables && !assignableInstance.gradable) {
-          return false;
-        }
-        return true;
-      });
-    }
+    assignableInstances = assignableInstances.filter((assignableInstance) => {
+      if (
+        localFilters.filterBy === 'activity' &&
+        localFilters.search?.length &&
+        !assignableInstance.assignable.asset.name
+          .toLowerCase()
+          .includes(localFilters.search.toLowerCase())
+      ) {
+        return false;
+      }
+      if (!assignableInstance.requiresScoring) {
+        return false;
+      }
+      if (!localFilters.showNonCalificables && !assignableInstance.gradable) {
+        return false;
+      }
+      return true;
+    });
 
     let values = assignableInstances.reduce((studentsValues, activity) => {
       activity.students.forEach((student) => {
