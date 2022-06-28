@@ -2,7 +2,7 @@
 
 const { table } = require('../tables');
 
-async function assignTest({ id, data }, { userSession, transacting } = {}) {
+async function assignTest({ id, data }, { ctx, userSession, transacting } = {}) {
   const { assignables: assignableService, assignableInstances: assignableInstancesService } =
     leemons.getPlugin('assignables').services;
 
@@ -41,7 +41,7 @@ async function assignTest({ id, data }, { userSession, transacting } = {}) {
       assignable: assignable.id,
       ...data,
     },
-    { userSession, transacting }
+    { userSession, transacting, ctx }
   );
 }
 

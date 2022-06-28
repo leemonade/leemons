@@ -1,4 +1,4 @@
-function activity(title, t1, t2, t3, t4, t5) {
+function activity(title, t1, t2, t3, t4, t5, texts) {
   return `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -119,27 +119,28 @@ function activity(title, t1, t2, t3, t4, t5) {
             </tr>
           </table>
           <table
-            cellpadding="0"
-            cellspacing="0"
-            align="center"
-            width="100%"
-            bgcolor="#F7F8FA"
-            style="background-color: #f7f8fa"
-          >
-            <tr>
-              <td align="center" style="text-align: center; padding: 15px 25px">
-                <table
-                  cellpadding="0"
-                  cellspacing="0"
-                  align="center"
-                  width="100%"
-                  bgcolor="#fff"
-                  style="background-color: #fff"
-                >
-                  <tr>
-                    <td align="center" style="padding-top: 24px">
-                      <div
-                        style="
+        cellpadding="0"
+        cellspacing="0"
+        align="center"
+        width="100%"
+        bgcolor="#F7F8FA"
+        style="background-color: #f7f8fa"
+      >
+        <tr>
+          <td align="center" style="text-align: center; padding: 15px 25px">
+            <table
+              cellpadding="0"
+              cellspacing="0"
+              align="center"
+              width="100%"
+              bgcolor="#fff"
+              style="background-color: #fff"
+            >
+              <!-- CARTA -->
+              <tr>
+                <td align="center" style="padding-top: 24px">
+                  <div
+                    style="
                           background-color: white;
                           border-radius: 4px;
                           border: 2px solid #f7f8fa;
@@ -147,65 +148,45 @@ function activity(title, t1, t2, t3, t4, t5) {
                           width: 354px;
                           height: 352px;
                         "
-                      >
+                  >
+                    <div
+                      style="width: 100%; height: 180px; position: relative; background-size: cover; background-image: url('{{ it.instance.assignable.asset.url }}')"
+                    >
+                      <div style="display: flex;height: 100%">
                         <div
-                          style="width: 100%; height: 180px; position: relative"
-                        >
-                          <img
-                            height="100%"
-                            width="100%"
-                            style="
-                              object-fit: cover;
-                              border-top-left-radius: 4px;
-                              border-top-right-radius: 2px;
-                            "
-                            src="https://s3-alpha-sig.figma.com/img/9845/7ff2/9522c3f9e01cf33153ab13d4c28b6e6f?Expires=1657497600&Signature=Fnf4GVTnvUVKyPunhCz9WYr2pnlbr~4CNOcUSoO6bsJYtT0ZJswuQdwVlkD--obN~c~qFT-s8rB3Uw~d-NEMcs-uByPx~e0Hvc-f7SpPdbdlCc6u1a87SX27NQb-aumVG~zkJZo5MNmfBlaSwmCXUTc8Eq-ehT2e~PdoOU8xhbh9YXCesobb22zbXKAKG5rgnSe1RtI-zGTUc9B-Se04Ep6tI9EaQiX30PRhH6Qx74HRRtbrkH4-6gqOKpVLRnwoeY~0FvL3QDvIHw9T-FwfTKGo2tAXf57S63a-VBJdbtpXm2p2yG-azogjlstI0dYSM06Vz7tcNwf79Bb3C5cYmA__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"
-                          />
-                          <div
-                            style="
-                              position: absolute;
-                              top: 0;
-                              bottom: 0;
-                              left: 0;
-                              right: 50%;
+                          style="
+                              width: 100%;
+                              height: 100%;
                               background: rgba(247, 248, 250, 0.8);
                               backdrop-filter: blur(20px);
                               border-top-left-radius: 2px;
                             "
+                        >
+                          <div
+                            style="
+                                display: flex;
+                                height: 100%;
+                                justify-content: flex-end;
+                                border-top: 8px solid #dc5571;
+                              "
                           >
                             <div
                               style="
-                                display: flex;
-                                justify-content: space-between;
-                                flex-direction: column;
-                                height: 100%;
-                              "
+                                  text-align: start;
+                                  padding: 12px;
+                                "
                             >
                               <div
                                 style="
-                                  background-color: #dc5571;
-                                  height: 8px;
-                                  border-top-left-radius: 2px;
-                                "
-                              ></div>
-                              <div
-                                style="
-                                  display: flex;
-                                  flex-direction: column;
-                                  text-align: start;
-                                  padding: 12px;
-                                  gap: 8px;
-                                "
-                              >
-                                <div
-                                  style="
                                     display: inline;
                                     width: fit-content;
                                     padding: 4px 8px;
                                     background-color: white;
                                     border-radius: 4px;
+                                    font-size: 13px;
+                                    margin-bottom: 8px;
                                   "
-                                >
+                              >
                                   <span
                                     style="
                                       font-family: 'Inter', Verdana, sans-serif;
@@ -213,83 +194,97 @@ function activity(title, t1, t2, t3, t4, t5) {
                                       line-height: 20px;
                                       color: #212b3d;
                                     "
-                                    >NUEVA</span
+                                  >${texts.new}</span
                                   >
-                                </div>
-                                <div
-                                  style="
+                              </div>
+                              <div
+                                style="
                                     display: flex;
                                     gap: 8px;
+                                    margin-top: 8px;
+                                    margin-bottom: 8px;
                                     align-items: center;
                                   "
-                                >
-                                  <div
-                                    style="
+                              >
+                                <div
+                                  style="
                                       height: 20px;
                                       width: 20px;
                                       border-radius: 50%;
-                                      background-color: #dc5571;
+                                      {{ @if (it.classes.length === 1) }}
+                                        background-color: {{ it.classes[0].color }};
+                                      {{ #else }}
+                                        background-color: #67728E;
+                                      {{ /if}}
+
                                     "
-                                  ></div>
-                                  <span
-                                    style="
-                                      font-family: 'Inter', Verdana, sans-serif;
-                                      font-size: 16px;
-                                      line-height: 20px;
-                                      color: #212b3d;
-                                    "
-                                    >Matemáticas</span
-                                  >
-                                </div>
+                                ></div>
                                 <span
                                   style="
+                                      font-family: 'Inter', Verdana, sans-serif;
+                                      font-size: 13px;
+                                      line-height: 20px;
+                                       width: 135px;
+                                       padding-left: 8px;
+                                        "
+                                >
+                                {{ @if (it.classes.length === 1) }}
+                                    {{ it.classes[0].subject.name }}
+                                {{ #else }}
+                                  ${texts.multiSubjects}
+                                {{ /if}}
+                                    </span>
+                              </div>
+                              <span
+                                style="
                                     display: block;
                                     font-family: 'Lexend', Verdana, sans-serif;
                                     font-size: 16px;
                                     line-height: 20px;
                                     font-weight: 600;
                                     color: #212b3d;
+                                    margin-top: 8px;
+
                                   "
-                                  >La historia detrás del cuadro</span
-                                >
-                              </div>
+                              >{{it.instance.assignable.asset.name}}</span>
                             </div>
                           </div>
+                        </div>
+                        <div
+                          style="
+                              background-color: white;
+                              text-align: left;
+                              padding: 8px;
+                              height: 50px;
+                              width: 100%;
+                              margin-top: 130px;
+                            "
+                        >
                           <div
                             style="
-                              position: absolute;
-                              background-color: white;
-                              display: flex;
-                              flex-direction: column;
-                              align-items: flex-start;
-                              padding: 8px;
-                              bottom: 0;
-                              right: 0;
-                              left: 50%;
-                            "
-                          >
-                            <span
-                              style="
                                 font-family: 'Inter', Verdana, sans-serif;
                                 font-size: 12px;
                                 line-height: 20px;
                                 font-weight: 600;
                                 color: #31753b;
                               "
-                              >Empezar actividad</span
-                            >
-                            <span
-                              style="
+                          >${texts.startActivity}
+                          </div
+                          >
+                          <div
+                            style="
                                 font-family: 'Inter', Verdana, sans-serif;
                                 font-size: 12.5px;
                                 line-height: 14px;
                                 color: #5b6577;
                               "
-                              >Entrega: 12/01/22</span
-                            >
-                          </div>
+                          >${texts.delivery}: {{it.taskDate}}
+                          </div
+                          >
                         </div>
-                        <div style="padding: 16px; text-align: start">
+                      </div>
+                    </div>
+                    <div style="padding: 16px; text-align: start">
                           <span
                             style="
                               font-family: 'Inter', Verdana, sans-serif;
@@ -297,26 +292,25 @@ function activity(title, t1, t2, t3, t4, t5) {
                               line-height: 16.5px;
                               color: #5b6577;
                             "
-                            >We’ve always been told that the brain contains
-                            billions of neurons, which, of course, have an
-                            essential role in all the processes…</span
-                          >
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      align="center"
-                      style="padding-top: 16px; padding-inline: 38.5px"
-                    >
-                      <div
-                        style="
-                          display: flex;
-                          flex-direction: column;
+                          >{{ @if (it.instance.assignable.asset.description) }}
+                             {{ it.instance.assignable.asset.description }}
+                           {{ /if}}</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- TABLA -->
+              <!--
+              <tr>
+                <td
+                  align="center"
+                  style="padding-top: 16px; padding-inline: 38.5px"
+                >
+                  <div
+                    style="
                           text-align: start;
                         "
-                      >
+                  >
                         <span
                           style="
                             padding: 5px 16px 8px;
@@ -326,138 +320,85 @@ function activity(title, t1, t2, t3, t4, t5) {
                             font-weight: 600;
                             color: #212b3d;
                           "
-                          >Próximas entregas</span
+                        >${texts.upcomingDeliveries}</span
                         >
-                        <div
-                          style="
-                            display: flex;
-                            padding: 6px 16px;
-                            align-items: center;
-                            border-top: 2px solid #edeff5;
-                          "
-                        >
-                          <div style="border: 1px solid #b9bec4">
-                            <img
-                              height="36"
-                              width="36"
-                              src="https://s3-alpha-sig.figma.com/img/842e/8ea2/8cb71140175199e85bf9e5d1bb9a3ef9?Expires=1657497600&Signature=BntaTMnqhCV-5JBiDDH6Elf8cPPKCzIvdrpsdavwbFpne~GIGDhj9CuU8frsVEUoFQFpqh9TQBO9pwEHJERuGJf9A1doN1FF~t1nae4MTOag2V6OB1yA63vivZqckVYpW6JClPXQ1cZ6wuVbNiUf3orYBx9IfLBkDiif07opmITVrJqnaxZkVA5P9--FtkBCir4o-j1PGltVV9Olf6dsc9j~BxrRNPup8BIeWFSr82OfnV6TMaRUjh8mXuLuRjo64UQFOjKQ5B4fVJ9UnJHcq-voSqkqL01lp6pGr1Y37GgWgPdPK-~5FKyDIFkLda~E5sVW4j1SxE1okOd2EnDe-Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"
-                            />
-                          </div>
-                          <span
-                            style="
-                              margin-left: 8px;
-                              font-family: 'Inter', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              color: #212b3d;
-                            "
-                            >La historia detrás del cuadro</span
-                          >
-                          <div
-                            style="
-                              margin-left: 10px;
-                              height: 26px;
-                              width: 26px;
-                              border-radius: 50%;
-                              background-color: #37a1a8;
-                            "
-                          ></div>
-                          <span
-                            style="
-                              margin-left: 16px;
-                              font-family: 'Inter', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              color: #212b3d;
-                            "
-                            >2ºA</span
-                          >
-                          <span
-                            style="
-                              margin-left: 25px;
-                              font-family: 'Lexend', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              font-weight: 500;
-                              color: #d13b3b;
-                            "
-                            >dentro de 1 día</span
-                          >
-                        </div>
-                        <div
-                          style="
-                            display: flex;
-                            padding: 6px 16px;
-                            align-items: center;
-                            border-top: 2px solid #edeff5;
-                          "
-                        >
-                          <div style="border: 1px solid #b9bec4">
-                            <img
-                              height="36"
-                              width="36"
-                              src="https://s3-alpha-sig.figma.com/img/842e/8ea2/8cb71140175199e85bf9e5d1bb9a3ef9?Expires=1657497600&Signature=BntaTMnqhCV-5JBiDDH6Elf8cPPKCzIvdrpsdavwbFpne~GIGDhj9CuU8frsVEUoFQFpqh9TQBO9pwEHJERuGJf9A1doN1FF~t1nae4MTOag2V6OB1yA63vivZqckVYpW6JClPXQ1cZ6wuVbNiUf3orYBx9IfLBkDiif07opmITVrJqnaxZkVA5P9--FtkBCir4o-j1PGltVV9Olf6dsc9j~BxrRNPup8BIeWFSr82OfnV6TMaRUjh8mXuLuRjo64UQFOjKQ5B4fVJ9UnJHcq-voSqkqL01lp6pGr1Y37GgWgPdPK-~5FKyDIFkLda~E5sVW4j1SxE1okOd2EnDe-Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"
-                            />
-                          </div>
-                          <span
-                            style="
-                              margin-left: 8px;
-                              font-family: 'Inter', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              color: #212b3d;
-                            "
-                            >La historia detrás del cuadro</span
-                          >
-                          <div
-                            style="
-                              margin-left: 10px;
-                              height: 26px;
-                              width: 26px;
-                              border-radius: 50%;
-                              background-color: #37a1a8;
-                            "
-                          ></div>
-                          <span
-                            style="
-                              margin-left: 16px;
-                              font-family: 'Inter', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              color: #212b3d;
-                            "
-                            >2ºA</span
-                          >
-                          <span
-                            style="
-                              margin-left: 25px;
-                              font-family: 'Lexend', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              font-weight: 500;
-                              color: #d13b3b;
-                            "
-                            >dentro de 1 día</span
-                          >
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      align="center"
+                    <div
                       style="
+                            display: flex;
+                            padding: 6px 16px;
+                            align-items: center;
+                            border-top: 2px solid #edeff5;
+                          "
+                    >
+                      <div style="border: 1px solid #b9bec4">
+                        <img
+                          height="36"
+                          width="36"
+                          src="https://s3-alpha-sig.figma.com/img/842e/8ea2/8cb71140175199e85bf9e5d1bb9a3ef9?Expires=1657497600&Signature=BntaTMnqhCV-5JBiDDH6Elf8cPPKCzIvdrpsdavwbFpne~GIGDhj9CuU8frsVEUoFQFpqh9TQBO9pwEHJERuGJf9A1doN1FF~t1nae4MTOag2V6OB1yA63vivZqckVYpW6JClPXQ1cZ6wuVbNiUf3orYBx9IfLBkDiif07opmITVrJqnaxZkVA5P9--FtkBCir4o-j1PGltVV9Olf6dsc9j~BxrRNPup8BIeWFSr82OfnV6TMaRUjh8mXuLuRjo64UQFOjKQ5B4fVJ9UnJHcq-voSqkqL01lp6pGr1Y37GgWgPdPK-~5FKyDIFkLda~E5sVW4j1SxE1okOd2EnDe-Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"
+                        />
+                      </div>
+                      <span
+                        style="
+                              margin-left: 8px;
+                              font-family: 'Inter', Verdana, sans-serif;
+                              font-size: 14px;
+                              line-height: 24px;
+                              color: #212b3d;
+                            "
+                      >La historia detrás del cuadro</span
+                      >
+                      <div
+                        style="
+                              margin-left: 10px;
+                              height: 26px;
+                              width: 26px;
+                              border-radius: 50%;
+                              background-color: #37a1a8;
+                            "
+                      ></div>
+                      <span
+                        style="
+                              margin-left: 16px;
+                              font-family: 'Inter', Verdana, sans-serif;
+                              font-size: 14px;
+                              line-height: 24px;
+                              color: #212b3d;
+                            "
+                      >2ºA</span
+                      >
+                      <span
+                        style="
+                              margin-left: 25px;
+                              font-family: 'Lexend', Verdana, sans-serif;
+                              font-size: 14px;
+                              line-height: 24px;
+                              font-weight: 500;
+                              color: #d13b3b;
+                            "
+                      >${texts.expDays}</span
+                      >
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+              -->
+              <!-- BOTON -->
+              <tr>
+                <td
+                  align="center"
+                  style="
                         text-align: center;
                         padding: 16px 45px 0px;
                         height: 38px;
                         font-family: 'Lexend', Century Gothic, CenturyGothic,
                           AppleGothic, sans-serif;
                       "
-                    >
-                      <a
-                        href="{{it.url}}"
-                        target="_blank"
-                        style="
+                >
+                  <a
+                    href="{{it.btnUrl}}"
+                    target="_blank"
+                    style="
                           text-decoration: none;
                           font-size: 14px;
                           line-height: 18px;
@@ -469,15 +410,16 @@ function activity(title, t1, t2, t3, t4, t5) {
                           font-family: 'Lexend', Century Gothic, CenturyGothic,
                             AppleGothic, sans-serif;
                         "
-                      >
-                        ${t2}
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      align="center"
-                      style="
+                  >
+                    ${t2}
+                  </a>
+                </td>
+              </tr>
+              <!-- TEXT -->
+              <tr>
+                <td
+                  align="center"
+                  style="
                         text-align: center;
                         padding: 16px 24px 24px;
                         font-family: 'Inter', Century Gothic, CenturyGothic,
@@ -487,14 +429,14 @@ function activity(title, t1, t2, t3, t4, t5) {
                         font-weight: 400;
                         color: #5b6577;
                       "
-                    >
-                      ${t3}
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
+                >
+                  ${t3}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
           <table
             cellpadding="0"
             cellspacing="0"
@@ -563,7 +505,15 @@ module.exports = {
     'Revisar mis actividades',
     'Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.',
     'Enviado por {{it.__from}}',
-    'Política de privacidad'
+    '', // Política de privacidad
+    {
+      new: 'NUEVA',
+      delivery: 'Entrega',
+      startActivity: 'Empezar actividad',
+      upcomingDeliveries: 'Próximas entregas',
+      expDays: 'dentro de {{it.days}} días',
+      multiSubjects: 'Multi-Asignatura',
+    }
   ),
   en: activity(
     'You have a new pending activity',
@@ -571,6 +521,14 @@ module.exports = {
     'Review my activities',
     'You can change your email preferences from your user account',
     'Sent to {{it.__from}}',
-    'Privacy policy'
+    '', // Privacy policy
+    {
+      new: 'NEW',
+      delivery: 'Delivery',
+      startActivity: 'Start activity',
+      upcomingDeliveries: 'Upcoming deliveries',
+      expDays: 'within {{it.days}} days',
+      multiSubjects: 'Multi-Subject',
+    }
   ),
 };
