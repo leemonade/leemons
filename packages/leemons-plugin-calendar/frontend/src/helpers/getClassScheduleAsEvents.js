@@ -100,9 +100,7 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
                 margin: '-0.25rem',
               })}
             >
-              <Text size="lg" role="productive">
-                {bbreak.name}
-              </Text>
+              <Text role="productive">{bbreak.name}</Text>
             </Box>
           ),
           originalEvent: {

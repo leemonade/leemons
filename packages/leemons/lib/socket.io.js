@@ -19,7 +19,7 @@ class LeemonsSocketWorker {
         config
       )
     );
-    process.on('message', function (message) {
+    process.on('message', (message) => {
       LeemonsSocketWorker.__onEvent(message);
     });
   }
@@ -51,10 +51,8 @@ class LeemonsSocketWorker {
       if (events[uuid]) {
         await events[uuid](data);
         delete events[uuid];
-      } else {
-        if (LeemonsSocketWorkerFunctions[type]) {
-          LeemonsSocketWorkerFunctions[type](data);
-        }
+      } else if (LeemonsSocketWorkerFunctions[type]) {
+        LeemonsSocketWorkerFunctions[type](data);
       }
     }
   }
@@ -63,7 +61,11 @@ class LeemonsSocketWorker {
   static __emit(type, data, callback) {
     const uuid = uuidv4();
     if (callback) events[uuid] = callback;
-    process.send({ subtype: 'socket.io:store', type, uuid, data });
+    if (_.isFunction(process.send)) {
+      process.send({ subtype: 'socket.io:store', type, uuid, data });
+    } else {
+      LeemonsSocketWorker.__onEvent({ subtype: 'socket.io:store', type, uuid, data });
+    }
   }
 
   /** @private */
@@ -82,7 +84,7 @@ class LeemonsSocketWorker {
 
 class LeemonsSocketMain {
   static init() {
-    cluster.on('message', function (worker, message) {
+    cluster.on('message', (worker, message) => {
       LeemonsSocketMain.__onEvent(message);
     });
   }
@@ -119,6 +121,7 @@ const LeemonsSocketMainFunctions = {
 
 class LeemonsSocket {
   static main = LeemonsSocketMain;
+
   static worker = LeemonsSocketWorker;
 }
 
