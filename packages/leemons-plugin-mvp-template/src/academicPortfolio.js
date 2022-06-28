@@ -117,6 +117,8 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
 
 async function initAcademicPortfolio({ centers, profiles, users, grades }) {
   const { services } = leemons.getPlugin('academic-portfolio');
+  const { timetable } = leemons.getPlugin('timetable').services;
+  const { weekdays } = timetable;
 
   try {
     // ·····················································
@@ -176,6 +178,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
       knowledgeAreas,
       subjectTypes,
       users,
+      weekdays,
     });
     const subjectsKeys = keys(subjects);
 

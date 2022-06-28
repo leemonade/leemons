@@ -2,13 +2,17 @@ const { keys, isEmpty, find, trim } = require('lodash');
 const path = require('path');
 const itemsImport = require('../helpers/simpleListImport');
 
-async function importAcademicPortfolioSubjects({ programs, users, knowledgeAreas, subjectTypes }) {
+async function importAcademicPortfolioSubjects({
+  programs,
+  users,
+  knowledgeAreas,
+  subjectTypes,
+  weekdays,
+}) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
   const items = await itemsImport(filePath, 'ap_subjects', 30, false, false);
 
   const now = new Date();
-  const { timetable } = leemons.getPlugin('timetable').services;
-  const { weekdays } = timetable;
 
   keys(items).forEach((key) => {
     const item = items[key];
