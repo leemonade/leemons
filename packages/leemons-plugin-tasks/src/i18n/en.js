@@ -445,6 +445,11 @@ module.exports = {
         },
       },
     },
+    types: {
+      calificable: 'Calificable',
+      evaluable: 'Evaluable with punctuation',
+      noPunctuationEvaluable: 'Evaluable without punctuation',
+    },
     contactTeacher: {
       title: 'Do you want to contact the teacher?',
       button: 'Write to your teacher',

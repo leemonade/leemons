@@ -435,6 +435,11 @@ module.exports = {
         },
       },
     },
+    types: {
+      calificable: 'Calificable',
+      evaluable: 'Evaluable con puntuación',
+      noPunctuationEvaluable: 'Evaluable sin puntuación',
+    },
     contactTeacher: {
       title: '¿Quieres hacer alguna consulta sobre esta evaluación?',
       button: 'Escribe a tu profesor',

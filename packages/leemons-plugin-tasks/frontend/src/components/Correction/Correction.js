@@ -2,17 +2,32 @@ import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import _ from 'lodash';
-import { Box, Button } from '@bubbles-ui/components';
+import { Box, Button, Text } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { CorrectionStyles } from './Correction.style';
 import Submission from './components/Submission';
 import { prefixPN } from '../../helpers';
 import SubjectTabs from './components/SubjectTabs';
 import Accordion from './components/Accordion';
 import updateStudentRequest from '../../request/instance/updateStudent';
+
+function getActivityType(instance) {
+  const { gradable, allowFeedback, requiresScoring } = instance;
+  if (gradable) {
+    return 'calificable';
+  }
+  if (!gradable && requiresScoring) {
+    return 'evaluable';
+  }
+  if (allowFeedback && !requiresScoring) {
+    return 'noPunctuationEvaluable';
+  }
+  return '';
+}
 
 export default function Correction({ assignation, instance, loading }) {
   /*
@@ -132,11 +147,27 @@ export default function Correction({ assignation, instance, loading }) {
   /*
     --- Render ---
   */
-  const { classes } = CorrectionStyles();
+  const { classes, theme } = CorrectionStyles();
 
   return (
     <>
       <Box className={classes.mainContent}>
+        <Box className={classes.type}>
+          <Text color="secondary">{labels?.types?.[getActivityType(instance)] || ''}</Text>
+          {instance?.gradable ? (
+            <StarIcon
+              style={{
+                color: theme.colors.text02,
+              }}
+            />
+          ) : (
+            <CutStarIcon
+              style={{
+                color: theme.colors.text02,
+              }}
+            />
+          )}
+        </Box>
         <Submission assignation={assignation} labels={labels.submission} />
         <SubjectTabs assignation={assignation} instance={instance} loading={loading}>
           <Accordion
