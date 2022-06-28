@@ -2,9 +2,9 @@ import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
 
-export default function StudentsList({ labels, students }) {
-  const columns = useMemo(
-    () => [
+export default function StudentsList({ labels, instance, students }) {
+  const columns = useMemo(() => {
+    const cols = [
       {
         Header: labels?.studentListcolumns?.student || '',
         accessor: 'student',
@@ -29,9 +29,13 @@ export default function StudentsList({ labels, students }) {
         Header: '',
         accessor: 'actions',
       },
-    ],
-    [labels]
-  );
+    ];
+    if (!instance?.requiresScoring) {
+      cols.splice(4, 1);
+    }
+
+    return cols;
+  }, [labels, instance?.requiresScoring]);
 
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
@@ -58,6 +62,7 @@ export default function StudentsList({ labels, students }) {
 
 StudentsList.propTypes = {
   students: PropTypes.array,
+  instance: PropTypes.object,
   labels: PropTypes.shape({
     studentListcolumns: PropTypes.shape({
       student: PropTypes.string,
