@@ -243,13 +243,13 @@ function ContentData({
                 placeholders={placeholders}
               /> */}
 
-              <Controller
+              {/* <Controller
                 name="gradable"
                 control={control}
                 render={({ field }) => (
                   <Switch label={labels?.submission?.gradable} {...field} checked={field.value} />
                 )}
-              />
+              /> */}
               <Submissions labels={labels} errorMessages={errorMessages} />
             </ContextContainer>
           </ContextContainer>
