@@ -8,7 +8,7 @@ async function initEmails() {
     .getPlugin('emails')
     .services.email.addIfNotExist(
       'user-create-assignation',
-      'es-ES',
+      'es',
       'Nueva actividad',
       newActivity.es,
       leemons.getPlugin('emails').services.email.types.active
