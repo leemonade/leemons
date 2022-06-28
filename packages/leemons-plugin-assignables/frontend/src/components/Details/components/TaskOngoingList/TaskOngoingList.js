@@ -187,12 +187,14 @@ const TaskOngoingList = ({ instance }) => {
             <ScoresBar {...instanceData.leftScoresBar} />
           </Box>
         </Box>
-        <Box className={classes.rightSide}>
-          <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.grades}</Text>
-          <Box className={classes.rightScoreBarWrapper}>
-            {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
+        {!!instance?.requiresScoring && (
+          <Box className={classes.rightSide}>
+            <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.grades}</Text>
+            <Box className={classes.rightScoreBarWrapper}>
+              {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </Box>
   );

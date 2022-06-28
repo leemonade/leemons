@@ -16,6 +16,10 @@ function CorrectionButton({ studentData, instanceData, label }) {
 
 export default function getActions(studentData, instanceData, localizations, subjects) {
   if (studentData.finished) {
+    if (!instanceData?.requiresScoring && !instanceData?.allowFeedback) {
+      return null;
+    }
+
     const grades = studentData.grades?.filter((grade) => grade.type === 'main');
     if (grades?.length >= subjects?.length) {
       return (
