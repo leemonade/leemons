@@ -18,9 +18,6 @@ module.exports = {
     },
     grade: {
       type: 'float',
-      options: {
-        notNull: true,
-      },
     },
     gradedBy: {
       type: 'string',
