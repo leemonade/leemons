@@ -11,7 +11,7 @@ function addEvent(key, event, { transacting } = {}) {
   _.forEach(keys, (k) => {
     if (
       !this.calledFrom.startsWith('plugins.assignables') &&
-      !this.calledFrom.startsWith('plugins.mvp-template')
+      !this.calledFrom.startsWith('plugins.bulk-template')
     ) {
       validateKeyPrefix(k, this.calledFrom);
     }

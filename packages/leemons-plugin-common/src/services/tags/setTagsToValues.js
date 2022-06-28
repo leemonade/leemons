@@ -11,7 +11,7 @@ async function setTagsToValues(type, tags, values, { transacting: _transacting }
       try {
         return await addTagsToValues.call(this, type, tags, values, { transacting });
       } catch (error) {
-        console.log(error, error.message);
+        // console.log(error, error.message);
         if (error.message !== 'Tags cannot be empty.') {
           throw error;
         }

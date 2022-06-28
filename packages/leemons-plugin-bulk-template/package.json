@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "async-promise-pool": "^1.0.6",
+    "chalk": "^4.1.0",
     "leemons-utils": "0.0.1-beta.0",
     "lodash": "^4.17.21",
     "mime": "^2.0.3",

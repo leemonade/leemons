@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const chalk = require('chalk');
 const systeminformation = require('systeminformation');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
@@ -86,4 +87,5 @@ module.exports = {
   got,
   sharp,
   getDiff,
+  chalk,
 };

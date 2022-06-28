@@ -2,7 +2,11 @@ const { tables } = require('../tables');
 const { setActiveProvider } = require('./setActiveProvider');
 
 async function setProviderConfig(providerName, config, { transacting: _transacting } = {}) {
-  if (!['plugins.mvp-template', 'plugins.leebrary'].includes(this.calledFrom)) {
+  if (
+    !['plugins.bulk-template', 'plugins.admin', 'plugins.leebrary'].includes(
+      this.calledFrom
+    )
+  ) {
     throw new Error('Must be called from leemons-plugin-leebrary');
   }
 
