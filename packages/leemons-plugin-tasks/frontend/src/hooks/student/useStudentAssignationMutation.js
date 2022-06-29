@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import updateStudentRequest from '../../request/instance/updateStudent';
 
-export default function useStudentAssignationMutation(details = true) {
+export default function useStudentAssignationMutation() {
   const queryClient = useQueryClient();
   return useMutation(
     'assignations',
@@ -13,7 +13,7 @@ export default function useStudentAssignationMutation(details = true) {
       onSuccess: (data) => {
         queryClient.invalidateQueries([
           'assignations',
-          { instance: data.instance, user: data.student, details },
+          { instance: data.instance, user: data.student },
         ]);
       },
     }

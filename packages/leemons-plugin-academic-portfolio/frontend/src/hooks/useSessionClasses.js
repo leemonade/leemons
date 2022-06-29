@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { listSessionClassesRequest } from '../request';
 
 export default function useSessionClasses(
-  { program, type, showType },
+  { program, type, showType } = {},
   queryOptions = { cacheTime: Infinity }
 ) {
   const userAgents = useUserAgents();

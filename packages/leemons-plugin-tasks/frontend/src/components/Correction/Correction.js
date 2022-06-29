@@ -8,12 +8,12 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { CorrectionStyles } from './Correction.style';
 import Submission from './components/Submission';
 import { prefixPN } from '../../helpers';
 import SubjectTabs from './components/SubjectTabs';
 import Accordion from './components/Accordion';
-import updateStudentRequest from '../../request/instance/updateStudent';
 
 function getActivityType(instance) {
   const { gradable, allowFeedback, requiresScoring } = instance;
@@ -45,18 +45,20 @@ export default function Correction({ assignation, instance, loading }) {
   };
 
   /*
+    --- State ---
+  */
+  const [subjectSelected, setSubjectSelected] = useState(null);
+
+  /*
     --- Form Hooks ---
   */
-  const { handleSubmit, getValues, setValue } = useFormContext();
+  const { handleSubmit, setValue } = useFormContext();
 
   useEffect(() => {
     if (!assignation) {
       return;
     }
 
-    const values = getValues();
-
-    const empty = _.mapValues(values, () => null);
     const grades = assignation.grades || [];
     const mainGrades = grades.filter(({ type }) => type === 'main');
     const gradesObject = mainGrades.reduce((acc, { subject, grade, feedback }) => {
@@ -110,6 +112,8 @@ export default function Correction({ assignation, instance, loading }) {
   /*
     --- Handlers ---
   */
+  const { mutateAsync } = useStudentAssignationMutation();
+
   const onSave = (sendToStudent, key) => async (data) => {
     if (loadingButton) {
       return;
@@ -119,21 +123,27 @@ export default function Correction({ assignation, instance, loading }) {
 
     try {
       const student = assignation.user;
-      const grades = Object.entries(data[student]).map(([id, { score, feedback }]) => ({
-        subject: id,
-        grade: score,
-        feedback,
+      const grade = data[student][subjectSelected];
+
+      const gradeObj = {
+        subject: subjectSelected,
+        grade: grade.score,
+        feedback: grade.feedback,
         type: 'main',
         visibleToStudent: sendToStudent,
-      }));
+      };
+
+      if (assignation.instance.requiresScoring && !grade.score) {
+        throw new Error('The score is required');
+      }
 
       // TODO: Do something with sendToStudent
-
-      await updateStudentRequest({
+      await mutateAsync({
         instance: assignation.instance.id,
         student,
-        grades,
+        grades: [gradeObj],
       });
+
       if (sendToStudent) {
         addSuccessAlert(labels.saveAndSendMessage);
       } else {
@@ -171,7 +181,12 @@ export default function Correction({ assignation, instance, loading }) {
           )}
         </Box>
         <Submission assignation={assignation} labels={labels.submission} />
-        <SubjectTabs assignation={assignation} instance={instance} loading={loading}>
+        <SubjectTabs
+          assignation={assignation}
+          instance={instance}
+          loading={loading}
+          onChange={(s) => setSubjectSelected(s)}
+        >
           <Accordion
             classes={classes}
             evaluationSystem={evaluationSystem}
@@ -202,3 +217,9 @@ export default function Correction({ assignation, instance, loading }) {
     </>
   );
 }
+
+Correction.propTypes = {
+  assignation: PropTypes.object,
+  instance: PropTypes.object,
+  loading: PropTypes.bool,
+};

@@ -1,16 +1,37 @@
-import React, { useMemo, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { useSubjects, useClassesSubjects } from '@academic-portfolio/hooks';
+import { useClassesSubjects, useSubjects } from '@academic-portfolio/hooks';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import { Loader } from '@bubbles-ui/components';
-import { Tabs, SubjectSelector } from './components';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from 'react';
+import { SubjectSelector, Tabs } from './components';
 import tabContext, { TabProvider } from './context/tabsContext';
 
-export default function SubjectTabs({ assignation, instance, children, loading }) {
+export default function SubjectTabs({ assignation, instance, children, loading, onChange }) {
   const [activeTab, setActiveTab] = useState(null);
   const instanceSubjects = useClassesSubjects(instance?.classes);
-  const subjectsIds = useMemo(() => _.map(instanceSubjects, 'id'), [instanceSubjects]);
+  const { data: classes } = useSessionClasses();
+
+  const subjectsIds = useMemo(() => {
+    if (!classes?.length) {
+      return [];
+    }
+
+    return instanceSubjects
+      .filter((subject) =>
+        classes.find(
+          (klass) => klass.subject.subject === subject.id || klass.subject.id === subject.id
+        )
+      )
+      .map((s) => s.id);
+  }, [classes, instanceSubjects]);
   const subjects = useSubjects(subjectsIds);
+
+  useEffect(() => {
+    if (_.isFunction(onChange)) {
+      onChange(activeTab);
+    }
+  }, [activeTab, onChange]);
 
   const tabs = useMemo(() => {
     if (!subjects?.length) {

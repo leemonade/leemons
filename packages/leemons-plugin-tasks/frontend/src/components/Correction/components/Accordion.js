@@ -204,4 +204,5 @@ Accordion.propTypes = {
   instance: PropTypes.object,
   subject: PropTypes.string,
   context: PropTypes.object,
+  user: PropTypes.string,
 };
