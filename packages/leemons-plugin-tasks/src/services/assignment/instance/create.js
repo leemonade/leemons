@@ -3,7 +3,7 @@ const assignablesServices = require('../../assignables');
 
 module.exports = async function create(
   { task, ...instanceData },
-  { userSession, transacting } = {}
+  { userSession, transacting, ctx } = {}
 ) {
   const { assignableInstances } = assignablesServices();
 
@@ -12,7 +12,7 @@ module.exports = async function create(
       ...instanceData,
       assignable: task,
     },
-    { userSession, transacting }
+    { userSession, transacting, ctx }
   );
 
   // emit(['task.instance.created', `task.${id}.instance.created`], {
