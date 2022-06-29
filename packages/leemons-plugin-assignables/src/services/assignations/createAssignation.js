@@ -7,7 +7,7 @@ const { assignations } = require('../tables');
 const registerGrade = require('../grades/registerGrade');
 const { validateAssignation } = require('../../helpers/validators/assignation');
 
-async function sendEmail(instance, userAgentByIds, user, classes, btnUrl) {
+async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjectIconUrl) {
   try {
     /*
     const userAssignableInstances = await searchAssignableInstances(
@@ -39,6 +39,7 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl) {
           instance,
           classes,
           btnUrl,
+          subjectIconUrl,
           taskDate: date,
         },
         userAgentByIds[user].center.id
@@ -94,8 +95,18 @@ module.exports = async function createAssignation(
       instance.assignable.asset.url =
         ctx.request.header.origin +
         leemons.getPlugin('leebrary').services.assets.getCoverUrl(instance.assignable.asset.id);
+
       const _classes = _.uniqBy(classesData, 'subject.id');
       const userAgentByIds = _.keyBy(userAgents, 'id');
+
+      const subjectIconUrl =
+        // eslint-disable-next-line no-nested-ternary
+        _classes.length > 1
+          ? `${ctx.request.header.origin}/public/assets/svgs/module-three.svg`
+          : _classes[0].icon.cover
+          ? ctx.request.header.origin +
+            leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].icon.id)
+          : null;
 
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
@@ -123,7 +134,8 @@ module.exports = async function createAssignation(
                 userAgentByIds,
                 user,
                 _classes,
-                `${ctx.request.header.origin}/private/assignables/ongoing`
+                `${ctx.request.header.origin}/private/assignables/ongoing`,
+                subjectIconUrl
               );
             }
 
