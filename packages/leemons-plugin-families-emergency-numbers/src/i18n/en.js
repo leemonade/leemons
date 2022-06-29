@@ -1,8 +1,8 @@
 module.exports = {
   config_page: {
-    deactivate_addon: 'Deactivate Addon',
+    deactivate_addon: 'Deactivate Add-on',
     message_important:
-      '<b>Important:</b> Once the emergency numbers add-on has been activated, it can only be deactivated again if no data has been loaded into the emergency numbers DB.',
+      '<b>Important:</b> Once the emergency numbers add-on has been activated, it can only be deactivated again if no data has been loaded into the emergency numbers Database.',
     dataset_tab: {
       filter_by_center: 'Filter by center',
       add_field: 'Add field',
@@ -18,10 +18,10 @@ module.exports = {
       },
     },
     phone_modal: {
-      title: 'Deactivate Addon',
+      title: 'Deactivate Add-on',
       message: 'You are going to deactivate the emergency numbers add on, are you sure?',
       cancel: 'No, exit without deactivating',
-      action: 'Yes, deactivate addon',
+      action: 'Yes, deactivate add-on',
       removing: 'Deactivating add-on',
       removed: 'Add-on deactivated',
     },
