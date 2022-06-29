@@ -7,12 +7,12 @@
     "next": "Start installation",
     "quote": {
       "title": "Welcome to Leemons",
-      "description": "The powerful, flexible and free Learning Experience Platform."
+      "description": "The powerful, flexible, and free Learning Experience Platform."
     }
   },
   "signup": {
     "title": "Admin Sign up",
-    "description": "Please enter your details to sign up as an administrator.",
+    "description": "Please enter your details to register as an administrator.",
     "labels": {
       "nextButton": "Next",
       "email": "Email",
@@ -31,7 +31,10 @@
         "invalidFormat": "Please enter a valid email address",
         "required": "Please enter your email address"
       },
-      "password": { "notMatch": "Passwords do not match", "required": "Please enter your password" }
+      "password": {
+        "notMatch": "Passwords do not match",
+        "required": "Please enter your password"
+      }
     }
   },
   "setup": {
@@ -52,8 +55,8 @@
       "label": "Languages",
       "title": "Languages",
       "description": "Which languages will be used in your center(s)?",
-      "intro": "Please choose the languages you wish to display on the platform. Currently the user interface supports English and Spanish.",
-      "collaborate": "If you want to help us translate the UI into more languages, please follow our guidelines on",
+      "intro": "Please choose the languages to display on the platform. Currently the user interface supports English and Spanish.",
+      "collaborate": "If help is required to translate the UI into more languages, please follow our guidelines on",
       "defaultLang": {
         "title": "Default language",
         "description": "Select the default language that will be used by the platform."
