@@ -103,9 +103,9 @@ module.exports = async function createAssignation(
         // eslint-disable-next-line no-nested-ternary
         _classes.length > 1
           ? `${ctx.request.header.origin}/public/assets/svgs/module-three.svg`
-          : _classes[0].icon.cover
+          : _classes[0].subject.icon.cover
           ? ctx.request.header.origin +
-            leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].icon.id)
+            leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].subject.icon.id)
           : null;
 
       try {
