@@ -39,13 +39,13 @@ module.exports = {
       },
       unableToAssignStudentsMessage:
         'The students which are not enrolled in all the selected subjects will not be assigned',
-      matchingStudents: 'matching students',
+      matchingStudents: 'Matching students',
       groupName: 'Name of group',
       students: 'Students',
       noStudentsToAssign:
         'There are no students enrolled in the selected subjects, please select other combination',
-      showToStudents: 'Ocultar nombre del grupo a los estudiantes',
-      required: 'Campo requerido',
+      showToStudents: 'Hide group name from students',
+      required: 'Required field',
     },
     placeholders: {
       date: 'dd/mm/yyyy',
@@ -78,24 +78,24 @@ module.exports = {
       days: 'days',
     },
     gradeVariations: {
-      title: 'Tipo de actividad',
+      title: 'Type of activity',
       calificable: {
-        label: 'Calificable',
+        label: 'Qualifying',
         description:
-          'La puntuación será tenida en cuenta para la nota final, se admiten comentarios',
+          'The score will be taken into account for the final grade, comments are welcome',
       },
       punctuationEvaluable: {
-        label: 'Evaluable con puntuación',
+        label: 'Assessable with score',
         description:
-          'Se pide una puntuación pero no serña tenida en cuenta para la nota final, se admiten comentarios',
+          'A score is requested but it will not be taken into account for the final grade, comments are welcome',
       },
       evaluable: {
-        label: 'Evaluable sin puntuación',
-        description: 'Solo se devuelven comentarios',
+        label: 'Assessable without score',
+        description: 'Only comments are returned',
       },
       notEvaluable: {
-        label: 'No evaluable',
-        description: 'El alumno no recibe ninguna retro-alimentación',
+        label: 'No assessment',
+        description: 'The student does not receive any feedback',
       },
     },
   },
@@ -106,7 +106,7 @@ module.exports = {
     closeTask: 'Close activity',
     save: 'Save',
     cancel: 'Cancel',
-    archiveTask: 'Archivar actividad',
+    archiveTask: 'Archive activity',
   },
   activity_dashboard: {
     closeAction: {
@@ -144,14 +144,14 @@ module.exports = {
     },
     archiveAction: {
       verbs: {
-        archiving: 'Archivando',
-        archived: 'Archivada',
-        unarchiving: 'Desarchivando',
-        unarchived: 'Desarchivada',
+        archiving: 'Archiving',
+        archived: 'Archived',
+        unarchiving: 'Unarchiving',
+        unarchived: 'Unarchived',
       },
       messages: {
-        success: 'Actividad {{verb}}',
-        error: 'Error {{verb}} actividad: {{error}}',
+        success: 'Activity {{verb}}',
+        error: 'Error {{verb}} Activity: {{error}}',
       },
     },
     archiveModal: {
@@ -192,18 +192,18 @@ module.exports = {
     ongoing: 'Ongoing',
     opened: 'Opened',
     notOpened: 'Not opened',
-    assigned: 'Programada',
-    started: 'Empezada',
-    closed: 'Cerrada',
-    evaluated: 'Evaluada',
-    submitted: 'Entregada',
-    notSubmitted: 'No entregada',
-    noLimit: 'Sin límite de tiempo',
+    assigned: 'Scheduled',
+    started: 'Started',
+    closed: 'Closed',
+    evaluated: 'Evaluated',
+    submitted: 'Submitted',
+    notSubmitted: 'Not submitted',
+    noLimit: 'No time limit',
   },
   teacher_actions: {
     sendReminder: 'Send reminder',
     evaluate: 'Evaluate',
-    review: 'Revisar',
+    review: 'Review',
   },
   levelsOfDifficulty: {
     beginner: 'Beginner',
@@ -232,7 +232,7 @@ module.exports = {
       deadline: 'Due date',
       status: 'Status',
       timeReference: 'Time reference',
-      submission: 'Entrega',
+      submission: 'Submission',
     },
   },
   multiSubject: 'Multi-subject',
@@ -259,7 +259,7 @@ module.exports = {
     closed: 'Closed',
   },
   need_your_attention: {
-    title: 'Need your attention',
+    title: 'Needs attention',
     new: 'New',
     assigment: {
       subject: 'Subject',
@@ -272,11 +272,11 @@ module.exports = {
     goTo: 'Go to',
   },
   student_actions: {
-    continue: 'Continuar',
-    start: 'Empezar',
-    view: 'Ver',
-    notSubmitted: 'No entregado',
-    correction: 'Revisar',
-    review: 'Revisar',
+    continue: 'Continue',
+    start: 'Start',
+    view: 'View',
+    notSubmitted: 'Not submitted',
+    correction: 'Correction',
+    review: 'Review',
   },
 };
