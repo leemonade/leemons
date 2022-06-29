@@ -17,12 +17,16 @@ import {
   Checkbox,
   Col,
   ContextContainer,
+  Divider,
   Grid,
+  ImageLoader,
   InputWrapper,
   LoadingOverlay,
   MultiSelect,
   Select,
+  Text,
   Textarea,
+  TextClamp,
   TextInput,
 } from '@bubbles-ui/components';
 import { useLocale, useStore } from '@common';
@@ -30,6 +34,7 @@ import getAssignableInstance from '@assignables/requests/assignableInstances/get
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import NYACard from '@assignables/components/NYACard';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
+import getClassData from '@assignables/helpers/getClassData';
 import { updateEventSubTasksRequest } from '../../request';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
@@ -103,6 +108,10 @@ export default function Task({ event, form, classes, disabled, allProps }) {
       store.assignation = await getAssignation({ id: store.instanceId, user: userAgent });
     }
     store.classes = await classByIdsRequest(store.instance.classes);
+    store.subjectData = await getClassData(store.instance.classes, {
+      multiSubject: t('multiSubject'),
+      groupName: store.instance?.metadata?.groupName,
+    });
     render();
   }
 
@@ -162,8 +171,41 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   if (store.instanceId) {
     if (store.instance) {
-      console.log(allProps);
-      return <NYACard instance={store.assignation || store.instance} showSubject />;
+      return (
+        <Box>
+          <Box>
+            <NYACard instance={store.assignation || store.instance} showSubject />
+          </Box>
+          {store.subjectData ? (
+            <>
+              <Box className={classes.divider}>
+                <Divider />
+              </Box>
+
+              <InputWrapper label={t('classe')}>
+                <Box className={classes.subject}>
+                  <Box
+                    className={classes.subjectIcon}
+                    style={{ backgroundColor: store.subjectData.color }}
+                  >
+                    <ImageLoader
+                      forceImage
+                      height={12}
+                      imageStyles={{ width: 12 }}
+                      src={store.subjectData.icon}
+                    />
+                  </Box>
+                  <TextClamp lines={1}>
+                    <Text color="primary" role="productive" size="xs">
+                      {store.subjectData.name}
+                    </Text>
+                  </TextClamp>
+                </Box>
+              </InputWrapper>
+            </>
+          ) : null}
+        </Box>
+      );
     }
     return <LoadingOverlay visible />;
   }

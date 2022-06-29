@@ -85,6 +85,8 @@ module.exports = {
     tags: 'Subject tag',
     column: 'State in Kanban',
     dontShowInCalendar: 'Do not show in calendar',
+    multiSubject: 'Multi-Subject',
+    classe: 'Class',
   },
   detail_page: {
     title_placeholder: 'Calendar setup name',
