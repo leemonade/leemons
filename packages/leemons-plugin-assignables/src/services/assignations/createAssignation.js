@@ -99,14 +99,16 @@ module.exports = async function createAssignation(
       const _classes = _.uniqBy(classesData, 'subject.id');
       const userAgentByIds = _.keyBy(userAgents, 'id');
 
-      const subjectIconUrl =
+      let subjectIconUrl =
         // eslint-disable-next-line no-nested-ternary
         _classes.length > 1
           ? `${ctx.request.header.origin}/public/assets/svgs/module-three.svg`
-          : _classes[0].icon.cover
+          : _classes[0].subject.icon.cover
           ? ctx.request.header.origin +
-            leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].icon.id)
+            leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].subject.icon.id)
           : null;
+
+      subjectIconUrl = null;
 
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
