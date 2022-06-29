@@ -154,6 +154,13 @@ module.exports = {
         error: 'Error {{verb}} actividad: {{error}}',
       },
     },
+    archiveModal: {
+      title: 'There are students not evaluated yet',
+      message1: 'The are some students who have not been evaluated yet.',
+      message2: 'After archiving this activity, you can add the scores in the notebook.',
+      confirm: 'Accept and archive',
+      cancel: 'Cancel',
+    },
   },
   studentsList: {
     labels: {

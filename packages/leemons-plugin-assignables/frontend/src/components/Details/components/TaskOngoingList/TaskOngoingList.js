@@ -13,6 +13,8 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { useLayout } from '@layout/context';
 import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
@@ -27,6 +29,16 @@ const TaskOngoingList = ({ instance }) => {
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
   const { mutateAsync } = useMutateAssignableInstance();
+  const { openConfirmationModal } = useLayout();
+  const [archived, setArchived] = React.useState(!!instance?.dates?.archived);
+
+  React.useEffect(() => {
+    const arch = !!instance?.dates?.archived;
+
+    if (arch !== archived) {
+      setArchived(arch);
+    }
+  }, [instance]);
 
   const [, translations] = useTranslateLoader([
     prefixPN('activity_dashboard'),
@@ -44,6 +56,8 @@ const TaskOngoingList = ({ instance }) => {
 
     return {};
   }, [translations]);
+
+  const subjects = useClassesSubjects(instance.classes);
 
   const { classes } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
 
@@ -79,18 +93,18 @@ const TaskOngoingList = ({ instance }) => {
     }
   };
 
-  const onArchiveTask = async (archived) => {
+  const archiveTask = async (archivedValue) => {
     const newDates = {
-      archived: archived ? new Date() : null,
+      archived: archivedValue ? new Date() : null,
       // TODO: Do not close if not closable
-      closed: archived && !instance.dates.deadline ? new Date() : undefined,
+      closed: archivedValue && !instance.dates.deadline ? new Date() : undefined,
     };
 
     try {
       await mutateAsync({ id: instance.id, dates: newDates });
 
       let verb = dashboardLocalizations.archiveAction.verbs.archived;
-      if (!archived) {
+      if (!archivedValue) {
         verb = dashboardLocalizations.archiveAction.verbs.unarchived;
       }
       addSuccessAlert(
@@ -98,7 +112,7 @@ const TaskOngoingList = ({ instance }) => {
       );
     } catch (e) {
       let verb = dashboardLocalizations.archiveAction.verbs.archiving;
-      if (!archived) {
+      if (!archivedValue) {
         verb = dashboardLocalizations.archiveAction.verbs.unarchiving;
       }
       addErrorAlert(
@@ -107,6 +121,49 @@ const TaskOngoingList = ({ instance }) => {
           .replace('{{error}}', e.message)
       );
     }
+  };
+
+  const onArchiveTask = async (archivedValue) => {
+    if (!archivedValue) {
+      return archiveTask(archivedValue);
+    }
+
+    if (instance.requiresScoring || instance.allowFeedback) {
+      if (
+        instance.students.some(
+          (student) =>
+            student.grades.filter((grade) => grade.type === 'main').length < subjects?.length
+        )
+      ) {
+        setArchived(true);
+        return openConfirmationModal({
+          title: dashboardLocalizations?.archiveModal?.title,
+          description: (
+            <Box
+              sx={(theme) => ({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: theme.spacing[2],
+              })}
+            >
+              <Text>{dashboardLocalizations?.archiveModal?.message1}</Text>
+              <Text>{dashboardLocalizations?.archiveModal?.message2}</Text>
+            </Box>
+          ),
+          labels: {
+            confirm: dashboardLocalizations?.archiveModal?.confirm,
+            cancel: dashboardLocalizations?.archiveModal?.cancel,
+          },
+          onConfirm: () => {
+            archiveTask(archivedValue);
+          },
+          onCancel: () => {
+            setArchived(false);
+          },
+        })();
+      }
+    }
+    return archiveTask(archivedValue);
   };
 
   const onDeadlineChange = async (deadline) => {
@@ -148,7 +205,7 @@ const TaskOngoingList = ({ instance }) => {
           disableClose={Boolean(instance.dates.archived)}
           hideClose={Boolean(instance.dates.deadline)}
           hideArchive={Boolean(dayjs(instance.dates.deadline).isAfter(dayjs()))}
-          archived={Boolean(instance.dates.archived)}
+          archived={archived}
           styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
         />
         {instanceData.horizontalTimeline && (

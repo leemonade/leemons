@@ -154,6 +154,14 @@ module.exports = {
         score: 'Puntuación',
       },
     },
+    archiveModal: {
+      title: 'Existen alumnos sin evaluar',
+      message1: 'Existe uno o varios estudiantes que no han sido evaluados.',
+      message2:
+        'Una vez archivada esta actividad, podrás incluir nuevas notas a través del Cuaderno de Evaluación',
+      confirm: 'Archivar de todas formas',
+      cancel: 'Cancelar',
+    },
   },
   studentsList: {
     labels: {
