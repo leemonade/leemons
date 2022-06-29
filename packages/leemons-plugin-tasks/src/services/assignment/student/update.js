@@ -39,23 +39,10 @@ module.exports = async function update(
   }
 
   if (newData.grades) {
-    const assignation = await assignations.getAssignation(instance, student, {
-      userSession,
-      transacting,
-    });
-
-    const existingGrades = assignation.grades || [];
-
-    const { diff, object } = getDiff(newData.grades, existingGrades);
-
-    newData.grades = object;
-
-    diff.forEach((grade) => {
-      object[grade] = {
-        ...object[grade],
-        gradedBy: userSession.userAgents[0].id,
-      };
-    });
+    newData.grades = newData.grades.map((grade) => ({
+      ...grade,
+      gradedBy: userSession.userAgents[0].id,
+    }));
   }
 
   // EN: Update the instance

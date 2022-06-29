@@ -49,7 +49,7 @@ const assignationObject = {
           },
           grade: {
             type: 'number',
-            nullable: false,
+            nullable: true,
           },
           gradedBy: {
             type: 'string',
