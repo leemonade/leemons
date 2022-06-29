@@ -347,6 +347,8 @@ function ScoresTable({ activitiesData, grades, filters, onOpen, labels }) {
             );
         }}
         onOpen={onOpen}
+        from={filters?.startDate}
+        to={filters?.endDate}
       />
     </Box>
   );
