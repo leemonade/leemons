@@ -119,7 +119,6 @@ function Filters({ onChange }) {
         />
         {/* <Switch size="md" label="Asessment criteria" /> */}
       </Box>
-      <Button>Guardar notas</Button>
     </Box>
   );
 }
@@ -200,18 +199,15 @@ function useTableData({ filters, localFilters }) {
           (g) => g.type === 'main' && g.subject === filters.subject
         );
 
-        if (!grade) {
-          return;
-        }
-
         // eslint-disable-next-line no-param-reassign
         studentsValues[student.user] = {
           activities: [
             ...(studentsValues[student.user]?.activities || []),
             {
               id: activity.id,
-              score: grade.grade,
-              grade,
+              score: grade ? grade.grade : undefined,
+              grade: grade || undefined,
+              isSubmitted: student.timestamps?.end,
             },
           ],
         };
@@ -224,13 +220,21 @@ function useTableData({ filters, localFilters }) {
       values[student.id] = {
         activities: values[student.id]?.activities || [],
         id: student.id,
-        name: student.user.name,
-        surname: student.user.surnames,
+        name: student.user.name || '',
+        surname: student.user.surnames || '',
         image: student.user.avatar,
       };
     });
 
-    values = Object.values(values);
+    values = Object.values(values).sort((a, b) => {
+      const surnameCompare = a.surname.localeCompare(b.surname);
+      if (surnameCompare !== 0) {
+        return surnameCompare;
+      }
+
+      const nameCompare = a.name.localeCompare(b.name);
+      return nameCompare;
+    });
 
     if (localFilters.filterBy === 'student' && localFilters.search?.length) {
       values = values.filter(
@@ -243,11 +247,22 @@ function useTableData({ filters, localFilters }) {
       );
     }
 
+    const calificableAssignableInstances = assignableInstances.reduce((count, activity) => {
+      if (activity.gradable) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+
     const tableData = {
       activities: assignableInstances.map((activity) => ({
         id: activity.id,
         name: activity.assignable.asset.name,
-        deadline: activity.dates.deadline || null,
+        deadline: activity.dates.deadline || activity.dates.closed,
+        weight: activity.gradable ? 1 / calificableAssignableInstances : 0,
+        allowChange: activity.assignable.role !== 'tests',
+        type: activity.gradable ? 'calificable' : 'evaluable',
+        activity,
       })),
       value: values,
     };
@@ -260,7 +275,7 @@ function useTableData({ filters, localFilters }) {
   };
 }
 
-function ScoresTable({ activitiesData, grades, filters }) {
+function ScoresTable({ activitiesData, grades, filters, onOpen }) {
   const { mutateAsync } = useStudentAssignationMutation();
   const data = React.useMemo(
     () => ({
@@ -285,17 +300,6 @@ function ScoresTable({ activitiesData, grades, filters }) {
           const student = data.value.find((student) => student.id === v.rowId);
           const activity = data.activities.find((activity) => activity.id === v.columnId);
           const grade = data.grades.find((g) => g.number === parseInt(v.value, 10));
-
-          console.log(
-            'student',
-            student,
-            'activity',
-            activity,
-            'grade',
-            grade,
-            data.grades,
-            v.value
-          );
 
           mutateAsync({
             instance: v.columnId,
@@ -323,6 +327,7 @@ function ScoresTable({ activitiesData, grades, filters }) {
               )
             );
         }}
+        onOpen={onOpen}
       />
     </Box>
   );
@@ -391,11 +396,29 @@ export default function ActivitiesTab({ filters }) {
   const labels = {};
   const [localFilters, setLocalFilters] = React.useState({});
   const { activitiesData, grades } = useTableData({ filters, localFilters });
+
+  const handleOpen = ({ rowId, columnId }) => {
+    const activity = activitiesData?.activities?.find((a) => a.id === columnId)?.activity;
+
+    if (!activity) {
+      // TRANSLATE: This is a placeholder for the activity name
+      return addErrorAlert('Activity not found');
+    }
+    const url = activity.assignable.roleDetails.evaluationDetailUrl;
+
+    window.open(url.replace(':id', columnId).replace(':user', rowId), '_blank');
+  };
+
   return (
     <Box>
       <Filters onChange={setLocalFilters} />
       {activitiesData?.activities?.length && grades?.length && activitiesData?.value?.length ? (
-        <ScoresTable activitiesData={activitiesData} grades={grades} filters={filters} />
+        <ScoresTable
+          activitiesData={activitiesData}
+          grades={grades}
+          filters={filters}
+          onOpen={handleOpen}
+        />
       ) : (
         <EmptyState />
       )}
