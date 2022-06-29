@@ -44,13 +44,13 @@ module.exports = {
     adminDrawer: {
       title: 'Periodos de evaluación',
       description:
-        'Como administrador, puedes crear periódos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periódos de evaluación por programa y curso.',
+        'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
       new: 'Nuevo periodo',
     },
     teacherDrawer: {
       title: 'Cuaderno de evaluación',
       description:
-        'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periódos pre-definidos por tu centro educativo para cada programa y curso.',
+        'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
       new: 'Establecer periodo',
     },
     periodFormErrorMessages: {
