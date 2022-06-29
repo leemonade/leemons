@@ -85,6 +85,8 @@ module.exports = {
     tags: 'Etiqueta de asignatura',
     column: 'Estado en Kanban',
     dontShowInCalendar: 'No mostrar en calendario',
+    multiSubject: 'Multi-Asignatura',
+    classe: 'Clase',
   },
   detail_page: {
     title_placeholder: 'Configuración del calendario',

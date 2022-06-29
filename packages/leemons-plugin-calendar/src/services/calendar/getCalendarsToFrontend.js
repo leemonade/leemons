@@ -532,6 +532,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         const assignation = assignationsByInstance[instanceIdEvents[event.id]];
         if (instance && assignation) {
           event.disableDrag = true;
+          event.data.hideCalendarField = true;
           const now = new Date();
 
           const status = getStatus(assignation, instance);

@@ -290,26 +290,28 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
             return desiredPlugin;
           };
 
+          let _pluggables = pluggables;
+
           // If the handler is a function, call it first
-          if (_.isFunction(pluggables)) {
+          if (_.isFunction(_pluggables)) {
             // eslint-disable-next-line no-param-reassign
-            pluggables = pluggables(plugin, pluggableName);
+            _pluggables = _pluggables(plugin, pluggableName);
 
             // If the handler desires to handle everything itself, must return a function
-            if (_.isFunction(pluggables)) {
-              return pluggables(secureDesiredPlugin);
+            if (_.isFunction(_pluggables)) {
+              return _pluggables(secureDesiredPlugin);
             }
           }
 
           // If the handler is a string, get it from leemons global object
-          if (_.isString(pluggables)) {
+          if (_.isString(_pluggables)) {
             // eslint-disable-next-line no-param-reassign
-            pluggables = leemons[pluggables];
+            _pluggables = leemons[_pluggables];
           }
 
           // If the handler is the object itself, handle by default handler
-          if (_.isArray(pluggables)) {
-            const desiredPluggable = pluggables.find(
+          if (_.isArray(_pluggables)) {
+            const desiredPluggable = _pluggables.find(
               (pluggable) =>
                 pluggable.name === pluggableName &&
                 pluggable.status.code === PLUGIN_STATUS.enabled.code

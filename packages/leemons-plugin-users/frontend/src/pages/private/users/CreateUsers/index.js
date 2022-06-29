@@ -65,12 +65,14 @@ function CreateUsers() {
     if (userAgents.length) {
       store.user = userAgents[0].user;
       form.setValue('name', store.user.name);
+      form.setValue('gender', store.user.gender);
       form.setValue('surnames', store.user.surnames);
       form.setValue('secondSurname', store.user.secondSurname);
       form.setValue(
         'birthdate',
         store.user.birthdate ? new Date(store.user.birthdate) : store.user.birthdate
       );
+
       form.setValue('avatar', store.user.avatar);
       forEach(userAgents, (userAgent) => {
         if (userAgent.center.id === store.center && userAgent.profile.id === store.profile) {
@@ -199,7 +201,12 @@ function CreateUsers() {
         accessor: 'avatar',
         className: 'text-left',
         input: {
-          node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
+          node: (
+            <TextInput
+              disabled={!store.center || !store.profile || !!store.user || !store.avatar.required}
+              required
+            />
+          ),
           rules: store.avatar.required ? { required: t('avatarHeaderRequired') } : {},
         },
         valueRender: (v, row) => (

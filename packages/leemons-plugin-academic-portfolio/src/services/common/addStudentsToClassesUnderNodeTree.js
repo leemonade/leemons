@@ -12,7 +12,14 @@ async function addStudentsClassesUnderNodeTree(
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const classes = await getClassesUnderNodeTree(nodeTypes, nodeType, nodeId, { transacting });
+      const split = nodeId.split('program|');
+      const programId = split[1].split('.')[0];
+
+      const classes = await getClassesUnderNodeTree(nodeTypes, nodeType, nodeId, {
+        program: programId,
+        transacting,
+      });
+
       return Promise.all(
         _.map(classes, (_class) =>
           addClassStudents({ class: _class.id, students }, { transacting })

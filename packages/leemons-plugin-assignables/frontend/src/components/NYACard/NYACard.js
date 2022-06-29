@@ -4,7 +4,7 @@ import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
-import { useApi, unflatten, useLocale, LocaleRelativeTime } from '@common';
+import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import getClassData from '../../helpers/getClassData';
@@ -297,7 +297,7 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
   // );
 }
 
-function usePreparedInstance(instance, query, labels) {
+export function usePreparedInstance(instance, query, labels) {
   const { isTeacher } = useAssignablesContext();
 
   const options = React.useMemo(

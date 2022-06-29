@@ -24,6 +24,7 @@ async function getUserAgentsInfo(
       'secondSurname',
       'birthdate',
       'avatar',
+      'gender',
       'created_at',
     ],
     transacting,
