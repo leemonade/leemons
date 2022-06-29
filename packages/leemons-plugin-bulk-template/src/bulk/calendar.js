@@ -3,6 +3,29 @@ const path = require('path');
 const { keys, isString, isEmpty, isNaN, trim, isNil, forEach } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
+function getSubjectAndClassroom(programs, subjectString) {
+  const [subjectKey, classroomKey] = subjectString.split('|');
+  let subject = null;
+  let classroom = null;
+
+  forEach(
+    keys(programs).map((programKey) => programs[programKey]),
+    (program) => {
+      if (program.subjects[subjectKey]) {
+        subject = program.subjects[subjectKey];
+        return false;
+      }
+      return true;
+    }
+  );
+
+  if (subject) {
+    classroom = subject.classes.find((item) => item.groups.abbreviation === classroomKey);
+  }
+
+  return { subject, classroom };
+}
+
 async function importEvents({ users, programs }) {
   const filePath = path.resolve(__dirname, 'data.xlsx');
   const items = await itemsImport(filePath, 'calendar', 40, true, true);
@@ -97,27 +120,40 @@ async function importEvents({ users, programs }) {
             .find((calendar) =>
               ref.userAgents.map(({ id }) => id).some((element) => calendar.key.includes(element))
             )?.key;
+
+          // ES: Si se ha indicado que además del usuario, tenga classes vinculadas
+          // EN: If the event has classes linked
+          if (event.calendar && event.classes && !isEmpty(event.classes)) {
+            const classes = event.classes
+              .split(',')
+              .map((val) => trim(val))
+              .filter((val) => !isEmpty(val));
+
+            const classesData = classes
+              .map((item) => {
+                const { classroom } = getSubjectAndClassroom(programs, item);
+
+                return creatorCalendars.find((calendar) => calendar.key.indexOf(classroom.id) > 0)
+                  ?.id;
+              })
+              .filter((val) => !isNil(val));
+
+            if (classesData && !isEmpty(classesData)) {
+              event.data = {
+                ...(event.data || {}),
+                classes: classesData,
+              };
+            }
+          }
         }
       }
 
       // Calendar is a Classroom
       if (!ref) {
-        const [subjectKey, classroomKey] = event.calendar.split('|');
-        let subject = null;
+        const { classroom } = getSubjectAndClassroom(programs, event.calendar);
 
-        forEach(
-          keys(programs).map((programKey) => programs[programKey]),
-          (program) => {
-            if (program.subjects[subjectKey]) {
-              subject = program.subjects[subjectKey];
-              return false;
-            }
-            return true;
-          }
-        );
-
-        if (subject) {
-          ref = subject.classes.find((classroom) => classroom.groups.abbreviation === classroomKey);
+        if (classroom) {
+          ref = classroom;
         }
 
         if (ref) {
@@ -132,6 +168,7 @@ async function importEvents({ users, programs }) {
     delete event.hideInCalendar;
     delete event.subtask;
     delete event.column;
+    delete event.classes;
 
     if (event.calendar) {
       items[key] = event;
