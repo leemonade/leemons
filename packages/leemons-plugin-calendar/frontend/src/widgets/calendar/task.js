@@ -162,6 +162,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   if (store.instanceId) {
     if (store.instance) {
+      console.log(allProps);
       return <NYACard instance={store.assignation || store.instance} showSubject />;
     }
     return <LoadingOverlay visible />;

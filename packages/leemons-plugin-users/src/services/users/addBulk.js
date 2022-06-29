@@ -77,10 +77,11 @@ async function addBulk(data, ctx, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       validateAddUsersBulkForm(data);
-      const [role, locale, _profile] = await Promise.all([
+      const [role, locale, _profile, _center] = await Promise.all([
         getRoleForRelationshipProfileCenter(profile, center, { transacting }),
         getDefaultLocale({ transacting }),
         table.profiles.findOne({ id: profile }, { transacting }),
+        table.centers.findOne({ id: center }, { transacting }),
       ]);
 
       return Promise.all(
@@ -89,7 +90,7 @@ async function addBulk(data, ctx, { transacting: _transacting } = {}) {
             role.id,
             {
               ...user,
-              locale,
+              locale: _center.locale || locale,
               status: 'created',
               active: false,
             },

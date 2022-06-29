@@ -476,7 +476,7 @@ export default function TreePage() {
           teachers,
           schedule: schedule ? schedule.days : [],
         });
-        alert = t('classUpdated');
+        alert = ts('classUpdated');
       } else {
         const {
           class: { id },
@@ -491,7 +491,7 @@ export default function TreePage() {
         data.id = id;
         store.editingItem = { ...store.newItem };
         store.newItem = null;
-        alert = t('classCreated');
+        alert = ts('classCreated');
       }
       store.tree = await getProgramTree();
       setAgainActiveTree();
