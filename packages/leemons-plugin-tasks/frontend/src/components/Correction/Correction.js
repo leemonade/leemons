@@ -47,7 +47,7 @@ export default function Correction({ assignation, instance, loading }) {
   /*
     --- Form Hooks ---
   */
-  const { handleSubmit, getValues, reset } = useFormContext();
+  const { handleSubmit, getValues, setValue } = useFormContext();
 
   useEffect(() => {
     if (!assignation) {
@@ -64,7 +64,8 @@ export default function Correction({ assignation, instance, loading }) {
       return acc;
     }, {});
 
-    reset({ ...empty, ...gradesObject });
+    setValue(assignation.user, gradesObject);
+    // reset({ ...empty, ...gradesObject });
   }, [assignation]);
 
   /*
@@ -117,7 +118,8 @@ export default function Correction({ assignation, instance, loading }) {
     setLoading(key);
 
     try {
-      const grades = Object.entries(data).map(([id, { score, feedback }]) => ({
+      const student = assignation.user;
+      const grades = Object.entries(data[student]).map(([id, { score, feedback }]) => ({
         subject: id,
         grade: score,
         feedback,
@@ -129,7 +131,7 @@ export default function Correction({ assignation, instance, loading }) {
 
       await updateStudentRequest({
         instance: assignation.instance.id,
-        student: assignation.user,
+        student,
         grades,
       });
       if (sendToStudent) {
@@ -175,6 +177,7 @@ export default function Correction({ assignation, instance, loading }) {
             evaluationSystem={evaluationSystem}
             labels={labels}
             instance={instance}
+            user={assignation?.user}
             scoreInputProps={scoreInputProps}
           />
         </SubjectTabs>

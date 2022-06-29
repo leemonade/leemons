@@ -13,12 +13,66 @@ import {
 import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorInput } from '@bubbles-ui/editors';
 
+function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {
+  return (
+    <Box className={classes.accordionPanel}>
+      {evaluationSystem && scoreInputProps && (
+        <Controller
+          key={`${user}.${subject}.score`}
+          control={control}
+          name={`${user}.${subject}.score`}
+          render={({ field }) => (
+            <ScoreInput
+              {...scoreInputProps}
+              tags={[]}
+              value={{ score: field?.value }}
+              decimalPrecision={2}
+              decimalSeparator=","
+              direction="ltr"
+              onChange={(newValue) => field.onChange(newValue.score)}
+            />
+          )}
+        />
+      )}
+    </Box>
+  );
+}
+
+Grades.propTypes = {
+  classes: PropTypes.object.isRequired,
+  evaluationSystem: PropTypes.object,
+  scoreInputProps: PropTypes.object,
+  control: PropTypes.object,
+  subject: PropTypes.string,
+};
+
+function Feedback({ classes, subject, control, user }) {
+  return (
+    <Box className={classes.accordionPanel}>
+      <Controller
+        key={`${user}.${subject}.feedback`}
+        control={control}
+        name={`${user}.${subject}.feedback`}
+        render={({ field }) => <TextEditorInput {...field} />}
+      />
+    </Box>
+  );
+}
+
+Feedback.propTypes = {
+  classes: PropTypes.object.isRequired,
+  subject: PropTypes.string,
+  control: PropTypes.object,
+  user: PropTypes.string,
+};
+
 export default function Accordion({
   labels,
   evaluationSystem,
   classes,
   scoreInputProps,
   subject,
+  user,
   instance,
   context,
 }) {
@@ -68,26 +122,14 @@ export default function Accordion({
             />
           }
         >
-          <Box className={classes.accordionPanel}>
-            {evaluationSystem && scoreInputProps && (
-              <Controller
-                key={`${subject}.score`}
-                control={control}
-                name={`${subject}.score`}
-                render={({ field }) => (
-                  <ScoreInput
-                    {...scoreInputProps}
-                    tags={[]}
-                    value={{ score: field?.value }}
-                    decimalPrecision={2}
-                    decimalSeparator=","
-                    direction="ltr"
-                    onChange={(newValue) => field.onChange(newValue.score)}
-                  />
-                )}
-              />
-            )}
-          </Box>
+          <Grades
+            classes={classes}
+            evaluationSystem={evaluationSystem}
+            scoreInputProps={scoreInputProps}
+            control={control}
+            subject={subject}
+            user={user}
+          />
         </ActivityAccordionPanel>
 
         <ActivityAccordionPanel
@@ -95,14 +137,7 @@ export default function Accordion({
           icon={<PluginComunicaIcon />}
           rightSection={<Badge label={labels?.optional} closable={false} />}
         >
-          <Box className={classes.accordionPanel}>
-            <Controller
-              key={`${subject}.feedback`}
-              control={control}
-              name={`${subject}.feedback`}
-              render={({ field }) => <TextEditorInput {...field} />}
-            />
-          </Box>
+          <Feedback classes={classes} subject={subject} control={control} user={user} />
         </ActivityAccordionPanel>
       </ActivityAccordion>
     );
@@ -132,26 +167,14 @@ export default function Accordion({
             />
           }
         >
-          <Box className={classes.accordionPanel}>
-            {evaluationSystem && scoreInputProps && (
-              <Controller
-                key={`${subject}.score`}
-                control={control}
-                name={`${subject}.score`}
-                render={({ field }) => (
-                  <ScoreInput
-                    {...scoreInputProps}
-                    tags={[]}
-                    value={{ score: field?.value }}
-                    decimalPrecision={2}
-                    decimalSeparator=","
-                    direction="ltr"
-                    onChange={(newValue) => field.onChange(newValue.score)}
-                  />
-                )}
-              />
-            )}
-          </Box>
+          <Grades
+            classes={classes}
+            evaluationSystem={evaluationSystem}
+            scoreInputProps={scoreInputProps}
+            control={control}
+            subject={subject}
+            user={user}
+          />
         </ActivityAccordionPanel>
       </ActivityAccordion>
     );
@@ -164,14 +187,7 @@ export default function Accordion({
           icon={<PluginComunicaIcon />}
           rightSection={<Badge label={labels?.optional} closable={false} />}
         >
-          <Box className={classes.accordionPanel}>
-            <Controller
-              key={`${subject}.feedback`}
-              control={control}
-              name={`${subject}.feedback`}
-              render={({ field }) => <TextEditorInput {...field} />}
-            />
-          </Box>
+          <Feedback classes={classes} subject={subject} control={control} user={user} />
         </ActivityAccordionPanel>
       </ActivityAccordion>
     );
