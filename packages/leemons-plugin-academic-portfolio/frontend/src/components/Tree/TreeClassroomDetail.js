@@ -145,8 +145,8 @@ const TreeClassroomDetail = ({
   }, [classe]);
 
   React.useEffect(() => {
-    getClassStudents();
-  }, [classe.students]);
+    if (classe) getClassStudents();
+  }, [classe?.students]);
 
   const tableHeaders = [
     {

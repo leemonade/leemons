@@ -844,6 +844,7 @@ export default function TreePage() {
                         item={store.newItem}
                         messages={messages.treeGroup}
                         saving={store.saving}
+                        messagesAddUsers={messages.addUsers}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
                       />
                     ) : null}
@@ -851,6 +852,7 @@ export default function TreePage() {
                       <TreeSubjectTypeDetail
                         onSave={onNewSubjectType}
                         item={store.newItem}
+                        messagesAddUsers={messages.addUsers}
                         messages={messages.treeSubjectType}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
@@ -861,6 +863,7 @@ export default function TreePage() {
                         onSave={onNewKnowledge}
                         program={store.program}
                         item={store.newItem}
+                        messagesAddUsers={messages.addUsers}
                         messages={messages.treeKnowledge}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
@@ -871,6 +874,7 @@ export default function TreePage() {
                         onSave={onNewSubjectSave}
                         item={store.newItem}
                         program={store.program}
+                        messagesAddUsers={messages.addUsers}
                         messages={{
                           subjects: messages.subjects,
                           tableLabels: messages.tableLabels,
@@ -889,6 +893,7 @@ export default function TreePage() {
                         onSaveSubject={onSaveSubject}
                         onSaveClass={onSaveClass}
                         selectClass={selectClass}
+                        messagesAddUsers={messages.addUsers}
                         item={store.newItem}
                         program={store.program}
                         classe={store.newItem.value}
