@@ -175,7 +175,7 @@ export default function PeriodSelector({
     const courseIsRequired =
       requiredFields.includes('course') && !programData?.moreThanOneAcademicYear;
 
-    if (fields.course) {
+    if (fields.course && courseIsRequired) {
       fieldsToReturn.push({
         name: 'course',
         label: labels?.form?.course?.label,

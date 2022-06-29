@@ -86,11 +86,39 @@ module.exports = {
     noClassSelected: {
       title: 'Cuaderno de evaluación',
       description:
-        'El cuaderno de evaluación te permiten evaluar las tareas calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
+        'El cuaderno de evaluación te permiten evaluar las actividades calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
       title: 'Sin resultados',
       description: 'No hemos encontrado resultados para tu búsqueda.',
+    },
+    tabs: {
+      activities: {
+        title: 'Actividades evaluadas',
+        unableToOpen: 'Error abriendo actividad, la actividad no se ha podido encontrar',
+        filters: {
+          filterBy: {
+            activity: 'Actividad',
+            student: 'Estudiante',
+            placeholder: 'Filtrar por',
+          },
+          search: 'Buscar',
+          nonCalificables: 'Ver no calificables',
+        },
+        scoresTable: {
+          table: {
+            students: 'Estudiantes',
+            noActivity: 'No entregado',
+            avgScore: 'Nota promedio',
+            gradingTasks: 'Actividades calificables',
+            attendance: 'Asistencia',
+          },
+          updatedSuccess:
+            'Actualizada la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
+          updatedError:
+            'Error actualizando la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
+        },
+      },
     },
   },
 };

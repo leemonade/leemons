@@ -86,11 +86,37 @@ module.exports = {
     noClassSelected: {
       title: 'Notebook',
       description:
-        'The notebook is a place where you can evaluate the tasks that are not graded and the tasks that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
+        'The notebook is a place where you can evaluate the activities that are not graded and the activities that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
     },
     noResults: {
       title: 'No results',
       description: 'We have not found results for your search.',
+    },
+    tabs: {
+      activities: {
+        title: 'Evaluated activities',
+        unableToOpen: 'Error opening activity, the activity could not be found',
+        filters: {
+          filterBy: {
+            activity: 'Activity',
+            student: 'Student',
+            placeholder: 'Search by',
+          },
+          search: 'Search',
+          nonCalificables: 'See non-calificables',
+        },
+        scoresTable: {
+          table: {
+            students: 'Students',
+            noActivity: 'Not submitted',
+            avgScore: 'Average score',
+            gradingTasks: 'Calificable activities',
+            attendance: 'attendance',
+          },
+          updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",
+          updatedError: "Error updating {{student}}'s score in {{activity}} to {{score}}",
+        },
+      },
     },
   },
 };
