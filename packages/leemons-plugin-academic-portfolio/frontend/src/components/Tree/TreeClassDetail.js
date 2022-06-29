@@ -72,6 +72,7 @@ const TreeClassDetail = ({
           program={program}
           messages={messages}
           saving={saving}
+          messagesAddUsers={messagesAddUsers}
           onSave={onSaveClass}
           teacherSelect={teacherSelect}
         />
