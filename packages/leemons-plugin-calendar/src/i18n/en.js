@@ -155,7 +155,7 @@ module.exports = {
   classroom_detail: {
     title: 'Calendars',
     description:
-      "Set the regional calendar, the key dates (e.g. start and end of school year, quarterly closing) for your schools and courses. Courses don't have any calendars set up yet, you can start by...",
+      "Set the regional calendar, the key dates (e.g. start and end of school year, quarterly closing) for your schools and courses. Courses don't have any calendars set up yet, start by...",
     create_school: 'Create School calendar',
     create_school_description: 'Start by creating a plan for a course of choice',
     center: 'Center',
