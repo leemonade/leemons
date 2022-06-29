@@ -50,8 +50,8 @@ module.exports = {
   },
   library_page: {
     page_title: 'Task Library',
-    published: 'Publicado',
-    draft: 'Borrador',
+    published: 'Published',
+    draft: 'Draft',
   },
   task_setup_page: {
     title: 'Create new task',
@@ -114,9 +114,9 @@ module.exports = {
               greater: 'Pass the test with a score higher than',
             },
           },
-          title: 'Configuración',
-          subjects: 'Asignaturas',
-          showOtherSubjects: 'Añadir otras asignaturas en las que colaboro',
+          title: 'Configuration',
+          subjects: 'Subjects',
+          showOtherSubjects: 'Add subjects I collaborate in',
         },
         placeholders: {
           center: 'Select...',
@@ -124,7 +124,7 @@ module.exports = {
           course: 'Select...',
           subject: 'Select...',
           level: 'Select...',
-          addSubject: 'Añadir asignatura',
+          addSubject: 'Add subject',
         },
         errorMessages: {
           program: {
@@ -143,7 +143,7 @@ module.exports = {
             required: 'Required field',
           },
           subject: {
-            required: 'Campo necesario',
+            required: 'Required field',
           },
         },
       },
@@ -181,10 +181,10 @@ module.exports = {
               required: 'Campo necesario',
             },
           },
-          attachmentsTitle: 'Recursos',
-          supportImage: 'Imagen de apoyo',
-          searchFromLibrary: 'Buscar en la librería',
-          searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia',
+          attachmentsTitle: 'Resources',
+          supportImage: 'Support image',
+          searchFromLibrary: 'Search in library',
+          searchFromLibraryDocsAndMedia: 'Add documents and media',
         },
         errorMessages: {
           statement: {
@@ -391,7 +391,7 @@ module.exports = {
         },
         link: {
           link: 'Submission link',
-          invalidURL: 'El enlace no es válido',
+          invalidURL: 'The URL is invalid',
         },
       },
       submission_state: {
@@ -415,18 +415,18 @@ module.exports = {
       submission: 'Submission',
     },
     limitedTimeAlert: {
-      beforeStart: 'Antes de empezar',
-      noTimeLimit: 'Sin límite de tiempo',
-      withoutPause: 'Sin pausa',
-      howItWorks: '¿Cómo funciona?',
-      limitedTimeTitle: 'Tiempo limitado',
+      beforeStart: 'Before beginning',
+      noTimeLimit: 'Without time limit',
+      withoutPause: 'Non-stop',
+      howItWorks: 'How it works?',
+      limitedTimeTitle: 'Time limit',
       limitedTime:
-        'Una vez comenzado tienes {{time}} para finalizar esta tarea, deberás hacer la entrega antes de que este tiempo termine.',
-      pauseTitle: 'La tarea no se puede pausar',
+        'Once you start, you have {{time}} to finish this task, you must submit it before this time ends.',
+      pauseTitle: 'The task can\'t be paused',
       pause:
-        'Si sales de la aplicación con la tarea en proceso, esta se dará por finalizada y se enviará automáticamente la última entrega guardada antes del momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la tarea, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizarla.',
-      closedTaskFirstLine: 'Esta actividad está en modo "solo consulta".',
-      closedTaskSecondLine: 'La fecha de inicio para poder realizar esta actividad es: {{time}}',
+        'If you leave the app with the task in process, this task will be finished and the last submission will be sent automatically before the interruption. If the system detects an error and you are expelled from the task, you can notify it and if your error is verified you can repeat it.':
+      closedTaskFirstLine: 'This activity is in "only read" mode.',
+      closedTaskSecondLine: 'The start date for this activity is: {{time}}',
     },
   },
   task_correction: {
