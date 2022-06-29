@@ -9,13 +9,10 @@ import {
   ContextContainer,
   DatePicker,
   Grid,
-  InputWrapper,
   Loader,
-  Radio,
   RadioGroup,
   Switch,
   Text,
-  Tooltip,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
@@ -123,6 +120,13 @@ function GradeVariation({
   );
 }
 
+GradeVariation.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.object,
+  variations: PropTypes.array,
+  labels: PropTypes.object,
+};
+
 function useAssignableCurriculum(program) {
   const [curriculum, setCurriculum] = React.useState(null);
 
@@ -149,6 +153,23 @@ function useCurriculumFields({ assignable }) {
     return assignable?.subjects?.[0]?.program;
   }, [assignable]);
 
+  const selectedCurriculumValues = useMemo(
+    () =>
+      assignable?.subjects?.flatMap((subject) => {
+        const values = [];
+
+        if (subject?.curriculum?.curriculum?.length) {
+          values.push(...subject.curriculum.curriculum);
+        }
+        if (subject?.curriculum?.objectives?.length) {
+          values.push('objectives');
+        }
+
+        return values;
+      }),
+    [assignable]
+  );
+
   const curriculum = useAssignableCurriculum(program);
   const query = useQuery(['curriculumDetail', { id: curriculum?.id }], () =>
     detailCurriculumRequest(curriculum?.id)
@@ -174,10 +195,15 @@ function useCurriculumFields({ assignable }) {
         isEvaluationCriteria: field.frontConfig.blockData.evaluationCriteria,
       }));
 
-      return parsedCurriculumFields;
+      return {
+        curriculum: parsedCurriculumFields.filter((field) =>
+          selectedCurriculumValues.some((value) => value.includes(`property.${field.id}`))
+        ),
+        objectives: _.last(selectedCurriculumValues) === 'objectives',
+      };
     }
 
-    return null;
+    return { curriculum: null, objectives: _.last(selectedCurriculumValues) === 'objectives' };
   }, [curriculumDetails]);
 
   return { ...query, data: finalData };
@@ -487,91 +513,96 @@ export default function Form({
           )}
         />
 
-        <Controller
-          control={control}
-          name="curriculum.toogle"
-          render={({ field: showField }) => (
-            <ConditionalInput
-              {...showField}
-              label={labels?.showCurriculumToogle}
-              render={
-                () =>
-                  curriculumFields.isLoading ? (
-                    <Loader />
-                  ) : (
-                    <>
-                      {!curriculumFields?.data
-                        ? null
-                        : curriculumFields.data.map((curriculumField) => (
-                            <Controller
-                              key={curriculumField.id}
-                              control={control}
-                              name={`curriculum.${curriculumField.id}`}
-                              shouldUnregister={true}
-                              render={({ field }) => (
-                                <Switch
-                                  {...field}
-                                  checked={field.value}
-                                  label={
-                                    <Box
-                                      sx={(theme) => ({
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        gap: theme.spacing[1],
-                                      })}
-                                    >
-                                      {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
-                                      <Text>{curriculumField.label}</Text>
-                                    </Box>
-                                  }
-                                />
-                              )}
-                            />
-                          ))}
-                      <Controller
-                        control={control}
-                        name="curriculum.objectives"
-                        shouldUnregister={true}
-                        render={({ field }) => (
-                          <Switch
-                            {...field}
-                            checked={field.value}
-                            label={<Text>{labels?.objectives}</Text>}
+        {!curriculumFields?.data?.curriculum?.length &&
+        !curriculumFields?.data?.objectives ? null : (
+          <Controller
+            control={control}
+            name="curriculum.toogle"
+            render={({ field: showField }) => (
+              <ConditionalInput
+                {...showField}
+                label={labels?.showCurriculumToogle}
+                render={
+                  () =>
+                    curriculumFields.isLoading ? (
+                      <Loader />
+                    ) : (
+                      <>
+                        {!curriculumFields?.data?.curriculum?.length
+                          ? null
+                          : curriculumFields.data.curriculum.map((curriculumField) => (
+                              <Controller
+                                key={curriculumField.id}
+                                control={control}
+                                name={`curriculum.${curriculumField.id}`}
+                                shouldUnregister={true}
+                                render={({ field }) => (
+                                  <Switch
+                                    {...field}
+                                    checked={field.value}
+                                    label={
+                                      <Box
+                                        sx={(theme) => ({
+                                          display: 'flex',
+                                          flexDirection: 'row',
+                                          gap: theme.spacing[1],
+                                        })}
+                                      >
+                                        {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
+                                        <Text>{curriculumField.label}</Text>
+                                      </Box>
+                                    }
+                                  />
+                                )}
+                              />
+                            ))}
+                        {!curriculumFields?.data?.objectives ? null : (
+                          <Controller
+                            control={control}
+                            name="curriculum.objectives"
+                            shouldUnregister={true}
+                            render={({ field }) => (
+                              <Switch
+                                {...field}
+                                checked={field.value}
+                                label={<Text>{labels?.objectives}</Text>}
+                              />
+                            )}
                           />
                         )}
-                      />
-                    </>
-                  )
-                // <>
-                //   <Controller
-                //     control={control}
-                //     name="curriculum.content"
-                //     shouldUnregister={true}
-                //     render={({ field }) => (
-                //       <Switch {...field} checked={field.value} label={labels?.content} />
-                //     )}
-                //   />
-                //   <Controller
-                //     control={control}
-                //     name="curriculum.assessmentCriteria"
-                //     shouldUnregister={true}
-                //     render={({ field }) => (
-                //       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
-                //     )}
-                //   />
-                //   <Controller
-                //     control={control}
-                //     name="curriculum.objectives"
-                //     shouldUnregister={true}
-                //     render={({ field }) => (
-                //       <Switch {...field} checked={field.value} label={labels?.objectives} />
-                //     )}
-                //   />
-                // </>
-              }
-            />
-          )}
-        />
+                      </>
+                    )
+                  // <>
+                  //   <Controller
+                  //     control={control}
+                  //     name="curriculum.content"
+                  //     shouldUnregister={true}
+                  //     render={({ field }) => (
+                  //       <Switch {...field} checked={field.value} label={labels?.content} />
+                  //     )}
+                  //   />
+                  //   <Controller
+                  //     control={control}
+                  //     name="curriculum.assessmentCriteria"
+                  //     shouldUnregister={true}
+                  //     render={({ field }) => (
+                  //       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
+                  //     )}
+                  //   />
+                  //   <Controller
+                  //     control={control}
+                  //     name="curriculum.objectives"
+                  //     shouldUnregister={true}
+                  //     render={({ field }) => (
+                  //       <Switch {...field} checked={field.value} label={labels?.objectives} />
+                  //     )}
+                  //   />
+                  // </>
+                }
+              />
+            )}
+          />
+        )}
 
         <Box>{sendButton || <Button type="submit">{labels?.submit}</Button>}</Box>
       </ContextContainer>
@@ -580,8 +611,15 @@ export default function Form({
 }
 
 Form.propTypes = {
+  labels: PropTypes.object,
+  placeholders: PropTypes.object,
+  descriptions: PropTypes.object,
+  sendButton: PropTypes.node,
   onSubmit: PropTypes.func,
-  assignable: PropTypes.object,
-  defaultValues: PropTypes.object,
-  sendButton: PropTypes.any,
+  onCancel: PropTypes.func,
+  isLoading: PropTypes.bool,
+  errors: PropTypes.object,
+  watch: PropTypes.func,
+  control: PropTypes.object,
+  curriculumFields: PropTypes.object,
 };

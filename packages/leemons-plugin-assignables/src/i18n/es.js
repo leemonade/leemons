@@ -87,7 +87,7 @@ module.exports = {
       punctuationEvaluable: {
         label: 'Evaluable con puntuación',
         description:
-          'Se pide una puntuación pero no serña tenida en cuenta para la nota final, se admiten comentarios',
+          'Se pide una puntuación pero no será tenida en cuenta para la nota final, se admiten comentarios',
       },
       evaluable: {
         label: 'Evaluable sin puntuación',
@@ -153,6 +153,14 @@ module.exports = {
         avg: 'Tiempo medio',
         score: 'Puntuación',
       },
+    },
+    archiveModal: {
+      title: 'Existen alumnos sin evaluar',
+      message1: 'Existe uno o varios estudiantes que no han sido evaluados.',
+      message2:
+        'Una vez archivada esta actividad, podrás incluir nuevas notas a través del Cuaderno de Evaluación',
+      confirm: 'Archivar de todas formas',
+      cancel: 'Cancelar',
     },
   },
   studentsList: {

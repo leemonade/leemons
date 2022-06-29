@@ -66,7 +66,7 @@ module.exports = async function updateAssignation(assignation, { userSession, tr
   // ES: Actualizar las notas
   if (diff.includes('grades')) {
     await Promise.all(
-      object.grades.map((grade) =>
+      assignationObj.grades.map((grade) =>
         registerGrade(
           {
             assignation: id,

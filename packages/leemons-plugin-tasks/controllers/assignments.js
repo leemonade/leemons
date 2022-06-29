@@ -35,7 +35,7 @@ module.exports = {
           task,
           ...instanceData,
         },
-        { userSession: ctx.state.userSession }
+        { userSession: ctx.state.userSession, ctx }
       );
 
       ctx.status = 201;
