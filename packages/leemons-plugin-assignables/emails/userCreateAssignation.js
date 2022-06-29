@@ -211,6 +211,8 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                       height: 20px;
                                       width: 20px;
                                       border-radius: 50%;
+                                      text-align: center;
+                                        line-height: 20px;
                                       {{ @if (it.classes.length === 1) }}
                                         background-color: {{ it.classes[0].color }};
                                       {{ #else }}
@@ -218,7 +220,15 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                       {{ /if}}
 
                                     "
-                                ></div>
+                                >
+
+                                {{ @if (it.subjectIconUrl) }}
+                                        <img src="{{it.subjectIconUrl}}" width="13px" height="13px" style="filter: brightness(0) invert(1)" />
+                                      {{ #else }}
+
+                                      {{ /if}}
+
+</div>
                                 <span
                                   style="
                                       font-family: 'Inter', Verdana, sans-serif;
