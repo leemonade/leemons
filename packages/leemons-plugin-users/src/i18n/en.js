@@ -93,7 +93,7 @@ module.exports = {
       'Here we recommend you the first steps to config properly your Users Administration setup.',
   },
   hero_bg: {
-    text: '“I don’t know the meaning of half those long words, and, what’s more, I don’t believe you do either!”',
+    text: `“I don't know the meaning of half those long words, and, what's more, I don't believe you do either!”`,
     author: 'Alice in Wonderland <br/> Lewis Carrol',
   },
   list_profiles: {
