@@ -494,17 +494,7 @@ class Leemons {
           // Get the given provider from the list of available providers
           getProvider: listProviders,
           // Get the list of available providers, return a function to immediate return
-          listProviders: (plugin) => {
-            console.log('Called listProviders clausure with', plugin);
-            return (securePlugin) => {
-              console.log(
-                'Called inner-function with',
-                securePlugin,
-                '(IT SHOULD BE A FUNCTION ALWAYS)'
-              );
-              listProviders(plugin).map(securePlugin);
-            };
-          },
+          listProviders: (plugin) => (securePlugin) => listProviders(plugin).map(securePlugin),
         });
         if (span) {
           await span.end();
