@@ -8,7 +8,7 @@ module.exports = {
     step_profiles: {
       title: 'Match profiles',
       description:
-        'Academic portfolio needs clarification regarding which are the key profiles to work on. This will only need to be done once.',
+        'Academic portfolio needs clarification regarding which key profiles are to be worked on. This will only need to be done once.',
       btn: 'Match profiles',
     },
     step_programs: {
@@ -26,14 +26,14 @@ module.exports = {
     step_tree: {
       title: 'Manage academic portfolio',
       description:
-        'Define the kind of tree for your specific education system and asssing students, create clusters or edit information.',
+        'Define the kind of tree for your specific education system and assigning students, create clusters or edit information.',
       btn: 'Create your tree',
     },
   },
   programs_page: {
     page_title: 'Learning programs',
     page_description:
-      'Elementary, High School, Bachelor, Masters, and more. Define the programs and courses offered in your organization. If you do not have traditional stages, you can create simple programs or courses instead.',
+      'Elementary, High School, Bachelor, Masters, and more. Define the programs and courses offered in your organization. If your organization does not have traditional stages, simple programs or courses can be created instead.',
     errorNoEvaluationSystems:
       'There are no evaluation systems defined. Please, create one or more evaluation systems.',
     errorNoEvaluationSystemsGoTo: 'Go to evaluation systems',
@@ -95,13 +95,13 @@ module.exports = {
         labels: {
           title: 'Courses',
           oneCourseOnly: 'This program takes one course only',
-          hideCoursesInTree: 'Hidden courses in the tree (not nested subjects behind courses)',
+          hideCoursesInTree: 'Hidden courses in the tree (subjects not nested behind courses)',
           moreThanOneAcademicYear: 'The same subject may be offered in more than one academic year',
           maxNumberOfCourses: 'Number of courses',
           courseCredits: 'Credits per course',
           courseSubstage: 'Course substages',
           haveSubstagesPerCourse: 'No substages per course',
-          substagesFrequency: 'Frecuency',
+          substagesFrequency: 'Frequency',
           numberOfSubstages: 'Number of substages',
           subtagesNames: 'Name the substages',
           useDefaultSubstagesName: 'Use the default name and abbreviation',
@@ -144,7 +144,7 @@ module.exports = {
             'All subjects have the same duraction as the evaluation substage',
           numberOfSemesters: 'Number of semesters',
           periodName: 'Period name',
-          numOfPeriods: 'N. periods',
+          numOfPeriods: 'Number of periods',
           substagesFrequency: 'Frecuency',
           knowledgeAreas: 'Knowledge areas abbreviation',
           haveKnowledge: 'Program has Knowledge areas',
@@ -191,7 +191,7 @@ module.exports = {
   subject_page: {
     page_title: 'Subjects configuration',
     page_description:
-      'Configure knowledge areas/topics and type (core, electives…), then it is possible to upload the subject database or add them manually. After this, you are ready to create your tree portfolio schema.',
+      'Configure knowledge areas/topics and type (core, electives…), then it is possible to upload the subject database or add them manually. After this, it will be possible to create your tree portfolio schema.',
     centerLabel: 'Center',
     centerPlaceholder: 'Select a center',
     programLabel: 'Program',
@@ -284,7 +284,7 @@ module.exports = {
   profiles_page: {
     page_title: 'Academic portfolio - Profiles setup',
     page_description:
-      'First of all, it is necessary to match the system profiles with the custom profiles that have been created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
+      'First, it is necessary to match the system profiles with the custom profiles that have been created on the platform (Please read the characteristics of each profile carefully. Once the profiles are linked, it cannot be undone.)',
     save: 'Save',
     profileSaved: 'Saved profiles',
     profiles: 'Profiles',
@@ -293,13 +293,13 @@ module.exports = {
     teacherRequired: 'Field required',
     student: 'Student',
     studentDescription:
-      'Assigned to a classroom, studies the subjects of his program/course with a specific teachers',
+      'Assigned to a classroom, studies the subjects of his program/course with a specific teacher',
     studentRequired: 'Field required',
   },
   tree_page: {
     page_title: 'Academic Portofolio Tree',
     page_description:
-      'This is your Portfolio Tree, it can be edited, duplicated or used to create new elements for your program. Students can also be assigned at any level (all subjects under it will inherit this task).',
+      'This is the Portfolio Tree, it can be edited, duplicated or used to create new elements for your program. Students can also be assigned at any level (all subjects under it will inherit this task).',
     centerLabel: 'Select center',
     programLabel: 'Select program',
     programUpdated: 'Program updated',
@@ -327,7 +327,7 @@ module.exports = {
     addUsers: {
       title: 'Assign Students',
       description:
-        'Assign students to all classrooms nested on this level from the students database.',
+        'Assign students to all classrooms nested on this level from the student database.',
       note: 'NOTE:',
       noteDescription:
         'selected students will be added to the current student lists for each classroom. If consultation or editing of a group of students is needed, it must be done directly in each classroom.',
@@ -338,7 +338,7 @@ module.exports = {
       nameHeader: 'Name',
       surnameHeader: 'Surname',
       birthdayHeader: 'Birthday',
-      studentsFound: 'We have found {{count}} Students',
+      studentsFound: '{{count}} Students have been found',
       selected: '{{count}} Selected',
       studentsError:
         '{{count}} students are already included in all classes and cannot be added again',
@@ -395,7 +395,7 @@ module.exports = {
           'New classrooms will be created for this group from the selected subjects, later, new students can be assigned and its properties modified.',
         notes: 'NOTE:',
         description2:
-          ' In order to create a new group keeping all settings except assigned students, please use the "duplicate" option instead.',
+          ' In order to create a new group keeping all settings except the assigned students, please use the "duplicate" option instead.',
       },
     },
     subjectType: {
