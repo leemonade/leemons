@@ -5,6 +5,7 @@ import {
   Button,
   createStyles,
   ImageLoader,
+  ProSwitch,
   SearchInput,
   Select,
   Switch,
@@ -26,6 +27,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
+import { CutStarIcon } from '@bubbles-ui/icons/solid';
 import noResults from '../../assets/noResults.png';
 
 const useStyles = createStyles((theme) => ({
@@ -40,11 +42,13 @@ const useStyles = createStyles((theme) => ({
   leftFilters: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing[2],
   },
 }));
 
 function Filters({ onChange, labels }) {
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
   const { control, watch } = useForm({
     defaultValues: {
       search: '',
@@ -84,10 +88,13 @@ function Filters({ onChange, labels }) {
     return () => {};
   }, [onChange, watch]);
 
-  const filterByLength = React.useMemo(
-    () => filterBy.reduce((maxLength, filter) => Math.max(maxLength, filter.label.length), 0),
-    [filterBy]
-  );
+  const filterByLength = React.useMemo(() => {
+    const valuesMaxLength = filterBy.reduce(
+      (maxLength, filter) => Math.max(maxLength, filter.label.length),
+      0
+    );
+    return Math.max(valuesMaxLength, labels?.filterBy?.placeholder?.length);
+  }, [filterBy]);
 
   return (
     <Box className={classes.filters}>
@@ -114,7 +121,16 @@ function Filters({ onChange, labels }) {
           control={control}
           name="showNonCalificables"
           render={({ field }) => (
-            <Switch size="md" label={labels?.nonCalificables} {...field} checked={field.value} />
+            <Box sx={{ height: 20 }}>
+              <ProSwitch
+                icon={<CutStarIcon height={12} />}
+                size="md"
+                color={theme.colors.interactive01}
+                label={labels?.nonCalificables}
+                {...field}
+                checked={field.value}
+              />
+            </Box>
           )}
         />
         {/* <Switch size="md" label="Asessment criteria" /> */}
