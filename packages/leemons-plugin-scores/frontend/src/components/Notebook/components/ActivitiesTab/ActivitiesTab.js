@@ -315,7 +315,9 @@ function ScoresTable({ activitiesData, grades, filters, onOpen, labels }) {
         onDataChange={(v) => {
           const student = data.value.find((student) => student.id === v.rowId);
           const activity = data.activities.find((activity) => activity.id === v.columnId);
-          const grade = data.grades.find((g) => g.number === parseInt(v.value, 10));
+          const grade = data.grades.find(
+            (g) => g.number === parseInt(v.value, 10) || g.letter === v.value
+          );
 
           mutateAsync({
             instance: v.columnId,

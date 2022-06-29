@@ -17,7 +17,8 @@ module.exports = {
       },
     },
     grade: {
-      type: 'float',
+      type: 'decimal',
+      scale: 7,
     },
     gradedBy: {
       type: 'string',
