@@ -44,13 +44,13 @@ module.exports = {
     adminDrawer: {
       title: 'Periodos de evaluación',
       description:
-        'Como administrador, puedes crear periódos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periódos de evaluación por programa y curso.',
+        'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
       new: 'Nuevo periodo',
     },
     teacherDrawer: {
       title: 'Cuaderno de evaluación',
       description:
-        'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periódos pre-definidos por tu centro educativo para cada programa y curso.',
+        'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
       new: 'Establecer periodo',
     },
     periodFormErrorMessages: {
@@ -86,11 +86,39 @@ module.exports = {
     noClassSelected: {
       title: 'Cuaderno de evaluación',
       description:
-        'El cuaderno de evaluación te permiten evaluar las tareas calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
+        'El cuaderno de evaluación te permiten evaluar las actividades calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
       title: 'Sin resultados',
       description: 'No hemos encontrado resultados para tu búsqueda.',
+    },
+    tabs: {
+      activities: {
+        title: 'Actividades evaluadas',
+        unableToOpen: 'Error abriendo actividad, la actividad no se ha podido encontrar',
+        filters: {
+          filterBy: {
+            activity: 'Actividad',
+            student: 'Estudiante',
+            placeholder: 'Filtrar por',
+          },
+          search: 'Buscar',
+          nonCalificables: 'Ver no calificables',
+        },
+        scoresTable: {
+          table: {
+            students: 'Estudiantes',
+            noActivity: 'No entregado',
+            avgScore: 'Nota promedio',
+            gradingTasks: 'Actividades calificables',
+            attendance: 'Asistencia',
+          },
+          updatedSuccess:
+            'Actualizada la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
+          updatedError:
+            'Error actualizando la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
+        },
+      },
     },
   },
 };

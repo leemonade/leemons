@@ -81,9 +81,20 @@ function EmptyState() {
 export default function Notebook({ isOpened, onOpenChange, filters }) {
   const { classes } = useStyles({ isOpened });
 
-  const labels = {
-    activitiesTab: 'Actividades evaluadas',
-  };
+  const [, translations] = useTranslateLoader(prefixPN('notebook.tabs'));
+
+  const labels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('notebook.tabs'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
 
   if (isEmpty(filters)) {
     return <EmptyState />;
@@ -93,8 +104,8 @@ export default function Notebook({ isOpened, onOpenChange, filters }) {
     <Box className={classes.root}>
       <Header isOpened={isOpened} onOpenChange={onOpenChange} filters={filters} />
       <Tabs className={classes.tabHeader}>
-        <TabPanel label={labels.activitiesTab}>
-          <ActivitiesTab filters={filters} />
+        <TabPanel label={labels.activities.title}>
+          <ActivitiesTab filters={filters} labels={labels.activities} />
         </TabPanel>
       </Tabs>
     </Box>

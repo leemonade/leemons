@@ -43,7 +43,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function Filters({ onChange }) {
+function Filters({ onChange, labels }) {
   const { classes } = useStyles();
   const { control, watch } = useForm({
     defaultValues: {
@@ -56,11 +56,11 @@ function Filters({ onChange }) {
   const filterBy = React.useMemo(
     () => [
       {
-        label: 'Actividad',
+        label: labels?.filterBy?.activity,
         value: 'activity',
       },
       {
-        label: 'Alumno',
+        label: labels?.filterBy?.student,
         value: 'student',
       },
     ],
@@ -98,7 +98,7 @@ function Filters({ onChange }) {
           render={({ field }) => (
             <Select
               variant="unstyled"
-              placeholder="Filter by"
+              placeholder={labels?.filterBy?.placeholder}
               style={{ width: `${filterByLength + 5}ch` }}
               data={filterBy}
               {...field}
@@ -108,13 +108,13 @@ function Filters({ onChange }) {
         <Controller
           control={control}
           name="search"
-          render={({ field }) => <SearchInput placeholder="Search" {...field} />}
+          render={({ field }) => <SearchInput placeholder={labels?.search} {...field} />}
         />
         <Controller
           control={control}
           name="showNonCalificables"
           render={({ field }) => (
-            <Switch size="md" label="Ver no calificables" {...field} checked={field.value} />
+            <Switch size="md" label={labels?.nonCalificables} {...field} checked={field.value} />
           )}
         />
         {/* <Switch size="md" label="Asessment criteria" /> */}
@@ -275,16 +275,16 @@ function useTableData({ filters, localFilters }) {
   };
 }
 
-function ScoresTable({ activitiesData, grades, filters, onOpen }) {
+function ScoresTable({ activitiesData, grades, filters, onOpen, labels }) {
   const { mutateAsync } = useStudentAssignationMutation();
   const data = React.useMemo(
     () => ({
       labels: {
-        students: 'Estudiante',
-        noActivity: 'No entregado',
-        avgScore: 'Average score',
-        gradingTasks: 'Grading tasks',
-        attendance: 'Attendance',
+        students: labels?.table?.students,
+        noActivity: labels?.table?.noActivity,
+        avgScore: labels?.table?.avgScore,
+        gradingTasks: labels?.table?.gradingTasks,
+        attendance: labels?.table?.attendance,
       },
       grades,
       ...activitiesData,
@@ -314,16 +314,19 @@ function ScoresTable({ activitiesData, grades, filters, onOpen }) {
           })
             .then(() =>
               addSuccessAlert(
-                `Updated ${student.name} ${student.surname}'s score for ${activity.name} to a ${
-                  grade.letter || grade.number
-                }`
+                labels?.updatedSuccess
+                  ?.replace('{{student}}', `${student.name} ${student.surname}`)
+                  ?.replace('{{activity}}', activity.name)
+                  ?.replace('{{score}}', grade.letter || grade.number)
               )
             )
             .catch((e) =>
               addErrorAlert(
-                `Error updating ${student.name} ${student.surname}'s score for ${
-                  activity.name
-                } to a ${grade.letter || grade.number}: ${e.message}`
+                labels?.updatedError
+                  ?.replace('{{student}}', `${student.name} ${student.surname}`)
+                  ?.replace('{{activity}}', activity.name)
+                  ?.replace('{{score}}', grade.letter || grade.number)
+                  ?.replace('{{error}}', e.message || e.error)
               )
             );
         }}
@@ -382,8 +385,8 @@ function EmptyState() {
             height="100%"
           />
           <Box sx={{ maxWidth: 250 }}>
-            <Title>{labels.title}</Title>
-            <Text>{labels.description}</Text>
+            <Title>{labels?.title}</Title>
+            <Text>{labels?.description}</Text>
           </Box>
         </Box>
       )}
@@ -391,9 +394,8 @@ function EmptyState() {
   );
 }
 
-export default function ActivitiesTab({ filters }) {
+export default function ActivitiesTab({ filters, labels }) {
   const { classes } = useStyles();
-  const labels = {};
   const [localFilters, setLocalFilters] = React.useState({});
   const { activitiesData, grades } = useTableData({ filters, localFilters });
 
@@ -402,7 +404,7 @@ export default function ActivitiesTab({ filters }) {
 
     if (!activity) {
       // TRANSLATE: This is a placeholder for the activity name
-      return addErrorAlert('Activity not found');
+      return addErrorAlert(labels?.unableToOpen);
     }
     const url = activity.assignable.roleDetails.evaluationDetailUrl;
 
@@ -411,13 +413,14 @@ export default function ActivitiesTab({ filters }) {
 
   return (
     <Box>
-      <Filters onChange={setLocalFilters} />
+      <Filters onChange={setLocalFilters} labels={labels?.filters} />
       {activitiesData?.activities?.length && grades?.length && activitiesData?.value?.length ? (
         <ScoresTable
           activitiesData={activitiesData}
           grades={grades}
           filters={filters}
           onOpen={handleOpen}
+          labels={labels?.scoresTable}
         />
       ) : (
         <EmptyState />
