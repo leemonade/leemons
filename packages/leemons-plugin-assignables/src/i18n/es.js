@@ -87,7 +87,7 @@ module.exports = {
       punctuationEvaluable: {
         label: 'Evaluable con puntuación',
         description:
-          'Se pide una puntuación pero no serña tenida en cuenta para la nota final, se admiten comentarios',
+          'Se pide una puntuación pero no será tenida en cuenta para la nota final, se admiten comentarios',
       },
       evaluable: {
         label: 'Evaluable sin puntuación',
