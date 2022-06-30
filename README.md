@@ -1,18 +1,14 @@
-Leemons is the powerful flexible friendly Learning Experience Platform you’re waiting for.
+# Leemons
+
+The powerful flexible friendly Learning Experience Platform you’re waiting for.
 
 - **Keep control over your data**. With Leemons, you know where your data is stored, and you keep full control at all times.
 - **Self-hosted**. You can host and scale Leemons the way you want. You can choose any hosting platform you want: AWS, Render, Netlify, Heroku, a VPS, or a dedicated server. You can scale as you grow, 100% independent.
 - **Customizable**. You can quickly build your logic by fully customizing plugins to fit your needs perfectly.
 
-## Getting Started
+## 🖐 Installation
 
-### ⏳ Installation
-
-Enjoy 🎉
-
-### 🖐 Requirements
-
-Complete installation requirements can be found in the documentation under - Installation Requirements (Coming soon) -.
+Complete installation and requirements can be found in the documentation under [Installation](https://leemonade.github.io/leemons-docs/getting-started/installation)
 
 **Supported operating systems**:
 
@@ -26,25 +22,19 @@ Complete installation requirements can be found in the documentation under - Ins
 
 **Node:**
 
-- NodeJS >= 10.16 <=14
-- NPM >= 6.x
+- NodeJS >= 16.x
+- NPM >= 7.x
 
 **Database:**
 
-- MongoDB >= 3.6
 - MySQL >= 5.6
 - MariaDB >= 10.1
 - PostgreSQL >= 10
+- MongoDB (comming soon)
 
 ## Features
 
-- **Modern Admin Panel:** Elegant, entirely customizable and a fully extensible admin panel.
-- **Secure by default:** Reusable policies, CORS, CSP, P3P, Xframe, XSS, and more.
-- **Plugins Oriented:** Install the auth system, custom plugins, and more, in seconds.
-- **Blazing Fast:** Built on top of Node.js, Leemons delivers amazing performance.
-- **SQL & NoSQL databases:** Works with MongoDB, PostgreSQL, MySQL and MariaDB.
-
-**[See more on our website](https://www.leemons.io/overview)**.
+See feature list at [Overview](https://leemonade.github.io/leemons-docs)
 
 ## Contributing
 
@@ -55,7 +45,6 @@ Please read our [Contributing Guide](./CONTRIBUTING.md) before submitting a Pull
 For general help using Leemons, please refer to - the official Leemons documentation (Coming soon) -. For additional help, you can use one of these channels to ask a question:
 
 - [GitHub](https://github.com/leemonade/leemons) (Bug reports, Contributions)
-- [Twitter](https://twitter.com/leemons) (Get the news fast)
 
 ## License
 
