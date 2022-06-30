@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Box, Button, createStyles, IconButton, Text } from '@bubbles-ui/components';
 import { DownloadIcon, MoveLeftIcon, MoveRightIcon } from '@bubbles-ui/icons/outline';
+import { addAction, fireEvent } from 'leemons-hooks';
 
 import _ from 'lodash';
 import { LocaleDate, unflatten } from '@common';
@@ -97,8 +98,61 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
       )}
 
       <Box className={classes.title}>{title}</Box>
-      <Button variant="outline" size="xs" position="center" leftIcon={<DownloadIcon />}>
-        {labels.export}
+      <Button
+        variant="outline"
+        size="xs"
+        position="center"
+        leftIcon={<DownloadIcon />}
+        onClick={() => {
+          let timer;
+          addAction('plugins.scores::downloaded-intercepted', () => {
+            clearTimeout(timer);
+          });
+          addAction('plugins.scores::downloaded', () => {
+            console.log('downloaded scores');
+          });
+          addAction('plugins.scores::download-scores-error', ({ args: [e] }) => {
+            console.log('error downloading scores', e);
+          });
+          addAction('plugins.scores::download-scores-cancelled', () => {
+            console.log('cancelled downloading scores');
+          });
+
+          fireEvent('plugins.scores::download-scores', 'xlsx');
+          timer = setTimeout(() => {
+            fireEvent('plugins.scores::download-scores-error', new Error('timeout'));
+          }, 1000);
+        }}
+      >
+        {labels.export} - EXCEL
+      </Button>
+      <Button
+        variant="outline"
+        size="xs"
+        position="center"
+        leftIcon={<DownloadIcon />}
+        onClick={() => {
+          let timer;
+          addAction('plugins.scores::downloaded-intercepted', () => {
+            clearTimeout(timer);
+          });
+          addAction('plugins.scores::downloaded', () => {
+            console.log('downloaded scores');
+          });
+          addAction('plugins.scores::download-scores-error', ({ args: [e] }) => {
+            console.log('error downloading scores', e);
+          });
+          addAction('plugins.scores::download-scores-cancelled', () => {
+            console.log('cancelled downloading scores');
+          });
+
+          fireEvent('plugins.scores::download-scores', 'csv');
+          timer = setTimeout(() => {
+            fireEvent('plugins.scores::download-scores-error', new Error('timeout'));
+          }, 1000);
+        }}
+      >
+        {labels.export} - CSV
       </Button>
     </Box>
   );

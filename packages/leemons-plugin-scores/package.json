@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "exceljs": "^4.3.0",
     "lodash": "^4.17.21"
   }
 }
