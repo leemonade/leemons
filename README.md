@@ -1,5 +1,7 @@
 # Leemons
 
+[![GitHub contributors](https://img.shields.io/github/contributors/leemonade/leemons)](https://github.com/leemonade/leemons/graphs/contributors)
+
 The powerful flexible friendly Learning Experience Platform you’re waiting for.
 
 - **Keep control over your data**. With Leemons, you know where your data is stored, and you keep full control at all times.
@@ -36,6 +38,12 @@ Complete installation and requirements can be found in the documentation under [
 
 See feature list at [Overview](https://leemonade.github.io/leemons-docs)
 
+## Contributors
+
+<a href="https://github.com/leemonade/leemons/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=leemonade/leemons" />
+</a>
+
 ## Contributing
 
 Please read our [Contributing Guide](./CONTRIBUTING.md) before submitting a Pull Request to the project.
@@ -48,4 +56,4 @@ For general help using Leemons, please refer to - the official Leemons documenta
 
 ## License
 
-See the [LICENSE](./LICENSE) file for licensing information.
+MIT
