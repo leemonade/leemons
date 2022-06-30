@@ -84,6 +84,7 @@ export default function LimitedTimeAlert({ assignation, labels, show }) {
   if (!show) {
     return null;
   }
+
   return (
     <>
       <Box className={classes.timeLimitContainer}>

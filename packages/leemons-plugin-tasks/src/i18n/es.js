@@ -339,6 +339,11 @@ module.exports = {
       description:
         '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si cancelas ahora, la entrega quedará guardada automáticamente y puedes modificarla más tarde</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
     },
+    activityContainer: {
+      deadline: {
+        label: 'Entrega',
+      },
+    },
     buttons: {
       previous: 'Anterior',
       next: 'Siguiente',

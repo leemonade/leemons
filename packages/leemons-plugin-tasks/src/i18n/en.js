@@ -350,6 +350,11 @@ module.exports = {
       description:
         '<p>If you click on "Confirm submission", your task will be sent to a reviewer and you will not be able to modify the selected deliverables. If you only want to save the work done so far, you can cancel this action and press on "Save only".</p><p>When you confirm the submission, the system will redirect you to the "Ongoing activities" section where you can review the tasks once they are corrected.</p>',
     },
+    activityContainer: {
+      deadline: {
+        label: 'Submission',
+      },
+    },
     buttons: {
       previous: 'Previous',
       next: 'Next',
@@ -422,9 +427,9 @@ module.exports = {
       limitedTimeTitle: 'Time limit',
       limitedTime:
         'Once you start, you have {{time}} to finish this task, you must submit it before this time ends.',
-      pauseTitle: 'The task can\'t be paused',
+      pauseTitle: "The task can't be paused",
       pause:
-        'If you leave the app with the task in process, this task will be finished and the last submission will be sent automatically before the interruption. If the system detects an error and you are expelled from the task, you can notify it and if your error is verified you can repeat it.':
+        'If you leave the app with the task in process, this task will be finished and the last submission will be sent automatically before the interruption. If the system detects an error and you are expelled from the task, you can notify it and if your error is verified you can repeat it.',
       closedTaskFirstLine: 'This activity is in "only read" mode.',
       closedTaskSecondLine: 'The start date for this activity is: {{time}}',
     },

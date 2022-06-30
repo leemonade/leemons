@@ -278,7 +278,7 @@ export default function TaskDetail({ id, student }) {
       }}
       deadline={
         assignation?.instance?.dates?.deadline && {
-          label: 'Entrega',
+          label: labels.activityContainer.deadline.label,
           deadline:
             assignation?.instance?.dates?.deadline instanceof Date
               ? assignation?.instance?.dates?.deadline
