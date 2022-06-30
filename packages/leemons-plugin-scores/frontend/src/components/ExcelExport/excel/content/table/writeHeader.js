@@ -21,7 +21,7 @@ export default function writeHeader({ ws, activities, labels, initialPosition })
   const contentArray = [
     [labels.type, ...map(parsedactivities, 'type'), ''],
     [labels.evaluation, ...map(parsedactivities, 'evaluation'), ''],
-    [labels.name, ...map(parsedactivities, 'name'), ''],
+    [labels.activity, ...map(parsedactivities, 'name'), ''],
     [labels.deadline, ...map(parsedactivities, 'deadline'), ''],
     [labels.weight, ...map(parsedactivities, 'weight')],
   ];

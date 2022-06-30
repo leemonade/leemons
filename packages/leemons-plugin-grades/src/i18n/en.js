@@ -2,33 +2,33 @@ module.exports = {
   welcome_page: {
     page_title: 'Academic Rules',
     page_description:
-      '"Academic Rules" allows you to create custom rules for your programs and courses: maximum or minimum core/elective credits, required subject areas, elective courses... thanks to these rules you will be able to create grade reports and know which students will be promoted.',
+      '"Academic Rules" allows the creation of custom rules for programs and courses: maximum or minimum core/elective credits, required subject areas, elective courses... thanks to these rules it will be possible to create grade reports and know which students will be promoted.',
     hide_info_label:
-      "Ok, I've got it. When the configuration is complete, don't show this info anymore",
+      'Ok, understood. When the configuration is complete, this information will not be shown anymore',
     step_evaluations: {
       title: 'Evaluation Systems',
       description:
-        'Whether you need an evaluation system based on a numerical scale, letter-based or a mix of both, we support it all.',
+        'Whether there is a need for an evaluation system based on a numerical scale, letter-based or a mix of both, all of them are supported.',
       btn: 'Create systems',
     },
     step_promotions: {
       title: 'Promotion rules',
       description:
-        'Creates a set of evaluation rules based on credits or on required and elective subjects. You can also add rules for specific knowledge areas.',
+        'Creates a set of evaluation rules based on credits or on required and elective subjects. Rules for specific knowledge areas can also be added.',
       btn: 'Add rules',
     },
     step_dependencies: {
       title: 'Dependencies',
       description:
-        'Configure the dependencies between subjects, based on your performance or evaluation system.',
+        'Configure the dependencies between subjects, based on performance or an evaluation system.',
       btn: 'Setup dependencies',
     },
   },
   evaluationsPage: {
     pageTitle: 'Evaluation System',
     pageDescription:
-      'With this tool you can create different types of evaluation systems that you can later assign to your programs.',
-    addGrade: 'Add new evaluation system',
+      'With this tool, different types of evaluation systems can be created that can later be assigned to your programs.',
+    addGrade: 'Add a new evaluation system',
     successSave: 'Saved successfully',
     successDelete: 'Deleted successfully',
     selectCenter: 'Select center',
@@ -49,8 +49,8 @@ module.exports = {
       minScaleToPromotePlaceholder: 'Select value...',
       otherTagsLabel: 'Other tags',
       otherTagsDescription:
-        'If you need to use other tags to classify special conditions for some subjects, you can freely create them here.',
-      otherTagsRelationScaleLabel: 'Co-relation with some scale value',
+        'If it is necessary to use other tags to classify special conditions for some subjects, they can freely be created here.',
+      otherTagsRelationScaleLabel: 'Corelation with some scale value',
       tableAdd: 'Add',
       tableRemove: 'Remove',
       tableEdit: 'Edit',
@@ -76,11 +76,11 @@ module.exports = {
     dataTypeEnrolled: 'Enrolled',
     dataTypeCredits: 'Credits',
     operatorGT: 'Greater than',
-    operatorGTE: 'Greater than or equal',
+    operatorGTE: 'Greater than or equal to',
     operatorLT: 'Less than',
-    operatorLTE: 'Less than or equal',
-    operatorEQ: 'Equal',
-    operatorNEQ: 'Not equal',
+    operatorLTE: 'Less than or equal to',
+    operatorEQ: 'Equal to',
+    operatorNEQ: 'Not equal to',
     operatorContains: 'Contains',
   },
   promotionDetail: {
@@ -132,7 +132,7 @@ module.exports = {
   promotionsPage: {
     pageTitle: 'Promotion rules',
     pageDescription:
-      'Creates a set of promotion rules based on credits or on core and elective subjects. You can also add rules for specific knowledge areas.',
+      'Creates a set of promotion rules based on credits or on core and elective subjects. Rules can also be added for specific knowledge areas.',
     addPromotion: 'New group of rules',
     successSave: 'Saved successfully',
     successDelete: 'Deleted successfully',
@@ -142,7 +142,7 @@ module.exports = {
   dependenciesPage: {
     pageTitle: 'Subjects dependencies',
     pageDescription:
-      'Our dependency mapping system allows you to establish specific rules between some subjects and others to allow the enrollment of a student.',
+      'The dependency mapping system allows the establishment of specific rules between some subjects and others to allow the enrollment of a student.',
     addPromotion: 'New dependency map',
     successSave: 'Saved successfully',
     successDelete: 'Deleted successfully',
