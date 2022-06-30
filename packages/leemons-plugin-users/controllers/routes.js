@@ -210,6 +210,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/user/:id/update-avatar',
+    method: 'POST',
+    handler: 'users.updateUserAvatar',
+    authenticated: true,
+  },
+  {
     path: '/user-agent/:id/update',
     method: 'POST',
     handler: 'users.updateUserAgent',

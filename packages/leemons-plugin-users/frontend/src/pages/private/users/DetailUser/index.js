@@ -279,6 +279,7 @@ function DetailUser({ session }) {
             <UserImageAndPreferredGender
               t={t}
               user={store.user}
+              session={session}
               form={form}
               isEditMode={store.isEditMode}
             />

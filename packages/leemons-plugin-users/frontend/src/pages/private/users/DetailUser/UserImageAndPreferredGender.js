@@ -1,11 +1,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, ContextContainer, InputWrapper, Select } from '@bubbles-ui/components';
+import {
+  Avatar,
+  Box,
+  ContextContainer,
+  createStyles,
+  InputWrapper,
+  Select,
+} from '@bubbles-ui/components';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+
 import { useStore } from '@common';
 import { Controller } from 'react-hook-form';
+import { updateUserImageRequest } from '@users/request';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useLayout } from '@layout/context';
+import SocketIoService from '@socket-io/service';
 import getUserFullName from '../../../../helpers/getUserFullName';
 
-function UserImageAndPreferredGender({ t, user, form, isEditMode }) {
+const Styles = createStyles((theme) => ({
+  imageOver: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    color: theme.colors.text07,
+    zIndex: 2,
+    borderRadius: '50%',
+    opacity: 0,
+    transition: 'opacity 0.3s ease-in-out',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: theme.fontSizes[3],
+    padding: theme.spacing[5],
+    textAlign: 'center',
+    cursor: 'pointer',
+    '&:hover': {
+      opacity: 1,
+    },
+  },
+}));
+
+function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
+  const isMe = user.id === session.id;
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const { classes: styles } = Styles();
+  const { openDeleteConfirmationModal, setLoading } = useLayout();
   const [store, render] = useStore({
     genders: user.preferences?.gender
       ? [{ label: user.preferences?.gender, value: user.preferences?.gender }]
@@ -18,18 +59,52 @@ function UserImageAndPreferredGender({ t, user, form, isEditMode }) {
       : [],
   });
 
+  const avatar = form.watch('user.avatar');
+
   function addData(name, e) {
     store[name].push({ label: e, value: e });
     render();
   }
 
-  const avatar = form.watch('user.avatar');
+  SocketIoService.useOn('USER_CHANGE_AVATAR', () => {
+    const split = avatar.split('?');
+    form.setValue('user.avatar', `${split[0]}?${Date.now()}`);
+  });
 
-  console.log(avatar);
+  async function saveImage(file) {
+    try {
+      setLoading(true);
+      await updateUserImageRequest(user.id, file);
+      addSuccessAlert(t('imageUpdated'));
+      setLoading(false);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  }
+
+  function selectImage() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        saveImage(file);
+      }
+    };
+    input.click();
+  }
 
   return (
     <ContextContainer direction="row" alignItems="center">
-      <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+      <Box sx={() => ({ position: 'relative' })}>
+        {isEditMode || isMe ? (
+          <Box className={styles.imageOver} onClick={selectImage}>
+            {t('changeAvatar')}
+          </Box>
+        ) : null}
+        <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+      </Box>
       <InputWrapper label={t('preferredGenderLabel')}>
         <ContextContainer direction="row">
           <Controller
@@ -94,6 +169,7 @@ UserImageAndPreferredGender.propTypes = {
   t: PropTypes.func,
   form: PropTypes.object,
   isEditMode: PropTypes.bool,
+  session: PropTypes.object,
 };
 
 export default UserImageAndPreferredGender;

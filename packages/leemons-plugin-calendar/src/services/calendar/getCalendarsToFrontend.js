@@ -526,13 +526,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         });
       }
 
+      if (event.data.instanceId) {
+        event.data.hideCalendarField = true;
+      }
+
       // --- Instancia
       if (instanceIdEvents[event.id]) {
         const instance = instancesById[instanceIdEvents[event.id]];
         const assignation = assignationsByInstance[instanceIdEvents[event.id]];
         if (instance && assignation) {
           event.disableDrag = true;
-          event.data.hideCalendarField = true;
           const now = new Date();
 
           const status = getStatus(assignation, instance);

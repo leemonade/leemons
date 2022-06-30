@@ -375,6 +375,11 @@ export default function Result() {
     );
   }
 
+  const scale = store.evaluationSystem?.scales?.find(
+    ({ number }) =>
+      number === store.assignation.grades[0]?.grade || store.evaluationSystem.minScale.number
+  );
+
   return (
     <ContextContainer
       sx={(theme) => ({
@@ -420,9 +425,9 @@ export default function Result() {
                 <ScoreFeedback
                   calification={{
                     minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                    grade:
-                      store.assignation.grades[0]?.grade || store.evaluationSystem.minScale.number,
-                    label: null,
+                    grade: scale.number,
+                    label: scale.letter,
+                    showOnlyLabel: !!scale.letter,
                   }}
                 >
                   <Stack

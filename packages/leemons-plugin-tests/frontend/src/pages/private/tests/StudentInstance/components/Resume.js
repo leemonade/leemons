@@ -18,11 +18,23 @@ export default function Resume(props) {
       canStart = false;
     }
   }
-  console.log(store);
 
   const subjects = useClassesSubjects(store.instance.classes);
 
   const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
+
+  let curriculum = null;
+
+  if (store.instance.assignable.subjects[0].curriculum.curriculum?.length) {
+    const curriculumKeysToShow = Object.entries(store.instance.curriculum)
+      .filter(([, value]) => value)
+      .map(([key]) => key);
+    curriculum = store.instance.assignable.subjects[0].curriculum.curriculum;
+    curriculum = curriculum.filter((key) => {
+      const regex = new RegExp(curriculumKeysToShow.join('|'), 'i');
+      return regex.test(key);
+    });
+  }
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
@@ -46,12 +58,10 @@ export default function Resume(props) {
                 gap: theme.spacing[4],
               })}
             >
-              {store.instance.assignable.subjects[0].curriculum.curriculum?.length ? (
+              {curriculum ? (
                 <Box sx={tabPanelStyle}>
                   <Box>
-                    <CurriculumListContents
-                      value={store.instance.assignable.subjects[0].curriculum.curriculum}
-                    />
+                    <CurriculumListContents value={curriculum} />
                   </Box>
                 </Box>
               ) : null}
