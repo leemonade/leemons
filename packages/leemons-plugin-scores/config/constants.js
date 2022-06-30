@@ -60,7 +60,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.scoresMenu,
-        actionNames: ['view'],
+        actionNames: ['view', 'admin'],
       },
     ],
   },
@@ -89,14 +89,14 @@ const menuItems = [
       parentKey: 'scores',
       url: '/private/scores/notebook',
       label: {
-        en: 'Notebook',
+        en: 'Evaluation Notebook',
         es: 'Cuaderno de notas',
       },
     },
     permissions: [
       {
         permissionName: permissionNames.noteBook,
-        actionNames: ['view'],
+        actionNames: ['view', 'admin'],
       },
     ],
   },
@@ -114,7 +114,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.scores,
-        actionNames: ['view'],
+        actionNames: ['view', 'admin'],
       },
     ],
   },

@@ -13,7 +13,14 @@ import {
   map,
   uniq,
 } from 'lodash';
-import { ActionButton, Box, Select, Stack, UserDisplayItem } from '@bubbles-ui/components';
+import {
+  ActionButton,
+  Box,
+  MultiSelect,
+  Select,
+  Stack,
+  UserDisplayItem,
+} from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -267,8 +274,26 @@ const SelectUserAgent = forwardRef(
       return [value];
     }, [inputValue]);
 
+    if (maxSelectedValues === 1) {
+      return (
+        <Select
+          {...props}
+          ref={ref}
+          searchable
+          onSearchChange={usersData ? undefined : search}
+          itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
+          valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
+          maxSelectedValues={maxSelectedValues}
+          data={usersData || data}
+          // EN: The value can be an array or a single value (string), so convert it to an array
+          // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
+          value={uniq(flattenDeep(propValue))}
+          onChange={handleChange}
+        />
+      );
+    }
     return (
-      <Select
+      <MultiSelect
         {...props}
         ref={ref}
         searchable
