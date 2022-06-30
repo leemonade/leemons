@@ -232,7 +232,7 @@ export default function StudentInstance() {
 
   const headerProps = React.useMemo(() => {
     if (store.instance) {
-      if (store.instance.assignable.asset.cover) {
+      if (store.instance.assignable?.asset?.cover) {
         return {
           blur: 10,
           withBlur: true,
@@ -260,11 +260,13 @@ export default function StudentInstance() {
         subtitle: store.class.name,
         icon: store.class.icon,
         color: store.class.color,
-        image: getFileUrl(
-          isString(store.instance.assignable.asset.cover)
-            ? store.instance.assignable.asset.cover
-            : store.instance.assignable.asset.cover.id
-        ),
+        image: store.instance.assignable.asset.cover
+          ? getFileUrl(
+              isString(store.instance.assignable.asset.cover)
+                ? store.instance.assignable.asset.cover
+                : store.instance.assignable.asset.cover.id
+            )
+          : null,
         styles: {
           position: 'absolute',
           bottom: 0,
