@@ -4,7 +4,7 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { find, forEach, map } from 'lodash';
+import { find, forEach, map, orderBy } from 'lodash';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
@@ -375,10 +375,26 @@ export default function Result() {
     );
   }
 
-  const scale = store.evaluationSystem?.scales?.find(
-    ({ number }) =>
-      number === store.assignation.grades[0]?.grade || store.evaluationSystem.minScale.number
-  );
+  const userNote = store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number;
+
+  let scale = null;
+  forEach(orderBy(store.evaluationSystem?.scales, ['number'], ['asc']), (s) => {
+    if (userNote >= s.number) {
+      scale = s;
+    } else if (scale) {
+      const diff1 = userNote - scale.number;
+      const diff2 = s.number - userNote;
+      if (diff2 <= diff1) {
+        scale = s;
+      }
+      return false;
+    } else {
+      scale = s;
+      return false;
+    }
+  });
+
+  console.log(scale);
 
   return (
     <ContextContainer
@@ -425,9 +441,9 @@ export default function Result() {
                 <ScoreFeedback
                   calification={{
                     minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                    grade: scale.number,
+                    grade: userNote,
                     label: scale.letter,
-                    showOnlyLabel: !!scale.letter,
+                    showOnlyLabel: false,
                   }}
                 >
                   <Stack

@@ -82,6 +82,8 @@ async function events(isInstalled) {
         'plugins.tasks:init-permissions',
         'plugins.tests:init-permissions',
         'plugins.assignables:init-permissions',
+        'plugins.scores:init-permissions',
+        'plugins.academic-calendar:init-permissions',
         'plugins.leebrary:pluginDidLoadServices',
         'plugins.admin:pluginDidLoadServices',
         'plugins.bulk-template:init-providers',

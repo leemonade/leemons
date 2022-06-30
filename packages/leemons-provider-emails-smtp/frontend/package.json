@@ -1,11 +1,9 @@
 {
-  "name": "curriculum-front",
+  "name": "emails-amazon-ses-front",
   "version": "1.0.0",
-  "main": "Public.js",
+  "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/leemons": "^1.0.39",
-    "@bubbles-ui/components": "^1.0.39",
     "prop-types": "^15.7.2",
     "react-hook-form": "^7.8.5"
   },

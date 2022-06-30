@@ -1,5 +1,5 @@
 {
-  "name": "emails-amazon-ses-front",
+  "name": "emails-amazon-smtp",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

@@ -981,10 +981,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bubbles-ui/components@^1.0.37":
-  version "1.0.38"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.38.tgz#8b75ff31f5db5bf900404268f935bff8c0d3230b"
-  integrity sha512-1qBo8lgDQ7ctid7LosDOYpfLGHLTrMhzxj2aeZkx+iihBZigq/MBZ/HqqvD2Gw3Gvm6rGjyvlK3LWa8utj/YEQ==
+"@bubbles-ui/components@^1.0.39":
+  version "1.0.39"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.0.39.tgz#64cf0a5e2a98812561780af8e2d46d4f5b581885"
+  integrity sha512-gr6NuNDVuwnkAgmx5+STCiwnXMgAKqTr5jcyhwPQDP431Zs+caqJz4y1Ovwwo+3B9tsZ9XV//kb2juE/ifb2oQ==
   dependencies:
     "@bubbles-ui/icons" "^1.0.26"
     "@heroicons/react" "^1.0.5"

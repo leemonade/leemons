@@ -60,7 +60,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.scoresMenu,
-        actionNames: ['view', 'admin'],
+        actionNames: ['view'],
       },
     ],
   },
@@ -114,7 +114,7 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.scores,
-        actionNames: ['view', 'admin'],
+        actionNames: ['view'],
       },
     ],
   },
