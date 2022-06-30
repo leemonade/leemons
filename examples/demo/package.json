@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "start": "leemons start",
-    "front": "yarn workspace leemons-react dev $(pwd)",
-    "front:build": "yarn workspace leemons-react clear && NODE_ENV=production yarn workspace leemons-react dev $(pwd)",
     "dev": "leemons dev",
-    "leemons": "leemons"
+    "leemons": "leemons",
+    "front": "yarn workspace leemons-react build $(pwd) && yarn workspace leemons-react serve",
+    "front:serve": "yarn workspace leemons-react serve",
+    "front:dev": "yarn workspace leemons-react dev $(pwd)",
+    "front:build": "yarn workspace leemons-react build $(pwd)"
   },
   "leemons": {},
   "dependencies": {
