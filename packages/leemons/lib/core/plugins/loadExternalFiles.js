@@ -50,7 +50,11 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       });
 
       // Save the plugin env
-      pluginsEnv.set(plugin.dir.app, env);
+      pluginsEnv.set(plugin.dir.app, {
+        HOST: process.env.HOST || process.env.host || 'localhost',
+        PORT: process.env.PORT || process.env.port,
+        env,
+      });
 
       return {
         source: plugin.source,
