@@ -39,6 +39,7 @@
     "leemons-plugin-users": "0.0.1-beta.0",
     "leemons-plugin-widgets": "0.0.1-beta.0",
     "leemons-provider-emails-amazon-ses": "0.0.1-beta.0",
+    "leemons-provider-emails-smtp": "0.0.1-beta.0",
     "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
     "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
     "leemons-provider-leebrary-tasks": "0.0.1-beta.0",

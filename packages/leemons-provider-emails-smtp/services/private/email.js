@@ -5,7 +5,7 @@ const inlineBase64 = require('nodemailer-plugin-inline-base64');
 let _transporters = null;
 
 const table = {
-  config: leemons.query('providers_emails-amazon-ses::config'),
+  config: leemons.query('providers_emails-smtp::config'),
 };
 
 class Email {
@@ -14,7 +14,6 @@ class Email {
   }
 
   static async getTransporters() {
-    return [];
     if (!_transporters) {
       const configs = await table.config.find();
       if (!configs.length) return null;
@@ -24,14 +23,14 @@ class Email {
   }
 
   static getTransporterByConfig(config) {
-    const ses = new global.utils.aws.SES({
-      apiVersion: '2010-12-01',
-      region: config.region,
-      accessKeyId: config.accessKey,
-      secretAccessKey: config.secretAccessKey,
-    });
     const transporter = global.utils.nodemailer.createTransport({
-      SES: { ses, aws: global.utils.aws },
+      host: config.host,
+      port: parseInt(config.port, 10),
+      secure: !!config.secure,
+      auth: {
+        user: config.user,
+        pass: config.pass,
+      },
     });
     transporter.use('compile', htmlToText());
     transporter.use('compile', inlineBase64());
