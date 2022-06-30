@@ -14,7 +14,6 @@ class Email {
   }
 
   static async getTransporters() {
-    return [];
     if (!_transporters) {
       const configs = await table.config.find();
       if (!configs.length) return null;
