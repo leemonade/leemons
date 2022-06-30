@@ -1,12 +1,6 @@
+MIT License
+
 Copyright (c) 2021-present Leemons
-
-Portions of the Leemons software are licensed as follows:
-
-* All software that resides under an "ee/" directory (the “EE Software”), if that directory exists, is licensed under the license defined in "ee/LICENSE".
-
-* All software outside of the above-mentioned directories or restrictions above is available under the "MIT Expat" license as set forth below.
-
-MIT Expat License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
