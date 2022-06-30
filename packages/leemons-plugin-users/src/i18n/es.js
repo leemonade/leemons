@@ -254,6 +254,8 @@ module.exports = {
     saveSuccess: 'Datos guardados con éxito',
   },
   detailUser: {
+    imageUpdated: 'Imagen actualizada',
+    changeAvatar: 'Cambiar avatar',
     selectCenter: 'Seleccionar un centro',
     selectProfile: 'Seleccionar un perfil',
     noResults: 'No hay resultados con los criterios indicados',

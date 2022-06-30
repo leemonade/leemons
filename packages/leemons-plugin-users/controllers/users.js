@@ -421,6 +421,36 @@ async function updateUser(ctx) {
   }
 }
 
+async function updateUserAvatar(ctx) {
+  const allowedPermissions = {
+    'plugins.users.users': {
+      actions: ['update', 'admin'],
+    },
+  };
+  let hasPermission = ctx.params.id === ctx.state.userSession.id;
+
+  if (!hasPermission) {
+    hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
+  }
+
+  if (hasPermission) {
+    const data = await usersService.updateAvatar(ctx.params.id, ctx.request.files.image);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    const rAllowedPermissions = [];
+    _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+      rAllowedPermissions.push({ permissionName, actions });
+    });
+    ctx.status = 401;
+    ctx.body = {
+      status: 401,
+      message: 'You do not have permissions',
+      allowedPermissions: rAllowedPermissions,
+    };
+  }
+}
+
 async function updateUserAgent(ctx) {
   const allowedPermissions = {
     'plugins.users.users': {
@@ -482,6 +512,7 @@ module.exports = {
   getRememberLogin,
   removeRememberLogin,
   centerProfileToken,
+  updateUserAvatar,
   canRegisterPassword,
   getDataForUserAgentDatasets,
   saveDataForUserAgentDatasets,

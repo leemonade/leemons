@@ -11,6 +11,7 @@ import SocketIoService from '@socket-io/service';
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
+  const [avatar, setAvatar] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
@@ -25,6 +26,10 @@ export default function MainMenu({ subNavWidth, ...props }) {
   SocketIoService.useOn('USER_CHANGE_LOCALE', () => {
     forceReload.current = true;
     reloadMenu();
+  });
+
+  SocketIoService.useOn('USER_CHANGE_AVATAR', () => {
+    setAvatar(`${session.avatar}?${Date.now()}`);
   });
 
   useEffect(() => {
@@ -83,6 +88,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         ...(session.isSuperAdmin
           ? { name: '', surnames: '' }
           : { name: session.name, surnames: session.surnames }),
+        avatar: avatar || session.avatar,
       }}
       sessionMenu={{
         id: 'menu-0',

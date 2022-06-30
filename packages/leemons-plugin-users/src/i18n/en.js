@@ -254,6 +254,8 @@ module.exports = {
     saveSuccess: 'Data saved successfully',
   },
   detailUser: {
+    imageUpdated: 'Image updated',
+    changeAvatar: 'Change avatar',
     selectCenter: 'Select center',
     selectProfile: 'Select profile',
     noResults: 'No results',

@@ -4,7 +4,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
-import { Box, PageContainer, Stack, Text } from '@bubbles-ui/components';
+import { Box, PageContainer, Stack } from '@bubbles-ui/components';
 import {
   ADD_CURRICULUM_FORM_ERROR_MESSAGES,
   ADD_CURRICULUM_FORM_MESSAGES,
@@ -109,7 +109,7 @@ function AddCurriculum() {
   const headerValues = useMemo(
     () => ({
       title: t('newCurriculum'),
-      description: t('description1'),
+      description: t('description2'),
     }),
     [t]
   );
@@ -120,9 +120,10 @@ function AddCurriculum() {
 
       <Box style={{ flex: 1 }}>
         <PageContainer>
-          <Box mb={16}>
+          {/* <Box mb={16}>
             <Text role={'productive'}>{t('description2')}</Text>
-          </Box>
+          </Box> */}
+
           <AddCurriculumForm
             messages={messages}
             errorMessages={errorMessages}

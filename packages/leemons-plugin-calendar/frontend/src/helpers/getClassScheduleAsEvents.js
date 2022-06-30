@@ -98,10 +98,11 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
                 justifyContent: 'center',
                 backgroundColor: theme.colors.interactive03h,
                 margin: '-0.25rem',
-                textTransform: 'uppercase',
               })}
             >
-              <Text role="productive">{bbreak.name}</Text>
+              <Text role="productive" transform="uppercase">
+                {bbreak.name}
+              </Text>
             </Box>
           ),
           originalEvent: {
