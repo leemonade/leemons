@@ -48,9 +48,9 @@ module.exports = {
       new: 'New period',
     },
     teacherDrawer: {
-      title: 'Notebook',
+      title: 'Evaluation Notebook',
       description:
-        'Welcome to your notebook. As a teacher you can do custom searches or use the pre-defined periods created by your center for each program and course.',
+        'Welcome to your evaluation notebook. As a teacher you can do custom searches or use the pre-defined periods created by your center for each program and course.',
       new: 'Stablish period',
     },
     periodFormErrorMessages: {
@@ -84,9 +84,9 @@ module.exports = {
       export: 'Export grades to csv',
     },
     noClassSelected: {
-      title: 'Notebook',
+      title: 'Evaluation Notebook',
       description:
-        'The notebook is a place where you can evaluate the activities that are not graded and the activities that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
+        'The Evaluation Notebook is a place where you can evaluate the activities that are not graded and the activities that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
     },
     noResults: {
       title: 'No results',
