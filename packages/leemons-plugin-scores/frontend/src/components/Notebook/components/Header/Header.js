@@ -9,6 +9,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import { addErrorAlert } from '@layout/alert';
 
 const useStyles = createStyles((theme, { isOpened } = {}) => ({
   root: {
@@ -108,15 +109,15 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
           addAction('plugins.scores::downloaded-intercepted', () => {
             clearTimeout(timer);
           });
-          addAction('plugins.scores::downloaded', () => {
-            console.log('downloaded scores');
-          });
+          // addAction('plugins.scores::downloaded', () => {
+          //   console.log('downloaded scores');
+          // });
           addAction('plugins.scores::download-scores-error', ({ args: [e] }) => {
-            console.log('error downloading scores', e);
+            addErrorAlert(`Error downloading scores report ${e.message}`);
           });
-          addAction('plugins.scores::download-scores-cancelled', () => {
-            console.log('cancelled downloading scores');
-          });
+          // addAction('plugins.scores::download-scores-cancelled', () => {
+          //   console.log('cancelled downloading scores');
+          // });
 
           fireEvent('plugins.scores::download-scores', 'xlsx');
           timer = setTimeout(() => {
@@ -124,7 +125,7 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
           }, 1000);
         }}
       >
-        {labels.export} - EXCEL
+        {labels.export} excel
       </Button>
       <Button
         variant="outline"
@@ -136,15 +137,15 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
           addAction('plugins.scores::downloaded-intercepted', () => {
             clearTimeout(timer);
           });
-          addAction('plugins.scores::downloaded', () => {
-            console.log('downloaded scores');
-          });
+          // addAction('plugins.scores::downloaded', () => {
+          //   console.log('downloaded scores');
+          // });
           addAction('plugins.scores::download-scores-error', ({ args: [e] }) => {
-            console.log('error downloading scores', e);
+            addErrorAlert(`Error downloading scores report ${e.message}`);
           });
-          addAction('plugins.scores::download-scores-cancelled', () => {
-            console.log('cancelled downloading scores');
-          });
+          // addAction('plugins.scores::download-scores-cancelled', () => {
+          //   console.log('cancelled downloading scores');
+          // });
 
           fireEvent('plugins.scores::download-scores', 'csv');
           timer = setTimeout(() => {
@@ -152,7 +153,7 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
           }, 1000);
         }}
       >
-        {labels.export} - CSV
+        {labels.export} csv
       </Button>
     </Box>
   );

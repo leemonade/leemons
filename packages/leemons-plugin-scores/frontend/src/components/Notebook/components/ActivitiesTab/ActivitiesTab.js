@@ -31,6 +31,8 @@ import { CutStarIcon } from '@bubbles-ui/icons/solid';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 import generateExcel from '@scores/components/ExcelExport/excel';
 import getFile from '@scores/components/ExcelExport/excel/config/getFile';
+import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
+import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import noResults from '../../assets/noResults.png';
 
 const useStyles = createStyles((theme) => ({
@@ -422,6 +424,24 @@ export default function ActivitiesTab({ filters, labels }) {
   const [localFilters, setLocalFilters] = React.useState({});
   const { activitiesData, grades } = useTableData({ filters, localFilters });
 
+  const { data: programData } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
+  const { data: subjectData } = useSubjectDetails(filters.subject, { enabled: !!filters.subject });
+
+  const [, translations] = useTranslateLoader(prefixPN('excel'));
+
+  const excelLabels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('excel'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
       fireEvent('plugins.scores::downloaded-intercepted');
@@ -430,6 +450,15 @@ export default function ActivitiesTab({ filters, labels }) {
         const wb = generateExcel({
           headerShown: format === 'xlsx',
           tableData: { ...activitiesData, grades },
+
+          period: {
+            period: filters.period?.name || '-',
+            startDate: new Date(filters.startDate),
+            endDate: new Date(filters.endDate),
+            program: programData.name,
+            subject: subjectData.name,
+          },
+          labels: excelLabels,
         });
         getFile(wb, format);
       } catch (e) {

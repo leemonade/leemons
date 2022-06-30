@@ -81,7 +81,7 @@ module.exports = {
   },
   notebook: {
     header: {
-      export: 'Exportar notas a csv',
+      export: 'Exportar notas a',
     },
     noClassSelected: {
       title: 'Cuaderno de evaluación',
@@ -119,6 +119,29 @@ module.exports = {
             'Error actualizando la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
         },
       },
+    },
+  },
+  excel: {
+    period: {
+      period: 'Periodo',
+      startDate: 'Fecha de inicio',
+      endDate: 'Fecha de fin',
+      program: 'Programa',
+      subject: 'Asignatura',
+    },
+    table: {
+      type: 'Tipo',
+      evaluation: 'Evaluación',
+      activity: 'Actividad',
+      deadline: 'Fecha límite/cierre',
+      calificable: 'calificable',
+      noCalificable: 'no calificable',
+      avg: 'Promedio',
+      notSubmitted: 'No entregado',
+      group: 'Grupo',
+      surname: 'Apellido',
+      name: 'Nombre',
+      weight: 'Porcentaje',
     },
   },
 };
