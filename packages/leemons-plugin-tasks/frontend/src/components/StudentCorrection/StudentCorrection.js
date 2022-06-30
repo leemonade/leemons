@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import SubjectTabs from '../Correction/components/SubjectTabs';
 import studentCorrectionStyles from './StudentCorrection.style';
 import Submission from '../Correction/components/Submission';
@@ -21,7 +22,9 @@ import ContactTeacher from './components/ContactTeacher/ContactTeacher';
 function SubjectTab({ assignation, subject, labels, classes, evaluationSystem }) {
   const grade = assignation?.grades?.find(({ subject: s }) => s === subject);
 
-  if (!grade) {
+  const scale = evaluationSystem?.scales?.find(({ number }) => number === grade?.grade);
+
+  if (!scale) {
     return (
       <Box className={classes?.notCorrected}>
         <Text>{labels?.subjectNotCorrectedYet}</Text>
@@ -30,7 +33,14 @@ function SubjectTab({ assignation, subject, labels, classes, evaluationSystem })
   }
   return (
     <>
-      <ScoreFeedback calification={{ grade: grade?.grade, label: null, minimumGrade: 5 }}>
+      <ScoreFeedback
+        calification={{
+          grade: scale.number,
+          label: scale.letter,
+          showOnlyLabel: !!scale.letter,
+          minimumGrade: evaluationSystem.minScaleToPromote?.number,
+        }}
+      >
         <Box className={classes?.scoreFeedbackContent}>
           <Title order={4} color="secondary">
             Task
@@ -74,11 +84,13 @@ export default function StudentCorrection({ assignation }) {
     return {};
   }, [translations]);
 
+  const evaluationSystem = useProgramEvaluationSystem(assignation?.instance);
+
   return (
     <Box className={classes?.root}>
       <Submission assignation={assignation} labels={labels?.submission} />
       <SubjectTabs assignation={assignation} instance={assignation?.instance}>
-        <SubjectTab labels={labels} classes={classes} />
+        <SubjectTab labels={labels} classes={classes} evaluationSystem={evaluationSystem} />
       </SubjectTabs>
     </Box>
   );
