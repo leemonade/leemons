@@ -1,0 +1,11 @@
+{
+  "name": "leemons-plugin-curriculum",
+  "version": "0.0.1-beta.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "country-region-data": "^1.11.0",
+    "leemons-utils": "0.0.1-beta.0",
+    "lodash": "^4.17.21"
+  }
+}

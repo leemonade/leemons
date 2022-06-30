@@ -1,0 +1,32 @@
+
+Dependencias
+  (Hecho) Tiene que tener un tipo de condicion que es la media donde tiene que añadir multiples asignaturas y hay que evaluar la nota media que tiene el usuario sobre dichas asignaturas, si el usuario no esta cursando alguna de la asignaturas, contara como un 0
+  (Hecho) Tiene que existir una condicion nueva que sea si el usuario esta matriculado en la asignatura, esto lo sabemos por academic portfolio que tiene registrado al usuario dento de la asignatura
+
+Dato dpa = Nota media
+
+En las reglas no hay dpa
+
+Programa
+
+(Hecho) Los creditos se calculan por que una vez tengamos todas las notas del usuario para las asignaturas del programa, tenemos que ver cuales de ellas pasan la nota minima, esto sumara los creditos que lleva el usuario en el programa
+Sacar todas las asignaturas y solicitar al plugin records que me devuelva las notas del usuario para todas esas asginaturas
+Si el usuario no esta cursando alguna de las asignaturas, tenemos que saberlo para que todas aquellas condiciones donde se compruebe por asignatura den siempre false
+
+(Hecho) Si seleccionan por cursos, hay que coger toddos los cursos y para cada uno, sacar la suma de los creditos de las asignaturas que tiene debajo y hacer la comprobacion.
+
+Curso
+
+(Hecho) Cuando se selecciona where course, hay que hacer el mismo calculo que con programa pero solo para las asignaturas que esten por debajo de ese curso
+
+Subject type - Knowledge
+
+(Hecho) Si creditos por curso, hay que coger los cursos del programa que debajo tengan el subject type o el knowledge selccionado y ahora de cada uno de esos cursos, saca todas las asignaturas que tengan ambas cosas, calcula los creditos y haz la comprobacion
+
+
+
+
+
+(Hecho) Añadir para area y tipo, el dato con nombre credits_by_course_group lo que hace el usario es seleccionar multiples cursos y luego hay que comprobar que para el area o tipo de asynatura seleccionada, cpger todas las asignaturas que esten en dicho area/tipo y en los cursos selccionados, sumar todos los creditos y hacer la comprobacion
+
+(Hecho) Añadir condicion de on subject group (Grupo de asignaturas) donde se seleccionan multiples asignaturas y siempre se hace la media entre ellas y se comprueba la condicion

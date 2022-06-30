@@ -1,0 +1,66 @@
+{
+  "welcome": {
+    "title": "Leemons installation",
+    "description": "Please select a language for the installation process.",
+    "selectLanguage": "Select language",
+    "disclaimer": "The default languages for the platform can be configured during the installation process.",
+    "next": "Start installation",
+    "quote": {
+      "title": "Welcome to Leemons",
+      "description": "The powerful, flexible, and free Learning Experience Platform."
+    }
+  },
+  "signup": {
+    "title": "Admin Sign up",
+    "description": "Please enter your details to register as an administrator.",
+    "labels": {
+      "nextButton": "Next",
+      "email": "Email",
+      "password": "Password",
+      "repeatPassword": "Repeat password",
+      "lang": "Select your language"
+    },
+    "placeholders": {
+      "email": "Your email",
+      "password": "Your password",
+      "repeatPassword": "Repeat your password",
+      "lang": "Select language"
+    },
+    "errorMessages": {
+      "email": {
+        "invalidFormat": "Please enter a valid email address",
+        "required": "Please enter your email address"
+      },
+      "password": {
+        "notMatch": "Passwords do not match",
+        "required": "Please enter your password"
+      }
+    }
+  },
+  "setup": {
+    "title": "Leemons installation",
+    "common": {
+      "labels": {
+        "selectLanguage": "Select language",
+        "saveAndNextButton": "Save and continue",
+        "nextButton": "Continue"
+      }
+    },
+    "welcome": {
+      "label": "Welcome",
+      "title": "Platform setup",
+      "description": "This brief guide explain the main points of each mandatory step in order to setup the platform for a super-admin user like you."
+    },
+    "languages": {
+      "label": "Languages",
+      "title": "Languages",
+      "description": "Which languages will be used in your center(s)?",
+      "intro": "Please choose the languages to display on the platform. Currently the user interface supports English and Spanish.",
+      "collaborate": "If help is required to translate the UI into more languages, please follow our guidelines on",
+      "defaultLang": {
+        "title": "Default language",
+        "description": "Select the default language that will be used by the platform."
+      }
+    }
+  }
+}

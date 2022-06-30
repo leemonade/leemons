@@ -1,0 +1,13 @@
+{
+  "name": "leemons-plugin-users",
+  "version": "0.0.1-beta.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "leemons-utils": "0.0.1-beta.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "react-dnd": "^14.0.2",
+    "react-dnd-html5-backend": "^14.0.0"
+  }
+}

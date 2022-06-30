@@ -1,0 +1,26 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-idiomatic-order"
+  ],
+  "rules": {
+		"string-quotes": "double",
+		"declaration-block-no-duplicate-properties": true,
+		"selector-max-id": 1,
+		"selector-type-no-unknown": [true, {
+			"ignoreTypes": [":export"]
+		}],
+		"property-no-unknown": [true, {
+			"ignoreSelectors": [":export"]
+		}],
+    "at-rule-no-unknown": [true, {
+      "ignoreAtRules": [
+        "extends",
+        "apply",
+        "components",
+        "utilities",
+        "screen"
+      ]
+    }]
+	}
+}

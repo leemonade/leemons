@@ -1,0 +1,7 @@
+{
+  "name": "leemons-plugin-tests",
+  "version": "0.0.1-beta.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {}
+}

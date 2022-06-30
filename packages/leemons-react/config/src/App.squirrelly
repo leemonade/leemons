@@ -1,0 +1,74 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom';
+import loadable from '@loadable/component';
+import pMinDelay from 'p-min-delay';
+import { LoadingOverlay } from '@bubbles-ui/components';
+import "./global.css";
+
+// Plugins imports
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.routers.public) }}
+const {{ plugin.name | clear | capitalize }}Public = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Public'), 1000));
+{{ /if }}
+{{ @if(plugin.routers.private) }}
+const {{ plugin.name | clear | capitalize }}Private = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Private'), 1000));
+{{ /if }}
+{{ @if(plugin.hooks) }}
+import use{{ plugin.name | clear | capitalize }} from '@{{ plugin.name }}/../globalHooks';
+{{ /if }}
+{{ @if(plugin.globalContext) }}
+import { Provider as {{ plugin.name | clear | capitalize }}GlobalProvider } from '@{{ plugin.name }}/../globalContext';
+{{ /if }}
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
+import { Provider as {{ plugin.name | clear | capitalize }}LocalProvider } from '@{{ plugin.name }}/../localContext';
+{{ /if }}
+{{ /each }}
+
+function App() {
+  // Plugins hooks
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.hooks) }}
+  use{{ plugin.name | clear | capitalize }}();
+{{ /if }}
+{{ /each }}
+  return (
+    <Router>
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.globalContext) }}
+        <{{ plugin.name | clear | capitalize }}GlobalProvider>
+{{ /if }}
+{{ /each }}
+            <Switch>
+              {/* Define each plugin route */}
+{{ @each(it.plugins) => plugin }}
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
+              <{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
+{{ @if(plugin.routers.public) }}
+                <Route path="/{{ plugin.name }}">
+                  <{{ plugin.name | clear | capitalize }}Public fallback={<LoadingOverlay visible />} />
+                </Route>
+{{ /if }}
+{{ @if(plugin.routers.private) }}
+                <Route path="/private/{{ plugin.name }}">
+                  <{{ plugin.name | clear | capitalize }}Private fallback={<LoadingOverlay visible />} />
+                </Route>
+{{ /if }}
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private)) }}
+              </{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
+{{ /each }}
+              <Route path="/">
+                   <Redirect to={`/admin`} />
+              </Route>
+            </Switch>
+{{ @each(it.plugins.reverse()) => plugin }}
+{{ @if(plugin.globalContext) }}
+        </{{ plugin.name | clear | capitalize }}GlobalProvider>
+{{ /if }}
+{{ /each }}
+    </Router>
+  );
+}
+
+export default App;
