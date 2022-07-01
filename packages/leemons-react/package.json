@@ -5,7 +5,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config config/webpack.config.js",
+    "build": "yarn clear && NODE_ENV=production ts-node config/index.ts",
+    "serve": "serve -n -p 3000 -s ./build",
     "dev": "nodemon -w config config/index.ts -e ts,json,cjson,js,squirrelly",
     "clear": "rimraf build"
   },
@@ -58,6 +59,7 @@
     "react-refresh": "^0.10.0",
     "rimraf": "^3.0.2",
     "sass-loader": "^12.2.0",
+    "serve": "^13.0.2",
     "ts-node": "^10.4.0",
     "webpack": "^5.57.1",
     "webpack-bundle-analyzer": "^4.4.2",

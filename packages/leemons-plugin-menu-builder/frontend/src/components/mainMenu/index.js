@@ -57,16 +57,18 @@ export default function MainMenu({ subNavWidth, ...props }) {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      if (loadMenu) {
-        setIsLoading(true);
-        const menu = await getMenu('plugins.menu-builder.main', forceReload.current);
-        if (mounted) {
-          setMenuData(menu);
-          setIsLoading(false);
-          setLoadMenu(false);
-          forceReload.current = false;
+      try {
+        if (loadMenu) {
+          setIsLoading(true);
+          const menu = await getMenu('plugins.menu-builder.main', forceReload.current);
+          if (mounted) {
+            setMenuData(menu);
+            setIsLoading(false);
+            setLoadMenu(false);
+            forceReload.current = false;
+          }
         }
-      }
+      } catch (error) {}
     })();
     return () => {
       mounted = false;

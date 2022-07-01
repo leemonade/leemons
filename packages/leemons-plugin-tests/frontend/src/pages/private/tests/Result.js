@@ -394,8 +394,6 @@ export default function Result() {
     }
   });
 
-  console.log(scale);
-
   return (
     <ContextContainer
       sx={(theme) => ({
