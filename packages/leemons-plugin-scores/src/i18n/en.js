@@ -81,7 +81,7 @@ module.exports = {
   },
   notebook: {
     header: {
-      export: 'Export grades to csv',
+      export: 'Export grades to',
     },
     noClassSelected: {
       title: 'Evaluation Notebook',
@@ -117,6 +117,29 @@ module.exports = {
           updatedError: "Error updating {{student}}'s score in {{activity}} to {{score}}",
         },
       },
+    },
+  },
+  excel: {
+    period: {
+      period: 'Period',
+      startDate: 'Start date',
+      endDate: 'End date',
+      program: 'Program',
+      subject: 'Subject',
+    },
+    table: {
+      type: 'Type',
+      evaluation: 'Evaluation',
+      activity: 'Activity',
+      deadline: 'Deadline/Close date',
+      calificable: 'calificable',
+      noCalificable: 'non-calificable',
+      avg: 'Average',
+      notSubmitted: 'Not submitted',
+      group: 'Group',
+      surname: 'Surname',
+      name: 'Name',
+      weight: 'Percentage',
     },
   },
 };

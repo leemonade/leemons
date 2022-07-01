@@ -1,9 +1,9 @@
 {
   "name": "leemons-monorepo",
   "description": "The powerful, flexible, friendly Learning Experience Platform you’re waiting for",
-  "private": true,
   "version": "0.0.1-beta.0",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
+  "private": true,
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "eslint": "^7.32.0",

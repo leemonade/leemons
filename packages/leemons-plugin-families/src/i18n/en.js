@@ -2,13 +2,13 @@ module.exports = {
   config_page: {
     title: 'Families dataset',
     description1:
-      'This dataset will allow you to download a template set for a smooth loading of your family database.',
+      'This dataset will allow you the download of a template set for a smooth loading of your family database.',
     phone_description:
-      'The families Leemon has its own component to manage the emergency numbers of the students, activate it to have this functionality.',
-    phone_button: 'Activate Emergency Numbers Addon',
+      'The Leemon families has its own component to manage the emergency numbers of the students, and activate it to have this functionality.',
+    phone_button: 'Activate Emergency Numbers Add-on',
     important: 'Important:',
     important_remember:
-      'remember that you will not be able to upload your families until your user base is correctly loaded into the system.',
+      'Remember that it will not be possible to upload your families until your user base is correctly loaded into the system.',
     tabs: {
       basic: 'Basic',
       dataset: 'Custom dataset',
@@ -30,12 +30,12 @@ module.exports = {
       },
     },
     phone_modal: {
-      title: 'Activate Addon',
-      message1: 'You are going to activate the Family Emergency Number Addon.',
+      title: 'Activate Add-on',
+      message1: 'You are going to activate the Family Emergency Number Add-on.',
       message2:
-        '<b>Important:</b> Once  Addon has been activated, it can only be deactivated again if its dataset has no fields and no data has been loaded into the emergency numbers DB.',
-      cancel: 'No, return without activate',
-      action: 'Yes, activate Addon',
+        '<b>Important:</b> Once  Add-on has been activated, it can only be deactivated again if its dataset has no fields and no data has been loaded into the emergency numbers Dataase.',
+      cancel: 'No, return without activating',
+      action: 'Yes, activate Add-on',
       installing: 'Installing add-on',
       installed: 'Add-on installed',
     },
@@ -78,13 +78,13 @@ module.exports = {
     search_by_name: 'User name/surname',
     search_by_email: 'Email',
     enter_name: 'Enter a name or surname',
-    enter_email: 'Enter a email',
+    enter_email: 'Enter an email',
     add: 'Add',
     guardian_relation: 'Relation',
     specify_relation: 'Specify relationship',
     deleted_done: 'Family removed',
     no_users_to_add:
-      'We have not found any user associated with this data, please try repeating the search by using another info.',
+      'We have not found any user associated with this data, please try repeating the search by using other information.',
     relations: {
       select_one: 'Select one...',
       father: 'Father',

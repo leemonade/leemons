@@ -28,6 +28,11 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { CutStarIcon } from '@bubbles-ui/icons/solid';
+import { addAction, fireEvent, removeAction } from 'leemons-hooks';
+import generateExcel from '@scores/components/ExcelExport/excel';
+import getFile from '@scores/components/ExcelExport/excel/config/getFile';
+import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
+import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import noResults from '../../assets/noResults.png';
 
 const useStyles = createStyles((theme) => ({
@@ -418,6 +423,53 @@ export default function ActivitiesTab({ filters, labels }) {
   const { classes } = useStyles();
   const [localFilters, setLocalFilters] = React.useState({});
   const { activitiesData, grades } = useTableData({ filters, localFilters });
+
+  const { data: programData } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
+  const { data: subjectData } = useSubjectDetails(filters.subject, { enabled: !!filters.subject });
+
+  const [, translations] = useTranslateLoader(prefixPN('excel'));
+
+  const excelLabels = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      const data = _.get(res, prefixPN('excel'));
+
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return data;
+    }
+
+    return {};
+  }, [translations]);
+
+  React.useEffect(() => {
+    const onDownload = ({ args: [format] }) => {
+      fireEvent('plugins.scores::downloaded-intercepted');
+
+      try {
+        const wb = generateExcel({
+          headerShown: format === 'xlsx',
+          tableData: { ...activitiesData, grades },
+
+          period: {
+            period: filters.period?.name || '-',
+            startDate: new Date(filters.startDate),
+            endDate: new Date(filters.endDate),
+            program: programData.name,
+            subject: subjectData.name,
+          },
+          labels: excelLabels,
+        });
+        getFile(wb, format);
+      } catch (e) {
+        fireEvent('plugins.scores::download-scores-error', e);
+      }
+      fireEvent('plugins.scores::downloaded');
+    };
+
+    addAction('plugins.scores::download-scores', onDownload);
+    return () => removeAction('plugins.scores::download-scores', onDownload);
+  }, [activitiesData, grades]);
 
   const handleOpen = ({ rowId, columnId }) => {
     const activity = activitiesData?.activities?.find((a) => a.id === columnId)?.activity;

@@ -6,14 +6,14 @@ module.exports = {
     page_title: 'Curriculum Library',
     published: 'Published',
     draft: 'Draft',
-    page_description: 'These are the curricula of the programmes you deliver.',
+    page_description: 'These are the curricula of the programmes this center delivers.',
   },
   addCurriculum: {
     noPrograms: 'All programs for this center used',
     newCurriculum: 'New curriculum',
     description1:
-      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
-    description2: 'Start by choosing the program to create the structure of your curriculum',
+      'Start by defining the structure of the curricular content, later it can be completed by creating the specific content for each section',
+    description2: 'Start by choosing the program to create the structure of the curriculum',
     nameLabel: 'Name',
     namePlaceholder: 'Enter name...',
     countryLabel: 'Country',
@@ -44,9 +44,9 @@ module.exports = {
   },
   addCurriculumStep1: {
     description1:
-      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content for each section',
+      'Start by defining the structure of the curricular content, later it can be completed by creating the specific content for each section',
     description2:
-      'It is possible that not all branches of your programs have curriculum content. Select here which levels of your portfolio you will use to manage the curriculum content. (subject level is mandatory)',
+      'It is possible that not all branches of the programs have curriculum content. Select here which levels of the portfolio will be used to manage the curriculum content. (subject level is mandatory)',
     saveButtonLabel: 'Continue',
     program: 'Program',
     courses: 'Course',
@@ -56,23 +56,23 @@ module.exports = {
     subject: 'Subject',
     alertTitle: 'Important:',
     alertDescription:
-      'In order to link the Curriculum with evaluable or gradable activities, <strong>it is necessary to have a subject level</strong> and to nest within it the contents, evaluation criteria or learning standards.<br/> <strong>If the selected program is a single subject</strong>, these items can be nested directly under this level.',
+      'In order to link the Curriculum with assessable or gradable activities, <strong>it is necessary to have a subject level</strong> and to nest within it the contents, evaluation criteria or learning standards.<br/> <strong>If the selected program is a single subject</strong>, these items can be nested directly under this level.',
   },
   addCurriculumStep2: {
     description1:
-      'Now you can add additional branches to the tree and by clicking on the edit icon, add new types of blocks (curricular contents, evaluation criteria, learning standards, objectives...).',
+      'Now additional branches can be added to the tree and by clicking on the edit icon, and adding new types of blocks (curricular contents, evaluation criteria, learning standards, objectives...).',
     description2:
-      'In the next step you can fill in these blocks for each subject or level of the selected tree.',
+      'In the next step these blocks can be filled in for each subject or level of the selected tree.',
     continueButtonLabel: 'Continue',
     addBranchButtonLabel: 'Add branch',
-    title: 'Branch config',
+    title: 'Branch configuration',
     nameLabel: 'New Branch Name',
     namePlaceholder: 'Branch name...',
     orderedLabel: 'Ordered:',
     orderedPlaceholder: 'Select...',
     orderedNothingFound: 'No data',
     evaluationCriteriaLabel: 'This block contains evaluation criteria',
-    saveButtonLabel: 'Save config',
+    saveButtonLabel: 'Save configuration',
     nameRequired: 'Field required',
     orderedRequired: 'Field required',
     blockNameRequired: 'Field required',
@@ -101,7 +101,7 @@ module.exports = {
     blockTypeOptions: {
       field: 'Field',
       code: 'Code',
-      textarea: 'Textarea',
+      textarea: 'Text area',
       list: 'List',
       group: 'Group',
     },
@@ -120,7 +120,7 @@ module.exports = {
     blockOrderedPlaceholder: 'Select...',
     groupTypeOfContentLabel: 'Type of Content',
     groupTypeOfContentPLaceholder: 'Select...',
-    groupContentConfigLabel: 'Content config',
+    groupContentConfigLabel: 'Content configuration',
     groupAddColumnButtonLabel: 'Add Column',
     fieldLimitCharactersLabel: 'Limited characters',
     fieldMinLabel: 'Min',
@@ -143,14 +143,14 @@ module.exports = {
     groupColumnTypeLabel: 'Type',
     groupColumnTypePlaceholder: 'Select...',
     groupShowAs: 'Show as',
-    groupSaveConfig: 'Save config',
+    groupSaveConfig: 'Save configuration',
     groupAddElement: 'Add element',
     blockCancelConfigButtonLabel: 'Cancel',
   },
   addCurriculumStep3: {
     addNode: 'Add {name}',
     description1:
-      'Now you can add content to each block typology, remember that the contents of the block marked with a star can be linked to evaluable or gradable activities and travel to the final grading system.',
+      'Now content can be added to each block typology, remember that the contents of the block marked with a star can be linked to asessable or gradable activities and travel to the final grading system.',
     publish: 'Publish curriculum',
     back: 'Back',
     published: 'Curriculum published',
@@ -162,7 +162,7 @@ module.exports = {
       saveButtonLabel: 'Save',
       nameRequired: 'Field required',
       noSubjectsFound:
-        'All available subjects are currently added to the curriculum, if you wish to create new subjects, you must do so in the Academic Portfolio section and then add them here to complete your curriculum.',
+        'All available subjects are currently added to the curriculum, if the creation of new subjects is desired, it must be done in the Academic Portfolio section and then they must be added here to complete the curriculum.',
     },
   },
   selectContentModal: {
