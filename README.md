@@ -1,7 +1,7 @@
 # Leemons
 
 [![GitHub contributors](https://img.shields.io/github/contributors/leemonade/leemons)](https://github.com/leemonade/leemons/graphs/contributors)
-[![CircleCI build](https://img.shields.io/circleci/build/github/leemonade/leemons/main)](https://github.com/leemonade/leemons/.circleci/config.yml)
+[![CircleCI build](https://img.shields.io/circleci/build/github/leemonade/leemons/main)](https://app.circleci.com/pipelines/github/leemonade/leemons)
 
 The powerful flexible friendly Learning Experience Platform you’re waiting for.
 
