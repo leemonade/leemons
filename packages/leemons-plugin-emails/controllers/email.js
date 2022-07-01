@@ -13,7 +13,8 @@ const validateProviderConfigObj = {
 };
 
 async function providers(ctx) {
-  ctx.body = { providers: emailService.providers() };
+  const providers = await emailService.providers();
+  ctx.body = { providers };
 }
 
 async function sendTest(ctx) {
@@ -27,10 +28,10 @@ async function sendTest(ctx) {
   }
 }
 
-async function addProvider(ctx) {
+async function saveProvider(ctx) {
   const validator = new global.utils.LeemonsValidator(validateProviderConfigObj);
   if (validator.validate(ctx.request.body)) {
-    await emailService.addProvider(ctx.request.body);
+    await emailService.saveProvider(ctx.request.body);
     ctx.status = 200;
     ctx.body = { status: 200 };
   } else {
@@ -39,7 +40,7 @@ async function addProvider(ctx) {
 }
 
 module.exports = {
-  addProvider,
+  saveProvider,
   providers,
   sendTest,
 };

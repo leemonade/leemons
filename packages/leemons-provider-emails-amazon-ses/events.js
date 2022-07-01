@@ -1,7 +1,7 @@
 const { addLocales } = require('./src/services/locales/addLocales');
 
 async function events() {
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+  leemons.events.once('leemons:appDidStart', async () => {
     await addLocales(['es', 'en']);
   });
 

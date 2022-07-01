@@ -85,11 +85,17 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
     onNext();
   }
 
+  function onChange(items) {
+    store.activeProvider.providers = items;
+  }
+
   React.useEffect(() => {
     load();
   }, []);
 
-  const Provider = store.activeProvider ? dynamicImport(store.activeProvider) : () => null;
+  const Provider = store.activeProvider
+    ? dynamicImport(store.activeProvider.providerName)
+    : () => null;
 
   return (
     <Box>
@@ -106,15 +112,15 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
                     key={provider.providerName}
                     className={cx(
                       styles.providerButton,
-                      store.activeProvider === provider.providerName
+                      store.activeProvider?.providerName === provider.providerName
                         ? styles.providerButtonActive
                         : null
                     )}
                     onClick={() => {
-                      if (store.activeProvider === provider.providerName) {
+                      if (store.activeProvider?.providerName === provider.providerName) {
                         store.activeProvider = null;
                       } else {
-                        store.activeProvider = provider.providerName;
+                        store.activeProvider = provider;
                       }
                       render();
                     }}
@@ -132,7 +138,7 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
                   {t('mails.github')}
                 </Button>
               </Box>
-              <Provider />
+              <Provider {...(store.activeProvider || {})} onChange={onChange} />
             </>
           ) : (
             <Alert severity="error" closeable={false}>

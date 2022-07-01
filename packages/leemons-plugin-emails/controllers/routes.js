@@ -1,3 +1,4 @@
+// TODO Añadir permisos
 module.exports = [
   {
     path: '/providers',
@@ -10,8 +11,8 @@ module.exports = [
     handler: 'email.sendTest',
   },
   {
-    path: '/add-provider',
+    path: '/save-provider',
     method: 'POST',
-    handler: 'email.addProvider',
+    handler: 'email.saveProvider',
   },
 ];

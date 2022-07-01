@@ -3,7 +3,8 @@ const data = require('../config/data');
 
 module.exports = {
   data,
-  addConfig: email.addConfig,
+  saveConfig: email.saveConfig,
+  getProviders: email.getProviders,
   getTransporters: email.getTransporters,
   getTransporterByConfig: email.getTransporterByConfig,
 };
