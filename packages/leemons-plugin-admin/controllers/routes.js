@@ -54,4 +54,11 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.setup, ['admin']),
   },
+  {
+    path: '/mail/providers',
+    method: 'GET',
+    handler: 'mail.getProviders',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.setup, ['admin']),
+  },
 ];

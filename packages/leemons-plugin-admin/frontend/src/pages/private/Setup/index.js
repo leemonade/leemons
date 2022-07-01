@@ -6,6 +6,7 @@ import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
+import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
 import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
@@ -18,7 +19,7 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 0,
+    currentStep: 1,
     headerHeight: null,
     steps: 3,
   });
@@ -67,6 +68,7 @@ function Setup({ session }) {
             stickyAt={store.headerHeight}
             data={[
               { label: t('welcome.label'), status: 'OK' },
+              { label: t('mails.label'), status: 'OK' },
               { label: t('languages.label'), status: 'OK' },
               { label: 'Step 2', status: 'OK' },
             ]}
@@ -78,8 +80,13 @@ function Setup({ session }) {
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.nextButton')}
                 />,
-                <Locales
+                <MailProviders
                   key="s2"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Locales
+                  key="s3"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,

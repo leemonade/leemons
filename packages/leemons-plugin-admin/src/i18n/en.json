@@ -51,6 +51,14 @@
       "title": "Platform setup",
       "description": "This brief guide explain the main points of each mandatory step in order to setup the platform for a super-admin user like you."
     },
+    "mails": {
+      "label": "Mail providers",
+      "title": "Mail providers and accounts",
+      "description": "Configure your providers and email accounts for the management of platform notifications, you can setup as many accounts as you want and later assign them to your different centers.",
+      "chooseProvider": "Choose a provider",
+      "noProviders": "No providers found, please install one.",
+      "github": "Do you want to create a new provider’s addon?, visit our Github"
+    },
     "languages": {
       "label": "Languages",
       "title": "Languages",

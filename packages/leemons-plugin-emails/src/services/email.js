@@ -42,12 +42,12 @@ class Email {
    * */
   static providers() {
     const providers = [];
-    let newValue;
     _.forIn(leemons.listProviders(), (value, key) => {
-      newValue = value;
-      if (newValue.config && newValue.config.data) {
-        newValue.config.data.providerName = key;
-        providers.push(newValue.config.data);
+      if (value.services?.email?.data) {
+        providers.push({
+          ...value.services.email.data,
+          providerName: value.name,
+        });
       }
     });
     return providers;

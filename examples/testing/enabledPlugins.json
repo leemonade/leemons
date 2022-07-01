@@ -102,5 +102,13 @@
   {
     "name": "academic-calendar",
     "path": "../../packages/leemons-plugin-academic-calendar/frontend"
+  },
+  {
+    "name": "emails-amazon-ses",
+    "path": "../../packages/leemons-provider-emails-amazon-ses/frontend"
+  },
+  {
+    "name": "emails-smtp",
+    "path": "../../packages/leemons-provider-emails-smtp/frontend"
   }
 ]

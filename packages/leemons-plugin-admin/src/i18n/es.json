@@ -51,6 +51,14 @@
       "title": "Configuración de la plataforma",
       "description": "Esta breve guía explica los puntos principales de cada paso obligatorio para configurar la plataforma para un usuario super-admin como tú."
     },
+    "mails": {
+      "label": "Proveedores de correo",
+      "title": "Proveedores y cuentas de correo",
+      "description": "Configura tus proveedores y cuentas de correo para la gestión de las notificaciones de la plataforma, puedes configurar tantas cuentas como quieras y posteriormente asignarlas a tus diferentes centros.",
+      "chooseProvider": "Selecciona un proveedor",
+      "noProviders": "No hay proveedores disponibles, por favor, instala uno.",
+      "github": "Si quieres crear un nuevo complemento de proveedor, visita nuestro Github"
+    },
     "languages": {
       "label": "Idiomas",
       "title": "Idiomas",

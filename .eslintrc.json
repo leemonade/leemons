@@ -42,6 +42,8 @@
           "@dashboard",
           "@dataset",
           "@emails",
+          "@emails-amazon-ses",
+          "@emails-smtp",
           "@grades",
           "@layout",
           "@leebrary",

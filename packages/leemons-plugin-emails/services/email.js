@@ -5,6 +5,7 @@ module.exports = {
   send: email.send,
   types: email.types,
   delete: email.delete,
+  providers: email.providers,
   deleteAll: email.deleteAll,
   addProvider: email.addProvider,
   addIfNotExist: email.addIfNotExist,
