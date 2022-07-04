@@ -1,6 +1,7 @@
 # Leemons
 
 [![GitHub contributors](https://img.shields.io/github/contributors/leemonade/leemons)](https://github.com/leemonade/leemons/graphs/contributors)
+[![CircleCI build](https://img.shields.io/circleci/build/github/leemonade/leemons/main)](https://app.circleci.com/pipelines/github/leemonade/leemons)
 
 The powerful flexible friendly Learning Experience Platform you’re waiting for.
 
@@ -8,7 +9,7 @@ The powerful flexible friendly Learning Experience Platform you’re waiting for
 - **Self-hosted**. You can host and scale Leemons the way you want. You can choose any hosting platform you want: AWS, Render, Netlify, Heroku, a VPS, or a dedicated server. You can scale as you grow, 100% independent.
 - **Customizable**. You can quickly build your logic by fully customizing plugins to fit your needs perfectly.
 
-## 🖐 Installation
+## 🚀 Installation
 
 Complete installation and requirements can be found in the documentation under [Installation](https://leemonade.github.io/leemons-docs/getting-started/installation)
 

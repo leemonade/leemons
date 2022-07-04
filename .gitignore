@@ -127,6 +127,8 @@ dist
 
 .tern-port
 
+.idea
+
 .DS_STORE
 
 # Editor
@@ -137,3 +139,4 @@ dist
 # Leemons
 packages/leemons-react/build
 data.xlsx
+
