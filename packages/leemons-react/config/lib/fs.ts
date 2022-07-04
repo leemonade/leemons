@@ -175,22 +175,17 @@ export async function createJsConfig(plugins: any[] = []): Promise<void> {
   try {
     rawConfig = fs.readFileSync(path.resolve(__dirname, `../../../../${fileName}`), 'utf8');
   } catch (e) {
-    rawConfig = JSON.stringify(`{
-      "compilerOptions": {
-        "module": "CommonJS",
-        "moduleResolution": "Node",
-        "target": "ES2020",
-        "jsx": "preserve",
-        "baseUrl": "."
+    rawConfig = JSON.stringify({
+      compilerOptions: {
+        module: 'CommonJS',
+        moduleResolution: 'Node',
+        target: 'ES2020',
+        jsx: 'preserve',
+        baseUrl: '.',
       },
-      "exclude": [
-        "node_modules",
-        "**/node_modules/*"
-      ],
-      "include": [
-        "./packages/**/*"
-      ]
-    }`);
+      exclude: ['node_modules', '**/node_modules/*'],
+      include: ['./packages/**/*'],
+    });
   }
 
   const config = JSON.parse(rawConfig);
@@ -225,35 +220,39 @@ export async function createEsLint(plugins: any[] = []): Promise<void> {
   try {
     rawConfig = fs.readFileSync(path.resolve(__dirname, `../../../../${fileName}`), 'utf8');
   } catch (e) {
-    rawConfig = JSON.stringify(`{
-      "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true,
-        "jest": true
+    rawConfig = JSON.stringify({
+      env: {
+        browser: true,
+        es2021: true,
+        node: true,
+        jest: true,
       },
-      "globals": { "leemons": true },
-      "extends": ["plugin:react/recommended", "airbnb-base", "prettier"],
-      "parser": "babel-eslint",
-      "parserOptions": {
-        "ecmaFeatures": { "jsx": true },
-        "ecmaVersion": 12,
-        "sourceType": "module"
+      globals: { leemons: true },
+      extends: ['plugin:react/recommended', 'airbnb-base', 'prettier'],
+      parser: 'babel-eslint',
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+        ecmaVersion: 12,
+        sourceType: 'module',
       },
-      "plugins": ["react", "import", "prettier"],
-      "rules": {
-        "no-plusplus": "off",
-        "import/no-dynamic-requires": "off",
-        "import/no-extraneous-dependencies": "off",
-        "react/react-in-jsx-scope": "off",
-        "no-underscore-dangle": "off",
-        "prettier/prettier": [ 2, {}, { "usePrettierrc": true } ],
-        "import/no-names-as-default": "off"
-      }
-    }`);
+      plugins: ['react', 'import', 'prettier'],
+      rules: {
+        'no-plusplus': 'off',
+        'import/no-dynamic-requires': 'off',
+        'import/no-extraneous-dependencies': 'off',
+        'react/react-in-jsx-scope': 'off',
+        'no-underscore-dangle': 'off',
+        'prettier/prettier': [2, {}, { usePrettierrc: true }],
+        'import/no-names-as-default': 'off',
+      },
+    });
   }
 
   const config = JSON.parse(rawConfig);
+
+  if (!config.rules) {
+    config.rules = {};
+  }
 
   config.rules['import/no-unresolved'] = [
     2,
