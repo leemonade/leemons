@@ -138,7 +138,7 @@ async function importTasks({ users, centers, programs, assets }) {
       instructionsForStudents: !isEmpty(task.instructions_for_students)
         ? converter.makeHtml(task.instructions_for_students)
         : null,
-      // resources: task.resources,
+      resources: task.resources,
     };
   });
 
