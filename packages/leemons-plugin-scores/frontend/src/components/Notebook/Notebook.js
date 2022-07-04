@@ -3,9 +3,9 @@ import {
   Box,
   createStyles,
   ImageLoader,
+  Paragraph,
   TabPanel,
   Tabs,
-  Text,
   Title,
 } from '@bubbles-ui/components';
 import _, { isEmpty } from 'lodash';
@@ -71,7 +71,7 @@ function EmptyState() {
         />
         <Box sx={{ maxWidth: '25%' }}>
           <Title>{labels.title}</Title>
-          <Text>{labels.description}</Text>
+          <Paragraph>{labels.description}</Paragraph>
         </Box>
       </Box>
     </Box>
