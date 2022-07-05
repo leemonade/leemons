@@ -31,7 +31,9 @@ services:
       - mysql
       - leemons-front
     working_dir: /monorepo/app
-    command: sh ../retry.sh yarn start
+    command: sh ../retry.sh FRONT_SERVER=http://leemons-front:3000 yarn start
+    ports:
+      - 8080:8080
 
   leemons-front:
     image: node:16
