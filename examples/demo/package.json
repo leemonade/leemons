@@ -6,14 +6,16 @@
     "start": "leemons start",
     "dev": "leemons dev",
     "leemons": "leemons",
-    "front": "yarn workspace leemons-react build $(pwd) && yarn workspace leemons-react serve",
-    "front:serve": "yarn workspace leemons-react serve",
-    "front:dev": "yarn workspace leemons-react dev $(pwd)",
-    "front:build": "yarn workspace leemons-react build $(pwd)"
+    "leemonsFront": "leemonsFront",
+    "front": "leemonsFront build && leemonsFront preview",
+    "front:preview": "leemonsFront preview",
+    "front:dev": "leemonsFront dev -m ../..",
+    "front:build": "leemonsFront build"
   },
   "leemons": {},
   "dependencies": {
     "leemons": "0.0.1-beta.0",
+    "leemons-react": "0.0.1-beta.0",
     "leemons-connector-bookshelf": "0.0.1-beta.0",
     "leemons-plugin-academic-portfolio": "0.0.1-beta.0",
     "leemons-plugin-academic-calendar": "0.0.1-beta.0",

@@ -11,7 +11,7 @@
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
     "react-hook-form": "^7.27.1",
-    "react-router-dom": "^6.2.1"
+    "react-router-dom": "^5"
   },
   "devDependencies": {}
 }
