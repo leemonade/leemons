@@ -83,8 +83,10 @@ services:
     environment:
       MYSQL_DATABASE: leemons
       MYSQL_USER: leemons
-      MYSQL_ROOT_PASSWORD: leemons
       MYSQL_PASSWORD: leemons
+      MYSQL_ROOT_PASSWORD: leemons
+    cap_add:
+      - SYS_NICE
     expose:
       - 3306
     ports:
