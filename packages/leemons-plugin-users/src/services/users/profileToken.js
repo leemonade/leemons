@@ -87,7 +87,7 @@ async function profileToken(user, profile, { transacting } = {}) {
     profiles: _.map(profiles, (item, index) => ({
       ...item,
       token: profilesTokens[index],
-      userAgentId: userAgentsByRole[item.role].id,
+      userAgentId: userAgentsByRole[item.role]?.id,
     })),
   };
 }

@@ -618,7 +618,7 @@ async function validateInternalIdHaveGoodFormat(program, internalId, { transacti
   if (internalId.length !== subjectDigits)
     throw new Error('internalId does not have the required number of digits');
   // ES: Comprobamos si son numeros
-  if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
+  // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
 }
 
 const addSubjectSchema = {
