@@ -347,10 +347,14 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
   }
+  try {
+    const { path, contentType } = await download(url, true);
 
-  const { path, contentType } = await download(url, true);
-
-  return upload({ path, type: contentType }, { name }, { userSession, transacting });
+    return upload({ path, type: contentType }, { name }, { userSession, transacting });
+  } catch (err) {
+    console.error('ERROR: downloading file:', url);
+    throw new Error(`-- ERROR: downloading file ${url} --`);
+  }
 }
 
 module.exports = { upload, uploadFromUrl, uploadFromFileStream, uploadImage };
