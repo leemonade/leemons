@@ -8,7 +8,7 @@ module.exports = {
         username: process.env['DATABASE_USERNAME'],
         password: process.env['DATABASE_PASSWORD'],
         port: 3306,
-        host: mysql,
+        host: 'mysql',
         pool: {
           min: 5,
           max: 1000,
