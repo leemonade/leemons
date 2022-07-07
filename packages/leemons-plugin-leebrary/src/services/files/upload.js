@@ -112,26 +112,30 @@ function getRemoteContentType(url) {
 function download(url, compress) {
   return new Promise((resolve, reject) => {
     (async () => {
-      const downloadStream = global.utils.got(url, { isStream: true });
-      const fileWriterStream = leemons.fs.createTempWriteStream();
-      const contentType = await getRemoteContentType(url);
+      try {
+        const downloadStream = global.utils.got(url, { isStream: true });
+        const fileWriterStream = leemons.fs.createTempWriteStream();
+        const contentType = await getRemoteContentType(url);
 
-      const [fileType] = contentType.split('/');
-      const extension = mime.extension(contentType);
+        const [fileType] = contentType.split('/');
+        const extension = mime.extension(contentType);
 
-      downloadStream.on('error', (error) => reject(error));
+        downloadStream.on('error', (error) => reject(error));
 
-      fileWriterStream
-        .on('error', (error) => reject(error))
-        .on('finish', () => {
-          fileWriterStream.end();
-          resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
-        });
+        fileWriterStream
+          .on('error', (error) => reject(error))
+          .on('finish', () => {
+            fileWriterStream.end();
+            resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
+          });
 
-      if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
-        downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
-      } else {
-        downloadStream.pipe(fileWriterStream);
+        if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
+          downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
+        } else {
+          downloadStream.pipe(fileWriterStream);
+        }
+      } catch (error) {
+        reject(error);
       }
     })();
   });
