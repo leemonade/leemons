@@ -2,6 +2,7 @@
 const { toLower, isEmpty } = require('lodash');
 const mime = require('mime-types');
 const pathSys = require('path');
+const stream = require('stream');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 const { getById } = require('./getById');
@@ -30,13 +31,13 @@ let mediainfo;
 // HELPERS
 
 function getOptimizedImage(path, extension) {
-  let stream = global.utils.sharp();
+  let imageStream = global.utils.sharp();
 
   if (path && !isEmpty(path)) {
-    stream = global.utils.sharp(path);
+    imageStream = global.utils.sharp(path);
   }
 
-  return stream
+  return imageStream
     .resize(1024, 1024, { fit: 'inside', withoutEnlargement: true })
     .toFormat(extension || 'jpeg', { quality: 70 });
 }
@@ -136,14 +137,46 @@ function download(url, compress) {
   });
 }
 
+function isReadableStream(obj) {
+  return (
+    obj instanceof stream.Stream &&
+    typeof (obj._read === 'function') &&
+    typeof (obj._readableState === 'object')
+  );
+}
+
+function streamToBuffer(readStream) {
+  return new Promise((resolve, reject) => {
+    const data = [];
+
+    readStream.on('data', (chunk) => {
+      data.push(chunk);
+    });
+
+    readStream.on('end', () => {
+      resolve(Buffer.concat(data));
+    });
+
+    readStream.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
 function createTemp(readStream, contentType) {
   return new Promise((resolve, reject) => {
-    leemons.fs.openTemp('leebrary', (err, info) => {
+    leemons.fs.openTemp('leebrary', async (err, info) => {
       if (err) {
         reject(err);
       }
 
-      leemons.fs.write(info.fd, readStream, (e) => {
+      let dataToWrite = readStream;
+
+      if (isReadableStream(dataToWrite)) {
+        dataToWrite = await streamToBuffer(dataToWrite);
+      }
+
+      leemons.fs.write(info.fd, dataToWrite, (e) => {
         if (e) {
           reject(e);
         }
