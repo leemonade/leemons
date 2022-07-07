@@ -25,7 +25,7 @@ async function initLibrary({ users }) {
 
           leemons.log.info(`Asset ADDED: ${asset.name}`);
         } catch (e) {
-          console.log('-- CREATOR ERROR --');
+          console.log('-- ASSET CREATION ERROR --');
           console.dir(asset, { depth: null });
           console.dir(creator, { depth: null });
           console.error(e);
