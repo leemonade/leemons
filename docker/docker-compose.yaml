@@ -7,6 +7,7 @@ services:
       - ../examples/docker:/monorepo/app
       - ../packages:/monorepo/packages
       - ../examples/docker/monorepo_node_modules:/monorepo/node_modules
+      - ../examples/docker/monorepo_yarn.lock:/monorepo/yarn.lock
       - ../yarn.lock:/monorepo/yarn.lock
       - ./src/installDeps.sh:/monorepo/installDeps.sh
       - ./src/retry.sh:/monorepo/retry.sh
@@ -83,10 +84,10 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_DATABASE: leemons
-      MYSQL_USER: leemons
-      MYSQL_PASSWORD: leemons
-      MYSQL_ROOT_PASSWORD: leemons
+      MYSQL_DATABASE: $DATABASE_DATABASE
+      MYSQL_USER: $DATABASE_USERNAME
+      MYSQL_PASSWORD: $DATABASE_PASSWORD
+      MYSQL_ROOT_PASSWORD: $DATABASE_PASSWORD
     cap_add:
       - SYS_NICE
     expose:
