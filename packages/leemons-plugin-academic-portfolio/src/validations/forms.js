@@ -477,7 +477,18 @@ const duplicateGroupSchema = {
     id: stringSchema,
     name: stringSchema,
     abbreviation: stringSchema,
-    students: arrayStringSchema,
+    teachers: booleanSchema,
+    students: {
+      oneOf: [
+        {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+        { type: 'boolean' },
+      ],
+    },
   },
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,

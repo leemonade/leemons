@@ -10,10 +10,14 @@ async function duplicateGroup(data, { userSession, transacting: _transacting } =
     async (transacting) => {
       await validateDuplicateGroup(data, { transacting });
       const { id, ...props } = data;
-      console.log(data);
       const group = await table.groups.findOne({ id }, { transacting });
       const nodeTypes = await getProgramTreeTypes(group.program, { transacting });
       return duplicateGroupWithClassesUnderNodeTreeByIds(nodeTypes, id, {
+        teachers: true,
+        groups: true,
+        courses: true,
+        substages: true,
+        knowledges: true,
         ...props,
         userSession,
         transacting,

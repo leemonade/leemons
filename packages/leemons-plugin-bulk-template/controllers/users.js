@@ -1,4 +1,15 @@
-const { uniq, uniqBy } = require('lodash');
+const _ = require('lodash');
+
+const groupToDuplicate = 'G01';
+const willyGroup = '2ºo';
+
+function getNextGroupName(name) {
+  const split = name.split('G');
+  const start = split[0];
+  const digits = split[1];
+  const n = parseInt(digits, 10);
+  return `${start}G${_.padStart((n + 1).toString(), digits.length, '0')}`;
+}
 
 async function addUser(ctx) {
   const validator = new global.utils.LeemonsValidator({
@@ -50,43 +61,103 @@ async function addUser(ctx) {
     // USER REGISTRATION
 
     // First register as a teacher
-    // const user = await userService.users.addBulk({ ...userToAdd, profile: profiles.student }, ctx);
+    const [user] = await userService.users.addBulk(
+      { ...userToAdd, profile: profiles.student },
+      ctx
+    );
 
     // Now add student profile
-    // await userService.users.addBulk({ ...userToAdd, profile: profiles.teacher }, ctx);
+    await userService.users.addBulk({ ...userToAdd, profile: profiles.teacher }, ctx);
+
+    // Get profile roles for the center
+    const [studentRole, teacherRole, userAgents] = await Promise.all([
+      userService.profiles.getRoleForRelationshipProfileCenter(
+        profiles.student,
+        programs[0].centers[0]
+      ),
+      userService.profiles.getRoleForRelationshipProfileCenter(
+        profiles.teacher,
+        programs[0].centers[0]
+      ),
+      userService.users.searchUserAgents({ user: { email: user.email } }),
+    ]);
+
+    // Search user agent for the user and profiles
+    const studentUserAgent = _.find(userAgents, { role: studentRole.id }).id;
+    const teacherUserAgent = _.find(userAgents, { role: teacherRole.id }).id;
 
     // -----------------------------------------------------
     // CLASS CREATION
 
     const userProgram = programs[0].id;
-    const classes = await academicService.classes.listClasses(0, 100, userProgram);
-    const groupsCodeByCourse = classes.items
-      .map((classItem) => {
-        if (Array.isArray(classItem.groups)) {
-          return {
-            course: classItem.courses.id,
-            groups: classItem.groups.map((group) => ({
-              id: group.id,
-              abbreviation: group.abbreviation,
-            })),
-          };
-        }
 
-        return {
-          course: classItem.courses.id,
-          groups: { id: classItem.groups.id, abbreviation: classItem.groups.abbreviation },
-        };
+    // List all groups for the program
+    const [{ items: groups }, { items: classes }] = await Promise.all([
+      academicService.groups.listGroups(0, 99999, userProgram),
+      academicService.classes.listClasses(0, 99999, userProgram),
+    ]);
+
+    const willyClassIds = _.map(
+      _.filter(
+        classes,
+        (c) =>
+          c.groups?.name.trim() === willyGroup.trim() ||
+          c.groups?.abbreviation.trim() === willyGroup.trim()
+      ),
+      'id'
+    );
+
+    // eslint-disable-next-line no-inner-declarations
+    function getByName(name) {
+      return _.find(
+        groups,
+        (g) => g.name.trim() === name.trim() || g.abbreviation.trim() === name.trim()
+      );
+    }
+
+    // eslint-disable-next-line no-inner-declarations
+    function getName(name) {
+      const g = getByName(name);
+      if (g) {
+        return getName(getNextGroupName(name));
+      }
+      return name;
+    }
+
+    // Search the group to clone
+    const group = getByName(groupToDuplicate);
+    const finalName = getName(groupToDuplicate);
+
+    // Clone the group
+    const duplications = await academicService.groups.duplicateGroup(
+      {
+        id: group.id,
+        name: finalName,
+        abbreviation: finalName,
+        students: true,
+        teachers: false,
+      },
+      { userSession: ctx.state.userSession }
+    );
+
+    const promises = [];
+    const classeIds = [...willyClassIds];
+    _.forIn(duplications.classes, (value) => {
+      classeIds.push(value.id);
+      promises.push(academicService.classes.addTeacher(value.id, teacherUserAgent, 'main-teacher'));
+    });
+
+    promises.push(
+      academicService.classes.addStudentsToClasses({
+        class: classeIds,
+        students: [studentUserAgent],
       })
-      .reduce((acc, curr) => {
-        if (!acc[curr.course]) {
-          acc[curr.course] = [];
-        }
-        acc[curr.course] = uniqBy(acc[curr.course].concat(curr.groups), 'id');
-        return acc;
-      }, {});
+    );
+
+    await Promise.all(promises);
 
     ctx.status = 200;
-    ctx.body = { status: 200, groupsCodeByCourse, classes };
+    ctx.body = { status: 200 };
   } else {
     throw validator.error;
   }
