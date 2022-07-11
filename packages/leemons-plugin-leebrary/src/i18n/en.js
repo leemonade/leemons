@@ -3,7 +3,7 @@ module.exports = {
     navbar: {
       title: 'Library',
       quickAccess: 'Quick access',
-      uploadButton: 'Upload or create',
+      uploadButton: 'Upload or Create',
       createNewTitle: 'Create new',
       uploadTitle: 'Upload file',
       fileUploadTitle: 'Click to browse files',
@@ -139,7 +139,7 @@ module.exports = {
       unpinnedSuccess: 'Asset successfully unpinned',
       listEmpty: 'No assets found',
       listEmptyDescription:
-        'Thanks to Leemons Libraries, teachers can manage assignments, tests, and sessions, and both teachers and students can create and share multimedia files and save their favorite web pages.',
+        'Thanks to Leemons Libraries, teachers can manage assignments, tests, and sessions. Both teachers and students can create and share multimedia files and save their favorite web pages.',
       searchListEmpty: 'No assets found with this search criteria',
       searchListEmptyDescription:
         'Try searching by keywords (tags) or type in more general information and then use the filters to refine the search.',
