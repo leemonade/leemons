@@ -537,11 +537,11 @@ export default function TreePage() {
     render();
   }
 
-  async function onDuplicateGroup({ id, name, abbreviation }) {
+  async function onDuplicateGroup({ id, name, abbreviation, students }) {
     try {
       store.saving = true;
       render();
-      await duplicateGroupRequest({ id, name, abbreviation });
+      await duplicateGroupRequest({ id, name, abbreviation, students });
       store.tree = await getProgramTree();
       store.duplicateItem = null;
       addSuccessAlert(t('groupDuplicated'));
@@ -914,10 +914,13 @@ export default function TreePage() {
                       <TreeGroupDetail
                         onSave={onDuplicateGroup}
                         group={store.duplicateItem.value}
+                        item={store.duplicateItem}
                         program={store.program}
                         messages={messages.treeGroup}
                         saving={store.saving}
                         duplicateMode={true}
+                        messagesAddUsers={messages.addUsers}
+                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
                       />
                     ) : null}
                   </Paper>

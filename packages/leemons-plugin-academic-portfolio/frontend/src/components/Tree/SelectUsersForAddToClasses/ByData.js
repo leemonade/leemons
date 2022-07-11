@@ -186,7 +186,6 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   ]);
 
   function onChangeUserAgent(e, userAgent) {
-    console.log(e, userAgent);
     const ids = getSelectedUserAgentsIds();
     if (!ids.includes(e)) {
       store.selectUserAgent = userAgent;

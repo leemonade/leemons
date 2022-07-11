@@ -75,6 +75,7 @@ async function duplicateProgramByIds(ids, { userSession, transacting: _transacti
         courses: true,
         substages: true,
         knowledges: true,
+        userSession,
         transacting,
       });
 

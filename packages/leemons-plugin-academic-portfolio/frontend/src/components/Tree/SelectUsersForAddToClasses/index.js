@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Paragraph, TabPanel, Tabs, Stack, Alert } from '@bubbles-ui/components';
-import { forEach } from 'lodash';
+import { Alert, Box, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
+import { forEach, map } from 'lodash';
 import { ByTag } from './ByTag';
 import { ByData } from './ByData';
 
@@ -12,6 +12,7 @@ const SelectUsersForAddToClasses = ({
   messages,
   onChange,
   disableSave,
+  ignoreAddedUsers,
 }) => {
   const _classes = React.useMemo(() => {
     const getClasses = (item) => {
@@ -23,6 +24,12 @@ const SelectUsersForAddToClasses = ({
         forEach(item.childrens, (e) => {
           classes = classes.concat(getClasses(e));
         });
+      }
+      if (ignoreAddedUsers) {
+        return map(classes, ({ students, ..._class }) => ({
+          ..._class,
+          students: [],
+        }));
       }
       return classes;
     };
@@ -63,6 +70,7 @@ const SelectUsersForAddToClasses = ({
             classes={_classes}
             disableSave={disableSave}
             onChange={onChange}
+            ignoreAddedUsers={ignoreAddedUsers}
           />
         </TabPanel>
       </Tabs>
@@ -77,6 +85,7 @@ SelectUsersForAddToClasses.propTypes = {
   messages: PropTypes.object,
   onChange: PropTypes.func,
   disableSave: PropTypes.func,
+  ignoreAddedUsers: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export

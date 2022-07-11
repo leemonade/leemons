@@ -477,6 +477,7 @@ const duplicateGroupSchema = {
     id: stringSchema,
     name: stringSchema,
     abbreviation: stringSchema,
+    students: arrayStringSchema,
   },
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
