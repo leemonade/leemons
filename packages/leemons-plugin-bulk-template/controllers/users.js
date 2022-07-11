@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-const groupToDuplicate = 'G01';
-const willyGroup = '2ºo';
+const groupToDuplicate = 'G001';
+const willyGroup = 'L001';
 
 function getNextGroupName(name) {
   const split = name.split('G');

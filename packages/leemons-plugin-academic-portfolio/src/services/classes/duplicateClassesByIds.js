@@ -9,6 +9,7 @@ const { duplicateByClass: duplicateTeachersByClass } = require('./teacher/duplic
 const { duplicateByClass: duplicateCourseByClass } = require('./course/duplicateByClass');
 const { duplicateByClass: duplicateGroupByClass } = require('./group/duplicateByClass');
 const { addClassStudentsMany } = require('./addClassStudentsMany');
+const { processScheduleForClass } = require('./processScheduleForClass');
 
 async function duplicateClassesByIds(
   ids,
@@ -25,15 +26,19 @@ async function duplicateClassesByIds(
   } = {}
 ) {
   const assetService = leemons.getPlugin('leebrary').services.assets;
+  const timetableService = leemons.getPlugin('timetable').services.timetable;
 
   const duplications = dup;
   return global.utils.withTransaction(
     async (transacting) => {
-      const [classes, rawClasses] = await Promise.all([
+      const [classes, rawClasses, timeTables] = await Promise.all([
         classByIds(ids, { transacting }),
         table.class.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+        timetableService.listByClassIds(ids, { transacting }),
       ]);
+      const classesById = _.keyBy(classes, 'id');
       const classesIds = _.map(classes, 'id');
+      const timetablesByClass = _.groupBy(timeTables, 'class');
       await leemons.events.emit('before-duplicate-classes', { classes, transacting });
 
       // ES: Empezamos la duplicación de los items
@@ -44,7 +49,7 @@ async function duplicateClassesByIds(
             image = await assetService.duplicate(image, { userSession, transacting });
             image = image.id;
           }
-          return table.class.create(
+          const newClass = await table.class.create(
             {
               ...item,
               image,
@@ -63,6 +68,16 @@ async function duplicateClassesByIds(
             },
             { transacting }
           );
+
+          if (classesById[id].schedule) {
+            await processScheduleForClass(
+              _.map(classesById[id].schedule, ({ id: _id, deleted, class: classe, ...e }) => e),
+              newClass.id,
+              { transacting }
+            );
+          }
+
+          return newClass;
         })
       );
 
