@@ -33,18 +33,18 @@ module.exports = {
     step_library: {
       title: 'Tasks Library',
       description:
-        'Create new tasks and assign them or review the create ones on the task library.',
+        'Create new tasks and assign them or review the created tasks in the task library.',
       btn: 'Create task',
     },
     step_ongoing: {
       title: 'Ongoing tasks',
       description:
-        'Reviews tasks in progress and monitors their status. You can also start the correction of completed tasks.',
+        'Reviews tasks in progress and monitors their status. It is also possible to start the correction of completed tasks.',
       btn: 'View ongoing tasks',
     },
     step_history: {
       title: 'History',
-      description: "View completed tasks, their evaluations and the student's feedback.",
+      description: "View completed tasks, their evaluations, and the student's feedback.",
       btn: 'View tasks history',
     },
   },
@@ -61,7 +61,7 @@ module.exports = {
       create_done: 'Task created',
       update_done: 'Task updated',
       publish_done: 'Task published',
-      no_id_error: 'No task id provided',
+      no_id_error: 'No task ID provided',
       save: 'Save draft',
       publish: 'Publish',
     },
@@ -75,13 +75,13 @@ module.exports = {
           buttonNext: 'Next',
         },
         placeholders: {
-          name: "Task's name",
+          name: "Task name",
           tagline: 'Subtitle of the task',
           description: 'What is this assignment about?',
         },
         errorMessages: {
           name: {
-            required: 'Field required',
+            required: 'Required field',
           },
           tagline: {
             required: 'Required field',
@@ -89,9 +89,9 @@ module.exports = {
         },
       },
       configData: {
-        step_label: 'Config',
+        step_label: 'Configure',
         labels: {
-          configTitle: 'Config',
+          configTitle: 'Configure',
           center: 'Center',
           program: 'Program',
           course: 'Course',
@@ -178,7 +178,7 @@ module.exports = {
               type: 'Type',
               typePlaceholder: 'Add extension',
               maxSize: 'Max size',
-              required: 'Campo necesario',
+              required: 'Required field',
             },
           },
           attachmentsTitle: 'Resources',
@@ -206,7 +206,7 @@ module.exports = {
         placeholders: {
           forTeacher: 'Help other teachers approach this exercise with a few simple instructions.',
           forStudent:
-            'Here you can include extra information to help the student perform the exercise better.',
+            'Here it is possible to include extra information to help the student perform the exercise better.',
         },
       },
       publishData: {
@@ -214,7 +214,7 @@ module.exports = {
         labels: {
           title: 'Publish & Assign',
           description:
-            'You can now save this activity in your library to use it whenever you want or, in the same step, assign it to your students to do.',
+            'You can now save this activity in your library to use it whenever you want or, in the same step, assign it for your students to do.',
           assign: 'Assign later to students',
           buttonNext: 'Publish',
           buttonPrev: 'Previous',
@@ -227,8 +227,8 @@ module.exports = {
   },
   assignment_form: {
     labels: {
-      classroomToAssign: 'Classroom to assign',
-      studentToAssign: 'Student to assign',
+      classroomToAssign: 'Assign to classroom',
+      studentToAssign: 'Assign to Student',
       mode: 'Mode',
       startDate: 'Start date',
       deadline: 'Deadline',
@@ -261,7 +261,7 @@ module.exports = {
       unableToAssignStudentsMessage:
         'The students which are not enrolled in all the selected subjects will not be assigned',
       matchingStudents: 'matching students',
-      groupName: "Group's name",
+      groupName: "Group name",
       students: 'Students',
       noStudentsToAssign:
         'There are no students enrrolled in the selected subjects, please select other combination',
@@ -273,7 +273,7 @@ module.exports = {
     },
     descriptions: {
       messageToStudents:
-        'If you assign this task to other groups in this step, this message will be the default message for all tasks (although you can change it individually if you wish).',
+        'If this task is assigned to other groups in this step, this message will be the default message for all tasks (although it can be changed individually if desired).',
       visualizationDate:
         'NOTE: The task will be available for review, but cannot be completed until the start date.',
       closeDateToogle: 'NOTE: After this date, no corrections can be made',
@@ -298,7 +298,7 @@ module.exports = {
   profiles_page: {
     page_title: 'Tasks - Profile setup',
     page_description:
-      'First of all we need to match the system profiles with the custom profiles you have created on the platform (Please read carefully the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
+      'First of all it is necessary to match the system profiles with the custom profiles that have been created on the platform (Please carefully read the characteristics of each profile. Once the profiles are linked, it cannot be undone.)',
     save: 'Save',
     loadFromAP: 'Load profiles from Academic Portfolio',
     profileSaved: 'Saved profiles',
@@ -338,7 +338,7 @@ module.exports = {
     edit: 'Edit',
     assign: 'Assign',
     delete: 'Delete',
-    duplicate: 'Duplicar',
+    duplicate: 'Duplicate',
   },
   task_realization: {
     confirmation_modal: {
@@ -348,7 +348,7 @@ module.exports = {
       },
       title: 'Finish and submit this task',
       description:
-        '<p>If you click on "Confirm submission", your task will be sent to a reviewer and you will not be able to modify the selected deliverables. If you only want to save the work done so far, you can cancel this action and press on "Save only".</p><p>When you confirm the submission, the system will redirect you to the "Ongoing activities" section where you can review the tasks once they are corrected.</p>',
+        '<p>Once "Confirm submission" is clicked, the task will be sent to a reviewer and it will not be possible to modify the selected deliverables. If you only want to save the work done so far, you can cancel this action and press on "Save only".</p><p>When you confirm the submission, the system will redirect you to the "Ongoing activities" section where you can review the tasks once they are corrected.</p>',
     },
     activityContainer: {
       deadline: {
@@ -451,9 +451,9 @@ module.exports = {
       },
     },
     types: {
-      calificable: 'Calificable',
-      evaluable: 'Evaluable with punctuation',
-      noPunctuationEvaluable: 'Evaluable without punctuation',
+      calificable: 'Qualifiable',
+      evaluable: 'Evaluate with punctuation',
+      noPunctuationEvaluable: 'Evaluate without punctuation',
     },
     contactTeacher: {
       title: 'Do you want to contact the teacher?',
