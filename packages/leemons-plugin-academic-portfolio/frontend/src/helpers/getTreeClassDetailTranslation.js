@@ -34,5 +34,13 @@ export function getTreeClassDetailTranslation(t) {
     noStudentsYet: t('class.noStudentsYet'),
     changeTeacherButtonLabel: t('class.changeTeacherButtonLabel'),
     newClass: t('class.newClass'),
+    basicInformation: t('class.basicInformation'),
+    groupsOfClasse: t('class.groupsOfClasse'),
+    studentsEnrolled: t('class.studentsEnrolled'),
+    saveChanges: t('class.saveChanges'),
+    removeSubject: t('class.removeSubject'),
+    attention: t('class.attention'),
+    subjectChangeCourse: t('class.subjectChangeCourse'),
+    subjectChangeCourseButton: t('class.subjectChangeCourseButton'),
   };
 }

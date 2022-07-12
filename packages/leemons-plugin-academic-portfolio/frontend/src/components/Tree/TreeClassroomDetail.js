@@ -6,10 +6,8 @@ import {
   Avatar,
   Box,
   Button,
-  ColorInput,
   ContextContainer,
   InputWrapper,
-  MultiSelect,
   NumberInput,
   Paragraph,
   Select,
@@ -45,10 +43,6 @@ const TreeClassroomDetail = ({
   const [store, render] = useStore({ students: [] });
   const selects = React.useMemo(
     () => ({
-      courses: map(program.courses, ({ name, index, id }) => ({
-        label: `${name ? `${name} (${index}º)` : `${index}º`}`,
-        value: id,
-      })),
       knowledges: map(program.knowledges, ({ name, id }) => ({
         label: name,
         value: id,
@@ -214,22 +208,7 @@ const TreeClassroomDetail = ({
       <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
-          {program.maxNumberOfCourses > 0 ? (
-            <Box>
-              <Controller
-                control={control}
-                name="course"
-                render={({ field }) => {
-                  if (program.moreThanOneAcademicYear) {
-                    return (
-                      <MultiSelect data={selects.courses} label={messages.courseLabel} {...field} />
-                    );
-                  }
-                  return <Select data={selects.courses} label={messages.courseLabel} {...field} />;
-                }}
-              />
-            </Box>
-          ) : null}
+
           <Box>
             <Controller
               control={control}
@@ -268,13 +247,7 @@ const TreeClassroomDetail = ({
               render={({ field }) => <NumberInput label={messages.seatsLabel} {...field} />}
             />
           </Box>
-          <Box>
-            <Controller
-              control={control}
-              name="color"
-              render={({ field }) => <ColorInput label={messages.colorLabel} {...field} />}
-            />
-          </Box>
+
           <Box>
             <Controller
               control={control}

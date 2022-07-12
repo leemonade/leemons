@@ -134,22 +134,28 @@ function generateQueries(model /* connector */) {
 
     const deletedCount = await entries().count({ transacting });
 
-    if (deletedCount > 0) {
-      if (soft) {
-        const fields = { deleted: true };
-        if (model.schema.options.useTimestamps) {
-          fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        }
+    try {
+      if (deletedCount > 0) {
+        if (soft) {
+          const fields = { deleted: true };
+          if (model.schema.options.useTimestamps) {
+            fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          }
 
-        await entries().save(fields, { method: 'update', patch: true, transacting });
-      } else {
-        try {
-          await entries().destroy({ transacting });
-        } catch (err) {
-          if (err.message.indexOf('No Rows Deleted') === -1) {
-            throw err;
+          await entries().save(fields, { method: 'update', patch: true, transacting });
+        } else {
+          try {
+            await entries().destroy({ transacting });
+          } catch (err) {
+            if (err.message.indexOf('No Rows Deleted') === -1) {
+              throw err;
+            }
           }
         }
+      }
+    } catch (err) {
+      if (err.message !== 'EmptyResponse') {
+        throw err;
       }
     }
 

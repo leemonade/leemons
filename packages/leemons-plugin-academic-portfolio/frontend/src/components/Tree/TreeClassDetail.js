@@ -4,8 +4,11 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
+  ColorInput,
   ContextContainer,
   InputWrapper,
+  MultiSelect,
+  RadioGroup,
   Select,
   Stack,
   TabPanel,
@@ -13,9 +16,11 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { useStore } from '@common';
-import { forEach, isString, map } from 'lodash';
+import { forEach, isArray, isString, map } from 'lodash';
+import { useLayout } from '@layout/context';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
@@ -29,14 +34,18 @@ const TreeClassDetail = ({
   addClassUsers,
   selectClass,
   saving,
+  removing,
+  removeSubject,
   removeUserFromClass,
   center,
   item: treeItem,
   teacherSelect,
   createMode = false,
 }) => {
+  const { openConfirmationModal } = useLayout();
   const [store, render] = useStore({
     createMode,
+    page: 1,
   });
   const {
     reset,
@@ -56,8 +65,16 @@ const TreeClassDetail = ({
         knowledge = isString(item.knowledges) ? item.knowledges : item.knowledges.id;
       }
     });
+
     reset({
-      ...classe.subject,
+      ...(classes?.[0].subject || {}),
+      // eslint-disable-next-line no-nested-ternary
+      course: classes[0]
+        ? isArray(classes[0].courses)
+          ? map(classes[0].courses, 'id')
+          : classes[0].courses.id
+        : null,
+      color: classes[0] ? classes[0].color : null,
       subjectType,
       knowledge,
     });
@@ -82,6 +99,10 @@ const TreeClassDetail = ({
 
   const selects = React.useMemo(
     () => ({
+      courses: map(program.courses, ({ name, index, id }) => ({
+        label: `${name ? `${name} (${index}º)` : `${index}º`}`,
+        value: id,
+      })),
       knowledges: map(program.knowledges, ({ name, id }) => ({
         label: name,
         value: id,
@@ -94,12 +115,52 @@ const TreeClassDetail = ({
     [program]
   );
 
+  function onBeforeSaveSubject(data) {
+    // eslint-disable-next-line no-nested-ternary
+    const intialCourse = classes[0]
+      ? isArray(classes[0].courses)
+        ? map(classes[0].courses, 'id')
+        : classes[0].courses.id
+      : null;
+    if (data.course !== intialCourse) {
+      openConfirmationModal({
+        title: messages.attention,
+        description: messages.subjectChangeCourse,
+        labels: {
+          confirm: messages.subjectChangeCourseButton,
+        },
+        onConfirm: async () => {
+          onSaveSubject(data);
+        },
+      })();
+    } else {
+      onSaveSubject(data);
+    }
+  }
+
   return (
-    <Box>
-      <ContextContainer direction="column" fullWidth divided>
-        <form onSubmit={handleSubmit(onSaveSubject)} autoComplete="off">
+    <ContextContainer>
+      <Title order={3}>{classe.subject.name}</Title>
+      <RadioGroup
+        variant="icon"
+        data={[
+          { label: messages.basicInformation, value: 1 },
+          {
+            label: messages.groupsOfClasse,
+            value: 2,
+          },
+          { label: messages.studentsEnrolled, value: 3 },
+        ]}
+        fullWidth
+        onChange={(page) => {
+          store.page = page;
+          render();
+        }}
+        value={store.page}
+      />
+      {store.page === 1 ? (
+        <form onSubmit={handleSubmit(onBeforeSaveSubject)} autoComplete="off">
           <ContextContainer direction="column" fullWidth>
-            <Title order={4}>{messages.title}</Title>
             <Box>
               <Controller
                 control={control}
@@ -125,6 +186,30 @@ const TreeClassDetail = ({
                 )}
               />
             </Box>
+
+            {program.maxNumberOfCourses > 0 ? (
+              <Box>
+                <Controller
+                  control={control}
+                  name="course"
+                  render={({ field }) => {
+                    if (program.moreThanOneAcademicYear) {
+                      return (
+                        <MultiSelect
+                          data={selects.courses}
+                          label={messages.courseLabel}
+                          {...field}
+                        />
+                      );
+                    }
+                    return (
+                      <Select data={selects.courses} label={messages.courseLabel} {...field} />
+                    );
+                  }}
+                />
+              </Box>
+            ) : null}
+
             {program.haveKnowledge ? (
               <Box>
                 <Controller
@@ -167,42 +252,55 @@ const TreeClassDetail = ({
               />
             </Box>
 
-            <Stack fullWidth justifyContent="end">
+            <Box>
+              <Controller
+                control={control}
+                name="color"
+                render={({ field }) => <ColorInput label={messages.colorLabel} {...field} />}
+              />
+            </Box>
+
+            <Stack fullWidth justifyContent="space-between">
+              <Button
+                leftIcon={<DeleteBinIcon />}
+                variant="outline"
+                loading={removing}
+                onClick={() => removeSubject(classe.subject.id)}
+              >
+                {messages.removeSubject}
+              </Button>
               <Button loading={saving} type="submit">
-                {messages.save}
+                {messages.saveChanges}
               </Button>
             </Stack>
           </ContextContainer>
         </form>
+      ) : null}
+      {store.page === 2 ? (
         <Box>
-          <ContextContainer direction="column" fullWidth>
-            <Title order={4}>{messages.classrooms}</Title>
-            <Box>
-              <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
-                {tabs}
-                {classes.map((item) => (
-                  <TabPanel disabled={store.createMode} key={item.id} label={item.treeName}>
-                    <TreeClassroomDetail
-                      messagesAddUsers={messagesAddUsers}
-                      removeUserFromClass={removeUserFromClass}
-                      program={program}
-                      classe={item}
-                      messages={messages}
-                      saving={saving}
-                      onSave={onSaveClass}
-                      center={center}
-                      item={treeItem}
-                      addClassUsers={addClassUsers}
-                      teacherSelect={teacherSelect}
-                    />
-                  </TabPanel>
-                ))}
-              </Tabs>
-            </Box>
-          </ContextContainer>
+          <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
+            {tabs}
+            {classes.map((item) => (
+              <TabPanel disabled={store.createMode} key={item.id} label={item.treeName}>
+                <TreeClassroomDetail
+                  messagesAddUsers={messagesAddUsers}
+                  removeUserFromClass={removeUserFromClass}
+                  program={program}
+                  classe={item}
+                  messages={messages}
+                  saving={saving}
+                  onSave={onSaveClass}
+                  center={center}
+                  item={treeItem}
+                  addClassUsers={addClassUsers}
+                  teacherSelect={teacherSelect}
+                />
+              </TabPanel>
+            ))}
+          </Tabs>
         </Box>
-      </ContextContainer>
-    </Box>
+      ) : null}
+    </ContextContainer>
   );
 };
 
@@ -222,6 +320,8 @@ TreeClassDetail.propTypes = {
   addClassUsers: PropTypes.func,
   messagesAddUsers: PropTypes.object,
   removeUserFromClass: PropTypes.func,
+  removing: PropTypes.bool,
+  removeSubject: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

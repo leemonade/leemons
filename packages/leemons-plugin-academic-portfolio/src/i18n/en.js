@@ -306,6 +306,7 @@ module.exports = {
     courseUpdated: 'Course updated',
     groupUpdated: 'Group updated',
     groupDuplicated: 'Group duplicated',
+    subjectRemoved: 'Subject removed',
     knowledgeUpdated: 'Area updated',
     subjectTypeUpdated: 'Subject type updated',
     subjectUpdated: 'Subject updated',
@@ -468,6 +469,18 @@ module.exports = {
       findStudents: 'Find',
       changeTeacherButtonLabel: 'Change',
       newClass: 'New classroom',
+      basicInformation: 'Basic information',
+      groupsOfClasse: 'Groups of classe',
+      studentsEnrolled: 'Students enrolled',
+      saveChanges: 'Save changes',
+      removeSubject: 'Remove subject',
+      attention: 'Attention',
+      subjectChangeCourse:
+        'Your tree model indicates that your courses are structuring, i.e. subjects are nested within course levels. When making a course change, the subject will disappear from the current course level and will be moved to the newly selected course.',
+      subjectChangeCourseButton: 'Change anyway',
+      removeSubjectButton: 'Eliminate anyway',
+      removeSubjectDescription:
+        '<strong>This action is not recommended if there is already content or assignments associated with this subject.</strong> <br/><br/> Deleting a subject will archive all class groups associated with it and all activities created or assigned that use this subject, as well as related assessments. <br/><br/> Errors may also occur when editing related activities.',
     },
   },
   selectSubjectsByTable: {

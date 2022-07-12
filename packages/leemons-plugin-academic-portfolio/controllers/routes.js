@@ -235,6 +235,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/subject/:id',
+    method: 'DELETE',
+    handler: 'subject.deleteSubject',
+    authenticated: true,
+  },
+  {
     path: '/subject/credits',
     method: 'PUT',
     handler: 'subject.putSubjectCredits',
