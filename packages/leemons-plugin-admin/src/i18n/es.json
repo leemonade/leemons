@@ -57,7 +57,12 @@
       "description": "Configura tus proveedores y cuentas de correo para la gestión de las notificaciones de la plataforma, puedes configurar tantas cuentas como quieras y posteriormente asignarlas a tus diferentes centros.",
       "chooseProvider": "Selecciona un proveedor",
       "noProviders": "No hay proveedores disponibles, por favor, instala uno.",
-      "github": "Si quieres crear un nuevo complemento de proveedor, visita nuestro Github"
+      "github": "Si quieres crear un nuevo complemento de proveedor, visita nuestro Github",
+      "defaultOrganizationEmail": "Email de la organización",
+      "defaultOrganizationEmailDescription": "Seleccione el correo electrónico por defecto que utilizará la plataforma para las notificaciones genéricas que no estén directamente relacionadas con un centro específico.",
+      "defaultOrganizationEmailRequired": "Es obligatorio crear al menos una cuenta de correo para poder utilizar la Plataforma Leemons",
+      "error": "Error",
+      "organizationEmail": "Email de la organización"
     },
     "languages": {
       "label": "Idiomas",

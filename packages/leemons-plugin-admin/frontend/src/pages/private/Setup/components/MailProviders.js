@@ -8,8 +8,10 @@ import {
   ContextContainer,
   createStyles,
   Loader,
+  Paragraph,
   Stack,
   Text,
+  TextInput,
   Title,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -100,6 +102,13 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
   return (
     <Box>
       <ContextContainer title={t('mails.title')} description={t('mails.description')} divided>
+        <ContextContainer>
+          <Box>
+            <Title order={4}>{t('mails.defaultOrganizationEmail')}</Title>
+            <Paragraph>{t('mails.defaultOrganizationEmailDescription')}</Paragraph>
+          </Box>
+          <TextInput label={t('mails.organizationEmail')} required />
+        </ContextContainer>
         <ContextContainer>
           <Title order={4}>{t('mails.chooseProvider')}</Title>
           {store.loading ? (

@@ -57,7 +57,12 @@
       "description": "Configure your providers and email accounts for the management of platform notifications, you can setup as many accounts as you want and later assign them to your different centers.",
       "chooseProvider": "Choose a provider",
       "noProviders": "No providers found, please install one.",
-      "github": "Do you want to create a new provider’s addon?, visit our Github"
+      "github": "Do you want to create a new provider’s addon?, visit our Github",
+      "defaultOrganizationEmail": "Default organization email",
+      "defaultOrganizationEmailDescription": "Select the default email to be used by the platform for generic notifications that are not directly related to a specific center.",
+      "defaultOrganizationEmailRequired": "It is mandatory to create at least one mail account in order to use Leemons Platform",
+      "error": "Error",
+      "organizationEmail": "Organization email"
     },
     "languages": {
       "label": "Languages",
