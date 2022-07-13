@@ -1,6 +1,7 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { table } = require('../tables');
 const { getResetConfig } = require('./getResetConfig');
+const getDomain = require('../platform/getDomain');
 
 /**
  * If there is a user with that email we check if there is already a recovery in progress, if
@@ -27,6 +28,7 @@ async function reset(token, password, ctx) {
     ]);
 
     if (leemons.getPlugin('emails')) {
+      const domain = await getDomain();
       await leemons
         .getPlugin('emails')
         .services.email.sendAsEducationalCenter(
@@ -35,7 +37,7 @@ async function reset(token, password, ctx) {
           config.user.locale,
           {
             name: config.user.name,
-            loginUrl: `${ctx.request.header.origin}/users/public/login`,
+            loginUrl: `${domain || ctx.request.header.origin}/users/public/login`,
           }
         );
     }

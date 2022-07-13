@@ -7,6 +7,7 @@ import {
   PageContainer,
   Paper,
   Tree,
+  useResizeObserver,
 } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
 import { AddCircleIcon, DuplicateIcon } from '@bubbles-ui/icons/outline';
@@ -35,6 +36,7 @@ import {
   removeClassRequest,
   removeGroupFromClassesRequest,
   removeStudentFromClassRequest,
+  removeSubjectRequest,
   updateClassRequest,
   updateCourseRequest,
   updateGroupRequest,
@@ -66,8 +68,28 @@ export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
   const [ts, , , tsLoading] = useTranslateLoader(prefixPN('subject_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [store, render] = useStore();
-  const { openDeleteConfirmationModal, setLoading } = useLayout();
+  const [store, render] = useStore({
+    scroll: 0,
+  });
+  const { openDeleteConfirmationModal, setLoading, layoutState } = useLayout();
+
+  function onScroll() {
+    store.scroll = layoutState.contentRef.current.scrollTop;
+    render();
+  }
+
+  React.useEffect(() => {
+    layoutState.contentRef.current.addEventListener('scroll', onScroll);
+
+    // cleanup this component
+    return () => {
+      layoutState.contentRef.current.removeEventListener('scroll', onScroll);
+    };
+  }, [layoutState.contentRef.current]);
+
+  const [containerRef, container] = useResizeObserver();
+  const [headerBaseRef, headerBase] = useResizeObserver();
+  const [headerDescriptionRef, headerDescription] = useResizeObserver();
 
   const params = useQuery();
 
@@ -195,7 +217,7 @@ export default function TreePage() {
           },
         ];
 
-        if (item.nodeType === 'groups' || item.nodeType === 'class') {
+        if (item.nodeType === 'groups') {
           actions.push({
             name: 'delete',
             tooltip: removeLabel,
@@ -214,6 +236,7 @@ export default function TreePage() {
           });
         }
 
+        /*
         if (item.nodeType === 'class') {
           actions.push({
             name: 'add-subject',
@@ -223,8 +246,13 @@ export default function TreePage() {
             handler: () => onNewSubject({ ...item, parents }),
           });
         }
+         */
 
-        if (item.nodeType !== 'program' && item.nodeType !== 'courses') {
+        if (
+          item.nodeType !== 'program' &&
+          item.nodeType !== 'class' &&
+          item.nodeType !== 'courses'
+        ) {
           actions.push({
             name: 'new',
             tooltip: t(`new${item.nodeType}`),
@@ -234,15 +262,35 @@ export default function TreePage() {
           });
         }
 
+        const parent = parents[parents.length - 1]?.treeId || 0;
+
         result.push({
           id: item.treeId,
-          parent: parents[parents.length - 1]?.treeId || 0,
+          parent,
           text,
           actions,
           item,
+          handler: () => onEdit({ ...item }),
         });
         if (item.childrens && item.childrens.length) {
           item.childrens.forEach((child) => processItem(child, [...parents, item]));
+        } else {
+          const id = `add-button-${parents[parents.length - 1]?.treeId || 0}`;
+          const exists = find(result, { id });
+          if (!exists) {
+            result.push({
+              id,
+              parent,
+              text: t('newsubject'),
+              type: 'button',
+              draggable: false,
+              node: null,
+              data: {
+                action: 'add',
+              },
+              handler: () => onNewSubject({ ...item, parents }),
+            });
+          }
         }
       }
 
@@ -254,15 +302,14 @@ export default function TreePage() {
       return result;
     } catch (err) {
       setLoading(false);
-      console.log(err);
       addErrorAlert(getErrorMessage(err));
       return false;
     }
   };
 
   async function init() {
-    store.centerId = params.center;
-    store.programId = params.program;
+    if (params.center) store.centerId = params.center;
+    if (params.program) store.programId = params.program;
     if (store.centerId && store.programId) {
       store.tree = await getProgramTree();
     }
@@ -424,7 +471,17 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveSubject({ id, name, subjectType, knowledge, image, icon }) {
+  async function onSaveSubject({
+    id,
+    name,
+    course,
+    subjectType,
+    internalId,
+    knowledge,
+    image,
+    icon,
+    color,
+  }) {
     try {
       store.saving = true;
       render();
@@ -434,6 +491,9 @@ export default function TreePage() {
         subjectType,
         image,
         icon,
+        color,
+        course,
+        internalId,
       };
       if (!isUndefined(knowledge)) body.knowledge = knowledge;
       await updateSubjectRequest(body);
@@ -447,21 +507,101 @@ export default function TreePage() {
     render();
   }
 
+  async function removeSubject(id) {
+    openDeleteConfirmationModal({
+      title: t('class.attention'),
+      description: t('class.removeSubjectDescription'),
+      labels: {
+        confirm: t('class.removeSubjectButton'),
+      },
+      onConfirm: async () => {
+        try {
+          store.removing = true;
+          render();
+          await removeSubjectRequest(id);
+          store.editingItem = null;
+          store.duplicateItem = null;
+          store.newItem = null;
+          store.tree = await getProgramTree();
+          setAgainActiveTree();
+          addSuccessAlert(t('subjectRemoved'));
+        } catch (err) {
+          addErrorAlert(getErrorMessage(err));
+        }
+        store.removing = false;
+        render();
+      },
+    })();
+  }
+
+  async function removeClass(id) {
+    openDeleteConfirmationModal({
+      title: t('class.attention'),
+      description: t('class.removeClassDescription'),
+      labels: {
+        confirm: t('class.removeSubjectButton'),
+      },
+      onConfirm: async () => {
+        try {
+          store.removing = true;
+          render();
+          await removeClassRequest(id);
+          store.editingItem = null;
+          store.duplicateItem = null;
+          store.newItem = null;
+          store.tree = await getProgramTree();
+          setAgainActiveTree();
+          addSuccessAlert(t('subjectRemoved'));
+        } catch (err) {
+          addErrorAlert(getErrorMessage(err));
+        }
+        store.removing = false;
+        render();
+      },
+    })();
+  }
+
   function selectClass(classId) {
     const item = cloneDeep(store.editingItem || store.newItem);
     item.value = find(store.classesBySubject[item.value.subject?.id], {
       id: classId,
     });
     item.treeId = item.value.treeId;
+    if (store.editingItem) {
+      store.editingItem = item;
+    }
+    if (store.newItem) {
+      store.newItem = item;
+    }
+
     render();
   }
 
-  async function onSaveClass({ schedule, teacher, associateTeachers, ...data }) {
+  async function createGroup({ name, abbreviation }) {
+    try {
+      const { group } = await createGroupRequest({
+        name,
+        abbreviation,
+        program: store.program.id,
+      });
+      addSuccessAlert(t('groupCreated'));
+      return group;
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    return null;
+  }
+
+  async function onSaveClass({ schedule, teacher, associateTeachers, group, isNewGroup, ...data }) {
     try {
       store.saving = true;
       render();
       let alert = null;
       const teachers = [];
+      if (isNewGroup) {
+        const g = await createGroup({ name: group, abbreviation: group });
+        group = g.id;
+      }
       if (teacher) {
         teachers.push({ type: 'main-teacher', teacher });
       }
@@ -470,9 +610,22 @@ export default function TreePage() {
           teachers.push({ type: 'associate-teacher', teacher: tea });
         });
       }
+      let subjectType = null;
+      let course = null;
+      if (store.newItem?.value?.courses) {
+        if (isArray(store.newItem.value.courses)) {
+          course = map(store.newItem.value.courses, 'id');
+        } else {
+          course = store.newItem.value.courses.id;
+        }
+      }
+      if (store.newItem?.value?.subjectType) {
+        subjectType = store.newItem.value.subjectType.id;
+      }
       if (data.id) {
         await updateClassRequest({
           ...data,
+          group,
           teachers,
           schedule: schedule ? schedule.days : [],
         });
@@ -482,7 +635,10 @@ export default function TreePage() {
           class: { id },
         } = await createClassRequest({
           ...omitBy(data, isUndefined),
+          group,
           teachers,
+          course,
+          subjectType,
           schedule: schedule ? schedule.days : [],
           subject: store.newItem.value.subject?.id,
           program: store.program.id,
@@ -497,11 +653,12 @@ export default function TreePage() {
       setAgainActiveTree();
       addSuccessAlert(alert);
     } catch (err) {
+      console.error(err);
       addErrorAlert(getErrorMessage(err));
     }
     store.saving = false;
     render();
-    selectClass(data.id);
+    if (data?.id) selectClass(data.id);
   }
 
   async function onNewGroup(data) {
@@ -710,9 +867,24 @@ export default function TreePage() {
     });
   }
 
+  let { scroll } = store;
+  if (scroll > headerBase.height) scroll = headerBase.height;
+  const correct = 48;
+  const correctBottom = 32;
+
+  let top = headerBase.height + correct - scroll;
+  const minTop = headerBase.height - headerDescription.height;
+  if (top < minTop) {
+    top = minTop;
+  }
+
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={messages.header} />
+      <AdminPageHeader
+        baseRef={headerBaseRef}
+        descriptionRef={headerDescriptionRef}
+        values={messages.header}
+      />
 
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
@@ -720,37 +892,58 @@ export default function TreePage() {
             <Grid>
               {/* TREE ----------------------------------------- */}
               <Col span={5}>
-                <Paper fullWidth padding={5}>
-                  <ContextContainer divided>
-                    <Grid grow>
-                      <Col span={6}>
-                        <SelectCenter
-                          label={t('centerLabel')}
-                          onChange={onSelectCenter}
-                          value={store.centerId}
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <SelectProgram
-                          label={t('programLabel')}
-                          onChange={onSelectProgram}
-                          center={store.centerId}
-                          value={store.programId}
-                        />
-                      </Col>
-                    </Grid>
-                    {store.tree ? (
-                      <Box>
-                        <Tree
-                          treeData={store.tree}
-                          selectedNode={store.editingItem ? store.editingItem.treeId : null}
-                          allowDragParents={false}
-                          initialOpen={map(store.tree, 'id')}
-                        />
-                      </Box>
-                    ) : null}
-                  </ContextContainer>
-                </Paper>
+                <Box ref={containerRef}>
+                  <Box
+                    style={{
+                      width: `${container.width}px`,
+                      position: 'fixed',
+                      top: `${top}px`,
+                      height: `calc(100vh - ${top + correctBottom}px)`,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <Paper fullWidth padding={5}>
+                      <ContextContainer divided>
+                        <Grid grow>
+                          <Col span={6}>
+                            <SelectCenter
+                              firstSelected
+                              label={t('centerLabel')}
+                              onChange={onSelectCenter}
+                              value={store.centerId}
+                            />
+                          </Col>
+                          <Col span={6}>
+                            <SelectProgram
+                              firstSelected
+                              label={t('programLabel')}
+                              onChange={onSelectProgram}
+                              center={store.centerId}
+                              value={store.programId}
+                            />
+                          </Col>
+                        </Grid>
+                        {store.tree ? (
+                          <Box>
+                            <Tree
+                              rootId={0}
+                              treeData={store.tree}
+                              selectedNode={store.editingItem ? store.editingItem.treeId : null}
+                              allowDragParents={false}
+                              initialOpen={map(store.tree, 'id')}
+                              onAdd={(a) => {
+                                a.handler();
+                              }}
+                              onSelect={(a) => {
+                                a.handler();
+                              }}
+                            />
+                          </Box>
+                        ) : null}
+                      </ContextContainer>
+                    </Paper>
+                  </Box>
+                </Box>
               </Col>
               {/* CONTENT ----------------------------------------- */}
               <Col span={7}>
@@ -815,11 +1008,15 @@ export default function TreePage() {
                     ) : null}
                     {store.editingItem.nodeType === 'class' ? (
                       <TreeClassDetail
+                        onNew={onNew}
                         onSaveSubject={onSaveSubject}
                         onSaveClass={onSaveClass}
                         selectClass={selectClass}
+                        onRemoveClass={removeClass}
                         addClassUsers={addClassUsers}
                         removeUserFromClass={removeUserFromClass}
+                        removeSubject={removeSubject}
+                        removing={store.removing}
                         program={store.program}
                         center={store.centerId}
                         messagesAddUsers={messages.addUsers}
@@ -890,12 +1087,16 @@ export default function TreePage() {
                     ) : null}
                     {store.newItem.nodeType === 'class' ? (
                       <TreeClassDetail
+                        onNew={onNew}
                         onSaveSubject={onSaveSubject}
                         onSaveClass={onSaveClass}
+                        onRemoveClass={removeClass}
                         selectClass={selectClass}
                         messagesAddUsers={messages.addUsers}
                         item={store.newItem}
                         program={store.program}
+                        removeSubject={removeSubject}
+                        removing={store.removing}
                         classe={store.newItem.value}
                         classes={store.classesBySubject[store.newItem.value.subject?.id]}
                         messages={messages.treeClass}

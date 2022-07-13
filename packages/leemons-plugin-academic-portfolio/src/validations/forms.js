@@ -702,6 +702,7 @@ const updateSubjectSchema = {
     credits: numberSchema,
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
+    color: stringSchemaNullable,
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -732,7 +733,7 @@ async function validateUpdateSubject(data, { transacting } = {}) {
     throw validator.error;
   }
 
-  if (course || internalId) {
+  if (internalId) {
     const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
 
     if (!validator2.validate({ course, internalId })) {

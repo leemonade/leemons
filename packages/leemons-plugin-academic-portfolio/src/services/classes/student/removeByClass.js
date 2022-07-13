@@ -6,13 +6,15 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
     async (transacting) => {
       const classStudents = await table.classStudent.find(
         { class_$in: _.isArray(classIds) ? classIds : [classIds] },
-        { soft, transacting }
+        { transacting }
       );
+
       await leemons.events.emit('before-remove-classes-students', {
         classStudents,
         soft,
         transacting,
       });
+
       await table.classStudent.deleteMany(
         { id_$in: _.map(classStudents, 'id') },
         { soft, transacting }
