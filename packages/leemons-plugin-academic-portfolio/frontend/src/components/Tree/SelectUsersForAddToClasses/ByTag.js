@@ -123,6 +123,7 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
             }
           });
           let classStatus = 'un-used';
+
           if (count === classes.length) {
             classStatus = 'all-used';
             store.allUsedUserAgents.push(student.id);

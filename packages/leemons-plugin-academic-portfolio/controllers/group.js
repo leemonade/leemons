@@ -44,14 +44,19 @@ async function deleteGroupFromClassesUnderNodeTree(ctx) {
 async function duplicateGroupWithClassesUnderNodeTree(ctx) {
   const duplications = await groupService.duplicateGroupWithClassesUnderNodeTreeByIds(
     ctx.request.body.nodeTypes,
-    ctx.request.params.id
+    ctx.request.params.id,
+    {
+      userSession: ctx.state.userSession,
+    }
   );
   ctx.status = 200;
   ctx.body = { status: 200, duplications };
 }
 
 async function duplicateGroup(ctx) {
-  const duplications = await groupService.duplicateGroup(ctx.request.body);
+  const duplications = await groupService.duplicateGroup(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, duplications };
 }

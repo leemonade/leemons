@@ -6,6 +6,7 @@ const { getSubjectCredits, getSubjectsCredits } = require('./getSubjectCredits')
 const { subjectNeedCourseForAdd } = require('./subjectNeedCourseForAdd');
 const { listSubjectCreditsForProgram } = require('./listSubjectCreditsForProgram');
 const { subjectByIds } = require('./subjectByIds');
+const { deleteSubjectWithClasses } = require('./deleteSubjectWithClasses');
 
 module.exports = {
   addSubject,
@@ -17,4 +18,5 @@ module.exports = {
   subjectNeedCourseForAdd,
   listSubjectCreditsForProgram,
   subjectByIds,
+  deleteSubjectWithClasses,
 };

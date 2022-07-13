@@ -88,12 +88,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
           throw new Error('course not in program');
         }
         const courses = isArray(course) ? course : [course];
-        promises.push(
-          Promise.all([
-            Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting }))),
-            setToAllClassesWithSubject(nClass.subject, courses, { transacting }),
-          ])
-        );
+        promises.push(setToAllClassesWithSubject(nClass.subject, courses, { transacting }));
       }
 
       if (_.isNull(group) || group) await removeGroupByClass(nClass.id, { transacting });

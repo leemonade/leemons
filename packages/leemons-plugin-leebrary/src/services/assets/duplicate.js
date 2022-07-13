@@ -12,7 +12,7 @@ async function duplicate(assetId, { preserveName = false, newId, userSession, tr
 
   // EN: Check if the user has permissions to update the asset
   // ES: Comprobar si el usuario tiene permisos para actualizar el activo
-  if (!permissions.edit) {
+  if (!permissions.duplicate) {
     throw new global.utils.HttpError(401, "You don't have permissions to duplicate this asset");
   }
 

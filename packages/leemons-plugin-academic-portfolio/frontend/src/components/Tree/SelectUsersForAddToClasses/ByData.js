@@ -13,9 +13,9 @@ import {
   UserDisplayItem,
 } from '@bubbles-ui/components';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { AlertWarningTriangleIcon, BlockIcon } from '@bubbles-ui/icons/solid';
+import { AlertWarningTriangleIcon, BlockIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert } from '@layout/alert';
-import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate, useStore } from '@common';
 import { cloneDeep, filter, findIndex, forEach, isNil, map } from 'lodash';
 import SelectUserAgent, { SelectUserAgentValueComponent } from '@users/components/SelectUserAgent';
@@ -186,7 +186,6 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   ]);
 
   function onChangeUserAgent(e, userAgent) {
-    console.log(e, userAgent);
     const ids = getSelectedUserAgentsIds();
     if (!ids.includes(e)) {
       store.selectUserAgent = userAgent;
@@ -238,7 +237,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
           <ActionButton
             onClick={() => removeUserAgent(userAgent.value)}
             tooltip={messages.removeUser}
-            icon={<RemoveIcon />}
+            icon={<DeleteBinIcon />}
           />
         </Box>
       ),

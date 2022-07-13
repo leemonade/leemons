@@ -1,5 +1,6 @@
-const { addProgram } = require('../src/services/programs');
 const {
+  addProgram,
+  listPrograms,
   programsByIds,
   getUserPrograms,
   isUserInsideProgram,
@@ -8,6 +9,7 @@ const {
 
 module.exports = {
   addProgram,
+  listPrograms,
   programsByIds,
   getUserPrograms,
   isUserInsideProgram,

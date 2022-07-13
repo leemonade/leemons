@@ -40,18 +40,22 @@ async function getByCategory(
       .map((item) => getAssetIdFromPermissionName(item.permissionName))
       .concat(publicAssets.map((item) => item.asset));
 
-    const { versionControl } = leemons.getPlugin('common').services;
-    const assetByStatus = await versionControl.listVersionsOfType(
-      leemons.plugin.prefixPN(categoryId),
-      { published, preferCurrent, transacting }
-    );
+    try {
+      const { versionControl } = leemons.getPlugin('common').services;
+      const assetByStatus = await versionControl.listVersionsOfType(
+        leemons.plugin.prefixPN(categoryId),
+        { published, preferCurrent, transacting }
+      );
 
-    assetIds = uniq(
-      intersection(
-        assetIds,
-        assetByStatus.map((item) => item.fullId)
-      )
-    );
+      assetIds = uniq(
+        intersection(
+          assetIds,
+          assetByStatus.map((item) => item.fullId)
+        )
+      );
+    } catch (e) {
+      leemons.log.error(`Failed to get asset by status from categoryId ${categoryId}`);
+    }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic

@@ -9,7 +9,6 @@ import {
   SearchInput,
   Select,
   Stack,
-  Switch,
   useDebouncedValue,
   useResizeObserver,
   ImageLoader,
@@ -448,15 +447,15 @@ const AssetList = ({
   const handleOnChangeCategory = (key) => {
     setAssetType('');
     setCategory(find(categories, { key }));
-  }
+  };
 
   const handleOnTypeChange = (type) => {
-    if(isEmbedded) {
+    if (isEmbedded) {
       setAssetType(type);
     }
 
     onTypeChange(type);
-  }
+  };
 
   // ·········································································
   // LABELS & STATIC
@@ -619,13 +618,23 @@ const AssetList = ({
   const categoriesRadioData = useMemo(
     () =>
       categories
-        .filter((item) => Array.isArray(allowChangeCategories) ? allowChangeCategories.includes(item.key) : true)
+        .filter((item) =>
+          Array.isArray(allowChangeCategories) ? allowChangeCategories.includes(item.key) : true
+        )
         .map((item) => ({
           value: item.key,
           label: item.name,
-          icon: <Box style={{ height: 16, marginBottom: 5}}><ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} /></Box>,
+          icon: (
+            <Box style={{ height: 16, marginBottom: 5 }}>
+              <ImageLoader
+                src={item.icon}
+                style={{ width: 16, height: 16, position: 'relative' }}
+              />
+            </Box>
+          ),
         })),
-    [allowChangeCategories, categories]);
+    [allowChangeCategories, categories]
+  );
 
   // ·········································································
   // RENDER
