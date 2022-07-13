@@ -7,6 +7,7 @@ import {
   PageContainer,
   Paper,
   Tree,
+  useResizeObserver,
 } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
 import { AddCircleIcon, DuplicateIcon } from '@bubbles-ui/icons/outline';
@@ -67,8 +68,28 @@ export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
   const [ts, , , tsLoading] = useTranslateLoader(prefixPN('subject_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [store, render] = useStore();
-  const { openDeleteConfirmationModal, setLoading } = useLayout();
+  const [store, render] = useStore({
+    scroll: 0,
+  });
+  const { openDeleteConfirmationModal, setLoading, layoutState } = useLayout();
+
+  function onScroll() {
+    store.scroll = layoutState.contentRef.current.scrollTop;
+    render();
+  }
+
+  React.useEffect(() => {
+    layoutState.contentRef.current.addEventListener('scroll', onScroll);
+
+    // cleanup this component
+    return () => {
+      layoutState.contentRef.current.removeEventListener('scroll', onScroll);
+    };
+  }, [layoutState.contentRef.current]);
+
+  const [containerRef, container] = useResizeObserver();
+  const [headerBaseRef, headerBase] = useResizeObserver();
+  const [headerDescriptionRef, headerDescription] = useResizeObserver();
 
   const params = useQuery();
 
@@ -215,6 +236,7 @@ export default function TreePage() {
           });
         }
 
+        /*
         if (item.nodeType === 'class') {
           actions.push({
             name: 'add-subject',
@@ -224,6 +246,7 @@ export default function TreePage() {
             handler: () => onNewSubject({ ...item, parents }),
           });
         }
+         */
 
         if (
           item.nodeType !== 'program' &&
@@ -239,15 +262,35 @@ export default function TreePage() {
           });
         }
 
+        const parent = parents[parents.length - 1]?.treeId || 0;
+
         result.push({
           id: item.treeId,
-          parent: parents[parents.length - 1]?.treeId || 0,
+          parent,
           text,
           actions,
           item,
+          handler: () => onEdit({ ...item }),
         });
         if (item.childrens && item.childrens.length) {
           item.childrens.forEach((child) => processItem(child, [...parents, item]));
+        } else {
+          const id = `add-button-${parents[parents.length - 1]?.treeId || 0}`;
+          const exists = find(result, { id });
+          if (!exists) {
+            result.push({
+              id,
+              parent,
+              text: t('newsubject'),
+              type: 'button',
+              draggable: false,
+              node: null,
+              data: {
+                action: 'add',
+              },
+              handler: () => onNewSubject({ ...item, parents }),
+            });
+          }
         }
       }
 
@@ -259,7 +302,6 @@ export default function TreePage() {
       return result;
     } catch (err) {
       setLoading(false);
-      console.log(err);
       addErrorAlert(getErrorMessage(err));
       return false;
     }
@@ -825,9 +867,24 @@ export default function TreePage() {
     });
   }
 
+  let { scroll } = store;
+  if (scroll > headerBase.height) scroll = headerBase.height;
+  const correct = 48;
+  const correctBottom = 32;
+
+  let top = headerBase.height + correct - scroll;
+  const minTop = headerBase.height - headerDescription.height;
+  if (top < minTop) {
+    top = minTop;
+  }
+
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={messages.header} />
+      <AdminPageHeader
+        baseRef={headerBaseRef}
+        descriptionRef={headerDescriptionRef}
+        values={messages.header}
+      />
 
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
@@ -835,39 +892,58 @@ export default function TreePage() {
             <Grid>
               {/* TREE ----------------------------------------- */}
               <Col span={5}>
-                <Paper fullWidth padding={5}>
-                  <ContextContainer divided>
-                    <Grid grow>
-                      <Col span={6}>
-                        <SelectCenter
-                          firstSelected
-                          label={t('centerLabel')}
-                          onChange={onSelectCenter}
-                          value={store.centerId}
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <SelectProgram
-                          firstSelected
-                          label={t('programLabel')}
-                          onChange={onSelectProgram}
-                          center={store.centerId}
-                          value={store.programId}
-                        />
-                      </Col>
-                    </Grid>
-                    {store.tree ? (
-                      <Box>
-                        <Tree
-                          treeData={store.tree}
-                          selectedNode={store.editingItem ? store.editingItem.treeId : null}
-                          allowDragParents={false}
-                          initialOpen={map(store.tree, 'id')}
-                        />
-                      </Box>
-                    ) : null}
-                  </ContextContainer>
-                </Paper>
+                <Box ref={containerRef}>
+                  <Box
+                    style={{
+                      width: `${container.width}px`,
+                      position: 'fixed',
+                      top: `${top}px`,
+                      height: `calc(100vh - ${top + correctBottom}px)`,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <Paper fullWidth padding={5}>
+                      <ContextContainer divided>
+                        <Grid grow>
+                          <Col span={6}>
+                            <SelectCenter
+                              firstSelected
+                              label={t('centerLabel')}
+                              onChange={onSelectCenter}
+                              value={store.centerId}
+                            />
+                          </Col>
+                          <Col span={6}>
+                            <SelectProgram
+                              firstSelected
+                              label={t('programLabel')}
+                              onChange={onSelectProgram}
+                              center={store.centerId}
+                              value={store.programId}
+                            />
+                          </Col>
+                        </Grid>
+                        {store.tree ? (
+                          <Box>
+                            <Tree
+                              rootId={0}
+                              treeData={store.tree}
+                              selectedNode={store.editingItem ? store.editingItem.treeId : null}
+                              allowDragParents={false}
+                              initialOpen={map(store.tree, 'id')}
+                              onAdd={(a) => {
+                                a.handler();
+                              }}
+                              onSelect={(a) => {
+                                a.handler();
+                              }}
+                            />
+                          </Box>
+                        ) : null}
+                      </ContextContainer>
+                    </Paper>
+                  </Box>
+                </Box>
               </Col>
               {/* CONTENT ----------------------------------------- */}
               <Col span={7}>
