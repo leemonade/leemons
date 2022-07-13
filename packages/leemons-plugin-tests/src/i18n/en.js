@@ -274,9 +274,9 @@ module.exports = {
     selectResponse: 'Select response',
     noBlankQuestions: "You cannot leave questions blank",
     blankQuestions:
-      '<strong>Questions can be left blank</strong> and these will not be scored (i.e. they score 0).',
+      '<strong>Questions can be left blank</strong> and these will not be scored.',
     blankQuestionsScores:
-      '<strong>Questions can be left blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
+      '<strong>Questions can be left blank</strong> and this will <strong>subtract {per}%</strong> of their value.',
     errorQuestions:
       '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
     finishTestModalTitle: 'Complete and submit this test',
