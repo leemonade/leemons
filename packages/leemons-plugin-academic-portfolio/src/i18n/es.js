@@ -440,7 +440,7 @@ module.exports = {
       subjectType: 'Tipo',
       knowledge: 'Área de conocimiento',
       classrooms: 'Clases',
-      newClassroom: 'Nueva clase',
+      newClassroom: 'Crear nueva clase',
       save: 'Guardar',
       courseLabel: 'Curso:',
       groupLabel: 'Grupo:',
@@ -471,13 +471,19 @@ module.exports = {
       studentsEnrolled: 'Estudiantes matriculados',
       saveChanges: 'Guardar cambios',
       removeSubject: 'Eliminar asignatura',
+      removeClassroom: 'Eliminar clase',
       attention: 'Atención',
+      groupAny: 'Máximo {max} caracteres',
+      groupNumbers: 'Máximo {max} dígitos',
       subjectChangeCourse:
         'Su modelo de árbol indica que sus cursos son estructurantes, es decir, que las asignaturas se anidan dentro de los niveles de curso. Al hacer un cambio de curso, la asignatura desaparecerá del nivel del curso actual y se trasladará al nuevo curso seleccionado.',
       subjectChangeCourseButton: 'Cambiar de todas formas',
       removeSubjectButton: 'Eliminar de todas formas',
+      cancelClassroomButton: 'Cancelar',
       removeSubjectDescription:
-        '<strong>No se recomienda esta acción si ya existen  contenidos o asignaciones asociadas a esta asignatura.</strong> <br/><br/> Al eliminar una asignatura se archivarán todos los grupos de clase asociados a ella y todas las actividades creadas o asignadas que usan esta asignatura, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
+        '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta asignatura.</strong> <br/><br/> Al eliminar una asignatura se archivarán todos los grupos de clase asociados a ella y todas las actividades creadas o asignadas que usan esta asignatura, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
+      removeClassDescription:
+        '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta clase.</strong> <br/><br/> Al eliminar una clase se archivarán todas las actividades creadas o asignadas que usan esta clase, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
     },
   },
   selectSubjectsByTable: {

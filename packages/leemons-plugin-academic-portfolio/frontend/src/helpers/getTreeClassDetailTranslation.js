@@ -39,8 +39,12 @@ export function getTreeClassDetailTranslation(t) {
     studentsEnrolled: t('class.studentsEnrolled'),
     saveChanges: t('class.saveChanges'),
     removeSubject: t('class.removeSubject'),
+    removeClassroom: t('class.removeClassroom'),
     attention: t('class.attention'),
     subjectChangeCourse: t('class.subjectChangeCourse'),
     subjectChangeCourseButton: t('class.subjectChangeCourseButton'),
+    cancelClassroomButton: t('class.cancelClassroomButton'),
+    groupNumbers: t('class.groupNumbers'),
+    groupAny: t('class.groupAny'),
   };
 }

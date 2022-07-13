@@ -196,7 +196,7 @@ export default function TreePage() {
           },
         ];
 
-        if (item.nodeType === 'groups' || item.nodeType === 'class') {
+        if (item.nodeType === 'groups') {
           actions.push({
             name: 'delete',
             tooltip: removeLabel,
@@ -488,21 +488,74 @@ export default function TreePage() {
     })();
   }
 
+  async function removeClass(id) {
+    openDeleteConfirmationModal({
+      title: t('class.attention'),
+      description: t('class.removeClassDescription'),
+      labels: {
+        confirm: t('class.removeSubjectButton'),
+      },
+      onConfirm: async () => {
+        try {
+          store.removing = true;
+          render();
+          await removeClassRequest(id);
+          store.editingItem = null;
+          store.duplicateItem = null;
+          store.newItem = null;
+          store.tree = await getProgramTree();
+          setAgainActiveTree();
+          addSuccessAlert(t('subjectRemoved'));
+        } catch (err) {
+          addErrorAlert(getErrorMessage(err));
+        }
+        store.removing = false;
+        render();
+      },
+    })();
+  }
+
   function selectClass(classId) {
     const item = cloneDeep(store.editingItem || store.newItem);
     item.value = find(store.classesBySubject[item.value.subject?.id], {
       id: classId,
     });
     item.treeId = item.value.treeId;
+    if (store.editingItem) {
+      store.editingItem = item;
+    }
+    if (store.newItem) {
+      store.newItem = item;
+    }
+
     render();
   }
 
-  async function onSaveClass({ schedule, teacher, associateTeachers, ...data }) {
+  async function createGroup({ name, abbreviation }) {
+    try {
+      const { group } = await createGroupRequest({
+        name,
+        abbreviation,
+        program: store.program.id,
+      });
+      addSuccessAlert(t('groupCreated'));
+      return group;
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    return null;
+  }
+
+  async function onSaveClass({ schedule, teacher, associateTeachers, group, isNewGroup, ...data }) {
     try {
       store.saving = true;
       render();
       let alert = null;
       const teachers = [];
+      if (isNewGroup) {
+        const g = await createGroup({ name: group, abbreviation: group });
+        group = g.id;
+      }
       if (teacher) {
         teachers.push({ type: 'main-teacher', teacher });
       }
@@ -511,9 +564,22 @@ export default function TreePage() {
           teachers.push({ type: 'associate-teacher', teacher: tea });
         });
       }
+      let subjectType = null;
+      let course = null;
+      if (store.newItem?.value?.courses) {
+        if (isArray(store.newItem.value.courses)) {
+          course = map(store.newItem.value.courses, 'id');
+        } else {
+          course = store.newItem.value.courses.id;
+        }
+      }
+      if (store.newItem?.value?.subjectType) {
+        subjectType = store.newItem.value.subjectType.id;
+      }
       if (data.id) {
         await updateClassRequest({
           ...data,
+          group,
           teachers,
           schedule: schedule ? schedule.days : [],
         });
@@ -523,7 +589,10 @@ export default function TreePage() {
           class: { id },
         } = await createClassRequest({
           ...omitBy(data, isUndefined),
+          group,
           teachers,
+          course,
+          subjectType,
           schedule: schedule ? schedule.days : [],
           subject: store.newItem.value.subject?.id,
           program: store.program.id,
@@ -538,11 +607,12 @@ export default function TreePage() {
       setAgainActiveTree();
       addSuccessAlert(alert);
     } catch (err) {
+      console.error(err);
       addErrorAlert(getErrorMessage(err));
     }
     store.saving = false;
     render();
-    selectClass(data.id);
+    if (data?.id) selectClass(data.id);
   }
 
   async function onNewGroup(data) {
@@ -858,9 +928,11 @@ export default function TreePage() {
                     ) : null}
                     {store.editingItem.nodeType === 'class' ? (
                       <TreeClassDetail
+                        onNew={onNew}
                         onSaveSubject={onSaveSubject}
                         onSaveClass={onSaveClass}
                         selectClass={selectClass}
+                        onRemoveClass={removeClass}
                         addClassUsers={addClassUsers}
                         removeUserFromClass={removeUserFromClass}
                         removeSubject={removeSubject}
@@ -935,8 +1007,10 @@ export default function TreePage() {
                     ) : null}
                     {store.newItem.nodeType === 'class' ? (
                       <TreeClassDetail
+                        onNew={onNew}
                         onSaveSubject={onSaveSubject}
                         onSaveClass={onSaveClass}
+                        onRemoveClass={removeClass}
                         selectClass={selectClass}
                         messagesAddUsers={messages.addUsers}
                         item={store.newItem}

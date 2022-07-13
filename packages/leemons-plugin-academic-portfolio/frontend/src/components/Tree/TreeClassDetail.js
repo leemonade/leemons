@@ -16,7 +16,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { useStore } from '@common';
 import { forEach, isArray, isString, map } from 'lodash';
@@ -31,11 +31,13 @@ const TreeClassDetail = ({
   messages,
   onSaveSubject,
   onSaveClass,
+  onNew,
   addClassUsers,
   selectClass,
   saving,
   removing,
   removeSubject,
+  onRemoveClass,
   removeUserFromClass,
   center,
   item: treeItem,
@@ -45,7 +47,7 @@ const TreeClassDetail = ({
   const { openConfirmationModal } = useLayout();
   const [store, render] = useStore({
     createMode,
-    page: 1,
+    page: createMode ? 2 : 2,
   });
   const {
     reset,
@@ -86,9 +88,15 @@ const TreeClassDetail = ({
     tabs.push(
       <TabPanel key="newItem" label={messages.newClass}>
         <TreeClassroomDetail
+          onRemoveClass={() => {
+            store.createMode = false;
+            render();
+          }}
+          removing={removing}
           program={program}
           messages={messages}
           saving={saving}
+          createMode={true}
           messagesAddUsers={messagesAddUsers}
           onSave={onSaveClass}
           teacherSelect={teacherSelect}
@@ -278,10 +286,26 @@ const TreeClassDetail = ({
       ) : null}
       {store.page === 2 ? (
         <Box>
+          <Box>
+            <Button
+              variant="light"
+              leftIcon={<AddCircleIcon />}
+              disabled={store.createMode}
+              onClick={() => {
+                onNew(treeItem);
+              }}
+            >
+              {messages.newClassroom}
+            </Button>
+          </Box>
           <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
             {tabs}
             {classes.map((item) => (
-              <TabPanel disabled={store.createMode} key={item.id} label={item.treeName}>
+              <TabPanel
+                disabled={store.createMode}
+                key={item.id}
+                label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+              >
                 <TreeClassroomDetail
                   messagesAddUsers={messagesAddUsers}
                   removeUserFromClass={removeUserFromClass}
@@ -289,9 +313,11 @@ const TreeClassDetail = ({
                   classe={item}
                   messages={messages}
                   saving={saving}
+                  removing={removing}
                   onSave={onSaveClass}
                   center={center}
                   item={treeItem}
+                  onRemoveClass={onRemoveClass}
                   addClassUsers={addClassUsers}
                   teacherSelect={teacherSelect}
                 />
@@ -321,7 +347,9 @@ TreeClassDetail.propTypes = {
   messagesAddUsers: PropTypes.object,
   removeUserFromClass: PropTypes.func,
   removing: PropTypes.bool,
+  onRemoveClass: PropTypes.func,
   removeSubject: PropTypes.func,
+  onNew: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export
