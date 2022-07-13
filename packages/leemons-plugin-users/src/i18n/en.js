@@ -5,7 +5,7 @@ module.exports = {
   user_data_page: {
     page_title: 'User data',
     page_description:
-      'In this section you can configure the dataset fields for your users. The identification data are mandatory for the operation of the platform and mandatory for all users of any profile. The common fields are those shared by all users, they can be mandatory or optional (they are useful to save time when defining fields common to all users of the platform such as a name or surname). <br/> Last but not least, profiles have their own data sets that you can consult in the profiles section.',
+      'In this section the dataset fields can be configured for your users. The identification data is mandatory for the operation of the platform and mandatory for all users of any profile. The common fields are those shared by all users, they can be mandatory or optional (they are useful to save time when defining fields common to all users of the platform such as a name or surname). <br/> Last but not least, profiles have their own data sets that you can consult in the profiles section.',
     tabs: {
       system_data: 'System data',
       common_fields: 'Common fields',
@@ -90,7 +90,7 @@ module.exports = {
   welcome_page: {
     page_title: 'Welcome to Users Admin',
     page_description:
-      'Here we recommend you the first steps to config properly your Users Administration setup.',
+      'Here are the first steps recommended to properly configure your User Administration setup.',
   },
   hero_bg: {
     text: `“I don't know the meaning of half those long words, and, what's more, I don't believe you do either!”`,
@@ -116,7 +116,7 @@ module.exports = {
     save_done: 'Profile created',
     update_done: 'Profile updated',
     translations: 'Translations',
-    translations_warning: 'Must save the profile to keep translations stored',
+    translations_warning: 'The profile must be saved to keep stored translations',
     options_modal: {
       title: 'Translation',
       description: 'Add here the translations of the profile info to your system languages',
@@ -151,7 +151,7 @@ module.exports = {
     title: 'Login to your account',
     email: 'Email',
     password: 'Password',
-    remember_password: 'I cant remember my password',
+    remember_password: 'I forgot my password',
     log_in: 'Log in',
     not_registered: 'I am not registered',
     form_error: 'Email or password does not match',
@@ -163,17 +163,17 @@ module.exports = {
     setPassword: 'Set password',
     repeatPasswordPlaceholder: 'Your password',
     passwordPlaceholder: 'Repeat your password',
-    passwordMatch: 'Passwords not match',
+    passwordMatch: 'Passwords do not match',
     tokenError: 'The code to set the password has expired or is not valid, contact your center.',
   },
   recover: {
     title: 'Forgot my password',
     description:
-      'Enter the email address associated with your account and we will send you a link to reset your password.',
+      'Enter the email address associated with your account and a link will be sent to reset your password.',
     email: 'Email',
     resetPassword: 'Reset password',
     returnLogin: 'Return to login',
-    emailSendTo: 'We have sent you an email to: {email}',
+    emailSendTo: 'An email has been sent to: {email}',
     emailRequired: 'Email required',
   },
   reset: {
@@ -188,9 +188,9 @@ module.exports = {
   selectProfile: {
     title: 'Hi {name}',
     number_of_profiles:
-      'You have {profiles} profiles on leemons, please select the one with you want to access',
+      'You have {profiles} profiles on leemons, please select the one that you want to access',
     several_centers:
-      'You have several centers and profiles in Leemons, please select how you want to access.',
+      'You have several centers and profiles in Leemons, please select how you want to access them.',
     use_always_profile: 'Remember this configuration',
     change_easy: 'You can always change your profile or center from your user account.',
     log_in: 'Log in',
@@ -238,8 +238,8 @@ module.exports = {
     tagsHeader: 'Tags',
     tableAdd: 'Add',
     tableRemove: 'Remove',
-    userAlreadyHaveThisConfig: 'The user already exists in that center with that profile.',
-    userEmailAlreadyAdded: 'You already have a user added with that email',
+    userAlreadyHaveThisConfig: 'A user already exists in that center with that profile.',
+    userEmailAlreadyAdded: 'A user has already been added with that email',
     tagsForAllUsers: 'Tags for all users to add',
     save: 'Save',
     usersAddedSuccessfully: 'Users added successfully',
@@ -259,7 +259,7 @@ module.exports = {
     selectCenter: 'Select center',
     selectProfile: 'Select profile',
     noResults: 'No results',
-    preferredGenderLabel: 'Preferred gender pronoun',
+    preferredGenderLabel: 'Preferred gender pronouns',
     personalInformationLabel: 'Personal information',
     recoveryLink: 'Send recovery link',
     otherInformationLabel: 'Other information',
