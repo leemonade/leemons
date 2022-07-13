@@ -225,7 +225,11 @@ export default function TreePage() {
           });
         }
 
-        if (item.nodeType !== 'program' && item.nodeType !== 'courses') {
+        if (
+          item.nodeType !== 'program' &&
+          item.nodeType !== 'class' &&
+          item.nodeType !== 'courses'
+        ) {
           actions.push({
             name: 'new',
             tooltip: t(`new${item.nodeType}`),

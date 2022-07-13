@@ -21,6 +21,7 @@ import ImagePicker from '@leebrary/components/ImagePicker';
 import { useStore } from '@common';
 import { forEach, isArray, isString, map } from 'lodash';
 import { useLayout } from '@layout/context';
+import { TreeClassroomUsersDetail } from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
@@ -307,6 +308,36 @@ const TreeClassDetail = ({
                 label={item.groups?.abbreviation || item.groups?.name || item.treeName}
               >
                 <TreeClassroomDetail
+                  messagesAddUsers={messagesAddUsers}
+                  removeUserFromClass={removeUserFromClass}
+                  program={program}
+                  classe={item}
+                  messages={messages}
+                  saving={saving}
+                  removing={removing}
+                  onSave={onSaveClass}
+                  center={center}
+                  item={treeItem}
+                  onRemoveClass={onRemoveClass}
+                  addClassUsers={addClassUsers}
+                  teacherSelect={teacherSelect}
+                />
+              </TabPanel>
+            ))}
+          </Tabs>
+        </Box>
+      ) : null}
+
+      {store.page === 3 ? (
+        <Box>
+          <Tabs onTabClick={selectClass}>
+            {classes.map((item) => (
+              <TabPanel
+                disabled={store.createMode}
+                key={item.id}
+                label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+              >
+                <TreeClassroomUsersDetail
                   messagesAddUsers={messagesAddUsers}
                   removeUserFromClass={removeUserFromClass}
                   program={program}

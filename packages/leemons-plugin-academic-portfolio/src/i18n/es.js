@@ -475,11 +475,15 @@ module.exports = {
       attention: 'Atención',
       groupAny: 'Máximo {max} caracteres',
       groupNumbers: 'Máximo {max} dígitos',
+      enrollStudents: 'Matricular estudiantes',
+      currentlyEnrolled: 'Estudiantes matriculados',
       subjectChangeCourse:
         'Su modelo de árbol indica que sus cursos son estructurantes, es decir, que las asignaturas se anidan dentro de los niveles de curso. Al hacer un cambio de curso, la asignatura desaparecerá del nivel del curso actual y se trasladará al nuevo curso seleccionado.',
       subjectChangeCourseButton: 'Cambiar de todas formas',
       removeSubjectButton: 'Eliminar de todas formas',
       cancelClassroomButton: 'Cancelar',
+      show: 'Mostrar',
+      goTo: 'Ir a',
       removeSubjectDescription:
         '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta asignatura.</strong> <br/><br/> Al eliminar una asignatura se archivarán todos los grupos de clase asociados a ella y todas las actividades creadas o asignadas que usan esta asignatura, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
       removeClassDescription:

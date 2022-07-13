@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Box, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
+import { Alert, Box, Radio, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
 import { forEach, map } from 'lodash';
 import { ByTag } from './ByTag';
 import { ByData } from './ByData';
@@ -8,12 +8,15 @@ import { ByData } from './ByData';
 const SelectUsersForAddToClasses = ({
   showMessages = true,
   tree,
+  radioMode,
   center,
   messages,
   onChange,
   disableSave,
   ignoreAddedUsers,
 }) => {
+  const [activeTab, setActiveTab] = React.useState(0);
+
   const _classes = React.useMemo(() => {
     const getClasses = (item) => {
       let classes = [];
@@ -53,27 +56,59 @@ const SelectUsersForAddToClasses = ({
         </Box>
       ) : null}
 
-      <Tabs destroyInactiveTabPanel>
-        <TabPanel label={messages.byTag}>
-          <ByTag
-            center={center}
-            messages={messages}
-            classes={_classes}
-            disableSave={disableSave}
-            onChange={onChange}
-          />
-        </TabPanel>
-        <TabPanel label={messages.byData}>
-          <ByData
-            center={center}
-            messages={messages}
-            classes={_classes}
-            disableSave={disableSave}
-            onChange={onChange}
-            ignoreAddedUsers={ignoreAddedUsers}
-          />
-        </TabPanel>
-      </Tabs>
+      {radioMode ? (
+        <Box>
+          <Stack>
+            <Radio checked={activeTab === 0} onChange={() => setActiveTab(0)}>
+              {messages.byTag}
+            </Radio>
+            <Radio checked={activeTab === 1} onChange={() => setActiveTab(1)}>
+              {messages.byData}
+            </Radio>
+          </Stack>
+          {activeTab === 0 ? (
+            <ByTag
+              center={center}
+              messages={messages}
+              classes={_classes}
+              disableSave={disableSave}
+              onChange={onChange}
+            />
+          ) : null}
+          {activeTab === 1 ? (
+            <ByData
+              center={center}
+              messages={messages}
+              classes={_classes}
+              disableSave={disableSave}
+              onChange={onChange}
+              ignoreAddedUsers={ignoreAddedUsers}
+            />
+          ) : null}
+        </Box>
+      ) : (
+        <Tabs destroyInactiveTabPanel>
+          <TabPanel label={messages.byTag}>
+            <ByTag
+              center={center}
+              messages={messages}
+              classes={_classes}
+              disableSave={disableSave}
+              onChange={onChange}
+            />
+          </TabPanel>
+          <TabPanel label={messages.byData}>
+            <ByData
+              center={center}
+              messages={messages}
+              classes={_classes}
+              disableSave={disableSave}
+              onChange={onChange}
+              ignoreAddedUsers={ignoreAddedUsers}
+            />
+          </TabPanel>
+        </Tabs>
+      )}
     </Box>
   );
 };
@@ -86,6 +121,7 @@ SelectUsersForAddToClasses.propTypes = {
   onChange: PropTypes.func,
   disableSave: PropTypes.func,
   ignoreAddedUsers: PropTypes.bool,
+  radioMode: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export

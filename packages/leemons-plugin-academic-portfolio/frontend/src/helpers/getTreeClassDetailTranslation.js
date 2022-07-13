@@ -46,5 +46,9 @@ export function getTreeClassDetailTranslation(t) {
     cancelClassroomButton: t('class.cancelClassroomButton'),
     groupNumbers: t('class.groupNumbers'),
     groupAny: t('class.groupAny'),
+    enrollStudents: t('class.enrollStudents'),
+    currentlyEnrolled: t('class.currentlyEnrolled'),
+    show: t('class.show'),
+    goTo: t('class.goTo'),
   };
 }

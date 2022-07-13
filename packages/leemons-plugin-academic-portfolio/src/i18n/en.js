@@ -478,11 +478,15 @@ module.exports = {
       attention: 'Attention',
       groupAny: 'Must be {max} characters',
       groupNumbers: 'Must be {max} numbers',
+      enrollStudents: 'Enroll students',
+      currentlyEnrolled: 'Currently enrolled',
       subjectChangeCourse:
         'Your tree model indicates that your courses are structuring, i.e. subjects are nested within course levels. When making a course change, the subject will disappear from the current course level and will be moved to the newly selected course.',
       subjectChangeCourseButton: 'Change anyway',
       removeSubjectButton: 'Eliminate anyway',
       cancelClassroomButton: 'Cancel',
+      show: 'Show',
+      goTo: 'Go to',
       removeSubjectDescription:
         '<strong>This action is not recommended if there is already content or assignments associated with this subject.</strong> <br/><br/> Deleting a subject will archive all class groups associated with it and all activities created or assigned that use this subject, as well as related assessments. <br/><br/> Errors may also occur when editing related activities.',
       removeClassDescription:
