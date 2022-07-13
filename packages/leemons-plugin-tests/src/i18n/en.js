@@ -1,6 +1,6 @@
 module.exports = {
   questionsBanksList: {
-    pageTitle: 'Questions Banks List',
+    pageTitle: 'Question Banks List',
     nameHeader: 'Name',
     nQuestionsHeader: 'Questions',
     levelHeader: 'Level',
@@ -25,10 +25,10 @@ module.exports = {
     subjectLabel: 'Subject',
     subjectRequired: 'Field required',
     pageTitle: 'Editing question bank: {name}',
-    pageTitleNew: 'New questions bank: {name}',
+    pageTitleNew: 'New question bank: {name}',
     saveDraft: 'Save as draft',
     publish: 'Publish',
-    config: 'Config',
+    config: 'Configure',
     design: 'Design',
     questions: 'Questions',
     nameLabel: 'Name',
@@ -44,7 +44,7 @@ module.exports = {
     addQuestion: 'Add new question',
     save: 'Save',
     saveQuestion: 'Save question',
-    returnToList: 'Return to questions bank',
+    returnToList: 'Return to question bank',
     questionDetail: 'Question detail',
     typeLabel: 'Type',
     typeRequired: 'Field required',
@@ -60,7 +60,7 @@ module.exports = {
     needExplanationAndResponse: 'All answers need a text and an explanation',
     needResponse: 'Answers must have a text',
     responsesDescription:
-      'Select the correct answer by clicking on the circular icon, mark ({{icon}}) the response that will be hidden when the user requests a hint (you can set the hint mode in the assignment section).',
+      'Select the correct answer by clicking on the circular icon, mark ({{icon}}) the response that will be hidden when the user requests a hint (the hint mode can be set in the assignment section).',
     addResponse: 'Add response',
     responseRequired: 'Field required',
     explanationRequired: 'Field required',
@@ -71,7 +71,7 @@ module.exports = {
     cluesLabel: 'Clues',
     addClue: 'Add clue',
     cluesDescription:
-      'You can give hints to students providing information that facilitates the memory retrieval task.',
+      'You can give hints to students providing information that facilitates memory retrieval.',
     imageLabel: 'Image',
     saveImage: 'Save image',
     addImage: 'Add image',
@@ -83,9 +83,9 @@ module.exports = {
     addMap: 'Add map',
     itemsLabel: 'Items',
     itemsDescriptionBeforeMap:
-      'Once you have added the number stickers to the image you can include the names',
+      'Once the number stickers have been added to the image the names can be included',
     itemsDescription:
-      'Mark ({{icon}}) the item that will be solved when the user requests a hint (you can set the hint mode in the assignment section).',
+      'Mark ({{icon}}) the item that will be solved when the user requests a hint (the hint mode can be set in the assignment section).',
     createNumbering: 'Create numbering',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
@@ -127,7 +127,7 @@ module.exports = {
     pageTitleNew: 'New test',
     saveDraft: 'Save as draft',
     publish: 'Publish',
-    config: 'Config',
+    config: 'Configure',
     nameLabel: 'Name',
     nameRequired: 'Field required',
     taglineLabel: 'Tagline',
@@ -143,10 +143,10 @@ module.exports = {
     continue: 'Continue',
     onlyPublish: 'Only publish',
     publishAndAssign: 'Publish and assign',
-    questionsBank: 'Questions Bank',
+    questionsBank: 'Question Bank',
     design: 'Design',
     questionsBanksDescription: 'Select a question bank to use in this test',
-    questionsBanks: 'Questions Banks',
+    questionsBanks: 'Question Banks',
     nameHeader: 'Name',
     nQuestionsHeader: 'Questions',
     noQuestionBanks: 'No question bank available for the selected subjects',
@@ -159,7 +159,7 @@ module.exports = {
     questionsDescription:
       'Select the questions you want to add to this test question bank to use in this test.',
     questionsDescriptionReorder:
-      'You can now modify the order in which the student will answer the questions. Drag and drop the questions to reorder them.',
+      'It is now possible to modify the order in which the student will answer the questions. Drag and drop the questions to reorder them.',
     questionBank: 'Question Bank: {name}',
     nQuestions: '({n} questions)',
     questionFiltersDescription1:
@@ -178,14 +178,14 @@ module.exports = {
     nQuestionsRequired: 'Field required',
     minOneQuestion: 'Minimum one question',
     selectQuestionDescription:
-      'These are the selected questions, check if this is the content you want for this test or edit the questions you are interested in.',
+      'These are the selected questions, check if this is the content wanted for this test or edit the questions you are interested in.',
     selectQuestionNothingToSelect:
-      'No questions were found for the criteria you entered, please go back and expand your search settings.',
+      'No questions were found for the criteria entered, please go back and expand the search settings.',
     returnFilters: 'Return to Select questions',
     assignSelectedQuestions: 'Select questions and continue',
     responsesLabel: 'Responses',
     questionLabel: 'Question',
-    questionsRequired: 'Minimum select one question',
+    questionsRequired: 'Select a minuimum of one question',
     reorderQuestionsDescription:
       'These are the questions you have selected for this test, if you wish, you can order them at your convenience',
     statementLabel: 'Test statement',
@@ -221,7 +221,7 @@ module.exports = {
     categories: 'Categories:',
     evaluation: 'Evaluation:',
     gradable: 'Gradable',
-    nogradable: 'No gradable',
+    nogradable: 'Ungradable',
     task: 'Task',
     toggle: 'Close',
     open: 'Open',
@@ -240,7 +240,7 @@ module.exports = {
     test: 'TEST',
     instructionsForTest: 'Instructions for this test',
     clueWithoutPer:
-      'The use of hints does not subtract any score, i.e., you can ask for hints without penalty.',
+      'The use of hints does not subtract any score, i.e., hints can be asked for without penalty.',
     clueWithPer:
       'The use of clues subtracts {per}% of the question, i.e. {points} for each clue used.',
     questions: 'Questions',
@@ -251,18 +251,18 @@ module.exports = {
     importantInformation: 'Important information',
     informationOnlyView: 'This test is in "query only" mode',
     informationStart: 'The starting date to be able to perform this test is: {date}',
-    minToApprove: 'Min. to approve',
+    minToApprove: 'Minimum to approve',
     beforeStart: 'To be considered',
     withoutPause: 'Without pause',
     noTimeLimit: 'No time limit',
     makeTheTest: 'Make the test',
-    howItWorks: 'How it works?',
+    howItWorks: 'How does it work?',
     limitedTime: 'Limited time',
     limitedTimeDescription:
-      'Once started you have {time} to finish the test, if the time ends before you answer all the questions, only the questions answered up to the moment of the interruption will be scored.',
+      'Once started there will be {time} to finish the test, if the time ends before all the questions are answered, only the questions answered up to the moment of the interruption will be scored.',
     canNotStop: 'The test cannot be paused',
     canNotStopDescription:
-      'If you exit the application with the test in progress, the test will be terminated, scoring only the questions answered up to the moment of interruption. If an error occurs in the system and you are expelled from the test, you will be able to notify it and if your error is verified you will be able to retake the test.',
+      'If the application is exited with the test in progress, the test will be terminated, scoring only the questions answered up to the moment of interruption. If an error occurs in the system and you are removed from the test, it will be possible to make a note of it and if your error is verified it will be possible to retake the test.',
     questionNumber: 'QUESTION: {number}',
     theQuestionValueIs: 'The question value is',
     pointsInTotal: 'Points',
@@ -272,16 +272,16 @@ module.exports = {
     nextButton: 'Next',
     finishButton: 'Finish',
     selectResponse: 'Select response',
-    noBlankQuestions: "You can't leave questions blank",
+    noBlankQuestions: "You cannot leave questions blank",
     blankQuestions:
-      '<strong>You can leave questions blank</strong> and these will not score (i.e. they score 0).',
+      '<strong>Questions can be left blank</strong> and these will not be scored (i.e. they score 0).',
     blankQuestionsScores:
-      '<strong>You can leave questions blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
+      '<strong>Questions can be left blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
     errorQuestions:
       '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
     finishTestModalTitle: 'Complete and submit this test',
     finishTestModalDescription:
-      'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
+      'If you click on "Confirm submission", your test will be sent to a reviewer and it will no longer be possile to modify any answers or answer unanswered questions <br/><br/> Once the submission is confirmed, the system will show the test results (except for open questions).',
     confirmSubmission: 'Confirm submission',
     cancelSubmission: 'Cancel',
     finishForceTestModalTitle: 'The time established to complete this test has expired.',
@@ -293,7 +293,7 @@ module.exports = {
     warnNoResponseDescription:
       'This question has not been answered, please see below for the correct answer and explanation (if any).',
     mapNeedResponses:
-      'This question requires you to answer all the options presented in order to be evaluated (otherwise it will count as an unanswered question).',
+      'This question requires an answer to all the options presented in order to be evaluated (otherwise it will count as an unanswered question).',
     attention: 'Attention',
     correctResponse: 'Correct response',
     explanation: 'Explanation',
@@ -302,8 +302,8 @@ module.exports = {
   },
   testAssign: {
     pageTitle: 'Assign Test:',
-    assign: 'Assignar',
-    config: 'Config',
+    assign: 'Assign',
+    config: 'Configure',
     next: 'Continue',
     prev: 'Previous',
     assignDone: 'Assignment created successfully',
@@ -312,7 +312,7 @@ module.exports = {
     allowAdvancedSettings: 'Allow advanced settings',
     useSettings: 'Selects a previously saved preset or creates a new configuration',
     configDescription:
-      'You can select a random subset of questions from this test according to their category or level. If you want to use all questions, check "Use all questions".',
+      'A random subset of questions from this test can be selected according to their category or level. Check "Use all questions" to use all questions if desired.',
     totalQuestions: '{n} questions',
     requirementsQuestions: '{n} meet requirements',
     nOfQuestions: 'Number of questions',
@@ -330,7 +330,7 @@ module.exports = {
     wrongAnswerPercentage: 'Subtract {number}% of the value',
     unansweredLabel: 'Unanswered',
     unansweredDescriptions: 'Allow students to leave questions unanswered.',
-    unansweredDescription2: 'What impact do unanswers have on the test score?',
+    unansweredDescription2: 'What impact do unanswered questions have on the test score?',
     clues: 'Clues',
     allowClues: 'Allow students to ask for clues',
     clueExtraInfo: 'Extra info',
@@ -342,7 +342,7 @@ module.exports = {
     clueNoImpact: 'No impact',
     categoriesLabel: 'Categories',
     noRequiredQuestions: 'The filtered questions are fewer than those requested',
-    level: 'Nivel',
+    level: 'Level',
   },
   testResult: {
     testResult: 'Statistics by type of question',
