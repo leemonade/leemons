@@ -92,10 +92,10 @@ module.exports = async function createAssignation(
         transacting,
       });
 
-      const domain = await leemons.getPlugin('users').services.platform.getDomain();
+      const hostname = await leemons.getPlugin('users').services.platform.getHostname();
 
       instance.assignable.asset.url =
-        (domain || ctx.request.header.origin) +
+        (hostname || ctx.request.header.origin) +
         leemons.getPlugin('leebrary').services.assets.getCoverUrl(instance.assignable.asset.id);
 
       const _classes = _.uniqBy(classesData, 'subject.id');
@@ -104,9 +104,9 @@ module.exports = async function createAssignation(
       let subjectIconUrl =
         // eslint-disable-next-line no-nested-ternary
         _classes.length > 1
-          ? `${domain || ctx.request.header.origin}/public/assets/svgs/module-three.svg`
+          ? `${hostname || ctx.request.header.origin}/public/assets/svgs/module-three.svg`
           : _classes[0].subject.icon.cover
-          ? (domain || ctx.request.header.origin) +
+          ? (hostname || ctx.request.header.origin) +
             leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].subject.icon.id)
           : null;
 
@@ -138,7 +138,7 @@ module.exports = async function createAssignation(
                 userAgentByIds,
                 user,
                 _classes,
-                `${domain || ctx.request.header.origin}/private/assignables/ongoing`,
+                `${hostname || ctx.request.header.origin}/private/assignables/ongoing`,
                 subjectIconUrl
               );
             }

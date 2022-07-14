@@ -3,7 +3,7 @@ const moment = require('moment');
 const { table } = require('../tables');
 const constants = require('../../../config/constants');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
-const getDomain = require('../platform/getDomain');
+const getHostname = require('../platform/getHostname');
 
 /**
  * If there is a user with that email we check if there is already a recovery in progress, if
@@ -35,18 +35,18 @@ async function recover(email, ctx) {
     });
   }
   if (leemons.getPlugin('emails')) {
-    const domain = await getDomain();
+    const hostname = await getHostname();
     await leemons
       .getPlugin('emails')
       .services.email.sendAsEducationalCenter(email, 'user-recover-password', user.locale, {
         name: user.name,
-        resetUrl: `${domain || ctx.request.header.origin}/users/reset?token=${encodeURIComponent(
+        resetUrl: `${hostname || ctx.request.header.origin}/users/reset?token=${encodeURIComponent(
           await generateJWTToken({
             id: user.id,
             code: recovery.code,
           })
         )}`,
-        recoverUrl: `${domain || ctx.request.header.origin}/users/recover`,
+        recoverUrl: `${hostname || ctx.request.header.origin}/users/recover`,
       });
   }
   return undefined;

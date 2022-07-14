@@ -24,7 +24,11 @@ async function add(fileId, assetId, { skipPermissions, userSession, transacting 
       throw new global.utils.HttpError(422, 'Asset not found');
     }
 
-    return tables.assetsFiles.set({ asset: assetId, file: fileId }, {}, { transacting });
+    return tables.assetsFiles.set(
+      { asset: assetId, file: fileId },
+      { asset: assetId, file: fileId },
+      { transacting }
+    );
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to add file: ${e.message}`);
   }
