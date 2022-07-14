@@ -15,7 +15,7 @@ async function setHostname(hostname, { transacting } = {}) {
     { key: 'platform-hostname' },
     {
       key: 'platform-hostname',
-      value: `${url.protocol}://${url.host}`,
+      value: `${url.protocol}//${url.host}`,
     },
     { transacting }
   );
