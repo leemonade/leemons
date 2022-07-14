@@ -7,6 +7,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
 import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
+import Centers from '@admin/pages/private/Setup/components/Centers';
 import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
@@ -19,9 +20,9 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 1,
+    currentStep: 3,
     headerHeight: null,
-    steps: 3,
+    steps: 4,
   });
 
   // ····················································
@@ -70,7 +71,7 @@ function Setup({ session }) {
               { label: t('welcome.label'), status: 'OK' },
               { label: t('mails.label'), status: 'OK' },
               { label: t('languages.label'), status: 'OK' },
-              { label: 'Step 2', status: 'OK' },
+              { label: t('centers.label'), status: 'OK' },
             ]}
           >
             {
@@ -87,6 +88,11 @@ function Setup({ session }) {
                 />,
                 <Locales
                   key="s3"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Centers
+                  key="s4"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,

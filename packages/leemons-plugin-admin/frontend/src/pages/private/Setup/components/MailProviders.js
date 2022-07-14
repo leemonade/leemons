@@ -67,7 +67,7 @@ function dynamicImport(pluginName) {
 }
 
 const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
-  const [t] = useTranslateLoader(prefixPN('setup'));
+  const [t] = useTranslateLoader(prefixPN('setup.mails'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [store, render] = useStore({
@@ -99,11 +99,11 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
     store.emailError = null;
     // Check if not empty
     if (!store.email) {
-      store.emailError = t('mails.emailRequired');
+      store.emailError = t('emailRequired');
     }
     // Check if valid email
     if (store.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(store.email)) {
-      store.emailError = t('mails.emailInvalid');
+      store.emailError = t('emailInvalid');
     }
   }
 
@@ -140,11 +140,11 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
 
   return (
     <Box>
-      <ContextContainer title={t('mails.title')} description={t('mails.description')} divided>
+      <ContextContainer title={t('title')} description={t('description')} divided>
         <ContextContainer>
           <Box>
-            <Title order={4}>{t('mails.defaultOrganizationEmail')}</Title>
-            <Paragraph>{t('mails.defaultOrganizationEmailDescription')}</Paragraph>
+            <Title order={4}>{t('defaultOrganizationEmail')}</Title>
+            <Paragraph>{t('defaultOrganizationEmailDescription')}</Paragraph>
           </Box>
           <TextInput
             value={store.email}
@@ -153,12 +153,12 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
               render();
             }}
             error={store.emailError}
-            label={t('mails.organizationEmail')}
+            label={t('organizationEmail')}
             required
           />
         </ContextContainer>
         <ContextContainer>
-          <Title order={4}>{t('mails.chooseProvider')}</Title>
+          <Title order={4}>{t('chooseProvider')}</Title>
           {store.loading ? (
             <Loader />
           ) : store.providers.length ? (
@@ -192,19 +192,19 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
                   variant="link"
                   onClick={() => window.open('https://github.com/leemonade/leemons')}
                 >
-                  {t('mails.github')}
+                  {t('github')}
                 </Button>
               </Box>
               <Provider {...(store.activeProvider || {})} onChange={onChange} />
               {store.dirty && !totalProviders ? (
-                <Alert title={t('mails.error')} severity="error" closeable={false}>
-                  {t('mails.defaultOrganizationEmailRequired')}
+                <Alert title={t('error')} severity="error" closeable={false}>
+                  {t('defaultOrganizationEmailRequired')}
                 </Alert>
               ) : null}
             </>
           ) : (
             <Alert severity="error" closeable={false}>
-              {t('mails.noProviders')}
+              {t('noProviders')}
             </Alert>
           )}
         </ContextContainer>

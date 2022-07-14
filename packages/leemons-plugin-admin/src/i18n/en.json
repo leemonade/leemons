@@ -76,6 +76,49 @@
         "title": "Default language",
         "description": "Select the default language that will be used by the platform."
       }
+    },
+    "centers": {
+      "label": "Centers",
+      "title": "Centers",
+      "description": "You can configure the type of information you want to include in each center. There is some basic system fields, But you can add as many fields as you need.",
+      "noCentersYet": "Don't have a center yet?",
+      "noCentersYetDescription": "Create a new center to which you will later add students and teachers.",
+      "noCentersYetButton": "Add new center",
+      "edit": "Edit",
+      "remove": "Remove",
+      "actions": "Actions"
     }
+  },
+  "addCenterDrawer": {
+    "newCenter": "New center",
+    "editCenter": "Edit center",
+    "name": "Name",
+    "nameRequired": "Name is required",
+    "preferredLanguage": "Preferred language",
+    "preferredLanguageRequired": "Preferred language is required",
+    "timeZone": "Time zone",
+    "firstDayOfWeek": "First day of week",
+    "firstDayOfWeekRequired": "First day of week is required",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "emailForNotifications": "Email for notifications",
+    "emailForNotificationsDescription": "We will use this email as sender in order to send notifications to users related with this center.",
+    "emailForNotificationsRequired": "Email is required",
+    "emailForNotificationsInvalid": "Email is invalid",
+    "email": "Email",
+    "extraData": "Extra data",
+    "country": "Country",
+    "address": "Address",
+    "city": "City",
+    "postalCode": "Postal code",
+    "street": "Street",
+    "contactInfo": "Contact info",
+    "phone": "Phone",
+    "save": "Save"
   }
 }

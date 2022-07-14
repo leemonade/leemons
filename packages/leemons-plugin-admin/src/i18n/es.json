@@ -76,6 +76,49 @@
         "title": "Idioma predeterminado",
         "description": "Selecciona el idioma predeterminado que se usará en la interfaz de usuario y en el sistema."
       }
+    },
+    "centers": {
+      "label": "Centros",
+      "title": "Centros",
+      "description": "Puede configurar el tipo de información que desea incluir en cada centro. Hay algunos campos básicos del sistema, pero puede añadir tantos campos como necesite.",
+      "noCentersYet": "Aún no tienes centros?",
+      "noCentersYetDescription": "Crea un nuevo centro al que mas adelante añadiras alumnos y profesores.",
+      "noCentersYetButton": "Añadir centro",
+      "edit": "Editar",
+      "remove": "Eliminar",
+      "actions": "Acciones"
     }
+  },
+  "addCenterDrawer": {
+    "newCenter": "Nuevo centro",
+    "editCenter": "Editar centro",
+    "name": "Nombre",
+    "nameRequired": "El nombre es obligatorio",
+    "preferredLanguage": "Idioma preferido",
+    "preferredLanguageRequired": "El idioma preferido es obligatorio",
+    "timeZone": "Zona horaria",
+    "firstDayOfWeek": "Primer día de la semana",
+    "firstDayOfWeekRequired": "El primer día de la semana es obligatorio",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "emailForNotifications": "Email para notificaciones",
+    "emailForNotificationsDescription": "Utilizaremos este email como remitente para enviar notificaciones a los usuarios relacionados con este centro",
+    "emailForNotificationsRequired": "El correo electrónico es obligatorio",
+    "emailForNotificationsInvalid": "El correo electrónico no es válido",
+    "email": "Email",
+    "extraData": "Datos extra",
+    "country": "País",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postalCode": "Código postal",
+    "street": "Street",
+    "contactInfo": "Información de contacto",
+    "phone": "Teléfono",
+    "save": "Guardar"
   }
 }

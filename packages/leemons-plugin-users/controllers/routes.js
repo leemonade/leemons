@@ -340,6 +340,39 @@ module.exports = [
       'plugins.users.centers': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
+      'plugins.admin.setup': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+
+  {
+    path: '/centers/add',
+    method: 'POST',
+    handler: 'centers.add',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+      'plugins.admin.setup': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+
+  {
+    path: '/centers/remove',
+    method: 'POST',
+    handler: 'centers.remove',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['delete', 'admin'],
+      },
+      'plugins.admin.setup': {
+        actions: ['delete', 'admin'],
+      },
     },
   },
 
