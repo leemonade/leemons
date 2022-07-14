@@ -16,6 +16,10 @@ class Email {
     return table.config.create(config);
   }
 
+  static async removeConfig(id) {
+    return table.config.delete({ id });
+  }
+
   static async getProviders() {
     return table.config.find();
   }

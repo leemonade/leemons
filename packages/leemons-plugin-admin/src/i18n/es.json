@@ -62,7 +62,9 @@
       "defaultOrganizationEmailDescription": "Seleccione el correo electrónico por defecto que utilizará la plataforma para las notificaciones genéricas que no estén directamente relacionadas con un centro específico.",
       "defaultOrganizationEmailRequired": "Es obligatorio crear al menos una cuenta de correo para poder utilizar la Plataforma Leemons",
       "error": "Error",
-      "organizationEmail": "Email de la organización"
+      "organizationEmail": "Email de la organización",
+      "emailRequired": "El email es obligatorio",
+      "emailInvalid": "El email no es válido"
     },
     "languages": {
       "label": "Idiomas",

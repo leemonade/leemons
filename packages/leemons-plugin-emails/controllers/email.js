@@ -12,12 +12,23 @@ const validateProviderConfigObj = {
   additionalProperties: false,
 };
 
+const validateRemoveProviderConfigObj = {
+  type: 'object',
+  properties: {
+    providerName: { type: 'string' },
+    id: { type: 'string' },
+  },
+  required: ['providerName', 'id'],
+  additionalProperties: false,
+};
+
 async function providers(ctx) {
-  const providers = await emailService.providers();
-  ctx.body = { providers };
+  const _providers = await emailService.providers();
+  ctx.body = { providers: _providers };
 }
 
 async function sendTest(ctx) {
+  /*
   const validator = new global.utils.LeemonsValidator(validateProviderConfigObj);
   if (validator.validate(ctx.request.body)) {
     const data = await emailService.sendTest(ctx.request.body);
@@ -26,12 +37,25 @@ async function sendTest(ctx) {
   } else {
     throw validator.error;
   }
+
+   */
 }
 
 async function saveProvider(ctx) {
   const validator = new global.utils.LeemonsValidator(validateProviderConfigObj);
   if (validator.validate(ctx.request.body)) {
-    await emailService.saveProvider(ctx.request.body);
+    const provider = await emailService.saveProvider(ctx.request.body);
+    ctx.status = 200;
+    ctx.body = { status: 200, provider };
+  } else {
+    throw validator.error;
+  }
+}
+
+async function removeProvider(ctx) {
+  const validator = new global.utils.LeemonsValidator(validateRemoveProviderConfigObj);
+  if (validator.validate(ctx.request.body)) {
+    await emailService.removeProvider(ctx.request.body);
     ctx.status = 200;
     ctx.body = { status: 200 };
   } else {
@@ -40,6 +64,7 @@ async function saveProvider(ctx) {
 }
 
 module.exports = {
+  removeProvider,
   saveProvider,
   providers,
   sendTest,

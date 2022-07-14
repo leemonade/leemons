@@ -77,6 +77,18 @@ class Email {
   }
 
   /**
+   * Remove provider config
+   * @public
+   * @static
+   * @return {Promise<any>} new provider config
+   * */
+  static async removeProvider(data) {
+    if (!leemons.getProvider(data.providerName))
+      throw new Error(`No provider with the name ${data.providerName}`);
+    return leemons.getProvider(data.providerName).services.email.removeConfig(data.id);
+  }
+
+  /**
    * Send test email to check if the transporter is working with the provided config
    * @private
    * @static

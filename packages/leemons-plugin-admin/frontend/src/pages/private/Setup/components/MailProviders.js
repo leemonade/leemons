@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { flatten, map } from 'lodash';
 import {
   Alert,
   Box,
@@ -17,7 +18,11 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
-import { getMailProvidersRequest } from '@admin/request/mails';
+import {
+  getMailProvidersRequest,
+  getPlatformEmailRequest,
+  savePlatformEmailRequest,
+} from '@admin/request/mails';
 import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import loadable from '@loadable/component';
@@ -70,11 +75,18 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
     activeProvider: null,
   });
 
+  const totalProviders = flatten(map(store.providers, 'providers')).length;
+
   const { classes: styles, cx } = Styles();
 
   async function load() {
     try {
-      const { providers } = await getMailProvidersRequest();
+      const [{ providers }, { email }] = await Promise.all([
+        getMailProvidersRequest(),
+        getPlatformEmailRequest(),
+      ]);
+
+      store.email = email;
       store.providers = providers;
       store.loading = false;
       render();
@@ -83,21 +95,48 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
     }
   }
 
-  function handleOnNext() {
-    onNext();
+  function checkEmail() {
+    store.emailError = null;
+    // Check if not empty
+    if (!store.email) {
+      store.emailError = t('mails.emailRequired');
+    }
+    // Check if valid email
+    if (store.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(store.email)) {
+      store.emailError = t('mails.emailInvalid');
+    }
+  }
+
+  async function handleOnNext() {
+    try {
+      store.dirty = true;
+      store.saving = true;
+      render();
+      checkEmail();
+      if (store.emailError === null && totalProviders) {
+        await savePlatformEmailRequest(store.email);
+        onNext();
+      }
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
   }
 
   function onChange(items) {
     store.activeProvider.providers = items;
+    render();
   }
 
   React.useEffect(() => {
     load();
   }, []);
 
-  const Provider = store.activeProvider
-    ? dynamicImport(store.activeProvider.providerName)
-    : () => null;
+  const Provider = React.useMemo(
+    () => (store.activeProvider ? dynamicImport(store.activeProvider.providerName) : () => null),
+    [store.activeProvider]
+  );
 
   return (
     <Box>
@@ -107,7 +146,16 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
             <Title order={4}>{t('mails.defaultOrganizationEmail')}</Title>
             <Paragraph>{t('mails.defaultOrganizationEmailDescription')}</Paragraph>
           </Box>
-          <TextInput label={t('mails.organizationEmail')} required />
+          <TextInput
+            value={store.email}
+            onChange={(e) => {
+              store.email = e;
+              render();
+            }}
+            error={store.emailError}
+            label={t('mails.organizationEmail')}
+            required
+          />
         </ContextContainer>
         <ContextContainer>
           <Title order={4}>{t('mails.chooseProvider')}</Title>
@@ -148,6 +196,11 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
                 </Button>
               </Box>
               <Provider {...(store.activeProvider || {})} onChange={onChange} />
+              {store.dirty && !totalProviders ? (
+                <Alert title={t('mails.error')} severity="error" closeable={false}>
+                  {t('mails.defaultOrganizationEmailRequired')}
+                </Alert>
+              ) : null}
             </>
           ) : (
             <Alert severity="error" closeable={false}>

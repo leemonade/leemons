@@ -62,7 +62,9 @@
       "defaultOrganizationEmailDescription": "Select the default email to be used by the platform for generic notifications that are not directly related to a specific center.",
       "defaultOrganizationEmailRequired": "It is mandatory to create at least one mail account in order to use Leemons Platform",
       "error": "Error",
-      "organizationEmail": "Organization email"
+      "organizationEmail": "Organization email",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid"
     },
     "languages": {
       "label": "Languages",

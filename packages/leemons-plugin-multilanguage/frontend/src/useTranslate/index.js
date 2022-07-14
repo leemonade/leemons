@@ -58,6 +58,7 @@ export function getLocalizationsByArrayOfItems(items, reducer, locale) {
 
 export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
   const [userLocale, setUserLocale] = React.useState(null);
+
   SocketIoService.useOn('USER_CHANGE_LOCALE', (e, event) => {
     setUserLocale(event.new);
   });

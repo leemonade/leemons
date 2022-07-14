@@ -61,4 +61,18 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.setup, ['admin']),
   },
+  {
+    path: '/mail/platform',
+    method: 'GET',
+    handler: 'mail.getPlatformEmail',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.setup, ['admin']),
+  },
+  {
+    path: '/mail/platform',
+    method: 'POST',
+    handler: 'mail.savePlatformEmail',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.setup, ['admin']),
+  },
 ];
