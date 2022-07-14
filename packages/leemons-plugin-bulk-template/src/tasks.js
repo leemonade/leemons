@@ -23,8 +23,8 @@ async function initTasks(config) {
         leemons.log.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);
       } catch (e) {
         console.log('-- TASK CREATION ERROR --');
-        console.dir(task, { depth: null });
-        console.dir(creator, { depth: null });
+        // console.dir(task, { depth: null });
+        console.log(`creator: ${creator.name}`);
         console.error(e);
       }
     }

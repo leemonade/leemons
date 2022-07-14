@@ -90,7 +90,7 @@ async function addBulk(data, ctx, { transacting: _transacting } = {}) {
             role.id,
             {
               ...user,
-              locale: _center.locale || locale,
+              locale: user.locale || _center.locale || locale,
               status: 'created',
               active: false,
             },
