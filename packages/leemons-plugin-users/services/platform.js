@@ -1,8 +1,8 @@
 const platform = require('../src/services/platform');
 
 module.exports = {
-  setDomain: platform.setDomain,
-  getDomain: platform.getDomain,
+  setHostname: platform.setHostname,
+  getHostname: platform.getHostname,
   setEmail: platform.setEmail,
   getEmail: platform.getEmail,
   setDefaultLocale: platform.setDefaultLocale,

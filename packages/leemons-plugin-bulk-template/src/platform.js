@@ -10,10 +10,13 @@ async function initPlatform() {
     const itemKeys = keys(platform);
 
     const itemKey = itemKeys[0]; // Just one platform
-    const { email, locale } = platform[itemKey];
+    const { email, locale, hostname } = platform[itemKey];
 
-    await services.platform.setDefaultLocale(locale);
-    await services.platform.setEmail(email);
+    await Promise.all([
+      services.platform.setDefaultLocale(locale),
+      services.platform.setEmail(email),
+      services.platform.setHostname(hostname),
+    ]);
 
     return platform;
   } catch (err) {
