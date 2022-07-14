@@ -1,3 +1,4 @@
+const URL = require('url');
 const { table } = require('../tables');
 
 /**
@@ -9,12 +10,12 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function setHostname(hostname, { transacting } = {}) {
-  const url = new URL(hostname);
+  const url = URL.parse(hostname, true);
   return table.config.set(
     { key: 'platform-hostname' },
     {
       key: 'platform-hostname',
-      value: url.origin,
+      value: `${url.protocol}://${url.host}`,
     },
     { transacting }
   );
