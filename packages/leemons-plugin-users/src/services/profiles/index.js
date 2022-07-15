@@ -12,6 +12,7 @@ const { getRoleForRelationshipProfileCenter } = require('./getRoleForRelationshi
 // Contacts
 const { addProfileContact } = require('./contacts/addProfileContact');
 const { getProfileContacts } = require('./contacts/getProfileContacts');
+const { detailBySysName } = require('./detailBySysName');
 
 module.exports = {
   add,
@@ -20,6 +21,7 @@ module.exports = {
   existMany,
   existName,
   detailByUri,
+  detailBySysName,
   addProfileContact,
   getProfileContacts,
   addCustomPermissions,

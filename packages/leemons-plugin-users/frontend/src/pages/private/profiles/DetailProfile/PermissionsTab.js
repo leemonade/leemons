@@ -1,21 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  forEach,
-  map,
-  forIn,
   filter,
   find,
-  uniqBy,
-  orderBy,
   findIndex,
-  isNil,
+  forEach,
+  forIn,
   isEmpty,
+  isNil,
+  map,
+  orderBy,
+  uniqBy,
 } from 'lodash';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
 import { listActionsRequest, listPermissionsRequest } from '@users/request';
-import { Table, Box, Select, Stack, createStyles, useDebouncedValue } from '@bubbles-ui/components';
+import { Box, createStyles, Select, Stack, Table, useDebouncedValue } from '@bubbles-ui/components';
 import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
 import { useAsync } from '@common/useAsync';
 import PropTypes from 'prop-types';
@@ -28,7 +28,13 @@ const PermissionsTabStyles = createStyles((theme) => ({
 }));
 
 // eslint-disable-next-line import/prefer-default-export
-export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isEditMode }) => {
+export const PermissionsTab = ({
+  t,
+  profile,
+  embedded,
+  onPermissionsChange = () => {},
+  isEditMode,
+}) => {
   const dataTable = useRef([]);
   const initialArrayPermissions = useRef([]);
   const [selectedPermission, setSelectedPermission] = useState('all');
@@ -226,7 +232,7 @@ export const PermissionsTab = ({ t, profile, onPermissionsChange = () => {}, isE
 
   return (
     <Stack direction="column" fullWidth>
-      <Box style={{ width: '70%', padding: 12 }}>
+      <Box style={{ width: embedded ? '100%' : '70%', padding: 12 }}>
         <Select
           label={t('permissions')}
           description={t('select_permissions')}
@@ -257,4 +263,5 @@ PermissionsTab.propTypes = {
   profile: PropTypes.any,
   onPermissionsChange: PropTypes.func,
   isEditMode: PropTypes.bool,
+  embedded: PropTypes.bool,
 };

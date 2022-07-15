@@ -13,6 +13,9 @@ const {
   addUsers,
 } = require('./src/services/menu-builder');
 const { addLocales } = require('./src/services/locales/addLocales');
+const {
+  createInitialProfiles,
+} = require('./src/services/profiles/createInitialProfiles/createInitialProfiles');
 
 async function initEmails() {
   await leemons
@@ -154,6 +157,10 @@ async function events(isInstalled) {
         await initUsers();
       }
     );
+
+    leemons.events.once('plugins.users:change-platform-locale', async () => {
+      createInitialProfiles();
+    });
 
     // Emails
     leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {

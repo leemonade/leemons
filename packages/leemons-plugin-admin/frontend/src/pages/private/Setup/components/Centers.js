@@ -16,7 +16,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { EditIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
@@ -141,33 +141,47 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
         {store.loading ? (
           <Loader />
         ) : store.centers?.length ? (
-          <ContextContainer>
-            {!tdLoading && !tLoading ? (
-              <Table
-                data={map(store.centers, (center) => ({
-                  ...center,
-                  locale: store.localesByCode[center.locale],
-                  actions: (
-                    <Box style={{ textAlign: 'right', width: '100%' }}>
-                      <ActionButton
-                        onClick={() => {
-                          store.selectedCenter = center;
-                          render();
-                        }}
-                        tooltip={t('edit')}
-                        icon={<EditIcon />}
-                      />
-                      <ActionButton
-                        onClick={() => deleteCenter(center)}
-                        tooltip={t('remove')}
-                        icon={<DeleteBinIcon />}
-                      />
-                    </Box>
-                  ),
-                }))}
-                columns={columns}
-              />
-            ) : null}
+          <ContextContainer divided>
+            <ContextContainer>
+              {!tdLoading && !tLoading ? (
+                <Table
+                  data={map(store.centers, (center) => ({
+                    ...center,
+                    locale: store.localesByCode[center.locale],
+                    actions: (
+                      <Box style={{ textAlign: 'right', width: '100%' }}>
+                        <ActionButton
+                          onClick={() => {
+                            store.selectedCenter = center;
+                            render();
+                          }}
+                          tooltip={t('edit')}
+                          icon={<EditIcon />}
+                        />
+                        <ActionButton
+                          onClick={() => deleteCenter(center)}
+                          tooltip={t('remove')}
+                          icon={<DeleteBinIcon />}
+                        />
+                      </Box>
+                    ),
+                  }))}
+                  columns={columns}
+                />
+              ) : null}
+              <Box>
+                <Button
+                  leftIcon={<AddCircleIcon />}
+                  variant="light"
+                  onClick={() => {
+                    store.selectedCenter = {};
+                    render();
+                  }}
+                >
+                  {t('noCentersYetButton')}
+                </Button>
+              </Box>
+            </ContextContainer>
 
             <Stack justifyContent="end">
               <Button onClick={onNext} loading={store.saving}>

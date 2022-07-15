@@ -87,6 +87,22 @@
       "edit": "Editar",
       "remove": "Eliminar",
       "actions": "Acciones"
+    },
+    "admins": {
+      "label": "Usuarios administradores",
+      "title": "Administradores",
+      "description": "Ahora puede crear algunos administradores estándar con permisos para colaborar en el proceso de configuración de la Experiencia de Aprendizaje."
+    },
+    "profiles": {
+      "label": "Perfiles",
+      "title": "Perfiles de usuarios",
+      "description": "Utilice los perfiles de usuario para gestionar los permisos de las aplicaciones. Cada vez que instales un nuevo Leemon (plugin) te pediremos que definas los permisos para cada perfil existente. <br/><br/> Hay cuatro perfiles por defecto incluidos en la plataforma, si quieres crear perfiles personalizados, puedes usar uno de ellos como plantilla y añadir permisos extra o crear uno nuevo desde cero.",
+      "profileList": "Listado de perfiles",
+      "name": "Nombre",
+      "overview": "Vista general",
+      "actions": "Acciones",
+      "view": "Ver",
+      "addProfile": "Añadir perfil"
     }
   },
   "addCenterDrawer": {
@@ -120,5 +136,19 @@
     "contactInfo": "Información de contacto",
     "phone": "Teléfono",
     "save": "Guardar"
+  },
+  "addProfileDrawer": {
+    "newProfile": "Nuevo perfil",
+    "editProfile": "Editar perfil",
+    "name": "Nombre",
+    "nameRequired": "El nombre es obligatorio",
+    "description": "Descripción",
+    "descriptionRequired": "La descripción es obligatoria",
+    "save": "Guardar",
+    "permissions": "Permisos",
+    "dataset": "Dataset",
+    "save_done": "Perfil creado",
+    "update_done": "Perfil actualizado",
+    "translations_warning": "Debe guardar el perfil para mantener las traducciones almacenadas"
   }
 }

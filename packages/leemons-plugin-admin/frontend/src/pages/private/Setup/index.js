@@ -8,6 +8,8 @@ import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
 import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
 import Centers from '@admin/pages/private/Setup/components/Centers';
+import Admins from '@admin/pages/private/Setup/components/Admins';
+import Profiles from '@admin/pages/private/Setup/components/Profiles';
 import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
@@ -20,9 +22,9 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 3,
+    currentStep: 4,
     headerHeight: null,
-    steps: 4,
+    steps: 5,
   });
 
   // ····················································
@@ -34,7 +36,7 @@ function Setup({ session }) {
   };
 
   const handleOnNext = () => {
-    if (store.currentStep < store.steps - 1) {
+    if (store.currentStep <= store.steps - 1) {
       store.currentStep += 1;
     } else {
       //
@@ -72,6 +74,8 @@ function Setup({ session }) {
               { label: t('mails.label'), status: 'OK' },
               { label: t('languages.label'), status: 'OK' },
               { label: t('centers.label'), status: 'OK' },
+              { label: t('profiles.label'), status: 'OK' },
+              { label: t('admins.label'), status: 'OK' },
             ]}
           >
             {
@@ -93,6 +97,16 @@ function Setup({ session }) {
                 />,
                 <Centers
                   key="s4"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Profiles
+                  key="s5"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Admins
+                  key="s6"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,

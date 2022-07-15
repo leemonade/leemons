@@ -87,6 +87,22 @@
       "edit": "Edit",
       "remove": "Remove",
       "actions": "Actions"
+    },
+    "admins": {
+      "label": "Admin users",
+      "title": "Admins",
+      "description": "Now you can create some standard admins with permissions to collaborate in the Learning Experience setup process."
+    },
+    "profiles": {
+      "label": "Profiles",
+      "title": "User profiles",
+      "description": "Use the user profiles to manage permissions for applications. Each time you install a new Leemon (plugin) we will ask you to define permissions for each existing profile.<br/><br/>There are four default profiles included in the platform, if you want to create custom profiles, you could use one of them as template and add extra permissions or create a new one from scratch."
+      "profileList": "Profile list",
+      "name": "Name",
+      "overview": "Overview",
+      "actions": "Actions",
+      "view": "View",
+      "addProfile": "Add profile"
     }
   },
   "addCenterDrawer": {
@@ -120,5 +136,19 @@
     "contactInfo": "Contact info",
     "phone": "Phone",
     "save": "Save"
+  },
+  "addProfileDrawer": {
+    "newProfile": "New profile",
+    "editProfile": "Edit profile",
+    "name": "Name",
+    "nameRequired": "Name is required",
+    "description": "Description",
+    "descriptionRequired": "Description is required",
+    "save": "Save",
+    "permissions": "Permissions",
+    "dataset": "Dataset",
+    "save_done": "Profile created",
+    "update_done": "Profile updated",
+    "translations_warning": "Must save the profile to keep translations stored"
   }
 }
