@@ -133,6 +133,8 @@ async function importEvents({ users, programs }) {
               .map((item) => {
                 const { classroom } = getSubjectAndClassroom(programs, item);
 
+                if (!classroom?.id) return null;
+
                 return creatorCalendars.find((calendar) => calendar.key.indexOf(classroom.id) > 0)
                   ?.id;
               })

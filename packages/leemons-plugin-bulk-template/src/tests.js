@@ -1,12 +1,13 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, isEmpty, findIndex, uniq, uniqBy, compact } = require('lodash');
+const { keys, find, isEmpty, findIndex, uniq, uniqBy, compact, isNil } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
 
 async function initTests({ users, programs }) {
   const { services } = leemons.getPlugin('tests');
+  const { chalk } = global.utils;
 
   try {
     // ·····················································
@@ -35,18 +36,29 @@ async function initTests({ users, programs }) {
           category: findIndex(categories, { value: category }),
         }));
 
-      const qbankData = await services.questionsBanks.save(
-        { ...qbank, categories },
-        {
-          userSession: users[creator],
-        }
-      );
+      let qbankData = null;
+
+      try {
+        leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding QBank: ${qbank.name}}`);
+        qbankData = await services.questionsBanks.save(
+          { ...qbank, categories },
+          {
+            userSession: users[creator],
+          }
+        );
+        leemons.log.info(chalk`{cyan.bold BULK} QBank ADDED: ${qbank.name}`);
+      } catch (e) {
+        console.log('-- QBANK CREATION ERROR --');
+        console.log(`qbank: ${qbank.name}`);
+        console.dir(qbank, { depth: null });
+        console.error(e);
+      }
 
       // ·····················································
       // POST-PROCESSING QUESTIONS
 
       const qbanksDetail = (
-        await services.questionsBanks.findByAssetIds([qbankData.asset], {
+        await services.questionsBanks.findByAssetIds([qbankData?.asset], {
           userSession: users[creator],
         })
       )[0];
@@ -64,7 +76,7 @@ async function initTests({ users, programs }) {
         });
       }
 
-      qbanks[key] = { ...qbankData, questions: qbanksDetail.questions };
+      qbanks[key] = !isNil(qbankData) ? { ...qbankData, questions: qbanksDetail?.questions } : null;
     }
 
     // ·····················································
@@ -77,14 +89,23 @@ async function initTests({ users, programs }) {
       const key = testsKeys[i];
       const { creator, ...test } = tests[key];
 
-      const testData = await services.tests.save(
-        { ...test },
-        {
-          userSession: users[creator],
-        }
-      );
+      try {
+        leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding Test: ${test.name}}`);
+        const testData = await services.tests.save(
+          { ...test },
+          {
+            userSession: users[creator],
+          }
+        );
 
-      tests[key] = { ...testData };
+        tests[key] = { ...testData };
+        leemons.log.info(chalk`{cyan.bold BULK} Test ADDED: ${test.name}`);
+      } catch (e) {
+        console.log('-- TEST CREATION ERROR --');
+        console.log(`test: ${test.name}`);
+        console.log(`creator: ${creator.name}`);
+        console.error(e);
+      }
     }
 
     return tests;

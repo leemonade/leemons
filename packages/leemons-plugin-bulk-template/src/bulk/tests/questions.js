@@ -1,5 +1,5 @@
 const path = require('path');
-const { keys, trim, isEmpty } = require('lodash');
+const { keys, trim, isEmpty, isString, isArray } = require('lodash');
 const showdown = require('showdown');
 const itemsImport = require('../helpers/simpleListImport');
 
@@ -61,6 +61,19 @@ async function importQuestions() {
     const imageResponses = Boolean(question.withImages && question.answers_images);
     const responseBreak = imageResponses ? ',' : '|';
 
+    if (imageResponses) {
+      // console.log('-- QUESTION HAS IMAGES RESPONSES:');
+      // console.log('responseBreak:', responseBreak);
+
+      if (!isString(question.answers_images) && isArray(question.answers_images?.richText)) {
+        question.answers_images = question.answers_images.richText
+          .map((item) => item.text)
+          .join('');
+      }
+
+      // console.log(question.answers_images);
+    }
+
     try {
       properties.responses = String(
         (imageResponses ? question.answers_images : question.answers) || question.answers || ''
@@ -94,7 +107,7 @@ async function importQuestions() {
           return { value };
         });
     } catch (e) {
-      console.log('ERROR ---------------------------------');
+      console.log('-- QUESTIONS IMPORT ERROR --');
       console.log(e);
       console.log('imageResponses:', imageResponses);
       console.log('question.answers_images:', question.answers_images);

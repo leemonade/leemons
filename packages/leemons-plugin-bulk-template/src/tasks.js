@@ -24,6 +24,7 @@ async function initTasks(config) {
       } catch (e) {
         console.log('-- TASK CREATION ERROR --');
         // console.dir(task, { depth: null });
+        console.log(`task: ${task.asset?.name}`);
         console.log(`creator: ${creator.name}`);
         console.error(e);
       }

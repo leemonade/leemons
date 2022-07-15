@@ -8,6 +8,7 @@ async function initCalendar({ users, programs }) {
   try {
     const events = await importEvents({ programs, users });
     const eventKeys = keys(events);
+    const { chalk } = global.utils;
 
     // console.dir(events, { depth: null });
 
@@ -19,14 +20,21 @@ async function initCalendar({ users, programs }) {
 
         if (creator && !isEmpty(creator)) {
           try {
-            if (calendar.indexOf('.') > -1) {
-              const eventData = await services.calendar.addEvent(calendar, event, {
-                userSession: users[creator],
-              });
-              events[key] = { ...eventData };
+            if (calendar.indexOf('.') < 0) {
+              throw new Error('This event does not have any Calendar');
             }
+
+            leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding calendar event: ${event.title}}`);
+            const eventData = await services.calendar.addEvent(calendar, event, {
+              userSession: users[creator],
+            });
+            events[key] = { ...eventData };
+            leemons.log.info(chalk`{cyan.bold BULK} Calendar event ADDED: ${event.title}`);
           } catch (e) {
             console.log('-- ERROR Creating event calendar --');
+            console.log(`event: ${event.title}`);
+            console.log(`calendar: ${calendar}`);
+            console.log(`creator: ${creator.name}`);
             console.error(e);
           }
         }
