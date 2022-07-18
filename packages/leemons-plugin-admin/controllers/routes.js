@@ -75,4 +75,18 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.setup, ['admin']),
   },
+  {
+    path: '/organization',
+    method: 'GET',
+    handler: 'organization.get',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.setup, ['admin']),
+  },
+  {
+    path: '/organization',
+    method: 'POST',
+    handler: 'organization.post',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.setup, ['admin']),
+  },
 ];

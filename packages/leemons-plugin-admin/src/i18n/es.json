@@ -107,7 +107,27 @@
     "organization": {
       "label": "Organización",
       "title": "Organización",
-      "description": "Por favor, complete la información básica sobre su organización para fines administrativos. Si tiene más de una escuela, puede indicarlo más adelante."
+      "description": "Por favor, complete la información básica sobre su organización para fines administrativos. Si tiene más de una escuela, puede indicarlo más adelante.",
+      "organizationName": "Nombre de la organización",
+      "organizationNameRequired": "El nombre de la organización es obligatorio",
+      "domainUrlForInstallation": "URL de la organización",
+      "domainUrlDescription": "Debe especificar el dominio web de su instalación (recomendamos el dominio https con certificado de seguridad actualizado). Para modificar este dominio en el futuro deberá borrar todos los datos de la base de datos de la instalación de la plataforma (no se recomienda). Por favor, utilice la URL completa (con www).",
+      "note": "Nota:",
+      "hostname": "URL del dominio",
+      "hostnameRequired": "El dominio es obligatorio",
+      "lookAndFeel": "Apariencia",
+      "lookAndFeelDescription": "Puedes cambiar la URL del logo más tarde, cuando tu Mediateca Leemons esté lista y correctamente configurada en la nube.",
+      "logoUrl": "URL del logo",
+      "mainColor": "Color principal",
+      "superAdminCredentials": "Credenciales del super-admin",
+      "superAdminCredentialsDescription": "Este usuario superadministrador tiene acceso a la configuración avanzada del sistema. En el último paso de esta configuración, podrás crear administradores estándar que tendrán acceso a los plugins relacionados con la experiencia de formación y tendrán su propia ruta de configuración.",
+      "email": "Email",
+      "emailRequired": "El email es obligatorio",
+      "password": "Contraseña",
+      "phone": "Teléfono",
+      "contactName": "Nombre de contacto",
+      "administrativeContactInfo": "Información de contacto administrativa (opcional)",
+      "administrativeContactInfoDescription": "Esta información se utilizará únicamente como firma de notificación para cumplir con el GDPR y otras leyes internacionales de privacidad."
     }
   },
   "addCenterDrawer": {

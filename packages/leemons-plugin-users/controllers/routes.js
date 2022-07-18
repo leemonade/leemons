@@ -389,4 +389,9 @@ module.exports = [
     method: 'GET',
     handler: 'platform.getLocales',
   },
+  {
+    path: '/platform/theme',
+    method: 'GET',
+    handler: 'platform.getTheme',
+  },
 ];
