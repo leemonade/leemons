@@ -50,6 +50,8 @@ build/Release
 # Dependency directories
 
 node_modules/
+monorepo_node_modules/
+monorepo_yarn.lock
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -127,6 +129,8 @@ dist
 
 .tern-port
 
+.idea
+
 .DS_STORE
 
 # Editor
@@ -137,3 +141,4 @@ dist
 # Leemons
 packages/leemons-react/build
 data.xlsx
+

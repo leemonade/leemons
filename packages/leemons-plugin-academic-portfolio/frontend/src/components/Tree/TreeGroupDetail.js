@@ -54,7 +54,8 @@ const TreeGroupDetail = ({
             {/* eslint-disable-next-line no-nested-ternary */}
             {duplicateMode ? messages.duplicateTitle : group ? messages.title : messages.titleNew}
           </Title>
-          <Alert closeable={false}>{messages.duplicateWarning}</Alert>
+          {duplicateMode ? <Alert closeable={false}>{messages.duplicateWarning}</Alert> : null}
+
           <Box>
             <Controller
               name="abbreviation"
@@ -112,6 +113,7 @@ const TreeGroupDetail = ({
               center={center}
               messages={messagesAddUsers}
               tree={item}
+              ignoreAddedUsers={duplicateMode}
             />
           ) : null}
 

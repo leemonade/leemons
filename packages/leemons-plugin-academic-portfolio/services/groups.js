@@ -1,7 +1,13 @@
-const { addGroup, listGroups, addGroupIfNotExists } = require('../src/services/groups');
+const {
+  addGroup,
+  listGroups,
+  addGroupIfNotExists,
+  duplicateGroup,
+} = require('../src/services/groups');
 
 module.exports = {
   addGroup,
   listGroups,
+  duplicateGroup,
   addGroupIfNotExists,
 };

@@ -5,7 +5,7 @@ module.exports = {
       confirm: 'Important',
     },
     description: {
-      delete: 'The item will be deleted, do you wish to proceed?',
+      delete: 'The item will be deleted, do you want to proceed?',
       confirm: 'Do you want to proceed?',
     },
     buttons: {

@@ -41,7 +41,7 @@ module.exports = {
     phone: 'Phone',
     link: 'Link',
     archive: 'Archive',
-    multioption: 'Multioption',
+    multioption: 'Multi-option',
     checkbox: 'Checkbox',
     select: 'Select',
     boolean: 'Boolean',

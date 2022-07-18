@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, DrawerPush, Loader, Text } from '@bubbles-ui/components';
+import { Box, createStyles, DrawerPush, Loader, Paragraph, Text } from '@bubbles-ui/components';
 
 import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';
 import { ScoresPeriodForm } from '@bubbles-ui/leemons';
@@ -34,9 +34,7 @@ const useStyle = createStyles((theme, { isOpened }) => ({
     gap: theme.spacing[2],
   },
   drawerText: {
-    display: 'block',
     marginBottom: theme.spacing[10],
-    lineHeight: '22.4px',
   },
 
   formTitle: {
@@ -244,16 +242,14 @@ export default function PeriodSelector({
       <Box className={classes.drawer}>
         <Box className={classes.drawerTitle}>
           <Box className={classes.titleTop}>
-            <PluginScoresBasicIcon width={16} height={16} />
-            <Text size="md">{labels?.drawer?.title}</Text>
+            <PluginScoresBasicIcon width={18} height={18} />
+            <Text size="lg">{labels?.drawer?.title}</Text>
           </Box>
           {/* <Text size="md" style={{ marginLeft: 24 }} strong>
             Scores Basic (admin)
           </Text> */}
         </Box>
-        <Text className={classes.drawerText} role="productive">
-          {labels?.drawer?.description}
-        </Text>
+        <Paragraph className={classes.drawerText}>{labels?.drawer?.description}</Paragraph>
         <Text
           className={classes.formTitle}
           role="productive"

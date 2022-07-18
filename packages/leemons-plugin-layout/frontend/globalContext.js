@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isNil } from 'lodash';
 import { useLocation } from 'react-router-dom';
-import { ThemeProvider, ModalsProvider, useModals, Paragraph } from '@bubbles-ui/components';
+import { ModalsProvider, Paragraph, ThemeProvider, useModals } from '@bubbles-ui/components';
 import { NotificationProvider } from '@bubbles-ui/notifications';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from './src/helpers/prefixPN';
@@ -43,9 +43,8 @@ function LayoutProviderWrapper({ children }) {
             sx={(theme) => ({
               paddingBottom: theme.spacing[5],
             })}
-          >
-            {description || t('description.delete')}
-          </Paragraph>
+            dangerouslySetInnerHTML={{ __html: description || t('description.delete') }}
+          />
         ),
         labels: {
           confirm: labels?.confirm || t('buttons.confirm'),
@@ -66,9 +65,8 @@ function LayoutProviderWrapper({ children }) {
             sx={(theme) => ({
               paddingBottom: theme.spacing[5],
             })}
-          >
-            {description || t('description.confirm')}
-          </Paragraph>
+            dangerouslySetInnerHTML={{ __html: description || t('description.confirm') }}
+          />
         ),
         labels: {
           confirm: labels?.confirm || t('buttons.confirm'),

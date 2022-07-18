@@ -2,6 +2,7 @@
 const { toLower, isEmpty } = require('lodash');
 const mime = require('mime-types');
 const pathSys = require('path');
+const stream = require('stream');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 const { getById } = require('./getById');
@@ -30,13 +31,13 @@ let mediainfo;
 // HELPERS
 
 function getOptimizedImage(path, extension) {
-  let stream = global.utils.sharp();
+  let imageStream = global.utils.sharp();
 
   if (path && !isEmpty(path)) {
-    stream = global.utils.sharp(path);
+    imageStream = global.utils.sharp(path);
   }
 
-  return stream
+  return imageStream
     .resize(1024, 1024, { fit: 'inside', withoutEnlargement: true })
     .toFormat(extension || 'jpeg', { quality: 70 });
 }
@@ -111,39 +112,75 @@ function getRemoteContentType(url) {
 function download(url, compress) {
   return new Promise((resolve, reject) => {
     (async () => {
-      const downloadStream = global.utils.got(url, { isStream: true });
-      const fileWriterStream = leemons.fs.createTempWriteStream();
-      const contentType = await getRemoteContentType(url);
+      try {
+        const downloadStream = global.utils.got(url, { isStream: true });
+        const fileWriterStream = leemons.fs.createTempWriteStream();
+        const contentType = await getRemoteContentType(url);
 
-      const [fileType] = contentType.split('/');
-      const extension = mime.extension(contentType);
+        const [fileType] = contentType.split('/');
+        const extension = mime.extension(contentType);
 
-      downloadStream.on('error', (error) => reject(error));
+        downloadStream.on('error', (error) => reject(error));
 
-      fileWriterStream
-        .on('error', (error) => reject(error))
-        .on('finish', () => {
-          fileWriterStream.end();
-          resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
-        });
+        fileWriterStream
+          .on('error', (error) => reject(error))
+          .on('finish', () => {
+            fileWriterStream.end();
+            resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
+          });
 
-      if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
-        downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
-      } else {
-        downloadStream.pipe(fileWriterStream);
+        if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
+          downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
+        } else {
+          downloadStream.pipe(fileWriterStream);
+        }
+      } catch (error) {
+        reject(error);
       }
     })();
   });
 }
 
+function isReadableStream(obj) {
+  return (
+    obj instanceof stream.Stream &&
+    typeof (obj._read === 'function') &&
+    typeof (obj._readableState === 'object')
+  );
+}
+
+function streamToBuffer(readStream) {
+  return new Promise((resolve, reject) => {
+    const data = [];
+
+    readStream.on('data', (chunk) => {
+      data.push(chunk);
+    });
+
+    readStream.on('end', () => {
+      resolve(Buffer.concat(data));
+    });
+
+    readStream.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
 function createTemp(readStream, contentType) {
   return new Promise((resolve, reject) => {
-    leemons.fs.openTemp('leebrary', (err, info) => {
+    leemons.fs.openTemp('leebrary', async (err, info) => {
       if (err) {
         reject(err);
       }
 
-      leemons.fs.write(info.fd, readStream, (e) => {
+      let dataToWrite = readStream;
+
+      if (isReadableStream(dataToWrite)) {
+        dataToWrite = await streamToBuffer(dataToWrite);
+      }
+
+      leemons.fs.write(info.fd, dataToWrite, (e) => {
         if (e) {
           reject(e);
         }
@@ -314,10 +351,14 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
   }
+  try {
+    const { path, contentType } = await download(url, true);
 
-  const { path, contentType } = await download(url, true);
-
-  return upload({ path, type: contentType }, { name }, { userSession, transacting });
+    return upload({ path, type: contentType }, { name }, { userSession, transacting });
+  } catch (err) {
+    console.error('ERROR: downloading file:', url);
+    throw new Error(`-- ERROR: downloading file ${url} --`);
+  }
 }
 
 module.exports = { upload, uploadFromUrl, uploadFromFileStream, uploadImage };

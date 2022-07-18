@@ -477,6 +477,18 @@ const duplicateGroupSchema = {
     id: stringSchema,
     name: stringSchema,
     abbreviation: stringSchema,
+    teachers: booleanSchema,
+    students: {
+      oneOf: [
+        {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+        { type: 'boolean' },
+      ],
+    },
   },
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
@@ -618,7 +630,7 @@ async function validateInternalIdHaveGoodFormat(program, internalId, { transacti
   if (internalId.length !== subjectDigits)
     throw new Error('internalId does not have the required number of digits');
   // ES: Comprobamos si son numeros
-  if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
+  // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
 }
 
 const addSubjectSchema = {
@@ -690,6 +702,7 @@ const updateSubjectSchema = {
     credits: numberSchema,
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
+    color: stringSchemaNullable,
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -720,7 +733,7 @@ async function validateUpdateSubject(data, { transacting } = {}) {
     throw validator.error;
   }
 
-  if (course || internalId) {
+  if (internalId) {
     const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
 
     if (!validator2.validate({ course, internalId })) {

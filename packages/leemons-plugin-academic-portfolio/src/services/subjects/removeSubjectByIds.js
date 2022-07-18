@@ -12,7 +12,7 @@ async function removeSubjectByIds(ids, { userSession, soft, transacting: _transa
       await leemons.events.emit('before-remove-subjects', { subjects, soft, transacting });
       const assetService = leemons.getPlugin('leebrary').services.assets;
       await Promise.all([
-        Promise.all(
+        Promise.allSettled(
           _.map(subjects, (subject) =>
             assetService.remove(
               { id: subject.image },
@@ -23,7 +23,7 @@ async function removeSubjectByIds(ids, { userSession, soft, transacting: _transa
             )
           )
         ),
-        Promise.all(
+        Promise.allSettled(
           _.map(subjects, (subject) =>
             assetService.remove(
               { id: subject.icon },

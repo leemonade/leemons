@@ -27,6 +27,14 @@ async function putSubject(ctx) {
   ctx.body = { status: 200, subject };
 }
 
+async function deleteSubject(ctx) {
+  await subjectService.deleteSubjectWithClasses(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 async function putSubjectCredits(ctx) {
   validatePutSubjectCredits(ctx.request.body);
   const { subject, program, credits } = ctx.request.body;
@@ -117,4 +125,5 @@ module.exports = {
   getSubjectCredits,
   listSubjectCreditsForProgram,
   subjectByIds,
+  deleteSubject,
 };

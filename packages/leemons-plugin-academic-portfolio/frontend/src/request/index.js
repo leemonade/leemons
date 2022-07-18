@@ -3,6 +3,7 @@ import {
   getSubjectCredits,
   listSubjectCreditsForProgram,
   listSubjects,
+  removeSubject,
   updateSubject,
   updateSubjectCredits,
 } from './subjects';
@@ -31,20 +32,20 @@ import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjec
 import {
   addStudentsToClass,
   addTeachersToClass,
+  classByIds,
   classDetailForDashboard,
   createClass,
   createClassInstance,
   haveClasses,
   listClasses,
-  listSubjectClasses,
   listSessionClasses,
   listStudentClasses,
+  listSubjectClasses,
   listTeacherClasses,
   removeClass,
   removeStudentFromClass,
   updateClass,
   updateClassMany,
-  classByIds,
 } from './classes';
 import { getStudentsByTags } from './common';
 
@@ -60,6 +61,7 @@ export {
 export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
 export const updateSubjectRequest = updateSubject;
+export const removeSubjectRequest = removeSubject;
 export const updateSubjectCreditsRequest = updateSubjectCredits;
 export const getSubjectCreditsRequest = getSubjectCredits;
 export const listSubjectCreditsForProgramRequest = listSubjectCreditsForProgram;

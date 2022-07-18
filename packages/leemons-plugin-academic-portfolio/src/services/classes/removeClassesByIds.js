@@ -15,13 +15,17 @@ async function removeClassesByIds(ids, { soft, userSession, transacting: _transa
       const classesIds = _.map(classes, 'id');
       await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
 
-      await leemons.getPlugin('users').services.permissions.removeItems({
-        item_$in: _.map(classes, 'id'),
-        type: 'plugins.academic-portfolio.class',
-      });
+      await leemons.getPlugin('users').services.permissions.removeItems(
+        {
+          item_$in: _.map(classes, 'id'),
+          type: 'plugins.academic-portfolio.class',
+        },
+        { transacting }
+      );
 
       const assetService = leemons.getPlugin('leebrary').services.assets;
-      await Promise.all(
+
+      await Promise.allSettled(
         _.map(classes, (classe) =>
           assetService.remove(
             { id: classe.image.id },
@@ -34,11 +38,18 @@ async function removeClassesByIds(ids, { soft, userSession, transacting: _transa
       );
 
       await removeKnowledgeByClass(classesIds, { soft, transacting });
+      console.log('Borrdo know');
       await removeSubstageByClass(classesIds, { soft, transacting });
+      console.log('Borrdo sub');
       await removeStudentsByClass(classesIds, { soft, transacting });
+      console.log('Borrdo stude');
       await removeTeachersByClass(classesIds, { soft, transacting });
+      console.log('Borrdo teach');
       await removeCourseByClass(classesIds, { soft, transacting });
+      console.log('Borrdo cour');
       await removeGroupByClass(classesIds, { soft, transacting });
+
+      console.log('Borrdo todo');
 
       const refClasses = await table.class.find(
         { class_$in: _.map(classes, 'id') },

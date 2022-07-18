@@ -436,15 +436,16 @@ class Leemons {
     // Make frontend server handle with all non /api requests
     this.frontRouter.get(/(?!^\/api)^\/.*/, async (ctx) => {
       try {
+        const frontServer = process.env.FRONT_SERVER || 'http://localhost:3000';
         // EN: Check if the server is ready
         // ES: Comprobamos si el servidor está listo
-        await fetch(`http://localhost:3000${ctx.req.url}`, {
+        await fetch(`${frontServer}${ctx.req.url}`, {
           method: 'HEAD',
         });
 
         // EN: Redirect to the react server
         // ES: Redirect to the react server
-        ctx.req.pipe(request(`http://localhost:3000${ctx.req.url}`)).pipe(ctx.res);
+        ctx.req.pipe(request(`${frontServer}${ctx.req.url}`)).pipe(ctx.res);
         // Stop Koa handling the request
       } catch (e) {
         ctx.res.setHeader('Content-Type', 'text/html');
