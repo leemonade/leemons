@@ -229,25 +229,34 @@ function generateQueries(model /* connector */) {
   }
 
   async function set(query, item, { transacting } = {}) {
-    const filters = parseFilters({ filters: query, model });
-    const newQuery = buildQuery(model, filters);
-    const entry = await bookshelfModel.query(newQuery).fetch({
-      require: false,
-      transacting,
-    });
+    try {
+      const filters = parseFilters({ filters: query, model });
+      const newQuery = buildQuery(model, filters);
+      const entry = await bookshelfModel.query(newQuery).fetch({
+        require: false,
+        transacting,
+      });
 
-    if (entry) {
-      if (!_.has(item, 'updated_at')) {
-        _.set(item, 'updated_at', new Date());
+      if (entry) {
+        if (!_.has(item, 'updated_at')) {
+          _.set(item, 'updated_at', new Date());
+        }
+        const attributes = selectAttributes(item);
+        return Object.keys(attributes).length > 0
+          ? entry
+              .save(attributes, { method: 'update', patch: true, transacting })
+              .then((res) => res.toJSON())
+          : entry.toJSON();
       }
-      const attributes = selectAttributes(item);
-      return Object.keys(attributes).length > 0
-        ? entry
-            .save(attributes, { method: 'update', patch: true, transacting })
-            .then((res) => res.toJSON())
-        : entry.toJSON();
+
+      return create({ ...query, ...item }, { transacting });
+    } catch (err) {
+      if (err.message !== 'EmptyResponse') {
+        throw err;
+      }
     }
-    return create({ ...query, ...item }, { transacting });
+
+    return null;
   }
 
   function setMany(newItems, { transacting } = {}) {

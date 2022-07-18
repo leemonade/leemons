@@ -227,7 +227,7 @@ async function upload(file, { name }, { transacting } = {}) {
       }
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
 
-      const { track: tracks } = JSON.parse(metainfo).media;
+      const { track: tracks } = JSON.parse(metainfo)?.media || { track: [] };
       tracks.forEach((track) => {
         metadata = getMetaProps(track, metadata);
       });
@@ -357,6 +357,7 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
     return upload({ path, type: contentType }, { name }, { userSession, transacting });
   } catch (err) {
     console.error('ERROR: downloading file:', url);
+    console.dir(url, { depth: null });
     throw new Error(`-- ERROR: downloading file ${url} --`);
   }
 }
