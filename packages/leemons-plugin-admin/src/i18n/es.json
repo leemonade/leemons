@@ -103,6 +103,11 @@
       "actions": "Acciones",
       "view": "Ver",
       "addProfile": "Añadir perfil"
+    },
+    "organization": {
+      "label": "Organización",
+      "title": "Organización",
+      "description": "Por favor, complete la información básica sobre su organización para fines administrativos. Si tiene más de una escuela, puede indicarlo más adelante."
     }
   },
   "addCenterDrawer": {

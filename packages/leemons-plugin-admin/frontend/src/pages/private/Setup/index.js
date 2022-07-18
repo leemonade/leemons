@@ -10,6 +10,7 @@ import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
 import Centers from '@admin/pages/private/Setup/components/Centers';
 import Admins from '@admin/pages/private/Setup/components/Admins';
 import Profiles from '@admin/pages/private/Setup/components/Profiles';
+import Organization from '@admin/pages/private/Setup/components/Organization';
 import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
@@ -22,7 +23,7 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 4,
+    currentStep: 0,
     headerHeight: null,
     steps: 5,
   });
@@ -71,6 +72,7 @@ function Setup({ session }) {
             stickyAt={store.headerHeight}
             data={[
               { label: t('welcome.label'), status: 'OK' },
+              { label: t('organization.label'), status: 'OK' },
               { label: t('mails.label'), status: 'OK' },
               { label: t('languages.label'), status: 'OK' },
               { label: t('centers.label'), status: 'OK' },
@@ -85,28 +87,33 @@ function Setup({ session }) {
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.nextButton')}
                 />,
-                <MailProviders
+                <Organization
                   key="s2"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,
-                <Locales
+                <MailProviders
                   key="s3"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,
-                <Centers
+                <Locales
                   key="s4"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,
-                <Profiles
+                <Centers
                   key="s5"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,
-                <Admins
+                <Profiles
                   key="s6"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Admins
+                  key="s7"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,

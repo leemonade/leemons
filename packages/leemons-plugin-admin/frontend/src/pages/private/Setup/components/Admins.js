@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
+import { find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import {
   Alert,
@@ -15,17 +16,21 @@ import {
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
+import usersPrefixPN from '@users/helpers/prefixPN';
 import { TagsMultiSelect, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
-import { map } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { EMAIL_REGEX } from '@admin/constants';
+import { listProfilesRequest } from '@users/request';
+import { addErrorAlert } from '@layout/alert';
+import listUsers from '@users/request/listUsers';
 
 const Styles = createStyles((theme) => ({}));
 
 const Admins = ({ onNextLabel, onNext = () => {} }) => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('setup.admins'));
+  const [tU] = useTranslateLoader(usersPrefixPN('create_users'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const { openDeleteConfirmationModal } = useLayout();
@@ -36,95 +41,132 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
     selectedCenter: null,
   });
 
+  async function load() {
+    try {
+      store.loading = true;
+      render();
+      const {
+        data: { items: profiles },
+      } = await listProfilesRequest({
+        page: 0,
+        size: 99999,
+      });
+
+      store.profile = find(profiles, { sysName: 'admin' });
+
+      const {
+        data: { items: users },
+      } = await listUsers({
+        page: 0,
+        size: 99999,
+        query: {
+          profiles: store.profile.id,
+        },
+      });
+
+      store.users = users;
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.loading = false;
+    render();
+  }
+
+  React.useEffect(() => {
+    load();
+  }, []);
+
   const { classes: styles, cx } = Styles();
 
   const data = React.useMemo(() => {
     const result = {
       pageHeader: {
-        title: t('pageTitle'),
+        title: tU('pageTitle'),
       },
       tableColumns: [],
       tableLabels: {
-        add: t('tableAdd'),
-        remove: t('tableRemove'),
+        add: tU('tableAdd'),
+        remove: tU('tableRemove'),
       },
     };
     result.tableColumns.push({
-      Header: t('emailHeader'),
+      Header: tU('emailHeader'),
       accessor: 'email',
       className: 'text-left',
       input: {
         node: <TextInput disabled={!store.center || !store.profile} required />,
         rules: {
-          required: t('emailHeaderRequired'),
-          pattern: { value: EMAIL_REGEX, message: t('emailHeaderNotEmail') },
+          required: tU('emailHeaderRequired'),
+          pattern: { value: EMAIL_REGEX, message: tU('emailHeaderNotEmail') },
         },
       },
       valueRender: (value) => <>{value}</>,
     });
     result.tableColumns.push({
-      Header: t('nameHeader'),
+      Header: tU('nameHeader'),
       accessor: 'name',
       className: 'text-left',
       input: {
         node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
-        rules: { required: t('nameHeaderRequired') },
+        rules: { required: tU('nameHeaderRequired') },
       },
       valueRender: (value) => <>{value}</>,
     });
     result.tableColumns.push({
-      Header: t('surnameHeader'),
+      Header: tU('surnameHeader'),
       accessor: 'surnames',
       className: 'text-left',
       input: {
         node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
-        rules: { required: t('surnameHeaderRequired') },
+        rules: { required: tU('surnameHeaderRequired') },
       },
       valueRender: (value) => <>{value}</>,
     });
     if (store.secondSurname && !store.secondSurname.disabled) {
       result.tableColumns.push({
-        Header: t('secondSurnameHeader'),
+        Header: tU('secondSurnameHeader'),
         accessor: 'secondSurname',
         className: 'text-left',
         input: {
           node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
-          rules: store.secondSurname.required ? { required: t('secondSurnameHeaderRequired') } : {},
+          rules: store.secondSurname.required
+            ? { required: tU('secondSurnameHeaderRequired') }
+            : {},
         },
         valueRender: (value) => <>{value}</>,
       });
     }
     result.tableColumns.push({
-      Header: t('birthdayHeader'),
+      Header: tU('birthdayHeader'),
       accessor: 'birthdate',
       className: 'text-left',
       input: {
         node: <DatePicker disabled={!store.center || !store.profile || !!store.user} required />,
-        rules: { required: t('birthdayHeaderRequired') },
+        rules: { required: tU('birthdayHeaderRequired') },
       },
       valueRender: (value) => <>{new Date(value).toLocaleString()}</>,
     });
     result.tableColumns.push({
-      Header: t('genderHeader'),
+      Header: tU('genderHeader'),
       accessor: 'gender',
       className: 'text-left',
       input: {
         node: (
           <Select
             data={[
-              { label: t('male'), value: 'male' },
-              { label: t('female'), value: 'female' },
+              { label: tU('male'), value: 'male' },
+              { label: tU('female'), value: 'female' },
             ]}
             disabled={!store.center || !store.profile || !!store.user}
             required
           />
         ),
-        rules: { required: t('genderHeaderRequired') },
+        rules: { required: tU('genderHeaderRequired') },
       },
-      valueRender: (value) => <>{t(value)}</>,
+      valueRender: (value) => <>{tU(value)}</>,
     });
     result.tableColumns.push({
-      Header: t('tagsHeader'),
+      Header: tU('tagsHeader'),
       accessor: 'tags',
       className: 'text-left',
       input: {
@@ -157,12 +199,12 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
         <Box>
           {store.userEmailAlreadyAdded ? (
             <Alert severity="error" closeable={false}>
-              {t('userEmailAlreadyAdded')}
+              {tU('userEmailAlreadyAdded')}
             </Alert>
           ) : null}
 
           <TableInput
-            data={store.usersToCreate}
+            data={store.users}
             // onChange={onChange}
             form={form}
             columns={data.tableColumns}

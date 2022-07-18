@@ -103,6 +103,11 @@
       "actions": "Actions",
       "view": "View",
       "addProfile": "Add profile"
+    },
+    "organization": {
+      "label": "Organization",
+      "title": "Organization",
+      "description": "Please complete the basic information about your organization for administrative purposes. If you have more than one school you can indicate this later."
     }
   },
   "addCenterDrawer": {
