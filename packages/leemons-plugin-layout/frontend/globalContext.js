@@ -152,8 +152,6 @@ export function Provider({ children }) {
         bubbles.push(colord({ ...mainColorHSL, l: colord(color).brightness() * 100 }).toHex());
       });
 
-      console.log(bubbles);
-
       setTheme({
         ...BUBBLES_THEME,
         colors: {

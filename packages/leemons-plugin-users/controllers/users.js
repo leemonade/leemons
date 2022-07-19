@@ -314,6 +314,12 @@ async function createBulk(ctx) {
   ctx.body = { status: 200, users };
 }
 
+async function deleteUserAgent(ctx) {
+  await userAgentsService.deleteById(ctx.params.id, { soft: true });
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -513,6 +519,7 @@ module.exports = {
   removeRememberLogin,
   centerProfileToken,
   updateUserAvatar,
+  deleteUserAgent,
   canRegisterPassword,
   getDataForUserAgentDatasets,
   saveDataForUserAgentDatasets,

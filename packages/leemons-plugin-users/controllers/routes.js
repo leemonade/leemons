@@ -195,6 +195,9 @@ module.exports = [
       'plugins.users.users': {
         actions: ['create', 'admin'],
       },
+      'plugins.admin.setup': {
+        actions: ['update', 'create', 'admin'],
+      },
     },
   },
   {
@@ -220,6 +223,20 @@ module.exports = [
     method: 'POST',
     handler: 'users.updateUserAgent',
     authenticated: true,
+  },
+  {
+    path: '/user-agent/:id',
+    method: 'DELETE',
+    handler: 'users.deleteUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['delete', 'admin'],
+      },
+      'plugins.admin.setup': {
+        actions: ['delete', 'admin'],
+      },
+    },
   },
   {
     path: '/user-agent/:id/detail/page',

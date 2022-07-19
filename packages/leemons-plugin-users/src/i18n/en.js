@@ -218,6 +218,8 @@ module.exports = {
     female: 'Female',
     pageTitle: 'Create users',
     centerLabel: 'Center',
+    centersLabel: 'Centers',
+    centersRequired: 'Centers required',
     profileLabel: 'Profile',
     emailHeader: 'Email',
     passwordHeader: 'Password',

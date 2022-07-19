@@ -1,3 +1,4 @@
+const { deleteById } = require('./deleteById');
 const { existUserAgent } = require('./existUserAgent');
 const { searchUserAgents } = require('./searchUserAgents');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
@@ -43,6 +44,7 @@ const { userAgentsAreContacts } = require('./contacts/userAgentsAreContacts');
 
 module.exports = {
   update,
+  deleteById,
   existUserAgent,
   searchUserAgents,
   getUserAgentsInfo,

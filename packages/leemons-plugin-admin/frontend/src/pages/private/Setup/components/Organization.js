@@ -140,8 +140,6 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     render={({ field }) => (
                       <ColorInput
                         useHsl
-                        compact={false}
-                        manual={false}
                         error={errors.mainColor}
                         label={t('mainColor')}
                         {...field}
