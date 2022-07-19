@@ -33,6 +33,7 @@ import {
 } from '@users/request';
 import { addErrorAlert } from '@layout/alert';
 import deleteUserAgentById from '@users/request/deleteUserAgentById';
+import listUsers from '@users/request/listUsers';
 
 const Styles = createStyles((theme) => ({}));
 
@@ -157,23 +158,25 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
   }
 
   async function getEmailData(email) {
-    const { userAgents } = await searchUserAgentsRequest(
-      {
-        user: { email },
+    const {
+      data: { items },
+    } = await listUsers({
+      page: 0,
+      size: 1,
+      query: {
+        email,
       },
-      { withProfile: true, withCenter: true, queryWithContains: false }
-    );
+    });
 
-    return userAgents;
+    return items[0];
   }
 
   async function checkEmail(email) {
     store.userEmailAlreadyAdded = false;
-    const userAgents = await getEmailData(email);
-    store.userAlreadyHaveThisConfig = false;
+    const user = await getEmailData(email);
     store.user = null;
-    if (userAgents.length) {
-      store.user = userAgents[0].user;
+    if (user) {
+      store.user = user;
       form.setValue('name', store.user.name);
       form.setValue('gender', store.user.gender);
       form.setValue('surnames', store.user.surnames);
@@ -182,15 +185,9 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
         'birthdate',
         store.user.birthdate ? new Date(store.user.birthdate) : store.user.birthdate
       );
-
-      forEach(userAgents, (userAgent) => {
-        if (userAgent.center?.id === store.center && userAgent.profile?.id === store.profile) {
-          store.userAlreadyHaveThisConfig = true;
-        }
-      });
     }
-    forEach(store.users, (user) => {
-      if (user.email === email) {
+    forEach(store.users, (u) => {
+      if (u.email === email) {
         store.userEmailAlreadyAdded = true;
       }
     });

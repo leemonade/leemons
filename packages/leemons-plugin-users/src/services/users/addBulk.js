@@ -77,8 +77,10 @@ async function addUserBulk(
       await sendNewProfileAddedEmailToUser(user, profile, ctx, { transacting });
     }
   } else if (userAgent.deleted) {
+    console.log('vamos a actualizar el user agent', role, user.id);
     userAgent = await table.userAgent.update(
       {
+        deleted_$null: false,
         role,
         user: user.id,
       },
@@ -88,13 +90,12 @@ async function addUserBulk(
       },
       { transacting }
     );
+    console.log(userAgent);
     await leemons.events.emit('user-agent:restore', { userAgent, transacting });
   }
 
   if (isNewUser) {
-    console.log('Añadimos avatar');
     await addUserAvatar({ ...user, userAgents: [userAgent] }, avatar, { transacting });
-    console.log('Añadido');
   }
 
   if (tags && _.isArray(tags) && tags.length) {

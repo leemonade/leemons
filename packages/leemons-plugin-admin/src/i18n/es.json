@@ -49,7 +49,19 @@
     "welcome": {
       "label": "Inicio",
       "title": "Configuración de la plataforma",
-      "description": "Esta breve guía explica los puntos principales de cada paso obligatorio para configurar la plataforma para un usuario super-admin como tú."
+      "description": "Esta breve guía explica los puntos principales de cada paso obligatorio para configurar la plataforma para un usuario super-admin como tú.",
+      "organization": "Organización",
+      "organizationDescription": "Completa la información básica de tu organización y crea el usuario superadministrador. Si tiene más de un centro/escuela puede indicarlo después",
+      "mailProviders": "Proveedores de correo",
+      "mailProvidersDescription": "Configura tus proveedores y cuentas de correo electrónico para la gestión de las notificaciones de la plataforma, puedes configurar tantas cuentas como quieras y asignarlas posteriormente a tus diferentes centros.",
+      "languages": "Idiomas",
+      "languagesDescription": "Elija el idioma principal de la plataforma de la interfaz y para el contenido. Puedes personalizarlo por centros más adelante.",
+      "centers": "Centros",
+      "centersDescription": "Puede configurar el tipo de información que desea incluir en cada centro. Hay algunos campos básicos del sistema, pero puede añadir tantos campos como necesite.",
+      "profiles": "Perfiles",
+      "profilesDescription": "Defina los perfiles para su plataforma, elija los perfiles por defecto (administrador, profesor, padre), personalícelos o cree otros nuevos.",
+      "adminUsers": "Usuarios administradores",
+      "adminUsersDescription": "Crear nuevos usuarios administradores para finalizar la configuración de Leemons:<br/>- Crear programas<br/>- Planes de estudio<br/>- Reglas académicas<br/>- Asignaturas<br/>- Inscribir estudiantes..."
     },
     "mails": {
       "label": "Proveedores de correo",

@@ -14,5 +14,8 @@ module.exports = {
     fieldRequired: 'This field is required',
     yes: 'Yes',
     no: 'No',
+    gmail: 'Gmail SMTP settings',
+    outlook: 'Outlook SMTP settings',
+    yahoo: 'Yahoo SMTP settings',
   },
 };

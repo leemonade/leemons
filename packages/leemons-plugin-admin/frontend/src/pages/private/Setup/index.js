@@ -23,7 +23,7 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 6,
+    currentStep: 0,
     headerHeight: null,
     steps: 6,
   });

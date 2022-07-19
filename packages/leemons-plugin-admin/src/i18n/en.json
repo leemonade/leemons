@@ -49,7 +49,19 @@
     "welcome": {
       "label": "Welcome",
       "title": "Platform setup",
-      "description": "This brief guide explain the main points of each mandatory step in order to setup the platform for a super-admin user like you."
+      "description": "This brief guide explain the main points of each mandatory step in order to setup the platform for a super-admin user like you.",
+      "organization": "Organization",
+      "organizationDescription": "Complete the basic information about your organization and create super-admin user. If you have more than one center/school you can indicate this later.",
+      "mailProviders": "Mail providers",
+      "mailProvidersDescription": "Configure your providers and email accounts for the management of platform notifications, you can setup as many accounts as you want and later assign them to your different centers.",
+      "languages": "Languages",
+      "languagesDescription": "Choose the main language of interface platform and for content. You can customize it by centers later.",
+      "centers": "Centers",
+      "centersDescription": "You can configure the type of information you want to include in each center. There is some basic system fields, but you can add as many fields as you need.",
+      "profiles": "Profiles",
+      "profilesDescription": "Define the profiles for your platform, choose the default profiles (admin, teacher, parent), customize them or create new ones.",
+      "adminUsers": "Admin users",
+      "adminUsersDescription": "Create new Admin Users in order to finish the setup of Leemons: <br/> - Create programs<br/>- Curriculums<br/>- Academic Rules<br/>- Subjects<br/>- Enroll students…"
     },
     "mails": {
       "label": "Mail providers",
@@ -116,7 +128,7 @@
       "hostname": "Domain URL",
       "hostnameRequired": "Domain URL is required",
       "lookAndFeel": "Brand look & feel",
-      "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud."
+      "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud.",
       "logoUrl": "Logo URL",
       "mainColor": "Main color (accent color)",
       "superAdminCredentials": "Super-admin credentials",

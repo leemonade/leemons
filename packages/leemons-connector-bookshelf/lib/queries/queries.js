@@ -7,7 +7,18 @@ const { parseFilters } = require('leemons-utils');
 function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
   const selectAttributes = (attributes) =>
-    _.pickBy(attributes, (value, key) => model.schema.allAttributes.includes(key));
+    _.pickBy(attributes, (value, key) => {
+      if (key === 'deleted') {
+        return model.schema.attributes.deleted !== null || model.schema.allAttributes.includes(key);
+      }
+      if (key === 'deleted_at') {
+        return (
+          (model.schema.attributes.deleted !== null && model.schema.options.useTimestamps) ||
+          model.schema.allAttributes.includes(key)
+        );
+      }
+      return model.schema.allAttributes.includes(key);
+    });
 
   // Creates one new item
   async function create(newItem, { transacting } = {}) {
@@ -57,7 +68,7 @@ function generateQueries(model /* connector */) {
 
     return Object.keys(attributes).length > 0
       ? entry
-          .save(attributes, { method: 'update', patch: true, transacting })
+          .save(attributes, { method: 'update', patch: true, transacting, debug: true })
           .then((res) => res.toJSON())
       : entry.toJSON();
   }

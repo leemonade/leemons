@@ -1,6 +1,8 @@
 import React from 'react';
 import { cloneDeep, findIndex, map } from 'lodash';
 import {
+  Box,
+  Button,
   ContextContainer,
   NumberInput,
   Paper,
@@ -135,6 +137,46 @@ export default function AddEmailProvider({ providers, onChange }) {
   return (
     <Paper shadow="none" sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}>
       <ContextContainer title={t('title')} description={t('description')}>
+        <Box>
+          <Box>
+            <Button
+              color="primary"
+              variant="link"
+              size="xs"
+              onClick={() =>
+                window.open('https://support.google.com/mail/answer/7126229', '_blank')
+              }
+            >
+              {t('gmail')}
+            </Button>
+          </Box>
+          <Box>
+            <Button
+              color="primary"
+              variant="link"
+              size="xs"
+              onClick={() =>
+                window.open(
+                  'https://support.microsoft.com/en-us/office/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040',
+                  '_blank'
+                )
+              }
+            >
+              {t('outlook')}
+            </Button>
+          </Box>
+          <Box>
+            <Button
+              color="primary"
+              variant="link"
+              size="xs"
+              onClick={() => window.open('https://help.yahoo.com/kb/SLN4724.html', '_blank')}
+            >
+              {t('yahoo')}
+            </Button>
+          </Box>
+        </Box>
+
         <TableInput
           data={providers}
           columns={columns}
