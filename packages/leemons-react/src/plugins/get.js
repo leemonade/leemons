@@ -36,7 +36,7 @@ module.exports = async function get({ app }) {
     console.warn(chalk`{yellowBright Warning:} No plugins found in {bold ${app}}`);
     return [];
   } catch (e) {
-    console.error(chalk`{redBright Error:} Cannot read package.json in {bold${app}}`);
+    console.error(chalk`{redBright Error:} Cannot read package.json in {bold ${app}}`);
     throw e;
   }
 };

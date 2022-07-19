@@ -15,7 +15,7 @@ services:
     working_dir: /monorepo
     tty: true
     stdin_open: true
-    command: sh retry.sh echo
+    command: sh retry.sh ./installDeps.sh
 
   leemons-back:
     image: node:16
