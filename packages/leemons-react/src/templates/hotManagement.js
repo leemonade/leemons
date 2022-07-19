@@ -2,6 +2,7 @@
 
 if (module.hot) {
   let loaderShown = 1;
+  let loaderContent = '';
 
   function showLoader() {
     let loader = document.getElementById('hot-loader');
@@ -9,6 +10,7 @@ if (module.hot) {
     if (!loader) {
       loader = document.createElement('div');
       loader.id = 'hot-loader';
+      loader.innerHTML = loaderContent;
 
       document.body.appendChild(loader);
     }
@@ -24,6 +26,7 @@ if (module.hot) {
     }
 
     if (loaderShown === 0) {
+      loaderContent = loader.innerHTML;
       document.body.removeChild(loader);
       loader.remove();
     }
