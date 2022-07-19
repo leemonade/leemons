@@ -1,7 +1,7 @@
 module.exports = {
   insecure: true,
   dir: {
-    app: '/Users/Usuario/Sites/leemonade/leemons/examples/demo-auth',
+    app: '/Users/Usuario/Sites/leemonade/leemons/examples/demo',
     plugins: 'plugins',
     frontend: 'frontend',
     env: '.env',

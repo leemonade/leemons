@@ -1,31 +1,4 @@
 {
-  "env": {
-    "browser": true,
-    "es2021": true,
-    "node": true,
-    "jest": true
-  },
-  "globals": {
-    "leemons": true
-  },
-  "extends": [
-    "plugin:react/recommended",
-    "airbnb-base",
-    "prettier"
-  ],
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "react",
-    "import",
-    "prettier"
-  ],
   "rules": {
     "import/no-unresolved": [
       2,
@@ -42,6 +15,8 @@
           "@dashboard",
           "@dataset",
           "@emails",
+          "@emails-amazon-ses",
+          "@emails-smtp",
           "@grades",
           "@layout",
           "@leebrary",
@@ -50,7 +25,6 @@
           "@menu-builder",
           "@multilanguage",
           "@package-manager",
-          "@scores",
           "@socket-io",
           "@tasks",
           "@tests",
@@ -60,19 +34,6 @@
           "@bubbles-ui"
         ]
       }
-    ],
-    "no-plusplus": "off",
-    "import/no-dynamic-requires": "off",
-    "import/no-extraneous-dependencies": "off",
-    "react/react-in-jsx-scope": "off",
-    "no-underscore-dangle": "off",
-    "prettier/prettier": [
-      "error",
-      {},
-      {
-        "usePrettierrc": true
-      }
-    ],
-    "import/no-names-as-default": "off"
+    ]
   }
 }
