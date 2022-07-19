@@ -10,6 +10,7 @@ async function addUserAvatar(user, avatar, { transacting } = {}) {
   if (avatar) assetData.cover = avatar;
   let asset;
   if (user.avatarAsset) {
+    console.log('Update', assetData);
     asset = await assetService.update(
       { ...assetData, id: user.avatarAsset },
       {
@@ -19,6 +20,7 @@ async function addUserAvatar(user, avatar, { transacting } = {}) {
       }
     );
   } else {
+    console.log('Create', assetData);
     asset = await assetService.add(assetData, {
       published: true,
       userSession: user,

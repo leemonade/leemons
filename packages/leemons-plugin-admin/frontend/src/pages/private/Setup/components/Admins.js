@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { find, forEach, map } from 'lodash';
+import { find, forEach, forIn, map } from 'lodash';
 import PropTypes from 'prop-types';
 import {
   Alert,
@@ -32,7 +32,7 @@ import {
   searchUserAgentsRequest,
 } from '@users/request';
 import { addErrorAlert } from '@layout/alert';
-import listUsers from '@users/request/listUsers';
+import deleteUserAgentById from '@users/request/deleteUserAgentById';
 
 const Styles = createStyles((theme) => ({}));
 
@@ -85,18 +85,28 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
       });
       store.profile = find(profiles, { sysName: 'admin' });
 
-      const {
-        data: { items: users },
-      } = await listUsers({
-        page: 0,
-        size: 99999,
-        query: {
-          profiles: store.profile.id,
+      const { userAgents } = await searchUserAgentsRequest(
+        {
+          profile: store.profile.id,
         },
-      });
+        { withCenter: true, queryWithContains: false }
+      );
 
-      store.users = users;
-      console.log(store.users);
+      store.userAgents = userAgents;
+      const users = {};
+      forEach(userAgents, ({ center, user }) => {
+        if (!users[user.id]) {
+          users[user.id] = {
+            ...user,
+            centers: [],
+          };
+        }
+        users[user.id].centers.push(center.id);
+      });
+      store.users = [];
+      forIn(users, (user) => {
+        store.users.push(user);
+      });
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -118,6 +128,15 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
           usersByCenter[center].push(user);
         });
       });
+
+      const userAgentIdsToRemove = [];
+      forEach(store.userAgents, ({ center, user, id }) => {
+        if (!usersByCenter[center.id] || !find(usersByCenter[center.id], { id: user.id })) {
+          userAgentIdsToRemove.push(id);
+        }
+      });
+
+      await Promise.all(map(userAgentIdsToRemove, (id) => deleteUserAgentById(id)));
 
       const centerIds = Object.keys(usersByCenter);
       for (let i = 0, l = centerIds.length; i < l; i++) {
@@ -163,8 +182,6 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
         'birthdate',
         store.user.birthdate ? new Date(store.user.birthdate) : store.user.birthdate
       );
-
-      form.setValue('avatar', store.user.avatar);
 
       forEach(userAgents, (userAgent) => {
         if (userAgent.center?.id === store.center && userAgent.profile?.id === store.profile) {

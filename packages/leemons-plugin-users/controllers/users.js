@@ -315,6 +315,7 @@ async function createBulk(ctx) {
 }
 
 async function deleteUserAgent(ctx) {
+  console.log(ctx.params.id);
   await userAgentsService.deleteById(ctx.params.id, { soft: true });
   ctx.status = 200;
   ctx.body = { status: 200 };

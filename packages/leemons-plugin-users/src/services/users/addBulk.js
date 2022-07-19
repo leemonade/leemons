@@ -92,7 +92,9 @@ async function addUserBulk(
   }
 
   if (isNewUser) {
+    console.log('Añadimos avatar');
     await addUserAvatar({ ...user, userAgents: [userAgent] }, avatar, { transacting });
+    console.log('Añadido');
   }
 
   if (tags && _.isArray(tags) && tags.length) {
