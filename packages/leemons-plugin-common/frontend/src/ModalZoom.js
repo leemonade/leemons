@@ -90,6 +90,7 @@ function ModalZoom({ children }) {
       <Box
         style={{ cursor: 'pointer' }}
         onClick={() => {
+          store.centerView();
           store.open = true;
           render();
         }}
@@ -107,29 +108,32 @@ function ModalZoom({ children }) {
           <RemoveIcon />
         </Box>
         <TransformWrapper minScale={0.1} maxScale={50} centerOnInit={true} initialScale={1}>
-          {({ zoomIn, zoomOut, resetTransform, centerView }) => (
-            <React.Fragment>
-              <Box className={classes.tools}>
-                <Box onClick={() => zoomIn()}>
-                  <ZoomInIcon />
+          {({ zoomIn, zoomOut, resetTransform, centerView }) => {
+            store.centerView = centerView;
+            return (
+              <React.Fragment>
+                <Box className={classes.tools}>
+                  <Box onClick={() => zoomIn()}>
+                    <ZoomInIcon />
+                  </Box>
+                  <Box onClick={() => zoomOut()}>
+                    <ZoomOutIcon />
+                  </Box>
                 </Box>
-                <Box onClick={() => zoomOut()}>
-                  <ZoomOutIcon />
-                </Box>
-              </Box>
 
-              <TransformComponent
-                wrapperStyle={{
-                  width: '100vw',
-                  height: '100vh',
-                  maxWidth: '100vw',
-                  maxHeight: '100vh',
-                }}
-              >
-                {children}
-              </TransformComponent>
-            </React.Fragment>
-          )}
+                <TransformComponent
+                  wrapperStyle={{
+                    width: '100vw',
+                    height: '100vh',
+                    maxWidth: '100vw',
+                    maxHeight: '100vh',
+                  }}
+                >
+                  {children}
+                </TransformComponent>
+              </React.Fragment>
+            );
+          }}
         </TransformWrapper>
       </Box>
     </>
