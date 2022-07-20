@@ -12,6 +12,10 @@ import {
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
+import { logoutSession } from '@users/session';
+import constants from '@users/constants';
+import { useHistory } from 'react-router-dom';
+import { updateSettingsRequest } from '@admin/request/settings';
 
 const Styles = createStyles((theme) => ({
   container: {
@@ -20,32 +24,35 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-const Finish = ({ onNextLabel, onNext = () => {} }) => {
+const Finish = () => {
   const [t] = useTranslateLoader(prefixPN('setup.finish'));
+  const history = useHistory();
 
   const { classes: styles, cx } = Styles();
 
-  // ····················································
-  // HANDLERS
-  const handleOnNext = () => {
-    onNext();
-  };
+  React.useEffect(() => {
+    updateSettingsRequest({ configured: true });
+  }, []);
 
   return (
     <Box>
       <ContextContainer title={t('title')}>
         <Box className={styles.container}>
           <ImageLoader src={`/public/admin/finish.png`} height={393} width={366} />
-          <ContextContainer>
-            <Title order={2}>{t('readyToGo')}</Title>
-            <Alert title={t('info')} variant="block" closeable={false}>
-              {t('infoDescription')}
-            </Alert>
-            <Paragraph>{t('description')}</Paragraph>
-            <Box>
-              <Button>{t('nextButton')}</Button>
-            </Box>
-          </ContextContainer>
+          <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+            <ContextContainer>
+              <Title order={2}>{t('readyToGo')}</Title>
+              <Alert title={t('info')} variant="block" closeable={false}>
+                {t('infoDescription')}
+              </Alert>
+              <Paragraph>{t('description')}</Paragraph>
+              <Box>
+                <Button onClick={() => logoutSession(history, `/${constants.base}`)}>
+                  {t('nextButton')}
+                </Button>
+              </Box>
+            </ContextContainer>
+          </Box>
         </Box>
       </ContextContainer>
     </Box>

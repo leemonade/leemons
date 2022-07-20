@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Alert,
+  Anchor,
   Box,
-  Stack,
   Button,
   ContextContainer,
   Paragraph,
-  Anchor,
-  TableInput,
   Select,
-  Alert,
+  Stack,
+  TableInput,
 } from '@bubbles-ui/components';
 import { isEmpty } from 'lodash';
 import LocalePicker from '@admin/components/LocalePicker';
@@ -17,7 +17,7 @@ import { getLanguagesRequest, setLanguagesRequest } from '@admin/request/setting
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 
-const Locales = ({ onNextLabel, onNext = () => {} }) => {
+const Locales = ({ configured, onNextLabel, onNext = () => {} }) => {
   const [localesData, setLocalesData] = React.useState([]);
   const [locales, setLocales] = React.useState([]);
   const [defaultLocale, setDefaultLocale] = React.useState('');
@@ -111,7 +111,7 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
                   accessor: 'code',
                   input: {
                     node: <LocalePicker onLoadData={setLocalesData} />,
-                    rules: { required: 'Required field' },
+                    rules: { required: t('languages.required') },
                   },
                   editable: false,
                   valueRender: (value) => {
@@ -121,8 +121,8 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
                 },
               ]}
               labels={{
-                add: 'Add',
-                remove: 'Remove',
+                add: t('languages.add'),
+                remove: t('languages.remove'),
               }}
               data={locales}
               onBeforeRemove={() => locales?.length > 1}
@@ -137,6 +137,7 @@ const Locales = ({ onNextLabel, onNext = () => {} }) => {
               data={localesData.filter((item) => locales.find((l) => l.code === item.value))}
               value={defaultLocale}
               onChange={setDefaultLocale}
+              disabled={configured}
               contentStyle={{ maxWidth: 262 }}
             />
           )}
@@ -161,6 +162,7 @@ Locales.defaultProps = {
   onNextLabel: 'Save and continue',
 };
 Locales.propTypes = {
+  configured: PropTypes.bool,
   onNext: PropTypes.func,
   onNextLabel: PropTypes.string,
 };

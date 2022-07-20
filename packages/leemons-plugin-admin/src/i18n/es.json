@@ -81,6 +81,9 @@
     "languages": {
       "label": "Idiomas",
       "title": "Idiomas",
+      "required": "Es obligatorio seleccionar un idioma",
+      "add": "Añadir",
+      "remove": "Borrar",
       "description": "¿Qué idiomas se usarán en tu centro(s)?",
       "intro": "Por favor, selecciona los idiomas que se usarán en tu centro(s). Actualmente la interfaz de usuario soporta inglés y español.",
       "collaborate": "Si quieres ayudarnos a traducir la interfaz de usuario a más idiomas, por favor sigue nuestra guía de colaboración en ",
