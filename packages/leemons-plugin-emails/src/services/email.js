@@ -34,23 +34,34 @@ class Email {
     );
   }
 
+  static async getProvider(value) {
+    const providers = await value.services.email.getProviders();
+    return {
+      ...value.services.email.data,
+      providerName: value.name,
+      providers,
+    };
+  }
+
   /**
    * Return array of installed providers for email
    * @public
    * @static
    * @return {any[]}
    * */
-  static providers() {
+  static async providers() {
     const providers = [];
-    let newValue;
-    _.forIn(leemons.listProviders(), (value, key) => {
-      newValue = value;
-      if (newValue.config && newValue.config.data) {
-        newValue.config.data.providerName = key;
-        providers.push(newValue.config.data);
+    _.forIn(leemons.listProviders(), (value) => {
+      if (
+        value.services?.email?.data &&
+        value.services.email &&
+        _.isFunction(value.services.email.getProviders)
+      ) {
+        providers.push(Email.getProvider(value));
       }
     });
-    return providers;
+
+    return Promise.all(providers);
   }
 
   /**
@@ -59,10 +70,22 @@ class Email {
    * @static
    * @return {Promise<any>} new provider config
    * */
-  static async addProvider(data) {
+  static async saveProvider(data) {
     if (!leemons.getProvider(data.providerName))
       throw new Error(`No provider with the name ${data.providerName}`);
-    return leemons.getProvider(data.providerName).services.email.addConfig(data.config);
+    return leemons.getProvider(data.providerName).services.email.saveConfig(data.config);
+  }
+
+  /**
+   * Remove provider config
+   * @public
+   * @static
+   * @return {Promise<any>} new provider config
+   * */
+  static async removeProvider(data) {
+    if (!leemons.getProvider(data.providerName))
+      throw new Error(`No provider with the name ${data.providerName}`);
+    return leemons.getProvider(data.providerName).services.email.removeConfig(data.id);
   }
 
   /**

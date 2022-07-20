@@ -3,9 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "front": "yarn workspace leemons-react dev $(pwd)",
+    "start": "leemons start",
     "dev": "leemons dev",
-    "leemons": "leemons"
+    "leemons": "leemons",
+    "front": "yarn workspace leemons-react build $(pwd) && yarn workspace leemons-react serve",
+    "front:serve": "yarn workspace leemons-react serve",
+    "front:dev": "yarn workspace leemons-react dev $(pwd)",
+    "front:build": "yarn workspace leemons-react build $(pwd)"
   },
   "leemons": {},
   "dependencies": {
@@ -38,6 +42,9 @@
     "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
     "leemons-provider-leebrary-tasks": "0.0.1-beta.0",
     "leemons-provider-leebrary-tests": "0.0.1-beta.0",
+    "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
+    "leemons-provider-emails-smtp": "0.0.1-beta.0",
+    "leemons-provider-emails-amazon-ses": "0.0.1-beta.0",
     "mysql": "^2.18.1"
   },
   "devDependencies": {

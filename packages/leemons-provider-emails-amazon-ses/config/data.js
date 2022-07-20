@@ -1,4 +1,4 @@
 module.exports = {
   name: 'Amazon SES',
-  image: 'https://cdn.worldvectorlogo.com/logos/aws-ses.svg',
+  image: '/public/emails-amazon-ses/aws.png',
 };

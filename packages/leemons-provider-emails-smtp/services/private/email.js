@@ -9,8 +9,19 @@ const table = {
 };
 
 class Email {
-  static async addConfig(config) {
+  static async saveConfig(config) {
+    if (config.id) {
+      return table.config.update({ id: config.id }, config);
+    }
     return table.config.create(config);
+  }
+
+  static async removeConfig(id) {
+    return table.config.delete({ id });
+  }
+
+  static async getProviders() {
+    return table.config.find();
   }
 
   static async getTransporters() {

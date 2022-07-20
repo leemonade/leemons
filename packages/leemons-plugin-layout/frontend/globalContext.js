@@ -1,10 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isNil } from 'lodash';
+import { forEach, isNil } from 'lodash';
 import { useLocation } from 'react-router-dom';
-import { ModalsProvider, Paragraph, ThemeProvider, useModals } from '@bubbles-ui/components';
+import {
+  BUBBLES_THEME,
+  colord,
+  ModalsProvider,
+  Paragraph,
+  ThemeProvider,
+  useModals,
+} from '@bubbles-ui/components';
 import { NotificationProvider } from '@bubbles-ui/notifications';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getPlatformThemeRequest } from '@users/request';
+import hooks from 'leemons-hooks';
 import prefixPN from './src/helpers/prefixPN';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import PrivateLayout from './src/components/PrivateLayout';
@@ -128,8 +137,59 @@ LayoutProviderWrapper.propTypes = {
 };
 
 export function Provider({ children }) {
+  const [theme, setTheme] = useState(BUBBLES_THEME);
+
+  async function load() {
+    try {
+      const { theme: th } = await getPlatformThemeRequest();
+      const mainColor = colord(th.mainColor);
+      const mainColorLight = 1 - mainColor.brightness();
+      const mainColorHSL = colord(th.mainColor).toHsl();
+
+      const bubbles = [];
+
+      forEach(BUBBLES_THEME.colors.bubbles, (color) => {
+        bubbles.push(colord({ ...mainColorHSL, l: colord(color).brightness() * 100 }).toHex());
+      });
+
+      setTheme({
+        ...BUBBLES_THEME,
+        colors: {
+          ...BUBBLES_THEME.colors,
+          bubbles,
+          interactive01: th.mainColor,
+          interactive01h: colord(th.mainColor)
+            .lighten(mainColorLight * 0.2)
+            .toHex(),
+          interactive01d: colord(th.mainColor)
+            .lighten(mainColorLight * 0.4)
+            .toHex(),
+          interactive01v0: colord(th.mainColor)
+            .lighten(mainColorLight * 0.5)
+            .toHex(),
+          interactive01v1: colord(th.mainColor)
+            .lighten(mainColorLight * 0.6)
+            .toHex(),
+        },
+      });
+    } catch (error) {
+      // Nothing
+    }
+  }
+
+  useEffect(() => {
+    hooks.addAction('platform:theme:change', load);
+    return () => {
+      hooks.removeAction('platform:theme:change', load);
+    };
+  });
+
+  React.useEffect(() => {
+    load();
+  }, []);
+
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
       <ModalsProvider>
         <LayoutProviderWrapper>{children}</LayoutProviderWrapper>
       </ModalsProvider>

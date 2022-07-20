@@ -29,6 +29,20 @@ async function list(ctx) {
   }
 }
 
+async function add(ctx) {
+  const center = await centerService.add(ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { status: 200, center };
+}
+
+async function remove(ctx) {
+  await centerService.remove(ctx.request.body.id, { soft: true });
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   list,
+  add,
+  remove,
 };

@@ -6,6 +6,12 @@ import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
+import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
+import Centers from '@admin/pages/private/Setup/components/Centers';
+import Admins from '@admin/pages/private/Setup/components/Admins';
+import Profiles from '@admin/pages/private/Setup/components/Profiles';
+import Organization from '@admin/pages/private/Setup/components/Organization';
+import Finish from '@admin/pages/private/Setup/components/Finish';
 import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
@@ -18,9 +24,9 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 0,
+    currentStep: 7,
     headerHeight: null,
-    steps: 3,
+    steps: 7,
   });
 
   // ····················································
@@ -32,7 +38,7 @@ function Setup({ session }) {
   };
 
   const handleOnNext = () => {
-    if (store.currentStep < store.steps - 1) {
+    if (store.currentStep <= store.steps - 1) {
       store.currentStep += 1;
     } else {
       //
@@ -67,8 +73,13 @@ function Setup({ session }) {
             stickyAt={store.headerHeight}
             data={[
               { label: t('welcome.label'), status: 'OK' },
+              { label: t('organization.label'), status: 'OK' },
+              { label: t('mails.label'), status: 'OK' },
               { label: t('languages.label'), status: 'OK' },
-              { label: 'Step 2', status: 'OK' },
+              { label: t('centers.label'), status: 'OK' },
+              { label: t('profiles.label'), status: 'OK' },
+              { label: t('admins.label'), status: 'OK' },
+              { label: t('finish.label'), status: 'OK' },
             ]}
           >
             {
@@ -78,11 +89,37 @@ function Setup({ session }) {
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.nextButton')}
                 />,
-                <Locales
+                <Organization
                   key="s2"
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,
+                <MailProviders
+                  key="s3"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Locales
+                  key="s4"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Centers
+                  key="s5"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Profiles
+                  key="s6"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Admins
+                  key="s7"
+                  onNext={handleOnNext}
+                  onNextLabel={t('common.labels.saveAndNextButton')}
+                />,
+                <Finish key="s8" />,
               ][store.currentStep]
             }
           </VerticalStepperContainer>

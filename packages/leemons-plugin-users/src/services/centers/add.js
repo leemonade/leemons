@@ -11,7 +11,7 @@ const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/c
  * @param {any=} _transacting -  DB Transaction
  * @return {Promise<Center>} Created / Updated role
  * */
-async function add({ name, description, locale, email }, { transacting: _transacting } = {}) {
+async function add({ id, name, locale, ...centerData }, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       if (await existName(name, { transacting }))
@@ -23,23 +23,37 @@ async function add({ name, description, locale, email }, { transacting: _transac
         }
       }
 
-      leemons.log.info(`Creating center '${name}'`);
-      const center = await table.centers.create(
-        {
-          name,
-          description,
-          locale,
-          email,
-          uri: global.utils.slugify(name, { lower: true }),
-        },
-        { transacting }
-      );
+      let center = null;
+      if (id) {
+        leemons.log.info(`Updating center '${name}'`);
+        center = await table.centers.update(
+          { id },
+          {
+            ...centerData,
+            name,
+            locale,
+            uri: global.utils.slugify(name, { lower: true }),
+          },
+          { transacting }
+        );
+        leemons.events.emit('didUpdateCenter');
+      } else {
+        leemons.log.info(`Creating center '${name}'`);
+        center = await table.centers.create(
+          {
+            ...centerData,
+            name,
+            locale,
+            uri: global.utils.slugify(name, { lower: true }),
+          },
+          { transacting }
+        );
+        await createNecessaryRolesForProfilesAccordingToCenters(undefined, center.id, {
+          transacting,
+        });
+        leemons.events.emit('didCreateCenter');
+      }
 
-      await createNecessaryRolesForProfilesAccordingToCenters(undefined, center.id, {
-        transacting,
-      });
-
-      leemons.events.emit('didCreateCenter');
       return center;
     },
     table.roles,
