@@ -6,19 +6,21 @@ export default function useSubjects(task) {
   const [data, setData] = useState([]);
   const { subjects } = task;
 
-  useEffect(async () => {
-    if (!subjects?.length) {
-      return;
-    }
+  useEffect(() => {
+    (async () => {
+      if (!subjects?.length) {
+        return;
+      }
 
-    const subjectsData = (await getSubjectDetails(_.map(subjects, 'subject')))?.data;
+      const subjectsData = (await getSubjectDetails(_.map(subjects, 'subject')))?.data;
 
-    setData(
-      subjectsData.map((subject) => ({
-        label: subject.name,
-        value: subject.id,
-      }))
-    );
+      setData(
+        subjectsData.map((subject) => ({
+          label: subject.name,
+          value: subject.id,
+        }))
+      );
+    })();
   }, [subjects]);
 
   return data;

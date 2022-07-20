@@ -130,16 +130,18 @@ GradeVariation.propTypes = {
 function useAssignableCurriculum(program) {
   const [curriculum, setCurriculum] = React.useState(null);
 
-  React.useEffect(async () => {
-    if (!program) {
-      return;
-    }
+  React.useEffect(() => {
+    (async () => {
+      if (!program) {
+        return;
+      }
 
-    const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
+      const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
 
-    if (curriculumData.count) {
-      setCurriculum(curriculumData.items[0]);
-    }
+      if (curriculumData.count) {
+        setCurriculum(curriculumData.items[0]);
+      }
+    })();
   }, program);
 
   return curriculum;

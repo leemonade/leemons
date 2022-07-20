@@ -68,7 +68,7 @@ function generateQueries(model /* connector */) {
 
     return Object.keys(attributes).length > 0
       ? entry
-          .save(attributes, { method: 'update', patch: true, transacting, debug: true })
+          .save(attributes, { method: 'update', patch: true, transacting })
           .then((res) => res.toJSON())
       : entry.toJSON();
   }

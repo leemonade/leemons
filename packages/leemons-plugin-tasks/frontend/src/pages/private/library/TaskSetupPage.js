@@ -141,11 +141,13 @@ export default function TaskSetupPage() {
 
   const { id } = useParams();
 
-  useEffect(async () => {
-    if (!isEmpty(id)) {
-      store.currentTask = await getTask(id);
-      render();
-    }
+  useEffect(() => {
+    (async () => {
+      if (!isEmpty(id)) {
+        store.currentTask = await getTask(id);
+        render();
+      }
+    })();
   }, [id]);
 
   useEffect(() => {

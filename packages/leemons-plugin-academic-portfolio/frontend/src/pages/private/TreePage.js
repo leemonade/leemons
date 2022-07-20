@@ -79,11 +79,11 @@ export default function TreePage() {
   }
 
   React.useEffect(() => {
-    layoutState.contentRef.current.addEventListener('scroll', onScroll);
+    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
 
     // cleanup this component
     return () => {
-      layoutState.contentRef.current.removeEventListener('scroll', onScroll);
+      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
     };
   }, [layoutState.contentRef.current]);
 

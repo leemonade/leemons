@@ -17,9 +17,11 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
     name: 'type',
   });
 
-  useEffect(async () => {
-    const p = await getProfiles(profile);
-    setProfiles([p[0].profile]);
+  useEffect(() => {
+    (async () => {
+      const p = await getProfiles(profile);
+      setProfiles([p[0].profile]);
+    })();
   }, []);
 
   if (!profiles) {

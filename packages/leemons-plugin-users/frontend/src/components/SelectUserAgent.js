@@ -204,30 +204,33 @@ const SelectUserAgent = forwardRef(
 
     // EN: Allow the user to select the users to display
     // ES: Permite al usuario seleccionar los usuarios a mostrar
-    useEffect(async () => {
-      if (users) {
-        if (users.length && users[0].name) {
-          setUsersData(users);
-        } else {
-          let data = await getUserAgentsInfoRequest(users, {
-            withCenter: true,
-            withProfile: true,
-          });
+    useEffect(() => {
+      ( async () => {
+        if (users) {
+          if (users.length && users[0].name) {
+            setUsersData(users);
+          } else {
+            let data = await getUserAgentsInfoRequest(users, {
+              withCenter: true,
+              withProfile: true,
+            });
 
-          data = data.userAgents.map((item) => ({
-            ...item.user,
-            variant: 'rol',
-            rol: item.profile.name,
-            center: item.center.name,
-            value: item.id,
-            label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
-          }));
+            data = data.userAgents.map((item) => ({
+              ...item.user,
+              variant: 'rol',
+              rol: item.profile.name,
+              center: item.center.name,
+              value: item.id,
+              label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+            }));
 
-          setUsersData(data);
+            setUsersData(data);
+          }
+        } else if (usersData) {
+          setUsersData(null);
         }
-      } else if (usersData) {
-        setUsersData(null);
-      }
+      })();
+      
     }, [users]);
 
     // EN: Initial search for the first render

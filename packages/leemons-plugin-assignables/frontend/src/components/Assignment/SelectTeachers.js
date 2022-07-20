@@ -33,21 +33,23 @@ export default function SelectTeachers({ role, onChange }) {
     });
   }, [role]);
 
-  useEffect(async () => {
-    const response = await searchUserAgentsRequest(
-      { profile: profiles },
-      {
-        withCenter: true,
-        withProfile: true,
-      }
-    );
+  useEffect(() => {
+    (async () => {
+      const response = await searchUserAgentsRequest(
+        { profile: profiles },
+        {
+          withCenter: true,
+          withProfile: true,
+        }
+      );
 
-    const ids = response.userAgents?.map(({ id }) => id);
-    const currentValue = getValues('assignee');
-    if (!_.isEqual(currentValue, ids)) {
-      onChange(ids);
-      setValue('assignee', []);
-    }
+      const ids = response.userAgents?.map(({ id }) => id);
+      const currentValue = getValues('assignee');
+      if (!_.isEqual(currentValue, ids)) {
+        onChange(ids);
+        setValue('assignee', []);
+      }
+    })();
   }, [profiles]);
 
   return <></>;

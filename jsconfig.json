@@ -72,9 +72,6 @@
       "@package-manager/*": [
         "./packages/leemons-plugin-package-manager/frontend/src/*"
       ],
-      "@scores/*": [
-        "./packages/leemons-plugin-scores/frontend/src/*"
-      ],
       "@socket-io/*": [
         "./packages/leemons-plugin-socket-io/frontend/src/*"
       ],

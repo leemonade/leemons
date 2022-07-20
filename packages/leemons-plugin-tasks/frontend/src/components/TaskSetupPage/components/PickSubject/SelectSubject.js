@@ -28,9 +28,11 @@ export default function SelectSubject({
     setValue(userValue);
   }, [userValue]);
 
-  useEffect(async () => {
-    const details = await detailProgramRequest(programId);
-    setProgram(details?.program);
+  useEffect(() => {
+    (async () => {
+      const details = await detailProgramRequest(programId);
+      setProgram(details?.program);
+    })();
   }, [programId]);
 
   /**

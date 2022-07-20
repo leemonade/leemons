@@ -8,16 +8,17 @@ export default function File({ assignation, labels }) {
   const submittedFiles = assignation.metadata?.submission;
   const [assets, setAssets] = useState([]);
 
-  useEffect(async () => {
-    if (!submittedFiles?.length) {
-      return;
-    }
-    let files = await getAssetsByIds(
-      submittedFiles.map((file) => file.id),
-      { showPublic: true, indexable: false }
-    );
+  useEffect(() => {
+    (async () => {
+      if (!submittedFiles?.length) {
+        return;
+      }
+      let files = await getAssetsByIds(
+        submittedFiles.map((file) => file.id),
+        { showPublic: true, indexable: false }
+      );
 
-    /**
+      /**
   id: PropTypes.string,
   fileType: PropTypes.string,
   fileExtension: PropTypes.string,
@@ -35,32 +36,33 @@ export default function File({ assignation, labels }) {
   category: PropTypes.string,
   role: PropTypes.oneOf(LIBRARYCARD_ROLES),
      */
-    files = files.assets.map((asset) => {
-      const preparedAsset = prepareAsset(asset);
-      return {
-        id: preparedAsset.id,
-        fileType: preparedAsset.file.extension,
-        // fileExtension: preparedAsset.file.extension,
-        title:
-          preparedAsset.name.substr(0, preparedAsset.name.lastIndexOf('.')) || preparedAsset.name,
-        description: preparedAsset.description,
-        // tagline: preparedAsset.tagline,
-        // metadata: preparedAsset.metadata,
-        // created: preparedAsset.created_at,
-        // version: '',
-        cover: null,
-        color: preparedAsset.color,
-        url: preparedAsset.url,
-        // icon: preparedAsset.icon,
-        // tags: preparedAsset.tags,
-        category: preparedAsset.category,
-        role: null,
-      };
-    });
+      files = files.assets.map((asset) => {
+        const preparedAsset = prepareAsset(asset);
+        return {
+          id: preparedAsset.id,
+          fileType: preparedAsset.file.extension,
+          // fileExtension: preparedAsset.file.extension,
+          title:
+            preparedAsset.name.substr(0, preparedAsset.name.lastIndexOf('.')) || preparedAsset.name,
+          description: preparedAsset.description,
+          // tagline: preparedAsset.tagline,
+          // metadata: preparedAsset.metadata,
+          // created: preparedAsset.created_at,
+          // version: '',
+          cover: null,
+          color: preparedAsset.color,
+          url: preparedAsset.url,
+          // icon: preparedAsset.icon,
+          // tags: preparedAsset.tags,
+          category: preparedAsset.category,
+          role: null,
+        };
+      });
 
-    // console.log('files', files);
+      // console.log('files', files);
 
-    setAssets(files);
+      setAssets(files);
+    })();
   }, [submittedFiles]);
 
   if (Array.isArray(submittedFiles)) {

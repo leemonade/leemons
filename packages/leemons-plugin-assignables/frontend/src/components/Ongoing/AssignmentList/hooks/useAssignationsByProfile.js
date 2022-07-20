@@ -13,18 +13,20 @@ export default function useAssignationsByProfile(ids) {
 
   const { isTeacher } = useContext(globalContext);
 
-  useEffect(async () => {
-    if (isTeacher) {
-      const teacherResults = await getAssignableInstances({ ids });
+  useEffect(() => {
+    (async () => {
+      if (isTeacher) {
+        const teacherResults = await getAssignableInstances({ ids });
 
-      setResults(teacherResults);
-    } else {
-      const studentResults = await getAssignations({ ids, user });
+        setResults(teacherResults);
+      } else {
+        const studentResults = await getAssignations({ ids, user });
 
-      setResults(studentResults);
-    }
+        setResults(studentResults);
+      }
 
-    setLoading(false);
+      setLoading(false);
+    })();
   }, [isTeacher, ids, user]);
 
   return [results, loading];
