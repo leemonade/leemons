@@ -281,7 +281,8 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                           >${texts.startActivity}
                           </div
                           >
-                          <div
+                          {{ @if (it.taskDate) }}
+                             <div
                             style="
                                 font-family: 'Inter', Verdana, sans-serif;
                                 font-size: 12.5px;
@@ -289,8 +290,9 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 color: #5b6577;
                               "
                           >${texts.delivery}: {{it.taskDate}}
-                          </div
-                          >
+                          </div>
+                           {{ /if}}
+
                         </div>
                       </div>
                     </div>
