@@ -140,6 +140,15 @@
       "contactName": "Nombre de contacto",
       "administrativeContactInfo": "Información de contacto administrativa (opcional)",
       "administrativeContactInfoDescription": "Esta información se utilizará únicamente como firma de notificación para cumplir con el GDPR y otras leyes internacionales de privacidad."
+    },
+    "finish": {
+      "label": "Fin",
+      "title": "¡Felicidades!",
+      "readyToGo": "Listo para salir!!",
+      "info": "Información",
+      "infoDescription": "Siempre puedes entrar con tus credenciales de super-administrador para modificar la configuración del sistema, pero algunos cambios pueden colapsar la plataforma, por favor, si tienes alguna duda, revisa nuestro FAQ en la web de Leemons. URL de super-admin",
+      "description": "Ahora puedes entrar en la plataforma con tus credenciales de administrador estándar para crear programas, dar de alta usuarios (profesores o alumnos), crear tu plan de estudios, etc...",
+      "nextButton": "Ir al inicio de sesión con sus credenciales de administrador"
     }
   },
   "addCenterDrawer": {

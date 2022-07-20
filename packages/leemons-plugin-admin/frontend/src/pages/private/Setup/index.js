@@ -11,6 +11,7 @@ import Centers from '@admin/pages/private/Setup/components/Centers';
 import Admins from '@admin/pages/private/Setup/components/Admins';
 import Profiles from '@admin/pages/private/Setup/components/Profiles';
 import Organization from '@admin/pages/private/Setup/components/Organization';
+import Finish from '@admin/pages/private/Setup/components/Finish';
 import { Start } from './components/Start';
 import { Locales } from './components/Locales';
 
@@ -23,9 +24,9 @@ function Setup({ session }) {
 
   const [store, render] = useStore({
     loading: false,
-    currentStep: 0,
+    currentStep: 7,
     headerHeight: null,
-    steps: 6,
+    steps: 7,
   });
 
   // ····················································
@@ -78,6 +79,7 @@ function Setup({ session }) {
               { label: t('centers.label'), status: 'OK' },
               { label: t('profiles.label'), status: 'OK' },
               { label: t('admins.label'), status: 'OK' },
+              { label: t('finish.label'), status: 'OK' },
             ]}
           >
             {
@@ -117,6 +119,7 @@ function Setup({ session }) {
                   onNext={handleOnNext}
                   onNextLabel={t('common.labels.saveAndNextButton')}
                 />,
+                <Finish key="s8" />,
               ][store.currentStep]
             }
           </VerticalStepperContainer>
