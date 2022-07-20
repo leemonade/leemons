@@ -81,6 +81,9 @@
     "languages": {
       "label": "Languages",
       "title": "Languages",
+      "required": "Language is required",
+      "add": "Add",
+      "remove": "Remove",
       "description": "Which languages will be used in your center(s)?",
       "intro": "Please choose the languages to display on the platform. Currently the user interface supports English and Spanish.",
       "collaborate": "If help is required to translate the UI into more languages, please follow our guidelines on",
