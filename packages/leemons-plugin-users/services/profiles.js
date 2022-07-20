@@ -8,6 +8,7 @@ module.exports = {
   existName: profiles.existName,
   existMany: profiles.existMany,
   detailByUri: profiles.detailByUri,
+  saveBySysName: profiles.saveBySysName,
   detailBySysName: profiles.detailBySysName,
   // TODO Comprobar acceso
   addProfileContact: profiles.addProfileContact,
