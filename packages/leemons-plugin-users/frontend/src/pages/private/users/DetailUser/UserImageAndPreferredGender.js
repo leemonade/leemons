@@ -9,7 +9,7 @@ import {
   Select,
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-
+import { ModalZoom } from '@common/ModalZoom';
 import { useStore } from '@common';
 import { Controller } from 'react-hook-form';
 import { updateUserImageRequest } from '@users/request';
@@ -103,7 +103,9 @@ function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
             {t('changeAvatar')}
           </Box>
         ) : null}
-        <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+        <ModalZoom>
+          <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+        </ModalZoom>
       </Box>
       <InputWrapper label={t('preferredGenderLabel')}>
         <ContextContainer direction="row">
