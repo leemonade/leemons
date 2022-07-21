@@ -1,30 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Box,
   Button,
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   TextInput,
-  Title,
+  Title
 } from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
 
 const TreeCourseDetail = ({
-  item,
-  center,
-  messagesAddUsers,
-  course,
-  messages,
-  onSave,
-  onGoProgram,
-  saving,
-}) => {
+                            item,
+                            center,
+                            messagesAddUsers,
+                            course,
+                            messages,
+                            onSave,
+                            onGoProgram,
+                            saving,
+                          }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
-  const { reset, control, setValue, handleSubmit } = useForm({ defaultValues: course });
+  const {reset, control, setValue, handleSubmit} = useForm({defaultValues: course});
 
   React.useEffect(() => {
     reset(course);
@@ -44,13 +45,13 @@ const TreeCourseDetail = ({
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
           <Box>
-            <TextInput disabled label={messages.numberLabel} value={course.index.toString()} />
+            <TextInput disabled label={messages.numberLabel} value={course.index.toString()}/>
           </Box>
           <Box>
             <Controller
               control={control}
               name="name"
-              render={({ field }) => (
+              render={({field}) => (
                 <TextInput label={messages.nameLabel} help={messages.nameHelper} {...field} />
               )}
             />
@@ -59,7 +60,7 @@ const TreeCourseDetail = ({
             <Controller
               name="number"
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
               )}
             />
@@ -83,11 +84,13 @@ const TreeCourseDetail = ({
             />
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -106,4 +109,4 @@ TreeCourseDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeCourseDetail };
+export {TreeCourseDetail};

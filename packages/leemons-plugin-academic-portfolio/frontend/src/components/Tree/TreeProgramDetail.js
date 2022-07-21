@@ -1,27 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Box,
   Button,
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
 
 const TreeProgramDetail = ({
-  item,
-  center,
-  messagesAddUsers,
-  program,
-  messages,
-  onSave,
-  onGoProgram,
-  saving,
-}) => {
+                             item,
+                             center,
+                             messagesAddUsers,
+                             program,
+                             messages,
+                             onSave,
+                             onGoProgram,
+                             saving,
+                           }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
   const {
@@ -29,8 +30,8 @@ const TreeProgramDetail = ({
     control,
     setValue,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: program });
+    formState: {errors},
+  } = useForm({defaultValues: program});
 
   React.useEffect(() => {
     reset(program);
@@ -53,8 +54,8 @@ const TreeProgramDetail = ({
             <Controller
               control={control}
               name="name"
-              rules={{ required: messages.nameRequired }}
-              render={({ field }) => (
+              rules={{required: messages.nameRequired}}
+              render={({field}) => (
                 <TextInput label={messages.nameLabel} error={errors.name} required {...field} />
               )}
             />
@@ -68,7 +69,7 @@ const TreeProgramDetail = ({
                 maxLength: 8,
                 minLength: 1,
               }}
-              render={({ field }) => (
+              render={({field}) => (
                 <TextInput
                   label={messages.abbreviationLabel}
                   help={messages.abbreviationHelper}
@@ -85,7 +86,7 @@ const TreeProgramDetail = ({
               <Controller
                 name="credits"
                 control={control}
-                render={({ field }) => (
+                render={({field}) => (
                   <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
                 )}
               />
@@ -108,11 +109,13 @@ const TreeProgramDetail = ({
             tree={item}
           />
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -131,4 +134,4 @@ TreeProgramDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeProgramDetail };
+export {TreeProgramDetail};

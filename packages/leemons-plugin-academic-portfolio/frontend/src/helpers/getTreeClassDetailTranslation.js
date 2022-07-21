@@ -13,6 +13,7 @@ export function getTreeClassDetailTranslation(t) {
     courseLabel: t('class.courseLabel'),
     groupLabel: t('class.groupLabel'),
     substageLabel: t('class.substageLabel'),
+    imageSubjectLabel: t('class.imageSubjectLabel'),
     imageLabel: t('class.imageLabel'),
     iconLabel: t('class.iconLabel'),
     seatsLabel: t('class.seatsLabel'),
