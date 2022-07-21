@@ -175,6 +175,7 @@ module.exports = {
     returnLogin: 'Volver al login',
     emailSendTo: 'Te hemos enviado un email a: {email}',
     emailRequired: 'Email necesario',
+    accountNotActive: 'Tu cuenta aun no esta activa, te hemos mandado el email de activación desde el que podrás setear tu contraseña.'
   },
   reset: {
     title: 'Crear nueva contraseña',
