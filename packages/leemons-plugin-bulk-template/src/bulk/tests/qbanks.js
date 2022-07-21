@@ -1,34 +1,36 @@
 const path = require('path');
-const { keys, trim, isEmpty } = require('lodash');
+const { keys, trim, isNil, isEmpty } = require('lodash');
 const itemsImport = require('../helpers/simpleListImport');
 
 async function importQbanks(programs) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
   const items = await itemsImport(filePath, 'te_qbanks', 40, true, true);
 
-  keys(items).forEach((key) => {
-    const qbank = items[key];
+  keys(items)
+    .filter((key) => !isNil(key) && !isEmpty(key))
+    .forEach((key) => {
+      const qbank = items[key];
 
-    // Qbank program
-    const program = programs[qbank.program];
+      // Qbank program
+      const program = programs[qbank.program];
 
-    qbank.program = program.id;
-    qbank.subjects = (qbank.subjects || '')
-      ?.split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((subject) => program.subjects[subject]?.id);
+      qbank.program = program.id;
+      qbank.subjects = (qbank.subjects || '')
+        ?.split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val))
+        .map((subject) => program.subjects[subject]?.id);
 
-    // Tags
-    qbank.tags = (qbank.tags || '')
-      ?.split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val));
+      // Tags
+      qbank.tags = (qbank.tags || '')
+        ?.split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val));
 
-    qbank.tags = qbank.tags || [];
+      qbank.tags = qbank.tags || [];
 
-    items[key] = qbank;
-  });
+      items[key] = qbank;
+    });
 
   /*
   const mock = {

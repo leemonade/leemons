@@ -3,7 +3,8 @@ const path = require('path');
 
 async function getEslint(basePath) {
   try {
-    const eslintRc = await fs.readJSON(path.resolve(basePath, '.eslintrc.json'));
+    const jsonPath = path.resolve(basePath, '.eslintrc.json');
+    const eslintRc = await fs.readJSON(jsonPath);
 
     if (eslintRc) {
       return eslintRc;
@@ -44,7 +45,7 @@ module.exports = async function createEsLint({
   plugins,
   basePath = path.resolve(__dirname, '../../../../'),
 }) {
-  const config = getEslint(basePath);
+  const config = await getEslint(basePath);
 
   if (!config.rules) {
     config.rules = {};

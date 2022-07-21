@@ -1,14 +1,14 @@
 /* eslint-disable no-await-in-loop */
-const {keys, isEmpty} = require('lodash');
+const { keys, isEmpty } = require('lodash');
 const importEvents = require('./bulk/calendar');
 
-async function initCalendar({users, programs}) {
-  const {services} = leemons.getPlugin('calendar');
+async function initCalendar({ users, programs }) {
+  const { services } = leemons.getPlugin('calendar');
 
   try {
-    const events = await importEvents({programs, users});
+    const events = await importEvents({ programs, users });
     const eventKeys = keys(events);
-    const {chalk} = global.utils;
+    const { chalk } = global.utils;
 
     // console.dir(events, { depth: null });
 
@@ -16,7 +16,7 @@ async function initCalendar({users, programs}) {
       const key = eventKeys[i];
 
       if (key && !isEmpty(key)) {
-        const {creator, calendar, ...event} = events[key];
+        const { creator, calendar, ...event } = events[key];
 
         if (creator && !isEmpty(creator)) {
           try {
@@ -27,9 +27,9 @@ async function initCalendar({users, programs}) {
             leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding calendar event: ${event.title}}`);
             const eventData = await services.calendar.addEventFromUser(users[creator], {
               ...event,
-              calendar
+              calendar,
             });
-            events[key] = {...eventData};
+            events[key] = { ...eventData };
             leemons.log.info(chalk`{cyan.bold BULK} Calendar event ADDED: ${event.title}`);
           } catch (e) {
             console.log('-- ERROR Creating event calendar --');
