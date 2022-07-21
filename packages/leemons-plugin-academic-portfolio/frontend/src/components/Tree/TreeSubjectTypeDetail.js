@@ -1,28 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Box,
   Button,
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   Switch,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
 
 const TreeSubjectTypeDetail = ({
-  item,
-  center,
-  messagesAddUsers,
-  subjectType,
-  messages,
-  onSave,
-  saving,
-  selectSubjectsNode,
-}) => {
+                                 item,
+                                 center,
+                                 messagesAddUsers,
+                                 subjectType,
+                                 messages,
+                                 onSave,
+                                 saving,
+                                 selectSubjectsNode,
+                               }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
   const {
@@ -30,8 +31,8 @@ const TreeSubjectTypeDetail = ({
     control,
     setValue,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: subjectType });
+    formState: {errors},
+  } = useForm({defaultValues: subjectType});
 
   React.useEffect(() => {
     reset(subjectType);
@@ -54,30 +55,30 @@ const TreeSubjectTypeDetail = ({
             <Controller
               control={control}
               name="name"
-              rules={{ required: messages.nameRequired }}
-              render={({ field }) => <TextInput required label={messages.nameLabel} {...field} />}
+              rules={{required: messages.nameRequired}}
+              render={({field}) => <TextInput required label={messages.nameLabel} {...field} />}
             />
           </Box>
           <Box>
             <Controller
               control={control}
               name="credits_course"
-              render={({ field }) => <NumberInput label={messages.crCourse} {...field} />}
+              render={({field}) => <NumberInput label={messages.crCourse} {...field} />}
             />
           </Box>
           <Box>
             <Controller
               control={control}
               name="credits_program"
-              render={({ field }) => <NumberInput label={messages.crProgram} {...field} />}
+              render={({field}) => <NumberInput label={messages.crProgram} {...field} />}
             />
           </Box>
           <Box>
             <Controller
               control={control}
               name="groupVisibility"
-              render={({ field }) => (
-                <Switch {...field} label={messages.nested} checked={!!field.value} />
+              render={({field}) => (
+                <Switch {...field} label={messages.nested} checked={!!field.value}/>
               )}
             />
           </Box>
@@ -93,7 +94,7 @@ const TreeSubjectTypeDetail = ({
                 <Controller
                   control={control}
                   name="subjects"
-                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                  render={({field}) => React.cloneElement(selectSubjectsNode, {...field})}
                 />
               </Box>
             </>
@@ -109,11 +110,13 @@ const TreeSubjectTypeDetail = ({
             />
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -133,4 +136,4 @@ TreeSubjectTypeDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeSubjectTypeDetail };
+export {TreeSubjectTypeDetail};

@@ -1,29 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Alert,
   Box,
   Button,
   ContextContainer,
   Paragraph,
+  Stack,
   TextInput,
-  Title,
+  Title
 } from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
 
 const TreeGroupDetail = ({
-  duplicateMode,
-  group,
-  program,
-  messages,
-  messagesAddUsers,
-  center,
-  onSave,
-  saving,
-  item,
-  selectSubjectsNode,
-}) => {
+                           duplicateMode,
+                           group,
+                           program,
+                           messages,
+                           messagesAddUsers,
+                           center,
+                           onSave,
+                           saving,
+                           item,
+                           selectSubjectsNode,
+                         }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
   const {
@@ -31,8 +32,8 @@ const TreeGroupDetail = ({
     control,
     setValue,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: group });
+    formState: {errors},
+  } = useForm({defaultValues: group});
 
   React.useEffect(() => {
     reset(group);
@@ -62,13 +63,13 @@ const TreeGroupDetail = ({
               control={control}
               rules={{
                 required: (program.maxGroupAbbreviationIsOnlyNumbers
-                  ? messages.groupNumbers
-                  : messages.groupAny
+                    ? messages.groupNumbers
+                    : messages.groupAny
                 ).replace('{max}', program.maxGroupAbbreviation),
                 pattern: {
                   message: (program.maxGroupAbbreviationIsOnlyNumbers
-                    ? messages.groupNumbers
-                    : messages.groupAny
+                      ? messages.groupNumbers
+                      : messages.groupAny
                   ).replace('{max}', program.maxGroupAbbreviation),
                   value: new RegExp(
                     `^${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
@@ -78,7 +79,7 @@ const TreeGroupDetail = ({
                   ),
                 },
               }}
-              render={({ field }) => (
+              render={({field}) => (
                 <TextInput
                   label={messages.abbreviationLabel}
                   help={messages.abbreviationHelper}
@@ -93,8 +94,8 @@ const TreeGroupDetail = ({
             <Controller
               control={control}
               name="name"
-              rules={{ required: messages.aliasRequired }}
-              render={({ field }) => (
+              rules={{required: messages.aliasRequired}}
+              render={({field}) => (
                 <TextInput
                   required
                   label={messages.aliasLabel}
@@ -132,17 +133,19 @@ const TreeGroupDetail = ({
                 <Controller
                   control={control}
                   name="subjects"
-                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                  render={({field}) => React.cloneElement(selectSubjectsNode, {...field})}
                 />
               </Box>
             </>
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -164,4 +167,4 @@ TreeGroupDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeGroupDetail };
+export {TreeGroupDetail};

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Box,
   Button,
@@ -13,40 +13,40 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import { ScheduleInput } from '@timetable/components';
-import { isValidHttpUrl, useStore } from '@common';
-import { filter, find, map } from 'lodash';
+import {DeleteBinIcon} from '@bubbles-ui/icons/outline';
+import {ScheduleInput} from '@timetable/components';
+import {isValidHttpUrl, useStore} from '@common';
+import {filter, find, map} from 'lodash';
 
 const TreeClassroomDetail = ({
-  messagesAddUsers,
-  classe,
-  program,
-  messages,
-  onSave,
-  saving,
-  removing,
-  onRemoveClass,
-  center,
-  addClassUsers,
-  removeUserFromClass,
-  item,
-  createMode,
-  teacherSelect,
-}) => {
-  const [store, render] = useStore({ students: [], tempGroups: [] });
+                               messagesAddUsers,
+                               classe,
+                               program,
+                               messages,
+                               onSave,
+                               saving,
+                               removing,
+                               onRemoveClass,
+                               center,
+                               addClassUsers,
+                               removeUserFromClass,
+                               item,
+                               createMode,
+                               teacherSelect,
+                             }) => {
+  const [store, render] = useStore({students: [], tempGroups: []});
   const selects = React.useMemo(
     () => ({
-      knowledges: map(program.knowledges, ({ name, id }) => ({
+      knowledges: map(program.knowledges, ({name, id}) => ({
         label: name,
         value: id,
       })),
-      groups: map(program.groups, ({ name, id }) => ({
+      groups: map(program.groups, ({name, id}) => ({
         label: name,
         value: id,
       })).concat(store.tempGroups),
 
-      substages: map(program.substages, ({ name, abbreviation, id }) => ({
+      substages: map(program.substages, ({name, abbreviation, id}) => ({
         label: `${name}${abbreviation ? ` [${abbreviation}]` : ''}`,
         value: id,
       })),
@@ -55,8 +55,8 @@ const TreeClassroomDetail = ({
   );
 
   function classForForm() {
-    const teacher = find(classe?.teachers, { type: 'main-teacher' });
-    const associateTeachers = filter(classe?.teachers, { type: 'associate-teacher' });
+    const teacher = find(classe?.teachers, {type: 'main-teacher'});
+    const associateTeachers = filter(classe?.teachers, {type: 'associate-teacher'});
     return {
       id: classe?.id,
       course: program.moreThanOneAcademicYear ? map(classe?.courses, 'id') : classe?.courses?.id,
@@ -67,7 +67,7 @@ const TreeClassroomDetail = ({
       seats: classe?.seats,
       address: classe?.address,
       virtualUrl: classe?.virtualUrl,
-      schedule: classe?.schedule ? { days: classe.schedule } : { days: [] },
+      schedule: classe?.schedule ? {days: classe.schedule} : {days: []},
       teacher: teacher ? teacher.teacher : null,
       associateTeachers: associateTeachers ? map(associateTeachers, 'teacher') : null,
     };
@@ -88,8 +88,9 @@ const TreeClassroomDetail = ({
     reset,
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: classForForm() });
+    formState: {errors},
+  } = useForm({defaultValues: classForForm()});
+
 
   React.useEffect(() => {
     reset(classForForm());
@@ -98,11 +99,11 @@ const TreeClassroomDetail = ({
   function beforeSave(data) {
     const tempGroupsValues = map(store.tempGroups, 'value');
     const isNewGroup = tempGroupsValues.indexOf(data.group) >= 0;
-    onSave({ ...data, isNewGroup });
+    onSave({...data, isNewGroup});
   }
 
   return (
-    <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+    <Box sx={(theme) => ({marginTop: theme.spacing[4]})}>
       <form onSubmit={handleSubmit(beforeSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
@@ -115,8 +116,8 @@ const TreeClassroomDetail = ({
                 rules={{
                   pattern: {
                     message: (program.maxGroupAbbreviationIsOnlyNumbers
-                      ? messages.groupNumbers
-                      : messages.groupAny
+                        ? messages.groupNumbers
+                        : messages.groupAny
                     ).replace('{max}', program.maxGroupAbbreviation),
                     value: new RegExp(
                       `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
@@ -126,13 +127,14 @@ const TreeClassroomDetail = ({
                     ),
                   },
                 }}
-                render={({ field }) => (
+                render={({field}) => (
                   <Select
                     data={selects.groups}
                     label={messages.groupLabel}
                     searchable
                     onCreate={onCreateGroup}
                     creatable={true}
+                    error={errors.group}
                     getCreateLabel={(value) => `+ ${value}`}
                     {...field}
                   />
@@ -143,7 +145,7 @@ const TreeClassroomDetail = ({
               <Controller
                 control={control}
                 name="seats"
-                render={({ field }) => <NumberInput label={messages.seatsLabel} {...field} />}
+                render={({field}) => <NumberInput label={messages.seatsLabel} {...field} />}
               />
             </Box>
           </Stack>
@@ -155,7 +157,7 @@ const TreeClassroomDetail = ({
                   <Controller
                     control={control}
                     name="knowledge"
-                    render={({ field }) => (
+                    render={({field}) => (
                       <Select
                         data={selects.knowledges}
                         label={messages.knowledgeLabel}
@@ -170,7 +172,7 @@ const TreeClassroomDetail = ({
                   <Controller
                     control={control}
                     name="substage"
-                    render={({ field }) => (
+                    render={({field}) => (
                       <Select data={selects.substages} label={messages.substageLabel} {...field} />
                     )}
                   />
@@ -184,8 +186,8 @@ const TreeClassroomDetail = ({
               <Controller
                 control={control}
                 name="teacher"
-                render={({ field }) =>
-                  React.cloneElement(teacherSelect, { label: messages.teacherLabel, ...field })
+                render={({field}) =>
+                  React.cloneElement(teacherSelect, {label: messages.teacherLabel, ...field})
                 }
               />
             </Box>
@@ -195,7 +197,7 @@ const TreeClassroomDetail = ({
             <Controller
               control={control}
               name="associateTeachers"
-              render={({ field }) =>
+              render={({field}) =>
                 React.cloneElement(teacherSelect, {
                   label: messages.associateTeachersLabel,
                   maxSelectedValues: 999,
@@ -209,7 +211,7 @@ const TreeClassroomDetail = ({
             <Controller
               control={control}
               name="image"
-              render={({ field }) => (
+              render={({field}) => (
                 <InputWrapper label={messages.imageLabel}>
                   <ImagePicker {...field} />
                 </InputWrapper>
@@ -230,7 +232,7 @@ const TreeClassroomDetail = ({
                   },
                 }}
                 name="virtualUrl"
-                render={({ field }) => (
+                render={({field}) => (
                   <TextInput
                     label={messages.virtualUrlLabel}
                     {...field}
@@ -243,7 +245,7 @@ const TreeClassroomDetail = ({
               <Controller
                 control={control}
                 name="address"
-                render={({ field }) => <TextInput label={messages.addressLabel} {...field} />}
+                render={({field}) => <TextInput label={messages.addressLabel} {...field} />}
               />
             </Box>
           </Stack>
@@ -252,13 +254,13 @@ const TreeClassroomDetail = ({
             <Controller
               control={control}
               name="schedule"
-              render={({ field }) => <ScheduleInput label={messages.scheduleLabel} {...field} />}
+              render={({field}) => <ScheduleInput label={messages.scheduleLabel} {...field} />}
             />
           </Box>
 
           <Stack fullWidth justifyContent="space-between">
             <Button
-              leftIcon={createMode ? null : <DeleteBinIcon />}
+              leftIcon={createMode ? null : <DeleteBinIcon/>}
               variant="outline"
               loading={removing}
               onClick={() => onRemoveClass(classe?.id)}
@@ -293,4 +295,4 @@ TreeClassroomDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeClassroomDetail };
+export {TreeClassroomDetail};

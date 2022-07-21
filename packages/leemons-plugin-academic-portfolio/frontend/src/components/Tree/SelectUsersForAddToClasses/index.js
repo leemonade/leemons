@@ -1,21 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Box, Radio, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
-import { forEach, map } from 'lodash';
-import { ByTag } from './ByTag';
-import { ByData } from './ByData';
+import {Alert, Box, Radio, Stack, TabPanel, Tabs} from '@bubbles-ui/components';
+import {forEach, map} from 'lodash';
+import {ByTag} from './ByTag';
+import {ByData} from './ByData';
 
 const SelectUsersForAddToClasses = ({
-  showMessages = true,
-  tree,
-  radioMode,
-  center,
-  messages,
-  onChange,
-  disableSave,
-  ignoreAddedUsers,
-}) => {
-  const [activeTab, setActiveTab] = React.useState(0);
+                                      showMessages = true,
+                                      tree,
+                                      radioMode,
+                                      center,
+                                      messages,
+                                      onChange,
+                                      disableSave,
+                                      ignoreAddedUsers,
+                                    }) => {
+  const [activeTab, setActiveTab] = React.useState(1);
 
   const _classes = React.useMemo(() => {
     const getClasses = (item) => {
@@ -29,7 +29,7 @@ const SelectUsersForAddToClasses = ({
         });
       }
       if (ignoreAddedUsers) {
-        return map(classes, ({ students, ..._class }) => ({
+        return map(classes, ({students, ..._class}) => ({
           ..._class,
           students: [],
         }));
@@ -59,11 +59,11 @@ const SelectUsersForAddToClasses = ({
       {radioMode ? (
         <Box>
           <Stack>
-            <Radio checked={activeTab === 0} onChange={() => setActiveTab(0)}>
-              {messages.byTag}
-            </Radio>
             <Radio checked={activeTab === 1} onChange={() => setActiveTab(1)}>
               {messages.byData}
+            </Radio>
+            <Radio checked={activeTab === 0} onChange={() => setActiveTab(0)}>
+              {messages.byTag}
             </Radio>
           </Stack>
           {activeTab === 0 ? (
@@ -125,4 +125,4 @@ SelectUsersForAddToClasses.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { SelectUsersForAddToClasses };
+export {SelectUsersForAddToClasses};

@@ -13,33 +13,35 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { SearchIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import {SearchIcon} from '@bubbles-ui/icons/outline';
+import {DeleteBinIcon} from '@bubbles-ui/icons/solid';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { LocaleDate, useStore } from '@common';
-import { filter, map } from 'lodash';
-import { getUserAgentsInfoRequest } from '@users/request';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import {LocaleDate, useStore} from '@common';
+import {filter, map, sortBy} from 'lodash';
+import {getUserAgentsInfoRequest} from '@users/request';
+import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
 
 const TreeClassroomUsersDetail = ({
-  messagesAddUsers,
-  classe,
-  program,
-  messages,
-  onSave,
-  saving,
-  center,
-  addClassUsers,
-  removeUserFromClass,
-  item,
-  teacherSelect,
-}) => {
-  const [store, render] = useStore({ pagination: { size: 2 }, students: [], studentsToAdd: [] });
+                                    messagesAddUsers,
+                                    classe,
+                                    program,
+                                    messages,
+                                    onSave,
+                                    saving,
+                                    center,
+                                    addClassUsers,
+                                    removeUserFromClass,
+                                    item,
+                                    teacherSelect,
+                                  }) => {
+  const [store, render] = useStore({pagination: {size: 10}, students: [], studentsToAdd: []});
 
   function removeUserAgent(userAgentId) {
     removeUserFromClass(userAgentId, classe.id)
-      .then(() => {})
-      .catch(() => {});
+      .then(() => {
+      })
+      .catch(() => {
+      });
   }
 
   function filterStudents() {
@@ -62,27 +64,27 @@ const TreeClassroomUsersDetail = ({
   }
 
   async function getClassStudents() {
-    const { userAgents } = await getUserAgentsInfoRequest(classe.students, {
+    const {userAgents} = await getUserAgentsInfoRequest(classe.students, {
       withCenter: true,
       withProfile: true,
     });
-    store.students = map(userAgents, (userAgent) => ({
+    store.students = sortBy(map(userAgents, (userAgent) => ({
       ...userAgent,
       user: {
         ...userAgent.user,
-        avatar: <Avatar image={userAgent.user.avatar} fullName={getUserFullName(userAgent.user)} />,
-        birthdate: <LocaleDate date={userAgent.user.birthdate} />,
+        avatar: <Avatar image={userAgent.user.avatar} fullName={getUserFullName(userAgent.user)}/>,
+        birthdate: <LocaleDate date={userAgent.user.birthdate}/>,
       },
       actions: (
-        <Box style={{ textAlign: 'right', width: '100%' }}>
+        <Box style={{textAlign: 'right', width: '100%'}}>
           <ActionButton
             onClick={() => removeUserAgent(userAgent.id)}
             tooltip={messages.removeUser}
-            icon={<DeleteBinIcon />}
+            icon={<DeleteBinIcon/>}
           />
         </Box>
       ),
-    }));
+    })), ['user.surnames', 'user.name', 'user.email']);
     store.pagination.page = 0;
     store.pagination.totalPages = Math.ceil(store.students.length / store.pagination.size);
     store.studentsFilter = '';
@@ -101,8 +103,8 @@ const TreeClassroomUsersDetail = ({
       className: 'text-left',
     },
     {
-      Header: messagesAddUsers.emailHeader,
-      accessor: 'user.email',
+      Header: messagesAddUsers.surnameHeader,
+      accessor: 'user.surnames',
       className: 'text-left',
     },
     {
@@ -111,8 +113,8 @@ const TreeClassroomUsersDetail = ({
       className: 'text-left',
     },
     {
-      Header: messagesAddUsers.surnameHeader,
-      accessor: 'user.surnames',
+      Header: messagesAddUsers.emailHeader,
+      accessor: 'user.email',
       className: 'text-left',
     },
     {
@@ -167,11 +169,12 @@ const TreeClassroomUsersDetail = ({
           render();
         }, 50);
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   }
 
   return (
-    <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+    <Box sx={(theme) => ({marginTop: theme.spacing[4]})}>
       <ContextContainer fullWidth>
         <ContextContainer>
           <Title order={4}>{messages.enrollStudents}</Title>
@@ -200,13 +203,13 @@ const TreeClassroomUsersDetail = ({
         </ContextContainer>
         {store.students.length ? (
           <ContextContainer>
-            <Title order={4}>{messages.currentlyEnrolled}</Title>
+            <Title order={4}>{messages.currentlyEnrolled} ({store.students?.length})</Title>
             <TextInput
-              rightSection={<SearchIcon />}
+              rightSection={<SearchIcon/>}
               value={store.studentsFilter}
               onChange={studentsFilterChange}
             />
-            <Table columns={tableHeaders} data={store.studentsFiltered} />
+            <Table columns={tableHeaders} data={store.studentsFiltered}/>
             <Stack fullWidth justifyContent="center">
               <Pager
                 page={store.pagination?.page || 0}
@@ -246,4 +249,4 @@ TreeClassroomUsersDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeClassroomUsersDetail };
+export {TreeClassroomUsersDetail};

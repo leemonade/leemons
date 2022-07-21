@@ -7,7 +7,7 @@ const {assignations} = require('../tables');
 const registerGrade = require('../grades/registerGrade');
 const {validateAssignation} = require('../../helpers/validators/assignation');
 
-async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjectIconUrl) {
+async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjectIconUrl, userSession) {
   try {
     /*
     const userAssignableInstances = await searchAssignableInstances(
@@ -31,7 +31,6 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjec
       date = dateTimeFormat2.format(date1);
     }
 
-
     leemons
       .getPlugin('emails')
       .services.email.sendAsEducationalCenter(
@@ -44,6 +43,7 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjec
         btnUrl,
         subjectIconUrl,
         taskDate: date,
+        userSession
       },
       userAgentByIds[user].center.id
     )
@@ -142,7 +142,8 @@ module.exports = async function createAssignation(
               user,
               _classes,
               `${hostname || ctx.request.header.origin}/private/assignables/ongoing`,
-              subjectIconUrl
+              subjectIconUrl,
+              userSession
             );
 
             // EN: Save the timestamps

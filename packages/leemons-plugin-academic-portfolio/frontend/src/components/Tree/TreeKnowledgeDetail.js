@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Box,
   Button,
@@ -8,22 +8,23 @@ import {
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   TextInput,
-  Title,
+  Title
 } from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
 
 const TreeKnowledgeDetail = ({
-  item,
-  center,
-  messagesAddUsers,
-  knowledge,
-  program,
-  messages,
-  onSave,
-  saving,
-  selectSubjectsNode,
-}) => {
+                               item,
+                               center,
+                               messagesAddUsers,
+                               knowledge,
+                               program,
+                               messages,
+                               onSave,
+                               saving,
+                               selectSubjectsNode,
+                             }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
   const {
@@ -31,8 +32,8 @@ const TreeKnowledgeDetail = ({
     control,
     setValue,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: knowledge });
+    formState: {errors},
+  } = useForm({defaultValues: knowledge});
 
   React.useEffect(() => {
     reset(knowledge);
@@ -63,9 +64,9 @@ const TreeKnowledgeDetail = ({
             <Controller
               control={control}
               name="name"
-              rules={{ required: messages.nameRequired }}
-              render={({ field }) => (
-                <TextInput {...field} label={messages.nameLabel} error={errors.name} required />
+              rules={{required: messages.nameRequired}}
+              render={({field}) => (
+                <TextInput {...field} label={messages.nameLabel} error={errors.name} required/>
               )}
             />
           </Box>
@@ -74,7 +75,7 @@ const TreeKnowledgeDetail = ({
               name="abbreviation"
               control={control}
               rules={abbrRules}
-              render={({ field }) => (
+              render={({field}) => (
                 <TextInput
                   {...field}
                   label={messages.abbreviationLabel}
@@ -95,8 +96,8 @@ const TreeKnowledgeDetail = ({
               rules={{
                 required: messages.colorRequired,
               }}
-              render={({ field }) => (
-                <ColorInput {...field} label={messages.colorLabel} error={errors.color} required />
+              render={({field}) => (
+                <ColorInput {...field} label={messages.colorLabel} error={errors.color} required/>
               )}
             />
           </Box>
@@ -104,14 +105,14 @@ const TreeKnowledgeDetail = ({
             <Controller
               control={control}
               name="credits_course"
-              render={({ field }) => <NumberInput label={messages.crCourse} {...field} />}
+              render={({field}) => <NumberInput label={messages.crCourse} {...field} />}
             />
           </Box>
           <Box>
             <Controller
               control={control}
               name="credits_program"
-              render={({ field }) => <NumberInput label={messages.crProgram} {...field} />}
+              render={({field}) => <NumberInput label={messages.crProgram} {...field} />}
             />
           </Box>
 
@@ -126,7 +127,7 @@ const TreeKnowledgeDetail = ({
                 <Controller
                   control={control}
                   name="subjects"
-                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                  render={({field}) => React.cloneElement(selectSubjectsNode, {...field})}
                 />
               </Box>
             </>
@@ -142,11 +143,13 @@ const TreeKnowledgeDetail = ({
             />
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -166,4 +169,4 @@ TreeKnowledgeDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeKnowledgeDetail };
+export {TreeKnowledgeDetail};

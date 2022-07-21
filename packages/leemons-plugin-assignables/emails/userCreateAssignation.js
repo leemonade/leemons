@@ -67,25 +67,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
             bgcolor="#F7F8FA"
             style="background-color: #f7f8fa"
           >
-            <tr>
-              <td
-                align="center"
-                style="
-                  text-align: center;
-                  padding: 10px 45px 0px;
-                  font-family: 'Lexend', Century Gothic, CenturyGothic,
-                    AppleGothic, sans-serif;
-                "
-              >
-                <img
-                  src="{{it.__logoUrl}}"
-                  height="96"
-                  width="96"
-                  style="border-radius: 50%"
-                />
-              </td>
-            </tr>
-            <tr>
+          <tr>
               <td
                 align="center"
                 style="
@@ -107,6 +89,53 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                 align="center"
                 style="
                   text-align: center;
+                  padding: 10px 45px 0px;
+                  font-family: 'Lexend', Century Gothic, CenturyGothic,
+                    AppleGothic, sans-serif;
+                "
+              >
+                <img
+                  src="{{it.__logoUrl}}"
+                  height="96"
+                  width="96"
+                  style="border-radius: 50%"
+                />
+              </td>
+            </tr>
+            <tr>
+            {{ @if (it.instance.messageToAssignees) }}
+              <td
+                align="center"
+                style="
+                  text-align: center;
+                  padding: 24px 45px 32px;
+                  font-family: 'Inter', Verdana, sans-serif;
+                  font-size: 18px;
+                  line-height: 22.4px;
+                  font-weight: 600;
+                  color: #5b6577;
+                "
+              >
+               {{it.instance.messageToAssignees}}
+              </td>
+              <td
+                align="center"
+                style="
+                  text-align: center;
+                  padding: 24px 45px 32px;
+                  font-family: 'Inter', Verdana, sans-serif;
+                  font-size: 14px;
+                  line-height: 22.4px;
+                  color: #212B3D;
+                "
+              >
+               {{it.userSession.name}} {{it.userSession.surnames}}
+              </td>
+              {{ #else }}
+              <td
+                align="center"
+                style="
+                  text-align: center;
                   padding: 24px 45px 32px;
                   font-family: 'Inter', Verdana, sans-serif;
                   font-size: 14px;
@@ -114,8 +143,9 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                   color: #5b6577;
                 "
               >
-                ${t1}
+               ${t1}
               </td>
+              {{ /if}}
             </tr>
           </table>
           <table
