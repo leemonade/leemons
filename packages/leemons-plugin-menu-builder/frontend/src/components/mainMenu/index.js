@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import hooks from 'leemons-hooks';
-import { getMenu } from '@menu-builder/helpers';
-import { MainNav } from '@bubbles-ui/components';
-import { useSession } from '@users/session';
+import {getMenu} from '@menu-builder/helpers';
+import {MainNav} from '@bubbles-ui/components';
+import {useSession} from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@socket-io/service';
 
-export default function MainMenu({ subNavWidth, ...props }) {
+export default function MainMenu({subNavWidth, ...props}) {
   const session = useSession();
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
   const [avatar, setAvatar] = useState(null);
@@ -28,9 +28,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
     reloadMenu();
   });
 
-  SocketIoService.useOn('USER_CHANGE_AVATAR', () => {
-    setAvatar(`${session.avatar}?${Date.now()}`);
-  });
 
   useEffect(() => {
     hooks.addAction('menu-builder:reload-menu', reloadMenu);
@@ -68,7 +65,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
             forceReload.current = false;
           }
         }
-      } catch (error) {}
+      } catch (error) {
+      }
     })();
     return () => {
       mounted = false;
@@ -88,8 +86,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
       session={{
         ...session,
         ...(session.isSuperAdmin
-          ? { name: '', surnames: '' }
-          : { name: session.name, surnames: session.surnames }),
+          ? {name: '', surnames: ''}
+          : {name: session.name, surnames: session.surnames}),
         avatar: avatar || session.avatar,
       }}
       sessionMenu={{
@@ -99,23 +97,23 @@ export default function MainMenu({ subNavWidth, ...props }) {
           ...(session.isSuperAdmin
             ? []
             : [
-                {
-                  id: 'menu-1',
-                  label: t('accountInfo'),
-                  order: 0,
-                  url: '/private/users/detail',
-                  window: 'SELF',
-                  disabled: null,
-                },
-                {
-                  id: 'menu-2',
-                  label: t('switchProfile'),
-                  order: 1,
-                  url: '/private/users/select-profile',
-                  window: 'SELF',
-                  disabled: null,
-                },
-              ]),
+              {
+                id: 'menu-1',
+                label: t('accountInfo'),
+                order: 0,
+                url: '/private/users/detail',
+                window: 'SELF',
+                disabled: null,
+              },
+              {
+                id: 'menu-2',
+                label: t('switchProfile'),
+                order: 1,
+                url: '/private/users/select-profile',
+                window: 'SELF',
+                disabled: null,
+              },
+            ]),
           {
             id: 'menu-3',
             label: t('changeLanguage'),
