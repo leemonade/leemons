@@ -1,5 +1,5 @@
 {
-  "name": "leemons-plugin-emails",
+  "name": "leemons-plugin-comunica",
   "version": "0.0.1-beta.0",
   "main": "lib/index.js",
   "license": "MIT",
