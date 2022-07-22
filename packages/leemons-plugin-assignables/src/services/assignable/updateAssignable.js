@@ -5,7 +5,7 @@ const {
   validAssignableProperties,
 } = require('../../helpers/validators/assignable');
 const updateSubjects = require('../subjects/updateSubjects');
-const { assignables } = require('../tables');
+const {assignables} = require('../tables');
 const versionControl = require('../versionControl');
 const addUserToAssignable = require('./addUserToAssignable');
 const createAssignable = require('./createAssignable');
@@ -16,7 +16,7 @@ const publishAssignable = require('./publishAssignable');
 const duplicateAsset = require('../leebrary/assets/duplicateAsset');
 const removeAsset = require('../leebrary/assets/removeAsset');
 
-const { getDiff } = global.utils;
+const {getDiff} = global.utils;
 
 const updatableFields = [
   'asset',
@@ -38,10 +38,10 @@ const updatableFields = [
 
 module.exports = async function updateAssignable(
   assignable,
-  { published = false, userSession, transacting } = {}
+  {published = false, userSession, transacting} = {}
 ) {
   try {
-    const { id, ...assignableObjectReceived } = assignable;
+    const {id, ...assignableObjectReceived} = assignable;
 
     const assignableObject = _.pick(assignableObjectReceived, updatableFields);
 
@@ -55,7 +55,7 @@ module.exports = async function updateAssignable(
 
     // EN: Get the current values
     // ES: Obtenemos los valores actuales
-    const currentAssignable = await getAssignable.call(this, id, { userSession, transacting });
+    const currentAssignable = await getAssignable.call(this, id, {userSession, transacting});
 
     if (currentAssignable.deleted) {
       throw new Error('The assignable is deleted');
@@ -63,7 +63,7 @@ module.exports = async function updateAssignable(
 
     // EN: Check if the user has permission to update the assignable.
     // ES: Comprueba si el usuario tiene permiso para actualizar el asignable.
-    const { actions } = await getUserPermission(currentAssignable, { userSession, transacting });
+    const {actions} = await getUserPermission(currentAssignable, {userSession, transacting});
 
     if (!actions.includes('edit')) {
       throw new Error('You do not have permission to update this assignable.');
@@ -71,7 +71,7 @@ module.exports = async function updateAssignable(
 
     // EN: Diff the current values with the new ones
     // ES: Compara los valores actuales con los nuevos
-    const { object, diff } = getDiff(assignableObject, currentAssignable);
+    const {object, diff} = getDiff(assignableObject, currentAssignable);
 
     if (!diff.length) {
       throw new Error('No changes detected');
@@ -79,14 +79,13 @@ module.exports = async function updateAssignable(
 
     // EN: Check if the current version is published.
     // ES: Comprueba si la versión actual está publicada.
-    const currentVersion = await versionControl.getVersion(id, { transacting });
+    const currentVersion = await versionControl.getVersion(id, {transacting});
 
     if (currentVersion.published) {
       shouldUpgrade = true;
     }
 
     let assetId = currentAssignable.asset.id;
-
     const asset = await updateAsset(
       {
         ..._.defaults(object.asset, currentAssignable.asset),
@@ -107,7 +106,7 @@ module.exports = async function updateAssignable(
     // ES: Actualiza la versión.
     if (shouldUpgrade) {
       // TODO: Let the user decide which upgrade scale to use.
-      const { fullId } = await versionControl.upgradeVersion(id, 'major', {
+      const {fullId} = await versionControl.upgradeVersion(id, 'major', {
         transacting,
       });
 
@@ -115,7 +114,7 @@ module.exports = async function updateAssignable(
       // TODO: Ensure to keep original owner
       const newAssignable = await createAssignable.call(
         this,
-        { ..._.pick(object, validAssignableProperties), asset: assetId },
+        {..._.pick(object, validAssignableProperties), asset: assetId},
         {
           id: fullId,
           userSession,
@@ -125,7 +124,7 @@ module.exports = async function updateAssignable(
 
       // EN: Get the users that have access to the assignable.
       // ES: Obtiene los usuarios que tienen acceso al asignable.
-      const users = await listAssignableUserAgents.call(this, id, { userSession, transacting });
+      const users = await listAssignableUserAgents.call(this, id, {userSession, transacting});
 
       const userAgents = userSession.userAgents.map((u) => u.id);
 
@@ -143,7 +142,7 @@ module.exports = async function updateAssignable(
       );
 
       if (published) {
-        await publishAssignable.call(this, fullId, { userSession, transacting });
+        await publishAssignable.call(this, fullId, {userSession, transacting});
       }
 
       return {
@@ -155,13 +154,13 @@ module.exports = async function updateAssignable(
     // ES: Actualizar el asignable.
 
     if (diff.includes('subjects')) {
-      const subjects = await updateSubjects(id, object.subjects, { transacting });
+      const subjects = await updateSubjects(id, object.subjects, {transacting});
 
       object.subjects = subjects;
     }
 
     if (!_.difference(diff, ['subjects']).length) {
-      return { id, ...object };
+      return {id, ...object};
     }
 
     const updateObject = {
@@ -187,7 +186,7 @@ module.exports = async function updateAssignable(
             _.concat(
               updateObject.relatedAssignables?.before,
               updateObject.relatedAssignables?.after
-            ).map((a) => getAssignable.call(this, a.id, { userSession, transacting }))
+            ).map((a) => getAssignable.call(this, a.id, {userSession, transacting}))
           );
         } catch (e) {
           throw new Error(
@@ -232,7 +231,7 @@ module.exports = async function updateAssignable(
       if (resourcesToDelete.length) {
         promises.push(
           ...resourcesToDelete.map((resource) =>
-            removeAsset(resource, { userSession, transacting })
+            removeAsset(resource, {userSession, transacting})
           )
         );
       }
@@ -282,7 +281,7 @@ module.exports = async function updateAssignable(
               if (resourcesToDelete.length) {
                 promises.push(
                   ...resourcesToDelete.map((resource) =>
-                    removeAsset(resource, { userSession, transacting })
+                    removeAsset(resource, {userSession, transacting})
                   )
                 );
               }
@@ -326,12 +325,12 @@ module.exports = async function updateAssignable(
       updateObject.metadata = JSON.stringify(assignableObject.metadata);
     }
 
-    await assignables.update({ id }, updateObject, {
+    await assignables.update({id}, updateObject, {
       transacting,
     });
 
     if (published) {
-      await publishAssignable.call(this, id, { userSession, transacting });
+      await publishAssignable.call(this, id, {userSession, transacting});
     }
 
     return {

@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
-const { getQuestionsBanksDetails } = require('../questions-banks/getQuestionsBanksDetails');
+const {table} = require('../tables');
+const {getQuestionsBanksDetails} = require('../questions-banks/getQuestionsBanksDetails');
 
-async function getTestsDetails(id, { userSession, withQuestionBank, transacting } = {}) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+async function getTestsDetails(id, {userSession, withQuestionBank, transacting} = {}) {
+  const {assignables: assignableService} = leemons.getPlugin('assignables').services;
   const ids = _.isArray(id) ? id : [id];
 
   const assignables = await Promise.all(
@@ -31,12 +31,14 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   });
 
   const [questions, questionBanks] = await Promise.all([
-    table.questions.find({ id_$in: _.uniq(questionIds) }, { transacting }),
-    getQuestionsBanksDetails(questionBankIds, { userSession, transacting }),
+    table.questions.find({id_$in: _.uniq(questionIds)}, {transacting}),
+    getQuestionsBanksDetails(questionBankIds, {userSession, transacting}),
   ]);
 
   const questionBankById = _.keyBy(questionBanks, 'id');
   const questionsById = _.keyBy(questions, 'id');
+
+  console.log(assignables);
 
   return _.map(assignables, (assignable) => ({
     id: assignable.id,
@@ -125,4 +127,4 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
    */
 }
 
-module.exports = { getTestsDetails };
+module.exports = {getTestsDetails};
