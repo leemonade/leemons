@@ -25,11 +25,11 @@ module.exports = {
       */
     },
     message: {
-      type: 'text',
+      type: 'json',
     },
     isEncrypt: {
       type: 'boolean',
-    }
+    },
   },
   primaryKey: {
     type: 'uuid',

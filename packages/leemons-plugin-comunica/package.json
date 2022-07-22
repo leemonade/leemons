@@ -5,9 +5,6 @@
   "license": "MIT",
   "dependencies": {
     "leemons-utils": "0.0.1-beta.0",
-    "lodash": "^4.17.21",
-    "nodemailer-html-to-text": "^3.2.0",
-    "nodemailer-plugin-inline-base64": "^2.1.1",
-    "squirrelly": "^8.0.8"
+    "lodash": "^4.17.21"
   }
 }

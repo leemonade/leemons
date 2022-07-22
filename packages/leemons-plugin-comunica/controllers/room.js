@@ -1,12 +1,35 @@
 const roomService = require('../src/services/room');
 
-
 async function getMessages(ctx) {
-  const messages = await roomService.getMessages(ctx.request.params.id, {userSession: ctx.state.userSession});
+  const messages = await roomService.getMessages(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id
+  );
   ctx.status = 200;
-  ctx.body = {status: 200, messages};
+  ctx.body = { status: 200, messages };
+}
+
+async function getRoom(ctx) {
+  const room = await roomService.get(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, room };
+}
+
+async function sendMessage(ctx) {
+  await roomService.sendMessage(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id,
+    ctx.request.body.message
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200 };
 }
 
 module.exports = {
-  getMessages
+  sendMessage,
+  getMessages,
+  getRoom,
 };

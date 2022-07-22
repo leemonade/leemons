@@ -1,26 +1,32 @@
 const _ = require('lodash');
-const {table} = require('../tables');
+const { table } = require('../tables');
 const {
   validateKeyPrefix,
-  validateExistRoomKey, validateNotExistRoomKey,
+  validateNotExistRoomKey,
+  validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
-const {addUserAgents} = require("./addUserAgents");
 
-
-async function get(key, {transacting: _transacting} = {}) {
+async function get(key, userAgent, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
     async (transacting) => {
-
-      await validateNotExistRoomKey(key, {transacting});
-
+      await validateNotExistRoomKey(key, { transacting });
+      try {
+        await validateNotExistUserAgentInRoomKey(key, userAgent, { transacting });
+      } catch (error) {
+        // Si el usuario no esta en la sala, comprobamos si tiene permisos para ver el item
+        const hasPermission = await leemons
+          .getPlugin('users')
+          .services.permissions.userAgentHasPermissionToItem(userAgent, key, { transacting });
+        if (!hasPermission) throw error;
+      }
       const [room, userAgents] = await Promise.all([
-        table.room.findOne({key}, {transacting}),
-        table.userAgentInRoom.find({room: key}, {columns: ['userAgent'], transacting}),
+        table.room.findOne({ key }, { transacting }),
+        table.userAgentInRoom.find({ room: key }, { transacting }),
       ]);
 
-      room.userAgents = _.map(userAgents, 'userAgent');
+      room.userAgents = _.map(userAgents, (a) => ({ userAgent: a.userAgent, deleted: a.deleted }));
 
       return room;
     },
@@ -29,4 +35,4 @@ async function get(key, {transacting: _transacting} = {}) {
   );
 }
 
-module.exports = {get};
+module.exports = { get };
