@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, isEmpty, findIndex, uniq, uniqBy, compact, isNil } = require('lodash');
+const { keys, isEmpty, findIndex, uniqBy, isNil } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');

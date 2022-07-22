@@ -37,7 +37,7 @@ async function importEvents({ users, programs }) {
   // console.dir(kanbanColumns, { depth: null });
 
   const calendars = {};
-  const itemsKeys = keys(items);
+  const itemsKeys = keys(items).filter((key) => !isNil(key) && !isEmpty(key));
 
   for (let i = 0, l = itemsKeys.length; i < l; i++) {
     const key = itemsKeys[i];

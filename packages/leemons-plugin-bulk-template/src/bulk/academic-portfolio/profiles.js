@@ -1,4 +1,4 @@
-const { keys } = require('lodash');
+const { keys, isNil, isEmpty } = require('lodash');
 const path = require('path');
 const itemsImport = require('../helpers/simpleListImport');
 
@@ -14,10 +14,12 @@ async function importAcademicPortfolioProfiles(profiles) {
   {"guardian":"G","student":"S"}
   */
 
-  keys(items).forEach((key) => {
-    const subKey = keys(items[key])[0];
-    items[key] = profiles[items[key][subKey]]?.id;
-  });
+  keys(items)
+    .filter((key) => !isNil(key) && !isEmpty(key))
+    .forEach((key) => {
+      const subKey = keys(items[key])[0];
+      items[key] = profiles[items[key][subKey]]?.id;
+    });
 
   // console.dir(items, { depth: null });
   return items;

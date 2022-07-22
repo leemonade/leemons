@@ -1,5 +1,5 @@
 const path = require('path');
-const { keys, trim, isEmpty, isString, isArray } = require('lodash');
+const { keys, trim, isNil, isEmpty, isString, isArray } = require('lodash');
 const showdown = require('showdown');
 const itemsImport = require('../helpers/simpleListImport');
 
@@ -10,149 +10,151 @@ async function importQuestions() {
   const items = await itemsImport(filePath, 'te_questions', 40, true, true);
   const questions = [];
 
-  keys(items).forEach((key) => {
-    const question = items[key];
+  keys(items)
+    .filter((key) => !isNil(key) && !isEmpty(key))
+    .forEach((key) => {
+      const question = items[key];
 
-    question.question = converter.makeHtml(question.question || '');
+      question.question = converter.makeHtml(question.question || '');
 
-    question.tags = (question.tags || '')
-      .split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val));
+      question.tags = (question.tags || '')
+        .split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val));
 
-    question.tags = question.tags || [];
+      question.tags = question.tags || [];
 
-    question.clues = (question.clues || '')
-      .split('|')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((value) => ({ value }));
-
-    // ·····················································
-    // FEEDBACKS
-
-    const feedbacks = (question.answers_feedback || '')
-      .split('|')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((feedbackItem) => {
-        const [answer, feedback] = feedbackItem.split('@');
-        return {
-          answer: Number(answer),
-          feedback: converter.makeHtml(feedback),
-        };
-      });
-
-    // ·····················································
-    // PROPERTIES
-
-    const properties = {};
-
-    if (feedbacks && feedbacks.length > 1) {
-      properties.explanationInResponses = true;
-      properties.explanation = '<p></p>';
-    } else {
-      properties.explanation = feedbacks[0] || '';
-    }
-
-    // ·····················································
-    // RESPONSES
-
-    const imageResponses = Boolean(question.withImages && question.answers_images);
-    const responseBreak = imageResponses ? ',' : '|';
-
-    if (imageResponses) {
-      // console.log('-- QUESTION HAS IMAGES RESPONSES:');
-      // console.log('responseBreak:', responseBreak);
-
-      if (!isString(question.answers_images) && isArray(question.answers_images?.richText)) {
-        question.answers_images = question.answers_images.richText
-          .map((item) => item.text)
-          .join('');
-      }
-
-      // console.log(question.answers_images);
-    }
-
-    try {
-      properties.responses = String(
-        (imageResponses ? question.answers_images : question.answers) || question.answers || ''
-      )
-        .split(responseBreak)
+      question.clues = (question.clues || '')
+        .split('|')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
-        .map((answer, index) => {
-          const { feedback } = feedbacks.find((item) => item.answer === index + 1) || {};
-          const hideOnHelp = answer.slice(-1) === '@';
-          let response = answer;
+        .map((value) => ({ value }));
 
-          if (hideOnHelp) {
-            response = answer.slice(0, -1);
-          }
+      // ·····················································
+      // FEEDBACKS
 
-          const value = {
-            explanation: feedback || null,
-            isCorrectResponse: Number(question.answer_correct) === index + 1,
-            hideOnHelp,
+      const feedbacks = (question.answers_feedback || '')
+        .split('|')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val))
+        .map((feedbackItem) => {
+          const [answer, feedback] = feedbackItem.split('@');
+          return {
+            answer: Number(answer),
+            feedback: converter.makeHtml(feedback),
           };
-
-          if (imageResponses) {
-            const [url, caption] = response.split('|');
-            value.image = url;
-            value.imageDescription = caption;
-          } else {
-            value.response = response;
-          }
-
-          return { value };
         });
-    } catch (e) {
-      console.log('-- QUESTIONS IMPORT ERROR --');
-      console.log(e);
-      console.log('imageResponses:', imageResponses);
-      console.log('question.answers_images:', question.answers_images);
-      console.log('question.answers:', question.answers);
-      console.log('---------------------------------');
-      properties.responses = [];
-    }
-    // ·····················································
-    // QUESTION MAP
 
-    if (question.type === 'map') {
-      if (!isEmpty(question.questionImage)) {
-        properties.image = question.questionImage;
-        delete question.questionImage;
+      // ·····················································
+      // PROPERTIES
+
+      const properties = {};
+
+      if (feedbacks && feedbacks.length > 1) {
+        properties.explanationInResponses = true;
+        properties.explanation = '<p></p>';
+      } else {
+        properties.explanation = feedbacks[0] || '';
       }
 
-      properties.markers = {
-        list: properties.responses.map(({ value }, index) => ({
-          left: `${(100 / (properties.responses.length + 1)) * (index + 1)}%`,
-          top: '50%',
-          response: value?.response,
-          hideOnHelp: value?.hideOnHelp || undefined,
-        })),
-        type: 'numbering',
-        backgroundColor: '#3B76CC',
-        position: { left: '100%', top: '100%' },
-      };
+      // ·····················································
+      // RESPONSES
 
-      delete properties.responses;
-      delete question.answers_feedback_image;
-    }
+      const imageResponses = Boolean(question.withImages && question.answers_images);
+      const responseBreak = imageResponses ? ',' : '|';
 
-    question.properties = properties;
+      if (imageResponses) {
+        // console.log('-- QUESTION HAS IMAGES RESPONSES:');
+        // console.log('responseBreak:', responseBreak);
 
-    // ·····················································
-    // CLEAN
+        if (!isString(question.answers_images) && isArray(question.answers_images?.richText)) {
+          question.answers_images = question.answers_images.richText
+            .map((item) => item.text)
+            .join('');
+        }
 
-    delete question.answers;
-    delete question.answers_feedback;
-    delete question.answer_correct;
-    delete question.answers_images;
+        // console.log(question.answers_images);
+      }
 
-    items[key] = question;
-    questions.push(question);
-  });
+      try {
+        properties.responses = String(
+          (imageResponses ? question.answers_images : question.answers) || question.answers || ''
+        )
+          .split(responseBreak)
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val))
+          .map((answer, index) => {
+            const { feedback } = feedbacks.find((item) => item.answer === index + 1) || {};
+            const hideOnHelp = answer.slice(-1) === '@';
+            let response = answer;
+
+            if (hideOnHelp) {
+              response = answer.slice(0, -1);
+            }
+
+            const value = {
+              explanation: feedback || null,
+              isCorrectResponse: Number(question.answer_correct) === index + 1,
+              hideOnHelp,
+            };
+
+            if (imageResponses) {
+              const [url, caption] = response.split('|');
+              value.image = url;
+              value.imageDescription = caption;
+            } else {
+              value.response = response;
+            }
+
+            return { value };
+          });
+      } catch (e) {
+        console.log('-- QUESTIONS IMPORT ERROR --');
+        console.log(e);
+        console.log('imageResponses:', imageResponses);
+        console.log('question.answers_images:', question.answers_images);
+        console.log('question.answers:', question.answers);
+        console.log('---------------------------------');
+        properties.responses = [];
+      }
+      // ·····················································
+      // QUESTION MAP
+
+      if (question.type === 'map') {
+        if (!isEmpty(question.questionImage)) {
+          properties.image = question.questionImage;
+          delete question.questionImage;
+        }
+
+        properties.markers = {
+          list: properties.responses.map(({ value }, index) => ({
+            left: `${(100 / (properties.responses.length + 1)) * (index + 1)}%`,
+            top: '50%',
+            response: value?.response,
+            hideOnHelp: value?.hideOnHelp || undefined,
+          })),
+          type: 'numbering',
+          backgroundColor: '#3B76CC',
+          position: { left: '100%', top: '100%' },
+        };
+
+        delete properties.responses;
+        delete question.answers_feedback_image;
+      }
+
+      question.properties = properties;
+
+      // ·····················································
+      // CLEAN
+
+      delete question.answers;
+      delete question.answers_feedback;
+      delete question.answer_correct;
+      delete question.answers_images;
+
+      items[key] = question;
+      questions.push(question);
+    });
 
   // eslint-disable-next-line no-unused-vars
   const mock = {
