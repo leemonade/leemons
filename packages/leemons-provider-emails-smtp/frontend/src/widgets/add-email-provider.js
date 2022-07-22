@@ -1,5 +1,5 @@
 import React from 'react';
-import { cloneDeep, findIndex, map } from 'lodash';
+import {cloneDeep, findIndex, map} from 'lodash';
 import {
   Box,
   Button,
@@ -14,8 +14,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@emails-smtp/helpers/prefixPN';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import * as PropTypes from 'prop-types';
-import { addErrorAlert } from '@layout/alert';
-import { removeProviderRequest, saveProviderRequest } from '@emails/request';
+import {addErrorAlert} from '@layout/alert';
+import {removeProviderRequest, saveProviderRequest} from '@emails/request';
 
 TableInput.propTypes = {
   data: PropTypes.any,
@@ -23,15 +23,15 @@ TableInput.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.any),
   removable: PropTypes.bool,
   sortable: PropTypes.bool,
-  labels: PropTypes.shape({ add: PropTypes.any, remove: PropTypes.any }),
+  labels: PropTypes.shape({add: PropTypes.any, remove: PropTypes.any}),
 };
-export default function AddEmailProvider({ providers, onChange }) {
+export default function AddEmailProvider({providers, onChange}) {
   const [t] = useTranslateLoader(prefixPN('provider'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   async function onBeforeAdd(config) {
     try {
-      const { provider } = await saveProviderRequest({
+      const {provider} = await saveProviderRequest({
         providerName: 'emails-smtp',
         config: {
           name: 'SMTP',
@@ -46,14 +46,14 @@ export default function AddEmailProvider({ providers, onChange }) {
     }
   }
 
-  async function onUpdate({ oldItem, newItem }) {
+  async function onUpdate({oldItem, newItem}) {
     try {
-      const { tableInputRowId, ...item } = oldItem;
+      const {tableInputRowId, ...item} = oldItem;
       const index = findIndex(
-        map(providers, (p) => ({ ...p, secure: !!p.secure })),
-        { ...item, secure: !!item.secure }
+        map(providers, (p) => ({...p, secure: !!p.secure})),
+        {...item, secure: !!item.secure}
       );
-      const { provider } = await saveProviderRequest({
+      const {provider} = await saveProviderRequest({
         providerName: 'emails-smtp',
         config: {
           id: providers[index].id,
@@ -70,11 +70,11 @@ export default function AddEmailProvider({ providers, onChange }) {
     }
   }
 
-  async function onBeforeRemove({ tableInputRowId, ...item }) {
+  async function onBeforeRemove({tableInputRowId, ...item}) {
     try {
       const index = findIndex(
-        map(providers, (p) => ({ ...p, secure: !!p.secure })),
-        { ...item, secure: !!item.secure }
+        map(providers, (p) => ({...p, secure: !!p.secure})),
+        {...item, secure: !!item.secure}
       );
       await removeProviderRequest({
         providerName: 'emails-smtp',
@@ -96,7 +96,7 @@ export default function AddEmailProvider({ providers, onChange }) {
       Header: t('secure'),
       accessor: 'secure',
       input: {
-        node: <Switch />,
+        node: <Switch/>,
       },
       valueRender: (value) => t(value ? 'yes' : 'no'),
     },
@@ -104,38 +104,36 @@ export default function AddEmailProvider({ providers, onChange }) {
       Header: t('port'),
       accessor: 'port',
       input: {
-        node: <NumberInput required />,
-        rules: { required: t('fieldRequired') },
+        node: <NumberInput required/>,
+        rules: {required: t('fieldRequired')},
       },
     },
     {
       Header: t('host'),
       accessor: 'host',
       input: {
-        node: <TextInput required />,
-        rules: { required: t('fieldRequired') },
+        node: <TextInput required/>,
+        rules: {required: t('fieldRequired')},
       },
     },
     {
       Header: t('user'),
       accessor: 'user',
       input: {
-        node: <TextInput required />,
-        rules: { required: t('fieldRequired') },
+        node: <TextInput required/>,
       },
     },
     {
       Header: t('pass'),
       accessor: 'pass',
       input: {
-        node: <TextInput required />,
-        rules: { required: t('fieldRequired') },
+        node: <TextInput required/>,
       },
     },
   ];
 
   return (
-    <Paper shadow="none" sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}>
+    <Paper shadow="none" sx={(theme) => ({backgroundColor: theme.colors.uiBackground02})}>
       <ContextContainer title={t('title')} description={t('description')}>
         <Box>
           <Box>
