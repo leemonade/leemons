@@ -108,8 +108,8 @@ class Email {
     if (!email) email = await Email.findEmail('test-email', 'en');
 
     // Compile email with data
-    email.subject = Sqrl.render(email.subject, {name: 'Cerberupo'});
-    email.html = Sqrl.render(email.html, {name: 'Cerberupo'});
+    email.subject = Sqrl.render(email.subject, { name: 'Cerberupo' });
+    email.html = Sqrl.render(email.html, { name: 'Cerberupo' });
 
     // TODO Cambiar emails por el del super admin para recibir el email y el del colegio para from
     return Email.startToTrySendEmail(
@@ -181,7 +181,7 @@ class Email {
    * @return {Promise<Email>}
    * */
   static async add(templateName, language, subject, html, type) {
-    let template = await table.emailTemplate.findOne({templateName}, {columns: ['id']});
+    let template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
     return table.emailTemplate.transaction(async (transacting) => {
       if (!template)
         template = await table.emailTemplate.create(
@@ -189,7 +189,7 @@ class Email {
             name: templateName,
             templateName,
           },
-          {transacting}
+          { transacting }
         );
       const detail = await table.emailTemplateDetail.count(
         {
@@ -197,11 +197,11 @@ class Email {
           language,
           type,
         },
-        {transacting}
+        { transacting }
       );
       if (detail) {
         return table.emailTemplateDetail.update(
-          {template: template.id, language, type},
+          { template: template.id, language, type },
           {
             template: template.id,
             language,
@@ -209,7 +209,7 @@ class Email {
             html,
             type,
           },
-          {transacting}
+          { transacting }
         );
         /*
         * throw new Error(
@@ -228,7 +228,7 @@ class Email {
           html,
           type,
         },
-        {transacting}
+        { transacting }
       );
     });
   }
@@ -243,7 +243,7 @@ class Email {
    * @return {Promise<Email>}
    * */
   static async delete(templateName, language, type) {
-    const template = await table.emailTemplate.findOne({templateName}, {columns: ['id']});
+    const template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
     if (!template) throw new Error(`There is no template with the name ${templateName}`);
     const templateDetail = await table.emailTemplateDetail.findOne(
       {
@@ -251,13 +251,13 @@ class Email {
         language,
         type,
       },
-      {columns: ['id']}
+      { columns: ['id'] }
     );
     if (!templateDetail)
       throw new Error(
         `The ${templateName} email template does not have the language ${language} of type ${type}`
       );
-    return table.emailTemplateDetail.delete({id: templateDetail.id});
+    return table.emailTemplateDetail.delete({ id: templateDetail.id });
   }
 
   /**
@@ -268,13 +268,13 @@ class Email {
    * @return {Promise<Email>}
    * */
   static async deleteAll(templateName) {
-    const template = await table.emailTemplate.findOne({templateName}, {columns: ['id']});
+    const template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
     if (!template) throw new Error(`There is no template with the name ${templateName}`);
 
     return table.emailTemplate.transaction(async (transacting) => {
       const value = await Promise.all([
-        table.emailTemplate.delete({id: template.id}, {transacting}),
-        table.emailTemplateDetail.deleteMany({template: template.id}, {transacting}),
+        table.emailTemplate.delete({ id: template.id }, { transacting }),
+        table.emailTemplateDetail.deleteMany({ template: template.id }, { transacting }),
       ]);
       return value[0];
     });
@@ -383,7 +383,7 @@ class Email {
         return Email.startToTrySendEmail(from, to, email, transporters, index + 1);
       }
     }
-    return {error: true, message: 'Could not send email with any provider'};
+    return { error: true, message: 'Could not send email with any provider' };
   }
 
   /**
@@ -395,7 +395,7 @@ class Email {
    * @return {Promise<Email>}
    * */
   static async findEmail(templateName, language) {
-    const template = await table.emailTemplate.findOne({templateName}, {columns: ['id']});
+    const template = await table.emailTemplate.findOne({ templateName }, { columns: ['id'] });
     if (!template) throw new Error(`There is no template with the name ${templateName}`);
     return table.emailTemplateDetail.findOne(
       {
@@ -403,7 +403,7 @@ class Email {
         language,
         type: Email.types.active,
       },
-      {columns: ['id', 'subject', 'html']}
+      { columns: ['id', 'subject', 'html'] }
     );
   }
 }
