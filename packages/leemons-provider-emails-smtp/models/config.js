@@ -28,15 +28,9 @@ module.exports = {
     },
     user: {
       type: 'string',
-      options: {
-        notNull: true,
-      },
     },
     pass: {
       type: 'string',
-      options: {
-        notNull: true,
-      },
     },
   },
   primaryKey: {
