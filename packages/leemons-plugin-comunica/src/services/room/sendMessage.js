@@ -7,6 +7,29 @@ const {
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 
+async function setMessageUnRead(key, userAgentId, message, { transacting } = {}) {
+  const count = await table.roomMessagesUnRead.count(
+    {
+      room: key,
+      userAgent: userAgentId,
+    },
+    { transacting }
+  );
+  if (count) return null;
+  return table.roomMessagesUnRead.set(
+    {
+      room: key,
+      userAgent: userAgentId,
+    },
+    {
+      room: key,
+      userAgent: userAgentId,
+      message,
+    },
+    { transacting }
+  );
+}
+
 async function sendMessage(key, _userAgent, message, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
@@ -29,26 +52,37 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
           { transacting }
         );
 
-      _.forEach(_.uniq(userAgentsInRoom.concat(userAgentsWithPermissions)), (userAgentInRoom) => {
-        leemons.socket.emit(userAgentInRoom.userAgent, `COMUNICA:ROOM:${key}`, {
+      const userAgentIds = _.uniq(
+        _.map(userAgentsInRoom, 'userAgent').concat(userAgentsWithPermissions)
+      );
+      const promises = [];
+
+      const response = await table.message.create(
+        {
+          room: key,
+          userAgent: _userAgent,
+          message: JSON.stringify(
+            room.useEncrypt ? global.utils.encrypt(message, userAgent.encryptKey) : message
+          ),
+          isEncrypt: room.useEncrypt,
+        },
+        { transacting }
+      );
+
+      _.forEach(userAgentIds, (userAgentId) => {
+        promises.push(setMessageUnRead(key, userAgentId, response.id, { transacting }));
+      });
+
+      await Promise.all(promises);
+
+      _.forEach(userAgentIds, (userAgentId) => {
+        leemons.socket.emit(userAgentId, `COMUNICA:ROOM:${key}`, {
           type: 'message',
           message,
         });
       });
 
-      if (room.useEncrypt) {
-        message = global.utils.encrypt(message, userAgent.encryptKey);
-      }
-
-      return table.message.create(
-        {
-          room: key,
-          userAgent: _userAgent,
-          message: JSON.stringify(message),
-          isEncrypt: room.useEncrypt,
-        },
-        { transacting }
-      );
+      return response;
     },
     table.room,
     _transacting

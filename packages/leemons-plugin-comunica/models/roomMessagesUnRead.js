@@ -1,6 +1,6 @@
 module.exports = {
-  modelName: 'message',
-  collectionName: 'message',
+  modelName: 'roomMessagesUnRead',
+  collectionName: 'roomMessagesUnRead',
   options: {
     useTimestamps: true,
   },
@@ -25,10 +25,16 @@ module.exports = {
       */
     },
     message: {
-      type: 'json',
-    },
-    isEncrypt: {
-      type: 'boolean',
+      type: 'string',
+      options: {
+        notNull: true,
+        unique: true,
+      },
+      /*
+      references: {
+        collection: 'plugins_comunica::message',
+      }
+      */
     },
   },
   primaryKey: {

@@ -41,6 +41,7 @@
     "leemons-plugin-tests": "0.0.1-beta.0",
     "leemons-plugin-timetable": "0.0.1-beta.0",
     "leemons-plugin-users": "0.0.1-beta.0",
+    "leemons-plugin-comunica": "0.0.1-beta.0",
     "leemons-plugin-widgets": "0.0.1-beta.0",
     "leemons-provider-emails-amazon-ses": "0.0.1-beta.0",
     "leemons-provider-emails-smtp": "0.0.1-beta.0",
