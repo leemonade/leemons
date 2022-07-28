@@ -6,9 +6,11 @@
   "private": true,
   "devDependencies": {
     "@types/jest": "^26.0.23",
+    "cypress": "9.7.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.23.1",
@@ -63,7 +65,8 @@
     "format:other": "npm run prettier:other -- --write",
     "prettier:code": "prettier \"**/*.js\"",
     "prettier:other": "prettier \"**/*.{md,css,scss,yaml,yml}\"",
-    "test": "jest"
+    "test": "jest",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "babel-eslint": "^10.1.0"
