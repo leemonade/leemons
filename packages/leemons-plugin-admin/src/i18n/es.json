@@ -130,6 +130,7 @@
       "note": "Nota:",
       "hostname": "URL del dominio",
       "hostnameRequired": "El dominio es obligatorio",
+      "hostnameInvalid": "El dominio no es válido",
       "lookAndFeel": "Apariencia",
       "lookAndFeelDescription": "Puedes cambiar la URL del logo más tarde, cuando tu Mediateca Leemons esté lista y correctamente configurada en la nube.",
       "logoUrl": "URL del logo",

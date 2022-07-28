@@ -48,7 +48,11 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      hostname: new URL(window.location.href).origin,
+    },
+  });
 
   const [store, render] = useStore({
     loading: true,
@@ -113,7 +117,14 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
               <Controller
                 name="hostname"
                 control={control}
-                rules={r('hostnameRequired')}
+                rules={{
+                  required: t('hostnameRequired'),
+                  pattern: {
+                    // Pattern check if start by http or https
+                    value: /^(http|https):\/\//,
+                    message: t('hostnameInvalid'),
+                  },
+                }}
                 render={({ field }) => (
                   <TextInput label={t('hostname')} error={errors.hostname} required {...field} />
                 )}
