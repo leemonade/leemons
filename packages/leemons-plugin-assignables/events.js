@@ -3,6 +3,7 @@ const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
 const { afterRemoveClassesTeachers } = require('./src/services/events/afterRemoveClassesTeachers');
+const { afterAddClassTeacher } = require('./src/services/events/afterAddClassTeacher');
 
 async function initEmails() {
   await leemons
@@ -106,6 +107,10 @@ async function events(isInstalled) {
 
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
+  });
+
+  leemons.events.on('plugins.academic-portfolio:after-add-class-teacher', async (event, data) => {
+    await afterAddClassTeacher(data);
   });
 
   leemons.events.on(

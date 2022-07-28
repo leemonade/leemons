@@ -82,6 +82,8 @@ async function afterRemoveClassesTeachers({ classTeachers, transacting }) {
         }
       });
     });
+
+    await Promise.all(promises);
   }
 }
 
