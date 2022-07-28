@@ -31,7 +31,7 @@ async function add(
       }
 
       if (userAgents.length > 0) {
-        await addUserAgents(room.key, userAgents, { transacting });
+        await addUserAgents.call(this, room.key, userAgents, { transacting });
       }
     },
     table.room,

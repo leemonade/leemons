@@ -2,6 +2,7 @@ const newActivity = require('./emails/userCreateAssignation');
 const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
+const { afterRemoveClassesTeachers } = require('./src/services/events/afterRemoveClassesTeachers');
 
 async function initEmails() {
   await leemons
@@ -106,6 +107,13 @@ async function events(isInstalled) {
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
+
+  leemons.events.on(
+    'plugins.academic-portfolio:after-remove-classes-teachers',
+    async (event, data) => {
+      await afterRemoveClassesTeachers(data);
+    }
+  );
 
   // Emails
   leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
