@@ -22,7 +22,7 @@ module.exports = {
           name: v['platform-name']?.value,
           hostname: v['platform-hostname']?.value,
           logoUrl: v['platform-appearance-logo']?.value,
-          mainColor: v['platform-appearance-main-color']?.value || '#4F96FF',
+          mainColor: v['platform-appearance-main-color']?.value || '#3B76CC',
           email: ctx.state.userSession.email,
           contactPhone: v['platform-contact-phone']?.value,
           contactEmail: v['platform-contact-email']?.value,
