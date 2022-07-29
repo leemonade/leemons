@@ -5,7 +5,12 @@
   "scripts": {
     "start": "leemons start",
     "dev": "leemons dev",
-    "leemons": "leemons"
+    "leemons": "leemons",
+    "leemonsFront": "leemonsFront",
+    "front": "leemonsFront build && leemonsFront preview",
+    "front:preview": "leemonsFront preview",
+    "front:dev": "leemonsFront dev -m ../..",
+    "front:build": "leemonsFront build"
   },
   "leemons": {},
   "dependencies": {
@@ -41,7 +46,6 @@
     "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
     "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
     "leemons-provider-leebrary-tasks": "0.0.1-beta.0",
-    "leemons-provider-leebrary-tests": "0.0.1-beta.0",
-    "mysql": "^2.18.1"
+    "leemons-provider-leebrary-tests": "0.0.1-beta.0"
   }
 }

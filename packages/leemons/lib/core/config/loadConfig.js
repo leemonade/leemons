@@ -18,7 +18,7 @@ const leemonsDefaultDirs = {
 
 async function loadConfiguration(
   object,
-  { dir = process.cwd(), defaultDirs = leemonsDefaultDirs } = {}
+  { dir = process.cwd(), defaultDirs = leemonsDefaultDirs, useProcessEnv = false } = {}
 ) {
   const packageJSON = await loadFile(path.join(dir, 'package.json'));
   // Get config_dir from package.json
@@ -56,7 +56,7 @@ async function loadConfiguration(
     );
   }
 
-  const env = await generateEnv(dirs.env);
+  const env = await generateEnv(dirs.env, useProcessEnv);
   const config = {
     ...(await loadFiles(configDir, { env, exclude: ['config.json', 'config.js'] })),
   };
