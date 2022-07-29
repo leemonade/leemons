@@ -5,6 +5,7 @@ module.exports = {
     switchProfile: 'Cambiar perfil',
     logout: 'Cerrar sesión',
     changeLanguage: 'Cambiar idioma',
+    emailPreference: 'Preferencias de correo',
   },
   menu: {
     menu_constructor: {
