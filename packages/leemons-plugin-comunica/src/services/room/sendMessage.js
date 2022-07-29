@@ -40,7 +40,7 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
 
       const [room, userAgent, userAgentsInRoom] = await Promise.all([
         table.room.findOne({ key }, { transacting }),
-        table.userAgentInRoom.findOne({ room: key, _userAgent }, { transacting }),
+        table.userAgentInRoom.findOne({ room: key, userAgent: _userAgent }, { transacting }),
         table.userAgentInRoom.find({ room: key }, { transacting }),
       ]);
 
@@ -77,7 +77,7 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
 
       _.forEach(userAgentIds, (userAgentId) => {
         leemons.socket.emit(userAgentId, `COMUNICA:ROOM:${key}`, {
-          type: 'message',
+          ...response,
           message,
         });
       });

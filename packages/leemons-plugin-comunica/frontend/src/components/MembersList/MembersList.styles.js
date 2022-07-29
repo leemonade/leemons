@@ -3,9 +3,16 @@ import { createStyles } from '@bubbles-ui/components';
 // eslint-disable-next-line import/prefer-default-export
 export const MembersListStyles = createStyles((theme, { opened }) => ({
   root: {
-    width: opened ? 360 : 0,
+    position: 'absolute',
+    transition: 'transform 0.3s ease-in-out',
+    left: 360,
+    top: 0,
+    width: 360,
+    height: '100%',
     overflow: 'hidden',
     backgroundColor: theme.colors.ui03,
+    transform: `translateX(${!opened ? 0 : -721}px)`,
+    boxShadow: theme.shadows.shadow04,
   },
   header: {
     paddingTop: 16,

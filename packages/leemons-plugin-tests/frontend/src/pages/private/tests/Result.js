@@ -494,6 +494,14 @@ export default function Result() {
           ) : null}
         </Box>
       </Box>
+      {/* {!store.loading ? (
+        <ChatDrawer
+          opened={true}
+          room={`plugins.assignables.subject|${
+            store.instance.assignable.subjects[0].subject
+          }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
+        />
+      ) : null} */}
     </ContextContainer>
   );
 }
