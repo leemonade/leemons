@@ -1,102 +1,222 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { keyBy, map, orderBy, uniqBy } from 'lodash';
 import {
   ActionButton,
   Badge,
   Box,
+  ChatMessage,
   Drawer,
   IconButton,
-  TextInput,
+  Textarea,
   UserDisplayItemList,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, MoveRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { isFunction } from 'lodash';
+import { MoveRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import { useLocale, useStore } from '@common';
+import RoomService from '@comunica/RoomService';
+import { getUserAgentsInfoRequest } from '@users/request';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert } from '@layout/alert';
+import { getCentersWithToken } from '@users/session';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@comunica/helpers/prefixPN';
 import { MembersList } from '../components';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
-function ChatDrawer({ opened, onClose }) {
+function ChatDrawer({ room, opened, onClose = () => {} }) {
   const { classes } = ChatDrawerStyles({}, { name: 'ChatDrawer' });
-  const [openMembersList, setOpenMembersList] = useState(false);
+  const [t] = useTranslateLoader(prefixPN('chatDrawer'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const locale = useLocale();
+  const scrollRef = React.useRef();
+  const [store, render] = useStore({
+    showMembers: false,
+  });
 
-  const onCloseHandler = () => {
-    isFunction(onClose) && onClose();
-  };
+  async function load() {
+    store.userAgent = getCentersWithToken()[0].userAgentId;
+    store.room = await store.service.getRoom();
+    store.messages = await store.service.getRoomMessages();
+    store.messages = orderBy(store.messages, 'created_at', 'asc');
+    store.messages = map(store.messages, (message) => ({
+      ...message,
+      created_at: new Date(message.created_at),
+    }));
+    const { userAgents } = await getUserAgentsInfoRequest(map(store.room.userAgents, 'userAgent'), {
+      withProfile: true,
+    });
+    const roomUserAgentsById = keyBy(store.room.userAgents, 'userAgent');
+    store.userAgents = map(userAgents, (userAgent) => ({
+      ...userAgent.user,
+      id: userAgent.id,
+      profile: userAgent.profile.id,
+      roomDeleted: roomUserAgentsById[userAgent.id].deleted,
+    }));
+    store.userAgentsById = keyBy(store.userAgents, 'id');
+    const profiles = uniqBy(userAgents, 'profile.id');
+    store.profiles = map(profiles, 'profile');
+    render();
+    setTimeout(() => {
+      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+    }, 10);
+  }
+
+  async function sendMessage() {
+    try {
+      if (store.newMessage && !store.sendingMessage) {
+        store.sendingMessage = true;
+        await store.service.sendMessageToRoom({
+          type: 'text',
+          content: store.newMessage,
+        });
+        store.newMessage = '';
+        render();
+      }
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.sendingMessage = false;
+  }
+
+  React.useEffect(() => {
+    if (room) {
+      store.service = new RoomService(room);
+      load();
+    }
+  }, [room]);
+
+  RoomService.watchRoom(room, (data) => {
+    let scrollToBottom = false;
+    const scrolled = scrollRef.current.scrollTop + scrollRef.current.clientHeight;
+    if (scrolled > scrollRef.current.scrollHeight - 50) {
+      scrollToBottom = true;
+    }
+    store.messages.push({
+      ...data,
+      created_at: new Date(data.created_at),
+    });
+    render();
+    if (scrollToBottom) {
+      setTimeout(() => {
+        scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+      }, 10);
+    }
+  });
 
   return (
-    <Drawer opened={opened} size={openMembersList ? 721 : 360} close={false} empty>
-      <Box className={classes.wrapper}>
-        <MembersList opened={openMembersList} onClose={() => setOpenMembersList(false)} />
-        <Box className={classes.chatWrapper}>
-          <Box className={classes.header}>
-            <UserDisplayItemList
-              limit={0}
-              notExpandable
-              onExpand={() => setOpenMembersList(true)}
-              onShrink={() => setOpenMembersList(false)}
-              data={[
-                {
-                  name: 'Juan',
-                  surnames: 'Perez',
-                  avatar:
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-                },
-                {
-                  name: 'Juan',
-                  surnames: 'Perez',
-                  avatar:
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-                },
-                {
-                  name: 'Juan',
-                  surnames: 'Perez',
-                  avatar:
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-                },
-                {
-                  name: 'Juan',
-                  surnames: 'Perez',
-                  avatar:
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-                },
-                {
-                  name: 'Juan',
-                  surnames: 'Perez',
-                  avatar:
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-                },
-                {
-                  name: 'Juan',
-                  surnames: 'Perez',
-                  avatar:
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-                },
-              ]}
-            />
-            <ActionButton
-              onClick={onCloseHandler}
-              icon={<MoveRightIcon width={16} height={16} />}
-            />
-          </Box>
-          <Box className={classes.messages}>
-            <Box>
-              <Badge label="Lun, 19 de jul" closable={false} size="md" />
+    <>
+      <Drawer opened={opened} size={360} close={false} empty>
+        <MembersList
+          t={t}
+          userAgents={store.userAgents}
+          profiles={store.profiles}
+          opened={store.showMembers}
+          onClose={() => {
+            store.showMembers = false;
+            render();
+          }}
+        />
+        <Box className={classes.wrapper}>
+          <Box className={classes.chatWrapper}>
+            <Box className={classes.header}>
+              <UserDisplayItemList
+                limit={0}
+                notExpandable
+                expanded={store.showMembers}
+                onExpand={() => {
+                  store.showMembers = !store.showMembers;
+                  render();
+                }}
+                onShrink={() => {
+                  store.showMembers = !store.showMembers;
+                  render();
+                }}
+                data={store.userAgents}
+                labels={{
+                  showMore: t('showMore'),
+                  showLess: t('showLess'),
+                }}
+              />
+              <ActionButton onClick={onClose} icon={<MoveRightIcon width={16} height={16} />} />
+            </Box>
+            <Box ref={scrollRef} className={classes.messages}>
+              {store.messages &&
+                store.messages.map((message, index) => {
+                  const comp = [];
+                  let forceUserImage = false;
+                  const day = new Date(message.created_at).toLocaleDateString(locale, {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  });
+                  if (index === 0 || store.lastDay !== day) {
+                    store.lastDay = day;
+                    forceUserImage = true;
+                    comp.push(
+                      <Box className={classes.date} key={`date-${index}`}>
+                        <Badge label={day} closable={false} size="md" />
+                      </Box>
+                    );
+                  }
+                  comp.push(
+                    <Box
+                      sx={(theme) => ({
+                        marginTop:
+                          index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                            ? theme.spacing[4]
+                            : 0,
+                      })}
+                    >
+                      <ChatMessage
+                        key={message.id}
+                        showUser={
+                          forceUserImage || index === 0
+                            ? true
+                            : store.messages[index - 1].userAgent !== message.userAgent
+                        }
+                        isOwn={message.userAgent === store.userAgent}
+                        user={store.userAgentsById[message.userAgent]}
+                        message={{ ...message.message, date: message.created_at }}
+                      />
+                    </Box>
+                  );
+                  return comp;
+                })}
+            </Box>
+            <Box className={classes.sendMessage}>
+              {/*  <IconButton
+                icon={<AddCircleIcon height={16} width={16} className={classes.addIcon} />}
+                rounded
+              /> */}
+
+              <Textarea
+                value={store.newMessage}
+                minRows={1}
+                name="message"
+                placeholder={t('writeNewMessage')}
+                className={classes.textarea}
+                onChange={(e) => {
+                  store.newMessage = e;
+                  render();
+                }}
+              />
+              <IconButton
+                onClick={sendMessage}
+                icon={<SendMessageIcon />}
+                color="primary"
+                rounded
+              />
             </Box>
           </Box>
-          <Box className={classes.sendMessage}>
-            <IconButton
-              icon={<AddCircleIcon height={16} width={16} className={classes.addIcon} />}
-              rounded
-            />
-            <TextInput name="message" placeholder="Escribe un nuevo mensaje" style={{ flex: 1 }} />
-            <IconButton icon={<SendMessageIcon />} color="primary" rounded />
-          </Box>
         </Box>
-      </Box>
-    </Drawer>
+      </Drawer>
+    </>
   );
 }
 
 ChatDrawer.propTypes = {
+  room: PropTypes.string,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
 };

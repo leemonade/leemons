@@ -11,7 +11,7 @@ async function getTheme({ transacting } = {}) {
   const v = _.keyBy(r, 'key');
   return {
     logoUrl: v['platform-appearance-logo']?.value,
-    mainColor: v['platform-appearance-main-color']?.value || '#4F96FF',
+    mainColor: v['platform-appearance-main-color']?.value || '#3B76CC',
   };
 }
 

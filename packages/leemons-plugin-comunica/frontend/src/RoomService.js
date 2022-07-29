@@ -37,18 +37,20 @@ class RoomService {
     });
   }
 
-  static getRoomMessages(key) {
-    return leemons.api(`comunica/room/${key}/messages`, {
+  static async getRoomMessages(key) {
+    const { messages } = await leemons.api(`comunica/room/${key}/messages`, {
       allAgents: true,
       method: 'GET',
     });
+    return messages;
   }
 
-  static getRoom(key) {
-    return leemons.api(`comunica/room/${key}`, {
+  static async getRoom(key) {
+    const { room } = await leemons.api(`comunica/room/${key}`, {
       allAgents: true,
       method: 'GET',
     });
+    return room;
   }
 }
 
