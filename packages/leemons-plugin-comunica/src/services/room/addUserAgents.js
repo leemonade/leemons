@@ -49,9 +49,13 @@ async function addUserAgents(key, _userAgents, { transacting: _transacting } = {
     async (transacting) => {
       await validateNotExistRoomKey(key, { transacting });
 
+      console.log('userAgents', userAgents);
+
       const responses = await Promise.all(
         _.map(userAgents, (userAgent) => add(key, userAgent, { transacting }))
       );
+
+      console.log('responses', responses);
 
       _.forEach(responses, (response) => {
         delete response.encryptKey;

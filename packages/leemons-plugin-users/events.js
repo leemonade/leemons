@@ -112,6 +112,10 @@ async function events(isInstalled) {
     await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(event);
   });
 
+  leemons.events.once('plugins.users:change-platform-locale', async () => {
+    createInitialProfiles();
+  });
+
   if (!isInstalled) {
     const initUsers = async () => {
       const actionsService = require('./src/services/actions');
@@ -157,10 +161,6 @@ async function events(isInstalled) {
         await initUsers();
       }
     );
-
-    leemons.events.once('plugins.users:change-platform-locale', async () => {
-      createInitialProfiles();
-    });
 
     // Emails
     leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
