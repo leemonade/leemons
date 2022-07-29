@@ -31,7 +31,6 @@ import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import {
   getFeedbackRequest,
@@ -495,7 +494,6 @@ export default function Result() {
           ) : null}
         </Box>
       </Box>
-      <ChatDrawer opened={true} />
     </ContextContainer>
   );
 }

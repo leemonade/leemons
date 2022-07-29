@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+  ActionButton,
+  Badge,
   Box,
   Drawer,
-  ActionButton,
-  UserDisplayItemList,
-  TextInput,
   IconButton,
-  Badge,
+  TextInput,
+  UserDisplayItemList,
 } from '@bubbles-ui/components';
-import { MoveRightIcon, AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { StarIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, MoveRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import { isFunction } from 'lodash';
 import { MembersList } from '../components';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
@@ -89,7 +88,7 @@ function ChatDrawer({ opened, onClose }) {
               rounded
             />
             <TextInput name="message" placeholder="Escribe un nuevo mensaje" style={{ flex: 1 }} />
-            <IconButton icon={<StarIcon />} color="primary" rounded />
+            <IconButton icon={<SendMessageIcon />} color="primary" rounded />
           </Box>
         </Box>
       </Box>
