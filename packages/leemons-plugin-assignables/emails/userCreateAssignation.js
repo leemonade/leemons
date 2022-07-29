@@ -116,7 +116,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                   color: #5b6577;
                 "
               >
-               {{it.instance.messageToAssignees}}
+               {{*it.instance.messageToAssignees}}
               </td>
               <td
                 align="center"
