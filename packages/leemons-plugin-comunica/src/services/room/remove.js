@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
-const { addUserAgents } = require('./addUserAgents');
 
 async function remove(key, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);

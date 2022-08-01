@@ -21,11 +21,21 @@ async function get(key, userAgent, { transacting: _transacting } = {}) {
           .services.permissions.userAgentHasPermissionToItem(userAgent, key, { transacting });
         if (!hasPermission) throw error;
       }
-      const [room, userAgents] = await Promise.all([
+      const [room, userAgents, nMessages, messagesUnread] = await Promise.all([
         table.room.findOne({ key }, { transacting }),
         table.userAgentInRoom.find({ room: key }, { transacting }),
+        table.message.count({ room: key }, { transacting }),
+        table.roomMessagesUnRead.findOne(
+          {
+            room: key,
+            userAgent,
+          },
+          { transacting }
+        ),
       ]);
 
+      room.unreadMessages = messagesUnread ? messagesUnread.count : 0;
+      room.messages = nMessages;
       room.userAgents = _.map(userAgents, (a) => ({ userAgent: a.userAgent, deleted: a.deleted }));
 
       return room;

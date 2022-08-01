@@ -5,7 +5,7 @@ async function getAppearanceMainColor({ transacting } = {}) {
     { key: 'platform-appearance-main-color' },
     { transacting }
   );
-  return config ? config.value : '#4F96FF';
+  return config ? config.value : '#3B76CC';
 }
 
 module.exports = getAppearanceMainColor;

@@ -30,6 +30,9 @@
       "@common/*": [
         "./packages/leemons-plugin-common/frontend/src/*"
       ],
+      "@comunica/*": [
+        "./packages/leemons-plugin-comunica/frontend/src/*"
+      ],
       "@curriculum/*": [
         "./packages/leemons-plugin-curriculum/frontend/src/*"
       ],

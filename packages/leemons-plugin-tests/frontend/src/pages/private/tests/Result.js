@@ -28,9 +28,11 @@ import {
 } from '@bubbles-ui/components';
 import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
+import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
+import ChatButton from '@comunica/ChatButton';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import {
   getFeedbackRequest,
@@ -341,38 +343,40 @@ export default function Result() {
       </Box>
     </ActivityAccordionPanel>
   );
-  if (store.isTeacher || (!store.isTeacher && store.feedback)) {
-    accordion.push(
-      <ActivityAccordionPanel
-        key={2}
-        label={t('feedbackForStudent')}
-        icon={
-          <Box style={{ position: 'relative', width: '24px', height: '24px' }}>
-            <ImageLoader src={'/public/tests/feedback-for-student.svg'} />
-          </Box>
-        }
-      >
-        {store.isTeacher ? (
-          <Box sx={(theme) => ({ padding: theme.spacing[6] })}>
-            <TextEditorInput
-              value={store.feedback}
-              error={store.feedbackError ? t('feedbackRequired') : null}
-              onChange={(e) => {
-                store.feedback = e;
-                store.feedbackError = false;
-                render();
-              }}
-            />
-          </Box>
-        ) : (
-          <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
-            <Box className={styles.feedbackUser}>
-              <HtmlText>{store.feedback}</HtmlText>
+  if (!store.room) {
+    if (store.isTeacher || (!store.isTeacher && store.feedback)) {
+      accordion.push(
+        <ActivityAccordionPanel
+          key={2}
+          label={t('feedbackForStudent')}
+          icon={
+            <Box style={{ position: 'relative', width: '24px', height: '24px' }}>
+              <ImageLoader src={'/public/tests/feedback-for-student.svg'} />
             </Box>
-          </Box>
-        )}
-      </ActivityAccordionPanel>
-    );
+          }
+        >
+          {store.isTeacher ? (
+            <Box sx={(theme) => ({ padding: theme.spacing[6] })}>
+              <TextEditorInput
+                value={store.feedback}
+                error={store.feedbackError ? t('feedbackRequired') : null}
+                onChange={(e) => {
+                  store.feedback = e;
+                  store.feedbackError = false;
+                  render();
+                }}
+              />
+            </Box>
+          ) : (
+            <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
+              <Box className={styles.feedbackUser}>
+                <HtmlText>{store.feedback}</HtmlText>
+              </Box>
+            </Box>
+          )}
+        </ActivityAccordionPanel>
+      );
+    }
   }
 
   const userNote = store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number;
@@ -467,7 +471,7 @@ export default function Result() {
                 >
                   {accordion}
                 </ActivityAccordion>
-                {store.isTeacher ? (
+                {store.isTeacher && !store.room ? (
                   <Box
                     sx={(theme) => ({
                       display: 'flex',
@@ -490,10 +494,68 @@ export default function Result() {
                   </Box>
                 ) : null}
               </Box>
+              <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
+                <ContextContainer alignItems="center">
+                  <Text size="md" color="primary" strong>
+                    {t('chatDescription')}
+                  </Text>
+                  <Box>
+                    <Button
+                      rounded
+                      rightIcon={<PluginComunicaIcon />}
+                      onClick={() => {
+                        store.chatOpened = true;
+                        render();
+                      }}
+                    >
+                      {store.isTeacher ? t('chatButtonStudent') : t('chatButtonTeacher')}
+                    </Button>
+                  </Box>
+                </ContextContainer>
+              </Box>
             </Box>
           ) : null}
         </Box>
       </Box>
+
+      {/**/}
+      {!store.loading ? (
+        <>
+          <ChatDrawer
+            onClose={() => {
+              store.chatOpened = false;
+              render();
+            }}
+            opened={store.chatOpened}
+            onRoomLoad={(room) => {
+              console.log(room);
+              store.room = room;
+              render();
+            }}
+            onMessage={() => {
+              store.room.unreadMessages += 1;
+              console.log(store.room.unreadMessages);
+              render();
+            }}
+            onMessagesMarkAsRead={() => {
+              store.room.unreadMessages = 0;
+              render();
+            }}
+            room={`plugins.assignables.subject|${
+              store.instance.assignable.subjects[0].subject
+            }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
+          />
+          {store.room && store.room.messages > 0 ? (
+            <ChatButton
+              room={store.room}
+              onClick={() => {
+                store.chatOpened = true;
+                render();
+              }}
+            />
+          ) : null}
+        </>
+      ) : null}
     </ContextContainer>
   );
 }

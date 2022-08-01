@@ -1,5 +1,3 @@
-const emailService = require('./src/services/email');
-
 async function install() {
   leemons.log.info('Plugin comunica init OK');
 }

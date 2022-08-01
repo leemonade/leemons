@@ -9,14 +9,12 @@ module.exports = {
       type: 'string',
       options: {
         notNull: true,
-        unique: true,
       },
     },
     userAgent: {
       type: 'string',
       options: {
         notNull: true,
-        unique: true,
       },
       /*
       references: {
@@ -28,9 +26,8 @@ module.exports = {
       type: 'string',
       options: {
         notNull: true,
-        unique: true,
       },
-    }
+    },
   },
   primaryKey: {
     type: 'uuid',

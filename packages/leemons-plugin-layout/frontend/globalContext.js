@@ -1,7 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import {forEach, isNil} from 'lodash';
-import {useLocation} from 'react-router-dom';
+import { forEach, isNil } from 'lodash';
+import { useLocation } from 'react-router-dom';
 import {
   BUBBLES_THEME,
   colord,
@@ -10,16 +10,16 @@ import {
   ThemeProvider,
   useModals,
 } from '@bubbles-ui/components';
-import {NotificationProvider} from '@bubbles-ui/notifications';
+import { NotificationProvider } from '@bubbles-ui/notifications';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import {getPlatformThemeRequest} from '@users/request';
+import { getPlatformThemeRequest } from '@users/request';
 import hooks from 'leemons-hooks';
+import SocketIoService from '@socket-io/service';
 import prefixPN from './src/helpers/prefixPN';
-import {LayoutContext, LayoutProvider} from './src/context/layout';
+import { LayoutContext, LayoutProvider } from './src/context/layout';
 import PrivateLayout from './src/components/PrivateLayout';
-import SocketIoService from "@socket-io/service";
 
-function LayoutWrapper({isPrivate, children}) {
+function LayoutWrapper({ isPrivate, children }) {
   if (isPrivate) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
@@ -31,7 +31,7 @@ LayoutWrapper.propTypes = {
   isPrivate: PropTypes.bool,
 };
 
-function LayoutProviderWrapper({children}) {
+function LayoutProviderWrapper({ children }) {
   const [layoutState, setLayoutState] = useState({
     loading: false,
     contentRef: useRef(),
@@ -42,82 +42,74 @@ function LayoutProviderWrapper({children}) {
   const modals = useModals();
   const [t] = useTranslateLoader(prefixPN('modals'));
 
-  SocketIoService.useOn('USER_CHANGE_AVATAR', (event, {url}) => {
+  SocketIoService.useOn('USER_CHANGE_AVATAR', (event, { url }) => {
     const elements = document.getElementsByTagName('img');
     forEach(elements, (element) => {
       if (element.src.includes(url)) {
-        element.src = url + '?t=' + Date.now();
+        element.src = `${url}?t=${Date.now()}`;
       }
     });
   });
 
   // TODO: Las traducciones se están tardando una eternidad, por eso al inicio se cargan solo las keys
   const openDeleteConfirmationModal =
-    ({
-       title, description, labels, onCancel = () => {
-      }, onConfirm = () => {
-      }
-     }) =>
-      () =>
-        modals.openConfirmModal({
-          title: title || t('title.delete', {'title.delete': 'Esta muriendo'}),
-          children: (
-            <Paragraph
-              sx={(theme) => ({
-                paddingBottom: theme.spacing[5],
-              })}
-              dangerouslySetInnerHTML={{__html: description || t('description.delete')}}
-            />
-          ),
-          labels: {
-            confirm: labels?.confirm || t('buttons.confirm'),
-            cancel: labels?.cancel || t('buttons.cancel'),
-          },
-          confirmProps: {color: 'fatic'},
-          onCancel,
-          onConfirm,
-        });
+    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    () =>
+      modals.openConfirmModal({
+        title: title || t('title.delete', { 'title.delete': 'Esta muriendo' }),
+        children: (
+          <Paragraph
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[5],
+            })}
+            dangerouslySetInnerHTML={{ __html: description || t('description.delete') }}
+          />
+        ),
+        labels: {
+          confirm: labels?.confirm || t('buttons.confirm'),
+          cancel: labels?.cancel || t('buttons.cancel'),
+        },
+        confirmProps: { color: 'fatic' },
+        onCancel,
+        onConfirm,
+      });
 
   const openConfirmationModal =
-    ({
-       title, description, labels, onCancel = () => {
-      }, onConfirm = () => {
-      }
-     }) =>
-      () =>
-        modals.openConfirmModal({
-          title: title || t('title.confirm'),
-          children: (
-            <Paragraph
-              sx={(theme) => ({
-                paddingBottom: theme.spacing[5],
-              })}
-              dangerouslySetInnerHTML={{__html: description || t('description.confirm')}}
-            />
-          ),
-          labels: {
-            confirm: labels?.confirm || t('buttons.confirm'),
-            cancel: labels?.cancel || t('buttons.cancel'),
-          },
-          onCancel,
-          onConfirm,
-        });
+    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    () =>
+      modals.openConfirmModal({
+        title: title || t('title.confirm'),
+        children: (
+          <Paragraph
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[5],
+            })}
+            dangerouslySetInnerHTML={{ __html: description || t('description.confirm') }}
+          />
+        ),
+        labels: {
+          confirm: labels?.confirm || t('buttons.confirm'),
+          cancel: labels?.cancel || t('buttons.cancel'),
+        },
+        onCancel,
+        onConfirm,
+      });
 
   const setPrivateLayout = (val) => {
-    setLayoutState({...layoutState, private: val});
+    setLayoutState({ ...layoutState, private: val });
   };
 
   const setLoading = (loading) => {
-    setLayoutState({...layoutState, loading});
+    setLayoutState({ ...layoutState, loading });
   };
 
   const setContentRef = (contentRef) => {
-    setLayoutState({...layoutState, contentRef});
+    setLayoutState({ ...layoutState, contentRef });
   };
 
   const scrollTo = (props) => {
     if (!isNil(layoutState.contentRef?.current)) {
-      layoutState.contentRef.current.scrollTo({...props, behavior: 'smooth'});
+      layoutState.contentRef.current.scrollTo({ ...props, behavior: 'smooth' });
     }
   };
 
@@ -154,12 +146,12 @@ LayoutProviderWrapper.propTypes = {
   children: PropTypes.node,
 };
 
-export function Provider({children}) {
+export function Provider({ children }) {
   const [theme, setTheme] = useState(BUBBLES_THEME);
 
   async function load() {
     try {
-      const {theme: th} = await getPlatformThemeRequest();
+      const { theme: th } = await getPlatformThemeRequest();
       const mainColor = colord(th.mainColor);
       const mainColorLight = 1 - mainColor.brightness();
       const mainColorHSL = colord(th.mainColor).toHsl();
@@ -167,12 +159,17 @@ export function Provider({children}) {
       const bubbles = [];
 
       forEach(BUBBLES_THEME.colors.bubbles, (color) => {
-        bubbles.push(colord({...mainColorHSL, l: colord(color).brightness() * 100}).toHex());
+        bubbles.push(colord({ ...mainColorHSL, l: colord(color).brightness() * 100 }).toHex());
       });
 
-      setTheme({
+      const sameColor = BUBBLES_THEME.colors.interactive01 === th.mainColor;
+
+      const newTheme = {
         ...BUBBLES_THEME,
-        colors: {
+      };
+
+      if (!sameColor) {
+        newTheme.colors = {
           ...BUBBLES_THEME.colors,
           bubbles,
           interactive01: th.mainColor,
@@ -188,8 +185,10 @@ export function Provider({children}) {
           interactive01v1: colord(th.mainColor)
             .lighten(mainColorLight * 0.6)
             .toHex(),
-        },
-      });
+        };
+      }
+
+      setTheme(newTheme);
     } catch (error) {
       // Nothing
     }

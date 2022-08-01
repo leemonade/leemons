@@ -1,8 +1,5 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const {
-  userAgentHasPermissionToItem,
-} = require('leemons-plugin-users/src/services/user-agents/item-permissions/userAgentHasPermissionToItem');
 const { table } = require('../tables');
 const {
   validateKeyPrefix,

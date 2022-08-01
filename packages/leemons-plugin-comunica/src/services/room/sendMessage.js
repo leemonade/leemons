@@ -8,14 +8,13 @@ const {
 } = require('../../validations/exists');
 
 async function setMessageUnRead(key, userAgentId, message, { transacting } = {}) {
-  const count = await table.roomMessagesUnRead.count(
+  const item = await table.roomMessagesUnRead.findOne(
     {
       room: key,
       userAgent: userAgentId,
     },
     { transacting }
   );
-  if (count) return null;
   return table.roomMessagesUnRead.set(
     {
       room: key,
@@ -25,6 +24,7 @@ async function setMessageUnRead(key, userAgentId, message, { transacting } = {})
       room: key,
       userAgent: userAgentId,
       message,
+      count: item && item.count ? item.count + 1 : 1,
     },
     { transacting }
   );
@@ -40,7 +40,7 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
 
       const [room, userAgent, userAgentsInRoom] = await Promise.all([
         table.room.findOne({ key }, { transacting }),
-        table.userAgentInRoom.findOne({ room: key, _userAgent }, { transacting }),
+        table.userAgentInRoom.findOne({ room: key, userAgent: _userAgent }, { transacting }),
         table.userAgentInRoom.find({ room: key }, { transacting }),
       ]);
 
@@ -77,7 +77,7 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
 
       _.forEach(userAgentIds, (userAgentId) => {
         leemons.socket.emit(userAgentId, `COMUNICA:ROOM:${key}`, {
-          type: 'message',
+          ...response,
           message,
         });
       });

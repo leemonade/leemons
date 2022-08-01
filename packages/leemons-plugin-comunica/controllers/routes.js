@@ -12,6 +12,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/room/:key/messages/read',
+    method: 'POST',
+    handler: 'room.markMessagesAsRead',
+    authenticated: true,
+  },
+  {
     path: '/room/:key',
     method: 'GET',
     handler: 'room.getRoom',
