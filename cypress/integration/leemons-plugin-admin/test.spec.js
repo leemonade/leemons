@@ -16,7 +16,7 @@ describe('Leemons tests', () => {
 
     it('Loads the installation page', () => {
       cy.url().should('include', '/admin/welcome');
-      cy.get('h3').contains('Instalación de Leemons');
+      cy.get('h3').contains('Leemons installation');
     });
 
     it('Can change installation language', () => {
