@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Redirect, useRouteMatch} from 'react-router-dom';
-import {LoadingOverlay} from '@bubbles-ui/components';
-import {getSettingsRequest} from '../request/settings';
+import { Redirect, useRouteMatch } from 'react-router-dom';
+import { LoadingOverlay } from '@bubbles-ui/components';
+import { useStore } from '@common';
+import { getSettingsRequest } from '../request/settings';
 import LocaleContext from '../contexts/translations';
-import {useStore} from "@common";
 
-const UserRedirect = ({to}) => {
+const UserRedirect = ({ to }) => {
   const [store, render] = useStore({
     loading: true,
   });
-  const {loadLocale} = React.useContext(LocaleContext);
-  const {path} = useRouteMatch();
+  const { loadLocale } = React.useContext(LocaleContext);
+  const { path } = useRouteMatch();
 
-  const getComponent = (url, comp) => (path === url ? comp : <Redirect to={url}/>);
+  const getComponent = (url, comp) => (path === url ? comp : <Redirect to={url} />);
 
   const getRedirect = (settings, isSuperAdmin) => {
     if (settings.configured) {
@@ -23,12 +23,18 @@ const UserRedirect = ({to}) => {
       if (path === '/admin/login') {
         return getComponent('/users/login', to);
       }
-      return <Redirect to={'/private/dashboard'}/>;
+      return <Redirect to={'/private/dashboard'} />;
     }
 
     // If not configured yet but user is UserAdmin, just redirect to the page requested
     if (isSuperAdmin) {
-      return getComponent(path, to);
+      let toPath = path;
+
+      if (path === '/admin') {
+        toPath = '/private/admin/setup';
+      }
+
+      return getComponent(toPath, to);
     }
 
     if (settings.status === 'ADMIN_CREATED') {
@@ -68,10 +74,12 @@ const UserRedirect = ({to}) => {
   };
 
   React.useEffect(() => {
-    getSettings();
+    (async () => {
+      await getSettings();
+    })();
   }, [to, path]);
 
-  if (store.loading) return <LoadingOverlay visible/>;
+  if (store.loading) return <LoadingOverlay visible />;
 
   return store.component;
 };
@@ -80,5 +88,5 @@ UserRedirect.propTypes = {
   to: PropTypes.node,
 };
 
-export {UserRedirect};
+export { UserRedirect };
 export default UserRedirect;

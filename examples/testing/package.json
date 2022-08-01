@@ -47,9 +47,5 @@
     "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
     "leemons-provider-emails-smtp": "0.0.1-beta.0",
     "leemons-provider-emails-amazon-ses": "0.0.1-beta.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.4.0"
   }
 }

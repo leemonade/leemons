@@ -21,7 +21,7 @@ async function registerAdmin(
 
       const { services: userService } = leemons.getPlugin('users');
 
-      const profile = await userService.profiles.add(profileSettings, {
+      const profile = await userService.profiles.saveBySysName(profileSettings, {
         sysName: profileSettings.sysName,
       });
 

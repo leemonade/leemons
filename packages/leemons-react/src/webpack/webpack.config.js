@@ -101,6 +101,7 @@ module.exports = function webpackConfig({
         'react-dom': path.resolve(require.resolve('react-dom'), '..'),
         'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
         'react-query': path.resolve(require.resolve('react-query'), '..'),
+        '@loadable/component': path.resolve(require.resolve('@loadable/component')),
       },
     },
     module: {

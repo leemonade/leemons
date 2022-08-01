@@ -5,7 +5,7 @@ console.log('Launching frontend from:', path.resolve(__dirname, ''));
 module.exports = {
   insecure: true,
   dir: {
-    app: '/Users/Usuario/Sites/leemonade/leemons/examples/testing',
+    app: path.resolve(__dirname, '..'),
     plugins: 'plugins',
     frontend: 'frontend',
     env: '.env',

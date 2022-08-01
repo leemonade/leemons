@@ -41,18 +41,12 @@
     "leemons-plugin-tests": "0.0.1-beta.0",
     "leemons-plugin-timetable": "0.0.1-beta.0",
     "leemons-plugin-users": "0.0.1-beta.0",
-    "leemons-plugin-comunica": "0.0.1-beta.0",
     "leemons-plugin-widgets": "0.0.1-beta.0",
     "leemons-provider-emails-amazon-ses": "0.0.1-beta.0",
     "leemons-provider-emails-smtp": "0.0.1-beta.0",
     "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
     "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
     "leemons-provider-leebrary-tasks": "0.0.1-beta.0",
-    "leemons-provider-leebrary-tests": "0.0.1-beta.0",
-    "mysql": "^2.18.1"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.4.0"
+    "leemons-provider-leebrary-tests": "0.0.1-beta.0"
   }
 }
