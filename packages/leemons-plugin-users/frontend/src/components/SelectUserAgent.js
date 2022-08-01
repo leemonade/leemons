@@ -230,7 +230,7 @@ const SelectUserAgent = forwardRef(
           setUsersData(null);
         }
       })();
-      
+
     }, [users]);
 
     // EN: Initial search for the first render
