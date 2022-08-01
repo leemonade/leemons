@@ -96,6 +96,10 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
     get default() {
       return connectors.get(connections[defaultConnection].connector);
     },
+
+    reloadDatabase: async () => {
+      await Promise.all([...connectors.values()].map((connector) => connector.reloadDatabase()));
+    },
   };
 }
 

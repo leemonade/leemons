@@ -60,6 +60,7 @@ async function initKnex(connector, connections) {
           ssl: _.get(connection.settings, 'ssl', false),
           timezone: _.get(connection.settings, 'timezone', 'utc'),
           user: _.get(connection.settings, 'username') || _.get(connection.settings, 'user'),
+          multipleStatements: true,
         },
       };
 
