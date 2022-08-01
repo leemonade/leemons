@@ -362,5 +362,8 @@ module.exports = {
     ok: 'Acertada',
     ko: 'Errónea',
     nsnc: 'NS/NC',
+    chatDescription: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+    chatButtonStudent: 'Escribe a tu alumno',
+    chatButtonTeacher: 'Escribe a tu profesor',
   },
 };

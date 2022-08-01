@@ -23,7 +23,14 @@ import prefixPN from '@comunica/helpers/prefixPN';
 import { MembersList } from '../components';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
-function ChatDrawer({ room, opened, onClose = () => {} }) {
+function ChatDrawer({
+  room,
+  opened,
+  onClose = () => {},
+  onMessage = () => {},
+  onRoomLoad = () => {},
+  onMessagesMarkAsRead = () => {},
+}) {
   const { classes } = ChatDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatDrawer'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -32,6 +39,10 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
   const [store, render] = useStore({
     showMembers: false,
   });
+
+  function scrollToBottom() {
+    if (scrollRef.current) scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+  }
 
   async function load() {
     store.userAgent = getCentersWithToken()[0].userAgentId;
@@ -56,8 +67,9 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
     const profiles = uniqBy(userAgents, 'profile.id');
     store.profiles = map(profiles, 'profile');
     render();
+    onRoomLoad(store.room);
     setTimeout(() => {
-      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+      scrollToBottom();
     }, 10);
   }
 
@@ -85,20 +97,43 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
     }
   }, [room]);
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (opened) {
+        scrollToBottom();
+        store.service.markRoomMessagesAsRead();
+        onMessagesMarkAsRead();
+      }
+    }, 10);
+  }, [opened]);
+
   RoomService.watchRoom(room, (data) => {
-    let scrollToBottom = false;
-    const scrolled = scrollRef.current.scrollTop + scrollRef.current.clientHeight;
-    if (scrolled > scrollRef.current.scrollHeight - 50) {
-      scrollToBottom = true;
+    let _scrollToBottom = false;
+    if (scrollRef.current) {
+      const scrolled = scrollRef.current.scrollTop + scrollRef.current.clientHeight;
+      if (scrolled > scrollRef.current.scrollHeight - 50) {
+        _scrollToBottom = true;
+      }
     }
     store.messages.push({
       ...data,
       created_at: new Date(data.created_at),
     });
+    onMessage(data);
     render();
-    if (scrollToBottom) {
+
+    if (opened) {
+      store.service.markRoomMessagesAsRead();
+      onMessagesMarkAsRead();
+    }
+
+    if (_scrollToBottom) {
       setTimeout(() => {
-        scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+        if (scrollRef.current)
+          scrollRef.current.scrollTo({
+            top: scrollRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
       }, 10);
     }
   });
@@ -161,6 +196,7 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
                   }
                   comp.push(
                     <Box
+                      key={message.id}
                       sx={(theme) => ({
                         marginTop:
                           index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
@@ -169,7 +205,6 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
                       })}
                     >
                       <ChatMessage
-                        key={message.id}
                         showUser={
                           forceUserImage || index === 0
                             ? true
@@ -196,6 +231,13 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
                 name="message"
                 placeholder={t('writeNewMessage')}
                 className={classes.textarea}
+                onKeyPress={(e) => {
+                  if (e.code === 'Enter' || e.charCode === 13) {
+                    sendMessage();
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }
+                }}
                 onChange={(e) => {
                   store.newMessage = e;
                   render();
@@ -219,6 +261,9 @@ ChatDrawer.propTypes = {
   room: PropTypes.string,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
+  onMessage: PropTypes.func,
+  onRoomLoad: PropTypes.func,
+  onMessagesMarkAsRead: PropTypes.func,
 };
 
 export { ChatDrawer };
