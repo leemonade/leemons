@@ -379,6 +379,27 @@ class Leemons {
       this.reload();
     });
 
+    if (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) {
+      this.backRouter.get('/api/database/reload', async (ctx) => {
+        try {
+          await this.db.reloadDatabase();
+
+          ctx.status = 200;
+          ctx.body = {
+            status: 200,
+            message: 'Database reloaded',
+          };
+        } catch (e) {
+          ctx.status = 500;
+          ctx.body = {
+            status: 500,
+            message: 'Error reloading database',
+            details: e.message,
+          };
+        }
+      });
+    }
+
     plugins.forEach((plugin) => {
       if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {

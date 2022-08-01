@@ -82,6 +82,10 @@ class DatabaseManager {
     this.queries.set(modelName, query);
     return showDelete ? query : _.omit(query, ['delete', 'deleteMany']);
   }
+
+  reloadDatabase() {
+    return this.connectors.reloadDatabase();
+  }
 }
 
 function createDatabaseManager(leemons) {
