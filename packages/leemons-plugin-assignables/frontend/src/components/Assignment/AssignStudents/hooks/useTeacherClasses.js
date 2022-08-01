@@ -46,7 +46,9 @@ export default function useTeacherClasses() {
     setData(classes);
   };
 
-  useEffect(getClasses, [userAgents]);
+  useEffect(() => {
+    getClasses();
+  }, [userAgents]);
 
   return data;
 }

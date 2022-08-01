@@ -14,7 +14,7 @@ module.exports = {
     },
     useEncrypt: {
       type: 'boolean',
-    }
+    },
   },
   primaryKey: {
     type: 'uuid',

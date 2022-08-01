@@ -130,6 +130,7 @@
       "note": "Note:",
       "hostname": "Domain URL",
       "hostnameRequired": "Domain URL is required",
+      "hostnameInvalid": "Domain URL is invalid",
       "lookAndFeel": "Brand look & feel",
       "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud.",
       "logoUrl": "Logo URL",

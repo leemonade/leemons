@@ -1,6 +1,6 @@
 import React from 'react';
 import useSWR from 'swr';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import SocketIoService from '@socket-io/service';
 
 function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
@@ -41,6 +41,16 @@ export function getLocalizations(...data) {
   return _getLocalizations(...data)();
 }
 
+let retry = 0;
+
+function retryMutate(fn) {
+  if (retry > 0) {
+    clearTimeout(retry);
+  }
+
+  retry = setTimeout(() => fn(), 2000);
+}
+
 export function getLocalizationsByArrayOfItems(items, reducer, locale) {
   let keysToTranslate = [];
   if (_.isFunction(reducer)) {
@@ -71,11 +81,18 @@ export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
   const jsonKey = JSON.stringify({ keys, keysStartsWith, locale });
 
   // Let swr handle data fetching and caching
-  const { data, error } = useSWR(jsonKey, _getLocalizations({ keys, keysStartsWith, locale }));
+  const { data, error, mutate, isValidating } = useSWR(
+    jsonKey,
+    _getLocalizations({ keys, keysStartsWith, locale })
+  );
+
+  if (mutate && data && _.isEmpty(data.items)) {
+    retryMutate(mutate);
+  }
 
   // Add a loading property
   let loading = false;
-  if (data === undefined && !error) {
+  if (isValidating || (data === undefined && !error)) {
     loading = true;
   }
 

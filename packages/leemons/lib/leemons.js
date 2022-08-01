@@ -600,7 +600,7 @@ class Leemons {
   async loadAppConfig() {
     return withTelemetry('loadAppConfig', async () => {
       leemons.events.emit('appWillLoadConfig', 'leemons');
-      this.config = (await loadConfiguration(this)).configProvider;
+      this.config = (await loadConfiguration(this, { useProcessEnv: true })).configProvider;
       leemons.events.emit('appDidLoadConfig', 'leemons');
 
       if (this.config.get('config.insecure', false)) {

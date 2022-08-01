@@ -5,6 +5,7 @@ const { getMessages } = require('./getMessages');
 const { sendMessage } = require('./sendMessage');
 const { addUserAgents } = require('./addUserAgents');
 const { existUserAgent } = require('./existUserAgent');
+const { removeUserAgents } = require('./removeUserAgents');
 
 module.exports = {
   add,
@@ -14,4 +15,5 @@ module.exports = {
   sendMessage,
   addUserAgents,
   existUserAgent,
+  removeUserAgents,
 };

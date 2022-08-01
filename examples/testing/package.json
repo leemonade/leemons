@@ -23,6 +23,7 @@
     "leemons-plugin-assignables": "0.0.1-beta.0",
     "leemons-plugin-calendar": "0.0.1-beta.0",
     "leemons-plugin-common": "0.0.1-beta.0",
+    "leemons-plugin-comunica": "0.0.1-beta.0",
     "leemons-plugin-curriculum": "0.0.1-beta.0",
     "leemons-plugin-dashboard": "0.0.1-beta.0",
     "leemons-plugin-dataset": "0.0.1-beta.0",
@@ -46,9 +47,5 @@
     "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
     "leemons-provider-emails-smtp": "0.0.1-beta.0",
     "leemons-provider-emails-amazon-ses": "0.0.1-beta.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.4.0"
   }
 }

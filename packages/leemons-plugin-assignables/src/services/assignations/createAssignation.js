@@ -2,12 +2,20 @@ const _ = require('lodash');
 const dayjs = require('dayjs');
 dayjs.extend(require('dayjs/plugin/localeData'));
 const getAssignableInstance = require('../assignableInstance/getAssignableInstance');
-const {registerDates} = require('../dates');
-const {assignations} = require('../tables');
+const { registerDates } = require('../dates');
+const { assignations } = require('../tables');
 const registerGrade = require('../grades/registerGrade');
-const {validateAssignation} = require('../../helpers/validators/assignation');
+const { validateAssignation } = require('../../helpers/validators/assignation');
 
-async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjectIconUrl, userSession) {
+async function sendEmail(
+  instance,
+  userAgentByIds,
+  user,
+  classes,
+  btnUrl,
+  subjectIconUrl,
+  userSession
+) {
   try {
     /*
     const userAssignableInstances = await searchAssignableInstances(
@@ -24,7 +32,7 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjec
      */
 
     let date = null;
-    const options1 = {year: 'numeric', month: 'numeric', day: 'numeric'};
+    const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
     if (instance.dates.deadline) {
       const date1 = new Date(instance.dates.deadline);
       const dateTimeFormat2 = new Intl.DateTimeFormat(userAgentByIds[user].user.locale, options1);
@@ -34,34 +42,33 @@ async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjec
     leemons
       .getPlugin('emails')
       .services.email.sendAsEducationalCenter(
-      userAgentByIds[user].user.email,
-      'user-create-assignation',
-      userAgentByIds[user].user.locale,
-      {
-        instance,
-        classes,
-        btnUrl,
-        subjectIconUrl,
-        taskDate: date,
-        userSession
-      },
-      userAgentByIds[user].center.id
-    )
+        userAgentByIds[user].user.email,
+        'user-create-assignation',
+        userAgentByIds[user].user.locale,
+        {
+          instance,
+          classes,
+          btnUrl,
+          subjectIconUrl,
+          taskDate: date,
+          userSession,
+        },
+        userAgentByIds[user].center.id
+      )
       .then(() => {
         console.log(`Email enviado a ${userAgentByIds[user].email}`);
       })
       .catch((e) => {
         console.error(e);
       });
-  } catch (e) {
-  }
+  } catch (e) {}
 }
 
 module.exports = async function createAssignation(
   assignableInstanceId,
   users,
   options,
-  {userSession, transacting: t, ctx} = {}
+  { userSession, transacting: t, ctx } = {}
 ) {
   // TODO: Permissions like `task.${taskId}.instance.${instanceId}` to allow assignation removals and permissions changes
   return global.utils.withTransaction(
@@ -72,7 +79,7 @@ module.exports = async function createAssignation(
           users,
           ...options,
         },
-        {useRequired: true}
+        { useRequired: true }
       );
 
       // EN: Get the assignable instance, if not permissions, it will throw an error
@@ -90,8 +97,10 @@ module.exports = async function createAssignation(
         }),
       ]);
 
+      const comunicaServices = leemons.getPlugin('comunica').services;
       const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
       const classesData = await academicPortfolioServices.classes.classByIds(instance.classes, {
+        withTeachers: true,
         userSession,
         transacting,
       });
@@ -110,14 +119,14 @@ module.exports = async function createAssignation(
         _classes.length > 1
           ? `${hostname || ctx.request.header.origin}/public/assets/svgs/module-three.svg`
           : _classes[0].subject.icon.cover
-            ? (hostname || ctx.request.header.origin) +
+          ? (hostname || ctx.request.header.origin) +
             leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].subject.icon.id)
-            : null;
+          : null;
 
       subjectIconUrl = null;
 
       try {
-        const {indexable, classes, group, grades, timestamps, status, metadata} = options;
+        const { indexable, classes, group, grades, timestamps, status, metadata } = options;
 
         // EN: Create the assignation
         // ES: Crea la asignación
@@ -133,8 +142,37 @@ module.exports = async function createAssignation(
                 status,
                 metadata: JSON.stringify(metadata),
               },
-              {transacting}
+              { transacting }
             );
+
+            const roomsPromises = [];
+
+            _.forEach(_classes, ({ subject: { id: subjectId } }) => {
+              const teachers = [];
+              _.forEach(classesData, (data) => {
+                if (data.subject.id === subjectId) {
+                  _.forEach(data.teachers, (teacher) => {
+                    if (teacher.type === 'main-teacher')
+                      teachers.push(
+                        _.isString(teacher.teacher) ? teacher.teacher : teacher.teacher.id
+                      );
+                  });
+                }
+              });
+
+              roomsPromises.push(
+                comunicaServices.room.add(
+                  leemons.plugin.prefixPN(
+                    `subject|${subjectId}.assignation|${assignation.id}.userAgent|${user}`
+                  ),
+                  {
+                    userAgents: _.compact(_.uniq(teachers).concat(user)),
+                  }
+                )
+              );
+            });
+
+            await Promise.all(roomsPromises);
 
             sendEmail(
               instance,
@@ -153,7 +191,7 @@ module.exports = async function createAssignation(
                 'assignation',
                 assignation.id,
                 timestamps,
-                {transacting}
+                { transacting }
               );
             }
 
@@ -162,7 +200,7 @@ module.exports = async function createAssignation(
             if (!_.isEmpty(grades)) {
               assignation.grades = await Promise.all(
                 grades.map((grade) =>
-                  registerGrade({assignation: assignation.id, ...grade}, {transacting})
+                  registerGrade({ assignation: assignation.id, ...grade }, { transacting })
                 )
               );
             }

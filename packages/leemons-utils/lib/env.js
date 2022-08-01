@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   env: (key, defaultValue) => _.get(process.env, key, defaultValue),
-  generateEnv: (filename) =>
+  generateEnv: (filename, useProcessEnv = false) =>
     new Promise((resolve) => {
       let _filename = filename;
       if (!filename) {
@@ -19,12 +19,19 @@ module.exports = {
         if (exists) {
           fs.readFile(_filename)
             .then((file) => {
-              const config = dotenv.parse(file);
+              let config = dotenv.parse(file);
+
+              if (useProcessEnv) {
+                config = { ...process.env, ...config };
+              }
+
               resolve(config);
             })
             .catch(() => {
               throw new Error(`The .env file ${_filename} can not be read`);
             });
+        } else if (useProcessEnv) {
+          resolve({ ...process.env });
         } else {
           resolve({});
         }
