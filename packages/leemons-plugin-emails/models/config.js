@@ -5,11 +5,16 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
+    userAgent: {
+      type: 'string',
+      options: {
+        notNull: true,
+      },
+    },
     key: {
       type: 'string',
       options: {
         notNull: true,
-        unique: true,
       },
     },
     value: {

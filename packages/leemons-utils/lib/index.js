@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
+const cron = require('node-cron');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
 // const execa = require('execa');
@@ -88,6 +89,17 @@ module.exports = {
   sharp,
   getDiff,
   chalk,
+  cron: {
+    ...cron,
+    schedule: (cronReg, callback) => {
+      const schedule = cron.schedule(cronReg, callback);
+      leemons.events.once('appWillReload', async () => {
+        console.log('appWillReload');
+        schedule.stop();
+      });
+      return schedule;
+    },
+  },
   encrypt: (payload, secretKey) =>
     jwt.sign({ payload }, secretKey, {
       expiresIn: 60 * 60 * 24 * 365 * 9999, // 9999 years
