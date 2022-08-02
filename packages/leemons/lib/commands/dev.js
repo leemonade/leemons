@@ -125,6 +125,10 @@ async function setupBack(leemons) {
   });
 
   const handler = async () => {
+    if (leemons.events) {
+      leemons.events.emit('appWillReload');
+    }
+
     leemons.setEvents();
     // eslint-disable-next-line no-param-reassign
     leemons.backRouter.stack = [];
@@ -299,9 +303,13 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
       switch (message.message) {
         case 'kill':
-          leemons.server.destroy(() => {
-            process.send({ ...message, message: 'killed' });
+          leemons.events.once('appWillReload', () => {
+            leemons.server.destroy(() => {
+              process.send({ ...message, message: 'killed' });
+            });
           });
+          leemons.events.emit('appWillReload');
+
           break;
         case 'reload-back-front':
           (async () => {
