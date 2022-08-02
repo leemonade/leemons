@@ -380,7 +380,7 @@ class Leemons {
     });
 
     if (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) {
-      this.backRouter.get('/api/database/reload', async (ctx) => {
+      this.backRouter.get('/api/database/restore', async (ctx) => {
         try {
           await this.db.reloadDatabase();
 
