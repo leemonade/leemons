@@ -101,8 +101,8 @@ function initWidgets(isInstalled) {
 }
 
 async function events(isInstalled) {
-  const schedule = global.utils.cron.schedule('* * * * * *', () => {
-    console.log('running a task every second');
+  global.utils.cron.schedule('* * * * * *', () => {
+    console.log('running a task every pollas');
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
