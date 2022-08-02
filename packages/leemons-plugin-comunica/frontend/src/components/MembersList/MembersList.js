@@ -46,10 +46,10 @@ function MembersList({
       <Box className={classes.header}>
         <ActionButton icon={<RemoveIcon height={16} width={16} />} onClick={onClose} />
       </Box>
-      <Text role="productive" color="primary" stronger size="lg" className={classes.title}>
+      <Text role="productive" color="primary" stronger size="md" className={classes.title}>
         {t('members')}
       </Text>
-      <ActivityAccordion>
+      <ActivityAccordion compact>
         {profiles.map((profile) => (
           <ActivityAccordionPanel
             key={profile.id}
@@ -58,7 +58,7 @@ function MembersList({
           >
             <Box className={classes.userWrapper}>
               {userAgentsByProfile[profile.id].map((userAgent) => (
-                <UserDisplayItem {...userAgent} />
+                <UserDisplayItem {...userAgent} key={userAgent.id} />
               ))}
             </Box>
           </ActivityAccordionPanel>
