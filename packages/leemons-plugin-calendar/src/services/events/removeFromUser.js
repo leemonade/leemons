@@ -1,13 +1,13 @@
 const _ = require('lodash');
-const {table} = require('../tables');
+const { table } = require('../tables');
 const {
   getPermissionConfig: getPermissionConfigCalendar,
 } = require('../calendar/getPermissionConfig');
-const {getPermissionConfig: getPermissionConfigEvent} = require('./getPermissionConfig');
-const {detail: detailEvent} = require('./detail');
-const {detail: detailCalendar} = require('../calendar/detail');
-const {removeOrCancel} = require('./removeOrCancel');
-const {unGrantAccessUserAgentToEvent} = require('./unGrantAccessUserAgentToEvent');
+const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
+const { detail: detailEvent } = require('./detail');
+const { detail: detailCalendar } = require('../calendar/detail');
+const { removeOrCancel } = require('./removeOrCancel');
+const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEvent');
 
 /**
  * Add calendar with the provided key if not already exists
@@ -18,7 +18,7 @@ const {unGrantAccessUserAgentToEvent} = require('./unGrantAccessUserAgentToEvent
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeFromUser(userSession, id, {transacting: _transacting} = {}) {
+async function removeFromUser(userSession, id, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const userPlugin = leemons.getPlugin('users');
@@ -48,7 +48,7 @@ async function removeFromUser(userSession, id, {transacting: _transacting} = {})
          */
       ]);
 
-      console.log(eventPermission, permissionConfigEvent);
+      console.log(eventPermission);
 
       // ES: Si el usuario es owner del calendario o del evento entonces procedemos a
       // borrar/cancelar el evento por que tiene permiso para hacerlo
@@ -56,7 +56,7 @@ async function removeFromUser(userSession, id, {transacting: _transacting} = {})
         (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) ||
         (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0)
       ) {
-        return removeOrCancel(id, {forceDelete: true, transacting});
+        return removeOrCancel(id, { forceDelete: true, transacting });
       }
       // ES: Si el usuario tiene permiso para ver el evento y quiere borrarlo, le quitamos el permiso
       if (eventPermission && eventPermission.actionNames.indexOf('view') >= 0) {
@@ -71,4 +71,4 @@ async function removeFromUser(userSession, id, {transacting: _transacting} = {})
   );
 }
 
-module.exports = {removeFromUser};
+module.exports = { removeFromUser };
