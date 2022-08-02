@@ -125,10 +125,6 @@ async function setupBack(leemons) {
   });
 
   const handler = async () => {
-    if (leemons.events) {
-      leemons.events.emit('appWillReload');
-    }
-
     leemons.setEvents();
     // eslint-disable-next-line no-param-reassign
     leemons.backRouter.stack = [];
@@ -154,9 +150,21 @@ async function setupBack(leemons) {
      * connection and load back again
      */
     handler: async () => {
-      if (leemons.canReloadBackend) {
-        await handler();
-      }
+      return new Promise(async (resolve) => {
+        if (leemons.canReloadBackend) {
+          if (leemons.events) {
+            leemons.events.once('appWillReload', async () => {
+              await handler();
+              resolve();
+            });
+
+            leemons.events.emit('appWillReload');
+          } else {
+            await handler();
+            resolve();
+          }
+        }
+      });
     },
     logger: leemons.log,
   });
