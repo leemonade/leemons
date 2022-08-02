@@ -205,7 +205,7 @@ const SelectUserAgent = forwardRef(
     // EN: Allow the user to select the users to display
     // ES: Permite al usuario seleccionar los usuarios a mostrar
     useEffect(() => {
-      ( async () => {
+      (async () => {
         if (users) {
           if (users.length && users[0].name) {
             setUsersData(users);
@@ -230,7 +230,6 @@ const SelectUserAgent = forwardRef(
           setUsersData(null);
         }
       })();
-
     }, [users]);
 
     // EN: Initial search for the first render

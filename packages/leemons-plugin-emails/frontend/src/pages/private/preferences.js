@@ -1,4 +1,5 @@
 import React from 'react';
+import { isUndefined } from 'lodash';
 import {
   Alert,
   Box,
@@ -16,6 +17,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@emails/helpers/prefixPN';
 import { useStore } from '@common';
 import { Controller, useForm } from 'react-hook-form';
+import { getConfigRequest, saveConfigRequest } from '@emails/request';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -29,6 +33,7 @@ const ListPageStyles = createStyles((theme) => ({
 
 export default function Preferences() {
   const [t] = useTranslateLoader(prefixPN('preferences'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -36,13 +41,33 @@ export default function Preferences() {
     loading: true,
   });
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { watch, reset, control, getValues, setValue } = useForm();
 
-  async function load() {}
+  const disableEmail = watch('disable-all-activity-emails');
+  const newAssignations = watch('new-assignation-email');
+
+  async function load() {
+    try {
+      const { configs } = await getConfigRequest();
+      reset(configs);
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+  }
+
+  async function save() {
+    try {
+      store.saving = true;
+      render();
+      console.log(getValues());
+      await saveConfigRequest(getValues());
+      addSuccessAlert(t('settingsSaved'));
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+    store.saving = false;
+    render();
+  }
 
   React.useEffect(() => {
     load();
@@ -66,17 +91,39 @@ export default function Preferences() {
               <Controller
                 control={control}
                 name="disable-all-activity-emails"
-                render={({ field }) => <Switch label={t('disableAllActivityEmails')} {...field} />}
+                render={({ field }) => (
+                  <Switch
+                    {...field}
+                    label={t('disableAllActivityEmails')}
+                    onChange={(e) => {
+                      reset({
+                        'disable-all-activity-emails': e,
+                        'week-resume-email': false,
+                        'new-assignation-email': false,
+                        'new-assignation-timeout-email': false,
+                        'new-assignation-per-day-email': false,
+                      });
+                    }}
+                  />
+                )}
               />
               <Controller
                 control={control}
                 name="new-assignation-email"
                 render={({ field }) => (
                   <Checkbox
+                    {...field}
+                    disabled={disableEmail}
                     label={t('newAssignationEmail')}
                     help={t('newAssignationEmailDescription')}
                     helpPosition="bottom"
-                    {...field}
+                    checked={field.value}
+                    onChange={(e) => {
+                      if (!e) {
+                        setValue('new-assignation-per-day-email', false);
+                      }
+                      field.onChange(e);
+                    }}
                   />
                 )}
               />
@@ -86,31 +133,42 @@ export default function Preferences() {
                 render={({ field }) => (
                   <>
                     <Checkbox
+                      {...field}
+                      disabled={disableEmail}
                       label={t('weekResumeEmail')}
                       help={t('weekResumeEmailDescription')}
                       helpPosition="bottom"
-                      {...field}
+                      checked={!isUndefined(field.value) && field.value !== false}
+                      onChange={(e) => {
+                        field.onChange(e ? 1 : false);
+                      }}
                     />
-                    <Box
-                      sx={(theme) => ({
-                        marginLeft: theme.spacing[8],
-                        marginTop: -theme.spacing[4],
-                        marginBottom: theme.spacing[6],
-                        width: 125,
-                      })}
-                    >
-                      <Select
-                        data={[
-                          { label: t('sunday'), value: 0 },
-                          { label: t('monday'), value: 1 },
-                          { label: t('tuesday'), value: 2 },
-                          { label: t('wednesday'), value: 3 },
-                          { label: t('thursday'), value: 4 },
-                          { label: t('friday'), value: 5 },
-                          { label: t('saturday'), value: 6 },
-                        ]}
-                      />
-                    </Box>
+                    {field.value ? (
+                      <Box
+                        sx={(theme) => ({
+                          marginLeft: theme.spacing[8],
+                          marginTop: -theme.spacing[4],
+                          marginBottom: theme.spacing[6],
+                          width: 125,
+                        })}
+                      >
+                        <Select
+                          onChange={(e) => {
+                            field.onChange(e);
+                          }}
+                          value={field.value}
+                          data={[
+                            { label: t('sunday'), value: 0 },
+                            { label: t('monday'), value: 1 },
+                            { label: t('tuesday'), value: 2 },
+                            { label: t('wednesday'), value: 3 },
+                            { label: t('thursday'), value: 4 },
+                            { label: t('friday'), value: 5 },
+                            { label: t('saturday'), value: 6 },
+                          ]}
+                        />
+                      </Box>
+                    ) : null}
                   </>
                 )}
               />
@@ -125,27 +183,38 @@ export default function Preferences() {
                 render={({ field }) => (
                   <>
                     <Checkbox
+                      {...field}
+                      disabled={disableEmail || !newAssignations}
                       label={t('newAssignationDaysEmail')}
                       help={t('newAssignationDaysEmailDescription')}
                       helpPosition="bottom"
-                      {...field}
+                      checked={!isUndefined(field.value) && field.value !== false}
+                      onChange={(e) => {
+                        field.onChange(e ? 10 : false);
+                      }}
                     />
-                    <Box
-                      sx={(theme) => ({
-                        marginLeft: theme.spacing[8],
-                        marginTop: -theme.spacing[4],
-                        width: 125,
-                      })}
-                    >
-                      <Select
-                        data={[
-                          { label: t('ndays', { n: 10 }), value: 10 },
-                          { label: t('ndays', { n: 7 }), value: 7 },
-                          { label: t('ndays', { n: 5 }), value: 5 },
-                          { label: t('ndays', { n: 2 }), value: 2 },
-                        ]}
-                      />
-                    </Box>
+                    {field.value ? (
+                      <Box
+                        sx={(theme) => ({
+                          marginLeft: theme.spacing[8],
+                          marginTop: -theme.spacing[4],
+                          width: 125,
+                        })}
+                      >
+                        <Select
+                          onChange={(e) => {
+                            field.onChange(e);
+                          }}
+                          value={field.value}
+                          data={[
+                            { label: t('ndays', { n: 10 }), value: 10 },
+                            { label: t('ndays', { n: 7 }), value: 7 },
+                            { label: t('ndays', { n: 5 }), value: 5 },
+                            { label: t('ndays', { n: 2 }), value: 2 },
+                          ]}
+                        />
+                      </Box>
+                    ) : null}
                   </>
                 )}
               />
@@ -155,34 +224,47 @@ export default function Preferences() {
                 render={({ field }) => (
                   <>
                     <Checkbox
+                      {...field}
+                      disabled={disableEmail}
                       label={t('emailLastHour')}
                       help={t('emailLastHourDescription')}
                       helpPosition="bottom"
-                      {...field}
+                      checked={!isUndefined(field.value) && field.value !== false}
+                      onChange={(e) => {
+                        field.onChange(e ? 72 : false);
+                      }}
                     />
-                    <Box
-                      sx={(theme) => ({
-                        marginLeft: theme.spacing[8],
-                        marginTop: -theme.spacing[4],
-                        marginBottom: theme.spacing[6],
-                        width: 125,
-                      })}
-                    >
-                      <Select
-                        data={[
-                          { label: t('nhours', { n: 72 }), value: 72 },
-                          { label: t('nhours', { n: 48 }), value: 48 },
-                          { label: t('nhours', { n: 24 }), value: 24 },
-                        ]}
-                      />
-                    </Box>
+                    {field.value ? (
+                      <Box
+                        sx={(theme) => ({
+                          marginLeft: theme.spacing[8],
+                          marginTop: -theme.spacing[4],
+                          marginBottom: theme.spacing[6],
+                          width: 125,
+                        })}
+                      >
+                        <Select
+                          onChange={(e) => {
+                            field.onChange(e);
+                          }}
+                          value={field.value}
+                          data={[
+                            { label: t('nhours', { n: 72 }), value: 72 },
+                            { label: t('nhours', { n: 48 }), value: 48 },
+                            { label: t('nhours', { n: 24 }), value: 24 },
+                          ]}
+                        />
+                      </Box>
+                    ) : null}
                   </>
                 )}
               />
             </ContextContainer>
           </Box>
           <Stack justifyContent="end">
-            <Button>{t('savePreferences')}</Button>
+            <Button onClick={save} loading={store.saving}>
+              {t('savePreferences')}
+            </Button>
           </Stack>
         </ContextContainer>
       </PageContainer>

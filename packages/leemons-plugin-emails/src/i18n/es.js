@@ -29,5 +29,6 @@ module.exports = {
     sunday: 'Domingo',
     ndays: '{n} días',
     nhours: '{n} horas',
+    settingsSaved: 'Preferencias guardadas',
   },
 };

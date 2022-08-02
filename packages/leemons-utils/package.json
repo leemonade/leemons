@@ -34,6 +34,7 @@
     "metascraper-title": "^5.26.0",
     "metascraper-url": "^5.26.0",
     "metascraper-video": "^5.26.0",
+    "node-cron": "^3.0.1",
     "node-fetch": "2",
     "nodemailer": "^6.6.1",
     "object-hash": "^2.1.1",

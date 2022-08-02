@@ -27,5 +27,6 @@ module.exports = {
     sunday: 'Sunday',
     ndays: '{n} days',
     nhours: '{n} hours',
+    settingsSaved: 'Settings saved',
   },
 };
