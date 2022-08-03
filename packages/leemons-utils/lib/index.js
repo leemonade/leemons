@@ -93,14 +93,11 @@ module.exports = {
     ...cron,
     schedule: (cronReg, callback) => {
       let schedule = null;
-      leemons.events.once('appDidStart', () => {
-        console.log('Ha terminado de cargar feamos el cron');
+      leemons.events.once('appDidLoadBack', () => {
         schedule = cron.schedule(cronReg, callback);
       });
       leemons.events.once('appWillReload', () => {
-        console.log('Se va a borrar la app pramos el cron');
         if (schedule) {
-          console.log('Se va a borrar ');
           schedule.stop();
         }
       });

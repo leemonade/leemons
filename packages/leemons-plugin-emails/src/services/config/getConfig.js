@@ -43,4 +43,4 @@ async function getConfig(userAgent, { keys, transacting } = {}) {
   );
 }
 
-module.exports = { getConfig };
+module.exports = { getConfig, keysDefaults };

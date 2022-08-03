@@ -37,6 +37,9 @@ module.exports = {
     emailSended: {
       type: 'boolean',
     },
+    rememberEmailSended: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     name: 'id',
