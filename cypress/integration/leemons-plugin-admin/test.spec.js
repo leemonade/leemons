@@ -10,34 +10,33 @@ describe('Leemons tests', () => {
   // };
 
   describe('Leemons can be configured', () => {
-    // beforeEach(() => {
-    //   cy.visit('localhost:8080', {
-    //     onBeforeLoad(win) {
-    //       Object.defineProperty(win.navigator, 'language', {
-    //         value: 'en-EN',
-    //       });
-    //     },
-    //   });
-    // });
-
+    let labels = {};
+    beforeEach(() => {
+      cy.visitInEnglish('/');
+    });
+    const dataWelcome = '[data-cypress-id="welcome"]';
     it('Loads the installation page', () => {
-      cy.request('localhost:8080/api/database/restore');
+      cy.restoreDatabase();
       cy.url().should('include', '/admin/welcome');
-      // cy.get('h3').contains('Leemons installation');
+      cy.getTranslations('en').then((translations) => {
+        labels = translations;
+      });
+      cy.then(() => cy.get(`${dataWelcome} h3`).contains(labels.title));
     });
-
     it('Can change installation language', () => {
-      cy.get('.mantine-Select-wrapper input').click();
-      cy.get('.mantine-Select-item').contains('English').click();
-      cy.get('h3').contains('Leemons installation');
+      let spanishTranslations = {};
+      cy.get(`${dataWelcome} input`).last().click();
+      cy.get('[role="option"]').contains('Español').click();
+      cy.getTranslations('es').then((translations) => {
+        spanishTranslations = translations;
+      });
+      cy.then(() => cy.get(`${dataWelcome} h3`).contains(spanishTranslations.title));
     });
-
-    // it('Can advance to register', () => {
-    //   cy.get('.mantine-Button-filled').should('contain', 'Empezar instalación').click();
-    //   cy.url().should('include', '/admin/signup');
-    //   cy.get('h3').should('contain', 'Registro del Administrador');
-    // });
-
+    it('Can advance to register', () => {
+      cy.get(`${dataWelcome} button`).contains(labels.next).click();
+      cy.url().should('include', '/admin/signup');
+      // cy.get('h3').should('contain', 'Registro del Administrador');
+    });
     // it('Can register superadmin', () => {
     //   cy.get('[name="email"]').type('admin@admin.com');
     //   cy.get('[name="password"]').type('admin');
@@ -46,7 +45,6 @@ describe('Leemons tests', () => {
     //   cy.get('h2').contains('Instalación de Leemons');
     //   cy.url().should('include', '/admin/setup');
     // });
-
     // describe('Superadmin configuration', () => {
     //   it('Superadmin can login', () => {
     //     loginUser('admin@admin.com', 'admin');

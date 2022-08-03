@@ -23,3 +23,19 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('visitInEnglish', (url) => {
+  cy.visit(url, {
+    onBeforeLoad(win) {
+      Object.defineProperty(win.navigator, 'language', {
+        value: 'en-EN',
+      });
+    },
+  });
+});
+
+Cypress.Commands.add('getTranslations', (language) =>
+  cy.request(`/api/admin/i18n/welcome/${language}`).then(({ body }) => body.data[language].welcome)
+);
+
+Cypress.Commands.add('restoreDatabase', () => cy.request('/api/database/restore'));

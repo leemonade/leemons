@@ -39,7 +39,11 @@ const Welcome = () => {
 
   return (
     <HeroWrapper quote={{ q: t('welcome.quote.title'), a: t('welcome.quote.description') }}>
-      <ContextContainer title={t('welcome.title')} description={t('welcome.description')}>
+      <ContextContainer
+        title={t('welcome.title')}
+        description={t('welcome.description')}
+        data-cypress-id="welcome"
+      >
         <Select
           placeholder={t('welcome.selectLanguage')}
           value={state.lang}
