@@ -28,7 +28,14 @@ async function sendMessage(ctx) {
   ctx.body = { status: 200 };
 }
 
+async function markMessagesAsRead(ctx) {
+  await roomService.markAsRead(ctx.request.params.key, ctx.state.userSession.userAgents[0].id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
+  markMessagesAsRead,
   sendMessage,
   getMessages,
   getRoom,

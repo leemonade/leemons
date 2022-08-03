@@ -13,6 +13,10 @@ class RoomService {
     return RoomService.getRoomMessages(this.room);
   }
 
+  markRoomMessagesAsRead() {
+    return RoomService.markRoomMessagesAsRead(this.room);
+  }
+
   sendMessageToRoom(message) {
     return RoomService.sendMessageToRoom(this.room, message);
   }
@@ -41,6 +45,14 @@ class RoomService {
     const { messages } = await leemons.api(`comunica/room/${key}/messages`, {
       allAgents: true,
       method: 'GET',
+    });
+    return messages;
+  }
+
+  static async markRoomMessagesAsRead(key) {
+    const { messages } = await leemons.api(`comunica/room/${key}/messages/read`, {
+      allAgents: true,
+      method: 'POST',
     });
     return messages;
   }

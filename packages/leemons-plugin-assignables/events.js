@@ -101,6 +101,10 @@ function initWidgets(isInstalled) {
 }
 
 async function events(isInstalled) {
+  global.utils.cron.schedule('* * * * * *', () => {
+    console.log('running a task every pollas');
+  });
+
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });

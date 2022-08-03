@@ -363,5 +363,8 @@ module.exports = {
     ok: 'Successful',
     ko: 'Wrong',
     nsnc: 'NS/NC',
+    chatDescription: 'Do you have any questions about this evaluation?',
+    chatButtonStudent: 'Write to your student',
+    chatButtonTeacher: 'Write to your teacher',
   },
 };

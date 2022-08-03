@@ -23,7 +23,14 @@ import prefixPN from '@comunica/helpers/prefixPN';
 import { MembersList } from '../components';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
-function ChatDrawer({ room, opened, onClose = () => {} }) {
+function ChatDrawer({
+  room,
+  opened,
+  onClose = () => {},
+  onMessage = () => {},
+  onRoomLoad = () => {},
+  onMessagesMarkAsRead = () => {},
+}) {
   const { classes } = ChatDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatDrawer'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -32,6 +39,10 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
   const [store, render] = useStore({
     showMembers: false,
   });
+
+  function scrollToBottom() {
+    if (scrollRef.current) scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+  }
 
   async function load() {
     store.userAgent = getCentersWithToken()[0].userAgentId;
@@ -56,8 +67,9 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
     const profiles = uniqBy(userAgents, 'profile.id');
     store.profiles = map(profiles, 'profile');
     render();
+    onRoomLoad(store.room);
     setTimeout(() => {
-      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+      scrollToBottom();
     }, 10);
   }
 
@@ -85,133 +97,154 @@ function ChatDrawer({ room, opened, onClose = () => {} }) {
     }
   }, [room]);
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (opened) {
+        scrollToBottom();
+        store.service.markRoomMessagesAsRead();
+        onMessagesMarkAsRead();
+      }
+    }, 10);
+  }, [opened]);
+
   RoomService.watchRoom(room, (data) => {
-    let scrollToBottom = false;
-    const scrolled = scrollRef.current.scrollTop + scrollRef.current.clientHeight;
-    if (scrolled > scrollRef.current.scrollHeight - 50) {
-      scrollToBottom = true;
+    let _scrollToBottom = false;
+    if (scrollRef.current) {
+      const scrolled = scrollRef.current.scrollTop + scrollRef.current.clientHeight;
+      if (scrolled > scrollRef.current.scrollHeight - 50) {
+        _scrollToBottom = true;
+      }
     }
     store.messages.push({
       ...data,
       created_at: new Date(data.created_at),
     });
+    onMessage(data);
     render();
-    if (scrollToBottom) {
+
+    if (opened) {
+      store.service.markRoomMessagesAsRead();
+      onMessagesMarkAsRead();
+    }
+
+    if (_scrollToBottom) {
       setTimeout(() => {
-        scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+        if (scrollRef.current)
+          scrollRef.current.scrollTo({
+            top: scrollRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
       }, 10);
     }
   });
 
   return (
-    <>
-      <Drawer opened={opened} size={360} close={false} empty>
-        <MembersList
-          t={t}
-          userAgents={store.userAgents}
-          profiles={store.profiles}
-          opened={store.showMembers}
-          onClose={() => {
-            store.showMembers = false;
-            render();
-          }}
-        />
-        <Box className={classes.wrapper}>
-          <Box className={classes.chatWrapper}>
-            <Box className={classes.header}>
-              <UserDisplayItemList
-                limit={0}
-                notExpandable
-                expanded={store.showMembers}
-                onExpand={() => {
-                  store.showMembers = !store.showMembers;
-                  render();
-                }}
-                onShrink={() => {
-                  store.showMembers = !store.showMembers;
-                  render();
-                }}
-                data={store.userAgents}
-                labels={{
-                  showMore: t('showMore'),
-                  showLess: t('showLess'),
-                }}
-              />
-              <ActionButton onClick={onClose} icon={<MoveRightIcon width={16} height={16} />} />
-            </Box>
-            <Box ref={scrollRef} className={classes.messages}>
-              {store.messages &&
-                store.messages.map((message, index) => {
-                  const comp = [];
-                  let forceUserImage = false;
-                  const day = new Date(message.created_at).toLocaleDateString(locale, {
-                    weekday: 'short',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
-                  if (index === 0 || store.lastDay !== day) {
-                    store.lastDay = day;
-                    forceUserImage = true;
-                    comp.push(
-                      <Box className={classes.date} key={`date-${index}`}>
-                        <Badge label={day} closable={false} size="md" />
-                      </Box>
-                    );
-                  }
-                  comp.push(
-                    <Box
-                      sx={(theme) => ({
-                        marginTop:
-                          index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
-                            ? theme.spacing[4]
-                            : 0,
-                      })}
-                    >
-                      <ChatMessage
-                        key={message.id}
-                        showUser={
-                          forceUserImage || index === 0
-                            ? true
-                            : store.messages[index - 1].userAgent !== message.userAgent
-                        }
-                        isOwn={message.userAgent === store.userAgent}
-                        user={store.userAgentsById[message.userAgent]}
-                        message={{ ...message.message, date: message.created_at }}
-                      />
-                    </Box>
-                  );
-                  return comp;
-                })}
-            </Box>
-            <Box className={classes.sendMessage}>
-              {/*  <IconButton
+    <Drawer opened={opened} size={360} close={false} empty>
+      <MembersList
+        t={t}
+        userAgents={store.userAgents}
+        profiles={store.profiles}
+        opened={store.showMembers}
+        onClose={() => {
+          store.showMembers = false;
+          render();
+        }}
+      />
+      <Box className={classes.wrapper}>
+        <Box className={classes.header}>
+          <UserDisplayItemList
+            limit={0}
+            notExpandable
+            expanded={store.showMembers}
+            onExpand={() => {
+              store.showMembers = !store.showMembers;
+              render();
+            }}
+            onShrink={() => {
+              store.showMembers = !store.showMembers;
+              render();
+            }}
+            data={store.userAgents}
+            labels={{
+              showMore: t('showMore'),
+              showLess: t('showLess'),
+            }}
+          />
+          <ActionButton onClick={onClose} icon={<MoveRightIcon width={16} height={16} />} />
+        </Box>
+        <Box ref={scrollRef} className={classes.messages}>
+          {store.messages &&
+            store.messages.map((message, index) => {
+              const comp = [];
+              let forceUserImage = false;
+              const day = new Date(message.created_at).toLocaleDateString(locale, {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              });
+              if (index === 0 || store.lastDay !== day) {
+                store.lastDay = day;
+                forceUserImage = true;
+                comp.push(
+                  <Box className={classes.date} key={`date-${index}`}>
+                    <Badge label={day} closable={false} size="md" />
+                  </Box>
+                );
+              }
+              comp.push(
+                <Box
+                  key={message.id}
+                  sx={(theme) => ({
+                    marginTop:
+                      index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                        ? theme.spacing[4]
+                        : 0,
+                  })}
+                >
+                  <ChatMessage
+                    showUser={
+                      forceUserImage || index === 0
+                        ? true
+                        : store.messages[index - 1].userAgent !== message.userAgent
+                    }
+                    isOwn={message.userAgent === store.userAgent}
+                    user={store.userAgentsById[message.userAgent]}
+                    message={{ ...message.message, date: message.created_at }}
+                  />
+                </Box>
+              );
+              return comp;
+            })}
+        </Box>
+        <Box className={classes.sendMessage}>
+          {/*  <IconButton
                 icon={<AddCircleIcon height={16} width={16} className={classes.addIcon} />}
                 rounded
               /> */}
 
-              <Textarea
-                value={store.newMessage}
-                minRows={1}
-                name="message"
-                placeholder={t('writeNewMessage')}
-                className={classes.textarea}
-                onChange={(e) => {
-                  store.newMessage = e;
-                  render();
-                }}
-              />
-              <IconButton
-                onClick={sendMessage}
-                icon={<SendMessageIcon />}
-                color="primary"
-                rounded
-              />
-            </Box>
-          </Box>
+          <Textarea
+            value={store.newMessage}
+            minRows={1}
+            name="message"
+            placeholder={t('writeNewMessage')}
+            className={classes.textarea}
+            onKeyPress={(e) => {
+              if (e.code === 'Enter' || e.charCode === 13) {
+                sendMessage();
+                e.stopPropagation();
+                e.preventDefault();
+              }
+            }}
+            onChange={(e) => {
+              store.newMessage = e;
+              render();
+            }}
+          />
+          <IconButton onClick={sendMessage} icon={<SendMessageIcon />} color="primary" rounded />
         </Box>
-      </Drawer>
-    </>
+      </Box>
+    </Drawer>
   );
 }
 
@@ -219,6 +252,9 @@ ChatDrawer.propTypes = {
   room: PropTypes.string,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
+  onMessage: PropTypes.func,
+  onRoomLoad: PropTypes.func,
+  onMessagesMarkAsRead: PropTypes.func,
 };
 
 export { ChatDrawer };

@@ -33,6 +33,9 @@ module.exports = {
       }
       */
     },
+    count: {
+      type: 'integer',
+    },
   },
   primaryKey: {
     type: 'uuid',

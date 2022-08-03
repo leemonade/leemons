@@ -46,4 +46,16 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions('plugins.admin.setup', ['admin']),
   },
+  {
+    path: '/config',
+    method: 'GET',
+    handler: 'config.getConfig',
+    authenticated: true,
+  },
+  {
+    path: '/config',
+    method: 'POST',
+    handler: 'config.saveConfig',
+    authenticated: true,
+  },
 ];

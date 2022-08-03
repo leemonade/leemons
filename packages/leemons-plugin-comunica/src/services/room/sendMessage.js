@@ -8,14 +8,13 @@ const {
 } = require('../../validations/exists');
 
 async function setMessageUnRead(key, userAgentId, message, { transacting } = {}) {
-  const count = await table.roomMessagesUnRead.count(
+  const item = await table.roomMessagesUnRead.findOne(
     {
       room: key,
       userAgent: userAgentId,
     },
     { transacting }
   );
-  if (count) return null;
   return table.roomMessagesUnRead.set(
     {
       room: key,
@@ -25,6 +24,7 @@ async function setMessageUnRead(key, userAgentId, message, { transacting } = {})
       room: key,
       userAgent: userAgentId,
       message,
+      count: item && item.count ? item.count + 1 : 1,
     },
     { transacting }
   );

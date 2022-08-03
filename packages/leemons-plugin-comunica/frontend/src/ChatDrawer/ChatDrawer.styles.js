@@ -1,26 +1,28 @@
 import { createStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
-export const ChatDrawerStyles = createStyles((theme, {}) => ({
+export const ChatDrawerStyles = createStyles((theme) => ({
   wrapper: {
     position: 'relative',
     zIndex: 9999,
     display: 'flex',
     height: '100%',
     justifyContent: 'end',
+    borderLeft: `1px solid ${theme.colors.ui01}`,
+    width: 360,
+    flexDirection: 'column',
   },
   header: {
     padding: 16,
     display: 'flex',
     justifyContent: 'space-between',
-    width: 360,
     backgroundColor: theme.colors.mainWhite,
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
+    zIndex: 2,
   },
   chatWrapper: {
-    borderLeft: `1px solid ${theme.colors.ui01}`,
     height: '100%',
     display: 'flex',
-    flexDirection: 'column',
   },
   messages: {
     backgroundColor: theme.colors.ui03,
@@ -42,6 +44,7 @@ export const ChatDrawerStyles = createStyles((theme, {}) => ({
     paddingBlock: 16,
     gap: 8,
     backgroundColor: theme.colors.mainWhite,
+    boxShadow: '0px -4px 8px rgba(0, 0, 0, 0.15)',
   },
   textarea: {
     flex: 1,
