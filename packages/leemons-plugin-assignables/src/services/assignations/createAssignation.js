@@ -64,6 +64,18 @@ async function sendEmail(
   } catch (e) {}
 }
 
+async function checkIfStudentIsOnInstance(user, instance) {
+  const assignationsCount = await assignations.count(
+    {
+      instance,
+      user,
+    },
+    { column: ['id'] }
+  );
+
+  return assignationsCount > 0;
+}
+
 module.exports = async function createAssignation(
   assignableInstanceId,
   users,
@@ -132,6 +144,16 @@ module.exports = async function createAssignation(
         // ES: Crea la asignación
         return await Promise.all(
           users.map(async (user) => {
+            const isOnInstance = await checkIfStudentIsOnInstance(user, assignableInstanceId, {
+              userSession,
+              transacting,
+            });
+
+            if (isOnInstance) {
+              throw new Error(
+                `The student ${user} is already assigned to instance ${assignableInstanceId}`
+              );
+            }
             const assignation = await assignations.create(
               {
                 instance: assignableInstanceId,

@@ -71,6 +71,9 @@ const assignableInstanceValidationObject = {
         },
       },
     },
+    addNewClassStudents: {
+      type: 'boolean',
+    },
     metadata: {
       type: 'object',
     },

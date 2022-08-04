@@ -327,14 +327,18 @@ export default function Form({
                 assignee: field.value,
                 type: defaultValues?.assignStudents?.type,
                 subjects: defaultValues?.assignStudents?.subjects,
-                assignmentSetup: defaultValues?.assignStudents?.assignmentSetup,
+                assignmentSetup: {
+                  ...defaultValues?.assignStudents?.assignmentSetup,
+                  addNewClassStudents: defaultValues?.addNewClassStudents || false,
+                },
               }}
               onChange={(value) => {
                 field.onChange(value.assignee);
+                setValue('addNewClassStudents', value?.assignmentSetup?.addNewClassStudents);
                 setValue('assignStudents', {
                   subjects: value.subjects,
                   type: value.type,
-                  assignmentSetup: value.assignmentSetup,
+                  assignmentSetup: _.omit(value.assignmentSetup, ['addNewClassStudents']),
                 });
               }}
             />

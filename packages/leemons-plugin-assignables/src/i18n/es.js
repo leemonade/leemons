@@ -34,6 +34,7 @@ module.exports = {
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
+      addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
       clearStudents: 'Borrar estudiantes',
       subjects: {
         title: 'Asignaturas que se evaluarán en esta actividad',
