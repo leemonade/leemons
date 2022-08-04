@@ -42,13 +42,13 @@ module.exports = {
       },
     },
     adminDrawer: {
-      title: 'Periodos de evaluación',
+      title: 'Periodos de Evaluación',
       description:
         'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
       new: 'Nuevo periodo',
     },
     teacherDrawer: {
-      title: 'Cuaderno de evaluación',
+      title: 'Cuaderno de Evaluación',
       description:
         'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
       new: 'Establecer periodo',
@@ -84,7 +84,7 @@ module.exports = {
       export: 'Exportar notas a',
     },
     noClassSelected: {
-      title: 'Cuaderno de evaluación',
+      title: 'Cuaderno de Evaluación',
       description:
         'El cuaderno de evaluación te permiten evaluar las actividades calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
     },
