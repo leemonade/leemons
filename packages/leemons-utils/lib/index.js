@@ -92,10 +92,14 @@ module.exports = {
   cron: {
     ...cron,
     schedule: (cronReg, callback) => {
-      const schedule = cron.schedule(cronReg, callback);
-      leemons.events.once('appWillReload', async () => {
-        console.log('appWillReload');
-        schedule.stop();
+      let schedule = null;
+      leemons.events.once('appDidLoadBack', () => {
+        schedule = cron.schedule(cronReg, callback);
+      });
+      leemons.events.once('appWillReload', () => {
+        if (schedule) {
+          schedule.stop();
+        }
       });
       return schedule;
     },

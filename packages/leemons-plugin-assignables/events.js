@@ -4,6 +4,7 @@ const addMenuItems = require('./src/services/menu-builder/add');
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
 const { afterRemoveClassesTeachers } = require('./src/services/events/afterRemoveClassesTeachers');
 const { afterAddClassTeacher } = require('./src/services/events/afterAddClassTeacher');
+const { sendRememberEmails } = require('./src/services/events/sendRememberEmail');
 
 async function initEmails() {
   await leemons
@@ -101,9 +102,16 @@ function initWidgets(isInstalled) {
 }
 
 async function events(isInstalled) {
-  const schedule = global.utils.cron.schedule('* * * * * *', () => {
-    console.log('running a task every second');
+  global.utils.cron.schedule('0 * * * *', () => {
+    console.log('running a task every miau');
   });
+
+  /*
+  leemons.events.once('appDidLoadBack', () => {
+    sendRememberEmails();
+  });
+
+   */
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
