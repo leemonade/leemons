@@ -4,12 +4,6 @@ const getAsset = require('../leebrary/assets/getAsset');
 
 const intlOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
 
-function diffHours(dt2, dt1) {
-  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
-  diff /= 60 * 60;
-  return Math.abs(Math.round(diff));
-}
-
 async function sendRememberEmails() {
   // eslint-disable-next-line global-require
   const table = require('../tables');
@@ -118,11 +112,10 @@ async function sendRememberEmails() {
     );
 
     // Nos recorremos las asignaciones y comprobamos si el usuario quiere que se le mande el email de recordatorio y si falta el tiempo que ha especificado
-    const promises = [];
     _.forEach(assignations, (assignation) => {
       const userAgentHours = userAgents[assignation.user];
       const instanceDate = dateByInstanceId[assignation.instance];
-      const hours = diffHours(now, new Date(instanceDate));
+      const hours = global.utils.diffHours(now, new Date(instanceDate));
       // Si el usuario quiere que se le mande el email de recordatorio y falta menos tiempo del que el usuario quiere que se le avise se le mande email
       if (userAgentHours && hours <= userAgentHours) {
         const instance = instanceById[assignation.instance];

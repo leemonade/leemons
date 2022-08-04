@@ -45,6 +45,12 @@ squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   return _.isArray(value) || _.isObject(value) ? `-*-*-${JSON.stringify(value)}-*-*-` : value;
 });
 
+function diffHours(dt2, dt1) {
+  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= 60 * 60;
+  return Math.abs(Math.round(diff));
+}
+
 module.exports = {
   env,
   getModel,
@@ -112,4 +118,5 @@ module.exports = {
     const { payload } = jwt.verify(token, secretKey);
     return payload;
   },
+  diffHours,
 };
