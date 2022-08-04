@@ -1,4 +1,5 @@
 const newActivity = require('./emails/userCreateAssignation');
+const rememberActivityTimeout = require('./emails/userRememberAssignationTimeout');
 const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
@@ -26,6 +27,25 @@ async function initEmails() {
       leemons.getPlugin('emails').services.email.types.active
     );
   leemons.events.emit('init-email-recover-password');
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-remember-assignation-timeout',
+      'es',
+      'Esta actividad finaliza pronto',
+      rememberActivityTimeout.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-remember-assignation-timeout',
+      'en',
+      'This activity ends soon',
+      rememberActivityTimeout.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
   leemons.events.emit('init-emails');
 }
 
@@ -103,15 +123,12 @@ function initWidgets(isInstalled) {
 
 async function events(isInstalled) {
   global.utils.cron.schedule('0 * * * *', () => {
-    console.log('running a task every miau');
-  });
-
-  /*
-  leemons.events.once('appDidLoadBack', () => {
     sendRememberEmails();
   });
 
-   */
+  leemons.events.once('appDidLoadBack', () => {
+    sendRememberEmails();
+  });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);

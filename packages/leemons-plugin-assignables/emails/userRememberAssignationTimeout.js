@@ -150,7 +150,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                         "
                   >
                     <div
-                      style="width: 100%; height: 180px; position: relative; background-size: cover; background-image: url('{{ it.instance.assignable.asset.url }}')"
+                      style="width: 100%; height: 180px; position: relative; background-size: cover; background-image: url('{{ it.asset.url }}')"
                     >
                       <div style="display: flex;height: 100%">
                         <div
@@ -178,27 +178,6 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                             >
                               <div
                                 style="
-                                    display: inline;
-                                    width: fit-content;
-                                    padding: 4px 8px;
-                                    background-color: white;
-                                    border-radius: 4px;
-                                    font-size: 13px;
-                                    margin-bottom: 8px;
-                                  "
-                              >
-                                  <span
-                                    style="
-                                      font-family: 'Inter', Verdana, sans-serif;
-                                      font-size: 16px;
-                                      line-height: 20px;
-                                      color: #212b3d;
-                                    "
-                                  >${texts.new}</span
-                                  >
-                              </div>
-                              <div
-                                style="
                                     display: flex;
                                     gap: 8px;
                                     margin-top: 8px;
@@ -206,29 +185,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                     align-items: center;
                                   "
                               >
-                                <div
-                                  style="
-                                      height: 20px;
-                                      width: 20px;
-                                      border-radius: 50%;
-                                      text-align: center;
-                                        line-height: 20px;
-                                      {{ @if (it.classes.length === 1) }}
-                                        background-color: {{ it.classes[0].color }};
-                                      {{ #else }}
-                                        background-color: #67728E;
-                                      {{ /if}}
 
-                                    "
-                                >
-
-                                {{ @if (it.subjectIconUrl) }}
-                                        <img src="{{it.subjectIconUrl}}" width="13px" height="13px" style="filter: brightness(0) invert(1)" />
-                                      {{ #else }}
-
-                                      {{ /if}}
-
-</div>
                                 <span
                                   style="
                                       font-family: 'Inter', Verdana, sans-serif;
@@ -256,7 +213,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                     margin-top: 8px;
 
                                   "
-                              >{{it.instance.assignable.asset.name}}</span>
+                              >{{it.asset.name}}</span>
                             </div>
                           </div>
                         </div>
@@ -276,9 +233,9 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 font-size: 12px;
                                 line-height: 20px;
                                 font-weight: 600;
-                                color: #31753b;
+                                color: #d13b3b;
                               "
-                          >${texts.startActivity}
+                          >${texts.expDays}
                           </div
                           >
                           {{ @if (it.taskDate) }}
@@ -304,97 +261,14 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                               line-height: 16.5px;
                               color: #5b6577;
                             "
-                          >{{ @if (it.instance.assignable.asset.description) }}
-                             {{ it.instance.assignable.asset.description }}
+                          >{{ @if (it.asset.description) }}
+                             {{ it.asset.description }}
                            {{ /if}}</span>
                     </div>
                   </div>
                 </td>
               </tr>
-              <!-- TABLA -->
-              <!--
-              <tr>
-                <td
-                  align="center"
-                  style="padding-top: 16px; padding-inline: 38.5px"
-                >
-                  <div
-                    style="
-                          text-align: start;
-                        "
-                  >
-                        <span
-                          style="
-                            padding: 5px 16px 8px;
-                            font-family: 'Inter', Verdana, sans-serif;
-                            font-size: 14px;
-                            line-height: 24px;
-                            font-weight: 600;
-                            color: #212b3d;
-                          "
-                        >${texts.upcomingDeliveries}</span
-                        >
-                    <div
-                      style="
-                            display: flex;
-                            padding: 6px 16px;
-                            align-items: center;
-                            border-top: 2px solid #edeff5;
-                          "
-                    >
-                      <div style="border: 1px solid #b9bec4">
-                        <img
-                          height="36"
-                          width="36"
-                          src="https://s3-alpha-sig.figma.com/img/842e/8ea2/8cb71140175199e85bf9e5d1bb9a3ef9?Expires=1657497600&Signature=BntaTMnqhCV-5JBiDDH6Elf8cPPKCzIvdrpsdavwbFpne~GIGDhj9CuU8frsVEUoFQFpqh9TQBO9pwEHJERuGJf9A1doN1FF~t1nae4MTOag2V6OB1yA63vivZqckVYpW6JClPXQ1cZ6wuVbNiUf3orYBx9IfLBkDiif07opmITVrJqnaxZkVA5P9--FtkBCir4o-j1PGltVV9Olf6dsc9j~BxrRNPup8BIeWFSr82OfnV6TMaRUjh8mXuLuRjo64UQFOjKQ5B4fVJ9UnJHcq-voSqkqL01lp6pGr1Y37GgWgPdPK-~5FKyDIFkLda~E5sVW4j1SxE1okOd2EnDe-Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"
-                        />
-                      </div>
-                      <span
-                        style="
-                              margin-left: 8px;
-                              font-family: 'Inter', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              color: #212b3d;
-                            "
-                      >La historia detrás del cuadro</span
-                      >
-                      <div
-                        style="
-                              margin-left: 10px;
-                              height: 26px;
-                              width: 26px;
-                              border-radius: 50%;
-                              background-color: #37a1a8;
-                            "
-                      ></div>
-                      <span
-                        style="
-                              margin-left: 16px;
-                              font-family: 'Inter', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              color: #212b3d;
-                            "
-                      >2ºA</span
-                      >
-                      <span
-                        style="
-                              margin-left: 25px;
-                              font-family: 'Lexend', Verdana, sans-serif;
-                              font-size: 14px;
-                              line-height: 24px;
-                              font-weight: 500;
-                              color: #d13b3b;
-                            "
-                      >${texts.expDays}</span
-                      >
-                    </div>
 
-                  </div>
-                </td>
-              </tr>
-              -->
               <!-- BOTON -->
               <tr>
                 <td
@@ -512,34 +386,28 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
 
 module.exports = {
   es: activity(
-    'Tienes una nueva actividad pendiente',
+    'Esta actividad finaliza pronto',
     'Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.',
     'Revisar mis actividades',
     'Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.',
     'Enviado por {{it.__from}}',
     '', // Política de privacidad
     {
-      new: 'NUEVA',
       delivery: 'Entrega',
-      startActivity: 'Empezar actividad',
-      upcomingDeliveries: 'Próximas entregas',
-      expDays: 'dentro de {{it.days}} días',
+      expDays: 'Dentro de {{it.hours}} horas',
       multiSubjects: 'Multi-Asignatura',
     }
   ),
   en: activity(
-    'You have a new pending activity',
+    'This activity ends soon',
     "This information may have changed, always check your current activities so you don't miss anything.",
     'Review my activities',
     'You can change your email preferences from your user account',
     'Sent to {{it.__from}}',
     '', // Privacy policy
     {
-      new: 'NEW',
       delivery: 'Delivery',
-      startActivity: 'Start activity',
-      upcomingDeliveries: 'Upcoming deliveries',
-      expDays: 'within {{it.days}} days',
+      expDays: 'In {{it.hours}} horas',
       multiSubjects: 'Multi-Subject',
     }
   ),
