@@ -66,6 +66,7 @@
           "@menu-builder",
           "@multilanguage",
           "@package-manager",
+          "@scores",
           "@socket-io",
           "@tasks",
           "@tests",
