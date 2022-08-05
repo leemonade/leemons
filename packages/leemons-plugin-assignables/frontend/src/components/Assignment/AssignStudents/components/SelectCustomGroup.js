@@ -14,7 +14,9 @@ export default function SelectCustomGroup({
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
-      showToStudents: true,
+      showToStudents: value?.[0]?.showToStudents === undefined ? true : value?.[0]?.showToStudents,
+      name: value?.[0]?.name,
+      assignees: value?.[0]?.students || [],
     },
   });
 

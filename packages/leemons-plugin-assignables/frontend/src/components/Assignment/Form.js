@@ -233,6 +233,15 @@ export default function Form({
         requiresScoring: defaultValues?.requiresScoring,
         allowFeedback: defaultValues?.allowFeedback,
       },
+      dates: defaultValues?.dates
+        ? Object.entries(defaultValues?.dates).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: value ? new Date(value) : null,
+            }),
+            {}
+          )
+        : {},
     },
   });
 
@@ -314,6 +323,20 @@ export default function Form({
               labels={labels}
               modes={modes}
               assignTo={assignTo}
+              defaultValue={{
+                assignee: field.value,
+                type: defaultValues?.assignStudents?.type,
+                subjects: defaultValues?.assignStudents?.subjects,
+                assignmentSetup: defaultValues?.assignStudents?.assignmentSetup,
+              }}
+              onChange={(value) => {
+                field.onChange(value.assignee);
+                setValue('assignStudents', {
+                  subjects: value.subjects,
+                  type: value.type,
+                  assignmentSetup: value.assignmentSetup,
+                });
+              }}
             />
           )}
         />
@@ -336,6 +359,7 @@ export default function Form({
           render={({ field: alwaysOpenField }) => (
             <ConditionalInput
               {...alwaysOpenField}
+              initialValue={!!defaultValues?.alwaysAvailable}
               label={labels?.alwaysOpenToogle}
               showOnTrue={false}
               render={() => (
@@ -392,6 +416,7 @@ export default function Form({
                   <Grid>
                     <Grid.Col span={6}>
                       <ConditionalInput
+                        initialValue={!!defaultValues?.dates?.visualization}
                         label={labels?.visualizationDateToogle}
                         help={descriptions?.visualizationDate}
                         render={() => (
@@ -443,6 +468,7 @@ export default function Form({
                       </Box>
                       <ConditionalInput
                         label={`${labels?.closeDateToogle}\n `}
+                        initialValue={!!defaultValues?.dates?.close}
                         help={descriptions?.closeDateToogle}
                         render={() => (
                           <ContextContainer direction="row" alignItems="end">
@@ -479,6 +505,7 @@ export default function Form({
         <ConditionalInput
           label={labels?.limitedExecutionToogle}
           help={descriptions?.limitedExecution}
+          initialValue={!!defaultValues?.duration}
           render={() => (
             <Controller
               control={control}
@@ -498,6 +525,7 @@ export default function Form({
         <ConditionalInput
           label={labels?.messageToStudentsToogle}
           help={descriptions?.messageToStudents}
+          initialValue={!!defaultValues?.messageToAssignees}
           render={() => (
             <Controller
               control={control}
@@ -523,6 +551,7 @@ export default function Form({
             render={({ field: showField }) => (
               <ConditionalInput
                 {...showField}
+                // TODO: Initial show if curriculum selected
                 label={labels?.showCurriculumToogle}
                 render={
                   () =>
@@ -624,4 +653,5 @@ Form.propTypes = {
   watch: PropTypes.func,
   control: PropTypes.object,
   curriculumFields: PropTypes.object,
+  defaultValues: PropTypes.object,
 };
