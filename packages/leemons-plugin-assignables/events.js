@@ -146,10 +146,13 @@ async function events(isInstalled) {
   global.utils.cron.schedule('0 * * * *', () => {
     sendRememberEmails();
   });
+  global.utils.cron.schedule('0 10 * * *', () => {
+    sendWeeklyEmails();
+  });
 
   leemons.events.once('appDidLoadBack', () => {
     sendRememberEmails();
-    sendWeeklyEmails();
+    // sendWeeklyEmails();
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
