@@ -34,8 +34,18 @@ Cypress.Commands.add('visitInEnglish', (url) => {
   });
 });
 
-Cypress.Commands.add('getTranslations', (language) =>
+Cypress.Commands.add('getWelcomeTranslations', (language) =>
   cy.request(`/api/admin/i18n/welcome/${language}`).then(({ body }) => body.data[language].welcome)
+);
+
+Cypress.Commands.add('getTranslations', (keysStartsWith, locale = 'en-EN') =>
+  cy
+    .request('POST', '/api/multilanguage/common/logged', {
+      keys: null,
+      keysStartsWith,
+      locale,
+    })
+    .then(({ body }) => body.items)
 );
 
 Cypress.Commands.add('restoreDatabase', () => cy.request('/api/database/restore'));

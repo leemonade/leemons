@@ -1,75 +1,132 @@
-describe('Leemons tests', () => {
-  // const loginUser = (user, password) => {
-  //   cy.session([user, password], () => {
-  //     cy.visit('localhost:8080');
-  //     cy.get('[name="email"]').type(user);
-  //     cy.get('[name="password"]').type(password);
-  //     cy.get('.mantine-Button-root').contains('Entrar').click();
-  //     cy.url().should('include', '/admin/setup');
-  //   });
-  // };
+import tLoader from '../../../packages/leemons-plugin-multilanguage/frontend/src/helpers/tLoader';
 
-  describe('Leemons can be configured', () => {
-    let labels = {};
+const loginUser = (user, password, selector, expectedUrl) => {
+  cy.session([user, password], () => {
+    cy.visitInEnglish('/');
+    cy.get(`${selector} [name="email"]`).type(user);
+    cy.get(`${selector} [name="password"]`).type(password);
+    cy.get(`${selector} [type="submit"]`).click();
+    cy.url().should('include', expectedUrl);
+    cy.getCookie('token').should('exist');
+  });
+};
+
+const advanceWelcomeStep = () => {
+  cy.visitInEnglish('/');
+  cy.get('[data-cypress-id="nextButton"]').click();
+};
+
+describe('leemons-plugin-admin tests', () => {
+  describe('Admin can signup', () => {
+    const dataWelcome = '[data-cypress-id="welcome"]';
+    const dataSignup = '[data-cypress-id="signupForm"]';
+    let englishWelcomeTranslations = {};
+    let spanishWelcomeTranslations = {};
+
+    before(() => {
+      Cypress.session.clearAllSavedSessions();
+      cy.restoreDatabase();
+      cy.getWelcomeTranslations('en').then((translations) => {
+        englishWelcomeTranslations = translations;
+      });
+      cy.getWelcomeTranslations('es').then((translations) => {
+        spanishWelcomeTranslations = translations;
+      });
+    });
+
     beforeEach(() => {
       cy.visitInEnglish('/');
     });
-    const dataWelcome = '[data-cypress-id="welcome"]';
+
     it('Loads the installation page', () => {
-      cy.restoreDatabase();
+      cy.visitInEnglish('/');
       cy.url().should('include', '/admin/welcome');
-      cy.getTranslations('en').then((translations) => {
-        labels = translations;
-      });
-      cy.then(() => cy.get(`${dataWelcome} h3`).contains(labels.title));
+      cy.get(`${dataWelcome} h3`).contains(englishWelcomeTranslations.title).should('be.visible');
     });
+
     it('Can change installation language', () => {
-      let spanishTranslations = {};
       cy.get(`${dataWelcome} input`).last().click();
       cy.get('[role="option"]').contains('Español').click();
-      cy.getTranslations('es').then((translations) => {
-        spanishTranslations = translations;
-      });
-      cy.then(() => cy.get(`${dataWelcome} h3`).contains(spanishTranslations.title));
+      cy.get(`${dataWelcome} h3`).contains(spanishWelcomeTranslations.title).should('be.visible');
     });
+
     it('Can advance to register', () => {
-      cy.get(`${dataWelcome} button`).contains(labels.next).click();
+      cy.get(`${dataWelcome} button`).contains(englishWelcomeTranslations.next).click();
       cy.url().should('include', '/admin/signup');
-      // cy.get('h3').should('contain', 'Registro del Administrador');
     });
-    // it('Can register superadmin', () => {
-    //   cy.get('[name="email"]').type('admin@admin.com');
-    //   cy.get('[name="password"]').type('admin');
-    //   cy.get('[name="repeatPassword"]').type('admin');
-    //   cy.get('.mantine-Button-root').click();
-    //   cy.get('h2').contains('Instalación de Leemons');
-    //   cy.url().should('include', '/admin/setup');
-    // });
-    // describe('Superadmin configuration', () => {
-    //   it('Superadmin can login', () => {
-    //     loginUser('admin@admin.com', 'admin');
-    //   });
-    //   it('Superadmin can configure organization', () => {
-    //     loginUser('admin@admin.com', 'admin');
-    //     cy.visit('localhost:8080/private/admin/setup');
-    //     cy.contains('Configuración de la plataforma');
-    //     cy.get('.mantine-Button-root').contains('Continuar').click();
-    //     cy.contains('URL de la organización');
-    //     cy.get('[name="name"]').type('TESTORG', { delay: 50 });
-    //     cy.get('[name="hostname"]').type('testorg.com', { delay: 50 });
-    //     cy.get('[name="email"]').clear().type('orgemail@org.com', { delay: 50 });
-    //     cy.get('[name="password"]').type('admin');
-    //     cy.get('.mantine-Button-root').contains('Guardar y continuar').click();
-    //   });
-    //   it('Superadmin can configure providers and email account', () => {
-    //     cy.contains('Proveedores y cuentas de correo');
-    //     cy.get('.mantine-Input-wrapper input');
-    //     cy.get('[alt="emails-smtp"]').click();
-    //     cy.get('[name="port"]').type('25');
-    //     cy.get('[name="host"]').type('smtp.freesmtpservers.com');
-    //     cy.get('.mantine-Button-root').contains('Añadir').click();
-    //     cy.get('.mantine-Button-root').contains('Guardar y continuar').click();
-    //   });
+
+    it('Can register superadmin', () => {
+      cy.get(`${dataSignup} [name="email"]`, { timeout: 10000 }).type('admin@admin.com');
+      cy.get(`${dataSignup} [name="password"]`).type('admin');
+      cy.get(`${dataSignup} [name="repeatPassword"]`).type('admin');
+      cy.get(`${dataSignup} [type="submit"]`).click();
+      cy.url().should('include', '/private/admin/setup');
+      cy.getCookie('token').should('exist');
+    });
+  });
+
+  describe('Superadmin configuration', () => {
+    const dataLogin = '[data-cypress-id="loginForm"]';
+
+    it('Superadmin can login', () => {
+      cy.visitInEnglish('/');
+      cy.url().should('include', '/users/login');
+      loginUser('admin@admin.com', 'admin', dataLogin, '/private/admin/setup');
+      cy.visitInEnglish('/');
+      cy.url().should('include', 'private/admin/setup');
+    });
+
+    describe('Superadmin can configure organization', () => {
+      const dataOrganization = '[data-cypress-id="organizationForm"]';
+      const orgName = 'Testorg';
+      const hostname = 'http://testorg.org';
+      let tOrg = null;
+
+      before(() => {
+        cy.getTranslations(['plugins.admin.setup.organization']).then((translations) => {
+          tOrg = tLoader('plugins.admin.setup.organization', { items: translations });
+        });
+      });
+
+      beforeEach(() => {
+        loginUser('admin@admin.com', 'admin', dataLogin, '/private/admin/setup');
+        advanceWelcomeStep();
+      });
+
+      it('Superadmin can not advance without required fields', () => {
+        cy.get(`${dataOrganization} [name="name"]`).clear();
+        cy.get(`${dataOrganization} [name="hostname"]`).clear();
+        cy.get(`${dataOrganization} [name="email"]`).clear();
+        cy.get(`${dataOrganization} [type="submit"]`).click();
+        cy.get('span').contains(tOrg('organizationNameRequired')).should('be.visible');
+        cy.get('span').contains(tOrg('hostnameRequired')).should('be.visible');
+        cy.get('span').contains(tOrg('emailRequired')).scrollIntoView().should('be.visible');
+      });
+
+      it('Superadmin can not advance with invalid domain URL', () => {
+        cy.get(`${dataOrganization} [name="name"]`).clear().type(orgName);
+        cy.get(`${dataOrganization} [name="hostname"]`).clear().type('testorg.org');
+        cy.get(`${dataOrganization} [type="submit"]`).click();
+        cy.get('span').contains(tOrg('hostnameInvalid')).should('be.visible');
+      });
+
+      it('Superadmin can configure organization', () => {
+        cy.get(`${dataOrganization} [name="name"]`).clear().type(orgName);
+        cy.get(`${dataOrganization} [name="hostname"]`).clear().type(hostname);
+        cy.get(`${dataOrganization} [type="submit"]`).click();
+      });
+    });
+
+    describe('Superadmin can configure mail providers', () => {});
+
+    // it('Superadmin can configure providers and email account', () => {
+    //   cy.contains('Proveedores y cuentas de correo');
+    //   cy.get('.mantine-Input-wrapper input');
+    //   cy.get('[alt="emails-smtp"]').click();
+    //   cy.get('[name="port"]').type('25');
+    //   cy.get('[name="host"]').type('smtp.freesmtpservers.com');
+    //   cy.get('.mantine-Button-root').contains('Añadir').click();
+    //   cy.get('.mantine-Button-root').contains('Guardar y continuar').click();
     // });
   });
 });

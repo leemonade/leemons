@@ -112,7 +112,7 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           <Card
             styles={styles}
             headerColor="#F4E6E6"
-            number="1"
+            number={1}
             title={t('organization')}
             image="organization.png"
             imageWidth={136}
@@ -122,7 +122,7 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           <Card
             styles={styles}
             headerColor="#D8E8FF"
-            number="2"
+            number={2}
             title={t('mailProviders')}
             image="mail-provider.png"
             imageWidth={123}
@@ -132,7 +132,7 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           <Card
             styles={styles}
             headerColor="#FEFBE8"
-            number="3"
+            number={3}
             title={t('languages')}
             image="languages.png"
             imageWidth={140}
@@ -142,7 +142,7 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           <Card
             styles={styles}
             headerColor="#E3EFDE"
-            number="4"
+            number={4}
             title={t('centers')}
             image="centers.png"
             imageWidth={143}
@@ -152,7 +152,7 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           <Card
             styles={styles}
             headerColor="#FEFBE8"
-            number="5"
+            number={5}
             title={t('profiles')}
             image="profile.png"
             imageWidth={133}
@@ -162,7 +162,7 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           <Card
             styles={styles}
             headerColor="#EEEAF7"
-            number="6"
+            number={6}
             title={t('adminUsers')}
             image="admin-users.png"
             imageWidth={146}
@@ -171,7 +171,9 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
           />
         </Box>
         <Stack justifyContent="end">
-          <Button onClick={handleOnNext}>{onNextLabel}</Button>
+          <Button onClick={handleOnNext} data-cypress-id="nextButton">
+            {onNextLabel}
+          </Button>
         </Stack>
       </ContextContainer>
     </Box>

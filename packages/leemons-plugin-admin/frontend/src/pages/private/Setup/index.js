@@ -38,7 +38,7 @@ function Setup({ session }) {
       store.loading = true;
       render();
       const { settings } = await getSettingsRequest();
-      store.configured = settings.configured;
+      store.configured = !!settings.configured;
       if (store.configured) {
         store.steps = 6;
       }

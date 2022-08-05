@@ -5,6 +5,7 @@
   "scripts": {
     "start": "leemons start",
     "dev": "leemons dev",
+    "dev:testing": "TESTING=true leemons dev",
     "leemons": "leemons",
     "leemonsFront": "leemonsFront",
     "front": "leemonsFront build && leemonsFront preview",

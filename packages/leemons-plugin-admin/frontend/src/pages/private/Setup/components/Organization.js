@@ -99,7 +99,12 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
   return (
     <Box>
       <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-        <ContextContainer title={t('title')} description={t('description')} divided>
+        <ContextContainer
+          title={t('title')}
+          description={t('description')}
+          divided
+          data-cypress-id="organizationForm"
+        >
           <ContextContainer>
             <Controller
               name="name"

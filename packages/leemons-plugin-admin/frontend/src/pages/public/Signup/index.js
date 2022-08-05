@@ -118,7 +118,11 @@ const Signup = () => {
         autoComplete="off"
       >
         {translations && !isEmpty(translations.items) ? (
-          <ContextContainer title={t.signup.title} description={t.signup.description}>
+          <ContextContainer
+            title={t.signup.title}
+            description={t.signup.description}
+            data-cypress-id="signupForm"
+          >
             <Box>
               <Controller
                 control={control}

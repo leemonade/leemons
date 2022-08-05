@@ -176,6 +176,7 @@ export default function Login() {
             onSubmit={onSubmit}
             loading={formStatus === 'loading'}
             formError={formError}
+            data-cypress-id="loginForm"
           />
         </Box>
       </Stack>
