@@ -1,3 +1,4 @@
+const userWeekly = require('./emails/userWeekly');
 const newActivity = require('./emails/userCreateAssignation');
 const rememberActivityTimeout = require('./emails/userRememberAssignationTimeout');
 const { addLocales } = require('./src/services/locales/addLocales');
@@ -6,6 +7,7 @@ const { pluginName, menuItems, permissions, widgets } = require('./config/consta
 const { afterRemoveClassesTeachers } = require('./src/services/events/afterRemoveClassesTeachers');
 const { afterAddClassTeacher } = require('./src/services/events/afterAddClassTeacher');
 const { sendRememberEmails } = require('./src/services/events/sendRememberEmail');
+const { sendWeeklyEmails } = require('./src/services/events/sendWeeklyEmail');
 
 async function initEmails() {
   await leemons
@@ -44,6 +46,25 @@ async function initEmails() {
       'en',
       'This activity ends soon',
       rememberActivityTimeout.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-weekly-resume',
+      'es',
+      'Aquí tienes tus actividades pendientes',
+      userWeekly.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-weekly-resume',
+      'en',
+      'Have a look to your pending activities',
+      userWeekly.en,
       leemons.getPlugin('emails').services.email.types.active
     );
   leemons.events.emit('init-emails');
@@ -128,6 +149,7 @@ async function events(isInstalled) {
 
   leemons.events.once('appDidLoadBack', () => {
     sendRememberEmails();
+    sendWeeklyEmails();
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {

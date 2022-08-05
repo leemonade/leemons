@@ -261,11 +261,13 @@ export default function Preferences() {
               />
             </ContextContainer>
           </Box>
-          <Stack justifyContent="end">
-            <Button onClick={save} loading={store.saving}>
-              {t('savePreferences')}
-            </Button>
-          </Stack>
+          <Box sx={(theme) => ({ marginBottom: theme.spacing[6] })}>
+            <Stack fullWidth justifyContent="end">
+              <Button onClick={save} loading={store.saving}>
+                {t('savePreferences')}
+              </Button>
+            </Stack>
+          </Box>
         </ContextContainer>
       </PageContainer>
     </ContextContainer>
