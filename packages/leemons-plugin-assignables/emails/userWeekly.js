@@ -157,8 +157,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                             font-weight: 600;
                             color: #212b3d;
                           "
-                        >${texts.upcomingDeliveries}</span
-                        >
+                        >${texts.upcomingDeliveries}</span>
                         {{@each(it.nextInstances) => instance}}
                           <div
                             style="
@@ -226,6 +225,99 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 {{ #else }}
                                   ${texts.expHours}
                                 {{ /if}}
+                            </span>
+                          </div>
+                        {{/each}}
+
+                  </div>
+                </td>
+              </tr>
+              {{ /if }}
+
+              {{ @if (it.evaluatedInstances.length > 0) }}
+              <tr>
+                <td
+                  align="center"
+                  style="padding-top: 16px; padding-bottom: 24px; padding-inline: 38.5px"
+                >
+                <div
+                    style="
+                          text-align: start;
+                        "
+                  >
+                        <span
+                          style="
+                            padding: 5px 16px 8px;
+                            font-family: 'Inter', Verdana, sans-serif;
+                            font-size: 14px;
+                            line-height: 24px;
+                            font-weight: 600;
+                            color: #212b3d;
+                          "
+                        >${texts.activitiesEvaluated}</span>
+                        {{@each(it.evaluatedInstances) => instance}}
+                          <div
+                            style="
+                                  display: flex;
+                                  padding: 6px 16px;
+                                  align-items: center;
+                                  border-top: 2px solid #edeff5;
+                                "
+                          >
+                            <div style="border: 1px solid #b9bec4">
+                              <img
+                                height="36"
+                                width="36"
+                                src="{{instance.asset.url}}"
+                              />
+                            </div>
+                            <span
+                              style="
+                                    margin-left: 8px;
+                                    font-family: 'Inter', Verdana, sans-serif;
+                                    font-size: 14px;
+                                    line-height: 16px;
+                                    color: #212b3d;
+                                  "
+                            >{{instance.asset.name}}</span
+                            >
+                            <div>
+                              <div
+                                style="
+                                      margin-left: 10px;
+                                      height: 26px;
+                                      width: 26px;
+                                      border-radius: 50%;
+                                      background-color: {{ @if (instance.classes.length === 1) }}{{ instance.classes[0].color }};{{ #else }}#67728E;{{ /if}}
+                                    "
+                              ></div>
+                            </div>
+                            <span
+                              style="
+                                    margin-left: 16px;
+                                    font-family: 'Inter', Verdana, sans-serif;
+                                    font-size: 14px;
+                                    line-height: 16px;
+                                    color: #212b3d;
+                                  "
+                            >
+                            {{ @if (instance.classes.length === 1) }}
+                                    {{ instance.classes[0].subject.name }}
+                                {{ #else }}
+                                  ${texts.multiSubjects}
+                                {{ /if}}
+                            </span>
+                            <span
+                              style="
+                                    margin-left: 25px;
+                                    font-family: 'Lexend', Verdana, sans-serif;
+                                    font-size: 14px;
+                                    line-height: 16px;
+                                    font-weight: 500;
+                                    color: #212b3d;
+                                  "
+                            >
+                               {{instance.note}}
                             </span>
                           </div>
                         {{/each}}
@@ -358,7 +450,8 @@ module.exports = {
     'Enviado por {{it.__from}}',
     '', // Política de privacidad
     {
-      upcomingDeliveries: 'Próximas entregas',
+      upcomingDeliveries: 'Próximas actividades',
+      activitiesEvaluated: 'Actividades evaluadas',
       expStart: 'dentro de',
       expDays: 'días',
       expHours: 'horas',
@@ -374,6 +467,7 @@ module.exports = {
     '', // Privacy policy
     {
       upcomingDeliveries: 'Upcoming deliveries',
+      activitiesEvaluated: 'Activities evaluated',
       expStart: 'within',
       expDays: 'days',
       expHours: 'hours',

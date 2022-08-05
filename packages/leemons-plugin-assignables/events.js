@@ -152,7 +152,6 @@ async function events(isInstalled) {
 
   leemons.events.once('appDidLoadBack', () => {
     sendRememberEmails();
-    // sendWeeklyEmails();
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {

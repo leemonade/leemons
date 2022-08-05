@@ -69,7 +69,51 @@ async function getNextActivities(userAgents, table) {
   };
 }
 
-async function getEvaluatedActivities(userAgents, table) {}
+async function getEvaluatedActivities(userAgents, table) {
+  const past = new Date();
+  past.setTime(past.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 dias
+  const grades = await table.grades.find(
+    {
+      type: 'main',
+      date_$gt: global.utils.sqlDatetime(past),
+    },
+    { columns: ['assignation', 'grade'] }
+  );
+  const gradesByAssignationId = _.groupBy(grades, 'assignation');
+  const assignationIds = _.uniq(_.map(grades, 'assignation'));
+  const assignationFinished = await table.dates.find({
+    type: 'assignation',
+    name: 'end',
+    instance_$in: assignationIds,
+  });
+  const assignationFinishedIds = _.map(assignationFinished, 'instance');
+  const assignations = await table.assignations.find(
+    {
+      id_$in: assignationFinishedIds,
+      user_$in: userAgents,
+    },
+    { columns: ['id', 'instance', 'user'] }
+  );
+  const userAgentInstances = _.reduce(
+    assignations,
+    (acc, { id, instance, user }) => {
+      if (!acc[user]) acc[user] = [];
+      let note = 0;
+      _.forEach(gradesByAssignationId[id], ({ grade }) => {
+        note += grade;
+      });
+      note /= gradesByAssignationId[id].length;
+      acc[user].push({
+        instance,
+        note,
+      });
+      return acc;
+    },
+    {}
+  );
+
+  return userAgentInstances;
+}
 
 async function sendWeeklyEmails() {
   // eslint-disable-next-line global-require
@@ -78,11 +122,6 @@ async function sendWeeklyEmails() {
   const emailsServices = leemons.getPlugin('emails').services;
   const leebraryServices = leemons.getPlugin('leebrary').services;
   const userServices = leemons.getPlugin('users').services;
-
-  console.log('----------------------------------------------------');
-  console.log('----------------------------------------------------');
-  console.log('----------------------------------------------------');
-  console.log('----------------------------------------------------');
 
   const userAgentIds = await emailsServices.config.getUserAgentsWithKeyValue('week-resume-email', {
     value: new Date().getDay().toString(),
@@ -99,6 +138,12 @@ async function sendWeeklyEmails() {
     instanceIds = instanceIds.concat(value);
   });
 
+  _.forIn(evaluatedActivities, (values) => {
+    _.forIn(values, (value) => {
+      instanceIds.push(value.instance);
+    });
+  });
+
   instanceIds = _.uniq(instanceIds);
 
   const [hostname, instances, _classes, userAgents] = await Promise.all([
@@ -110,7 +155,7 @@ async function sendWeeklyEmails() {
       assignableInstance_$in: instanceIds,
     }),
     // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
-    userServices.users.getUserAgentsInfo(userAgentIds, {
+    userServices.users.getUserAgentsInfo(_.uniq(userAgentIds), {
       withCenter: true,
       userColumns: ['id', 'email', 'locale'],
     }),
@@ -143,10 +188,28 @@ async function sendWeeklyEmails() {
   );
 
   _.forEach(userAgents, (userAgent) => {
+    const hasEvaluated =
+      evaluatedActivities[userAgent.id] && evaluatedActivities[userAgent.id].length > 0;
     const hasNext = userAgentInstances[userAgent.id] && userAgentInstances[userAgent.id].length > 0;
 
-    if (hasNext) {
+    if (hasNext || hasEvaluated) {
       const nextInstances = [];
+      const evaluatedInstances = [];
+
+      if (hasEvaluated) {
+        _.forEach(evaluatedActivities[userAgent.id], ({ instance: instanceId, note }) => {
+          const instance = instanceById[instanceId];
+          const assignable = assignableById[instance.assignable];
+          evaluatedInstances.push({
+            asset: {
+              ...assetById[assignable.asset],
+              url: hostname + leebraryServices.assets.getCoverUrl(assignable.asset),
+            },
+            classes: _.uniqBy(instanceClasses[instance.id], 'subject.id'),
+            note: note.toFixed(2),
+          });
+        });
+      }
 
       if (hasNext) {
         const now = new Date();
@@ -173,9 +236,6 @@ async function sendWeeklyEmails() {
             timeColor,
           });
         });
-
-        nextInstances.push(_.cloneDeep(nextInstances[0]));
-        nextInstances.push(_.cloneDeep(nextInstances[0]));
       }
 
       emailsServices.email
@@ -184,6 +244,7 @@ async function sendWeeklyEmails() {
           'user-weekly-resume',
           userAgent.user.locale,
           {
+            evaluatedInstances,
             nextInstances,
             btnUrl: `${hostname}/private/assignables/ongoing`,
           },
