@@ -343,6 +343,14 @@ module.exports = {
     categoriesLabel: 'Categories',
     noRequiredQuestions: 'The filtered questions are fewer than those requested',
     level: 'Nivel',
+    defaultRules: {
+      title: 'Default test rules',
+      canOmit: 'Questions may be omitted and do not detract from the score.',
+      errorQuestions: 'Wrong questions do not detract from the score',
+      canClue: 'Hints may be used (if available) and their use does not detract from the score.',
+      useAdvanced:
+        'If you wish to change this default setting, use the advanced configuration option below.',
+    },
   },
   testResult: {
     testResult: 'Statistics by type of question',

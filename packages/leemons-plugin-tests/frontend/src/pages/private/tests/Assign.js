@@ -159,7 +159,7 @@ export default function Assign() {
                 }}
                 onSend={(e) => {
                   let filters = {
-                    wrong: 50,
+                    wrong: 0,
                     canOmitQuestions: true,
                     allowClues: true,
                     omit: 0,
