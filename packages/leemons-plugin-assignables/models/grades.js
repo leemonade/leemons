@@ -19,6 +19,7 @@ module.exports = {
     grade: {
       type: 'decimal',
       scale: 7,
+      precision: 7 - 2 + 8, // scale - defaultScale + defaultPrecision
     },
     gradedBy: {
       type: 'string',
