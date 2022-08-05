@@ -19,12 +19,18 @@ async function sendEmail(
   try {
     const emailServices = leemons.getPlugin('emails').services;
 
-    const [canSend, dayLimits] = await Promise.all([
+    // eslint-disable-next-line prefer-const
+    let [canSend, dayLimits] = await Promise.all([
       emailServices.config.getConfig('new-assignation-email'),
       emailServices.config.getConfig('new-assignation-per-day-email'),
     ]);
 
-    if (canSend && !dayLimits) {
+    if (dayLimits && instance.dates.deadline) {
+      const hours = global.utils.diffHours(new Date(), new Date(instance.dates.deadline));
+      canSend = hours < dayLimits * 24;
+    }
+
+    if (canSend) {
       let date = null;
       const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
       if (instance.dates.deadline) {

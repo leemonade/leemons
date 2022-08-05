@@ -4,14 +4,25 @@ const table = {
   config: leemons.query('plugins_emails::config'),
 };
 
-async function getUserAgentsWithKeyValue(key, { transacting } = {}) {
-  const configs = await table.config.find(
-    { key, value_$neq: JSON.stringify(false) },
-    { columns: ['userAgent', 'value'], transacting }
-  );
+async function getUserAgentsWithKeyValue(key, { value, transacting } = {}) {
+  const query = {
+    key,
+  };
+  if (value) {
+    query.value = JSON.stringify(value);
+  } else {
+    query.value_$neq = JSON.stringify(false);
+  }
+
+  const configs = await table.config.find(query, { columns: ['userAgent', 'value'], transacting });
+
+  if (value) {
+    return _.map(configs, 'userAgent');
+  }
+
   const result = {};
-  _.forEach(configs, ({ userAgent, value }) => {
-    result[userAgent] = JSON.parse(value);
+  _.forEach(configs, ({ userAgent, value: v }) => {
+    result[userAgent] = JSON.parse(v);
   });
   return result;
 }
