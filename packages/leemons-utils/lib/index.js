@@ -45,6 +45,12 @@ squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   return _.isArray(value) || _.isObject(value) ? `-*-*-${JSON.stringify(value)}-*-*-` : value;
 });
 
+function diffHours(dt2, dt1) {
+  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= 60 * 60;
+  return Math.abs(Math.round(diff));
+}
+
 module.exports = {
   env,
   getModel,
@@ -93,14 +99,11 @@ module.exports = {
     ...cron,
     schedule: (cronReg, callback) => {
       let schedule = null;
-      leemons.events.once('appDidStart', () => {
-        console.log('Ha terminado de cargar feamos el cron');
+      leemons.events.once('appDidLoadBack', () => {
         schedule = cron.schedule(cronReg, callback);
       });
       leemons.events.once('appWillReload', () => {
-        console.log('Se va a borrar la app pramos el cron');
         if (schedule) {
-          console.log('Se va a borrar ');
           schedule.stop();
         }
       });
@@ -115,4 +118,5 @@ module.exports = {
     const { payload } = jwt.verify(token, secretKey);
     return payload;
   },
+  diffHours,
 };

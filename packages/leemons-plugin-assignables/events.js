@@ -1,9 +1,13 @@
+const userWeekly = require('./emails/userWeekly');
 const newActivity = require('./emails/userCreateAssignation');
+const rememberActivityTimeout = require('./emails/userRememberAssignationTimeout');
 const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
 const { afterRemoveClassesTeachers } = require('./src/services/events/afterRemoveClassesTeachers');
 const { afterAddClassTeacher } = require('./src/services/events/afterAddClassTeacher');
+const { sendRememberEmails } = require('./src/services/events/sendRememberEmail');
+const { sendWeeklyEmails } = require('./src/services/events/sendWeeklyEmail');
 
 async function initEmails() {
   await leemons
@@ -25,6 +29,44 @@ async function initEmails() {
       leemons.getPlugin('emails').services.email.types.active
     );
   leemons.events.emit('init-email-recover-password');
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-remember-assignation-timeout',
+      'es',
+      'Esta actividad finaliza pronto',
+      rememberActivityTimeout.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-remember-assignation-timeout',
+      'en',
+      'This activity ends soon',
+      rememberActivityTimeout.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-weekly-resume',
+      'es',
+      'Aquí tienes tus actividades pendientes',
+      userWeekly.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-weekly-resume',
+      'en',
+      'Have a look to your pending activities',
+      userWeekly.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
   leemons.events.emit('init-emails');
 }
 
@@ -101,8 +143,15 @@ function initWidgets(isInstalled) {
 }
 
 async function events(isInstalled) {
-  global.utils.cron.schedule('* * * * * *', () => {
-    console.log('running a task every pollas');
+  global.utils.cron.schedule('0 * * * *', () => {
+    sendRememberEmails();
+  });
+  global.utils.cron.schedule('0 10 * * *', () => {
+    sendWeeklyEmails();
+  });
+
+  leemons.events.once('appDidLoadBack', () => {
+    sendRememberEmails();
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {

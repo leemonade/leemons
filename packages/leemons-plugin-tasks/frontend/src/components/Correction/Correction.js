@@ -133,7 +133,7 @@ export default function Correction({ assignation, instance, loading }) {
         visibleToStudent: sendToStudent,
       };
 
-      if (assignation.instance.requiresScoring && !grade.score) {
+      if (assignation.instance.requiresScoring && _.isNil(grade.score)) {
         throw new Error('The score is required');
       }
 

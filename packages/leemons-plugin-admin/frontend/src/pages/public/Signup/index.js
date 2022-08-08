@@ -46,9 +46,9 @@ const Signup = () => {
   // FORM
 
   const defaultValues = {
-    email: null,
+    email: '',
     password: '',
-    confirmPassword: '',
+    repeatPassword: '',
     locale,
   };
 

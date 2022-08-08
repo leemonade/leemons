@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -247,6 +248,16 @@ export default function AssignConfig({ defaultValues: dv, test, t, configs = [],
               </Box>,
             ]
           : null}
+
+        <Alert variant="block" title={t('defaultRules.title')} closeable={false}>
+          <ul>
+            <li>- {t('defaultRules.canOmit')}</li>
+            <li>- {t('defaultRules.errorQuestions')}</li>
+            <li>- {t('defaultRules.canClue')}</li>
+          </ul>
+          <br />
+          {t('defaultRules.useAdvanced')}
+        </Alert>
 
         <Title order={4}>{t('advancedSettings')}</Title>
         <Controller

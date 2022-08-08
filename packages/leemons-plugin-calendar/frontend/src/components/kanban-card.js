@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
-import { Paper, Avatar } from '@bubbles-ui/components';
+import { Avatar, Paper } from '@bubbles-ui/components';
 import moment from 'moment';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 

@@ -42,7 +42,7 @@ module.exports = {
       },
     },
     adminDrawer: {
-      title: 'Evaluation periods',
+      title: 'Evaluation Periods',
       description:
         'As administrator, it is possible to create custom time periods for teachers to use as evaluation stages, for example, defining the evaluation periods by program and course.',
       new: 'New period',

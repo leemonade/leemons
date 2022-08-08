@@ -22,6 +22,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { addErrorAlert } from '@layout/alert';
 import { getOrganizationRequest, updateOrganizationRequest } from '@admin/request/organization';
 import hooks from 'leemons-hooks';
+import { EMAIL_REGEX } from '../../../../constants';
 
 const Styles = createStyles((theme) => ({}));
 
@@ -144,6 +145,12 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                   <Controller
                     name="logoUrl"
                     control={control}
+                    rules={{
+                      pattern: {
+                        value: /^(http|https):\/\//,
+                        message: t('logoUrlInvalid'),
+                      },
+                    }}
                     render={({ field }) => (
                       <TextInput error={errors.logoUrl} label={t('logoUrl')} {...field} />
                     )}
@@ -173,7 +180,13 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                 <Box>
                   <Controller
                     name="email"
-                    rules={r('emailRequired')}
+                    rules={{
+                      required: t('emailRequired'),
+                      pattern: {
+                        value: EMAIL_REGEX,
+                        message: t('emailInvalid'),
+                      },
+                    }}
                     control={control}
                     render={({ field }) => (
                       <TextInput error={errors.email} label={t('email')} required {...field} />
@@ -208,9 +221,15 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                 <Box>
                   <Controller
                     name="contactEmail"
+                    rules={{
+                      pattern: {
+                        value: EMAIL_REGEX,
+                        message: t('emailInvalid'),
+                      },
+                    }}
                     control={control}
                     render={({ field }) => (
-                      <PasswordInput error={errors.contactEmail} label={t('email')} {...field} />
+                      <TextInput error={errors.contactEmail} label={t('email')} {...field} />
                     )}
                   />
                 </Box>

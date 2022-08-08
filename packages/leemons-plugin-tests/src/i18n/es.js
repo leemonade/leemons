@@ -342,6 +342,14 @@ module.exports = {
     clueNoImpact: 'Sin impacto',
     categoriesLabel: 'Categorías',
     noRequiredQuestions: 'Las preguntas filtradas son menores que las solicitadas',
+    defaultRules: {
+      title: 'Reglas de un test por defecto',
+      canOmit: 'Se pueden omitir preguntas y no restan puntuación',
+      errorQuestions: 'Las preguntas erroneas no restan puntuación',
+      canClue: 'Se pueden utilizar pistas (si estan disponibles) y su uso no resta puntuación.',
+      useAdvanced:
+        'Si desea modificar esta configuración por defecto, utilice la opción de configuración avanzada más abajo.',
+    },
   },
   testResult: {
     testResult: 'Estadísticas por tipo de pregunta',

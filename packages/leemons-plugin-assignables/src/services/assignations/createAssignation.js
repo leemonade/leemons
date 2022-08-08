@@ -17,50 +17,50 @@ async function sendEmail(
   userSession
 ) {
   try {
-    /*
-    const userAssignableInstances = await searchAssignableInstances(
-      {
-        limit: 4,
-        archived: false,
-        evaluated: false,
-      },
-      {
-        userSession: { userAgents: [{ id: user }] },
-      }
-    );
+    const emailServices = leemons.getPlugin('emails').services;
 
-     */
+    // eslint-disable-next-line prefer-const
+    let [canSend, dayLimits] = await Promise.all([
+      emailServices.config.getConfig('new-assignation-email'),
+      emailServices.config.getConfig('new-assignation-per-day-email'),
+    ]);
 
-    let date = null;
-    const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    if (instance.dates.deadline) {
-      const date1 = new Date(instance.dates.deadline);
-      const dateTimeFormat2 = new Intl.DateTimeFormat(userAgentByIds[user].user.locale, options1);
-      date = dateTimeFormat2.format(date1);
+    if (dayLimits && instance.dates.deadline) {
+      const hours = global.utils.diffHours(new Date(), new Date(instance.dates.deadline));
+      canSend = hours < dayLimits * 24;
     }
 
-    leemons
-      .getPlugin('emails')
-      .services.email.sendAsEducationalCenter(
-        userAgentByIds[user].user.email,
-        'user-create-assignation',
-        userAgentByIds[user].user.locale,
-        {
-          instance,
-          classes,
-          btnUrl,
-          subjectIconUrl,
-          taskDate: date,
-          userSession,
-        },
-        userAgentByIds[user].center.id
-      )
-      .then(() => {
-        console.log(`Email enviado a ${userAgentByIds[user].email}`);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    if (canSend) {
+      let date = null;
+      const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
+      if (instance.dates.deadline) {
+        const date1 = new Date(instance.dates.deadline);
+        const dateTimeFormat2 = new Intl.DateTimeFormat(userAgentByIds[user].user.locale, options1);
+        date = dateTimeFormat2.format(date1);
+      }
+
+      emailServices.email
+        .sendAsEducationalCenter(
+          userAgentByIds[user].user.email,
+          'user-create-assignation',
+          userAgentByIds[user].user.locale,
+          {
+            instance,
+            classes,
+            btnUrl,
+            subjectIconUrl,
+            taskDate: date,
+            userSession,
+          },
+          userAgentByIds[user].center.id
+        )
+        .then(() => {
+          console.log(`Email enviado a ${userAgentByIds[user].email}`);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
   } catch (e) {}
 }
 
