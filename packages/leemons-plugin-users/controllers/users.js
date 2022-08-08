@@ -118,7 +118,6 @@ async function login(ctx) {
     required: ['email', 'password'],
     additionalProperties: false,
   });
-  console.log(validator);
   if (validator.validate(ctx.request.body)) {
     const data = await usersService.login(ctx.request.body.email, ctx.request.body.password);
     ctx.status = 200;
