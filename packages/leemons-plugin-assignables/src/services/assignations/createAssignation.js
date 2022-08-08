@@ -21,8 +21,8 @@ async function sendEmail(
 
     // eslint-disable-next-line prefer-const
     let [canSend, dayLimits] = await Promise.all([
-      emailServices.config.getConfig('new-assignation-email'),
-      emailServices.config.getConfig('new-assignation-per-day-email'),
+      emailServices.config.getConfig(user, { keys: 'new-assignation-email' }),
+      emailServices.config.getConfig(user, { keys: 'new-assignation-per-day-email' }),
     ]);
 
     if (dayLimits && instance.dates.deadline) {
