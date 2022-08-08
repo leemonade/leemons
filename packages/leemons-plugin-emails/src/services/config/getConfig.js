@@ -8,8 +8,8 @@ const keysDefaults = {
   'disable-all-activity-emails': false,
   'new-assignation-email': true,
   'week-resume-email': 1,
-  'new-assignation-per-day-email': 10,
-  'new-assignation-timeout-email': 72,
+  'new-assignation-per-day-email': false,
+  'new-assignation-timeout-email': false,
 };
 
 async function getConfig(userAgent, { keys, transacting } = {}) {
