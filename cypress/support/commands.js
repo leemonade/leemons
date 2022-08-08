@@ -35,7 +35,7 @@ Cypress.Commands.add('visitInEnglish', (url) => {
 });
 
 Cypress.Commands.add('getWelcomeTranslations', (language) =>
-  cy.request(`/api/admin/i18n/welcome/${language}`).then(({ body }) => body.data[language].welcome)
+  cy.request(`/api/admin/i18n/welcome/${language}`).then(({ body }) => body.data[language])
 );
 
 Cypress.Commands.add('getTranslations', (keysStartsWith, locale = 'en-EN') =>

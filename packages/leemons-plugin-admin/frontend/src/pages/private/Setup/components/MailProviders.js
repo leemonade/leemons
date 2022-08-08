@@ -140,8 +140,13 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
 
   return (
     <Box>
-      <ContextContainer title={t('title')} description={t('description')} divided>
-        <ContextContainer>
+      <ContextContainer
+        title={t('title')}
+        description={t('description')}
+        divided
+        data-cypress-id="mailsForm"
+      >
+        <ContextContainer data-cypress-id="emailInput">
           <Box>
             <Title order={4}>{t('defaultOrganizationEmail')}</Title>
             <Paragraph>{t('defaultOrganizationEmailDescription')}</Paragraph>
@@ -197,7 +202,12 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
               </Box>
               <Provider {...(store.activeProvider || {})} onChange={onChange} />
               {store.dirty && !totalProviders ? (
-                <Alert title={t('error')} severity="error" closeable={false}>
+                <Alert
+                  title={t('error')}
+                  severity="error"
+                  closeable={false}
+                  data-cypress-id="mailError"
+                >
                   {t('defaultOrganizationEmailRequired')}
                 </Alert>
               ) : null}
@@ -209,7 +219,7 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
           )}
         </ContextContainer>
         <Stack justifyContent="end">
-          <Button onClick={handleOnNext} loading={store.saving}>
+          <Button onClick={handleOnNext} loading={store.saving} data-cypress-id="saveMailsButton">
             {onNextLabel}
           </Button>
         </Stack>

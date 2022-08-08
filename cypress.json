@@ -1,5 +1,6 @@
 {
   "experimentalStudio": true,
   "experimentalSessionAndOrigin": true,
-  "baseUrl": "http://localhost:8080"
+  "baseUrl": "http://localhost:8080",
+  "retries": 1
 }

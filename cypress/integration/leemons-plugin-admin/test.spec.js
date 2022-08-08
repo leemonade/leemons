@@ -7,6 +7,7 @@ const loginUser = (user, password, selector, expectedUrl) => {
     cy.get(`${selector} [name="password"]`).type(password);
     cy.get(`${selector} [type="submit"]`).click();
     cy.url().should('include', expectedUrl);
+    cy.wait(1000);
     cy.getCookie('token').should('exist');
   });
 };
@@ -16,21 +17,27 @@ const advanceWelcomeStep = () => {
   cy.get('[data-cypress-id="nextButton"]').click();
 };
 
+const advanceOrganizationStep = (tOrg) => {
+  advanceWelcomeStep();
+  cy.get('[data-cypress-id="organizationForm"] h3').should('contain', tOrg('title'));
+  cy.get('[data-cypress-id="organizationForm"] [type="submit"]').click();
+};
+
 describe('leemons-plugin-admin tests', () => {
   describe('Admin can signup', () => {
     const dataWelcome = '[data-cypress-id="welcome"]';
     const dataSignup = '[data-cypress-id="signupForm"]';
-    let englishWelcomeTranslations = {};
-    let spanishWelcomeTranslations = {};
+    let englishTranslations = {};
+    let spanishTranslations = {};
 
     before(() => {
       Cypress.session.clearAllSavedSessions();
       cy.restoreDatabase();
       cy.getWelcomeTranslations('en').then((translations) => {
-        englishWelcomeTranslations = translations;
+        englishTranslations = translations.welcome;
       });
       cy.getWelcomeTranslations('es').then((translations) => {
-        spanishWelcomeTranslations = translations;
+        spanishTranslations = translations.welcome;
       });
     });
 
@@ -41,18 +48,45 @@ describe('leemons-plugin-admin tests', () => {
     it('Loads the installation page', () => {
       cy.visitInEnglish('/');
       cy.url().should('include', '/admin/welcome');
-      cy.get(`${dataWelcome} h3`).contains(englishWelcomeTranslations.title).should('be.visible');
+      cy.get(`${dataWelcome} h3`).contains(englishTranslations.title).should('be.visible');
     });
 
     it('Can change installation language', () => {
       cy.get(`${dataWelcome} input`).last().click();
       cy.get('[role="option"]').contains('Español').click();
-      cy.get(`${dataWelcome} h3`).contains(spanishWelcomeTranslations.title).should('be.visible');
+      cy.get(`${dataWelcome} h3`).contains(spanishTranslations.title).should('be.visible');
     });
 
-    it('Can advance to register', () => {
-      cy.get(`${dataWelcome} button`).contains(englishWelcomeTranslations.next).click();
+    it('Can advance to register', { defaultCommandTimeout: 10000 }, () => {
+      cy.url().should('include', '/admin/welcome');
+      cy.get(`${dataWelcome} button`).contains(englishTranslations.next).click();
       cy.url().should('include', '/admin/signup');
+      cy.wait(8000);
+    });
+
+    it('Can fail register', () => {
+      cy.getTranslations(['plugins.admin.signup']).then((translations) => {
+        englishTranslations.signup = tLoader('plugins.admin.signup', { items: translations });
+      });
+      cy.then(() => {
+        cy.url().should('include', '/admin/signup');
+        cy.get(`${dataSignup} [type="submit"]`).click();
+        cy.get('span')
+          .contains(englishTranslations.signup('errorMessages.email.required'))
+          .should('be.visible');
+        cy.get('span')
+          .contains(englishTranslations.signup('errorMessages.password.required'))
+          .should('be.visible');
+        cy.get(`${dataSignup} [name="email"]`).type('admin.com');
+        cy.get(`${dataSignup} [name="password"]`).type('password1');
+        cy.get(`${dataSignup} [name="repeatPassword"]`).type('password2');
+        cy.get('span')
+          .contains(englishTranslations.signup('errorMessages.email.invalidFormat'))
+          .should('be.visible');
+        cy.get('span')
+          .contains(englishTranslations.signup('errorMessages.password.notMatch'))
+          .should('be.visible');
+      });
     });
 
     it('Can register superadmin', () => {
@@ -67,6 +101,36 @@ describe('leemons-plugin-admin tests', () => {
 
   describe('Superadmin configuration', () => {
     const dataLogin = '[data-cypress-id="loginForm"]';
+    let tOrg = null;
+    let tMails = null;
+    let tLanguages = null;
+    let tLogin = null;
+    let tCommon = null;
+
+    before(() => {
+      cy.getTranslations([
+        'plugins.admin.setup.organization',
+        'plugins.admin.setup.mails',
+        'plugins.admin.setup.languages',
+        'plugins.users.login',
+        'plugins.multilanguage.common',
+      ]).then((translations) => {
+        tOrg = tLoader('plugins.admin.setup.organization', { items: translations });
+        tMails = tLoader('plugins.admin.setup.mails', { items: translations });
+        tLanguages = tLoader('plugins.admin.setup.languages', { items: translations });
+        tLogin = tLoader('plugins.users.login', { items: translations });
+        tCommon = tLoader('plugins.multilanguage.common', { items: translations });
+      });
+    });
+
+    it('Superadmin can fail login', () => {
+      cy.visitInEnglish('/');
+      cy.url().should('include', '/users/login');
+      // cy.get(`${dataLogin} [name="email"]`).type('admin');
+      // // cy.get(`${dataLogin} [name="password"]`).type(password);
+      cy.get(`${dataLogin} [type="submit"]`).click();
+      cy.get('span').contains(tLogin('form_error')).should('be.visible');
+    });
 
     it('Superadmin can login', () => {
       cy.visitInEnglish('/');
@@ -80,13 +144,6 @@ describe('leemons-plugin-admin tests', () => {
       const dataOrganization = '[data-cypress-id="organizationForm"]';
       const orgName = 'Testorg';
       const hostname = 'http://testorg.org';
-      let tOrg = null;
-
-      before(() => {
-        cy.getTranslations(['plugins.admin.setup.organization']).then((translations) => {
-          tOrg = tLoader('plugins.admin.setup.organization', { items: translations });
-        });
-      });
 
       beforeEach(() => {
         loginUser('admin@admin.com', 'admin', dataLogin, '/private/admin/setup');
@@ -103,30 +160,84 @@ describe('leemons-plugin-admin tests', () => {
         cy.get('span').contains(tOrg('emailRequired')).scrollIntoView().should('be.visible');
       });
 
-      it('Superadmin can not advance with invalid domain URL', () => {
+      it('Superadmin can not advance with invalid fields', () => {
         cy.get(`${dataOrganization} [name="name"]`).clear().type(orgName);
         cy.get(`${dataOrganization} [name="hostname"]`).clear().type('testorg.org');
+        cy.get(`${dataOrganization} [name="logoUrl"]`).clear().type('invalid url');
+        cy.get('div').contains(tOrg('mainColor')).click();
         cy.get(`${dataOrganization} [type="submit"]`).click();
         cy.get('span').contains(tOrg('hostnameInvalid')).should('be.visible');
       });
 
       it('Superadmin can configure organization', () => {
-        cy.get(`${dataOrganization} [name="name"]`).clear().type(orgName);
-        cy.get(`${dataOrganization} [name="hostname"]`).clear().type(hostname);
+        cy.get(`${dataOrganization} [name="name"]`).as('nameInput').clear().type(orgName);
+        cy.get(`${dataOrganization} [name="hostname"]`).as('hostInput').clear().type(hostname);
         cy.get(`${dataOrganization} [type="submit"]`).click();
+        cy.get('[data-cypress-id="mailsForm"] h3').should('contain', tMails('title'));
+        advanceWelcomeStep();
+        cy.get('@nameInput').should('have.value', orgName);
+        cy.get('@hostInput').should('have.value', hostname);
+        cy.get(`${dataOrganization} [name="email"]`).should('have.value', 'admin@admin.com');
       });
     });
 
-    describe('Superadmin can configure mail providers', () => {});
+    describe('Superadmin can configure mail providers', () => {
+      const dataMails = '[data-cypress-id="mailsForm"]';
+      const dataButton = '[data-cypress-id="saveMailsButton"]';
+      const orgEmail = 'test@org.org';
+      let tProviders = null;
 
-    // it('Superadmin can configure providers and email account', () => {
-    //   cy.contains('Proveedores y cuentas de correo');
-    //   cy.get('.mantine-Input-wrapper input');
-    //   cy.get('[alt="emails-smtp"]').click();
-    //   cy.get('[name="port"]').type('25');
-    //   cy.get('[name="host"]').type('smtp.freesmtpservers.com');
-    //   cy.get('.mantine-Button-root').contains('Añadir').click();
-    //   cy.get('.mantine-Button-root').contains('Guardar y continuar').click();
-    // });
+      before(() => {
+        cy.getTranslations(['providers.emails-smtp.provider']).then((translations) => {
+          tProviders = tLoader('providers.emails-smtp.provider', { items: translations });
+        });
+      });
+
+      beforeEach(() => {
+        loginUser('admin@admin.com', 'admin', dataLogin, '/private/admin/setup');
+        advanceOrganizationStep(tOrg);
+      });
+
+      it('Superadmin can not advance without mail and provider', () => {
+        cy.get(`${dataMails} h3`).first().should('contain', tMails('title'));
+        cy.get(`${dataMails} input`).clear();
+        cy.get(dataButton).click();
+        cy.get(`${dataMails} span`).contains(tMails('emailRequired')).should('be.visible');
+        cy.get(`[data-cypress-id="mailError"]`)
+          .contains(tMails('defaultOrganizationEmailRequired'))
+          .should('be.visible');
+      });
+
+      it('Superadmin can not advance with invalid email', () => {
+        cy.get(`${dataMails} input`).type('test@org');
+        cy.get(dataButton).click();
+        cy.get(`${dataMails} span`).contains(tMails('emailInvalid')).should('be.visible');
+        cy.get(`${dataMails} input`).clear().type('testorg.com');
+        cy.get(dataButton).click();
+        cy.get(`${dataMails} span`).contains(tMails('emailInvalid')).should('be.visible');
+      });
+
+      it('Superadmin can configure mail providers', () => {
+        const dataProvider = '[data-cypress-id="smtpProvider"]';
+
+        cy.get(`${dataMails} input`).clear().type(orgEmail);
+        cy.get('[alt="emails-smtp"]').click();
+        cy.get(dataProvider).should('contain', tProviders('title'));
+        cy.get(`${dataProvider} [name="port"]`).type('25');
+        cy.get(`${dataProvider} [name="host"]`).type('smtp.freesmtpservers.com');
+        cy.get(`${dataProvider} button`).contains(tProviders('tableAdd')).click();
+        cy.get(`${dataProvider} td`).should('contain', '25');
+        cy.get(`${dataProvider} td`).should('contain', 'smtp.freesmtpservers.com');
+        cy.get(dataButton).click();
+        cy.get('[data-cypress-id="localesForm"]').should('contain', tLanguages('title'));
+        advanceOrganizationStep(tOrg);
+        cy.get(`${dataMails} input`).should('have.value', orgEmail);
+        cy.get('[alt="emails-smtp"]').click();
+        cy.get(`${dataProvider} td`).should('contain', '25');
+        cy.get(`${dataProvider} td`).should('contain', 'smtp.freesmtpservers.com');
+      });
+    });
+
+    describe('Superadmin can configure locales', () => {});
   });
 });

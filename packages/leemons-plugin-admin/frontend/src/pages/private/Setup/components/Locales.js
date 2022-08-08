@@ -97,6 +97,7 @@ const Locales = ({ configured, onNextLabel, onNext = () => {} }) => {
         title={t('languages.title')}
         description={t('languages.description')}
         divided
+        data-cypress-id="localesForm"
       >
         <ContextContainer>
           <Paragraph>{t('languages.intro')}</Paragraph>
