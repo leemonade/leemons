@@ -11,7 +11,7 @@ function getConfigByInstance(instance) {
           { type: 'hide-response', value: 0, canUse: true },
           { type: 'note', value: 0, canUse: true },
         ],
-    wrong: filters?.wrong ? Number(filters.wrong) : 50,
+    wrong: filters?.wrong ? Number(filters.wrong) : 0,
     canOmitQuestions: isBoolean(filters?.canOmitQuestions) ? filters?.canOmitQuestions : true,
   };
 }

@@ -277,6 +277,7 @@ module.exports = {
       '<strong>Puedes dejar preguntas en blanco</strong> y estas <strong>restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
     errorQuestions:
       'Las <strong>contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
+    noErrorQuestions: 'Las contestaciones erroneas no restan puntos',
     finishTestModalTitle: 'Finalizar y entregar este test',
     finishTestModalDescription:
       'Si haces click en "Confirmar entrega", tu test será enviado a un revisor y ya no podrás modificar ningun respuesta o responder a preguntas sin contestar <br/><br/> Una vez que confirmes la entrega, el sistema te mostrará los resultados del test (exceptuando las preguntas abiertas)',
