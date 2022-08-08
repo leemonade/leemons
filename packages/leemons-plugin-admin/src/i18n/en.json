@@ -134,11 +134,13 @@
       "lookAndFeel": "Brand look & feel",
       "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud.",
       "logoUrl": "Logo URL",
+      "logoUrlInvalid": "Logo URL is invalid",
       "mainColor": "Main color (accent color)",
       "superAdminCredentials": "Super-admin credentials",
       "superAdminCredentialsDescription": "This super administrator user has access to the advanced settings of the system. In the last step of this setup, you will be able to create standard administrators who will have access to the plugins related to the training experience and will have their own setup path.",
       "email": "Email",
       "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
       "password": "Password",
       "phone": "Phone",
       "contactName": "Contact name",
@@ -202,4 +204,3 @@
     "translations_warning": "Must save the profile to keep translations stored"
   }
 }
-
