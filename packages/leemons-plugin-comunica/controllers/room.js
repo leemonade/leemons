@@ -34,8 +34,18 @@ async function markMessagesAsRead(ctx) {
   ctx.body = { status: 200 };
 }
 
+async function getUnreadMessages(ctx) {
+  const count = await roomService.getUnreadMessages(
+    ctx.request.body.keys,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, count };
+}
+
 module.exports = {
   markMessagesAsRead,
+  getUnreadMessages,
   sendMessage,
   getMessages,
   getRoom,

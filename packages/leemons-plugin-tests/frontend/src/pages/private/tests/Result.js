@@ -528,13 +528,11 @@ export default function Result() {
             }}
             opened={store.chatOpened}
             onRoomLoad={(room) => {
-              console.log(room);
               store.room = room;
               render();
             }}
             onMessage={() => {
               store.room.unreadMessages += 1;
-              console.log(store.room.unreadMessages);
               render();
             }}
             onMessagesMarkAsRead={() => {

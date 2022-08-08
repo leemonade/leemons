@@ -7,6 +7,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { UserDisplayItem } from '@bubbles-ui/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { useQuery } from 'react-query';
+import UnreadMessages from '@comunica/UnreadMessages';
 import getStatus from './getStatus';
 import getActions from './getActions';
 import prefixPN from '../../../../../helpers/prefixPN';
@@ -91,6 +92,7 @@ export default function useParseStudents(instance, statusLabels) {
       id: student.user,
       student: <UserDisplayItem {...student.userInfo} />,
       status: statusLabels[getStatus(student, instance)],
+      unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
       completed:
         (student?.timestamps?.end && (
           <LocaleDate

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import SocketIoService from '@socket-io/service';
 
 class RoomService {
@@ -28,6 +29,26 @@ class RoomService {
   static watchRoom(key, callback) {
     return SocketIoService.useOn(`COMUNICA:ROOM:${key}`, (event, data) => {
       callback(data);
+    });
+  }
+
+  static watchRooms(keys, callback) {
+    let k = _.isArray(keys) ? keys : [keys];
+    k = _.map(k, (key) => `COMUNICA:ROOM:${key}`);
+    return SocketIoService.useOnAny((event, data) => {
+      if (k.indexOf(event) !== -1) {
+        callback(event.replace('COMUNICA:ROOM:', ''), data);
+      }
+    });
+  }
+
+  static watchOnReadRooms(keys, callback) {
+    let k = _.isArray(keys) ? keys : [keys];
+    k = _.map(k, (key) => `COMUNICA:ROOM:READED:${key}`);
+    return SocketIoService.useOnAny((event, data) => {
+      if (k.indexOf(event) !== -1) {
+        callback(event.replace('COMUNICA:ROOM:READED:', ''), data);
+      }
     });
   }
 
@@ -63,6 +84,17 @@ class RoomService {
       method: 'GET',
     });
     return room;
+  }
+
+  static async getUnreadMessages(keys) {
+    const { count } = await leemons.api(`comunica/room/messages/unread`, {
+      allAgents: true,
+      method: 'POST',
+      body: {
+        keys,
+      },
+    });
+    return count;
   }
 }
 

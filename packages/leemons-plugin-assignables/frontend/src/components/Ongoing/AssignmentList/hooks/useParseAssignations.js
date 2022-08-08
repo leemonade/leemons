@@ -1,21 +1,22 @@
-import React, { useMemo, useContext, useCallback } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
-import { LocaleDate, LocaleRelativeTime, useApi, unflatten } from '@common';
+import { LocaleDate, LocaleRelativeTime, unflatten } from '@common';
 import {
   Badge,
-  Text,
-  ContextContainer,
-  Button,
-  ImageLoader,
   Box,
+  Button,
+  ContextContainer,
+  ImageLoader,
+  Text,
   TextClamp,
 } from '@bubbles-ui/components';
-import { ViewOnIcon, EditIcon } from '@bubbles-ui/icons/outline';
+import { EditIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from 'react-query';
+import UnreadMessages from '@comunica/UnreadMessages';
 import globalContext from '../../../../contexts/globalContext';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
@@ -369,11 +370,19 @@ async function parseAssignationForTeacherView(instance, labels, options) {
   const studentsStatus = getStudentsStatusForTeacher(instance);
 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
+
+  let rooms = [];
+  _.forEach(instance.students, ({ chatKeys }) => {
+    rooms = rooms.concat(chatKeys);
+  });
+  rooms = _.uniq(rooms);
+
   return {
     ...commonData,
     ...studentsStatus,
     students: instance?.students?.length,
     actions: <TeacherActions id={instance.id} />,
+    unreadMessages: <UnreadMessages rooms={rooms} />,
   };
 }
 
@@ -390,6 +399,7 @@ async function parseAssignationForStudentView(assignation, labels, options) {
     submission: (
       <TimeReference assignation={assignation} status={_status} labels={labels.activity_status} />
     ),
+    unreadMessages: <UnreadMessages rooms={assignation.chatKeys} />,
     // !instance.dates.deadline || instance.dates.end ? (
     //   '-'
     // ) : (

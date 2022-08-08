@@ -176,6 +176,7 @@ module.exports = {
         completed: 'Completed',
         avgTime: 'Avg. time',
         score: 'Score',
+        unreadMessages: 'Messages',
       },
     },
     placeholders: {
@@ -224,6 +225,7 @@ module.exports = {
       open: 'Open',
       ongoing: 'Ongoing',
       completed: 'Completed',
+      unreadMessages: 'Messages',
     },
     student: {
       task: 'Task',
@@ -233,6 +235,7 @@ module.exports = {
       status: 'Status',
       timeReference: 'Time reference',
       submission: 'Submission',
+      unreadMessages: 'Messages',
     },
   },
   multiSubject: 'Multi-subject',

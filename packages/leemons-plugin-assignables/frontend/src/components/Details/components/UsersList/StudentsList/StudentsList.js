@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PaginatedList } from '@bubbles-ui/components';
 
@@ -24,6 +24,10 @@ export default function StudentsList({ labels, instance, students }) {
       {
         Header: labels?.studentListcolumns?.score || '',
         accessor: 'score',
+      },
+      {
+        Header: labels?.studentListcolumns?.unreadMessages || '',
+        accessor: 'unreadMessages',
       },
       {
         Header: '',
@@ -70,6 +74,7 @@ StudentsList.propTypes = {
       completed: PropTypes.string,
       avgTime: PropTypes.string,
       score: PropTypes.string,
+      unreadMessages: PropTypes.string,
     }),
     pagination: PropTypes.object,
   }),

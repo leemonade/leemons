@@ -177,6 +177,7 @@ module.exports = {
         completed: 'Completada',
         avgTime: 'Tiempo medio',
         score: 'Puntuación',
+        unreadMessages: 'Mensajes',
       },
     },
     placeholders: {
@@ -230,6 +231,7 @@ module.exports = {
       open: 'Abierta',
       ongoing: 'Comenzada',
       completed: 'Completada',
+      unreadMessages: 'Mensajes',
     },
     student: {
       task: 'Tarea',
@@ -238,6 +240,7 @@ module.exports = {
       deadline: 'Fecha límite',
       status: 'Estado',
       submission: 'Entrega',
+      unreadMessages: 'Mensajes',
     },
   },
   multiSubject: 'Multi-asignatura',

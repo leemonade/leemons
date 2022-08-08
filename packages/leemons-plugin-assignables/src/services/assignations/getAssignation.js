@@ -1,8 +1,10 @@
+const _ = require('lodash');
 const dayjs = require('dayjs');
 const { getDates } = require('../dates');
-const { assignations } = require('../tables');
+const { assignations, assignableInstances } = require('../tables');
 const getGrade = require('../grades/getGrade');
 const getUserPermission = require('../assignableInstance/permissions/assignableInstance/users/getUserPermission');
+const getSubjects = require('../subjects/getSubjects');
 
 module.exports = async function getAssignation(
   assignableInstanceId,
@@ -23,20 +25,36 @@ module.exports = async function getAssignation(
     throw new Error('Assignation not found or your are not allowed to view it');
   }
 
-  let assignation = await assignations.findOne(
-    {
-      instance: assignableInstanceId,
-      user,
-    },
-    { transacting }
-  );
+  let [assignation, { assignable }] = await Promise.all([
+    assignations.findOne(
+      {
+        instance: assignableInstanceId,
+        user,
+      },
+      { transacting }
+    ),
+    assignableInstances.findOne(
+      { id: assignableInstanceId },
+      { columns: ['assignable'], transacting }
+    ),
+  ]);
 
   if (!assignation) {
     throw new Error('Assignation not found or your are not allowed to view it');
   }
 
-  const instanceDates = await getDates('assignableInstance', assignableInstanceId, {
-    transacting,
+  const [instanceDates, subjects] = await Promise.all([
+    getDates('assignableInstance', assignableInstanceId, {
+      transacting,
+    }),
+    getSubjects(assignable, { transacting }),
+  ]);
+
+  const chatKeys = [];
+  _.forEach(subjects, ({ subject }) => {
+    chatKeys.push(
+      `plugins.assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${user}`
+    );
   });
 
   assignation = {
@@ -45,11 +63,23 @@ module.exports = async function getAssignation(
     metadata: JSON.parse(assignation.metadata),
   };
 
-  assignation.timestamps = await getDates('assignation', assignation.id, { transacting });
-  assignation.grades = await getGrade(
-    { assignation: assignation.id, visibleToStudent: isTheStudent ? true : undefined },
-    { transacting }
-  );
+  const [timestamps, grades] = await Promise.all([
+    getDates('assignation', assignation.id, { transacting }),
+    getGrade(
+      { assignation: assignation.id, visibleToStudent: isTheStudent ? true : undefined },
+      { transacting }
+    ),
+    /*
+        leemons
+          .getPlugin('comunica')
+          .services.room.getUnreadMessages(chatKeys, userSession.userAgents[0].id, { transacting }),
+    */
+  ]);
+
+  assignation.chatKeys = chatKeys;
+  // assignation.unreadMessages = unreadMessages;
+  assignation.timestamps = timestamps;
+  assignation.grades = grades;
 
   const today = dayjs();
   const startDate = dayjs(instanceDates.start || null);
