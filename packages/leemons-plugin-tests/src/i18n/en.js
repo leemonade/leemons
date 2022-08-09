@@ -373,6 +373,7 @@ module.exports = {
     ko: 'Wrong',
     nsnc: 'NS/NC',
     chatDescription: 'Do you have any questions about this evaluation?',
+    chatTeacherDescription: 'Would you like to write a comment?',
     chatButtonStudent: 'Write to your student',
     chatButtonTeacher: 'Write to your teacher',
   },

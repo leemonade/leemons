@@ -181,7 +181,10 @@ module.exports = async function createAssignation(
               _classes,
               `${hostname || ctx.request.header.origin}/private/assignables/ongoing`,
               subjectIconUrl,
-              userSession
+              {
+                ...userSession,
+                avatarUrl: (hostname || ctx.request.header.origin) + userSession.avatar,
+              }
             );
 
             // EN: Save the timestamps

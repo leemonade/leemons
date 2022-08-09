@@ -842,6 +842,8 @@ const addClassSchema = {
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
     color: stringSchema,
+    virtualUrl: stringSchemaNullable,
+    address: stringSchemaNullable,
     icon: {
       type: ['string', 'object'],
       nullable: true,
