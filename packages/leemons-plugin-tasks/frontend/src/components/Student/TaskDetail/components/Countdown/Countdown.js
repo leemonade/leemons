@@ -103,7 +103,6 @@ export default function Countdown({ assignation, show = true, onTimeout }) {
         return () => clearTimeout(timer);
       }
     }
-    return null;
   }, [endDate?.format(), showTimeoutModal]);
 
   if (!endDate || !show) {

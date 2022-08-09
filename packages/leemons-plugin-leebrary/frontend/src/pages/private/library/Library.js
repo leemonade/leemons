@@ -41,7 +41,9 @@ const LibraryPageContent = () => {
     setSettings({ hasPins: settingsResult.hasPins, loadingPins: false });
   };
 
-  useEffect(() => getCategories(), []);
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   const navbarLabels = useMemo(() => {
     if (!isEmpty(translations)) {
