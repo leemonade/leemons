@@ -109,7 +109,7 @@ export default function Accordion({
         <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[10] })}>
           <ContextContainer alignItems="center">
             <Text size="md" color="primary" strong>
-              {store.isTeacher ? labels?.chatTeacherDescription : labels?.chatDescription}
+              {labels?.chatTeacherDescription}
             </Text>
             <Box>
               <Button
@@ -120,7 +120,7 @@ export default function Accordion({
                   render();
                 }}
               >
-                {store.isTeacher ? labels?.chatButtonStudent : labels?.chatButtonTeacher}
+                {labels?.chatButtonStudent}
               </Button>
             </Box>
           </ContextContainer>
@@ -223,6 +223,7 @@ export default function Accordion({
               label={
                 <ContextContainer direction="row" spacing={1}>
                   <Text>{labels?.minToPromote}</Text>
+                  gatitosdd
                   <Badge
                     label={
                       evaluationSystem?.minScaleToPromote?.letter ||
