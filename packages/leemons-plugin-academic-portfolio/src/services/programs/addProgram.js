@@ -10,6 +10,10 @@ const enableMenuItemService = require('../menu-builder/enableItem');
 async function addProgram(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      if (!data.maxSubstageAbbreviationIsOnlyNumbers) {
+        // eslint-disable-next-line no-param-reassign
+        data.maxSubstageAbbreviationIsOnlyNumbers = false;
+      }
       validateAddProgram(data);
       const {
         centers,

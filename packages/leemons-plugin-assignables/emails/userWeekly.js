@@ -168,7 +168,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 width="36"
                                 src="{{instance.asset.url}}"
                                 style="object-fit: cover;"
-                                alt=" "
+                                alt="&nbsp;"
                               />
                             </div>
                             </td>
@@ -264,7 +264,8 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                     height="36"
                                     width="36"
                                     src="{{instance.asset.url}}"
-                                    alt=" "
+                                    style="object-fit: cover;"
+                                    alt="&nbsp;"
                                   />
                                 </div>
                             </td>
