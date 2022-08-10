@@ -9,7 +9,7 @@ module.exports = {
       'Recibir un correo cada vez que se me asigne una nueva actividad',
     weekResumeEmail: 'Resumen semanal',
     weekResumeEmailDescription:
-      'Recibir un resumen semanal de las actividades  en curso y evaluadas (envío a las 9am hora local)',
+      'Recibe un resumen semanal de las actividades en curso y evaluadas.',
     advancedConfig: 'Configuración avanzada',
     alertTitle: 'Atención',
     alertDescription:

@@ -21,8 +21,8 @@ async function sendEmail(
 
     // eslint-disable-next-line prefer-const
     let [canSend, dayLimits] = await Promise.all([
-      emailServices.config.getConfig('new-assignation-email'),
-      emailServices.config.getConfig('new-assignation-per-day-email'),
+      emailServices.config.getConfig(user, { keys: 'new-assignation-email' }),
+      emailServices.config.getConfig(user, { keys: 'new-assignation-per-day-email' }),
     ]);
 
     if (dayLimits && instance.dates.deadline) {
@@ -181,7 +181,10 @@ module.exports = async function createAssignation(
               _classes,
               `${hostname || ctx.request.header.origin}/private/assignables/ongoing`,
               subjectIconUrl,
-              userSession
+              {
+                ...userSession,
+                avatarUrl: (hostname || ctx.request.header.origin) + userSession.avatar,
+              }
             );
 
             // EN: Save the timestamps

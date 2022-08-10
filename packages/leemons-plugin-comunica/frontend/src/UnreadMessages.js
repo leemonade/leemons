@@ -46,7 +46,7 @@ function UnreadMessages({ rooms }) {
 }
 
 UnreadMessages.propTypes = {
-  rooms: PropTypes.oneOf([PropTypes.array, PropTypes.string]),
+  rooms: PropTypes.any,
 };
 
 export { UnreadMessages };

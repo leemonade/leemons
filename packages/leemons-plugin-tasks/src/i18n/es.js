@@ -425,6 +425,10 @@ module.exports = {
     },
   },
   task_correction: {
+    chatDescription: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+    chatTeacherDescription: '¿Quieres escribir alguna observación?',
+    chatButtonStudent: 'Escribe a tu alumno',
+    chatButtonTeacher: 'Escribe a tu profesor',
     punctuation: 'Puntuación',
     minToPromote: 'Min. para aprobar',
     feedbackForStudent: 'Feedback para el estudiante',

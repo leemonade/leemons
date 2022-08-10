@@ -7,9 +7,11 @@ export default function ConditionalInput({
   render,
   helpPosition = 'bottom',
   onChange,
+  initialValue,
   value: userValue,
   ...props
 }) {
+  const isFirstRender = React.useRef(true);
   const [show, setShow] = useState(userValue || false);
 
   const handleChange = (value) => {
@@ -22,6 +24,11 @@ export default function ConditionalInput({
   };
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      handleChange(initialValue);
+    }
+
     handleChange(userValue);
   }, [userValue]);
 
@@ -40,4 +47,5 @@ ConditionalInput.propTypes = {
   helpPosition: PropTypes.string,
   onChange: PropTypes.func,
   value: PropTypes.bool,
+  initialValue: PropTypes.bool,
 };

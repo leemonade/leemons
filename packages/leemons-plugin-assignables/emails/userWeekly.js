@@ -158,33 +158,31 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                             color: #212b3d;
                           "
                         >${texts.upcomingDeliveries}</span>
+                        <table border="0" cellspacing="0" cellpadding="0">
                         {{@each(it.nextInstances) => instance}}
-                          <div
-                            style="
-                                  display: flex;
-                                  padding: 6px 16px;
-                                  align-items: center;
-                                  border-top: 2px solid #edeff5;
-                                "
-                          >
+                          <tr>
+                          <td style="border-top: 2px solid #edeff5; padding: 6px; padding-left: 16px;">
                             <div style="border: 1px solid #b9bec4">
                               <img
                                 height="36"
                                 width="36"
                                 src="{{instance.asset.url}}"
+                                style="object-fit: cover;"
+                                alt=" "
                               />
                             </div>
+                            </td>
+                          <td style="border-top: 2px solid #edeff5; padding: 6px;">
                             <span
                               style="
-                                    margin-left: 8px;
                                     font-family: 'Inter', Verdana, sans-serif;
                                     font-size: 14px;
                                     line-height: 16px;
                                     color: #212b3d;
                                   "
-                            >{{instance.asset.name}}</span
-                            >
-                            <div>
+                            >{{instance.asset.name}}</span>
+                            </td>
+                          <td style="border-top: 2px solid #edeff5; padding: 6px;">
                               <div
                                 style="
                                       margin-left: 10px;
@@ -194,10 +192,10 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                       background-color: {{ @if (instance.classes.length === 1) }}{{ instance.classes[0].color }};{{ #else }}#67728E;{{ /if}}
                                     "
                               ></div>
-                            </div>
+                            </td>
+                          <td style="border-top: 2px solid #edeff5; padding: 6px;">
                             <span
                               style="
-                                    margin-left: 16px;
                                     font-family: 'Inter', Verdana, sans-serif;
                                     font-size: 14px;
                                     line-height: 16px;
@@ -210,9 +208,10 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                   ${texts.multiSubjects}
                                 {{ /if}}
                             </span>
+                            </td>
+                          <td style="border-top: 2px solid #edeff5; padding: 6px; padding-right: 16px;">
                             <span
                               style="
-                                    margin-left: 25px;
                                     font-family: 'Lexend', Verdana, sans-serif;
                                     font-size: 14px;
                                     line-height: 16px;
@@ -221,14 +220,15 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                   "
                             >
                                 ${texts.expStart} {{instance.time}} {{ @if (instance.timeUnit === 'days') }}
-                                    ${texts.expDays}
+                                    {{@if (instance.time === 1)}}${texts.expDay} {{#else}}${texts.expDays} {{/if}}
                                 {{ #else }}
-                                  ${texts.expHours}
+                                  {{@if (instance.time === 1)}}${texts.expHour} {{#else}}${texts.expHours} {{/if}}
                                 {{ /if}}
                             </span>
-                          </div>
+                            </td>
+                          </tr>
                         {{/each}}
-
+                         </table>
                   </div>
                 </td>
               </tr>
@@ -255,72 +255,65 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                             color: #212b3d;
                           "
                         >${texts.activitiesEvaluated}</span>
+                        <table border="0" cellspacing="0" cellpadding="0">
                         {{@each(it.evaluatedInstances) => instance}}
-                          <div
-                            style="
-                                  display: flex;
-                                  padding: 6px 16px;
-                                  align-items: center;
-                                  border-top: 2px solid #edeff5;
-                                "
-                          >
-                            <div style="border: 1px solid #b9bec4">
-                              <img
-                                height="36"
-                                width="36"
-                                src="{{instance.asset.url}}"
-                              />
-                            </div>
-                            <span
-                              style="
-                                    margin-left: 8px;
+                          <tr>
+                          <td style="border-top: 2px solid #edeff5; padding: 6px; padding-left: 16px;">
+                                <div style="border: 1px solid #b9bec4">
+                                  <img
+                                    height="36"
+                                    width="36"
+                                    src="{{instance.asset.url}}"
+                                    alt=" "
+                                  />
+                                </div>
+                            </td>
+                            <td style="border-top: 2px solid #edeff5; padding: 6px;">
+                                <span style="
                                     font-family: 'Inter', Verdana, sans-serif;
                                     font-size: 14px;
                                     line-height: 16px;
                                     color: #212b3d;
-                                  "
-                            >{{instance.asset.name}}</span
-                            >
-                            <div>
-                              <div
-                                style="
+                                  ">{{instance.asset.name}}</span>
+                            </td>
+                            <td style="border-top: 2px solid #edeff5; padding: 6px;">
+                              <div style="
                                       margin-left: 10px;
                                       height: 26px;
                                       width: 26px;
                                       border-radius: 50%;
                                       background-color: {{ @if (instance.classes.length === 1) }}{{ instance.classes[0].color }};{{ #else }}#67728E;{{ /if}}
-                                    "
-                              ></div>
-                            </div>
-                            <span
-                              style="
-                                    margin-left: 16px;
-                                    font-family: 'Inter', Verdana, sans-serif;
-                                    font-size: 14px;
-                                    line-height: 16px;
-                                    color: #212b3d;
-                                  "
-                            >
-                            {{ @if (instance.classes.length === 1) }}
-                                    {{ instance.classes[0].subject.name }}
-                                {{ #else }}
-                                  ${texts.multiSubjects}
-                                {{ /if}}
-                            </span>
-                            <span
-                              style="
-                                    margin-left: 25px;
-                                    font-family: 'Lexend', Verdana, sans-serif;
-                                    font-size: 14px;
-                                    line-height: 16px;
-                                    font-weight: 500;
-                                    color: #212b3d;
-                                  "
-                            >
-                               {{instance.note}}
-                            </span>
-                          </div>
+                                    "></div>
+                            </td>
+                            <td style="border-top: 2px solid #edeff5; padding: 6px;">
+                              <span style="
+                                      font-family: 'Inter', Verdana, sans-serif;
+                                      font-size: 14px;
+                                      line-height: 16px;
+                                      color: #212b3d;
+                                    ">
+                              {{ @if (instance.classes.length === 1) }}
+                                      {{ instance.classes[0].subject.name }}
+                                  {{ #else }}
+                                    ${texts.multiSubjects}
+                                  {{ /if}}
+                              </span>
+                            </td>
+                            <td style="border-top: 2px solid #edeff5; padding: 6px; padding-right: 16px;">
+                              <span style="
+                                      margin-left: 25px;
+                                      font-family: 'Lexend', Verdana, sans-serif;
+                                      font-size: 14px;
+                                      line-height: 16px;
+                                      font-weight: 500;
+                                      color: #212b3d;
+                                    ">
+                                 {{instance.note}}
+                              </span>
+                            </td>
+                          </tr>
                         {{/each}}
+                        </table>
 
                   </div>
                 </td>
@@ -454,7 +447,9 @@ module.exports = {
       activitiesEvaluated: 'Actividades evaluadas',
       expStart: 'dentro de',
       expDays: 'días',
+      expDay: 'día',
       expHours: 'horas',
+      expHour: 'hora',
       multiSubjects: 'Multi-Asignatura',
     }
   ),
@@ -470,7 +465,9 @@ module.exports = {
       activitiesEvaluated: 'Activities evaluated',
       expStart: 'within',
       expDays: 'days',
+      expDay: 'day',
       expHours: 'hours',
+      expHour: 'hour',
       multiSubjects: 'Multi-Subject',
     }
   ),

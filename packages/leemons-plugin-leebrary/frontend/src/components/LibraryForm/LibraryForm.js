@@ -173,7 +173,9 @@ const LibraryForm = ({
     }
   }, [onlyImages, isImage]);
 
-  useEffect(() => onChange(formValues), [formValues]);
+  useEffect(() => {
+    onChange(formValues);
+  }, [formValues]);
 
   // ························································
   // HANDLERS
