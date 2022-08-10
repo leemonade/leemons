@@ -33,6 +33,7 @@ module.exports = {
       },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
+      clearStudents: 'Clear students',
       subjects: {
         title: 'Subjects to be evaluated in this activity',
         subtitle: 'NOTE: At least one of them',
@@ -176,6 +177,7 @@ module.exports = {
         completed: 'Completed',
         avgTime: 'Avg. time',
         score: 'Score',
+        unreadMessages: 'Messages',
       },
     },
     placeholders: {
@@ -224,6 +226,7 @@ module.exports = {
       open: 'Open',
       ongoing: 'Ongoing',
       completed: 'Completed',
+      unreadMessages: 'Messages',
     },
     student: {
       task: 'Task',
@@ -233,6 +236,7 @@ module.exports = {
       status: 'Status',
       timeReference: 'Time reference',
       submission: 'Submission',
+      unreadMessages: 'Messages',
     },
   },
   multiSubject: 'Multi-subject',

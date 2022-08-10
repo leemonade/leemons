@@ -153,8 +153,11 @@ export default function Login() {
 
   const errorMessages = useMemo(
     () => ({
-      username: { required: tCommon('required'), invalidFormat: tCommon('email') },
-      password: { required: tCommon('required') },
+      username: {
+        required: tCommon('required') || 'Required field',
+        invalidFormat: tCommon('email') || 'Invalid format',
+      },
+      password: { required: tCommon('required') || 'Required field' },
     }),
     [tCommon]
   );

@@ -209,7 +209,7 @@ function ChatDrawer({
                         : store.messages[index - 1].userAgent !== message.userAgent
                     }
                     isOwn={message.userAgent === store.userAgent}
-                    user={store.userAgentsById[message.userAgent]}
+                    user={store.userAgentsById?.[message.userAgent]}
                     message={{ ...message.message, date: message.created_at }}
                   />
                 </Box>

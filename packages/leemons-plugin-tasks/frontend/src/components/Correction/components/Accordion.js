@@ -1,17 +1,21 @@
 import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import {
-  Box,
-  Text,
   ActivityAccordion,
   ActivityAccordionPanel,
   Badge,
+  Box,
+  Button,
   ContextContainer,
   ScoreInput,
+  Text,
 } from '@bubbles-ui/components';
 import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorInput } from '@bubbles-ui/editors';
+import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
+import ChatButton from '@comunica/ChatButton';
+import { useStore } from '@common';
 
 function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {
   return (
@@ -75,7 +79,9 @@ export default function Accordion({
   user,
   instance,
   context,
+  assignationId,
 }) {
+  const [store, render] = useStore();
   const { control } = useFormContext();
   const { tabsState, updateTabState } = useContext(context);
 
@@ -97,41 +103,98 @@ export default function Accordion({
     return state;
   }, []);
 
-  if (instance?.requiresScoring && instance?.allowFeedback) {
-    return (
-      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-        <ActivityAccordionPanel
-          label={labels?.punctuation}
-          icon={<RatingStarIcon />}
-          rightSection={
-            <Badge
-              label={
-                <ContextContainer direction="row" spacing={1}>
-                  <Text>{labels?.minToPromote}</Text>
-                  <Badge
-                    label={
-                      evaluationSystem?.minScaleToPromote?.letter ||
-                      evaluationSystem?.minScaleToPromote?.number
-                    }
-                    closable={false}
-                    severity="warning"
-                  />
-                </ContextContainer>
-              }
-              closable={false}
-            />
-          }
-        >
-          <Grades
-            classes={classes}
-            evaluationSystem={evaluationSystem}
-            scoreInputProps={scoreInputProps}
-            control={control}
-            subject={subject}
-            user={user}
-          />
-        </ActivityAccordionPanel>
+  const Chat = (
+    <>
+      {store.room ? (
+        <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[10] })}>
+          <ContextContainer alignItems="center">
+            <Text size="md" color="primary" strong>
+              {store.isTeacher ? labels?.chatTeacherDescription : labels?.chatDescription}
+            </Text>
+            <Box>
+              <Button
+                rounded
+                rightIcon={<PluginComunicaIcon />}
+                onClick={() => {
+                  store.chatOpened = true;
+                  render();
+                }}
+              >
+                {store.isTeacher ? labels?.chatButtonStudent : labels?.chatButtonTeacher}
+              </Button>
+            </Box>
+          </ContextContainer>
+        </Box>
+      ) : null}
 
+      <ChatDrawer
+        onClose={() => {
+          store.chatOpened = false;
+          render();
+        }}
+        opened={store.chatOpened}
+        onRoomLoad={(room) => {
+          store.room = room;
+          render();
+        }}
+        onMessage={() => {
+          store.room.unreadMessages += 1;
+          render();
+        }}
+        onMessagesMarkAsRead={() => {
+          store.room.unreadMessages = 0;
+          render();
+        }}
+        room={`plugins.assignables.subject|${subject}.assignation|${assignationId}.userAgent|${user}`}
+      />
+      {store.room ? (
+        <ChatButton
+          room={store.room}
+          onClick={() => {
+            store.chatOpened = true;
+            render();
+          }}
+        />
+      ) : null}
+    </>
+  );
+
+  if (instance?.requiresScoring && instance?.allowFeedback) {
+    const panels = [
+      <ActivityAccordionPanel
+        label={labels?.punctuation}
+        icon={<RatingStarIcon />}
+        rightSection={
+          <Badge
+            label={
+              <ContextContainer direction="row" spacing={1}>
+                <Text>{labels?.minToPromote}</Text>
+                <Badge
+                  label={
+                    evaluationSystem?.minScaleToPromote?.letter ||
+                    evaluationSystem?.minScaleToPromote?.number
+                  }
+                  closable={false}
+                  severity="warning"
+                />
+              </ContextContainer>
+            }
+            closable={false}
+          />
+        }
+      >
+        <Grades
+          classes={classes}
+          evaluationSystem={evaluationSystem}
+          scoreInputProps={scoreInputProps}
+          control={control}
+          subject={subject}
+          user={user}
+        />
+      </ActivityAccordionPanel>,
+    ];
+    if (!store.room)
+      panels.push(
         <ActivityAccordionPanel
           label={labels?.feedbackForStudent}
           icon={<PluginComunicaIcon />}
@@ -139,7 +202,14 @@ export default function Accordion({
         >
           <Feedback classes={classes} subject={subject} control={control} user={user} />
         </ActivityAccordionPanel>
-      </ActivityAccordion>
+      );
+    return (
+      <>
+        <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
+          {panels}
+        </ActivityAccordion>
+        {Chat}
+      </>
     );
   }
   if (instance?.requiresScoring && !instance?.allowFeedback) {
@@ -180,8 +250,9 @@ export default function Accordion({
     );
   }
   if (!instance?.requiresScoring && instance?.allowFeedback) {
-    return (
-      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
+    const panels = [];
+    if (!store.room)
+      panels.push(
         <ActivityAccordionPanel
           label={labels?.feedbackForStudent}
           icon={<PluginComunicaIcon />}
@@ -189,7 +260,14 @@ export default function Accordion({
         >
           <Feedback classes={classes} subject={subject} control={control} user={user} />
         </ActivityAccordionPanel>
-      </ActivityAccordion>
+      );
+    return (
+      <>
+        <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
+          {panels}
+        </ActivityAccordion>
+        {Chat}
+      </>
     );
   }
 
@@ -205,4 +283,5 @@ Accordion.propTypes = {
   subject: PropTypes.string,
   context: PropTypes.object,
   user: PropTypes.string,
+  assignationId: PropTypes.string,
 };

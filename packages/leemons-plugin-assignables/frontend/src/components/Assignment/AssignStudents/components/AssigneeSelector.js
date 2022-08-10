@@ -6,7 +6,7 @@ import SelectClass from './SelectClass';
 import SelectCustomGroup from './SelectCustomGroup';
 import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
-export default function AssigneeSelector({ labels, profile, onChange, value }) {
+export default function AssigneeSelector({ labels, profile, onChange, value, defaultValue }) {
   const { control } = useFormContext();
   const [profiles, setProfiles] = useState(null);
 
@@ -36,6 +36,7 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
           profiles={profiles}
           value={value}
           onChange={onChange}
+          defaultValue={defaultValue?.assignmentSetup}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
         />
       );
@@ -62,4 +63,5 @@ AssigneeSelector.propTypes = {
   profile: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array.isRequired,
+  defaultValue: PropTypes.object,
 };

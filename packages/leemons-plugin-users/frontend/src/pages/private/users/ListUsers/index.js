@@ -175,7 +175,7 @@ function ListUsers() {
   }
 
   async function onPageSizeChange(size) {
-    store.size = size;
+    store.size = Number(size);
     await load();
   }
 

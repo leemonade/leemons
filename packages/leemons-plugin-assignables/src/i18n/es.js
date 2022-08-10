@@ -34,6 +34,7 @@ module.exports = {
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
+      clearStudents: 'Borrar estudiantes',
       subjects: {
         title: 'Asignaturas que se evaluarán en esta actividad',
         subtitle: 'NOTA: Al menos una de ellas',
@@ -177,6 +178,7 @@ module.exports = {
         completed: 'Completada',
         avgTime: 'Tiempo medio',
         score: 'Puntuación',
+        unreadMessages: 'Mensajes',
       },
     },
     placeholders: {
@@ -230,6 +232,7 @@ module.exports = {
       open: 'Abierta',
       ongoing: 'Comenzada',
       completed: 'Completada',
+      unreadMessages: 'Mensajes',
     },
     student: {
       task: 'Tarea',
@@ -238,6 +241,7 @@ module.exports = {
       deadline: 'Fecha límite',
       status: 'Estado',
       submission: 'Entrega',
+      unreadMessages: 'Mensajes',
     },
   },
   multiSubject: 'Multi-asignatura',

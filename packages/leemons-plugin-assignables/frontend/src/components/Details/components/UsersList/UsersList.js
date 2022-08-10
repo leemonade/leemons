@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Title, SearchInput, Stack, ContextContainer } from '@bubbles-ui/components';
+import { ContextContainer, SearchInput, Stack, Title } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -116,6 +116,7 @@ UserList.propTypes = {
       completed: PropTypes.string,
       avgTime: PropTypes.string,
       score: PropTypes.string,
+      unreadMessages: PropTypes.string,
     }),
     bulkActions: PropTypes.shape({
       label: PropTypes.string,
@@ -145,6 +146,7 @@ UserList.defaultProps = {
       completed: 'Completed',
       avgTime: 'Avg. time',
       score: 'Score',
+      unreadMessages: 'Messages',
     },
   },
   placeholders: {

@@ -52,11 +52,16 @@ export default function SelectClass({
   profiles,
   onChange,
   value,
+  defaultValue,
   groupedClassesWithSelectedSubjects,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       excluded: [],
+      ...defaultValue,
+      showExcluded: _.isNil(defaultValue?.showExcluded)
+        ? defaultValue?.excluded?.length > 0
+        : defaultValue?.showExcluded,
     },
   });
 
@@ -68,13 +73,19 @@ export default function SelectClass({
         return;
       }
 
+      if (!classes?.length) {
+        return;
+      }
+
       const selectedClasses = data.assignees
         .map((a) => classes.find((c) => c.id === a))
         // EN: Remove excluded students from assignableStudents
         // ES: Quitar alumnos excluidos de assignableStudents
         .map((c) => ({
           ...c,
-          assignableStudents: c.assignableStudents.filter((s) => !data.excluded?.includes(s)),
+          assignableStudents: data.showExcluded
+            ? c.assignableStudents.filter((s) => !data.excluded?.includes(s))
+            : c.assignableStudents,
         }))
         .filter((c) => c.assignableStudents.length);
 
@@ -82,7 +93,7 @@ export default function SelectClass({
         if (g.type === 'group') {
           return g.classes.map((c) => ({
             group: c.class.id,
-            students: c.assignableStudents,
+            students: _.intersection(c.assignableStudents, g.assignableStudents),
           }));
         }
 
@@ -94,10 +105,10 @@ export default function SelectClass({
 
       if (assignees.length) {
         if (!value || !_.isEqual(value, assignees)) {
-          onChange(assignees);
+          onChange(assignees, data);
         }
       } else if (!value || value?.length) {
-        onChange([]);
+        onChange([], data);
       }
     };
 
@@ -133,6 +144,7 @@ export default function SelectClass({
                   disabled,
                   label: `${c.label} (${c.assignableStudents.length}/${c.totalStudents} ${labels?.matchingStudents})`,
                   _type: c.type,
+                  checked: !disabled && field.value?.includes(c.id),
                 };
               })
               // Sort in the following order:
@@ -155,21 +167,22 @@ export default function SelectClass({
         <NonAssignableStudents users={nonAssignableStudents} labels={labels} />
       )}
       <Controller
-        name="excluded"
+        name="showExcluded"
         control={control}
-        render={({ field: { value: show } }) => (
+        render={({ field: { value: show, onChange: onToggle } }) => (
           <ConditionalInput
             label={labels?.excludeStudents}
-            value={!!show?.length}
+            value={!!show}
             showOnTrue
+            onChange={onToggle}
             render={() => (
               <Controller
                 name="excluded"
                 control={control}
-                shouldUnregister
                 render={({ field }) => (
                   <SelectUserAgent
                     {...field}
+                    clearable={labels?.clearStudents}
                     label={labels?.excludeStudents}
                     maxSelectedValues={0}
                     users={assignableStudents}
@@ -188,6 +201,7 @@ export default function SelectClass({
 SelectClass.propTypes = {
   labels: PropTypes.shape({
     excludeStudents: PropTypes.string,
+    clearStudents: PropTypes.string,
     unableToAssignStudentsMessage: PropTypes.string,
     matchingStudents: PropTypes.string,
     noStudentsToAssign: PropTypes.string,
@@ -208,4 +222,9 @@ SelectClass.propTypes = {
     nonAssignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
     assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
+  defaultValue: PropTypes.shape({
+    assignees: PropTypes.arrayOf(PropTypes.string),
+    excluded: PropTypes.arrayOf(PropTypes.string),
+    showExcluded: PropTypes.bool,
+  }),
 };

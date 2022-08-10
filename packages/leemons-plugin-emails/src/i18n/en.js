@@ -6,8 +6,7 @@ module.exports = {
     newAssignmentEmail: 'New AssignmentEmail',
     newAssignationEmailDescription: 'Receive an email every time I am assigned a new activity',
     weekResumeEmail: 'Weekly summary',
-    weekResumeEmailDescription:
-      'Receive a weekly summary of ongoing and evaluated activities (sent at 9am local time)',
+    weekResumeEmailDescription: 'Receive a weekly summary of ongoing and evaluated activities.',
     advancedConfig: 'Advanced configuration',
     alertTitle: 'Attention',
     alertDescription:

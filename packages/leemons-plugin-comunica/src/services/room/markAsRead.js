@@ -12,6 +12,7 @@ async function markAsRead(key, userAgentId, { transacting } = {}) {
     { transacting }
   );
   if (!count) return null;
+  await leemons.socket.emit(userAgentId, `COMUNICA:ROOM:READED:${key}`);
   return table.roomMessagesUnRead.delete(
     {
       room: key,

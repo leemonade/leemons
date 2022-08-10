@@ -279,6 +279,7 @@ module.exports = {
       '<strong>You can leave questions blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
     errorQuestions:
       '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
+    noErrorQuestions: 'Wrong answers do not deduct points',
     finishTestModalTitle: 'Complete and submit this test',
     finishTestModalDescription:
       'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
@@ -372,6 +373,7 @@ module.exports = {
     ko: 'Wrong',
     nsnc: 'NS/NC',
     chatDescription: 'Do you have any questions about this evaluation?',
+    chatTeacherDescription: 'Would you like to write a comment?',
     chatButtonStudent: 'Write to your student',
     chatButtonTeacher: 'Write to your teacher',
   },

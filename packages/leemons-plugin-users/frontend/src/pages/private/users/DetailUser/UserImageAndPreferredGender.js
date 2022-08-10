@@ -8,13 +8,14 @@ import {
   InputWrapper,
   Select,
 } from '@bubbles-ui/components';
-import {addErrorAlert, addSuccessAlert} from '@layout/alert';
-import {ModalZoom} from '@common/ModalZoom';
-import {useStore} from '@common';
-import {Controller} from 'react-hook-form';
-import {updateUserImageRequest} from '@users/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { ModalZoom } from '@common/ModalZoom';
+import { useStore } from '@common';
+import { Controller } from 'react-hook-form';
+import { updateUserImageRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import {useLayout} from '@layout/context';
+import { useLayout } from '@layout/context';
+import SocketIoService from '@socket-io/service';
 import getUserFullName from '../../../../helpers/getUserFullName';
 
 const Styles = createStyles((theme) => ({
@@ -41,30 +42,36 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function UserImageAndPreferredGender({t, user, session, form, isEditMode}) {
+function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
   const isMe = user.id === session.id;
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const {classes: styles} = Styles();
-  const {openDeleteConfirmationModal, setLoading} = useLayout();
+  const { classes: styles } = Styles();
+  const { openDeleteConfirmationModal, setLoading } = useLayout();
   const [store, render] = useStore({
     genders: user.preferences?.gender
-      ? [{label: user.preferences?.gender, value: user.preferences?.gender}]
+      ? [{ label: user.preferences?.gender, value: user.preferences?.gender }]
       : [],
     pronouns: user.preferences?.pronoun
-      ? [{label: user.preferences?.pronoun, value: user.preferences?.pronoun}]
+      ? [{ label: user.preferences?.pronoun, value: user.preferences?.pronoun }]
       : [],
     pluralPronouns: user.preferences?.pluralPronoun
-      ? [{label: user.preferences?.pluralPronoun, value: user.preferences?.pluralPronoun}]
+      ? [{ label: user.preferences?.pluralPronoun, value: user.preferences?.pluralPronoun }]
       : [],
   });
 
   const avatar = form.watch('user.avatar');
 
+  SocketIoService.useOn('USER_CHANGE_AVATAR', (event, { url }) => {
+    const a = avatar.split('?');
+    if (url === a[0]) {
+      form.setValue('user.avatar', `${url}?t=${Date.now()}`);
+    }
+  });
+
   function addData(name, e) {
-    store[name].push({label: e, value: e});
+    store[name].push({ label: e, value: e });
     render();
   }
-
 
   async function saveImage(file) {
     try {
@@ -92,22 +99,24 @@ function UserImageAndPreferredGender({t, user, session, form, isEditMode}) {
 
   return (
     <ContextContainer direction="row" alignItems="center">
-      <Box sx={() => ({position: 'relative'})}>
-        {isEditMode || isMe ? (
-          <Box className={styles.imageOver} onClick={selectImage}>
-            {t('changeAvatar')}
-          </Box>
-        ) : null}
-        <ModalZoom>
-          <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg"/>
-        </ModalZoom>
+      <Box>
+        <Box sx={() => ({ display: 'inline-block', position: 'relative' })}>
+          {isEditMode || isMe ? (
+            <Box className={styles.imageOver} onClick={selectImage}>
+              {t('changeAvatar')}
+            </Box>
+          ) : null}
+          <ModalZoom>
+            <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+          </ModalZoom>
+        </Box>
       </Box>
       <InputWrapper label={t('preferredGenderLabel')}>
         <ContextContainer direction="row">
           <Controller
             name="preferences.gender"
             control={form.control}
-            render={({field}) => (
+            render={({ field }) => (
               <Select
                 {...field}
                 data={store.genders}
@@ -124,7 +133,7 @@ function UserImageAndPreferredGender({t, user, session, form, isEditMode}) {
           <Controller
             name="preferences.pronoun"
             control={form.control}
-            render={({field}) => (
+            render={({ field }) => (
               <Select
                 {...field}
                 data={store.pronouns}
@@ -141,7 +150,7 @@ function UserImageAndPreferredGender({t, user, session, form, isEditMode}) {
           <Controller
             name="preferences.pluralPronoun"
             control={form.control}
-            render={({field}) => (
+            render={({ field }) => (
               <Select
                 {...field}
                 data={store.pluralPronouns}

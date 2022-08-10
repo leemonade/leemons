@@ -497,7 +497,7 @@ export default function Result() {
               <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
                 <ContextContainer alignItems="center">
                   <Text size="md" color="primary" strong>
-                    {t('chatDescription')}
+                    {store.isTeacher ? t('chatTeacherDescription') : t('chatDescription')}
                   </Text>
                   <Box>
                     <Button
@@ -528,13 +528,11 @@ export default function Result() {
             }}
             opened={store.chatOpened}
             onRoomLoad={(room) => {
-              console.log(room);
               store.room = room;
               render();
             }}
             onMessage={() => {
               store.room.unreadMessages += 1;
-              console.log(store.room.unreadMessages);
               render();
             }}
             onMessagesMarkAsRead={() => {
@@ -545,7 +543,7 @@ export default function Result() {
               store.instance.assignable.subjects[0].subject
             }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
           />
-          {store.room && store.room.messages > 0 ? (
+          {store.room ? (
             <ChatButton
               room={store.room}
               onClick={() => {

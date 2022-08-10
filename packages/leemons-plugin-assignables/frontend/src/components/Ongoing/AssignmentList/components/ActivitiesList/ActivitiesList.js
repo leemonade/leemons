@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { PaginatedList, Loader, Box, Text, ImageLoader } from '@bubbles-ui/components';
+import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -61,10 +61,13 @@ function useAssignmentsColumns() {
           Header: labels.students || '',
           accessor: 'students',
         },
+        /*
         {
           Header: labels.open || '',
           accessor: 'open',
         },
+
+         */
         {
           Header: labels.ongoing || '',
           accessor: 'ongoing',
@@ -72,6 +75,10 @@ function useAssignmentsColumns() {
         {
           Header: labels.completed || '',
           accessor: 'completed',
+        },
+        {
+          Header: labels.unreadMessages || '',
+          accessor: 'unreadMessages',
         },
         {
           Header: '',
@@ -89,6 +96,10 @@ function useAssignmentsColumns() {
       {
         Header: labels.submission || '',
         accessor: 'submission',
+      },
+      {
+        Header: labels.unreadMessages || '',
+        accessor: 'unreadMessages',
       },
       {
         Header: '',

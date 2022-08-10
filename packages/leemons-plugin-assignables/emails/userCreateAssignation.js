@@ -102,51 +102,66 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                 />
               </td>
             </tr>
-            <tr>
+
             {{ @if (it.instance.messageToAssignees) }}
-              <td
-                align="center"
-                style="
-                  text-align: center;
-                  padding: 24px 45px 32px;
-                  font-family: 'Inter', Verdana, sans-serif;
-                  font-size: 18px;
-                  line-height: 22.4px;
-                  font-weight: 600;
-                  color: #5b6577;
-                "
-              >
-               {{*it.instance.messageToAssignees}}
-              </td>
-              <td
-                align="center"
-                style="
-                  text-align: center;
-                  padding: 24px 45px 32px;
-                  font-family: 'Inter', Verdana, sans-serif;
-                  font-size: 14px;
-                  line-height: 22.4px;
-                  color: #212B3D;
-                "
-              >
-               {{it.userSession.name}} {{it.userSession.surnames}}
-              </td>
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    text-align: center;
+                    padding: 24px 45px 32px;
+                    font-family: 'Inter', Verdana, sans-serif;
+                    font-size: 18px;
+                    line-height: 22.4px;
+                    font-weight: 600;
+                    color: #5b6577;
+                  "
+                >
+                 {{*it.instance.messageToAssignees}}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    text-align: center;
+                    padding: 24px 45px 32px;
+                    font-family: 'Inter', Verdana, sans-serif;
+                    font-size: 14px;
+                    line-height: 22.4px;
+                    color: #212B3D;
+                    align-items: flex-end;
+                    display: block;
+                    justify-content: center;
+                  "
+                >
+                <img
+                  src="{{it.userSession.avatarUrl}}"
+                  height="36"
+                  width="36"
+                  style="border-radius: 50%, margin-right: 8px"
+                />
+                 {{it.userSession.name}} {{it.userSession.surnames}}
+                </td>
+              </tr>
               {{ #else }}
-              <td
-                align="center"
-                style="
-                  text-align: center;
-                  padding: 24px 45px 32px;
-                  font-family: 'Inter', Verdana, sans-serif;
-                  font-size: 14px;
-                  line-height: 22.4px;
-                  color: #5b6577;
-                "
-              >
-               ${t1}
-              </td>
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    text-align: center;
+                    padding: 24px 45px 32px;
+                    font-family: 'Inter', Verdana, sans-serif;
+                    font-size: 14px;
+                    line-height: 22.4px;
+                    color: #5b6577;
+                  "
+                >
+                 ${t1}
+                </td>
+               </tr>
               {{ /if}}
-            </tr>
+
           </table>
           <table
         cellpadding="0"
