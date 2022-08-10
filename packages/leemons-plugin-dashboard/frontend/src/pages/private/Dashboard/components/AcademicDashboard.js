@@ -131,6 +131,7 @@ export default function AcademicDashboard({ session }) {
             <HeaderDropdown
               value={store.selectedProgram}
               data={store.programsSelect}
+              readOnly={store.programsSelect?.length <= 1}
               onChange={selectProgram}
             />
           </Box>
