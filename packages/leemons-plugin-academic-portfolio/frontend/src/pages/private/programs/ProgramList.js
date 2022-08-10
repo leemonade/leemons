@@ -222,6 +222,7 @@ export default function ProgramList() {
     handleShowDetail(async () => {
       const { program } = await detailProgramRequest(e.program.id);
       store.currentProgram = program;
+      store.currentProgram.allSubjectsSameDuration = !store.currentProgram.customSubstages?.length;
       treeProps.setSelectedNode(e.id);
     });
   };

@@ -119,9 +119,6 @@ export default function ClassDashboard({ session }) {
     render();
     store.idLoaded = id;
     const { classe, programClasses } = await classDetailForDashboardRequest(id);
-    console.log('id:', id);
-    console.log('classe:', classe);
-    console.log('programClasses:', programClasses);
 
     store.class = classe;
     store.programClasses = programClasses;
@@ -145,7 +142,6 @@ export default function ClassDashboard({ session }) {
     });
 
     store.loading = false;
-    console.log('store:', store);
     render();
 
     setTimeout(() => {

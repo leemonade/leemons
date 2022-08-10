@@ -182,13 +182,14 @@ export default function SubjectList() {
     return null;
   }
 
-  async function updateSubject({ id, course, internalId, credits }) {
+  async function updateSubject({ id, course, internalId, credits, color }) {
     try {
       const { subject } = await updateSubjectRequest({
         id,
         course,
         internalId,
         credits,
+        color,
       });
       return subject;
     } catch (err) {
@@ -281,6 +282,7 @@ export default function SubjectList() {
           course: isArray(data.courses) ? null : data.courses,
           internalId: data.internalId,
           credits: data.credits,
+          color: data.color,
         });
         if (!subject) return null;
       }

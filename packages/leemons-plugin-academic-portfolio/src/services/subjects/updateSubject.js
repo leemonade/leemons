@@ -65,6 +65,7 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
       );
 
       await table.class.updateMany({ subject: subject.id }, { color }, { transacting });
+
       const courses = isArray(course) ? course : [course];
       await setToAllClassesWithSubject(subject.id, courses, { transacting });
 

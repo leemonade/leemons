@@ -97,7 +97,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
       promises.push(
         table.class.updateMany(
           { subject: nClass.subject },
-          { subjectType: nClass.subjectType },
+          { subjectType: nClass.subjectType, color: nClass.color },
           { transacting }
         )
       );
