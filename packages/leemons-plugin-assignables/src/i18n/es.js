@@ -34,6 +34,7 @@ module.exports = {
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
+      clearStudents: 'Borrar estudiantes',
       subjects: {
         title: 'Asignaturas que se evaluarán en esta actividad',
         subtitle: 'NOTA: Al menos una de ellas',

@@ -182,6 +182,7 @@ export default function SelectClass({
                 render={({ field }) => (
                   <SelectUserAgent
                     {...field}
+                    clearable={labels?.clearStudents}
                     label={labels?.excludeStudents}
                     maxSelectedValues={0}
                     users={assignableStudents}
@@ -200,6 +201,7 @@ export default function SelectClass({
 SelectClass.propTypes = {
   labels: PropTypes.shape({
     excludeStudents: PropTypes.string,
+    clearStudents: PropTypes.string,
     unableToAssignStudentsMessage: PropTypes.string,
     matchingStudents: PropTypes.string,
     noStudentsToAssign: PropTypes.string,
