@@ -33,6 +33,7 @@ module.exports = {
       },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
+      clearStudents: 'Clear students',
       subjects: {
         title: 'Subjects to be evaluated in this activity',
         subtitle: 'NOTE: At least one of them',
