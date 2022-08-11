@@ -261,8 +261,10 @@ function SubjectItem({ classData, fullLength }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: 26,
-          height: 26,
+          minWidth: 26,
+          minHeight: 26,
+          maxWidth: 26,
+          maxHeight: 26,
           borderRadius: '50%',
           backgroundColor: classData?.color,
         })}

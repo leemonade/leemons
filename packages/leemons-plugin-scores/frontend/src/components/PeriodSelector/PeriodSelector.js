@@ -1,6 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, DrawerPush, Loader, Paragraph, Text } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  DrawerPush,
+  ImageLoader,
+  Loader,
+  Paragraph,
+  Text,
+} from '@bubbles-ui/components';
 
 import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';
 import { ScoresPeriodForm } from '@bubbles-ui/leemons';
@@ -13,6 +21,7 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 
 const useStyle = createStyles((theme, { isOpened }) => ({
   drawer: {
@@ -74,6 +83,51 @@ function getMostSpecificPeriod(filters, periods) {
   return _.omit(mostSpecificPeriod, 'specificity');
 }
 
+function ClassItem({ class: klass, ...props }) {
+  return (
+    <Box {...props}>
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          flexDirection: 'row',
+          gap: theme.spacing[2],
+          alignItems: 'center',
+        })}
+      >
+        <Box
+          sx={() => ({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 26,
+            minHeight: 26,
+            maxWidth: 26,
+            maxHeight: 26,
+            borderRadius: '50%',
+            backgroundColor: klass?.color,
+          })}
+        >
+          <ImageLoader
+            sx={() => ({
+              borderRadius: 0,
+              filter: 'brightness(0) invert(1)',
+            })}
+            forceImage
+            width={16}
+            height={16}
+            src={getClassIcon(klass)}
+          />
+        </Box>
+        <Text>{`${klass.subject.name} - ${klass.groups.name}`}</Text>
+      </Box>
+    </Box>
+  );
+}
+
+ClassItem.propTypes = {
+  class: PropTypes.object.isRequired,
+};
+
 export default function PeriodSelector({
   opened,
   size = 370,
@@ -94,6 +148,8 @@ export default function PeriodSelector({
   const [program, setProgram] = React.useState(null);
   const [course, setCourse] = React.useState(null);
   const [subject, setSubject] = React.useState(null);
+  const [group, setGroup] = React.useState(null);
+  const [selectedPeriod, setSelectedPeriod] = React.useState(null);
 
   const [, translations] = useTranslateLoader([
     prefixPN('periods.periodForm'),
@@ -125,8 +181,36 @@ export default function PeriodSelector({
   });
   const { data: teacherClasses } = useSessionClasses({ program }, { enabled: !!program });
 
+  const { data: allTeacherClasses, isLoading: isLoadingTeacherClasses } = useSessionClasses(
+    {},
+    { enabled: !!fields?.class }
+  );
+
   const fieldsToUse = useMemo(() => {
     const fieldsToReturn = [];
+
+    if (fields.class) {
+      // The class field excludes the other fields
+      return [
+        {
+          name: 'class',
+          label: 'Class',
+          placeholder: 'Select a class',
+          itemComponent: (item) => (
+            <ClassItem class={allTeacherClasses.find((c) => c.id === item.value)} {...item} />
+          ),
+          valueComponent: (item) => (
+            <ClassItem class={allTeacherClasses.find((c) => c.id === item.value)} {...item} />
+          ),
+          data:
+            allTeacherClasses?.map((klass) => ({
+              label: `${klass.groups.name}`,
+              value: klass.id,
+            })) || [],
+          required: true,
+        },
+      ];
+    }
 
     if (fields.center === 'all') {
       fieldsToReturn.push({
@@ -138,7 +222,7 @@ export default function PeriodSelector({
         required: requiredFields.includes('center') && labels?.form?.center?.error,
       });
       setAllowCenterChange(true);
-    } else {
+    } else if (fields.center) {
       const centersWithToken = getCentersWithToken();
       if (centersWithToken.length > 1) {
         fieldsToReturn.push({
@@ -231,9 +315,19 @@ export default function PeriodSelector({
     }
 
     return fieldsToReturn;
-  }, [fields, centers, programs, programData, center, course, subject, teacherClasses]);
+  }, [
+    fields,
+    centers,
+    programs,
+    programData,
+    center,
+    course,
+    subject,
+    teacherClasses,
+    allTeacherClasses,
+  ]);
 
-  if (isLoadingCenters) {
+  if ((fields?.class && isLoadingTeacherClasses) || (fields?.center && isLoadingCenters)) {
     return <Loader />;
   }
 
@@ -245,21 +339,21 @@ export default function PeriodSelector({
             <PluginScoresBasicIcon width={18} height={18} />
             <Text size="lg">{labels?.drawer?.title}</Text>
           </Box>
-          {/* <Text size="md" style={{ marginLeft: 24 }} strong>
-            Scores Basic (admin)
-          </Text> */}
         </Box>
         <Paragraph className={classes.drawerText}>{labels?.drawer?.description}</Paragraph>
-        <Text
-          className={classes.formTitle}
-          role="productive"
-          strong
-          color="soft"
-          size="xs"
-          transform="uppercase"
-        >
-          {labels?.drawer?.new}
-        </Text>
+
+        {allowCreate && (
+          <Text
+            className={classes.formTitle}
+            role="productive"
+            strong
+            color="soft"
+            size="xs"
+            transform="uppercase"
+          >
+            {labels?.drawer?.new}
+          </Text>
+        )}
         <Box className={classes.form}>
           <ScoresPeriodForm
             labels={labels?.form}
@@ -267,7 +361,7 @@ export default function PeriodSelector({
             fields={fieldsToUse}
             allowCreate={allowCreate}
             periods={periods?.filter((period) => {
-              if (period.center !== center || period.program !== program) {
+              if ((fields.center && period.center !== center) || period.program !== program) {
                 return false;
               }
 
@@ -277,37 +371,96 @@ export default function PeriodSelector({
 
               return true;
             })}
+            onPeriodSelect={(period) => {
+              if (isFunction(onPeriodSubmit)) {
+                onPeriodSubmit({ program, center, course, subject, group, period });
+              }
+            }}
             onSave={onPeriodSave}
             onChange={(v) => {
+              if (fields.class) {
+                if (!v.class) {
+                  if (!v.program) {
+                    setProgram(null);
+                  }
+
+                  if (!v.course) {
+                    setCourse(null);
+                  }
+                } else {
+                  const c = allTeacherClasses.find((klass) => klass.id === v.class);
+
+                  onPeriodChange({
+                    ...v,
+                    program: c.program,
+                    course: c.course,
+                    subject: c.subject?.id,
+                    group: c.groups?.id,
+                  });
+
+                  setProgram(c?.program);
+                  setCourse(c?.subject?.course);
+                  setSubject(c?.subject?.id);
+                  setGroup(c?.groups?.id);
+                }
+                return;
+              }
+
               if (isFunction(onPeriodChange)) {
                 onPeriodChange(v);
               }
+
               if (v.center !== center && allowCenterChange) {
                 setCenter(v.center);
                 setProgram(null);
                 setCourse(null);
                 setSubject(null);
+                setGroup(null);
               }
               if (v.program !== program) {
                 setProgram(v.program);
                 setCourse(null);
                 setSubject(null);
+                setGroup(null);
               }
 
               if (v.course !== course) {
                 setCourse(v.course);
                 setSubject(null);
+                setGroup(null);
               }
 
               if (v.subject !== subject) {
                 setSubject(v.subject);
+                setGroup(null);
+              }
+
+              if (v.group !== group) {
+                setGroup(v.group);
               }
             }}
             onSubmit={(v) => {
-              const period = getMostSpecificPeriod(v, periods);
+              let period;
+              if (v.class) {
+                const c = allTeacherClasses.find((klass) => klass.id === v.class);
 
-              if (isFunction(onPeriodSubmit)) {
-                onPeriodSubmit({ ...v, period });
+                const classValues = {
+                  ...v,
+                  program: c.program,
+                  course: c.course,
+                  subject: c.subject?.id,
+                  group: c.groups?.id,
+                };
+                period = getMostSpecificPeriod(classValues, periods);
+
+                if (isFunction(onPeriodSubmit)) {
+                  onPeriodSubmit({ ...classValues, period });
+                }
+              } else {
+                period = getMostSpecificPeriod(v, periods);
+                if (isFunction(onPeriodSubmit)) {
+                  onPeriodSubmit({ ...v, period });
+                }
               }
             }}
             locale={locale}

@@ -15,6 +15,8 @@ module.exports = {
       shareWithTeachers: 'Compartir con profesores',
       saveButton: 'Guardar periodo',
       periodName: 'Nombre del periodo',
+      customPeriod: 'Periodo personalizado',
+      evaluations: 'Evaluaciones',
       center: {
         label: 'Centro',
         placeholder: 'Selecciona un centro',
@@ -102,7 +104,7 @@ module.exports = {
             student: 'Estudiante',
             placeholder: 'Filtrar por',
           },
-          search: 'Buscar',
+          search: 'Buscar por {{filterBy.toLowerCase}}',
           nonCalificables: 'Ver no calificables',
         },
         scoresTable: {

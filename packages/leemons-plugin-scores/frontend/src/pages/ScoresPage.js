@@ -33,11 +33,7 @@ export default function ScoresPage() {
     <Box className={classes.root}>
       <PeriodSelector
         fields={{
-          center: true,
-          program: true,
-          course: true,
-          subject: true,
-          group: true,
+          class: true,
         }}
         requiredFields={['program', 'course', 'subject', 'group']}
         fixed
