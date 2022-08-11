@@ -110,7 +110,10 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <ContextContainer>
           <ContextContainer divided>
-            <ContextContainer title={t(center?.id ? 'editCenter' : 'newCenter')}>
+            <ContextContainer
+              title={t(center?.id ? 'editCenter' : 'newCenter')}
+              data-cypress-id="centerForm"
+            >
               {/* -- Name -- */}
               <Stack fullWidth className={styles.inputContent} alignItems="center">
                 <InputWrapper label={`${t('name')}*`} />

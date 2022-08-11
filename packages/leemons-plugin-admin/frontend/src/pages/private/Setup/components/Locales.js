@@ -150,7 +150,7 @@ const Locales = ({ configured, onNextLabel, onNext = () => {} }) => {
           </Alert>
         </ContextContainer>
         <Stack justifyContent="end">
-          <Button onClick={handleOnNext} loading={loading}>
+          <Button onClick={handleOnNext} loading={loading} data-cypress-id="saveLocalesButton">
             {onNextLabel}
           </Button>
         </Stack>

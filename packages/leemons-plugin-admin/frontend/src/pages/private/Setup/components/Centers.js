@@ -127,7 +127,7 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
   ];
 
   return (
-    <Box>
+    <Box data-cypress-id="centersStep">
       <AddCenterDrawer
         opened={!!store.selectedCenter}
         center={store.selectedCenter}

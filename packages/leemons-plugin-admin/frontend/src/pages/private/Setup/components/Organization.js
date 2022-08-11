@@ -165,6 +165,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                         useHsl
                         error={errors.mainColor}
                         label={t('mainColor')}
+                        data-cypress-id="colorInput"
                         {...field}
                       />
                     )}
