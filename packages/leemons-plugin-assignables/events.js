@@ -142,6 +142,27 @@ function initWidgets(isInstalled) {
   }
 }
 
+function initMultilanguage() {
+  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+    await addLocales(['es', 'en']);
+  });
+
+  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+    await addLocales(locale.code);
+  });
+}
+
+function handleAcademicPortfolio() {
+  leemons.events.on(
+    'plugins.academic-portfolio:after-add-class-student',
+    async (event, { class: klass, student }) => {
+      // eslint-disable-next-line global-require
+      const addStudentToOpenInstancesWithClass = require('./src/services/assignations/addStudentToOpenInstancesWithClass');
+      addStudentToOpenInstancesWithClass({ student, class: klass });
+    }
+  );
+}
+
 async function events(isInstalled) {
   global.utils.cron.schedule('0 * * * *', () => {
     sendRememberEmails();
@@ -152,14 +173,6 @@ async function events(isInstalled) {
 
   leemons.events.once('appDidLoadBack', () => {
     sendRememberEmails();
-  });
-
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
-    await addLocales(['es', 'en']);
-  });
-
-  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
-    await addLocales(locale.code);
   });
 
   leemons.events.on('plugins.academic-portfolio:after-add-class-teacher', async (event, data) => {
@@ -193,9 +206,12 @@ async function events(isInstalled) {
     }
   );
 
+  initMultilanguage();
   initPermissions(isInstalled);
   initMenuBuilder(isInstalled);
   initWidgets(isInstalled);
+
+  handleAcademicPortfolio();
 
   // TODO cuando se cambie el profesor de la clase en academic -portfolio se lance un evento que pille assignable para quitarle el permiso al profesor sobre los eventos y darselo al nuevo profesor
 }

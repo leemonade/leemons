@@ -27,19 +27,27 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
     setLoading: setAppLoading,
   } = useLayout();
 
-  const [, translations] = useTranslateLoader(prefixPN('cardMenu'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('cardMenu'),
+    'plugins.assignables.roles.task',
+  ]);
 
-  const menuLabels = useMemo(() => {
+  const { menuLabels, taskLabel } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('cardMenu'));
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return {
+        menuLabels: _.get(res, prefixPN('cardMenu')),
+        taskLabel: _.get(res, 'plugins.assignables.roles.task'),
+      };
     }
 
-    return {};
+    return {
+      menuLabels: {},
+      taskLabel: '',
+    };
   }, [translations]);
 
   // ·········································································
@@ -155,7 +163,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       menuItems={menuItems}
       variant="task"
       // TRANSLATE
-      variantTitle={'task'}
+      variantTitle={taskLabel}
       className={classes.root}
     />
   );
