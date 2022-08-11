@@ -97,4 +97,25 @@ module.exports = {
       };
     }
   },
+  sendReminder: async (ctx) => {
+    try {
+      const { body } = ctx.request;
+
+      await services.sendReminder(body, {
+        userSession: ctx.state.userSession,
+        ctx,
+      });
+
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+      };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = {
+        status: 500,
+        message: e.message,
+      };
+    }
+  },
 };

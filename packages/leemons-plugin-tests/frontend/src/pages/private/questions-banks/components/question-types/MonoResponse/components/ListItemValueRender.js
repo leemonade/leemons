@@ -48,7 +48,6 @@ export function ListItemValueRender({
                       <InputWrapper label={t('caption')}>{item.imageDescription}</InputWrapper>
                     </Box>
                   </Stack>
-
                   {useExplanation ? (
                     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                       <InputWrapper label={t('explanationLabel')}>
@@ -62,6 +61,9 @@ export function ListItemValueRender({
           ) : (
             <>
               {item.response}
+              <Box
+                sx={(theme) => ({ borderTop: '1px dashed #333333', marginTop: theme.spacing[4] })}
+              />
               {useExplanation ? (
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <InputWrapper label={t('explanationLabel')}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { forEach, isNil } from 'lodash';
+import { forEach, isNil, isString } from 'lodash';
 import { useLocation } from 'react-router-dom';
 import {
   BUBBLES_THEME,
@@ -79,13 +79,15 @@ function LayoutProviderWrapper({ children }) {
     () =>
       modals.openConfirmModal({
         title: title || t('title.confirm'),
-        children: (
+        children: isString(description) ? (
           <Paragraph
             sx={(theme) => ({
               paddingBottom: theme.spacing[5],
             })}
             dangerouslySetInnerHTML={{ __html: description || t('description.confirm') }}
           />
+        ) : (
+          description
         ),
         labels: {
           confirm: labels?.confirm || t('buttons.confirm'),

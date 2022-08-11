@@ -172,6 +172,13 @@ module.exports = {
         label: 'Acciones',
         SEND_REMINDER: 'Enviar recordatorio',
       },
+      rememberModal: {
+        title: 'Enviar recordatorio a estudiantes que:',
+        notOpen: 'No han abierto la actividad',
+        notEnd: 'No han finalizado la actividad',
+        send: 'Enviar',
+        sended: 'Recordatorio enviado',
+      },
       studentListcolumns: {
         student: 'Estudiantes',
         status: 'Estado',
@@ -179,6 +186,7 @@ module.exports = {
         avgTime: 'Tiempo medio',
         score: 'Puntuación',
         unreadMessages: 'Mensajes',
+        sendReminder: 'Enviar recordatorio',
       },
     },
     placeholders: {
@@ -204,6 +212,7 @@ module.exports = {
     sendReminder: 'Enviar recordatorio',
     evaluate: 'Evaluar',
     review: 'Revisar',
+    reminderSended: 'Recordatorio enviado',
   },
   student_actions: {
     continue: 'Continuar',

@@ -171,6 +171,13 @@ module.exports = {
         label: 'Actions',
         SEND_REMINDER: 'Send reminder',
       },
+      rememberModal: {
+        title: 'Send reminder to students that:',
+        notOpen: 'They have not opened the activity',
+        notEnd: 'They have not finished the activity',
+        send: 'Send',
+        sended: 'Reminder sent',
+      },
       studentListcolumns: {
         student: 'Student',
         status: 'Status',
@@ -178,6 +185,7 @@ module.exports = {
         avgTime: 'Avg. time',
         score: 'Score',
         unreadMessages: 'Messages',
+        sendReminder: 'Send reminder',
       },
     },
     placeholders: {
@@ -206,6 +214,7 @@ module.exports = {
     sendReminder: 'Send reminder',
     evaluate: 'Evaluate',
     review: 'Review',
+    reminderSended: 'Reminder sent',
   },
   levelsOfDifficulty: {
     beginner: 'Beginner',
