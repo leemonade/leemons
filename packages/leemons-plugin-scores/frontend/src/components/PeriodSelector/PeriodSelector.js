@@ -149,7 +149,7 @@ export default function PeriodSelector({
   const [course, setCourse] = React.useState(null);
   const [subject, setSubject] = React.useState(null);
   const [group, setGroup] = React.useState(null);
-  const [selectedPeriod, setSelectedPeriod] = React.useState(null);
+  const [periodSelected, setPeriodSelected] = React.useState(null);
 
   const [, translations] = useTranslateLoader([
     prefixPN('periods.periodForm'),
@@ -372,7 +372,9 @@ export default function PeriodSelector({
               return true;
             })}
             onPeriodSelect={(period) => {
-              if (isFunction(onPeriodSubmit)) {
+              setPeriodSelected(period);
+
+              if (period && isFunction(onPeriodSubmit)) {
                 onPeriodSubmit({ program, center, course, subject, group, period });
               }
             }}
@@ -398,6 +400,17 @@ export default function PeriodSelector({
                     group: c.groups?.id,
                   });
 
+                  if (periodSelected && isFunction(onPeriodSubmit)) {
+                    onPeriodSubmit({
+                      program: c.program,
+                      center: c.center,
+                      course: c.course,
+                      subject: c.subject?.id,
+                      group: c.groups?.id,
+                      period: periodSelected,
+                    });
+                  }
+
                   setProgram(c?.program);
                   setCourse(c?.subject?.course);
                   setSubject(c?.subject?.id);
@@ -408,6 +421,13 @@ export default function PeriodSelector({
 
               if (isFunction(onPeriodChange)) {
                 onPeriodChange(v);
+              }
+
+              if (periodSelected && isFunction(onPeriodSubmit)) {
+                onPeriodSubmit({
+                  ...v,
+                  period: periodSelected,
+                });
               }
 
               if (v.center !== center && allowCenterChange) {
