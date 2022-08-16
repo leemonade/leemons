@@ -66,7 +66,7 @@ module.exports = {
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
-    explanationLabel: 'Explicación',
+    explanationLabel: 'EXPLICACIÓN',
     caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Pistas',
     addClue: 'Añadir pista',

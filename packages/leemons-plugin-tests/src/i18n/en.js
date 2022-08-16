@@ -66,7 +66,7 @@ module.exports = {
     explanationRequired: 'Field required',
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
-    explanationLabel: 'Explanation',
+    explanationLabel: 'EXPLANATION',
     caption: 'Caption/ Alt text',
     cluesLabel: 'Clues',
     addClue: 'Add clue',
