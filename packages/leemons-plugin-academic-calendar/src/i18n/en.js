@@ -37,4 +37,26 @@ module.exports = {
     tableRemove: 'Remove',
     allCourses: 'All courses',
   },
+  regionalList: {
+    title: 'Regional calendars',
+    description:
+      'You can create regional calendars to record holidays or vacations in a given territory. <br/> These events can later be associated with your Program Calendars.',
+    selectCenter: 'Select center',
+    addRegionalCalendar: 'Add regional calendar',
+    detailTitle: 'National/regional holidays',
+    regionalEvents: 'Festivos nacionales/regionales',
+    regionalEventsDescription:
+      'If national/regional events are repeated in several different calendars, you can indicate this below.',
+    useEventsFrom: 'Use the events of:',
+    useEventsFromPlaceholder: 'Choose calendar',
+    localEvents: 'Local holidays',
+    daysOffEvents: 'Non-school days',
+    daysOffEventsDescription:
+      'If these days are specific to a particular program and not to a geographic area, we advise you to include them in the program calendar rather than in the regional calendar.',
+    name: 'Name',
+    init: 'Init',
+    end: 'End',
+    add: 'Add',
+    save: 'Save',
+  },
 };

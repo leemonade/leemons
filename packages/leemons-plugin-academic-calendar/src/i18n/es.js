@@ -30,4 +30,26 @@ module.exports = {
     tableRemove: 'Eliminar',
     allCourses: 'Todos los cursos',
   },
+  regionalList: {
+    title: 'Calendarios regionales',
+    description:
+      'Puedes crear calendarios regionales para registrar los días festivos o las vacaciones de un determinado territorio. <br/> Estos eventos se pueden asociar más tarde con tus Calendarios de programa.',
+    selectCenter: 'Seleccionar centro',
+    addRegionalCalendar: 'Añadir calendario regional',
+    detailTitle: 'Calendario regional {name}',
+    regionalEvents: 'Festivos nacionales/regionales',
+    regionalEventsDescription:
+      'Si los eventos nacionales/regionales se repiten en varios calendarios diferentes, puedes indicarlo a continuación.',
+    useEventsFrom: 'Usar los eventos de:',
+    useEventsFromPlaceholder: 'Elegir calendario',
+    localEvents: 'Festivos locales',
+    daysOffEvents: 'Días no lectivos',
+    daysOffEventsDescription:
+      'Si estos días son específicos de un programa concreto y no de una zona geográfica, te aconsejamos incluirlos en el calendario de programa en vez de en el calendario regional.',
+    name: 'Nombre',
+    init: 'Inicio',
+    end: 'Final',
+    add: 'Añadir',
+    save: 'Guardar',
+  },
 };

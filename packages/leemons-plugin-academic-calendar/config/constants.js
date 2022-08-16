@@ -54,6 +54,44 @@ const menuItems = [
       },
     ],
   },
+  // Calendario regional
+  {
+    item: {
+      key: 'regional-calendar',
+      order: 1,
+      parentKey: 'portfolio-calendar',
+      url: '/private/academic-calendar/regional-calendars',
+      label: {
+        en: 'Regional calendars',
+        es: 'Calendarios regionales',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.config,
+        actionNames: ['admin'],
+      },
+    ],
+  },
+  // Calendario de programas
+  {
+    item: {
+      key: 'program-calendar',
+      order: 1,
+      parentKey: 'portfolio-calendar',
+      url: '/private/academic-calendar/program-calendars',
+      label: {
+        en: 'Program calendars',
+        es: 'Calendarios de programa',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.config,
+        actionNames: ['admin'],
+      },
+    ],
+  },
 ];
 
 module.exports = {
