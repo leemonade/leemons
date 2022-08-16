@@ -2,13 +2,11 @@ import React, { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
-  Button,
   createStyles,
   ImageLoader,
   ProSwitch,
   SearchInput,
   Select,
-  Switch,
   Text,
   Title,
   useResizeObserver,
@@ -31,7 +29,6 @@ import { CutStarIcon } from '@bubbles-ui/icons/solid';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 import generateExcel from '@scores/components/ExcelExport/excel';
 import getFile from '@scores/components/ExcelExport/excel/config/getFile';
-import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import noResults from '../../assets/noResults.png';
 
@@ -48,16 +45,19 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: theme.spacing[4],
+  },
+  leftFiltersGroup: {
+    gap: theme.spacing[1],
   },
 }));
 
 function Filters({ onChange, labels }) {
-  const { classes, theme } = useStyles();
+  const { classes, theme, cx } = useStyles();
   const { control, watch } = useForm({
     defaultValues: {
       search: '',
-      filterBy: null,
+      filterBy: 'student',
       showNonCalificables: false,
     },
   });
@@ -104,24 +104,44 @@ function Filters({ onChange, labels }) {
   return (
     <Box className={classes.filters}>
       <Box className={classes.leftFilters}>
-        <Controller
-          control={control}
-          name="filterBy"
-          render={({ field }) => (
-            <Select
-              variant="unstyled"
-              placeholder={labels?.filterBy?.placeholder}
-              style={{ width: `${filterByLength + 5}ch` }}
-              data={filterBy}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="search"
-          render={({ field }) => <SearchInput placeholder={labels?.search} {...field} />}
-        />
+        <Box className={cx(classes.leftFilters, classes.leftFiltersGroup)}>
+          <Controller
+            control={control}
+            name="filterBy"
+            render={({ field }) => (
+              <>
+                <Select
+                  placeholder={labels?.filterBy?.placeholder}
+                  style={{ width: `${filterByLength + 5}ch` }}
+                  data={filterBy}
+                  ariaLabel={labels?.filterBy?.placeholder}
+                  {...field}
+                />
+              </>
+            )}
+          />
+          <Controller
+            control={control}
+            name="search"
+            render={({ field }) => {
+              const filterByValue = watch('filterBy');
+              return (
+                <SearchInput
+                  placeholder={labels?.search
+                    ?.replace(
+                      '{{filterBy}}',
+                      filterBy.find((item) => item.value === filterByValue).label
+                    )
+                    ?.replace(
+                      '{{filterBy.toLowerCase}}',
+                      filterBy.find((item) => item.value === filterByValue).label.toLowerCase()
+                    )}
+                  {...field}
+                />
+              );
+            }}
+          />
+        </Box>
         <Controller
           control={control}
           name="showNonCalificables"
