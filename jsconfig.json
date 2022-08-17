@@ -51,6 +51,9 @@
       "@emails-smtp/*": [
         "./packages/leemons-provider-emails-smtp/frontend/src/*"
       ],
+      "@families/*": [
+        "./packages/leemons-plugin-families/frontend/src/*"
+      ],
       "@grades/*": [
         "./packages/leemons-plugin-grades/frontend/src/*"
       ],

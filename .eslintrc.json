@@ -58,6 +58,7 @@
           "@emails",
           "@emails-amazon-ses",
           "@emails-smtp",
+          "@families",
           "@grades",
           "@layout",
           "@leebrary",

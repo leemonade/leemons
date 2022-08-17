@@ -17,21 +17,19 @@ export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/list`}>
-          <FamiliesList session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/detail/:id`}>
-          <FamilyDetail session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/detail`}>
-          <FamilyDetail session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/config`}>
-          <FamiliesConfig session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/list`}>
+        <FamiliesList session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/detail/:id`}>
+        <FamilyDetail session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/detail`}>
+        <FamilyDetail session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/config`}>
+        <FamiliesConfig session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+    </Switch>
   );
 }

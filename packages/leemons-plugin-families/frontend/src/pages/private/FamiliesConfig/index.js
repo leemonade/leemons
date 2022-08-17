@@ -1,26 +1,24 @@
 import React, { useMemo, useState } from 'react';
-/*
 import {
   Button,
-  Modal,
   PageContainer,
-  PageHeader,
-  Tab,
   Table,
-  TabList,
-  TabPanel,
+  Modal,
+  Text,
+  Box,
+  Stack,
+  ContextContainer,
   Tabs,
-  useModal,
-} from 'leemons--ui';
-
- */
+  TabPanel,
+} from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { CheckIcon } from '@bubbles-ui/icons/outline';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { useHistory } from 'react-router-dom';
-import { PlusIcon } from '@heroicons/react/outline';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useAsync } from '@common/useAsync';
@@ -45,22 +43,22 @@ function DatasetTabs({ t }) {
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
-  const [modal, toggleModal] = useModal({
-    animated: true,
-    title: t('remove_modal.title'),
-    message: t('remove_modal.message'),
-    cancelLabel: t('remove_modal.cancel'),
-    actionLabel: t('remove_modal.action'),
-    onAction: async () => {
-      try {
-        await removeDatasetFieldRequest(`families-data`, 'plugins.families', itemToRemove.id);
-        addSuccessAlert(t('dataset_tab.deleted_done'));
-        await reload();
-      } catch (e) {
-        addErrorAlert(getErrorMessage(e));
-      }
-    },
-  });
+  // const [modal, toggleModal] = useModal({
+  //   animated: true,
+  //   title: t('remove_modal.title'),
+  //   message: t('remove_modal.message'),
+  //   cancelLabel: t('remove_modal.cancel'),
+  //   actionLabel: t('remove_modal.action'),
+  //   onAction: async () => {
+  //     try {
+  //       await removeDatasetFieldRequest(`families-data`, 'plugins.families', itemToRemove.id);
+  //       addSuccessAlert(t('dataset_tab.deleted_done'));
+  //       await reload();
+  //     } catch (e) {
+  //       addErrorAlert(getErrorMessage(e));
+  //     }
+  //   },
+  // });
 
   function newItem() {
     setItem(null);
@@ -74,7 +72,7 @@ function DatasetTabs({ t }) {
 
   function removeItem(item) {
     setItemToRemove(item);
-    toggleModal();
+    // toggleModal();
   }
 
   async function reload() {
@@ -95,9 +93,9 @@ function DatasetTabs({ t }) {
       {
         Header: t('dataset_tab.table.name'),
         accessor: (field) => (
-          <div className="text-left">
+          <Text className="text-left">
             {field.schema.frontConfig.name} {field.schema.frontConfig.required ? '*' : ''}
-          </div>
+          </Text>
         ),
         className: 'text-left',
       },
@@ -109,21 +107,21 @@ function DatasetTabs({ t }) {
       {
         Header: t('dataset_tab.table.type'),
         accessor: (field) => (
-          <div className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</div>
+          <Text className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</Text>
         ),
         className: 'text-center',
       },
       {
         Header: t('dataset_tab.table.actions'),
         accessor: (field) => (
-          <div className="text-center">
+          <Box>
             <Button color="primary" text onClick={() => openItem(field)}>
               {t('dataset_tab.table.edit')}
             </Button>
             <Button color="primary" text onClick={() => removeItem(field)}>
               {t('dataset_tab.table.delete')}
             </Button>
-          </div>
+          </Box>
         ),
         className: 'text-center',
       },
@@ -160,14 +158,14 @@ function DatasetTabs({ t }) {
 
   return (
     <>
-      <Modal {...modal} />
-      <div className="bg-primary-content">
+      {/* <Modal {...modal} /> */}
+      <Box>
         <PageContainer className="pt-0">
           <ErrorAlert />
           {!loading && !error ? (
-            <div className="pt-6 mb-6 flex flex-row justify-end items-center">
+            <Stack justifyContent="flex-end" alignItems="center">
               <Button color="secondary" onClick={newItem}>
-                <PlusIcon className="w-6 h-6 mr-1" />
+                {/* <PlusIcon className="w-6 h-6 mr-1" /> */}
                 {t('dataset_tab.add_field')}
               </Button>
 
@@ -177,23 +175,19 @@ function DatasetTabs({ t }) {
                 item={item}
                 onSave={onSave}
               />
-            </div>
+            </Stack>
           ) : null}
         </PageContainer>
-      </div>
-      {!loading && !error ? (
-        <PageContainer>
-          <div className="bg-primary-content p-4">
-            <div>
-              {tableItems && tableItems.length ? (
-                <Table columns={tableHeaders} data={tableItems} />
-              ) : (
-                <div className="text-center">{t('dataset_tab.no_data_in_table')}</div>
-              )}
-            </div>
-          </div>
-        </PageContainer>
-      ) : null}
+      </Box>
+      {!loading && !error && (
+        <Box>
+          {tableItems && tableItems.length ? (
+            <Table columns={tableHeaders} data={tableItems} />
+          ) : (
+            <Text>{t('dataset_tab.no_data_in_table')}</Text>
+          )}
+        </Box>
+      )}
     </>
   );
 }
@@ -203,14 +197,8 @@ function Config() {
   const [installingEmergencyNumber, setInstallingEmergencyNumber] = useState(false);
   const [emergencyNumberInstalled, setEmergencyNumberInstalled] = useState(false);
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const [opened, setOpened] = useState(false);
   const [t] = useTranslateLoader(prefixPN('config_page'));
-
-  const [modal, toggleModal] = useModal({
-    animated: true,
-    title: installingEmergencyNumber ? null : t('phone_modal.title'),
-    closeButton: !installingEmergencyNumber,
-    overlayClose: !installingEmergencyNumber,
-  });
 
   const load = useMemo(
     () => () =>
@@ -225,12 +213,12 @@ function Config() {
     []
   );
 
-  const onError = useMemo(() => (e) => {}, []);
+  const onError = useMemo(() => () => {}, []);
 
   useAsync(load, onSuccess, onError);
 
   const openInstallPhoneModal = async () => {
-    toggleModal();
+    setOpened(!opened);
   };
 
   const installPhoneAddon = async () => {
@@ -253,98 +241,70 @@ function Config() {
   };
 
   let EmergencyNumbersTabs = null;
-
   if (emergencyNumberInstalled && !installingEmergencyNumber) {
     EmergencyNumbersTabs = dynamicImport('/families-emergency-numbers/src/components/config');
   }
 
-  return 'Hay que pasar el diseño a bubbles-ui';
-
-  /*
   return (
     <>
-      <Modal {...modal}>
+      <Modal opened={opened} title={t} onClose={() => setOpened(false)}>
         {installingEmergencyNumber ? (
-          <div className="text-center pt-4">
+          <Stack>
             <Button color="primary" className="btn-xl" loading={!emergencyNumberInstalled} text>
-              {emergencyNumberInstalled ? <CheckIcon className="w-7 h-7 mr-2" /> : null}
-              <span className="text-secondary">
+              {emergencyNumberInstalled && <CheckIcon />}
+              <Text className="text-secondary">
                 {emergencyNumberInstalled
                   ? t('phone_modal.installed')
                   : t('phone_modal.installing')}
-              </span>
+              </Text>
             </Button>
-          </div>
+          </Stack>
         ) : (
-          <>
-            <div className="text-sm text-secondary mb-6">{t('phone_modal.message1')}</div>
-            <div className="mt-6 flex flex-row gap-2 justify-end">
-              <Button color="ghost" onClick={toggleModal}>
+          <Stack direction="column" spacing={4}>
+            <Box>
+              <Text>{t('phone_modal.message1')}</Text>
+            </Box>
+            <Stack spacing={4}>
+              <Button
+                color="tertiary"
+                onClick={() => {
+                  setOpened(false);
+                }}
+              >
                 {t('phone_modal.cancel')}
               </Button>
-              <Button color="primary" onClick={installPhoneAddon}>
-                {t('phone_modal.action')}
-              </Button>
-            </div>
-          </>
+              <Button onClick={installPhoneAddon}>{t('phone_modal.action')}</Button>
+            </Stack>
+          </Stack>
         )}
       </Modal>
-      <PageHeader title={t('title')} />
-      <div className="bg-primary-content">
-        <PageContainer>
-          <div className="page-description max-w-screen-sm">{t('description1')}</div>
-          {!emergencyNumberInstalled ? (
-            <>
-              <div className="page-description max-w-screen-sm">{t('phone_description')}</div>
+      <AdminPageHeader values={{ title: t('title'), description: t('description1') }} />
+      <PageContainer>
+        {!emergencyNumberInstalled && (
+          <ContextContainer>
+            <Text>{t('phone_description')}</Text>
+            <Box>
               <Button color="primary" className="mt-4" onClick={openInstallPhoneModal}>
                 {t('phone_button')}
               </Button>
-            </>
-          ) : null}
-        </PageContainer>
-      </div>
-
-      <Tabs>
-        <div className="bg-primary-content">
-          <PageContainer>
-            <TabList>
-              <Tab id="basic-data" panelId="panel-basic-data">
-                {t('tabs.basic')}
-              </Tab>
-              <Tab id="dataset-data" panelId="panel-dataset-data">
-                {t('tabs.dataset')}
-              </Tab>
-              {emergencyNumberInstalled ? (
-                <Tab id="phone-data" panelId="panel-phone-data">
-                  {t('tabs.emergency_numbers')}
-                </Tab>
-              ) : null}
-              <Tab id="permissions-data" panelId="panel-permissions-data">
-                {t('tabs.permissions')}
-              </Tab>
-            </TabList>
-          </PageContainer>
-        </div>
-
-        <TabPanel id="panel-basic-data" tabId="basic-data">
-          a
-        </TabPanel>
-        <TabPanel id="panel-dataset-data" tabId="dataset-data">
-          <DatasetTabs t={t} />
-        </TabPanel>
-        {emergencyNumberInstalled ? (
-          <TabPanel id="panel-dataset-data" tabId="dataset-data">
-            <EmergencyNumbersTabs />
+            </Box>
+          </ContextContainer>
+        )}
+        <Tabs>
+          <TabPanel label={t('tabs.basic')}>a</TabPanel>
+          <TabPanel label={t('tabs.dataset')}>
+            <DatasetTabs t={t} />
           </TabPanel>
-        ) : null}
-        <TabPanel id="panel-permissions-data" tabId="permissions-data">
-          c
-        </TabPanel>
-      </Tabs>
+          {emergencyNumberInstalled && (
+            <TabPanel label={t('tabs.emergency_numbers')}>
+              <EmergencyNumbersTabs />
+            </TabPanel>
+          )}
+          <TabPanel label={t('tabs.permissions')}>c</TabPanel>
+        </Tabs>
+      </PageContainer>
     </>
   );
-
-   */
 }
 
 export default Config;
