@@ -54,9 +54,17 @@ module.exports = {
     daysOffEventsDescription:
       'If these days are specific to a particular program and not to a geographic area, we advise you to include them in the program calendar rather than in the regional calendar.',
     name: 'Name',
+    nameRequired: 'Name required',
     init: 'Init',
     end: 'End',
     add: 'Add',
     save: 'Save',
+    remove: 'Remove',
+    edit: 'Edit',
+    accept: 'Accept',
+    cancel: 'Cancel',
+    saved: 'Saved',
+    newRegionalCalendar: 'New regional calendar',
+    requiredField: 'Required field',
   },
 };

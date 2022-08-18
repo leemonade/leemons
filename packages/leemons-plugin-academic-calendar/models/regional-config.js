@@ -8,6 +8,9 @@ module.exports = {
     name: {
       type: 'string',
     },
+    center: {
+      type: 'string',
+    },
     regionalEventsRel: {
       type: 'string',
     },

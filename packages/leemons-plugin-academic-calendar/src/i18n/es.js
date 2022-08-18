@@ -47,9 +47,17 @@ module.exports = {
     daysOffEventsDescription:
       'Si estos días son específicos de un programa concreto y no de una zona geográfica, te aconsejamos incluirlos en el calendario de programa en vez de en el calendario regional.',
     name: 'Nombre',
+    nameRequired: 'Nombre necesario',
     init: 'Inicio',
     end: 'Final',
     add: 'Añadir',
     save: 'Guardar',
+    remove: 'Eliminar',
+    edit: 'Editar',
+    accept: 'Aceptar',
+    cancel: 'Cancelar',
+    saved: 'Guardado',
+    newRegionalCalendar: 'Nuevo calendario regional',
+    requiredField: 'Campo necesario',
   },
 };

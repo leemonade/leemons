@@ -38,4 +38,18 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.config, ['create', 'update']),
   },
+  {
+    path: '/regional-config/list/:center',
+    method: 'GET',
+    handler: 'regional-config.list',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.config, ['view']),
+  },
+  {
+    path: '/regional-config/save',
+    method: 'POST',
+    handler: 'regional-config.save',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.config, ['create', 'update']),
+  },
 ];
