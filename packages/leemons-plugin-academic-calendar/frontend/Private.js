@@ -7,6 +7,9 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const Config = loadable(() => pMinDelay(import('./src/pages/private/config/List'), 1000));
+const RegionalCalendars = loadable(() =>
+  pMinDelay(import('./src/pages/private/regional/index'), 1000)
+);
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -16,6 +19,9 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/config`}>
         <Config session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/regional-calendars`}>
+        <RegionalCalendars session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );
