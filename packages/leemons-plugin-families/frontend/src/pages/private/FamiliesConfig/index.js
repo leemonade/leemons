@@ -10,9 +10,12 @@ import {
   ContextContainer,
   Tabs,
   TabPanel,
+  Paper,
+  ActionButton,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { CheckIcon } from '@bubbles-ui/icons/outline';
+import { CheckIcon, AddIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
@@ -24,7 +27,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useAsync } from '@common/useAsync';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { PackageManagerService } from '@package-manager/services';
-
 import loadable from '@loadable/component';
 
 function dynamicImport(component) {
@@ -43,22 +45,7 @@ function DatasetTabs({ t }) {
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
-  // const [modal, toggleModal] = useModal({
-  //   animated: true,
-  //   title: t('remove_modal.title'),
-  //   message: t('remove_modal.message'),
-  //   cancelLabel: t('remove_modal.cancel'),
-  //   actionLabel: t('remove_modal.action'),
-  //   onAction: async () => {
-  //     try {
-  //       await removeDatasetFieldRequest(`families-data`, 'plugins.families', itemToRemove.id);
-  //       addSuccessAlert(t('dataset_tab.deleted_done'));
-  //       await reload();
-  //     } catch (e) {
-  //       addErrorAlert(getErrorMessage(e));
-  //     }
-  //   },
-  // });
+  const [removeOpened, setRemoveOpened] = useState(false);
 
   function newItem() {
     setItem(null);
@@ -72,7 +59,7 @@ function DatasetTabs({ t }) {
 
   function removeItem(item) {
     setItemToRemove(item);
-    // toggleModal();
+    setRemoveOpened(true);
   }
 
   async function reload() {
@@ -93,37 +80,35 @@ function DatasetTabs({ t }) {
       {
         Header: t('dataset_tab.table.name'),
         accessor: (field) => (
-          <Text className="text-left">
+          <Text>
             {field.schema.frontConfig.name} {field.schema.frontConfig.required ? '*' : ''}
           </Text>
         ),
-        className: 'text-left',
       },
       {
         Header: t('dataset_tab.table.description'),
         accessor: 'description',
-        className: 'text-left',
       },
       {
         Header: t('dataset_tab.table.type'),
-        accessor: (field) => (
-          <Text className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</Text>
-        ),
-        className: 'text-center',
+        accessor: (field) => <Text>{tCommonTypes(field.schema.frontConfig.type)}</Text>,
       },
       {
         Header: t('dataset_tab.table.actions'),
         accessor: (field) => (
-          <Box>
-            <Button color="primary" text onClick={() => openItem(field)}>
-              {t('dataset_tab.table.edit')}
-            </Button>
-            <Button color="primary" text onClick={() => removeItem(field)}>
-              {t('dataset_tab.table.delete')}
-            </Button>
-          </Box>
+          <Stack spacing={4}>
+            <ActionButton
+              onClick={() => removeItem(field)}
+              tooltip={t('dataset_tab.table.delete')}
+              icon={<DeleteBinIcon />}
+            />
+            <ActionButton
+              onClick={() => openItem(field)}
+              tooltip={t('dataset_tab.table.edit')}
+              icon={<ExpandDiagonalIcon />}
+            />
+          </Stack>
         ),
-        className: 'text-center',
       },
     ],
     [t, tCommonTypes]
@@ -158,36 +143,74 @@ function DatasetTabs({ t }) {
 
   return (
     <>
-      {/* <Modal {...modal} /> */}
+      <Modal opened={removeOpened} title={t('remove_modal.title')}>
+        <Stack>
+          <Box>
+            <Text>{t('remove_modal.message')}</Text>
+          </Box>
+          <Stack>
+            <Button color="tertiary" onClick={() => setRemoveOpened(false)}>
+              {t('remove_modal.cancel')}
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  await removeDatasetFieldRequest(
+                    `families-data`,
+                    'plugins.families',
+                    itemToRemove.id
+                  );
+                  addSuccessAlert(t('dataset_tab.deleted_done'));
+                  setRemoveOpened(false);
+                  await reload();
+                } catch (e) {
+                  addErrorAlert(getErrorMessage(e));
+                }
+              }}
+            >
+              {t('remove_modal.action')}
+            </Button>
+          </Stack>
+        </Stack>
+      </Modal>
       <Box>
-        <PageContainer className="pt-0">
-          <ErrorAlert />
-          {!loading && !error ? (
-            <Stack justifyContent="flex-end" alignItems="center">
-              <Button color="secondary" onClick={newItem}>
-                {/* <PlusIcon className="w-6 h-6 mr-1" /> */}
-                {t('dataset_tab.add_field')}
-              </Button>
-
-              <DatasetItemDrawer
-                locationName={`families-data`}
-                pluginName="plugins.families"
-                item={item}
-                onSave={onSave}
-              />
-            </Stack>
-          ) : null}
-        </PageContainer>
+        <ErrorAlert />
+        <Paper
+          color="solid"
+          fullWidth
+          fullHeight
+          radius="none"
+          shadow="none"
+          style={{
+            width: 'calc(100vw - 52px)',
+            marginLeft: -40,
+            paddingLeft: 40,
+          }}
+        >
+          <Box style={{ width: '100%', height: '100%', maxWidth: 1136 }}>
+            {!loading && !error && tableItems && tableItems.length ? (
+              <Paper padding={2} mt={20} mb={20} fullWidth>
+                <Table columns={tableHeaders} data={tableItems} />
+              </Paper>
+            ) : (
+              <Text>{t('dataset_tab.no_data_in_table')}</Text>
+            )}
+            {!loading && !error && (
+              <Stack justifyContent="flex-end" alignItems="center" fullWidth>
+                <Button leftIcon={<AddIcon />} onClick={newItem}>
+                  {t('dataset_tab.add_field')}
+                </Button>
+                <DatasetItemDrawer
+                  locationName={`families-data`}
+                  pluginName="plugins.families"
+                  item={item}
+                  onSave={onSave}
+                />
+              </Stack>
+            )}
+          </Box>
+        </Paper>
       </Box>
-      {!loading && !error && (
-        <Box>
-          {tableItems && tableItems.length ? (
-            <Table columns={tableHeaders} data={tableItems} />
-          ) : (
-            <Text>{t('dataset_tab.no_data_in_table')}</Text>
-          )}
-        </Box>
-      )}
     </>
   );
 }
