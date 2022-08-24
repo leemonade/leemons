@@ -12,14 +12,21 @@ import {
   RadioGroup,
   Radio,
   Box,
+  Textarea,
   Select,
+  ContextContainer,
+  Title,
   Stack,
   Table,
   Text,
   UserDisplayItem,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import {
+  DeleteBinIcon,
+  FamilyChildIcon,
+  SingleActionsGraduateMaleIcon,
+} from '@bubbles-ui/icons/outline';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -34,7 +41,6 @@ import {
 } from '@families/request';
 import { constants } from '@families/constants';
 import moment from 'moment';
-import { UserImage } from '@common/userImage';
 import { useAsync } from '@common/useAsync';
 import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -42,7 +48,7 @@ import hooks from 'leemons-hooks';
 import { PackageManagerService } from '@package-manager/services';
 import RelationSelect from '@families/components/relationSelect';
 import loadable from '@loadable/component';
-import { SearchUserDrawer } from '@families/components/';
+import { SearchUserDrawer, UserListBox } from '@families/components/';
 
 function dynamicImport(component) {
   return loadable(() =>
@@ -448,12 +454,12 @@ function Detail() {
 
   const onAddGuardian = () => {
     setAddType('guardian');
-    setModalOpened(!modalOpened);
+    setModalOpened(true);
   };
 
   const onAddStudent = () => {
     setAddType('student');
-    setModalOpened(!modalOpened);
+    setModalOpened(true);
   };
 
   const addMember = (member) => {
@@ -483,13 +489,15 @@ function Detail() {
             onClose={() => setRemoveModalOpened(false)}
             title={t('remove_modal.title')}
           >
-            <Stack>
+            <Stack direction="column" spacing={4}>
               <Text>{t('remove_modal.message')}</Text>
-              <Button>Cancel</Button>
-              <Button onClick={deleteFamily}>Remove</Button>
+              <Stack justifyContent="space-between" spacing={4}>
+                <Button onClick={() => setRemoveModalOpened(false)}>Cancel</Button>
+                <Button onClick={deleteFamily}>Remove</Button>
+              </Stack>
             </Stack>
           </Modal>
-          <Modal
+          {/* <Modal
             opened={modalOpened}
             onClose={() => setModalOpened(false)}
             title={t(`assign_${addType}_to_family`)}
@@ -500,8 +508,16 @@ function Detail() {
               alreadyExistingMembers={members}
               onAdd={addMember}
             />
-          </Modal>
-          <SearchUserDrawer opened={true} />
+          </Modal> */}
+          <SearchUserDrawer
+            opened={modalOpened}
+            onClose={() => setModalOpened(false)}
+            onBack={() => setModalOpened(false)}
+            t={t}
+            type={addType}
+            alreadyExistingMembers={members}
+            onAdd={addMember}
+          />
           <AdminPageHeader
             values={{ title: watch('name') }}
             placeholders={{ title: t('title_placeholder') }}
@@ -529,11 +545,28 @@ function Detail() {
             onSave={() => (formActions.isLoaded() ? formActions.submit() : null)}
             onCancel={(e) => (isEditMode ? onCancelButton(e) : onDeleteButton(e))}
             onEdit={onEditButton}
+            fullWidth
           />
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Box>
-              <PageContainer>
-                <Stack spacing={6}>
+            <PageContainer fullWidth>
+              <Stack spacing={10} style={{ marginTop: 36, width: '100%' }}>
+                <Stack direction="column" spacing={6}>
+                  {permissions.guardiansInfo.view && (
+                    <UserListBox
+                      title={t('guardians')}
+                      icon={<FamilyChildIcon height={32} width={32} />}
+                      label="No tutors yet"
+                      // relationship={'Married'}
+                      type={'guardian'}
+                      isEditing={isEditMode}
+                      data={guardians}
+                      onClick={onAddGuardian}
+                      onRemove={removeMember}
+                      t={t}
+                      permissions={permissions}
+                    />
+                  )}
+                  {/*
                   {permissions.guardiansInfo.view ? (
                     <Box>
                       <Stack justifyContent="space-between" alignItems="center">
@@ -542,12 +575,11 @@ function Detail() {
                         </Box>
                         {isEditMode && guardians.length < 2 && permissions.guardiansInfo.update && (
                           <Button type="button" color="secondary" onClick={onAddGuardian}>
-                            {/* <PlusIcon className="w-6 h-6 mr-1" /> */}
+                            <PlusIcon className="w-6 h-6 mr-1" />
                             {t('add_guardian')}
                           </Button>
                         )}
                       </Stack>
-
                       <Stack className="flex flex-row">
                         {guardians.map((guardian) => (
                           <Stack alignItems="center" key={guardian.id}>
@@ -570,7 +602,6 @@ function Detail() {
                           </Stack>
                         ))}
                       </Stack>
-
                       {guardians.length >= 2 && permissions.guardiansInfo.view ? (
                         <Select
                           label={t('guardian_relation')}
@@ -602,13 +633,29 @@ function Detail() {
                       ) : null}
                     </Box>
                   ) : null}
-
-                  {permissions.studentsInfo.view ? (
+                        */}
+                  {permissions.studentsInfo.view && (
+                    <UserListBox
+                      title={t('students')}
+                      icon={<SingleActionsGraduateMaleIcon height={32} width={32} />}
+                      label="No students yet"
+                      // relationship={'Married'}
+                      type={'student'}
+                      isEditing={isEditMode}
+                      data={students}
+                      onClick={onAddStudent}
+                      onRemove={removeMember}
+                      t={t}
+                      permissions={permissions}
+                    />
+                  )}
+                  {/*
+                  permissions.studentsInfo.view ? (
                     <Box>
                       <Text>{t('students')}</Text>
                       {isEditMode && permissions.studentsInfo.update ? (
                         <Button type="button" color="secondary" onClick={onAddStudent}>
-                          {/* <PlusIcon className="w-6 h-6 mr-1" /> */}
+                          <PlusIcon className="w-6 h-6 mr-1" />
                           {t('add_student')}
                         </Button>
                       ) : null}
@@ -625,21 +672,59 @@ function Detail() {
                         ))}
                       </Stack>
                     </Box>
-                  ) : null}
+                  ) : null
+                  */}
                 </Stack>
-              </PageContainer>
-            </Box>
+                <Stack direction="column" spacing={6} fullWidth>
+                  <UserListBox
+                    title={'Emergency Phone numbers'}
+                    icon={<FamilyChildIcon height={32} width={32} />}
+                    label="No Emergency Numbers"
+                    // relationship={'Married'}
+                    type={'phones'}
+                    isEditing={isEditMode}
+                    data={students}
+                    onClick={onAddStudent}
+                    onRemove={removeMember}
+                    t={t}
+                    permissions={permissions}
+                    fullWidth
+                  />
+                  {permissions.customInfo.view && (
+                    <ContextContainer title={t('other_information')}>
+                      <TextInput
+                        label="CRM Old ID"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <Textarea
+                        label="Family Address"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <TextInput
+                        label="Main Contact Phone"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <TextInput
+                        label="Visa Status"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <Select
+                        label="Member of public Administration"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                        data={[]}
+                      />
+                    </ContextContainer>
+                  )}
+                  <ContextContainer title={'Permissions'}></ContextContainer>
+                </Stack>
+              </Stack>
+            </PageContainer>
           </form>
-
-          {permissions.customInfo.view ? (
-            <Box>
-              <PageContainer>
-                <Text>{t('other_information')}</Text>
-                {form}
-              </PageContainer>
-            </Box>
-          ) : null}
-
           {/* <EmergencyNumbers
             editMode={isEditMode}
             onChangePhoneNumbers={onChangePhoneNumbers}
