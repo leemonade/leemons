@@ -16,25 +16,22 @@ const saveConfigSchema = {
   type: 'object',
   properties: {
     program: stringSchema,
+    regionalConfig: stringSchema,
     allCoursesHaveSameConfig: booleanSchemaNullable,
     allCoursesHaveSameDates: booleanSchemaNullable,
     courseDates: {
       type: 'object',
       additionalProperties: true,
     },
+    substagesDates: {
+      type: 'object',
+      additionalProperties: true,
+    },
+    courseEvents: {
+      type: 'object',
+      additionalProperties: true,
+    },
     allCoursesHaveSameDays: booleanSchemaNullable,
-    courseDays: {
-      type: 'object',
-      additionalProperties: true,
-      nullable: true,
-    },
-    allCoursesHaveSameHours: booleanSchemaNullable,
-    allDaysHaveSameHours: booleanSchemaNullable,
-    courseHours: {
-      type: 'object',
-      additionalProperties: true,
-      nullable: true,
-    },
     breaks: {
       type: 'array',
       items: {

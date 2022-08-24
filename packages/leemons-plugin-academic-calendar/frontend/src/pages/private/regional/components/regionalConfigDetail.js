@@ -99,9 +99,24 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
   } = useForm({
     defaultValues: {
       ...config,
-      regionalEvents: config.regionalEvents || [],
-      daysOffEvents: config.daysOffEvents || [],
-      localEvents: config.localEvents || [],
+      regionalEvents:
+        _.map(config.regionalEvents, (e) => ({
+          ...e,
+          startDate: new Date(e.startDate),
+          endDate: e.endDate ? new Date(e.endDate) : null,
+        })) || [],
+      daysOffEvents:
+        _.map(config.daysOffEvents, (e) => ({
+          ...e,
+          startDate: new Date(e.startDate),
+          endDate: e.endDate ? new Date(e.endDate) : null,
+        })) || [],
+      localEvents:
+        _.map(config.localEvents, (e) => ({
+          ...e,
+          startDate: new Date(e.startDate),
+          endDate: e.endDate ? new Date(e.endDate) : null,
+        })) || [],
     },
   });
 

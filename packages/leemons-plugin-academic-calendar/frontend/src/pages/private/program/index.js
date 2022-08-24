@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
-import { Box, Button, createStyles, DrawerPush, Paragraph, Text } from '@bubbles-ui/components';
-import { AddCircleIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { Box, createStyles, DrawerPush, Paragraph, Text } from '@bubbles-ui/components';
+import { FolderIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LayoutContext } from '@layout/context/layout';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@academic-calendar/helpers/prefixPN';
 import { useStore } from '@common';
 import { SelectCenter } from '@users/components/SelectCenter';
-import { listRegionalConfigsRequest } from '@academic-calendar/request';
-import { RegionalConfigDetail } from './components/regionalConfigDetail';
+import { listProgramsRequest } from '@academic-portfolio/request';
+import AcademicCalendarDetail from './components/AcademicCalendarDetail';
 
 const useStyle = createStyles((theme) => ({
   container: {
@@ -71,30 +71,29 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-export default function RegionalCalendars() {
-  const [t, , , loading] = useTranslateLoader(prefixPN('regionalList'));
+export default function ProgramCalendars() {
+  const [t, , , loading] = useTranslateLoader(prefixPN('programList'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { classes, cx } = useStyle();
 
   const { setLoading, scrollTo } = useContext(LayoutContext);
   const [store, render] = useStore({
+    showDetail: false,
     center: null,
+    mounted: true,
+    programs: [],
+    currentProgram: null,
   });
 
-  async function loadRegionalConfigs() {
-    const { regionalConfigs } = await listRegionalConfigsRequest(store.center);
-    store.regionalConfigs = regionalConfigs;
+  async function loadProgramConfigs() {
+    const response = await listProgramsRequest({ page: 0, size: 9999, center: store.center });
+    store.programs = response.data?.items || [];
     render();
   }
 
   function handleOnSelectCenter(center) {
     store.center = center;
-    loadRegionalConfigs();
-  }
-
-  function addNewRegionalCalendar() {
-    store.selectedConfig = {};
-    render();
+    loadProgramConfigs();
   }
 
   return (
@@ -123,33 +122,24 @@ export default function RegionalCalendars() {
             {store.center ? (
               <Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                  {store.regionalConfigs
-                    ? store.regionalConfigs.map((config) => (
+                  {store.programs
+                    ? store.programs.map((program) => (
                         <Box
-                          key={config.id}
+                          key={program.id}
                           className={cx(
                             classes.configItem,
-                            config.id === store.selectedConfig?.id && classes.configItemActive
+                            program.id === store.currentProgram?.id && classes.configItemActive
                           )}
                           onClick={() => {
-                            store.selectedConfig = config;
+                            store.selectedProgram = program;
                             render();
                           }}
                         >
-                          <PluginCalendarIcon width={16} height={16} />
-                          <Box className={classes.configItemName}>{config.name}</Box>
+                          <FolderIcon width={16} height={16} />
+                          <Box className={classes.configItemName}>{program.name}</Box>
                         </Box>
                       ))
                     : null}
-                </Box>
-                <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                  <Button
-                    onClick={addNewRegionalCalendar}
-                    leftIcon={<AddCircleIcon />}
-                    variant="link"
-                  >
-                    {t('addRegionalCalendar')}
-                  </Button>
                 </Box>
               </Box>
             ) : null}
@@ -157,16 +147,14 @@ export default function RegionalCalendars() {
         </Box>
       </DrawerPush>
       <Box className={classes.content}>
-        {store.selectedConfig ? (
-          <RegionalConfigDetail
+        {store.selectedProgram ? (
+          <AcademicCalendarDetail
             t={t}
-            center={store.center}
-            config={store.selectedConfig}
-            calendars={store.regionalConfigs}
             onSave={() => {
-              store.selectedConfig = null;
-              loadRegionalConfigs();
+              store.selectedProgram = null;
+              render();
             }}
+            program={store.selectedProgram}
           />
         ) : null}
       </Box>

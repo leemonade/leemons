@@ -41,7 +41,6 @@ const menuItems = [
       key: 'portfolio-calendar',
       iconSvg: '/public/academic-calendar/menu-icon.svg',
       activeIconSvg: '/public/academic-calendar/menu-icon.svg',
-      url: '/private/academic-calendar/config',
       label: {
         en: 'Academic Calendar',
         es: 'Calendario Académico',

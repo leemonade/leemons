@@ -176,7 +176,7 @@ module.exports = {
         year: 'Anual',
         semester: 'Semestral',
         quarter: 'Cuatrimestral',
-        trimester: 'Trimestral)',
+        trimester: 'Trimestral',
         month: 'Mensual',
         week: 'Semanal',
         day: 'Diario',
