@@ -128,7 +128,7 @@ export default function ProgramCalendars() {
                           key={program.id}
                           className={cx(
                             classes.configItem,
-                            program.id === store.currentProgram?.id && classes.configItemActive
+                            program.id === store.selectedProgram?.id && classes.configItemActive
                           )}
                           onClick={() => {
                             store.selectedProgram = program;

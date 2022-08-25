@@ -18,7 +18,7 @@ import {
 import ColorBall from '@academic-calendar/components/ColorBall';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore } from '@common';
+import { useLocale, useStore } from '@common';
 import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
 
 const useStyle = createStyles((theme) => ({
@@ -29,11 +29,33 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
+function StartDate(props) {
+  return (
+    <DatePicker
+      // eslint-disable-next-line react/prop-types
+      maxDate={props.form.getValues(props.name.replace('startDate', 'endDate'))}
+      {...props}
+    />
+  );
+}
+
+function EndDate(props) {
+  return (
+    <DatePicker
+      // eslint-disable-next-line react/prop-types
+      minDate={props.form.getValues(props.name.replace('endDate', 'startDate'))}
+      {...props}
+    />
+  );
+}
+
 export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const locale = useLocale();
   const [store, render] = useStore();
   const { classes } = useStyle();
   const isNew = !config.id;
+
   const regionalCalendars = React.useMemo(() => {
     const result = [];
     _.forEach(calendars, (calendar) => {
@@ -63,7 +85,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
           Header: `${t('init')}*`,
           accessor: 'startDate',
           input: {
-            node: <DatePicker required />,
+            node: <StartDate locale={locale} required />,
             rules: { required: t('requiredField') },
           },
           valueRender: (value) => <>{new Date(value).toLocaleDateString()}</>,
@@ -72,7 +94,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
           Header: `${t('end')}*`,
           accessor: 'endDate',
           input: {
-            node: <DatePicker required />,
+            node: <EndDate locale={locale} required />,
             rules: { required: t('requiredField') },
           },
           valueRender: (value) => <>{new Date(value).toLocaleDateString()}</>,
@@ -86,7 +108,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
         cancel: t('cancel'),
       },
     }),
-    []
+    [locale]
   );
 
   const {

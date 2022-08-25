@@ -17,6 +17,7 @@ const useStyle = createStyles((theme) => ({
 }));
 
 export default function CourseData({
+  locale,
   startLabel,
   endLabel,
   value,
@@ -61,6 +62,7 @@ export default function CourseData({
           render={({ field }) => (
             <DatePicker
               {...field}
+              locale={locale}
               label={startLabel || t('initOfCourse')}
               maxDate={form.watch(`endDate`)}
               required
@@ -75,6 +77,7 @@ export default function CourseData({
           render={({ field }) => (
             <DatePicker
               {...field}
+              locale={locale}
               label={endLabel || t('endOfCourse')}
               minDate={form.watch(`startDate`)}
               required
@@ -89,6 +92,7 @@ export default function CourseData({
           control={form.control}
           render={({ field }) => (
             <Substages
+              locale={locale}
               start={startDate}
               end={endDate}
               disabled={disabled}
@@ -104,6 +108,7 @@ export default function CourseData({
         control={form.control}
         render={({ field }) => (
           <OtherEvents
+            locale={locale}
             start={startDate}
             end={endDate}
             disabled={disabled}
@@ -118,6 +123,9 @@ export default function CourseData({
 }
 
 CourseData.propTypes = {
+  locale: PropTypes.string,
+  startLabel: PropTypes.string,
+  endLabel: PropTypes.string,
   program: PropTypes.any,
   value: PropTypes.any,
   onChange: PropTypes.func,

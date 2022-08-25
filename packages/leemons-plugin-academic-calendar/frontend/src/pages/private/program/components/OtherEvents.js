@@ -18,7 +18,15 @@ import { useStore } from '@common';
 import ColorBall from '@academic-calendar/components/ColorBall';
 import { useLayout } from '@layout/context';
 
-export default function OtherEvents({ disabled, value = [], onChange = () => {}, t }) {
+export default function OtherEvents({
+  locale,
+  start,
+  end,
+  disabled,
+  value = [],
+  onChange = () => {},
+  t,
+}) {
   const [store, render] = useStore();
   const { openDeleteConfirmationModal } = useLayout();
 
@@ -108,6 +116,9 @@ export default function OtherEvents({ disabled, value = [], onChange = () => {},
           </Col>
           <Col span={16}>
             <CalendarNewEventModal
+              locale={locale}
+              minDate={start}
+              maxDate={end}
               closeOnClickOutside={false}
               opened={store.openedIndex === index}
               onClose={() => {
@@ -145,6 +156,9 @@ export default function OtherEvents({ disabled, value = [], onChange = () => {},
 
       <Box>
         <CalendarNewEventModal
+          locale={locale}
+          minDate={start}
+          maxDate={end}
           closeOnClickOutside={false}
           disabled={disabled}
           opened={store.openAddButton}
@@ -177,6 +191,7 @@ export default function OtherEvents({ disabled, value = [], onChange = () => {},
 }
 
 OtherEvents.propTypes = {
+  locale: PropTypes.string,
   value: PropTypes.any,
   onChange: PropTypes.func,
   disabled: PropTypes.bool,

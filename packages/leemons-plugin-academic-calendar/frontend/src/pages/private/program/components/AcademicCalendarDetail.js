@@ -96,6 +96,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
       if (store.program.moreThanOneAcademicYear) {
         store.config.allCoursesHaveSameConfig = true;
       }
+      store.step = 0;
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }

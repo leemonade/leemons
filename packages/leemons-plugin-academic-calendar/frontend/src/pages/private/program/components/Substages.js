@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Col, ContextContainer, DatePicker, Grid, Text, Title } from '@bubbles-ui/components';
 
 export default function Substages({
+  locale,
   start,
   end,
   disabled,
@@ -49,6 +50,7 @@ export default function Substages({
             </Col>
             <Col span={40}>
               <DatePicker
+                locale={locale}
                 disabled={disabled}
                 value={value[substage.id]?.startDate}
                 minDate={start}
@@ -67,6 +69,7 @@ export default function Substages({
             </Col>
             <Col span={40}>
               <DatePicker
+                locale={locale}
                 disabled={disabled}
                 value={value[substage.id]?.endDate}
                 minDate={minDate}
@@ -91,6 +94,7 @@ export default function Substages({
 }
 
 Substages.propTypes = {
+  locale: PropTypes.string,
   program: PropTypes.any,
   value: PropTypes.any,
   onChange: PropTypes.func,

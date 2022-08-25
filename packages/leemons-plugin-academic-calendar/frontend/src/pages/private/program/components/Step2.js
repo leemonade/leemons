@@ -19,7 +19,7 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useStore } from '@common';
+import { useLocale, useStore } from '@common';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert } from '@layout/alert';
 import { Controller, useForm } from 'react-hook-form';
@@ -35,6 +35,7 @@ const useStyle = createStyles((theme) => ({
 }));
 
 export default function Step2({ config, program, onPrev, onChange, t }) {
+  const locale = useLocale();
   const { classes } = useStyle();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -206,7 +207,7 @@ export default function Step2({ config, program, onPrev, onChange, t }) {
     };
   }
 
-  if (!store.program) return null;
+  if (!store.program || !locale) return null;
 
   return (
     <ContextContainer divided>
@@ -215,6 +216,7 @@ export default function Step2({ config, program, onPrev, onChange, t }) {
         {programMode ? (
           <>
             <CourseData
+              locale={locale}
               startLabel={t('initOfProgram')}
               endLabel={t('endOfProgram')}
               course={store.program?.courses[0]}
@@ -268,6 +270,7 @@ export default function Step2({ config, program, onPrev, onChange, t }) {
                     }
                   >
                     <CourseData
+                      locale={locale}
                       course={course}
                       value={{
                         ...courseDates[course.id],
