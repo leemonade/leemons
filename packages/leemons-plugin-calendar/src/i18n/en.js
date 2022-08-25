@@ -27,6 +27,8 @@ module.exports = {
     calendar: 'Calendar',
     schedule: 'Schedule',
     centers: 'Centers',
+    programCalendar: 'Calendar of program - ',
+    program: 'Program',
     close: 'Close',
     allDay: 'All day',
     init: 'Init',

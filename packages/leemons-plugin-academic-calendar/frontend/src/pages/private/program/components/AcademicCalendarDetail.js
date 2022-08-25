@@ -71,6 +71,9 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
         (centerId) => store.centersById[centerId]
       );
       store.config = config || {};
+      if (_.isObject(store.config.regionalConfig)) {
+        store.config.regionalConfig = store.config.regionalConfig.id;
+      }
       if (store.config?.courseDates) {
         _.forIn(store.config.courseDates, (e) => {
           e.startDate = new Date(e.startDate);

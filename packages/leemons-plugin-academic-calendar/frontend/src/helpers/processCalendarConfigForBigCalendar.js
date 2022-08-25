@@ -6,8 +6,6 @@ export function processCalendarConfigForBigCalendar(config, { course, locale }) 
   const substagesDates = config.substagesDates[course];
   const { regionalConfig } = config;
 
-  console.log('regionalConfig', regionalConfig);
-
   const events = [];
   if (courseDates) {
     events.push({

@@ -26,10 +26,12 @@ module.exports = [
     method: 'POST',
     handler: 'pluginManager.info',
     authenticated: true,
+    /*
     allowedPermissions: {
       'plugins.package-manager.plugins': {
         actions: ['view', 'admin'],
       },
     },
+     */
   },
 ];
