@@ -5,7 +5,7 @@ import { BigCalendar } from '@bubbles-ui/calendars';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { Box, Button, ContextContainer, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
 import { useLocale, useStore } from '@common';
-import { processCalendarConfigForBigCalendar } from '@academic-calendar/helpers/processCalendarConfigForBigCalendar';
+import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { saveConfig } from '@academic-calendar/request/config';
@@ -13,6 +13,7 @@ import { saveConfig } from '@academic-calendar/request/config';
 export default function Step3({ regionalConfigs, program, config, onPrev, onSave, t }) {
   const locale = useLocale();
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [processCalendarConfigForBigCalendar] = useProcessCalendarConfigForBigCalendar();
   const [store, render] = useStore({
     saving: false,
   });

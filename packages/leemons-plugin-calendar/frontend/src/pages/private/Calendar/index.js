@@ -16,7 +16,7 @@ import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import hooks from 'leemons-hooks';
@@ -29,21 +29,23 @@ import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents
 import { useHistory } from 'react-router-dom';
 import { PackageManagerService } from '@package-manager/services';
 import loadable from '@loadable/component';
+import tLoader from '@multilanguage/helpers/tLoader';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function academicCalendarImport(component) {
   return loadable(() =>
-    import(
-      /* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/components/${component}.js`
-    )
+    import(/* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`)
   );
 }
 
 function Calendar({ session }) {
   const locale = useLocale();
   const history = useHistory();
-  const [store, render] = useStore({ loading: true });
+  const [store, render] = useStore({
+    processCalendarConfigForBigCalendar: () => ({ events: [] }),
+    loading: true,
+  });
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
@@ -53,7 +55,7 @@ function Calendar({ session }) {
 
   let AcademicCalendar = null;
   if (store.academicCalendarInstalled) {
-    AcademicCalendar = academicCalendarImport('Calendar');
+    AcademicCalendar = academicCalendarImport('components/Calendar');
   }
 
   async function getCalendarsForCenter(center) {
@@ -100,8 +102,20 @@ function Calendar({ session }) {
   }
 
   function getEvents(data) {
-    const events = [];
+    let processEvents = [];
+    const unProcessEvents = [];
     const calendarsByKey = keyBy(data.calendars, 'id');
+
+    const calendarData = store.scheduleCenter[data.center];
+
+    if (calendarData.config && calendarData.courses.length) {
+      const calendarEvents = store.processCalendarConfigForBigCalendar(calendarData.config, {
+        course: map(calendarData.courses, 'id'),
+        locale,
+        forCalendar: true,
+      });
+      processEvents = calendarEvents.events;
+    }
     _.forEach(data.events, (event) => {
       let canShowInCalendar = true;
 
@@ -114,24 +128,25 @@ function Calendar({ session }) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {
-              events.push(transformEv(event, data.calendars));
+              unProcessEvents.push(transformEv(event, data.calendars));
               return false;
             }
           });
         } else if (calendarsByKey[event.calendar]?.showEvents) {
-          events.push(transformEv(event, data.calendars));
+          unProcessEvents.push(transformEv(event, data.calendars));
         }
       }
     });
-    return events;
+    return [unProcessEvents, processEvents];
   }
 
   function getFilteredEvents(data) {
+    const [unProcessEvents, processEvents] = getEvents(data);
     return transformDBEventsToFullCalendarEvents(
-      getEvents(data),
+      unProcessEvents,
       data.calendars,
       data.calendarConfig
-    );
+    ).concat(processEvents);
   }
 
   const getSectionName = (sectionName, calendarSectionNamesTranslations) =>
@@ -158,6 +173,14 @@ function Calendar({ session }) {
       store.academicCalendarInstalled = await PackageManagerService.isPluginInstalled(
         'leemons-plugin-academic-calendar'
       );
+
+      if (store.academicCalendarInstalled) {
+        const impor = academicCalendarImport('helpers/useProcessCalendarConfigForBigCalendar');
+        const translations = await getLocalizations({ keysStartsWith: prefixPN('transformEvent') });
+        const trans = tLoader(prefixPN('transformEvent'), translations);
+        [store.processCalendarConfigForBigCalendar] = (await impor.load()).default(trans);
+      }
+
       store.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
       store.calendarSectionNamesTranslations = await getTranslationSections(centersData);
 
@@ -288,7 +311,7 @@ function Calendar({ session }) {
   }, [session, evLoading]);
 
   function onEventClick(info) {
-    if (info.originalEvent) {
+    if (info.originalEvent && info.originalEvent.noCanOpen !== true) {
       const { bgColor, icon, borderColor, ...e } = info.originalEvent;
       setSelectedEvent(e);
       openEventModal();
@@ -349,8 +372,6 @@ function Calendar({ session }) {
   }, [store.center, store.loading]);
 
   if (store.loading) return <LoadingOverlay visible />;
-
-  console.log(store.scheduleCenter[store.center.id]);
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>

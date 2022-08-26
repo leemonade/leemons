@@ -14,6 +14,7 @@ module.exports = {
     multiSubject: 'Multi-Asignatura',
     start: 'Inicio',
     end: 'Final',
+    course: 'Curso',
   },
   calendar: {
     month: 'Mes',
