@@ -194,8 +194,8 @@ export default function PeriodSelector({
       return [
         {
           name: 'class',
-          label: 'Class',
-          placeholder: 'Select a class',
+          label: labels?.form?.class?.label,
+          placeholder: labels?.form?.class?.placeholder,
           itemComponent: (item) => (
             <ClassItem class={allTeacherClasses.find((c) => c.id === item.value)} {...item} />
           ),
@@ -207,7 +207,7 @@ export default function PeriodSelector({
               label: `${klass.groups.name}`,
               value: klass.id,
             })) || [],
-          required: true,
+          required: labels?.form?.class?.error,
         },
       ];
     }
@@ -375,7 +375,16 @@ export default function PeriodSelector({
               setPeriodSelected(period);
 
               if (period && isFunction(onPeriodSubmit)) {
-                onPeriodSubmit({ program, center, course, subject, group, period });
+                onPeriodSubmit({
+                  program,
+                  center,
+                  course,
+                  subject,
+                  group,
+                  startDate: period.startDate,
+                  endDate: period.endDate,
+                  period,
+                });
               }
             }}
             onSave={onPeriodSave}

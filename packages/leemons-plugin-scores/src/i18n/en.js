@@ -17,6 +17,11 @@ module.exports = {
       periodName: 'Period name',
       customPeriod: 'Custom periods',
       evaluations: 'Evaluations',
+      class: {
+        label: 'Class',
+        placeholder: 'Select a class',
+        error: 'A class is required',
+      },
       center: {
         label: 'Center',
         placeholder: 'Select a center',
@@ -83,7 +88,7 @@ module.exports = {
   },
   notebook: {
     header: {
-      export: 'Export grades to',
+      export: 'Download',
     },
     noClassSelected: {
       title: 'Evaluation Notebook',
