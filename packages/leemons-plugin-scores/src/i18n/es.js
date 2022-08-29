@@ -17,6 +17,11 @@ module.exports = {
       periodName: 'Nombre del periodo',
       customPeriod: 'Periodo personalizado',
       evaluations: 'Evaluaciones',
+      class: {
+        label: 'Clase',
+        placeholder: 'Seleccionar una clase',
+        error: 'La clase es requerida',
+      },
       center: {
         label: 'Centro',
         placeholder: 'Selecciona un centro',
@@ -52,7 +57,7 @@ module.exports = {
     teacherDrawer: {
       title: 'Cuaderno de Evaluación',
       description:
-        'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+        'Bienvenido a tu cuaderno de evaluación. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
       new: 'Establecer periodo',
     },
     periodFormErrorMessages: {
@@ -83,7 +88,7 @@ module.exports = {
   },
   notebook: {
     header: {
-      export: 'Exportar notas a',
+      export: 'Descargar',
     },
     noClassSelected: {
       title: 'Cuaderno de Evaluación',
