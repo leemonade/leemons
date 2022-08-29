@@ -16,7 +16,7 @@ import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import hooks from 'leemons-hooks';
@@ -27,19 +27,36 @@ import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
 import { useHistory } from 'react-router-dom';
+import { PackageManagerService } from '@package-manager/services';
+import loadable from '@loadable/component';
+import tLoader from '@multilanguage/helpers/tLoader';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
+
+function academicCalendarImport(component) {
+  return loadable(() =>
+    import(/* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`)
+  );
+}
 
 function Calendar({ session }) {
   const locale = useLocale();
   const history = useHistory();
-  const [store, render] = useStore({ loading: true });
+  const [store, render] = useStore({
+    processCalendarConfigForBigCalendar: () => ({ events: [] }),
+    loading: true,
+  });
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
+  let AcademicCalendar = null;
+  if (store.academicCalendarInstalled) {
+    AcademicCalendar = academicCalendarImport('components/Calendar');
+  }
 
   async function getCalendarsForCenter(center) {
     const [{ calendars, events, userCalendar, ownerCalendars, calendarConfig }, schedule] =
@@ -85,8 +102,20 @@ function Calendar({ session }) {
   }
 
   function getEvents(data) {
-    const events = [];
+    let processEvents = [];
+    const unProcessEvents = [];
     const calendarsByKey = keyBy(data.calendars, 'id');
+
+    const calendarData = store.scheduleCenter[data.center];
+
+    if (calendarData.config && calendarData.courses.length) {
+      const calendarEvents = store.processCalendarConfigForBigCalendar(calendarData.config, {
+        course: map(calendarData.courses, 'id'),
+        locale,
+        forCalendar: true,
+      });
+      processEvents = calendarEvents.events;
+    }
     _.forEach(data.events, (event) => {
       let canShowInCalendar = true;
 
@@ -99,24 +128,25 @@ function Calendar({ session }) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {
-              events.push(transformEv(event, data.calendars));
+              unProcessEvents.push(transformEv(event, data.calendars));
               return false;
             }
           });
         } else if (calendarsByKey[event.calendar]?.showEvents) {
-          events.push(transformEv(event, data.calendars));
+          unProcessEvents.push(transformEv(event, data.calendars));
         }
       }
     });
-    return events;
+    return [unProcessEvents, processEvents];
   }
 
   function getFilteredEvents(data) {
+    const [unProcessEvents, processEvents] = getEvents(data);
     return transformDBEventsToFullCalendarEvents(
-      getEvents(data),
+      unProcessEvents,
       data.calendars,
       data.calendarConfig
-    );
+    ).concat(processEvents);
   }
 
   const getSectionName = (sectionName, calendarSectionNamesTranslations) =>
@@ -139,6 +169,17 @@ function Calendar({ session }) {
       const centersData = await Promise.all(
         map(store.centers, (center) => getCalendarsForCenter(center))
       );
+
+      store.academicCalendarInstalled = await PackageManagerService.isPluginInstalled(
+        'leemons-plugin-academic-calendar'
+      );
+
+      if (store.academicCalendarInstalled) {
+        const impor = academicCalendarImport('helpers/useProcessCalendarConfigForBigCalendar');
+        const translations = await getLocalizations({ keysStartsWith: prefixPN('transformEvent') });
+        const trans = tLoader(prefixPN('transformEvent'), translations);
+        [store.processCalendarConfigForBigCalendar] = (await impor.load()).default(trans);
+      }
 
       store.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
       store.calendarSectionNamesTranslations = await getTranslationSections(centersData);
@@ -270,7 +311,7 @@ function Calendar({ session }) {
   }, [session, evLoading]);
 
   function onEventClick(info) {
-    if (info.originalEvent) {
+    if (info.originalEvent && info.originalEvent.noCanOpen !== true) {
       const { bgColor, icon, borderColor, ...e } = info.originalEvent;
       setSelectedEvent(e);
       openEventModal();
@@ -349,10 +390,21 @@ function Calendar({ session }) {
           pages={[
             { label: t('calendar'), value: 'calendar' },
             { label: t('schedule'), value: 'schedule' },
+            ...(store.scheduleCenter[store.center.id]?.config
+              ? [
+                  {
+                    label: t('program'),
+                    value: 'program',
+                  },
+                ]
+              : []),
           ]}
           pageOnChange={changePage}
           value={
-            store.activePage === 'schedule'
+            // eslint-disable-next-line no-nested-ternary
+            store.activePage === 'program'
+              ? []
+              : store.activePage === 'schedule'
               ? store.schedule.sections
               : store.centersDataById[store.center.id].sections
           }
@@ -396,7 +448,6 @@ function Calendar({ session }) {
             classCalendars={store.centersDataById[store.center.id].data.classCalendars}
           />
         ) : null}
-
         {!store.activePage || store.activePage === 'calendar' ? (
           <BigCalendar
             key="1"
@@ -437,7 +488,8 @@ function Calendar({ session }) {
               ),
             }}
           />
-        ) : (
+        ) : null}{' '}
+        {store.activePage === 'schedule' ? (
           <>
             <EventDetailPanel
               labels={{
@@ -517,7 +569,50 @@ function Calendar({ session }) {
               }}
             />
           </>
-        )}
+        ) : null}
+        {store.activePage === 'program' ? (
+          <>
+            <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+              <Stack fullWidth justifyContent="space-between">
+                <Box>
+                  <Text color="primary" size="xl">
+                    {t('programCalendar')}{' '}
+                    {store.scheduleCenter[store.center.id].config.program.abbreviation}
+                  </Text>
+                </Box>
+                <Box>
+                  {store.schedule.courseData.length > 1 ? (
+                    <Stack alignItems="center">
+                      <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                        <Text color="primary">{t('course')}</Text>
+                      </Box>
+                      <Box sx={() => ({ width: 80 })}>
+                        <Select
+                          value={
+                            store.academicCalendarCourse ||
+                            store.scheduleCenter[store.center.id]?.courses[0]?.id
+                          }
+                          data={store.schedule.courseData}
+                          onChange={(e) => {
+                            store.academicCalendarCourse = e;
+                            render();
+                          }}
+                        />
+                      </Box>
+                    </Stack>
+                  ) : null}
+                </Box>
+              </Stack>
+            </Box>
+            <AcademicCalendar
+              config={store.scheduleCenter[store.center.id].config}
+              course={
+                store.academicCalendarCourse ||
+                store.scheduleCenter[store.center.id]?.courses[0]?.id
+              }
+            />
+          </>
+        ) : null}
       </Box>
     </Box>
   );

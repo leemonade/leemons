@@ -390,7 +390,8 @@ export default function PeriodSelector({
                     setCourse(null);
                   }
                 } else {
-                  const c = allTeacherClasses.find((klass) => klass.id === v.class);
+                  const vClassId = _.isArray(v.class) ? v.class[0] : v.class;
+                  const c = allTeacherClasses.find((klass) => klass.id === vClassId);
 
                   onPeriodChange({
                     ...v,
@@ -462,7 +463,8 @@ export default function PeriodSelector({
             onSubmit={(v) => {
               let period;
               if (v.class) {
-                const c = allTeacherClasses.find((klass) => klass.id === v.class);
+                const vClassId = _.isArray(v.class) ? v.class[0] : v.class;
+                const c = allTeacherClasses.find((klass) => klass.id === vClassId);
 
                 const classValues = {
                   ...v,

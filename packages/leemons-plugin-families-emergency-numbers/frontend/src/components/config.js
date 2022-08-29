@@ -1,6 +1,5 @@
-import React from 'react';
-// import { Button, Modal, PageContainer, Table, useModal } from 'leemons--ui';
-/*
+import React, { useState, useMemo } from 'react';
+import { Button, Modal, PageContainer, Table, Text } from '@bubbles-ui/components';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
@@ -12,10 +11,8 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@families-emergency-numbers/helpers/prefixPN';
 import { PackageManagerService } from '@package-manager/services';
-*/
+
 function Config() {
-  return 'Pasar a bubbles-ui';
-  /*
   const [loading, setLoading] = useState(true);
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
@@ -26,13 +23,8 @@ function Config() {
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const [removingEmergencyNumber, setRemovingEmergencyNumber] = useState(false);
   const [emergencyNumberInstalled, setEmergencyNumberInstalled] = useState(true);
-
-  const [modalRemove, toggleModalRemove] = useModal({
-    animated: true,
-    title: removingEmergencyNumber ? null : t('phone_modal.title'),
-    closeButton: !removingEmergencyNumber,
-    overlayClose: !removingEmergencyNumber,
-  });
+  const [removeOpened, setRemoveOpened] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
   function newItem() {
     setItem(null);
@@ -84,30 +76,9 @@ function Config() {
     }
   }
 
-  const [modal, toggleModal] = useModal({
-    animated: true,
-    title: t('remove_modal.title'),
-    message: t('remove_modal.message'),
-    cancelLabel: t('remove_modal.cancel'),
-    actionLabel: t('remove_modal.action'),
-    onAction: async () => {
-      try {
-        await removeDatasetFieldRequest(
-          `families-emergency-numbers-data`,
-          'plugins.families-emergency-numbers',
-          itemToRemove.id
-        );
-        addSuccessAlert(t('dataset_tab.deleted_done'));
-        await reload();
-      } catch (e) {
-        addErrorAlert(getErrorMessage(e));
-      }
-    },
-  });
-
   function removeItem(_item) {
     setItemToRemove(_item);
-    toggleModal();
+    setModalOpened(true);
   }
 
   async function onSave() {
@@ -156,7 +127,7 @@ function Config() {
   );
 
   const removeAddon = () => {
-    toggleModalRemove();
+    setRemoveOpened(true);
   };
 
   const removePhoneAddon = async () => {
@@ -180,7 +151,11 @@ function Config() {
 
   return (
     <>
-      <Modal {...modalRemove}>
+      <Modal
+        title={removingEmergencyNumber ? '' : t('phone_modal.title')}
+        opened={removeOpened}
+        onClose={() => setRemoveOpened(false)}
+      >
         {removingEmergencyNumber ? (
           <div className="text-center pt-4">
             <Button color="primary" className="btn-xl" loading={emergencyNumberInstalled} text>
@@ -194,7 +169,7 @@ function Config() {
           <>
             <div className="text-sm text-secondary mb-6">{t('phone_modal.message')}</div>
             <div className="mt-6 flex flex-row gap-2 justify-end">
-              <Button color="ghost" onClick={toggleModalRemove}>
+              <Button color="ghost" onClick={() => setRemoveOpened(false)}>
                 {t('phone_modal.cancel')}
               </Button>
               <Button color="primary" onClick={removePhoneAddon}>
@@ -204,7 +179,36 @@ function Config() {
           </>
         )}
       </Modal>
-      <Modal {...modal} />
+      <Modal
+        title={t('remove_modal.title')}
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+      >
+        <Text>{t('remove_modal.message')}</Text>
+        <div className="mt-6 flex flex-row gap-2 justify-end">
+          <Button color="ghost" onClick={() => setModalOpened(false)}>
+            {t('phone_modal.cancel')}
+          </Button>
+          <Button
+            color="primary"
+            onClick={async () => {
+              try {
+                await removeDatasetFieldRequest(
+                  `families-emergency-numbers-data`,
+                  'plugins.families-emergency-numbers',
+                  itemToRemove.id
+                );
+                addSuccessAlert(t('dataset_tab.deleted_done'));
+                await reload();
+              } catch (e) {
+                addErrorAlert(getErrorMessage(e));
+              }
+            }}
+          >
+            {t('phone_modal.action')}
+          </Button>
+        </div>
+      </Modal>
       <div className="bg-primary-content">
         <PageContainer className="pt-0">
           <ErrorAlert />
@@ -243,7 +247,7 @@ function Config() {
               {tableItems && tableItems.length ? (
                 <Table columns={tableHeaders} data={tableItems} />
               ) : (
-                <div className="text-center">{t('dataset_tab.no_data_in_table')}</div>
+                <Text>{t('dataset_tab.no_data_in_table')}</Text>
               )}
             </div>
           </div>
@@ -251,7 +255,6 @@ function Config() {
       ) : null}
     </>
   );
-  */
 }
 
 export default Config;

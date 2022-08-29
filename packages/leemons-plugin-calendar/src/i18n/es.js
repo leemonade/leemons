@@ -14,6 +14,7 @@ module.exports = {
     multiSubject: 'Multi-Asignatura',
     start: 'Inicio',
     end: 'Final',
+    course: 'Curso',
   },
   calendar: {
     month: 'Mes',
@@ -26,6 +27,8 @@ module.exports = {
     showWeekends: 'Mostrar fines de semana',
     calendar: 'Calendario',
     schedule: 'Horario',
+    program: 'Programa',
+    programCalendar: 'Calendario del programa - ',
     centers: 'Centros',
     close: 'Cerrar',
     allDay: 'Todo el dia',

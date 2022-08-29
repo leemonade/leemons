@@ -139,7 +139,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                   src="{{it.userSession.avatarUrl}}"
                   height="36"
                   width="36"
-                  style="border-radius: 50%, margin-right: 8px"
+                  style="border-radius: 50%; margin-right: 8px; display: inline-block;vertical-align: middle;"
                 />
                  {{it.userSession.name}} {{it.userSession.surnames}}
                 </td>

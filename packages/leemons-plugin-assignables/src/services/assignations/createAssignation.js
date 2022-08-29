@@ -127,6 +127,7 @@ module.exports = async function createAssignation(
 
             sendEmail({
               instance,
+              userSession,
               userAgent: userAgentByIds[user],
               classes: _classes,
               ctx,
