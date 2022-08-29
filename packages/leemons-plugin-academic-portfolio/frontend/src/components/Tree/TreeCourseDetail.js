@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Controller, useForm} from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -9,23 +9,24 @@ import {
   Paragraph,
   Stack,
   TextInput,
-  Title
+  Title,
 } from '@bubbles-ui/components';
-import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeCourseDetail = ({
-                            item,
-                            center,
-                            messagesAddUsers,
-                            course,
-                            messages,
-                            onSave,
-                            onGoProgram,
-                            saving,
-                          }) => {
+  item,
+  center,
+  messagesAddUsers,
+  course,
+  messages,
+  onSave,
+  onGoProgram,
+  managersSelect,
+  saving,
+}) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
-  const {reset, control, setValue, handleSubmit} = useForm({defaultValues: course});
+  const { reset, control, setValue, handleSubmit } = useForm({ defaultValues: course });
 
   React.useEffect(() => {
     reset(course);
@@ -45,22 +46,37 @@ const TreeCourseDetail = ({
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
           <Box>
-            <TextInput disabled label={messages.numberLabel} value={course.index.toString()}/>
+            <TextInput disabled label={messages.numberLabel} value={course.index.toString()} />
           </Box>
           <Box>
             <Controller
               control={control}
               name="name"
-              render={({field}) => (
+              render={({ field }) => (
                 <TextInput label={messages.nameLabel} help={messages.nameHelper} {...field} />
               )}
             />
           </Box>
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
           <Box>
             <Controller
               name="number"
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
               )}
             />
@@ -105,8 +121,9 @@ TreeCourseDetail.propTypes = {
   saving: PropTypes.bool,
   item: PropTypes.object,
   center: PropTypes.string,
+  managersSelect: PropTypes.any,
   messagesAddUsers: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export {TreeCourseDetail};
+export { TreeCourseDetail };

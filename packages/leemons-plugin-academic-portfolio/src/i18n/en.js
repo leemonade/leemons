@@ -352,6 +352,7 @@ module.exports = {
       addStudent: 'Add student',
       userAlreadySelected: 'User already selected',
       removeUser: 'Remove',
+      managersLabel: 'Responsible for reference',
     },
     program: {
       title: 'Program configuration',

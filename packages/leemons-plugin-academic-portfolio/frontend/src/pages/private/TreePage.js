@@ -363,11 +363,11 @@ export default function TreePage() {
     }
   }
 
-  async function onSaveProgram({ id, name, abbreviation, credits, students }) {
+  async function onSaveProgram({ id, name, abbreviation, credits, students, managers }) {
     try {
       store.saving = true;
       render();
-      await updateProgramRequest({ id, name, abbreviation, credits });
+      await updateProgramRequest({ id, name, abbreviation, credits, managers });
       await addStudentIfNeed(students, id, 'program');
       store.tree = await getProgramTree();
       setAgainActiveTree();
@@ -379,11 +379,11 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveCourse({ id, name, credits, students }) {
+  async function onSaveCourse({ id, name, credits, students, managers }) {
     try {
       store.saving = true;
       render();
-      await updateCourseRequest({ id, name, abbreviation: name, number: credits });
+      await updateCourseRequest({ id, name, abbreviation: name, number: credits, managers });
       await addStudentIfNeed(students, id, 'courses');
       store.tree = await getProgramTree();
       setAgainActiveTree();
@@ -395,11 +395,11 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveGroup({ id, name, abbreviation, students }) {
+  async function onSaveGroup({ id, name, abbreviation, students, managers }) {
     try {
       store.saving = true;
       render();
-      await updateGroupRequest({ id, name, abbreviation });
+      await updateGroupRequest({ id, name, abbreviation, managers });
       await addStudentIfNeed(students, id, 'groups');
 
       store.tree = await getProgramTree();
@@ -417,6 +417,7 @@ export default function TreePage() {
     id,
     name,
     groupVisibility,
+    managers,
     credits_course,
     credits_program,
   }) {
@@ -429,6 +430,7 @@ export default function TreePage() {
         groupVisibility: !!groupVisibility,
         credits_course,
         credits_program,
+        managers,
       });
       await addStudentIfNeed(students, id, 'subjectType');
       store.tree = await getProgramTree();
@@ -448,6 +450,7 @@ export default function TreePage() {
     color,
     credits_course,
     credits_program,
+    managers,
     students,
   }) {
     try {
@@ -460,6 +463,7 @@ export default function TreePage() {
         color,
         credits_course,
         credits_program,
+        managers,
         icon: ' ',
       });
       await addStudentIfNeed(students, id, 'knowledges');
@@ -809,6 +813,7 @@ export default function TreePage() {
         course: isArray(data.courses) ? null : data.courses,
         internalId: data.internalId,
         credits: data.credits,
+        managers: data.managers,
       });
       if (subject) {
         // eslint-disable-next-line no-param-reassign
@@ -986,6 +991,9 @@ export default function TreePage() {
                         messages={messages.treeProgram}
                         messagesAddUsers={messages.addUsers}
                         saving={store.saving}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.editingItem.nodeType === 'courses' ? (
@@ -997,6 +1005,9 @@ export default function TreePage() {
                         messages={messages.treeCourse}
                         messagesAddUsers={messages.addUsers}
                         saving={store.saving}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.editingItem.nodeType === 'groups' ? (
@@ -1009,6 +1020,9 @@ export default function TreePage() {
                         messages={messages.treeGroup}
                         messagesAddUsers={messages.addUsers}
                         saving={store.saving}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.editingItem.nodeType === 'subjectType' ? (
@@ -1020,6 +1034,9 @@ export default function TreePage() {
                         messages={messages.treeSubjectType}
                         messagesAddUsers={messages.addUsers}
                         saving={store.saving}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.editingItem.nodeType === 'knowledges' ? (
@@ -1032,6 +1049,9 @@ export default function TreePage() {
                         messages={messages.treeKnowledge}
                         messagesAddUsers={messages.addUsers}
                         saving={store.saving}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.editingItem.nodeType === 'class' ? (
@@ -1086,6 +1106,9 @@ export default function TreePage() {
                         saving={store.saving}
                         messagesAddUsers={messages.addUsers}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.newItem.nodeType === 'subjectType' ? (
@@ -1096,6 +1119,9 @@ export default function TreePage() {
                         messages={messages.treeSubjectType}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.newItem.nodeType === 'knowledges' ? (
@@ -1107,6 +1133,9 @@ export default function TreePage() {
                         messages={messages.treeKnowledge}
                         saving={store.saving}
                         selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
                       />
                     ) : null}
                     {store.newItem.nodeType === 'subject' ? (
@@ -1125,6 +1154,9 @@ export default function TreePage() {
                             profiles={store.profiles.teacher}
                             centers={store.centerId}
                           />
+                        }
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
                         }
                       />
                     ) : null}

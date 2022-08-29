@@ -7,6 +7,7 @@ const { getProgramSubstages } = require('../programs/getProgramSubstages');
 const { getProgramKnowledges } = require('../programs/getProgramKnowledges');
 const { getProgramSubjects } = require('../programs/getProgramSubjects');
 const { getProgramSubjectTypes } = require('../programs/getProgramSubjectTypes');
+const { getManagers } = require('../managers/getManagers');
 
 async function getTree(nodeTypes, { program, transacting } = {}) {
   const query = {};
@@ -38,6 +39,35 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     listClasses(0, 99999, undefined, { query: { program_$in: programIds }, transacting }),
   ]);
 
+  let managerIds = [];
+  managerIds = managerIds.concat(_.map(programs, 'id'));
+  managerIds = managerIds.concat(_.map(courses, 'id'));
+  managerIds = managerIds.concat(_.map(groups, 'id'));
+  managerIds = managerIds.concat(_.map(substages, 'id'));
+  managerIds = managerIds.concat(_.map(knowledges, 'id'));
+  managerIds = managerIds.concat(_.map(subjects, 'id'));
+  managerIds = managerIds.concat(_.map(subjectTypes, 'id'));
+
+  const managers = await getManagers(managerIds, { transacting, returnAgents: false });
+  const managersByRelationship = _.groupBy(managers, 'relationship');
+
+  function process(items) {
+    _.forEach(items, (item) => {
+      // eslint-disable-next-line no-param-reassign
+      item.managers = managersByRelationship[item.id]
+        ? _.map(managersByRelationship[item.id], 'userAgent')
+        : [];
+    });
+  }
+
+  process(programs);
+  process(courses);
+  process(groups);
+  process(substages);
+  process(knowledges);
+  process(subjects);
+  process(subjectTypes);
+
   const classCoursesIds = _.flatten(
     _.map(classes, (classe) => {
       if (classe.courses) {
@@ -46,6 +76,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
         }
         return classe.courses.id;
       }
+      return undefined;
     })
   );
   const classGroupsIds = _.map(classes, 'groups.id');

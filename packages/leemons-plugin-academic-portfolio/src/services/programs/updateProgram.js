@@ -1,15 +1,19 @@
 const { table } = require('../tables');
 const { programsByIds } = require('./programsByIds');
 const { validateUpdateProgram } = require('../../validations/forms');
+const { saveManagers } = require('../managers/saveManagers');
 
 async function updateProgram(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       validateUpdateProgram(data);
 
-      const { id, image, ...programData } = data;
+      const { id, image, managers, ...programData } = data;
 
-      let program = await table.programs.update({ id }, programData, { transacting });
+      let [program] = await Promise.all([
+        table.programs.update({ id }, programData, { transacting }),
+        saveManagers(managers, 'program', id, { transacting }),
+      ]);
 
       const imageData = {
         indexable: false,
