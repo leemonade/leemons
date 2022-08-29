@@ -340,6 +340,7 @@ module.exports = {
     delete: 'Delete',
     duplicate: 'Duplicate',
   },
+  variant: 'Task',
   task_realization: {
     confirmation_modal: {
       labels: {

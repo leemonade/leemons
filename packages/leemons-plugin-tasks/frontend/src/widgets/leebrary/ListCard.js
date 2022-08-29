@@ -27,10 +27,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
     setLoading: setAppLoading,
   } = useLayout();
 
-  const [, translations] = useTranslateLoader([
-    prefixPN('cardMenu'),
-    'plugins.assignables.roles.task',
-  ]);
+  const [, translations] = useTranslateLoader([prefixPN('cardMenu'), 'plugins.tasks.variant']);
 
   const { menuLabels, taskLabel } = useMemo(() => {
     if (translations && translations.items) {
@@ -40,7 +37,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       // ES: Modifica el objeto data aquí
       return {
         menuLabels: _.get(res, prefixPN('cardMenu')),
-        taskLabel: _.get(res, 'plugins.assignables.roles.task'),
+        taskLabel: _.get(res, 'plugins.tasks.variant'),
       };
     }
 

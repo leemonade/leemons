@@ -329,6 +329,7 @@ module.exports = {
     delete: 'Eliminar',
     duplicate: 'Duplicar',
   },
+  variant: 'Tarea',
   task_realization: {
     confirmation_modal: {
       labels: {
