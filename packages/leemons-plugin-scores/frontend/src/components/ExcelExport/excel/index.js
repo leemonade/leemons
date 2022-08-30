@@ -5,7 +5,7 @@ import writeHeader from './content/writeHeader';
 
 export default function generateExcel({ headerShown, tableData, labels, period }) {
   const wb = createWorkbook();
-  const notebookSheet = createSheet(wb, 'noebook');
+  const notebookSheet = createSheet(wb, 'notebook');
   if (headerShown) {
     writeHeader(notebookSheet, period, labels.period);
   }
