@@ -141,16 +141,21 @@ class Leemons {
 
   // Initialize the server config with http server
   initServer() {
+    // Enable global cors
+    if (process.env.CORS) {
+      leemons.log.debug('CORS ENABLED: Allowing all incoming traffic');
+
+      const options = {
+        origin: '*',
+      };
+
+      this.app.use(cors(options));
+    }
+
     // Add front router to KOA
     this.app.use(this.frontRouter.routes());
     // Add backRouter to app
     this.app.use(this.backRouter.routes());
-
-    // Enable global cors
-    if (process.env.CORS) {
-      leemons.log.debug('CORS ENABLED: Allowing all incoming traffic');
-      this.app.use(cors());
-    }
 
     // Use http-server for being able to reuse it (for example with webSockets)
     this.server = http.createServer(this.handleRequest.bind(this));
