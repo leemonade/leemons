@@ -30,7 +30,7 @@ Teacher Sort
 
  */
 
-const { map, uniq, set, flattenDeep, isNil, pull } = require('lodash');
+const { map, uniq, set, flattenDeep, isNil, pull, take } = require('lodash');
 const dayjs = require('dayjs');
 const leebrary = require('../../leebrary/leebrary');
 const {
@@ -526,10 +526,6 @@ module.exports = async function searchAssignableInstances(
 ) {
   const activitiesByProfile = await getActivitiesByProfile({ userSession, transacting });
 
-  if (Array.isArray(activitiesByProfile)) {
-    return activitiesByProfile;
-  }
-
   const { isTeacher } = activitiesByProfile;
 
   let { assignableInstances: assignableInstancesFound, assignations: assignationsFound } =
@@ -646,6 +642,9 @@ module.exports = async function searchAssignableInstances(
       // ES: Ordena las actividades no nuevas
       sorted.push(...sortByDates(assignationsLeft, ['deadline', 'start', 'visualization']));
 
+      if (query.limit) {
+        return take(map(sorted, 'instance'), query.limit);
+      }
       return map(sorted, 'instance');
     }
 
@@ -656,6 +655,15 @@ module.exports = async function searchAssignableInstances(
       ...instanceDates[instance],
     }));
 
+    if (query.limit) {
+      return take(
+        map(
+          sortByDates(instancesToSort, ['close', 'closed', 'deadline', 'start', 'visibility']),
+          'id'
+        ),
+        query.limit
+      );
+    }
     return map(
       sortByDates(instancesToSort, ['close', 'closed', 'deadline', 'start', 'visibility']),
       'id'
