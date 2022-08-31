@@ -410,7 +410,7 @@ async function parseAssignationForStudentView(assignation, labels, options) {
     grade: instance?.requiresScoring ? (
       <Grade grade={avgGrade} instance={instance} show={calculatedGrade?.count > 0} />
     ) : (
-      labels?.activity_status?.evaluated
+      <Text color="success">{labels?.activity_status?.evaluated}</Text>
     ),
   };
 }
