@@ -246,6 +246,7 @@ module.exports = {
       status: 'Status',
       timeReference: 'Time reference',
       submission: 'Submission',
+      grade: 'Grade',
       unreadMessages: 'Messages',
     },
   },

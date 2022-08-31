@@ -87,6 +87,7 @@ function useAssignmentsColumns() {
       ];
     }
 
+    // student
     return [
       ...commonColumns,
       {
@@ -96,6 +97,10 @@ function useAssignmentsColumns() {
       {
         Header: labels.submission || '',
         accessor: 'submission',
+      },
+      {
+        Header: labels.grade || '',
+        accessor: 'grade',
       },
       {
         Header: labels.unreadMessages || '',

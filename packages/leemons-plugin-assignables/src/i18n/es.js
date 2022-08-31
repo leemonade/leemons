@@ -251,6 +251,7 @@ module.exports = {
       deadline: 'Fecha límite',
       status: 'Estado',
       submission: 'Entrega',
+      grade: 'Puntuación',
       unreadMessages: 'Mensajes',
     },
   },
