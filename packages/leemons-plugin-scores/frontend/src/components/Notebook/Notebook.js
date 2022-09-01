@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import {
   Box,
   createStyles,
-  ImageLoader,
   Paragraph,
   TabPanel,
   Tabs,
   Title,
+  useResizeObserver,
 } from '@bubbles-ui/components';
 import _, { isEmpty } from 'lodash';
 import { unflatten } from '@common';
@@ -16,18 +16,33 @@ import { Header } from './components/Header';
 import ActivitiesTab from './components/ActivitiesTab';
 import noFilters from './assets/noFilters.png';
 
-const useStyles = createStyles((theme, { isOpened } = {}) => ({
+const useEmptyStateStyles = createStyles((theme, { top }) => ({
   root: {
-    width: isOpened ? 'calc(100% - 370px)' : '100%',
-    boxSizing: 'border-box',
-    transition: 'width 0.3s ease-in-out',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing[7],
+    width: '100%',
+    height: `calc(100vh - ${top}px)`,
+    padding: theme.spacing[8],
   },
-  tabHeader: {
-    backgroundColor: theme.colors.interactive03h,
+  text: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[5],
+    maxWidth: 370,
+  },
+  textMargin: {
+    margin: 0,
+  },
+  image: {
+    maxHeight: 500,
+    maxWidth: '50%',
   },
 }));
 
-function EmptyState() {
+function useEmptyStateLocalizations() {
   const [, translations] = useTranslateLoader(prefixPN('notebook.noClassSelected'));
 
   const labels = useMemo(() => {
@@ -41,46 +56,40 @@ function EmptyState() {
     return {};
   }, [translations]);
 
+  return labels;
+}
+
+function EmptyState() {
+  const [ref, rect] = useResizeObserver();
+  const top = React.useMemo(() => ref?.current?.getBoundingClientRect()?.top, [rect]);
+  const { classes } = useEmptyStateStyles({ top });
+  const labels = useEmptyStateLocalizations();
+
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        height: '100vh',
-        width: '100%',
-      }}
-    >
-      <Box
-        sx={(theme) => ({
-          position: 'absolute',
-          width: '100%',
-          bottom: 0,
-          left: 0,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: theme.spacing[4],
-        })}
-      >
-        <ImageLoader
-          src={noFilters}
-          imageStyles={{
-            maxWidth: 573,
-            width: '50%',
-          }}
-          height="100%"
-        />
-        <Box sx={{ maxWidth: '25%' }}>
-          <Title>{labels.title}</Title>
-          <Paragraph>{labels.description}</Paragraph>
-        </Box>
+    <Box className={classes.root} ref={ref}>
+      <img src={noFilters} className={classes.image} />
+      <Box className={classes.text}>
+        <Title>{labels.title}</Title>
+        <Paragraph className={classes.textMargin}>{labels.description}</Paragraph>
       </Box>
     </Box>
   );
 }
 
-export default function Notebook({ isOpened, onOpenChange, filters }) {
-  const { classes } = useStyles({ isOpened });
+const useNotebookStyles = createStyles((theme, { top } = {}) => ({
+  root: {
+    width: '100%',
+    position: 'sticky',
+    top,
+    boxSizing: 'border-box',
+    transition: 'width 0.3s ease-in-out',
+  },
+  tabHeader: {
+    backgroundColor: theme.colors.interactive03h,
+  },
+}));
 
+function useNotebookLocalizations() {
   const [, translations] = useTranslateLoader(prefixPN('notebook.tabs'));
 
   const labels = useMemo(() => {
@@ -96,16 +105,28 @@ export default function Notebook({ isOpened, onOpenChange, filters }) {
     return {};
   }, [translations]);
 
+  return labels;
+}
+
+export default function Notebook({ filters }) {
+  const labels = useNotebookLocalizations();
+  const top = 0;
+  const { classes } = useNotebookStyles({ top });
+
   if (isEmpty(filters)) {
     return <EmptyState />;
   }
 
   return (
     <Box className={classes.root}>
-      <Header isOpened={isOpened} onOpenChange={onOpenChange} filters={filters} />
+      <Header filters={filters} />
       <Tabs className={classes.tabHeader}>
         <TabPanel label={labels.activities.title}>
-          <ActivitiesTab filters={filters} labels={labels.activities} />
+          <ActivitiesTab
+            key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
+            filters={filters}
+            labels={labels.activities}
+          />
         </TabPanel>
       </Tabs>
     </Box>

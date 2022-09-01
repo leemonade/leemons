@@ -1,6 +1,9 @@
 const { permissionNames } = require('../config/constants');
 
 module.exports = [
+  /*
+    --- Periods ---
+  */
   {
     method: 'POST',
     path: '/periods',
@@ -33,5 +36,27 @@ module.exports = [
         actions: ['delete', 'admin'],
       },
     },
+  },
+
+  /*
+    --- Scores ---
+   */
+  {
+    method: 'GET',
+    path: '/scores',
+    handler: 'scores.get',
+    authenticated: true,
+  },
+  {
+    method: 'PATCH',
+    path: '/scores',
+    handler: 'scores.set',
+    authenticated: true,
+  },
+  {
+    method: 'DELETE',
+    path: '/scores',
+    handler: 'scores.remove',
+    authenticated: true,
   },
 ];

@@ -2,5 +2,11 @@
   "name": "scores-frontend",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "exceljs": "^4.3.0",
+    "lodash": "^4.17.21",
+    "react-hook-form": "^7.34.2",
+    "react-query": "^3.39.2"
+  }
 }
