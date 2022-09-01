@@ -34,6 +34,36 @@ module.exports = {
       },
     },
   },
+  reviewPage: {
+    header: {
+      admin: {
+        title: 'Final grades',
+        description:
+          'As administrator, it is possible to create custom time periods for teachers to use as evaluation stages, for example, defining the evaluation periods by program and course.',
+      },
+      teacher: {
+        title: 'Final grades',
+        description:
+          'Welcome to your evaluation notebook. As a teacher you can do custom searches or use the pre-defined periods created by your center for each program and course.',
+      },
+    },
+    filters: {
+      title: 'Search period',
+      program: {
+        label: 'Program',
+        placeholder: 'Select program...',
+      },
+      course: {
+        label: 'Course',
+        placeholder: 'Select course...',
+      },
+      group: {
+        label: 'Group',
+        placeholder: 'Select groups...',
+        all: 'All groups',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Period "{{name}}" removed successfully',
@@ -187,6 +217,29 @@ module.exports = {
           error: "The period {{period}} can't be submitted: {{error}}",
         },
       },
+    },
+  },
+  finalNotebook: {
+    filters: {
+      filterBy: {
+        student: 'Student',
+        subject: 'Subject',
+        group: 'Group',
+      },
+      searchBy: 'Search by {{noun}}',
+      hideFutureEvaluations: 'Hide future evaluations',
+    },
+    reviewerTable: {
+      students: 'Students',
+      noActivity: 'Not submitted',
+      avgScore: 'Weighted score',
+      gradingTasks: 'Calculated',
+      customScore: 'Custom',
+    },
+    update: {
+      success: 'Grade updated for {{student}} in {{subject}} to a {{score}}',
+      fail: 'Failed to update grade for {{student}} in {{subject}} to a {{score}}',
+      course: 'Course',
     },
   },
   excel: {

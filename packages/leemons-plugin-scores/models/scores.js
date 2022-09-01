@@ -2,7 +2,8 @@ module.exports = {
   modelName: 'scores',
   attributes: {
     class: {
-      type: 'uuid',
+      type: 'string',
+      length: 36 * 2 + 1, // uuid.uuid
     },
     student: {
       type: 'uuid',

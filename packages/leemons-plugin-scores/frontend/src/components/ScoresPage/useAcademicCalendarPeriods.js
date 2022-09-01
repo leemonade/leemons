@@ -5,15 +5,14 @@ import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 
 export function useAcademicCalendarPeriods({ classes }) {
-  const programsCache = useCache();
-  const configsCache = useCache();
+  const cache = useCache();
   const programsIds = React.useMemo(() => _.uniq(_.map(classes, 'program')), [classes]);
 
   const programsQueries = useProgramDetail(programsIds);
   const configQueries = useAcademicCalendarConfig(programsIds);
 
   const programs = React.useMemo(
-    () => programsCache(_.map(programsQueries, 'data').filter(Boolean)),
+    () => cache('programs', _.map(programsQueries, 'data').filter(Boolean)),
     [programsQueries]
   );
 
@@ -48,7 +47,7 @@ export function useAcademicCalendarPeriods({ classes }) {
   );
 
   const configs = React.useMemo(
-    () => configsCache(_.map(configQueries, 'data.substagesDates').filter(Boolean)),
+    () => cache('config', _.map(configQueries, 'data.substagesDates').filter(Boolean)),
     [configQueries]
   );
 

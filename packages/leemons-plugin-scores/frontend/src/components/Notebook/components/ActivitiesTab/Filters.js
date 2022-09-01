@@ -47,13 +47,13 @@ const useEvaluationReportModalStyles = createStyles((theme) => ({
   },
 }));
 
-function useFilterByLength(filterBy, labels) {
+export function useFilterByLength(filterBy, labels) {
   return React.useMemo(() => {
     const valuesMaxLength = filterBy.reduce(
       (maxLength, filter) => Math.max(maxLength, filter.label.length),
       0
     );
-    return Math.max(valuesMaxLength, labels?.filterBy?.placeholder?.length);
+    return Math.max(valuesMaxLength, labels?.filterBy?.placeholder?.length || 0);
   }, [filterBy]);
 }
 

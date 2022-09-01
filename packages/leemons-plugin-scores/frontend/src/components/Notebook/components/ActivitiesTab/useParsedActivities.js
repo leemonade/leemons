@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { useCache } from '@common';
+import { stringMatch, useCache } from '@common';
 import useScores from '@scores/hooks/scores/useScores';
 
 function parseStudentsData({ studentsData, values: _values, scores, isSubmitted }) {
@@ -64,13 +64,8 @@ export function sortByStudentName(values) {
 
 export function filterStudentsByLocalFilters({ filters, values }) {
   if (filters.filterBy === 'student' && filters.search?.length) {
-    return values.filter(
-      (student) =>
-        student.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        student.surname.toLowerCase().includes(filters.search.toLowerCase()) ||
-        `${student.name.toLowerCase()} ${student.surname.toLowerCase()}`.includes(
-          filters.search.toLowerCase()
-        )
+    return values.filter((student) =>
+      stringMatch(`${student.name} ${student.surname}`, filters.search, { partial: true })
     );
   }
   return values;
@@ -85,7 +80,7 @@ export function useParsedActivities(
   localFilters,
   assignableInstances
 ) {
-  const { current: cache } = React.useRef(useCache({ useHooks: false }));
+  const cache = useCache();
 
   const { data: scores, isLoading: isLoadingScores } = useScores({
     classes: [filters?.class?.id],
@@ -133,7 +128,7 @@ export function useParsedActivities(
       isPeriodSubmitted,
     };
 
-    return cache(tableData);
+    return cache('tableData', tableData);
   }, [assignableInstances, studentsData, localFilters, filters, scores]);
 }
 

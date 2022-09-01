@@ -16,8 +16,8 @@ const useHeaderStyles = createStyles((theme) => ({
   },
 }));
 
-function useHeaderLocalizations() {
-  const key = prefixPN('scoresPage.header.teacher');
+function useHeaderLocalizations({ variant }) {
+  const key = prefixPN(`${variant}.header.teacher`);
   const [, translations] = useTranslateLoader(key);
 
   const localizations = useMemo(() => {
@@ -33,9 +33,9 @@ function useHeaderLocalizations() {
   return localizations;
 }
 
-export function Header() {
+export function Header({ variant }) {
   const { classes } = useHeaderStyles();
-  const localizations = useHeaderLocalizations();
+  const localizations = useHeaderLocalizations({ variant });
 
   return (
     <Box className={classes.root}>

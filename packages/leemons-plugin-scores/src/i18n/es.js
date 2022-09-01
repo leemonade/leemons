@@ -34,6 +34,36 @@ module.exports = {
       },
     },
   },
+  reviewPage: {
+    header: {
+      admin: {
+        title: 'Notas finales',
+        description:
+          'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
+      },
+      teacher: {
+        title: 'Notas finales',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      title: 'Buscar periodo',
+      program: {
+        label: 'Programa',
+        placeholder: 'Seleccionar programa...',
+      },
+      course: {
+        label: 'Curso',
+        placeholder: 'Seleccionar curso...',
+      },
+      group: {
+        label: 'Grupo',
+        placeholder: 'Seleccionar grupos...',
+        all: 'Todos los grupos',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Periodo "{{name}}" eliminado correctamente',
@@ -188,6 +218,29 @@ module.exports = {
           error: 'El periodo {{period}} no puede ser reportado: {{error}}',
         },
       },
+    },
+  },
+  finalNotebook: {
+    filters: {
+      filterBy: {
+        student: 'Estudiante',
+        subject: 'Asignatura',
+        group: 'Grupo',
+      },
+      searchBy: 'Buscar por {{noun}}',
+      hideFutureEvaluations: 'Ocultar evaluaciones futuras',
+    },
+    reviewerTable: {
+      students: 'Estudiantes',
+      noActivity: 'No entregada',
+      avgScore: 'Nota ponderada',
+      gradingTasks: 'Calculada',
+      customScore: 'Personalizada',
+    },
+    update: {
+      success: 'Nota actualizada para {{student}} en {{subject}} a un {{score}}',
+      fail: 'La nota no ha podido ser actualizada para {{student}} en {{subject}} a un {{score}}',
+      course: 'el curso',
     },
   },
   excel: {

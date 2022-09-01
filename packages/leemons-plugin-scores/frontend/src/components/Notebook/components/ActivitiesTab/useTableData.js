@@ -109,7 +109,11 @@ function useGrades(assignableInstances) {
   const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0]);
   const cache = useCache();
   const grades = React.useMemo(
-    () => cache(evaluationSystem?.scales.sort((a, b) => a.number - b.number)),
+    () =>
+      cache(
+        'grades',
+        evaluationSystem?.scales.sort((a, b) => a.number - b.number)
+      ),
     [evaluationSystem?.scales]
   );
   return grades;
@@ -162,13 +166,13 @@ function usePeriodData({ filters, localFilters }) {
 
   return {
     isLoading,
-    activitiesData: cache(activitiesData),
+    activitiesData: cache('activitiesData', activitiesData),
     grades,
   };
 }
 
 export function useTableData({ filters, localFilters }) {
-  if (filters.period?.period?.id === 'final') {
+  if (filters.period.period.id === 'final') {
     return useFinalData({ filters, localFilters });
   }
 
