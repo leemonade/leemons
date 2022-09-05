@@ -162,7 +162,7 @@ export default function TreePage() {
     render();
   }
 
-  const getProgramTree = async () => {
+  async function getProgramTree() {
     setLoading(true);
     try {
       const [{ tree }, { subjectCredits }, { program }, { profiles }] = await Promise.all([
@@ -307,7 +307,7 @@ export default function TreePage() {
       addErrorAlert(getErrorMessage(err));
       return false;
     }
-  };
+  }
 
   async function init() {
     if (params.center) store.centerId = params.center;
