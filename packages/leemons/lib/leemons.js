@@ -2,6 +2,7 @@ const http = require('http');
 const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
+const cors = require('@koa/cors');
 const request = require('request');
 const events = require('events-async');
 const execa = require('execa');
@@ -140,6 +141,17 @@ class Leemons {
 
   // Initialize the server config with http server
   initServer() {
+    // Enable global cors
+    if (process.env.CORS) {
+      leemons.log.debug('CORS ENABLED: Allowing all incoming traffic');
+
+      const options = {
+        origin: '*',
+      };
+
+      this.app.use(cors(options));
+    }
+
     // Add front router to KOA
     this.app.use(this.frontRouter.routes());
     // Add backRouter to app

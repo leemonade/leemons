@@ -100,8 +100,8 @@ export default function writeStudentsWithActivities({ ws, tableData, labels, ini
       }
 
       cell.value = {
-        formula: `SUMPRODUCT(scores_${row};weights;types = "calificable")`,
-        result: cell.value || '0',
+        formula: `SUMPRODUCT(scores_${row},weights,--(types="calificable"))`,
+        result: cell.value || 0,
       };
 
       cell.alignment = {

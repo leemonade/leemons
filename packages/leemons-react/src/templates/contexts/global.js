@@ -31,7 +31,7 @@ class LeemonsApi {
     try {
       await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
 
-      const response = await fetch(`${window.location.origin}/api/${ctx.url}`, ctx.options);
+      const response = await fetch(`${global.leemons.serverUrl}/api/${ctx.url}`, ctx.options);
 
       const responseCtx = { middlewares: [], response };
       await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
@@ -119,6 +119,7 @@ export function Provider({ children }) {
       api,
       log: console,
       version: '1.0.0',
+      serverUrl: window.location.origin,
     },
   });
 

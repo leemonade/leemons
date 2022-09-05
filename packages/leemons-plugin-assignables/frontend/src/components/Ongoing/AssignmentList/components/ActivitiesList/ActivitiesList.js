@@ -11,7 +11,7 @@ import globalContext from '../../../../../contexts/globalContext';
 import prefixPN from '../../../../../helpers/prefixPN';
 import EmptyState from '../../../../../assets/EmptyState.png';
 
-function useAssignmentsColumns() {
+function useAssignmentsColumns({ variant } = {}) {
   const { isTeacher } = useContext(globalContext);
 
   const [, translations] = useTranslateLoader(
@@ -87,15 +87,20 @@ function useAssignmentsColumns() {
       ];
     }
 
+    // student
     return [
       ...commonColumns,
       {
         Header: labels.status || '',
         accessor: 'status',
       },
-      {
+      variant !== 'evaluated' && {
         Header: labels.submission || '',
         accessor: 'submission',
+      },
+      variant === 'evaluated' && {
+        Header: labels.grade || '',
+        accessor: 'grade',
       },
       {
         Header: labels.unreadMessages || '',
@@ -105,8 +110,8 @@ function useAssignmentsColumns() {
         Header: '',
         accessor: 'actions',
       },
-    ];
-  }, [isTeacher, labels]);
+    ].filter(Boolean);
+  }, [isTeacher, labels, variant]);
 
   return columns;
 }
@@ -193,7 +198,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     }
   );
 
-  const columns = useAssignmentsColumns();
+  const columns = useAssignmentsColumns({ variant: filters?.tab });
 
   const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
 
