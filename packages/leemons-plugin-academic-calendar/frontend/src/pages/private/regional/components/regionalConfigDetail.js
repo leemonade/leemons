@@ -79,7 +79,6 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
             node: <TextInput required />,
             rules: { required: t('requiredField') },
           },
-          editable: false,
         },
         {
           Header: `${t('init')}*`,
@@ -111,15 +110,8 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
     [locale]
   );
 
-  const {
-    reset,
-    watch,
-    control,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
+  function getConfigDefaultValue() {
+    return {
       ...config,
       regionalEvents:
         _.map(config.regionalEvents, (e) => ({
@@ -139,7 +131,18 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
           startDate: new Date(e.startDate),
           endDate: e.endDate ? new Date(e.endDate) : null,
         })) || [],
-    },
+    };
+  }
+
+  const {
+    reset,
+    watch,
+    control,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: getConfigDefaultValue(),
   });
 
   function save() {
@@ -162,6 +165,10 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
       render();
     })();
   }
+
+  React.useEffect(() => {
+    reset(getConfigDefaultValue());
+  }, [config]);
 
   const regionalEventsRel = watch('regionalEventsRel');
   const regionalEvents = watch('regionalEvents');

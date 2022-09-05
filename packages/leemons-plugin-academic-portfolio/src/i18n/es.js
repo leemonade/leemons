@@ -152,7 +152,7 @@ module.exports = {
           subjectsIDConfig: 'Código de abreviatura de asignatura ',
           subjectsFirstDigit: 'Primer dígito',
           subjectsDigits: 'Dígito',
-          buttonNext: 'Guardar prograna',
+          buttonNext: 'Guardar programa',
           buttonPrev: 'Anterior',
           buttonAdd: 'Crear',
           buttonRemove: 'Eliminar',

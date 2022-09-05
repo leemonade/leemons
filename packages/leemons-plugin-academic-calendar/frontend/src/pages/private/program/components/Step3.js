@@ -47,6 +47,7 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
             const bigCalendarConf = processCalendarConfigForBigCalendar(
               {
                 ...config,
+                program,
                 regionalConfig: config.regionalConfig
                   ? _.find(regionalConfigs, { id: config.regionalConfig })
                   : undefined,
