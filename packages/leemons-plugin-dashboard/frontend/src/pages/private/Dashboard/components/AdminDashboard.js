@@ -25,9 +25,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
-
 import { getLocalizations } from '@multilanguage/useTranslate';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
+import SkeletonDashboardLoader from './SkeletonDashboardLoader';
 
 function bytesToSize(bytes) {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -178,8 +178,6 @@ export default function AdminDashboard({ session }) {
     return () => clearInterval(interval);
   }, []);
 
-  if (store.loading) return null;
-
   let ram = null;
   let ramUsed = null;
   let diskUsed = null;
@@ -193,12 +191,13 @@ export default function AdminDashboard({ session }) {
     diskUsed += fs.used;
   });
 
-  if (store.pc.mem.total && store.pc.mem.available) {
-    ramUsed = store.pc.mem.total - store.pc.mem.available;
-    ramUsed = (ramUsed / store.pc.mem.total) * 100;
+  if (!store.loading) {
+    if (store.pc.mem.total && store.pc.mem.available) {
+      ramUsed = store.pc.mem.total - store.pc.mem.available;
+      ramUsed = (ramUsed / store.pc.mem.total) * 100;
+    }
   }
-
-  if (store.loading) return <LoadingOverlay visible />;
+  // if (store.loading) return <LoadingOverlay visible />;
 
   return (
     <ContextContainer
@@ -218,267 +217,322 @@ export default function AdminDashboard({ session }) {
         })}
       >
         <Box sx={(theme) => ({ marginBottom: theme.spacing[6] })}>
-          <Text size="lg" color="primary" className={styles.title}>
-            {t('programs')}
-          </Text>
+          {store.loading ? (
+            <SkeletonDashboardLoader height="40">
+              <rect x="0" y="0" width="420" height="40" rx="3" />
+            </SkeletonDashboardLoader>
+          ) : (
+            <Text size="lg" color="primary" className={styles.title}>
+              {t('programs')}
+            </Text>
+          )}
         </Box>
         <Box>
-          <Swiper
-            className={styles.cardContainer}
-            breakAt={{
-              1800: { slidesPerView: 4, spaceBetween: 2 },
-              1600: { slidesPerView: 3, spaceBetween: 2 },
-              1200: { slidesPerView: 3, spaceBetween: 2 },
-              940: { slidesPerView: 2, spaceBetween: 2 },
-              520: { slidesPerView: 1, spaceBetween: 2 },
-              360: { slidesPerView: 1, spaceBetween: 2 },
-            }}
-          >
-            {store.academicPortfolio?.programs.map((program, i) => (
-              <LibraryCardBasic
-                key={program.id}
-                blur={20}
-                asset={{
-                  name: program.program.name,
-                  color: program.program.color,
-                  cover: program.program.imageUrl,
-                }}
-              >
-                <Box
-                  style={{
-                    display: 'flex',
-                    height: '100%',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    padding: 12,
+          {store.loading ? (
+            <SkeletonDashboardLoader height="350">
+              <rect x="0" y="0" width="350" height="350" rx="3" />
+              <rect x="366" y="0" width="350" height="350" rx="3" />
+              <rect x="732" y="0" width="350" height="350" rx="3" />
+            </SkeletonDashboardLoader>
+          ) : (
+            <Swiper
+              className={styles.cardContainer}
+              breakAt={{
+                1800: { slidesPerView: 4, spaceBetween: 2 },
+                1600: { slidesPerView: 3, spaceBetween: 2 },
+                1200: { slidesPerView: 3, spaceBetween: 2 },
+                940: { slidesPerView: 2, spaceBetween: 2 },
+                520: { slidesPerView: 1, spaceBetween: 2 },
+                360: { slidesPerView: 1, spaceBetween: 2 },
+              }}
+            >
+              {store.academicPortfolio?.programs.map((program) => (
+                <LibraryCardBasic
+                  key={program.id}
+                  blur={20}
+                  asset={{
+                    name: program.program.name,
+                    color: program.program.color,
+                    cover: program.program.imageUrl,
                   }}
                 >
                   <Box
                     style={{
                       display: 'flex',
+                      height: '100%',
                       flexDirection: 'column',
-                      gap: 16,
+                      justifyContent: 'space-between',
+                      padding: 12,
                     }}
                   >
-                    {/*
+                    <Box
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 16,
+                      }}
+                    >
+                      {/* <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
+                          <FamilyChildIcon width={16} height={16} />
+                          <Text role="productive" color="primary">
+                            Familias:
+                          </Text>
+                          <Text role="productive" color="primary" strong>
+                            320
+                          </Text>
+                        </Box>  */}
                       <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
-                        <FamilyChildIcon width={16} height={16} />
+                        <SingleActionsGraduateIcon width={16} height={16} />
                         <Text role="productive" color="primary">
-                          Familias:
+                          {t('students')}:
                         </Text>
                         <Text role="productive" color="primary" strong>
-                          320
+                          {program.students}
                         </Text>
-                      </Box> */}
-
-                    <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
-                      <SingleActionsGraduateIcon width={16} height={16} />
-                      <Text role="productive" color="primary">
-                        {t('students')}:
-                      </Text>
-                      <Text role="productive" color="primary" strong>
-                        {program.students}
-                      </Text>
+                      </Box>
+                      <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
+                        <SchoolTeacherMaleIcon width={16} height={16} />
+                        <Text role="productive" color="primary">
+                          {t('teachers')}:
+                        </Text>
+                        <Text role="productive" color="primary" strong>
+                          {program.teachers}
+                        </Text>
+                      </Box>
                     </Box>
-                    <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
-                      <SchoolTeacherMaleIcon width={16} height={16} />
-                      <Text role="productive" color="primary">
-                        {t('teachers')}:
-                      </Text>
-                      <Text role="productive" color="primary" strong>
-                        {program.teachers}
-                      </Text>
-                    </Box>
-                  </Box>
-                  <Box style={{ display: 'flex' }}>
-                    <Box style={{ flex: 1 }}>
-                      <Title order={3}>{program.courses}</Title>
-                      <Text role="productive" color="primary">
-                        {t('courses')}
-                      </Text>
-                    </Box>
-                    <Box style={{ flex: 1 }}>
-                      <Title order={3}>{program.subjects}</Title>
-                      <Text role="productive" color="primary">
-                        {t('subjects')}
-                      </Text>
+                    <Box style={{ display: 'flex' }}>
+                      <Box style={{ flex: 1 }}>
+                        <Title order={3}>{program.courses}</Title>
+                        <Text role="productive" color="primary">
+                          {t('courses')}
+                        </Text>
+                      </Box>
+                      <Box style={{ flex: 1 }}>
+                        <Title order={3}>{program.subjects}</Title>
+                        <Text role="productive" color="primary">
+                          {t('subjects')}
+                        </Text>
+                      </Box>
                     </Box>
                   </Box>
-                </Box>
-              </LibraryCardBasic>
-            ))}
-          </Swiper>
+                </LibraryCardBasic>
+              ))}
+            </Swiper>
+          )}
         </Box>
 
         <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[6] })}>
-          <AnalyticsGraphBarIcon />
-          <Text size="lg" color="primary" className={styles.title}>
-            {t('activityInPlatform')}
-          </Text>
+          {store.loading ? (
+            <SkeletonDashboardLoader width="100%" height="40">
+              <circle cx="14" cy="14" r="14" />
+              <rect x="40" y="2" width="360" height="24" rx="3" />
+            </SkeletonDashboardLoader>
+          ) : (
+            <>
+              <AnalyticsGraphBarIcon />
+              <Text size="lg" color="primary" className={styles.title}>
+                {t('activityInPlatform')}
+              </Text>
+            </>
+          )}
         </Box>
         <Stack direction="column" spacing={3} fullWidth>
-          <Box>
-            <ActivityAccordion initialItem={0}>
-              <ActivityAccordionPanel
-                key={0}
-                label={t('activeUsers')}
-                icon={
-                  <Icon className="fill-current" src={'/public/assets/svgs/user-male-female.svg'} />
-                }
-                rightSection={
-                  <Box>
-                    <Badge
-                      label={`${t('total')} ${store.activeUsers?.data.length}`}
-                      size="md"
-                      color="stroke"
-                      closable={false}
-                    />
-                  </Box>
-                }
-                color="solid"
-              >
-                <Box p={20}>
-                  <ActivityAnswersBar
-                    withSelect={false}
-                    withLegend={false}
-                    {...store.activeUsers}
-                  />
-                </Box>
-              </ActivityAccordionPanel>
-            </ActivityAccordion>
-          </Box>
-          <Box>
-            <ActivityAccordion initialItem={0}>
-              <ActivityAccordionPanel
-                key={0}
-                label={t('createdTasks')}
-                icon={<Icon className="stroke-current" src={'/public/assets/svgs/tasks.svg'} />}
-                rightSection={
-                  <Box>
-                    <Badge
-                      label={`${t('total')} ${store.instances?.data.length}`}
-                      size="md"
-                      color="stroke"
-                      closable={false}
-                    />
-                  </Box>
-                }
-                color="solid"
-              >
-                <Box p={20}>
-                  <ActivityAnswersBar withSelect={false} withLegend={false} {...store.instances} />
-                </Box>
-              </ActivityAccordionPanel>
-            </ActivityAccordion>
-          </Box>
+          {store.loading ? (
+            <SkeletonDashboardLoader height="416">
+              <rect x="0" y="0" width="100%" height="200" rx="3" />
+              <rect x="0" y="216" width="100%" height="200" rx="3" />
+            </SkeletonDashboardLoader>
+          ) : (
+            <>
+              <Box>
+                <ActivityAccordion initialItem={0}>
+                  <ActivityAccordionPanel
+                    key={0}
+                    label={t('activeUsers')}
+                    icon={
+                      <Icon
+                        className="fill-current"
+                        src={'/public/assets/svgs/user-male-female.svg'}
+                      />
+                    }
+                    rightSection={
+                      <Box>
+                        <Badge
+                          label={`${t('total')} ${store.activeUsers?.data.length}`}
+                          size="md"
+                          color="stroke"
+                          closable={false}
+                        />
+                      </Box>
+                    }
+                    color="solid"
+                  >
+                    <Box p={20}>
+                      <ActivityAnswersBar
+                        withSelect={false}
+                        withLegend={false}
+                        {...store.activeUsers}
+                      />
+                    </Box>
+                  </ActivityAccordionPanel>
+                </ActivityAccordion>
+              </Box>
+              <Box>
+                <ActivityAccordion initialItem={0}>
+                  <ActivityAccordionPanel
+                    key={0}
+                    label={t('createdTasks')}
+                    icon={<Icon className="stroke-current" src={'/public/assets/svgs/tasks.svg'} />}
+                    rightSection={
+                      <Box>
+                        <Badge
+                          label={`${t('total')} ${store.instances?.data.length}`}
+                          size="md"
+                          color="stroke"
+                          closable={false}
+                        />
+                      </Box>
+                    }
+                    color="solid"
+                  >
+                    <Box p={20}>
+                      <ActivityAnswersBar
+                        withSelect={false}
+                        withLegend={false}
+                        {...store.instances}
+                      />
+                    </Box>
+                  </ActivityAccordionPanel>
+                </ActivityAccordion>
+              </Box>
+            </>
+          )}
         </Stack>
       </PageContainer>
       {/* -- RIGHT ZONE -- */}
-      <Paper className={styles.rightZone}>
+      <Paper className={styles.rightZone} padding={store.loading ? 0 : undefined}>
         {/* --- SYSTEM --- */}
         {/* --- CPU --- */}
-        <Stack>
-          <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-            <Icon size="18px" src={'/public/assets/svgs/cpu.svg'} />
-          </Box>
-          <Box sx={() => ({ width: '100%' })}>
-            <Box>
-              <Text color="primary" strong>
-                {t('cpu')}
-              </Text>
-            </Box>
-            <Box>
-              <PCValue
-                text={t('name')}
-                value={`${store.pc.cpu.brand} (${store.pc.cpu.manufacturer})`}
-              />
-            </Box>
-            {store.pc.cpu.cores ? <PCValue text={t('cores')} value={store.pc.cpu.cores} /> : null}
-            {store.pc.cpu.speed ? (
-              <PCValue text={t('feq')} value={`${store.pc.cpu.speed}GHz`} />
-            ) : null}
-            {store.pc.cpu.speedMin ? (
-              <PCValue text={t('feqMin')} value={`${store.pc.cpu.speedMin}GHz`} />
-            ) : null}
-            {store.pc.cpu.speedMax ? (
-              <PCValue text={t('feqMax')} value={`${store.pc.cpu.speedMax}GHz`} />
-            ) : null}
-            {store.pc.cpu.cores ? (
-              <PCValue text={t('load')} value={`${store.pc.currentLoad.currentLoad.toFixed(2)}%`} />
-            ) : null}
-          </Box>
-        </Stack>
-        {/* --- RAM --- */}
-        <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
-          <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-            <Icon size="18px" src={'/public/assets/svgs/ram.svg'} />
-          </Box>
-          <Box sx={() => ({ width: '100%' })}>
-            <Box>
-              <Text color="primary" strong>
-                {t('ram')}
-              </Text>
-            </Box>
-            {ram && ram.clockSpeed ? <PCValue text={t('type')} value={ram.type} /> : null}
-            {ram && ram.clockSpeed ? (
-              <PCValue text={t('clockSpeed')} value={`${ram.clockSpeed}MHz`} />
-            ) : null}
-            {store.pc.mem.total ? (
-              <PCValue text={t('total')} value={bytesToSize(store.pc.mem.total)} />
-            ) : null}
-            {store.pc.mem.available ? (
-              <PCValue text={t('available')} value={bytesToSize(store.pc.mem.available)} />
-            ) : null}
-            {ramUsed ? <PCValue text={t('used')} value={`${ramUsed.toFixed(2)}%`} /> : null}
-          </Box>
-        </Stack>
-
-        {/* --- DISCO --- */}
-        {store.pc.diskLayout
-          ? store.pc.diskLayout.map((disk, i) => (
-              <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
-                <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                  <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
+        {store.loading ? (
+          <SkeletonDashboardLoader height="100%">
+            <rect x="0" width="100%" height="100%" />
+          </SkeletonDashboardLoader>
+        ) : (
+          <>
+            <Stack>
+              <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                <Icon size="18px" src={'/public/assets/svgs/cpu.svg'} />
+              </Box>
+              <Box sx={() => ({ width: '100%' })}>
+                <Box>
+                  <Text color="primary" strong>
+                    {t('cpu')}
+                  </Text>
                 </Box>
-                <Box sx={() => ({ width: '100%' })}>
-                  <Box>
-                    <Text color="primary" strong>
-                      {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
-                    </Text>
-                  </Box>
-                  {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
-                  {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
-                  {disk.size ? <PCValue text={t('space')} value={bytesToSize(disk.size)} /> : null}
-                  {store.pc.fsSize ? (
-                    <PCValue
-                      text={t('used')}
-                      value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
-                    />
-                  ) : null}
+                <Box>
+                  <PCValue
+                    text={t('name')}
+                    value={`${store.pc.cpu.brand} (${store.pc.cpu.manufacturer})`}
+                  />
                 </Box>
-              </Stack>
-            ))
-          : null}
+                {store.pc.cpu.cores ? (
+                  <PCValue text={t('cores')} value={store.pc.cpu.cores} />
+                ) : null}
+                {store.pc.cpu.speed ? (
+                  <PCValue text={t('feq')} value={`${store.pc.cpu.speed}GHz`} />
+                ) : null}
+                {store.pc.cpu.speedMin ? (
+                  <PCValue text={t('feqMin')} value={`${store.pc.cpu.speedMin}GHz`} />
+                ) : null}
+                {store.pc.cpu.speedMax ? (
+                  <PCValue text={t('feqMax')} value={`${store.pc.cpu.speedMax}GHz`} />
+                ) : null}
+                {store.pc.cpu.cores ? (
+                  <PCValue
+                    text={t('load')}
+                    value={`${store.pc.currentLoad.currentLoad.toFixed(2)}%`}
+                  />
+                ) : null}
+              </Box>
+            </Stack>
+            {/* --- RAM --- */}
+            <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+              <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                <Icon size="18px" src={'/public/assets/svgs/ram.svg'} />
+              </Box>
+              <Box sx={() => ({ width: '100%' })}>
+                <Box>
+                  <Text color="primary" strong>
+                    {t('ram')}
+                  </Text>
+                </Box>
+                {ram && ram.clockSpeed ? <PCValue text={t('type')} value={ram.type} /> : null}
+                {ram && ram.clockSpeed ? (
+                  <PCValue text={t('clockSpeed')} value={`${ram.clockSpeed}MHz`} />
+                ) : null}
+                {store.pc.mem.total ? (
+                  <PCValue text={t('total')} value={bytesToSize(store.pc.mem.total)} />
+                ) : null}
+                {store.pc.mem.available ? (
+                  <PCValue text={t('available')} value={bytesToSize(store.pc.mem.available)} />
+                ) : null}
+                {ramUsed ? <PCValue text={t('used')} value={`${ramUsed.toFixed(2)}%`} /> : null}
+              </Box>
+            </Stack>
 
-        {/* --- INTERNET --- */}
-        <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
-          <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-            <Icon size="18px" src={'/public/assets/svgs/internet-speed.svg'} />
-          </Box>
-          <Box sx={() => ({ width: '100%' })}>
-            <Box>
-              <Text color="primary" strong>
-                {t('network')}
-              </Text>
-            </Box>
-            {store.pc.networkInterface ? (
-              <PCValue text={t('type')} value={store.pc.networkInterface.type} />
-            ) : null}
-            {store.pc.networkInterface ? (
-              <PCValue text={t('speed')} value={`${store.pc.networkInterface.speed || 0}Mb/s`} />
-            ) : null}
-          </Box>
-        </Stack>
+            {/* --- DISCO --- */}
+            {store.pc?.diskLayout
+              ? store.pc.diskLayout.map((disk, i) => (
+                  <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+                    <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                      <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
+                    </Box>
+                    <Box sx={() => ({ width: '100%' })}>
+                      <Box>
+                        <Text color="primary" strong>
+                          {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
+                        </Text>
+                      </Box>
+                      {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
+                      {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
+                      {disk.size ? (
+                        <PCValue text={t('space')} value={bytesToSize(disk.size)} />
+                      ) : null}
+                      {store.pc.fsSize ? (
+                        <PCValue
+                          text={t('used')}
+                          value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
+                        />
+                      ) : null}
+                    </Box>
+                  </Stack>
+                ))
+              : null}
+
+            {/* --- INTERNET --- */}
+            <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+              <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                <Icon size="18px" src={'/public/assets/svgs/internet-speed.svg'} />
+              </Box>
+              <Box sx={() => ({ width: '100%' })}>
+                <Box>
+                  <Text color="primary" strong>
+                    {t('network')}
+                  </Text>
+                </Box>
+                {store.pc.networkInterface ? (
+                  <PCValue text={t('type')} value={store.pc.networkInterface.type} />
+                ) : null}
+                {store.pc.networkInterface ? (
+                  <PCValue
+                    text={t('speed')}
+                    value={`${store.pc.networkInterface.speed || 0}Mb/s`}
+                  />
+                ) : null}
+              </Box>
+            </Stack>
+          </>
+        )}
       </Paper>
     </ContextContainer>
   );
