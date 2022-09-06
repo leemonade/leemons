@@ -109,6 +109,17 @@ module.exports = {
           maxSubstageAbbreviationIsOnlyNumbers: 'Numérico',
           buttonNext: 'Siguiente',
           buttonPrev: 'Anterior',
+          cycles: 'Ciclos',
+          haveCycles: 'Hay ciclos o agrupaciones de cursos',
+          cycleName: 'Nombre del ciclo',
+          cycleNameRequired: 'Se requiere el nombre del ciclo',
+          cycleCourses: 'Cursos incluidos',
+          cycleCoursesRequired: 'Campo requerido',
+          add: 'Añadir ciclo',
+          remove: 'Eliminar',
+          edit: 'Editar',
+          aceptar: 'Aceptar',
+          cancelar: 'Cancelar',
         },
         placeholders: {
           substagesFrequency: 'Seleccionar frecuencia',
@@ -268,6 +279,17 @@ module.exports = {
       description2:
         'A continuación se muestran los esquemas que encajan con la configuración previa. La “visibilidad de grupo” (de la configuración del tipo de aisgnatura), se mantendrá independientemente del tipo de esquema elegido.',
       opt1Label: 'Clase primero',
+      opt1DescriptionCycle:
+        'Programa > Ciclo > Curso > Grupo > Tipo > Área de conocimiento > Asignatura',
+      opt1DescriptionNoCourseCycle:
+        'Program > Ciclo > Grupo > Tipo > Área de conocimiento > Asignatura',
+      opt2DescriptionCycle:
+        'Programa > Ciclo > Curso > Grupo > Área de conocimiento > Tipo > Asignatura',
+      opt2DescriptionNoCourseCycle:
+        'Program > Ciclo > Grupo > Área de conocimiento > Tipo > Asignatura',
+      opt3DescriptionCycle: 'Programa > Ciclo > Curso > Tipo > Área de conocimiento > Asignatura',
+      opt3DescriptionNoCourseCycle: 'Programa > Ciclo > Tipo > Área de conocimiento > Asignatura',
+
       opt1Description: 'Programa > Curso > Grupo > Tipo > Área de conocimiento > Asignatura',
       opt1DescriptionNoCourse: 'Program > Grupo > Tipo > Área de conocimiento > Asignatura',
       opt2Label: 'Clase + Área primero',
@@ -310,6 +332,7 @@ module.exports = {
     subjectTypeUpdated: 'Tipo de asignatura actualizado con éxito',
     subjectUpdated: 'Asignatura actualizada con éxito',
     classUpdated: 'Clase actualizada con éxito',
+    cycleUpdated: 'Ciclo actualizado con éxito',
     lassCreated: 'Clase creada con éxito',
     treeEdit: 'Editar',
     treeRemove: 'Eliminar',
@@ -324,6 +347,11 @@ module.exports = {
     newclass: 'Nueva clase',
     newknowledges: 'Nueva área',
     newsubject: 'Nueva asignatura',
+    cycleTreeType: {
+      title: 'Configuración ciclo',
+      name: 'Nombre:',
+      save: 'Guardar',
+    },
     addUsers: {
       title: 'Asignar estudiantes',
       description: 'Asignar estudiantes a todas las clases de este nivel.',

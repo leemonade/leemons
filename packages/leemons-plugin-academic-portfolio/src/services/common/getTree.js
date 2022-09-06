@@ -8,6 +8,7 @@ const { getProgramKnowledges } = require('../programs/getProgramKnowledges');
 const { getProgramSubjects } = require('../programs/getProgramSubjects');
 const { getProgramSubjectTypes } = require('../programs/getProgramSubjectTypes');
 const { getManagers } = require('../managers/getManagers');
+const { getProgramCycles } = require('../programs/getProgramCycles');
 
 async function getTree(nodeTypes, { program, transacting } = {}) {
   const query = {};
@@ -27,6 +28,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     subjects,
     subjectTypes,
     { items: classes },
+    cycles,
   ] = await Promise.all([
     table.programs.find({ id_$in: programIds }, { transacting }),
     leemons.getPlugin('users').services.centers.list(0, 9999, { transacting }),
@@ -37,6 +39,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     getProgramSubjects(programIds, { transacting }),
     getProgramSubjectTypes(programIds, { transacting }),
     listClasses(0, 99999, undefined, { query: { program_$in: programIds }, transacting }),
+    getProgramCycles(programIds, { transacting }),
   ]);
 
   let managerIds = [];
@@ -47,6 +50,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
   managerIds = managerIds.concat(_.map(knowledges, 'id'));
   managerIds = managerIds.concat(_.map(subjects, 'id'));
   managerIds = managerIds.concat(_.map(subjectTypes, 'id'));
+  managerIds = managerIds.concat(_.map(cycles, 'id'));
 
   const managers = await getManagers(managerIds, { transacting, returnAgents: false });
   const managersByRelationship = _.groupBy(managers, 'relationship');
@@ -67,6 +71,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
   process(knowledges);
   process(subjects);
   process(subjectTypes);
+  process(cycles);
 
   const classCoursesIds = _.flatten(
     _.map(classes, (classe) => {
@@ -104,24 +109,28 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
 
   const centersByProgram = _.groupBy(programCenter, 'program');
 
-  const programByIds = _.keyBy(programs, 'id');
-  const centerByIds = _.keyBy(centers.items, 'id');
-  const courseByIds = _.keyBy(courses, 'id');
-  const groupByIds = _.keyBy(groups, 'id');
-  const substageByIds = _.keyBy(substages, 'id');
-  const knowledgeByIds = _.keyBy(knowledges, 'id');
-  const subjectTypeByIds = _.keyBy(subjectTypes, 'id');
-  const subjectByIds = _.keyBy(subjects, 'id');
   const nodesByIds = {
-    center: centerByIds,
-    program: programByIds,
-    courses: courseByIds,
-    groups: groupByIds,
-    substage: substageByIds,
-    knowledges: knowledgeByIds,
-    subjectType: subjectTypeByIds,
-    subject: subjectByIds,
+    center: _.keyBy(centers.items, 'id'),
+    program: _.keyBy(programs, 'id'),
+    courses: _.keyBy(courses, 'id'),
+    groups: _.keyBy(groups, 'id'),
+    substage: _.keyBy(substages, 'id'),
+    knowledges: _.keyBy(knowledges, 'id'),
+    subjectType: _.keyBy(subjectTypes, 'id'),
+    subject: _.keyBy(subjects, 'id'),
+    cycles: _.keyBy(cycles, 'id'),
   };
+
+  function getCycleByCourse(courseId) {
+    let cycle = null;
+    _.forEach(cycles, (cy) => {
+      if (cy.courses.includes(courseId)) {
+        cycle = cy;
+        return false;
+      }
+    });
+    return cycle;
+  }
 
   // ES: Inicializamos el árbol
   const tree = {};
@@ -138,11 +147,21 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
   _.forEach(finalClasses, (classroom) => {
     // ES: Vamos a almacenar la profundidad del árbol que nos llega en el nodeTypes, en función de la clase
     const nodes = [];
-    nodeTypes.forEach((nodeType) => {
+    nodeTypes.forEach((nodeType, index) => {
       if (classroom[nodeType]) {
+        const id = _.isString(classroom[nodeType]) ? classroom[nodeType] : classroom[nodeType].id;
+        if (nodeType === 'courses' && nodeTypes[index - 1] === 'cycles') {
+          const cycle = getCycleByCourse(id);
+          if (cycle) {
+            nodes.push({
+              type: 'cycles',
+              id: cycle.id,
+            });
+          }
+        }
         nodes.push({
           type: nodeType,
-          id: _.isString(classroom[nodeType]) ? classroom[nodeType] : classroom[nodeType].id,
+          id,
         });
       }
     });

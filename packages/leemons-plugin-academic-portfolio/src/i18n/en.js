@@ -110,6 +110,17 @@ module.exports = {
           maxSubstageAbbreviationIsOnlyNumbers: 'Only numbers',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
+          cycles: 'Cycles',
+          haveCycles: 'There are cycles or groupings of courses',
+          cycleName: 'Cycle name',
+          cycleNameRequired: 'Cycle name required',
+          cycleCourses: 'Courses included',
+          cycleCoursesRequired: 'Field required',
+          add: 'Add cycle',
+          remove: 'Remove',
+          edit: 'Edit',
+          accept: 'Accept',
+          cancel: 'Cancel',
         },
         placeholders: {
           substagesFrequency: 'Select frequency',
@@ -269,6 +280,13 @@ module.exports = {
       description2:
         'See only the schemas that fit with previous configuration. “Group visibility” (from Subject type configuration), will be respected independent of tree schema chosen.',
       opt1Label: 'Classroom first',
+      opt1DescriptionCycle: 'Program > Cycle > Course > Group > Type > Area > Subject',
+      opt1DescriptionNoCourseCycle: 'Program > Cycle > Group > Type > Area > Subject',
+      opt2DescriptionCycle: 'Program > Cycle > Course > Group > Area > Type > Subject',
+      opt2DescriptionNoCourseCycle: 'Program > Cycle > Group > Area > Type > Subject',
+      opt3DescriptionCycle: 'Program > Cycle > Course > Type > Area > Subject',
+      opt3DescriptionNoCourseCycle: 'Program > Cycle > Type > Area > Subject',
+
       opt1Description: 'Program > Course > Group > Type > Area > Subject',
       opt1DescriptionNoCourse: 'Program > Group > Type > Area > Subject',
       opt2Label: 'Classroom + Area first',
@@ -311,6 +329,7 @@ module.exports = {
     subjectTypeUpdated: 'Subject type updated',
     subjectUpdated: 'Subject updated',
     classUpdated: 'Class updated',
+    cycleUpdated: 'Cycle updated',
     lassCreated: 'Class created',
     treeEdit: 'Edit',
     treeRemove: 'Remove',
@@ -325,6 +344,11 @@ module.exports = {
     newclass: 'New class',
     newknowledges: 'New area',
     newsubject: 'New subject',
+    cycleTreeType: {
+      title: 'Cycle configuration',
+      name: 'Name:',
+      save: 'Save',
+    },
     addUsers: {
       title: 'Assign Students',
       description:

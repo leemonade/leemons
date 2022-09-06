@@ -18,6 +18,7 @@ import {
   listPrograms,
   updateProgram,
 } from './programs';
+import { updateCycle } from './cycles';
 import {
   enableMenuItem,
   getProfiles,
@@ -58,6 +59,7 @@ export {
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
 
+export const updateCycleRequest = updateCycle;
 export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
 export const updateSubjectRequest = updateSubject;

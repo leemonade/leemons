@@ -16,6 +16,7 @@ const table = {
   programSubjectsCredits: leemons.query('plugins_academic-portfolio::program-subjects-credits'),
   settings: leemons.query('plugins_academic-portfolio::settings'),
   managers: leemons.query('plugins_academic-portfolio::managers'),
+  cycles: leemons.query('plugins_academic-portfolio::cycles'),
 };
 
 module.exports = { table };

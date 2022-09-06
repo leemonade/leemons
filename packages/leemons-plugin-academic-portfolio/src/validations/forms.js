@@ -26,6 +26,21 @@ const addProgramSchema = {
     color: stringSchemaNullable,
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
+    cycles: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: stringSchema,
+          courses: {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+          },
+        },
+      },
+    },
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -1178,7 +1193,46 @@ function validateUpdateClassMany(data) {
   }
 }
 
+const addCycleSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    program: stringSchema,
+    courses: arrayStringSchema,
+  },
+  required: ['name', 'program', 'courses'],
+  additionalProperties: false,
+};
+
+function validateAddCycle(data) {
+  const validator = new LeemonsValidator(addCycleSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const updateCycleSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    managers: arrayStringSchema,
+  },
+  required: ['name'],
+  additionalProperties: false,
+};
+
+function validateUpdateCycle(data) {
+  const validator = new LeemonsValidator(updateCycleSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
+  validateAddCycle,
   validateAddClass,
   validateAddGroup,
   validateAddCourse,
@@ -1186,6 +1240,7 @@ module.exports = {
   validateAddProgram,
   validateUpdateClass,
   validateUpdateGroup,
+  validateUpdateCycle,
   validateUpdateCourse,
   validateAddKnowledge,
   validateUpdateProgram,

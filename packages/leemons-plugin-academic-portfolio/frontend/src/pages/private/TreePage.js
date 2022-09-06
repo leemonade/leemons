@@ -21,6 +21,8 @@ import { cloneDeep, find, forEach, isArray, isNil, isUndefined, map, omitBy } fr
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { getCycleTreeTypeTranslation } from '@academic-portfolio/helpers/getCycleTreeTypeTranslation';
+import { TreeCycleDetail } from '@academic-portfolio/components/Tree/TreeCycleDetail';
 import SelectProgram from '../../components/Selectors/SelectProgram';
 import {
   addStudentsToClassesUnderNodeTreeRequest,
@@ -40,6 +42,7 @@ import {
   removeSubjectRequest,
   updateClassRequest,
   updateCourseRequest,
+  updateCycleRequest,
   updateGroupRequest,
   updateKnowledgeRequest,
   updateProgramRequest,
@@ -253,7 +256,8 @@ export default function TreePage() {
         if (
           item.nodeType !== 'program' &&
           item.nodeType !== 'class' &&
-          item.nodeType !== 'courses'
+          item.nodeType !== 'courses' &&
+          item.nodeType !== 'cycles'
         ) {
           actions.push({
             name: 'new',
@@ -327,6 +331,7 @@ export default function TreePage() {
       addUsers: getTreeAddUsersComponentTranslation(t),
       treeProgram: getTreeProgramDetailTranslation(t),
       treeCourse: getTreeCourseDetailTranslation(t),
+      treeCycle: getCycleTreeTypeTranslation(t),
       treeGroup: getTreeGroupDetailTranslation(t),
       treeSubjectType: getTreeSubjectTypeDetailTranslation(t),
       treeKnowledge: getTreeKnowledgeDetailTranslation(t),
@@ -361,6 +366,22 @@ export default function TreePage() {
         students,
       });
     }
+  }
+
+  async function onSaveCycle({ id, name, managers, ...d }) {
+    try {
+      store.saving = true;
+      render();
+      console.log('onSaveCycle', d);
+      await updateCycleRequest({ id, name, managers });
+      store.tree = await getProgramTree();
+      setAgainActiveTree();
+      addSuccessAlert(t('cycleUpdated'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.saving = false;
+    render();
   }
 
   async function onSaveProgram({ id, name, abbreviation, credits, students, managers }) {
@@ -989,6 +1010,18 @@ export default function TreePage() {
                         center={store.centerId}
                         item={store.editingItem}
                         messages={messages.treeProgram}
+                        messagesAddUsers={messages.addUsers}
+                        saving={store.saving}
+                        managersSelect={
+                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
+                        }
+                      />
+                    ) : null}
+                    {store.editingItem.nodeType === 'cycles' ? (
+                      <TreeCycleDetail
+                        onSave={onSaveCycle}
+                        item={store.editingItem}
+                        messages={messages.treeCycle}
                         messagesAddUsers={messages.addUsers}
                         saving={store.saving}
                         managersSelect={
