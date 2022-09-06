@@ -281,8 +281,8 @@ function CreateUsers() {
       });
       store.usersToCreate = [];
       store.tags = [];
-      store.profile = null;
-      store.center = null;
+      // store.profile = null;
+      // store.center = null;
       addSuccessAlert(t(`usersAddedSuccessfully`));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -301,13 +301,13 @@ function CreateUsers() {
             <SelectCenter
               label={t('centerLabel')}
               value={store.center}
-              disabled={store.usersToCreate?.length}
+              disabled={!!store.usersToCreate?.length}
               onChange={centerChange}
             />
             <SelectProfile
               label={t('profileLabel')}
               value={store.profile}
-              disabled={store.usersToCreate?.length}
+              disabled={!!store.usersToCreate?.length}
               onChange={profileChange}
             />
           </ContextContainer>
