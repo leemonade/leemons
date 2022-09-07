@@ -8,9 +8,17 @@ module.exports = {
     draft: 'Draft',
     page_description: 'These are the curricula of the programmes this center delivers.',
   },
+  addCurriculumBase: {
+    newCurriculum: 'New curriculum',
+    basic: 'Basic',
+    config: 'Curricular structure',
+    contentType: 'Type of content',
+    loadOfContent: 'Load of content',
+  },
   addCurriculum: {
     noPrograms: 'All programs for this center used',
     newCurriculum: 'New curriculum',
+    basicData: 'Basic data',
     description1:
       'Start by defining the structure of the curricular content, later it can be completed by creating the specific content for each section',
     description2: 'Start by choosing the program to create the structure of the curriculum',
@@ -43,16 +51,16 @@ module.exports = {
     programRequired: 'Field required',
   },
   addCurriculumStep1: {
-    description1:
-      'Start by defining the structure of the curricular content, later it can be completed by creating the specific content for each section',
-    description2:
-      'It is possible that not all branches of the programs have curriculum content. Select here which levels of the portfolio will be used to manage the curriculum content. (subject level is mandatory)',
+    title: 'Defines curriculum structure',
+    description:
+      'Start by defining the structure of your curricular content, later you can complete it by creating the specific content of each section. It is possible that not all branches of your program will have curricular content.',
     saveButtonLabel: 'Continue',
     program: 'Program',
     courses: 'Course',
     groups: 'Group',
     subjectType: 'Type',
     knowledges: 'Area',
+    cycles: 'Cycle',
     subject: 'Subject',
     alertTitle: 'Important:',
     alertDescription:

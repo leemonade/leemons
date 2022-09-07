@@ -9,9 +9,17 @@ module.exports = {
     page_description:
       'Estos son los planes de estudio de los programas que se imparten en el centro.',
   },
+  addCurriculumBase: {
+    newCurriculum: 'Nuevo curriculum',
+    basic: 'Básicos',
+    config: 'Estructura curricular',
+    contentType: 'Tipo de contenido',
+    loadOfContent: 'Carga de contenido',
+  },
   addCurriculum: {
     noPrograms: 'Todos los programas de este centro ya se estan utilizando',
     newCurriculum: 'Nuevo curriculum',
+    basicData: 'Datos básicos',
     description1:
       'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
     description2: 'Elegir el programa para estructurar su plan de estudios',
@@ -44,15 +52,15 @@ module.exports = {
     programRequired: 'Campo necesario',
   },
   addCurriculumStep1: {
-    description1:
-      'Estructura del contenido curricular (posteriormente se podrá completar con el contenido específico de cada sección).',
-    description2:
-      'Es posible que no todas las ramas de los programas tengan contenido curricular. Seleccionar aquí los niveles del Portafolio que se utilizarán para gestionar el contenido curricular. (el nivel de asignatura es obligatorio)',
+    title: 'Define la estructura curricular',
+    description:
+      'Comienza por definir la estructura de tu contenido curricular, más tarde podrás completarlo creando el contenido específico de cada sección. Es posible que no todas las ramas de tu programa tengan contenido curricular.',
     saveButtonLabel: 'Continuar',
     program: 'Programa',
     courses: 'Curso',
     groups: 'Grupo',
     subjectType: 'Tipo',
+    cycles: 'Ciclo',
     knowledges: 'Area',
     subject: 'Asignatura',
     alertTitle: 'Importante:',
