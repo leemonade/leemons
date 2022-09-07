@@ -341,8 +341,8 @@ export default function SubjectList() {
   let help2 = null;
   let help3 = null;
 
-  if (store.program.moreThanOneAcademicYear) {
-    if (store.program.cycles?.length) {
+  if (store.program?.moreThanOneAcademicYear) {
+    if (store.program?.cycles?.length) {
       help1 = messages.programTreeType.opt1DescriptionNoCourseCycle;
       help2 = messages.programTreeType.opt2DescriptionNoCourseCycle;
       help3 = messages.programTreeType.opt3DescriptionNoCourseCycle;
@@ -351,7 +351,7 @@ export default function SubjectList() {
       help2 = messages.programTreeType.opt2DescriptionNoCourse;
       help3 = messages.programTreeType.opt3DescriptionNoCourse;
     }
-  } else if (store.program.cycles?.length) {
+  } else if (store.program?.cycles?.length) {
     help1 = messages.programTreeType.opt1DescriptionCycle;
     help2 = messages.programTreeType.opt2DescriptionCycle;
     help3 = messages.programTreeType.opt3DescriptionCycle;
