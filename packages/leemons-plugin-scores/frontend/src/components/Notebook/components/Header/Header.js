@@ -58,7 +58,7 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
       return <Text></Text>;
     }
 
-    const subjectGroupToUse = subjectData.find((s) => s.groups.id === filters.group);
+    const subjectGroupToUse = subjectData.find((s) => s?.groups?.id === filters.group);
 
     if (!subjectGroupToUse) {
       return <Text></Text>;
@@ -70,7 +70,7 @@ export default function Header({ isOpened, onOpenChange, filters = {} }) {
       </Text>
     );
     const subjectName = subjectGroupToUse.subject.name;
-    const className = subjectGroupToUse.groups.name;
+    const className = subjectGroupToUse.groups?.name;
 
     return (
       <Text>

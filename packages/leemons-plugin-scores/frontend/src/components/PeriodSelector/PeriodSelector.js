@@ -118,7 +118,9 @@ function ClassItem({ class: klass, ...props }) {
             src={getClassIcon(klass)}
           />
         </Box>
-        <Text>{`${klass.subject.name} - ${klass.groups.name}`}</Text>
+        <Text>{`${klass.subject.name}${
+          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+        }`}</Text>
       </Box>
     </Box>
   );
@@ -204,7 +206,6 @@ export default function PeriodSelector({
           ),
           data:
             allTeacherClasses?.map((klass) => ({
-              label: `${klass.groups.name}`,
               value: klass.id,
             })) || [],
           required: labels?.form?.class?.error,
