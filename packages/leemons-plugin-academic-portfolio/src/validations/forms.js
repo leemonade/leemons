@@ -26,6 +26,7 @@ const addProgramSchema = {
     color: stringSchemaNullable,
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
+    useOneStudentGroup: booleanSchema,
     cycles: {
       type: 'array',
       items: {
@@ -408,6 +409,7 @@ const addCourseSchema = {
     abbreviation: stringSchema,
     program: stringSchema,
     number: integerSchema,
+    isAlone: booleanSchema,
   },
   required: ['program'],
   additionalProperties: false,
@@ -441,6 +443,7 @@ const addGroupSchema = {
     name: stringSchema,
     abbreviation: stringSchema,
     program: stringSchema,
+    isAlone: booleanSchema,
     subjects: arrayStringSchema,
     managers: arrayStringSchema,
     aditionalData: {
@@ -467,6 +470,10 @@ async function validateAddGroup(data, { transacting } = {}) {
   const program = await table.programs.findOne({ id: data.program }, { transacting });
   if (!program) {
     throw new Error('The program does not exist');
+  }
+
+  if (program.useOneStudentGroup) {
+    throw new Error('This program configured as one group, you can´t add a new group');
   }
 
   if (program.maxGroupAbbreviation) {
@@ -911,9 +918,12 @@ async function validateAddClass(data, { transacting }) {
     throw validator.error;
   }
 
-  const haveMultiCourses = await programHaveMultiCourses(data.program, { transacting });
+  const program = await table.programs.findOne(
+    { id: data.program },
+    { columns: ['id', 'moreThanOneAcademicYear', 'useOneStudentGroup'], transacting }
+  );
 
-  if (!haveMultiCourses) {
+  if (!program.moreThanOneAcademicYear) {
     if (isArray(data.course) && data.course.length > 1) {
       throw new Error('Class does not have multi courses');
     }

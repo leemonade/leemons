@@ -22,8 +22,33 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateAddClass(data, { transacting });
+
+      let goodGroup = null;
+
+      const program = await table.programs.findOne(
+        { id: data.program },
+        { columns: ['id', 'useOneStudentGroup'], transacting }
+      );
+
+      if (program.useOneStudentGroup) {
+        const group = await table.groups.findOne(
+          {
+            isAlone: true,
+            type: 'group',
+            program: program.id,
+          },
+          { columns: ['id'], transacting }
+        );
+        goodGroup = group.id;
+      }
+
       // eslint-disable-next-line prefer-const
       let { course, group, knowledge, substage, teachers, schedule, image, icon, ...rest } = data;
+
+      if (!goodGroup && group) {
+        goodGroup = group;
+      }
+
       // ES: Creamos la clase
       let nClass = await table.class.create(rest, { transacting });
 
@@ -82,15 +107,16 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           ])
         );
       }
-      if (group) {
+
+      if (goodGroup) {
         // ES: Comprobamos que todos los grupos existen y pertenecen al programa
-        if (!(await existGroupInProgram(group, nClass.program, { transacting }))) {
+        if (!(await existGroupInProgram(goodGroup, nClass.program, { transacting }))) {
           throw new Error('group not in program');
         }
-        if (await isUsedInSubject(nClass.subject, group, { classe: nClass.id, transacting })) {
+        if (await isUsedInSubject(nClass.subject, goodGroup, { classe: nClass.id, transacting })) {
           throw new Error('group is already used in subject');
         }
-        promises.push(addGroup(nClass.id, group, { transacting }));
+        promises.push(addGroup(nClass.id, goodGroup, { transacting }));
       }
 
       // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
