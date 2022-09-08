@@ -168,7 +168,7 @@ module.exports = {
             FileType: {
               multiFile: 'Permitir varios archivos',
               type: 'Tipo de archivo',
-              typePlaceholder: 'Añadir tipo de archivo',
+              typePlaceholder: 'zip, pdf, xls...',
               maxSize: 'Tamaño máximo',
               required: 'Campo necesario',
             },
