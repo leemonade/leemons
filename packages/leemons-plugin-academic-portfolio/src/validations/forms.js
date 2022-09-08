@@ -477,16 +477,17 @@ async function validateAddGroup(data, { transacting } = {}) {
     if (group) throw new Error('This program configured as one group, you can´t add a new group');
   }
 
-  if (program.maxGroupAbbreviation) {
-    // ES: Comprobamos si el nombre del grupo es mayor que el maximo
-    if (data.abbreviation.length > program.maxGroupAbbreviation)
-      throw new Error('The group abbreviation is longer than the specified length');
+  if (!data.isAlone) {
+    if (program.maxGroupAbbreviation) {
+      // ES: Comprobamos si el nombre del grupo es mayor que el maximo
+      if (data.abbreviation.length > program.maxGroupAbbreviation)
+        throw new Error('The group abbreviation is longer than the specified length');
+    }
+
+    // ES: Comprobamos si el nombre del grupo es solo numeros
+    if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+      throw new Error('The group abbreviation must be only numbers');
   }
-
-  // ES: Comprobamos si el nombre del grupo es solo numeros
-  if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new Error('The group abbreviation must be only numbers');
-
   // ES: Comprobamos que no exista ya el grupo
   const groupCount = await table.groups.count(
     {
