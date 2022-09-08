@@ -473,7 +473,8 @@ async function validateAddGroup(data, { transacting } = {}) {
   }
 
   if (program.useOneStudentGroup) {
-    throw new Error('This program configured as one group, you can´t add a new group');
+    const group = await table.groups.count({ program: data.program }, { transacting });
+    if (group) throw new Error('This program configured as one group, you can´t add a new group');
   }
 
   if (program.maxGroupAbbreviation) {
