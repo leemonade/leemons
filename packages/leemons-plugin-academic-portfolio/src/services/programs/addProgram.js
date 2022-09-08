@@ -136,12 +136,15 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       }
 
       if (program.useOneStudentGroup) {
-        await addGroup({
-          name: '-auto-',
-          abbreviation: '-auto-',
-          program: program.id,
-          isAlone: true,
-        });
+        await addGroup(
+          {
+            name: '-auto-',
+            abbreviation: '-auto-',
+            program: program.id,
+            isAlone: true,
+          },
+          { transacting }
+        );
       }
 
       promises.push(
