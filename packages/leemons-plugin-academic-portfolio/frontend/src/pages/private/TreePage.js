@@ -349,6 +349,7 @@ export default function TreePage() {
 
   async function onSelectProgram(programId) {
     store.programId = programId;
+    store.editingItem = null;
     store.tree = await getProgramTree();
     render();
   }
