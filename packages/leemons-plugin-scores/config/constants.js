@@ -90,7 +90,7 @@ const menuItems = [
       url: '/private/scores/notebook',
       label: {
         en: 'Evaluation Notebook',
-        es: 'Cuaderno de evaluaciones',
+        es: 'Cuaderno de evaluación',
       },
     },
     permissions: [
