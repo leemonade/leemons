@@ -33,6 +33,9 @@ module.exports = {
         defaultTo: null,
       },
     },
+    useOneStudentGroup: {
+      type: 'boolean',
+    },
     maxGroupAbbreviation: {
       type: 'integer',
       options: {

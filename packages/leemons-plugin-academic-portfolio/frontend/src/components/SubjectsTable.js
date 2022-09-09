@@ -371,37 +371,39 @@ function SubjectsTable({
     ),
   });
 
-  columns.push({
-    Header: messages.group,
-    accessor: 'groups',
-    input: {
-      rules: {
-        pattern: {
-          message: (program.maxGroupAbbreviationIsOnlyNumbers
-            ? messages.groupNumbers
-            : messages.groupAny
-          ).replace('{max}', program.maxGroupAbbreviation),
-          value: new RegExp(
-            `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
-              program.maxGroupAbbreviation
-            }}|.{36})$`,
-            'g'
-          ),
+  if (!program.useOneStudentGroup) {
+    columns.push({
+      Header: messages.group,
+      accessor: 'groups',
+      input: {
+        rules: {
+          pattern: {
+            message: (program.maxGroupAbbreviationIsOnlyNumbers
+              ? messages.groupNumbers
+              : messages.groupAny
+            ).replace('{max}', program.maxGroupAbbreviation),
+            value: new RegExp(
+              `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+                program.maxGroupAbbreviation
+              }}|.{36})$`,
+              'g'
+            ),
+          },
         },
-      },
 
-      node: (
-        <Group
-          selectGroups={selects.groups}
-          program={program}
-          onCreateGroup={onCreateGroup}
-          onlyNewSubject={onlyNewSubject}
-          messages={messages}
-        />
-      ),
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+        node: (
+          <Group
+            selectGroups={selects.groups}
+            program={program}
+            onCreateGroup={onCreateGroup}
+            onlyNewSubject={onlyNewSubject}
+            messages={messages}
+          />
+        ),
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   if (program.haveSubstagesPerCourse) {
     columns.push({

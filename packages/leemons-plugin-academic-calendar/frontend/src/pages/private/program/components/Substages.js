@@ -56,13 +56,24 @@ export default function Substages({
                 minDate={start}
                 maxDate={maxDate}
                 onChange={(date) => {
-                  onChange({
-                    ...value,
-                    [substage.id]: {
-                      ...(value[substage.id] || {}),
-                      startDate: date,
-                    },
-                  });
+                  if (!date) {
+                    onChange({
+                      ...value,
+                      [substage.id]: {
+                        ...(value[substage.id] || {}),
+                        startDate: date,
+                        endDate: date,
+                      },
+                    });
+                  } else {
+                    onChange({
+                      ...value,
+                      [substage.id]: {
+                        ...(value[substage.id] || {}),
+                        startDate: date,
+                      },
+                    });
+                  }
                 }}
                 required
               />
@@ -70,8 +81,9 @@ export default function Substages({
             <Col span={40}>
               <DatePicker
                 locale={locale}
-                disabled={disabled}
-                value={value[substage.id]?.endDate}
+                clearable={false}
+                disabled={disabled || !value[substage.id]?.startDate}
+                value={value[substage.id]?.endDate || value[substage.id]?.startDate}
                 minDate={minDate}
                 maxDate={end}
                 onChange={(date) => {

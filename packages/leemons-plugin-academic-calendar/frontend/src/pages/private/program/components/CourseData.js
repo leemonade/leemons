@@ -67,6 +67,12 @@ export default function CourseData({
               maxDate={form.watch(`endDate`)}
               required
               error={get(formErrors, `startDate`)}
+              onChange={(value) => {
+                if (!value) {
+                  form.setValue('endDate', null);
+                }
+                field.onChange(value);
+              }}
             />
           )}
         />
@@ -77,9 +83,12 @@ export default function CourseData({
           render={({ field }) => (
             <DatePicker
               {...field}
+              clearable={false}
+              value={field.value || form.watch(`startDate`)}
               locale={locale}
               label={endLabel || t('endOfCourse')}
               minDate={form.watch(`startDate`)}
+              disabled={!form.watch(`startDate`)}
               required
               error={get(formErrors, `endDate`)}
             />

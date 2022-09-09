@@ -30,21 +30,32 @@ const useStyle = createStyles((theme) => ({
 }));
 
 function StartDate(props) {
+  const endName = props.name.replace('startDate', 'endDate');
   return (
     <DatePicker
-      // eslint-disable-next-line react/prop-types
-      maxDate={props.form.getValues(props.name.replace('startDate', 'endDate'))}
       {...props}
+      // eslint-disable-next-line react/prop-types
+      maxDate={props.form.getValues(endName)}
+      onChange={(value) => {
+        if (!value) {
+          props.form.setValue(endName, null);
+        }
+        props.onChange(value);
+      }}
     />
   );
 }
 
 function EndDate(props) {
+  // eslint-disable-next-line react/prop-types
+  const startValue = props.form.getValues(props.name.replace('endDate', 'startDate'));
   return (
     <DatePicker
-      // eslint-disable-next-line react/prop-types
-      minDate={props.form.getValues(props.name.replace('endDate', 'startDate'))}
       {...props}
+      clearable={false}
+      disabled={!startValue}
+      minDate={startValue}
+      value={props.value || startValue}
     />
   );
 }

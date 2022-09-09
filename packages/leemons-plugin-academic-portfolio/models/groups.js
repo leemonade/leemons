@@ -35,6 +35,9 @@ module.exports = {
     frequency: {
       type: 'string',
     },
+    isAlone: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     type: 'uuid',
