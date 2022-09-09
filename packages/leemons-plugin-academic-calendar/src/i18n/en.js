@@ -135,7 +135,7 @@ module.exports = {
         periodName: 'Period name',
         schoolDays: 'School days',
         nonSchoolDays: 'Non school days',
-        withoutOrdinaryDays: 'Without ordinary days',
+        withoutOrdinaryDays: 'Without ordinary classes',
         startDate: 'Start date',
         endDate: 'End date',
         color: 'Color',
