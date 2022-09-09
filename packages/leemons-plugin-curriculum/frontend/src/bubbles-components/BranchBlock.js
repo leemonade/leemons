@@ -6,11 +6,16 @@ import {
   Button,
   Checkbox,
   ContextContainer,
-  Group,
+  createStyles,
+  NumberInput,
   Select,
+  Stack,
+  Switch,
+  Text,
   TextInput,
 } from '@bubbles-ui/components';
-import BranchBlockField from './BranchBlockField';
+import { EditorListBulletsIcon } from '@bubbles-ui/icons/solid';
+import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
   BRANCH_CONTENT_MESSAGES,
@@ -19,6 +24,24 @@ import {
 import BranchBlockCode from './BranchBlockCode';
 import BranchBlockList from './BranchBlockList';
 import BranchBlockGroup from './BranchBlockGroup';
+
+const useStyle = createStyles((theme) => ({
+  container: {
+    border: `1px solid ${theme.colors.ui01}`,
+    borderRadius: '8px',
+    padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
+  },
+  header: {
+    paddingBottom: theme.spacing[6],
+    display: 'flex',
+    alignItems: 'center',
+  },
+  icon: {
+    height: 18,
+    width: 18,
+    marginRight: theme.spacing[2],
+  },
+}));
 
 function BranchBlock({
   messages,
@@ -29,6 +52,8 @@ function BranchBlock({
   onSubmit,
   onCancel,
 }) {
+  const { classes } = useStyle();
+  const isNew = !defaultValues;
   const form = useForm({ defaultValues });
 
   const {
@@ -54,48 +79,121 @@ function BranchBlock({
     return () => subscription.unsubscribe();
   });
 
-  const groupFields = [
-    <Box key="item-1">
-      <Controller
-        name="name"
-        control={control}
-        rules={{
-          required: errorMessages.blockNameRequired,
-        }}
-        render={({ field }) => (
-          <TextInput
-            label={messages.blockNameLabel}
-            placeholder={messages.blockNamePlaceholder}
-            error={errors.name}
-            required
-            {...field}
-          />
-        )}
-      />
-    </Box>,
-    <Box key="item-2">
-      <Controller
-        name="type"
-        control={control}
-        rules={{
-          required: errorMessages.blockTypeRequired,
-        }}
-        render={({ field }) => (
-          <Select
-            label={messages.blockTypeLabel}
-            placeholder={messages.blockTypePlaceholder}
-            required
-            error={errors.type}
-            data={selectData.blockType || []}
-            nothingFound={messages.blockTypeNothingFound}
-            {...field}
-          />
-        )}
-      />
-    </Box>,
-  ];
+  const nameController = (
+    <Controller
+      name="name"
+      control={control}
+      rules={{
+        required: errorMessages.blockNameRequired,
+      }}
+      render={({ field }) => (
+        <TextInput
+          label={messages.blockNameLabel}
+          placeholder={messages.blockNamePlaceholder}
+          error={errors.name}
+          required
+          {...field}
+        />
+      )}
+    />
+  );
 
-  if (formData.type === 'code') {
+  const curricularContentController = (
+    <Controller
+      name="curricularContent"
+      control={control}
+      rules={{
+        required: errorMessages.curricularContentRequired,
+      }}
+      render={({ field }) => (
+        <Select
+          label={messages.curricularContentLabel}
+          placeholder={messages.curricularContentPlaceholder}
+          error={errors.curricularContent}
+          required
+          data={[
+            { label: messages.curricularKnowledges, value: 'knowledges' },
+            { label: messages.curricularQualifyingCriteria, value: 'qualifying-criteria' },
+            { label: messages.curricularNonQualifyingCriteria, value: 'non-qualifying-criteria' },
+          ]}
+          {...field}
+        />
+      )}
+    />
+  );
+
+  const typeController = (
+    <Controller
+      name="type"
+      control={control}
+      rules={{
+        required: errorMessages.blockTypeRequired,
+      }}
+      render={({ field }) => (
+        <Select
+          label={messages.blockTypeLabel}
+          placeholder={messages.blockTypePlaceholder}
+          required
+          error={errors.type}
+          data={selectData.blockType || []}
+          nothingFound={messages.blockTypeNothingFound}
+          {...field}
+        />
+      )}
+    />
+  );
+
+  const maxController = (
+    <Controller
+      name="max"
+      control={control}
+      shouldUnregister
+      rules={
+        {
+          // required: errorMessages.fieldMaxRequired,
+        }
+      }
+      render={({ field }) => (
+        <NumberInput
+          label={messages.fieldMaxLabel}
+          placeholder={messages.fieldMaxPlaceholder}
+          error={errors.max?.message}
+          // required
+          {...field}
+        />
+      )}
+    />
+  );
+
+  const groupFields = [];
+
+  if (formData.type === 'field' || formData.type === 'textarea') {
+    /*
+    groupFields.push(
+      <Controller
+        name="min"
+        control={control}
+        shouldUnregister
+        rules={
+          {
+            required: errorMessages.fieldMinRequired,
+          }
+        }
+        render={({ field }) => (
+          <NumberInput
+            label={messages.fieldMinLabel}
+            placeholder={messages.fieldMinPlaceholder}
+            error={errors.min?.message}
+            required
+            {...field}
+          />
+        )}
+      />
+    );
+
+     */
+    groupFields.push(maxController);
+  } else if (formData.type === 'code') {
     groupFields.push(
       <Box key="item-3">
         <Controller
@@ -140,27 +238,7 @@ function BranchBlock({
         />
       </Box>
     );
-    groupFields.push(
-      <Box key="item-4">
-        <Controller
-          name="listOrdered"
-          control={control}
-          rules={{
-            required: errorMessages.listOrderedRequired,
-          }}
-          render={({ field }) => (
-            <Select
-              label={messages.numerationLabel}
-              placeholder={messages.listOrderedPlaceholder}
-              required
-              error={errors.listOrdered}
-              data={selectData.listOrdered || []}
-              {...field}
-            />
-          )}
-        />
-      </Box>
-    );
+    groupFields.push(maxController);
   } else if (formData.type === 'group') {
     groupFields.push(
       <Box key="item-3">
@@ -185,8 +263,59 @@ function BranchBlock({
     );
   }
 
+  const listOrderedController = (
+    <Controller
+      name="listOrdered"
+      control={control}
+      shouldUnregister
+      rules={
+        {
+          // required: errorMessages.listOrderedRequired,
+        }
+      }
+      render={({ field }) => (
+        <Select
+          label={messages.numerationLabel}
+          placeholder={messages.listOrderedPlaceholder}
+          // required
+          error={errors.listOrdered}
+          data={selectData.listOrdered || []}
+          {...field}
+        />
+      )}
+    />
+  );
+
+  const listOrdered = (
+    <>
+      <Controller
+        name="useListOrdered"
+        control={control}
+        shouldUnregister
+        render={({ field }) => (
+          <Switch label={messages.useNumerationLabel} checked={field.value} {...field} />
+        )}
+      />
+      {formData.useListOrdered ? (
+        <Stack fullWidth spacing={2}>
+          <Box>{listOrderedController}</Box>
+          <Box>
+            {formData.listOrdered === 'custom' ? (
+              <BranchBlockListCustomOrder
+                messages={messages}
+                errorMessages={errorMessages}
+                isLoading={isLoading}
+                selectData={selectData}
+                form={form}
+              />
+            ) : null}
+          </Box>
+        </Stack>
+      ) : null}
+    </>
+  );
+
   const branchBlocks = {
-    field: <BranchBlockField messages={messages} errorMessages={errorMessages} form={form} />,
     code: (
       <BranchBlockCode
         messages={messages}
@@ -225,26 +354,52 @@ function BranchBlock({
       })}
       autoComplete="off"
     >
-      <ContextContainer>
-        <Group grow>{groupFields}</Group>
-        {branchBlocks[formData.type] || null}
-        <Controller
-          name="evaluationCriteria"
-          control={control}
-          render={({ field }) => (
-            <Checkbox checked={field.value} {...field} label={messages.evaluationCriteriaLabel} />
-          )}
-        />
+      <Box className={classes.container}>
+        <Box className={classes.header}>
+          <EditorListBulletsIcon className={classes.icon} />
+          <Text size="md" color="primary" role="productive" strong>
+            {messages.newBlock}
+          </Text>
+        </Box>
+        <ContextContainer>
+          <Stack fullWidth spacing={2}>
+            <Box>{nameController}</Box>
+            <Box />
+          </Stack>
+          <Stack fullWidth spacing={2}>
+            <Stack fullWidth spacing={2}>
+              {curricularContentController}
+              {typeController}
+            </Stack>
+            <Stack fullWidth spacing={2}>
+              {groupFields}
+            </Stack>
+          </Stack>
 
-        <ContextContainer direction="row" justifyContent="end">
-          <Button variant="link" loading={isLoading} onClick={onCancel}>
-            {messages.blockCancelConfigButtonLabel}
-          </Button>
-          <Button variant="outline" loading={isLoading} type="submit">
-            {messages.blockSaveConfigButtonLabel}
-          </Button>
+          {formData.type === 'list' ? listOrdered : null}
+
+          {branchBlocks[formData.type] || null}
+          <Controller
+            name="evaluationCriteria"
+            control={control}
+            render={({ field }) => (
+              <Checkbox checked={field.value} {...field} label={messages.evaluationCriteriaLabel} />
+            )}
+          />
+
+          <ContextContainer direction="row" justifyContent="end">
+            {!isNew ? (
+              <Button variant="link" loading={isLoading} onClick={onCancel}>
+                {messages.blockCancelConfigButtonLabel}
+              </Button>
+            ) : null}
+
+            <Button variant="outline" loading={isLoading} type="submit">
+              {messages.blockSaveConfigButtonLabel}
+            </Button>
+          </ContextContainer>
         </ContextContainer>
-      </ContextContainer>
+      </Box>
     </form>
   );
 }

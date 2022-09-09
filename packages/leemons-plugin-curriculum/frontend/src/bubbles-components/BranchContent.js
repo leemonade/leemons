@@ -2,15 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { compact, keys, values } from 'lodash';
 import PropTypes from 'prop-types';
 import { AddCircleIcon, EditIcon, RatingStarIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import {
-  ActionButton,
-  Box,
-  Button,
-  ContextContainer,
-  Stack,
-  Table,
-  Title,
-} from '@bubbles-ui/components';
+import { ActionButton, Box, Button, ContextContainer, Stack, Table } from '@bubbles-ui/components';
 import BranchBlock from './BranchBlock';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
@@ -28,7 +20,7 @@ function BranchContent({
   onCloseBranch,
   onRemoveBlock,
 }) {
-  const [addBlock, setAddBlock] = useState(false);
+  const [addBlock, setAddBlock] = useState(!branch.schema);
   const [editingBlock, setEditingBlock] = useState(null);
 
   const columns = useMemo(
@@ -105,15 +97,14 @@ function BranchContent({
     setAddBlock(false);
   }
 
+  React.useEffect(() => {
+    setAddBlock(!branch.schema);
+  }, [branch]);
+
   if (!branch) return 'Branch required';
 
   return (
     <ContextContainer>
-      <Stack fullWidth justifyContent="space-between" alignItems="center">
-        <Title order={4}>{branch.name}</Title>
-        <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
-      </Stack>
-
       {branch.schema ? <Table columns={columns} data={data} /> : null}
 
       {addBlock || editingBlock ? (

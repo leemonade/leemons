@@ -85,39 +85,23 @@ function AddCurriculumStep1({ curriculum, onNext }) {
         ),
       });
     }
-    treeData.push({
-      id: parent + 1,
-      parent,
-      draggable: false,
-      text: (
-        <Checkbox
-          label={t('courses')}
-          checked={store.nodeLevels.indexOf('courses') >= 0}
-          onChange={(e) => {
-            onCheckboxChange(e, 'courses', 2);
-          }}
-        />
-      ),
-    });
-    parent++;
-    /*
-    treeData.push({
-      id: parent+1,
-      parent,
-      draggable: false,
-      text: (
-        <Checkbox
-          label={t('groups')}
-          checked={store.nodeLevels.indexOf('groups') >= 0}
-          onChange={(e) => {
-            onCheckboxChange(e, 'groups', 3);
-          }}
-        />
-      ),
-    });
- parent++;
-     */
-
+    if (curriculum.program.courses.length) {
+      treeData.push({
+        id: parent + 1,
+        parent,
+        draggable: false,
+        text: (
+          <Checkbox
+            label={t('courses')}
+            checked={store.nodeLevels.indexOf('courses') >= 0}
+            onChange={(e) => {
+              onCheckboxChange(e, 'courses', 2);
+            }}
+          />
+        ),
+      });
+      parent++;
+    }
     if (curriculum.program.haveKnowledge) {
       treeData.push({
         id: parent + 1,

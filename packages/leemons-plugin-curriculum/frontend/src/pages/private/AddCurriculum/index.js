@@ -18,6 +18,7 @@ import { listCentersRequest } from '@users/request';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { find } from 'lodash';
 import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';
+import AddCurriculumStep2 from '@curriculum/pages/private/AddCurriculumStep2';
 
 const useStyle = createStyles((theme) => ({
   title: {
@@ -42,6 +43,12 @@ function AddCurriculum() {
 
   function onStep0({ curriculum }) {
     history.push(`/private/curriculum/${curriculum.id}`);
+  }
+
+  function onStep1() {
+    store.curriculum.step = 2;
+    store.currentStep = 2;
+    render();
   }
 
   async function load() {
@@ -96,7 +103,8 @@ function AddCurriculum() {
     () =>
       [
         <AddCurriculumStep0 key="0" onNext={onStep0} />,
-        <AddCurriculumStep1 key="1" curriculum={store.curriculum} />,
+        <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
+        <AddCurriculumStep2 key="2" onNext={onStep1} curriculum={store.curriculum} />,
       ][store.currentStep],
     [store.currentStep]
   );

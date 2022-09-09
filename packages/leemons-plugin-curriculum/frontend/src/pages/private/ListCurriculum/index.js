@@ -100,7 +100,7 @@ function ListCurriculum() {
   }, []);
 
   const handleOnSelect = (curriculum) => {
-    history.push(`/private/curriculum/${curriculum.id}/step/${curriculum.step || 1}`);
+    history.push(`/private/curriculum/${curriculum.id}`);
   };
 
   const headerValues = useMemo(

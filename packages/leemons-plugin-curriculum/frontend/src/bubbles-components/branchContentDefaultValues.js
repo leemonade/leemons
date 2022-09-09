@@ -1,5 +1,7 @@
 export const BRANCH_CONTENT_MESSAGES = {
   numerationLabel: 'Numeration',
+  useNumerationLabel: 'Numbering',
+  addNumeration: 'Add numeration',
   subTypeLabel: 'Sub-type',
   evaluationCriteriaLabel: 'This block contains evaluation criteria',
   addContent: 'Add Content',
@@ -36,6 +38,12 @@ export const BRANCH_CONTENT_MESSAGES = {
   groupSaveConfig: 'Save config',
   groupAddElement: 'Add element',
   blockCancelConfigButtonLabel: 'Cancel',
+  newBlock: 'New block',
+  curricularContentLabel: 'Curricular content',
+  curricularContentPlaceholder: 'Select...',
+  curricularKnowledges: 'Knowledges',
+  curricularQualifyingCriteria: 'Qualifying criteria',
+  curricularNonQualifyingCriteria: 'Non qualifying criteria',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {
@@ -57,6 +65,7 @@ export const BRANCH_CONTENT_ERROR_MESSAGES = {
   groupColumnNameRequired: 'Field required',
   groupColumnTypeRequired: 'Field required',
   groupShowAsRequired: 'Field required',
+  curricularContentRequired: 'Field required',
 };
 
 export const BRANCH_CONTENT_SELECT_DATA = {
@@ -65,10 +74,12 @@ export const BRANCH_CONTENT_SELECT_DATA = {
       label: 'Field',
       value: 'field',
     },
+    /*
     {
       label: 'Code',
       value: 'code',
     },
+     */
     {
       label: 'Text area',
       value: 'textarea',
@@ -155,10 +166,12 @@ export const BRANCH_CONTENT_SELECT_DATA = {
       label: 'Field',
       value: 'field',
     },
+    /*
     {
       label: 'Code',
       value: 'code',
     },
+     */
     {
       label: 'Text area',
       value: 'textarea',

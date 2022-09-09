@@ -3,7 +3,6 @@ import { cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take } from '
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { listCentersRequest } from '@users/request';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   Box,
   Button,
@@ -11,8 +10,6 @@ import {
   ContextContainer,
   Grid,
   LoadingOverlay,
-  PageContainer,
-  Paper,
   Stack,
   Tree,
   useTree,
@@ -214,23 +211,9 @@ function AddCurriculumStep2() {
         parent: index === 0 ? 0 : items[index - 1].id,
         draggable: false,
         text: nodeLevel.name,
-        actions: ['edit'],
+        actions: [], // ['edit'],
       });
     });
-
-    /*
-    items.push({
-      id: 'add-button',
-      parent: items.length ? items[items.length - 1].id : 0,
-      text: t('addBranchButtonLabel'),
-      type: 'button',
-      draggable: false,
-      data: {
-        action: 'add',
-      },
-    });
-
-     */
 
     tree.setTreeData(items);
   }, [store.curriculum]);
@@ -480,60 +463,50 @@ function AddCurriculumStep2() {
   }
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        values={{
-          title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
-          description: t('description1') + t('description2'),
-        }}
-      />
-
-      <Paper fullHeight color="solid" shadow="none" padding={0}>
-        <PageContainer>
-          <ContextContainer divided padded="vertical">
-            {store.removing ? <LoadingOverlay visible /> : null}
-            <Grid grow>
-              <Col span={5}>
-                <Paper fullWidth padding={5}>
-                  <ContextContainer divided>
-                    <Tree
-                      {...tree}
-                      rootId={0}
-                      onAdd={() => {
-                        store.activeRightSection = 'new-branch';
-                        render();
-                      }}
-                      onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-                      onEdit={(node) => {
-                        onSelect(node);
-                        store.activeRightSection = 'edit-branch';
-                        render();
-                      }}
-                      initialOpen={map(tree.treeData, 'id')}
-                      selectedNode={store.activeNodeLevel?.id}
-                      onSelect={onSelect}
-                    />
-                  </ContextContainer>
-                </Paper>
-              </Col>
-              <Col span={7}>
-                {rightSection ? (
-                  <>
-                    <Paper fullWidth padding={5}>
-                      {rightSection}
-                    </Paper>
-                  </>
-                ) : null}
-              </Col>
-            </Grid>
-            <Stack justifyContent="end">
-              <Button loading={store.generating} onClick={goStep3}>
-                {t('continueButtonLabel')}
-              </Button>
-            </Stack>
-          </ContextContainer>
-        </PageContainer>
-      </Paper>
+    <ContextContainer title={t('pageTitle')} description={t('pageDescription')} divided>
+      {store.removing ? <LoadingOverlay visible /> : null}
+      <Grid grow>
+        <Col span={3}>
+          <Box
+            sx={(theme) => ({
+              paddingRight: theme.spacing[6],
+              borderRight: `1px solid ${theme.colors.ui01}`,
+            })}
+          >
+            <Tree
+              {...tree}
+              rootId={0}
+              onAdd={() => {
+                store.activeRightSection = 'new-branch';
+                render();
+              }}
+              onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
+              onEdit={(node) => {
+                onSelect(node);
+                store.activeRightSection = 'edit-branch';
+                render();
+              }}
+              initialOpen={map(tree.treeData, 'id')}
+              selectedNode={store.activeNodeLevel?.id}
+              onSelect={onSelect}
+            />
+          </Box>
+        </Col>
+        <Col span={9}>
+          <Box
+            sx={(theme) => ({
+              paddingLeft: theme.spacing[6],
+            })}
+          >
+            {rightSection || null}
+          </Box>
+        </Col>
+      </Grid>
+      <Stack justifyContent="end">
+        <Button loading={store.generating} onClick={goStep3}>
+          {t('continueButtonLabel')}
+        </Button>
+      </Stack>
     </ContextContainer>
   );
 }
