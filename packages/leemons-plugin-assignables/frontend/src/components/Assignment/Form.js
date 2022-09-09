@@ -405,10 +405,11 @@ export default function Form({
                                   field.onChange(e);
                                 }
                               }}
-                              withTime={!isAllDay}
+                              withTime={startDate && !isAllDay}
                               error={errors?.dates?.deadline}
                               label={labels?.deadline}
                               minDate={startDate}
+                              disabled={!startDate}
                               placeholder={placeholders?.date}
                             />
                           );
