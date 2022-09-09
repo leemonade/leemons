@@ -168,8 +168,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
               id,
             });
           }
-        }
-        if (nodeType === 'groups') {
+        } else if (nodeType === 'groups') {
           const pro = nodesByIds.program[nodesByIds.groups[id].program];
           if (!pro.useOneStudentGroup) {
             nodes.push({
