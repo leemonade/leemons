@@ -201,7 +201,10 @@ export default function TreePage() {
             : '';
           let groupName = '';
           if (!groups) {
-            groupName = item.value.groups ? ` - ${item.value.groups.abbreviation}` : '';
+            groupName =
+              item.value.groups && !item.value.groups.isAlone
+                ? ` - ${item.value.groups.abbreviation}`
+                : '';
           }
           text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
           if (!isArray(classesBySubject[item.value.subject?.id]))
@@ -349,6 +352,7 @@ export default function TreePage() {
 
   async function onSelectProgram(programId) {
     store.programId = programId;
+    store.editingItem = null;
     store.tree = await getProgramTree();
     render();
   }

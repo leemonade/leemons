@@ -7,6 +7,7 @@ const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
 const enableMenuItemService = require('../menu-builder/enableItem');
 const { addCycle } = require('../cycle');
+const { addGroup } = require('../groups/addGroup');
 
 async function addProgram(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -105,7 +106,7 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       const coursesNames = names || [];
       const offset = coursesOffset || 0;
 
-      if (data.maxNumberOfCourses) {
+      if (data.maxNumberOfCourses >= 2) {
         for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
           const courseIndex = i + 1 + offset;
 
@@ -127,9 +128,22 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
               program: program.id,
               number: data.courseCredits ? data.courseCredits : 0,
               name: coursesNames[0] || `${1 + offset}`,
+              isAlone: true,
             },
             { index: 1 + offset, transacting }
           )
+        );
+      }
+
+      if (program.useOneStudentGroup) {
+        await addGroup(
+          {
+            name: '-auto-',
+            abbreviation: '-auto-',
+            program: program.id,
+            isAlone: true,
+          },
+          { transacting }
         );
       }
 

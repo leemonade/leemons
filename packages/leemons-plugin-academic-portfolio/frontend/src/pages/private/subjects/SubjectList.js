@@ -422,6 +422,7 @@ export default function SubjectList() {
                                 centers={store.center}
                               />
                             }
+                            onlyNewSubject={!!store.program?.useOneStudentGroup}
                           />,
                           <ProgramTreeType
                             key="3"
