@@ -461,6 +461,7 @@ const addGroupSchema = {
 };
 
 async function validateAddGroup(data, { transacting } = {}) {
+  console.log('validateAddGroup');
   const validator = new LeemonsValidator(addGroupSchema);
 
   if (!validator.validate(data)) {
@@ -473,7 +474,10 @@ async function validateAddGroup(data, { transacting } = {}) {
   }
 
   if (program.useOneStudentGroup) {
-    const group = await table.groups.count({ program: data.program }, { transacting });
+    const group = await table.groups.count(
+      { program: data.program, type: 'group' },
+      { transacting }
+    );
     if (group) throw new Error('This program configured as one group, you can´t add a new group');
   }
 
