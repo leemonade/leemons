@@ -95,7 +95,8 @@ module.exports = {
           title: 'Cursos',
           oneCourseOnly: 'Este programa tiene un solo curso',
           hideCoursesInTree: 'Ocultar cursos en el árbol (no anidar la asignaturas por curso)',
-          moreThanOneAcademicYear: 'Esta asignatura se ofrece en más de un año académico',
+          moreThanOneAcademicYear:
+            'Existen asignaturas que se ofertan en varios cursos simultáneamente',
           maxNumberOfCourses: 'Número de cursos',
           courseCredits: 'Créditos por curso',
           courseSubstage: 'Subetapas',
