@@ -285,6 +285,9 @@ module.exports = {
       subject: 'Asignatura',
       submission: 'Entregadas',
       avgTime: 'Tiempo medio',
+      grade: 'Nota',
+      score: 'Puntuación',
+      activityType: 'Tipo de actividad',
     },
   },
   pagination: {

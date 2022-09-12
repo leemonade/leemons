@@ -280,6 +280,9 @@ module.exports = {
       subject: 'Subject',
       submission: 'Submissions',
       avgTime: 'Avg. time',
+      grade: 'Grade',
+      score: 'Score',
+      activityType: 'Activity type',
     },
   },
   pagination: {

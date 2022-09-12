@@ -3,15 +3,25 @@ import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
+import useIsTeacher from '../Ongoing/AssignmentList/hooks/useIsTeacher';
+
+function capitalizeFirstLetter(str) {
+  return `${str[0].toUpperCase()}${str.substring(1)}`;
+}
 
 function parseAssignation({ isTeacher, instance, subject, labels }) {
+  const commonInfo = {
+    subject: {
+      name: subject.name,
+    },
+  };
+
   if (isTeacher) {
     const { students } = instance;
 
@@ -44,19 +54,50 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
     const total = students.length;
     return {
+      ...commonInfo,
       // Only if finished
       completed: (submission / total).toFixed(2),
       submission,
       total,
-      subject: {
-        name: subject.name,
-      },
       labels: labels?.assigment,
       avgTime,
     };
   }
 
-  return null;
+  const { count: gradeCount, sum: gradeSum } = instance.grades?.reduce(
+    ({ count, sum }, grade) => {
+      if (grade.type === 'main') {
+        return {
+          count: count + 1,
+          sum: sum + grade.grade,
+        };
+      }
+      return { count, sum };
+    },
+    { count: 0, sum: 0 }
+  );
+
+  const avgGrade = gradeCount > 0 ? gradeSum / gradeCount : 0;
+
+  const role = instance?.instance?.assignable?.role;
+  const roleName = labels?.roles?.[role]?.singular || role;
+
+  let submission;
+  let total;
+
+  if (instance?.metadata?.score) {
+    total = instance?.metadata?.score?.total || 0;
+    submission = instance?.metadata?.score?.count || 0;
+  }
+
+  return {
+    ...commonInfo,
+    grade: avgGrade.toFixed(avgGrade % 1 === 0 ? 0 : 2),
+    submission,
+    total,
+    activityType: capitalizeFirstLetter(roleName),
+    labels: _.omit(labels?.assigment, [!instance?.metadata?.score && 'score'].filter(Boolean)),
+  };
 }
 
 function parseDeadline(isTeacher, obj) {
@@ -293,12 +334,10 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     asset: prepareAsset(instance.assignable.asset),
     onClick,
   };
-  // }
-  // );
 }
 
 export function usePreparedInstance(instance, query, labels) {
-  const { isTeacher } = useAssignablesContext();
+  const isTeacher = useIsTeacher();
 
   const options = React.useMemo(
     () => ({
@@ -319,21 +358,8 @@ export function usePreparedInstance(instance, query, labels) {
   return results;
 }
 
-export default function NYACard({
-  instance,
-  showSubject,
-  labels: _labels,
-  classData,
-  //  asset,
-  // assignment,
-  // deadlineProps,
-  // subject,
-  // badge,
-  // variantTitle,
-  // role,
-  // isNew,
-  // labels
-}) {
+export default function NYACard({ instance, showSubject, labels: _labels, classData }) {
+  const isTeacher = useIsTeacher();
   const locale = useLocale();
   const useOwnLabels = useMemo(() => _labels === undefined, []);
 
@@ -389,15 +415,17 @@ export default function NYACard({
           hideDashboardIcons: true,
         }}
         variant="assigment"
+        role={isTeacher ? 'teacher' : 'student'}
         dashboard
         shadow
         locale={locale}
-        assigment={preparedInstance?.assignment}
+        assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
         deadlineProps={preparedInstance?.deadlineProps}
         subject={preparedInstance?.subject}
         badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
         variantTitle={
-          labels?.roles?.[preparedInstance?.assignable?.role] || preparedInstance?.assignable?.role
+          labels?.roles?.[preparedInstance?.assignable?.role]?.singular ||
+          preparedInstance?.assignable?.role
         }
         variantIcon={
           <Box
