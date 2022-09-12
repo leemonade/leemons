@@ -31,6 +31,7 @@ function BranchBlockListCustomOrder({ ...props }) {
     messages,
     errorMessages,
     selectData,
+    withPrevious = true,
     form: {
       control,
       setValue,
@@ -130,6 +131,7 @@ function BranchBlockListCustomOrder({ ...props }) {
         opened={showAddOrder}
         setOpened={setShowAddOrder}
         onSave={addOrderField}
+        withPrevious={withPrevious}
       />
     </Box>
   );
@@ -142,6 +144,7 @@ BranchBlockListCustomOrder.propTypes = {
   onSubmit: PropTypes.func,
   selectData: PropTypes.object,
   form: PropTypes.object,
+  withPrevious: PropTypes.bool,
 };
 
 export default BranchBlockListCustomOrder;

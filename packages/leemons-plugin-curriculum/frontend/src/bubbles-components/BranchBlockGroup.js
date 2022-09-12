@@ -1,9 +1,26 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
-import { keyBy } from 'lodash';
+import { keyBy, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
-import { Box, Select, Group, Button, TagifyInput, Input } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  createStyles,
+  Group,
+  Input,
+  InputWrapper,
+  NumberInput,
+  Select,
+  Stack,
+  TableInput,
+  TagifyInput,
+  TextInput,
+  Title,
+} from '@bubbles-ui/components';
 import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
 import BranchBlockGroupColumn from './BranchBlockGroupColumn';
 
 function makeid(length) {
@@ -114,7 +131,13 @@ function BranchBlockGroup({ ...props }) {
     );
   }
   return (
-    <Box>
+    <ContextContainer
+      sx={(theme) => ({
+        borderTop: `1px solid ${theme.colors.ui01}`,
+        paddingTop: theme.spacing[4],
+      })}
+    >
+      <Box></Box>
       <Box>
         <Controller
           name="groupTypeOfContents"
@@ -181,7 +204,7 @@ function BranchBlockGroup({ ...props }) {
         />
       </Box>
       <Button onClick={saveConfig}>{messages.groupSaveConfig}</Button>
-    </Box>
+    </ContextContainer>
   );
 }
 
@@ -193,5 +216,220 @@ BranchBlockGroup.propTypes = {
   selectData: PropTypes.object,
   form: PropTypes.object,
 };
+
+const useStyle = createStyles((theme) => ({
+  container: {
+    borderTop: `1px solid ${theme.colors.ui01}`,
+    paddingTop: theme.spacing[4],
+  },
+}));
+
+function BranchBlockGroup2({ ...props }) {
+  const { classes } = useStyle();
+  const {
+    messages,
+    errorMessages,
+    selectData,
+    form: {
+      setValue,
+      getValues,
+      control,
+      watch,
+      unregister,
+      formState: { errors },
+    },
+  } = props;
+
+  const groupListOrdered = watch('groupListOrdered');
+  const groupTypeOfContents = watch('groupTypeOfContents');
+
+  const columnsConfig = React.useMemo(
+    () => ({
+      resetOnAdd: true,
+      editable: true,
+      removable: true,
+      sortable: false,
+      labels: {
+        add: messages.tableAdd,
+        remove: messages.tableRemove,
+        edit: messages.tableEdit,
+        accept: messages.tableAccept,
+        cancel: messages.tableCancel,
+      },
+      columns: [
+        {
+          Header: `${messages.fieldName} *`,
+          accessor: 'name',
+          input: {
+            node: <TextInput />,
+            rules: { required: errorMessages.fieldNameRequired },
+          },
+        },
+        {
+          Header: messages.fieldMaxLabel,
+          accessor: 'max',
+          input: {
+            node: <NumberInput min={0} />,
+          },
+        },
+      ],
+      onChange: (e) => {
+        setValue(
+          'columns',
+          map(e, (item) => ({
+            ...item,
+            type: 'field',
+            id: item.id || makeid(32),
+          }))
+        );
+      },
+    }),
+    []
+  );
+
+  const listTypeController = (
+    <Controller
+      name="groupListType"
+      control={control}
+      shouldUnregister
+      rules={{
+        required: errorMessages.listTypeRequired,
+      }}
+      render={({ field }) => (
+        <Select
+          label={messages.subTypeLabel}
+          placeholder={messages.listTypePlaceholder}
+          required
+          error={errors.groupListType}
+          data={selectData.listType || []}
+          {...field}
+        />
+      )}
+    />
+  );
+  const maxController = (
+    <Controller
+      name="groupMax"
+      control={control}
+      shouldUnregister
+      render={({ field }) => (
+        <NumberInput
+          min={0}
+          label={messages.fieldMaxLabel}
+          placeholder={messages.fieldMaxPlaceholder}
+          error={errors.groupMax?.message}
+          {...field}
+        />
+      )}
+    />
+  );
+
+  const listOrderedController = (
+    <Controller
+      name="groupListOrdered"
+      control={control}
+      shouldUnregister
+      render={({ field }) => (
+        <Select
+          label={messages.numerationLabel}
+          placeholder={messages.listOrderedPlaceholder}
+          error={errors.groupListOrdered}
+          data={selectData.listOrdered || []}
+          {...field}
+        />
+      )}
+    />
+  );
+
+  return (
+    <ContextContainer className={classes.container}>
+      <Box>
+        <Title order={5} weight={500}>
+          {messages.subBlockTitle}
+        </Title>
+        <Controller
+          name="columns"
+          control={control}
+          rules={{
+            required: errorMessages.groupShowAsRequired,
+          }}
+          render={({ field }) => (
+            <InputWrapper error={errors.columns}>
+              <TableInput {...field} data={field.value} {...columnsConfig} />
+            </InputWrapper>
+          )}
+        />
+      </Box>
+      <Controller
+        name="showAs"
+        control={control}
+        rules={{
+          required: errorMessages.groupShowAsRequired,
+        }}
+        render={({ field }) => (
+          <TagifyInput
+            value={field.value}
+            onChange={(e) => field.onChange(e.detail.value)}
+            settings={{
+              mode: 'mix',
+              pattern: /@/,
+              editTags: false,
+            }}
+            error={errors.showAs}
+            label={messages.groupShowAs}
+            required
+          />
+        )}
+      />
+      <Box>
+        <Title order={5} weight={500}>
+          {messages.subBlockContent}
+        </Title>
+        <Stack fullWidth spacing={2} sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+          <Box>
+            <Controller
+              name="groupTypeOfContents"
+              control={control}
+              rules={{
+                required: errorMessages.groupOrderedRequired,
+              }}
+              render={({ field }) => (
+                <Select
+                  label={messages.groupTypeOfContentLabel}
+                  placeholder={messages.groupTypeOfContentPLaceholder}
+                  required
+                  error={errors.groupTypeOfContents}
+                  data={selectData.groupTypeOfContents || []}
+                  {...field}
+                />
+              )}
+            />
+          </Box>
+          <Box>
+            {groupTypeOfContents === 'list'
+              ? listTypeController
+              : groupTypeOfContents
+              ? maxController
+              : null}
+          </Box>
+          <Box>{groupTypeOfContents === 'list' ? maxController : null}</Box>
+          <Box>{groupTypeOfContents === 'list' ? listOrderedController : null}</Box>
+        </Stack>
+        {groupListOrdered === 'custom' ? (
+          <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+            <BranchBlockListCustomOrder
+              messages={messages}
+              errorMessages={errorMessages}
+              isLoading={false}
+              selectData={selectData}
+              form={props.form}
+              withPrevious={false}
+            />
+          </Box>
+        ) : null}
+      </Box>
+    </ContextContainer>
+  );
+}
 
 export default BranchBlockGroup;

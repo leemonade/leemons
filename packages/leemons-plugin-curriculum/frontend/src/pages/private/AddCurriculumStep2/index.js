@@ -367,24 +367,27 @@ function AddCurriculumStep2() {
   }
 
   function onRemoveBlock(e) {
-    openDeleteConfirmationModal({
-      onConfirm: async () => {
-        try {
-          store.removing = true;
-          render();
-          await removeDatasetFieldRequest(
-            `node-level-${store.activeNodeLevel.id}`,
-            'plugins.curriculum',
-            e.id
-          );
-          await load(true);
-          onSelect(store.activeNodeLevel);
-        } catch (e) {}
+    return new Promise((resolve) => {
+      openDeleteConfirmationModal({
+        onConfirm: async () => {
+          try {
+            store.removing = true;
+            render();
+            await removeDatasetFieldRequest(
+              `node-level-${store.activeNodeLevel.id}`,
+              'plugins.curriculum',
+              e.id
+            );
+            await load(true);
+            onSelect(store.activeNodeLevel);
+            resolve();
+          } catch (e) {}
 
-        store.removing = false;
-        render();
-      },
-    })();
+          store.removing = false;
+          render();
+        },
+      })();
+    });
   }
 
   let rightSection;
@@ -463,7 +466,12 @@ function AddCurriculumStep2() {
   }
 
   return (
-    <ContextContainer title={t('pageTitle')} description={t('pageDescription')} divided>
+    <ContextContainer
+      sx={(theme) => ({ marginBottom: theme.spacing[6] })}
+      title={t('pageTitle')}
+      description={t('pageDescription')}
+      divided
+    >
       {store.removing ? <LoadingOverlay visible /> : null}
       <Grid grow>
         <Col span={3}>

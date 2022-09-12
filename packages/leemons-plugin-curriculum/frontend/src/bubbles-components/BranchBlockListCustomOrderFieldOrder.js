@@ -47,6 +47,7 @@ function BranchBlockListCustomOrderFieldOrder({
   defaultValues,
   selectData,
   opened,
+  withPrevious = true,
   setOpened,
   onSave = () => {},
 }) {
@@ -139,16 +140,18 @@ function BranchBlockListCustomOrderFieldOrder({
                 </Box>
               ) : null}
 
-              <Box sx={(theme) => ({ marginTop: -theme.spacing[4], marginLeft: '-8px' })}>
-                <Controller
-                  name="numberingContinueFromPrevious"
-                  control={control}
-                  defaultValue={false}
-                  render={({ field }) => (
-                    <Checkbox label={messages.listNumberingContinueFromPrevious} {...field} />
-                  )}
-                />
-              </Box>
+              {withPrevious ? (
+                <Box sx={(theme) => ({ marginTop: -theme.spacing[4], marginLeft: '-8px' })}>
+                  <Controller
+                    name="numberingContinueFromPrevious"
+                    control={control}
+                    defaultValue={false}
+                    render={({ field }) => (
+                      <Checkbox label={messages.listNumberingContinueFromPrevious} {...field} />
+                    )}
+                  />
+                </Box>
+              ) : null}
 
               <Box>
                 <Button
@@ -178,6 +181,7 @@ BranchBlockListCustomOrderFieldOrder.propTypes = {
   setOpened: PropTypes.func,
   onSubmit: PropTypes.func,
   onSave: PropTypes.func,
+  withPrevious: PropTypes.bool,
 };
 
 export default BranchBlockListCustomOrderFieldOrder;

@@ -44,10 +44,20 @@ export const BRANCH_CONTENT_MESSAGES = {
   curricularKnowledges: 'Knowledges',
   curricularQualifyingCriteria: 'Qualifying criteria',
   curricularNonQualifyingCriteria: 'Non qualifying criteria',
+  tableAdd: 'Add',
+  tableRemove: 'Remove',
+  tableEdit: 'Edit',
+  tableAccept: 'Accept',
+  tableCancel: 'Cancel',
+  fieldName: 'Field name',
+  subBlockTitle: 'Title of the sub-blocks',
+  subBlockContent: 'Content of the sub-blocks',
+  removeBlock: 'Remove block',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {
   nameRequired: 'Field required',
+  fieldNameRequired: 'Field required',
   orderedRequired: 'Field required',
   blockNameRequired: 'Field required',
   blockTypeRequired: 'Field required',

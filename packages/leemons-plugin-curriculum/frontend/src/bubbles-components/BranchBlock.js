@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
+  ActionButton,
   Box,
   Button,
-  Checkbox,
   ContextContainer,
   createStyles,
   NumberInput,
@@ -15,6 +15,7 @@ import {
   TextInput,
 } from '@bubbles-ui/components';
 import { EditorListBulletsIcon } from '@bubbles-ui/icons/solid';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
@@ -22,7 +23,6 @@ import {
   BRANCH_CONTENT_SELECT_DATA,
 } from './branchContentDefaultValues';
 import BranchBlockCode from './BranchBlockCode';
-import BranchBlockList from './BranchBlockList';
 import BranchBlockGroup from './BranchBlockGroup';
 
 const useStyle = createStyles((theme) => ({
@@ -30,6 +30,7 @@ const useStyle = createStyles((theme) => ({
     border: `1px solid ${theme.colors.ui01}`,
     borderRadius: '8px',
     padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
+    position: 'relative',
   },
   header: {
     paddingBottom: theme.spacing[6],
@@ -41,6 +42,11 @@ const useStyle = createStyles((theme) => ({
     width: 18,
     marginRight: theme.spacing[2],
   },
+  close: {
+    position: 'absolute',
+    right: theme.spacing[2],
+    top: theme.spacing[2],
+  },
 }));
 
 function BranchBlock({
@@ -50,13 +56,16 @@ function BranchBlock({
   selectData,
   defaultValues,
   onSubmit,
+  hasProperties,
   onCancel,
+  onRemove,
 }) {
   const { classes } = useStyle();
   const isNew = !defaultValues;
   const form = useForm({ defaultValues });
 
   const {
+    getValues,
     watch,
     control,
     handleSubmit,
@@ -71,9 +80,9 @@ function BranchBlock({
   const formData = watch();
 
   useEffect(() => {
-    const subscription = watch(({ name, type }, { name: n }) => {
+    const subscription = watch(({ curricularContent, name, type }, { name: n }) => {
       if (n === 'type') {
-        reset({ name, type });
+        reset({ curricularContent, name, type });
       }
     });
     return () => subscription.unsubscribe();
@@ -239,7 +248,7 @@ function BranchBlock({
       </Box>
     );
     groupFields.push(maxController);
-  } else if (formData.type === 'group') {
+  } /* else if (formData.type === 'group') {
     groupFields.push(
       <Box key="item-3">
         <Controller
@@ -261,7 +270,7 @@ function BranchBlock({
         />
       </Box>
     );
-  }
+  } */
 
   const listOrderedController = (
     <Controller
@@ -325,15 +334,6 @@ function BranchBlock({
         form={form}
       />
     ),
-    list: (
-      <BranchBlockList
-        messages={messages}
-        errorMessages={errorMessages}
-        isLoading={isLoading}
-        selectData={selectData}
-        form={form}
-      />
-    ),
     group: (
       <BranchBlockGroup
         messages={messages}
@@ -355,10 +355,13 @@ function BranchBlock({
       autoComplete="off"
     >
       <Box className={classes.container}>
+        {hasProperties ? (
+          <ActionButton className={classes.close} icon={<RemoveIcon />} onClick={onCancel} />
+        ) : null}
         <Box className={classes.header}>
           <EditorListBulletsIcon className={classes.icon} />
-          <Text size="md" color="primary" role="productive" strong>
-            {messages.newBlock}
+          <Text size="md" color="primary" role="productive" stronger>
+            {isNew ? messages.newBlock : formData.name}
           </Text>
         </Box>
         <ContextContainer>
@@ -379,16 +382,14 @@ function BranchBlock({
           {formData.type === 'list' ? listOrdered : null}
 
           {branchBlocks[formData.type] || null}
-          <Controller
-            name="evaluationCriteria"
-            control={control}
-            render={({ field }) => (
-              <Checkbox checked={field.value} {...field} label={messages.evaluationCriteriaLabel} />
-            )}
-          />
 
-          <ContextContainer direction="row" justifyContent="end">
-            {!isNew ? (
+          <ContextContainer direction="row" justifyContent="space-between">
+            {!isNew && hasProperties ? (
+              <Button variant="link" loading={isLoading} onClick={onRemove}>
+                {messages.removeBlock}
+              </Button>
+            ) : null}
+            {isNew && hasProperties ? (
               <Button variant="link" loading={isLoading} onClick={onCancel}>
                 {messages.blockCancelConfigButtonLabel}
               </Button>
@@ -411,6 +412,7 @@ BranchBlock.defaultProps = {
   isLoading: false,
   onSubmit: () => {},
   onCancel: () => {},
+  onRemove: () => {},
 };
 
 BranchBlock.propTypes = {
@@ -420,7 +422,9 @@ BranchBlock.propTypes = {
   defaultValues: PropTypes.object,
   isLoading: PropTypes.bool,
   onSubmit: PropTypes.func,
+  hasProperties: PropTypes.bool,
   onCancel: PropTypes.func,
+  onRemove: PropTypes.func,
 };
 
 export default BranchBlock;
