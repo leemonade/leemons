@@ -395,6 +395,11 @@ export default function Form({
                         rules={{ required: labels?.required }}
                         render={({ field }) => {
                           const startDate = watch('dates.start');
+
+                          if (field.value && !startDate) {
+                            field.onChange(null);
+                          }
+
                           return (
                             <DatePicker
                               {...field}
