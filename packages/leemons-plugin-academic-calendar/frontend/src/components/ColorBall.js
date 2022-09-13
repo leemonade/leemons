@@ -3,26 +3,68 @@ import PropTypes from 'prop-types';
 import { isString } from 'lodash';
 import { Box, createStyles } from '@bubbles-ui/components';
 
-const useStyle = createStyles((theme, { colors, withBorder, rotate, isSquare }) => ({
+const useStyle = createStyles((theme, { colors, withBorder, rotate, isSquare, withArrow }) => ({
   root: {
     display: 'inline-block',
     verticalAlign: 'middle',
-    width: 23,
+    width: withArrow ? 18 : 23,
     height: 23,
     borderRadius: isSquare ? '4px' : '50%',
-    border: withBorder && !isSquare ? `1px solid ${theme.colors.ui01}` : 'none',
+    border:
+      (withBorder && !isSquare) || withArrow
+        ? `1px solid ${withArrow ? 'black' : theme.colors.ui01}`
+        : 'none',
+    borderTopRightRadius: withArrow && 0,
+    borderBottomRightRadius: withArrow && 0,
+    borderRight: withArrow && 'none',
+    marginRight: withArrow && '21px !important',
     backgroundColor: isString(colors) ? colors : colors[0],
-    overflow: 'hidden',
+    overflow: !withArrow && 'hidden',
     position: 'relative',
     transform: `rotate(${rotate}deg)`,
+    '&:before': isString(colors)
+      ? {}
+      : {
+          content: '""',
+          position: 'absolute',
+          top: '50%',
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+          backgroundColor: colors[1],
+        },
+  },
+  rightArrow: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    bottom: -1,
+    right: -4,
+    // backgroundColor: 'red',
+    borderStyle: 'solid',
+    borderWidth: '11.5px 0 11.5px 4px',
+    borderColor: `transparent transparent transparent ${colors}`,
     '&:before': {
-      content: '""',
+      content: "''",
       position: 'absolute',
-      top: '50%',
-      width: '100%',
-      height: '100%',
-      zIndex: 1,
-      backgroundColor: isString(colors) ? colors : colors[1],
+      top: -1,
+      left: -4,
+      width: 1,
+      height: 11.5,
+      backgroundColor: 'black',
+      transform: `rotate(15deg)`,
+      transformOrigin: 'bottom',
+    },
+    '&:after': {
+      content: "''",
+      position: 'absolute',
+      left: -4,
+      width: 1,
+      height: 11.5,
+      backgroundColor: 'black',
+      bottom: 0,
+      transform: `rotate(-15deg)`,
+      transformOrigin: 'top',
     },
   },
   square: {
@@ -62,12 +104,19 @@ const useStyle = createStyles((theme, { colors, withBorder, rotate, isSquare }) 
   },
 }));
 
-export default function ColorBall({ colors, withBorder, rotate = 0, isSquare, ...props }) {
-  const { classes, cx } = useStyle({ colors, withBorder, rotate, isSquare });
+export default function ColorBall({
+  colors,
+  withBorder,
+  rotate = 0,
+  isSquare,
+  withArrow,
+  ...props
+}) {
+  const { classes, cx } = useStyle({ colors, withBorder, rotate, isSquare, withArrow });
 
   return (
     <Box {...props} className={classes.root}>
-      {withBorder && isSquare ? (
+      {withBorder && isSquare && !withArrow ? (
         <>
           <Box className={cx(classes.square, classes.square1)} />
           <Box className={cx(classes.square, classes.square2)} />
@@ -75,6 +124,7 @@ export default function ColorBall({ colors, withBorder, rotate = 0, isSquare, ..
           <Box className={cx(classes.square, classes.square4)} />
         </>
       ) : null}
+      {withArrow && isSquare && <Box className={classes.rightArrow} />}
     </Box>
   );
 }
@@ -84,4 +134,5 @@ ColorBall.propTypes = {
   withBorder: PropTypes.bool,
   rotate: PropTypes.number,
   isSquare: PropTypes.bool,
+  withArrow: PropTypes.bool,
 };

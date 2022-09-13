@@ -9,6 +9,7 @@ import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpe
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { saveConfig } from '@academic-calendar/request/config';
+import CalendarKey from '@academic-calendar/components/CalendarKey';
 
 export default function Step3({ regionalConfigs, program, config, onPrev, onSave, t }) {
   const locale = useLocale();
@@ -68,6 +69,7 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
               >
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <BigCalendar {...bigCalendarConf} />
+                  <CalendarKey />
                 </Box>
               </TabPanel>
             );
