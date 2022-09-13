@@ -175,8 +175,8 @@ module.exports = {
             description: 'Description',
             FileType: {
               multiFile: 'Allow multiple files',
-              type: 'Type',
-              typePlaceholder: 'zip, pdf, xls...',
+              format: 'File format',
+              formatPlaceholder: 'Write extension and add (pdf, xls, doc...)',
               maxSize: 'Max size',
               required: 'Required field',
             },
