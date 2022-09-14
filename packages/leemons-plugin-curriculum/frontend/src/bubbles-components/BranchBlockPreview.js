@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { find } from 'lodash';
-import { Box, Button, createStyles, Text } from '@bubbles-ui/components';
+import { Box, Button, Collapse, createStyles, Text } from '@bubbles-ui/components';
 import { CutStarIcon, EditWriteIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { ChevUpIcon, PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
 
-const useStyle = createStyles((theme) => ({
+const useStyle = createStyles((theme, { isOpen }) => ({
   container: {
     border: `1px solid ${theme.colors.ui01}`,
     borderRadius: '8px',
@@ -31,10 +31,35 @@ const useStyle = createStyles((theme) => ({
     top: '50%',
     transform: 'translateY(-50%)',
   },
+  chev: {
+    position: 'absolute',
+    right: 32,
+    top: '50%',
+    transform: isOpen ? 'translateY(-50%)' : 'translateY(-50%) rotate(180deg)',
+    transition: '300ms',
+    cursor: 'pointer',
+  },
+  content: {
+    backgroundColor: theme.colors.uiBackground02,
+    padding: `${theme.spacing[3]}px ${theme.spacing[5]}px`,
+  },
+  table: {
+    width: '100%',
+  },
+  tr: {
+    borderBottom: `1px solid ${theme.colors.ui01}`,
+    '&:last-child': {
+      borderBottom: 'none',
+    },
+  },
+  td: {
+    padding: `${theme.spacing[3]}px ${theme.spacing[4]}px`,
+  },
 }));
 
 function BranchBlockPreview({ messages, item, selectData, onEdit = () => {} }) {
-  const { classes } = useStyle();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { classes } = useStyle({ isOpen });
   const data = item.frontConfig.blockData;
 
   const icon = React.useMemo(() => {
@@ -92,7 +117,32 @@ function BranchBlockPreview({ messages, item, selectData, onEdit = () => {} }) {
             {messages.tableEdit}
           </Button>
         </Box>
+        {data.type === 'group' ? (
+          <Box
+            className={classes.chev}
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+          >
+            <ChevUpIcon />
+          </Box>
+        ) : null}
       </Box>
+      {data.type === 'group' ? (
+        <Collapse in={isOpen}>
+          <Box className={classes.content}>
+            <table className={classes.table}>
+              {data.elements.map((el) => (
+                <tr className={classes.tr}>
+                  {data.columns.map((col) => (
+                    <td className={classes.td}>{el[col.id]}</td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+          </Box>
+        </Collapse>
+      ) : null}
     </Box>
   );
 }

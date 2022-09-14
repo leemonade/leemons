@@ -53,6 +53,15 @@ export const BRANCH_CONTENT_MESSAGES = {
   subBlockTitle: 'Title of the sub-blocks',
   subBlockContent: 'Content of the sub-blocks',
   removeBlock: 'Remove block',
+  continueButtonLabel: 'Continue',
+  subBlock: 'Sub-block',
+  fieldRequired: 'Field required',
+  maxLength: 'Maximum {max} characters',
+  useContentRelations: 'Content relations',
+  relatedTo: 'Related to',
+  typeOfRelation: 'Type of relation',
+  father: 'Father',
+  label: 'Label',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {

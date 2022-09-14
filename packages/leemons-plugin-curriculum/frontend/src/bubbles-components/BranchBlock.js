@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { cloneDeep, find, findIndex, forEach, values } from 'lodash';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -11,6 +12,7 @@ import {
   Select,
   Stack,
   Switch,
+  TableInput,
   Text,
   TextInput,
 } from '@bubbles-ui/components';
@@ -49,6 +51,25 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
+function TypeOfRelation({ hasParent, messages, selectData, ...props }) {
+  const data = [];
+  // eslint-disable-next-line react/prop-types
+  const relatedToValue = props.form.getValues(props.name.replace('typeOfRelation', 'relatedTo'));
+  if (relatedToValue) {
+    if (!hasParent && find(selectData, { value: relatedToValue }).isParent) {
+      data.push({
+        label: messages.father,
+        value: 'parent',
+      });
+    }
+    data.push({
+      label: messages.label,
+      value: 'label',
+    });
+  }
+  return <Select disabled={!relatedToValue} {...props} data={data} />;
+}
+
 function BranchBlock({
   messages,
   errorMessages,
@@ -59,10 +80,13 @@ function BranchBlock({
   hasProperties,
   onCancel,
   onRemove,
+  store,
+  branch,
 }) {
   const { classes } = useStyle();
   const isNew = !defaultValues;
   const form = useForm({ defaultValues });
+  const [customRightButton, setCustomRightButton] = React.useState();
 
   const {
     getValues,
@@ -340,10 +364,89 @@ function BranchBlock({
         errorMessages={errorMessages}
         isLoading={isLoading}
         selectData={selectData}
+        setCustomRightButton={setCustomRightButton}
         form={form}
       />
     ),
   };
+
+  const relationData = React.useMemo(() => {
+    const data = [];
+    const index = findIndex(store.curriculum.nodeLevels, { id: branch.id });
+    const parents = store.curriculum.nodeLevels.slice(0, index);
+    forEach(parents, (parent) => {
+      const props = values(parent?.schema?.jsonSchema.properties) || [];
+      forEach(props, (prop) => {
+        data.push({
+          label: `${parent.name} - ${prop.frontConfig.blockData.name}`,
+          value: `${parent.id}|${prop.frontConfig.blockData.id}`,
+          isParent: true,
+        });
+      });
+    });
+    const branchProps = values(branch?.schema?.jsonSchema.properties) || [];
+    forEach(branchProps, (prop) => {
+      data.push({
+        label: `${branch.name} - ${prop.frontConfig.blockData.name}`,
+        value: `${branch.id}|${prop.frontConfig.blockData.id}`,
+        isParent: false,
+      });
+    });
+    const selectData = cloneDeep(data);
+    forEach(formData.contentRelations, ({ relatedTo }) => {
+      const index = findIndex(selectData, { value: relatedTo });
+      if (index >= 0) {
+        selectData.splice(index, 1);
+      }
+    });
+    const typeMessages = {
+      parent: messages.father,
+      label: messages.label,
+    };
+    return {
+      resetOnAdd: true,
+      editable: true,
+      removable: true,
+      sortable: false,
+      labels: {
+        add: messages.tableAdd,
+        remove: messages.tableRemove,
+        edit: messages.tableEdit,
+        accept: messages.tableAccept,
+        cancel: messages.tableCancel,
+      },
+      columns: [
+        {
+          Header: `${messages.relatedTo} *`,
+          accessor: 'relatedTo',
+          input: {
+            node: <Select data={selectData} />,
+            rules: {
+              required: messages.fieldRequired,
+            },
+          },
+          valueRender: (value) => find(data, { value }).label,
+        },
+        {
+          Header: `${messages.typeOfRelation} *`,
+          accessor: 'typeOfRelation',
+          input: {
+            node: (
+              <TypeOfRelation
+                hasParent={!!find(formData.contentRelations, { typeOfRelation: 'parent' })}
+                messages={messages}
+                selectData={data}
+              />
+            ),
+            rules: {
+              required: messages.fieldRequired,
+            },
+          },
+          valueRender: (value) => typeMessages[value],
+        },
+      ],
+    };
+  }, [branch, formData.contentRelations]);
 
   return (
     <form
@@ -381,6 +484,25 @@ function BranchBlock({
 
           {formData.type === 'list' ? listOrdered : null}
 
+          <Controller
+            name="useContentRelations"
+            control={control}
+            shouldUnregister
+            render={({ field }) => (
+              <Switch label={messages.useContentRelations} checked={field.value} {...field} />
+            )}
+          />
+          {formData.useContentRelations ? (
+            <Controller
+              key="contentRelations"
+              name="contentRelations"
+              control={control}
+              render={({ field }) => (
+                <TableInput {...field} data={field.value || []} {...relationData} />
+              )}
+            />
+          ) : null}
+
           {branchBlocks[formData.type] || null}
 
           <ContextContainer direction="row" justifyContent="space-between">
@@ -395,9 +517,11 @@ function BranchBlock({
               </Button>
             ) : null}
 
-            <Button variant="outline" loading={isLoading} type="submit">
-              {messages.blockSaveConfigButtonLabel}
-            </Button>
+            {customRightButton || (
+              <Button variant="outline" loading={isLoading} type="submit">
+                {messages.blockSaveConfigButtonLabel}
+              </Button>
+            )}
           </ContextContainer>
         </ContextContainer>
       </Box>
@@ -425,6 +549,8 @@ BranchBlock.propTypes = {
   hasProperties: PropTypes.bool,
   onCancel: PropTypes.func,
   onRemove: PropTypes.func,
+  store: PropTypes.any,
+  branch: PropTypes.any,
 };
 
 export default BranchBlock;

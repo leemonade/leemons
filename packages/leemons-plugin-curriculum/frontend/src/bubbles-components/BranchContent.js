@@ -20,6 +20,7 @@ function BranchContent({
   onSaveBlock,
   onCloseBranch,
   onRemoveBlock,
+  store,
 }) {
   const properties = values(branch?.schema?.jsonSchema.properties) || [];
   const [addBlock, setAddBlock] = useState(!properties.length);
@@ -56,6 +57,7 @@ function BranchContent({
                   isLoading={isLoading}
                   hasProperties={!!properties.length}
                   branch={branch}
+                  store={store}
                   defaultValues={
                     editingBlock
                       ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id }
@@ -77,7 +79,6 @@ function BranchContent({
                 messages={messages}
                 item={item}
                 onEdit={() => {
-                  console.log(item);
                   setEditingBlock(item);
                   setAddBlock(false);
                 }}
@@ -95,6 +96,7 @@ function BranchContent({
             isLoading={isLoading}
             hasProperties={!!properties.length}
             branch={branch}
+            store={store}
             defaultValues={
               editingBlock ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id } : null
             }
@@ -137,6 +139,7 @@ BranchContent.propTypes = {
   onCloseBranch: PropTypes.func,
   onRemoveBlock: PropTypes.func,
   isLoading: PropTypes.bool,
+  store: PropTypes.any,
 };
 
 export default BranchContent;

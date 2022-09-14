@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
@@ -37,7 +38,7 @@ import {
   BRANCH_CONTENT_SELECT_DATA,
 } from '../../../bubbles-components/branchContentDefaultValues';
 
-function AddCurriculumStep2() {
+function AddCurriculumStep2({ onNext }) {
   const [store, render] = useStore({
     loading: true,
     curriculum: {},
@@ -434,6 +435,7 @@ function AddCurriculumStep2() {
             groupOrdered: groupOrderedData,
           }}
           isLoading={store.saving}
+          store={store}
           branch={store.activeNodeLevel}
           onSaveBlock={onSaveBlock}
           onRemoveBlock={onRemoveBlock}
@@ -445,14 +447,14 @@ function AddCurriculumStep2() {
 
   async function goStep3() {
     try {
-      if (store.curriculum.step === 3) {
-        await history.push(`/private/curriculum/${store.curriculum.id}/step/3`);
+      if (store.curriculum.step >= 3) {
+        onNext();
         return null;
       }
       store.generating = true;
       render();
       await generateNodesFromAcademicPortfolioRequest(store.curriculum.id);
-      await history.push(`/private/curriculum/${store.curriculum.id}/step/3`);
+      onNext();
       store.generating = false;
     } catch (err) {
       console.error(err);
@@ -518,5 +520,9 @@ function AddCurriculumStep2() {
     </ContextContainer>
   );
 }
+
+AddCurriculumStep2.propTypes = {
+  onNext: PropTypes.func,
+};
 
 export default AddCurriculumStep2; // withLayout(AddCurriculumStep2);

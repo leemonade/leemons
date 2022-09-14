@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
-import { keyBy, map } from 'lodash';
-import PropTypes from 'prop-types';
+import { forEach, isNil, keyBy, map, remove } from 'lodash';
 import { Controller } from 'react-hook-form';
+import PropTypes from 'prop-types';
 import {
   Box,
   Button,
@@ -15,13 +15,15 @@ import {
   Select,
   Stack,
   TableInput,
+  TAGIFY_TAG_REGEX,
   TagifyInput,
+  Text,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
-import BranchBlockGroupColumn from './BranchBlockGroupColumn';
+import BranchBlockGroupColumn from '@curriculum/bubbles-components/BranchBlockGroupColumn';
 
 function makeid(length) {
   let result = '';
@@ -93,6 +95,7 @@ function BranchBlockGroup({ ...props }) {
   function onChangeElementValue(e, index, itemId) {
     const elements = getValues('elements');
     elements[index][itemId] = e.target.value;
+    console.log(elements);
     setValue('elements', [...elements]);
   }
 
@@ -162,8 +165,6 @@ function BranchBlockGroup({ ...props }) {
         {formColumns.map((item) => (
           <Box key={item.id}>
             {item.name}({typesByValue[item.type].label})
-            <EditIcon onClick={() => editColumn(item)} />
-            <RemoveIcon onClick={() => removeColumn(item)} />
           </Box>
         ))}
         <Button onClick={openModalColumn}>{messages.groupAddColumnButtonLabel}</Button>
@@ -222,6 +223,22 @@ const useStyle = createStyles((theme) => ({
     borderTop: `1px solid ${theme.colors.ui01}`,
     paddingTop: theme.spacing[4],
   },
+  card: {
+    border: `1px solid ${theme.colors.ui01}`,
+    borderRadius: '8px',
+    overflow: 'hidden',
+  },
+  cardHeader: {
+    backgroundColor: theme.colors.uiBackground04,
+    padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
+    position: 'relative',
+  },
+  edit: {
+    position: 'absolute',
+    right: 80,
+    top: '50%',
+    transform: 'translateY(-50%)',
+  },
 }));
 
 function BranchBlockGroup2({ ...props }) {
@@ -230,6 +247,7 @@ function BranchBlockGroup2({ ...props }) {
     messages,
     errorMessages,
     selectData,
+    setCustomRightButton,
     form: {
       setValue,
       getValues,
@@ -240,8 +258,20 @@ function BranchBlockGroup2({ ...props }) {
     },
   } = props;
 
+  const showAs = watch('showAs');
+  const firstStepDone = watch('firstStepDone');
   const groupListOrdered = watch('groupListOrdered');
   const groupTypeOfContents = watch('groupTypeOfContents');
+
+  const showAsText = React.useMemo(() => {
+    let finalText = showAs;
+    let array;
+    while ((array = TAGIFY_TAG_REGEX.exec(showAs)) !== null) {
+      const json = JSON.parse(array[0])[0][0];
+      finalText = finalText.replace(array[0], json.value);
+    }
+    return finalText;
+  }, [showAs]);
 
   const columnsConfig = React.useMemo(
     () => ({
@@ -287,11 +317,43 @@ function BranchBlockGroup2({ ...props }) {
     []
   );
 
+  async function isFirstStepDone() {
+    const fieldsToRemove = ['name', 'curricularContent', 'type'];
+    const fieldsToTrigger = [...props.form.control._names.mount];
+    remove(fieldsToTrigger, (n) => fieldsToRemove.includes(n));
+    return props.form.trigger(fieldsToTrigger);
+  }
+
+  async function tryContinue(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (await isFirstStepDone()) {
+      setCustomRightButton(null);
+      setValue('firstStepDone', true);
+    }
+  }
+
+  const rightButton = (
+    <Button type="button" variant="outline" onClick={tryContinue}>
+      {messages.continueButtonLabel}
+    </Button>
+  );
+
+  React.useEffect(() => {
+    if (!firstStepDone) {
+      setCustomRightButton(rightButton);
+    } else {
+      setCustomRightButton(null);
+    }
+    return () => {
+      setCustomRightButton(null);
+    };
+  }, [firstStepDone]);
+
   const listTypeController = (
     <Controller
       name="groupListType"
       control={control}
-      shouldUnregister
       rules={{
         required: errorMessages.listTypeRequired,
       }}
@@ -311,7 +373,6 @@ function BranchBlockGroup2({ ...props }) {
     <Controller
       name="groupMax"
       control={control}
-      shouldUnregister
       render={({ field }) => (
         <NumberInput
           min={0}
@@ -328,7 +389,6 @@ function BranchBlockGroup2({ ...props }) {
     <Controller
       name="groupListOrdered"
       control={control}
-      shouldUnregister
       render={({ field }) => (
         <Select
           label={messages.numerationLabel}
@@ -340,6 +400,100 @@ function BranchBlockGroup2({ ...props }) {
       )}
     />
   );
+
+  const elementsColumnsConfig = React.useMemo(() => {
+    const formColumns = getValues('columns');
+    const columns = [];
+    forEach(formColumns, (col) => {
+      const rules = {
+        required: messages.fieldRequired,
+      };
+      let { name } = col;
+      if (!isNil(col.max)) {
+        name += ` (${col.max})`;
+        rules.maxLength = {
+          value: col.max,
+          message: messages.maxLength.replace('{max}', col.max),
+        };
+      }
+      columns.push({
+        Header: `${name} *`,
+        accessor: col.id,
+        input: {
+          node: <TextInput />,
+          rules,
+        },
+      });
+    });
+    return {
+      resetOnAdd: true,
+      editable: true,
+      removable: true,
+      sortable: false,
+      labels: {
+        add: messages.tableAdd,
+        remove: messages.tableRemove,
+        edit: messages.tableEdit,
+        accept: messages.tableAccept,
+        cancel: messages.tableCancel,
+      },
+      columns,
+      onChange: (e) => {
+        setValue(
+          'elements',
+          map(e, (item) => ({
+            ...item,
+            id: item.id || makeid(32),
+          }))
+        );
+      },
+    };
+  }, [watch('columns')]);
+
+  if (firstStepDone) {
+    return (
+      <ContextContainer>
+        <Box className={classes.card}>
+          <Box className={classes.cardHeader}>
+            <Box>
+              <Text role="productive" size="md" color="primary" stronger>
+                {messages.subBlock}
+              </Text>
+            </Box>
+            <Box>
+              <Text role="productive" color="primary">
+                {showAsText}
+              </Text>
+            </Box>
+            <Box className={classes.edit}>
+              <Button
+                variant="link"
+                leftIcon={<EditWriteIcon />}
+                onClick={() => {
+                  setValue('firstStepDone', false);
+                }}
+              >
+                {messages.tableEdit}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+        <Controller
+          key="elements"
+          name="elements"
+          control={control}
+          rules={{
+            required: errorMessages.groupShowAsRequired,
+          }}
+          render={({ field }) => (
+            <InputWrapper error={errors.elements}>
+              <TableInput data={field.value || []} {...elementsColumnsConfig} />
+            </InputWrapper>
+          )}
+        />
+      </ContextContainer>
+    );
+  }
 
   return (
     <ContextContainer className={classes.container}>
@@ -432,4 +586,4 @@ function BranchBlockGroup2({ ...props }) {
   );
 }
 
-export default BranchBlockGroup;
+export default BranchBlockGroup2;

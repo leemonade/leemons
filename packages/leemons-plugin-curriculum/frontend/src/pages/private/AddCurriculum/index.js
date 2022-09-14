@@ -19,6 +19,7 @@ import { detailProgramRequest } from '@academic-portfolio/request';
 import { find } from 'lodash';
 import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';
 import AddCurriculumStep2 from '@curriculum/pages/private/AddCurriculumStep2';
+import AddCurriculumStep3 from '@curriculum/pages/private/AddCurriculumStep3';
 
 const useStyle = createStyles((theme) => ({
   title: {
@@ -48,6 +49,12 @@ function AddCurriculum() {
   function onStep1() {
     store.curriculum.step = 2;
     store.currentStep = 2;
+    render();
+  }
+
+  function onStep2() {
+    store.curriculum.step = 3;
+    store.currentStep = 3;
     render();
   }
 
@@ -104,7 +111,8 @@ function AddCurriculum() {
       [
         <AddCurriculumStep0 key="0" onNext={onStep0} />,
         <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
-        <AddCurriculumStep2 key="2" onNext={onStep1} curriculum={store.curriculum} />,
+        <AddCurriculumStep2 key="2" onNext={onStep2} curriculum={store.curriculum} />,
+        <AddCurriculumStep3 key="3" onNext={onStep2} curriculum={store.curriculum} />,
       ][store.currentStep],
     [store.currentStep]
   );
