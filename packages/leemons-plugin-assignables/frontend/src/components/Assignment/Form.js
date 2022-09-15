@@ -398,6 +398,8 @@ export default function Form({
 
                           if (field.value && !startDate) {
                             field.onChange(null);
+                          } else if (startDate && !field.value) {
+                            field.onChange(startDate);
                           }
 
                           return (
