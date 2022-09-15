@@ -256,6 +256,7 @@ module.exports = {
       color: 'Color',
       colorRequired: 'Required field',
       group: 'Group',
+      groupRequired: 'Required field',
       substage: 'Sub-stage',
       seats: 'Seats',
       classroom: 'Classroom',

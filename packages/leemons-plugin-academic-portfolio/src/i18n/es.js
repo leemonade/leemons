@@ -255,6 +255,7 @@ module.exports = {
       color: 'Color',
       colorRequired: 'Campo necesario',
       group: 'Grupo',
+      groupRequired: 'Campo necesario',
       substage: 'Sub-etapa',
       seats: 'Plazas disponibles',
       classroom: 'Clase',

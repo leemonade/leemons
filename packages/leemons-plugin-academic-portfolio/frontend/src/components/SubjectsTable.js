@@ -389,6 +389,7 @@ function SubjectsTable({
               'g'
             ),
           },
+          required: messages.groupRequired
         },
 
         node: (

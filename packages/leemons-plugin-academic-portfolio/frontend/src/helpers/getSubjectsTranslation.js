@@ -16,6 +16,7 @@ export function getSubjectsTranslation(t) {
     color: t('subjects.color'),
     colorRequired: t('subjects.colorRequired'),
     group: t('subjects.group'),
+    groupRequired: t('subjects.groupRequired'),
     substage: t('subjects.substage'),
     seats: t('subjects.seats'),
     classroom: t('subjects.classroom'),
