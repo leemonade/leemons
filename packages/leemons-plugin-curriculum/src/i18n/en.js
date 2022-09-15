@@ -182,11 +182,16 @@ module.exports = {
     label: 'Label',
   },
   addCurriculumStep3: {
+    pageTitle: 'Content loading',
+    pageDescription:
+      'Now you can fill in all the blocks previously created in each branch of your program.',
     addNode: 'Add {name}',
     description1:
       'Now content can be added to each block typology, remember that the contents of the block marked with a star can be linked to asessable or gradable activities and travel to the final grading system.',
     publish: 'Publish curriculum',
     back: 'Back',
+    syncTree: 'Synchronize tree',
+    syncTreeDone: 'Synchronized tree',
     published: 'Curriculum published',
     starDescription: 'The blocks marked with a star correspond to evaluation criteria.',
     newBranchValue: {

@@ -40,6 +40,7 @@ function BranchContent({
 
   React.useEffect(() => {
     setAddBlock(!properties.length);
+    setEditingBlock(null);
   }, [branch]);
 
   if (!branch) return 'Branch required';

@@ -1,19 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import formWithTheme from '@common/formWithTheme';
-import {
-  ActionButton,
-  Box,
-  Button,
-  ContextContainer,
-  Select,
-  Stack,
-  TextInput,
-} from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { Box, Button, ContextContainer, Stack, Title } from '@bubbles-ui/components';
 import * as _ from 'lodash';
-import { find } from 'lodash';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -48,26 +40,52 @@ function NewBranchDetailValue({
     formState: { errors },
   } = useForm();
 
-  useEffect(() => {
+  React.useEffect(() => {
     reset(defaultValues);
   }, [JSON.stringify(defaultValues)]);
 
-  const datasetProps = useMemo(
+  const datasetProps = React.useMemo(
     () => ({ formData: schemaFormValues }),
     [JSON.stringify(schemaFormValues)]
   );
 
-  const goodDatasetConfig = useMemo(() => {
+  function getIcon(curricularContent) {
+    switch (curricularContent) {
+      case 'knowledges':
+        return <PluginSubjectsIcon />;
+      case 'qualifying-criteria':
+        return <StarIcon />;
+      case 'non-qualifying-criteria':
+        return <CutStarIcon />;
+      default:
+        return null;
+    }
+  }
+
+  const goodDatasetConfig = React.useMemo(() => {
     const response = _.cloneDeep(schema);
-    if (readonly) {
-      if (response && response.jsonSchema) {
-        _.forIn(response.jsonSchema.properties, (value, key) => {
+    if (response && response.jsonSchema) {
+      _.forIn(response.jsonSchema.properties, (value, key) => {
+        response.jsonSchema.properties[key].tabTitle = (
+          <Box sx={(theme) => ({ display: 'flex', alignItem: 'center', gap: theme.spacing[2] })}>
+            {getIcon(value.frontConfig.blockData.curricularContent)} {value.title}
+          </Box>
+        );
+        response.jsonSchema.properties[key].frontConfig.required = false;
+        if (readonly) {
           if (!response.jsonUI[key]) response.jsonUI[key] = {};
           response.jsonUI[key]['ui:readonly'] = true;
-        });
-      }
+        }
+      });
     }
-    return response;
+    return {
+      ...response,
+      jsonSchema: {
+        ...response.jsonSchema,
+        required: [],
+        asTabs: true,
+      },
+    };
   }, [schema, readonly]);
 
   const [form, formActions] = formWithTheme(
@@ -84,11 +102,8 @@ function NewBranchDetailValue({
       if (formActions.isLoaded()) {
         await formActions.submit();
         fErrors = formActions.getErrors();
-
         toSend.datasetValues = formActions.getValues();
-        console.log(toSend.datasetValues);
       }
-
       if (!fErrors.length) {
         onSubmit(toSend);
       }
@@ -97,53 +112,7 @@ function NewBranchDetailValue({
 
   return (
     <ContextContainer>
-      <Stack fullWidth justifyContent="end">
-        <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
-      </Stack>
-      {!readonly ? (
-        <form autoComplete="off">
-          <ContextContainer>
-            {isSubject ? (
-              <Controller
-                name="academicItem"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    label={messages.subjectLabel}
-                    data={subjectData}
-                    readOnly
-                    {...field}
-                    onChange={(e) => {
-                      const { label } = find(subjectData, { value: e });
-                      setValue('name', label);
-                      field.onChange(e);
-                    }}
-                  />
-                )}
-              />
-            ) : (
-              <Controller
-                name="name"
-                control={control}
-                rules={{
-                  required: errorMessages.nameRequired,
-                }}
-                render={({ field }) => (
-                  <TextInput
-                    label={messages.nameLabel}
-                    placeholder={messages.namePlaceholder}
-                    error={errors.name}
-                    required
-                    {...field}
-                  />
-                )}
-              />
-            )}
-          </ContextContainer>
-        </form>
-      ) : (
-        <Box>{watch('name')}</Box>
-      )}
+      <Title order={3}>{watch('name')}</Title>
 
       <Box>{form}</Box>
 

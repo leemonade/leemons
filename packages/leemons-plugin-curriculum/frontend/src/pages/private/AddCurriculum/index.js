@@ -58,6 +58,12 @@ function AddCurriculum() {
     render();
   }
 
+  function onPrev3() {
+    store.curriculum.step = 2;
+    store.currentStep = 2;
+    render();
+  }
+
   async function load() {
     try {
       store.loading = true;
@@ -112,7 +118,7 @@ function AddCurriculum() {
         <AddCurriculumStep0 key="0" onNext={onStep0} />,
         <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
         <AddCurriculumStep2 key="2" onNext={onStep2} curriculum={store.curriculum} />,
-        <AddCurriculumStep3 key="3" onNext={onStep2} curriculum={store.curriculum} />,
+        <AddCurriculumStep3 key="3" onPrev={onPrev3} curriculum={store.curriculum} />,
       ][store.currentStep],
     [store.currentStep]
   );

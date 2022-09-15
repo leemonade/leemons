@@ -279,7 +279,6 @@ function AddCurriculumStep2({ onNext }) {
             centers: [],
             isAllCenterMode: true,
             masked: false,
-            required: true,
             blockData: data,
             name: data.name,
             groupType: data.type,

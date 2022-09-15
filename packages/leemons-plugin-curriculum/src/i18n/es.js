@@ -183,11 +183,16 @@ module.exports = {
     label: 'Etiqueta',
   },
   addCurriculumStep3: {
+    pageTitle: 'Carga de contenido',
+    pageDescription:
+      'Ahora puedes rellenar todos los bloques creados anteriormente en cada rama de tu programa.',
     addNode: 'Añadir {name}',
     description1:
       'Ahora se pueden añadir contenidos a cada tipología de bloque, recuerda que los contenidos del bloque marcado con una estrella podrán vincularse con actividades evaluables o calificables y viajar al sistema de calificaciones finales.',
     publish: 'Publicar curriculum',
     back: 'Volver',
+    syncTree: 'Sincronizar árbol',
+    syncTreeDone: 'Árbol sincronizado',
     published: 'Curriculum publicado',
     starDescription:
       'Los bloques marcados con una estrella corresponden a criterios de evaluación.',
