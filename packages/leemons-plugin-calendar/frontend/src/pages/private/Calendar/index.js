@@ -30,6 +30,7 @@ import { useHistory } from 'react-router-dom';
 import { PackageManagerService } from '@package-manager/services';
 import loadable from '@loadable/component';
 import tLoader from '@multilanguage/helpers/tLoader';
+import CalendarKey from '@academic-calendar/components/CalendarKey';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -374,8 +375,8 @@ function Calendar({ session }) {
   if (store.loading) return <LoadingOverlay visible />;
 
   return (
-    <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
-      <Box style={{ width: '250px', height: '100vh' }}>
+    <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
+      <Box style={{ width: '250px' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
           showPageControl={
@@ -439,7 +440,7 @@ function Calendar({ session }) {
         />
       </Box>
 
-      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', height: '100vh' })}>
+      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%' })}>
         {store.center ? (
           <EventModal
             centerToken={store.center.token}
@@ -571,47 +572,52 @@ function Calendar({ session }) {
           </>
         ) : null}
         {store.activePage === 'program' ? (
-          <>
-            <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
-              <Stack fullWidth justifyContent="space-between">
-                <Box>
-                  <Text color="primary" size="xl">
-                    {t('programCalendar')}{' '}
-                    {store.scheduleCenter[store.center.id].config.program.abbreviation}
-                  </Text>
-                </Box>
-                <Box>
-                  {store.schedule.courseData.length > 1 ? (
-                    <Stack alignItems="center">
-                      <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
-                        <Text color="primary">{t('course')}</Text>
-                      </Box>
-                      <Box sx={() => ({ width: 80 })}>
-                        <Select
-                          value={
-                            store.academicCalendarCourse ||
-                            store.scheduleCenter[store.center.id]?.courses[0]?.id
-                          }
-                          data={store.schedule.courseData}
-                          onChange={(e) => {
-                            store.academicCalendarCourse = e;
-                            render();
-                          }}
-                        />
-                      </Box>
-                    </Stack>
-                  ) : null}
-                </Box>
-              </Stack>
+          <Stack direction="column" justifyContent="space-between" fullHeight>
+            <Box>
+              <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+                <Stack fullWidth justifyContent="space-between">
+                  <Box>
+                    <Text color="primary" size="xl">
+                      {t('programCalendar')}
+                      {store.scheduleCenter[store.center.id].config.program.abbreviation}
+                    </Text>
+                  </Box>
+                  <Box>
+                    {store.schedule.courseData.length > 1 ? (
+                      <Stack alignItems="center">
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                          <Text color="primary">{t('course')}</Text>
+                        </Box>
+                        <Box sx={() => ({ width: 80 })}>
+                          <Select
+                            value={
+                              store.academicCalendarCourse ||
+                              store.scheduleCenter[store.center.id]?.courses[0]?.id
+                            }
+                            data={store.schedule.courseData}
+                            onChange={(e) => {
+                              store.academicCalendarCourse = e;
+                              render();
+                            }}
+                          />
+                        </Box>
+                      </Stack>
+                    ) : null}
+                  </Box>
+                </Stack>
+              </Box>
+              <AcademicCalendar
+                config={store.scheduleCenter[store.center.id].config}
+                course={
+                  store.academicCalendarCourse ||
+                  store.scheduleCenter[store.center.id]?.courses[0]?.id
+                }
+              />
             </Box>
-            <AcademicCalendar
-              config={store.scheduleCenter[store.center.id].config}
-              course={
-                store.academicCalendarCourse ||
-                store.scheduleCenter[store.center.id]?.courses[0]?.id
-              }
-            />
-          </>
+            <Box>
+              <CalendarKey />
+            </Box>
+          </Stack>
         ) : null}
       </Box>
     </Box>

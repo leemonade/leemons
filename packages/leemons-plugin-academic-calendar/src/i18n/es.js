@@ -142,4 +142,12 @@ module.exports = {
       },
     },
   },
+  calendarKey: {
+    regionalEvents: 'Festivos nacionales/regionales',
+    localEvents: 'Festivos locales',
+    daysOffEvents: 'Días no lectivos',
+    specialSchoolDay: 'Día escolar especial',
+    courseStartEnd: 'Inicio/Fin de curso',
+    subStageStartEnd: 'Inicio/Fin de subetapa',
+  },
 };
