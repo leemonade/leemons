@@ -40,6 +40,7 @@ function StartDate(props) {
         if (!value) {
           props.form.setValue(endName, null);
         }
+        if (!props.form.getValues('endDate')) props.form.setValue(endName, value);
         props.onChange(value);
       }}
     />
@@ -60,6 +61,7 @@ function EndDate(props) {
   );
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export function RegionalConfigDetail({ config, t, calendars, center, onSave }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
