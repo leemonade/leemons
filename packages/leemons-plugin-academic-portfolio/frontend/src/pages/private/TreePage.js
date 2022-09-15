@@ -74,6 +74,7 @@ export default function TreePage() {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore({
     scroll: 0,
+    firstLoading: true,
   });
   const { openDeleteConfirmationModal, setLoading, layoutState } = useLayout();
 
@@ -321,6 +322,9 @@ export default function TreePage() {
     if (params.program) store.programId = params.program;
     if (store.centerId && store.programId) {
       store.tree = await getProgramTree();
+      setTimeout(() => {
+        store.firstLoading = false;
+      }, [500]);
     }
     render();
   }
@@ -346,15 +350,19 @@ export default function TreePage() {
   );
 
   function onSelectCenter(centerId) {
-    store.centerId = centerId;
-    render();
+    if (!(!!params?.center && store.firstLoading)) {
+      store.centerId = centerId;
+      render();
+    }
   }
 
   async function onSelectProgram(programId) {
-    store.programId = programId;
-    store.editingItem = null;
-    store.tree = await getProgramTree();
-    render();
+    if (!(!!params?.program && store.firstLoading)) {
+      store.programId = programId;
+      store.editingItem = null;
+      store.tree = await getProgramTree();
+      render();
+    }
   }
 
   useEffect(() => {
