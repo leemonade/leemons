@@ -379,6 +379,7 @@ function ScoresTable({ activitiesData, grades, filters, onOpen, labels }) {
               )
             );
         }}
+        hideCustom
         onOpen={onOpen}
         from={filters?.startDate}
         to={filters?.endDate}
