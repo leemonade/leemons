@@ -440,7 +440,7 @@ function Calendar({ session }) {
         />
       </Box>
 
-      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%' })}>
+      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', overflowY: 'auto' })}>
         {store.center ? (
           <EventModal
             centerToken={store.center.token}
@@ -614,7 +614,7 @@ function Calendar({ session }) {
                 }
               />
             </Box>
-            <Box>
+            <Box style={{ paddingBottom: 16 }}>
               <CalendarKey />
             </Box>
           </Stack>
