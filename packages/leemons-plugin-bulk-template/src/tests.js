@@ -4,6 +4,7 @@ const { keys, isEmpty, findIndex, uniqBy, isNil } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
+const _delay = require('./bulk/helpers/delay');
 
 async function initTests({ users, programs }) {
   const { services } = leemons.getPlugin('tests');
@@ -53,6 +54,8 @@ async function initTests({ users, programs }) {
         console.dir(qbank, { depth: null });
         console.error(e);
       }
+
+      await _delay(10000);
 
       // ·····················································
       // POST-PROCESSING QUESTIONS
