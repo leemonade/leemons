@@ -5,6 +5,10 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import CenterAlignedSelect from '../CenterAlignedSelect';
 import prefixPN from '../../../../../../../helpers/prefixPN';
 
+function capitalize(str) {
+  return str[0].toUpperCase() + str.substring(1, str.length);
+}
+
 function useRoles() {
   const [, translations] = useTranslateLoader(prefixPN('roles'));
 
@@ -16,7 +20,8 @@ function useRoles() {
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
       return Object.entries(data).map(([key, value]) => ({
-        label: value,
+        label: capitalize(value.singular),
+        plural: capitalize(value.plural),
         value: key,
       }));
     }
