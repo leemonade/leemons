@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import {
   Box,
   ImageLoader,
@@ -10,7 +10,9 @@ import {
   Stack,
   Text,
   Title,
+  IconButton,
 } from '@bubbles-ui/components';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
@@ -31,6 +33,8 @@ import { PackageManagerService } from '@package-manager/services';
 import loadable from '@loadable/component';
 import tLoader from '@multilanguage/helpers/tLoader';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
+import ReactToPrint from 'react-to-print';
+import PrintCalendar from '@academic-calendar/components/PrintCalendar';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -47,6 +51,8 @@ function Calendar({ session }) {
     processCalendarConfigForBigCalendar: () => ({ events: [] }),
     loading: true,
   });
+
+  const calendarRef = useRef();
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
@@ -582,7 +588,7 @@ function Calendar({ session }) {
                       {store.scheduleCenter[store.center.id].config.program.abbreviation}
                     </Text>
                   </Box>
-                  <Box>
+                  <Stack spacing={8}>
                     {store.schedule.courseData.length > 1 ? (
                       <Stack alignItems="center">
                         <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
@@ -603,7 +609,19 @@ function Calendar({ session }) {
                         </Box>
                       </Stack>
                     ) : null}
-                  </Box>
+                    <Box>
+                      <ReactToPrint
+                        trigger={() => (
+                          <IconButton
+                            icon={<DownloadIcon height={16} width={16} />}
+                            color="primary"
+                            rounded
+                          />
+                        )}
+                        content={() => calendarRef.current}
+                      />
+                    </Box>
+                  </Stack>
                 </Stack>
               </Box>
               <AcademicCalendar
@@ -612,6 +630,17 @@ function Calendar({ session }) {
                   store.academicCalendarCourse ||
                   store.scheduleCenter[store.center.id]?.courses[0]?.id
                 }
+              />
+              <PrintCalendar
+                config={store.scheduleCenter[store.center.id].config}
+                course={
+                  store.academicCalendarCourse ||
+                  store.scheduleCenter[store.center.id]?.courses[0]?.id
+                }
+                t={t}
+                programName={store.scheduleCenter[store.center.id].config.program.name}
+                ref={calendarRef}
+                useAcademicCalendar
               />
             </Box>
             <Box>
