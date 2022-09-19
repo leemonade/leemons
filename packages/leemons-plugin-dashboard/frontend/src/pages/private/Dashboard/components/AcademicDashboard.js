@@ -132,6 +132,7 @@ export default function AcademicDashboard({ session }) {
               value={store.selectedProgram}
               data={store.programsSelect}
               onChange={selectProgram}
+              showIcon={false}
             />
           </Box>
         </Box>
