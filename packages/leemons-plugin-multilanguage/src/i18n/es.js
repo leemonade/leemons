@@ -68,5 +68,13 @@ module.exports = {
   },
   formWithTheme: {
     add: 'Añadir',
+    update: 'Actualizar',
+    edit: 'Editar',
+    cancel: 'Cancelar',
+    remove: 'Borrar',
+    save: 'Guardar',
+    addNewElementToList: 'Añadir nuevo elemento lista',
+    parentBlock: 'Bloque padre ({name})',
+    fieldRequired: 'Campo necesario',
   },
 };

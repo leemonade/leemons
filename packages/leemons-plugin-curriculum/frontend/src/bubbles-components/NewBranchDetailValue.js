@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-import formWithTheme from '@common/formWithTheme';
-import { Box, Button, ContextContainer, Stack, Title } from '@bubbles-ui/components';
+import { Box, ContextContainer, Title } from '@bubbles-ui/components';
 import * as _ from 'lodash';
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
+import CurriculumForm from '@curriculum/components/FormTheme/CurriculumForm';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -29,8 +30,11 @@ function NewBranchDetailValue({
   schema,
   schemaFormValues,
   readonly,
+  curriculum,
   onCloseBranch,
 }) {
+  const [store, render] = useStore();
+
   const {
     reset,
     control,
@@ -43,11 +47,6 @@ function NewBranchDetailValue({
   React.useEffect(() => {
     reset(defaultValues);
   }, [JSON.stringify(defaultValues)]);
-
-  const datasetProps = React.useMemo(
-    () => ({ formData: schemaFormValues }),
-    [JSON.stringify(schemaFormValues)]
-  );
 
   function getIcon(curricularContent) {
     switch (curricularContent) {
@@ -78,51 +77,59 @@ function NewBranchDetailValue({
         }
       });
     }
+
     return {
       ...response,
       jsonSchema: {
         ...response.jsonSchema,
         required: [],
         asTabs: true,
+        tabProps: {
+          onChange: (e) => {
+            store.hideSaveButton = false;
+            if (response.jsonSchema.properties[e].frontConfig.blockData.type === 'list') {
+              store.hideSaveButton = true;
+            }
+            render();
+          },
+        },
       },
     };
   }, [schema, readonly]);
 
+  /*
   const [form, formActions] = formWithTheme(
     goodDatasetConfig?.jsonSchema,
     goodDatasetConfig?.jsonUI,
     undefined,
-    datasetProps
+    datasetProps,
+    {
+      customValidateSchema: goodDatasetConfig?.jsonSchema,
+      widgets: { BaseInput, wysiwyg: WysiwygWidget, TextareaWidget: WysiwygWidget, ListField },
+    }
   );
 
-  async function save() {
-    handleSubmit(async (data) => {
-      const toSend = { ...data, id: defaultValues?.id };
-      let fErrors = [];
-      if (formActions.isLoaded()) {
-        await formActions.submit();
-        fErrors = formActions.getErrors();
-        toSend.datasetValues = formActions.getValues();
-      }
-      if (!fErrors.length) {
-        onSubmit(toSend);
-      }
-    })();
+   */
+
+  async function save(datasetValues, noClose) {
+    const toSend = { ...defaultValues, datasetValues };
+    await onSubmit(toSend, noClose);
   }
 
   return (
     <ContextContainer>
       <Title order={3}>{watch('name')}</Title>
 
-      <Box>{form}</Box>
-
-      {!readonly ? (
-        <Stack justifyContent="end">
-          <Button variant="outline" loading={isLoading} onClick={save}>
-            {messages.saveButtonLabel}
-          </Button>
-        </Stack>
-      ) : null}
+      <Box>
+        <CurriculumForm
+          id={defaultValues.id}
+          curriculum={curriculum}
+          schema={goodDatasetConfig?.jsonSchema}
+          onSave={save}
+          defaultValues={schemaFormValues}
+          readonly={readonly}
+        />
+      </Box>
     </ContextContainer>
   );
 }
@@ -156,6 +163,7 @@ NewBranchDetailValue.propTypes = {
   onSubmit: PropTypes.func,
   isLoading: PropTypes.bool,
   readonly: PropTypes.bool,
+  curriculum: PropTypes.any,
   onCloseBranch: PropTypes.func,
 };
 

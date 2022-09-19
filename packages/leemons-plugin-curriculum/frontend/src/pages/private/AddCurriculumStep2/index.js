@@ -329,8 +329,29 @@ function AddCurriculumStep2({ onNext }) {
         toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
         break;
       case 'list':
-        toSave.schemaConfig.schema.type = 'array';
-        toSave.schemaConfig.schema.items = { type: 'string' };
+        toSave.schemaConfig.schema.type = 'object';
+        toSave.schemaConfig.schema.properties = {
+          id: {
+            type: 'string',
+          },
+          value: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+              },
+              value: { type: 'string' },
+              metadata: {
+                type: 'object',
+                additionalProperties: true,
+              },
+            },
+          },
+          metadata: {
+            type: 'object',
+            additionalProperties: true,
+          },
+        };
         toSave.schemaConfig.schema.frontConfig.type = 'list';
         if (data.listType === 'textarea') {
           toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';

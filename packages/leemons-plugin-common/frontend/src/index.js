@@ -18,6 +18,7 @@ export * from './LocaleDate';
 export * from './numberToEncodedLetter';
 export * from './linkify';
 export * from './isValidHttpUrl';
+export * from './randomString';
 
 export {
   formWithTheme,

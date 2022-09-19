@@ -667,7 +667,7 @@ function AddCurriculumStep3New({ onPrev }) {
     } catch (e) {}
   }
 
-  async function onAddBranchValue(data) {
+  async function onAddBranchValue(data, noClose) {
     try {
       store.saving = true;
       render();
@@ -695,8 +695,10 @@ function AddCurriculumStep3New({ onPrev }) {
         await saveNodeRequest(data);
       }
       await load(true);
-      store.activeRightSection = null;
-      store.activeNode = null;
+      if (!noClose) {
+        store.activeRightSection = null;
+        store.activeNode = null;
+      }
       store.saving = false;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -717,6 +719,7 @@ function AddCurriculumStep3New({ onPrev }) {
           errorMessages={errorMessagesBranchValues}
           onSubmit={onAddBranchValue}
           isLoading={store.saving}
+          curriculum={store.curriculum}
           defaultValues={{
             academicItem: store.activeNode.academicItem,
             name: store.activeNode.name,
