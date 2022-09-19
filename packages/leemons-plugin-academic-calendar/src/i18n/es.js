@@ -29,6 +29,7 @@ module.exports = {
     tableAdd: 'Añadir descanso',
     tableRemove: 'Eliminar',
     allCourses: 'Todos los cursos',
+    calendarOf: 'Calendario del programa',
   },
   regionalList: {
     title: 'Calendarios regionales',

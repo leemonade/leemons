@@ -36,6 +36,7 @@ module.exports = {
     tableAdd: 'Add break',
     tableRemove: 'Remove',
     allCourses: 'All courses',
+    calendarOf: 'Program calendar of',
   },
   regionalList: {
     title: 'Regional calendars',
@@ -43,8 +44,8 @@ module.exports = {
       'You can create regional calendars to record holidays or vacations in a given territory. <br/> These events can later be associated with your Program Calendars.',
     selectCenter: 'Select center',
     addRegionalCalendar: 'Add regional calendar',
-    detailTitle: 'National/regional holidays',
-    regionalEvents: 'Festivos nacionales/regionales',
+    detailTitle: 'Regional calendar {name}',
+    regionalEvents: 'National/regional holidays',
     regionalEventsDescription:
       'If national/regional events are repeated in several different calendars, you can indicate this below.',
     useEventsFrom: 'Use the events of:',
@@ -148,5 +149,13 @@ module.exports = {
         color: 'Select a color',
       },
     },
+  },
+  calendarKey: {
+    regionalEvents: 'National/regional holidays',
+    localEvents: 'Local holidays',
+    daysOffEvents: 'Non-school days',
+    specialSchoolDay: 'Special school day',
+    courseStartEnd: 'Start/end of course',
+    subStageStartEnd: 'Start/end of substage',
   },
 };

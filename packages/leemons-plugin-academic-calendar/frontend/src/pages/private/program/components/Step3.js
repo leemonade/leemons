@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { BigCalendar } from '@bubbles-ui/calendars';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { Box, Button, ContextContainer, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
+import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  Stack,
+  TabPanel,
+  Tabs,
+  IconButton,
+  Title,
+} from '@bubbles-ui/components';
 import { useLocale, useStore } from '@common';
 import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { saveConfig } from '@academic-calendar/request/config';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
+import ReactToPrint from 'react-to-print';
+import PrintCalendar from '@academic-calendar/components/PrintCalendar';
 
 export default function Step3({ regionalConfigs, program, config, onPrev, onSave, t }) {
   const locale = useLocale();
@@ -18,6 +29,7 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
   const [store, render] = useStore({
     saving: false,
   });
+  const calendarRef = useRef();
 
   const coursesForDates = config.allCoursesHaveSameDates ? [program?.courses[0]] : program?.courses;
 
@@ -43,6 +55,20 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
   return (
     <ContextContainer divided>
       <ContextContainer>
+        <Stack justifyContent="space-between" alignItems="center" style={{ marginInline: 8 }}>
+          <Title order={1}>{program.name}</Title>
+          <ReactToPrint
+            trigger={() => (
+              <IconButton
+                icon={<DownloadIcon height={16} width={16} />}
+                color="primary"
+                rounded
+                label={t('downloadCalendar')}
+              />
+            )}
+            content={() => calendarRef.current}
+          />
+        </Stack>
         <Tabs forceRender>
           {coursesForDates.map((course) => {
             const bigCalendarConf = processCalendarConfigForBigCalendar(
@@ -71,6 +97,14 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
                   <BigCalendar {...bigCalendarConf} />
                   <CalendarKey />
                 </Box>
+                <PrintCalendar
+                  calendarConf={bigCalendarConf}
+                  config={config}
+                  course={course}
+                  programName={program.name}
+                  t={t}
+                  ref={calendarRef}
+                />
               </TabPanel>
             );
           })}

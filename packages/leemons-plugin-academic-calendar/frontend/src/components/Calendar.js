@@ -4,7 +4,7 @@ import { BigCalendar } from '@bubbles-ui/calendars';
 import { useLocale } from '@common';
 import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
 
-export default function Calendar({ config, course }) {
+export default function Calendar({ config, course, printMode }) {
   const locale = useLocale();
 
   const [processCalendarConfigForBigCalendar] = useProcessCalendarConfigForBigCalendar();
@@ -20,10 +20,11 @@ export default function Calendar({ config, course }) {
     }
   );
 
-  return <BigCalendar {...bigCalendarConf} />;
+  return <BigCalendar {...bigCalendarConf} printMode={printMode} />;
 }
 
 Calendar.propTypes = {
   config: PropTypes.any,
   course: PropTypes.any,
+  printMode: PropTypes.bool,
 };
