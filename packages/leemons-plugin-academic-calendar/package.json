@@ -4,5 +4,6 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "react-to-print": "^2.14.7"
   }
 }
