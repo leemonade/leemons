@@ -4,7 +4,6 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.1"
+    "react-to-print": "^2.14.7"
   }
 }

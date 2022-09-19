@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { BigCalendar } from '@bubbles-ui/calendars';
@@ -19,8 +19,8 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { saveConfig } from '@academic-calendar/request/config';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
+import ReactToPrint from 'react-to-print';
+import PrintCalendar from '@academic-calendar/components/PrintCalendar';
 
 export default function Step3({ regionalConfigs, program, config, onPrev, onSave, t }) {
   const locale = useLocale();
@@ -29,7 +29,7 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
   const [store, render] = useStore({
     saving: false,
   });
-  const [isPrinting, setIsPrinting] = useState(false);
+  const calendarRef = useRef();
 
   const coursesForDates = config.allCoursesHaveSameDates ? [program?.courses[0]] : program?.courses;
 
@@ -52,33 +52,21 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
 
   if (!program) return null;
 
-  useEffect(() => {
-    if (!isPrinting) return;
-    const input = document.getElementById('calendarToPrint');
-    html2canvas(input).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      // eslint-disable-next-line new-cap
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, 'JPEG', 0, 0);
-      pdf.save('download.pdf');
-    });
-    setIsPrinting(false);
-  }, [isPrinting]);
-
   return (
     <ContextContainer divided>
       <ContextContainer>
         <Stack justifyContent="space-between" alignItems="center" style={{ marginInline: 8 }}>
           <Title order={1}>{program.name}</Title>
-          <IconButton
-            icon={<DownloadIcon height={16} width={16} />}
-            color="primary"
-            rounded
-            label={t('downloadCalendar')}
-            onClick={() => {
-              setIsPrinting(true);
-            }}
-            loading={isPrinting}
+          <ReactToPrint
+            trigger={() => (
+              <IconButton
+                icon={<DownloadIcon height={16} width={16} />}
+                color="primary"
+                rounded
+                label={t('downloadCalendar')}
+              />
+            )}
+            content={() => calendarRef.current}
           />
         </Stack>
         <Tabs forceRender>
@@ -109,28 +97,14 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
                   <BigCalendar {...bigCalendarConf} />
                   <CalendarKey />
                 </Box>
-                <Stack
-                  direction="column"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  height="100%"
-                  id="calendarToPrint"
-                  style={{
-                    position: 'absolute',
-                    left: -9999,
-                    top: -9999,
-                    width: '210mm',
-                    minHeight: '297mm',
-                    padding: 16,
-                  }}
-                >
-                  <Box style={{ marginLeft: 89 }}>
-                    <BigCalendar {...bigCalendarConf} />
-                  </Box>
-                  <Box style={{ width: '100%' }}>
-                    <CalendarKey />
-                  </Box>
-                </Stack>
+                <PrintCalendar
+                  calendarConf={bigCalendarConf}
+                  config={config}
+                  course={course}
+                  programName={program.name}
+                  t={t}
+                  ref={calendarRef}
+                />
               </TabPanel>
             );
           })}
