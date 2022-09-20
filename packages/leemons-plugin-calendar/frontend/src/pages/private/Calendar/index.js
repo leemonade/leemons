@@ -1,16 +1,16 @@
 import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
+  IconButton,
   ImageLoader,
   LoadingOverlay,
   Select,
   Stack,
   Text,
   Title,
-  IconButton,
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { BigCalendar } from '@bubbles-ui/calendars';
@@ -115,9 +115,9 @@ function Calendar({ session }) {
 
     const calendarData = store.scheduleCenter[data.center];
 
-    if (calendarData.config && calendarData.courses.length) {
+    if (calendarData.config && calendarData.allCourses.length) {
       const calendarEvents = store.processCalendarConfigForBigCalendar(calendarData.config, {
-        course: map(calendarData.courses, 'id'),
+        course: map(calendarData.allCourses, 'id'),
         locale,
         forCalendar: true,
       });
@@ -386,7 +386,7 @@ function Calendar({ session }) {
         <CalendarSubNavFilters
           style={{ position: 'static' }}
           showPageControl={
-            store.scheduleCenter?.[store.center?.id]?.classes?.length &&
+            store.scheduleCenter?.[store.center?.id]?.allClasses?.length &&
             store.scheduleCenter?.[store.center?.id]?.config
           }
           messages={{
@@ -598,7 +598,7 @@ function Calendar({ session }) {
                           <Select
                             value={
                               store.academicCalendarCourse ||
-                              store.scheduleCenter[store.center.id]?.courses[0]?.id
+                              store.scheduleCenter[store.center.id]?.allCourses[0]?.id
                             }
                             data={store.schedule.courseData}
                             onChange={(e) => {
@@ -628,14 +628,14 @@ function Calendar({ session }) {
                 config={store.scheduleCenter[store.center.id].config}
                 course={
                   store.academicCalendarCourse ||
-                  store.scheduleCenter[store.center.id]?.courses[0]?.id
+                  store.scheduleCenter[store.center.id]?.allCourses[0]?.id
                 }
               />
               <PrintCalendar
                 config={store.scheduleCenter[store.center.id].config}
                 course={
                   store.academicCalendarCourse ||
-                  store.scheduleCenter[store.center.id]?.courses[0]?.id
+                  store.scheduleCenter[store.center.id]?.allCourses[0]?.id
                 }
                 t={t}
                 programName={store.scheduleCenter[store.center.id].config.program.name}
