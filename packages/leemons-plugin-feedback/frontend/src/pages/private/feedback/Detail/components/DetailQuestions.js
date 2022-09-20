@@ -7,22 +7,24 @@ import {
   Box,
   Button,
   ContextContainer,
+  InputWrapper,
   Stack,
   Table,
   Title,
 } from '@bubbles-ui/components';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
-import QuestionForm from './QuestionForm';
-import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
+import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
+import { Controller } from 'react-hook-form';
+import QuestionForm from '@feedback/pages/private/feedback/Detail/components/QuestionForm';
 
 export default function DetailQuestions({ form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
   });
-
-  const categories = form.watch('categories');
 
   const { openDeleteConfirmationModal } = useLayout();
   const questions = form.watch('questions');
@@ -57,7 +59,6 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
         onSave={onSave}
         defaultValues={qStore.newQuestion ? {} : qStore.question}
         onCancel={onCancel}
-        categories={categories}
       />
     );
   }
@@ -100,8 +101,6 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     },
   ];
 
-  // console.log(form.formState.errors.questions);
-
   return (
     <>
       <ContextContainer divided>
@@ -109,6 +108,31 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
           <Stack alignItems="center" justifyContent="space-between">
             <Title order={4}>{t('questions')}</Title>
           </Stack>
+
+          <Controller
+            control={form.control}
+            name="featuredImage"
+            render={({ field }) => (
+              <InputWrapper label={t('featuredImage')}>
+                <ImagePicker required error={form.formState.errors.featuredImage} {...field} />
+              </InputWrapper>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="introductoryText"
+            rules={{ required: t('introductoryTextRequired') }}
+            render={({ field }) => (
+              <TextEditorInput
+                required
+                error={form.formState.errors.introductoryText}
+                label={t('introductoryText')}
+                {...field}
+              />
+            )}
+          />
+
           {questions && questions.length ? (
             <Table
               columns={tableHeaders}

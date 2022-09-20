@@ -29,5 +29,12 @@ module.exports = {
     addTag: 'Añadir etiqueta',
     continue: 'Continuar',
     previous: 'Anterior',
+    addQuestion: 'Añadir nueva pregunta',
+    introductoryText: 'Texto de introducción:',
+    introductoryTextRequired: 'Campo necesario',
+    featuredImage: 'Añadir imagen destacada',
+    returnToList: 'Volver al listado de preguntas',
+    questionDetail: 'Detalle de la pregunta',
+    typeLabel: 'Tipo de pregunta',
   },
 };

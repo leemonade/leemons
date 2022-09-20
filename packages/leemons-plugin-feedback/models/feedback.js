@@ -5,6 +5,12 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
+    introductoryText: {
+      type: 'string',
+    },
+    featuredImage: {
+      type: 'string',
+    },
     asset: {
       type: 'string',
     },

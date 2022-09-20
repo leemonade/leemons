@@ -18,6 +18,7 @@ import { getFeedbackRequest } from '@feedback/request';
 
 import { useForm } from 'react-hook-form';
 import DetailBasic from '@feedback/pages/private/feedback/Detail/components/DetailBasic';
+import DetailQuestions from '@feedback/pages/private/feedback/Detail/components/DetailQuestions';
 
 export default function Index() {
   const [t] = useTranslateLoader(prefixPN('feedbackDetail'));
@@ -163,6 +164,9 @@ export default function Index() {
             ]}
           >
             {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
+            {store.currentStep > 0 && (
+              <DetailQuestions t={t} form={form} onNext={() => setStep(1)} />
+            )}
           </VerticalStepperContainer>
         </Box>
       </Stack>

@@ -29,5 +29,12 @@ module.exports = {
     addTag: 'Add tag',
     continue: 'Continue',
     previous: 'Previous',
+    addQuestion: 'Add new question',
+    introductoryText: 'Introductory text:',
+    introductoryTextRequired: 'Field required',
+    featuredImage: 'Add featured image',
+    returnToList: 'Back to list of questions',
+    questionDetail: 'Question detail',
+    typeLabel: 'Type of question',
   },
 };
