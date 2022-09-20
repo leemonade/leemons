@@ -1,1 +1,1 @@
-export { saveFeedback as saveFeedbackRequest } from './feedback';
+export { saveFeedback as saveFeedbackRequest, getFeedback as getFeedbackRequest } from './feedback';

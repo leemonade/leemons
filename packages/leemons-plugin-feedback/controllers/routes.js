@@ -39,4 +39,11 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
   },
+  {
+    path: '/feedback',
+    method: 'GET',
+    handler: 'feedback.getFeedback',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.feedback, ['view']),
+  },
 ];

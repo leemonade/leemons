@@ -6,9 +6,11 @@ module.exports = {
   },
   attributes: {
     feedback: {
+      type: 'string',
+      /*
       references: {
         collection: 'plugins_feedback::feedback',
-      },
+      }, */
     },
     type: {
       type: 'string',
