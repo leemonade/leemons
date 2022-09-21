@@ -8,8 +8,8 @@ import {
   ContextContainer,
   Select,
   Stack,
-  Title,
   Switch,
+  Title,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
@@ -34,36 +34,8 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
   const form = useForm({ defaultValues });
   const type = form.watch('type');
 
-  const filterProperties = (object, properties) => {
-    Object.entries(object).forEach(([key]) => {
-      if (!properties.includes(key)) delete object[key];
-    });
-  };
-
-  const filterData = (data) => {
-    if (type === 'singleResponse') {
-      filterProperties(data.properties, ['responses', 'withImages']);
-    }
-    if (type === 'multiResponse') {
-      filterProperties(data.properties, [
-        'responses',
-        'withImages',
-        'minResponses',
-        'maxResponses',
-      ]);
-    }
-    if (type === 'likertScale') {
-      filterProperties(data.properties, ['maxLabels', 'likertLabels']);
-    }
-    if (type === 'netPromoterScore') {
-      filterProperties(data.properties, ['veryLikely', 'notLikely']);
-    }
-    return data;
-  };
-
   function save() {
     form.handleSubmit((data) => {
-      filterData(data);
       console.log(data);
       onSave(data);
     })();
@@ -72,8 +44,11 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
   React.useEffect(() => {
     if (type === 'netPromoterScore') {
       form.setValue('question', t('npsStatement'));
-    } else {
-      form.setValue('question', '');
+      form.setValue('properties.maxLabels', 3);
+      form.setValue('properties.veryLikely', t('npsVeryLikely'));
+      form.setValue('properties.notLikely', t('npsNotLikely'));
+      form.setValue('properties.minResponses', 1);
+      form.setValue('properties.maxResponses', 1);
     }
   }, [type]);
 
@@ -109,7 +84,7 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
               />
               <Controller
                 control={form.control}
-                name="isRequired"
+                name="required"
                 render={({ field }) => (
                   <Switch orientation="horizontal" label={t('requiredQuestionLabel')} {...field} />
                 )}

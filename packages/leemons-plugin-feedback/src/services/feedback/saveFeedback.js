@@ -7,13 +7,12 @@ const { createFeedbackQuestion } = require('../feedback-questions/createFeedback
 const { deleteFeedbackQuestions } = require('../feedback-questions/deleteFeedbackQuestions');
 
 async function saveFeedback(_data, { userSession, transacting: _transacting } = {}) {
-  const versionControlService = leemons.getPlugin('common').services.versionControl;
+  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
   return global.utils.withTransaction(
     async (transacting) => {
       const data = _.cloneDeep(_data);
       delete data.asset;
       _.forEach(data.questions, (question) => {
-        delete question.questionBank;
         delete question.deleted;
         delete question.created_at;
         delete question.updated_at;
@@ -22,83 +21,99 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
       // Check is userSession is provided
       if (!userSession) throw new Error('User session is required (saveFeedback)');
       validateSaveFeedback(data);
-      const { id, questions, tags, published, ...props } = data;
-      let feedback;
+      const { questions, published } = data;
 
-      if (id) {
-        let version = await versionControlService.getVersion(id, { transacting });
+      const toSave = {
+        asset: {
+          name: data.name,
+          tagline: data.tagline,
+          description: data.description,
+          color: data.color,
+          cover: data.cover,
+          tags: data.tags,
+          indexable: true,
+          public: true, // TODO Cambiar a false despues de la demo
+        },
+        role: 'feedback',
+        subjects: [],
+        statement: data.introductoryText,
+        instructionsForTeachers: null,
+        instructionsForStudents: null,
+        gradable: false,
+        metadata: {},
+      };
 
-        if (version.published) {
-          version = await versionControlService.upgradeVersion(id, 'major', {
-            published,
-            setAsCurrent: true,
+      let assignable = null;
+
+      if (data.id) {
+        delete toSave.role;
+        assignable = await assignableService.updateAssignable(
+          { id: data.id, ...toSave },
+          {
+            userSession,
             transacting,
-          });
-          feedback = await table.feedback.create({ id: version.fullId, ...props }, { transacting });
-
-          // ES - Borramos las id para que se creen nuevas
-          // EN - Delete the id to create new
-          _.forEach(data.questions, (question) => {
-            delete question.id;
-          });
-        } else {
-          if (published) {
-            await versionControlService.publishVersion(id, true, { transacting });
+            published: data.published,
           }
-          feedback = await table.feedback.update({ id }, props, { transacting });
-        }
+        );
       } else {
-        const version = await versionControlService.register('feedback', {
-          published,
+        assignable = await assignableService.createAssignable(toSave, {
+          userSession,
           transacting,
+          published: data.published,
         });
-        feedback = await table.feedback.create({ id: version.fullId, ...props }, { transacting });
       }
 
-      // -- Asset ---
-      if (props.name) {
-        const assetsToSave = {
-          indexable: true,
-          public: true, // TODO Cambiar a false despues de hacer la demo
-          category: 'feedback',
-        };
-        assetsToSave.name = props.name;
-        if (props.description) assetsToSave.description = props.description;
-        if (props.tagline) assetsToSave.tagline = props.tagline;
-        if (props.color) assetsToSave.color = props.color;
-        if (props.cover) assetsToSave.cover = props.cover;
-        if (tags) assetsToSave.tags = tags;
-        const assetService = leemons.getPlugin('leebrary').services.assets;
-
-        let asset;
-        if (id) {
-          const q = await table.questionsBanks.findOne({ id }, { columns: ['asset'], transacting });
-          // -- Asset update
-          assetsToSave.id = q.asset;
-          asset = await assetService.update(assetsToSave, {
-            upgrade: true,
-            published,
-            userSession,
-            transacting,
-          });
+      let featuredImage = null;
+      if (assignable.metadata.featuredImage) {
+        if (data.featuredImage) {
+          featuredImage = await leemons.getPlugin('leebrary').services.assets.update(
+            {
+              id: assignable.metadata.featuredImage,
+              name: `Image feedback - ${assignable.id}`,
+              cover: data.featuredImage,
+              description: '',
+            },
+            {
+              published,
+              userSession,
+              transacting,
+            }
+          );
         } else {
-          // -- Asset create
-          asset = await assetService.add(assetsToSave, {
+          await leemons
+            .getPlugin('leebrary')
+            .services.assets.remove(assignable.metadata.featuredImage, {
+              userSession,
+              transacting,
+            });
+        }
+      } else {
+        featuredImage = await leemons.getPlugin('leebrary').services.assets.add(
+          {
+            name: `Image feedback - ${assignable.id}`,
+            cover: data.featuredImage,
+            description: '',
+          },
+          {
             published,
             userSession,
             transacting,
-          });
-        }
-
-        feedback = await table.feedback.update(
-          { id: feedback.id },
-          { asset: asset.id },
-          { transacting }
+          }
         );
       }
 
+      toSave.metadata.featuredImage = featuredImage;
+      assignable = await assignableService.updateAssignable(
+        { id: assignable.id, ...toSave },
+        {
+          userSession,
+          transacting,
+          published: data.published,
+        }
+      );
+
       const currentQuestions = await table.feedbackQuestions.find(
-        { feedback: feedback.id },
+        { assignable: assignable.id },
         {
           columns: ['id'],
           transacting,
@@ -154,7 +169,7 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
             createFeedbackQuestion(
               {
                 ...question,
-                feedback: feedback.id,
+                assignable: assignable.id,
               },
               {
                 published,
@@ -166,9 +181,9 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
         );
       }
 
-      return feedback;
+      return assignable;
     },
-    table.feedback,
+    table.feedbackQuestions,
     _transacting
   );
 }

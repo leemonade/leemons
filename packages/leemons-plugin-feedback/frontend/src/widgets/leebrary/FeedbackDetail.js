@@ -8,9 +8,9 @@ import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { deleteTestRequest, duplicateRequest } from '../../request';
+// import { deleteTestRequest, duplicateRequest } from '../../request';
 
-const TestsDetail = ({ asset, onRefresh, ...props }) => {
+const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const {
@@ -35,17 +35,17 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
       toolbarItems.assign = t('assign');
     }
     if (asset.duplicable) {
-      toolbarItems.duplicate = t('duplicate');
+      // toolbarItems.duplicate = t('duplicate');
     }
     // duplicateRequest
   }
 
   const handleView = () => {
-    history.push(`/private/tests/detail/${asset.providerData.id}`);
+    history.push(`/private/feedback/detail/${asset.providerData.id}`);
   };
 
   const handleEdit = () => {
-    history.push(`/private/tests/${asset.providerData.id}`);
+    history.push(`/private/feedback/${asset.providerData.id}`);
   };
 
   const handleDelete = () => {
@@ -53,7 +53,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await deleteTestRequest(asset.providerData.id);
+          // await deleteTestRequest(asset.providerData.id);
           addSuccessAlert(t('deleted'));
           onRefresh();
         } catch (err) {
@@ -69,7 +69,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicateRequest(asset.providerData.id, asset.providerData.published);
+          // await duplicateRequest(asset.providerData.id, asset.providerData.published);
           addSuccessAlert(t('duplicated'));
           onRefresh();
         } catch (err) {
@@ -81,7 +81,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
   };
 
   const handleAssign = () => {
-    history.push(`/private/tests/assign/${asset.providerData.id}`);
+    history.push(`/private/feedback/assign/${asset.providerData.id}`);
   };
 
   // ·········································································
@@ -125,9 +125,9 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
   );
 };
 
-TestsDetail.propTypes = {
+FeedbackDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
 };
 
-export default TestsDetail;
+export default FeedbackDetail;

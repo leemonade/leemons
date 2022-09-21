@@ -40,7 +40,7 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
   },
   {
-    path: '/feedback',
+    path: '/feedback/:id',
     method: 'GET',
     handler: 'feedback.getFeedback',
     authenticated: true,

@@ -5,12 +5,8 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    feedback: {
+    assignable: {
       type: 'string',
-      /*
-      references: {
-        collection: 'plugins_feedback::feedback',
-      }, */
     },
     type: {
       type: 'string',

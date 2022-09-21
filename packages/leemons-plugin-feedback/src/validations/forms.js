@@ -62,6 +62,8 @@ function validateSaveFeedback(data) {
   }
   const validator = new LeemonsValidator(schema);
 
+  console.log(data);
+
   if (!validator.validate(data)) {
     throw validator.error;
   }

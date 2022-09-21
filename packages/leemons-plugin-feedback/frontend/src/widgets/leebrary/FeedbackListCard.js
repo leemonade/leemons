@@ -4,13 +4,12 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { AssignIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { deleteTestRequest, duplicateRequest } from '../../request';
+// import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -21,7 +20,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
+const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { classes } = ListCardStyles({ selected });
   const {
@@ -37,23 +36,26 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
     const items = [];
 
     if (asset?.id) {
+      /*
       if (asset.providerData?.published) {
         items.push({
           icon: <ViewOnIcon />,
           children: t('view'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/tests/detail/${asset.providerData.id}`);
+            history.push(`/private/feedback/detail/${asset.providerData.id}`);
           },
         });
       }
+
+       */
       if (asset.editable) {
         items.push({
           icon: <EditWriteIcon />,
           children: t('edit'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/tests/${asset.providerData.id}`);
+            history.push(`/private/feedback/${asset.providerData.id}`);
           },
         });
       }
@@ -63,11 +65,12 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
           children: t('assign'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/tests/assign/${asset.providerData.id}`);
+            history.push(`/private/feedback/assign/${asset.providerData.id}`);
           },
         });
       }
 
+      /*
       if (asset.duplicable && asset.providerData) {
         items.push({
           icon: <DuplicateIcon />,
@@ -113,6 +116,8 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
+
+       */
     }
 
     return items;
@@ -130,11 +135,11 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
   );
 };
 
-TestsListCard.propTypes = {
+FeedbackListCard.propTypes = {
   asset: PropTypes.any,
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
 };
 
-export default TestsListCard;
+export default FeedbackListCard;

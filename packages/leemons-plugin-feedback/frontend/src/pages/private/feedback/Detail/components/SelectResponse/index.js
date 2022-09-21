@@ -52,6 +52,7 @@ export function SelectResponse({ form, t, multi }) {
         <Controller
           control={form.control}
           name="properties.responses"
+          shouldUnregister
           rules={{
             required: t('responsesRequired'),
             validate: (a) => {
