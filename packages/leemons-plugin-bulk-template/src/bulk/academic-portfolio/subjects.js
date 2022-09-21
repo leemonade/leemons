@@ -38,7 +38,11 @@ async function importAcademicPortfolioSubjects({
         const dayValue = items[key][dayKey];
 
         if (dayValue && !isEmpty(dayValue)) {
-          const dayGroups = dayValue.split(',');
+          const dayGroups = dayValue
+            .split(',')
+            .map((val) => trim(val))
+            .filter((val) => !isEmpty(val));
+
           dayGroups.forEach((dayGroup) => {
             const [group, durationRaw] = dayGroup.split('@');
             const [start, end] = durationRaw.split('|');
