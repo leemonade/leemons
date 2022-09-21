@@ -17,12 +17,14 @@ import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { SelectResponse } from '@feedback/pages/private/feedback/Detail/components/SelectResponse';
 import { LikertScale } from './LikertScale';
 import { NetPromoterScore } from './NetPromoterScore';
+import { OpenResponse } from './OpenResponse';
 
 const questionComponents = {
   singleResponse: <SelectResponse />,
   multiResponse: <SelectResponse multi />,
   likertScale: <LikertScale />,
   netPromoterScore: <NetPromoterScore />,
+  openResponse: <OpenResponse />,
 };
 
 export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
