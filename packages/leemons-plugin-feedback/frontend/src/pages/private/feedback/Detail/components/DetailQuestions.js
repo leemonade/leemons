@@ -170,9 +170,9 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
             onClick={() => {
               qStore.trySend = true;
               qRender();
-              if (questions && questions.length) {
+              form.handleSubmit(() => {
                 onNext();
-              }
+              })();
             }}
           >
             {t('publish')}

@@ -4,7 +4,7 @@ import { Box, HtmlText } from '@bubbles-ui/components';
 // eslint-disable-next-line import/prefer-default-export
 export function getQuestionForTable(question, t, styles) {
   let responses = '-';
-  if (question.type === 'mono-response') {
+  if (question.type === 'singleResponse' || question.type === 'multiResponse') {
     responses = question.properties.responses.length;
   }
   return {

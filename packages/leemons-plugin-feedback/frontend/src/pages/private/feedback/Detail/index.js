@@ -14,7 +14,7 @@ import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { saveQuestionBankRequest } from '@tests/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { getFeedbackRequest } from '@feedback/request';
+import { getFeedbackRequest, saveFeedbackRequest } from '@feedback/request';
 
 import { useForm } from 'react-hook-form';
 import DetailBasic from '@feedback/pages/private/feedback/Detail/components/DetailBasic';
@@ -43,9 +43,9 @@ export default function Index() {
     try {
       store.saving = 'duplicate';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: false });
+      await saveFeedbackRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests/questions-banks');
+      history.push('/private/feedback');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -59,7 +59,7 @@ export default function Index() {
       render();
       await saveQuestionBankRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
-      history.push('/private/tests/questions-banks');
+      history.push('/private/feedback');
     } catch (error) {
       console.log(error);
       addErrorAlert(error);
@@ -164,9 +164,7 @@ export default function Index() {
             ]}
           >
             {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
-            {store.currentStep > 0 && (
-              <DetailQuestions t={t} form={form} onNext={() => setStep(1)} />
-            )}
+            {store.currentStep > 0 && <DetailQuestions t={t} form={form} onNext={saveAsPublish} />}
           </VerticalStepperContainer>
         </Box>
       </Stack>
