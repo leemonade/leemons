@@ -57,7 +57,15 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
       <QuestionForm
         t={t}
         onSave={onSave}
-        defaultValues={qStore.newQuestion ? {} : qStore.question}
+        defaultValues={
+          qStore.newQuestion
+            ? {
+                properties: {
+                  maxLabels: 3,
+                },
+              }
+            : qStore.question
+        }
         onCancel={onCancel}
       />
     );

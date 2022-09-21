@@ -6,10 +6,13 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { SelectResponse } from '@feedback/pages/private/feedback/Detail/components/SelectResponse';
+import { LikertScale } from './LikertScale';
 
 const questionComponents = {
   singleResponse: <SelectResponse />,
   multiResponse: <SelectResponse multi />,
+  likertScale: <LikertScale />,
+  netPromoterScore: <div></div>,
 };
 
 export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
@@ -69,6 +72,7 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
                   render={({ field }) => (
                     <TextEditorInput
                       required
+                      placeholder={type === 'likertScale' ? t('likertScalePlaceholder') : ''}
                       error={form.formState.errors.question}
                       label={t('questionLabel')}
                       {...field}
