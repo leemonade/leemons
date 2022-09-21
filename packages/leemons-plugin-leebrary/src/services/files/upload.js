@@ -357,6 +357,7 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
     return upload({ path, type: contentType }, { name }, { userSession, transacting });
   } catch (err) {
     console.error('ERROR: downloading file:', url);
+    console.dir(url, { depth: null });
     throw new Error(`-- ERROR: downloading file ${url} --`);
   }
 }

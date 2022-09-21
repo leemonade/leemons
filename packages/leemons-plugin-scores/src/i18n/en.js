@@ -15,6 +15,13 @@ module.exports = {
       shareWithTeachers: 'Share with teachers',
       saveButton: 'Save period',
       periodName: 'Period name',
+      customPeriod: 'Custom periods',
+      evaluations: 'Evaluations',
+      class: {
+        label: 'Class',
+        placeholder: 'Select a class',
+        error: 'A class is required',
+      },
       center: {
         label: 'Center',
         placeholder: 'Select a center',
@@ -42,7 +49,7 @@ module.exports = {
       },
     },
     adminDrawer: {
-      title: 'Evaluation periods',
+      title: 'Evaluation Periods',
       description:
         'As administrator, it is possible to create custom time periods for teachers to use as evaluation stages, for example, defining the evaluation periods by program and course.',
       new: 'New period',
@@ -81,7 +88,7 @@ module.exports = {
   },
   notebook: {
     header: {
-      export: 'Export grades to',
+      export: 'Download',
     },
     noClassSelected: {
       title: 'Evaluation Notebook',
@@ -102,7 +109,7 @@ module.exports = {
             student: 'Student',
             placeholder: 'Search by',
           },
-          search: 'Search',
+          search: 'Search by {{filterBy.toLowerCase}}',
           nonCalificables: 'See non-qualifiable',
         },
         scoresTable: {

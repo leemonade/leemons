@@ -1,7 +1,18 @@
 import * as _ from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import {
+  PageContainer,
+  Pager,
+  Badge,
+  Box,
+  SearchInput,
+  Paper,
+  Table,
+  Text,
+  ContextContainer,
+} from '@bubbles-ui/components';
 import { listFamiliesRequest } from '@families/request';
-// import { FormControl, Input, PageContainer, PageHeader, Table } from 'leemons--ui';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -25,22 +36,22 @@ function List() {
   const tableHeaders = useMemo(
     () => [
       {
-        Header: t('table.family'),
+        Header: t('table.family') || 'Family',
         accessor: 'name',
         className: 'text-left',
       },
       {
-        Header: t('table.guardians'),
-        accessor: ({ nGuardians }) => <div className="text-center">{nGuardians}</div>,
+        Header: t('table.guardians') || 'Guardians',
+        accessor: ({ nGuardians }) => <Text>{nGuardians}</Text>,
         className: 'text-center',
       },
       {
-        Header: t('table.students'),
-        accessor: ({ nStudents }) => <div className="text-center">{nStudents}</div>,
+        Header: t('table.students') || 'Students',
+        accessor: ({ nStudents }) => <Text>{nStudents}</Text>,
         className: 'text-center',
       },
       {
-        Header: t('table.actions'),
+        Header: t('table.actions') || 'Actions',
         accessor: 'actions',
         className: 'text-right',
       },
@@ -52,13 +63,13 @@ function List() {
     () =>
       pagination
         ? _.map(pagination.items, (item) => {
-            item.name = <div className="font-semibold">{item.name}</div>;
+            item.name = <Text strong>{item.name}</Text>;
             item.actions = (
-              <div className="text-right">
+              <Box>
                 <Link to={`/private/families/detail/${item.id}`} className="text-sm text-primary">
                   {t('view')}
                 </Link>
-              </div>
+              </Box>
             );
             return item;
           })
@@ -109,57 +120,45 @@ function List() {
     setPagination(await list());
   };
 
-  return 'Hay que remaquetar esta pagina con bubbles-ui';
-  /*
   return (
-    <>
-      <PageHeader title={t('title')} newButton={tCommon('new')} onNewButton={goDetailPage} />
-      <div className="bg-primary-content">
-        <PageContainer>
-          <div className="page-description pb-6 max-w-screen-sm">{t('description')}</div>
-          {pagination ? (
-            <>
-              <div className="page-description pb-6 max-w-screen-sm">
-                {t('families', { n: pagination.totalCount })}
-              </div>
-              <div className="flex">
-                <FormControl label={t('search')}>
-                  <div className="relative">
-                    <SearchIcon
-                      onClick={search}
-                      className={`w-6 h-6 transition absolute right-2 top-2 ${
-                        searchValue ? 'text-secondary cursor-pointer' : 'text-base-300'
-                      }`}
-                    />
-                    <Input
-                      value={searchValue}
-                      onChange={(e) => setSearchValue(e.target.value)}
-                      onKeyEnter={search}
-                      outlined={true}
-                      placeholder={t('search')}
-                      className="pr-10"
-                    />
-                  </div>
-                </FormControl>
-              </div>
-            </>
-          ) : null}
-        </PageContainer>
-      </div>
-      <PageContainer>
-        <LoadingErrorAlert />
-        <div className="bg-primary-content p-4">
-          {!loading && !loadingError ? (
-            <div>
-              <Table columns={tableHeaders} data={tableItems} />
-            </div>
-          ) : null}
-        </div>
-      </PageContainer>
-    </>
+    <ContextContainer fullHeight>
+      <AdminPageHeader
+        values={{ title: t('title'), description: t('description') }}
+        buttons={{ new: tCommon('new') }}
+        onNew={goDetailPage}
+      />
+      {pagination && (
+        <>
+          <PageContainer>
+            <Badge size="md" color="stroke" closable={false}>
+              {t('families', { n: pagination?.totalCount })}
+            </Badge>
+          </PageContainer>
+          <Paper color="solid" shadow="none" padding="none" fullWidth>
+            <PageContainer noFlex>
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <SearchInput
+                  label={t('search')}
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  placeholder={t('search')}
+                />
+              </Box>
+              <Paper padding={2} mt={20} mb={20} fullWidth>
+                <LoadingErrorAlert />
+                {!loading && !loadingError && (
+                  <Box>
+                    <Table columns={tableHeaders} data={tableItems} />
+                  </Box>
+                )}
+              </Paper>
+              <LoadingErrorAlert />
+            </PageContainer>
+          </Paper>
+        </>
+      )}
+    </ContextContainer>
   );
-
-   */
 }
 
 export default List;

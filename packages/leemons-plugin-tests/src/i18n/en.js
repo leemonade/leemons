@@ -66,7 +66,7 @@ module.exports = {
     explanationRequired: 'Field required',
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
-    explanationLabel: 'Explanation',
+    explanationLabel: 'EXPLANATION',
     caption: 'Caption/ Alt text',
     cluesLabel: 'Clues',
     addClue: 'Add clue',
@@ -279,6 +279,7 @@ module.exports = {
       '<strong>You can leave questions blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
     errorQuestions:
       '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
+    noErrorQuestions: 'Wrong answers do not deduct points',
     finishTestModalTitle: 'Complete and submit this test',
     finishTestModalDescription:
       'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
@@ -343,13 +344,21 @@ module.exports = {
     categoriesLabel: 'Categories',
     noRequiredQuestions: 'The filtered questions are fewer than those requested',
     level: 'Nivel',
+    defaultRules: {
+      title: 'Default test rules',
+      canOmit: 'Questions may be omitted and do not detract from the score.',
+      errorQuestions: 'Wrong questions do not detract from the score',
+      canClue: 'Hints may be used (if available) and their use does not detract from the score.',
+      useAdvanced:
+        'If you wish to change this default setting, use the advanced configuration option below.',
+    },
   },
   testResult: {
     testResult: 'Statistics by type of question',
     questions: 'Questions',
     test: 'Test',
-    notGradable: 'Not gradable',
-    gradable: 'Gradable',
+    notGradable: 'Non-qualifiable',
+    gradable: 'Qualifiable',
     category: 'Category',
     level: 'Level',
     undefined: 'Undefined',
@@ -363,5 +372,9 @@ module.exports = {
     ok: 'Successful',
     ko: 'Wrong',
     nsnc: 'NS/NC',
+    chatDescription: 'Do you have any questions about this evaluation?',
+    chatTeacherDescription: 'Would you like to write a comment?',
+    chatButtonStudent: 'Write to your student',
+    chatButtonTeacher: 'Write to your teacher',
   },
 };

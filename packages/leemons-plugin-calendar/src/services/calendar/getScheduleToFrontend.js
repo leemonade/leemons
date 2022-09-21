@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+const { programsByIds } = require('leemons-plugin-academic-portfolio/src/services/programs');
 
 function getBreakData(breaks) {
   const start = new Date();
@@ -26,19 +27,34 @@ function getBreakData(breaks) {
 
 async function getScheduleToFrontend(userSession, { transacting } = {}) {
   if (userSession.sessionConfig?.program) {
+    const academicCalendar = leemons.getPlugin('academic-calendar');
+    const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
     // eslint-disable-next-line prefer-const
-    let [classes, config] = await Promise.all([
-      leemons
-        .getPlugin('academic-portfolio')
-        .services.classes.listSessionClasses(
-          userSession,
-          { program: userSession.sessionConfig.program },
-          { withProgram: true, withTeachers: true, transacting }
-        ),
-      leemons
-        .getPlugin('academic-calendar')
-        .services.config.getConfig(userSession.sessionConfig.program, { transacting }),
+    let [classes, [program], config] = await Promise.all([
+      academicPortfolioServices.classes.listSessionClasses(
+        userSession,
+        { program: userSession.sessionConfig.program },
+        { withProgram: true, withTeachers: true, transacting }
+      ),
+      academicPortfolioServices.programs.programsByIds([userSession.sessionConfig.program], {
+        userSession,
+        transacting,
+      }),
+      academicCalendar
+        ? academicCalendar.services.config.getConfig(userSession.sessionConfig.program, {
+            transacting,
+          })
+        : null,
     ]);
+    const allClasses = classes;
+    let allCourses = [];
+
+    _.forEach(allClasses, (classe) => {
+      const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
+      allCourses = allCourses.concat(classCourses);
+    });
+
+    if (config) config.program = program;
 
     classes = _.filter(classes, ({ schedule }) => schedule && schedule.length);
 
@@ -161,6 +177,8 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
       },
       calendarConfigByCourse: configByCourse,
       classes,
+      allClasses,
+      allCourses: _.sortBy(_.uniqBy(allCourses, 'id'), ['index']),
       courses,
       config,
     };

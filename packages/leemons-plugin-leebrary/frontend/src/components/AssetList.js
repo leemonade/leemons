@@ -322,7 +322,9 @@ const AssetList = ({
   useEffect(() => setCategories(categoriesProp), [categoriesProp]);
   useEffect(() => setAssetType(assetTypeProp), [assetTypeProp]);
   useEffect(() => setShowPublic(showPublicProp), [showPublicProp]);
-  useEffect(() => onLoading(loading), [loading]);
+  useEffect(() => {
+    onLoading(loading);
+  }, [loading]);
 
   useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {

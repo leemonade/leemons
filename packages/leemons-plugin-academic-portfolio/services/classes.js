@@ -15,6 +15,7 @@ const { add: addTeacher } = require('../src/services/classes/teacher/add');
 const {
   removeByClass: removeTeachersByClass,
 } = require('../src/services/classes/teacher/removeByClass');
+const { getTeachersByClass } = require('../src/services/classes/getTeachersByClass');
 
 module.exports = {
   listSessionClasses,
@@ -22,6 +23,9 @@ module.exports = {
   student: {
     getByClassAndUserAgent: studentGetByClassAndUserAgent,
     getByClass,
+  },
+  teacher: {
+    getByClass: getTeachersByClass,
   },
   classByIds,
   addClass,

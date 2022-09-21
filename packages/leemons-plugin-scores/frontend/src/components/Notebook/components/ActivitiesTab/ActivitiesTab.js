@@ -2,13 +2,12 @@ import React, { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
-  Button,
   createStyles,
   ImageLoader,
+  Loader,
   ProSwitch,
   SearchInput,
   Select,
-  Switch,
   Text,
   Title,
   useResizeObserver,
@@ -31,7 +30,6 @@ import { CutStarIcon } from '@bubbles-ui/icons/solid';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 import generateExcel from '@scores/components/ExcelExport/excel';
 import getFile from '@scores/components/ExcelExport/excel/config/getFile';
-import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import noResults from '../../assets/noResults.png';
 
@@ -48,16 +46,19 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing[2],
+    gap: theme.spacing[4],
+  },
+  leftFiltersGroup: {
+    gap: theme.spacing[1],
   },
 }));
 
 function Filters({ onChange, labels }) {
-  const { classes, theme } = useStyles();
+  const { classes, theme, cx } = useStyles();
   const { control, watch } = useForm({
     defaultValues: {
       search: '',
-      filterBy: null,
+      filterBy: 'student',
       showNonCalificables: false,
     },
   });
@@ -78,14 +79,8 @@ function Filters({ onChange, labels }) {
 
   React.useEffect(() => {
     if (isFunction(onChange)) {
-      let timer;
       const subscription = watch((values) => {
-        if (timer) {
-          clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-          onChange(values);
-        }, 500);
+        onChange(values);
       });
 
       return subscription.unsubscribe;
@@ -104,24 +99,45 @@ function Filters({ onChange, labels }) {
   return (
     <Box className={classes.filters}>
       <Box className={classes.leftFilters}>
-        <Controller
-          control={control}
-          name="filterBy"
-          render={({ field }) => (
-            <Select
-              variant="unstyled"
-              placeholder={labels?.filterBy?.placeholder}
-              style={{ width: `${filterByLength + 5}ch` }}
-              data={filterBy}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="search"
-          render={({ field }) => <SearchInput placeholder={labels?.search} {...field} />}
-        />
+        <Box className={cx(classes.leftFilters, classes.leftFiltersGroup)}>
+          <Controller
+            control={control}
+            name="filterBy"
+            render={({ field }) => (
+              <>
+                <Select
+                  placeholder={labels?.filterBy?.placeholder}
+                  style={{ width: `${filterByLength + 5}ch` }}
+                  data={filterBy}
+                  ariaLabel={labels?.filterBy?.placeholder}
+                  {...field}
+                />
+              </>
+            )}
+          />
+          <Controller
+            control={control}
+            name="search"
+            render={({ field }) => {
+              const filterByValue = watch('filterBy');
+              return (
+                <SearchInput
+                  wait={300}
+                  placeholder={labels?.search
+                    ?.replace(
+                      '{{filterBy}}',
+                      filterBy.find((item) => item.value === filterByValue).label
+                    )
+                    ?.replace(
+                      '{{filterBy.toLowerCase}}',
+                      filterBy.find((item) => item.value === filterByValue).label.toLowerCase()
+                    )}
+                  {...field}
+                />
+              );
+            }}
+          />
+        </Box>
         <Controller
           control={control}
           name="showNonCalificables"
@@ -149,6 +165,7 @@ function useTableData({ filters, localFilters }) {
     { program: filters.program },
     { enabled: !!filters.program }
   );
+
   const selectedClasses = React.useMemo(() => {
     if (!sessionClasses) {
       return [];
@@ -165,15 +182,16 @@ function useTableData({ filters, localFilters }) {
     return classesMatchingFilters;
   }, [sessionClasses, filters]);
 
-  const { data: activities } = useSearchAssignableInstances(
-    {
-      finished: true,
-      finished_$gt: filters.startDate,
-      finished_$lt: filters.endDate,
-      classes: JSON.stringify(selectedClasses),
-    },
-    { enabled: !!selectedClasses.length }
-  );
+  const { data: activities, isLoading: isLoadingSearchAssignableInstances } =
+    useSearchAssignableInstances(
+      {
+        finished: true,
+        finished_$gt: filters.startDate,
+        finished_$lt: filters.endDate,
+        classes: JSON.stringify(selectedClasses),
+      },
+      { enabled: !!selectedClasses.length }
+    );
 
   const assignableInstancesQueries = useAssignableInstances({ id: activities || [] });
 
@@ -187,11 +205,18 @@ function useTableData({ filters, localFilters }) {
     return uniq(map(stdnts, 'user'));
   }, [assignableInstances]);
 
-  const { data: studentsData } = useUserAgentsInfo(students, { enabled: !!students.length });
+  const { data: studentsData, isLoading: isLoadingStudentsData } = useUserAgentsInfo(students, {
+    enabled: !!students.length,
+  });
   const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0]);
 
+  const isLoading =
+    isLoadingSearchAssignableInstances ||
+    isLoadingStudentsData ||
+    assignableInstancesQueries.some((q) => q.isLoading);
+
   const activitiesData = React.useMemo(() => {
-    if (!studentsData?.length || !activities?.length) {
+    if (isLoading || !studentsData?.length || !activities?.length) {
       return {};
     }
 
@@ -291,6 +316,7 @@ function useTableData({ filters, localFilters }) {
   }, [assignableInstances, studentsData, localFilters, filters]);
 
   return {
+    isLoading,
     activitiesData,
     grades: evaluationSystem?.scales.sort((a, b) => a.number - b.number),
   };
@@ -353,6 +379,7 @@ function ScoresTable({ activitiesData, grades, filters, onOpen, labels }) {
               )
             );
         }}
+        hideCustom
         onOpen={onOpen}
         from={filters?.startDate}
         to={filters?.endDate}
@@ -419,10 +446,32 @@ function EmptyState() {
   );
 }
 
+function LoadingState() {
+  const [ref, rect] = useResizeObserver();
+
+  const top = React.useMemo(() => ref.current?.getBoundingClientRect()?.top, [ref, rect]);
+
+  return (
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: `calc(100vh - ${top}px)`,
+        width: '100%',
+        backgroundColor: theme.white,
+      })}
+      ref={ref}
+    >
+      {ref.current && <Loader />}
+    </Box>
+  );
+}
+
 export default function ActivitiesTab({ filters, labels }) {
   const { classes } = useStyles();
   const [localFilters, setLocalFilters] = React.useState({});
-  const { activitiesData, grades } = useTableData({ filters, localFilters });
+  const { activitiesData, grades, isLoading } = useTableData({ filters, localFilters });
 
   const { data: programData } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
   const { data: subjectData } = useSubjectDetails(filters.subject, { enabled: !!filters.subject });
@@ -483,10 +532,13 @@ export default function ActivitiesTab({ filters, labels }) {
     window.open(url.replace(':id', columnId).replace(':user', rowId), '_blank');
   };
 
-  return (
-    <Box>
-      <Filters onChange={setLocalFilters} labels={labels?.filters} />
-      {activitiesData?.activities?.length && grades?.length && activitiesData?.value?.length ? (
+  const renderView = () => {
+    if (isLoading) {
+      return <LoadingState />;
+    }
+
+    if (activitiesData?.activities?.length && grades?.length && activitiesData?.value?.length) {
+      return (
         <ScoresTable
           activitiesData={activitiesData}
           grades={grades}
@@ -494,9 +546,16 @@ export default function ActivitiesTab({ filters, labels }) {
           onOpen={handleOpen}
           labels={labels?.scoresTable}
         />
-      ) : (
-        <EmptyState />
-      )}
+      );
+    }
+
+    return <EmptyState />;
+  };
+
+  return (
+    <Box>
+      <Filters onChange={setLocalFilters} labels={labels?.filters} />
+      {renderView()}
     </Box>
   );
 }

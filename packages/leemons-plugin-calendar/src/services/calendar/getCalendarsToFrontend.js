@@ -480,12 +480,20 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       }
     });
 
-    [assignations, instances, kanbanColumns] = await Promise.all([
-      Promise.all(assignationsPromises),
-      Promise.all(instancePromises),
+    const [_assignations, _instances, _kanbanColumns] = await Promise.all([
+      Promise.allSettled(assignationsPromises),
+      Promise.allSettled(instancePromises),
       leemons.plugin.services.kanban.listColumns({ transacting }),
     ]);
-  } catch (e) {}
+
+    assignations = _.map(_.filter(_assignations, { status: 'fulfilled' }), 'value');
+    instances = _.map(_.filter(_instances, { status: 'fulfilled' }), 'value');
+    kanbanColumns = _kanbanColumns;
+  } catch (e) {
+    console.error(e);
+  }
+
+  console.log('instances', instances);
 
   const instancesById = _.keyBy(instances, 'id');
   const assignationsByInstance = _.keyBy(assignations, 'instance');
@@ -534,6 +542,11 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       if (instanceIdEvents[event.id]) {
         const instance = instancesById[instanceIdEvents[event.id]];
         const assignation = assignationsByInstance[instanceIdEvents[event.id]];
+
+        if (instance && (event.endDate || event.startDate) && instance.dates.deadline) {
+          event.startDate = instance.dates.deadline;
+          event.endDate = instance.dates.deadline;
+        }
         if (instance && assignation) {
           event.disableDrag = true;
           const now = new Date();

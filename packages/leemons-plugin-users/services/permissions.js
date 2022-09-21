@@ -35,7 +35,8 @@ module.exports = {
   countItems: itemPermissions.count,
   removeItems: itemPermissions.remove,
   addItemBasicIfNeed: itemPermissions.addBasicIfNeed,
-
+  getItemPermissions: itemPermissions.getItemPermissions,
+  getUserAgentsWithPermissionsForItem: itemPermissions.getUserAgentsWithPermissionsForItem,
   // User profile
   addCustomPermissionToUserProfile: userProfile.addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile: userProfile.removeCustomPermissionToUserProfile,

@@ -1,0 +1,193 @@
+{
+  "permissions": [
+    {
+      "permissionName": "plugins.users.users",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.users.user-data",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.users.centers",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.users.profiles",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.dataset.dataset",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.calendar.calendar",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.academic-portfolio.portfolio",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.academic-portfolio.programs",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.academic-portfolio.profiles",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.academic-portfolio.subjects",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.academic-portfolio.tree",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.timetable.config",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.timetable.timetable",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.tasks.tasks",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.tasks.library",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.tasks.profiles",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.curriculum.curriculum",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.curriculum.curriculum-menu",
+      "actionNames": [
+        "view"
+      ]
+    },
+    {
+      "permissionName": "plugins.leebrary.library",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.grades.rules",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.grades.evaluations",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.grades.promotions",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.grades.dependencies",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.tests.tests",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.tests.questionsBanks",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.assignables.activities",
+      "actionNames": [
+        "view"
+      ]
+    },
+    {
+      "permissionName": "plugins.assignables.ongoing",
+      "actionNames": [
+        "view"
+      ]
+    },
+    {
+      "permissionName": "plugins.assignables.history",
+      "actionNames": [
+        "view"
+      ]
+    },
+    {
+      "permissionName": "plugins.scores.periods",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.scores.scoresMenu",
+      "actionNames": [
+        "view"
+      ]
+    },
+    {
+      "permissionName": "plugins.academic-calendar.config",
+      "actionNames": [
+        "admin"
+      ]
+    }
+  ],
+  "name": "Admin",
+  "description": "Profile for platform administrators",
+  "indexable": true
+}

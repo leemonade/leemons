@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@bubbles-ui/leemons';
+import {createStyles} from '@bubbles-ui/components';
+import {LibraryCard} from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { deleteQuestionBankRequest } from '@tests/request';
-import { useHistory } from 'react-router-dom';
+import {DeleteBinIcon, EditWriteIcon} from '@bubbles-ui/icons/solid';
+import {addErrorAlert, addSuccessAlert} from '@layout/alert';
+import {deleteQuestionBankRequest} from '@tests/request';
+import {useHistory} from 'react-router-dom';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
+import {useLayout} from '@layout/context';
 
-const ListCardStyles = createStyles((theme, { selected }) => ({
+const ListCardStyles = createStyles((theme, {selected}) => ({
   root: {
     cursor: 'pointer',
     borderColor: selected && theme.colors.interactive01d,
@@ -20,10 +20,10 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
+const QuestionsBanksListCard = ({asset, selected, onRefresh, ...props}) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
-  const { classes } = ListCardStyles({ selected });
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const {classes} = ListCardStyles({selected});
+  const {openConfirmationModal, openDeleteConfirmationModal} = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
@@ -32,17 +32,19 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
     const items = [];
 
     if (asset?.id) {
-      items.push({
-        icon: <EditWriteIcon />,
-        children: t('edit'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/tests/questions-banks/${asset.providerData.id}`);
-        },
-      });
+      if (asset.editable) {
+        items.push({
+          icon: <EditWriteIcon/>,
+          children: t('edit'),
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/tests/questions-banks/${asset.providerData.id}`);
+          },
+        });
+      }
       if (asset.deleteable) {
         items.push({
-          icon: <DeleteBinIcon />,
+          icon: <DeleteBinIcon/>,
           children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();

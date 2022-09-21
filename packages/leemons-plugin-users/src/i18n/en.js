@@ -161,8 +161,8 @@ module.exports = {
     password: 'Password',
     repeatPassword: 'Repeat password',
     setPassword: 'Set password',
-    repeatPasswordPlaceholder: 'Your password',
-    passwordPlaceholder: 'Repeat your password',
+    repeatPasswordPlaceholder: 'Repeat your password',
+    passwordPlaceholder: 'Your password',
     passwordMatch: 'Passwords not match',
     tokenError: 'The code to set the password has expired or is not valid, contact your center.',
   },
@@ -175,6 +175,8 @@ module.exports = {
     returnLogin: 'Return to login',
     emailSendTo: 'We have sent you an email to: {email}',
     emailRequired: 'Email required',
+    accountNotActive:
+      'Your account is not yet active, we have sent you the activation email from which you can set your password.',
   },
   reset: {
     title: 'Create new password',
@@ -218,6 +220,8 @@ module.exports = {
     female: 'Female',
     pageTitle: 'Create users',
     centerLabel: 'Center',
+    centersLabel: 'Centers',
+    centersRequired: 'Centers required',
     profileLabel: 'Profile',
     emailHeader: 'Email',
     passwordHeader: 'Password',

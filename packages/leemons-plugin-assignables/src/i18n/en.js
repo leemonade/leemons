@@ -33,6 +33,8 @@ module.exports = {
       },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
+      addNewClassStudents: 'Automatically assign to newly enrolled students',
+      clearStudents: 'Clear students',
       subjects: {
         title: 'Subjects to be evaluated in this activity',
         subtitle: 'NOTE: At least one of them',
@@ -170,12 +172,21 @@ module.exports = {
         label: 'Actions',
         SEND_REMINDER: 'Send reminder',
       },
+      rememberModal: {
+        title: 'Send reminder to students that:',
+        notOpen: 'They have not opened the activity',
+        notEnd: 'They have not finished the activity',
+        send: 'Send',
+        sended: 'Reminder sent',
+      },
       studentListcolumns: {
         student: 'Student',
         status: 'Status',
         completed: 'Completed',
         avgTime: 'Avg. time',
         score: 'Score',
+        unreadMessages: 'Messages',
+        sendReminder: 'Send reminder',
       },
     },
     placeholders: {
@@ -204,6 +215,7 @@ module.exports = {
     sendReminder: 'Send reminder',
     evaluate: 'Evaluate',
     review: 'Review',
+    reminderSended: 'Reminder sent',
   },
   levelsOfDifficulty: {
     beginner: 'Beginner',
@@ -224,6 +236,7 @@ module.exports = {
       open: 'Open',
       ongoing: 'Ongoing',
       completed: 'Completed',
+      unreadMessages: 'Messages',
     },
     student: {
       task: 'Task',
@@ -233,6 +246,8 @@ module.exports = {
       status: 'Status',
       timeReference: 'Time reference',
       submission: 'Submission',
+      grade: 'Grade',
+      unreadMessages: 'Messages',
     },
   },
   multiSubject: 'Multi-subject',
@@ -265,6 +280,9 @@ module.exports = {
       subject: 'Subject',
       submission: 'Submissions',
       avgTime: 'Avg. time',
+      grade: 'Grade',
+      score: 'Score',
+      activityType: 'Activity type',
     },
   },
   pagination: {

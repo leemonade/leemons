@@ -167,8 +167,8 @@ module.exports = {
             description: 'Descripción',
             FileType: {
               multiFile: 'Permitir varios archivos',
-              type: 'Tipo de archivo',
-              typePlaceholder: 'Añadir tipo de archivo',
+              format: 'Formato de archivo',
+              formatPlaceholder: 'Escribir extensión y añadir (pdf, xls, doc...)',
               maxSize: 'Tamaño máximo',
               required: 'Campo necesario',
             },
@@ -329,6 +329,7 @@ module.exports = {
     delete: 'Eliminar',
     duplicate: 'Duplicar',
   },
+  variant: 'Tarea',
   task_realization: {
     confirmation_modal: {
       labels: {
@@ -425,6 +426,10 @@ module.exports = {
     },
   },
   task_correction: {
+    chatDescription: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+    chatTeacherDescription: '¿Quieres escribir alguna observación?',
+    chatButtonStudent: 'Escribe a tu alumno',
+    chatButtonTeacher: 'Escribe a tu profesor',
     punctuation: 'Puntuación',
     minToPromote: 'Min. para aprobar',
     feedbackForStudent: 'Feedback para el estudiante',

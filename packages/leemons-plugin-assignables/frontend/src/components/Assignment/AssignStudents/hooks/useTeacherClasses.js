@@ -35,9 +35,9 @@ export default function useTeacherClasses() {
     ).map((_class) => ({
       id: _class.id,
       // TODO: Update to standard class name
-      label: `${getCourseName(_class.courses)} - ${_class.subject.name} (${
-        _class.groups?.abbreviation
-      })`,
+      label: `${getCourseName(_class.courses)}${_class.subject.name} ${
+        _class.groups?.abbreviation ? ` - (${_class.groups.abbreviation})` : ''
+      }`,
       subject: _class.subject.id,
       teachers: _class.teachers,
       c: _class,
@@ -46,7 +46,9 @@ export default function useTeacherClasses() {
     setData(classes);
   };
 
-  useEffect(getClasses, [userAgents]);
+  useEffect(() => {
+    getClasses();
+  }, [userAgents]);
 
   return data;
 }

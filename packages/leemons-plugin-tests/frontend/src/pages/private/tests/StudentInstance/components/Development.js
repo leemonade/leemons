@@ -122,10 +122,14 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/error-questions.png"
           styles={styles}
-          label={t('errorQuestions', {
-            per: store.config.wrong,
-            points: store.questionsInfo.perErrorQuestion,
-          })}
+          label={
+            store.config.wrong
+              ? t('errorQuestions', {
+                  per: store.config.wrong,
+                  points: store.questionsInfo.perErrorQuestion,
+                })
+              : t('noErrorQuestions')
+          }
         />
       </Box>
 

@@ -10,7 +10,7 @@ async function addCalendarToUserAgent(userAgent, { transacting } = {}) {
     calendarKey,
     {
       name: userAgent,
-      bgColor: '#4F96FF',
+      bgColor: '#3C72C2',
       borderColor: '#4F96FF',
       section: leemons.plugin.prefixPN('calendar.user_section'),
     },

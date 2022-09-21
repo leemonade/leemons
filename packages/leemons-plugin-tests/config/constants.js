@@ -173,6 +173,8 @@ const assignableRoles = [
       creatable: true,
       createUrl: '/private/tests/new',
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      pluralName: { en: 'tests', es: 'tests' },
+      singularName: { en: 'test', es: 'test' },
       menu: {
         item: {
           iconSvg: '/public/tests/menu-icon.svg',

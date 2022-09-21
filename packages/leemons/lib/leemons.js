@@ -2,6 +2,7 @@ const http = require('http');
 const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
+const cors = require('@koa/cors');
 const request = require('request');
 const events = require('events-async');
 const execa = require('execa');
@@ -140,6 +141,17 @@ class Leemons {
 
   // Initialize the server config with http server
   initServer() {
+    // Enable global cors
+    if (process.env.CORS) {
+      leemons.log.debug('CORS ENABLED: Allowing all incoming traffic');
+
+      const options = {
+        origin: '*',
+      };
+
+      this.app.use(cors(options));
+    }
+
     // Add front router to KOA
     this.app.use(this.frontRouter.routes());
     // Add backRouter to app
@@ -268,6 +280,15 @@ class Leemons {
       try {
         // TODO: Ahora mismo con que cualquiera de los user auth tenga permiso pasa al controlador, aqui entra la duda de si se le deberian de pasar todos los user auth o solo los que tengan permiso, por qe es posible que relacione algun dato a un user auth que realmente no deberia de tener acceso
         // TODO QUITAR LOS USER AUTH QUE NO TENGAN EL PERMISO
+        if (!ctx.state.userSession) {
+          ctx.status = 401;
+          ctx.body = {
+            status: 401,
+            message:
+              'No user session found for check permissions, check if endpoint have [authenticated: true] property',
+          };
+          return undefined;
+        }
         const hasPermission = await this.plugins.users.services.users.hasPermissionCTX(
           ctx.state.userSession,
           allowedPermissions
@@ -369,6 +390,27 @@ class Leemons {
       ctx.body = { reloading: true };
       this.reload();
     });
+
+    if (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) {
+      this.backRouter.get('/api/database/restore', async (ctx) => {
+        try {
+          await this.db.reloadDatabase();
+
+          ctx.status = 200;
+          ctx.body = {
+            status: 200,
+            message: 'Database reloaded',
+          };
+        } catch (e) {
+          ctx.status = 500;
+          ctx.body = {
+            status: 500,
+            message: 'Error reloading database',
+            details: e.message,
+          };
+        }
+      });
+    }
 
     plugins.forEach((plugin) => {
       if (_.isArray(plugin.routes)) {
@@ -591,7 +633,7 @@ class Leemons {
   async loadAppConfig() {
     return withTelemetry('loadAppConfig', async () => {
       leemons.events.emit('appWillLoadConfig', 'leemons');
-      this.config = (await loadConfiguration(this)).configProvider;
+      this.config = (await loadConfiguration(this, { useProcessEnv: true })).configProvider;
       leemons.events.emit('appDidLoadConfig', 'leemons');
 
       if (this.config.get('config.insecure', false)) {

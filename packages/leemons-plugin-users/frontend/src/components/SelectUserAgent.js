@@ -28,13 +28,13 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
 // ES: El componente para el componente MultiSelect de valores seleccionados
-export function SelectUserAgentValueComponent({ onRemove, ...props }) {
+export function SelectUserAgentValueComponent({ onRemove, value, ...props }) {
   return (
     <Stack sx={(theme) => ({ paddingRight: theme.spacing[1] })}>
       <UserDisplayItem {...props} />
       {onRemove ? (
         <Box>
-          <ActionButton icon={<RemoveIcon />} onClick={onRemove} />
+          <ActionButton icon={<RemoveIcon />} onClick={() => onRemove(value)} />
         </Box>
       ) : null}
     </Stack>
@@ -136,6 +136,14 @@ const SelectUserAgent = forwardRef(
       onChange(values, userAgent);
     }
 
+    function onRemoveHandler(userId) {
+      const index = inputValue.indexOf(userId);
+      if (index > -1) {
+        inputValue.splice(index, 1);
+        handleChange(inputValue);
+      }
+    }
+
     // EN: Handle controlled input value by adding the selected values to the data array
     // ES: Maneja el valor de entrada controlado añadiendo los valores seleccionados al array de datos
     async function onValueChange(propValues) {
@@ -204,30 +212,32 @@ const SelectUserAgent = forwardRef(
 
     // EN: Allow the user to select the users to display
     // ES: Permite al usuario seleccionar los usuarios a mostrar
-    useEffect(async () => {
-      if (users) {
-        if (users.length && users[0].name) {
-          setUsersData(users);
-        } else {
-          let data = await getUserAgentsInfoRequest(users, {
-            withCenter: true,
-            withProfile: true,
-          });
+    useEffect(() => {
+      (async () => {
+        if (users) {
+          if (users.length && users[0].name) {
+            setUsersData(users);
+          } else {
+            let data = await getUserAgentsInfoRequest(users, {
+              withCenter: true,
+              withProfile: true,
+            });
 
-          data = data.userAgents.map((item) => ({
-            ...item.user,
-            variant: 'rol',
-            rol: item.profile.name,
-            center: item.center.name,
-            value: item.id,
-            label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
-          }));
+            data = data.userAgents.map((item) => ({
+              ...item.user,
+              variant: 'rol',
+              rol: item.profile.name,
+              center: item.center.name,
+              value: item.id,
+              label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+            }));
 
-          setUsersData(data);
+            setUsersData(data);
+          }
+        } else if (usersData) {
+          setUsersData(null);
         }
-      } else if (usersData) {
-        setUsersData(null);
-      }
+      })();
     }, [users]);
 
     // EN: Initial search for the first render
@@ -299,7 +309,9 @@ const SelectUserAgent = forwardRef(
         searchable
         onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
-        valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
+        valueComponent={(p) => (
+          <ValueComponent {...p} {...valueRenderProps} onRemove={onRemoveHandler} />
+        )}
         maxSelectedValues={maxSelectedValues}
         data={usersData || data}
         // EN: The value can be an array or a single value (string), so convert it to an array
@@ -329,6 +341,7 @@ SelectUserAgent.propTypes = {
 
 SelectUserAgentValueComponent.propTypes = {
   onRemove: PropTypes.func,
+  value: PropTypes.string,
 };
 
 export { SelectUserAgent };

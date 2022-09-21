@@ -9,8 +9,12 @@ async function updateAvatar(userId, avatar, { transacting: _transacting } = {}) 
 
       if (!_.isUndefined(avatar)) {
         const userAgents = await table.userAgent.find({ user: user.id }, { transacting });
-        await addUserAvatar({ ...user, userAgents }, avatar, { transacting });
-        leemons.socket.emit(userId, 'USER_CHANGE_AVATAR');
+        const { avatar: url } = await addUserAvatar({ ...user, userAgents }, avatar, {
+          transacting,
+        });
+
+        console.log(url);
+        leemons.socket.emitToAll('USER_CHANGE_AVATAR', { url });
       }
 
       return user;

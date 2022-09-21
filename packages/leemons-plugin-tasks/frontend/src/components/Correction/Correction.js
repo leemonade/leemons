@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import _ from 'lodash';
@@ -133,7 +133,7 @@ export default function Correction({ assignation, instance, loading }) {
         visibleToStudent: sendToStudent,
       };
 
-      if (assignation.instance.requiresScoring && !grade.score) {
+      if (assignation.instance.requiresScoring && _.isNil(grade.score)) {
         throw new Error('The score is required');
       }
 
@@ -193,6 +193,7 @@ export default function Correction({ assignation, instance, loading }) {
             labels={labels}
             instance={instance}
             user={assignation?.user}
+            assignationId={assignation.id}
             scoreInputProps={scoreInputProps}
           />
         </SubjectTabs>

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const socketIO = require('socket.io');
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const cluster = require('cluster');
 
 let io;
@@ -38,7 +38,11 @@ class LeemonsSocketWorker {
 
   static emit(id, eventName, eventData) {
     const ids = _.isArray(id) ? id : [id];
-    LeemonsSocketWorker.__emit('emitEvent', { ids, eventName, eventData });
+    LeemonsSocketWorker.__emit('emitEvent', {ids, eventName, eventData});
+  }
+
+  static emitToAll(eventName, eventData) {
+    LeemonsSocketWorker.__emit('emitToAllEvent', {eventName, eventData});
   }
 
   static getSockets() {
@@ -46,7 +50,7 @@ class LeemonsSocketWorker {
   }
 
   /** @private */
-  static async __onEvent({ subtype, type, uuid, data }) {
+  static async __onEvent({subtype, type, uuid, data}) {
     if (subtype === 'socket.io:store') {
       if (events[uuid]) {
         await events[uuid](data);
@@ -62,20 +66,28 @@ class LeemonsSocketWorker {
     const uuid = uuidv4();
     if (callback) events[uuid] = callback;
     if (_.isFunction(process.send)) {
-      process.send({ subtype: 'socket.io:store', type, uuid, data });
+      process.send({subtype: 'socket.io:store', type, uuid, data});
     } else {
-      LeemonsSocketWorker.__onEvent({ subtype: 'socket.io:store', type, uuid, data });
+      LeemonsSocketWorker.__onEvent({subtype: 'socket.io:store', type, uuid, data});
     }
   }
 
   /** @private */
-  static async __emitEvent({ ids, eventName, eventData }) {
+  static async __emitToAllEvent({eventName, eventData}) {
+    const sockets = await LeemonsSocketWorker.getSockets();
+    _.forEach(sockets, (socket) => {
+      socket.emit(eventName, eventData);
+    });
+  }
+
+  /** @private */
+  static async __emitEvent({ids, eventName, eventData}) {
     const sockets = await LeemonsSocketWorker.getSockets();
     _.forEach(sockets, (socket) => {
       if (ids.indexOf(socket.session.id) >= 0) {
         socket.emit(eventName, eventData);
       } else if (_.isArray(socket.session.userAgents)) {
-        const userAgent = _.find(socket.session.userAgents, ({ id }) => ids.indexOf(id) >= 0);
+        const userAgent = _.find(socket.session.userAgents, ({id}) => ids.indexOf(id) >= 0);
         if (userAgent) socket.emit(eventName, eventData);
       }
     });
@@ -91,7 +103,7 @@ class LeemonsSocketMain {
 
   /** @private */
   static __emit(worker, uuid, type, data) {
-    worker.send({ subtype: 'socket.io:store', type, uuid, data });
+    worker.send({subtype: 'socket.io:store', type, uuid, data});
   }
 
   /** @private */
@@ -102,7 +114,14 @@ class LeemonsSocketMain {
   }
 
   /** @private */
-  static __onEvent({ subtype, type, uuid, data }) {
+  static __emitToAllEvent(uuid, data) {
+    for (const id in cluster.workers) {
+      LeemonsSocketMain.__emit(cluster.workers[id], null, 'emitToAllEvent', data);
+    }
+  }
+
+  /** @private */
+  static __onEvent({subtype, type, uuid, data}) {
     if (subtype === 'socket.io:store') {
       if (LeemonsSocketMainFunctions[type]) {
         LeemonsSocketMainFunctions[type](uuid, data);
@@ -113,10 +132,12 @@ class LeemonsSocketMain {
 
 const LeemonsSocketWorkerFunctions = {
   emitEvent: LeemonsSocketWorker.__emitEvent,
+  emitToAllEvent: LeemonsSocketWorker.__emitToAllEvent,
 };
 
 const LeemonsSocketMainFunctions = {
   emitEvent: LeemonsSocketMain.__emitEvent,
+  emitToAllEvent: LeemonsSocketMain.__emitToAllEvent,
 };
 
 class LeemonsSocket {

@@ -9,20 +9,31 @@ async function getProgramTreeTypes(programId, { transacting } = {}) {
     program = programId;
   }
 
+  const haveCycles = await table.cycles.count({ program: program.id }, { transacting });
+
   // subject
   let result = [];
   switch (program.treeType) {
     case 2:
       result = ['center', 'program', 'courses', 'groups', 'knowledges', 'subjectType'];
+      if (haveCycles) {
+        result = ['center', 'program', 'cycles', 'courses', 'groups', 'knowledges', 'subjectType'];
+      }
       break;
     case 3:
       result = ['center', 'program', 'courses', 'subjectType', 'knowledges'];
+      if (haveCycles) {
+        result = ['center', 'program', 'cycles', 'courses', 'subjectType', 'knowledges'];
+      }
       break;
     case 4:
       result = ['center', 'program', 'subjectType', 'knowledges'];
       break;
     default:
       result = ['center', 'program', 'courses', 'groups', 'subjectType', 'knowledges'];
+      if (haveCycles) {
+        result = ['center', 'program', 'cycles', 'courses', 'groups', 'subjectType', 'knowledges'];
+      }
       break;
   }
   if (program.moreThanOneAcademicYear) {

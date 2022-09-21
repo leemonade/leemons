@@ -34,6 +34,8 @@ module.exports = {
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
+      addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
+      clearStudents: 'Borrar estudiantes',
       subjects: {
         title: 'Asignaturas que se evaluarán en esta actividad',
         subtitle: 'NOTA: Al menos una de ellas',
@@ -171,12 +173,21 @@ module.exports = {
         label: 'Acciones',
         SEND_REMINDER: 'Enviar recordatorio',
       },
+      rememberModal: {
+        title: 'Enviar recordatorio a estudiantes que:',
+        notOpen: 'No han abierto la actividad',
+        notEnd: 'No han finalizado la actividad',
+        send: 'Enviar',
+        sended: 'Recordatorio enviado',
+      },
       studentListcolumns: {
         student: 'Estudiantes',
         status: 'Estado',
         completed: 'Completada',
         avgTime: 'Tiempo medio',
         score: 'Puntuación',
+        unreadMessages: 'Mensajes',
+        sendReminder: 'Enviar recordatorio',
       },
     },
     placeholders: {
@@ -202,6 +213,7 @@ module.exports = {
     sendReminder: 'Enviar recordatorio',
     evaluate: 'Evaluar',
     review: 'Revisar',
+    reminderSended: 'Recordatorio enviado',
   },
   student_actions: {
     continue: 'Continuar',
@@ -230,6 +242,7 @@ module.exports = {
       open: 'Abierta',
       ongoing: 'Comenzada',
       completed: 'Completada',
+      unreadMessages: 'Mensajes',
     },
     student: {
       task: 'Tarea',
@@ -238,6 +251,8 @@ module.exports = {
       deadline: 'Fecha límite',
       status: 'Estado',
       submission: 'Entrega',
+      grade: 'Puntuación',
+      unreadMessages: 'Mensajes',
     },
   },
   multiSubject: 'Multi-asignatura',
@@ -270,6 +285,9 @@ module.exports = {
       subject: 'Asignatura',
       submission: 'Entregadas',
       avgTime: 'Tiempo medio',
+      grade: 'Nota',
+      score: 'Puntuación',
+      activityType: 'Tipo de actividad',
     },
   },
   pagination: {

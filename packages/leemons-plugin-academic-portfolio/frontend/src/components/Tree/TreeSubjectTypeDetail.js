@@ -7,6 +7,7 @@ import {
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   Switch,
   TextInput,
   Title,
@@ -21,6 +22,7 @@ const TreeSubjectTypeDetail = ({
   messages,
   onSave,
   saving,
+  managersSelect,
   selectSubjectsNode,
 }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
@@ -58,6 +60,21 @@ const TreeSubjectTypeDetail = ({
               render={({ field }) => <TextInput required label={messages.nameLabel} {...field} />}
             />
           </Box>
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
           <Box>
             <Controller
               control={control}
@@ -109,11 +126,13 @@ const TreeSubjectTypeDetail = ({
             />
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -129,6 +148,7 @@ TreeSubjectTypeDetail.propTypes = {
   selectSubjectsNode: PropTypes.any,
   item: PropTypes.object,
   center: PropTypes.string,
+  managersSelect: PropTypes.any,
   messagesAddUsers: PropTypes.object,
 };
 

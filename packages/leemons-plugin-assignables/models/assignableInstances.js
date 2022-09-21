@@ -20,24 +20,23 @@ module.exports = {
       type: 'boolean',
       options: {
         notNull: true,
-        defaultValue: 0,
+        defaultTo: 0,
       },
     },
     requiresScoring: {
       type: 'boolean',
       options: {
         notNull: true,
-        defaultValue: 0,
+        defaultTo: 0,
       },
     },
     allowFeedback: {
       type: 'boolean',
       options: {
         notNull: true,
-        defaultValue: 0,
+        defaultTo: 0,
       },
     },
-
     messageToAssignees: {
       type: 'richtext',
     },
@@ -57,6 +56,13 @@ module.exports = {
         collection: 'plugins_calendar::events',
       },
        */
+    },
+    addNewClassStudents: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: 0,
+      },
     },
   },
   primaryKey: {

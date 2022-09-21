@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { LoadingOverlay } from '@bubbles-ui/components';
+import { useStore } from '@common';
 import { getSettingsRequest } from '../request/settings';
 import LocaleContext from '../contexts/translations';
 
 const UserRedirect = ({ to }) => {
-  const [loading, setLoading] = React.useState(true);
+  const [store, render] = useStore({
+    loading: true,
+  });
   const { loadLocale } = React.useContext(LocaleContext);
   const { path } = useRouteMatch();
-  const component = React.useRef(null);
 
   const getComponent = (url, comp) => (path === url ? comp : <Redirect to={url} />);
 
@@ -26,7 +28,13 @@ const UserRedirect = ({ to }) => {
 
     // If not configured yet but user is UserAdmin, just redirect to the page requested
     if (isSuperAdmin) {
-      return getComponent(path, to);
+      let toPath = path;
+
+      if (path === '/admin') {
+        toPath = '/private/admin/setup';
+      }
+
+      return getComponent(toPath, to);
     }
 
     if (settings.status === 'ADMIN_CREATED') {
@@ -41,7 +49,8 @@ const UserRedirect = ({ to }) => {
   };
 
   const getSettings = async () => {
-    setLoading(true);
+    store.loading = true;
+    render();
 
     try {
       let userToken = null;
@@ -56,18 +65,23 @@ const UserRedirect = ({ to }) => {
         loadLocale(response.settings?.lang);
       }
 
-      component.current = getRedirect(response.settings || {}, userToken?.user?.isSuperAdmin);
-      setLoading(false);
+      store.component = getRedirect(response.settings || {}, userToken?.user?.isSuperAdmin);
+      store.loading = false;
+      render();
     } catch (e) {
       console.error(e);
     }
   };
 
-  React.useEffect(() => getSettings(), [to, path]);
+  React.useEffect(() => {
+    (async () => {
+      await getSettings();
+    })();
+  }, [to, path]);
 
-  if (loading) return <LoadingOverlay visible />;
+  if (store.loading) return <LoadingOverlay visible />;
 
-  return component.current;
+  return store.component;
 };
 
 UserRedirect.propTypes = {

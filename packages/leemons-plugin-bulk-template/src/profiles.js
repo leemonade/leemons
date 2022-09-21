@@ -18,7 +18,7 @@ async function initProfiles() {
 
       // console.dir(item, { depth: null });
 
-      const itemData = await services.profiles.add(item);
+      const itemData = await services.profiles.saveBySysName({ ...item, sysName: itemKey });
       profiles[itemKey] = { ...itemData, accessTo };
     }
 

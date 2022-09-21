@@ -75,7 +75,7 @@ module.exports = {
           buttonNext: 'Next',
         },
         placeholders: {
-          name: "Task name",
+          name: 'Task name',
           tagline: 'Subtitle of the task',
           description: 'What is this assignment about?',
         },
@@ -175,8 +175,8 @@ module.exports = {
             description: 'Description',
             FileType: {
               multiFile: 'Allow multiple files',
-              type: 'Type',
-              typePlaceholder: 'Add extension',
+              format: 'File format',
+              formatPlaceholder: 'Write extension and add (pdf, xls, doc...)',
               maxSize: 'Max size',
               required: 'Required field',
             },
@@ -261,7 +261,7 @@ module.exports = {
       unableToAssignStudentsMessage:
         'The students which are not enrolled in all the selected subjects will not be assigned',
       matchingStudents: 'matching students',
-      groupName: "Group name",
+      groupName: 'Group name',
       students: 'Students',
       noStudentsToAssign:
         'There are no students enrrolled in the selected subjects, please select other combination',
@@ -340,6 +340,7 @@ module.exports = {
     delete: 'Delete',
     duplicate: 'Duplicate',
   },
+  variant: 'Task',
   task_realization: {
     confirmation_modal: {
       labels: {
@@ -435,6 +436,10 @@ module.exports = {
     },
   },
   task_correction: {
+    chatDescription: 'Do you have any questions about this evaluation?',
+    chatTeacherDescription: 'Would you like to write a comment?',
+    chatButtonStudent: 'Write to your student',
+    chatButtonTeacher: 'Write to your teacher',
     punctuation: 'Punctuation',
     minToPromote: 'Min. to promote',
     feedbackForStudent: 'Feedback for student',

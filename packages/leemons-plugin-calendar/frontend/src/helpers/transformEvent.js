@@ -1,6 +1,6 @@
 import { cloneDeep, keyBy, uniq } from 'lodash';
 
-export default function transformEvent(_event, calendars, { t, session }) {
+export default function transformEvent(_event, calendars, { t, translate }) {
   const event = cloneDeep(_event);
   // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');
@@ -31,7 +31,7 @@ export default function transformEvent(_event, calendars, { t, session }) {
       event.icon = '/public/assets/svgs/alarm-bell.svg';
     }
   }
-  event.title = event.title.replace('{-_start_-}', t('start')).replace('{-_end_-}', t('end'));
+  event.title = translate(event.title);
   // }
 
   return event;

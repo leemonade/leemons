@@ -13,6 +13,7 @@ import {
   DATASET_ITEM_DRAWER_DEFAULT_PROPS,
   DatasetItemDrawer as DatasetItemDrawerBubbles,
 } from '@bubbles-ui/leemons';
+import formWithTheme from '@common/formWithTheme';
 import prefixPN from '../helpers/prefixPN';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { getDatasetSchemaFieldLocaleRequest, saveDatasetFieldRequest } from '../request';
@@ -319,6 +320,7 @@ const DatasetItemDrawer = ({
           },
         }
       }
+      formWithTheme={formWithTheme}
       opened={opened}
       onClose={onClose}
       onSave={onSave}

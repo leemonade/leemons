@@ -20,13 +20,15 @@ async function _centers(user, { transacting } = {}) {
   });
   const values = {};
   forEach(userAgents, (userAgent) => {
-    if (!values[userAgent.center.id]) {
-      values[userAgent.center.id] = {
-        ...userAgent.center,
-        profiles: [],
-      };
+    if (userAgent.center) {
+      if (!values[userAgent.center.id]) {
+        values[userAgent.center.id] = {
+          ...userAgent.center,
+          profiles: [],
+        };
+      }
+      values[userAgent.center.id].profiles.push(userAgent.profile);
     }
-    values[userAgent.center.id].profiles.push(userAgent.profile);
   });
   const results = [];
   forIn(values, (value) => {

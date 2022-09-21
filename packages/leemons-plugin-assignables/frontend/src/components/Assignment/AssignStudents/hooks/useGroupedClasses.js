@@ -32,7 +32,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
         students: c.c.students,
         assignableStudents: _.difference(c.c.students, studentsNotPresentInAllSubjects),
         nonAssignableStudents: _.intersection(c.c.students, studentsNotPresentInAllSubjects),
-        group: c.c.groups.id,
+        group: c.c.groups?.id,
         class: c,
       })),
       (c) => c.group
@@ -57,7 +57,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
         const groupNonAssignableStudents = _.uniq(group.flatMap((c) => c.nonAssignableStudents));
 
         acc.push({
-          label: group[0].class.c.groups.abbreviation,
+          label: group[0].class.c.groups?.abbreviation,
           type: 'group',
           id,
           students: groupStudents,

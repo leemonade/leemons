@@ -30,6 +30,9 @@
       "@common/*": [
         "./packages/leemons-plugin-common/frontend/src/*"
       ],
+      "@comunica/*": [
+        "./packages/leemons-plugin-comunica/frontend/src/*"
+      ],
       "@curriculum/*": [
         "./packages/leemons-plugin-curriculum/frontend/src/*"
       ],
@@ -41,6 +44,15 @@
       ],
       "@emails/*": [
         "./packages/leemons-plugin-emails/frontend/src/*"
+      ],
+      "@emails-amazon-ses/*": [
+        "./packages/leemons-provider-emails-amazon-ses/frontend/src/*"
+      ],
+      "@emails-smtp/*": [
+        "./packages/leemons-provider-emails-smtp/frontend/src/*"
+      ],
+      "@families/*": [
+        "./packages/leemons-plugin-families/frontend/src/*"
       ],
       "@grades/*": [
         "./packages/leemons-plugin-grades/frontend/src/*"

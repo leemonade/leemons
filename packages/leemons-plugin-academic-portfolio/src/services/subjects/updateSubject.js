@@ -1,15 +1,28 @@
 const _ = require('lodash');
+const { isArray } = require('lodash');
 const { table } = require('../tables');
 const { validateUpdateSubject } = require('../../validations/forms');
 const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
+const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateSubject(data, { transacting });
-      const { id, credits, internalId, subjectType, knowledge, image, icon, ..._data } = data;
+      const {
+        id,
+        course,
+        credits,
+        internalId,
+        subjectType,
+        knowledge,
+        image,
+        icon,
+        color,
+        ..._data
+      } = data;
 
       let subject = await table.subjects.update({ id }, _data, { transacting });
       const promises = [];
@@ -50,6 +63,11 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
         },
         { transacting }
       );
+
+      await table.class.updateMany({ subject: subject.id }, { color }, { transacting });
+
+      const courses = isArray(course) ? course : [course];
+      await setToAllClassesWithSubject(subject.id, courses, { transacting });
 
       if (!_.isUndefined(subjectType)) {
         promises.push(

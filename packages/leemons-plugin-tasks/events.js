@@ -70,6 +70,8 @@ async function events(isInstalled) {
         creatable: true,
         createUrl: '/private/tasks/create',
         canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+        pluralName: { en: 'tasks', es: 'tareas' },
+        singularName: { en: 'task', es: 'tarea' },
         menu: {
           item: {
             iconSvg: '/public/tasks/leebrary-menu-icon.svg',

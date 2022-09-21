@@ -150,11 +150,20 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     for (let i = 0, len = knowledgeAreasKeys.length; i < len; i++) {
       const key = knowledgeAreasKeys[i];
       const knowledgeArea = knowledgeAreas[key];
-      const knowledgeAreaData = await services.knowledges.addKnowledge({
-        ...knowledgeArea,
-        credits_program: null,
-      });
-      knowledgeAreas[key] = { ...knowledgeAreaData };
+      leemons.log.debug(`Adding Knowledge area: ${knowledgeArea.name}`);
+
+      try {
+        const knowledgeAreaData = await services.knowledges.addKnowledge({
+          ...knowledgeArea,
+          credits_program: null,
+        });
+        knowledgeAreas[key] = { ...knowledgeAreaData };
+        leemons.log.info(`Knowledge area ADDED: ${knowledgeArea.name}`);
+      } catch (error) {
+        console.log('-- ERROR: Knowledge area cannot be imported');
+        console.dir(knowledgeArea, { depth: null });
+        console.log(error);
+      }
     }
 
     // ·····················································

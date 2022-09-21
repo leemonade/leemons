@@ -15,6 +15,13 @@ module.exports = {
       shareWithTeachers: 'Compartir con profesores',
       saveButton: 'Guardar periodo',
       periodName: 'Nombre del periodo',
+      customPeriod: 'Periodo personalizado',
+      evaluations: 'Evaluaciones',
+      class: {
+        label: 'Clase',
+        placeholder: 'Seleccionar una clase',
+        error: 'La clase es requerida',
+      },
       center: {
         label: 'Centro',
         placeholder: 'Selecciona un centro',
@@ -42,15 +49,15 @@ module.exports = {
       },
     },
     adminDrawer: {
-      title: 'Periodos de evaluación',
+      title: 'Periodos de Evaluación',
       description:
         'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
       new: 'Nuevo periodo',
     },
     teacherDrawer: {
-      title: 'Cuaderno de evaluación',
+      title: 'Cuaderno de Evaluación',
       description:
-        'Bienvenido a tu cuaderno de notas. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+        'Bienvenido a tu cuaderno de evaluación. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
       new: 'Establecer periodo',
     },
     periodFormErrorMessages: {
@@ -81,10 +88,10 @@ module.exports = {
   },
   notebook: {
     header: {
-      export: 'Exportar notas a',
+      export: 'Descargar',
     },
     noClassSelected: {
-      title: 'Cuaderno de evaluación',
+      title: 'Cuaderno de Evaluación',
       description:
         'El cuaderno de evaluación te permiten evaluar las actividades calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
     },
@@ -102,7 +109,7 @@ module.exports = {
             student: 'Estudiante',
             placeholder: 'Filtrar por',
           },
-          search: 'Buscar',
+          search: 'Buscar por {{filterBy.toLowerCase}}',
           nonCalificables: 'Ver no calificables',
         },
         scoresTable: {

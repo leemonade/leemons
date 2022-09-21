@@ -1,8 +1,62 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { PaginatedList } from '@bubbles-ui/components';
+import { Box, Button, PaginatedList, RadioGroup } from '@bubbles-ui/components';
+import { SendEmailEnvelopeIcon } from '@bubbles-ui/icons/outline';
+import { useLayout } from '@layout/context';
+import { useStore } from '@common';
+import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 
 export default function StudentsList({ labels, instance, students }) {
+  const { openConfirmationModal } = useLayout();
+  const [store, render] = useStore({
+    rememberType: 'open',
+  });
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+
+  async function reminder() {
+    openConfirmationModal({
+      title: labels?.rememberModal?.title,
+      description: (
+        <Box>
+          <RadioGroup
+            direction="column"
+            data={[
+              { label: labels?.rememberModal?.notOpen, value: 'open' },
+              {
+                label: labels?.rememberModal?.notEnd,
+                value: 'end',
+              },
+            ]}
+            fullWidth
+            onChange={(page) => {
+              store.rememberType = page;
+              render();
+            }}
+            value={store.rememberType}
+          />
+        </Box>
+      ),
+      labels: {
+        confirm: labels?.rememberModal?.send,
+      },
+      onConfirm: async () => {
+        try {
+          const { rememberType } = store;
+          console.log(instance);
+          await sendReminder({
+            assignableInstanceId: instance.id,
+            type: rememberType,
+          });
+          addSuccessAlert(labels?.rememberModal?.sended);
+        } catch (err) {
+          addErrorAlert(getErrorMessage(err));
+        }
+      },
+    })();
+  }
+
   const columns = useMemo(() => {
     const cols = [
       {
@@ -26,7 +80,15 @@ export default function StudentsList({ labels, instance, students }) {
         accessor: 'score',
       },
       {
-        Header: '',
+        Header: labels?.studentListcolumns?.unreadMessages || '',
+        accessor: 'unreadMessages',
+      },
+      {
+        Header: (
+          <Button variant="link" leftIcon={<SendEmailEnvelopeIcon />} onClick={reminder}>
+            {labels?.studentListcolumns?.sendReminder}
+          </Button>
+        ),
         accessor: 'actions',
       },
     ];
@@ -70,6 +132,15 @@ StudentsList.propTypes = {
       completed: PropTypes.string,
       avgTime: PropTypes.string,
       score: PropTypes.string,
+      unreadMessages: PropTypes.string,
+      sendReminder: PropTypes.string,
+    }),
+    rememberModal: PropTypes.shape({
+      title: PropTypes.string,
+      notOpen: PropTypes.string,
+      notEnd: PropTypes.string,
+      send: PropTypes.string,
+      sended: PropTypes.string,
     }),
     pagination: PropTypes.object,
   }),

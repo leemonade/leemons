@@ -25,16 +25,21 @@ async function addUserAvatar(user, avatar, { transacting } = {}) {
       transacting,
     });
   }
-  return table.users.update(
+  const u = await table.users.update(
     { id: user.id },
     {
-      avatar: assetService.getCoverUrl(asset.id),
+      avatar: `${assetService.getCoverUrl(asset.id)}?t=${Date.now()}`,
       avatarAsset: asset.id,
     },
     {
       transacting,
     }
   );
+
+  return {
+    ...u,
+    avatar: assetService.getCoverUrl(asset.id),
+  };
 }
 
 module.exports = { addUserAvatar };

@@ -160,8 +160,8 @@ module.exports = {
     password: 'Contraseña',
     repeatPassword: 'Repetir contraseña',
     setPassword: 'Establecer contraseña',
-    repeatPasswordPlaceholder: 'Contraseña',
-    passwordPlaceholder: 'Repitir contraseña',
+    repeatPasswordPlaceholder: 'Repitir contraseña',
+    passwordPlaceholder: 'Contraseña',
     passwordMatch: 'Las contraseñas no coinciden',
     tokenError:
       'El código para configurar la contraseña ha caducado o no es valido, contactar con el centro.',
@@ -175,6 +175,8 @@ module.exports = {
     returnLogin: 'Volver al login',
     emailSendTo: 'Te hemos enviado un email a: {email}',
     emailRequired: 'Email necesario',
+    accountNotActive:
+      'Tu cuenta aun no esta activa, te hemos mandado el email de activación desde el que podrás setear tu contraseña.',
   },
   reset: {
     title: 'Crear nueva contraseña',
@@ -218,6 +220,8 @@ module.exports = {
     female: 'Mujer',
     pageTitle: 'Crear usuarios',
     centerLabel: 'Centro',
+    centersLabel: 'Centros',
+    centersRequired: 'Centros es necesario',
     profileLabel: 'Perfil',
     emailHeader: 'Email',
     passwordHeader: 'Contraseña',

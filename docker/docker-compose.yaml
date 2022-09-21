@@ -2,20 +2,21 @@ version: "3.8"
 services:
   leemons-yarn-install:
     image: node:16
+    profiles:
+      - installation
     volumes:
       - ./src/package.json:/monorepo/package.json
       - ../examples/docker:/monorepo/app
       - ../packages:/monorepo/packages
       - ../examples/docker/monorepo_node_modules:/monorepo/node_modules
       - ../examples/docker/monorepo_yarn.lock:/monorepo/yarn.lock
-      - ../yarn.lock:/monorepo/yarn.lock
       - ./src/installDeps.sh:/monorepo/installDeps.sh
       - ./src/retry.sh:/monorepo/retry.sh
       - ./src/app/package.json:/monorepo/appPackageTemplate.json
     working_dir: /monorepo
     tty: true
     stdin_open: true
-    command: sh retry.sh echo
+    command: sh retry.sh ./installDeps.sh
 
   leemons-back:
     image: node:16
@@ -53,33 +54,11 @@ services:
       - ./src/retry.sh:/monorepo/retry.sh
     working_dir: /monorepo
     restart: always
-    depends_on:
-      - leemons-yarn-install # condition: service_completed_successfully
     expose:
       - 3000
     ports:
       - 3000:3000
     command: sh ./retry.sh sh ./build.sh
-
-  # leemons:
-  #   image: node:16
-  #   tty: true
-  #   stdin_open: true
-  #   volumes:
-  #     - ./src/package.json:/monorepo/package.json
-  #     - ../examples/demo-auth:/monorepo/app
-  #     - ../packages:/monorepo/packages
-  #     - ../node_modules:/monorepo/node_modules
-  #     - ../yarn.lock:/monorepo/yarn.lock
-  #     - ./src/front:/front
-
-  #   links:
-  #     - mysql
-  #   working_dir: /monorepo/app
-  #   command: "sh -c 'yarn global add serve; yarn --cwd .. -s; serve -p 3000 /front & yarn dev'"
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
 
   mysql:
     image: mysql
@@ -96,9 +75,8 @@ services:
       - 3306
     ports:
       - 3307:3306
+
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
       timeout: 20s
       retries: 10
-  # MongoDB mono replica set
-  # mongo:

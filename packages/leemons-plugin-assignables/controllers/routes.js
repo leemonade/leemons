@@ -20,6 +20,12 @@ module.exports = [
     handler: 'assignableInstance.update',
     authenticated: true,
   },
+  {
+    method: 'POST',
+    path: '/assignableInstances/reminder',
+    handler: 'assignableInstance.sendReminder',
+    authenticated: true,
+  },
   /**
    * Assignations
    */

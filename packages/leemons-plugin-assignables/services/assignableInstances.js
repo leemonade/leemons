@@ -5,6 +5,7 @@ const searchAssignableInstances = require('../src/services/assignableInstance/se
 const updateAssignableInstance = require('../src/services/assignableInstance/updateAssignableInstance');
 const getUserPermission = require('../src/services/assignableInstance/permissions/assignableInstance/users/getUserPermission');
 const adminDashboard = require('../src/services/assignableInstance/adminDashboard');
+const sendReminder = require('../src/services/assignableInstance/sendReminder');
 
 module.exports = {
   getUserPermission,
@@ -14,4 +15,5 @@ module.exports = {
   updateAssignableInstance,
   searchAssignableInstances,
   adminDashboard,
+  sendReminder,
 };

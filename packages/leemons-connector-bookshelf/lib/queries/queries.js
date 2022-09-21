@@ -7,7 +7,18 @@ const { parseFilters } = require('leemons-utils');
 function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
   const selectAttributes = (attributes) =>
-    _.pickBy(attributes, (value, key) => model.schema.allAttributes.includes(key));
+    _.pickBy(attributes, (value, key) => {
+      if (key === 'deleted') {
+        return model.schema.attributes.deleted !== null || model.schema.allAttributes.includes(key);
+      }
+      if (key === 'deleted_at') {
+        return (
+          (model.schema.attributes.deleted !== null && model.schema.options.useTimestamps) ||
+          model.schema.allAttributes.includes(key)
+        );
+      }
+      return model.schema.allAttributes.includes(key);
+    });
 
   // Creates one new item
   async function create(newItem, { transacting } = {}) {
@@ -134,22 +145,28 @@ function generateQueries(model /* connector */) {
 
     const deletedCount = await entries().count({ transacting });
 
-    if (deletedCount > 0) {
-      if (soft) {
-        const fields = { deleted: true };
-        if (model.schema.options.useTimestamps) {
-          fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        }
+    try {
+      if (deletedCount > 0) {
+        if (soft) {
+          const fields = { deleted: true };
+          if (model.schema.options.useTimestamps) {
+            fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          }
 
-        await entries().save(fields, { method: 'update', patch: true, transacting });
-      } else {
-        try {
-          await entries().destroy({ transacting });
-        } catch (err) {
-          if (err.message.indexOf('No Rows Deleted') === -1) {
-            throw err;
+          await entries().save(fields, { method: 'update', patch: true, transacting });
+        } else {
+          try {
+            await entries().destroy({ transacting });
+          } catch (err) {
+            if (err.message.indexOf('No Rows Deleted') === -1) {
+              throw err;
+            }
           }
         }
+      }
+    } catch (err) {
+      if (err.message !== 'EmptyResponse') {
+        throw err;
       }
     }
 
@@ -223,25 +240,34 @@ function generateQueries(model /* connector */) {
   }
 
   async function set(query, item, { transacting } = {}) {
-    const filters = parseFilters({ filters: query, model });
-    const newQuery = buildQuery(model, filters);
-    const entry = await bookshelfModel.query(newQuery).fetch({
-      require: false,
-      transacting,
-    });
+    try {
+      const filters = parseFilters({ filters: query, model });
+      const newQuery = buildQuery(model, filters);
+      const entry = await bookshelfModel.query(newQuery).fetch({
+        require: false,
+        transacting,
+      });
 
-    if (entry) {
-      if (!_.has(item, 'updated_at')) {
-        _.set(item, 'updated_at', new Date());
+      if (entry) {
+        if (!_.has(item, 'updated_at')) {
+          _.set(item, 'updated_at', new Date());
+        }
+        const attributes = selectAttributes(item);
+        return Object.keys(attributes).length > 0
+          ? entry
+              .save(attributes, { method: 'update', patch: true, transacting })
+              .then((res) => res.toJSON())
+          : entry.toJSON();
       }
-      const attributes = selectAttributes(item);
-      return Object.keys(attributes).length > 0
-        ? entry
-            .save(attributes, { method: 'update', patch: true, transacting })
-            .then((res) => res.toJSON())
-        : entry.toJSON();
+
+      return create({ ...query, ...item }, { transacting });
+    } catch (err) {
+      if (err.message !== 'EmptyResponse') {
+        throw err;
+      }
     }
-    return create({ ...query, ...item }, { transacting });
+
+    return null;
   }
 
   function setMany(newItems, { transacting } = {}) {

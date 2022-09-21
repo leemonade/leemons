@@ -130,16 +130,18 @@ GradeVariation.propTypes = {
 function useAssignableCurriculum(program) {
   const [curriculum, setCurriculum] = React.useState(null);
 
-  React.useEffect(async () => {
-    if (!program) {
-      return;
-    }
+  React.useEffect(() => {
+    (async () => {
+      if (!program) {
+        return;
+      }
 
-    const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
+      const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
 
-    if (curriculumData.count) {
-      setCurriculum(curriculumData.items[0]);
-    }
+      if (curriculumData.count) {
+        setCurriculum(curriculumData.items[0]);
+      }
+    })();
   }, program);
 
   return curriculum;
@@ -231,6 +233,15 @@ export default function Form({
         requiresScoring: defaultValues?.requiresScoring,
         allowFeedback: defaultValues?.allowFeedback,
       },
+      dates: defaultValues?.dates
+        ? Object.entries(defaultValues?.dates).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: value ? new Date(value) : null,
+            }),
+            {}
+          )
+        : {},
     },
   });
 
@@ -312,6 +323,24 @@ export default function Form({
               labels={labels}
               modes={modes}
               assignTo={assignTo}
+              defaultValue={{
+                assignee: field.value,
+                type: defaultValues?.assignStudents?.type,
+                subjects: defaultValues?.assignStudents?.subjects,
+                assignmentSetup: {
+                  ...defaultValues?.assignStudents?.assignmentSetup,
+                  addNewClassStudents: defaultValues?.addNewClassStudents || false,
+                },
+              }}
+              onChange={(value) => {
+                field.onChange(value.assignee);
+                setValue('addNewClassStudents', value?.assignmentSetup?.addNewClassStudents);
+                setValue('assignStudents', {
+                  subjects: value.subjects,
+                  type: value.type,
+                  assignmentSetup: _.omit(value.assignmentSetup, ['addNewClassStudents']),
+                });
+              }}
             />
           )}
         />
@@ -334,6 +363,7 @@ export default function Form({
           render={({ field: alwaysOpenField }) => (
             <ConditionalInput
               {...alwaysOpenField}
+              initialValue={!!defaultValues?.alwaysAvailable}
               label={labels?.alwaysOpenToogle}
               showOnTrue={false}
               render={() => (
@@ -365,6 +395,13 @@ export default function Form({
                         rules={{ required: labels?.required }}
                         render={({ field }) => {
                           const startDate = watch('dates.start');
+
+                          if (field.value && !startDate) {
+                            field.onChange(null);
+                          } else if (startDate && !field.value) {
+                            field.onChange(startDate);
+                          }
+
                           return (
                             <DatePicker
                               {...field}
@@ -375,10 +412,11 @@ export default function Form({
                                   field.onChange(e);
                                 }
                               }}
-                              withTime={!isAllDay}
+                              withTime={startDate && !isAllDay}
                               error={errors?.dates?.deadline}
                               label={labels?.deadline}
                               minDate={startDate}
+                              disabled={!startDate}
                               placeholder={placeholders?.date}
                             />
                           );
@@ -390,6 +428,7 @@ export default function Form({
                   <Grid>
                     <Grid.Col span={6}>
                       <ConditionalInput
+                        initialValue={!!defaultValues?.dates?.visualization}
                         label={labels?.visualizationDateToogle}
                         help={descriptions?.visualizationDate}
                         render={() => (
@@ -441,6 +480,7 @@ export default function Form({
                       </Box>
                       <ConditionalInput
                         label={`${labels?.closeDateToogle}\n `}
+                        initialValue={!!defaultValues?.dates?.close}
                         help={descriptions?.closeDateToogle}
                         render={() => (
                           <ContextContainer direction="row" alignItems="end">
@@ -477,6 +517,7 @@ export default function Form({
         <ConditionalInput
           label={labels?.limitedExecutionToogle}
           help={descriptions?.limitedExecution}
+          initialValue={!!defaultValues?.duration}
           render={() => (
             <Controller
               control={control}
@@ -496,6 +537,7 @@ export default function Form({
         <ConditionalInput
           label={labels?.messageToStudentsToogle}
           help={descriptions?.messageToStudents}
+          initialValue={!!defaultValues?.messageToAssignees}
           render={() => (
             <Controller
               control={control}
@@ -521,6 +563,7 @@ export default function Form({
             render={({ field: showField }) => (
               <ConditionalInput
                 {...showField}
+                // TODO: Initial show if curriculum selected
                 label={labels?.showCurriculumToogle}
                 render={
                   () =>
@@ -622,4 +665,5 @@ Form.propTypes = {
   watch: PropTypes.func,
   control: PropTypes.object,
   curriculumFields: PropTypes.object,
+  defaultValues: PropTypes.object,
 };

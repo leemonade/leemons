@@ -1,24 +1,26 @@
 import React from 'react';
-import { LibraryDetail } from '@bubbles-ui/leemons';
-import { useHistory } from 'react-router-dom';
+import {LibraryDetail} from '@bubbles-ui/leemons';
+import {useHistory} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { deleteQuestionBankRequest } from '@tests/request';
+import {addErrorAlert, addSuccessAlert} from '@layout/alert';
+import {deleteQuestionBankRequest} from '@tests/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
+import {useLayout} from '@layout/context';
 
-const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
+const QuestionsBanksDetail = ({asset, onRefresh, ...props}) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const {openConfirmationModal, openDeleteConfirmationModal} = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
   const toolbarItems = {};
 
   if (asset?.id) {
-    toolbarItems.edit = t('edit');
+    if (asset.editable) {
+      toolbarItems.edit = t('edit');
+    }
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
@@ -51,10 +53,10 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
   const metadata = [];
 
   if (asset?.providerData?.questions?.length) {
-    metadata.push({ label: t('questions'), value: asset.providerData.questions.length });
+    metadata.push({label: t('questions'), value: asset.providerData.questions.length});
   }
   if (asset?.providerData?.categories?.length) {
-    metadata.push({ label: t('categories'), value: asset.providerData.categories.length });
+    metadata.push({label: t('categories'), value: asset.providerData.categories.length});
   }
 
   return (

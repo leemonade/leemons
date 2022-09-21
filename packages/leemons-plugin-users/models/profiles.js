@@ -34,6 +34,9 @@ module.exports = {
         defaultTo: true,
       },
     },
+    sysName: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

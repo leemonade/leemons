@@ -46,6 +46,7 @@ const menuItems = [
 
 const profileSettings = {
   name: 'SuperAdmin',
+  sysName: 'super',
   description: 'Profile for platform super-administrators',
   indexable: false,
   permissions: [

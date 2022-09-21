@@ -3,6 +3,7 @@ import {
   getSubjectCredits,
   listSubjectCreditsForProgram,
   listSubjects,
+  removeSubject,
   updateSubject,
   updateSubjectCredits,
 } from './subjects';
@@ -17,6 +18,7 @@ import {
   listPrograms,
   updateProgram,
 } from './programs';
+import { updateCycle } from './cycles';
 import {
   enableMenuItem,
   getProfiles,
@@ -31,20 +33,20 @@ import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjec
 import {
   addStudentsToClass,
   addTeachersToClass,
+  classByIds,
   classDetailForDashboard,
   createClass,
   createClassInstance,
   haveClasses,
   listClasses,
-  listSubjectClasses,
   listSessionClasses,
   listStudentClasses,
+  listSubjectClasses,
   listTeacherClasses,
   removeClass,
   removeStudentFromClass,
   updateClass,
   updateClassMany,
-  classByIds,
 } from './classes';
 import { getStudentsByTags } from './common';
 
@@ -57,9 +59,11 @@ export {
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
 
+export const updateCycleRequest = updateCycle;
 export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
 export const updateSubjectRequest = updateSubject;
+export const removeSubjectRequest = removeSubject;
 export const updateSubjectCreditsRequest = updateSubjectCredits;
 export const getSubjectCreditsRequest = getSubjectCredits;
 export const listSubjectCreditsForProgramRequest = listSubjectCreditsForProgram;

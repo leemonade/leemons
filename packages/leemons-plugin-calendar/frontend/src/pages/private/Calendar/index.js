@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
+  IconButton,
   ImageLoader,
   LoadingOverlay,
   Select,
@@ -11,12 +12,13 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
 import { getCentersWithToken } from '@users/session';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import hooks from 'leemons-hooks';
@@ -27,19 +29,41 @@ import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
 import { useHistory } from 'react-router-dom';
+import { PackageManagerService } from '@package-manager/services';
+import loadable from '@loadable/component';
+import tLoader from '@multilanguage/helpers/tLoader';
+import CalendarKey from '@academic-calendar/components/CalendarKey';
+import ReactToPrint from 'react-to-print';
+import PrintCalendar from '@academic-calendar/components/PrintCalendar';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
+
+function academicCalendarImport(component) {
+  return loadable(() =>
+    import(/* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`)
+  );
+}
 
 function Calendar({ session }) {
   const locale = useLocale();
   const history = useHistory();
-  const [store, render] = useStore({ loading: true });
+  const [store, render] = useStore({
+    processCalendarConfigForBigCalendar: () => ({ events: [] }),
+    loading: true,
+  });
+
+  const calendarRef = useRef();
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
+  let AcademicCalendar = null;
+  if (store.academicCalendarInstalled) {
+    AcademicCalendar = academicCalendarImport('components/Calendar');
+  }
 
   async function getCalendarsForCenter(center) {
     const [{ calendars, events, userCalendar, ownerCalendars, calendarConfig }, schedule] =
@@ -85,8 +109,20 @@ function Calendar({ session }) {
   }
 
   function getEvents(data) {
-    const events = [];
+    let processEvents = [];
+    const unProcessEvents = [];
     const calendarsByKey = keyBy(data.calendars, 'id');
+
+    const calendarData = store.scheduleCenter[data.center];
+
+    if (calendarData.config && calendarData.allCourses.length) {
+      const calendarEvents = store.processCalendarConfigForBigCalendar(calendarData.config, {
+        course: map(calendarData.allCourses, 'id'),
+        locale,
+        forCalendar: true,
+      });
+      processEvents = calendarEvents.events;
+    }
     _.forEach(data.events, (event) => {
       let canShowInCalendar = true;
 
@@ -99,24 +135,25 @@ function Calendar({ session }) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {
-              events.push(transformEv(event, data.calendars));
+              unProcessEvents.push(transformEv(event, data.calendars));
               return false;
             }
           });
         } else if (calendarsByKey[event.calendar]?.showEvents) {
-          events.push(transformEv(event, data.calendars));
+          unProcessEvents.push(transformEv(event, data.calendars));
         }
       }
     });
-    return events;
+    return [unProcessEvents, processEvents];
   }
 
   function getFilteredEvents(data) {
+    const [unProcessEvents, processEvents] = getEvents(data);
     return transformDBEventsToFullCalendarEvents(
-      getEvents(data),
+      unProcessEvents,
       data.calendars,
       data.calendarConfig
-    );
+    ).concat(processEvents);
   }
 
   const getSectionName = (sectionName, calendarSectionNamesTranslations) =>
@@ -139,6 +176,17 @@ function Calendar({ session }) {
       const centersData = await Promise.all(
         map(store.centers, (center) => getCalendarsForCenter(center))
       );
+
+      store.academicCalendarInstalled = await PackageManagerService.isPluginInstalled(
+        'leemons-plugin-academic-calendar'
+      );
+
+      if (store.academicCalendarInstalled) {
+        const impor = academicCalendarImport('helpers/useProcessCalendarConfigForBigCalendar');
+        const translations = await getLocalizations({ keysStartsWith: prefixPN('transformEvent') });
+        const trans = tLoader(prefixPN('transformEvent'), translations);
+        [store.processCalendarConfigForBigCalendar] = (await impor.load()).default(trans);
+      }
 
       store.calendarNamesTranslations = await getTranslationDataCalendars(centersData);
       store.calendarSectionNamesTranslations = await getTranslationSections(centersData);
@@ -270,7 +318,7 @@ function Calendar({ session }) {
   }, [session, evLoading]);
 
   function onEventClick(info) {
-    if (info.originalEvent) {
+    if (info.originalEvent && info.originalEvent.noCanOpen !== true) {
       const { bgColor, icon, borderColor, ...e } = info.originalEvent;
       setSelectedEvent(e);
       openEventModal();
@@ -333,12 +381,12 @@ function Calendar({ session }) {
   if (store.loading) return <LoadingOverlay visible />;
 
   return (
-    <Box style={{ display: 'flex', width: '100%', height: '100vh' }}>
-      <Box style={{ width: '250px', height: '100vh' }}>
+    <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
+      <Box style={{ width: '250px' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
           showPageControl={
-            store.scheduleCenter?.[store.center?.id]?.classes?.length &&
+            store.scheduleCenter?.[store.center?.id]?.allClasses?.length &&
             store.scheduleCenter?.[store.center?.id]?.config
           }
           messages={{
@@ -349,10 +397,21 @@ function Calendar({ session }) {
           pages={[
             { label: t('calendar'), value: 'calendar' },
             { label: t('schedule'), value: 'schedule' },
+            ...(store.scheduleCenter[store.center.id]?.config
+              ? [
+                  {
+                    label: t('program'),
+                    value: 'program',
+                  },
+                ]
+              : []),
           ]}
           pageOnChange={changePage}
           value={
-            store.activePage === 'schedule'
+            // eslint-disable-next-line no-nested-ternary
+            store.activePage === 'program'
+              ? []
+              : store.activePage === 'schedule'
               ? store.schedule.sections
               : store.centersDataById[store.center.id].sections
           }
@@ -387,7 +446,7 @@ function Calendar({ session }) {
         />
       </Box>
 
-      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', height: '100vh' })}>
+      <Box sx={(theme) => ({ padding: theme.spacing[4], width: '100%', overflowY: 'auto' })}>
         {store.center ? (
           <EventModal
             centerToken={store.center.token}
@@ -396,7 +455,6 @@ function Calendar({ session }) {
             classCalendars={store.centersDataById[store.center.id].data.classCalendars}
           />
         ) : null}
-
         {!store.activePage || store.activePage === 'calendar' ? (
           <BigCalendar
             key="1"
@@ -437,7 +495,8 @@ function Calendar({ session }) {
               ),
             }}
           />
-        ) : (
+        ) : null}{' '}
+        {store.activePage === 'schedule' ? (
           <>
             <EventDetailPanel
               labels={{
@@ -517,7 +576,78 @@ function Calendar({ session }) {
               }}
             />
           </>
-        )}
+        ) : null}
+        {store.activePage === 'program' ? (
+          <Stack direction="column" justifyContent="space-between" fullHeight>
+            <Box>
+              <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+                <Stack fullWidth justifyContent="space-between">
+                  <Box>
+                    <Text color="primary" size="xl">
+                      {t('programCalendar')}
+                      {store.scheduleCenter[store.center.id].config.program.abbreviation}
+                    </Text>
+                  </Box>
+                  <Stack spacing={8}>
+                    {store.schedule.courseData.length > 1 ? (
+                      <Stack alignItems="center">
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                          <Text color="primary">{t('course')}</Text>
+                        </Box>
+                        <Box sx={() => ({ width: 80 })}>
+                          <Select
+                            value={
+                              store.academicCalendarCourse ||
+                              store.scheduleCenter[store.center.id]?.allCourses[0]?.id
+                            }
+                            data={store.schedule.courseData}
+                            onChange={(e) => {
+                              store.academicCalendarCourse = e;
+                              render();
+                            }}
+                          />
+                        </Box>
+                      </Stack>
+                    ) : null}
+                    <Box>
+                      <ReactToPrint
+                        trigger={() => (
+                          <IconButton
+                            icon={<DownloadIcon height={16} width={16} />}
+                            color="primary"
+                            rounded
+                          />
+                        )}
+                        content={() => calendarRef.current}
+                      />
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Box>
+              <AcademicCalendar
+                config={store.scheduleCenter[store.center.id].config}
+                course={
+                  store.academicCalendarCourse ||
+                  store.scheduleCenter[store.center.id]?.allCourses[0]?.id
+                }
+              />
+              <PrintCalendar
+                config={store.scheduleCenter[store.center.id].config}
+                course={
+                  store.academicCalendarCourse ||
+                  store.scheduleCenter[store.center.id]?.allCourses[0]?.id
+                }
+                t={t}
+                programName={store.scheduleCenter[store.center.id].config.program.name}
+                ref={calendarRef}
+                useAcademicCalendar
+              />
+            </Box>
+            <Box style={{ paddingBottom: 16 }}>
+              <CalendarKey />
+            </Box>
+          </Stack>
+        ) : null}
       </Box>
     </Box>
   );

@@ -5,19 +5,27 @@
   "scripts": {
     "start": "leemons start",
     "dev": "leemons dev",
-    "leemons": "leemons"
+    "leemons": "leemons",
+    "leemonsFront": "leemonsFront",
+    "front": "leemonsFront build && leemonsFront preview",
+    "front:preview": "leemonsFront preview",
+    "front:dev": "leemonsFront dev -m ../..",
+    "front:build": "leemonsFront build"
   },
   "leemons": {},
   "dependencies": {
     "leemons": "0.0.1-beta.0",
+    "leemons-react": "0.0.1-beta.0",
     "leemons-connector-bookshelf": "0.0.1-beta.0",
     "leemons-plugin-academic-portfolio": "0.0.1-beta.0",
     "leemons-plugin-academic-calendar": "0.0.1-beta.0",
     "leemons-plugin-admin": "0.0.1-beta.0",
+    "leemons-plugin-families": "0.0.1-beta.0",
     "leemons-plugin-assets": "0.0.1-beta.0",
     "leemons-plugin-assignables": "0.0.1-beta.0",
     "leemons-plugin-calendar": "0.0.1-beta.0",
     "leemons-plugin-common": "0.0.1-beta.0",
+    "leemons-plugin-comunica": "0.0.1-beta.0",
     "leemons-plugin-curriculum": "0.0.1-beta.0",
     "leemons-plugin-dashboard": "0.0.1-beta.0",
     "leemons-plugin-dataset": "0.0.1-beta.0",
@@ -27,7 +35,6 @@
     "leemons-plugin-leebrary": "0.0.1-beta.0",
     "leemons-plugin-menu-builder": "0.0.1-beta.0",
     "leemons-plugin-multilanguage": "0.0.1-beta.0",
-    "leemons-plugin-bulk-template": "0.0.1-beta.0",
     "leemons-plugin-package-manager": "0.0.1-beta.0",
     "leemons-plugin-scores": "0.0.1-beta.0",
     "leemons-plugin-socket-io": "0.0.1-beta.0",
@@ -41,7 +48,6 @@
     "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
     "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
     "leemons-provider-leebrary-tasks": "0.0.1-beta.0",
-    "leemons-provider-leebrary-tests": "0.0.1-beta.0",
-    "mysql": "^2.18.1"
+    "leemons-provider-leebrary-tests": "0.0.1-beta.0"
   }
 }

@@ -9,6 +9,8 @@ import {
   ContextContainer,
   UserDisplayItem,
   Paragraph,
+  Switch,
+  Box,
 } from '@bubbles-ui/components';
 import { SelectUserAgent } from '@users/components';
 import { useForm, Controller } from 'react-hook-form';
@@ -52,19 +54,28 @@ export default function SelectClass({
   profiles,
   onChange,
   value,
+  defaultValue,
   groupedClassesWithSelectedSubjects,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       excluded: [],
+      ...defaultValue,
+      showExcluded: _.isNil(defaultValue?.showExcluded)
+        ? defaultValue?.excluded?.length > 0
+        : defaultValue?.showExcluded,
     },
   });
 
   const { classes, nonAssignableStudents, assignableStudents } = groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
-    const handleChange = (data) => {
+    const handleChange = (data, { name: fieldChanged } = {}) => {
       if (!data?.assignees) {
+        return;
+      }
+
+      if (!classes?.length) {
         return;
       }
 
@@ -74,7 +85,9 @@ export default function SelectClass({
         // ES: Quitar alumnos excluidos de assignableStudents
         .map((c) => ({
           ...c,
-          assignableStudents: c.assignableStudents.filter((s) => !data.excluded?.includes(s)),
+          assignableStudents: data.showExcluded
+            ? c.assignableStudents.filter((s) => !data.excluded?.includes(s))
+            : c.assignableStudents,
         }))
         .filter((c) => c.assignableStudents.length);
 
@@ -82,7 +95,7 @@ export default function SelectClass({
         if (g.type === 'group') {
           return g.classes.map((c) => ({
             group: c.class.id,
-            students: c.assignableStudents,
+            students: _.intersection(c.assignableStudents, g.assignableStudents),
           }));
         }
 
@@ -93,11 +106,11 @@ export default function SelectClass({
       });
 
       if (assignees.length) {
-        if (!value || !_.isEqual(value, assignees)) {
-          onChange(assignees);
+        if (!value || !_.isEqual(value, assignees) || fieldChanged === 'addNewClassStudents') {
+          onChange(assignees, data);
         }
       } else if (!value || value?.length) {
-        onChange([]);
+        onChange([], data);
       }
     };
 
@@ -133,6 +146,7 @@ export default function SelectClass({
                   disabled,
                   label: `${c.label} (${c.assignableStudents.length}/${c.totalStudents} ${labels?.matchingStudents})`,
                   _type: c.type,
+                  checked: !disabled && field.value?.includes(c.id),
                 };
               })
               // Sort in the following order:
@@ -154,33 +168,43 @@ export default function SelectClass({
       {!!nonAssignableStudents?.length && (
         <NonAssignableStudents users={nonAssignableStudents} labels={labels} />
       )}
-      <Controller
-        name="excluded"
-        control={control}
-        render={({ field: { value: show } }) => (
-          <ConditionalInput
-            label={labels?.excludeStudents}
-            value={!!show?.length}
-            showOnTrue
-            render={() => (
-              <Controller
-                name="excluded"
-                control={control}
-                shouldUnregister
-                render={({ field }) => (
-                  <SelectUserAgent
-                    {...field}
-                    label={labels?.excludeStudents}
-                    maxSelectedValues={0}
-                    users={assignableStudents}
-                    profiles={profiles}
-                  />
-                )}
-              />
-            )}
-          />
-        )}
-      />
+      <Box>
+        <Controller
+          name="addNewClassStudents"
+          control={control}
+          render={({ field }) => (
+            <Switch {...field} label={labels?.addNewClassStudents} checked={field.value} />
+          )}
+        />
+        <Controller
+          name="showExcluded"
+          control={control}
+          render={({ field: { value: show, onChange: onToggle } }) => (
+            <ConditionalInput
+              label={labels?.excludeStudents}
+              value={!!show}
+              showOnTrue
+              onChange={onToggle}
+              render={() => (
+                <Controller
+                  name="excluded"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectUserAgent
+                      {...field}
+                      clearable={labels?.clearStudents}
+                      label={labels?.excludeStudents}
+                      maxSelectedValues={0}
+                      users={assignableStudents}
+                      profiles={profiles}
+                    />
+                  )}
+                />
+              )}
+            />
+          )}
+        />
+      </Box>
     </ContextContainer>
   );
 }
@@ -188,9 +212,11 @@ export default function SelectClass({
 SelectClass.propTypes = {
   labels: PropTypes.shape({
     excludeStudents: PropTypes.string,
+    clearStudents: PropTypes.string,
     unableToAssignStudentsMessage: PropTypes.string,
     matchingStudents: PropTypes.string,
     noStudentsToAssign: PropTypes.string,
+    addNewClassStudents: PropTypes.string,
   }),
   profiles: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
@@ -208,4 +234,9 @@ SelectClass.propTypes = {
     nonAssignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
     assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
+  defaultValue: PropTypes.shape({
+    assignees: PropTypes.arrayOf(PropTypes.string),
+    excluded: PropTypes.arrayOf(PropTypes.string),
+    showExcluded: PropTypes.bool,
+  }),
 };

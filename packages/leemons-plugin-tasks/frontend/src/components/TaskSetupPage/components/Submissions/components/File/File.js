@@ -74,8 +74,8 @@ export default function File({ labels }) {
 
               field.onChange(validExtensions);
             }}
-            label={labels?.type}
-            placeholder={labels?.typePlaceholder}
+            label={labels?.format}
+            placeholder={labels?.formatPlaceholder}
           />
         )}
       />
@@ -107,8 +107,8 @@ export default function File({ labels }) {
 File.propTypes = {
   labels: PropTypes.shape({
     multiFile: PropTypes.string,
-    type: PropTypes.string,
-    typePlaceholder: PropTypes.string,
+    format: PropTypes.string,
+    formatPlaceholder: PropTypes.string,
     maxSize: PropTypes.string,
   }),
 };

@@ -7,6 +7,7 @@ import {
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
@@ -19,6 +20,7 @@ const TreeProgramDetail = ({
   program,
   messages,
   onSave,
+  managersSelect,
   onGoProgram,
   saving,
 }) => {
@@ -59,6 +61,21 @@ const TreeProgramDetail = ({
               )}
             />
           </Box>
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
           <Box>
             <Controller
               control={control}
@@ -108,11 +125,13 @@ const TreeProgramDetail = ({
             tree={item}
           />
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -128,6 +147,7 @@ TreeProgramDetail.propTypes = {
   item: PropTypes.object,
   center: PropTypes.string,
   messagesAddUsers: PropTypes.object,
+  managersSelect: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

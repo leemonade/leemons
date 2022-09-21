@@ -66,7 +66,7 @@ module.exports = {
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
-    explanationLabel: 'Explicación',
+    explanationLabel: 'EXPLICACIÓN',
     caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Pistas',
     addClue: 'Añadir pista',
@@ -277,6 +277,7 @@ module.exports = {
       '<strong>Puedes dejar preguntas en blanco</strong> y estas <strong>restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
     errorQuestions:
       'Las <strong>contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
+    noErrorQuestions: 'Las contestaciones erroneas no restan puntos',
     finishTestModalTitle: 'Finalizar y entregar este test',
     finishTestModalDescription:
       'Si haces click en "Confirmar entrega", tu test será enviado a un revisor y ya no podrás modificar ningun respuesta o responder a preguntas sin contestar <br/><br/> Una vez que confirmes la entrega, el sistema te mostrará los resultados del test (exceptuando las preguntas abiertas)',
@@ -342,13 +343,21 @@ module.exports = {
     clueNoImpact: 'Sin impacto',
     categoriesLabel: 'Categorías',
     noRequiredQuestions: 'Las preguntas filtradas son menores que las solicitadas',
+    defaultRules: {
+      title: 'Reglas de un test por defecto:',
+      canOmit: 'Las preguntas sin responder no restan puntuación.',
+      errorQuestions: 'Las respuestas erróneas no restan puntuación.',
+      canClue: 'Se pueden utilizar pistas (si están disponibles) y su uso no resta puntuación.',
+      useAdvanced:
+        'Si desea modificar esta configuración por defecto, utilice la opción de configuración avanzada más abajo.',
+    },
   },
   testResult: {
     testResult: 'Estadísticas por tipo de pregunta',
     questions: 'Preguntas',
     test: 'Test',
-    notGradable: 'No evaluable',
-    gradable: 'Evaluable',
+    notGradable: 'No calificable',
+    gradable: 'Calificable',
     category: 'Categoría',
     level: 'Nivel',
     undefined: 'No definido',
@@ -362,5 +371,9 @@ module.exports = {
     ok: 'Acertada',
     ko: 'Errónea',
     nsnc: 'NS/NC',
+    chatDescription: '¿Quieres hacer alguna consulta sobre esta evaluación?',
+    chatTeacherDescription: '¿Quieres escribir alguna observación?',
+    chatButtonStudent: 'Escribe a tu alumno',
+    chatButtonTeacher: 'Escribe a tu profesor',
   },
 };

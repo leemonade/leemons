@@ -1,6 +1,7 @@
 const Bookshelf = require('bookshelf');
 const bookshelfUUID = require('bookshelf-uuid');
 const _ = require('lodash');
+const fs = require('fs/promises');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
@@ -71,6 +72,33 @@ class Connector {
         return mountModels(_models, ctx);
       })
     );
+  }
+
+  async reloadDatabase() {
+    try {
+      const contexts = [...this.contexts.values()];
+      return await Promise.all(
+        contexts.map(async (ctx) => {
+          const restoreFile = await (
+            await fs.readFile(ctx.connection.restoreFile, 'utf8')
+          ).toString();
+
+          const { ORM } = ctx;
+
+          this.leemons.log.silly(
+            `Restoring database ${ctx.connection.database} on connection ${ctx.connection.name}`
+          );
+          await ORM.knex.raw(restoreFile);
+          this.leemons.log.silly(
+            `Restored database ${ctx.connection.database} on connection ${ctx.connection.name}`
+          );
+          return true;
+        })
+      );
+    } catch (e) {
+      this.leemons.log.error(e.message);
+      throw e;
+    }
   }
 }
 

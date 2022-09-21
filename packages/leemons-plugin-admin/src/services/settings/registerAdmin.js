@@ -8,26 +8,31 @@ const update = require('./update');
  * @static
  * @return {Promise<any>}
  * */
-async function registerAdmin({ email, password, locale }, { transacting: _transacting } = {}) {
+async function registerAdmin(
+  { email, password, locale, ...user },
+  { transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
       const currentSettings = await findOne({ transacting });
       if (currentSettings && currentSettings.status !== STATUS.LOCALIZED) {
-        throw new Error('User already registered');
+        throw new Error('Super Admin already registered');
       }
 
       const { services: userService } = leemons.getPlugin('users');
 
-      const profile = await userService.profiles.add(profileSettings);
+      const profile = await userService.profiles.saveBySysName(profileSettings, {
+        sysName: profileSettings.sysName,
+      });
 
       await userService.users.add(
         {
           email,
           password,
           locale,
-          name: 'Super admin',
-          birthdate: new Date(),
-          gender: 'male',
+          name: `${user?.name || 'Super'} ${user?.surnames || 'admin'}`,
+          birthdate: user?.birthdate || new Date(),
+          gender: user?.gender || 'male',
           active: true,
         },
         [profile.role]

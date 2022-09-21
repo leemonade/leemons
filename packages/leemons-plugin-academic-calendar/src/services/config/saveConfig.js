@@ -10,16 +10,24 @@ async function saveConfig(data, { transacting: _transacting } = {}) {
       delete data.deleted_at;
       delete data.updated_at;
       delete data.created_at;
+      delete data.courseDays;
+      delete data.courseHours;
+      delete data.programStartDate;
+      delete data.programEndDate;
+      delete data.programEvents;
+      delete data.allCoursesHaveSameHours;
+      delete data.allDaysHaveSameHours;
       delete data.deleted;
       delete data.id;
+      console.log(data);
       validateSaveConfig(data);
       await table.config.set(
         { program: data.program },
         {
           ...data,
+          substagesDates: JSON.stringify(data.substagesDates),
+          courseEvents: JSON.stringify(data.courseEvents),
           courseDates: JSON.stringify(data.courseDates),
-          courseDays: JSON.stringify(data.courseDays),
-          courseHours: JSON.stringify(data.courseHours),
           breaks: JSON.stringify(data.breaks),
         },
         { transacting }

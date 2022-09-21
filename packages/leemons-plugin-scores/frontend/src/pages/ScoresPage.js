@@ -4,6 +4,7 @@ import PeriodSelector from '@scores/components/PeriodSelector/PeriodSelector';
 import Notebook from '@scores/components/Notebook';
 import { usePeriods } from '@scores/hooks';
 import { omitBy, isNil, isEqual } from 'lodash';
+import { useLocale } from '@common';
 
 const useStyles = createStyles((theme) => ({
   root: { display: 'flex', flexDirection: 'row' },
@@ -18,6 +19,7 @@ export default function ScoresPage() {
   /*
     --- State ---
   */
+  const locale = useLocale();
   const [isOpened, setIsOpened] = React.useState(true);
   const [periodFetchingFilters, setPeriodFetchingFilters] = React.useState({});
   const [filters, setFilters] = React.useState({});
@@ -32,12 +34,9 @@ export default function ScoresPage() {
   return (
     <Box className={classes.root}>
       <PeriodSelector
+        locale={locale}
         fields={{
-          center: true,
-          program: true,
-          course: true,
-          subject: true,
-          group: true,
+          class: true,
         }}
         requiredFields={['program', 'course', 'subject', 'group']}
         fixed

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { isArray, isEmpty, isNil } from 'lodash';
+import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from 'lodash';
 import {
   Alert,
   Anchor,
@@ -222,6 +222,7 @@ export default function ProgramList() {
     handleShowDetail(async () => {
       const { program } = await detailProgramRequest(e.program.id);
       store.currentProgram = program;
+      store.currentProgram.allSubjectsSameDuration = !store.currentProgram.customSubstages?.length;
       treeProps.setSelectedNode(e.id);
     });
   };
@@ -258,9 +259,22 @@ export default function ProgramList() {
         value: key,
       }));
 
+      const values = store.currentProgram ? cloneDeep(store.currentProgram) : {};
+      if (values.cycles) {
+        const coursesById = keyBy(values.courses, 'id');
+        values.cycles = map(values.cycles, (cycle) => ({
+          ...cycle,
+          courses: map(cycle.courses, (courseId) => coursesById[courseId]?.index),
+        }));
+      }
+
       return {
         editable: isEmpty(store.currentProgram),
-        values: store.currentProgram || {},
+        values: {
+          ...values,
+          haveCycles: !!values.cycles?.length,
+          maxNumberOfCourses: values.courses?.length,
+        },
         labels: { title: isEmpty(store.currentProgram) ? title : editTitle },
         data: [
           {

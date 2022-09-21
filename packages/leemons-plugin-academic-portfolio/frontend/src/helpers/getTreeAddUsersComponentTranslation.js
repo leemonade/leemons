@@ -21,5 +21,6 @@ export function getTreeAddUsersComponentTranslation(t) {
     addStudent: t('addUsers.addStudent'),
     userAlreadySelected: t('addUsers.userAlreadySelected'),
     removeUser: t('addUsers.removeUser'),
+    managersLabel: t('addUsers.managersLabel'),
   };
 }

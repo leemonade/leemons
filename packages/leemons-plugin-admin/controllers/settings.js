@@ -63,7 +63,17 @@ module.exports = {
   update: async (ctx) => {
     const validator = new global.utils.LeemonsValidator({
       type: 'object',
-      properties: { ...settingsSchema.attributes },
+      properties: {
+        configured: {
+          type: 'boolean',
+        },
+        status: {
+          type: 'string',
+        },
+        lang: {
+          type: 'string',
+        },
+      },
       required: [],
       additionalProperties: false,
     });

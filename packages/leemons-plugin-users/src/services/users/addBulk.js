@@ -16,13 +16,18 @@ const { addUserAvatar } = require('./addUserAvatar');
 
 async function addUserBulk(
   role,
-  { tags, password, birthdate, avatar, ...userData },
+  { id, tags, password, birthdate, avatar, ...userData },
   ctx,
   { profile, transacting } = {}
 ) {
   const tagsService = leemons.getPlugin('common').services.tags;
 
-  let user = await table.users.findOne({ email: userData.email }, { transacting });
+  let user = null;
+  if (id) {
+    user = await table.users.findOne({ id }, { transacting });
+  } else {
+    user = await table.users.findOne({ email: userData.email }, { transacting });
+  }
   let isNewUser = false;
   if (!user) {
     user = await table.users.create(
@@ -38,9 +43,26 @@ async function addUserBulk(
     await setUserForRegisterPassword(user.id, { transacting });
     await sendWelcomeEmailToUser(user, ctx, { transacting });
     isNewUser = true;
+  } else if (id) {
+    await table.users.update(
+      {
+        ...userData,
+        birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
+      },
+      {
+        transacting,
+      }
+    );
   }
 
-  let userAgent = await table.userAgent.findOne({ user: user.id, role }, { transacting });
+  let userAgent = await table.userAgent.findOne(
+    {
+      deleted_$null: false,
+      user: user.id,
+      role,
+    },
+    { transacting }
+  );
   if (!userAgent) {
     userAgent = await table.userAgent.create(
       {
@@ -54,6 +76,22 @@ async function addUserBulk(
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser(user, profile, ctx, { transacting });
     }
+  } else if (userAgent.deleted) {
+    console.log('vamos a actualizar el user agent', role, user.id);
+    userAgent = await table.userAgent.update(
+      {
+        deleted_$null: false,
+        role,
+        user: user.id,
+      },
+      {
+        deleted: false,
+        deleted_at: null,
+      },
+      { transacting }
+    );
+    console.log(userAgent);
+    await leemons.events.emit('user-agent:restore', { userAgent, transacting });
   }
 
   if (isNewUser) {
@@ -90,7 +128,7 @@ async function addBulk(data, ctx, { transacting: _transacting } = {}) {
             role.id,
             {
               ...user,
-              locale: _center.locale || locale,
+              locale: user.locale || _center.locale || locale,
               status: 'created',
               active: false,
             },

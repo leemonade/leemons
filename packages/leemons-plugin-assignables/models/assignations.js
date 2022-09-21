@@ -34,6 +34,12 @@ module.exports = {
     metadata: {
       type: 'json',
     },
+    emailSended: {
+      type: 'boolean',
+    },
+    rememberEmailSended: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     name: 'id',
