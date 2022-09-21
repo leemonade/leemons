@@ -25,26 +25,11 @@ const saveQuestionBankSchema = {
       type: ['object', 'string'],
       nullable: true,
     },
-
-    state: textSchemaNullable,
-    program: stringSchemaNullable,
-    categories: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['value'],
-        properties: {
-          id: stringSchema,
-          value: stringSchema,
-        },
-      },
+    featuredImage: {
+      type: ['object', 'string'],
+      nullable: true,
     },
-    subjects: {
-      type: 'array',
-      items: stringSchema,
-    },
-
+    introductoryText: textSchema,
     published: booleanSchema,
     questions: {
       type: 'array',
@@ -55,41 +40,11 @@ const saveQuestionBankSchema = {
         properties: {
           id: stringSchema,
           type: stringSchema,
-          level: stringSchemaNullable,
-          category: {
-            type: ['string', 'number'],
-            minLength: 1,
-            maxLength: 255,
-            nullable: true,
-          },
-          withImages: {
-            type: ['boolean', 'number'],
-            nullable: true,
-          },
-          tags: {
-            type: 'array',
-            items: stringSchema,
-            nullable: true,
-          },
           question: textSchema,
-          questionImage: {
-            type: ['object', 'string'],
-            nullable: true,
-          },
-          questionImageDescription: stringSchemaNullable,
+          required: booleanSchema,
           properties: {
             type: 'object',
             additionalProperties: true,
-          },
-          clues: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                value: textSchema,
-              },
-            },
-            nullable: true,
           },
         },
       },
@@ -99,10 +54,10 @@ const saveQuestionBankSchema = {
   additionalProperties: false,
 };
 
-function validateSaveQuestionBank(data) {
+function validateSaveFeedback(data) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
-    schema.required = ['name', 'questions', 'program', 'subjects'];
+    schema.required = ['name', 'questions', 'introductoryText'];
     schema.properties.questions.items.required = ['type', 'question'];
   }
   const validator = new LeemonsValidator(schema);
@@ -113,5 +68,5 @@ function validateSaveQuestionBank(data) {
 }
 
 module.exports = {
-  validateSaveQuestionBank,
+  validateSaveFeedback,
 };
