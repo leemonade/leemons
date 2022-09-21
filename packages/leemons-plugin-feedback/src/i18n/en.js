@@ -71,5 +71,8 @@ module.exports = {
       'The NPS format is a scale of 0 to 10 where 0=Not at all likely and 10=Very likely. For those cases where it is necessary to translate or adapt the wording of these labels, modifications are allowed, but we strongly recommend not to modify their underlying meaning. More information about NPS',
     npsNotLikely: 'Not likely',
     npsVeryLikely: 'Very likely',
+    openResponse: 'Open response',
+    openResponseSettings: 'Input configuration',
+    maxCharacters: 'Maximum characters',
   },
 };
