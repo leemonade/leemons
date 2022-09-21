@@ -26,6 +26,17 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     newQuestion: false,
   });
 
+  const defaultValues = {
+    isRequired: false,
+    properties: {
+      maxLabels: 3,
+      veryLikely: t('npsVeryLikely'),
+      notLikely: t('npsNotLikely'),
+      minResponses: 1,
+      maxResponses: 1,
+    },
+  };
+
   const { openDeleteConfirmationModal } = useLayout();
   const questions = form.watch('questions');
 
@@ -57,15 +68,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
       <QuestionForm
         t={t}
         onSave={onSave}
-        defaultValues={
-          qStore.newQuestion
-            ? {
-                properties: {
-                  maxLabels: 3,
-                },
-              }
-            : qStore.question
-        }
+        defaultValues={qStore.newQuestion ? defaultValues : qStore.question}
         onCancel={onCancel}
       />
     );

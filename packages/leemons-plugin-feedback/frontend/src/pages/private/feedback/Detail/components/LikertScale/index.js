@@ -11,12 +11,20 @@ export function LikertScale({ form, t }) {
     const labelInputs = [];
     for (let i = 0; i < maxLabels; i++) {
       labelInputs.push(
-        <TextInput
-          label={`${i + 1}`}
-          orientation="horizontal"
-          placeholder={t('labelsPlaceholder')}
-          headerStyle={{ justifyContent: 'center', width: 20 }}
-          contentStyle={{ maxWidth: 370 }}
+        <Controller
+          control={form.control}
+          shouldUnregister
+          name={`properties.likertLabel${i}`}
+          render={({ field }) => (
+            <TextInput
+              label={`${i + 1}`}
+              orientation="horizontal"
+              placeholder={t('labelsPlaceholder')}
+              headerStyle={{ justifyContent: 'center', width: 20 }}
+              contentStyle={{ maxWidth: 370 }}
+              {...field}
+            />
+          )}
         />
       );
     }
@@ -24,7 +32,7 @@ export function LikertScale({ form, t }) {
   };
 
   return (
-    <ContextContainer>
+    <ContextContainer style={{ marginTop: 32 }}>
       <Text color="primary" role="productive" stronger size="md">
         {t('likertSettings')}
       </Text>
@@ -41,6 +49,7 @@ export function LikertScale({ form, t }) {
         />
         <Controller
           control={form.control}
+          shouldUnregister
           name="properties.maxLabels"
           render={({ field }) => (
             <NumberInput

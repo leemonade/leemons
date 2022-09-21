@@ -164,7 +164,16 @@ export default function Index() {
             ]}
           >
             {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
-            {store.currentStep > 0 && <DetailQuestions t={t} form={form} onNext={saveAsPublish} />}
+            {store.currentStep > 0 && (
+              <DetailQuestions
+                t={t}
+                form={form}
+                onNext={saveAsPublish}
+                onPrev={() => {
+                  setStep(0);
+                }}
+              />
+            )}
           </VerticalStepperContainer>
         </Box>
       </Stack>

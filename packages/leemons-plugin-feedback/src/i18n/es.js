@@ -36,6 +36,7 @@ module.exports = {
     returnToList: 'Volver al listado de preguntas',
     questionDetail: 'Detalle de la pregunta',
     typeLabel: 'Tipo de pregunta',
+    requiredQuestionLabel: 'Obligatoria',
     singleResponse: 'Respuesta única',
     multiResponse: 'Multi-respuesta',
     likertScale: 'Escala Likert',
@@ -59,9 +60,16 @@ module.exports = {
     maxResponsesRequired: 'Campo necesario',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
-    likertSettings: 'Configuracíon de escala y etiquetas',
+    likertSettings: 'Configuración de escala y etiquetas',
     maxLabelsFrom: 'De',
     maxLabelsTo: 'Hasta',
     labelsPlaceholder: 'Etiqueta (opcional)',
+    npsSettings: 'Configuración de las etiquetas',
+    npsStatement:
+      '¿Con qué probabilidad recomendaría este producto o servicio a otros familiares o amigos?',
+    npsInfo:
+      'El formato NPS es una escala de 0 a 10 en la que 0=Nada probable y 10=Muy probable. Para aquellos casos en los que sea necesario traducir o adaptar la redacción de estas etiquetas, se permite su modificación, pero recomendamos encarecidamente no modificar su significado subyacente. Más información sobre NPS',
+    npsNotLikely: 'Nada probable',
+    npsVeryLikely: 'Muy probable',
   },
 };

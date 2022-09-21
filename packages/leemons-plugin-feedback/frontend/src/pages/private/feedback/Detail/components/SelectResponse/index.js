@@ -33,6 +33,7 @@ export function SelectResponse({ form, t, multi }) {
             <Box style={{ alignSelf: 'flex-end' }}>
               <Controller
                 control={form.control}
+                shouldUnregister
                 name="properties.withImages"
                 render={({ field }) => (
                   <Checkbox
@@ -109,6 +110,7 @@ export function SelectResponse({ form, t, multi }) {
           <Stack spacing={4} style={{ width: 450 }}>
             <Controller
               control={form.control}
+              shouldUnregister
               name="properties.minResponses"
               rules={{ required: t('minResponsesRequired') }}
               render={({ field }) => (
@@ -129,6 +131,7 @@ export function SelectResponse({ form, t, multi }) {
             <Controller
               control={form.control}
               name="properties.maxResponses"
+              shouldUnregister
               rules={{ required: t('maxResponsesRequired') }}
               render={({ field }) => (
                 <Box style={{ width: '100%' }}>
