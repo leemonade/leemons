@@ -109,7 +109,7 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
         );
       }
 
-      toSave.metadata.featuredImage = featuredImage;
+      toSave.metadata.featuredImage = featuredImage?.id;
       assignable = await assignableService.updateAssignable(
         { id: assignable.id, ...toSave },
         {
@@ -126,8 +126,6 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
           transacting,
         }
       );
-
-      console.log('currentQuestions', currentQuestions, assignable.id);
 
       // -- Questions --
       const currentQuestionsIds = _.map(currentQuestions, 'id');
@@ -150,10 +148,6 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
           questionsToDelete.push(questionId);
         }
       });
-
-      console.log('questionsToCreate', questionsToCreate);
-      console.log('questionsToUpdate', questionsToUpdate);
-      console.log('questionsToDelete', questionsToDelete);
 
       if (questionsToDelete.length) {
         await deleteFeedbackQuestions(questionsToDelete, { userSession, transacting });

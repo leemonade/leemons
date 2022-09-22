@@ -103,14 +103,6 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
       variant="feedback"
       variantTitle={t('feedback')}
       toolbarItems={toolbarItems}
-      titleActionButton={
-        asset?.providerData?.published
-          ? {
-              icon: <ViewOnIcon height={16} width={16} />,
-              onClick: handleView,
-            }
-          : null
-      }
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}

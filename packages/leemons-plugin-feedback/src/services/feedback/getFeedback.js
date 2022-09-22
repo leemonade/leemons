@@ -5,6 +5,7 @@ const { getFeedbackQuestionByIds } = require('../feedback-questions');
 
 async function getFeedback(id, { userSession, transacting } = {}, getAssets = true) {
   const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+  const assetService = leemons.getPlugin('leebrary').services.assets;
 
   // Check is userSession is provided
   if (getAssets && !userSession)
@@ -21,6 +22,19 @@ async function getFeedback(id, { userSession, transacting } = {}, getAssets = tr
       })
     )
   );
+
+  const imagesIds = [];
+  _.forEach(assignables, (assignable) => {
+    if (assignable.metadata.featuredImage) imagesIds.push(assignable.metadata.featuredImage);
+  });
+
+  const questionAssets = await assetService.getByIds(imagesIds, {
+    withFiles: true,
+    userSession,
+    transacting,
+  });
+
+  const questionAssetsById = _.keyBy(questionAssets, 'id');
 
   const assignableIds = _.map(assignables, 'id');
   const questionIds = await table.feedbackQuestions.find(
@@ -46,6 +60,7 @@ async function getFeedback(id, { userSession, transacting } = {}, getAssets = tr
     color: feedback.asset.color,
     cover: feedback.asset.cover,
     tagline: feedback.asset.tagline,
+    featuredImage: questionAssetsById[feedback.metadata.featuredImage],
     description: feedback.asset.description,
     introductoryText: feedback.statement,
     questions: _.map(questionsByFeedback[feedback.id] || [], (question) => ({

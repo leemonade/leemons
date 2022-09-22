@@ -3,7 +3,6 @@ const _ = require('lodash');
 const { table } = require('../tables');
 
 async function getFeedbackQuestionByIds(id, { userSession, transacting } = {}) {
-  const tagsService = leemons.getPlugin('common').services.tags;
   const assetService = leemons.getPlugin('leebrary').services.assets;
   const questions = await table.feedbackQuestions.find(
     { id_$in: _.isArray(id) ? id : [id] },
@@ -12,7 +11,7 @@ async function getFeedbackQuestionByIds(id, { userSession, transacting } = {}) {
   const assetIds = [];
   _.forEach(questions, (question) => {
     question.properties = JSON.parse(question.properties);
-    if (question.withImages && question.properties.responses?.length) {
+    if (question.properties.withImages && question.properties.responses?.length) {
       _.forEach(question.properties.responses, (response) => {
         assetIds.push(response.value.image);
       });
