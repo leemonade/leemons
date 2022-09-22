@@ -320,6 +320,12 @@ function PickDate({ control, name }) {
           field.onChange(null);
         }
 
+        if (name === 'endDate' && !field.value && minDate) {
+          const newDate = new Date();
+          newDate.setDate(minDate.getDate() + 1);
+          field.onChange(newDate);
+        }
+
         return (
           <DatePicker
             {...field}
