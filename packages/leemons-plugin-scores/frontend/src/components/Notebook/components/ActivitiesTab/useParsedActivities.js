@@ -47,6 +47,10 @@ function parseStudentsGrades({ assignableInstances, filters }) {
 }
 
 export function sortByStudentName(values) {
+  if (!values) {
+    return values;
+  }
+
   return Object.values(values).sort((a, b) => {
     const surnameCompare = a.surname.localeCompare(b.surname);
     if (surnameCompare !== 0) {
