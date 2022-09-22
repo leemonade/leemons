@@ -46,4 +46,11 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.feedback, ['view']),
   },
+  {
+    path: '/feedback/:id',
+    method: 'DELETE',
+    handler: 'feedback.deleteFeedback',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.feedback, ['delete']),
+  },
 ];

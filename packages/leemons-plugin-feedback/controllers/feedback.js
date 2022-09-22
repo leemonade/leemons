@@ -21,7 +21,16 @@ async function getFeedback(ctx) {
   ctx.body = { status: 200, feedback };
 }
 
+async function deleteFeedback(ctx) {
+  const feedback = await feedbackService.deleteFeedback(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, feedback };
+}
+
 module.exports = {
+  deleteFeedback,
   saveFeedback,
   getFeedback,
 };

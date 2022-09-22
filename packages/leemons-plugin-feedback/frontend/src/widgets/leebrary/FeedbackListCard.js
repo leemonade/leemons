@@ -6,9 +6,11 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { AssignIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
-import { EditWriteIcon } from '@bubbles-ui/icons/solid';
+import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { deleteFeedbackRequest } from '@feedback/request';
 // import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
@@ -93,7 +95,7 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
-
+ */
       if (asset.deleteable) {
         items.push({
           icon: <DeleteBinIcon />,
@@ -104,7 +106,7 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
               onConfirm: async () => {
                 try {
                   setAppLoading(true);
-                  await deleteTestRequest(asset.providerData.id);
+                  await deleteFeedbackRequest(asset.providerData.id);
                   addSuccessAlert(t('deleted'));
                   onRefresh();
                 } catch (err) {
@@ -116,8 +118,6 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
-
-       */
     }
 
     return items;

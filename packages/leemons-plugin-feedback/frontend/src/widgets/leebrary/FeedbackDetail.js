@@ -8,6 +8,7 @@ import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { deleteFeedbackRequest } from '@feedback/request';
 // import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
@@ -53,7 +54,7 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          // await deleteTestRequest(asset.providerData.id);
+          await deleteFeedbackRequest(asset.providerData.id);
           addSuccessAlert(t('deleted'));
           onRefresh();
         } catch (err) {

@@ -37,11 +37,11 @@ async function deleteFeedbackQuestions(
           )
         );
       }
-      await table.questions.deleteMany({ id_$in: questionIds }, { transacting });
+      await table.feedbackQuestions.deleteMany({ id_$in: questionIds }, { transacting });
 
       return true;
     },
-    table.questions,
+    table.feedbackQuestions,
     _transacting
   );
 }

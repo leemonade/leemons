@@ -1,12 +1,5 @@
 import { cloneDeep, forEach, isString } from 'lodash';
 
-async function listFeedback({ page, size, published }) {
-  return leemons.api(`feedback/feedback?page=${page}&size=${size}&published=${published}`, {
-    allAgents: true,
-    method: 'GET',
-  });
-}
-
 async function saveFeedback(_body) {
   const body = cloneDeep(_body);
   const form = new FormData();
@@ -80,4 +73,11 @@ async function getFeedback(id) {
   });
 }
 
-export { listFeedback, saveFeedback, getFeedback };
+async function deleteFeedback(id) {
+  return leemons.api(`feedback/feedback/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+export { deleteFeedback, saveFeedback, getFeedback };
