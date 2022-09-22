@@ -172,7 +172,7 @@ function usePeriodData({ filters, localFilters }) {
 }
 
 export function useTableData({ filters, localFilters }) {
-  if (filters.period.period.id === 'final') {
+  if (filters.period?.period?.id === 'final') {
     return useFinalData({ filters, localFilters });
   }
 
