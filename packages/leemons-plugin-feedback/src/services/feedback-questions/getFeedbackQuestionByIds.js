@@ -19,21 +19,14 @@ async function getFeedbackQuestionByIds(id, { userSession, transacting } = {}) {
     }
   });
 
-  const [questionAssets, questionsTags] = await Promise.all([
-    assetService.getByIds(assetIds, {
-      withFiles: true,
-      userSession,
-      transacting,
-    }),
-    tagsService.getValuesTags(_.map(questions, 'id'), {
-      type: 'plugins.feedback.questions',
-      transacting,
-    }),
-  ]);
+  const questionAssets = await assetService.getByIds(assetIds, {
+    withFiles: true,
+    userSession,
+    transacting,
+  });
 
   const questionAssetsById = _.keyBy(questionAssets, 'id');
-  _.forEach(questions, (question, i) => {
-    question.tags = questionsTags[i];
+  _.forEach(questions, (question) => {
     if (question.properties.responses?.length) {
       _.forEach(question.properties.responses, (response) => {
         if (response.value.image) {

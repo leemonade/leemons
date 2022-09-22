@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { LibraryDetail } from '@bubbles-ui/leemons';
 import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from '@feedback/helpers/prefixPN';
 import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -12,7 +12,7 @@ import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 
 const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
-  const [t] = useTranslateLoader(prefixPN('testsCard'));
+  const [t] = useTranslateLoader(prefixPN('feedbackCard'));
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
@@ -89,14 +89,8 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
 
   const metadata = [];
 
-  if (asset?.providerData) {
-    metadata.push({
-      label: t('evaluation'),
-      value: asset.providerData.gradable ? t('gradable') : t('nogradable'),
-    });
-  }
-  if (asset?.providerData?.metadata?.questions?.length) {
-    metadata.push({ label: t('questions'), value: asset.providerData.metadata.questions.length });
+  if (asset?.providerData?.metadata?.questions) {
+    metadata.push({ label: t('questions'), value: asset.providerData.metadata.questions });
   }
 
   return (
@@ -106,8 +100,8 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
         ...asset,
         metadata,
       }}
-      variant="tests"
-      variantTitle={t('tests')}
+      variant="feedback"
+      variantTitle={t('feedback')}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, ContextContainer, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
@@ -21,7 +21,7 @@ const ListPageStyles = createStyles((theme) => ({
 }));
 
 export default function List() {
-  const [t] = useTranslateLoader(prefixPN('testsList'));
+  const [t] = useTranslateLoader(prefixPN('feedbackList'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const [currentAsset, setCurrentAsset] = React.useState(null);
 
@@ -36,7 +36,9 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.tests.tests']);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
+      'plugins.feedback.feedback',
+    ]);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes('create') ||
@@ -46,11 +48,10 @@ export default function List() {
   }
 
   function goCreatePage() {
-    history.push('/private/tests/new');
+    history.push('/private/feedback/new');
   }
 
   function goDetailPage(asset) {
-    // history.push(`/private/tests/${asset.id}`);
     if (currentAsset?.id !== asset?.id) {
       setCurrentAsset(prepareAsset(asset));
     }

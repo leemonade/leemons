@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from '@feedback/helpers/prefixPN';
 import { AssignIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
@@ -21,7 +21,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
 }));
 
 const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
-  const [t] = useTranslateLoader(prefixPN('testsCard'));
+  const [t] = useTranslateLoader(prefixPN('feedbackCard'));
   const { classes } = ListCardStyles({ selected });
   const {
     openConfirmationModal,
@@ -128,8 +128,8 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
       {...props}
       asset={asset}
       menuItems={menuItems}
-      variant="tests"
-      variantTitle={t('tests')}
+      variant="feedback"
+      variantTitle={t('feedback')}
       className={classes.root}
     />
   );

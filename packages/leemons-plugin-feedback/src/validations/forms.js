@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const { LeemonsValidator } = global.utils;
+const { booleanSchemaNullable } = require('leemons-plugin-academic-calendar/src/validations/types');
 const {
   stringSchema,
   booleanSchema,
@@ -41,7 +42,7 @@ const saveQuestionBankSchema = {
           id: stringSchema,
           type: stringSchema,
           question: textSchema,
-          required: booleanSchema,
+          required: booleanSchemaNullable,
           properties: {
             type: 'object',
             additionalProperties: true,

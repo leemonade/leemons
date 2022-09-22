@@ -14,6 +14,8 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
       delete data.asset;
       _.forEach(data.questions, (question) => {
         delete question.deleted;
+        delete question.feedback;
+        delete question.assignable;
         delete question.created_at;
         delete question.updated_at;
         delete question.deleted_at;
@@ -35,12 +37,12 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
           public: true, // TODO Cambiar a false despues de la demo
         },
         role: 'feedback',
-        subjects: [],
         statement: data.introductoryText,
-        instructionsForTeachers: null,
-        instructionsForStudents: null,
+        subjects: [],
         gradable: false,
-        metadata: {},
+        metadata: {
+          questions: questions.length,
+        },
       };
 
       let assignable = null;
@@ -52,9 +54,14 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
           {
             userSession,
             transacting,
-            published: data.published,
           }
         );
+
+        if (assignable.id !== data.id) {
+          _.forEach(questions, (question) => {
+            delete question.id;
+          });
+        }
       } else {
         assignable = await assignableService.createAssignable(toSave, {
           userSession,
@@ -120,6 +127,8 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
         }
       );
 
+      console.log('currentQuestions', currentQuestions, assignable.id);
+
       // -- Questions --
       const currentQuestionsIds = _.map(currentQuestions, 'id');
       const questionsToCreate = [];
@@ -141,6 +150,10 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
           questionsToDelete.push(questionId);
         }
       });
+
+      console.log('questionsToCreate', questionsToCreate);
+      console.log('questionsToUpdate', questionsToUpdate);
+      console.log('questionsToDelete', questionsToDelete);
 
       if (questionsToDelete.length) {
         await deleteFeedbackQuestions(questionsToDelete, { userSession, transacting });
