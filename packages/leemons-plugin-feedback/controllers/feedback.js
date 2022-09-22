@@ -29,7 +29,17 @@ async function deleteFeedback(ctx) {
   ctx.body = { status: 200, feedback };
 }
 
+async function duplicateFeedback(ctx) {
+  const feedback = await feedbackService.duplicateFeedback(ctx.request.body.id, {
+    published: ctx.request.body.published,
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, feedback };
+}
+
 module.exports = {
+  duplicateFeedback,
   deleteFeedback,
   saveFeedback,
   getFeedback,

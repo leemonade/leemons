@@ -8,7 +8,7 @@ import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { deleteFeedbackRequest } from '@feedback/request';
+import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
 // import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
@@ -36,9 +36,8 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
       toolbarItems.assign = t('assign');
     }
     if (asset.duplicable) {
-      // toolbarItems.duplicate = t('duplicate');
+      toolbarItems.duplicate = t('duplicate');
     }
-    // duplicateRequest
   }
 
   const handleView = () => {
@@ -70,7 +69,7 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          // await duplicateRequest(asset.providerData.id, asset.providerData.published);
+          await duplicateFeedbackRequest(asset.providerData.id, asset.providerData.published);
           addSuccessAlert(t('duplicated'));
           onRefresh();
         } catch (err) {

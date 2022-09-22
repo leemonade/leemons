@@ -53,4 +53,11 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.feedback, ['delete']),
   },
+  {
+    path: '/feedback/duplicate',
+    method: 'POST',
+    handler: 'feedback.duplicateFeedback',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
+  },
 ];

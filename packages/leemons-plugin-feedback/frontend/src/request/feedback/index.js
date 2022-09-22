@@ -80,4 +80,15 @@ async function deleteFeedback(id) {
   });
 }
 
-export { deleteFeedback, saveFeedback, getFeedback };
+async function duplicateFeedback(id, published) {
+  return leemons.api(`feedback/feedback/duplicate`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id,
+      published,
+    },
+  });
+}
+
+export { duplicateFeedback, deleteFeedback, saveFeedback, getFeedback };
