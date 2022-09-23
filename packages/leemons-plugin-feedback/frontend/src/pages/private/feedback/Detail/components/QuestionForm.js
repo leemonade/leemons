@@ -38,7 +38,6 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
 
   function save() {
     form.handleSubmit((data) => {
-      console.log(data);
       onSave(data);
     })();
   }
@@ -53,6 +52,8 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
       form.setValue('properties.maxResponses', 1);
     }
   }, [type]);
+
+  console.log(form.getValues());
 
   return (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
@@ -86,6 +87,7 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
               />
               <Controller
                 control={form.control}
+                defaultValue={false}
                 name="required"
                 render={({ field }) => (
                   <Switch orientation="horizontal" label={t('requiredQuestionLabel')} {...field} />

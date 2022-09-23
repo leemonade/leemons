@@ -17,9 +17,9 @@ export default function DetailBasic({ form, t, onNext }) {
       <AssetFormInput
         form={form}
         preview
-        tagsPluginName="tests"
-        tagsType="plugins.tests.questionBanks"
-        category="tests-questions-banks"
+        tagsPluginName="feedback"
+        tagsType="plugins.feedback.feedback"
+        category="assignables.feedback"
       />
 
       <Stack fullWidth justifyContent="end">

@@ -32,6 +32,8 @@ module.exports = {
     addQuestion: 'Añadir nueva pregunta',
     introductoryText: 'Texto de introducción:',
     introductoryTextRequired: 'Campo necesario',
+    thanksMessage: 'Mensaje de gracias',
+    thanksMessageRequired: 'Campo necesario',
     featuredImage: 'Añadir imagen destacada',
     returnToList: 'Volver al listado de preguntas',
     questionDetail: 'Detalle de la pregunta',

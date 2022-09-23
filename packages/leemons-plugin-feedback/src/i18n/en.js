@@ -32,6 +32,8 @@ module.exports = {
     addQuestion: 'Add new question',
     introductoryText: 'Introductory text:',
     introductoryTextRequired: 'Field required',
+    thanksMessage: 'Thank you message',
+    thanksMessageRequired: 'Field required',
     featuredImage: 'Add featured image',
     returnToList: 'Back to list of questions',
     questionDetail: 'Question detail',

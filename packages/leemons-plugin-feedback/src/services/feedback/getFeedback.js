@@ -63,8 +63,10 @@ async function getFeedback(id, { userSession, transacting } = {}, getAssets = tr
     featuredImage: questionAssetsById[feedback.metadata.featuredImage],
     description: feedback.asset.description,
     introductoryText: feedback.statement,
+    thanksMessage: feedback.metadata.thanksMessage,
     questions: _.map(questionsByFeedback[feedback.id] || [], (question) => ({
       ...question,
+      required: !!question.required,
     })),
   }));
   return _.isArray(id) ? result : result[0];

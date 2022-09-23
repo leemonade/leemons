@@ -30,7 +30,8 @@ const saveQuestionBankSchema = {
       type: ['object', 'string'],
       nullable: true,
     },
-    introductoryText: textSchema,
+    introductoryText: { type: 'string' },
+    thanksMessage: { type: 'string' },
     published: booleanSchema,
     questions: {
       type: 'array',
@@ -58,12 +59,12 @@ const saveQuestionBankSchema = {
 function validateSaveFeedback(data) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
-    schema.required = ['name', 'questions', 'introductoryText'];
+    schema.properties.thanksMessage = textSchema;
+    schema.properties.introductoryText = textSchema;
+    schema.required = ['name', 'questions', 'introductoryText', 'thanksMessage'];
     schema.properties.questions.items.required = ['type', 'question'];
   }
   const validator = new LeemonsValidator(schema);
-
-  console.log(data);
 
   if (!validator.validate(data)) {
     throw validator.error;

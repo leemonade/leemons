@@ -42,6 +42,7 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
         gradable: false,
         metadata: {
           questions: questions.length,
+          thanksMessage: data.thanksMessage,
         },
       };
 
@@ -94,7 +95,7 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
               transacting,
             });
         }
-      } else {
+      } else if (data.featuredImage) {
         featuredImage = await leemons.getPlugin('leebrary').services.assets.add(
           {
             name: `Image feedback - ${assignable.id}`,

@@ -5,10 +5,11 @@ const getQuestionsByFeedbackIds = require('../feedback-questions/getQuestionsByF
 
 async function duplicateFeedback(id, { published, userSession, transacting: _transacting } = {}) {
   const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+  const { assets: assetsService } = leemons.getPlugin('leebrary').services.assets;
   return global.utils.withTransaction(
     async (transacting) => {
       const newAssignable = await assignableService.duplicateAssignable(id, {
-        published,
+        published: false,
         userSession,
         transacting,
       });
@@ -29,7 +30,7 @@ async function duplicateFeedback(id, { published, userSession, transacting: _tra
       const promises = [];
       _.forEach(assetIds, (assetId) => {
         promises.push(
-          leemons.getPlugin('leebrary').services.assets.duplicate(assetId, {
+          assetsService.duplicate(assetId, {
             preserveName: true,
             userSession,
             transacting,
@@ -54,6 +55,23 @@ async function duplicateFeedback(id, { published, userSession, transacting: _tra
       });
 
       await table.feedbackQuestions.createMany(newQuestions, { transacting });
+
+      if (newAssignable.metadata.featuredImage) {
+        const newFeaturedImage = await assetsService.duplicate(
+          newAssignable.metadata.featuredImage,
+          {
+            preserveName: true,
+            userSession,
+            transacting,
+          }
+        );
+        newAssignable.metadata.featuredImage = newFeaturedImage.id;
+        await assetsService.updateAssignable(newAssignable, {
+          userSession,
+          transacting,
+          published,
+        });
+      }
 
       return true;
     },

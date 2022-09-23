@@ -60,7 +60,6 @@ export default function Index() {
       addSuccessAlert(t('published'));
       history.push('/private/feedback');
     } catch (error) {
-      console.log(error);
       addErrorAlert(error);
     }
     store.saving = null;
@@ -80,11 +79,6 @@ export default function Index() {
         if (props.questions.length > 0) {
           store.currentStep = 1;
         }
-        console.log(props);
-        console.log(props);
-        console.log(props);
-        console.log(props);
-        console.log(props);
         form.reset(props);
       }
       store.idLoaded = params.id;

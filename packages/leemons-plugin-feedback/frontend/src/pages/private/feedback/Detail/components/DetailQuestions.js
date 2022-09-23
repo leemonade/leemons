@@ -6,6 +6,7 @@ import {
   Alert,
   Box,
   Button,
+  Textarea,
   ContextContainer,
   InputWrapper,
   Stack,
@@ -24,6 +25,7 @@ import QuestionForm from '@feedback/pages/private/feedback/Detail/components/Que
 export default function DetailQuestions({ form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
+    isDirty: false,
   });
 
   const { openDeleteConfirmationModal } = useLayout();
@@ -126,8 +128,22 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
             render={({ field }) => (
               <TextEditorInput
                 required
-                error={form.formState.errors.introductoryText}
+                error={qStore.isDirty ? form.formState.errors.introductoryText : null}
                 label={t('introductoryText')}
+                {...field}
+              />
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="thanksMessage"
+            rules={{ required: t('thanksMessageRequired') }}
+            render={({ field }) => (
+              <Textarea
+                required
+                error={qStore.isDirty ? form.formState.errors.thanksMessage : null}
+                label={t('thanksMessage')}
                 {...field}
               />
             )}
@@ -168,6 +184,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
           </Button>
           <Button
             onClick={() => {
+              qStore.isDirty = true;
               qStore.trySend = true;
               qRender();
               form.handleSubmit(() => {
