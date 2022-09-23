@@ -44,7 +44,6 @@ module.exports = [
     method: 'GET',
     handler: 'feedback.getFeedback',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.feedback, ['view']),
   },
   {
     path: '/feedback/:id',
@@ -57,6 +56,13 @@ module.exports = [
     path: '/feedback/duplicate',
     method: 'POST',
     handler: 'feedback.duplicateFeedback',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
+  },
+  {
+    path: '/feedback/assign',
+    method: 'POST',
+    handler: 'feedback.assignFeedback',
     authenticated: true,
     allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
   },

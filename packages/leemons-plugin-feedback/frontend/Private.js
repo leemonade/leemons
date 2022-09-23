@@ -12,12 +12,28 @@ const FeedbackDetail = loadable(() =>
 
 const FeedbackList = loadable(() => pMinDelay(import('./src/pages/private/feedback/List'), 1000));
 
+const FeedbackAssign = loadable(() =>
+  pMinDelay(import('./src/pages/private/feedback/Assign'), 1000)
+);
+const StudentInstance = loadable(() =>
+  pMinDelay(import('./src/pages/private/feedback/StudentInstance'), 1000)
+);
+
 export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
     <Switch>
+      <Route path={`${path}/student/:id/:user`}>
+        <StudentInstance session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/student/:id/`}>
+        <StudentInstance session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/assign/:id`}>
+        <FeedbackAssign session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
       <Route path={`${path}/:id`}>
         <FeedbackDetail session={session} fallback={<LoadingOverlay visible />} />
       </Route>

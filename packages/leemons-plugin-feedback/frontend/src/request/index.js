@@ -3,4 +3,5 @@ export {
   deleteFeedback as deleteFeedbackRequest,
   saveFeedback as saveFeedbackRequest,
   getFeedback as getFeedbackRequest,
+  assignFeedback as assignFeedbackRequest,
 } from './feedback';

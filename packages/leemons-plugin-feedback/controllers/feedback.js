@@ -38,9 +38,19 @@ async function duplicateFeedback(ctx) {
   ctx.body = { status: 200, feedback };
 }
 
+async function assignFeedback(ctx) {
+  const feedback = await feedbackService.assignFeedback(ctx.request.body, {
+    userSession: ctx.state.userSession,
+    ctx,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, feedback };
+}
+
 module.exports = {
   duplicateFeedback,
   deleteFeedback,
   saveFeedback,
   getFeedback,
+  assignFeedback,
 };

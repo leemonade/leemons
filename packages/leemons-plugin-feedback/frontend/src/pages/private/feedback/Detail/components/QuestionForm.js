@@ -53,8 +53,6 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
     }
   }, [type]);
 
-  console.log(form.getValues());
-
   return (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
       <ContextContainer>

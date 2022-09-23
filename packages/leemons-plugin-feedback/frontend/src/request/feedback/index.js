@@ -91,4 +91,15 @@ async function duplicateFeedback(id, published) {
   });
 }
 
-export { duplicateFeedback, deleteFeedback, saveFeedback, getFeedback };
+async function assignFeedback(id, data) {
+  return leemons.api(`feedback/feedback/assign`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id,
+      data,
+    },
+  });
+}
+
+export { duplicateFeedback, deleteFeedback, saveFeedback, getFeedback, assignFeedback };
