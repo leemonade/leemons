@@ -36,8 +36,6 @@ async function addUserAvatar(user, avatar, { transacting } = {}) {
     }
   );
 
-  console.log('assetService.getCoverUrl(asset.id)', assetService.getCoverUrl(asset.id));
-
   return {
     ...u,
     avatar: assetService.getCoverUrl(asset.id),

@@ -46,6 +46,13 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
           })
         : null,
     ]);
+    const allClasses = classes;
+    let allCourses = [];
+
+    _.forEach(allClasses, (classe) => {
+      const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
+      allCourses = allCourses.concat(classCourses);
+    });
 
     if (config) config.program = program;
 
@@ -170,6 +177,8 @@ async function getScheduleToFrontend(userSession, { transacting } = {}) {
       },
       calendarConfigByCourse: configByCourse,
       classes,
+      allClasses,
+      allCourses: _.sortBy(_.uniqBy(allCourses, 'id'), ['index']),
       courses,
       config,
     };

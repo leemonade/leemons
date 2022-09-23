@@ -1,4 +1,39 @@
 module.exports = {
+  scoresPage: {
+    header: {
+      admin: {
+        title: 'Periodos de Evaluación',
+        description:
+          'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
+      },
+      teacher: {
+        title: 'Cuaderno de Evaluación',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      title: 'Buscar periodo',
+      class: {
+        label: 'Clase',
+        placeholder: 'Clase...',
+      },
+      period: {
+        label: 'Periodo de evaluación',
+        placeholder: 'Periodo de evaluación...',
+        custom: 'Periodo personalizado',
+        final: 'Evaluación final',
+      },
+      startDate: {
+        label: 'Fecha inicio',
+        placeholder: 'Fecha inicio...',
+      },
+      endDate: {
+        label: 'Fecha fin',
+        placeholder: 'Fecha fin...',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Periodo "{{name}}" eliminado correctamente',
@@ -86,6 +121,10 @@ module.exports = {
       endDate: 'Fecha de fin',
     },
   },
+  periodTypes: {
+    custom: 'Periodos personalizados',
+    academicCalendar: 'Periodos del calendario académico',
+  },
   notebook: {
     header: {
       export: 'Descargar',
@@ -111,19 +150,42 @@ module.exports = {
           },
           search: 'Buscar por {{filterBy.toLowerCase}}',
           nonCalificables: 'Ver no calificables',
+          evaluationReport: {
+            label: 'Enviar informe de evaluación',
+            disabledTooltip: {
+              invalidPeriod:
+                'Los informes de evaluación solo están disponibles en los periodos del calendario académico',
+              submittedPeriod: 'El informe de evlauación ya ha sido enviado',
+            },
+            modal: {
+              title: 'Enviar informe',
+              msg1: 'Una vez enviado el informe al revisor/administrador de tu organización, las notas de las actividades calificables no podrán modificarse, te aconsejamos revisar bien las puntuaciones antes de hacer el envío.',
+              msg2: 'Recuerda que las notas personalizadas por evaluación, sustituyen a las notas calculadas y que estas solo podrán modificarse por un revisor/administrador una vez entregado el informe.',
+              confirm: 'Enviar informe',
+              cancel: 'Cancelar',
+            },
+          },
+          finalReport: {
+            label: 'Enviar informe final',
+          },
         },
         scoresTable: {
           table: {
             students: 'Estudiantes',
             noActivity: 'No entregado',
             avgScore: 'Nota promedio',
-            gradingTasks: 'Actividades calificables',
+            calculated: 'Calculada',
+            custom: 'Personalizada',
             attendance: 'Asistencia',
           },
-          updatedSuccess:
-            'Actualizada la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
-          updatedError:
-            'Error actualizando la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
+          updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',
+          updatedError: 'Error actualizando la nota de {{student}} en {{activity}} a un {{score}}',
+        },
+        periodSubmission: {
+          noData: 'Todavía no hay datos que enviar',
+          noPeriod: 'El periodo debe ser un periodo del calendario académico',
+          success: 'El periodo {{period}} ha sido reportado',
+          error: 'El periodo {{period}} no puede ser reportado: {{error}}',
         },
       },
     },

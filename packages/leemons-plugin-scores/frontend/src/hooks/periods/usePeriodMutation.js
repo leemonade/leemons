@@ -7,7 +7,6 @@ export default function usePeriodMutation() {
 
   return useMutation(
     async ({ period, action = 'write' }) => {
-      console.log(period, action);
       if (action === 'write') {
         if (period.id) {
           throw new Error('Period updates are not supported yet');

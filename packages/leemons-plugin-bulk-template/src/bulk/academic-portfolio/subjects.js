@@ -38,23 +38,30 @@ async function importAcademicPortfolioSubjects({
         const dayValue = items[key][dayKey];
 
         if (dayValue && !isEmpty(dayValue)) {
-          const [group, durationRaw] = dayValue.split('@');
-          const [start, end] = durationRaw.split('|');
+          const dayGroups = dayValue
+            .split(',')
+            .map((val) => trim(val))
+            .filter((val) => !isEmpty(val));
 
-          const [startH, startM] = start.split(':');
-          const [endH, endM] = end.split(':');
+          dayGroups.forEach((dayGroup) => {
+            const [group, durationRaw] = dayGroup.split('@');
+            const [start, end] = durationRaw.split('|');
 
-          const startDate = new Date(new Date(now.setHours(startH)).setMinutes(startM));
-          const endDate = new Date(new Date(now.setHours(endH)).setMinutes(endM));
+            const [startH, startM] = start.split(':');
+            const [endH, endM] = end.split(':');
 
-          const duration = new Date(endDate - startDate).getTime() / (60 * 1000);
+            const startDate = new Date(new Date(now.setHours(startH)).setMinutes(startM));
+            const endDate = new Date(new Date(now.setHours(endH)).setMinutes(endM));
 
-          if (!schedule[group]) {
-            schedule[group] = [];
-          }
+            const duration = new Date(endDate - startDate).getTime() / (60 * 1000);
 
-          schedule[group].push({ dayWeek: day, start, end, duration, day: weekdays[day] });
-          // { day: 1, value: 'G01@11:05|11:55' },
+            if (!schedule[group]) {
+              schedule[group] = [];
+            }
+
+            schedule[group].push({ dayWeek: day, start, end, duration, day: weekdays[day] });
+            // { day: 1, value: 'G01@11:05|11:55' },
+          });
         }
 
         delete items[key][dayKey];

@@ -14,6 +14,7 @@ import {
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import * as _ from 'lodash';
 import { find } from 'lodash';
+import { useStore } from '@common';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -39,6 +40,7 @@ function NewBranchDetailValue({
   readonly,
   onCloseBranch,
 }) {
+  const [store, render] = useStore();
   const {
     reset,
     control,
@@ -70,12 +72,20 @@ function NewBranchDetailValue({
     return response;
   }, [schema, readonly]);
 
-  const [form, formActions] = formWithTheme(
+  const [formBad, formActions] = formWithTheme(
     goodDatasetConfig?.jsonSchema,
     goodDatasetConfig?.jsonUI,
     undefined,
     datasetProps
   );
+
+  React.useEffect(() => {
+    if ((!store.form && formBad) || store.id !== defaultValues.id) {
+      store.form = formBad;
+      store.id = defaultValues.id;
+      render();
+    }
+  }, [formBad]);
 
   async function save() {
     handleSubmit(async (data) => {
@@ -86,7 +96,6 @@ function NewBranchDetailValue({
         fErrors = formActions.getErrors();
 
         toSend.datasetValues = formActions.getValues();
-        console.log(toSend.datasetValues);
       }
 
       if (!fErrors.length) {
@@ -145,7 +154,7 @@ function NewBranchDetailValue({
         <Box>{watch('name')}</Box>
       )}
 
-      <Box>{form}</Box>
+      <Box>{store?.form}</Box>
 
       {!readonly ? (
         <Stack justifyContent="end">
