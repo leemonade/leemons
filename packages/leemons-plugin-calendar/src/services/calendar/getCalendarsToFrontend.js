@@ -363,6 +363,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     courses = _.uniqBy(courses, 'id');
   }
 
+  /*
   const programById = _.keyBy(programs, 'id');
   const coursesById = _.keyBy(courses, 'id');
 
@@ -407,6 +408,8 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       });
     }
   });
+
+   */
 
   /*
   * {
