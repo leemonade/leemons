@@ -80,6 +80,8 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
               name: `Image feedback - ${assignable.id}`,
               cover: data.featuredImage,
               description: '',
+              indexable: false,
+              public: true,
             },
             {
               published,
@@ -101,6 +103,8 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
             name: `Image feedback - ${assignable.id}`,
             cover: data.featuredImage,
             description: '',
+            indexable: false,
+            public: true,
           },
           {
             published,
