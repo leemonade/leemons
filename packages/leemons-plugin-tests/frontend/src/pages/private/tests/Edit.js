@@ -6,18 +6,18 @@ import {
   useDebouncedCallback,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import {AdminPageHeader} from '@bubbles-ui/leemons';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import {useStore} from '@common';
-import {useHistory, useParams} from 'react-router-dom';
-import {useForm} from 'react-hook-form';
-import {addErrorAlert, addSuccessAlert} from '@layout/alert';
-import {groupBy, map, uniqBy} from 'lodash';
-import {PluginTestIcon} from '@bubbles-ui/icons/outline';
-import {getUserProgramsRequest, listSessionClassesRequest} from '@academic-portfolio/request';
+import { useStore } from '@common';
+import { useHistory, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { groupBy, map, uniqBy } from 'lodash';
+import { PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import DetailConfig from './components/DetailConfig';
-import {getTestRequest, saveTestRequest} from '../../../request';
+import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 import DetailQuestions from './components/DetailQuestions';
@@ -48,7 +48,7 @@ export default function Edit() {
     try {
       store.saving = 'duplicate';
       render();
-      await saveTestRequest({...formValues, published: false});
+      await saveTestRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests');
     } catch (error) {
@@ -62,7 +62,7 @@ export default function Edit() {
     try {
       store.saving = 'edit';
       render();
-      const {test} = await saveTestRequest({...formValues, published: true});
+      const { test } = await saveTestRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
       if (redictToAssign) {
         history.push(`/private/tests/assign/${test.id}`);
@@ -77,7 +77,7 @@ export default function Edit() {
   }
 
   async function load() {
-    const [{programs}, {classes}] = await Promise.all([
+    const [{ programs }, { classes }] = await Promise.all([
       getUserProgramsRequest(),
       listSessionClassesRequest(),
     ]);
@@ -91,7 +91,7 @@ export default function Edit() {
       'program'
     );
     store.programs = programs;
-    store.programsData = map(programs, ({id, name}) => ({value: id, label: name}));
+    store.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
     render();
   }
 
@@ -102,9 +102,9 @@ export default function Edit() {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          test: {deleted, deleted_at, created_at, updated_at, ...props},
+          test: { deleted, deleted_at, created_at, updated_at, ...props },
         } = await getTestRequest(params.id);
-        form.reset({...props, questions: map(props.questions, 'id')});
+        form.reset({ ...props, questions: map(props.questions, 'id') });
       }
       await load();
       store.loading = false;
@@ -121,19 +121,19 @@ export default function Edit() {
 
   React.useEffect(() => {
     if (params?.id) init();
-  }, [params]);
+  }, [params?.id]);
 
   let component = null;
   const steps = [
-    {label: t('basic'), status: 'OK'},
-    {label: t('config'), status: 'OK'},
+    { label: t('basic'), status: 'OK' },
+    { label: t('config'), status: 'OK' },
   ];
 
-  form.register('name', {required: t('nameRequired')});
-  form.register('type', {required: t('typeRequired')});
+  form.register('name', { required: t('nameRequired') });
+  form.register('type', { required: t('typeRequired') });
 
   if (formValues.type === 'learn') {
-    form.register('questionBank', {required: t('questionBankRequired')});
+    form.register('questionBank', { required: t('questionBankRequired') });
     form.register('questions', {
       required: t('questionsRequired'),
       min: {
@@ -141,11 +141,11 @@ export default function Edit() {
         message: t('questionsRequired'),
       },
     });
-    form.register('statement', {required: t('statementRequired')});
-    steps.push({label: t('questionsBank'), status: 'OK'});
-    steps.push({label: t('questions'), status: 'OK'});
-    steps.push({label: t('contentLabel'), status: 'OK'});
-    steps.push({label: t('instructions'), status: 'OK'});
+    form.register('statement', { required: t('statementRequired') });
+    steps.push({ label: t('questionsBank'), status: 'OK' });
+    steps.push({ label: t('questions'), status: 'OK' });
+    steps.push({ label: t('contentLabel'), status: 'OK' });
+    steps.push({ label: t('instructions'), status: 'OK' });
     if (store.currentStep === 2)
       component = (
         <DetailQuestionsBanks
@@ -157,7 +157,7 @@ export default function Edit() {
       );
     if (store.currentStep === 3)
       component = (
-        <DetailQuestions t={t} form={form} onNext={() => setStep(4)} onPrev={() => setStep(2)}/>
+        <DetailQuestions t={t} form={form} onNext={() => setStep(4)} onPrev={() => setStep(2)} />
       );
     if (store.currentStep === 4)
       component = (
@@ -199,21 +199,21 @@ export default function Edit() {
 
   return (
     <Stack direction="column" fullHeight>
-      {store.loading ? <LoadingOverlay visible/> : null}
+      {store.loading ? <LoadingOverlay visible /> : null}
       <AdminPageHeader
         values={{
           // eslint-disable-next-line no-nested-ternary
           title: formValues.name
             ? formValues.name
             : store.isNew
-              ? t('pageTitleNew')
-              : t('pageTitle', {name: formValues.name}),
+            ? t('pageTitleNew')
+            : t('pageTitle', { name: formValues.name }),
         }}
         buttons={{
           duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
           edit: store.isValid && !store.isNew ? t('publish') : undefined,
         }}
-        icon={<PluginTestIcon/>}
+        icon={<PluginTestIcon />}
         variant="teacher"
         onEdit={() => saveAsPublish()}
         onDuplicate={() => saveAsDraft()}
@@ -227,7 +227,7 @@ export default function Edit() {
           currentStep={store.currentStep}
           data={steps}
         >
-          {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)}/>}
+          {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
           {store.currentStep === 1 && (
             <DetailConfig
               store={store}
