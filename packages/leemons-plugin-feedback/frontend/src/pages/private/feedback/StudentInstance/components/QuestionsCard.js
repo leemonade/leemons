@@ -9,6 +9,7 @@ import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
+import OpenResponse from './OpenResponse';
 
 export const Styles = createStyles((theme) => ({
   container: {
@@ -37,8 +38,6 @@ export const Styles = createStyles((theme) => ({
 }));
 
 function Empty(props) {
-  const { question } = props;
-
   return (
     <Box>
       Gatitos <QuestionButtons {...props} />
@@ -51,7 +50,7 @@ const questionsByType = {
   multiResponse: <SelectResponseQuestion multi />,
   likertScale: <Empty />,
   netPromoterScore: <Empty />,
-  openResponse: <Empty />,
+  openResponse: <OpenResponse />,
 };
 
 function QuestionsCard({ feedback }) {

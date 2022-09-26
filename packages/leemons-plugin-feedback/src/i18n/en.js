@@ -119,5 +119,6 @@ module.exports = {
     next: 'Next',
     skip: 'Skip',
     back: 'Back',
+    openResponsePlaceholder: 'Write here your answer...',
   },
 };
