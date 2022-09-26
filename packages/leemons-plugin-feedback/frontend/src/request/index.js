@@ -4,4 +4,5 @@ export {
   saveFeedback as saveFeedbackRequest,
   getFeedback as getFeedbackRequest,
   assignFeedback as assignFeedbackRequest,
+  setQuestionResponse as setQuestionResponseRequest,
 } from './feedback';

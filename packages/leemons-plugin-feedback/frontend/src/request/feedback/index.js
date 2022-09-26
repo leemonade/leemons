@@ -101,5 +101,22 @@ async function assignFeedback(id, data) {
     },
   });
 }
+async function setQuestionResponse(id, data) {
+  return leemons.api(`feedback/feedback/instance/question/response`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id,
+      data,
+    },
+  });
+}
 
-export { duplicateFeedback, deleteFeedback, saveFeedback, getFeedback, assignFeedback };
+export {
+  duplicateFeedback,
+  deleteFeedback,
+  saveFeedback,
+  getFeedback,
+  assignFeedback,
+  setQuestionResponse,
+};

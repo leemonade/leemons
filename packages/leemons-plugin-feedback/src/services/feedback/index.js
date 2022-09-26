@@ -3,6 +3,7 @@ const deleteFeedback = require('./deleteFeedback');
 const saveFeedback = require('./saveFeedback');
 const getFeedback = require('./getFeedback');
 const assignFeedback = require('./assignFeedback');
+const setQuestionResponse = require('../feedback-responses/setQuestionResponse');
 
 module.exports = {
   duplicateFeedback,
@@ -10,4 +11,5 @@ module.exports = {
   saveFeedback,
   getFeedback,
   assignFeedback,
+  setQuestionResponse,
 };
