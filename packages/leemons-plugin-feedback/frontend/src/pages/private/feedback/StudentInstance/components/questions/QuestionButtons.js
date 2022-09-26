@@ -1,14 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { isNil } from 'lodash';
 import { Box, Button, Stack } from '@bubbles-ui/components';
 import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 
 function QuestionButtons({ t, question, value, currentIndex, onNext, onPrev }) {
+  const hasValue = React.useMemo(() => {
+    if (question.type === 'multiResponse') {
+      return value.length >= question.properties.minResponses;
+    }
+    return !isNil(value);
+  }, [question, JSON.stringify(value)]);
+
   const nextText = React.useMemo(() => {
     if (question.required) return t('next');
-    if (value) return t('next');
+    if (hasValue) return t('next');
     return t('skip');
-  }, [question, value]);
+  }, [question, hasValue]);
+
+  const disabled = question.required && !hasValue;
 
   return (
     <Stack
@@ -36,8 +46,10 @@ function QuestionButtons({ t, question, value, currentIndex, onNext, onPrev }) {
         rightIcon={<ChevronRightIcon />}
         rounded
         compact
-        onClick={onNext}
-        disabled={question.required && !value}
+        onClick={() => {
+          if (!disabled) onNext(hasValue ? value : undefined);
+        }}
+        disabled={disabled}
       >
         {nextText}
       </Button>

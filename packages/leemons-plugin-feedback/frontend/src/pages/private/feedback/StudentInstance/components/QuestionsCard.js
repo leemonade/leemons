@@ -8,6 +8,7 @@ import { Box, createStyles, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
+import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
 import OpenResponse from './OpenResponse';
 import LikertResponse from './LikertResponse';
 
@@ -38,8 +39,6 @@ export const Styles = createStyles((theme) => ({
 }));
 
 function Empty(props) {
-  const { question } = props;
-
   return (
     <Box>
       Gatitos <QuestionButtons {...props} />
@@ -48,8 +47,8 @@ function Empty(props) {
 }
 
 const questionsByType = {
-  singleResponse: <Empty value={'asd'} />,
-  multiResponse: <Empty multi />,
+  singleResponse: <SelectResponseQuestion />,
+  multiResponse: <SelectResponseQuestion multi />,
   likertScale: <LikertResponse />,
   netPromoterScore: <Empty />,
   openResponse: <OpenResponse />,
@@ -64,7 +63,8 @@ function QuestionsCard({ feedback }) {
   });
   const question = feedback.questions[store.currentIndex];
 
-  function onNext() {
+  function onNext(value) {
+    console.log(value);
     store.currentIndex++;
     if (store.currentIndex > store.maxIndex) {
       store.maxIndex = store.currentIndex;
