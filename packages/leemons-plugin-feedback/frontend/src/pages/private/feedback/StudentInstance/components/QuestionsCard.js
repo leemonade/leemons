@@ -7,10 +7,10 @@ import HeaderProgressBar from '@feedback/pages/private/feedback/StudentInstance/
 import { Box, createStyles, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
-import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
 import OpenResponse from './OpenResponse';
 import LikertResponse from './LikertResponse';
+import NetPromoterScoreResponse from './NetPromoterScoreResponse';
 
 export const Styles = createStyles((theme) => ({
   container: {
@@ -38,19 +38,11 @@ export const Styles = createStyles((theme) => ({
   },
 }));
 
-function Empty(props) {
-  return (
-    <Box>
-      Gatitos <QuestionButtons {...props} />
-    </Box>
-  );
-}
-
 const questionsByType = {
   singleResponse: <SelectResponseQuestion />,
   multiResponse: <SelectResponseQuestion multi />,
   likertScale: <LikertResponse />,
-  netPromoterScore: <Empty />,
+  netPromoterScore: <NetPromoterScoreResponse />,
   openResponse: <OpenResponse />,
 };
 
@@ -64,7 +56,6 @@ function QuestionsCard({ feedback }) {
   const question = feedback.questions[store.currentIndex];
 
   function onNext(value) {
-    console.log(value);
     store.currentIndex++;
     if (store.currentIndex > store.maxIndex) {
       store.maxIndex = store.currentIndex;
