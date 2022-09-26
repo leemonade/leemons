@@ -47,10 +47,19 @@ async function assignFeedback(ctx) {
   ctx.body = { status: 200, feedback };
 }
 
+async function setQuestionResponse(ctx) {
+  const question = await feedbackService.setQuestionResponse(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, question };
+}
+
 module.exports = {
   duplicateFeedback,
   deleteFeedback,
   saveFeedback,
   getFeedback,
   assignFeedback,
+  setQuestionResponse,
 };

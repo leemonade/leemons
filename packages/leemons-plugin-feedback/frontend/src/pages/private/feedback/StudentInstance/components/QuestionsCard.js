@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import HeaderProgressBar from '@feedback/pages/private/feedback/StudentInstance/components/questions/HeaderProgressBar';
-
 import { Box, createStyles, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
+import { setQuestionResponseRequest } from '@feedback/request';
 import OpenResponse from './OpenResponse';
 import LikertResponse from './LikertResponse';
 import NetPromoterScoreResponse from './NetPromoterScoreResponse';
@@ -17,6 +17,7 @@ export const Styles = createStyles((theme) => ({
     maxWidth: 768,
     width: '100%',
     margin: '0px auto',
+    marginTop: 45,
   },
   header: {
     height: 56,
@@ -55,11 +56,16 @@ function QuestionsCard({ feedback }) {
   });
   const question = feedback.questions[store.currentIndex];
 
-  function onNext(value) {
+  async function onNext(value) {
     store.currentIndex++;
     if (store.currentIndex > store.maxIndex) {
       store.maxIndex = store.currentIndex;
     }
+
+    const result = await setQuestionResponseRequest();
+
+    console.log(result);
+
     render();
   }
 

@@ -66,4 +66,10 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
   },
+  {
+    path: '/feedback/instance/question/response',
+    method: 'POST',
+    handler: 'feedback.setQuestionResponse',
+    authenticated: true,
+  },
 ];
