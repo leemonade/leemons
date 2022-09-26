@@ -116,5 +116,8 @@ module.exports = {
   feedbackResponseQuestion: {
     nQuestion: 'PREGUNTA {n}',
     questionRequired: '(obligatoria)',
+    next: 'Siguiente',
+    skip: 'Omitir',
+    back: 'Volver',
   },
 };

@@ -113,4 +113,11 @@ module.exports = {
     startQuestions: 'Answer feedback',
     feedbackIntroductoryText: 'Introduction',
   },
+  feedbackResponseQuestion: {
+    nQuestion: 'QUESTION {n}',
+    questionRequired: '(required)',
+    next: 'Next',
+    skip: 'Skip',
+    back: 'Back',
+  },
 };

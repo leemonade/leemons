@@ -4,10 +4,13 @@ import { Box, createStyles, HtmlText, ImageLoader, Text } from '@bubbles-ui/comp
 
 export const Styles = createStyles((theme) => ({
   questionStep: {
-    width: '210px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: theme.spacing[4],
+    paddingBottom: theme.spacing[4],
+    paddingLeft: theme.spacing[5],
+    paddingRight: theme.spacing[5],
   },
   questionTitleIcon: {
     display: 'inline-block',
@@ -18,7 +21,7 @@ export const Styles = createStyles((theme) => ({
     color: theme.colors.text05,
   },
   questionTitleText: {
-    width: 'calc(100% - 23px)',
+    width: 'calc(100% - 23px )',
   },
 }));
 

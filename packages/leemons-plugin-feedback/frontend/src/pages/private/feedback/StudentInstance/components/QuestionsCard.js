@@ -55,7 +55,7 @@ const questionsByType = {
 
 function QuestionsCard({ feedback }) {
   const { classes } = Styles();
-  const [t] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
+  const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
   const [store, render] = useStore({
     maxIndex: 0,
     currentIndex: 0,
@@ -74,6 +74,8 @@ function QuestionsCard({ feedback }) {
     store.currentIndex--;
     render();
   }
+
+  if (!translations) return null;
 
   return (
     <Box className={classes.container}>
@@ -97,6 +99,7 @@ function QuestionsCard({ feedback }) {
               currentIndex: store.currentIndex,
               onNext,
               onPrev,
+              t,
             })}
           </Box>
         </Box>
