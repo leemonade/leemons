@@ -101,13 +101,14 @@ async function assignFeedback(id, data) {
     },
   });
 }
-async function setQuestionResponse(id, data) {
+
+async function setQuestionResponse(id, value) {
   return leemons.api(`feedback/feedback/instance/question/response`, {
     allAgents: true,
     method: 'POST',
     body: {
       id,
-      data,
+      value,
     },
   });
 }

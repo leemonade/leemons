@@ -57,14 +57,12 @@ function QuestionsCard({ feedback }) {
   const question = feedback.questions[store.currentIndex];
 
   async function onNext(value) {
+    setQuestionResponseRequest(question.id, value);
+
     store.currentIndex++;
     if (store.currentIndex > store.maxIndex) {
       store.maxIndex = store.currentIndex;
     }
-
-    const result = await setQuestionResponseRequest();
-
-    console.log(result);
 
     render();
   }
