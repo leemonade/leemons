@@ -185,7 +185,7 @@ module.exports = {
             disabledTooltip: {
               invalidPeriod:
                 'Los informes de evaluación solo están disponibles en los periodos del calendario académico',
-              submittedPeriod: 'El informe de evlauación ya ha sido enviado',
+              submittedPeriod: 'El informe de evaluación ya ha sido enviado',
             },
             modal: {
               title: 'Enviar informe',
@@ -233,7 +233,7 @@ module.exports = {
     reviewerTable: {
       students: 'Estudiantes',
       noActivity: 'No entregada',
-      avgScore: 'Nota ponderada',
+      avgScore: 'Nota media',
       gradingTasks: 'Calculada',
       customScore: 'Personalizada',
     },
