@@ -47,13 +47,13 @@ const questionsByType = {
   openResponse: <OpenResponse />,
 };
 
-function QuestionsCard({ feedback, instanceId }) {
+function QuestionsCard({ feedback, instanceId, defaultValues }) {
   const { classes } = Styles();
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
   const [store, render] = useStore({
     maxIndex: 0,
     currentIndex: 0,
-    values: {},
+    values: defaultValues || {},
   });
   const question = feedback.questions[store.currentIndex];
 
@@ -111,6 +111,7 @@ function QuestionsCard({ feedback, instanceId }) {
 QuestionsCard.propTypes = {
   feedback: PropTypes.any,
   instanceId: PropTypes.string,
+  defaultValues: PropTypes.any,
 };
 
 export default QuestionsCard;

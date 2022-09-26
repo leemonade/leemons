@@ -9,7 +9,7 @@ import { useLocale, useStore } from '@common';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getCentersWithToken } from '@users/session';
-import { getFeedbackRequest } from '@feedback/request';
+import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { isString } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
@@ -63,11 +63,14 @@ const StudentInstance = () => {
 
   const init = async () => {
     try {
-      [store.instance, store.assignation] = await Promise.all([
+      [store.instance, store.assignation, store.responses] = await Promise.all([
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
+        getUserAssignableResponsesRequest(params.id),
+        setInstanceTimestamp(params.id, 'open', getUserId()),
       ]);
-      setInstanceTimestamp(params.id, 'open', getUserId());
+
+      console.log(store.responses);
 
       let canStart = true;
       if (store.instance.dates?.start) {
@@ -119,7 +122,11 @@ const StudentInstance = () => {
               canStart={store.canStart}
             />
           ) : (
-            <QuestionsCard feedback={store.feedback} instanceId={store.idLoaded} />
+            <QuestionsCard
+              feedback={store.feedback}
+              instanceId={store.idLoaded}
+              defaultValues={store.responses}
+            />
           )}
         </Stack>
       </ActivityContainer>

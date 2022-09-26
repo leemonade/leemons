@@ -11,7 +11,7 @@ const NetPromoterScoreResponse = (props) => {
 
   const renderNumbers = () => {
     const numberElements = [];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 0; i < 10; i++) {
       numberElements.push(
         <Box>
           <Box
@@ -27,7 +27,7 @@ const NetPromoterScoreResponse = (props) => {
             onClick={() => setSelectedValue(i)}
           >
             <Text color="primary" role="productive">
-              {i}
+              {i + 1}
             </Text>
           </Box>
         </Box>

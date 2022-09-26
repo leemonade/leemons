@@ -1,22 +1,25 @@
 const { table } = require('../tables');
 
-async function getUserAssignableResponses(data, { userSession, transacting: _transacting } = {}) {
+async function getUserAssignableResponses(
+  instanceId,
+  { userSession, transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const { assignableId } = data;
+      const results = await table.feedbackResponse.find(
+        {
+          instance: instanceId,
+          userAgent: userSession.userAgents[0].id,
+        },
+        { transacting }
+      );
 
-      // const response = await table.feedbackResponse.set(
-      //   { question: questionId, assignable: assignableId, userAgent: userSession.userAgents[0].id },
-      //   {
-      //     response: JSON.stringify(value),
-      //     question: questionId,
-      //     assignable: assignableId,
-      //     userAgent: userSession.userAgents[0].id,
-      //   },
-      //   { transacting }
-      // );
+      const responses = {};
+      results.forEach((result) => {
+        responses[result.question] = JSON.parse(result.response);
+      });
 
-      return 'nose';
+      return responses;
     },
     table.feedbackResponse,
     _transacting

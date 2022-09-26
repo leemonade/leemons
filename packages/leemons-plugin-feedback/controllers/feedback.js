@@ -69,6 +69,17 @@ async function setInstanceTimestamp(ctx) {
   ctx.body = { status: 200, timestamps };
 }
 
+async function getUserAssignableResponses(ctx) {
+  const responses = await feedbackResponsesService.getUserAssignableResponses(
+    ctx.request.params.id,
+    {
+      userSession: ctx.state.userSession,
+    }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, responses };
+}
+
 module.exports = {
   duplicateFeedback,
   deleteFeedback,
@@ -77,4 +88,5 @@ module.exports = {
   assignFeedback,
   setQuestionResponse,
   setInstanceTimestamp,
+  getUserAssignableResponses,
 };

@@ -1,9 +1,11 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
 import { LeebraryImage } from '@leebrary/components';
+import { isArray, isNil } from 'lodash';
 
 export const Styles = createStyles((theme) => ({
   response: {
@@ -84,7 +86,7 @@ function SelectResponseQuestion(props) {
   }
 
   React.useEffect(() => {
-    store.value = defaultValue || [];
+    store.value = isNil(defaultValue) ? [] : isArray(defaultValue) ? defaultValue : [defaultValue];
     render();
   }, [defaultValue, question]);
 

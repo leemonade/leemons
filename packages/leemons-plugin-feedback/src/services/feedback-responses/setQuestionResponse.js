@@ -13,11 +13,11 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
       const { questionId, instanceId, value } = data;
 
       const [{ timestamps, finished }, instance] = await Promise.all([
-        assignationsService.getAssignation(data.instance, userSession.userAgents[0].id, {
+        assignationsService.getAssignation(instanceId, userSession.userAgents[0].id, {
           userSession,
           transacting,
         }),
-        assignableInstancesService.getAssignableInstance(data.instance, {
+        assignableInstancesService.getAssignableInstance(instanceId, {
           userSession,
           details: true,
           transacting,

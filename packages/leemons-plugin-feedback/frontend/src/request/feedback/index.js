@@ -126,6 +126,14 @@ async function setInstanceTimestamp(instance, timeKey, user) {
   });
 }
 
+async function getUserAssignableResponses(instanceId) {
+  const { responses } = await leemons.api(`feedback/feedback/instance/responses/${instanceId}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+  return responses;
+}
+
 export {
   duplicateFeedback,
   deleteFeedback,
@@ -134,4 +142,5 @@ export {
   assignFeedback,
   setQuestionResponse,
   setInstanceTimestamp,
+  getUserAssignableResponses,
 };
