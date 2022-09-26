@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
+import { LeebraryImage } from '@leebrary/components';
 
 export const Styles = createStyles((theme) => ({
   response: {
@@ -18,6 +19,41 @@ export const Styles = createStyles((theme) => ({
   responseActive: {
     borderColor: theme.colors.interactive01d,
     backgroundColor: theme.colors.interactive01v1,
+  },
+  questionResponseImageContainer: {
+    border: '1px solid',
+    borderColor: theme.colors.ui01,
+    borderRadius: 4,
+    overflow: 'hidden',
+    cursor: 'pointer',
+    padding: theme.spacing[3],
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    position: 'relative',
+  },
+  questionResponseImageTextContent: {
+    paddingTop: theme.spacing[3],
+  },
+  questionResponseImageContent: {
+    width: '100%',
+    position: 'relative',
+    paddingBottom: '100%',
+  },
+  questionResponseImage: {
+    width: '100%',
+    height: '100%',
+    display: 'block',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    objectFit: 'contain',
+  },
+  questionResponsesContainerImages: {
+    display: 'grid',
+    flexDirection: 'row',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: theme.spacing[3],
   },
 }));
 
@@ -49,20 +85,51 @@ function SelectResponseQuestion(props) {
 
   return (
     <Box>
-      {question.properties.responses.map(({ value }, index) => (
-        <Box
-          key={index}
-          className={cx(
-            classes.response,
-            store.value.includes(index) ? classes.responseActive : null
-          )}
-          onClick={() => {
-            onSelect(index);
-          }}
-        >
-          {value.response}
-        </Box>
-      ))}
+      <Box
+        className={question.properties.withImages ? classes.questionResponsesContainerImages : null}
+      >
+        {question.properties.responses.map(({ value }, index) => {
+          if (question.properties.withImages) {
+            return (
+              <Box
+                key={index}
+                className={cx(
+                  classes.questionResponseImageContainer,
+                  store.value.includes(index) ? classes.responseActive : null
+                )}
+                onClick={() => {
+                  onSelect(index);
+                }}
+              >
+                <Box className={classes.questionResponseImageContent}>
+                  <LeebraryImage className={classes.questionResponseImage} src={value.image} />
+                </Box>
+                {value.imageDescription ? (
+                  <Box className={classes.questionResponseImageTextContent}>
+                    <Text color="primary" role="productive">
+                      {value.imageDescription}
+                    </Text>
+                  </Box>
+                ) : null}
+              </Box>
+            );
+          }
+          return (
+            <Box
+              key={index}
+              className={cx(
+                classes.response,
+                store.value.includes(index) ? classes.responseActive : null
+              )}
+              onClick={() => {
+                onSelect(index);
+              }}
+            >
+              {value.response}
+            </Box>
+          );
+        })}
+      </Box>
       <QuestionButtons value={multi ? store.value : store.value[0]} {...props} />
     </Box>
   );
