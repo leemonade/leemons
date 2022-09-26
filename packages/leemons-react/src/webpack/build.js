@@ -7,8 +7,9 @@ const ora = require('ora');
 const boxen = require('boxen');
 const path = require('path');
 const webpackConfig = require('./webpack.config');
+const { formatWebpackMessages } = require('./parseWebpackMessage');
 
-const isTTY = process.stdout.isTTY;
+const { isTTY } = process.stdout;
 
 function getRelativePath(dir) {
   const relativePath = path.relative(process.cwd(), dir);
@@ -31,6 +32,13 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
     compiler.run((err, stats) => {
       if (stats.hasErrors()) {
         spinner.fail(chalk`{red Compilation failed with errors}`);
+        const parsedStats = stats.toJson({
+          errors: true,
+        });
+
+        const { errors } = formatWebpackMessages(parsedStats);
+
+        console.error(errors[0]);
         return;
       }
 
@@ -57,6 +65,13 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
     compiler.run((err, stats) => {
       if (stats.hasErrors()) {
         console.error(chalk`{red Compilation failed with errors}`);
+        const parsedStats = stats.toJson({
+          errors: true,
+        });
+
+        const { errors } = formatWebpackMessages(parsedStats);
+
+        console.error(errors[0]);
         return;
       }
 
