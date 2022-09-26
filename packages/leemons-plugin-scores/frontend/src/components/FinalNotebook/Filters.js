@@ -26,10 +26,9 @@ function useSearchByData({ localizations, filters }) {
       return [];
     }
 
-    const filterBy =
-      !filters?.group || filters?.group === 'all'
-        ? localizations?.filterBy
-        : _.omit(localizations?.filterBy, ['group']);
+    const filterBy = !filters?.group
+      ? localizations?.filterBy
+      : _.omit(localizations?.filterBy, ['group']);
 
     return Object.entries(filterBy)?.map(([value, label]) => ({
       value,

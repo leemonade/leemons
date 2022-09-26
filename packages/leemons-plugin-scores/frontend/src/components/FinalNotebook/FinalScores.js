@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import useScores from '@scores/hooks/scores/useScores';
 import { ScoresReviewerTable } from '@bubbles-ui/leemons';
-import { Loader } from '@bubbles-ui/components';
+import { Box, Loader } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import useScoresUpdateMutation from '@scores/hooks/scores/useScoresUpdateMutation';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -15,11 +15,12 @@ import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesT
 import { onDataChange } from './onDataChange';
 import { useLocalFilters } from './useLocalFilters';
 import { useParsedData } from './useParsedData';
+import EmptyState from '../Notebook/components/ActivitiesTab/EmptyState';
 
-function useMatchingClasses({ filters }) {
+export function useMatchingClasses({ filters }) {
   const cache = useCache();
 
-  let { data: programClasses } = useProgramClasses(filters?.program, {
+  let { data: programClasses, isLoading } = useProgramClasses(filters?.program, {
     enabled: !!filters?.program,
   });
 
@@ -35,14 +36,14 @@ function useMatchingClasses({ filters }) {
   );
 
   const groupClasses = React.useMemo(() => {
-    if (!filters?.group || filters?.group === 'all') {
+    if (!filters?.group) {
       return courseClasses;
     }
 
     return courseClasses?.filter((klass) => klass.groups.id === filters?.group);
   }, [courseClasses, filters?.group]);
 
-  return groupClasses;
+  return { classes: groupClasses, isLoading };
 }
 
 function useStudents({ classes, filters }) {
@@ -53,7 +54,7 @@ function useStudents({ classes, filters }) {
     [classes]
   );
 
-  const { data } = useUserAgentsInfo(students);
+  const { data, isLoading } = useUserAgentsInfo(students);
 
   const studentsData = React.useMemo(
     () =>
@@ -80,14 +81,14 @@ function useStudents({ classes, filters }) {
     );
   }, [filters?.filterBy, filters?.search, data]);
 
-  return filteredStudents;
+  return { isLoading, students: filteredStudents };
 }
 
-function useMatchingAcademicCalendarPeriods({ classes, filters }) {
+export function useMatchingAcademicCalendarPeriods({ classes, filters }) {
   const cache = useCache();
   const periods = useAcademicCalendarPeriods({ classes });
 
-  return React.useMemo(() => {
+  const parsedPeriods = React.useMemo(() => {
     if (!(filters?.program && filters?.course && periods?.length)) {
       return cache('periods', []);
     }
@@ -102,6 +103,11 @@ function useMatchingAcademicCalendarPeriods({ classes, filters }) {
         .filter((period) => period.id)
     );
   }, [periods, filters?.program, filters?.course]);
+
+  return {
+    isLoading: !periods,
+    periods: parsedPeriods,
+  };
 }
 
 function useGrades({ filters }) {
@@ -115,7 +121,7 @@ function useGrades({ filters }) {
     React.useMemo(() => scales?.sort((a, b) => a.number - b.number), [scales])
   );
 
-  return grades;
+  return { isLoading: !evaluationSystem, grades };
 }
 
 function useFinalScoresLocalization() {
@@ -140,35 +146,60 @@ function useFinalScoresLocalization() {
 }
 
 export function FinalScores({ filters, localFilters }) {
-  let classes = useMatchingClasses({ filters });
-  let students = useStudents({ classes, filters: localFilters });
-  let periods = useMatchingAcademicCalendarPeriods({ classes, filters });
-  const grades = useGrades({ filters });
+  let { classes, isLoading: classesAreLoading } = useMatchingClasses({ filters });
+  let { students, isLoading: studentsAreLoading } = useStudents({ classes, filters: localFilters });
+  let { periods, isLoading: periodsAreLoading } = useMatchingAcademicCalendarPeriods({
+    classes,
+    filters,
+  });
+  const { grades, isLoading: gradesAreLoading } = useGrades({ filters });
   const locale = useLocale();
   const localizations = useFinalScoresLocalization();
   const { mutateAsync: mutateScore } = useScoresUpdateMutation();
 
-  const { data: scores } = useScores({
+  const { data: scores, isLoading: scoresAreLoading } = useScores({
     students: _.map(students, 'id'),
     classes: _.map(classes, 'id'),
     periods: [..._.map(periods, 'id'), 'final'],
     published: true,
   });
 
-  const { data: courseScores } = useScores({
+  const { data: courseScores, isLoading: courseScoresAreLoading } = useScores({
     students: _.map(students, 'id'),
     classes: [`${filters.program}.${filters.course}`],
     periods: ['course'],
   });
 
+  const periodsWithFinal = React.useMemo(() => {
+    const greatestDate = periods?.reduce((dates, period) =>
+      period.endDate > dates.endDate ? period : dates
+    )?.startDate;
+
+    return [
+      ..._.map(periods),
+      {
+        id: 'final',
+        name: localizations?.final,
+        startDate: greatestDate,
+        endDate: greatestDate,
+      },
+    ];
+  }, [periods]);
+
   ({ students, classes, periods } = useLocalFilters({
     students,
     classes,
-    periods,
-    filters: localFilters,
+    periods: periodsWithFinal,
+    filters: { ...localFilters, period: filters?.period },
   }));
 
-  const periodsWithFinal = [..._.map(periods), { id: 'final', name: localizations?.final }];
+  const isLoading =
+    classesAreLoading ||
+    studentsAreLoading ||
+    periodsAreLoading ||
+    gradesAreLoading ||
+    scoresAreLoading ||
+    courseScoresAreLoading;
 
   const {
     classes: classesForTable,
@@ -177,19 +208,27 @@ export function FinalScores({ filters, localFilters }) {
     endDate,
   } = useParsedData({
     classes,
-    periods: periodsWithFinal,
+    periods,
     students,
     scores,
     courseScores,
   });
 
+  if (isLoading) {
+    return (
+      <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+        <Loader />
+      </Box>
+    );
+  }
+
   if (!Array.isArray(grades) || !classesForTable?.length || !studentsForTable?.length) {
-    return <Loader />;
+    return <EmptyState />;
   }
 
   return (
     <ScoresReviewerTable
-      key={`${classesForTable?.length}-${periodsWithFinal?.length}`}
+      key={`${_.map(classesForTable, 'id')?.join('.')}-${_.map(periods, 'id')?.join('.')}`}
       grades={grades}
       locale={locale}
       subjects={classesForTable}

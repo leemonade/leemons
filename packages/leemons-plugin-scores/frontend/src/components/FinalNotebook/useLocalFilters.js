@@ -21,11 +21,21 @@ function filterClassesByLocalFilters({ classes, filters }) {
   );
 }
 function filterPeriodsByLocalFilters({ filters, periods }) {
-  if (filters?.futureEvaluations) {
+  if (filters?.futureEvaluations && !filters?.period) {
     return periods;
   }
 
-  return periods?.filter((period) => !dayjs(period?.startDate).isAfter(dayjs()));
+  return periods?.filter((period) => {
+    if (!filters?.futureEvaluations && dayjs(period?.startDate).isAfter(dayjs())) {
+      return false;
+    }
+
+    if (filters?.period && filters?.period !== period.id) {
+      return false;
+    }
+
+    return true;
+  });
 }
 
 export function useLocalFilters({ students, classes, periods, filters }) {

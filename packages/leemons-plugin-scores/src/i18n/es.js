@@ -62,6 +62,11 @@ module.exports = {
         placeholder: 'Seleccionar grupos...',
         all: 'Todos los grupos',
       },
+      period: {
+        label: 'Periodo',
+        placeholder: 'Seleccionar periodo...',
+        all: 'Todos los periodos',
+      },
     },
   },
   periods: {

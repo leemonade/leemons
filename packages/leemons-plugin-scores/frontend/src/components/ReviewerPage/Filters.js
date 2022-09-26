@@ -8,6 +8,7 @@ import { getCentersWithToken } from '@users/session';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { prefixPN } from '@scores/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
@@ -32,12 +33,18 @@ const useFiltersStyles = createStyles((theme) => ({
 }));
 
 function useFiltersLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('reviewPage.filters'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('reviewPage.filters'),
+    prefixPN('scoresPage.filters.period.final'),
+  ]);
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('reviewPage.filters'));
+      const data = {
+        ..._.get(res, prefixPN('reviewPage.filters')),
+        finalPeriod: _.get(res, prefixPN('scoresPage.filters.period.final')),
+      };
 
       return data;
     }
@@ -97,14 +104,20 @@ function useFiltersData({ control }) {
     );
   }, [classes, selectedCourse]);
 
+  const { periods } = useMatchingAcademicCalendarPeriods({
+    classes,
+    filters: { program: selectedProgram, course: selectedCourse },
+  });
+
   return {
     programs,
     courses,
     groups,
+    periods,
   };
 }
 
-function useParsedData({ programs, courses, groups, localizations }) {
+function useParsedData({ programs, courses, groups, periods, localizations }) {
   const _programs = React.useMemo(
     () =>
       programs?.map((program) => ({
@@ -140,25 +153,45 @@ function useParsedData({ programs, courses, groups, localizations }) {
     ];
   }, [groups]);
 
+  const _periods = React.useMemo(() => {
+    if (!periods?.length) {
+      return [];
+    }
+
+    return [
+      {
+        label: localizations?.period?.all,
+        value: 'all',
+      },
+      ...periods.map((period) => ({
+        label: period.name,
+        value: period.id,
+      })),
+      { label: localizations?.finalPeriod, value: 'final' },
+    ];
+  });
+
   return {
     programs: _programs,
     courses: _courses,
     groups: _groups,
+    periods: _periods,
   };
 }
 
 function useEmitOnChange({ control, onChange }) {
-  const { program, course, group } = useWatch({ control });
+  const { program, course, group, period } = useWatch({ control });
 
   React.useEffect(() => {
     if (program && course && typeof onChange === 'function') {
       onChange({
         program,
         course,
-        group,
+        group: group === 'all' ? undefined : group,
+        period: period === 'all' ? undefined : period,
       });
     }
-  }, [program, course, group]);
+  }, [program, course, group, period]);
 }
 
 export default function Filters({ onChange }) {
@@ -169,7 +202,7 @@ export default function Filters({ onChange }) {
   const { control } = useForm();
 
   const filtersData = useFiltersData({ control });
-  const { programs, courses, groups } = useParsedData({ ...filtersData, localizations });
+  const { programs, courses, groups, periods } = useParsedData({ ...filtersData, localizations });
 
   useEmitOnChange({ control, onChange });
 
@@ -235,6 +268,21 @@ export default function Filters({ onChange }) {
               />
             );
           }}
+        />
+
+        <Controller
+          control={control}
+          name={'period'}
+          render={({ field }) => (
+            <Select
+              {...field}
+              data={periods}
+              disabled={!periods?.length}
+              placeholder={localizations?.period?.placeholder}
+              ariaLabel={localizations?.period?.label}
+              searchable
+            />
+          )}
         />
       </Box>
     </Box>

@@ -59,8 +59,13 @@ module.exports = {
       },
       group: {
         label: 'Group',
-        placeholder: 'Select groups...',
+        placeholder: 'Select group...',
         all: 'All groups',
+      },
+      period: {
+        label: 'Period',
+        placeholder: 'Select period...',
+        all: 'All periods',
       },
     },
   },

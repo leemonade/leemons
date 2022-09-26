@@ -72,7 +72,8 @@ export function useParsedData({ classes, periods, students, scores, courseScores
           ...dates,
           ...newDates,
         };
-      }) || {}
+      }) || {},
+    [periods]
   );
 
   return {
