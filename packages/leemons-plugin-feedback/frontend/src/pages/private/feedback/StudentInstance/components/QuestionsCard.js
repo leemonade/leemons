@@ -9,6 +9,7 @@ import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
 import OpenResponse from './OpenResponse';
+import LikertResponse from './LikertResponse';
 
 export const Styles = createStyles((theme) => ({
   container: {
@@ -47,9 +48,9 @@ function Empty(props) {
 }
 
 const questionsByType = {
-  singleResponse: <Empty />,
+  singleResponse: <Empty value={'asd'} />,
   multiResponse: <Empty multi />,
-  likertScale: <Empty />,
+  likertScale: <LikertResponse />,
   netPromoterScore: <Empty />,
   openResponse: <OpenResponse />,
 };
