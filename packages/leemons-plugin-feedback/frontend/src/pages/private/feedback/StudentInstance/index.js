@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ActivityContainer } from '@bubbles-ui/leemons';
-import { Box, COLORS, LoadingOverlay } from '@bubbles-ui/components';
+import { Box, COLORS, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { addErrorAlert } from '@layout/alert';
@@ -13,21 +13,28 @@ import { getFeedbackRequest } from '@feedback/request';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { isString } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
+import WelcomeCard from './components/WelcomeCards/WelcomeCard';
 
 const StudentInstance = () => {
   const [t] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
     idLoaded: '',
+    showingWelcome: true,
   });
 
   const locale = useLocale();
   const params = useParams();
 
-  function getUserId() {
+  const getUserId = () => {
     if (params.user) return params.user;
     return getCentersWithToken()[0].userAgentId;
-  }
+  };
+
+  const advanceToQuestions = () => {
+    store.showingWelcome = false;
+    render();
+  };
 
   const taskHeaderProps = React.useMemo(() => {
     if (store.instance) {
@@ -90,7 +97,13 @@ const StudentInstance = () => {
         }
         collapsed
       >
-        <QuestionsCard feedback={store.feedback} />
+        <Stack fullWidth justifyContent="center">
+          {store.showingWelcome ? (
+            <WelcomeCard feedback={store.feedback} t={t} onNext={advanceToQuestions} />
+          ) : (
+            <QuestionsCard feedback={store.feedback} />
+          )}
+        </Stack>
       </ActivityContainer>
     </Box>
   );
