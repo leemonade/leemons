@@ -5,20 +5,25 @@ import QuestionButtons from '../questions/QuestionButtons';
 import LikertResponseStyles from './LikertResponse.styles';
 
 const LikertResponse = (props) => {
-  const { question } = props;
+  const { question, defaultValue } = props;
   const [selectedValue, setSelectedValue] = useState(null);
   const { classes } = LikertResponseStyles({}, { name: 'LikertResponse' });
 
   const getLabelPosition = (index, maxLabels) => {
-    if (index === 1) return 'flex-start';
-    if (index === maxLabels) return 'flex-end';
+    if (index === 0) return 'flex-start';
+    if (index === maxLabels - 1) return 'flex-end';
     return 'center';
+  };
+
+  const handleSelectValue = (value) => {
+    if (value !== selectedValue) setSelectedValue(value);
+    else if (value === selectedValue) setSelectedValue(null);
   };
 
   const renderNumbers = () => {
     const { maxLabels } = question.properties;
     const numberElements = [];
-    for (let i = 1; i <= maxLabels; i++) {
+    for (let i = 0; i < maxLabels; i++) {
       numberElements.push(
         <Box>
           <Box
@@ -31,15 +36,15 @@ const LikertResponse = (props) => {
                   }
                 : {}
             }
-            onClick={() => setSelectedValue(i)}
+            onClick={() => handleSelectValue(i)}
           >
             <Text color="primary" role="productive">
-              {i}
+              {i + 1}
             </Text>
           </Box>
           <Stack style={{ marginTop: 6 }} fullWidth justifyContent={getLabelPosition(i, maxLabels)}>
             <Text color="primary" role="productive" className={classes.likertLabel}>
-              {question.properties[`likertLabel${i - 1}`]}
+              {question.properties[`likertLabel${i}`]}
             </Text>
           </Stack>
         </Box>
@@ -47,6 +52,10 @@ const LikertResponse = (props) => {
     }
     return numberElements;
   };
+
+  React.useEffect(() => {
+    setSelectedValue(defaultValue);
+  }, [defaultValue, question]);
 
   return (
     <Box>
@@ -61,6 +70,7 @@ const LikertResponse = (props) => {
 LikertResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
+  defaultValue: PropTypes.any,
 };
 
 export default LikertResponse;

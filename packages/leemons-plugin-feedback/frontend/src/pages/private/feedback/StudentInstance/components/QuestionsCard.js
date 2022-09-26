@@ -47,17 +47,19 @@ const questionsByType = {
   openResponse: <OpenResponse />,
 };
 
-function QuestionsCard({ feedback }) {
+function QuestionsCard({ feedback, instanceId }) {
   const { classes } = Styles();
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
   const [store, render] = useStore({
     maxIndex: 0,
     currentIndex: 0,
+    values: {},
   });
   const question = feedback.questions[store.currentIndex];
 
   async function onNext(value) {
-    setQuestionResponseRequest(question.id, value);
+    store.values[question.id] = value;
+    setQuestionResponseRequest(question.id, instanceId, value);
 
     store.currentIndex++;
     if (store.currentIndex > store.maxIndex) {
@@ -96,6 +98,7 @@ function QuestionsCard({ feedback }) {
               currentIndex: store.currentIndex,
               onNext,
               onPrev,
+              defaultValue: store.values[question.id],
               t,
             })}
           </Box>
@@ -107,6 +110,7 @@ function QuestionsCard({ feedback }) {
 
 QuestionsCard.propTypes = {
   feedback: PropTypes.any,
+  instanceId: PropTypes.string,
 };
 
 export default QuestionsCard;

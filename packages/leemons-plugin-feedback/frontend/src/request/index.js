@@ -5,4 +5,5 @@ export {
   getFeedback as getFeedbackRequest,
   assignFeedback as assignFeedbackRequest,
   setQuestionResponse as setQuestionResponseRequest,
+  setInstanceTimestamp as setInstanceTimestampRequest,
 } from './feedback';

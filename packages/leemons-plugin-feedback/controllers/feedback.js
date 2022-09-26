@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const feedbackService = require('../src/services/feedback');
+const feedbackResponsesService = require('../src/services/feedback-responses');
 
 async function saveFeedback(ctx) {
   const data = JSON.parse(ctx.request.body.data);
@@ -48,11 +49,24 @@ async function assignFeedback(ctx) {
 }
 
 async function setQuestionResponse(ctx) {
-  const question = await feedbackService.setQuestionResponse(ctx.request.body, {
+  const question = await feedbackResponsesService.setQuestionResponse(ctx.request.body, {
     userSession: ctx.state.userSession,
   });
   ctx.status = 200;
   ctx.body = { status: 200, question };
+}
+
+async function setInstanceTimestamp(ctx) {
+  const { timestamps } = await feedbackService.setInstanceTimestamp(
+    ctx.request.body.instance,
+    ctx.request.body.timeKey,
+    ctx.request.body.user || ctx.state.userSession.userAgents[0].id,
+    {
+      userSession: ctx.state.userSession,
+    }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, timestamps };
 }
 
 module.exports = {
@@ -62,4 +76,5 @@ module.exports = {
   getFeedback,
   assignFeedback,
   setQuestionResponse,
+  setInstanceTimestamp,
 };

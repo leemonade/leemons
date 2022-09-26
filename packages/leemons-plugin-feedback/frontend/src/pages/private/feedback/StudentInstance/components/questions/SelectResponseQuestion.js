@@ -59,7 +59,7 @@ export const Styles = createStyles((theme) => ({
 
 function SelectResponseQuestion(props) {
   const { classes, cx } = Styles();
-  const { question, multi } = props;
+  const { question, multi, defaultValue } = props;
   const [store, render] = useStore({
     value: [],
   });
@@ -82,6 +82,11 @@ function SelectResponseQuestion(props) {
     }
     render();
   }
+
+  React.useEffect(() => {
+    store.value = defaultValue || [];
+    render();
+  }, [defaultValue, question]);
 
   return (
     <Box>
@@ -138,6 +143,7 @@ function SelectResponseQuestion(props) {
 SelectResponseQuestion.propTypes = {
   question: PropTypes.any,
   multi: PropTypes.boolean,
+  defaultValue: PropTypes.any,
 };
 
 export default SelectResponseQuestion;

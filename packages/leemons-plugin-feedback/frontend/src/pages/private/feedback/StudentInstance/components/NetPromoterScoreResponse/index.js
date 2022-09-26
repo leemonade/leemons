@@ -5,7 +5,7 @@ import QuestionButtons from '../questions/QuestionButtons';
 import NetPromoterScoreResponseStyles from './NetPromoterScoreResponse.styles';
 
 const NetPromoterScoreResponse = (props) => {
-  const { question } = props;
+  const { question, defaultValue } = props;
   const [selectedValue, setSelectedValue] = useState('');
   const { classes } = NetPromoterScoreResponseStyles({}, { name: 'NetPromoterScoreResponse' });
 
@@ -35,6 +35,11 @@ const NetPromoterScoreResponse = (props) => {
     }
     return numberElements;
   };
+
+  React.useEffect(() => {
+    setSelectedValue(defaultValue);
+  }, [defaultValue, question]);
+
   return (
     <Box>
       <Stack fullWidth spacing={1}>
@@ -56,6 +61,7 @@ const NetPromoterScoreResponse = (props) => {
 NetPromoterScoreResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
+  defaultValue: PropTypes.any,
 };
 
 export default NetPromoterScoreResponse;

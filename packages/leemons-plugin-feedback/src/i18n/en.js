@@ -108,6 +108,7 @@ module.exports = {
   feedbackAssign: {
     pageTitle: 'Assign feedback:',
     assign: 'Assign',
+    assignDone: 'Feedback assigned',
   },
   studentInstance: {
     startQuestions: 'Answer feedback',
@@ -120,5 +121,6 @@ module.exports = {
     skip: 'Skip',
     back: 'Back',
     openResponsePlaceholder: 'Write here your answer...',
+    sendFeedback: 'Send feedback',
   },
 };

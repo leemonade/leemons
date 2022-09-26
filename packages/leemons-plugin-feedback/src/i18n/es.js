@@ -108,6 +108,7 @@ module.exports = {
   feedbackAssign: {
     pageTitle: 'Asignar encuesta:',
     assign: 'Asignar',
+    assignDone: 'Encuesta asignada',
   },
   studentInstance: {
     startQuestions: 'Responder encuesta',
@@ -120,5 +121,6 @@ module.exports = {
     skip: 'Omitir',
     back: 'Volver',
     openResponsePlaceholder: 'Escribe aquí tu respuesta...',
+    sendFeedback: 'Enviar encuesta',
   },
 };

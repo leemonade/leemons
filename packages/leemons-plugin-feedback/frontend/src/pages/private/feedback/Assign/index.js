@@ -28,7 +28,7 @@ export default function Assign() {
   const [t] = useTranslateLoader(prefixPN('feedbackAssign'));
 
   const [store, render] = useStore({
-    loading: true,
+    loading: false,
     isNew: false,
     currentStep: 0,
     data: {
@@ -40,6 +40,8 @@ export default function Assign() {
   const params = useParams();
 
   async function send(data) {
+    store.loading = true;
+    render();
     const { assignees, teachers, dates, curriculum, alwaysAvailable, ...instanceData } = data;
 
     const students = uniq(assignees.flatMap((assignee) => assignee.students));
@@ -72,6 +74,8 @@ export default function Assign() {
     } catch (e) {
       addErrorAlert(e.message);
     }
+    store.loading = false;
+    render();
   }
 
   const handleOnHeaderResize = (size) => {
@@ -97,7 +101,9 @@ export default function Assign() {
               assignable={{}}
               sendButton={
                 <Stack fullWidth justifyContent="end">
-                  <Button type="submit">{t('assign')}</Button>
+                  <Button loading={store.loading} type="submit">
+                    {t('assign')}
+                  </Button>
                 </Stack>
               }
               variations={['calificable', 'punctuation-evaluable']}

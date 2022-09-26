@@ -13,6 +13,7 @@ import { getFeedbackRequest } from '@feedback/request';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { isString } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
+import { setInstanceTimestamp } from '@feedback/request/feedback';
 import WelcomeCard from './components/WelcomeCards/WelcomeCard';
 
 const StudentInstance = () => {
@@ -32,6 +33,7 @@ const StudentInstance = () => {
   };
 
   const advanceToQuestions = () => {
+    setInstanceTimestamp(params.id, 'start', getUserId());
     store.showingWelcome = false;
     render();
   };
@@ -65,7 +67,18 @@ const StudentInstance = () => {
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
+      setInstanceTimestamp(params.id, 'open', getUserId());
 
+      let canStart = true;
+      if (store.instance.dates?.start) {
+        const now = new Date();
+        const start = new Date(store.instance.dates.start);
+        if (now < start) {
+          canStart = false;
+        }
+      }
+
+      store.canStart = canStart;
       store.feedback = (await getFeedbackRequest(store.instance.assignable.id)).feedback;
       store.idLoaded = params.id;
       store.loading = false;
@@ -99,9 +112,14 @@ const StudentInstance = () => {
       >
         <Stack fullWidth justifyContent="center">
           {store.showingWelcome ? (
-            <WelcomeCard feedback={store.feedback} t={t} onNext={advanceToQuestions} />
+            <WelcomeCard
+              feedback={store.feedback}
+              t={t}
+              onNext={advanceToQuestions}
+              canStart={store.canStart}
+            />
           ) : (
-            <QuestionsCard feedback={store.feedback} />
+            <QuestionsCard feedback={store.feedback} instanceId={store.idLoaded} />
           )}
         </Stack>
       </ActivityContainer>

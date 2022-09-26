@@ -5,7 +5,7 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    assignable: {
+    instance: {
       type: 'string',
       /*
       references: {
@@ -27,7 +27,7 @@ module.exports = {
         collection: 'plugins_feedback::feedback-questions',
       },
     },
-    response: { type: ['string', 'int'] },
+    response: { type: 'json' },
   },
   primaryKey: {
     type: 'uuid',

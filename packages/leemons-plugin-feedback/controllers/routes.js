@@ -67,9 +67,21 @@ module.exports = [
     allowedPermissions: getPermissions(permissions.feedback, ['create', 'update']),
   },
   {
+    path: '/feedback/instance/timestamp',
+    method: 'POST',
+    handler: 'feedback.setInstanceTimestamp',
+    authenticated: true,
+  },
+  {
     path: '/feedback/instance/question/response',
     method: 'POST',
     handler: 'feedback.setQuestionResponse',
+    authenticated: true,
+  },
+  {
+    path: '/feedback/instance/responses/:id',
+    method: 'GET',
+    handler: 'feedback.getUserAssignableResponses',
     authenticated: true,
   },
 ];

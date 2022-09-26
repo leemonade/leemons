@@ -102,13 +102,26 @@ async function assignFeedback(id, data) {
   });
 }
 
-async function setQuestionResponse(id, value) {
+async function setQuestionResponse(questionId, instanceId, value) {
   return leemons.api(`feedback/feedback/instance/question/response`, {
     allAgents: true,
     method: 'POST',
     body: {
-      id,
+      questionId,
+      instanceId,
       value,
+    },
+  });
+}
+
+async function setInstanceTimestamp(instance, timeKey, user) {
+  return leemons.api(`feedback/feedback/instance/timestamp`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      instance,
+      timeKey,
+      user,
     },
   });
 }
@@ -120,4 +133,5 @@ export {
   getFeedback,
   assignFeedback,
   setQuestionResponse,
+  setInstanceTimestamp,
 };
