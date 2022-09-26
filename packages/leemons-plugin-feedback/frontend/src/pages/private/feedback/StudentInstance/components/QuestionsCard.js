@@ -8,6 +8,7 @@ import { Box, createStyles, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
+import OpenResponse from './OpenResponse';
 
 export const Styles = createStyles((theme) => ({
   container: {
@@ -50,7 +51,7 @@ const questionsByType = {
   multiResponse: <Empty multi />,
   likertScale: <Empty />,
   netPromoterScore: <Empty />,
-  openResponse: <Empty />,
+  openResponse: <OpenResponse />,
 };
 
 function QuestionsCard({ feedback }) {
