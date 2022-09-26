@@ -158,4 +158,8 @@ module.exports = {
     //     'Si desea modificar esta configuración por defecto, utilice la opción de configuración avanzada más abajo.',
     // },
   },
+  feedbackResponseQuestion: {
+    nQuestion: 'PREGUNTA {n}',
+    questionRequired: '(obligatoria)',
+  },
 };

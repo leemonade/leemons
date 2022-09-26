@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ActivityContainer } from '@bubbles-ui/leemons';
-import { LoadingOverlay, Box, COLORS } from '@bubbles-ui/components';
+import { Box, COLORS, LoadingOverlay } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { addErrorAlert } from '@layout/alert';
@@ -12,6 +12,7 @@ import { getCentersWithToken } from '@users/session';
 import { getFeedbackRequest } from '@feedback/request';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { isString } from 'lodash';
+import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
 
 const StudentInstance = () => {
   const [t] = useTranslateLoader(prefixPN('studentInstance'));
@@ -89,7 +90,7 @@ const StudentInstance = () => {
         }
         collapsed
       >
-        <Box>hola</Box>
+        <QuestionsCard feedback={store.feedback} />
       </ActivityContainer>
     </Box>
   );
