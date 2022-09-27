@@ -15,7 +15,8 @@ import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesT
 import { onDataChange } from './onDataChange';
 import { useLocalFilters } from './useLocalFilters';
 import { useParsedData } from './useParsedData';
-import EmptyState from '../Notebook/components/ActivitiesTab/EmptyState';
+import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
+import { useClassesManagers } from './useClassesManagers';
 
 export function useMatchingClasses({ filters }) {
   const cache = useCache();
@@ -43,7 +44,22 @@ export function useMatchingClasses({ filters }) {
     return courseClasses?.filter((klass) => klass.groups.id === filters?.group);
   }, [courseClasses, filters?.group]);
 
-  return { classes: groupClasses, isLoading };
+  const classesManagers = useClassesManagers({ filters, classes: groupClasses });
+
+  const managers = React.useMemo(
+    () => classesManagers.reduce((obj, klass) => ({ ...obj, [klass.id]: klass.managers }), {}),
+    [classesManagers]
+  );
+
+  const classesWithManagers = React.useMemo(() => {
+    if (!classesManagers?.length) {
+      return groupClasses;
+    }
+
+    return groupClasses.map((klass) => ({ ...klass, managers: managers[klass.id] }));
+  }, [groupClasses, managers]);
+
+  return { classes: classesWithManagers, isLoading };
 }
 
 function useStudents({ classes, filters }) {
@@ -152,6 +168,7 @@ export function FinalScores({ filters, localFilters }) {
     classes,
     filters,
   });
+
   const { grades, isLoading: gradesAreLoading } = useGrades({ filters });
   const locale = useLocale();
   const localizations = useFinalScoresLocalization();

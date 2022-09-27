@@ -565,82 +565,55 @@ export default function Form({
                 {...showField}
                 // TODO: Initial show if curriculum selected
                 label={labels?.showCurriculumToogle}
-                render={
-                  () =>
-                    curriculumFields.isLoading ? (
-                      <Loader />
-                    ) : (
-                      <>
-                        {!curriculumFields?.data?.curriculum?.length
-                          ? null
-                          : curriculumFields.data.curriculum.map((curriculumField) => (
-                              <Controller
-                                key={curriculumField.id}
-                                control={control}
-                                name={`curriculum.${curriculumField.id}`}
-                                shouldUnregister={true}
-                                render={({ field }) => (
-                                  <Switch
-                                    {...field}
-                                    checked={field.value}
-                                    label={
-                                      <Box
-                                        sx={(theme) => ({
-                                          display: 'flex',
-                                          flexDirection: 'row',
-                                          gap: theme.spacing[1],
-                                        })}
-                                      >
-                                        {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
-                                        <Text>{curriculumField.label}</Text>
-                                      </Box>
-                                    }
-                                  />
-                                )}
-                              />
-                            ))}
-                        {!curriculumFields?.data?.objectives ? null : (
-                          <Controller
-                            control={control}
-                            name="curriculum.objectives"
-                            shouldUnregister={true}
-                            render={({ field }) => (
-                              <Switch
-                                {...field}
-                                checked={field.value}
-                                label={<Text>{labels?.objectives}</Text>}
-                              />
-                            )}
-                          />
-                        )}
-                      </>
-                    )
-                  // <>
-                  //   <Controller
-                  //     control={control}
-                  //     name="curriculum.content"
-                  //     shouldUnregister={true}
-                  //     render={({ field }) => (
-                  //       <Switch {...field} checked={field.value} label={labels?.content} />
-                  //     )}
-                  //   />
-                  //   <Controller
-                  //     control={control}
-                  //     name="curriculum.assessmentCriteria"
-                  //     shouldUnregister={true}
-                  //     render={({ field }) => (
-                  //       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
-                  //     )}
-                  //   />
-                  //   <Controller
-                  //     control={control}
-                  //     name="curriculum.objectives"
-                  //     shouldUnregister={true}
-                  //     render={({ field }) => (
-                  //       <Switch {...field} checked={field.value} label={labels?.objectives} />
-                  //     )}
-                  //   />
-                  // </>
+                render={() =>
+                  curriculumFields.isLoading ? (
+                    <Loader />
+                  ) : (
+                    <>
+                      {!curriculumFields?.data?.curriculum?.length
+                        ? null
+                        : curriculumFields.data.curriculum.map((curriculumField) => (
+                            <Controller
+                              key={curriculumField.id}
+                              control={control}
+                              name={`curriculum.${curriculumField.id}`}
+                              shouldUnregister={true}
+                              render={({ field }) => (
+                                <Switch
+                                  {...field}
+                                  checked={field.value}
+                                  label={
+                                    <Box
+                                      sx={(theme) => ({
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        gap: theme.spacing[1],
+                                      })}
+                                    >
+                                      {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
+                                      <Text>{curriculumField.label}</Text>
+                                    </Box>
+                                  }
+                                />
+                              )}
+                            />
+                          ))}
+                      {!curriculumFields?.data?.objectives ? null : (
+                        <Controller
+                          control={control}
+                          name="curriculum.objectives"
+                          shouldUnregister={true}
+                          render={({ field }) => (
+                            <Switch
+                              {...field}
+                              checked={field.value}
+                              label={<Text>{labels?.objectives}</Text>}
+                            />
+                          )}
+                        />
+                      )}
+                    </>
+                  )
                 }
               />
             )}

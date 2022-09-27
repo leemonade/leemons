@@ -1,8 +1,18 @@
 import React from 'react';
 import { useCache } from '@common';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getCookieToken } from '@users/session';
 
 export function useParsedData({ classes, periods, students, scores, courseScores }) {
+  const token = getCookieToken(true);
+  const userAgent = token?.centers?.[0]?.userAgentId;
+
+  const programManagers = React.useMemo(
+    () =>
+      classes[0]?.managers?.filter(({ type }) => type === 'course')?.map((manager) => manager.id),
+    [classes]
+  );
+
   const cache = useCache();
   const parsedClasses = cache(
     'parsedClasses',
@@ -17,10 +27,10 @@ export function useParsedData({ classes, periods, students, scores, courseScores
           periods: periods.map((period) => ({
             id: period.id,
             name: period.name,
-            allowChange: true,
+            allowChange: klass.managers?.map((manager) => manager.id)?.includes(userAgent),
           })),
         })),
-      [classes, periods]
+      [classes, periods, userAgent]
     )
   );
 
@@ -50,9 +60,9 @@ export function useParsedData({ classes, periods, students, scores, courseScores
             }),
           })),
           customScore: courseScores?.find((score) => score.student === student.id)?.grade,
-          allowCustomChange: true,
+          allowCustomChange: programManagers?.includes(userAgent),
         })),
-      [students, classes, periods]
+      [students, classes, periods, programManagers, userAgent]
     )
   );
 
