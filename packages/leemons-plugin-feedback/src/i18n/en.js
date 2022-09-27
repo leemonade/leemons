@@ -131,5 +131,9 @@ module.exports = {
     feedback: 'Feedback',
     generalInformation: 'General information',
     question: 'Question {i}',
+    started: 'Started',
+    sent: 'Sent',
+    completed: 'Finished',
+    timeToComplete: 'Time to complete',
   },
 };

@@ -15,6 +15,25 @@ const ResultStyles = createStyles((theme) => ({
     paddingTop: 12,
     borderRadius: 8,
   },
+  generalInformation: {
+    paddingBlock: 24,
+    paddingInline: 36,
+  },
+  infoBox: {
+    backgroundColor: theme.colors.mainWhite,
+    paddingInline: 16,
+    paddingBlock: 24,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 22,
+    borderRadius: 4,
+  },
+  infoText: {
+    color: theme.colors.text01,
+    fontSize: 32,
+    fontWeight: 500,
+    lineHeight: '24px',
+  },
 }));
 
 export default ResultStyles;

@@ -131,5 +131,9 @@ module.exports = {
     feedback: 'Encuesta',
     generalInformation: 'Información general',
     question: 'Pregunta {i}',
+    started: 'Comenzadas',
+    sent: 'Enviadas',
+    completed: 'Completadas',
+    timeToComplete: 'Tiempo para completar',
   },
 };

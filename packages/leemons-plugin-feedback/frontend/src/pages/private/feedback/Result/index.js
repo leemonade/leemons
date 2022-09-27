@@ -6,12 +6,16 @@ import { useParams } from 'react-router-dom';
 import {
   Box,
   Stack,
+  Text,
   Title,
   ActivityAccordion,
   ActivityAccordionPanel,
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import { NavigationMenuLeftIcon } from '@bubbles-ui/icons/outline';
+import { StarIcon } from '@bubbles-ui/icons/solid';
+
 import ResultStyles from './Result.styles';
 
 const Empty = () => <Box>HELLO</Box>;
@@ -23,6 +27,10 @@ const questionsByType = {
   netPromoterScore: <Empty />,
   openResponse: <Empty />,
 };
+
+function padTo2Digits(num) {
+  return num.toString().padStart(2, '0');
+}
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
@@ -60,6 +68,7 @@ export default function Result() {
       <ActivityAccordionPanel
         label={t('question', { i: index + 1 })}
         color="solid"
+        icon={<NavigationMenuLeftIcon />}
         key={question.id}
       >
         <Box className={classes.question}>hola</Box>
@@ -73,6 +82,17 @@ export default function Result() {
     ));
     return questionBoxs;
   };
+
+  function getAvgTime() {
+    const milliseconds = store.result.generalInfo.avgTimeOfCompletion;
+    let seconds = Math.floor(milliseconds / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    seconds %= 60;
+    minutes %= 60;
+    hours %= 24;
+    return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+  }
 
   React.useEffect(() => {
     if (params.id) init();
@@ -92,8 +112,35 @@ export default function Result() {
           </Title>
         </Box>
         <ActivityAccordion>
-          <ActivityAccordionPanel label={t('generalInformation')} color="solid">
-            <Box>hola</Box>
+          <ActivityAccordionPanel label={t('generalInformation')} color="solid" icon={<StarIcon />}>
+            <Stack fullWidth fullHeight spacing={2} className={classes.generalInformation}>
+              <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                <Text role="productive" color="primary" size="xs">
+                  {t('started')}
+                </Text>
+                <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
+              </Box>
+              <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                <Text role="productive" color="primary" size="xs">
+                  {t('sent')}
+                </Text>
+                <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
+              </Box>
+              <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                <Text role="productive" color="primary" size="xs">
+                  {t('completed')}
+                </Text>
+                <Text
+                  className={classes.infoText}
+                >{`${store.result.generalInfo.completionPercentage}%`}</Text>
+              </Box>
+              <Box className={classes.infoBox}>
+                <Text role="productive" color="primary" size="xs">
+                  {t('timeToComplete')}
+                </Text>
+                <Text className={classes.infoText}>{getAvgTime()}</Text>
+              </Box>
+            </Stack>
           </ActivityAccordionPanel>
           {renderQuestions()}
         </ActivityAccordion>
