@@ -56,11 +56,13 @@ export default function SelectClass({
   value,
   defaultValue,
   groupedClassesWithSelectedSubjects,
+  showResultsCheck,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       excluded: [],
       ...defaultValue,
+      showResults: true,
       showExcluded: _.isNil(defaultValue?.showExcluded)
         ? defaultValue?.excluded?.length > 0
         : defaultValue?.showExcluded,
@@ -204,6 +206,15 @@ export default function SelectClass({
             />
           )}
         />
+        {showResultsCheck && (
+          <Controller
+            control={control}
+            name={'showResults'}
+            render={({ field }) => (
+              <Switch {...field} checked={field.value} label={labels?.showResults} />
+            )}
+          />
+        )}
       </Box>
     </ContextContainer>
   );
@@ -238,5 +249,7 @@ SelectClass.propTypes = {
     assignees: PropTypes.arrayOf(PropTypes.string),
     excluded: PropTypes.arrayOf(PropTypes.string),
     showExcluded: PropTypes.bool,
+    showResults: PropTypes.bool,
   }),
+  showResultsCheck: PropTypes.bool,
 };

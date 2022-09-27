@@ -6,7 +6,14 @@ import SelectClass from './SelectClass';
 import SelectCustomGroup from './SelectCustomGroup';
 import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
-export default function AssigneeSelector({ labels, profile, onChange, value, defaultValue }) {
+export default function AssigneeSelector({
+  labels,
+  profile,
+  onChange,
+  value,
+  defaultValue,
+  showResultsCheck,
+}) {
   const { control } = useFormContext();
   const [profiles, setProfiles] = useState(null);
 
@@ -38,6 +45,7 @@ export default function AssigneeSelector({ labels, profile, onChange, value, def
           onChange={onChange}
           defaultValue={defaultValue?.assignmentSetup}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+          showResultsCheck={showResultsCheck}
         />
       );
     case 'customGroups':
@@ -48,6 +56,7 @@ export default function AssigneeSelector({ labels, profile, onChange, value, def
           value={value}
           onChange={onChange}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+          showResultsCheck={showResultsCheck}
         />
       );
     case 'session':
@@ -63,5 +72,6 @@ AssigneeSelector.propTypes = {
   profile: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array.isRequired,
+  showResultsCheck: PropTypes.bool,
   defaultValue: PropTypes.object,
 };

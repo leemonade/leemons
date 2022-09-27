@@ -33,6 +33,7 @@ module.exports = {
       },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
+      showResults: 'Allow students to view the results',
       addNewClassStudents: 'Automatically assign to newly enrolled students',
       clearStudents: 'Clear students',
       subjects: {
