@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
-import { TextInput, Alert, Loader, ContextContainer, Switch } from '@bubbles-ui/components';
+import { TextInput, Alert, Loader, ContextContainer, Switch, Box } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 
 export default function SelectCustomGroup({
@@ -11,10 +11,12 @@ export default function SelectCustomGroup({
   onChange,
   value,
   groupedClassesWithSelectedSubjects,
+  showResultsCheck,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       showToStudents: value?.[0]?.showToStudents === undefined ? true : value?.[0]?.showToStudents,
+      showResults: true,
       name: value?.[0]?.name,
       assignees: value?.[0]?.students || [],
     },
@@ -103,19 +105,30 @@ export default function SelectCustomGroup({
           />
         )}
       />
-      <Controller
-        name="showToStudents"
-        shouldUnregister
-        control={control}
-        render={({ field }) => (
-          <Switch
-            {...field}
-            checked={!field.value}
-            onChange={(v) => field.onChange(!v)}
-            label={labels?.showToStudents}
+      <Box>
+        <Controller
+          name="showToStudents"
+          shouldUnregister
+          control={control}
+          render={({ field }) => (
+            <Switch
+              {...field}
+              checked={!field.value}
+              onChange={(v) => field.onChange(!v)}
+              label={labels?.showToStudents}
+            />
+          )}
+        />
+        {showResultsCheck && (
+          <Controller
+            control={control}
+            name={'showResults'}
+            render={({ field }) => (
+              <Switch {...field} checked={field.value} label={labels?.showResults} />
+            )}
           />
         )}
-      />
+      </Box>
     </ContextContainer>
   );
 }
@@ -142,4 +155,5 @@ SelectCustomGroup.propTypes = {
     subjects: PropTypes.arrayOf(PropTypes.string).isRequired,
     assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
+  showResultsCheck: PropTypes.bool,
 };

@@ -32,52 +32,59 @@ function GradeVariation({
   variations = ['calificable', 'punctuation-evaluable', 'evaluable', 'no-evaluable'],
   labels,
 }) {
-  const data = useMemo(
-    () =>
-      [
-        {
-          label: labels?.calificable?.label,
-          description: labels?.calificable?.description,
-          value: 'calificable',
-          variation: {
-            gradable: true,
-            requiresScoring: true,
-            allowFeedback: true,
-          },
+  const data = useMemo(() => {
+    const allVariations = [
+      {
+        label: labels?.calificable?.label,
+        description: labels?.calificable?.description,
+        value: 'calificable',
+        variation: {
+          gradable: true,
+          requiresScoring: true,
+          allowFeedback: true,
         },
-        {
-          label: labels?.punctuationEvaluable?.label,
-          description: labels?.punctuationEvaluable?.description,
-          value: 'punctuation-evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: true,
-            allowFeedback: true,
-          },
+      },
+      {
+        label: labels?.punctuationEvaluable?.label,
+        description: labels?.punctuationEvaluable?.description,
+        value: 'punctuation-evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: true,
+          allowFeedback: true,
         },
-        {
-          label: labels?.evaluable?.label,
-          description: labels?.evaluable?.description,
-          value: 'evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: false,
-            allowFeedback: true,
-          },
+      },
+      {
+        label: labels?.evaluable?.label,
+        description: labels?.evaluable?.description,
+        value: 'evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: false,
+          allowFeedback: true,
         },
-        {
-          label: labels?.notEvaluable?.label,
-          description: labels?.notEvaluable?.description,
-          value: 'no-evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: false,
-            allowFeedback: false,
-          },
+      },
+      {
+        label: labels?.notEvaluable?.label,
+        description: labels?.notEvaluable?.description,
+        value: 'no-evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: false,
+          allowFeedback: false,
         },
-      ].filter((variation) => variations.includes(variation.value)),
-    [labels, ...variations]
-  );
+      },
+    ];
+    const variationsToUse = allVariations.filter((variation) =>
+      variations.includes(variation.value)
+    );
+
+    if (!variationsToUse?.length) {
+      return [allVariations[allVariations.length - 1]];
+    }
+
+    return variationsToUse;
+  }, [labels, ...variations]);
 
   const selectedValue = useMemo(() => {
     if (value) {
@@ -89,6 +96,7 @@ function GradeVariation({
     }
 
     onChange(data[0].variation);
+
     return data[0].value;
   }, [JSON.stringify(value)]);
 
@@ -217,6 +225,8 @@ export default function Form({
   assignable,
   sendButton,
   variations,
+  showResultsCheck,
+  hideDuration,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const {
@@ -306,6 +316,7 @@ export default function Form({
 
   const isAllDay = watch('isAllDay');
   const deadline = watch('dates.deadline');
+  const gradeVariation = watch('gradeVariation');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
@@ -317,6 +328,7 @@ export default function Form({
           render={({ field }) => (
             <AssignStudents
               {...field}
+              showResultsCheck={showResultsCheck}
               error={errors?.assignees}
               profile="student"
               assignable={assignable}
@@ -478,34 +490,36 @@ export default function Form({
                           )}
                         />
                       </Box>
-                      <ConditionalInput
-                        label={`${labels?.closeDateToogle}\n `}
-                        initialValue={!!defaultValues?.dates?.close}
-                        help={descriptions?.closeDateToogle}
-                        render={() => (
-                          <ContextContainer direction="row" alignItems="end">
-                            <Controller
-                              control={control}
-                              name="dates.close"
-                              shouldUnregister={true}
-                              rules={{ required: labels?.required }}
-                              render={({ field }) => {
-                                const deadline = watch('dates.deadline');
-                                return (
-                                  <DatePicker
-                                    {...field}
-                                    withTime
-                                    minDate={deadline}
-                                    error={errors?.dates?.close}
-                                    label={labels?.closeDate}
-                                    placeholder={placeholders?.date}
-                                  />
-                                );
-                              }}
-                            />
-                          </ContextContainer>
-                        )}
-                      />
+                      {(gradeVariation.gradable || gradeVariation.allowFeedback) && (
+                        <ConditionalInput
+                          label={`${labels?.closeDateToogle}\n `}
+                          initialValue={!!defaultValues?.dates?.close}
+                          help={descriptions?.closeDateToogle}
+                          render={() => (
+                            <ContextContainer direction="row" alignItems="end">
+                              <Controller
+                                control={control}
+                                name="dates.close"
+                                shouldUnregister={true}
+                                rules={{ required: labels?.required }}
+                                render={({ field }) => {
+                                  const deadline = watch('dates.deadline');
+                                  return (
+                                    <DatePicker
+                                      {...field}
+                                      withTime
+                                      minDate={deadline}
+                                      error={errors?.dates?.close}
+                                      label={labels?.closeDate}
+                                      placeholder={placeholders?.date}
+                                    />
+                                  );
+                                }}
+                              />
+                            </ContextContainer>
+                          )}
+                        />
+                      )}
                     </Grid.Col>
                   </Grid>
                 </>
@@ -514,26 +528,28 @@ export default function Form({
           )}
         />
 
-        <ConditionalInput
-          label={labels?.limitedExecutionToogle}
-          help={descriptions?.limitedExecution}
-          initialValue={!!defaultValues?.duration}
-          render={() => (
-            <Controller
-              control={control}
-              name="duration"
-              shouldUnregister={true}
-              rules={{ required: labels?.required }}
-              render={({ field }) => (
-                <TimeUnitsInput
-                  error={errors?.duration}
-                  label={labels?.limitedExecution}
-                  {...field}
-                />
-              )}
-            />
-          )}
-        />
+        {!hideDuration && (
+          <ConditionalInput
+            label={labels?.limitedExecutionToogle}
+            help={descriptions?.limitedExecution}
+            initialValue={!!defaultValues?.duration}
+            render={() => (
+              <Controller
+                control={control}
+                name="duration"
+                shouldUnregister={true}
+                rules={{ required: labels?.required }}
+                render={({ field }) => (
+                  <TimeUnitsInput
+                    error={errors?.duration}
+                    label={labels?.limitedExecution}
+                    {...field}
+                  />
+                )}
+              />
+            )}
+          />
+        )}
         <ConditionalInput
           label={labels?.messageToStudentsToogle}
           help={descriptions?.messageToStudents}
@@ -639,4 +655,5 @@ Form.propTypes = {
   control: PropTypes.object,
   curriculumFields: PropTypes.object,
   defaultValues: PropTypes.object,
+  hideDuration: PropTypes.bool,
 };

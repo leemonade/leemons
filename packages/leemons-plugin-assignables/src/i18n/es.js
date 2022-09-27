@@ -34,6 +34,7 @@ module.exports = {
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
+      showResults: 'Permitir a los estudiantes ver los resultados',
       addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
       clearStudents: 'Borrar estudiantes',
       subjects: {
@@ -285,8 +286,8 @@ module.exports = {
       subject: 'Asignatura',
       submission: 'Entregadas',
       avgTime: 'Tiempo medio',
-      grade: 'Nota',
-      score: 'Puntuación',
+      grade: 'Puntuación',
+      score: 'Respuestas correctas',
       activityType: 'Tipo de actividad',
     },
   },

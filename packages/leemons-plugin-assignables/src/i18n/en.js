@@ -33,6 +33,7 @@ module.exports = {
       },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
+      showResults: 'Allow students to view the results',
       addNewClassStudents: 'Automatically assign to newly enrolled students',
       clearStudents: 'Clear students',
       subjects: {
@@ -280,8 +281,8 @@ module.exports = {
       subject: 'Subject',
       submission: 'Submissions',
       avgTime: 'Avg. time',
-      grade: 'Grade',
-      score: 'Score',
+      grade: 'Score',
+      score: 'Correct answers',
       activityType: 'Activity type',
     },
   },
