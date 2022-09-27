@@ -226,6 +226,7 @@ export default function Form({
   sendButton,
   variations,
   showResultsCheck,
+  hideDuration,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
   const {
@@ -315,6 +316,7 @@ export default function Form({
 
   const isAllDay = watch('isAllDay');
   const deadline = watch('dates.deadline');
+  const gradeVariation = watch('gradeVariation');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
@@ -488,34 +490,36 @@ export default function Form({
                           )}
                         />
                       </Box>
-                      <ConditionalInput
-                        label={`${labels?.closeDateToogle}\n `}
-                        initialValue={!!defaultValues?.dates?.close}
-                        help={descriptions?.closeDateToogle}
-                        render={() => (
-                          <ContextContainer direction="row" alignItems="end">
-                            <Controller
-                              control={control}
-                              name="dates.close"
-                              shouldUnregister={true}
-                              rules={{ required: labels?.required }}
-                              render={({ field }) => {
-                                const deadline = watch('dates.deadline');
-                                return (
-                                  <DatePicker
-                                    {...field}
-                                    withTime
-                                    minDate={deadline}
-                                    error={errors?.dates?.close}
-                                    label={labels?.closeDate}
-                                    placeholder={placeholders?.date}
-                                  />
-                                );
-                              }}
-                            />
-                          </ContextContainer>
-                        )}
-                      />
+                      {(gradeVariation.gradable || gradeVariation.allowFeedback) && (
+                        <ConditionalInput
+                          label={`${labels?.closeDateToogle}\n `}
+                          initialValue={!!defaultValues?.dates?.close}
+                          help={descriptions?.closeDateToogle}
+                          render={() => (
+                            <ContextContainer direction="row" alignItems="end">
+                              <Controller
+                                control={control}
+                                name="dates.close"
+                                shouldUnregister={true}
+                                rules={{ required: labels?.required }}
+                                render={({ field }) => {
+                                  const deadline = watch('dates.deadline');
+                                  return (
+                                    <DatePicker
+                                      {...field}
+                                      withTime
+                                      minDate={deadline}
+                                      error={errors?.dates?.close}
+                                      label={labels?.closeDate}
+                                      placeholder={placeholders?.date}
+                                    />
+                                  );
+                                }}
+                              />
+                            </ContextContainer>
+                          )}
+                        />
+                      )}
                     </Grid.Col>
                   </Grid>
                 </>
@@ -524,26 +528,28 @@ export default function Form({
           )}
         />
 
-        <ConditionalInput
-          label={labels?.limitedExecutionToogle}
-          help={descriptions?.limitedExecution}
-          initialValue={!!defaultValues?.duration}
-          render={() => (
-            <Controller
-              control={control}
-              name="duration"
-              shouldUnregister={true}
-              rules={{ required: labels?.required }}
-              render={({ field }) => (
-                <TimeUnitsInput
-                  error={errors?.duration}
-                  label={labels?.limitedExecution}
-                  {...field}
-                />
-              )}
-            />
-          )}
-        />
+        {!hideDuration && (
+          <ConditionalInput
+            label={labels?.limitedExecutionToogle}
+            help={descriptions?.limitedExecution}
+            initialValue={!!defaultValues?.duration}
+            render={() => (
+              <Controller
+                control={control}
+                name="duration"
+                shouldUnregister={true}
+                rules={{ required: labels?.required }}
+                render={({ field }) => (
+                  <TimeUnitsInput
+                    error={errors?.duration}
+                    label={labels?.limitedExecution}
+                    {...field}
+                  />
+                )}
+              />
+            )}
+          />
+        )}
         <ConditionalInput
           label={labels?.messageToStudentsToogle}
           help={descriptions?.messageToStudents}
@@ -649,4 +655,5 @@ Form.propTypes = {
   control: PropTypes.object,
   curriculumFields: PropTypes.object,
   defaultValues: PropTypes.object,
+  hideDuration: PropTypes.bool,
 };
