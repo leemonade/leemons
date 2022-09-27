@@ -135,5 +135,10 @@ module.exports = {
     sent: 'Sent',
     completed: 'Finished',
     timeToComplete: 'Time to complete',
+    required: 'Required',
+    notRequired: 'Optional',
+    singleResponse: 'Monoresponse',
+    multiResponse: 'Multi-response',
+    openResponse: 'Open response',
   },
 };

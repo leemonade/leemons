@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   Title,
+  Badge,
   ActivityAccordion,
   ActivityAccordionPanel,
 } from '@bubbles-ui/components';
@@ -63,6 +64,22 @@ export default function Result() {
     render();
   }
 
+  const getQuestionBadges = (question) => {
+    const questionTypes = {
+      likertScale: 'Likert',
+      singleResponse: t('singleResponse'),
+      multiResponse: t('multiResponse'),
+      netPromoterScore: 'NPS',
+      openResponse: t('openResponse'),
+    };
+    return (
+      <Stack spacing={2}>
+        <Badge label={questionTypes[question.type]} closable={false} />
+        <Badge label={question.required ? t('required') : t('notRequired')} closable={false} />
+      </Stack>
+    );
+  };
+
   const renderQuestions = () => {
     const questionBoxs = store.feedback.questions.map((question, index) => (
       <ActivityAccordionPanel
@@ -70,6 +87,7 @@ export default function Result() {
         color="solid"
         icon={<NavigationMenuLeftIcon />}
         key={question.id}
+        rightSection={getQuestionBadges(question)}
       >
         <Box className={classes.question}>hola</Box>
         <Box>
