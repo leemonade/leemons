@@ -35,7 +35,13 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
       };
 
       // Info of responses
-      const questionResponses = _.groupBy(feedbackResponses, 'question');
+      const questionResponses = _.groupBy(
+        _.map(feedbackResponses, (value) => ({
+          ...value,
+          response: JSON.parse(value.response),
+        })),
+        'question'
+      );
       const questions = await table.feedbackQuestions.find(
         {
           id_$in: Object.keys(questionResponses),
@@ -45,15 +51,108 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
 
       const questionsInfo = {};
       _.forEach(questions, (question) => {
-        questionsInfo[question.id] = {};
+        questionsInfo[question.id] = {
+          value: {},
+          percentages: {},
+          totalValues: 0,
+        };
+        if (question.type === 'openResponse') {
+          questionsInfo[question.id].value = [];
+        } else {
+          questionsInfo[question.id].avg = 0;
+        }
         _.forEach(questionResponses[question.id], (questionResponse) => {
-          if (question.type === 'singleResponse') {
+          if (question.type === 'openResponse') {
+            questionsInfo[question.id].value.push(questionResponse.response);
+            questionsInfo[question.id].totalValues++;
+          }
+          if (
+            question.type === 'singleResponse' ||
+            question.type === 'likertScale' ||
+            question.type === 'netPromoterScore'
+          ) {
+            if (!questionsInfo[question.id].value[questionResponse.response]) {
+              questionsInfo[question.id].value[questionResponse.response] = 0;
+            }
+            questionsInfo[question.id].avg += questionResponse.response;
+            questionsInfo[question.id].value[questionResponse.response]++;
+            questionsInfo[question.id].totalValues++;
+          }
+          if (question.type === 'multiResponse') {
+            _.forEach(questionResponse.response, (response) => {
+              if (!questionsInfo[question.id].value[response]) {
+                questionsInfo[question.id].value[response] = 0;
+              }
+              questionsInfo[question.id].avg += questionResponse.response;
+              questionsInfo[question.id].value.push(response);
+              questionsInfo[question.id].totalValues++;
+            });
           }
         });
+
+        if (question.type !== 'openResponse') {
+          questionsInfo[question.id].avg /= questionsInfo[question.id].totalValues;
+          _.forIn(questionsInfo[question.id].value, (value, key) => {
+            questionsInfo[question.id].percentages[key] =
+              value / questionsInfo[question.id].totalValues;
+          });
+        }
+
+        if (question.type === 'netPromoterScore') {
+          let detractors = 0;
+          let passives = 0;
+          let promoters = 0;
+          if (questionsInfo[question.id].value[0]) {
+            detractors += questionsInfo[question.id].value[0];
+          }
+          if (questionsInfo[question.id].value[1]) {
+            detractors += questionsInfo[question.id].value[1];
+          }
+          if (questionsInfo[question.id].value[2]) {
+            detractors += questionsInfo[question.id].value[2];
+          }
+          if (questionsInfo[question.id].value[3]) {
+            detractors += questionsInfo[question.id].value[3];
+          }
+          if (questionsInfo[question.id].value[4]) {
+            detractors += questionsInfo[question.id].value[4];
+          }
+          if (questionsInfo[question.id].value[5]) {
+            detractors += questionsInfo[question.id].value[5];
+          }
+          if (questionsInfo[question.id].value[6]) {
+            passives += questionsInfo[question.id].value[6];
+          }
+          if (questionsInfo[question.id].value[7]) {
+            passives += questionsInfo[question.id].value[7];
+          }
+          if (questionsInfo[question.id].value[8]) {
+            promoters += questionsInfo[question.id].value[8];
+          }
+          if (questionsInfo[question.id].value[9]) {
+            promoters += questionsInfo[question.id].value[9];
+          }
+          const avgDetractors = detractors / questionsInfo[question.id].totalValues;
+          const avgPromoters = promoters / questionsInfo[question.id].totalValues;
+          questionsInfo[question.id].nsp = {
+            points: avgPromoters - avgDetractors,
+            detractors: {
+              number: detractors,
+              avg: avgDetractors,
+            },
+            passives: {
+              number: passives,
+              avg: passives / questionsInfo[question.id].totalValues,
+            },
+            promoters: {
+              number: promoters,
+              avg: avgPromoters,
+            },
+          };
+        }
       });
 
-      console.log('questions', questions);
-      return { generalInfo: feedbackGeneralInfo };
+      return { generalInfo: feedbackGeneralInfo, questionsInfo };
     },
     table.feedbackResponse,
     _transacting
