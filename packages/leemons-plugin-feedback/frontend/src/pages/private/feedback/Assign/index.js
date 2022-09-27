@@ -106,7 +106,7 @@ export default function Assign() {
                   </Button>
                 </Stack>
               }
-              variations={['calificable', 'punctuation-evaluable']}
+              variations={[]}
             />
           )}
         </VerticalStepperContainer>

@@ -122,5 +122,9 @@ module.exports = {
     back: 'Volver',
     openResponsePlaceholder: 'Escribe aquí tu respuesta...',
     sendFeedback: 'Enviar encuesta',
+    finishModal: 'Encuesta finalizada',
+    pendingActivities: 'Actividades pendientes',
+    viewResults: 'Ver resultados',
+    nextActivity: 'Siguiente actividad',
   },
 };

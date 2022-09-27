@@ -122,5 +122,9 @@ module.exports = {
     back: 'Back',
     openResponsePlaceholder: 'Write here your answer...',
     sendFeedback: 'Send feedback',
+    finishModal: 'Feedback finished',
+    pendingActivities: 'Pending activities',
+    viewResults: 'View results',
+    nextActivity: 'Next activity',
   },
 };

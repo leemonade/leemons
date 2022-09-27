@@ -70,8 +70,6 @@ const StudentInstance = () => {
         setInstanceTimestamp(params.id, 'open', getUserId()),
       ]);
 
-      console.log(store.responses);
-
       let canStart = true;
       if (store.instance.dates?.start) {
         const now = new Date();
@@ -126,6 +124,7 @@ const StudentInstance = () => {
               feedback={store.feedback}
               instanceId={store.idLoaded}
               defaultValues={store.responses}
+              userId={getUserId()}
             />
           )}
         </Stack>
