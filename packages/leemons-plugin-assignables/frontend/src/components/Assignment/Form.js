@@ -32,52 +32,59 @@ function GradeVariation({
   variations = ['calificable', 'punctuation-evaluable', 'evaluable', 'no-evaluable'],
   labels,
 }) {
-  const data = useMemo(
-    () =>
-      [
-        {
-          label: labels?.calificable?.label,
-          description: labels?.calificable?.description,
-          value: 'calificable',
-          variation: {
-            gradable: true,
-            requiresScoring: true,
-            allowFeedback: true,
-          },
+  const data = useMemo(() => {
+    const allVariations = [
+      {
+        label: labels?.calificable?.label,
+        description: labels?.calificable?.description,
+        value: 'calificable',
+        variation: {
+          gradable: true,
+          requiresScoring: true,
+          allowFeedback: true,
         },
-        {
-          label: labels?.punctuationEvaluable?.label,
-          description: labels?.punctuationEvaluable?.description,
-          value: 'punctuation-evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: true,
-            allowFeedback: true,
-          },
+      },
+      {
+        label: labels?.punctuationEvaluable?.label,
+        description: labels?.punctuationEvaluable?.description,
+        value: 'punctuation-evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: true,
+          allowFeedback: true,
         },
-        {
-          label: labels?.evaluable?.label,
-          description: labels?.evaluable?.description,
-          value: 'evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: false,
-            allowFeedback: true,
-          },
+      },
+      {
+        label: labels?.evaluable?.label,
+        description: labels?.evaluable?.description,
+        value: 'evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: false,
+          allowFeedback: true,
         },
-        {
-          label: labels?.notEvaluable?.label,
-          description: labels?.notEvaluable?.description,
-          value: 'no-evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: false,
-            allowFeedback: false,
-          },
+      },
+      {
+        label: labels?.notEvaluable?.label,
+        description: labels?.notEvaluable?.description,
+        value: 'no-evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: false,
+          allowFeedback: false,
         },
-      ].filter((variation) => variations.includes(variation.value)),
-    [labels, ...variations]
-  );
+      },
+    ];
+    const variationsToUse = allVariations.filter((variation) =>
+      variations.includes(variation.value)
+    );
+
+    if (!variationsToUse?.length) {
+      return [allVariations[allVariations.length - 1]];
+    }
+
+    return variationsToUse;
+  }, [labels, ...variations]);
 
   const selectedValue = useMemo(() => {
     if (value) {
@@ -89,6 +96,7 @@ function GradeVariation({
     }
 
     onChange(data[0].variation);
+
     return data[0].value;
   }, [JSON.stringify(value)]);
 
