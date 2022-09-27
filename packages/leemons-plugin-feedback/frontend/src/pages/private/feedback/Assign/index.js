@@ -1,5 +1,5 @@
 import React from 'react';
-import { forIn, map, omit, set, uniq } from 'lodash';
+import { forIn, omit, set, uniq } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
@@ -98,7 +98,10 @@ export default function Assign() {
           {store.currentStep === 0 && (
             <Form
               onSubmit={send}
+              showResultsCheck
+              hideDuration
               assignable={{}}
+              variations={[]}
               sendButton={
                 <Stack fullWidth justifyContent="end">
                   <Button loading={store.loading} type="submit">
@@ -106,7 +109,6 @@ export default function Assign() {
                   </Button>
                 </Stack>
               }
-              variations={['calificable', 'punctuation-evaluable']}
             />
           )}
         </VerticalStepperContainer>
