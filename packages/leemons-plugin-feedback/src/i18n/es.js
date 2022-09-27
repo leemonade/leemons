@@ -129,5 +129,7 @@ module.exports = {
   },
   feedbackResult: {
     feedback: 'Encuesta',
+    generalInformation: 'Información general',
+    question: 'Pregunta {i}',
   },
 };

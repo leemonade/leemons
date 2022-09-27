@@ -129,5 +129,7 @@ module.exports = {
   },
   feedbackResult: {
     feedback: 'Feedback',
+    generalInformation: 'General information',
+    question: 'Question {i}',
   },
 };

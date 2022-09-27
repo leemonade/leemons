@@ -84,7 +84,7 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
                 questionsInfo[question.id].value[response] = 0;
               }
               questionsInfo[question.id].avg += questionResponse.response;
-              questionsInfo[question.id].value.push(response);
+              questionsInfo[question.id].value[questionResponse.response]++;
               questionsInfo[question.id].totalValues++;
             });
           }
