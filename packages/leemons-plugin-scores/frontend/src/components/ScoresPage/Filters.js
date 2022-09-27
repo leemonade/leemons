@@ -226,7 +226,7 @@ function usePeriodTypes() {
 function usePeriods({ selectedClass, classes }) {
   const periodTypes = usePeriodTypes();
 
-  const adminPeriodsCache = useCache();
+  const cache = useCache();
   const { data: periodsResponse, isLoading } = usePeriodsRequest({
     page: 0,
     size: 9999,
@@ -234,7 +234,8 @@ function usePeriods({ selectedClass, classes }) {
 
   const adminPeriods = React.useMemo(
     () =>
-      adminPeriodsCache(
+      cache(
+        'adminPeriods',
         periodsResponse?.items?.map((period) => ({
           ..._.omit(period, ['program', 'course']),
           programs: [period.program].filter(Boolean),

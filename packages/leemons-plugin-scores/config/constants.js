@@ -5,6 +5,7 @@ const permissionNames = {
   noteBook: `${pluginName}.notebook`,
   scores: `${pluginName}.scores`,
   scoresMenu: `${pluginName}.scoresMenu`,
+  reviewer: `${pluginName}.reviewer`,
 };
 
 const permissions = [
@@ -38,6 +39,14 @@ const permissions = [
     localizationName: {
       es: 'Evaluaciones (menú)',
       en: 'Scores (menu)',
+    },
+  },
+  {
+    permissionName: permissionNames.reviewer,
+    actions: ['view', 'admin'],
+    localizationName: {
+      es: 'Notas finales',
+      en: 'Final grades',
     },
   },
 ];
@@ -102,8 +111,21 @@ const menuItems = [
   },
   {
     item: {
-      key: 'scores.scores',
+      key: 'scores.review',
       order: 3,
+      parentKey: 'scores',
+      url: '/private/scores/notebook/review',
+      label: {
+        en: 'Final grades',
+        es: 'Notas finales',
+      },
+    },
+    permissions: [{ permissionName: permissionNames.reviewer, actionNames: ['view', 'admin'] }],
+  },
+  {
+    item: {
+      key: 'scores.scores',
+      order: 4,
       parentKey: 'scores',
       url: '/private/scores/scores',
       label: {

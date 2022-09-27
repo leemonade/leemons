@@ -65,7 +65,7 @@ function getValues({
     ...student,
     activities: periods.map((period) => ({
       id: period.id,
-      score: scores.find((score) => score.student === student.id && score.period === period.id)
+      score: scores?.find((score) => score.student === student.id && score.period === period.id)
         ?.grade,
       isSubmitted: true,
     })),
@@ -79,6 +79,7 @@ function useGrades(klass) {
 
   const cache = useCache();
   return cache(
+    'grades',
     React.useMemo(
       () => evaluationSystem?.scales?.sort((a, b) => a.number - b.number),
       [evaluationSystem?.scales]
@@ -128,7 +129,7 @@ export default function useFinalData({ filters, localFilters }) {
   return {
     isLoading:
       studentsAreLoading || periodsScoresAreLoading || finalScoresAreLoading || !grades?.length,
-    activitiesData: cache({
+    activitiesData: cache('activitiesData', {
       activities,
       value: values,
       isPeriodSubmitted,

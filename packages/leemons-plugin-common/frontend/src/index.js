@@ -19,6 +19,7 @@ export * from './numberToEncodedLetter';
 export * from './linkify';
 export * from './isValidHttpUrl';
 export * from './useCache';
+export * from './stringMatch';
 
 export {
   formWithTheme,

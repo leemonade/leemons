@@ -1,20 +1,28 @@
 import { isEqual } from 'lodash';
 import { useRef } from 'react';
 
-function useCache({ useHooks = true } = {}) {
-  if (useHooks) {
-    return useRef(useCache({ useHooks: false })).current;
-  }
-  let prevValue = null;
+function cacheBody() {
+  const cache = new Map();
 
-  return (newValue) => {
-    if (isEqual(newValue, prevValue)) {
+  return (key, value) => {
+    const prevValue = cache.get(key);
+
+    if (isEqual(value, prevValue)) {
       return prevValue;
     }
 
-    prevValue = newValue;
-    return newValue;
+    cache.set(key, value);
+
+    return value;
   };
+}
+
+function useCache({ useHooks = true } = {}) {
+  if (useHooks) {
+    return useRef(cacheBody()).current;
+  }
+
+  return cacheBody();
 }
 
 export { useCache };
