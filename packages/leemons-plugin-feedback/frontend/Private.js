@@ -18,6 +18,7 @@ const FeedbackAssign = loadable(() =>
 const StudentInstance = loadable(() =>
   pMinDelay(import('./src/pages/private/feedback/StudentInstance'), 1000)
 );
+const Result = loadable(() => pMinDelay(import('./src/pages/private/feedback/Result'), 1000));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -25,10 +26,13 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route path={`${path}/result/:id`}>
+        <Result session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
       <Route path={`${path}/student/:id/:user`}>
         <StudentInstance session={session} fallback={<LoadingOverlay visible />} />
       </Route>
-      <Route path={`${path}/student/:id/`}>
+      <Route path={`${path}/student/:id`}>
         <StudentInstance session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/assign/:id`}>

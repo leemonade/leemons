@@ -134,6 +134,14 @@ async function getUserAssignableResponses(instanceId) {
   return responses;
 }
 
+async function getFeedbackResults(id) {
+  const { results } = await leemons.api(`feedback/feedback/results/${id}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+  return results;
+}
+
 export {
   duplicateFeedback,
   deleteFeedback,
@@ -143,4 +151,5 @@ export {
   setQuestionResponse,
   setInstanceTimestamp,
   getUserAssignableResponses,
+  getFeedbackResults,
 };

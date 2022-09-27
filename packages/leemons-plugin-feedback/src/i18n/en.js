@@ -127,4 +127,7 @@ module.exports = {
     viewResults: 'View results',
     nextActivity: 'Next activity',
   },
+  feedbackResult: {
+    feedback: 'Feedback',
+  },
 };

@@ -7,4 +7,5 @@ export {
   setQuestionResponse as setQuestionResponseRequest,
   setInstanceTimestamp as setInstanceTimestampRequest,
   getUserAssignableResponses as getUserAssignableResponsesRequest,
+  getFeedbackResults as getFeedbackResultsRequest,
 } from './feedback';

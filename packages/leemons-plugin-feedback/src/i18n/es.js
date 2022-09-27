@@ -127,4 +127,7 @@ module.exports = {
     viewResults: 'Ver resultados',
     nextActivity: 'Siguiente actividad',
   },
+  feedbackResult: {
+    feedback: 'Encuesta',
+  },
 };

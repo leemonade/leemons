@@ -84,4 +84,10 @@ module.exports = [
     handler: 'feedback.getUserAssignableResponses',
     authenticated: true,
   },
+  {
+    path: '/feedback/results/:id',
+    method: 'GET',
+    handler: 'feedback.getFeedbackResults',
+    authenticated: true,
+  },
 ];
