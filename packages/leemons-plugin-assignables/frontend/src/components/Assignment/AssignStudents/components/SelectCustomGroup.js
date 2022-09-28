@@ -18,7 +18,7 @@ export default function SelectCustomGroup({
     defaultValues: {
       showToStudents: value?.[0]?.showToStudents === undefined ? true : value?.[0]?.showToStudents,
       showResults: true,
-      showCorrectAnswers,
+      showCorrectAnswers: true,
       name: value?.[0]?.name,
       assignees: value?.[0]?.students || [],
     },
