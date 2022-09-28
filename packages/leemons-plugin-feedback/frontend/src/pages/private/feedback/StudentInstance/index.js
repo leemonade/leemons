@@ -125,6 +125,7 @@ const StudentInstance = () => {
               instanceId={store.idLoaded}
               defaultValues={store.responses}
               userId={getUserId()}
+              showResults={store.instance.showResults}
             />
           )}
         </Stack>

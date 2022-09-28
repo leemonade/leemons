@@ -50,7 +50,7 @@ const questionsByType = {
   openResponse: <OpenResponse />,
 };
 
-function QuestionsCard({ feedback, instanceId, defaultValues, userId }) {
+function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResults }) {
   const { classes } = Styles();
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
   const [store, render] = useStore({
@@ -72,6 +72,10 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId }) {
     history.push('/private/assignables/ongoing');
   };
 
+  const goToResults = () => {
+    history.push(`/private/feedback/result/${instanceId}`);
+  };
+
   async function onNext(value) {
     store.values[question.id] = value;
     setQuestionResponseRequest(question.id, instanceId, value);
@@ -84,7 +88,6 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId }) {
     } else {
       setInstanceTimestamp(instanceId, 'end', userId);
       store.showFinishModal = true;
-      console.log(store);
     }
 
     render();
@@ -94,6 +97,10 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId }) {
     store.currentIndex--;
     render();
   }
+
+  React.useEffect(() => {
+    store.modalMode = showResults ? 1 : 0;
+  }, [showResults]);
 
   if (!translations) return null;
 
@@ -139,16 +146,16 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId }) {
         <Stack direction="column" fullWidth spacing={8}>
           <Paragraph align="center">{feedback.thanksMessage}</Paragraph>
           {store.modalMode === 0 ? (
+            <Stack justifyContent="center">
+              <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
+            </Stack>
+          ) : null}
+          {store.modalMode === 1 ? (
             <Stack justifyContent="space-between">
               <Button variant="light" onClick={goToOnGoing}>
                 {t('pendingActivities')}
               </Button>
-              <Button>{t('viewResults')}</Button>
-            </Stack>
-          ) : null}
-          {store.modalMode === 1 ? (
-            <Stack justifyContent="center">
-              <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
+              <Button onClick={goToResults}>{t('viewResults')}</Button>
             </Stack>
           ) : null}
           {store.modalMode === 2 ? (
@@ -187,6 +194,7 @@ QuestionsCard.propTypes = {
   instanceId: PropTypes.string,
   defaultValues: PropTypes.any,
   userId: PropTypes.string,
+  showResults: PropTypes.bool,
 };
 
 export default QuestionsCard;

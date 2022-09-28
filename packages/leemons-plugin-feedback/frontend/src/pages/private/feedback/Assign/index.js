@@ -60,6 +60,7 @@ export default function Assign() {
         curriculum: curriculum ? omit(curriculum, 'toogle') : {},
         alwaysAvailable: alwaysAvailable || false,
         dates: alwaysAvailable ? {} : dates,
+        showResults: data.assignStudents.assignmentSetup.showResults,
       };
 
       if (assignees[0]?.type === 'custom') {
