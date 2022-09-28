@@ -37,6 +37,20 @@ module.exports = {
         defaultTo: 0,
       },
     },
+    showResults: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: 1,
+      },
+    },
+    showCorrectAnswers: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: 1,
+      },
+    },
     messageToAssignees: {
       type: 'richtext',
     },

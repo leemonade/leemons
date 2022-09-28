@@ -22,6 +22,8 @@ const updatableFields = [
   'curriculum',
   'metadata',
   'addNewClassStudents',
+  'showResults',
+  'showCorrectAnsers',
 ];
 
 module.exports = async function updateAssignableInstance(

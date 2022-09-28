@@ -85,14 +85,14 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
   let submission;
   let total;
 
-  if (instance?.metadata?.score) {
+  if (instance?.metadata?.score && instance.instance.gradable) {
     total = instance?.metadata?.score?.total || 0;
     submission = instance?.metadata?.score?.count || 0;
   }
 
   return {
     ...commonInfo,
-    grade: avgGrade.toFixed(avgGrade % 1 === 0 ? 0 : 2),
+    grade: !instance.instance.gradable ? undefined : avgGrade.toFixed(avgGrade % 1 === 0 ? 0 : 2),
     submission,
     total,
     activityType: capitalizeFirstLetter(roleName),
