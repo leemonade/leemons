@@ -51,24 +51,28 @@ async function getFeedback(id, { userSession, transacting } = {}, getAssets = tr
   });
 
   const questionsByFeedback = _.groupBy(questions, 'assignable');
-  const result = _.map(assignables, (feedback) => ({
-    id: feedback.id,
-    asset: feedback.asset,
-    name: feedback.asset.name,
-    file: feedback.asset.file,
-    tags: feedback.asset.tags,
-    color: feedback.asset.color,
-    cover: feedback.asset.cover,
-    tagline: feedback.asset.tagline,
-    featuredImage: questionAssetsById[feedback.metadata.featuredImage],
-    description: feedback.asset.description,
-    introductoryText: feedback.statement,
-    thanksMessage: feedback.metadata.thanksMessage,
-    questions: _.map(questionsByFeedback[feedback.id] || [], (question) => ({
-      ...question,
-      required: !!question.required,
-    })),
-  }));
+  const result = _.map(assignables, (feedback) => {
+    const toReturn = {
+      id: feedback.id,
+      asset: feedback.asset,
+      name: feedback.asset.name,
+      file: feedback.asset.file,
+      tags: feedback.asset.tags,
+      color: feedback.asset.color,
+      cover: feedback.asset.cover,
+      tagline: feedback.asset.tagline,
+      featuredImage: questionAssetsById[feedback.metadata.featuredImage],
+      description: feedback.asset.description,
+      introductoryText: feedback.statement,
+      thanksMessage: feedback.metadata.thanksMessage,
+      questions: _.map(questionsByFeedback[feedback.id] || [], (question) => ({
+        ...question,
+        required: !!question.required,
+      })),
+    };
+    toReturn.questions = _.orderBy(toReturn.questions, ['order'], ['asc']);
+    return toReturn;
+  });
   return _.isArray(id) ? result : result[0];
 }
 

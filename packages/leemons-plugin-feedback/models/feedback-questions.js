@@ -14,6 +14,9 @@ module.exports = {
     required: {
       type: 'boolean',
     },
+    order: {
+      type: 'integer',
+    },
     question: {
       type: 'text',
       required: true,

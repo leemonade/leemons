@@ -137,15 +137,15 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
       const questionsToCreate = [];
       const questionsToUpdate = [];
       const questionsToDelete = [];
-      _.forEach(questions, (question) => {
+      _.forEach(questions, (question, index) => {
         if (question.id) {
           if (currentQuestionsIds.includes(question.id)) {
-            questionsToUpdate.push(question);
+            questionsToUpdate.push({ ...question, order: index });
           } else {
-            questionsToCreate.push(question);
+            questionsToCreate.push({ ...question, order: index });
           }
         } else {
-          questionsToCreate.push(question);
+          questionsToCreate.push({ ...question, order: index });
         }
       });
       _.forEach(currentQuestionsIds, (questionId) => {

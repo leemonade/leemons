@@ -6,11 +6,11 @@ import {
   Alert,
   Box,
   Button,
-  Textarea,
   ContextContainer,
   InputWrapper,
   Stack,
-  Table,
+  TableInput,
+  Textarea,
   Title,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
@@ -26,6 +26,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
     isDirty: false,
+    questionChanged: 1,
   });
 
   const { openDeleteConfirmationModal } = useLayout();
@@ -33,6 +34,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
 
   function addQuestion() {
     qStore.newQuestion = true;
+    qStore.questionChanged++;
     qRender();
   }
 
@@ -40,6 +42,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     qStore.newQuestion = false;
     qStore.questionIndex = null;
     qStore.question = null;
+    qStore.questionChanged++;
     qRender();
   }
 
@@ -51,8 +54,44 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
       currentQuestions.push(question);
     }
     form.setValue('questions', currentQuestions);
+    qStore.questionChanged++;
+    qRender();
     onCancel();
   }
+
+  function editQuestion(index) {
+    qStore.questionIndex = index;
+    qStore.questionChanged++;
+    qStore.question = (form.getValues('questions') || [])[index];
+    qRender();
+  }
+
+  function deleteQuestion(index) {
+    openDeleteConfirmationModal({
+      onConfirm: async () => {
+        const newQuestions = form.getValues('questions') || [];
+        newQuestions.splice(index, 1);
+        form.setValue('questions', newQuestions);
+        qStore.questionChanged++;
+        qRender();
+      },
+    })();
+  }
+
+  const questionsForTable = React.useMemo(
+    () =>
+      map(questions, (question, i) => ({
+        ...getQuestionForTable(question, t),
+        goodQuestion: question,
+        actions: (
+          <Stack justifyContent="end" fullWidth>
+            <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
+            <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
+          </Stack>
+        ),
+      })),
+    [qStore.questionChanged]
+  );
 
   if (qStore.newQuestion || qStore.question) {
     return (
@@ -65,41 +104,29 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     );
   }
 
-  function editQuestion(index) {
-    qStore.questionIndex = index;
-    qStore.question = (form.getValues('questions') || [])[index];
-    qRender();
-  }
-
-  function deleteQuestion(index) {
-    openDeleteConfirmationModal({
-      onConfirm: async () => {
-        const newQuestions = form.getValues('questions') || [];
-        newQuestions.splice(index, 1);
-        form.setValue('questions', newQuestions);
-      },
-    })();
-  }
-
   const tableHeaders = [
     {
       Header: t('questionLabel'),
       accessor: 'question',
       className: 'text-left',
+      editable: false,
     },
     {
       Header: t('responsesLabel'),
       accessor: 'responses',
       className: 'text-left',
+      editable: false,
     },
     {
       Header: t('typeLabel'),
       accessor: 'type',
       className: 'text-left',
+      editable: false,
     },
     {
       Header: t('actionsHeader'),
       accessor: 'actions',
+      editable: false,
     },
   ];
 
@@ -150,17 +177,16 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
           />
 
           {questions && questions.length ? (
-            <Table
+            <TableInput
+              labels={{}}
+              showHeaders={false}
+              removable={false}
+              editable={false}
               columns={tableHeaders}
-              data={map(questions, (question, i) => ({
-                ...getQuestionForTable(question, t),
-                actions: (
-                  <Stack justifyContent="end" fullWidth>
-                    <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
-                    <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
-                  </Stack>
-                ),
-              }))}
+              data={questionsForTable}
+              onChange={(data) => {
+                form.setValue('questions', map(data, 'goodQuestion'));
+              }}
             />
           ) : null}
           <Box>

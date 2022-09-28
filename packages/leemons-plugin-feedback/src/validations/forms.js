@@ -8,6 +8,8 @@ const {
   stringSchemaNullable,
   textSchemaNullable,
   textSchema,
+  numberSchema,
+  integerSchemaNullable,
 } = require('./types');
 
 const saveQuestionBankSchema = {
@@ -44,6 +46,7 @@ const saveQuestionBankSchema = {
           type: stringSchema,
           question: textSchema,
           required: booleanSchemaNullable,
+          order: integerSchemaNullable,
           properties: {
             type: 'object',
             additionalProperties: true,
