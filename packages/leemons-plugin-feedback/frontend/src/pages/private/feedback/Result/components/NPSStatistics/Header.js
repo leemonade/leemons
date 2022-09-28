@@ -12,7 +12,7 @@ function Header({ classes, className, cx, title, avg, total, color }) {
       </Box>
       <Box>
         <Text color={color} size="md" strong>
-          {avg}%
+          {Math.trunc(avg)}%
         </Text>
         &nbsp;
         <Text size="md">({total})</Text>

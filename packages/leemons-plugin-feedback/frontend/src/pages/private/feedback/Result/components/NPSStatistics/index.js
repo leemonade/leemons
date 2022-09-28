@@ -2,15 +2,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NSPStatisticsStyles from '@feedback/pages/private/feedback/Result/components/NPSStatistics/styles';
-import { Badge, Box, Col, Grid, Stack, Text } from '@bubbles-ui/components';
-import { Header } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/header';
+import { Badge, Box, Col, Grid, Stack, Text, getFontExpressive } from '@bubbles-ui/components';
+import { Header } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/Header';
 import { PointBar } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/PointBar';
 
 function NPSStatistics({ question, responses, t }) {
   const { classes, cx } = NSPStatisticsStyles();
   const columns = [...new Array(11).keys()];
-
-  console.log(question);
 
   return (
     <Box className={classes.root}>
@@ -18,8 +16,13 @@ function NPSStatistics({ question, responses, t }) {
         <Text role="productive" stronger size="sm" color="primary">
           {t('responses', { n: responses.totalValues })}
         </Text>
-        <Badge color="stroke" size="lg" closable={false}>
-          {t('npsScore', { n: responses.nps.points })}
+        <Badge
+          color="stroke"
+          size="lg"
+          closable={false}
+          labelStyles={{ ...getFontExpressive('16px', 500) }}
+        >
+          {t('npsScore', { n: Math.trunc(responses.nps.points) })}
         </Badge>
       </Box>
       <Box className={classes.content}>
@@ -65,7 +68,7 @@ function NPSStatistics({ question, responses, t }) {
                 <PointBar
                   classes={classes}
                   cx={cx}
-                  percentage={responses.percentages[index] || 0}
+                  percentage={Math.trunc(responses.percentages[index]) || 0}
                   bottomText={index}
                   total={responses.value[index] || 0}
                   color={index < 7 ? 'fatic01' : index > 8 ? 'fatic02' : 'fatic03'}

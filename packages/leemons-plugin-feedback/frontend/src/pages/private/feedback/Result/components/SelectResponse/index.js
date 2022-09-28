@@ -24,7 +24,7 @@ export default function OpenResponse(props) {
               <Stack skipFlex spacing={6} alignItems="flex-end">
                 <Text color="quartiary">{responses.value[index]} resp.</Text>
                 <Text color="quartiary" size="md" strong>
-                  {Math.trunc(responses.percentages[index] * 100)}%
+                  {Math.trunc(responses.percentages[index])}%
                 </Text>
               </Stack>
             </Stack>
