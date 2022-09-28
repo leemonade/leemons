@@ -92,11 +92,16 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
   return {
     ...commonInfo,
-    grade: !instance.instance.gradable ? undefined : avgGrade.toFixed(avgGrade % 1 === 0 ? 0 : 2),
+    grade: avgGrade.toFixed(avgGrade % 1 === 0 ? 0 : 2),
     submission,
     total,
     activityType: capitalizeFirstLetter(roleName),
-    labels: _.omit(labels?.assigment, [!instance?.metadata?.score && 'score'].filter(Boolean)),
+    labels: _.omit(
+      labels?.assigment,
+      [!instance?.metadata?.score && 'score', !instance.instance.gradable && 'grade'].filter(
+        Boolean
+      )
+    ),
   };
 }
 
