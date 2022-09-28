@@ -9,8 +9,6 @@ function LikertStatistics({ question, responses, t }) {
   const { classes, cx } = NSPStatisticsStyles();
   const columns = [...new Array(question.properties.maxLabels).keys()];
 
-  console.log(question);
-
   const averageColor = React.useMemo(() => {
     const mid = question.properties.maxLabels + 1 / 2;
     if (responses.avg < mid - 0.5) return 'error';
