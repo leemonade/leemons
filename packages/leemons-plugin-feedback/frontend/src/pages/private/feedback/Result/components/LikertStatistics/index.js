@@ -39,7 +39,7 @@ function LikertStatistics({ question, responses, t }) {
               <PointBar
                 classes={classes}
                 cx={cx}
-                percentage={responses.percentages[index] || 0}
+                percentage={Math.trunc(responses.percentages[index] || 0)}
                 bottomText={index + 1}
                 total={responses.value[index] || 0}
                 label={question.properties[`likertLabel${index}`]}
