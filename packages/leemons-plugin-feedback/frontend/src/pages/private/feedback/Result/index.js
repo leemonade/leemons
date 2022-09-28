@@ -15,16 +15,16 @@ import {
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import { NavigationMenuLeftIcon } from '@bubbles-ui/icons/outline';
+import { NavigationMenuLeftIcon, PluginRankingIcon } from '@bubbles-ui/icons/outline';
 import { StarIcon } from '@bubbles-ui/icons/solid';
 import ResultStyles from './Result.styles';
-import OpenResponse from './components/OpenResponse';
+import { OpenResponse, SelectResponse } from './components';
 
 const Empty = () => <Box>HELLO</Box>;
 
 const questionsByType = {
-  singleResponse: <Empty />,
-  multiResponse: <Empty multi />,
+  singleResponse: <SelectResponse />,
+  multiResponse: <SelectResponse />,
   likertScale: <Empty />,
   netPromoterScore: <Empty />,
   openResponse: <OpenResponse />,
@@ -76,12 +76,24 @@ export default function Result() {
     );
   };
 
+  const getQuestionIcons = (questionType) => {
+    const questionTypes = {
+      likertScale: <PluginRankingIcon />,
+      singleResponse: <NavigationMenuLeftIcon />,
+      multiResponse: <NavigationMenuLeftIcon />,
+      netPromoterScore: <NavigationMenuLeftIcon />,
+      openResponse: <NavigationMenuLeftIcon />,
+    };
+
+    return questionTypes[questionType];
+  };
+
   const renderQuestions = () => {
     const questionBoxs = store.feedback.questions.map((question, index) => (
       <ActivityAccordionPanel
         label={t('question', { i: index + 1 })}
         color="solid"
-        icon={<NavigationMenuLeftIcon />}
+        icon={getQuestionIcons(question.type)}
         key={question.id}
         rightSection={getQuestionBadges(question)}
       >
@@ -117,7 +129,7 @@ export default function Result() {
   if (store.loading) return null;
 
   return (
-    <Stack justifyContent="center" fullWidth fullHeight className={classes.root}>
+    <Stack justifyContent="center" fullWidth className={classes.root}>
       <Stack direction="column" spacing={4} className={classes.container}>
         <Box className={classes.resultHeader}>
           <Title order={5} role="productive" color="quartiary">

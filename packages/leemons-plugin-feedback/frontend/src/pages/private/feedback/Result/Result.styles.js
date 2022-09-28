@@ -3,11 +3,13 @@ import { createStyles } from '@bubbles-ui/components';
 const ResultStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.interactive03,
+    height: '100vh',
   },
   container: {
     width: '100%',
     maxWidth: 710,
     marginTop: 28,
+    marginBottom: 28,
   },
   resultHeader: {
     backgroundColor: theme.colors.mainWhite,
@@ -38,6 +40,9 @@ const ResultStyles = createStyles((theme) => ({
     paddingBlock: 22,
     paddingInline: 16,
     backgroundColor: theme.colors.mainWhite,
+    '*': {
+      fontSize: 16,
+    },
   },
 }));
 
