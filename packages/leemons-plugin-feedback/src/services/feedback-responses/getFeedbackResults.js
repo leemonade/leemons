@@ -92,6 +92,9 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
 
         if (question.type !== 'openResponse') {
           questionsInfo[question.id].avg /= questionsInfo[question.id].totalValues;
+          if (question.type === 'likertScale') {
+            questionsInfo[question.id].avg += 1;
+          }
           _.forIn(questionsInfo[question.id].value, (value, key) => {
             questionsInfo[question.id].percentages[key] =
               (value / questionsInfo[question.id].totalValues) * 100;

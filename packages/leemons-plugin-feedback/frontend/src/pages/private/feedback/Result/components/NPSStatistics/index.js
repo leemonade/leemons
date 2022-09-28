@@ -10,8 +10,6 @@ function NPSStatistics({ question, responses, t }) {
   const { classes, cx } = NSPStatisticsStyles();
   const columns = [...new Array(11).keys()];
 
-  console.log(question);
-
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>

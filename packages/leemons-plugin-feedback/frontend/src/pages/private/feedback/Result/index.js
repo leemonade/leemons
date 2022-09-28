@@ -18,6 +18,7 @@ import getAssignableInstance from '@assignables/requests/assignableInstances/get
 import { NavigationMenuLeftIcon } from '@bubbles-ui/icons/outline';
 import { StarIcon } from '@bubbles-ui/icons/solid';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
+import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import ResultStyles from './Result.styles';
 import OpenResponse from './components/OpenResponse';
 
@@ -26,7 +27,7 @@ const Empty = () => <Box>HELLO</Box>;
 const questionsByType = {
   singleResponse: <Empty />,
   multiResponse: <Empty multi />,
-  likertScale: <Empty />,
+  likertScale: <LikertStatistics />,
   netPromoterScore: <NPSStatistics />,
   openResponse: <OpenResponse />,
 };
