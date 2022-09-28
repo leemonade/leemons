@@ -142,5 +142,6 @@ module.exports = {
     multiResponse: 'Multi-response',
     openResponse: 'Open response',
     responses: 'Responses ({n})',
+    average: 'Average:',
   },
 };

@@ -18,15 +18,14 @@ import getAssignableInstance from '@assignables/requests/assignableInstances/get
 import { NavigationMenuLeftIcon, PluginRankingIcon } from '@bubbles-ui/icons/outline';
 import { StarIcon } from '@bubbles-ui/icons/solid';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
+import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
-const Empty = () => <Box>HELLO</Box>;
-
 const questionsByType = {
+  likertScale: <LikertStatistics />,
   singleResponse: <SelectResponse />,
   multiResponse: <SelectResponse />,
-  likertScale: <Empty />,
   netPromoterScore: <NPSStatistics />,
   openResponse: <OpenResponse />,
 };

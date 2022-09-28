@@ -145,5 +145,6 @@ module.exports = {
     multiResponse: 'Multi-respuesta',
     openResponse: 'Respuesta abierta',
     responses: 'Respuestas ({n})',
+    average: 'Media:',
   },
 };

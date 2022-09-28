@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Text } from '@bubbles-ui/components';
 
-function PointBar({ classes, cx, percentage, total, color, bottomText }) {
+function PointBar({ classes, cx, percentage, total, color, bottomText, label }) {
   return (
     <Box>
       <Box sx={() => ({ textAlign: 'center' })}>
@@ -25,6 +25,11 @@ function PointBar({ classes, cx, percentage, total, color, bottomText }) {
             {bottomText}
           </Text>
         </Box>
+        {label ? (
+          <Box sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+            <Text role="productive">{label}</Text>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );
