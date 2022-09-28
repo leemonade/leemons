@@ -124,15 +124,18 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
             detractors += questionsInfo[question.id].value[5];
           }
           if (questionsInfo[question.id].value[6]) {
-            passives += questionsInfo[question.id].value[6];
+            detractors += questionsInfo[question.id].value[6];
           }
           if (questionsInfo[question.id].value[7]) {
             passives += questionsInfo[question.id].value[7];
           }
           if (questionsInfo[question.id].value[8]) {
-            promoters += questionsInfo[question.id].value[8];
+            passives += questionsInfo[question.id].value[8];
           }
           if (questionsInfo[question.id].value[9]) {
+            promoters += questionsInfo[question.id].value[9];
+          }
+          if (questionsInfo[question.id].value[10]) {
             promoters += questionsInfo[question.id].value[9];
           }
           const avgDetractors = (detractors / questionsInfo[question.id].totalValues) * 100;
