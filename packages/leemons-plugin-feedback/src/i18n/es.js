@@ -135,5 +135,10 @@ module.exports = {
     sent: 'Enviadas',
     completed: 'Completadas',
     timeToComplete: 'Tiempo para completar',
+    responses: 'Respuestas ({n})',
+    npsScore: 'Net Promoter Score©️ = {n}',
+    npsDetractors: 'Detractors',
+    npsPassives: 'Passives',
+    npsPromoters: 'Promoters',
   },
 };

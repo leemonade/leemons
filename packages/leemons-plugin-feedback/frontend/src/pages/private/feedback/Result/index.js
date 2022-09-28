@@ -4,18 +4,19 @@ import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
 import { useParams } from 'react-router-dom';
 import {
+  ActivityAccordion,
+  ActivityAccordionPanel,
   Box,
   Stack,
   Text,
   Title,
-  ActivityAccordion,
-  ActivityAccordionPanel,
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { NavigationMenuLeftIcon } from '@bubbles-ui/icons/outline';
 import { StarIcon } from '@bubbles-ui/icons/solid';
 
+import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import ResultStyles from './Result.styles';
 
 const Empty = () => <Box>HELLO</Box>;
@@ -24,7 +25,7 @@ const questionsByType = {
   singleResponse: <Empty />,
   multiResponse: <Empty multi />,
   likertScale: <Empty />,
-  netPromoterScore: <Empty />,
+  netPromoterScore: <NPSStatistics />,
   openResponse: <Empty />,
 };
 
@@ -76,6 +77,7 @@ export default function Result() {
           {React.cloneElement(questionsByType[question.type], {
             question,
             responses: store.result.questionsInfo[question.id],
+            t,
           })}
         </Box>
       </ActivityAccordionPanel>

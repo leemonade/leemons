@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import HeaderProgressBar from '@feedback/pages/private/feedback/StudentInstance/components/questions/HeaderProgressBar';
-import { Box, createStyles, Text, Modal, Paragraph, Stack, Button } from '@bubbles-ui/components';
+import { Box, Button, createStyles, Modal, Paragraph, Stack, Text } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
 import { setQuestionResponseRequest } from '@feedback/request';
-import { ExpandDiagonalIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
+import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
 import { setInstanceTimestamp } from '@feedback/request/feedback';
 import OpenResponse from './OpenResponse';
@@ -84,6 +84,7 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId }) {
     } else {
       setInstanceTimestamp(instanceId, 'end', userId);
       store.showFinishModal = true;
+      console.log(store);
     }
 
     render();
