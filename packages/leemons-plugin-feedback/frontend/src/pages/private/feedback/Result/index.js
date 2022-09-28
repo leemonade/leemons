@@ -6,7 +6,9 @@ import { useParams } from 'react-router-dom';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
+  Badge,
   Box,
+  HtmlText,
   Stack,
   Text,
   Title,
@@ -15,9 +17,9 @@ import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { NavigationMenuLeftIcon } from '@bubbles-ui/icons/outline';
 import { StarIcon } from '@bubbles-ui/icons/solid';
-
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import ResultStyles from './Result.styles';
+import OpenResponse from './components/OpenResponse';
 
 const Empty = () => <Box>HELLO</Box>;
 
@@ -26,7 +28,7 @@ const questionsByType = {
   multiResponse: <Empty multi />,
   likertScale: <Empty />,
   netPromoterScore: <NPSStatistics />,
-  openResponse: <Empty />,
+  openResponse: <OpenResponse />,
 };
 
 function padTo2Digits(num) {
@@ -37,11 +39,6 @@ export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
   const [store, render] = useStore({
     loading: true,
-    isNew: false,
-    currentStep: 0,
-    data: {
-      metadata: {},
-    },
   });
 
   const { classes } = ResultStyles({}, { name: 'Result' });
@@ -64,6 +61,22 @@ export default function Result() {
     render();
   }
 
+  const getQuestionBadges = (question) => {
+    const questionTypes = {
+      likertScale: 'Likert',
+      singleResponse: t('singleResponse'),
+      multiResponse: t('multiResponse'),
+      netPromoterScore: 'NPS',
+      openResponse: t('openResponse'),
+    };
+    return (
+      <Stack spacing={2}>
+        <Badge label={questionTypes[question.type]} closable={false} />
+        <Badge label={question.required ? t('required') : t('notRequired')} closable={false} />
+      </Stack>
+    );
+  };
+
   const renderQuestions = () => {
     const questionBoxs = store.feedback.questions.map((question, index) => (
       <ActivityAccordionPanel
@@ -71,8 +84,11 @@ export default function Result() {
         color="solid"
         icon={<NavigationMenuLeftIcon />}
         key={question.id}
+        rightSection={getQuestionBadges(question)}
       >
-        <Box className={classes.question}>hola</Box>
+        <Box className={classes.question}>
+          <HtmlText>{question.question}</HtmlText>
+        </Box>
         <Box>
           {React.cloneElement(questionsByType[question.type], {
             question,

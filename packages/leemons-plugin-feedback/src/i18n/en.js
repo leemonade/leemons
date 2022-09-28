@@ -135,7 +135,12 @@ module.exports = {
     sent: 'Sent',
     completed: 'Finished',
     timeToComplete: 'Time to complete',
-    responses: 'Responses ({n})',
     npsScore: 'Net Promoter Score©️ = {n}',
+    required: 'Required',
+    notRequired: 'Optional',
+    singleResponse: 'Monoresponse',
+    multiResponse: 'Multi-response',
+    openResponse: 'Open response',
+    responses: 'Responses ({n})',
   },
 };
