@@ -9,6 +9,7 @@ const addPermissionToUser = require('./permissions/assignableInstance/users/addP
 const createAssignation = require('../assignations/createAssignation');
 const addTeachersToAssignableInstance = require('../teachers/addTeachersToAssignableInstance');
 const registerEvent = require('./calendar/registerEvent');
+const updateAssignableInstance = require('./updateAssignableInstance');
 
 async function getTeachersOfGivenClasses(classes, { userSession, transacting } = {}) {
   const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
@@ -24,7 +25,7 @@ async function getTeachersOfGivenClasses(classes, { userSession, transacting } =
   return teachers;
 }
 
-module.exports = async function createAssignableInstance(
+async function createAssignableInstance(
   assignableInstance,
   { userSession, transacting, ctx } = {}
 ) {
@@ -40,6 +41,7 @@ module.exports = async function createAssignableInstance(
     relatedAssignables,
     students,
     isAllDay,
+    relatedAssignableInstances,
     ...assignableInstanceObj
   } = assignableInstance;
 
@@ -49,39 +51,6 @@ module.exports = async function createAssignableInstance(
     userSession,
     transacting,
   });
-
-  // EN: Check if the assignable has related assignables and create them
-  // ES: Comprueba si el asignable tiene asignables relacionados y los crea
-  const relatedAssignableInstances = [];
-  if (
-    assignable.relatedAssignables?.after?.length ||
-    assignable.relatedAssignables?.before?.length
-  ) {
-    const assignables = _.concat(
-      assignable?.relatedAssignables?.after,
-      assignable?.relatedAssignables?.before
-    );
-
-    // EN: Create the assignableInstance of each related assignable
-    // ES: Crea el asignableInstance de cada asignable relacionado
-    relatedAssignableInstances.push(
-      ...(await Promise.all(
-        assignables.map((ass) =>
-          createAssignableInstance.call(
-            this,
-            {
-              // EN: If no info provided for the assignable, use the info of the parent assignableInstance
-              // ES: Si no se proporciona información para el asignable, usa la información del asignableInstance padre
-              ...assignableInstance,
-              assignable: ass.id,
-              ..._.get(relatedAssignables, assignable.id, {}),
-            },
-            { userSession, transacting }
-          )
-        )
-      ))
-    );
-  }
 
   let event = null;
 
@@ -93,9 +62,7 @@ module.exports = async function createAssignableInstance(
       event,
       metadata: JSON.stringify(metadata),
       curriculum: JSON.stringify(curriculum),
-      relatedAssignableInstances: JSON.stringify(
-        relatedAssignableInstances.map((instance) => instance.id).filter((instance) => instance)
-      ),
+      relatedAssignableInstances: JSON.stringify({ before: [], after: [] }),
     },
     { transacting }
   );
@@ -133,6 +100,17 @@ module.exports = async function createAssignableInstance(
   // ES: Guarda las fechas
   await registerDates('assignableInstance', id, dates, { userSession, transacting });
 
+  if (relatedAssignableInstances?.before?.length || relatedAssignableInstances?.after?.length) {
+    await updateAssignableInstance.call(
+      this,
+      {
+        id,
+        relatedAssignableInstances,
+      },
+      { transacting, userSession }
+    );
+  }
+
   if (students.length) {
     // EN: Grant users to access event
     // ES: Da permiso a los usuarios para ver el evento
@@ -158,7 +136,6 @@ module.exports = async function createAssignableInstance(
   }
 
   return {
-    ...assignableInstanceObj,
     id,
     students,
     dates,
@@ -167,4 +144,5 @@ module.exports = async function createAssignableInstance(
     curriculum,
     relatedAssignableInstances,
   };
-};
+}
+module.exports = createAssignableInstance;

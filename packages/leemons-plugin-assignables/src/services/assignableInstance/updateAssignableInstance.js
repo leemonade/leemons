@@ -8,6 +8,7 @@ const getUserPermission = require('./permissions/assignableInstance/users/getUse
 const updateEvent = require('./calendar/updateEvent');
 const registerEvent = require('./calendar/registerEvent');
 const { listAssignableInstanceClasses } = require('../classes');
+const createAssignableInstance = require('./createAssignableInstance');
 
 const { getDiff } = global.utils;
 
@@ -24,11 +25,77 @@ const updatableFields = [
   'addNewClassStudents',
   'showResults',
   'showCorrectAnsers',
+  'relatedAssignableInstances',
 ];
 
-module.exports = async function updateAssignableInstance(
-  assignableInstance,
+async function createRelatedInstance(
+  { caller, instance, type, propagate = true },
   { userSession, transacting } = {}
+) {
+  const oppositeType = type === 'before' ? 'after' : 'before';
+
+  // EN: Given instance is an id
+  // ES: La instancia dada es un id
+  if (typeof instance === 'string') {
+    const relatedInstance = await getAssignableInstance.call(this, instance, {
+      userSession,
+      transacting,
+    });
+    if (!relatedInstance) {
+      throw new Error(`The related instance ${instance} does not exists`);
+    }
+
+    // EN: Update the relatedInstance to add the current instance as related
+    // ES: Actualizar la instancia relacionada para añadir la instancia actual como relacionada
+    if (propagate) {
+      // eslint-disable-next-line no-use-before-define
+      await updateAssignableInstance.call(
+        this,
+        {
+          id: instance,
+          relatedAssignableInstances: {
+            [type]: relatedInstance.relatedAssignableInstances?.[type] || [],
+            [oppositeType]: _.uniq([
+              ...(relatedInstance.relatedAssignableInstances?.[oppositeType] || []),
+              caller,
+            ]),
+          },
+        },
+        { userSession, transacting, propagateRelated: false }
+      );
+    }
+
+    return instance;
+  }
+
+  // EN: Given instance is an object
+  // ES: La instance dada es un objeto
+
+  // eslint-disable-next-line no-use-before-define
+  const createdInstance = await createAssignableInstance.call(
+    this,
+    {
+      ...instance,
+      relatedAssignableInstances: {
+        [type]: instance.relatedAssignableInstances?.[type] || [],
+        [oppositeType]: _.uniq([
+          ...(instance.relatedAssignableInstances?.[oppositeType] || []),
+          caller.id,
+        ]),
+      },
+    },
+    {
+      userSession,
+      transacting,
+    }
+  );
+
+  return createdInstance;
+}
+
+async function updateAssignableInstance(
+  assignableInstance,
+  { userSession, transacting, propagateRelated } = {}
 ) {
   const { id, relatedAssignables, ...assignableInstanceObj } = assignableInstance;
 
@@ -55,27 +122,6 @@ module.exports = async function updateAssignableInstance(
 
   let changesDetected = false;
 
-  // TODO: What happens with relatedAssignables?
-  // EN: Update related assignable instances
-  // ES: Actualizar asignable instances relacionadas
-  // if (relatedAssignables) {
-  //   const updated = await Promise.all(
-  //     relatedAssignableInstances
-  //       .map((a) => ({ id: a.id, ...relatedAssignables[a.id] }))
-  //       .filter((a) => a)
-  //       .map(({ a }) =>
-  //         updateAssignableInstance(
-  //           { ...a, ...assignableInstanceObj, relatedAssignables },
-  //           { userSession, transacting }
-  //         )
-  //       )
-  //   );
-
-  //   if (updated.length) {
-  //     changesDetected = true;
-  //   }
-  // }
-
   if (diff.length) {
     changesDetected = true;
   }
@@ -83,6 +129,7 @@ module.exports = async function updateAssignableInstance(
   if (!changesDetected) {
     throw new Error('No changes detected');
   }
+
   // EN: Update dates
   // ES: Actualizar las fechas
   if (diff.includes('dates')) {
@@ -98,6 +145,34 @@ module.exports = async function updateAssignableInstance(
   // EN: Update the assignable instance
   // ES: Actualizar el asignable instance
   const cleanObj = _.pick(object, _.omit(diff, ['assignable', 'classes', 'dates']));
+
+  if (diff.includes('relatedAssignableInstances')) {
+    // TODO: What happens with relatedAssignables when unassigned?
+    cleanObj.relatedAssignableInstances = JSON.stringify({
+      before: _.uniq(
+        await Promise.all(
+          assignableInstance.relatedAssignableInstances?.before?.map((instance) =>
+            createRelatedInstance.call(
+              this,
+              { instance, caller: id, type: 'before', propagate: propagateRelated },
+              { userSession, transacting }
+            )
+          ) || []
+        )
+      ),
+      after: _.uniq(
+        await Promise.all(
+          assignableInstance.relatedAssignableInstances?.after?.map((instance) =>
+            createRelatedInstance.call(
+              this,
+              { instance, caller: id, type: 'after', propagate: propagateRelated },
+              { userSession, transacting }
+            )
+          ) || []
+        )
+      ),
+    });
+  }
 
   if (diff.includes('metadata')) {
     cleanObj.metadata = JSON.stringify(cleanObj.metadata);
@@ -181,4 +256,6 @@ module.exports = async function updateAssignableInstance(
     id,
     ...object,
   };
-};
+}
+
+module.exports = updateAssignableInstance;
