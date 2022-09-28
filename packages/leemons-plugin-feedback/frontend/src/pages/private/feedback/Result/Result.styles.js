@@ -3,13 +3,13 @@ import { createStyles } from '@bubbles-ui/components';
 const ResultStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.interactive03,
-    height: '100vh',
+    minHeight: '100%',
+    paddingBottom: 300,
   },
   container: {
     width: '100%',
     maxWidth: 710,
     marginTop: 28,
-    marginBottom: 28,
   },
   resultHeader: {
     backgroundColor: theme.colors.mainWhite,
