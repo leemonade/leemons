@@ -226,6 +226,7 @@ export default function Form({
   sendButton,
   variations,
   showResultsCheck,
+  showCorrectAnswersCheck,
   hideDuration,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
@@ -329,6 +330,7 @@ export default function Form({
             <AssignStudents
               {...field}
               showResultsCheck={showResultsCheck}
+              showCorrectAnswersCheck={showCorrectAnswersCheck}
               error={errors?.assignees}
               profile="student"
               assignable={assignable}

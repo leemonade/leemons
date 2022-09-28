@@ -34,7 +34,8 @@ module.exports = {
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
-      showResults: 'Permitir a los estudiantes ver los resultados',
+      showResults: 'Ocultar informe de resultados',
+      showCorrectAnswers: 'Ocultar soluciones a los estudiantes al terminar',
       addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
       clearStudents: 'Borrar estudiantes',
       subjects: {

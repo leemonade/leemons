@@ -13,6 +13,7 @@ export default function AssignStudents({
   assignable,
   defaultValue,
   showResultsCheck,
+  showCorrectAnswersCheck,
   ...props
 }) {
   const form = useForm({
@@ -64,6 +65,7 @@ export default function AssignStudents({
                   labels={labels}
                   profile={profile}
                   showResultsCheck={showResultsCheck}
+                  showCorrectAnswersCheck={showCorrectAnswersCheck}
                 />
               )}
             />

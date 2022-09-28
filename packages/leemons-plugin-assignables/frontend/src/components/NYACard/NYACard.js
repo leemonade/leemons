@@ -85,7 +85,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
   let submission;
   let total;
 
-  if (instance?.metadata?.score) {
+  if (instance?.metadata?.score && instance.instance.gradable) {
     total = instance?.metadata?.score?.total || 0;
     submission = instance?.metadata?.score?.count || 0;
   }
@@ -96,7 +96,12 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     submission,
     total,
     activityType: capitalizeFirstLetter(roleName),
-    labels: _.omit(labels?.assigment, [!instance?.metadata?.score && 'score'].filter(Boolean)),
+    labels: _.omit(
+      labels?.assigment,
+      [!instance?.metadata?.score && 'score', !instance.instance.gradable && 'grade'].filter(
+        Boolean
+      )
+    ),
   };
 }
 

@@ -13,6 +13,7 @@ export default function AssigneeSelector({
   value,
   defaultValue,
   showResultsCheck,
+  showCorrectAnswersCheck,
 }) {
   const { control } = useFormContext();
   const [profiles, setProfiles] = useState(null);
@@ -46,6 +47,7 @@ export default function AssigneeSelector({
           defaultValue={defaultValue?.assignmentSetup}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
           showResultsCheck={showResultsCheck}
+          showCorrectAnswersCheck={showCorrectAnswersCheck}
         />
       );
     case 'customGroups':
@@ -57,6 +59,7 @@ export default function AssigneeSelector({
           onChange={onChange}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
           showResultsCheck={showResultsCheck}
+          showCorrectAnswersCheck={showCorrectAnswersCheck}
         />
       );
     case 'session':
