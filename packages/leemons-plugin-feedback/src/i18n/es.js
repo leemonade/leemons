@@ -140,5 +140,6 @@ module.exports = {
     singleResponse: 'Mono-respuesta',
     multiResponse: 'Multi-respuesta',
     openResponse: 'Respuesta abierta',
+    responses: 'Respuestas ({n})',
   },
 };

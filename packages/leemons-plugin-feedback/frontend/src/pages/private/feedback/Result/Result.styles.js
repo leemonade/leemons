@@ -34,6 +34,11 @@ const ResultStyles = createStyles((theme) => ({
     fontWeight: 500,
     lineHeight: '24px',
   },
+  question: {
+    paddingBlock: 22,
+    paddingInline: 16,
+    backgroundColor: theme.colors.mainWhite,
+  },
 }));
 
 export default ResultStyles;

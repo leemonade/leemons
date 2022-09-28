@@ -9,6 +9,7 @@ import {
   Text,
   Title,
   Badge,
+  HtmlText,
   ActivityAccordion,
   ActivityAccordionPanel,
 } from '@bubbles-ui/components';
@@ -16,8 +17,8 @@ import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { NavigationMenuLeftIcon } from '@bubbles-ui/icons/outline';
 import { StarIcon } from '@bubbles-ui/icons/solid';
-
 import ResultStyles from './Result.styles';
+import OpenResponse from './components/OpenResponse';
 
 const Empty = () => <Box>HELLO</Box>;
 
@@ -26,7 +27,7 @@ const questionsByType = {
   multiResponse: <Empty multi />,
   likertScale: <Empty />,
   netPromoterScore: <Empty />,
-  openResponse: <Empty />,
+  openResponse: <OpenResponse />,
 };
 
 function padTo2Digits(num) {
@@ -37,11 +38,6 @@ export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
   const [store, render] = useStore({
     loading: true,
-    isNew: false,
-    currentStep: 0,
-    data: {
-      metadata: {},
-    },
   });
 
   const { classes } = ResultStyles({}, { name: 'Result' });
@@ -89,7 +85,9 @@ export default function Result() {
         key={question.id}
         rightSection={getQuestionBadges(question)}
       >
-        <Box className={classes.question}>hola</Box>
+        <Box className={classes.question}>
+          <HtmlText>{question.question}</HtmlText>
+        </Box>
         <Box>
           {React.cloneElement(questionsByType[question.type], {
             question,
