@@ -213,16 +213,26 @@ export default function SelectClass({
             control={control}
             name={'showResults'}
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={labels?.showResults} />
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showResults}
+              />
             )}
           />
         )}
         {showCorrectAnswersCheck && (
           <Controller
             control={control}
-            name={'showAnswers'}
+            name={'showCorrectAnswers'}
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={labels?.showAnswers} />
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showCorrectAnswers}
+              />
             )}
           />
         )}
