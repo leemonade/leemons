@@ -94,7 +94,7 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
           questionsInfo[question.id].avg /= questionsInfo[question.id].totalValues;
           _.forIn(questionsInfo[question.id].value, (value, key) => {
             questionsInfo[question.id].percentages[key] =
-              value / questionsInfo[question.id].totalValues;
+              (value / questionsInfo[question.id].totalValues) * 100;
           });
         }
 
@@ -132,9 +132,9 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
           if (questionsInfo[question.id].value[9]) {
             promoters += questionsInfo[question.id].value[9];
           }
-          const avgDetractors = detractors / questionsInfo[question.id].totalValues;
-          const avgPromoters = promoters / questionsInfo[question.id].totalValues;
-          questionsInfo[question.id].nsp = {
+          const avgDetractors = (detractors / questionsInfo[question.id].totalValues) * 100;
+          const avgPromoters = (promoters / questionsInfo[question.id].totalValues) * 100;
+          questionsInfo[question.id].nps = {
             points: avgPromoters - avgDetractors,
             detractors: {
               number: detractors,
@@ -142,7 +142,7 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
             },
             passives: {
               number: passives,
-              avg: passives / questionsInfo[question.id].totalValues,
+              avg: (passives / questionsInfo[question.id].totalValues) * 100,
             },
             promoters: {
               number: promoters,
