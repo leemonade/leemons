@@ -32,6 +32,11 @@ module.exports = {
         customGroups: 'Grupos personalizados',
         session: 'Sesión',
       },
+      relations: {
+        toggle: 'Establecer relación con otra actividad',
+        before: 'Actividad anterior',
+        required: 'Dependencia obligatoria',
+      },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
       showResults: 'Ocultar informe de resultados',
@@ -224,6 +229,10 @@ module.exports = {
     notSubmitted: 'No entregado',
     correction: 'Revisar',
     review: 'Revisar',
+    disabled: {
+      results: 'Los resultados han sido ocultados por tu profesor',
+      previous: 'La actividad anterior debe completarse primero',
+    },
   },
   levelsOfDifficulty: {
     beginner: 'Principiante',

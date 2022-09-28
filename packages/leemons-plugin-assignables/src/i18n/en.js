@@ -31,6 +31,11 @@ module.exports = {
         customGroups: 'Custom Groups',
         session: 'Session',
       },
+      relations: {
+        toggle: 'Establish relation with another activity',
+        before: 'Previous activity',
+        required: 'Required dependency',
+      },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
       showResults: 'Hide results report',
@@ -298,5 +303,9 @@ module.exports = {
     notSubmitted: 'Not submitted',
     correction: 'Correction',
     review: 'Review',
+    disabled: {
+      results: 'The results have been hidden by your teacher',
+      previous: 'The previous activity must be completed first',
+    },
   },
 };

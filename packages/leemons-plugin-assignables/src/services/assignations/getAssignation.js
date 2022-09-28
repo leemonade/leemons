@@ -25,7 +25,7 @@ module.exports = async function getAssignation(
     throw new Error('Assignation not found or your are not allowed to view it');
   }
 
-  let [assignation, { assignable }] = await Promise.all([
+  let [assignation, { assignable, relatedAssignableInstances }] = await Promise.all([
     assignations.findOne(
       {
         instance: assignableInstanceId,
@@ -35,9 +35,13 @@ module.exports = async function getAssignation(
     ),
     assignableInstances.findOne(
       { id: assignableInstanceId },
-      { columns: ['assignable'], transacting }
+      { columns: ['assignable', 'relatedAssignableInstances'], transacting }
     ),
   ]);
+
+  relatedAssignableInstances = relatedAssignableInstances
+    ? JSON.parse(relatedAssignableInstances)
+    : null;
 
   if (!assignation) {
     throw new Error('Assignation not found or your are not allowed to view it');
@@ -62,6 +66,21 @@ module.exports = async function getAssignation(
     classes: JSON.parse(assignation.classes),
     metadata: JSON.parse(assignation.metadata),
   };
+
+  if (relatedAssignableInstances?.before?.length) {
+    const relatedInstancesTimestamps = await Promise.all(
+      relatedAssignableInstances.before.map((instance) =>
+        getDates('assignation', instance.id, { transacting })
+      )
+    );
+
+    assignation.relatedAssignableInstances = {
+      before: relatedAssignableInstances.before.map((instance, i) => ({
+        ...instance,
+        timestamps: relatedInstancesTimestamps[i],
+      })),
+    };
+  }
 
   const [timestamps, grades] = await Promise.all([
     getDates('assignation', assignation.id, { transacting }),
