@@ -12,11 +12,13 @@ export default function SelectCustomGroup({
   value,
   groupedClassesWithSelectedSubjects,
   showResultsCheck,
+  showCorrectAnswersCheck,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       showToStudents: value?.[0]?.showToStudents === undefined ? true : value?.[0]?.showToStudents,
       showResults: true,
+      showCorrectAnswers: true,
       name: value?.[0]?.name,
       assignees: value?.[0]?.students || [],
     },
@@ -128,6 +130,15 @@ export default function SelectCustomGroup({
             )}
           />
         )}
+        {showCorrectAnswersCheck && (
+          <Controller
+            control={control}
+            name={'showCorrectAnswers'}
+            render={({ field }) => (
+              <Switch {...field} checked={field.value} label={labels?.showCorrectAnswers} />
+            )}
+          />
+        )}
       </Box>
     </ContextContainer>
   );
@@ -156,4 +167,5 @@ SelectCustomGroup.propTypes = {
     assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
   showResultsCheck: PropTypes.bool,
+  showCorrectAnswersCheck: PropTypes.bool,
 };

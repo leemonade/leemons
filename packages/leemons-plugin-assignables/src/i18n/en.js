@@ -33,7 +33,8 @@ module.exports = {
       },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
-      showResults: 'Allow students to view the results',
+      showResults: 'Hide results report',
+      showCorrectAnswers: 'Hide solutions for students',
       addNewClassStudents: 'Automatically assign to newly enrolled students',
       clearStudents: 'Clear students',
       subjects: {
