@@ -27,7 +27,7 @@ export default function SelectCustomGroup({
   const { assignableStudents, subjects, classes } = groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
-    const handleChange = (v) => {
+    const handleChange = (v, { name: fieldChanged } = {}) => {
       if (v.name?.length && v.assignees?.length) {
         // EN: Get the groups that are selected through their students
         // ES: Obtener los grupos que seleccionaron a través de sus estudiantes
@@ -64,8 +64,15 @@ export default function SelectCustomGroup({
 
         // EN: Do not update if same values
         // ES: No actualizar si son iguales
-        if (!value || !_.isEqual(value, classesMatchingStudents)) {
-          onChange(classesMatchingStudents);
+        if (
+          !value ||
+          !_.isEqual(value, classesMatchingStudents) ||
+          ['showResults', 'showCorrectAnswers'].includes(fieldChanged)
+        ) {
+          onChange(classesMatchingStudents, {
+            showResults: v.showResults,
+            showCorrectAnswers: v.showCorrectAnswers,
+          });
         }
       } else if (!value || value?.length) {
         onChange([]);
@@ -126,7 +133,12 @@ export default function SelectCustomGroup({
             control={control}
             name={'showResults'}
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={labels?.showResults} />
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showResults}
+              />
             )}
           />
         )}
@@ -135,7 +147,12 @@ export default function SelectCustomGroup({
             control={control}
             name={'showCorrectAnswers'}
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={labels?.showCorrectAnswers} />
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showCorrectAnswers}
+              />
             )}
           />
         )}

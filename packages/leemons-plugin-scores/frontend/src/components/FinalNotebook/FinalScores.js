@@ -201,7 +201,7 @@ export function FinalScores({ filters, localFilters }) {
         endDate: greatestDate,
       },
     ];
-  }, [periods]);
+  }, [periods, localizations?.final]);
 
   ({ students, classes, periods } = useLocalFilters({
     students,
