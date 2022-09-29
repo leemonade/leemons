@@ -49,6 +49,7 @@ NonAssignableStudents.propTypes = {
     unableToAssignStudentsMessage: PropTypes.string,
   }),
 };
+
 export default function SelectClass({
   labels,
   profiles,
@@ -110,7 +111,11 @@ export default function SelectClass({
       });
 
       if (assignees.length) {
-        if (!value || !_.isEqual(value, assignees) || fieldChanged === 'addNewClassStudents') {
+        if (
+          !value ||
+          !_.isEqual(value, assignees) ||
+          ['addNewClassStudents', 'showResults', 'showCorrectAnswers'].includes(fieldChanged)
+        ) {
           onChange(assignees, data);
         }
       } else if (!value || value?.length) {
