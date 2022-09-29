@@ -212,7 +212,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 display: flex;
                                 height: 100%;
                                 justify-content: flex-end;
-                                border-top: 8px solid #dc5571;
+                                border-top: 8px solid {{ @if (it.classes.length > 1) }}#67728E{{ #else }}{it.classes[0].color}{{ /if}};
                               "
                           >
                             <div
@@ -342,6 +342,16 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                       </div>
                     </div>
                     <div style="padding: 16px; text-align: start">
+                          {{ @if (it.instance.assignable.asset.tagline) }}
+                            <div style="
+                              font-family: 'Inter', Verdana, sans-serif;
+                              font-size: 13px;
+                              line-height: 16.5px;
+                              color: #1A202B;
+                            ">
+                             {{ it.instance.assignable.asset.tagline }}
+                             </div>
+                           {{ /if}}
                           <span
                             style="
                               font-family: 'Inter', Verdana, sans-serif;
