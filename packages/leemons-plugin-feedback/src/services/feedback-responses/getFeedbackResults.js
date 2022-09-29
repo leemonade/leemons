@@ -2,9 +2,23 @@ const _ = require('lodash');
 const { table } = require('../tables');
 
 async function getFeedbackResults(id, { userSession, transacting: _transacting } = {}) {
+  const { assignableInstances } = leemons.getPlugin('assignables').services;
   return global.utils.withTransaction(
     async (transacting) => {
-      const [feedbackDates, feedbackResponses, feedbackQuestions] = await Promise.all([
+      const [permissions, instance] = await Promise.all([
+        assignableInstances.getUserPermission(id, { userSession, transacting }),
+        assignableInstances.getAssignableInstance(id, { userSession, transacting }),
+      ]);
+
+      if (
+        !permissions.actions.includes('edit') &&
+        (!permissions.actions.includes('view') ||
+          (permissions.actions.includes('view') && !instance.showResults))
+      ) {
+        throw new Error('You dont have permissions');
+      }
+
+      const [feedbackDates, feedbackResponses] = await Promise.all([
         table.feedbackDates.find({ instance: id }, { transacting }),
         table.feedbackResponse.find({ instance: id }, { transacting }),
       ]);
