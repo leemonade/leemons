@@ -20,7 +20,7 @@ function LikertStatistics({ question, responses, t }) {
     <Box className={classes.root}>
       <Box className={classes.header}>
         <Text role="productive" stronger size="sm" color="primary">
-          {t('responses', { n: responses.totalValues })}
+          {t('responses', { n: responses.totalValues || 0 })}
         </Text>
         <Badge color="stroke" size="lg" closable={false}>
           <Text size="md" color="primary">
@@ -28,7 +28,7 @@ function LikertStatistics({ question, responses, t }) {
           </Text>
           &nbsp;
           <Text size="md" color={averageColor}>
-            {responses.avg}
+            {responses.avg || 0}
           </Text>
         </Badge>
       </Box>
@@ -39,9 +39,9 @@ function LikertStatistics({ question, responses, t }) {
               <PointBar
                 classes={classes}
                 cx={cx}
-                percentage={Math.trunc(responses.percentages[index] || 0)}
+                percentage={Math.trunc(responses.percentages?.[index] || 0)}
                 bottomText={index + 1}
-                total={responses.value[index] || 0}
+                total={responses.value?.[index] || 0}
                 label={question.properties[`likertLabel${index}`]}
                 color={
                   index < question.properties.maxLabels / 2

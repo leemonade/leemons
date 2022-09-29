@@ -2,7 +2,7 @@ import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -19,6 +19,7 @@ import { NavigationMenuLeftIcon, PluginRankingIcon } from '@bubbles-ui/icons/out
 import { StarIcon } from '@bubbles-ui/icons/solid';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
+import { addErrorAlert } from '@layout/alert';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
@@ -42,22 +43,30 @@ export default function Result() {
 
   const { classes } = ResultStyles({}, { name: 'Result' });
 
+  const history = useHistory();
   const params = useParams();
 
   async function init() {
-    store.loading = true;
-    render();
-    const instance = await getAssignableInstance({ id: params.id });
+    try {
+      store.loading = true;
+      render();
+      const instance = await getAssignableInstance({ id: params.id });
 
-    const [result, feedback] = await Promise.all([
-      getFeedbackResultsRequest(params.id),
-      getFeedbackRequest(instance.assignable.id),
-    ]);
+      const [result, feedback] = await Promise.all([
+        getFeedbackResultsRequest(params.id),
+        getFeedbackRequest(instance.assignable.id),
+      ]);
 
-    store.result = result;
-    store.feedback = feedback.feedback;
-    store.loading = false;
-    render();
+      store.result = result;
+      store.feedback = feedback.feedback;
+      store.loading = false;
+      render();
+    } catch (err) {
+      await addErrorAlert(err.code ? t(`errorCode${err.code}`) : err.message);
+      if (err.code === 6001) {
+        history.push('/private/assignables/ongoing');
+      }
+    }
   }
 
   const getQuestionBadges = (question) => {
@@ -103,7 +112,7 @@ export default function Result() {
         <Box>
           {React.cloneElement(questionsByType[question.type], {
             question,
-            responses: store.result.questionsInfo[question.id],
+            responses: store.result.questionsInfo[question.id] || {},
             t,
           })}
         </Box>
@@ -159,9 +168,9 @@ export default function Result() {
                 <Text role="productive" color="primary" size="xs">
                   {t('completed')}
                 </Text>
-                <Text
-                  className={classes.infoText}
-                >{`${store.result.generalInfo.completionPercentage}%`}</Text>
+                <Text className={classes.infoText}>{`${
+                  store.result.generalInfo.completionPercentage || 0
+                }%`}</Text>
               </Box>
               <Box className={classes.infoBox}>
                 <Text role="productive" color="primary" size="xs">

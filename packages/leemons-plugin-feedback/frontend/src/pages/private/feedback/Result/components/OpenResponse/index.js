@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
-import { Box, Stack, Text, Pager } from '@bubbles-ui/components';
+import { Box, Pager, Stack, Text } from '@bubbles-ui/components';
 
 const VISIBLE_ELEMENTS = 8;
 
@@ -11,16 +11,14 @@ export default function OpenResponse(props) {
   const { responses } = props;
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
   const [store, render] = useStore({
-    visibleResponses: responses.value.slice(0, VISIBLE_ELEMENTS),
+    visibleResponses: responses.value?.slice(0, VISIBLE_ELEMENTS) || [],
   });
 
-  const totalPages = Math.ceil(responses.value.length / VISIBLE_ELEMENTS);
+  const totalPages = Math.ceil(responses.value ? responses.value.length / VISIBLE_ELEMENTS : 0);
 
   const handlePageChange = (page) => {
-    store.visibleResponses = responses.value.slice(
-      (page - 1) * VISIBLE_ELEMENTS,
-      VISIBLE_ELEMENTS * page
-    );
+    store.visibleResponses =
+      responses.value?.slice((page - 1) * VISIBLE_ELEMENTS, VISIBLE_ELEMENTS * page) || [];
     render();
   };
 
@@ -28,7 +26,7 @@ export default function OpenResponse(props) {
     <Stack spacing={2} direction="column" fullWidth>
       <Box style={{ padding: 24, paddingBottom: 0 }}>
         <Text role="productive" size="xs" color="primary" stronger>
-          {t('responses', { n: responses.totalValues })}
+          {t('responses', { n: responses.totalValues || 0 })}
         </Text>
       </Box>
       <Stack fullWidth direction="column">

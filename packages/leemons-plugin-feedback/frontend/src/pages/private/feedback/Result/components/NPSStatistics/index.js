@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NSPStatisticsStyles from '@feedback/pages/private/feedback/Result/components/NPSStatistics/styles';
-import { Badge, Box, Col, Grid, Stack, Text, getFontExpressive } from '@bubbles-ui/components';
+import { Badge, Box, Col, getFontExpressive, Grid, Stack, Text } from '@bubbles-ui/components';
 import { Header } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/Header';
 import { PointBar } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/PointBar';
 
@@ -14,7 +14,7 @@ function NPSStatistics({ question, responses, t }) {
     <Box className={classes.root}>
       <Box className={classes.header}>
         <Text role="productive" stronger size="sm" color="primary">
-          {t('responses', { n: responses.totalValues })}
+          {t('responses', { n: responses.totalValues || 0 })}
         </Text>
         <Badge
           color="stroke"
@@ -22,7 +22,7 @@ function NPSStatistics({ question, responses, t }) {
           closable={false}
           labelStyles={{ ...getFontExpressive('16px', 500) }}
         >
-          {t('npsScore', { n: Math.trunc(responses.nps.points) })}
+          {t('npsScore', { n: Math.trunc(responses.nps?.points || 0) })}
         </Badge>
       </Box>
       <Box className={classes.content}>
@@ -33,8 +33,8 @@ function NPSStatistics({ question, responses, t }) {
               classes={classes}
               cx={cx}
               title={t('npsDetractors')}
-              avg={responses.nps.detractors.avg}
-              total={responses.nps.detractors.number}
+              avg={responses.nps?.detractors.avg || 0}
+              total={responses.nps?.detractors.number || 0}
               color="error"
             />
           </Col>
@@ -44,8 +44,8 @@ function NPSStatistics({ question, responses, t }) {
               classes={classes}
               cx={cx}
               title={t('npsPassives')}
-              avg={responses.nps.passives.avg}
-              total={responses.nps.passives.number}
+              avg={responses.nps?.passives.avg || 0}
+              total={responses.nps?.passives.number || 0}
               color="warning"
             />
           </Col>
@@ -55,8 +55,8 @@ function NPSStatistics({ question, responses, t }) {
               classes={classes}
               cx={cx}
               title={t('npsPromoters')}
-              avg={responses.nps.promoters.avg}
-              total={responses.nps.promoters.number}
+              avg={responses.nps?.promoters.avg || 0}
+              total={responses.nps?.promoters.number || 0}
               color="success"
             />
           </Col>
@@ -68,9 +68,9 @@ function NPSStatistics({ question, responses, t }) {
                 <PointBar
                   classes={classes}
                   cx={cx}
-                  percentage={Math.trunc(responses.percentages[index]) || 0}
+                  percentage={Math.trunc(responses.percentages?.[index]) || 0}
                   bottomText={index}
-                  total={responses.value[index] || 0}
+                  total={responses.value?.[index] || 0}
                   color={index < 7 ? 'fatic01' : index > 8 ? 'fatic02' : 'fatic03'}
                 />
               </Col>

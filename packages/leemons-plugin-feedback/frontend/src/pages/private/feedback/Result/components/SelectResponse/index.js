@@ -23,9 +23,9 @@ export default function OpenResponse(props) {
                 {responseValue}
               </Text>
               <Stack skipFlex spacing={6} alignItems="flex-end">
-                <Text color="quartiary">{responses.value[index] || 0} resp.</Text>
+                <Text color="quartiary">{responses.value?.[index] || 0} resp.</Text>
                 <Text color="quartiary" size="md" strong>
-                  {Math.trunc(responses.percentages[index] || 0)}%
+                  {Math.trunc(responses.percentages?.[index] || 0)}%
                 </Text>
               </Stack>
             </Stack>
@@ -34,7 +34,7 @@ export default function OpenResponse(props) {
                 skipFlex
                 className={classes.percentageBar}
                 style={{
-                  width: `${responses.percentages[index]}%`,
+                  width: `${responses.percentages?.[index] || 0}%`,
                 }}
               />
             </Stack>

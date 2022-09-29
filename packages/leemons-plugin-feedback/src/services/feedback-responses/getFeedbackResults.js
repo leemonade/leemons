@@ -15,7 +15,7 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
         (!permissions.actions.includes('view') ||
           (permissions.actions.includes('view') && !instance.showResults))
       ) {
-        throw new Error('You dont have permissions');
+        throw new global.utils.HttpErrorWithCustomCode(400, 6001, 'You dont have permissions');
       }
 
       const [feedbackDates, feedbackResponses] = await Promise.all([

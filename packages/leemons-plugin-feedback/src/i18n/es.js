@@ -146,5 +146,6 @@ module.exports = {
     openResponse: 'Respuesta abierta',
     responses: 'Respuestas ({n})',
     average: 'Media:',
+    errorCode6001: 'No tienes permisos para ver los resultados de la encuesta',
   },
 };
