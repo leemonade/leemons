@@ -312,37 +312,39 @@ export default function Result() {
       </ActivityAccordionPanel>
     );
   }
-  accordion.push(
-    <ActivityAccordionPanel
-      key={2}
-      label={t('questions')}
-      rightSection={
+  if (store.instance.showCorrectAnswers || store.isTeacher) {
+    accordion.push(
+      <ActivityAccordionPanel
+        key={2}
+        label={t('questions')}
+        rightSection={
+          <Box>
+            <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
+          </Box>
+        }
+        icon={
+          <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+            <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
+          </Box>
+        }
+      >
         <Box>
-          <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
+          {store.useQuestionMode ? (
+            <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
+          ) : (
+            <>
+              <Box className={styles.showTestBar}>
+                <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
+                  {t('showInTests')}
+                </Button>
+              </Box>
+              <Table columns={tableHeaders} data={tableData} />
+            </>
+          )}
         </Box>
-      }
-      icon={
-        <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-          <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
-        </Box>
-      }
-    >
-      <Box>
-        {store.useQuestionMode ? (
-          <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
-        ) : (
-          <>
-            <Box className={styles.showTestBar}>
-              <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
-                {t('showInTests')}
-              </Button>
-            </Box>
-            <Table columns={tableHeaders} data={tableData} />
-          </>
-        )}
-      </Box>
-    </ActivityAccordionPanel>
-  );
+      </ActivityAccordionPanel>
+    );
+  }
   if (!store.room) {
     if (store.isTeacher || (!store.isTeacher && store.feedback)) {
       accordion.push(

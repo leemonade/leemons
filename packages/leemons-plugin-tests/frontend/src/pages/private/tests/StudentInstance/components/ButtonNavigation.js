@@ -37,6 +37,7 @@ export function ButtonNavigation({
         {showLastButton ? (
           <Button
             position="left"
+            variant={isLastButton ? null : 'outline'}
             rightIcon={<ChevronRightIcon />}
             rounded
             compact

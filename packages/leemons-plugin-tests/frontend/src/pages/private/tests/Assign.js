@@ -58,6 +58,7 @@ export default function Assign() {
         classes,
         curriculum: curriculum ? omit(curriculum, 'toogle') : {},
         alwaysAvailable: alwaysAvailable || false,
+        showCorrectAnswers: store.data.assignStudents.assignmentSetup.showCorrectAnswers,
         dates: alwaysAvailable ? {} : dates,
       };
 
@@ -133,6 +134,7 @@ export default function Assign() {
             {store.currentStep === 0 && (
               <Form
                 defaultValues={store.data}
+                showCorrectAnswersCheck
                 onSubmit={handleAssignment}
                 assignable={store.assignable}
                 sendButton={
