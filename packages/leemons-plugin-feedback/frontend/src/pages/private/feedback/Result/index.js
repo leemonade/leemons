@@ -15,8 +15,14 @@ import {
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import { NavigationMenuLeftIcon, PluginRankingIcon } from '@bubbles-ui/icons/outline';
-import { StarIcon } from '@bubbles-ui/icons/solid';
+import {
+  NavigationMenuLeftIcon,
+  PluginRankingIcon,
+  GaugeDashboardIcon,
+  DataFileBarsQuestionIcon,
+  FormImageIcon,
+  QuestionExclamationIcon,
+} from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import { addErrorAlert } from '@layout/alert';
@@ -85,12 +91,12 @@ export default function Result() {
     );
   };
 
-  const getQuestionIcons = (questionType) => {
+  const getQuestionIcons = (questionType, hasImage) => {
     const questionTypes = {
       likertScale: <PluginRankingIcon />,
-      singleResponse: <NavigationMenuLeftIcon />,
-      multiResponse: <NavigationMenuLeftIcon />,
-      netPromoterScore: <NavigationMenuLeftIcon />,
+      singleResponse: hasImage ? <FormImageIcon /> : <QuestionExclamationIcon />,
+      multiResponse: hasImage ? <FormImageIcon /> : <QuestionExclamationIcon />,
+      netPromoterScore: <GaugeDashboardIcon />,
       openResponse: <NavigationMenuLeftIcon />,
     };
 
@@ -102,7 +108,7 @@ export default function Result() {
       <ActivityAccordionPanel
         label={t('question', { i: index + 1 })}
         color="solid"
-        icon={getQuestionIcons(question.type)}
+        icon={getQuestionIcons(question.type, question.properties.withImages)}
         key={question.id}
         rightSection={getQuestionBadges(question)}
       >
@@ -150,7 +156,11 @@ export default function Result() {
           </Title>
         </Box>
         <ActivityAccordion>
-          <ActivityAccordionPanel label={t('generalInformation')} color="solid" icon={<StarIcon />}>
+          <ActivityAccordionPanel
+            label={t('generalInformation')}
+            color="solid"
+            icon={<DataFileBarsQuestionIcon />}
+          >
             <Stack fullWidth fullHeight spacing={2} className={classes.generalInformation}>
               <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
                 <Text role="productive" color="primary" size="xs">
