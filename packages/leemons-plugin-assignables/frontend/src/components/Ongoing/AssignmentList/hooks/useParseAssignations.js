@@ -93,13 +93,14 @@ function getTimeReferenceColor(date) {
   return 'primary';
 }
 
-function TeacherActions({ id }) {
+function TeacherActions({ instance }) {
+  const { id } = instance;
+  const role = instance?.assignable?.roleDetails;
+  const dashboardURL = (role.dashboardUrl || '/private/assignables/details/:id').replace(':id', id);
+
   const history = useHistory();
 
-  const redirectToInstance = useCallback(
-    () => window.open(`/private/assignables/details/${id}`, '_blank'),
-    [history, id]
-  );
+  const redirectToInstance = useCallback(() => window.open(dashboardURL, '_blank'), [history, id]);
 
   return (
     <Button
@@ -376,7 +377,7 @@ async function parseAssignationForTeacherView(instance, labels, options) {
     ...commonData,
     ...studentsStatus,
     students: instance?.students?.length,
-    actions: <TeacherActions id={instance.id} />,
+    actions: <TeacherActions instance={instance} />,
     unreadMessages: <UnreadMessages rooms={rooms} />,
   };
 }

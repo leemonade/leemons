@@ -4,7 +4,14 @@ const getRole = require('./getRole');
 
 module.exports = async function registerRole(
   role,
-  { transacting: t, teacherDetailUrl, studentDetailUrl, evaluationDetailUrl, ...data } = {}
+  {
+    transacting: t,
+    teacherDetailUrl,
+    studentDetailUrl,
+    evaluationDetailUrl,
+    dashboardUrl,
+    ...data
+  } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -38,6 +45,7 @@ module.exports = async function registerRole(
           teacherDetailUrl,
           studentDetailUrl,
           evaluationDetailUrl,
+          dashboardUrl,
           plugin: this.calledFrom,
           icon: data.menu.item.iconSvg,
         },
