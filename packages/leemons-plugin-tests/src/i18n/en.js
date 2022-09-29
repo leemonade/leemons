@@ -280,9 +280,8 @@ module.exports = {
     errorQuestions:
       '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
     noErrorQuestions: 'Wrong answers do not deduct points',
-    finishTestModalTitle: 'Complete and submit this test',
-    finishTestModalDescription:
-      'If you click on "Confirm submission", your test will be sent to a reviewer and you will no longer be able to modify any answers or answer unanswered questions <br/><br/> Once you confirm the submission, the system will show you the test results (except for open questions).',
+    finishTestModalTitle: 'Test finished',
+    finishTestModalDescription: 'Your answers have been sent successfully',
     confirmSubmission: 'Confirm submission',
     cancelSubmission: 'Cancel',
     finishForceTestModalTitle: 'The time established to complete this test has expired.',
@@ -300,6 +299,9 @@ module.exports = {
     explanation: 'Explanation',
     returnToTable: 'Return to table',
     clueN: '{number}ª Clue',
+    pendingActivities: 'Pending activities',
+    viewResults: 'Check results',
+    nextActivity: 'Next activity',
   },
   testAssign: {
     pageTitle: 'Assign Test:',

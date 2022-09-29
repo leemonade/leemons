@@ -54,6 +54,9 @@
       "@families/*": [
         "./packages/leemons-plugin-families/frontend/src/*"
       ],
+      "@feedback/*": [
+        "./packages/leemons-plugin-feedback/frontend/src/*"
+      ],
       "@grades/*": [
         "./packages/leemons-plugin-grades/frontend/src/*"
       ],

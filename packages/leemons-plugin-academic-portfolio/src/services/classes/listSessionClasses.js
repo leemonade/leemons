@@ -59,7 +59,7 @@ async function listSessionClasses(
     });
   }
 
-  return classes;
+  return _.orderBy(classes, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
 }
 
 module.exports = { listSessionClasses };

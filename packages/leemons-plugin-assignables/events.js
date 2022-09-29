@@ -139,6 +139,11 @@ function initWidgets(isInstalled) {
 
       leemons.events.emit('init-widget-items');
     });
+  } else {
+    leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
+      leemons.events.emit('init-widget-zones');
+      leemons.events.emit('init-widget-items');
+    });
   }
 }
 
