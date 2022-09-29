@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { Box, createStyles, LoadingOverlay, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
@@ -6,8 +6,8 @@ import MainMenu from '@menu-builder/components/mainMenu';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import { getCookieToken } from '@users/session';
 import { useHistory } from 'react-router-dom';
+import { useLayout } from '@layout/context';
 import AlertStack from './AlertStack';
-import { LayoutContext } from '../context/layout';
 
 const NAV_OPEN_WIDTH = 280;
 
@@ -33,7 +33,7 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
 }));
 
 const PrivateLayout = ({ children }) => {
-  const { layoutState, setLayoutState } = useContext(LayoutContext);
+  const { layoutState, setLayoutState, theme } = useLayout();
   const history = useHistory();
 
   const setState = (newState) => {
@@ -64,6 +64,8 @@ const PrivateLayout = ({ children }) => {
       history.push('/users/login');
     }
   };
+
+  useEffect(() => console.log('PrivateLayout >> theme:', theme), [theme]);
 
   useEffect(() => {
     if (!layoutState.menuWidth) {
@@ -111,7 +113,10 @@ const PrivateLayout = ({ children }) => {
           onPin={onPinMenu}
           subNavWidth={NAV_OPEN_WIDTH}
           pinned={pinned}
-          // lightMode={layoutState.isAcademicMode}
+          lightMode={!theme.useDarkMode}
+          mainColor={theme.menuMainColor}
+          drawerColor={theme.menuDrawerColor}
+          logoUrl={theme.squareLogoUrl}
         />
       </Box>
       <Box ref={layoutState.contentRef} className={classes.content}>

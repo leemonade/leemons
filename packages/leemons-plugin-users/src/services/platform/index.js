@@ -16,10 +16,18 @@ const setContactEmail = require('./setContactEmail');
 const setContactPhone = require('./setContactPhone');
 const setDefaultLocale = require('./setDefaultLocale');
 const getDefaultLocale = require('./getDefaultLocale');
-const setAppearanceLogo = require('./setAppearanceLogo');
-const getAppearanceLogo = require('./getAppearanceLogo');
+const setSquareLogo = require('./setSquareLogo');
+const getSquareLogo = require('./getSquareLogo');
+const setLandscapeLogo = require('./setLandscapeLogo');
+const getLandscapeLogo = require('./getLandscapeLogo');
 const getAppearanceMainColor = require('./getAppearanceMainColor');
 const setAppearanceMainColor = require('./setAppearanceMainColor');
+const getAppearanceDarkMode = require('./getAppearanceDarkMode');
+const setAppearanceDarkMode = require('./setAppearanceDarkMode');
+const getAppearanceMenuMainColor = require('./getAppearanceMenuMainColor');
+const setAppearanceMenuMainColor = require('./setAppearanceMenuMainColor');
+const getAppearanceMenuDrawerColor = require('./getAppearanceMenuDrawerColor');
+const setAppearanceMenuDrawerColor = require('./setAppearanceMenuDrawerColor');
 
 module.exports = {
   query,
@@ -40,8 +48,16 @@ module.exports = {
   setContactPhone,
   setDefaultLocale,
   getDefaultLocale,
-  setAppearanceLogo,
-  getAppearanceLogo,
+  setSquareLogo,
+  getSquareLogo,
+  setLandscapeLogo,
+  getLandscapeLogo,
   getAppearanceMainColor,
   setAppearanceMainColor,
+  getAppearanceDarkMode,
+  setAppearanceDarkMode,
+  getAppearanceMenuMainColor,
+  setAppearanceMenuMainColor,
+  getAppearanceMenuDrawerColor,
+  setAppearanceMenuDrawerColor,
 };
