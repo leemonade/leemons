@@ -111,7 +111,8 @@ function ActionIcon({ icon, disabled }) {
   return <Box className={disabled ? classes.disabled : classes.enabled}>{icon}</Box>;
 }
 
-function TeacherActions({ id }) {
+function TeacherActions({ instance }) {
+  const { id } = instance;
   return (
     <Link to={`/private/assignables/details/${id}`}>
       <ActionIcon icon={<ViewOnIcon />} />
