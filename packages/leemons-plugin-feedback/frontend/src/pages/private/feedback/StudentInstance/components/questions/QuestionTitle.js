@@ -25,8 +25,28 @@ export const Styles = createStyles((theme) => ({
   },
 }));
 
-function QuestionTitle({ question }) {
+function QuestionTitle({ t, question, currentValue }) {
   const { classes } = Styles();
+  const subtitle = React.useMemo(() => {
+    if (question.type === 'multiResponse') {
+      let message =
+        question.properties.minResponses === 1
+          ? t('needNResponsesSingular')
+          : t('needNResponsesPlural', { n: question.properties.minResponses });
+
+      if (currentValue.length) {
+        message = null;
+        const needMore = question.properties.minResponses - currentValue.length;
+        if (needMore) {
+          message = t('needNResponses', { n: needMore });
+        }
+      }
+
+      return message;
+    }
+    return null;
+  }, [question, JSON.stringify(currentValue)]);
+
   return (
     <Box className={classes.questionStep}>
       <Box className={classes.questionTitleIcon}>
@@ -36,13 +56,20 @@ function QuestionTitle({ question }) {
         <Text size="md" role="productive" color="primary" strong>
           <HtmlText>{question?.question}</HtmlText>
         </Text>
+        {subtitle ? (
+          <Text size="sm" role="productive">
+            {subtitle}
+          </Text>
+        ) : null}
       </Box>
     </Box>
   );
 }
 
 QuestionTitle.propTypes = {
+  t: PropTypes.func,
   question: PropTypes.any,
+  currentValue: PropTypes.any,
 };
 
 export default QuestionTitle;

@@ -35,6 +35,7 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
 import ReactToPrint from 'react-to-print';
 import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import { useLayout } from '@layout/context';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -57,6 +58,7 @@ function Calendar({ session }) {
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const { theme } = useLayout();
 
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
@@ -385,6 +387,9 @@ function Calendar({ session }) {
       <Box style={{ width: '250px' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
+          lightMode={!theme.useDarkMode}
+          drawerColor={theme.menuDrawerColor}
+          mainColor={theme.menuMainColor}
           showPageControl={
             store.scheduleCenter?.[store.center?.id]?.allClasses?.length &&
             store.scheduleCenter?.[store.center?.id]?.config

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Stack, Text, COLORS } from '@bubbles-ui/components';
+import { Box, Stack, Text } from '@bubbles-ui/components';
 import QuestionButtons from '../questions/QuestionButtons';
 import NetPromoterScoreResponseStyles from './NetPromoterScoreResponse.styles';
 
@@ -11,23 +11,23 @@ const NetPromoterScoreResponse = (props) => {
 
   const renderNumbers = () => {
     const numberElements = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 11; i++) {
       numberElements.push(
         <Box>
           <Box
             className={classes.numberElement}
-            style={
+            sx={(theme) =>
               i === selectedValue
                 ? {
-                    border: `1px solid ${COLORS.interactive01d}`,
-                    backgroundColor: COLORS.interactive01v1,
+                    border: `1px solid ${theme.colors.interactive01d}`,
+                    backgroundColor: theme.colors.interactive01v1,
                   }
                 : {}
             }
             onClick={() => setSelectedValue(i)}
           >
             <Text color="primary" role="productive">
-              {i + 1}
+              {i}
             </Text>
           </Box>
         </Box>

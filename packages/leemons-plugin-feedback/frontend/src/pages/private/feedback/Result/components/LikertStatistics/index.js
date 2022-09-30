@@ -10,7 +10,7 @@ function LikertStatistics({ question, responses, t }) {
   const columns = [...new Array(question.properties.maxLabels).keys()];
 
   const averageColor = React.useMemo(() => {
-    const mid = question.properties.maxLabels + 1 / 2;
+    const mid = (question.properties.maxLabels + 1) / 2;
     if (responses.avg < mid - 0.5) return 'error';
     if (responses.avg > mid + 0.5) return 'success';
     return 'warning';
@@ -44,9 +44,9 @@ function LikertStatistics({ question, responses, t }) {
                 total={responses.value?.[index] || 0}
                 label={question.properties[`likertLabel${index}`]}
                 color={
-                  index < question.properties.maxLabels / 2
+                  index + 1 < (question.properties.maxLabels + 1) / 2
                     ? 'fatic01'
-                    : index > question.properties.maxLabels / 2
+                    : index + 1 > (question.properties.maxLabels + 1) / 2
                     ? 'fatic02'
                     : 'fatic03'
                 }

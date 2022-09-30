@@ -7,7 +7,7 @@ import {
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
@@ -142,7 +142,7 @@ export default function Index() {
             duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
             edit: store.isValid && !store.isNew ? t('publish') : undefined,
           }}
-          icon={<PluginTestIcon />}
+          icon={<PluginFeedbackIcon />}
           variant="teacher"
           onEdit={() => saveAsPublish()}
           onDuplicate={() => saveAsDraft()}
