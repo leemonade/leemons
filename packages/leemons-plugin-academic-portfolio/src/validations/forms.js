@@ -1119,6 +1119,7 @@ const updateClassSchema = {
     course: {
       oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
     },
+    program: stringSchema,
     group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,

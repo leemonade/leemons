@@ -249,6 +249,7 @@ export default function SubjectList() {
         ...data,
         course: courses,
         knowledge: knowledges,
+        program: store.program.id,
         substage: substages,
         group: groups,
         schedule: schedule ? schedule.days : [],
