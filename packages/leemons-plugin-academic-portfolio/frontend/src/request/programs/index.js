@@ -61,7 +61,6 @@ async function createProgram(body) {
 }
 
 async function updateProgram(body) {
-  console.log(body);
   const form = new FormData();
   if (body.image && !isString(body.image)) {
     const { image, ...data } = body;
@@ -69,7 +68,6 @@ async function updateProgram(body) {
       if (body.image.id) {
         data.image = body.image.cover?.id;
       } else {
-        console.log('Añadimos el image as file');
         form.append('image', body.image, body.image.name);
       }
     }
