@@ -75,7 +75,7 @@ const TreeClassDetail = ({
       course: classes?.[0]
         ? isArray(classes[0].courses)
           ? map(classes[0].courses, 'id')
-          : classes[0].courses.id
+          : classes[0].courses?.id
         : null,
       color: classes?.[0] ? classes[0].color : null,
       subjectType,
