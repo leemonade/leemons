@@ -77,6 +77,7 @@ module.exports = {
     openResponse: 'Open response',
     openResponseSettings: 'Input configuration',
     maxCharacters: 'Maximum characters',
+    actionsHeader: 'Actions',
   },
   feedbackList: {
     pageTitle: 'Feedback library',
@@ -151,5 +152,16 @@ module.exports = {
     responses: 'Responses ({n})',
     average: 'Average:',
     errorCode6001: 'You don´t have permissions to see the feedback results',
+  },
+  feedbackPreview: {
+    edit: 'Edit feedback',
+    assign: 'Assign feedback',
+    questions: 'Preguntas',
+    questionLabel: 'Statement',
+    responsesLabel: 'Responses',
+    typeLabel: 'Type of question',
+    actionsHeader: 'Acciones',
+    showPreview: 'See preview',
+    returnToTable: 'Return to table',
   },
 };

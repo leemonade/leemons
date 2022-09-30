@@ -77,6 +77,7 @@ module.exports = {
     openResponse: 'Respuesta abierta',
     openResponseSettings: 'Configuración del campo',
     maxCharacters: 'Caracteres máximos',
+    actionsHeader: 'Acciones',
   },
   feedbackList: {
     pageTitle: 'Librería de encuestas',
@@ -151,5 +152,16 @@ module.exports = {
     responses: 'Respuestas ({n})',
     average: 'Media:',
     errorCode6001: 'No tienes permisos para ver los resultados de la encuesta',
+  },
+  feedbackPreview: {
+    edit: 'Editar encuesta',
+    assign: 'Asignar encuesta',
+    questions: 'Preguntas',
+    questionLabel: 'Enunciado',
+    responsesLabel: 'Respuestas',
+    typeLabel: 'Tipo de pregunta',
+    actionsHeader: 'Acciones',
+    showPreview: 'Ver vista previa',
+    returnToTable: 'Volver a la tabla',
   },
 };
