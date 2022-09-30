@@ -208,19 +208,37 @@ export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
           >
             {t('previous')}
           </Button>
-          <Button
-            loading={saving}
-            onClick={() => {
-              qStore.isDirty = true;
-              qStore.trySend = true;
-              qRender();
-              form.handleSubmit(() => {
-                onNext();
-              })();
-            }}
-          >
-            {t('publish')}
-          </Button>
+          <Box>
+            <Button
+              variant="outline"
+              loading={saving}
+              onClick={() => {
+                qStore.isDirty = true;
+                qStore.trySend = true;
+                qRender();
+                form.handleSubmit(() => {
+                  onNext();
+                })();
+              }}
+            >
+              {t('publish')}
+            </Button>
+            <Box sx={(theme) => ({ display: 'inline-block', marginLeft: theme.spacing[2] })}>
+              <Button
+                loading={saving}
+                onClick={() => {
+                  qStore.isDirty = true;
+                  qStore.trySend = true;
+                  qRender();
+                  form.handleSubmit(() => {
+                    onNext(true);
+                  })();
+                }}
+              >
+                {t('publishAndAssign')}
+              </Button>
+            </Box>
+          </Box>
         </Stack>
       </ContextContainer>
     </>

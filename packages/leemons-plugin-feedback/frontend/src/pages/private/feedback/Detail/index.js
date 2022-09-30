@@ -52,13 +52,17 @@ export default function Index() {
     render();
   }
 
-  async function saveAsPublish() {
+  async function saveAsPublish(goAssign) {
     try {
       store.saving = 'edit';
       render();
-      await saveFeedbackRequest({ ...formValues, published: true });
+      const { feedback } = await saveFeedbackRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
-      history.push('/private/feedback');
+      if (goAssign) {
+        history.push(`/private/feedback/assign/${feedback.id}`);
+      } else {
+        history.push('/private/feedback');
+      }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -140,7 +144,7 @@ export default function Index() {
           }}
           buttons={{
             duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            edit: store.isValid && !store.isNew ? t('publish') : undefined,
+            // edit: store.isValid && !store.isNew ? t('publish') : undefined,
           }}
           icon={<PluginFeedbackIcon />}
           variant="teacher"
