@@ -37,7 +37,7 @@ function QuestionTitle({ t, question, currentValue }) {
       if (currentValue.length) {
         message = null;
         const needMore = question.properties.minResponses - currentValue.length;
-        if (needMore) {
+        if (needMore > 0) {
           message = t('needNResponses', { n: needMore });
         }
       }

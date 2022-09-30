@@ -312,7 +312,7 @@ export default function Result() {
       </ActivityAccordionPanel>
     );
   }
-  if (store.instance.showCorrectAnswers || store.isTeacher) {
+  if (store.instance?.showCorrectAnswers || store.isTeacher) {
     accordion.push(
       <ActivityAccordionPanel
         key={2}

@@ -42,6 +42,11 @@ async function sendEmail({
 
        */
 
+      let classColor = '#67728E';
+      if (classes.length === 1) {
+        classColor = classes[0].color;
+      }
+
       emailServices.email
         .sendAsEducationalCenter(
           userAgent.user.email,
@@ -54,6 +59,7 @@ async function sendEmail({
                 ...instance.assignable,
                 asset: {
                   ...instance.assignable.asset,
+                  color: instance.assignable.asset.color || '#D9DCE0',
                   url:
                     (hostname || ctx.request.header.origin) +
                     leemons
@@ -63,6 +69,7 @@ async function sendEmail({
               },
             },
             classes,
+            classColor,
             btnUrl: `${hostname || ctx.request.header.origin}/private/assignables/ongoing`,
             subjectIconUrl: null,
             taskDate: date,

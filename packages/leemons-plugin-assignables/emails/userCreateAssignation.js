@@ -212,7 +212,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 display: flex;
                                 height: 100%;
                                 justify-content: flex-end;
-                                border-top: 8px solid {{ @if (it.classes.length > 1) }}#67728E{{ #else }}{it.classes[0].color}{{ /if}};
+                                border-top: 8px solid {{ it.instance.assignable.asset.color }};
                               "
                           >
                             <div
@@ -257,14 +257,9 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                       width: 20px;
                                       border-radius: 50%;
                                       text-align: center;
-                                        line-height: 20px;
-                                      {{ @if (it.classes.length === 1) }}
-                                        background-color: {{ it.classes[0].color }};
-                                      {{ #else }}
-                                        background-color: #67728E;
-                                      {{ /if}}
-
-                                    "
+                                      line-height: 20px;
+                                      background-color: {{ it.classColor }};
+                                   "
                                 >
 
                                 {{ @if (it.subjectIconUrl) }}
@@ -348,6 +343,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                               font-size: 13px;
                               line-height: 16.5px;
                               color: #1A202B;
+                              marginBottom: 4px;
                             ">
                              {{ it.instance.assignable.asset.tagline }}
                              </div>
