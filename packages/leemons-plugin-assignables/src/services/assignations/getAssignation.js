@@ -69,9 +69,17 @@ module.exports = async function getAssignation(
 
   if (relatedAssignableInstances?.before?.length) {
     const relatedInstancesTimestamps = await Promise.all(
-      relatedAssignableInstances.before.map((instance) =>
-        getDates('assignation', instance.id, { transacting })
-      )
+      relatedAssignableInstances.before.map(async (instance) => {
+        const relatedAssignation = await assignations.findOne(
+          {
+            instance: instance.id,
+            user,
+          },
+          { transacting, columns: ['id'] }
+        );
+
+        return getDates('assignation', relatedAssignation.id, { transacting });
+      })
     );
 
     assignation.relatedAssignableInstances = {
