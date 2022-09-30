@@ -117,6 +117,7 @@ module.exports = {
     feedbackIntroductoryText: 'Introducción',
   },
   feedbackResponseQuestion: {
+    returnToTable: 'Volver a la tabla',
     nQuestion: 'PREGUNTA {n}',
     questionRequired: '(obligatoria)',
     next: 'Siguiente',

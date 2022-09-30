@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, HtmlText, ImageLoader, Text } from '@bubbles-ui/components';
 
-export const Styles = createStyles((theme) => ({
+export const Styles = createStyles((theme, { viewMode }) => ({
   questionStep: {
     display: 'flex',
     justifyContent: 'center',
@@ -11,6 +11,7 @@ export const Styles = createStyles((theme) => ({
     paddingBottom: theme.spacing[4],
     paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
+    backgroundColor: viewMode ? theme.colors.ui04 : 'transparent',
   },
   questionTitleIcon: {
     display: 'inline-block',
@@ -25,8 +26,8 @@ export const Styles = createStyles((theme) => ({
   },
 }));
 
-function QuestionTitle({ t, question, currentValue }) {
-  const { classes } = Styles();
+function QuestionTitle({ t, viewMode, question, currentValue }) {
+  const { classes } = Styles({ viewMode });
   const subtitle = React.useMemo(() => {
     if (question.type === 'multiResponse') {
       let message =
@@ -69,6 +70,7 @@ function QuestionTitle({ t, question, currentValue }) {
 QuestionTitle.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
+  viewMode: PropTypes.bool,
   currentValue: PropTypes.any,
 };
 

@@ -4,7 +4,7 @@ import { isNil } from 'lodash';
 import { Box, Button, Stack } from '@bubbles-ui/components';
 import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 
-function QuestionButtons({ t, feedback, question, value, currentIndex, onNext, onPrev }) {
+function QuestionButtons({ t, viewMode, feedback, question, value, currentIndex, onNext, onPrev }) {
   const hasValue = React.useMemo(() => {
     if (question.type === 'multiResponse') {
       return value.length >= question.properties.minResponses;
@@ -47,19 +47,21 @@ function QuestionButtons({ t, feedback, question, value, currentIndex, onNext, o
         <Box />
       )}
 
-      <Button
-        position="left"
-        rightIcon={<ChevronRightIcon />}
-        rounded
-        compact
-        variant={!isLast ? 'outline' : null}
-        onClick={() => {
-          if (!disabled) onNext(hasValue ? value : undefined);
-        }}
-        disabled={disabled}
-      >
-        {nextText}
-      </Button>
+      {!viewMode || (viewMode && !isLast) ? (
+        <Button
+          position="left"
+          rightIcon={<ChevronRightIcon />}
+          rounded
+          compact
+          variant={!isLast ? 'outline' : null}
+          onClick={() => {
+            if (!disabled) onNext(hasValue ? value : undefined);
+          }}
+          disabled={disabled}
+        >
+          {nextText}
+        </Button>
+      ) : null}
     </Stack>
   );
 }
@@ -72,6 +74,7 @@ QuestionButtons.propTypes = {
   value: PropTypes.any,
   currentIndex: PropTypes.number,
   feedback: PropTypes.any,
+  viewMode: PropTypes.bool,
 };
 
 QuestionButtons.defaultProps = {

@@ -1,42 +1,31 @@
 import React from 'react';
 import {
+  ActionButton,
   ActivityAccordion,
   ActivityAccordionPanel,
-  ActivityAnswersBar,
-  ActionButton,
   Badge,
-  Text,
   Box,
   Button,
   ContextContainer,
+  createStyles,
   ImageLoader,
   PageContainer,
   Stack,
-  useAccordionState,
   Table,
-  createStyles,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { useStore } from '@common';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory, useParams } from 'react-router-dom';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import AssetList from '@leebrary/components/AssetList';
-import { prepareAsset } from '@leebrary/helpers/prepareAsset';
 import { addErrorAlert } from '@layout/alert';
-import {
-  PluginFeedbackIcon,
-  EditIcon,
-  ChevronRightIcon,
-  ArrowLeftIcon,
-} from '@bubbles-ui/icons/outline';
+import { ChevronRightIcon, EditIcon, PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
 import { getFeedbackRequest } from '@feedback/request';
 import { map } from 'lodash';
+import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
 
-const PreviewPageStyles = createStyles((theme) => ({
+const PreviewPageStyles = createStyles((theme, { viewMode }) => ({
   firstTableHeader: {
     paddingLeft: `${theme.spacing[6]}px !important`,
   },
@@ -72,6 +61,7 @@ export default function Preview() {
 
   const [store, render] = useStore({
     loading: true,
+    statusAccordion: { 0: true },
   });
 
   const history = useHistory();
@@ -189,11 +179,11 @@ export default function Preview() {
   }
 
   function goAssignPage() {
-    history.push(`/private/feedback/assign/${store.test.id}`);
+    history.push(`/private/feedback/assign/${store.feedback.id}`);
   }
 
   function goEditPage() {
-    history.push(`/private/feedback/${store.test.id}`);
+    history.push(`/private/feedback/${store.feedback.id}`);
   }
 
   function toggleQuestionMode() {
@@ -205,66 +195,8 @@ export default function Preview() {
     if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V) init();
   }, [params, t1V, t2V]);
 
-  // const accordion = [];
-  // if (store.stats?.data.length && store.stats?.selectables.length) {
-  //   accordion.push(
-  //     <ActivityAccordionPanel
-  //       key={1}
-  //       label={t('chartLabel')}
-  //       icon={
-  //         <Box style={{ position: 'relative', width: '23px', height: '23px' }}>
-  //           <ImageLoader className="stroke-current" src={'/public/tests/test-results-icon.svg'} />
-  //         </Box>
-  //       }
-  //       color="solid"
-  //     >
-  //       <Box p={20}>
-  //         <ActivityAnswersBar showBarIcon={false} withLegend={false} {...store.stats} />
-  //       </Box>
-  //     </ActivityAccordionPanel>
-  //   );
-  // }
-  // if (store.test) {
-  //   accordion.push(
-  //     <ActivityAccordionPanel
-  //       key={2}
-  //       label={t('questions')}
-  //       rightSection={
-  //         <Box>
-  //           <Badge
-  //             label={store.test?.questions?.length}
-  //             size="md"
-  //             color="stroke"
-  //             closable={false}
-  //           />
-  //         </Box>
-  //       }
-  //       icon={
-  //         <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-  //           <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
-  //         </Box>
-  //       }
-  //     >
-  //       <Box>
-  //         {store.useQuestionMode ? (
-  //           <ViewModeQuestions viewMode={false} store={store.test} onReturn={toggleQuestionMode} />
-  //         ) : (
-  //           <>
-  //             <Box className={styles.showTestBar}>
-  //               <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
-  //                 {t('showInTests')}
-  //               </Button>
-  //             </Box>
-  //             <QuestionsTable withStyle hideCheckbox questions={store.test?.questions} />
-  //           </>
-  //         )}
-  //       </Box>
-  //     </ActivityAccordionPanel>
-  //   );
-  // }
-
-  const editQuestion = (i) => {
-    console.log(i);
+  const editQuestion = () => {
+    goEditPage();
   };
 
   return (
@@ -292,7 +224,13 @@ export default function Preview() {
       />
       <PageContainer noFlex>
         <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-          <ActivityAccordion>
+          <ActivityAccordion
+            state={store.statusAccordion}
+            onChange={(e) => {
+              store.statusAccordion = e;
+              render();
+            }}
+          >
             <ActivityAccordionPanel
               label={tP('questions')}
               rightSection={
@@ -316,16 +254,13 @@ export default function Preview() {
             >
               <Box>
                 {store.useQuestionMode ? (
-                  <Box onClick={toggleQuestionMode}>
-                    {/* <Box className={classes.returnToTable} onClick={toggleQuestionMode}>
-                      <ArrowLeftIcon />
-                      <Box sx={(theme) => ({ paddingLeft: theme.spacing[3] })}>
-                        <Text role="productive" size="md" color="primary">
-                          {tP('returnToTable')}
-                        </Text>
-                      </Box>
-                    </Box> */}
-                    questionMode
+                  <Box>
+                    <QuestionsCard
+                      viewMode
+                      returnToTable={toggleQuestionMode}
+                      feedback={store.feedback}
+                      defaultValues={{}}
+                    />
                   </Box>
                 ) : (
                   <>

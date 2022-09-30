@@ -8,16 +8,17 @@ import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
 import { setQuestionResponseRequest } from '@feedback/request';
-import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { ArrowLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+
 import { useHistory } from 'react-router-dom';
 import { setInstanceTimestamp } from '@feedback/request/feedback';
 import OpenResponse from './OpenResponse';
 import LikertResponse from './LikertResponse';
 import NetPromoterScoreResponse from './NetPromoterScoreResponse';
 
-export const Styles = createStyles((theme) => ({
+export const Styles = createStyles((theme, { viewMode }) => ({
   container: {
-    maxWidth: 768,
+    maxWidth: viewMode ? '100%' : 768,
     width: '100%',
     margin: '0px auto',
     marginTop: 45,
@@ -50,8 +51,16 @@ const questionsByType = {
   openResponse: <OpenResponse />,
 };
 
-function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResults }) {
-  const { classes } = Styles();
+function QuestionsCard({
+  viewMode,
+  returnToTable,
+  feedback,
+  instanceId,
+  defaultValues,
+  userId,
+  showResults,
+}) {
+  const { classes } = Styles({ viewMode });
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
   const [store, render] = useStore({
     maxIndex: 0,
@@ -73,12 +82,12 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResult
   };
 
   const goToResults = () => {
-    history.push(`/private/feedback/result/${instanceId}`);
+    if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
   };
 
   async function onNext(value) {
     store.values[question.id] = value;
-    setQuestionResponseRequest(question.id, instanceId, value);
+    if (!viewMode) setQuestionResponseRequest(question.id, instanceId, value);
 
     if (!isLast) {
       store.currentIndex++;
@@ -86,7 +95,7 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResult
         store.maxIndex = store.currentIndex;
       }
     } else {
-      setInstanceTimestamp(instanceId, 'end', userId);
+      if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
       store.showFinishModal = true;
     }
 
@@ -107,18 +116,37 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResult
   return (
     <Box className={classes.container}>
       <Box className={classes.header}>
-        <Box className={classes.headerText}>
-          <Text size="sm" stronger>
-            {t('nQuestion', { n: store.currentIndex + 1 })}
-          </Text>
-          &nbsp;
-          {question.required ? <Text role="productive">{t('questionRequired')}</Text> : null}
-        </Box>
+        {viewMode ? (
+          <Box>
+            <Button
+              onClick={returnToTable}
+              variant="link"
+              leftIcon={<ArrowLeftIcon />}
+              color="secondary"
+            >
+              {t('returnToTable')}
+            </Button>
+          </Box>
+        ) : (
+          <Box className={classes.headerText}>
+            <Text size="sm" stronger>
+              {t('nQuestion', { n: store.currentIndex + 1 })}
+            </Text>
+            &nbsp;
+            {question.required ? <Text role="productive">{t('questionRequired')}</Text> : null}
+          </Box>
+        )}
+
         <HeaderProgressBar current={store.maxIndex} max={feedback.questions.length} />
       </Box>
       {question ? (
         <Box className={classes.questionCard}>
-          <QuestionTitle t={t} currentValue={store.currentValue} question={question} />
+          <QuestionTitle
+            t={t}
+            viewMode={viewMode}
+            currentValue={store.currentValue}
+            question={question}
+          />
           <Box className={classes.questionContainer}>
             {React.cloneElement(questionsByType[question.type], {
               question,
@@ -126,6 +154,7 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResult
               currentIndex: store.currentIndex,
               onNext,
               onPrev,
+              viewMode,
               defaultValue: store.values[question.id],
               setCurrentValue: (e) => {
                 store.currentValue = e;
@@ -199,6 +228,8 @@ QuestionsCard.propTypes = {
   defaultValues: PropTypes.any,
   userId: PropTypes.string,
   showResults: PropTypes.bool,
+  viewMode: PropTypes.bool,
+  returnToTable: PropTypes.func,
 };
 
 export default QuestionsCard;
