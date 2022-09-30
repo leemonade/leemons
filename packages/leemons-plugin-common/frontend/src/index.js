@@ -21,6 +21,12 @@ export * from './isValidHttpUrl';
 export * from './useCache';
 export * from './stringMatch';
 
+function htmlToText(html) {
+  const el = document.createElement('div');
+  el.innerHTML = html;
+  return el.innerText;
+}
+
 export {
   formWithTheme,
   getObjectArrayKeys,
@@ -28,4 +34,5 @@ export {
   unflatten,
   useRequestErrorMessage,
   getRequestErrorMessage,
+  htmlToText,
 };

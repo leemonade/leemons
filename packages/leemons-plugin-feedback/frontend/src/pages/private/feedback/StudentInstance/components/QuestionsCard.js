@@ -118,7 +118,7 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResult
       </Box>
       {question ? (
         <Box className={classes.questionCard}>
-          <QuestionTitle question={question} />
+          <QuestionTitle t={t} currentValue={store.currentValue} question={question} />
           <Box className={classes.questionContainer}>
             {React.cloneElement(questionsByType[question.type], {
               question,
@@ -127,6 +127,10 @@ function QuestionsCard({ feedback, instanceId, defaultValues, userId, showResult
               onNext,
               onPrev,
               defaultValue: store.values[question.id],
+              setCurrentValue: (e) => {
+                store.currentValue = e;
+                render();
+              },
               t,
             })}
           </Box>

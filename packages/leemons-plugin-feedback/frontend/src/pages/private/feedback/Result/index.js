@@ -1,14 +1,13 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
-import { useStore } from '@common';
+import { htmlToText, useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
   Badge,
   Box,
-  HtmlText,
   Stack,
   Text,
   Title,
@@ -16,11 +15,11 @@ import {
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import {
-  NavigationMenuLeftIcon,
-  PluginRankingIcon,
-  GaugeDashboardIcon,
   DataFileBarsQuestionIcon,
   FormImageIcon,
+  GaugeDashboardIcon,
+  NavigationMenuLeftIcon,
+  PluginRankingIcon,
   QuestionExclamationIcon,
 } from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
@@ -45,6 +44,7 @@ export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
   const [store, render] = useStore({
     loading: true,
+    accordionState: { 0: true },
   });
 
   const { classes } = ResultStyles({}, { name: 'Result' });
@@ -106,15 +106,12 @@ export default function Result() {
   const renderQuestions = () => {
     const questionBoxs = store.feedback.questions.map((question, index) => (
       <ActivityAccordionPanel
-        label={t('question', { i: index + 1 })}
+        label={htmlToText(question.question)}
         color="solid"
         icon={getQuestionIcons(question.type, question.properties.withImages)}
         key={question.id}
         rightSection={getQuestionBadges(question)}
       >
-        <Box className={classes.question}>
-          <HtmlText>{question.question}</HtmlText>
-        </Box>
         <Box>
           {React.cloneElement(questionsByType[question.type], {
             question,
@@ -155,7 +152,13 @@ export default function Result() {
             {store.feedback.name}
           </Title>
         </Box>
-        <ActivityAccordion>
+        <ActivityAccordion
+          state={store.accordionState}
+          onChange={(e) => {
+            store.accordionState = e;
+            render();
+          }}
+        >
           <ActivityAccordionPanel
             label={t('generalInformation')}
             color="solid"

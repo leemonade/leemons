@@ -90,6 +90,10 @@ function SelectResponseQuestion(props) {
     render();
   }, [defaultValue, question]);
 
+  React.useEffect(() => {
+    props.setCurrentValue(store.value);
+  }, [store.value?.length]);
+
   return (
     <Box>
       <Box
@@ -146,6 +150,7 @@ SelectResponseQuestion.propTypes = {
   question: PropTypes.any,
   multi: PropTypes.boolean,
   defaultValue: PropTypes.any,
+  setCurrentValue: PropTypes.func,
 };
 
 export default SelectResponseQuestion;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Stack, Text, COLORS } from '@bubbles-ui/components';
+import { Box, Stack, Text } from '@bubbles-ui/components';
 import QuestionButtons from '../questions/QuestionButtons';
 import LikertResponseStyles from './LikertResponse.styles';
 
@@ -28,11 +28,11 @@ const LikertResponse = (props) => {
         <Box>
           <Box
             className={classes.numberElement}
-            style={
+            sx={(theme) =>
               i === selectedValue
                 ? {
-                    border: `1px solid ${COLORS.interactive01d}`,
-                    backgroundColor: COLORS.interactive01v1,
+                    border: `1px solid ${theme.colors.interactive01d}`,
+                    backgroundColor: theme.colors.interactive01v1,
                   }
                 : {}
             }

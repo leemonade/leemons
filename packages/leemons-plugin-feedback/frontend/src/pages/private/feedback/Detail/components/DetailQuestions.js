@@ -22,7 +22,7 @@ import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { Controller } from 'react-hook-form';
 import QuestionForm from '@feedback/pages/private/feedback/Detail/components/QuestionForm';
 
-export default function DetailQuestions({ form, t, onPrev, onNext }) {
+export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
     isDirty: false,
@@ -208,18 +208,37 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
           >
             {t('previous')}
           </Button>
-          <Button
-            onClick={() => {
-              qStore.isDirty = true;
-              qStore.trySend = true;
-              qRender();
-              form.handleSubmit(() => {
-                onNext();
-              })();
-            }}
-          >
-            {t('publish')}
-          </Button>
+          <Box>
+            <Button
+              variant="outline"
+              loading={saving}
+              onClick={() => {
+                qStore.isDirty = true;
+                qStore.trySend = true;
+                qRender();
+                form.handleSubmit(() => {
+                  onNext();
+                })();
+              }}
+            >
+              {t('publish')}
+            </Button>
+            <Box sx={(theme) => ({ display: 'inline-block', marginLeft: theme.spacing[2] })}>
+              <Button
+                loading={saving}
+                onClick={() => {
+                  qStore.isDirty = true;
+                  qStore.trySend = true;
+                  qRender();
+                  form.handleSubmit(() => {
+                    onNext(true);
+                  })();
+                }}
+              >
+                {t('publishAndAssign')}
+              </Button>
+            </Box>
+          </Box>
         </Stack>
       </ContextContainer>
     </>
@@ -229,6 +248,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
 DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  saving: PropTypes.boolean,
   onNext: PropTypes.func,
   onPrev: PropTypes.func,
 };
