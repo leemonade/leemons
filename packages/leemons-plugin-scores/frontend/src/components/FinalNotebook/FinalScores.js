@@ -121,7 +121,7 @@ export function useMatchingAcademicCalendarPeriods({ classes, filters }) {
   }, [periods, filters?.program, filters?.course]);
 
   return {
-    isLoading: !periods?.length,
+    isLoading: !periods,
     periods: parsedPeriods,
   };
 }
@@ -243,7 +243,12 @@ export function FinalScores({ filters, localFilters }) {
     );
   }
 
-  if (!Array.isArray(grades) || !classesForTable?.length || !studentsForTable?.length) {
+  if (
+    !Array.isArray(grades) ||
+    !classesForTable?.length ||
+    !studentsForTable?.length ||
+    !periodsWithFinal?.length
+  ) {
     return <EmptyState />;
   }
 
