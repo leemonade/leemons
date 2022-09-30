@@ -166,6 +166,7 @@ export default function Index() {
               <DetailQuestions
                 t={t}
                 form={form}
+                saving={store.saving}
                 onNext={saveAsPublish}
                 onPrev={() => {
                   setStep(0);

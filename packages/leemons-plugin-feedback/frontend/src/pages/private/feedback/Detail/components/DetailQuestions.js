@@ -22,7 +22,7 @@ import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { Controller } from 'react-hook-form';
 import QuestionForm from '@feedback/pages/private/feedback/Detail/components/QuestionForm';
 
-export default function DetailQuestions({ form, t, onPrev, onNext }) {
+export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
     isDirty: false,
@@ -209,6 +209,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
             {t('previous')}
           </Button>
           <Button
+            loading={saving}
             onClick={() => {
               qStore.isDirty = true;
               qStore.trySend = true;
@@ -229,6 +230,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
 DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  saving: PropTypes.boolean,
   onNext: PropTypes.func,
   onPrev: PropTypes.func,
 };
