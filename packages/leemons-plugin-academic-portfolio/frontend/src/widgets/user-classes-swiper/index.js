@@ -142,7 +142,9 @@ function UserClassesSwiperWidget({ program }) {
             : classe.groups
             ? classe.groups.abbreviation
             : null;
-          const course = isArray(classe.courses)
+          const course = classe.groups.isAlone
+            ? null
+            : isArray(classe.courses)
             ? t('multiCourse')
             : classe.courses
             ? getCourseName(classe.courses)
