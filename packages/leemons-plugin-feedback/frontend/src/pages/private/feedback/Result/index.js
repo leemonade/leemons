@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
   Title,
+  TextClamp,
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -106,7 +107,13 @@ export default function Result() {
   const renderQuestions = () => {
     const questionBoxs = store.feedback.questions.map((question, index) => (
       <ActivityAccordionPanel
-        label={htmlToText(question.question)}
+        label={
+          <TextClamp>
+            <Text role="productive" color="primary" stronger size="md">{`${index + 1}. ${htmlToText(
+              question.question
+            )}`}</Text>
+          </TextClamp>
+        }
         color="solid"
         icon={getQuestionIcons(question.type, question.properties.withImages)}
         key={question.id}
