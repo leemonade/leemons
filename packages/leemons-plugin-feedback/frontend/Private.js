@@ -20,12 +20,17 @@ const StudentInstance = loadable(() =>
 );
 const Result = loadable(() => pMinDelay(import('./src/pages/private/feedback/Result'), 1000));
 
+const Preview = loadable(() => pMinDelay(import('./src/pages/private/feedback/Preview'), 1000));
+
 export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
     <Switch>
+      <Route path={`${path}/preview/:id`}>
+        <Preview session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
       <Route path={`${path}/result/:id`}>
         <Result session={session} fallback={<LoadingOverlay visible />} />
       </Route>

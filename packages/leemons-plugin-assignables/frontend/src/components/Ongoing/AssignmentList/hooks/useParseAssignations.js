@@ -1,15 +1,16 @@
-import React, { useCallback, useContext, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useContext, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { LocaleDate, LocaleRelativeTime, unflatten } from '@common';
 import {
   Badge,
   Box,
-  Button,
   ContextContainer,
   ImageLoader,
   Text,
   TextClamp,
+  createStyles,
+  Tooltip,
 } from '@bubbles-ui/components';
 import { EditIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
@@ -93,32 +94,48 @@ function getTimeReferenceColor(date) {
   return 'primary';
 }
 
+const useActionIconStyles = createStyles((theme) => ({
+  enabled: {
+    color: theme.colors.interactive01,
+  },
+  disabled: {
+    // There is no disabled token
+    color: '#C3C8CE',
+    cursor: 'not-allowed',
+  },
+}));
+
+function ActionIcon({ icon, disabled }) {
+  const { classes } = useActionIconStyles();
+
+  return <Box className={disabled ? classes.disabled : classes.enabled}>{icon}</Box>;
+}
+
 function TeacherActions({ instance }) {
   const { id } = instance;
-  const role = instance?.assignable?.roleDetails;
-  const dashboardURL = (role.dashboardUrl || '/private/assignables/details/:id').replace(':id', id);
-
-  const history = useHistory();
-
-  const redirectToInstance = useCallback(() => window.open(dashboardURL, '_blank'), [history, id]);
-
   return (
-    <Button
-      iconOnly
-      variant="link"
-      color="primary"
-      rightIcon={<ViewOnIcon />}
-      onClick={redirectToInstance}
-    />
+    <Link to={`/private/assignables/details/${id}`}>
+      <ActionIcon icon={<ViewOnIcon />} />
+    </Link>
   );
 }
 
-function StudentActions({ assignation }) {
+function StudentActions({ assignation, labels }) {
   const id = assignation?.instance?.id;
   const role = assignation?.instance?.assignable?.roleDetails;
   const user = assignation?.user;
+  const showRevisionPage =
+    assignation?.instance?.showResults || assignation?.instance?.showCorrectAnswers;
+  const hasPreviousActivitiesCompleted = React.useMemo(() => {
+    if (!assignation?.relatedAssignableInstances?.before?.length) {
+      return true;
+    }
 
-  const history = useHistory();
+    return assignation.relatedAssignableInstances.before.every(
+      (instance) => instance.timestamps?.end
+    );
+  }, [assignation?.relatedAssignableInstances]);
+
   const activityUrl = useMemo(
     () => role.studentDetailUrl.replace(':id', id).replace(':user', user),
     [id, role?.studentDetailUrl]
@@ -130,47 +147,48 @@ function StudentActions({ assignation }) {
   const finished = assignation?.finished;
   const started = assignation?.started;
 
-  const redirectToInstance = useCallback(
-    () => window.open(activityUrl, '_blank'),
-    [history, activityUrl]
-  );
-  const redirectToRevision = useCallback(
-    () => window.open(revisionUrl, '_blank'),
-    [history, revisionUrl]
-  );
-
   if (finished) {
+    if (showRevisionPage) {
+      return (
+        <Link to={revisionUrl}>
+          <ActionIcon icon={<ViewOnIcon />} />
+        </Link>
+      );
+    }
     return (
-      <Button
-        iconOnly
-        variant="link"
-        color="primary"
-        rightIcon={<ViewOnIcon />}
-        onClick={redirectToRevision}
-      />
+      <Tooltip label={labels?.student_actions?.disabled?.results} position="left">
+        <ActionIcon icon={<ViewOnIcon />} disabled />
+      </Tooltip>
     );
   }
 
   if (!started) {
+    if (!hasPreviousActivitiesCompleted) {
+      return (
+        <Tooltip label={labels?.student_actions?.disabled?.previous} position="left">
+          <ActionIcon icon={<ViewOnIcon />} disabled />
+        </Tooltip>
+      );
+    }
+
     return (
-      <Button
-        iconOnly
-        variant="link"
-        color="primary"
-        rightIcon={<ViewOnIcon />}
-        onClick={redirectToInstance}
-      />
+      <Link to={activityUrl}>
+        <ActionIcon icon={<ViewOnIcon />} />
+      </Link>
     );
   }
 
+  if (!hasPreviousActivitiesCompleted) {
+    return (
+      <Tooltip label={labels?.student_actions?.disabled?.previous} position="left">
+        <ActionIcon icon={<EditIcon />} disabled />
+      </Tooltip>
+    );
+  }
   return (
-    <Button
-      iconOnly
-      variant="link"
-      color="primary"
-      rightIcon={<EditIcon />}
-      onClick={redirectToInstance}
-    />
+    <Link to={activityUrl}>
+      <ActionIcon icon={<EditIcon />} />
+    </Link>
   );
 }
 

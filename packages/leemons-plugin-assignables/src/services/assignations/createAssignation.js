@@ -125,14 +125,16 @@ module.exports = async function createAssignation(
 
             await Promise.all(roomsPromises);
 
-            sendEmail({
-              instance,
-              userSession,
-              userAgent: userAgentByIds[user],
-              classes: _classes,
-              ctx,
-              hostname,
-            });
+            if (instance?.messageToAssignees) {
+              sendEmail({
+                instance,
+                userSession,
+                userAgent: userAgentByIds[user],
+                classes: _classes,
+                ctx,
+                hostname,
+              });
+            }
 
             // EN: Save the timestamps
             // ES: Guarda los timestamps

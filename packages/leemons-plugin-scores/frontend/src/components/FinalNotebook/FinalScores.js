@@ -188,6 +188,10 @@ export function FinalScores({ filters, localFilters }) {
   });
 
   const periodsWithFinal = React.useMemo(() => {
+    if (!periods?.length) {
+      return [];
+    }
+
     const greatestDate = periods?.reduce((dates, period) =>
       period.endDate > dates.endDate ? period : dates
     )?.startDate;
@@ -239,7 +243,12 @@ export function FinalScores({ filters, localFilters }) {
     );
   }
 
-  if (!Array.isArray(grades) || !classesForTable?.length || !studentsForTable?.length) {
+  if (
+    !Array.isArray(grades) ||
+    !classesForTable?.length ||
+    !studentsForTable?.length ||
+    !periodsWithFinal?.length
+  ) {
     return <EmptyState />;
   }
 

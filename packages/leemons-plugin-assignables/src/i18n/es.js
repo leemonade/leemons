@@ -19,7 +19,7 @@ module.exports = {
         'Esta actividad está siempre disponible y puede realizarse en cualquier momento.',
       closeDateToogle: 'Fecha límite para correcciones del profesor',
       closeDate: 'Fecha límite para corregir',
-      messageToStudentsToogle: 'Añadir mensaje para los estudiantes',
+      messageToStudentsToogle: 'Notificar a los estudiantes',
       messageToStudents: 'Mensaje para los estudiantes',
       showCurriculumToogle: 'Mostrar curriculum',
       content: 'Contenidos',
@@ -31,6 +31,11 @@ module.exports = {
         class: 'Clase',
         customGroups: 'Grupos personalizados',
         session: 'Sesión',
+      },
+      relations: {
+        toggle: 'Establecer relación con otra actividad',
+        before: 'Actividad anterior',
+        required: 'Dependencia obligatoria',
       },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
@@ -224,6 +229,10 @@ module.exports = {
     notSubmitted: 'No entregado',
     correction: 'Revisar',
     review: 'Revisar',
+    disabled: {
+      results: 'Los resultados han sido ocultados por tu profesor',
+      previous: 'La actividad anterior debe completarse primero',
+    },
   },
   levelsOfDifficulty: {
     beginner: 'Principiante',
