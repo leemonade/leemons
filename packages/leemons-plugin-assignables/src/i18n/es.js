@@ -19,7 +19,7 @@ module.exports = {
         'Esta actividad está siempre disponible y puede realizarse en cualquier momento.',
       closeDateToogle: 'Fecha límite para correcciones del profesor',
       closeDate: 'Fecha límite para corregir',
-      messageToStudentsToogle: 'Añadir mensaje para los estudiantes',
+      messageToStudentsToogle: 'Notificar a los estudiantes',
       messageToStudents: 'Mensaje para los estudiantes',
       showCurriculumToogle: 'Mostrar curriculum',
       content: 'Contenidos',

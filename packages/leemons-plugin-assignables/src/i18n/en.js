@@ -18,7 +18,7 @@ module.exports = {
       alwaysOpenToogle: 'This activity is always available and can be performed at any time.',
       closeDateToogle: 'Deadline for teacher corrections',
       closeDate: 'Closing date',
-      messageToStudentsToogle: 'Add a message to the students',
+      messageToStudentsToogle: 'Notify students',
       messageToStudents: 'Message to the students',
       showCurriculumToogle: 'Show curriculum',
       content: 'Content',
