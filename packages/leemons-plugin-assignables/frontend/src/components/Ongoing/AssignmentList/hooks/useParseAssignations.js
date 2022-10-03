@@ -113,8 +113,15 @@ function ActionIcon({ icon, disabled }) {
 
 function TeacherActions({ instance }) {
   const { id } = instance;
+  const role = instance?.assignable?.roleDetails;
+
+  const dashboardUrl = React.useMemo(
+    () => () => (role.dashboardUrl || '/private/assignables/details/:id').replace(':id', id),
+    [id, role?.dashboardUrl]
+  );
+
   return (
-    <Link to={`/private/assignables/details/${id}`}>
+    <Link to={dashboardUrl}>
       <ActionIcon icon={<ViewOnIcon />} />
     </Link>
   );
@@ -126,6 +133,7 @@ function StudentActions({ assignation, labels }) {
   const user = assignation?.user;
   const showRevisionPage =
     assignation?.instance?.showResults || assignation?.instance?.showCorrectAnswers;
+
   const hasPreviousActivitiesCompleted = React.useMemo(() => {
     if (!assignation?.relatedAssignableInstances?.before?.length) {
       return true;
