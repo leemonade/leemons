@@ -149,7 +149,8 @@
       "administrativeContactInfoDescription": "Esta información se utilizará únicamente como firma de notificación para cumplir con el GDPR y otras leyes internacionales de privacidad.",
       "useDarkMode": "Activar modo Dark en el menú lateral",
       "menuMainColor": "Color del menú principal",
-      "menuDrawerColor": "Color del submenú lateral"
+      "menuDrawerColor": "Color del submenú lateral",
+      "usePicturesEmptyStates": "Usar ilustraciones cuando no se encuentren resultados en los listados"
     },
     "finish": {
       "label": "Fin",

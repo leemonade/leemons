@@ -165,9 +165,9 @@ module.exports = {
       export: 'Download',
     },
     noClassSelected: {
-      title: 'Evaluation Notebook',
+      title: 'Select class and period',
       description:
-        'The Evaluation Notebook is a place where you can evaluate the activities that are not graded and the activities that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
+        'Select the class or group and then filter by evaluation periods. You can also export these reports to excel or csv.',
     },
     noResults: {
       title: 'No results',

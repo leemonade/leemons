@@ -3,6 +3,7 @@ import { Swiper, Box, Text, Loader, ImageLoader } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useLayout } from '@layout/context';
 import useSearchAssignableInstances from '../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useAssignationsByProfile from '../../../hooks/assignations/useAssignationsByProfile';
 import prefixPN from '../../../helpers/prefixPN';
@@ -43,7 +44,7 @@ function useInstancesClassData({ instances: object, labels }) {
   };
 }
 
-function nyaStatus({ loading, data, labels, query, classData }) {
+function nyaStatus({ loading, data, labels, query, classData, usePicturesEmptyStates }) {
   if (loading) {
     return <Loader />;
   }
@@ -104,9 +105,8 @@ function nyaStatus({ loading, data, labels, query, classData }) {
         gap: theme.spacing[1],
       })}
     >
-      <ImageLoader src={EmptyState} width={142} height={149} />
-      {/* TRANSLATE: Translate empty state */}
-      <Text color="primary">No hay actividades programadas</Text>
+      {usePicturesEmptyStates && <ImageLoader src={EmptyState} width={142} height={149} />}
+      <Text color="primary">{labels.emptyState}</Text>
     </Box>
   );
 }
@@ -117,6 +117,7 @@ export default function NYA({ classe, program }) {
     prefixPN('need_your_attention'),
     prefixPN('multiSubject'),
   ]);
+  const { theme } = useLayout();
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
@@ -192,6 +193,7 @@ export default function NYA({ classe, program }) {
         labels,
         query,
         classData,
+        usePicturesEmptyStates: theme.usePicturesEmptyStates,
       })}
     </Box>
   );

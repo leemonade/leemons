@@ -227,6 +227,19 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                   </Box>
                 </Stack>
               ) : null}
+              <Box>
+                <Controller
+                  name="usePicturesEmptyStates"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      {...field}
+                      label={t('usePicturesEmptyStates')}
+                      checked={!!field.value}
+                    />
+                  )}
+                />
+              </Box>
             </ContextContainer>
             <ContextContainer
               subtitle={t('superAdminCredentials')}

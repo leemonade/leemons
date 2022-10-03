@@ -165,9 +165,9 @@ module.exports = {
       export: 'Descargar',
     },
     noClassSelected: {
-      title: 'Cuaderno de Evaluación',
+      title: 'Seleccionar clase y periodo',
       description:
-        'El cuaderno de evaluación te permiten evaluar las actividades calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
+        'Selecciona la clase o grupo y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
       title: 'Sin resultados',

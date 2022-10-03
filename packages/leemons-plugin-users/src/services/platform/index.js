@@ -28,6 +28,8 @@ const getAppearanceMenuMainColor = require('./getAppearanceMenuMainColor');
 const setAppearanceMenuMainColor = require('./setAppearanceMenuMainColor');
 const getAppearanceMenuDrawerColor = require('./getAppearanceMenuDrawerColor');
 const setAppearanceMenuDrawerColor = require('./setAppearanceMenuDrawerColor');
+const getPicturesEmptyStates = require('./getPicturesEmptyStates');
+const setPicturesEmptyStates = require('./setPicturesEmptyStates');
 
 module.exports = {
   query,
@@ -60,4 +62,6 @@ module.exports = {
   setAppearanceMenuMainColor,
   getAppearanceMenuDrawerColor,
   setAppearanceMenuDrawerColor,
+  getPicturesEmptyStates,
+  setPicturesEmptyStates,
 };

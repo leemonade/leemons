@@ -16,6 +16,7 @@ module.exports = {
           'platform-appearance-dark-mode',
           'platform-appearance-menu-main-color',
           'platform-appearance-menu-drawer-color',
+          'platform-pictures-empty-states',
         ],
       });
       const v = _.keyBy(r, 'key');
@@ -33,6 +34,9 @@ module.exports = {
           contactEmail: v['platform-contact-email']?.value,
           contactName: v['platform-contact-name']?.value,
           useDarkMode: ['true', '1'].includes(String(v['platform-appearance-dark-mode']?.value)),
+          usePicturesEmptyStates: ['true', '1'].includes(
+            String(v['platform-pictures-empty-states']?.value)
+          ),
           menuMainColor: v['platform-appearance-menu-main-color']?.value || '#212B3D',
           menuDrawerColor: v['platform-appearance-menu-drawer-color']?.value || '#333F56',
         },
@@ -54,6 +58,9 @@ module.exports = {
         platform.setContactPhone(body.contactPhone),
         platform.setContactEmail(body.contactEmail),
         platform.setAppearanceDarkMode(['true', '1'].includes(String(body.useDarkMode))),
+        platform.setPicturesEmptyStates(
+          ['true', '1'].includes(String(body.usePicturesEmptyStates))
+        ),
         platform.setAppearanceMainColor(body.mainColor),
         platform.setAppearanceMenuMainColor(body.menuMainColor),
         platform.setAppearanceMenuDrawerColor(body.menuDrawerColor),

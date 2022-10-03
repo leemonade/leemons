@@ -149,7 +149,8 @@
       "administrativeContactInfoDescription": "This information will be use only as notification signature in order to complain GDPR and other privacy international laws.Please check if this information is mandatory in your country.",
       "useDarkMode": "Enable Dark mode in the side menu",
       "menuMainColor": "Main menu color",
-      "menuDrawerColor": "Side submenu color"
+      "menuDrawerColor": "Side submenu color",
+      "usePicturesEmptyStates": "Use illustrations when no results are found in the listings"
     },
     "finish": {
       "label": "Finish",

@@ -268,6 +268,9 @@ module.exports = {
     type: 'Type',
     seeAll: 'See all',
   },
+  activities_list: {
+    emptyState: 'There are no activities yet',
+  },
   ongoing: {
     ongoing: 'Ongoing activities',
     history: 'History',
@@ -283,6 +286,7 @@ module.exports = {
   need_your_attention: {
     title: 'Needs attention',
     new: 'New',
+    emptyState: 'There are no scheduled activities',
     assigment: {
       subject: 'Subject',
       submission: 'Submissions',

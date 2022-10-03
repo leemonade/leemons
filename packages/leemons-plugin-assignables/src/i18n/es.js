@@ -278,6 +278,9 @@ module.exports = {
     type: 'Tipo',
     seeAll: 'Ver todas',
   },
+  activities_list: {
+    emptyState: 'No hay actividades aún',
+  },
   ongoing: {
     ongoing: 'Actividades en curso',
     history: 'Actividades pasadas',
@@ -293,6 +296,7 @@ module.exports = {
   need_your_attention: {
     title: 'Necesita tu atención',
     new: 'Nueva',
+    emptyState: 'No hay actividades programadas',
     assigment: {
       subject: 'Asignatura',
       submission: 'Entregadas',

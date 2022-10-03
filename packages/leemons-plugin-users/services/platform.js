@@ -30,4 +30,6 @@ module.exports = {
   getAppearanceMenuMainColor: platform.getAppearanceMenuMainColor,
   setAppearanceMenuDrawerColor: platform.setAppearanceMenuDrawerColor,
   getAppearanceMenuDrawerColor: platform.getAppearanceMenuDrawerColor,
+  getPicturesEmptyStates: platform.getPicturesEmptyStates,
+  setPicturesEmptyStates: platform.setPicturesEmptyStates,
 };

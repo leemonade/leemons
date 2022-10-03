@@ -11,6 +11,7 @@ async function getTheme({ transacting } = {}) {
         'platform-appearance-dark-mode',
         'platform-landscape-logo',
         'platform-square-logo',
+        'platform-pictures-empty-states',
       ],
     },
     { transacting }
@@ -23,6 +24,9 @@ async function getTheme({ transacting } = {}) {
     useDarkMode: ['true', '1'].includes(String(v['platform-appearance-dark-mode']?.value)),
     menuMainColor: v['platform-appearance-menu-main-color']?.value || '#3B76CC',
     menuDrawerColor: v['platform-appearance-menu-drawer-color']?.value || '#3B76CC',
+    usePicturesEmptyStates: ['true', '1'].includes(
+      String(v['platform-pictures-empty-states']?.value)
+    ),
   };
 }
 

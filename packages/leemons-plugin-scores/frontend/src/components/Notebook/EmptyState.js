@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
+import { useLayout } from '@layout/context';
 import noFilters from './assets/noFilters.png';
 
 const useEmptyStateStyles = createStyles((theme, { top }) => ({
@@ -49,13 +50,14 @@ function useEmptyStateLocalizations() {
 }
 export function EmptyState() {
   const [ref, rect] = useResizeObserver();
+  const { theme } = useLayout();
   const top = React.useMemo(() => ref?.current?.getBoundingClientRect()?.top, [rect]);
   const { classes } = useEmptyStateStyles({ top });
   const labels = useEmptyStateLocalizations();
 
   return (
     <Box className={classes.root} ref={ref}>
-      <img src={noFilters} className={classes.image} />
+      {theme.usePicturesEmptyStates && <img src={noFilters} className={classes.image} />}
       <Box className={classes.text}>
         <Title>{labels.title}</Title>
         <Paragraph className={classes.textMargin}>{labels.description}</Paragraph>
