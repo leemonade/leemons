@@ -61,6 +61,7 @@ export default function Assign() {
         alwaysAvailable: alwaysAvailable || false,
         dates: alwaysAvailable ? {} : dates,
         showResults: data.assignStudents.assignmentSetup.showResults,
+        showCorrectAnswers: false,
       };
 
       if (assignees[0]?.type === 'custom') {

@@ -63,7 +63,8 @@ module.exports = {
       units: 'unidad',
     },
     descriptions: {
-      messageToStudents: 'Este mensaje será el mensaje por defecto para todos los estudiantes.',
+      messageToStudents:
+        'Enviar un mensaje de notificación para hacer la actividad. Puede añadirse un texto personalizado',
       visualizationDate:
         'NOTA: La actividad estará disponible para su consulta, pero no podrá ser completada hasta la fecha de inicio.',
       closeDateToogle: 'NOTA: Después de esta fecha, no se pueden hacer correcciones',
