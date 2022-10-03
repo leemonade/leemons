@@ -120,7 +120,7 @@ function useAssignmentsColumns({ variant } = {}) {
 export default function ActivitiesList({ filters, subjectFullLength = true }) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
-  const { themeLayout } = useLayout();
+  const { theme: themeLayout } = useLayout();
 
   const query = useMemo(() => {
     const q = {};
