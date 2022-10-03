@@ -63,7 +63,7 @@ module.exports = {
     },
     descriptions: {
       messageToStudents:
-        'If this activity is assigned to other groups at this step, this message will be the default message for all activities (although it can be changed individually if desired).',
+        'Send notification message to perform the activity. A custom message can be added.',
       visualizationDate:
         'NOTE: The activity will be available for review, but cannot be completed until the start date.',
       closeDateToogle: 'NOTE: After this date, no corrections can be made',
