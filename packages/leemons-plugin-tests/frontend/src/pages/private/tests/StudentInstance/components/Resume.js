@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, HtmlText, TabPanel, Tabs, Title } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { isEmpty } from 'lodash';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -47,7 +48,7 @@ export default function Resume(props) {
         </>
       ) : null}
 
-      {store.instance?.assignable?.subjects?.[0].curriculum ? (
+      {!isEmpty(store.instance?.assignable?.subjects?.[0].curriculum) ? (
         <Tabs>
           <TabPanel label={subjects?.[0]?.name}>
             <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />

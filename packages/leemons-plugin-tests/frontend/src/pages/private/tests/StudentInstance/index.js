@@ -150,7 +150,6 @@ export default function StudentInstance() {
 
       render();
     } catch (error) {
-      console.log(error);
       addErrorAlert(error);
     }
   }

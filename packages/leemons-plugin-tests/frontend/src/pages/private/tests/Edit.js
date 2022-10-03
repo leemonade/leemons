@@ -42,7 +42,6 @@ export default function Edit() {
 
   const form = useForm();
   const formValues = form.watch();
-  console.log(formValues);
 
   async function saveAsDraft() {
     try {
