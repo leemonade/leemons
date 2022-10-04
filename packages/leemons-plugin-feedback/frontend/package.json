@@ -6,7 +6,8 @@
   "dependencies": {
     "@bubbles-ui/components": "^1.0.39",
     "@bubbles-ui/icons": "^1.0.26",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "exceljs": "^4.3.0"
   },
   "devDependencies": {}
 }

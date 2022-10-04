@@ -8,6 +8,7 @@ import {
   ActivityAccordionPanel,
   Badge,
   Box,
+  Button,
   Stack,
   Text,
   Title,
@@ -22,10 +23,12 @@ import {
   NavigationMenuLeftIcon,
   PluginRankingIcon,
   QuestionExclamationIcon,
+  DownloadIcon,
 } from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import { addErrorAlert } from '@layout/alert';
+import { createDatasheet } from '@feedback/helpers/createDatasheet';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
@@ -142,6 +145,15 @@ export default function Result() {
     return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
   }
 
+  function downloadDatasheet(format) {
+    createDatasheet(
+      store.feedback.name,
+      store.feedback.questions,
+      store.result.questionsInfo,
+      format
+    );
+  }
+
   React.useEffect(() => {
     if (params.id) init();
   }, [params.id]);
@@ -151,6 +163,22 @@ export default function Result() {
   return (
     <Stack justifyContent="center" fullWidth className={classes.root}>
       <Stack direction="column" spacing={4} className={classes.container}>
+        <Stack justifyContent="flex-end" spacing={3}>
+          <Button
+            variant="outline"
+            rightIcon={<DownloadIcon />}
+            onClick={() => downloadDatasheet('csv')}
+          >
+            CSV
+          </Button>
+          <Button
+            variant="outline"
+            rightIcon={<DownloadIcon />}
+            onClick={() => downloadDatasheet('xls')}
+          >
+            XLS
+          </Button>
+        </Stack>
         <Box className={classes.resultHeader}>
           <Title order={5} role="productive" color="quartiary">
             {t('feedback')}
