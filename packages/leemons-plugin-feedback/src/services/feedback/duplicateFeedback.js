@@ -5,11 +5,11 @@ const getQuestionsByFeedbackIds = require('../feedback-questions/getQuestionsByF
 
 async function duplicateFeedback(id, { published, userSession, transacting: _transacting } = {}) {
   const { assignables: assignableService } = leemons.getPlugin('assignables').services;
-  const { assets: assetsService } = leemons.getPlugin('leebrary').services.assets;
+  const { assets: assetsService } = leemons.getPlugin('leebrary').services;
   return global.utils.withTransaction(
     async (transacting) => {
       const newAssignable = await assignableService.duplicateAssignable(id, {
-        published: false,
+        published,
         userSession,
         transacting,
       });
