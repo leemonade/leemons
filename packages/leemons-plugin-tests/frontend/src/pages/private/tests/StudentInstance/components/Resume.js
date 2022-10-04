@@ -107,7 +107,8 @@ export default function Resume(props) {
               sx={(theme) => ({
                 paddingLeft: theme.spacing[6],
                 gap: theme.spacing[4],
-                textAlign: 'left',
+                // textAlign: 'left',
+                textAlign: 'center',
                 flexDirection: 'column',
               })}
             >
@@ -118,7 +119,7 @@ export default function Resume(props) {
                 })}
               </Box>
             </Box>
-            <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" />
+            {/* <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" /> */}
           </Box>
         </Box>
       )}

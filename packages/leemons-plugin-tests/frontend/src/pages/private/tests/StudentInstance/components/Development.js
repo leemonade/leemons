@@ -36,6 +36,7 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/hint.png"
           styles={styles}
+          withRedColor={cluePer.value !== 0}
           label={
             cluePer.value !== 0
               ? t('clueWithPer', {
@@ -103,6 +104,9 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/blank-questions.png"
           styles={styles}
+          withRedColor={
+            !store.config.canOmitQuestions || (!store.config.canOmitQuestions && store.config.omit)
+          }
           label={
             // eslint-disable-next-line no-nested-ternary
             !store.config.canOmitQuestions
@@ -122,6 +126,7 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/error-questions.png"
           styles={styles}
+          withRedColor={store.config.wrong}
           label={
             store.config.wrong
               ? t('errorQuestions', {
@@ -156,7 +161,7 @@ export default function Development(props) {
               </Box>
             ) : null}
           </Box>
-          <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" />
+          {/* <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" /> */}
           {durationSeconds ? (
             <Box
               sx={() => ({

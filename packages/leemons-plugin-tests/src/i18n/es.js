@@ -270,14 +270,14 @@ module.exports = {
     nextButton: 'Siguiente',
     finishButton: 'Finalizar',
     selectResponse: 'Seleccionar respuesta',
-    noBlankQuestions: 'No puedes dejar preguntas en blanco',
+    noBlankQuestions: '<strong>No puedes dejar preguntas en blanco</strong>',
     blankQuestions:
-      '<strong>Puedes dejar preguntas en blanco</strong> y estas no puntuarán (es decir, puntúan 0)',
+      '<strong>Puedes dejar preguntas en blanco </strong> y estas no puntuarán (es decir, puntúan 0)',
     blankQuestionsScores:
-      '<strong>Puedes dejar preguntas en blanco</strong> y estas <strong>restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
+      '<strong>Puedes dejar preguntas en blanco  y estas restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
     errorQuestions:
-      'Las <strong>contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
-    noErrorQuestions: 'Las contestaciones erroneas no restan puntos',
+      '<strong>Las contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
+    noErrorQuestions: '<strong>Las contestaciones erroneas no restan puntos</strong>',
     finishTestModalTitle: 'Test finalizado',
     finishTestModalDescription: 'Tu respuestas han sido enviadas con éxito',
     confirmSubmission: 'Confirmar entrega',

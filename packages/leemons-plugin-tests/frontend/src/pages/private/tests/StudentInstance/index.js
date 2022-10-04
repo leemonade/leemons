@@ -146,8 +146,6 @@ export default function StudentInstance() {
       store.idLoaded = params.id;
       store.loading = false;
 
-      // console.log(store);
-
       render();
     } catch (error) {
       addErrorAlert(error);

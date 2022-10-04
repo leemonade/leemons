@@ -240,9 +240,9 @@ module.exports = {
     test: 'TEST',
     instructionsForTest: 'Instructions for this test',
     clueWithoutPer:
-      'The use of hints does not subtract any score, i.e., you can ask for hints without penalty.',
+      '<strong>The use of hints does not subtract any score</strong>, i.e., you can ask for hints without penalty.',
     clueWithPer:
-      'The use of clues subtracts {per}% of the question, i.e. {points} for each clue used.',
+      '<strong>The use of clues subtracts {per}% of the question</strong>, i.e. {points} for each clue used.',
     questions: 'Questions',
     perQuestion: 'Per question',
     totalPoints: 'Total points',
@@ -276,10 +276,10 @@ module.exports = {
     blankQuestions:
       '<strong>You can leave questions blank</strong> and these will not score (i.e. they score 0).',
     blankQuestionsScores:
-      '<strong>You can leave questions blank</strong> and these will <strong>subtract {per}%</strong> of their value (i.e. they score {points}).',
+      '<strong>You can leave questions blank and these will subtract {per}%</strong> of their value (i.e. they score {points}).',
     errorQuestions:
       '<strong>Wrong answers subtract {per}% of their value</strong>, that is, they score {points}',
-    noErrorQuestions: 'Wrong answers do not deduct points',
+    noErrorQuestions: '<strong>Wrong answers do not deduct points</strong>',
     finishTestModalTitle: 'Test finished',
     finishTestModalDescription: 'Your answers have been sent successfully',
     confirmSubmission: 'Confirm submission',
