@@ -150,7 +150,7 @@ async function getFeedbackResults(id, { userSession, transacting: _transacting }
             promoters += questionsInfo[question.id].value[9];
           }
           if (questionsInfo[question.id].value[10]) {
-            promoters += questionsInfo[question.id].value[9];
+            promoters += questionsInfo[question.id].value[10];
           }
           const avgDetractors = (detractors / questionsInfo[question.id].totalValues) * 100;
           const avgPromoters = (promoters / questionsInfo[question.id].totalValues) * 100;
