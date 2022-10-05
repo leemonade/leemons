@@ -44,6 +44,7 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
             disabled={!subjects?.length}
             searchable
             required
+            autoSelectOneOption
           />
         ),
         rules: { required: errorMessages?.subject?.required },

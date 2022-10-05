@@ -386,6 +386,7 @@ export default function SubjectList() {
                     placeholder={t('programPlaceholder')}
                     onChange={onProgramChange}
                     value={store.selectProgram}
+                    autoSelectOneOption
                   />
                 </Box>
               </ContextContainer>

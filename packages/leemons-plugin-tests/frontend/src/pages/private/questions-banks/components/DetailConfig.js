@@ -66,6 +66,7 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
               error={isDirty ? form.formState.errors.program : null}
               label={t('programLabel')}
               data={store.programsData || []}
+              autoSelectOneOption
               {...field}
             />
           )}
@@ -81,7 +82,12 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
               error={isDirty ? form.formState.errors.subjects : null}
               label={t('subjectLabel')}
               disabled={!program}
-              data={store.subjectsByProgram[program] || []}
+              data={
+                store.subjectsByProgram[program]
+                  ? [store.subjectsByProgram[program][0]]
+                  : undefined || []
+              }
+              autoSelectOneOption
               {...field}
             />
           )}

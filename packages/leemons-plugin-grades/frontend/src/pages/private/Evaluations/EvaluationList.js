@@ -37,7 +37,7 @@ import { TreeItem } from '../../../components/TreeItem/TreeItem';
 import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 
 export default function EvaluationList() {
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const [t, translations] = useTranslateLoader(prefixPN('evaluationsPage'));
 
   const [store, render] = useStore();
 
@@ -290,13 +290,15 @@ export default function EvaluationList() {
               <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
-                    <Box>
-                      <SelectCenter
-                        value={store.center}
-                        label={t('selectCenter')}
-                        onChange={onSelectCenter}
-                      />
-                    </Box>
+                    {translations && (
+                      <Box>
+                        <SelectCenter
+                          value={store.center}
+                          label={t('selectCenter')}
+                          onChange={onSelectCenter}
+                        />
+                      </Box>
+                    )}
                     {store.center && (
                       <Box>
                         <Tree

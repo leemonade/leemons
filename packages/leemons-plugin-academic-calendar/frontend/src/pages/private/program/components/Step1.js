@@ -76,6 +76,7 @@ export default function Step1({ regionalConfigs, program, config, onChange, t })
               clearable
               placeholder={t('selectCalendar')}
               label={t('baseRegionalCalendar')}
+              autoSelectOneOption
             />
           )}
         />

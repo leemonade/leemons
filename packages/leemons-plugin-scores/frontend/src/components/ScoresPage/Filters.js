@@ -61,7 +61,7 @@ function ClassItem({ class: klass, dropdown = false, ...props }) {
           })}
         >
           <TextClamp lines={dropdown ? 3 : 1}>
-            {klass.groups?.name ? (
+            {!klass.groups.isAlone && klass.groups?.name ? (
               <Text>{`${klass.subject.name} - ${klass.groups.name}`}</Text>
             ) : (
               <Text>{klass.subject.name}</Text>
@@ -397,6 +397,7 @@ export function Filters({ onChange }) {
                 itemComponent={({ c, ...item }) => <ClassItem class={c} dropdown {...item} />}
                 valueComponent={({ c, ...item }) => <ClassItem class={c} {...item} />}
                 disabled={dataIsLoading}
+                autoSelectOneOption
                 {...field}
               />
             )}
