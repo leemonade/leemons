@@ -1,0 +1,92 @@
+import React from 'react';
+import { Box, createStyles, Button, Modal, Title, Text } from '@bubbles-ui/components';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { Link } from 'react-router-dom';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+
+const useFinalizationModalStyles = createStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing[1],
+    alignItems: 'center',
+    gap: theme.spacing[6],
+  },
+  text: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[4],
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: theme.fontSizes.lg,
+  },
+  centerButtons: {
+    justifyContent: 'center!important',
+  },
+  buttons: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: theme.spacing[4],
+  },
+}));
+
+export default function FinalizationModal({
+  toggleModal,
+  assignation,
+  localizations,
+  updateTimestamps = () => {},
+  actionUrl,
+}) {
+  const [opened, setOpened] = React.useState(false);
+
+  const nextActivityUrl = useNextActivityUrl(assignation);
+
+  React.useEffect(() => {
+    toggleModal.current = () => setOpened(true);
+  }, [setOpened]);
+
+  React.useEffect(() => {
+    if (opened) {
+      updateTimestamps('end');
+    }
+  }, [updateTimestamps, opened]);
+
+  const { cx, classes } = useFinalizationModalStyles();
+
+  const hasNextActivity = assignation?.instance?.relatedAssignableInstances?.after?.length > 0;
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={() => {}}
+      withCloseButton={false}
+      size={hasNextActivity ? 'lg' : undefined}
+    >
+      <Box className={classes.root}>
+        <Box className={classes.text}>
+          <Title className={classes.title}>{localizations?.title}</Title>
+          <Text>{localizations?.description}</Text>
+        </Box>
+        <Box className={cx(classes.buttons, { [classes.centerButtons]: !hasNextActivity })}>
+          <Link to={actionUrl} target="_blank">
+            <Button variant={hasNextActivity ? 'link' : 'filled'}>{localizations?.action}</Button>
+          </Link>
+          {hasNextActivity && (
+            <Link to={nextActivityUrl}>
+              <Button
+                variant="filled"
+                onClick={() => setOpened(false)}
+                rightIcon={<ChevRightIcon />}
+              >
+                {localizations?.nextActivity}
+              </Button>
+            </Link>
+          )}
+        </Box>
+      </Box>
+    </Modal>
+  );
+}

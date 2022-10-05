@@ -332,13 +332,17 @@ module.exports = {
   variant: 'Tarea',
   task_realization: {
     confirmation_modal: {
-      labels: {
-        confirm: 'Confirmar entrega',
-        cancel: 'Cancelar',
-      },
-      title: 'Finalizar y entregar esta tarea',
+      title: 'Tarea finalizada',
+      description: 'Tu tarea ha sido enviada con éxito',
+      action: 'Actividades pendientes',
+      nextActivity: 'Siguiente actividad',
+    },
+    timeout_modal: {
+      title: 'El tiempo establecido para completar esta actividad ha finalizado.',
       description:
-        '<p>Si haces click en "Confirmar entrega", tu tarea será enviada a un revisor y ya no podrás modificar el/los entregable/s seleccionado/s. Si cancelas ahora, la entrega quedará guardada automáticamente y puedes modificarla más tarde</p><p>Al confirmar la entrega, el sistema te redireccionará a la sección de "Actividades en curso" dónde podrás revisar las tareas una vez sean corregidas.</p>',
+        'Si has guardado algún archivo previamente, ha sido enviado automáticamente, en caso contrario, no se ha efectuado ninguna entrega.\nPuedes revisar la entrega pulsando en "Revisar entrega"',
+      action: 'Revisar entrega',
+      nextActivity: 'Siguiente actividad',
     },
     activityContainer: {
       deadline: {
@@ -348,7 +352,8 @@ module.exports = {
     buttons: {
       previous: 'Anterior',
       next: 'Siguiente',
-      finish: 'Entregar',
+      finish: 'Finalizar',
+      submit: 'Entregar',
       save: 'Guardar',
     },
     sidebar: {

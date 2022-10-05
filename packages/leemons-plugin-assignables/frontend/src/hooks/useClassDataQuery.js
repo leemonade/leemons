@@ -8,7 +8,7 @@ function getClassDataWithLabel({ classes, labels }) {
 export default function useClassData(instances, labels = {}) {
   const _instances = (Array.isArray(instances) ? instances : [instances])?.filter(Boolean);
 
-  return useQueries(
+  const queries = useQueries(
     _instances.map(({ classes, metadata }) => ({
       queryKey: [
         'plugins.assignables.classData',
@@ -24,4 +24,9 @@ export default function useClassData(instances, labels = {}) {
         }),
     }))
   );
+
+  if (Array.isArray(instances)) {
+    return queries;
+  }
+  return queries?.[0] || {};
 }

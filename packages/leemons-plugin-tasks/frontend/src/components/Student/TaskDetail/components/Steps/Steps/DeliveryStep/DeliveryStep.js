@@ -1,7 +1,8 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
-import { ContextContainer, Alert, HtmlText, Title } from '@bubbles-ui/components';
+import { ContextContainer, Alert, HtmlText, Title, Box, Button } from '@bubbles-ui/components';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 
 function SubmissionState({ status, error, labels: _labels }) {
   const labels = _labels?.submission_state;
@@ -37,7 +38,81 @@ function SubmissionState({ status, error, labels: _labels }) {
 
   return null;
 }
-export default function DeliveryStep({ assignation, onSave, labels: _labels, disableButton }) {
+
+function buttonsToSet({
+  status,
+  hasPrevStep,
+  hasNextStep,
+  onPrevStep,
+  onNextStep,
+  onSave,
+  localizations,
+}) {
+  let next = true;
+  let save = true;
+
+  if (status === 'cleared') {
+    save = false;
+    next = false;
+  } else if (['error', 'changed'].includes(status)) {
+    next = true;
+    save = true;
+  } else if (status === 'submitted') {
+    save = false;
+    next = true;
+  } else if (status === 'loading') {
+    save = false;
+    next = false;
+  }
+
+  return (
+    <>
+      <Box>
+        {hasPrevStep && (
+          <Button onClick={onPrevStep} variant="link" rounded leftIcon={<ChevLeftIcon />}>
+            {localizations?.buttons?.previous}
+          </Button>
+        )}
+      </Box>
+      <Box sx={(theme) => ({ display: 'flex', gap: theme.spacing[4] })}>
+        <Button variant="outline" onClick={() => onSave.current()} disabled={!save} rounded>
+          {localizations?.buttons?.save}
+        </Button>
+
+        <Button
+          variant={hasNextStep ? 'outline' : 'filled'}
+          onClick={async () => {
+            const canContinue = await onSave.current();
+
+            if (canContinue) {
+              onNextStep();
+            }
+          }}
+          disabled={!next}
+          rightIcon={hasNextStep && <ChevRightIcon />}
+        >
+          {hasNextStep ? localizations?.buttons?.next : localizations?.buttons?.submit}
+        </Button>
+      </Box>
+    </>
+  );
+}
+
+export default function DeliveryStep({
+  assignation,
+  updateTimestamps,
+  setButtons,
+  onPrevStep,
+  onNextStep,
+  hasPrevStep,
+  hasNextStep,
+  localizations: _labels,
+}) {
+  React.useEffect(() => {
+    updateTimestamps('start');
+  }, [assignation?.id]);
+  const onSave = React.useRef(null);
+
   const labels = _labels?.submission_step;
   const { instance } = assignation;
   const { assignable } = instance;
@@ -53,26 +128,10 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
     }
 
     setStatus(newStatus);
-
-    if (newStatus === 'cleared') {
-      disableButton('save', true);
-      disableButton('next', true);
-    } else if (newStatus === 'cleared' || newStatus === 'changed' || newStatus === 'error') {
-      if (e) {
-        setError(e);
-      }
-
-      // EN: If it is cleared and is the first render, disable the save button
-      // ES: Si se ha borrado y es la primera renderización, deshabilitar el botón de guardar
-      disableButton('save', false);
-      disableButton('next', false);
-    } else if (newStatus === 'submitted') {
-      disableButton('save', true);
-      disableButton('next', false);
-    } else if (newStatus === 'loading') {
-      disableButton('save', true);
-      disableButton('next', true);
+    if (e) {
+      setError(e);
     }
+
     // TODO: Optional submission
   };
 
@@ -80,10 +139,19 @@ export default function DeliveryStep({ assignation, onSave, labels: _labels, dis
     updateStatus(status);
   }, []);
 
-  // , metadata: {submission: submissionValue}
-  // onNext.current = () => !loading;
-
-  // onPrev.current = () => !loading;
+  useEffect(() => {
+    setButtons(
+      buttonsToSet({
+        status,
+        hasPrevStep,
+        hasNextStep,
+        onPrevStep,
+        onNextStep,
+        onSave,
+        localizations: _labels,
+      })
+    );
+  }, [status, hasPrevStep, hasNextStep, onPrevStep, onNextStep, _labels?.buttons]);
 
   const Component = (type) =>
     loadable(() => {

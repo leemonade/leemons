@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import _, { find, map } from 'lodash';
+import _, { find } from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
@@ -7,26 +7,9 @@ import {
   SelectLevelsOfDifficulty,
   useLevelsOfDifficulty,
 } from '@assignables/components/LevelsOfDifficulty';
-import { listSessionClassesRequest } from '@academic-portfolio/request';
-import { useApi } from '@common';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import useTableInputLabels from '../../../../helpers/useTableInputLabels';
-import useProgram from '../../../Student/TaskDetail/helpers/useProgram';
 import ConditionalInput from '../../../Inputs/ConditionalInput';
-
-function useProgramSubjects(programId) {
-  const program = useProgram(programId);
-
-  if (program) {
-    return map(program?.subjects, ({ name, id }) => ({
-      // TODO: Incluir el curso y grupo en el label
-      label: name,
-      value: id,
-    }));
-  }
-
-  return [];
-}
 
 function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
   const difficultyLevels = useLevelsOfDifficulty();
