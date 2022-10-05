@@ -66,7 +66,7 @@ async function duplicateFeedback(id, { published, userSession, transacting: _tra
           }
         );
         newAssignable.metadata.featuredImage = newFeaturedImage.id;
-        await assetsService.updateAssignable(newAssignable, {
+        await assignableService.updateAssignable(newAssignable, {
           userSession,
           transacting,
           published,
