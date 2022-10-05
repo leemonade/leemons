@@ -1,4 +1,4 @@
-import updateStudentRequest from '../../../../../request/instance/updateStudent';
+import updateStudentRequest from '@tasks/request/instance/updateStudent';
 
 export default function handleDeliverySubmission(assignation) {
   return async (delivery, shouldRemove = false) => {

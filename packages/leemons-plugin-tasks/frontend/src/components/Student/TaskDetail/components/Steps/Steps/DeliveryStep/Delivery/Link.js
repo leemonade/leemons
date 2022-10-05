@@ -20,7 +20,7 @@ export default function Link({ updateStatus, value, assignation, labels: _labels
         new URL(urlToSave);
       } catch (e) {
         updateStatus('error', labels?.invalidURL);
-        return;
+        return false;
       }
     }
 
@@ -28,8 +28,13 @@ export default function Link({ updateStatus, value, assignation, labels: _labels
       await saveSubmission(urlToSave, !urlToSave?.length);
       updateStatus(urlToSave.length ? 'submitted' : 'cleared');
     } catch (e) {
-      updateStatus('error', e.message);
+      if (e.message !== 'No changes detected') {
+        updateStatus('error', e.message);
+        return false;
+      }
     }
+
+    return true;
   }, [updateStatus, saveSubmission, _labels]);
 
   onSave.current = handleSubmit;

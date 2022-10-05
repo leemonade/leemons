@@ -138,7 +138,7 @@ function useSupportImage(assignable) {
   return query;
 }
 
-export default function StatementStep({ assignation, labels: _labels }) {
+export default function StatementStep({ assignation, localizations: _labels }) {
   const labels = _labels.statement_step;
 
   const { instance } = assignation;

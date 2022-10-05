@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { LoadingOverlay } from '@bubbles-ui/components';
