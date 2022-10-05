@@ -75,9 +75,13 @@ export default function Result() {
   }
 
   async function getIfTeacher() {
-    const { feedback } = await getFeedbackRequest(params.id, getUserId());
-    store.isTeacher = feedback.isTeacher;
-    render();
+    try {
+      const { feedback } = await getFeedbackRequest(params.id, getUserId());
+      store.isTeacher = feedback.isTeacher;
+      render();
+    } catch (error) {
+      addErrorAlert(error);
+    }
   }
 
   async function init() {
@@ -286,7 +290,6 @@ export default function Result() {
         await setFeedbackRequest(store.instance.id, getUserId(), store.feedback);
         addSuccessAlert(t('feedbackDone'));
       } catch (e) {
-        console.log(e);
         addErrorAlert(e);
       }
     }

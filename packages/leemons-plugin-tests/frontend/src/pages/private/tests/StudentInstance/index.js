@@ -299,7 +299,7 @@ export default function StudentInstance() {
   };
 
   const goToResults = () => {
-    history.push(`/private/tests/result/${params?.id}`);
+    history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
   };
 
   return (
