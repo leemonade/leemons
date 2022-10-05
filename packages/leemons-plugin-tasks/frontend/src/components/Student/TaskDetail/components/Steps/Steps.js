@@ -85,8 +85,8 @@ function useSteps({ assignation, localizations }) {
       {
         id: 'statement',
         label: hasDeliverable
-          ? localizations?.steps?.statement || 'statement'
-          : localizations?.steps?.presentation || 'Presentation',
+          ? localizations?.steps?.statement
+          : localizations?.steps?.presentation,
         component: <StatementStep />,
         status: 'OK',
       },

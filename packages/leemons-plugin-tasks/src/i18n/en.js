@@ -373,6 +373,7 @@ module.exports = {
     },
     steps: {
       statement: 'Statement',
+      presentation: 'Presentation',
       development: 'Development',
       submission: 'Submission',
     },

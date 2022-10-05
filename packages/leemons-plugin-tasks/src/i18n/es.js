@@ -362,6 +362,7 @@ module.exports = {
     },
     steps: {
       statement: 'Enunciado',
+      presentation: 'Presentación',
       development: 'Desarrollo',
       submission: 'Entrega',
     },
