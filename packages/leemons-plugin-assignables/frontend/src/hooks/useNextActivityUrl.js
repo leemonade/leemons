@@ -2,7 +2,7 @@ import useAssignations from './assignations/useAssignationsQuery';
 
 export default function useNextActivityUrl(assignation) {
   const nextActivity = assignation?.instance?.relatedAssignableInstances?.after?.[0];
-  const { id } = nextActivity;
+  const id = nextActivity?.id;
   const { user } = assignation;
 
   const { data: nextAssignation } = useAssignations({ instance: id, user }, true, {
