@@ -2,7 +2,7 @@
 import { htmlToText } from '@common';
 import { getFeedbackResultsWithTime } from '@feedback/request/feedback';
 import { Workbook } from 'exceljs';
-import { groupBy, sortBy } from 'lodash';
+import { groupBy, forEach } from 'lodash';
 
 function downloadURL(url, name) {
   const link = document.createElement('a');
@@ -26,6 +26,13 @@ function downloadFile(data, name) {
 export const createDatasheet = async (title, questions, instanceId, format, timeMarkerLabel) => {
   const wb = new Workbook();
   const feedbackResponsesWithTime = await getFeedbackResultsWithTime(instanceId);
+
+  forEach(questions, (question) => {
+    forEach(Object.values(feedbackResponsesWithTime), (value) => {
+      // eslint-disable-next-line no-param-reassign
+      value.responses[question.id].order = question.order;
+    });
+  });
 
   wb.creator = 'Leemons EdTech Solutions';
   wb.title = title;
@@ -56,20 +63,33 @@ export const createDatasheet = async (title, questions, instanceId, format, time
       const date = new Date(key);
       const timeMark = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
       const contentArray = [timeMark];
-      const valueResponses = sortBy(Object.entries(value.responses), [0]);
+      const valueResponses = Object.entries(value.responses).sort(
+        ([, aValue], [, bValue]) => aValue.order - bValue.order
+      );
       valueResponses.forEach(([questionKey, { value: questionValue }]) => {
         const { type, properties } = questionsById[questionKey][0];
         if (type === 'openResponse' || type === 'netPromoterScore')
           contentArray.push(questionValue.toString());
         else if (type === 'likertScale') contentArray.push(`${questionValue + 1}`);
-        else if (type === 'singleResponse')
-          contentArray.push(properties.responses[questionValue].value.response);
-        else if (type === 'multiResponse') {
-          contentArray.push(
-            questionValue
-              .map((selectedValue) => properties.responses[selectedValue].value.imageDescription)
-              .join(', ')
-          );
+        else if (type === 'singleResponse') {
+          if (properties.withImages)
+            contentArray.push(properties.responses[questionValue].value.imageDescription);
+          else contentArray.push(properties.responses[questionValue].value.response);
+        } else if (type === 'multiResponse') {
+          const sortedValues = questionValue.sort((a, b) => a - b);
+          if (properties.withImages) {
+            contentArray.push(
+              sortedValues
+                .map((selectedValue) => properties.responses[selectedValue].value.imageDescription)
+                .join(', ')
+            );
+          } else {
+            contentArray.push(
+              sortedValues
+                .map((selectedValue) => properties.responses[selectedValue].value.response)
+                .join(', ')
+            );
+          }
         } else contentArray.push('');
       });
       contentArray.forEach((contentValue, contentIndex) => {

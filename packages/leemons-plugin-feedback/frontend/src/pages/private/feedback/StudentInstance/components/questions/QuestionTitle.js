@@ -35,7 +35,7 @@ function QuestionTitle({ t, viewMode, question, currentValue }) {
           ? t('needNResponsesSingular')
           : t('needNResponsesPlural', { n: question.properties.minResponses });
 
-      if (currentValue.length) {
+      if (currentValue?.length) {
         message = null;
         const needMore = question.properties.minResponses - currentValue.length;
         if (needMore > 0) {
