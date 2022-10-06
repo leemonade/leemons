@@ -153,6 +153,7 @@ module.exports = {
     responses: 'Responses ({n})',
     average: 'Average:',
     errorCode6001: 'You don´t have permissions to see the feedback results',
+    timeMarker: 'Time mark',
   },
   feedbackPreview: {
     edit: 'Edit feedback',

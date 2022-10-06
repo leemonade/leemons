@@ -8,4 +8,5 @@ export {
   setInstanceTimestamp as setInstanceTimestampRequest,
   getUserAssignableResponses as getUserAssignableResponsesRequest,
   getFeedbackResults as getFeedbackResultsRequest,
+  getFeedbackResultsWithTime as getFeedbackResultsWithTimeRequest,
 } from './feedback';

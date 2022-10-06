@@ -153,6 +153,7 @@ module.exports = {
     responses: 'Respuestas ({n})',
     average: 'Media:',
     errorCode6001: 'No tienes permisos para ver los resultados de la encuesta',
+    timeMarker: 'Marca temporal',
   },
   feedbackPreview: {
     edit: 'Editar encuesta',

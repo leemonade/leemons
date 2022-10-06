@@ -70,6 +70,7 @@ export default function Result() {
       store.result = result;
       store.feedback = feedback.feedback;
       store.loading = false;
+      store.instanceId = params.id;
       render();
     } catch (err) {
       await addErrorAlert(err.code ? t(`errorCode${err.code}`) : err.message);
@@ -149,8 +150,9 @@ export default function Result() {
     createDatasheet(
       store.feedback.name,
       store.feedback.questions,
-      store.result.questionsInfo,
-      format
+      store.instanceId,
+      format,
+      t('timeMarker')
     );
   }
 
