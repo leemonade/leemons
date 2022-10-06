@@ -142,6 +142,14 @@ async function getFeedbackResults(id) {
   return results;
 }
 
+async function getFeedbackResultsWithTime(id) {
+  const { results } = await leemons.api(`feedback/feedback/results/time/${id}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+  return results;
+}
+
 export {
   duplicateFeedback,
   deleteFeedback,
@@ -152,4 +160,5 @@ export {
   setInstanceTimestamp,
   getUserAssignableResponses,
   getFeedbackResults,
+  getFeedbackResultsWithTime,
 };

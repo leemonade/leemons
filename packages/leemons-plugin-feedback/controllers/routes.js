@@ -90,4 +90,10 @@ module.exports = [
     handler: 'feedback.getFeedbackResults',
     authenticated: true,
   },
+  {
+    path: '/feedback/results/time/:id',
+    method: 'GET',
+    handler: 'feedback.getFeedbackResultsWithTime',
+    authenticated: true,
+  },
 ];

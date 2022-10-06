@@ -88,6 +88,14 @@ async function getFeedbackResults(ctx) {
   ctx.body = { status: 200, results };
 }
 
+async function getFeedbackResultsWithTime(ctx) {
+  const results = await feedbackResponsesService.getFeedbackResultsWithTime(ctx.request.params.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, results };
+}
+
 module.exports = {
   duplicateFeedback,
   deleteFeedback,
@@ -98,4 +106,5 @@ module.exports = {
   setInstanceTimestamp,
   getUserAssignableResponses,
   getFeedbackResults,
+  getFeedbackResultsWithTime,
 };
