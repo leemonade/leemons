@@ -130,7 +130,7 @@ export default function DevelopmentStep({
             {_labels?.buttons?.next}
           </Button>
         )}
-        {!hasNextDevelopment && hasNextStep && (
+        {!hasNextDevelopment && (
           <Button
             onClick={onNextStep}
             variant="outline"
