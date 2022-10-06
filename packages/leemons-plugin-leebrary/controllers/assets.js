@@ -154,16 +154,28 @@ async function getAsset(ctx) {
 }
 
 async function getAssets(ctx) {
-  const { category, criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
+  const {
+    category,
+    criteria,
+    type,
+    published,
+    preferCurrent,
+    showPublic,
+    searchInProvider,
+    roles,
+  } = ctx.request.query;
   const { userSession } = ctx.state;
 
   if (isEmpty(category)) {
     throw new global.utils.HttpError(400, 'Not category was specified');
   }
 
+  const trueValues = ['true', true, '1', 1];
+
   let assets;
-  const assetPublished = ['true', true, '1', 1].includes(published);
-  const displayPublic = ['true', true, '1', 1].includes(showPublic);
+  const assetPublished = trueValues.includes(published);
+  const displayPublic = trueValues.includes(showPublic);
+  const searchProvider = trueValues.includes(searchInProvider);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
     assets = await getByCriteria(
@@ -174,6 +186,8 @@ async function getAssets(ctx) {
         showPublic: displayPublic,
         preferCurrent,
         userSession,
+        roles: JSON.parse(roles || null) || [],
+        searchInProvider: searchProvider,
       }
     );
   } else {
@@ -183,6 +197,7 @@ async function getAssets(ctx) {
       preferCurrent,
       showPublic: displayPublic,
       userSession,
+      searchInProvider: searchProvider,
     });
   }
 

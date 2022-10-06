@@ -62,7 +62,6 @@ const AssetList = ({
   search: searchProp,
   layout: layoutProp,
   showPublic: showPublicProp,
-  canShowPublicToggle,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -80,10 +79,11 @@ const AssetList = ({
   searchEmptyComponent,
   allowChangeCategories,
   preferCurrent,
+  searchInProvider,
+  roles,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
-  onShowPublic = () => {},
   onLoading = () => {},
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('list'));
@@ -180,6 +180,8 @@ const AssetList = ({
           showPublic: !pinned ? showPublic : true,
           pinned,
           preferCurrent,
+          searchInProvider,
+          roles: JSON.stringify(roles || []),
         };
         // console.log('query:', query);
         const response = await getAssetsRequest(query);
@@ -875,6 +877,8 @@ AssetList.propTypes = {
   onLoading: PropTypes.func,
   preferCurrent: PropTypes.bool,
   allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+  searchInProvider: PropTypes.bool,
+  roles: PropTypes.arrayOf(PropTypes.string),
 };
 
 export { AssetList };
