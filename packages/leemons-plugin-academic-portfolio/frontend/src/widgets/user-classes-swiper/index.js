@@ -99,22 +99,9 @@ function UserClassesSwiperWidget({ program }) {
 
   const history = useHistory();
 
-  function goClassDashboard(classe, { force = false }) {
-    const url = `/private/dashboard/class/${classe.id}`;
-    if (force) {
-      history.replace(url);
-    } else {
-      history.push(url);
-    }
-  }
-
   async function load() {
     try {
       const { classes } = await listSessionClassesRequest({ program: program.id });
-
-      if (classes?.length === 1) {
-        goClassDashboard(classes[0], { force: true });
-      }
       store.classes = classes;
     } catch (error) {
       addErrorAlert(error);
@@ -122,6 +109,10 @@ function UserClassesSwiperWidget({ program }) {
     }
     store.loading = false;
     render();
+  }
+
+  function goClassDashboard(classe) {
+    history.push(`/private/dashboard/class/${classe.id}`);
   }
 
   React.useEffect(() => {
