@@ -34,12 +34,14 @@ const useStepsStyles = createStyles((theme, { marginTop }) => ({
     top: 0,
   },
   contentContainer: {
-    padding: theme.spacing[13],
+    paddingLeft: theme.spacing[13],
+    paddingRight: theme.spacing[13],
     paddingTop: theme.spacing[7],
     width: '100%',
     height: '100%',
     minHeight: '100%',
     overflow: 'auto',
+    overflowX: 'clip',
   },
   content: {
     width: '100%',
@@ -243,6 +245,8 @@ async function useUpdateVisitedSteps(assignation, step) {
 export default function Steps({ assignation, localizations, marginTop, setIsFirstStep }) {
   const [buttons, setButtons] = React.useState(null);
 
+  const { classes, theme } = useStepsStyles({ marginTop });
+
   const {
     steps,
     visitedSteps,
@@ -312,11 +316,10 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
         index,
         previousIndex,
         updateTimestamps,
+        marginTop: marginTop + theme.spacing[7] * 2,
       }),
-    [currentStep?.component, assignation, localizations, setButtons]
+    [currentStep?.component, assignation, localizations, setButtons, marginTop, theme.spacing[7]]
   );
-
-  const { classes } = useStepsStyles({ marginTop });
 
   return (
     <>
@@ -361,7 +364,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
         </Box>
         <Box className={classes.sidebarContainer}>
           <Box className={classes.sidebar}>
-            <Sidebar assignation={assignation} labels={localizations} show={true} />
+            <Sidebar assignation={assignation} labels={localizations} show />
           </Box>
         </Box>
       </Box>
