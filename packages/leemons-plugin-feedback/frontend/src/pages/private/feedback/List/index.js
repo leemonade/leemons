@@ -91,6 +91,7 @@ export default function List() {
               variant="embedded"
               category="assignables.feedback"
               onSelectItem={goDetailPage}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>
@@ -104,6 +105,7 @@ export default function List() {
               variant="embedded"
               category="assignables.feedback"
               onSelectItem={goDetailPage}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>

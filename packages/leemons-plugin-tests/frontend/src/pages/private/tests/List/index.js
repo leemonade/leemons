@@ -90,6 +90,7 @@ export default function List() {
               variant="embedded"
               category="assignables.tests"
               onSelectItem={goDetailPage}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>
@@ -103,6 +104,7 @@ export default function List() {
               variant="embedded"
               category="assignables.tests"
               onSelectItem={goDetailPage}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>
