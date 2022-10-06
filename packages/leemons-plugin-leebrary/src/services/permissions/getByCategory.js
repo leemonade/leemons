@@ -14,10 +14,13 @@ async function getByCategory(
     indexable = true,
     preferCurrent,
     showPublic,
+    roles,
+    searchInProvider,
     userSession,
     transacting,
   } = {}
 ) {
+  // TODO: Search in provider
   try {
     const { services: userService } = leemons.getPlugin('users');
 
@@ -92,7 +95,12 @@ async function getByCategory(
         permissions: getRolePermissions(item.actionNames[0]),
       }))
       .concat(publicAssets)
-      .filter((item) => assetIds.includes(item.asset));
+      .filter((item) => {
+        if (roles?.length && !roles.includes(item.role)) {
+          return false;
+        }
+        return assetIds.includes(item.asset);
+      });
 
     return uniqBy(results, 'asset');
   } catch (e) {

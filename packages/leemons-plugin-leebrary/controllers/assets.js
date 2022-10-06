@@ -176,6 +176,7 @@ async function getAssets(ctx) {
   const assetPublished = trueValues.includes(published);
   const displayPublic = trueValues.includes(showPublic);
   const searchProvider = trueValues.includes(searchInProvider);
+  const parsedRoles = JSON.parse(roles || null) || [];
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
     assets = await getByCriteria(
@@ -186,7 +187,7 @@ async function getAssets(ctx) {
         showPublic: displayPublic,
         preferCurrent,
         userSession,
-        roles: JSON.parse(roles || null) || [],
+        roles: parsedRoles,
         searchInProvider: searchProvider,
       }
     );
@@ -197,6 +198,7 @@ async function getAssets(ctx) {
       preferCurrent,
       showPublic: displayPublic,
       userSession,
+      roles: parsedRoles,
       searchInProvider: searchProvider,
     });
   }
