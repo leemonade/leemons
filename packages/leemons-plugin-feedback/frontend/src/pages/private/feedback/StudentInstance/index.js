@@ -14,6 +14,7 @@ import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { isString } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
 import { setInstanceTimestamp } from '@feedback/request/feedback';
+import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import WelcomeCard from './components/WelcomeCards/WelcomeCard';
 
 const StudentInstance = () => {
@@ -22,6 +23,7 @@ const StudentInstance = () => {
     loading: true,
     idLoaded: '',
     showingWelcome: true,
+    modalMode: 0,
   });
 
   const locale = useLocale();
@@ -61,6 +63,14 @@ const StudentInstance = () => {
     return {};
   }, [store.instance, store.class, store.isFirstStep]);
 
+  const getModalMode = (showResults, hasNextActivity) => {
+    if (!showResults && !hasNextActivity) return 0;
+    if (showResults && !hasNextActivity) return 1;
+    if (showResults && hasNextActivity) return 2;
+    if (!showResults && hasNextActivity) return 3;
+    return 0;
+  };
+
   const init = async () => {
     try {
       [store.instance, store.assignation, store.responses] = await Promise.all([
@@ -78,6 +88,14 @@ const StudentInstance = () => {
           canStart = false;
         }
       }
+
+      const showResults = !!store.instance.showResults;
+
+      store.nextActivityUrl = await getNextActivityUrl(store.assignation);
+      const hasNextActivity =
+        store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
+        store.nextActivityUrl;
+      store.modalMode = getModalMode(showResults, hasNextActivity);
 
       store.canStart = canStart;
       store.feedback = (await getFeedbackRequest(store.instance.assignable.id)).feedback;
@@ -125,7 +143,8 @@ const StudentInstance = () => {
               instanceId={store.idLoaded}
               defaultValues={store.responses}
               userId={getUserId()}
-              showResults={store.instance.showResults}
+              modalMode={store.modalMode}
+              nextActivityUrl={store.nextActivityUrl}
             />
           )}
         </Stack>

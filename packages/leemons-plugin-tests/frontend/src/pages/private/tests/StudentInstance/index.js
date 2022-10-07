@@ -2,7 +2,7 @@ import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useLocale, useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
@@ -24,6 +24,7 @@ import getClassData from '@assignables/helpers/getClassData';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
+import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import { StudentInstanceStyles } from './StudentInstance.style';
 import Resume from './components/Resume';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
@@ -131,6 +132,10 @@ export default function StudentInstance() {
           };
         }
       });
+      store.nextActivityUrl = await getNextActivityUrl(store.assignation);
+      store.hasNextActivity =
+        store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
+        store.nextActivityUrl;
       store.timestamps = timestamps;
       store.config = getConfigByInstance(store.instance);
       store.questionsInfo = calculeInfoValues(
@@ -145,6 +150,7 @@ export default function StudentInstance() {
       store.class = classe;
       store.idLoaded = params.id;
       store.loading = false;
+      store.modalMode = store.hasNextActivity ? 2 : 1;
 
       render();
     } catch (error) {
@@ -298,8 +304,9 @@ export default function StudentInstance() {
     history.push('/private/assignables/ongoing');
   };
 
-  const goToResults = () => {
-    history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
+  const goToResults = (e, openInNewTab = false) => {
+    if (openInNewTab) window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank');
+    else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
   };
 
   return (
@@ -371,13 +378,15 @@ export default function StudentInstance() {
                   variant="light"
                   rightIcon={<ExpandDiagonalIcon />}
                   compact
-                  onClick={goToResults}
+                  onClick={() => goToResults(null, true)}
                 >
                   {t('viewResults')}
                 </Button>
-                <Button rightIcon={<ChevronRightIcon />} compact>
-                  {t('nextActivity')}
-                </Button>
+                <Link to={store.nextActivityUrl}>
+                  <Button rightIcon={<ChevronRightIcon />} compact>
+                    {t('nextActivity')}
+                  </Button>
+                </Link>
               </Stack>
             ) : null}
           </Box>

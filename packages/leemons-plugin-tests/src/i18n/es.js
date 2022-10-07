@@ -238,9 +238,9 @@ module.exports = {
     test: 'TEST',
     instructionsForTest: 'Instrucciones para hacer este test',
     clueWithoutPer:
-      '<strong>El uso de pistas no resta ninguna puntuación</strong>, es decir, puedes pedir pistas sin penalización.',
+      '<span><strong>El uso de pistas no resta ninguna puntuación</strong>, es decir, puedes pedir pistas sin penalización.</span>',
     clueWithPer:
-      '<strong>El uso de pistas resta un {per}% de la pregunta</strong>, es decir, restarán {points} por cada pista utilizada.',
+      '<span><strong>El uso de pistas resta un {per}% de la pregunta</strong>, es decir, restarán {points} por cada pista utilizada.</span>',
     questions: 'Preguntas',
     perQuestion: 'Cada pregunta',
     totalPoints: 'Puntuación total',
@@ -272,11 +272,11 @@ module.exports = {
     selectResponse: 'Seleccionar respuesta',
     noBlankQuestions: '<strong>No puedes dejar preguntas en blanco</strong>',
     blankQuestions:
-      '<strong>Puedes dejar preguntas en blanco </strong> y estas no puntuarán (es decir, puntúan 0)',
+      '<span><strong>Puedes dejar preguntas en blanco </strong> y estas no puntuarán (es decir, puntúan 0)</span>',
     blankQuestionsScores:
-      '<strong>Puedes dejar preguntas en blanco  y estas restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
+      '<span><strong>Puedes dejar preguntas en blanco  y estas restaran el {per}%</strong> de su valor (es decir, puntúan {points})</span>',
     errorQuestions:
-      '<strong>Las contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
+      '<span><strong>Las contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}</span>',
     noErrorQuestions: '<strong>Las contestaciones erroneas no restan puntos</strong>',
     finishTestModalTitle: 'Test finalizado',
     finishTestModalDescription: 'Tu respuestas han sido enviadas con éxito',

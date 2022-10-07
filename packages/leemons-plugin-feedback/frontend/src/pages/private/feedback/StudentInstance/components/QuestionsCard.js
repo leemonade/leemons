@@ -10,7 +10,7 @@ import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInst
 import { setQuestionResponseRequest } from '@feedback/request';
 import { ArrowLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { setInstanceTimestamp } from '@feedback/request/feedback';
 import OpenResponse from './OpenResponse';
 import LikertResponse from './LikertResponse';
@@ -58,7 +58,8 @@ function QuestionsCard({
   instanceId,
   defaultValues,
   userId,
-  showResults,
+  modalMode,
+  nextActivityUrl,
 }) {
   const { classes } = Styles({ viewMode });
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
@@ -66,7 +67,6 @@ function QuestionsCard({
     maxIndex: 0,
     currentIndex: 0,
     values: defaultValues || {},
-    modalMode: 1,
   });
   const question = feedback.questions[store.currentIndex];
 
@@ -77,11 +77,13 @@ function QuestionsCard({
     [feedback, store.currentIndex]
   );
 
-  const goToOnGoing = () => {
+  const goToOnGoing = (e, openInNewTab = false) => {
+    if (openInNewTab) window.open('/private/assignables/ongoing');
     history.push('/private/assignables/ongoing');
   };
 
-  const goToResults = () => {
+  const goToResults = (e, openInNewTab = false) => {
+    if (openInNewTab) window.open(`/private/feedback/result/${instanceId}`);
     if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
   };
 
@@ -106,10 +108,6 @@ function QuestionsCard({
     store.currentIndex--;
     render();
   }
-
-  React.useEffect(() => {
-    store.modalMode = showResults ? 1 : 0;
-  }, [showResults]);
 
   if (!translations) return null;
 
@@ -178,12 +176,12 @@ function QuestionsCard({
       >
         <Stack direction="column" fullWidth spacing={8}>
           <Paragraph align="center">{feedback.thanksMessage}</Paragraph>
-          {store.modalMode === 0 ? (
+          {modalMode === 0 ? (
             <Stack justifyContent="center">
               <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
             </Stack>
           ) : null}
-          {store.modalMode === 1 ? (
+          {modalMode === 1 ? (
             <Stack justifyContent="space-between">
               <Button variant="light" onClick={goToOnGoing}>
                 {t('pendingActivities')}
@@ -191,29 +189,38 @@ function QuestionsCard({
               <Button onClick={goToResults}>{t('viewResults')}</Button>
             </Stack>
           ) : null}
-          {store.modalMode === 2 ? (
-            <Stack justifyContent="space-between">
-              <Button variant="light" rightIcon={<ExpandDiagonalIcon />} compact>
-                {t('viewResults')}
-              </Button>
-              <Button rightIcon={<ChevronRightIcon />} compact>
-                {t('nextActivity')}
-              </Button>
-            </Stack>
-          ) : null}
-          {store.modalMode === 3 ? (
+          {modalMode === 2 ? (
             <Stack justifyContent="space-between">
               <Button
                 variant="light"
                 rightIcon={<ExpandDiagonalIcon />}
                 compact
-                onClick={goToOnGoing}
+                onClick={() => goToResults(null, true)}
+              >
+                {t('viewResults')}
+              </Button>
+              <Link to={nextActivityUrl}>
+                <Button rightIcon={<ChevronRightIcon />} compact>
+                  {t('nextActivity')}
+                </Button>
+              </Link>
+            </Stack>
+          ) : null}
+          {modalMode === 3 ? (
+            <Stack justifyContent="space-between">
+              <Button
+                variant="light"
+                rightIcon={<ExpandDiagonalIcon />}
+                compact
+                onClick={() => goToOnGoing(null, true)}
               >
                 {t('pendingActivities')}
               </Button>
-              <Button rightIcon={<ChevronRightIcon />} compact>
-                {t('nextActivity')}
-              </Button>
+              <Link to={nextActivityUrl}>
+                <Button rightIcon={<ChevronRightIcon />} compact>
+                  {t('nextActivity')}
+                </Button>
+              </Link>
             </Stack>
           ) : null}
         </Stack>
@@ -227,9 +234,10 @@ QuestionsCard.propTypes = {
   instanceId: PropTypes.string,
   defaultValues: PropTypes.any,
   userId: PropTypes.string,
-  showResults: PropTypes.bool,
   viewMode: PropTypes.bool,
   returnToTable: PropTypes.func,
+  modalMode: PropTypes.number,
+  nextActivityUrl: PropTypes.any,
 };
 
 export default QuestionsCard;

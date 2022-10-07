@@ -28,7 +28,11 @@ function LikertStatistics({ question, responses, t }) {
           </Text>
           &nbsp;
           <Text size="md" color={averageColor}>
-            {responses.avg || 0}
+            {responses.avg
+              ? responses.avg % 1 === 0
+                ? responses.avg
+                : responses.avg.toFixed(2)
+              : 0}
           </Text>
         </Badge>
       </Box>

@@ -95,7 +95,6 @@ export default function Assign() {
       };
       render();
     } catch (error) {
-      console.log(error);
       addErrorAlert(error);
     }
   }
