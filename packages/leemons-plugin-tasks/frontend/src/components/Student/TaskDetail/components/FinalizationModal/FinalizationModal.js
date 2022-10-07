@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, createStyles, Button, Modal, Title, Text } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 
 const useFinalizationModalStyles = createStyles((theme) => ({
@@ -41,6 +41,7 @@ export default function FinalizationModal({
   actionUrl,
 }) {
   const [opened, setOpened] = React.useState(false);
+  const history = useHistory();
 
   const nextActivityUrl = useNextActivityUrl(assignation);
 
@@ -53,6 +54,12 @@ export default function FinalizationModal({
       updateTimestamps('end');
     }
   }, [updateTimestamps, opened]);
+
+  React.useEffect(() => {
+    if (opened && !assignation?.instance?.assignable?.submission?.type && nextActivityUrl) {
+      history.push(nextActivityUrl);
+    }
+  }, [opened, nextActivityUrl]);
 
   const { cx, classes } = useFinalizationModalStyles();
 

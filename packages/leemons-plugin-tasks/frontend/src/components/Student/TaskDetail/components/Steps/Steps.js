@@ -4,6 +4,7 @@ import { VerticalStepper, Box, createStyles, Button } from '@bubbles-ui/componen
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import StatementStep from './Steps/StatementStep';
 import DevelopmentStep from './Steps/DevelopmentStep';
 import DeliveryStep from './Steps/DeliveryStep';
@@ -77,6 +78,7 @@ function useSteps({ assignation, localizations }) {
   const hasDeliverable = !!assignable?.submission?.type;
   const developmentLength = assignable?.metadata?.development?.length;
   const hasDevelopment = developmentLength > 0;
+  const hasNextActivity = assignation?.instance?.relatedAssignableInstances?.after?.length > 0;
 
   const steps = React.useMemo(() => {
     if (!localizations) {
@@ -158,6 +160,7 @@ function useSteps({ assignation, localizations }) {
     hasNext: index < steps?.length - 1,
     hasDeliverable,
     hasDevelopment,
+    hasNextActivity,
   };
 }
 
@@ -167,6 +170,8 @@ function setDefaultButtons({
   toggleModal,
   hasPrev,
   hasNext,
+  hasDeliverable,
+  hasNextActivity,
   localizations,
 }) {
   return (
@@ -179,14 +184,25 @@ function setDefaultButtons({
         )}
       </Box>
       <Box>
-        <Button
-          variant="outline"
-          onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
-          rounded
-          rightIcon={hasNext && <ChevRightIcon />}
-        >
-          {hasNext ? localizations?.buttons?.next : localizations?.buttons?.finish}
-        </Button>
+        {(hasNext || hasDeliverable || !hasNextActivity) && (
+          <Button
+            variant={hasNext ? 'outline' : 'filled'}
+            onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
+            rounded={hasNext}
+            rightIcon={hasNext && <ChevRightIcon />}
+          >
+            {hasNext ? localizations?.buttons?.next : localizations?.buttons?.finish}
+          </Button>
+        )}
+        {!hasNext && !hasDeliverable && hasNextActivity && (
+          <Button
+            variant="filled"
+            onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
+            rightIcon={<ChevRightIcon />}
+          >
+            {localizations?.buttons?.nextActivity}
+          </Button>
+        )}
       </Box>
     </>
   );
@@ -259,6 +275,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
     hasNext,
     hasDeliverable,
     hasDevelopment,
+    hasNextActivity,
   } = useSteps({
     assignation,
     localizations,
@@ -294,6 +311,8 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
           hasPrev,
           hasNext,
           localizations,
+          hasDeliverable,
+          hasNextActivity,
         })
       );
     }
@@ -313,6 +332,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
         hasPrevStep: hasPrev,
         hasNextStep: hasNext,
         hasDeliverable,
+        hasNextActivity,
         index,
         previousIndex,
         updateTimestamps,

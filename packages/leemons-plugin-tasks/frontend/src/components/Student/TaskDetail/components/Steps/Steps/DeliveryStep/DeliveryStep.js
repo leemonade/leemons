@@ -89,6 +89,7 @@ function buttonsToSet({
             }
           }}
           disabled={!next}
+          rounded={hasNextStep}
           rightIcon={hasNextStep && <ChevRightIcon />}
         >
           {hasNextStep ? localizations?.buttons?.next : localizations?.buttons?.submit}

@@ -366,6 +366,7 @@ module.exports = {
       finish: 'Finish',
       submit: 'Submit',
       save: 'Save',
+      nextActivity: 'Next activity',
     },
     sidebar: {
       resources: 'Resources',

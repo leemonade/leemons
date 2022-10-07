@@ -355,6 +355,7 @@ module.exports = {
       finish: 'Finalizar',
       submit: 'Entregar',
       save: 'Guardar',
+      nextActivity: 'Siguiente actividad',
     },
     sidebar: {
       resources: 'Recursos',

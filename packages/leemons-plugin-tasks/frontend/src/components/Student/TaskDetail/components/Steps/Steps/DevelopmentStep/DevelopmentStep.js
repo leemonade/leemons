@@ -10,6 +10,7 @@ import {
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { Link } from 'react-router-dom';
 import LimitedTimeAlert from '../../../LimitedTimeAlert';
 import { AnimatedPane } from './AnimatedPane';
 
@@ -75,6 +76,7 @@ export default function DevelopmentStep({
   hasPrevStep,
   hasNextStep,
   hasDeliverable,
+  hasNextActivity,
   index,
   previousIndex,
   marginTop,
@@ -130,15 +132,25 @@ export default function DevelopmentStep({
             {_labels?.buttons?.next}
           </Button>
         )}
-        {!hasNextDevelopment && (
+        {!hasNextDevelopment && (hasNextStep || !hasNextActivity) && (
           <Button
             onClick={onNextStep}
-            variant="outline"
+            variant={hasNextStep ? 'outline' : 'filled'}
             rightIcon={<ChevRightIcon />}
-            rounded
+            rounded={hasNextStep}
             disabled={!!animation}
           >
             {hasNextStep ? _labels?.buttons?.next : _labels?.buttons?.finish}
+          </Button>
+        )}
+        {!hasNextDevelopment && !hasNextStep && hasNextActivity && (
+          <Button
+            variant="filled"
+            rightIcon={<ChevRightIcon />}
+            disabled={!!animation}
+            onClick={onNextStep}
+          >
+            {_labels?.buttons?.nextActivity}
           </Button>
         )}
       </>
@@ -153,6 +165,7 @@ export default function DevelopmentStep({
     hasPrevDevelopment,
     step,
     _labels?.buttons,
+    hasNextActivity,
     animation,
   ]);
 
