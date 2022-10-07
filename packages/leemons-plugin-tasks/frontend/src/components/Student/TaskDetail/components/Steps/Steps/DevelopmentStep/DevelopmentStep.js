@@ -10,7 +10,6 @@ import {
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { Link } from 'react-router-dom';
 import LimitedTimeAlert from '../../../LimitedTimeAlert';
 import { AnimatedPane } from './AnimatedPane';
 
@@ -22,6 +21,7 @@ function _DevelopmentText({ text, style, classes }, ref) {
   return (
     <Paper
       className={classes.developmentText}
+      shadow="level01"
       sx={{
         opacity: style?.opacity,
         transform: `translateX(${style?.translateX || 0}px)`,
@@ -137,7 +137,7 @@ export default function DevelopmentStep({
             onClick={onNextStep}
             variant={hasNextStep ? 'outline' : 'filled'}
             rightIcon={<ChevRightIcon />}
-            rounded={hasNextStep}
+            rounded
             disabled={!!animation}
           >
             {hasNextStep ? _labels?.buttons?.next : _labels?.buttons?.finish}
@@ -148,6 +148,7 @@ export default function DevelopmentStep({
             variant="filled"
             rightIcon={<ChevRightIcon />}
             disabled={!!animation}
+            rounded
             onClick={onNextStep}
           >
             {_labels?.buttons?.nextActivity}
