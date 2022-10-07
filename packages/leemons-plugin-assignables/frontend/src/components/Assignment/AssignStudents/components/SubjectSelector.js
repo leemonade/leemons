@@ -24,7 +24,14 @@ export default function SubjectSelector({ labels, onChange, value, assignable })
   }
 
   return (
-    <ContextContainer title={labels?.subjects?.title} subtitle={labels?.subjects?.subtitle}>
+    <ContextContainer
+      title={
+        assignable?.subjects?.length
+          ? labels?.subjects?.calificableTitle
+          : labels?.subjects?.nonCalificableTitle
+      }
+      subtitle={labels?.subjects?.subtitle}
+    >
       <CheckBoxGroup variant="boxed" data={subjectsProcessed} onChange={onChange} />
     </ContextContainer>
   );

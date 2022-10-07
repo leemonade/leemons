@@ -43,7 +43,9 @@ module.exports = {
       addNewClassStudents: 'Automatically assign to newly enrolled students',
       clearStudents: 'Clear students',
       subjects: {
-        title: 'Subjects to be evaluated in this activity',
+        nonCalificableTitle:
+          'Select at least one of your subjects to see the different available groups',
+        calificableTitle: 'Subjects to be evaluated in this activity',
         subtitle: 'NOTE: At least one of them',
       },
       unableToAssignStudentsMessage:

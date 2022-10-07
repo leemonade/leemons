@@ -44,7 +44,9 @@ module.exports = {
       addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
       clearStudents: 'Borrar estudiantes',
       subjects: {
-        title: 'Asignaturas que se evaluarán en esta actividad',
+        nonCalificableTitle:
+          'Selecciona al menos una de tus asignaturas para ver los grupos disponibles',
+        calificableTitle: 'Asignaturas que se evaluarán en esta actividad',
         subtitle: 'NOTA: Al menos una de ellas',
       },
       unableToAssignStudentsMessage:
