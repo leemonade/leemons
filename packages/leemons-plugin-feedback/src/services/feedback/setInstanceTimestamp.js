@@ -16,7 +16,7 @@ async function setInstanceTimestamp(
           { userAgent: user, instance: instanceId },
           { transacting }
         );
-        if (!date || timeKey === 'start') {
+        if (!date && timeKey === 'start') {
           await table.feedbackDates.create(
             { instance: instanceId, userAgent: user, startDate: new Date() },
             { transacting }

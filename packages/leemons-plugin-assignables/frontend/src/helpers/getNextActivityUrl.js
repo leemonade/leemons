@@ -10,7 +10,7 @@ export default async function getNextActivityUrl(assignation) {
   const { id } = nextActivity;
   const { user } = assignation;
 
-  const { data: nextAssignation } = await getAssignation({ id, user });
+  const nextAssignation = await getAssignation({ id, user });
   const role = nextAssignation?.instance?.assignable?.roleDetails;
 
   if (!nextAssignation) {

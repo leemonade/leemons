@@ -167,7 +167,7 @@ export default function Development(props) {
               sx={() => ({
                 position: 'absolute',
                 bottom: '0px',
-                width: '340px',
+                width: '100%',
                 textAlign: 'center',
               })}
             >

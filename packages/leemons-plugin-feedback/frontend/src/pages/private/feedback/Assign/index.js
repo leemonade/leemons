@@ -14,7 +14,7 @@ import {
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import Form from '@assignables/components/Assignment/Form';
-import { assignFeedbackRequest } from '@feedback/request';
+import { assignFeedbackRequest, getFeedbackRequest } from '@feedback/request';
 
 function parseDates(date) {
   if (date instanceof Date) {
@@ -80,15 +80,29 @@ export default function Assign() {
     render();
   }
 
+  async function init() {
+    try {
+      const { feedback } = await getFeedbackRequest(params.id);
+      store.feedback = feedback;
+      render();
+    } catch (error) {
+      addErrorAlert(error);
+    }
+  }
+
   const handleOnHeaderResize = (size) => {
     store.headerHeight = size?.height - 1;
     render();
   };
 
+  React.useEffect(() => {
+    if (params?.id && !store.feedback) init();
+  }, [params]);
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
-        values={{ title: `${t('pageTitle')} ${store.test?.name || ''}` }}
+        values={{ title: `${t('pageTitle')} ${store.feedback?.name || ''}` }}
         onResize={handleOnHeaderResize}
       />
       <Box>
