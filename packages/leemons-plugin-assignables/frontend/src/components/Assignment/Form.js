@@ -565,21 +565,27 @@ export default function Form({
               )}
             />
           )}
-          <ConditionalInput
-            label={labels?.messageToStudentsToogle}
-            help={descriptions?.messageToStudents}
-            initialValue={!!defaultValues?.messageToAssignees}
-            render={() => (
-              <Controller
-                control={control}
-                name="messageToAssignees"
-                shouldUnregister={true}
-                rules={{ required: labels?.required }}
-                render={({ field }) => (
-                  <TextEditorInput
-                    error={errors?.messageToAssignees}
-                    label={labels?.messageToStudents}
-                    {...field}
+          <Controller
+            control={control}
+            name={'sendMail'}
+            render={({ field: sendMailField }) => (
+              <ConditionalInput
+                {...sendMailField}
+                label={labels?.messageToStudentsToogle}
+                help={descriptions?.messageToStudents}
+                initialValue={!!defaultValues?.messageToAssignees}
+                render={() => (
+                  <Controller
+                    control={control}
+                    name="messageToAssignees"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <TextEditorInput
+                        error={errors?.messageToAssignees}
+                        label={labels?.messageToStudents}
+                        {...field}
+                      />
+                    )}
                   />
                 )}
               />

@@ -48,6 +48,7 @@ async function createAssignableInstance(
         students,
         isAllDay,
         relatedAssignableInstances,
+        sendMail,
         ...assignableInstanceObj
       } = assignableInstance;
 
@@ -66,6 +67,7 @@ async function createAssignableInstance(
         {
           ...assignableInstanceObj,
           event,
+          sendMail: !!sendMail,
           metadata: JSON.stringify(metadata),
           curriculum: JSON.stringify(curriculum),
           relatedAssignableInstances: JSON.stringify({ before: [], after: [] }),

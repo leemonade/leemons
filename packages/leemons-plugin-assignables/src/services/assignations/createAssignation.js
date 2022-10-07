@@ -125,7 +125,7 @@ module.exports = async function createAssignation(
 
             await Promise.all(roomsPromises);
 
-            if (instance?.messageToAssignees) {
+            if (instance?.sendMail) {
               sendEmail({
                 instance,
                 userSession,

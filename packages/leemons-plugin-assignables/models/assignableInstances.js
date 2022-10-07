@@ -51,6 +51,9 @@ module.exports = {
         defaultTo: 1,
       },
     },
+    sendMail: {
+      type: 'boolean',
+    },
     messageToAssignees: {
       type: 'richtext',
     },
