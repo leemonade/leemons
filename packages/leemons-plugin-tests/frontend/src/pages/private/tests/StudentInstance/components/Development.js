@@ -104,9 +104,7 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/blank-questions.png"
           styles={styles}
-          withRedColor={
-            !store.config.canOmitQuestions || (!store.config.canOmitQuestions && store.config.omit)
-          }
+          withRedColor={!store.config.canOmitQuestions || store.config.omit}
           label={
             // eslint-disable-next-line no-nested-ternary
             !store.config.canOmitQuestions

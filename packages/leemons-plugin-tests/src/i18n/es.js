@@ -242,11 +242,11 @@ module.exports = {
     clueWithPer:
       '<span><strong>El uso de pistas resta un {per}% de la pregunta</strong>, es decir, restarán {points} por cada pista utilizada.</span>',
     questions: 'Preguntas',
-    perQuestion: 'Cada pregunta',
+    perQuestion: 'Puntos por pregunta',
     totalPoints: 'Puntuación total',
     minScore: 'Puntuación mínima',
     maxScore: 'Puntuación máxima',
-    minToApprove: 'Min. para aprobar',
+    minToApprove: 'Puntos para aprobar',
     importantInformation: 'Información importante',
     informationOnlyView: 'Este test esta en modo "solo consulta"',
     informationStart: 'La fecha de inicio para poder realizar este test es: {date}',
