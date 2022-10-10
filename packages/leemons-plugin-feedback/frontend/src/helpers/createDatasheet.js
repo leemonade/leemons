@@ -67,29 +67,28 @@ export const createDatasheet = async (title, questions, instanceId, format, time
         ([, aValue], [, bValue]) => aValue.order - bValue.order
       );
       valueResponses.forEach(([questionKey, { value: questionValue }]) => {
-        const { type, properties } = questionsById[questionKey][0];
+        const {
+          type,
+          properties: { responses, withImages },
+        } = questionsById[questionKey][0];
+        const property = withImages ? 'imageDescription' : 'response';
         if (type === 'openResponse' || type === 'netPromoterScore')
           contentArray.push(questionValue.toString());
         else if (type === 'likertScale') contentArray.push(`${questionValue + 1}`);
         else if (type === 'singleResponse') {
-          if (properties.withImages)
-            contentArray.push(properties.responses[questionValue].value.imageDescription);
-          else contentArray.push(properties.responses[questionValue].value.response);
+          const responseValue =
+            responses[questionValue].value[property] || questionValue.toString();
+          contentArray.push(responseValue);
         } else if (type === 'multiResponse') {
           const sortedValues = questionValue.sort((a, b) => a - b);
-          if (properties.withImages) {
-            contentArray.push(
-              sortedValues
-                .map((selectedValue) => properties.responses[selectedValue].value.imageDescription)
-                .join(', ')
-            );
-          } else {
-            contentArray.push(
-              sortedValues
-                .map((selectedValue) => properties.responses[selectedValue].value.response)
-                .join(', ')
-            );
-          }
+          contentArray.push(
+            sortedValues
+              .map(
+                (selectedValue) =>
+                  responses[selectedValue].value[property] || selectedValue.toString()
+              )
+              .join(', ')
+          );
         } else contentArray.push('');
       });
       contentArray.forEach((contentValue, contentIndex) => {
