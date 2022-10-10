@@ -154,6 +154,20 @@ module.exports = {
     average: 'Average:',
     errorCode6001: 'You don´t have permissions to see the feedback results',
     timeMarker: 'Time mark',
+    closeFeedback: 'Close',
+    archiveFeedback: 'Archive',
+    closeAction: {
+      closedFeedback: 'Feedback closed',
+      errorClosingFeedback: 'Error closing feedback',
+      openedFeedback: 'Feedback opened',
+      errorOpeningFeedback: 'Error opening feedback',
+    },
+    archiveAction: {
+      archivedFeedback: 'Feedback archived',
+      errorArchivingFeedback: 'Error archiving feedback',
+      unarchiedFeedback: 'Feedback unarchived',
+      errorUnarchivingFeedback: 'Error unarchiving feedback',
+    },
   },
   feedbackPreview: {
     edit: 'Edit feedback',

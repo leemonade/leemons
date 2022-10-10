@@ -154,6 +154,20 @@ module.exports = {
     average: 'Media:',
     errorCode6001: 'No tienes permisos para ver los resultados de la encuesta',
     timeMarker: 'Marca temporal',
+    closeFeedback: 'Cerrar',
+    archiveFeedback: 'Archivar',
+    closeAction: {
+      closedFeedback: 'Encuesta cerrada',
+      errorClosingFeedback: 'Error cerrando encuesta',
+      openedFeedback: 'Encuesta abierta',
+      errorOpeningFeedback: 'Error abriendo encuesta',
+    },
+    archiveAction: {
+      archivedFeedback: 'Encuesta archivada',
+      errorArchivingFeedback: 'Error archivando encuesta',
+      unarchiedFeedback: 'Encuesta desarchivada',
+      errorUnarchivingFeedback: 'Error desarchivando encuesta',
+    },
   },
   feedbackPreview: {
     edit: 'Editar encuesta',
