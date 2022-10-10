@@ -23,7 +23,7 @@ function downloadFile(data, name) {
   downloadURL(url, name);
 }
 
-export const createDatasheet = async (title, questions, instanceId, format, timeMarkerLabel) => {
+export const createDatasheet = async (title, questions, instanceId, format, labels) => {
   const wb = new Workbook();
   const feedbackResponsesWithTime = await getFeedbackResultsWithTime(instanceId);
 
@@ -42,7 +42,7 @@ export const createDatasheet = async (title, questions, instanceId, format, time
 
   const firstCell = workSheet.getCell(1, 1);
   const firstColumn = workSheet.getColumn(1);
-  firstCell.value = timeMarkerLabel;
+  firstCell.value = labels.timeMarkerLabel;
   firstColumn.width = 20;
 
   questions.forEach((question, index) => {
@@ -72,21 +72,18 @@ export const createDatasheet = async (title, questions, instanceId, format, time
           properties: { responses, withImages },
         } = questionsById[questionKey][0];
         const property = withImages ? 'imageDescription' : 'response';
+        const optionPlaceholder = `${labels.option} ${index + 1}`;
         if (type === 'openResponse' || type === 'netPromoterScore')
           contentArray.push(questionValue.toString());
         else if (type === 'likertScale') contentArray.push(`${questionValue + 1}`);
         else if (type === 'singleResponse') {
-          const responseValue =
-            responses[questionValue].value[property] || questionValue.toString();
+          const responseValue = responses[questionValue].value[property] || optionPlaceholder;
           contentArray.push(responseValue);
         } else if (type === 'multiResponse') {
           const sortedValues = questionValue.sort((a, b) => a - b);
           contentArray.push(
             sortedValues
-              .map(
-                (selectedValue) =>
-                  responses[selectedValue].value[property] || selectedValue.toString()
-              )
+              .map((selectedValue) => responses[selectedValue].value[property] || optionPlaceholder)
               .join(', ')
           );
         } else contentArray.push('');
