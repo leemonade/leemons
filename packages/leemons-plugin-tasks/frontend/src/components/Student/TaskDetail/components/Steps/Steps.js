@@ -188,7 +188,7 @@ function setDefaultButtons({
           <Button
             variant={hasNext ? 'outline' : 'filled'}
             onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
-            rounded={hasNext}
+            rounded
             rightIcon={hasNext && <ChevRightIcon />}
           >
             {hasNext ? localizations?.buttons?.next : localizations?.buttons?.finish}
@@ -197,6 +197,7 @@ function setDefaultButtons({
         {!hasNext && !hasDeliverable && hasNextActivity && (
           <Button
             variant="filled"
+            rounded
             onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
             rightIcon={<ChevRightIcon />}
           >
