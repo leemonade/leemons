@@ -72,18 +72,21 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
           properties: { responses, withImages },
         } = questionsById[questionKey][0];
         const property = withImages ? 'imageDescription' : 'response';
-        const optionPlaceholder = `${labels.option} ${index + 1}`;
         if (type === 'openResponse' || type === 'netPromoterScore')
           contentArray.push(questionValue.toString());
         else if (type === 'likertScale') contentArray.push(`${questionValue + 1}`);
         else if (type === 'singleResponse') {
-          const responseValue = responses[questionValue].value[property] || optionPlaceholder;
+          const responseValue =
+            responses[questionValue].value[property] || `${labels.option} ${index + 1}`;
           contentArray.push(responseValue);
         } else if (type === 'multiResponse') {
           const sortedValues = questionValue.sort((a, b) => a - b);
           contentArray.push(
             sortedValues
-              .map((selectedValue) => responses[selectedValue].value[property] || optionPlaceholder)
+              .map(
+                (selectedValue, i) =>
+                  responses[selectedValue].value[property] || `${labels.option} ${i + 1}`
+              )
               .join(', ')
           );
         } else contentArray.push('');
