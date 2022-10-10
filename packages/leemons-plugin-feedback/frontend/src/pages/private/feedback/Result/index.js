@@ -13,6 +13,7 @@ import {
   Text,
   Title,
   TextClamp,
+  Switch,
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -27,8 +28,11 @@ import {
 } from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { createDatasheet } from '@feedback/helpers/createDatasheet';
+import useIsTeacher from '@assignables/components/Ongoing/AssignmentList/hooks/useIsTeacher';
+import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
+import dayjs from 'dayjs';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
@@ -50,9 +54,11 @@ export default function Result() {
     loading: true,
     accordionState: { 0: true },
   });
+  const { mutateAsync } = useMutateAssignableInstance();
 
   const { classes } = ResultStyles({}, { name: 'Result' });
 
+  const isTeacher = useIsTeacher();
   const history = useHistory();
   const params = useParams();
 
@@ -66,11 +72,15 @@ export default function Result() {
         getFeedbackResultsRequest(params.id),
         getFeedbackRequest(instance.assignable.id),
       ]);
-
       store.result = result;
       store.feedback = feedback.feedback;
       store.loading = false;
       store.instanceId = params.id;
+      store.instance = instance;
+      store.instanceState = {
+        isClosed: instance?.dates?.closed,
+        isArchived: instance.dates?.archived,
+      };
       render();
     } catch (err) {
       await addErrorAlert(err.code ? t(`errorCode${err.code}`) : err.message);
@@ -156,6 +166,44 @@ export default function Result() {
     );
   }
 
+  const onCloseFeedback = async (closed) => {
+    const newDates = {
+      closed: closed ? new Date() : null,
+    };
+    if (dayjs(store.instance.dates.close).isBefore(dayjs())) {
+      newDates.close = null;
+    }
+    try {
+      await mutateAsync({ id: store.instanceId, dates: newDates });
+      addSuccessAlert(closed ? t('closeAction.closedFeedback') : t('closeAction.openedFeedback'));
+    } catch (e) {
+      addErrorAlert(
+        closed ? t('closeAction.errorClosingFeedback') : t('closeAction.errorOpeningFeedback')
+      );
+    }
+  };
+
+  const onArchiveFeedback = async (archived) => {
+    const newDates = {
+      archived: archived ? new Date() : null,
+      // TODO: Do not close if not closable
+      closed: archived && !store.instance.dates.deadline ? new Date() : undefined,
+    };
+
+    try {
+      await mutateAsync({ id: store.instanceId, dates: newDates });
+      addSuccessAlert(
+        archived ? t('archiveAction.archivedFeedback') : t('archiveAction.unarchiedFeedback')
+      );
+    } catch (e) {
+      addErrorAlert(
+        archived
+          ? t('archiveAction.errorArchivingFeedback')
+          : t('archiveAction.errorUnarchivingFeedback')
+      );
+    }
+  };
+
   React.useEffect(() => {
     if (params.id) init();
   }, [params.id]);
@@ -165,22 +213,38 @@ export default function Result() {
   return (
     <Stack justifyContent="center" fullWidth className={classes.root}>
       <Stack direction="column" spacing={4} className={classes.container}>
-        <Stack justifyContent="flex-end" spacing={3}>
-          <Button
-            variant="outline"
-            rightIcon={<DownloadIcon />}
-            onClick={() => downloadDatasheet('csv')}
-          >
-            CSV
-          </Button>
-          <Button
-            variant="outline"
-            rightIcon={<DownloadIcon />}
-            onClick={() => downloadDatasheet('xls')}
-          >
-            XLS
-          </Button>
-        </Stack>
+        {isTeacher && (
+          <Stack justifyContent="space-between">
+            <Stack spacing={5}>
+              <Switch
+                label={t('closeFeedback')}
+                checked={store.instanceState.isClosed}
+                onChange={onCloseFeedback}
+              />
+              <Switch
+                label={t('archiveFeedback')}
+                checked={store.instanceState.isArchived}
+                onChange={onArchiveFeedback}
+              />
+            </Stack>
+            <Stack spacing={3}>
+              <Button
+                variant="outline"
+                rightIcon={<DownloadIcon />}
+                onClick={() => downloadDatasheet('csv')}
+              >
+                CSV
+              </Button>
+              <Button
+                variant="outline"
+                rightIcon={<DownloadIcon />}
+                onClick={() => downloadDatasheet('xls')}
+              >
+                XLS
+              </Button>
+            </Stack>
+          </Stack>
+        )}
         <Box className={classes.resultHeader}>
           <Title order={5} role="productive" color="quartiary">
             {t('feedback')}
