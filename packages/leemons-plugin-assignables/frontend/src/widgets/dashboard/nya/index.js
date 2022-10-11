@@ -137,6 +137,7 @@ export default function NYA({ classe, program }) {
     const q = {
       limit: 9,
       archived: false,
+      sortBySeverity: true,
     };
 
     if (classe) {

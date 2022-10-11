@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'assignableInstances',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     assignable: {
       type: 'string',
