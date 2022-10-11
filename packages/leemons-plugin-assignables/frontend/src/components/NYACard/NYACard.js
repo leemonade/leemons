@@ -6,6 +6,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Link } from 'react-router-dom';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
@@ -312,22 +313,18 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     icon: subjectData.icon,
   };
 
-  let onClick = () => window.open(`/private/assignables/details/${instance.id}`, '_blank');
-
   const roleDetails = instance?.assignable?.roleDetails;
 
-  if (!isTeacher) {
-    if (!object.finished) {
-      const activityUrl = roleDetails.studentDetailUrl
-        .replace(':id', instance.id)
-        .replace(':user', object.user);
-      onClick = () => window.open(activityUrl, '_blank');
-    } else {
-      const revisionUrl = roleDetails.evaluationDetailUrl
-        .replace(':id', instance.id)
-        .replace(':user', object.user);
-      onClick = () => window.open(revisionUrl, '_blank');
-    }
+  let url;
+  if (isTeacher) {
+    url = (roleDetails.dashboardUrl || '/private/assignables/details/:id').replace(
+      ':id',
+      instance.id
+    );
+  } else if (!object.finished) {
+    url = roleDetails.studentDetailUrl.replace(':id', instance.id).replace(':user', object.user);
+  } else {
+    url = roleDetails.evaluationDetailUrl.replace(':id', instance.id).replace(':user', object.user);
   }
 
   return {
@@ -337,7 +334,7 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     subject: showSubject ? subject : null,
     isNew: object?.timestamps?.open === undefined && !isTeacher,
     asset: prepareAsset(instance.assignable.asset),
-    onClick,
+    url,
   };
 }
 
@@ -405,52 +402,52 @@ export default function NYACard({ instance, showSubject, labels: _labels, classD
   }
 
   return (
-    <Box
-      key={preparedInstance?.id}
-      style={{
-        cursor: 'pointer',
-        height: '100%',
-      }}
-      onClick={preparedInstance?.onClick}
-    >
-      <LibraryCard
-        fullHeight
-        asset={{
-          ...preparedInstance?.asset,
-          hideDashboardIcons: true,
+    <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
+      <Box
+        key={preparedInstance?.id}
+        style={{
+          height: '100%',
         }}
-        variant="assigment"
-        role={isTeacher ? 'teacher' : 'student'}
-        dashboard
-        shadow
-        locale={locale}
-        assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
-        deadlineProps={preparedInstance?.deadlineProps}
-        subject={preparedInstance?.subject}
-        badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
-        variantTitle={
-          labels?.roles?.[preparedInstance?.assignable?.role]?.singular ||
-          preparedInstance?.assignable?.role
-        }
-        variantIcon={
-          <Box
-            style={{
-              position: 'relative',
-            }}
-          >
-            <ImageLoader
+      >
+        <LibraryCard
+          fullHeight
+          asset={{
+            ...preparedInstance?.asset,
+            hideDashboardIcons: true,
+          }}
+          variant="assigment"
+          role={isTeacher ? 'teacher' : 'student'}
+          dashboard
+          shadow
+          locale={locale}
+          assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
+          deadlineProps={preparedInstance?.deadlineProps}
+          subject={preparedInstance?.subject}
+          badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
+          variantTitle={
+            labels?.roles?.[preparedInstance?.assignable?.role]?.singular ||
+            preparedInstance?.assignable?.role
+          }
+          variantIcon={
+            <Box
               style={{
-                width: 12,
-                height: 12,
                 position: 'relative',
               }}
-              width={12}
-              height={12}
-              src={preparedInstance?.assignable?.roleDetails?.icon}
-            />
-          </Box>
-        }
-      />
-    </Box>
+            >
+              <ImageLoader
+                style={{
+                  width: 12,
+                  height: 12,
+                  position: 'relative',
+                }}
+                width={12}
+                height={12}
+                src={preparedInstance?.assignable?.roleDetails?.icon}
+              />
+            </Box>
+          }
+        />
+      </Box>
+    </Link>
   );
 }
