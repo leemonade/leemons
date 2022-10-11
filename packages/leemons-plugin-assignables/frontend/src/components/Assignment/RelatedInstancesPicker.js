@@ -181,7 +181,6 @@ function ActivityItem({ instance, class: klass, ...props }) {
         </Box>
 
         <Text color="secondary">{klass.name}</Text>
-        <Text></Text>
       </Box>
     </Box>
   );

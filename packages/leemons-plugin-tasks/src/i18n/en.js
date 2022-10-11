@@ -380,6 +380,7 @@ module.exports = {
     },
     statement_step: {
       statement: 'Statement',
+      presentation: 'Presentation',
       curriculum: {
         title: 'Curriculum',
         content: 'Content',

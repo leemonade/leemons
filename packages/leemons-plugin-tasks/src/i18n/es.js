@@ -369,6 +369,7 @@ module.exports = {
     },
     statement_step: {
       statement: 'Enunciado',
+      presentation: 'Presentación',
       curriculum: {
         title: 'Curriculum',
         content: 'Contenido',
