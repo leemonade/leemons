@@ -105,18 +105,18 @@ export default function Development(props) {
           icon="/public/tests/blank-questions.png"
           styles={styles}
           withRedColor={
-            !store.config.canOmitQuestions || (!store.config.canOmitQuestions && store.config.omit)
+            !store.config.canOmitQuestions || (store.config.canOmitQuestions && store.config.omit)
           }
           label={
             // eslint-disable-next-line no-nested-ternary
-            !store.config.canOmitQuestions
-              ? t('noBlankQuestions')
-              : store.config.omit
-              ? t('blankQuestionsScores', {
-                  per: store.config.omit,
-                  points: store.questionsInfo.perOmitQuestion,
-                })
-              : t('blankQuestions')
+            store.config.canOmitQuestions
+              ? store.config.omit
+                ? t('blankQuestionsScores', {
+                    per: store.config.omit,
+                    points: store.questionsInfo.perOmitQuestion,
+                  })
+                : t('blankQuestions')
+              : t('noBlankQuestions')
           }
         />
       </Box>

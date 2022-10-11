@@ -147,12 +147,13 @@ export default function StatementStep({ assignation, localizations: _labels }) {
   const { data: supportImage } = useSupportImage(assignable);
 
   const showCurriculum = instance.curriculum;
+  const isGradable = assignable.gradable;
 
   return (
     <ContextContainer>
       <ContextContainer>
         <Title order={2} color="primary">
-          {labels?.statement}
+          {isGradable ? labels?.statement : labels?.presentation}
         </Title>
         <HtmlText>{assignable?.statement}</HtmlText>
         {!!supportImage && <ImageLoader src={supportImage.url} height="auto" />}

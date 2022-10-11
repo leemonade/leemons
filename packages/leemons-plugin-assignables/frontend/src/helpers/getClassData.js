@@ -20,10 +20,11 @@ export default async function getClassData(classes, labels = { multiSubject: 'Mu
     id: klass,
     name:
       labels?.groupName ||
-      `${data?.subject?.name} - ${data?.groups?.name}` ||
-      data?.groups?.abbreviation,
+      `${data?.subject?.name} ${
+        data?.groups?.isAlone ? '' : `- ${data?.groups?.name}` || `- ${data?.groups?.abbreviation}`
+      }`,
     subjectName: data?.subject?.name,
-    groupName: labels?.groupName || data?.groups?.name,
+    groupName: labels?.groupName || data?.groups?.isAlone ? '' : data?.groups?.name,
     icon: getClassIcon(data),
     color: data?.color,
   };

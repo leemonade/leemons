@@ -23,7 +23,7 @@ function downloadFile(data, name) {
   downloadURL(url, name);
 }
 
-export const createDatasheet = async (title, questions, instanceId, format, timeMarkerLabel) => {
+export const createDatasheet = async (title, questions, instanceId, format, labels) => {
   const wb = new Workbook();
   const feedbackResponsesWithTime = await getFeedbackResultsWithTime(instanceId);
 
@@ -42,7 +42,7 @@ export const createDatasheet = async (title, questions, instanceId, format, time
 
   const firstCell = workSheet.getCell(1, 1);
   const firstColumn = workSheet.getColumn(1);
-  firstCell.value = timeMarkerLabel;
+  firstCell.value = labels.timeMarkerLabel;
   firstColumn.width = 20;
 
   questions.forEach((question, index) => {
@@ -67,29 +67,28 @@ export const createDatasheet = async (title, questions, instanceId, format, time
         ([, aValue], [, bValue]) => aValue.order - bValue.order
       );
       valueResponses.forEach(([questionKey, { value: questionValue }]) => {
-        const { type, properties } = questionsById[questionKey][0];
+        const {
+          type,
+          properties: { responses, withImages },
+        } = questionsById[questionKey][0];
+        const property = withImages ? 'imageDescription' : 'response';
         if (type === 'openResponse' || type === 'netPromoterScore')
           contentArray.push(questionValue.toString());
         else if (type === 'likertScale') contentArray.push(`${questionValue + 1}`);
         else if (type === 'singleResponse') {
-          if (properties.withImages)
-            contentArray.push(properties.responses[questionValue].value.imageDescription);
-          else contentArray.push(properties.responses[questionValue].value.response);
+          const responseValue =
+            responses[questionValue].value[property] || `${labels.option} ${index + 1}`;
+          contentArray.push(responseValue);
         } else if (type === 'multiResponse') {
           const sortedValues = questionValue.sort((a, b) => a - b);
-          if (properties.withImages) {
-            contentArray.push(
-              sortedValues
-                .map((selectedValue) => properties.responses[selectedValue].value.imageDescription)
-                .join(', ')
-            );
-          } else {
-            contentArray.push(
-              sortedValues
-                .map((selectedValue) => properties.responses[selectedValue].value.response)
-                .join(', ')
-            );
-          }
+          contentArray.push(
+            sortedValues
+              .map(
+                (selectedValue, i) =>
+                  responses[selectedValue].value[property] || `${labels.option} ${i + 1}`
+              )
+              .join(', ')
+          );
         } else contentArray.push('');
       });
       contentArray.forEach((contentValue, contentIndex) => {

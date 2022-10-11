@@ -157,13 +157,10 @@ export default function Result() {
   }
 
   function downloadDatasheet(format) {
-    createDatasheet(
-      store.feedback.name,
-      store.feedback.questions,
-      store.instanceId,
-      format,
-      t('timeMarker')
-    );
+    createDatasheet(store.feedback.name, store.feedback.questions, store.instanceId, format, {
+      timeMarkerLabel: t('timeMarker'),
+      option: t('optionPlaceholder'),
+    });
   }
 
   const onCloseFeedback = async (closed) => {
