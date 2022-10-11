@@ -20,6 +20,7 @@ export * from './linkify';
 export * from './isValidHttpUrl';
 export * from './useCache';
 export * from './stringMatch';
+export * from './components';
 
 function htmlToText(html) {
   const el = document.createElement('div');

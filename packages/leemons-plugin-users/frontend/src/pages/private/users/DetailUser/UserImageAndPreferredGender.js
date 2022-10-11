@@ -7,9 +7,9 @@ import {
   createStyles,
   InputWrapper,
   Select,
+  ModalZoom,
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { ModalZoom } from '@common/ModalZoom';
 import { useStore } from '@common';
 import { Controller } from 'react-hook-form';
 import { updateUserImageRequest } from '@users/request';
