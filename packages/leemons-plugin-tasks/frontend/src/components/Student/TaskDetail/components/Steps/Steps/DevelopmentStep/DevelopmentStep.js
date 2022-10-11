@@ -28,6 +28,7 @@ function _DevelopmentText({ text, style, classes }, ref) {
         zIndex: style?.zIndex,
       }}
       ref={ref}
+      bordered
     >
       <HtmlText>{text}</HtmlText>
     </Paper>
