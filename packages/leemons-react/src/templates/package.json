@@ -7,7 +7,7 @@
     "./plugins/*"
   ],
   "dependencies": {
-    "@bubbles-ui/components": "^1.0.39",
+    "@bubbles-ui/components": "^1.0.42",
     "@loadable/component": "^5.0.0",
     "p-min-delay": "^4.0.0",
     "react": "^17.0.2",
