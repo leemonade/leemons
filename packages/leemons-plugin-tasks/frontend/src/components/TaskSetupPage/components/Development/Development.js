@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-import { HtmlText, InputWrapper, TableInput } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { InputWrapper, TableInput } from '@bubbles-ui/components';
+import { TextEditorInput, TextEditorViewer } from '@common/components';
 import useTableInputLabels from '@tasks/helpers/useTableInputLabels';
 
 export default function Development({ name, label, placeholder, required }) {
@@ -15,7 +15,7 @@ export default function Development({ name, label, placeholder, required }) {
       Header: '',
       accessor: 'development',
       input: { node: <TextEditorInput placeholder={placeholder} />, rules: { required: true } },
-      valueRender: (value) => <HtmlText>{value}</HtmlText>,
+      valueRender: (value) => <TextEditorViewer>{value}</TextEditorViewer>,
     },
   ]);
 

@@ -42,7 +42,10 @@ const LibraryPlayer = ({
     if (display === 'embed') {
       return (
         <Box style={{ width: widthProp }}>
-          <LibraryCardEmbed asset={asset} />
+          <LibraryCardEmbed
+            asset={asset}
+            variant={asset.fileType === 'bookmark' ? 'bookmark' : 'media'}
+          />
         </Box>
       );
     }
@@ -85,7 +88,7 @@ style={{
             display: 'flex',
             justifyContent: align,
             marginTop: 20,
-            margiBottom: 20,
+            marginBottom: 20,
             marginLeft: ['left'].includes(align) ? 0 : 20,
             marginRight: ['right'].includes(align) ? 0 : 20,
           }}

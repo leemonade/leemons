@@ -9,7 +9,7 @@ import {
   TabPanel,
   Tabs,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@common/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';

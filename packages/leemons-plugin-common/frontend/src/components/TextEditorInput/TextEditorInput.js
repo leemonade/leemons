@@ -77,7 +77,11 @@ const TextEditorInput = ({
         >
           {toolbars.color && <ColorTool />}
           {toolbars.style && <TransformsTool />}
-          {leemonsTools.map((item) => React.cloneElement(item.tool))}
+
+          {leemonsTools.map((item, i) => (
+            <React.Fragment key={item.tool.id || `t-${i}`}>{item.tool}</React.Fragment>
+          ))}
+
           {toolbars.link && <LinkTool />}
           {toolbars.heading && <HeadingsTool paragraph={false} />}
           {toolbars.list && <ListIndentTool />}

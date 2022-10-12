@@ -496,8 +496,6 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     console.error(e);
   }
 
-  console.log('instances', instances);
-
   const instancesById = _.keyBy(instances, 'id');
   const assignationsByInstance = _.keyBy(assignations, 'instance');
 

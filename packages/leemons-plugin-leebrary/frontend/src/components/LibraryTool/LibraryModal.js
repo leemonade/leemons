@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
+  ActionButton,
   Button,
   ContextContainer,
   RadioGroup,
   Select,
   Stack,
   TextInput,
+  Paper,
+  useViewportSize,
 } from '@bubbles-ui/components';
+import { LibraryItem } from '@bubbles-ui/leemons';
 import {
   EditorLeftAlignIcon,
   EditorRightAlignIcon,
   EditorCenterAlignIcon,
 } from '@bubbles-ui/icons/solid';
+import { RemoveIcon, AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { isFunction } from 'lodash';
 import { useTextEditor } from '@bubbles-ui/editors';
 import { prepareAsset } from '../../helpers/prepareAsset';
@@ -54,9 +59,14 @@ export const LIBRARY_MODAL_PROP_TYPES = {
 };
 
 const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange, ...props }) => {
-  const { libraryContent } = useTextEditor();
+  const { currentTool } = useTextEditor();
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
-  const [asset, setAsset] = useState(null);
+  const [asset, setAsset] = useState(currentTool.data.asset);
+  const [assetType, setAssetType] = useState('');
+
+  // SIZE ·····················································
+  const { width: viewportWidth } = useViewportSize();
+  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 600), [viewportWidth]);
 
   const {
     control,
@@ -64,7 +74,11 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues: { ...libraryContent },
+    defaultValues: {
+      width: currentTool.data.width || '100%',
+      display: currentTool.data.display || 'card',
+      align: currentTool.data.align || 'left',
+    },
   });
 
   const watchInputs = watch(['width', 'display', 'align']);
@@ -75,7 +89,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
   // HANDLERS
 
   const submitHandler = (values) => {
-    console.log('submitHandler > values:', values);
+    // console.log('submitHandler > values:', values);
     if (isFunction(onChange)) onChange({ ...values, asset });
   };
 
@@ -90,6 +104,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
   const handleOnSelectAsset = (item) => {
     const preparedAsset = prepareAsset(item);
     setAsset(preparedAsset);
+    setAssetType('');
     setShowAssetDrawer(false);
   };
 
@@ -101,11 +116,26 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
       <Box style={{ padding: 16, paddingBottom: 18 }}>
         <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
           <ContextContainer>
-            {!asset ? (
-              <Button onClick={() => setShowAssetDrawer(true)}>Añadir</Button>
-            ) : (
-              <Button onClick={() => setAsset(null)}>Borrar {asset.name}</Button>
-            )}
+            <Paper bordered padding={1} shadow="none">
+              {!asset ? (
+                <Button
+                  variant="light"
+                  onClick={() => setShowAssetDrawer(true)}
+                  compact
+                  leftIcon={<AddCircleIcon height={16} width={16} />}
+                >
+                  Añadir
+                </Button>
+              ) : (
+                <Stack justifyContent="space-between" alignItems="center">
+                  <LibraryItem asset={asset} />
+                  <ActionButton
+                    icon={<RemoveIcon height={16} width={16} />}
+                    onClick={() => setAsset(null)}
+                  />
+                </Stack>
+              )}
+            </Paper>
             <Controller
               name="width"
               control={control}
@@ -148,9 +178,9 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
                   size="xs"
                   label={labels.align}
                   data={[
-                    { value: 'left', icon: <EditorLeftAlignIcon /> },
-                    { value: 'center', icon: <EditorCenterAlignIcon /> },
-                    { value: 'right', icon: <EditorRightAlignIcon /> },
+                    { value: 'left', icon: <EditorLeftAlignIcon height={16.5} width={16} /> },
+                    { value: 'center', icon: <EditorCenterAlignIcon height={16.5} width={16} /> },
+                    { value: 'right', icon: <EditorRightAlignIcon height={16.5} width={16} /> },
                   ]}
                 />
               )}
@@ -160,7 +190,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
                 {labels.cancel}
               </Button>
               <Button size="xs" type="submit" disabled={disableCondition()}>
-                {libraryContent.editing ? labels.update : labels.add}
+                {currentTool.editing ? labels.update : labels.add}
               </Button>
             </Stack>
           </ContextContainer>
@@ -168,10 +198,18 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
       </Box>
 
       <AssetListDrawer
+        creatable
+        canChangeType
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
-        creatable
+        size={drawerSize}
+        shadow={drawerSize <= 600}
+        assetType={assetType}
+        onTypeChange={setAssetType}
+        onlyThumbnails={false}
+        allowChangeCategories={['bookmarks', 'media-files']}
+        itemMinWidth={200}
       />
     </Box>
   );

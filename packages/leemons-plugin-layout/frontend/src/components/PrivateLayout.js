@@ -65,8 +65,6 @@ const PrivateLayout = ({ children }) => {
     }
   };
 
-  useEffect(() => console.log('PrivateLayout >> theme:', theme), [theme]);
-
   useEffect(() => {
     if (!layoutState.menuWidth) {
       setState({ menuWidth: MAIN_NAV_WIDTH });

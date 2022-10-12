@@ -47,10 +47,7 @@ function BranchBlockCodeAutocomposed({ ...props }) {
             <TagifyInput
               value={field.value}
               error={errors.codeText}
-              onChange={(e) => {
-                console.log(e);
-                field.onChange(e.detail.value);
-              }}
+              onChange={(e) => field.onChange(e.detail.value)}
               settings={{
                 mode: 'mix',
                 pattern: /@/,

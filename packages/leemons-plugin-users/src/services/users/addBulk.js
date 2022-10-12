@@ -90,7 +90,6 @@ async function addUserBulk(
       },
       { transacting }
     );
-    console.log(userAgent);
     await leemons.events.emit('user-agent:restore', { userAgent, transacting });
   }
 
