@@ -10,6 +10,7 @@ import {
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { TextEditorViewer } from '@common/components';
 import LimitedTimeAlert from '../../../LimitedTimeAlert';
 import { AnimatedPane } from './AnimatedPane';
 
@@ -30,7 +31,7 @@ function _DevelopmentText({ text, style, classes }, ref) {
       ref={ref}
       bordered
     >
-      <HtmlText>{text}</HtmlText>
+      <TextEditorViewer>{text}</TextEditorViewer>
     </Paper>
   );
 }
@@ -64,6 +65,7 @@ const useDevelopmentStepStyles = createStyles((theme, { marginTop }) => {
       height: '100%',
       width: '100%',
       overflowY: 'auto',
+      overflowX: 'hidden',
     },
   };
 });

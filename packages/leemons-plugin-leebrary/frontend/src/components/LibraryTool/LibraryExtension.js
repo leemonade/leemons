@@ -1,10 +1,21 @@
 /* eslint-disable import/prefer-default-export */
 import { Node, ReactNodeViewRenderer, mergeAttributes } from '@bubbles-ui/editors';
 import { keys, isEmpty } from 'lodash';
+import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { IMAGE_ASSET, VIDEO_ASSET, AUDIO_ASSET, URL_ASSET } from './mock/data';
 import { LibraryPlayer } from './LibraryPlayer';
 
 const ASSET_KEYS = keys({ ...VIDEO_ASSET, ...AUDIO_ASSET, ...IMAGE_ASSET, ...URL_ASSET });
+
+function appendAuthorizationToUrl(url) {
+  const authTokens = getAuthorizationTokenForAllCenters();
+
+  const _url = new URL(url.startsWith('http') ? url : window.location.origin + url);
+
+  _url.searchParams.set('authorization', authTokens);
+
+  return _url.href;
+}
 
 export const LibraryExtension = Node.create({
   name: 'library', // unique name for the Node
@@ -66,6 +77,8 @@ export const LibraryExtension = Node.create({
           }, {});
 
           if (!isEmpty(asset)) {
+            asset.url = appendAuthorizationToUrl(asset.url);
+            asset.cover = appendAuthorizationToUrl(asset.cover);
             asset.tags = asset.tags ? JSON.parse(asset.tags) : [];
             asset.metadata = asset.metadata ? JSON.parse(asset.metadata) : [];
             asset.fileType = asset.fileType || asset.filetype;
