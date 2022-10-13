@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { Popover } from '@bubbles-ui/components';
@@ -16,13 +16,8 @@ export const LIBRARY_TOOL_PROP_TYPES = {
 };
 
 const LibraryTool = ({ label, ...props }) => {
-  const { editor, readOnly, libraryModalOpened, editLibrary, closeLibraryModal, libraryContent } =
+  const { editor, readOnly, toolModalOpen, currentTool, editToolData, closeToolModal } =
     useTextEditor();
-
-  React.useEffect(
-    () => console.log('libraryModalOpened:', libraryModalOpened),
-    [libraryModalOpened]
-  );
 
   const handleOnChange = (content) => {
     // console.log('>>> LibraryTool > onSetContent:', content);
@@ -31,21 +26,30 @@ const LibraryTool = ({ label, ...props }) => {
       editor.chain().focus().setLibrary(content).run();
     }
 
-    closeLibraryModal();
+    closeToolModal();
   };
 
   const handleOnEdit = () => {
     const content = editor.getAttributes('library');
     // console.log('>>> LibraryTool > handleOnEdit:', content);
-    editLibrary(!isEmpty(content) ? content : libraryContent);
+    editToolData(
+      'library',
+      !isEmpty(content) ? content : currentTool.data,
+      !isEmpty(content.asset)
+    );
   };
+
+  const libraryModalOpened = useMemo(
+    () => currentTool.type === 'library' && toolModalOpen,
+    [currentTool, toolModalOpen]
+  );
 
   if (readOnly) return null;
 
   return (
     <Popover
       opened={libraryModalOpened}
-      onClose={() => console.log('LibraryModal cerrada')}
+      onClose={() => {}}
       width={360}
       position="bottom"
       placement="start"
@@ -73,7 +77,7 @@ const LibraryTool = ({ label, ...props }) => {
           width: 'Campo requerido',
           display: 'Campo requerido',
         }}
-        onCancel={() => closeLibraryModal()}
+        onCancel={() => closeToolModal()}
         onChange={handleOnChange}
       />
     </Popover>

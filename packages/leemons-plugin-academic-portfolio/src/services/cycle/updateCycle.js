@@ -6,7 +6,7 @@ async function updateCycle(data, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateCycle(data, { transacting });
-      console.log(data);
+
       const { id, managers, ..._data } = data;
 
       const [cycle] = await Promise.all([

@@ -151,7 +151,7 @@ function validateAddProgram(data) {
     if (!data.useDefaultSubstagesName) {
       validator = new LeemonsValidator(addProgramSubstage2Schema);
 
-      console.log(data.substages);
+      // console.log(data.substages);
       if (!validator.validate(data)) {
         throw validator.error;
       }
@@ -461,7 +461,6 @@ const addGroupSchema = {
 };
 
 async function validateAddGroup(data, { transacting } = {}) {
-  console.log('validateAddGroup');
   const validator = new LeemonsValidator(addGroupSchema);
 
   if (!validator.validate(data)) {

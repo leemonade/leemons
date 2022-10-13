@@ -29,7 +29,6 @@ const addUsersBulkSchema = {
 };
 
 function validateAddUsersBulkForm(data) {
-  console.log(data.users[0]);
   const validator = new LeemonsValidator(addUsersBulkSchema);
 
   if (!validator.validate(data)) {

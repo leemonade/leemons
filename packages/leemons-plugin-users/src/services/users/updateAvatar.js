@@ -13,7 +13,6 @@ async function updateAvatar(userId, avatar, { transacting: _transacting } = {}) 
           transacting,
         });
 
-        console.log(url);
         leemons.socket.emitToAll('USER_CHANGE_AVATAR', { url });
       }
 

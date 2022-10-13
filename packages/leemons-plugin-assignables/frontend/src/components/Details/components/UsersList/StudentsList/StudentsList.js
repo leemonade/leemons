@@ -44,7 +44,7 @@ export default function StudentsList({ labels, instance, students }) {
       onConfirm: async () => {
         try {
           const { rememberType } = store;
-          console.log(instance);
+          // console.log(instance);
           await sendReminder({
             assignableInstanceId: instance.id,
             type: rememberType,

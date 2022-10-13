@@ -122,7 +122,8 @@ const AssetList = ({
     [onlyThumbnails, category]
   );
 
-  useEffect(() => console.log(assetType), [assetType]);
+  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
+
   // ·········································································
   // DATA PROCESSING
 
@@ -498,7 +499,6 @@ const AssetList = ({
   }, [category]);
 
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
-  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
   const toggleDetail = (val) => {
     if (!val) {
@@ -677,6 +677,7 @@ const AssetList = ({
               variant={isEmbedded ? 'default' : 'filled'}
               onChange={setSearhCriteria}
               value={searchCriteria}
+              disabled={loading}
             />
           )}
           {!isEmpty(assetTypes) && canChangeType && (
@@ -686,6 +687,7 @@ const AssetList = ({
               value={assetType}
               onChange={handleOnTypeChange}
               placeholder={t('labels.resourceTypes')}
+              disabled={loading}
             />
           )}
         </Stack>
@@ -704,14 +706,19 @@ const AssetList = ({
 
       {/* CATEGORY RADIO GROUP ···· */}
       {allowChangeCategories !== false && !isNil(categories) && !isEmpty(categories) && (
-        <Box skipFlex sx={(theme) => ({ marginTop: theme.spacing[5] })}>
-          <RadioGroup
-            data={categoriesRadioData}
-            variant="icon"
-            onChange={handleOnChangeCategory}
-            value={category.key}
-            fullWidth
-          />
+        <Box
+          skipFlex
+          sx={(theme) => ({ marginTop: theme.spacing[5] })}
+          style={{ cursor: loading ? 'wait' : 'default'}}>
+          <Box style={{ pointerEvents: loading ? 'none' : 'auto'}}>
+            <RadioGroup
+              data={categoriesRadioData}
+              variant="icon"
+              onChange={handleOnChangeCategory}
+              value={category.key}
+              fullWidth
+            />
+          </Box>
         </Box>
       )}
 
