@@ -521,6 +521,10 @@ function sortByDates(instances, datesToSort) {
 }
 
 function getInstanceGroup(instance, instances) {
+  if (!instance) {
+    return null;
+  }
+
   const group = [instance];
 
   group.push(
@@ -529,7 +533,7 @@ function getInstanceGroup(instance, instances) {
     )
   );
 
-  return group;
+  return group.filter(Boolean);
 }
 
 module.exports = async function searchAssignableInstances(
