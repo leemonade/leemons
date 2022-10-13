@@ -34,29 +34,6 @@ async function events(isInstalled) {
         await initMenuBuilder();
       }
     );
-    // leemons.events.once('plugins.dashboard:init-widget-zones', async () => {
-    //   await Promise.all(
-    //     _.map(constants.widgets.zones, (config) =>
-    //       leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
-    //         name: config.name,
-    //         description: config.description,
-    //       })
-    //     )
-    //   );
-    //   leemons.events.emit('init-widget-zones');
-    //   await Promise.all(
-    //     _.map(constants.widgets.items, (config) =>
-    //       leemons
-    //         .getPlugin('widgets')
-    //         .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
-    //           name: config.name,
-    //           description: config.description,
-    //           properties: config.properties,
-    //         })
-    //     )
-    //   );
-    //   leemons.events.emit('init-widget-items');
-    // });
 
     // EN: Register the assignable role
     // ES: Registrar el rol de asignable
@@ -68,7 +45,7 @@ async function events(isInstalled) {
         studentDetailUrl: '/private/tasks/student-detail/:id/:user',
         evaluationDetailUrl: '/private/tasks/correction/:id/:user',
         creatable: true,
-        createUrl: '/private/tasks/create',
+        createUrl: '/private/tasks/library/create',
         canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
         pluralName: { en: 'tasks', es: 'tareas' },
         singularName: { en: 'task', es: 'tarea' },
