@@ -30,6 +30,7 @@ export default function Development({ name, label, placeholder, required }) {
             {...field}
             columns={columns}
             editable
+            resetOnAdd
             // TRANSLATE: Required error label
             error={error && 'This field is required'}
             data={field.value || []}
