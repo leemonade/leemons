@@ -22,7 +22,7 @@ export default function transformEvent(_event, calendars, { t, translate }) {
     event.icon = event.icon || calendar.icon;
     event.bgColor = event.bgColor || calendar.bgColor;
     event.borderColor = event.borderColor || calendar.borderColor;
-    event.calendarName = calendar.name;
+    event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
     if (calendar.isUserCalendar && !classes.length) {
       event.image = calendar.image;
       event.calendarName = null;
