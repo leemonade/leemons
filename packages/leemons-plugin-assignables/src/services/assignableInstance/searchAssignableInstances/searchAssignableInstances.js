@@ -649,7 +649,16 @@ module.exports = async function searchAssignableInstances(
     if (isTeacher) {
       const instancesGroupedByDependencies = instances.reduce((groups, instance) => {
         if (!instance.relatedAssignableInstances?.before?.length) {
-          return [...groups, getInstanceGroup(instance, instancesObject).reverse()];
+          return [
+            ...groups,
+            getInstanceGroup(instancesObject[instance.id], instancesObject).reverse(),
+          ];
+        }
+
+        if (
+          !instance.relatedAssignableInstances?.before.every((before) => instancesObject[before.id])
+        ) {
+          return [...groups, [instance]];
         }
         return groups;
       }, []);
@@ -726,6 +735,15 @@ module.exports = async function searchAssignableInstances(
           if (!instance.relatedAssignableInstances?.before?.length) {
             return [...groups, getInstanceGroup(instancesObject[instance.id], instancesObject)];
           }
+
+          if (
+            !instance.relatedAssignableInstances?.before.every(
+              (before) => instancesObject[before.id]
+            )
+          ) {
+            return [...groups, [instance]];
+          }
+
           return groups;
         }, []);
 
