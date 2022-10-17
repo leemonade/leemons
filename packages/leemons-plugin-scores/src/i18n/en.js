@@ -1,4 +1,74 @@
 module.exports = {
+  scoresPage: {
+    header: {
+      admin: {
+        title: 'Evaluation Periods',
+        description:
+          'As administrator, it is possible to create custom time periods for teachers to use as evaluation stages, for example, defining the evaluation periods by program and course.',
+      },
+      teacher: {
+        title: 'Evaluation Notebook',
+        description:
+          'Welcome to your evaluation notebook. As a teacher you can do custom searches or use the pre-defined periods created by your center for each program and course.',
+      },
+    },
+    filters: {
+      title: 'Search period',
+      class: {
+        label: 'Class',
+        placeholder: 'Class...',
+      },
+      period: {
+        label: 'Evaluation period',
+        placeholder: 'Evaluation period...',
+        custom: 'Custom period',
+        final: 'Final evaluation',
+      },
+      startDate: {
+        label: 'Start date',
+        placeholder: 'Start date...',
+      },
+      endDate: {
+        label: 'End date',
+        placeholder: 'End date...',
+      },
+    },
+  },
+  reviewPage: {
+    header: {
+      admin: {
+        title: 'Final grades',
+        description:
+          'As administrator, it is possible to create custom time periods for teachers to use as evaluation stages, for example, defining the evaluation periods by program and course.',
+      },
+      teacher: {
+        title: 'Final grades',
+        description:
+          'Welcome to your evaluation notebook. As a teacher you can do custom searches or use the pre-defined periods created by your center for each program and course.',
+      },
+    },
+    filters: {
+      title: 'Search period',
+      program: {
+        label: 'Program',
+        placeholder: 'Select program...',
+      },
+      course: {
+        label: 'Course',
+        placeholder: 'Select course...',
+      },
+      group: {
+        label: 'Group',
+        placeholder: 'Select group...',
+        all: 'All groups',
+      },
+      period: {
+        label: 'Period',
+        placeholder: 'Select period...',
+        all: 'All periods',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Period "{{name}}" removed successfully',
@@ -86,14 +156,18 @@ module.exports = {
       endDate: 'End date',
     },
   },
+  periodTypes: {
+    custom: 'Custom periods',
+    academicCalendar: 'Academic calendar periods',
+  },
   notebook: {
     header: {
       export: 'Download',
     },
     noClassSelected: {
-      title: 'Evaluation Notebook',
+      title: 'Select class and period',
       description:
-        'The Evaluation Notebook is a place where you can evaluate the activities that are not graded and the activities that are graded. Select the program, course, class and then filter by time periods. You can also export these reports to excel or csv.',
+        'Select the class or group and then filter by evaluation periods. You can also export these reports to excel or csv.',
     },
     noResults: {
       title: 'No results',
@@ -111,19 +185,66 @@ module.exports = {
           },
           search: 'Search by {{filterBy.toLowerCase}}',
           nonCalificables: 'See non-qualifiable',
+          evaluationReport: {
+            label: 'Submit evaluation report',
+            disabledTooltip: {
+              invalidPeriod: 'Evaluation reports are only enabled for academic calendar periods',
+              submittedPeriod: 'The period was already submitted',
+            },
+            modal: {
+              title: 'Send report',
+              msg1: "Once the report has been submitted to your organization's administrator/reviewer, the grades for the qualifying activities cannot be changed, so we advise you to review the scores carefully before submitting the report.",
+              msg2: 'Remember that the custom grades per evaluation replace the calculated grades and that these can only be modified by a reviewer/administrator once the report has been submitted.',
+              confirm: 'Send report',
+              cancel: 'Cancel',
+            },
+          },
+          finalReport: {
+            label: 'Submit final report',
+          },
         },
         scoresTable: {
           table: {
             students: 'Students',
             noActivity: 'Not submitted',
             avgScore: 'Average score',
-            gradingTasks: 'Qualifiable activities',
+            calculated: 'Calculated',
+            custom: 'Custom',
             attendance: 'attendance',
           },
           updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",
           updatedError: "Error updating {{student}}'s score in {{activity}} to {{score}}",
         },
+        periodSubmission: {
+          noData: 'There is no data to be reported yet',
+          noPeriod: 'The period must be an academic calendar period',
+          success: 'The period {{period}} was successfully submitted',
+          error: "The period {{period}} can't be submitted: {{error}}",
+        },
       },
+    },
+  },
+  finalNotebook: {
+    filters: {
+      filterBy: {
+        student: 'Student',
+        subject: 'Subject',
+        group: 'Group',
+      },
+      searchBy: 'Search by {{noun}}',
+      hideFutureEvaluations: 'Hide future evaluations',
+    },
+    reviewerTable: {
+      students: 'Students',
+      noActivity: 'Not submitted',
+      avgScore: 'Weighted score',
+      gradingTasks: 'Calculated',
+      customScore: 'Custom',
+    },
+    update: {
+      success: 'Grade updated for {{student}} in {{subject}} to a {{score}}',
+      fail: 'Failed to update grade for {{student}} in {{subject}} to a {{score}}',
+      course: 'Course',
     },
   },
   excel: {

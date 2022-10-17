@@ -76,7 +76,7 @@ const menuItems = [
   {
     item: {
       key: 'program-calendar',
-      order: 1,
+      order: 2,
       parentKey: 'portfolio-calendar',
       url: '/private/academic-calendar/program-calendars',
       label: {

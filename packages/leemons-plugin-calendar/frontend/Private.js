@@ -24,24 +24,22 @@ export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/home`}>
-          <Calendar session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/kanban`}>
-          <Kanban session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/config/calendars/:id`}>
-          <CalendarConfigCalendar session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/config/detail/:id`}>
-          <CalendarConfigDetail session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/config`}>
-          <CalendarConfigList session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/home`}>
+        <Calendar session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/kanban`}>
+        <Kanban session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/config/calendars/:id`}>
+        <CalendarConfigCalendar session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/config/detail/:id`}>
+        <CalendarConfigDetail session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/config`}>
+        <CalendarConfigList session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+    </Switch>
   );
 }

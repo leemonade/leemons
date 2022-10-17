@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text } from '@bubbles-ui/components';
+import { Box, Text, ModalZoom } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
-import { ModalZoom } from '@common/ModalZoom';
 
 export default function QuestionImage(props) {
   const { styles, question, cx, style = 1 } = props;

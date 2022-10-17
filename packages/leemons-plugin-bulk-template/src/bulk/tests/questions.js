@@ -54,7 +54,7 @@ async function importQuestions() {
         properties.explanationInResponses = true;
         properties.explanation = '<p></p>';
       } else {
-        properties.explanation = feedbacks[0] || '';
+        properties.explanation = converter.makeHtml(question.answers_feedback) || '';
       }
 
       // ·····················································
@@ -151,6 +151,7 @@ async function importQuestions() {
       delete question.answers_feedback;
       delete question.answer_correct;
       delete question.answers_images;
+      delete question.answers_feedback_image;
 
       items[key] = question;
       questions.push(question);

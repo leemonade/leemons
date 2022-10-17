@@ -265,14 +265,12 @@ function BranchBlockGroup2({ ...props }) {
 
   const whitelist = React.useMemo(
     () =>
-      getValues('columns').map((item) => ({
+      (getValues('columns') || []).map((item) => ({
         ...item,
         value: item.name,
       })),
     [watch('columns')]
   );
-
-  console.log(whitelist);
 
   if (firstStepDone) {
     return (

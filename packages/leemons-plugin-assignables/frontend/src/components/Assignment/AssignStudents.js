@@ -12,6 +12,8 @@ export default function AssignStudents({
   onChange,
   assignable,
   defaultValue,
+  showResultsCheck,
+  showCorrectAnswersCheck,
   ...props
 }) {
   const form = useForm({
@@ -62,6 +64,8 @@ export default function AssignStudents({
                   defaultValue={defaultValue}
                   labels={labels}
                   profile={profile}
+                  showResultsCheck={showResultsCheck}
+                  showCorrectAnswersCheck={showCorrectAnswersCheck}
                 />
               )}
             />
@@ -82,4 +86,5 @@ AssignStudents.propTypes = {
     type: PropTypes.string,
     assignee: PropTypes.arrayOf(PropTypes.string),
   }),
+  showResultsCheck: PropTypes.bool,
 };

@@ -3,7 +3,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const ora = require('ora');
 const chalk = require('chalk');
 const webpackConfig = require('./webpack.config');
-const parseWebpackMessage = require('./parseWebpackMessage');
+const { parseWebpackMessage } = require('./parseWebpackMessage');
 
 module.exports = async function startDevServer({ app, build, alias, publicFiles }) {
   const config = webpackConfig({ app, build, alias, publicFiles, isDev: true });

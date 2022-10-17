@@ -19,6 +19,15 @@ export * from './numberToEncodedLetter';
 export * from './linkify';
 export * from './isValidHttpUrl';
 export * from './randomString';
+export * from './useCache';
+export * from './stringMatch';
+export * from './components';
+
+function htmlToText(html) {
+  const el = document.createElement('div');
+  el.innerHTML = html;
+  return el.innerText;
+}
 
 export {
   formWithTheme,
@@ -27,4 +36,5 @@ export {
   unflatten,
   useRequestErrorMessage,
   getRequestErrorMessage,
+  htmlToText,
 };

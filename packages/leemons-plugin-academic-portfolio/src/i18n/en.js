@@ -96,7 +96,8 @@ module.exports = {
           title: 'Courses',
           oneCourseOnly: 'This program takes one course only',
           hideCoursesInTree: 'Hidden courses in the tree (subjects not nested behind courses)',
-          moreThanOneAcademicYear: 'The same subject may be offered in more than one academic year',
+          moreThanOneAcademicYear:
+            'There are subjects that are offered in several courses simultaneously',
           maxNumberOfCourses: 'Number of courses',
           courseCredits: 'Credits per course',
           courseSubstage: 'Course substages',
@@ -255,6 +256,7 @@ module.exports = {
       color: 'Color',
       colorRequired: 'Required field',
       group: 'Group',
+      groupRequired: 'Required field',
       substage: 'Sub-stage',
       seats: 'Seats',
       classroom: 'Classroom',

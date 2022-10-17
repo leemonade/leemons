@@ -264,6 +264,7 @@ async function upload(file, { name }, { transacting } = {}) {
     type,
     extension,
     uri: '',
+    size: fileSize,
     metadata: JSON.stringify(metadata),
   };
 

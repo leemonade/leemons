@@ -4,6 +4,7 @@ import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/compo
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useLayout } from '@layout/context';
 import useSearchAssignableInstances from '../../../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useParseAssignations from '../../hooks/useParseAssignations';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
@@ -119,6 +120,7 @@ function useAssignmentsColumns({ variant } = {}) {
 export default function ActivitiesList({ filters, subjectFullLength = true }) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+  const { theme: themeLayout } = useLayout();
 
   const query = useMemo(() => {
     const q = {};
@@ -154,13 +156,17 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     return q;
   }, [filters]);
 
-  const [, translations] = useTranslateLoader(prefixPN('pagination'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('pagination'),
+    prefixPN('activities_list'),
+  ]);
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
         pagination: _.get(res, prefixPN('pagination')),
+        activitiesList: _.get(res, prefixPN('activities_list')),
       };
     }
 
@@ -220,9 +226,10 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
           gap: theme.spacing[1],
         })}
       >
-        <ImageLoader src={EmptyState} width={142} height={149} />
-        {/* TRANSLATE: Translate empty state */}
-        <Text color="primary">No hay actividades programadas</Text>
+        {themeLayout.usePicturesEmptyStates && (
+          <ImageLoader src={EmptyState} width={142} height={149} />
+        )}
+        <Text color="primary">{labels.activitiesList?.emptyState}</Text>
       </Box>
     );
   }

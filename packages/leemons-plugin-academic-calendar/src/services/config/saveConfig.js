@@ -19,7 +19,6 @@ async function saveConfig(data, { transacting: _transacting } = {}) {
       delete data.allDaysHaveSameHours;
       delete data.deleted;
       delete data.id;
-      console.log(data);
       validateSaveConfig(data);
       await table.config.set(
         { program: data.program },

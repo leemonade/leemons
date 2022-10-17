@@ -40,7 +40,6 @@ const BookmarkBasicData = ({
 
   const preparedAsset = useMemo(() => {
     if (assetProp) {
-      console.log(assetProp);
       return prepareAsset(assetProp);
     }
     return {};

@@ -77,6 +77,7 @@ const SelectProgram = forwardRef(
         disabled={!data?.length}
         onChange={handleChange}
         value={value}
+        autoSelectOneOption
       />
     );
   }

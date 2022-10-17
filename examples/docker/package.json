@@ -15,11 +15,13 @@
   "leemons": {},
   "dependencies": {
     "leemons": "0.0.1-beta.0",
+    "leemons-react": "0.0.1-beta.0",
     "leemons-connector-bookshelf": "0.0.1-beta.0",
     "leemons-plugin-academic-portfolio": "0.0.1-beta.0",
     "leemons-plugin-academic-calendar": "0.0.1-beta.0",
-    "leemons-plugin-assets": "0.0.1-beta.0",
     "leemons-plugin-admin": "0.0.1-beta.0",
+    "leemons-plugin-families": "0.0.1-beta.0",
+    "leemons-plugin-assets": "0.0.1-beta.0",
     "leemons-plugin-assignables": "0.0.1-beta.0",
     "leemons-plugin-calendar": "0.0.1-beta.0",
     "leemons-plugin-common": "0.0.1-beta.0",
@@ -41,11 +43,11 @@
     "leemons-plugin-timetable": "0.0.1-beta.0",
     "leemons-plugin-users": "0.0.1-beta.0",
     "leemons-plugin-widgets": "0.0.1-beta.0",
-    "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
-    "leemons-provider-leebrary-tasks": "0.0.1-beta.0",
-    "leemons-provider-leebrary-tests": "0.0.1-beta.0",
-    "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
+    "leemons-provider-emails-amazon-ses": "0.0.1-beta.0",
     "leemons-provider-emails-smtp": "0.0.1-beta.0",
-    "leemons-provider-emails-amazon-ses": "0.0.1-beta.0"
+    "leemons-provider-leebrary-assignables": "0.0.1-beta.0",
+    "leemons-provider-leebrary-aws-s3": "0.0.1-beta.0",
+    "leemons-provider-leebrary-tasks": "0.0.1-beta.0",
+    "leemons-provider-leebrary-tests": "0.0.1-beta.0"
   }
 }

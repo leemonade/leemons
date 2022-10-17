@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'assignations',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     instance: {
       type: 'uuid',

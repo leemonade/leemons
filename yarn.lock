@@ -5058,7 +5058,7 @@ events@^3.2.0:
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
-exceljs@^4.2.0, exceljs@^4.3.0:
+exceljs@^4.2.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/exceljs/-/exceljs-4.3.0.tgz#939bc0d4c59c200acadb7051be34d25c109853c4"
   integrity sha512-hTAeo5b5TPvf8Z02I2sKIT4kSfCnOO2bCxYX8ABqODCdAjppI3gI9VYiGCQQYVcBaBSKlFDMKlAQRqC+kV9O8w==
@@ -10141,6 +10141,11 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-hook-form@^7.36.1:
+  version "7.36.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.36.1.tgz#82a311fe8cbe75e689fd4529f083b7c983da6520"
+  integrity sha512-EbYYkCG2p8ywe7ikOH2l02lAFMrrrslZi1I8fqd8ifDGNAkhomHZQzQsP6ksvzrWBKntRe8b5L5L7Zsd+Gm02Q==
+
 react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -10212,6 +10217,13 @@ react-router@5.3.3:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-to-print@^2.14.7:
+  version "2.14.7"
+  resolved "https://registry.yarnpkg.com/react-to-print/-/react-to-print-2.14.7.tgz#d288de0e573e6e63e203a48d4bad7a1759d18688"
+  integrity sha512-lWVVAs9Co25uyE0toxcWeFsmaZObwUozXrJD9WMpDPclpBgk+WIzxlt3Q3omL/BCBG/cpf0XNvhayUWa+99YGw==
+  dependencies:
+    prop-types "^15.8.1"
 
 react@^17.0.1:
   version "17.0.2"

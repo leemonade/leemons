@@ -74,10 +74,6 @@ function getCoverUrl(cover) {
     return cover;
   }
 
-  if (isString(cover)) {
-    console.log('A ver qué llega aquí:', cover);
-  }
-
   return null;
 }
 

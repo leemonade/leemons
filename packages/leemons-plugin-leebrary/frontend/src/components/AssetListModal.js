@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty, isString, find } from 'lodash';
-import { Modal, Box, Paper, Stack, ActionButton, Tabs, TabPanel } from '@bubbles-ui/components';
+import { find, isEmpty, isString } from 'lodash';
+import { ActionButton, Box, Modal, Paper, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
@@ -83,7 +83,14 @@ const AssetListModal = ({
   );
 
   return (
-    <Modal opened={opened} size={size} withCloseButton={false} trapFocus={false} empty>
+    <Modal
+      opened={opened}
+      size={size}
+      onClose={onClose}
+      withCloseButton={false}
+      trapFocus={false}
+      empty
+    >
       <Paper
         color="solid"
         shadow="none"

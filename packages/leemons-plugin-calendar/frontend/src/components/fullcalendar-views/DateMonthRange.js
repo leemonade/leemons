@@ -66,7 +66,6 @@ class DateMonthRangeView extends React.Component {
 }
 
 DateMonthRangeView.range = (date, { localizer, ...rest }) => {
-  console.log('rest', rest);
   let start = localizer.firstVisibleDay(date, localizer);
   let end = localizer.lastVisibleDay(date, localizer);
   return { start, end };

@@ -26,6 +26,7 @@ const addProgramSchema = {
     color: stringSchemaNullable,
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
+    useOneStudentGroup: booleanSchema,
     cycles: {
       type: 'array',
       items: {
@@ -150,7 +151,7 @@ function validateAddProgram(data) {
     if (!data.useDefaultSubstagesName) {
       validator = new LeemonsValidator(addProgramSubstage2Schema);
 
-      console.log(data.substages);
+      // console.log(data.substages);
       if (!validator.validate(data)) {
         throw validator.error;
       }
@@ -408,6 +409,7 @@ const addCourseSchema = {
     abbreviation: stringSchema,
     program: stringSchema,
     number: integerSchema,
+    isAlone: booleanSchema,
   },
   required: ['program'],
   additionalProperties: false,
@@ -441,6 +443,7 @@ const addGroupSchema = {
     name: stringSchema,
     abbreviation: stringSchema,
     program: stringSchema,
+    isAlone: booleanSchema,
     subjects: arrayStringSchema,
     managers: arrayStringSchema,
     aditionalData: {
@@ -469,16 +472,25 @@ async function validateAddGroup(data, { transacting } = {}) {
     throw new Error('The program does not exist');
   }
 
-  if (program.maxGroupAbbreviation) {
-    // ES: Comprobamos si el nombre del grupo es mayor que el maximo
-    if (data.abbreviation.length > program.maxGroupAbbreviation)
-      throw new Error('The group abbreviation is longer than the specified length');
+  if (program.useOneStudentGroup) {
+    const group = await table.groups.count(
+      { program: data.program, type: 'group' },
+      { transacting }
+    );
+    if (group) throw new Error('This program configured as one group, you can´t add a new group');
   }
 
-  // ES: Comprobamos si el nombre del grupo es solo numeros
-  if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new Error('The group abbreviation must be only numbers');
+  if (!data.isAlone) {
+    if (program.maxGroupAbbreviation) {
+      // ES: Comprobamos si el nombre del grupo es mayor que el maximo
+      if (data.abbreviation.length > program.maxGroupAbbreviation)
+        throw new Error('The group abbreviation is longer than the specified length');
+    }
 
+    // ES: Comprobamos si el nombre del grupo es solo numeros
+    if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+      throw new Error('The group abbreviation must be only numbers');
+  }
   // ES: Comprobamos que no exista ya el grupo
   const groupCount = await table.groups.count(
     {
@@ -911,9 +923,12 @@ async function validateAddClass(data, { transacting }) {
     throw validator.error;
   }
 
-  const haveMultiCourses = await programHaveMultiCourses(data.program, { transacting });
+  const program = await table.programs.findOne(
+    { id: data.program },
+    { columns: ['id', 'moreThanOneAcademicYear', 'useOneStudentGroup'], transacting }
+  );
 
-  if (!haveMultiCourses) {
+  if (!program.moreThanOneAcademicYear) {
     if (isArray(data.course) && data.course.length > 1) {
       throw new Error('Class does not have multi courses');
     }
@@ -1103,6 +1118,7 @@ const updateClassSchema = {
     course: {
       oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
     },
+    program: stringSchema,
     group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,

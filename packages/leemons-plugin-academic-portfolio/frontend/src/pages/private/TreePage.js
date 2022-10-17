@@ -74,6 +74,7 @@ export default function TreePage() {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore({
     scroll: 0,
+    firstLoading: true,
   });
   const { openDeleteConfirmationModal, setLoading, layoutState } = useLayout();
 
@@ -201,7 +202,10 @@ export default function TreePage() {
             : '';
           let groupName = '';
           if (!groups) {
-            groupName = item.value.groups ? ` - ${item.value.groups.abbreviation}` : '';
+            groupName =
+              item.value.groups && !item.value.groups.isAlone
+                ? ` - ${item.value.groups.abbreviation}`
+                : '';
           }
           text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
           if (!isArray(classesBySubject[item.value.subject?.id]))
@@ -318,6 +322,9 @@ export default function TreePage() {
     if (params.program) store.programId = params.program;
     if (store.centerId && store.programId) {
       store.tree = await getProgramTree();
+      setTimeout(() => {
+        store.firstLoading = false;
+      }, [500]);
     }
     render();
   }
@@ -343,14 +350,19 @@ export default function TreePage() {
   );
 
   function onSelectCenter(centerId) {
-    store.centerId = centerId;
-    render();
+    if (!(!!params?.center && store.firstLoading)) {
+      store.centerId = centerId;
+      render();
+    }
   }
 
   async function onSelectProgram(programId) {
-    store.programId = programId;
-    store.tree = await getProgramTree();
-    render();
+    if (!(!!params?.program && store.firstLoading)) {
+      store.programId = programId;
+      store.editingItem = null;
+      store.tree = await getProgramTree();
+      render();
+    }
   }
 
   useEffect(() => {
@@ -372,7 +384,7 @@ export default function TreePage() {
     try {
       store.saving = true;
       render();
-      console.log('onSaveCycle', d);
+      // console.log('onSaveCycle', d);
       await updateCycleRequest({ id, name, managers });
       store.tree = await getProgramTree();
       setAgainActiveTree();
@@ -888,7 +900,7 @@ export default function TreePage() {
           render();
         },
         onCancel: () => {
-          console.log('on cancel');
+          // console.log('on cancel');
           reject();
         },
       })();

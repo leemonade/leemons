@@ -13,7 +13,6 @@ function validateDataForPublish(assignable) {
   const validationObject = _.cloneDeep(assignableValidationObject);
 
   validationObject.properties.statement.nullable = false;
-  validationObject.properties.subjects.minItems = 1;
 
   validateAssignable(_.pick(assignable, validAssignableProperties), {
     validationObject,

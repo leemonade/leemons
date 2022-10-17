@@ -150,19 +150,40 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     nodeTypes.forEach((nodeType, index) => {
       if (classroom[nodeType]) {
         const id = _.isString(classroom[nodeType]) ? classroom[nodeType] : classroom[nodeType].id;
-        if (nodeType === 'courses' && nodeTypes[index - 1] === 'cycles') {
-          const cycle = getCycleByCourse(id);
-          if (cycle) {
+        if (nodeType === 'courses') {
+          if (nodesByIds.courses[id]) {
+            const proId = nodesByIds.courses[id].program;
+            const proCourses = _.filter(courses, { program: proId });
+            if (proCourses.length > 1 && nodeTypes[index - 1] === 'cycles') {
+              const cycle = getCycleByCourse(id);
+              if (cycle) {
+                nodes.push({
+                  type: 'cycles',
+                  id: cycle.id,
+                });
+              }
+            }
+            if (proCourses.length > 1) {
+              nodes.push({
+                type: nodeType,
+                id,
+              });
+            }
+          }
+        } else if (nodeType === 'groups') {
+          const pro = nodesByIds.program[nodesByIds.groups[id].program];
+          if (!pro.useOneStudentGroup) {
             nodes.push({
-              type: 'cycles',
-              id: cycle.id,
+              type: nodeType,
+              id,
             });
           }
+        } else {
+          nodes.push({
+            type: nodeType,
+            id,
+          });
         }
-        nodes.push({
-          type: nodeType,
-          id,
-        });
       }
     });
 

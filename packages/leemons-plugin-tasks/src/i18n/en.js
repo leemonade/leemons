@@ -175,8 +175,8 @@ module.exports = {
             description: 'Description',
             FileType: {
               multiFile: 'Allow multiple files',
-              type: 'Type',
-              typePlaceholder: 'Add extension',
+              format: 'File format',
+              formatPlaceholder: 'Write extension and add (pdf, xls, doc...)',
               maxSize: 'Max size',
               required: 'Required field',
             },
@@ -343,13 +343,17 @@ module.exports = {
   variant: 'Task',
   task_realization: {
     confirmation_modal: {
-      labels: {
-        confirm: 'Confirm the submission',
-        cancel: 'Cancel',
-      },
-      title: 'Finish and submit this task',
+      title: 'Tasks finished',
+      description: 'Your task has been successfuly submitted',
+      action: 'Ongoing activities',
+      nextActivity: 'Next activity',
+    },
+    timeout_modal: {
+      title: 'The given time to finish this activity have finished.',
       description:
-        '<p>Once "Confirm submission" is clicked, the task will be sent to a reviewer and it will not be possible to modify the selected deliverables. If you only want to save the work done so far, you can cancel this action and press on "Save only".</p><p>When you confirm the submission, the system will redirect you to the "Ongoing activities" section where you can review the tasks once they are corrected.</p>',
+        'If you have saved the submission previously, it will be sended, in other case, no submission was made.\nYou can review your submission by clicking on "Review submission"',
+      action: 'Review submission',
+      nextActivity: 'Next activity',
     },
     activityContainer: {
       deadline: {
@@ -360,7 +364,9 @@ module.exports = {
       previous: 'Previous',
       next: 'Next',
       finish: 'Finish',
+      submit: 'Submit',
       save: 'Save',
+      nextActivity: 'Next activity',
     },
     sidebar: {
       resources: 'Resources',
@@ -368,11 +374,13 @@ module.exports = {
     },
     steps: {
       statement: 'Statement',
+      presentation: 'Presentation',
       development: 'Development',
       submission: 'Submission',
     },
     statement_step: {
       statement: 'Statement',
+      presentation: 'Presentation',
       curriculum: {
         title: 'Curriculum',
         content: 'Content',

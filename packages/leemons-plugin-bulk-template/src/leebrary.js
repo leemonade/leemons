@@ -1,10 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const { keys } = require('lodash');
 const importLibrary = require('./bulk/library');
-
-function _delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+const _delay = require('./bulk/helpers/delay');
 
 async function initLibrary({ users }) {
   const { services } = leemons.getPlugin('leebrary');

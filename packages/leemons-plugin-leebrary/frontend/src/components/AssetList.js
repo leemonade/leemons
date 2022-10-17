@@ -62,7 +62,6 @@ const AssetList = ({
   search: searchProp,
   layout: layoutProp,
   showPublic: showPublicProp,
-  canShowPublicToggle,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -80,10 +79,11 @@ const AssetList = ({
   searchEmptyComponent,
   allowChangeCategories,
   preferCurrent,
+  searchInProvider,
+  roles,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
-  onShowPublic = () => {},
   onLoading = () => {},
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('list'));
@@ -122,7 +122,8 @@ const AssetList = ({
     [onlyThumbnails, category]
   );
 
-  useEffect(() => console.log(assetType), [assetType]);
+  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
+
   // ·········································································
   // DATA PROCESSING
 
@@ -180,6 +181,8 @@ const AssetList = ({
           showPublic: !pinned ? showPublic : true,
           pinned,
           preferCurrent,
+          searchInProvider,
+          roles: JSON.stringify(roles || []),
         };
         // console.log('query:', query);
         const response = await getAssetsRequest(query);
@@ -496,7 +499,6 @@ const AssetList = ({
   }, [category]);
 
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
-  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
   const toggleDetail = (val) => {
     if (!val) {
@@ -675,6 +677,7 @@ const AssetList = ({
               variant={isEmbedded ? 'default' : 'filled'}
               onChange={setSearhCriteria}
               value={searchCriteria}
+              disabled={loading}
             />
           )}
           {!isEmpty(assetTypes) && canChangeType && (
@@ -684,6 +687,7 @@ const AssetList = ({
               value={assetType}
               onChange={handleOnTypeChange}
               placeholder={t('labels.resourceTypes')}
+              disabled={loading}
             />
           )}
         </Stack>
@@ -702,14 +706,19 @@ const AssetList = ({
 
       {/* CATEGORY RADIO GROUP ···· */}
       {allowChangeCategories !== false && !isNil(categories) && !isEmpty(categories) && (
-        <Box skipFlex sx={(theme) => ({ marginTop: theme.spacing[5] })}>
-          <RadioGroup
-            data={categoriesRadioData}
-            variant="icon"
-            onChange={handleOnChangeCategory}
-            value={category.key}
-            fullWidth
-          />
+        <Box
+          skipFlex
+          sx={(theme) => ({ marginTop: theme.spacing[5] })}
+          style={{ cursor: loading ? 'wait' : 'default'}}>
+          <Box style={{ pointerEvents: loading ? 'none' : 'auto'}}>
+            <RadioGroup
+              data={categoriesRadioData}
+              variant="icon"
+              onChange={handleOnChangeCategory}
+              value={category.key}
+              fullWidth
+            />
+          </Box>
         </Box>
       )}
 
@@ -875,6 +884,8 @@ AssetList.propTypes = {
   onLoading: PropTypes.func,
   preferCurrent: PropTypes.bool,
   allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+  searchInProvider: PropTypes.bool,
+  roles: PropTypes.arrayOf(PropTypes.string),
 };
 
 export { AssetList };

@@ -10,6 +10,7 @@ const { getByIds } = require('../src/services/assets/getByIds');
 async function getFileContent(ctx) {
   const { id, download } = ctx.params;
   const { userSession } = ctx.state;
+  const { headers } = ctx.request;
 
   if (isEmpty(id)) {
     throw new global.utils.HttpError(400, 'id is required');
@@ -23,7 +24,20 @@ async function getFileContent(ctx) {
     throw new global.utils.HttpError(403, 'You do not have permissions to view this file');
   }
 
-  const { readStream, fileName, contentType, file } = await fileService.dataForReturnFile(id);
+  // let bytesStart = -1;
+  // let bytesEnd = -1;
+  const { range } = headers;
+
+  if (!download && range?.indexOf('bytes=') > -1) {
+    // const parts = range.replace(/bytes=/, '').split('-');
+    // bytesStart = parseInt(parts[0], 10);
+    // bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
+  }
+
+  const { readStream, fileName, contentType, file } = await fileService.dataForReturnFile(id, {
+    // start: bytesStart,
+    // end: bytesEnd,
+  });
 
   const mediaType = contentType.split('/')[0];
 
@@ -31,10 +45,34 @@ async function getFileContent(ctx) {
   ctx.body = readStream;
   ctx.set('Content-Type', contentType);
 
-  if (['image', 'video', 'audio'].includes(mediaType)) {
-    // TODO: handle content disposition for images, video and audio. Taking care of download param
-  } else {
+  if (download || !['image', 'video', 'audio'].includes(mediaType)) {
     ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
+  }
+
+  if (!download && ['video', 'audio'].includes(mediaType)) {
+    let fileSize = file.size;
+
+    if (!fileSize && file.provider === 'sys') {
+      const fileHandle = await leemons.fs.open(file.uri, 'r');
+      const stats = await fileHandle.stat(file.uri);
+      fileSize = stats.size;
+    }
+
+    if (fileSize > 0) {
+      ctx.set('Content-Length', fileSize);
+      ctx.set('Accept-Ranges', 'bytes');
+    }
+
+    /*
+    if (file.size > 0 && bytesStart > -1 && bytesEnd > -1) {
+      ctx.status = 206;
+      bytesEnd = Math.min(bytesEnd, file.size - 1);
+
+      ctx.set('Accept-Ranges', 'bytes');
+      ctx.set('Content-Length', bytesEnd - bytesStart);
+      ctx.set('Content-Range', `bytes ${bytesStart}-${bytesEnd}/${file.size}`);
+    }
+    */
   }
 }
 

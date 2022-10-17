@@ -27,10 +27,6 @@ const Signup = () => {
   const [, translations] = useTranslateLoader(prefixPN(''));
   const history = useHistory();
 
-  React.useEffect(() => {
-    console.log('translations:', translations);
-  }, [translations]);
-
   const t = React.useMemo(() => {
     const empty = { welcome: {}, signup: {} };
 

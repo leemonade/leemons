@@ -29,6 +29,12 @@ module.exports = {
         notNull: true,
       },
     },
+    size: {
+      type: 'integer',
+      options: {
+        defaultTo: 0,
+      },
+    },
     uri: {
       type: 'string',
       options: {

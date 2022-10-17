@@ -24,6 +24,7 @@ const { getAssetsByType } = require('../files/getAssetsByType');
 const { getById: getCategoryById } = require('../categories/getById');
 const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { getByUser: getPinsByUser } = require('../pins/getByUser');
+const { byProvider: getByProvider } = require('./byProvider');
 
 async function search(
   { criteria = '', type, category },
@@ -34,8 +35,11 @@ async function search(
     published = true,
     indexable = true,
     preferCurrent,
+    searchInProvider,
+    providerQuery,
     pinned,
     showPublic,
+    roles,
     userSession,
     transacting,
   } = {}
@@ -76,28 +80,42 @@ async function search(
     if (!isEmpty(criteria)) {
       const tagsService = leemons.getPlugin('common').services.tags;
 
-      const [byName, byTagline, byDescription, byTags] = await Promise.all([
-        getByName(criteria, { indexable, assets, transacting }),
-        getByTagline(criteria, { indexable, assets, transacting }),
-        getByDescription(criteria, { indexable, assets, transacting }),
-        // getByProvider(category, criteria, { assets, transacting }),
-        tagsService.getTagsValues(criteria, {
-          type: leemons.plugin.prefixPN(''),
+      let providerAssets = null;
+      if (searchInProvider) {
+        providerAssets = await getByProvider(categoryId, criteria, {
+          query: providerQuery,
+          assets,
+          published,
+          preferCurrent,
+          userSession,
           transacting,
-        }),
-      ]);
-
-      const matches = byName.concat(byTagline).concat(byDescription);
-
-      // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
-      // EN: If there are resources, we must apply a previous filter as an intersection
-      if (!isEmpty(assets)) {
-        assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
-      } else {
-        assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+        });
       }
 
-      nothingFound = assets.length === 0;
+      if (!providerAssets || providerAssets.length) {
+        const [byName, byTagline, byDescription, byTags] = await Promise.all([
+          getByName(criteria, { indexable, assets: providerAssets || assets, transacting }),
+          getByTagline(criteria, { indexable, assets: providerAssets || assets, transacting }),
+          getByDescription(criteria, { indexable, assets: providerAssets || assets, transacting }),
+          // getByProvider(category, criteria, { assets, transacting }),
+          tagsService.getTagsValues(criteria, {
+            type: leemons.plugin.prefixPN(''),
+            transacting,
+          }),
+        ]);
+
+        const matches = byName.concat(byTagline).concat(byDescription);
+
+        // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
+        // EN: If there are resources, we must apply a previous filter as an intersection
+        if (!isEmpty(assets)) {
+          assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+        } else {
+          assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+        }
+
+        nothingFound = assets.length === 0;
+      }
     }
 
     if (type) {
@@ -201,7 +219,13 @@ async function search(
         assets = assets.map(({ fullId }) => fullId);
       }
 
-      assets = assetsWithPermissions.filter(({ asset }) => assets.includes(asset));
+      assets = assetsWithPermissions.filter(({ asset, role }) => {
+        if (roles?.length && !roles.includes(role)) {
+          return false;
+        }
+
+        return assets.includes(asset);
+      });
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta

@@ -141,7 +141,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         },
         editable: false,
         valueRender: (value) => <UserDisplayItem {...value} variant="inline" size="xs" />,
-        style: { width: '60%' },
+        style: { width: '50%' },
       },
       {
         Header: 'Role',
@@ -205,6 +205,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
                       columns={USERS_COLUMNS}
                       labels={USER_LABELS}
                       showHeaders={false}
+                      forceShowInputs
                       sortable={false}
                       onBeforeAdd={checkIfUserIsAdded}
                       resetOnAdd

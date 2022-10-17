@@ -135,9 +135,9 @@ export default function Responses(props) {
                   : styles.questionResponseImageTextContent
               }
             >
-              {!store.viewMode && response.image?.description ? (
+              {response.imageDescription ? (
                 <Text color="primary" role="productive" size="md">
-                  {response.image.description}
+                  {response.imageDescription}
                 </Text>
               ) : null}
               {explanation ? (

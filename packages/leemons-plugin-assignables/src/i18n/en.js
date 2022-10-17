@@ -18,7 +18,7 @@ module.exports = {
       alwaysOpenToogle: 'This activity is always available and can be performed at any time.',
       closeDateToogle: 'Deadline for teacher corrections',
       closeDate: 'Closing date',
-      messageToStudentsToogle: 'Add a message to the students',
+      messageToStudentsToogle: 'Notify students',
       messageToStudents: 'Message to the students',
       showCurriculumToogle: 'Show curriculum',
       content: 'Content',
@@ -31,12 +31,21 @@ module.exports = {
         customGroups: 'Custom Groups',
         session: 'Session',
       },
+      relations: {
+        toggle: 'Establish relation with another activity',
+        before: 'Previous activity',
+        required: 'Required dependency',
+      },
       selectStudentsTitle: 'Who will perform the activity?',
       excludeStudents: 'Exclude students',
+      showResults: 'Hide results report',
+      showCorrectAnswers: 'Hide solutions for students',
       addNewClassStudents: 'Automatically assign to newly enrolled students',
       clearStudents: 'Clear students',
       subjects: {
-        title: 'Subjects to be evaluated in this activity',
+        nonCalificableTitle:
+          'Select at least one of your subjects to see the different available groups',
+        calificableTitle: 'Subjects to be evaluated in this activity',
         subtitle: 'NOTE: At least one of them',
       },
       unableToAssignStudentsMessage:
@@ -56,7 +65,7 @@ module.exports = {
     },
     descriptions: {
       messageToStudents:
-        'If this activity is assigned to other groups at this step, this message will be the default message for all activities (although it can be changed individually if desired).',
+        'Send notification message to perform the activity. A custom message can be added.',
       visualizationDate:
         'NOTE: The activity will be available for review, but cannot be completed until the start date.',
       closeDateToogle: 'NOTE: After this date, no corrections can be made',
@@ -261,6 +270,9 @@ module.exports = {
     type: 'Type',
     seeAll: 'See all',
   },
+  activities_list: {
+    emptyState: 'There are no activities yet',
+  },
   ongoing: {
     ongoing: 'Ongoing activities',
     history: 'History',
@@ -276,10 +288,14 @@ module.exports = {
   need_your_attention: {
     title: 'Needs attention',
     new: 'New',
+    emptyState: 'There are no scheduled activities',
     assigment: {
       subject: 'Subject',
       submission: 'Submissions',
       avgTime: 'Avg. time',
+      grade: 'Score',
+      score: 'Correct answers',
+      activityType: 'Activity type',
     },
   },
   pagination: {
@@ -293,5 +309,9 @@ module.exports = {
     notSubmitted: 'Not submitted',
     correction: 'Correction',
     review: 'Review',
+    disabled: {
+      results: 'The results have been hidden by your teacher',
+      previous: 'The previous activity must be completed first',
+    },
   },
 };
