@@ -812,7 +812,7 @@ module.exports = async function searchAssignableInstances(
             }
 
             return instance?.relatedAssignableInstances.before.every(
-              (relation) => assignationDates[assignationsByInstance[relation.id].id]?.end
+              (relation) => assignationDates[assignationsByInstance[relation.id]?.id]?.end
             );
           })
           .map((instance) => ({
