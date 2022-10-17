@@ -285,7 +285,19 @@ export default function ClassDashboard({ session }) {
         ) : null}
       </Box>
       <Box className={styles.rightSide}>
-        {store.rightWidgetSelect ? (
+        {!!store.rightWidgetSelect && (
+          <Tabs
+            onChange={(e) => {
+              store.selectedRightTab = store.rightWidgetSelect[e].value;
+              render();
+            }}
+          >
+            {store.rightWidgetSelect.map(({ label, id: tabId }) => (
+              <TabPanel label={label} id={tabId} key={tabId} />
+            ))}
+          </Tabs>
+        )}
+        {/* {store.rightWidgetSelect ? (
           <RadioGroup
             variant="icon"
             data={store.rightWidgetSelect || []}
@@ -296,8 +308,7 @@ export default function ClassDashboard({ session }) {
             }}
             value={store.selectedRightTab}
           />
-        ) : null}
-
+        ) : null} */}
         <Box className={styles.rightSidewidgetsContainer}>
           {!store.loading ? (
             <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
