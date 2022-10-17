@@ -5,9 +5,19 @@ import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { IMAGE_ASSET, VIDEO_ASSET, AUDIO_ASSET, URL_ASSET } from './mock/data';
 import { LibraryPlayer } from './LibraryPlayer';
 
-const ASSET_KEYS = keys({ ...VIDEO_ASSET, ...AUDIO_ASSET, ...IMAGE_ASSET, ...URL_ASSET });
+const ASSET_KEYS = keys({
+  ...VIDEO_ASSET,
+  ...AUDIO_ASSET,
+  ...IMAGE_ASSET,
+  ...URL_ASSET,
+  processed: true,
+});
 
 function appendAuthorizationToUrl(url) {
+  if (!url || url === 'null') {
+    return undefined;
+  }
+
   const authTokens = getAuthorizationTokenForAllCenters();
 
   const _url = new URL(url.startsWith('http') ? url : window.location.origin + url);

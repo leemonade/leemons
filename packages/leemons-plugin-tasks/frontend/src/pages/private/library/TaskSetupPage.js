@@ -6,7 +6,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, unflatten } from '@common';
+import { useStore, unflatten, useProcessTextEditor } from '@common';
 import {
   Setup,
   BasicData,
@@ -30,6 +30,8 @@ export default function TaskSetupPage() {
     headerHeight: null,
   });
 
+  const processTextEditor = useProcessTextEditor();
+
   const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
 
   const history = useHistory();
@@ -39,6 +41,25 @@ export default function TaskSetupPage() {
 
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
+      const developments = values?.metadata?.development;
+      if (developments?.length || store.currentTask.metadata?.development?.length) {
+        const length = Math.max(
+          developments?.length,
+          store.currentTask.metadata?.development?.length
+        );
+        const promises = [];
+
+        for (let i = 0; i < length; i++) {
+          const html = developments[i]?.development;
+          const oldHtml = store.currentTask.metadata?.development?.[i]?.development;
+
+          promises.push(processTextEditor(html, oldHtml).then((development) => ({ development })));
+        }
+
+        // eslint-disable-next-line no-param-reassign
+        values.metadata.development = await Promise.all(promises);
+      }
+
       const body = {
         gradable: false,
         ...values,

@@ -5,7 +5,10 @@ const { add } = require('./add');
 const { dataForReturnFile } = require('../files/dataForReturnFile');
 const { getById: getCategory } = require('../categories/getById');
 
-async function duplicate(assetId, { preserveName = false, newId, userSession, transacting }) {
+async function duplicate(
+  assetId,
+  { preserveName = false, newId, indexable, public: isPublic, userSession, transacting }
+) {
   // EN: Get the user permissions
   // ES: Obtener los permisos del usuario
   const { permissions } = await getPermissions(assetId, { userSession, transacting });
@@ -49,13 +52,17 @@ async function duplicate(assetId, { preserveName = false, newId, userSession, tr
     'created_at',
     'updated_at',
   ]);
+
   const newAsset = await add.call(
     this,
     {
       ...assetData,
       ...filesData,
-      name: preserveName ? asset.name : `${asset.name} (1)`,
+      name: ['true', true, 1, '1'].includes(preserveName) ? asset.name : `${asset.name} (1)`,
       categoryId: asset.category,
+      indexable:
+        indexable === undefined ? asset.indexable : ['true', true, 1, '1'].includes(indexable),
+      public: isPublic === undefined ? asset.public : ['true', true, 1, '1'].includes(isPublic),
     },
     { newId, userSession, transacting }
   );

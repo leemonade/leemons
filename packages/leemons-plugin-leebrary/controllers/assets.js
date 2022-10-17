@@ -108,10 +108,15 @@ async function removeAsset(ctx) {
 async function duplicateAsset(ctx) {
   const { id: assetId } = ctx.params;
   const { userSession } = ctx.state;
+  const { preserveName, indexable, public: isPublic } = ctx.request.body;
 
   const asset = await duplicate.call({ calledFrom: leemons.plugin.prefixPN('') }, assetId, {
+    preserveName,
+    indexable,
+    public: isPublic,
     userSession,
   });
+
   ctx.status = 200;
   ctx.body = {
     status: 200,
