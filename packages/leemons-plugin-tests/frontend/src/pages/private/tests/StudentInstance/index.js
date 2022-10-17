@@ -40,7 +40,7 @@ import { calculeInfoValues } from './helpers/calculeInfoValues';
 import QuestionList from './components/QuestionList';
 import { getConfigByInstance } from './helpers/getConfigByInstance';
 
-export default function StudentInstance() {
+function StudentInstance() {
   const locale = useLocale();
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
@@ -433,4 +433,10 @@ export default function StudentInstance() {
       </>
     </ActivityContainer>
   );
+}
+
+export default function StudentInstanceContainer() {
+  const { id, user } = useParams();
+
+  return <StudentInstance key={`studentInstance.${id}.user.${user}`} />;
 }

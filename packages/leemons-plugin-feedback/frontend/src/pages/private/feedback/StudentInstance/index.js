@@ -153,4 +153,8 @@ const StudentInstance = () => {
   );
 };
 
-export default StudentInstance;
+export default function StudentInstanceContainer() {
+  const { id, user } = useParams();
+
+  return <StudentInstance key={`studentInstance.${id}.user.${user}`} />;
+}
