@@ -78,7 +78,7 @@ const ParentRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
         const nodeLevelId = ids[0];
         const formValueId = ids[1];
         const node = _.find(parentNodes, { nodeLevel: nodeLevelId });
-        const nodeValue = node.formValues[formValueId];
+        const nodeValue = node?.formValues?.[formValueId];
         if (nodeValue) {
           const nodeLevel = _.find(curriculum.nodeLevels, { id: nodeLevelId });
           store.parentNodeValue = nodeValue.value;

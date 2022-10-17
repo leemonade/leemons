@@ -77,5 +77,7 @@ module.exports = {
     addNewElementToList: 'Add new list item',
     parentBlock: 'Parent block ({name})',
     fieldRequired: 'Field required',
+    maxLength: 'Must be {max} characters',
+    newItemList: 'New list item',
   },
 };

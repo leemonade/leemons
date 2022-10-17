@@ -1,0 +1,97 @@
+/* eslint-disable no-param-reassign */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Box } from '@bubbles-ui/components';
+import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
+import { useStore } from '@common';
+import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
+
+function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSave, id, t }) {
+  const [store, render] = useStore();
+
+  async function save(e) {
+    store.loading = true;
+    render();
+    await onSave(e);
+    store.loading = false;
+    render();
+  }
+
+  function onCancel() {
+    store.editingItem = null;
+    render();
+  }
+
+  function onUpdate(itemId, newValues) {
+    store.editingItem = null;
+    if (!value) value = {};
+    if (!value.value) value.value = {};
+    value.value[itemId] = newValues;
+    onChange({ ...value });
+    setTimeout(() => {
+      save(true);
+    }, 100);
+  }
+
+  function onEdit(index) {
+    store.editingItem = { index };
+    render();
+  }
+
+  React.useEffect(() => {
+    onCancel();
+  }, [blockData]);
+
+  return (
+    <Box>
+      <ParentRelation
+        curriculum={curriculum}
+        blockData={blockData}
+        value={value}
+        onChange={onChange}
+        isShow={(e) => {
+          store.showSaveButton = e;
+          render();
+        }}
+        id={id}
+        t={t}
+      />
+
+      {blockData?.elements.map((item, index) => (
+        <CurriculumGroupItem
+          key={index}
+          preview={store.editingItem?.index !== index}
+          defaultValues={value?.value?.[item.id] || {}}
+          item={item}
+          schema={schema}
+          blockData={blockData}
+          t={t}
+          onEdit={() => {
+            onEdit(index);
+          }}
+          onSave={(e) => {
+            onUpdate(item.id, e);
+          }}
+          onCancel={onCancel}
+        />
+      ))}
+    </Box>
+  );
+}
+
+CurriculumGroup.defaultProps = {
+  onSave: () => {},
+};
+
+CurriculumGroup.propTypes = {
+  onChange: PropTypes.func,
+  value: PropTypes.any,
+  schema: PropTypes.any,
+  blockData: PropTypes.any,
+  curriculum: PropTypes.any,
+  onSave: PropTypes.func,
+  id: PropTypes.string,
+  t: PropTypes.func,
+};
+
+export default CurriculumGroup;
