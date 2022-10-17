@@ -45,7 +45,7 @@ function parseDevelopment(task, assets) {
   const finalArray = htmlArray.map((development) => {
     const regex = /<p>(\[asset.*?\])<\/p>/g;
     let match;
-    let finalDevelopment = '';
+    let finalDevelopment = development;
 
     // eslint-disable-next-line no-cond-assign
     while ((match = regex.exec(development)) !== null) {
@@ -102,7 +102,7 @@ function parseDevelopment(task, assets) {
         )
         .join('\n')}></library>`;
 
-      finalDevelopment += match.input.replace(paragraph, assetText);
+      finalDevelopment = finalDevelopment.replace(paragraph, assetText);
     }
 
     return finalDevelopment || development;
