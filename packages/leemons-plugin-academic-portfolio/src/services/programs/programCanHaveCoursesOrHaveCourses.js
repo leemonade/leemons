@@ -7,12 +7,12 @@ async function programCanHaveCoursesOrHaveCourses(id, { transacting } = {}) {
     { id },
     { columns: ['id', 'maxNumberOfCourses'], transacting }
   );
-  if (program.maxNumberOfCourses > 0) {
+  if (program.maxNumberOfCourses > 1) {
     return true;
   }
 
   const courses = await getProgramCourses(id, { transacting });
-  if (courses.length > 0) {
+  if (courses.length > 1) {
     return true;
   }
   return false;

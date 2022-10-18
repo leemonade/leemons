@@ -94,7 +94,7 @@ async function importAcademicPortfolioSubjects({
       }
 
       // Groups
-      const groups = items[key].groups
+      let groups = (items[key].groups ?? '')
         .split(',')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
@@ -103,8 +103,12 @@ async function importAcademicPortfolioSubjects({
           return { name, abbreviation, program: programID };
         });
 
+      if (groups.length === 0) {
+        groups = [null];
+      }
+
       // Course
-      const courseIndexes = item.course
+      const courseIndexes = (item.course ?? '')
         .split('|')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
@@ -138,8 +142,12 @@ async function importAcademicPortfolioSubjects({
           group,
           course: items[key].courses,
           color: items[key].color,
-          schedule: schedule[group.abbreviation],
+          schedule: schedule[group ? group.abbreviation : ''],
         };
+
+        if (!classroom.course.length) {
+          delete classroom.course;
+        }
 
         const subjectTypeKey = item.subjectType;
         classroom.subjectType = subjectTypes[subjectTypeKey]?.id;
@@ -148,10 +156,14 @@ async function importAcademicPortfolioSubjects({
         classroom.knowledge = knowledgeAreas[knowledgeKey]?.id;
 
         // Teacher
-        classroom.teachers = teachers.filter((teacher) => teacher.group === group.abbreviation);
+        classroom.teachers = teachers.filter((teacher) =>
+          teacher.group === group ? group.abbreviation : ''
+        );
 
         // Students
-        classroom.students = students.filter((student) => student.group === group.abbreviation);
+        classroom.students = students.filter((student) =>
+          student.group === group ? group.abbreviation : ''
+        );
 
         return classroom;
       });
