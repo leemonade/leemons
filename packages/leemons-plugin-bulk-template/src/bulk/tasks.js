@@ -25,7 +25,33 @@ function scapeHTML(value) {
   return value;
 }
 
-function parseDevelopment(task, assets) {
+async function newAssetForTextEditor(props, { userSession }) {
+  const { services } = leemons.getPlugin('leebrary');
+
+  const duplicatedAsset = await services.assets.duplicate(props.id, {
+    preserveName: true,
+    indexable: false,
+    public: true,
+    userSession,
+  });
+
+  if (duplicatedAsset.file?.id) {
+    duplicatedAsset.url = getFileUrl(duplicatedAsset.file.id);
+  }
+  if (duplicatedAsset.cover?.id) {
+    duplicatedAsset.cover = getFileUrl(duplicatedAsset.cover.id);
+  }
+
+  return {
+    ...props,
+    url: duplicatedAsset.url || duplicatedAsset.cover,
+    cover: duplicatedAsset.cover,
+    id: duplicatedAsset.id,
+    processed: true,
+  };
+}
+
+async function parseDevelopment({ task, assets, userSession }) {
   if (isEmpty(task.development)) {
     return null;
   }
@@ -42,71 +68,78 @@ function parseDevelopment(task, assets) {
 
   const htmlArray = parsedMarkdownArray.map((development) => converter.makeHtml(development));
 
-  const finalArray = htmlArray.map((development) => {
-    const regex = /<p>(\[asset.*?\])<\/p>/g;
-    let match;
-    let finalDevelopment = development;
+  const finalArray = await Promise.all(
+    htmlArray.map(async (development) => {
+      const regex = /<p>(\[asset.*?\])<\/p>/g;
+      let match;
+      let finalDevelopment = development;
+      const duplicatedAssets = {};
 
-    // eslint-disable-next-line no-cond-assign
-    while ((match = regex.exec(development)) !== null) {
-      const [paragraph, asset] = match;
+      // eslint-disable-next-line no-cond-assign
+      while ((match = regex.exec(development)) !== null) {
+        const [paragraph, asset] = match;
 
-      const componentInfo = Object.fromEntries(
-        asset
-          .substring(1, asset.length - 1)
-          .split(',')
-          .map((prop) => prop.split(':').map((s) => s.trim()))
-      );
+        const componentInfo = Object.fromEntries(
+          asset
+            .substring(1, asset.length - 1)
+            .split(',')
+            .map((prop) => prop.split(':').map((s) => s.trim()))
+        );
 
-      const assetInfo = assets[componentInfo.asset];
-      if (assetInfo.file?.id) {
-        assetInfo.url = getFileUrl(assetInfo.file.id);
-      }
-      if (assetInfo.cover?.id) {
-        assetInfo.cover = getFileUrl(assetInfo.cover.id);
-      }
+        let assetInfo;
+        if (duplicatedAssets[componentInfo.asset]) {
+          assetInfo = duplicatedAssets[componentInfo.asset];
+        } else {
+          const props = assets[componentInfo.asset];
 
-      if (!assetInfo) {
-        throw new Error(`Invalid asset id (${componentInfo.asset}) provided`);
-      }
+          if (!props) {
+            throw new Error(`Invalid asset id (${componentInfo.asset}) provided`);
+          }
 
-      const fullAssetinfo = {
-        ...componentInfo,
-        ...assetInfo,
-        filetype: assetInfo.file?.type.replace(/\/.*/, ''),
-      };
+          // eslint-disable-next-line no-await-in-loop
+          assetInfo = await newAssetForTextEditor(props, { userSession });
 
-      const assetText = `<library ${Object.entries(
-        pick(
-          fullAssetinfo,
-          [
-            'id',
-            'color',
-            'name',
-            'metadata',
-            'cover',
-            'url',
-            'width',
-            'display',
-            'align',
-            'tags',
-            'filetype',
-            !isEmpty(fullAssetinfo.tagline) && 'tagline',
-            !isEmpty(fullAssetinfo.description) && 'description',
-          ].filter(Boolean)
+          duplicatedAssets[componentInfo.asset] = assetInfo;
+        }
+
+        const fullAssetinfo = {
+          ...componentInfo,
+          ...assetInfo,
+          filetype: assetInfo.file?.type.replace(/\/.*/, ''),
+        };
+
+        const assetText = `<library ${Object.entries(
+          pick(
+            fullAssetinfo,
+            [
+              'id',
+              'color',
+              'name',
+              'metadata',
+              'cover',
+              'url',
+              'width',
+              'display',
+              'align',
+              'tags',
+              'filetype',
+              !isEmpty(fullAssetinfo.tagline) && 'tagline',
+              !isEmpty(fullAssetinfo.description) && 'description',
+            ].filter(Boolean)
+          )
         )
-      )
-        .map(
-          ([key, value]) =>
-            `${key}="${scapeHTML(typeof value === 'object' ? JSON.stringify(value) : value)}"`
-        )
-        .join('\n')}></library>`;
+          .map(
+            ([key, value]) =>
+              `${key}="${scapeHTML(typeof value === 'object' ? JSON.stringify(value) : value)}"`
+          )
+          .join('\n')}></library>`;
 
-      finalDevelopment = finalDevelopment.replace(paragraph, assetText);
-    }
+        finalDevelopment = finalDevelopment.replace(paragraph, assetText);
+      }
 
-    return finalDevelopment || development;
-  });
+      return finalDevelopment || development;
+    })
+  );
 
   return finalArray.map((development) => ({ development }));
 }
@@ -141,119 +174,100 @@ async function importTasks({ users, centers, programs, assets }) {
   const items = await itemsImport(filePath, 'ta_tasks', 40);
   const subjects = await itemsImport(filePath, 'ta_task_subjects', 40);
 
-  keys(items)
-    .filter((key) => !isNil(key) && !isEmpty(key))
-    .forEach((key) => {
-      const task = items[key];
+  await Promise.all(
+    keys(items)
+      .filter((key) => !isNil(key) && !isEmpty(key))
+      .map(async (key) => {
+        const task = items[key];
 
-      task.center = centers[task.center]?.id;
-      const program = programs[task.program];
+        task.center = centers[task.center]?.id;
+        const program = programs[task.program];
 
-      task.subjects = Object.entries(subjects)
-        .filter(([, item]) => item.task === key)
-        .map(([, item]) => ({
-          subject: program.subjects[item.subject]?.id,
-          level: item.level,
-          program: program.id,
-          curriculum: {
-            objectives: (item.objectives || '')
-              .split('\n')
-              .map((val) => `<p style="margin-left: 0px!important;">${trim(val)}</p>`),
-          },
-        }));
+        task.subjects = Object.entries(subjects)
+          .filter(([, item]) => item.task === key)
+          .map(([, item]) => ({
+            subject: program.subjects[item.subject]?.id,
+            level: item.level,
+            program: program.id,
+            curriculum: {
+              objectives: (item.objectives || '')
+                .split('\n')
+                .map((val) => `<p style="margin-left: 0px!important;">${trim(val)}</p>`),
+            },
+          }));
 
-      /*
-    task.subjects = (task.subjects || '')
-      .split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((subjectItem) => {
-        const [subject, level] = subjectItem.split('|');
-        const subjectKey = `${subject}.objectives`;
+        task.resources = (task.resources || '')
+          .split(',')
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val))
+          .map((val) => assets && assets[val]?.id)
+          .filter(Boolean);
 
-        return {
-          subject: program.subjects[subject]?.id,
-          level,
-          program: program.id,
-          curriculum: {
-            objectives: (task[subjectKey] || '')
-              .split('\n')
-              .map((val) => `<p style="margin-left: 0px!important;">${trim(val)}</p>`),
-          },
-        };
-      });
-      */
+        task.tags = (task.tags || '')
+          .split(',')
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val));
 
-      task.resources = (task.resources || '')
-        .split(',')
-        .map((val) => trim(val))
-        .filter((val) => !isEmpty(val))
-        .map((val) => assets && assets[val]?.id)
-        .filter(Boolean);
+        // ·····················································
+        // SUBMISSION
 
-      task.tags = (task.tags || '')
-        .split(',')
-        .map((val) => trim(val))
-        .filter((val) => !isEmpty(val));
+        let submission = null;
+        const type = task.submission_type;
 
-      // ·····················································
-      // SUBMISSION
+        if (type && !isEmpty(type)) {
+          let data = null;
 
-      let submission = null;
-      const type = task.submission_type;
+          if (toLower(type) === 'file') {
+            data = {
+              maxSize: task.submission_max_size,
+              extensions: getDataType((task.submission_extensions || '').split(',')),
+              multipleFiles: task.submission_multiple_files,
+            };
+          }
 
-      if (type && !isEmpty(type)) {
-        let data = null;
-
-        if (toLower(type) === 'file') {
-          data = {
-            maxSize: task.submission_max_size,
-            extensions: getDataType((task.submission_extensions || '').split(',')),
-            multipleFiles: task.submission_multiple_files,
+          submission = {
+            type,
+            data,
+            description: !isEmpty(task.submission_description)
+              ? converter.makeHtml(task.submission_description)
+              : null,
           };
         }
 
-        submission = {
-          type,
-          data,
-          description: !isEmpty(task.submission_description)
-            ? converter.makeHtml(task.submission_description)
+        const creator = users[task.creator];
+        const development = await parseDevelopment({ task, assets, userSession: creator });
+
+        items[key] = {
+          asset: {
+            name: task.name,
+            tagline: task.tagline,
+            description: task.description,
+            tags: task.tags,
+            color: task.color,
+            cover: task.cover,
+          },
+          center: task.center,
+          subjects: task.subjects,
+          statement: converter.makeHtml(task.statement || ''),
+          duration: task.duration || null,
+          submission,
+          gradable: task.gradable,
+          creator,
+          instructionsForTeachers: !isEmpty(task.instructions_for_teachers)
+            ? converter.makeHtml(task.instructions_for_teachers)
             : null,
+          instructionsForStudents: !isEmpty(task.instructions_for_students)
+            ? converter.makeHtml(task.instructions_for_students)
+            : null,
+          resources: task.resources,
+          metadata: development
+            ? {
+                development,
+              }
+            : undefined,
         };
-      }
-
-      const development = parseDevelopment(task, assets);
-
-      items[key] = {
-        asset: {
-          name: task.name,
-          tagline: task.tagline,
-          description: task.description,
-          tags: task.tags,
-          color: task.color,
-          cover: task.cover,
-        },
-        center: task.center,
-        subjects: task.subjects,
-        statement: converter.makeHtml(task.statement || ''),
-        duration: task.duration || null,
-        submission,
-        gradable: task.gradable,
-        creator: users[task.creator],
-        instructionsForTeachers: !isEmpty(task.instructions_for_teachers)
-          ? converter.makeHtml(task.instructions_for_teachers)
-          : null,
-        instructionsForStudents: !isEmpty(task.instructions_for_students)
-          ? converter.makeHtml(task.instructions_for_students)
-          : null,
-        resources: task.resources,
-        metadata: development
-          ? {
-              development,
-            }
-          : undefined,
-      };
-    });
+      })
+  );
 
   return items;
 }
