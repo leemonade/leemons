@@ -52,13 +52,17 @@ function getStudentsStatusForTeacher(assignation) {
       timestamps: { open, start, end },
     } = student;
 
-    if (end) {
+    const isEnded = !!end;
+    const isStarted = start || isEnded;
+    const isOpened = open || isStarted;
+
+    if (isEnded) {
       status.completed += 1;
     }
-    if (start) {
+    if (isStarted) {
       status.ongoing += 1;
     }
-    if (open) {
+    if (isOpened) {
       status.open += 1;
     }
   });
