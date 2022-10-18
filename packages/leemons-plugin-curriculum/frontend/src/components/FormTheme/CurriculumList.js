@@ -3,16 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button, Stack } from '@bubbles-ui/components';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { randomString, useStore } from '@common';
+import { useStore } from '@common';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';
 
 function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave, id, t }) {
   const [store, render] = useStore();
-
-  function onChangeValue(e) {
-    onChange({ ...value, value: e });
-  }
 
   async function save(e) {
     store.loading = true;
@@ -36,7 +32,7 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
 
   function addNew(values) {
     store.isNewItem = false;
-    onChange({ ...value, value: [...(value?.value || []), { ...values, id: randomString() }] });
+    onChange({ ...value, value: [...(value?.value || []), { ...values }] });
     setTimeout(() => {
       save(true);
     }, 100);
@@ -83,9 +79,11 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
       {value?.value.map((item, index) => (
         <CurriculumListItem
           key={index}
+          curriculum={curriculum}
           preview={store.editingItem?.index !== index}
           defaultValues={item}
           schema={schema}
+          id={id}
           blockData={blockData}
           t={t}
           onEdit={() => {
@@ -104,8 +102,10 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
       {store.isNewItem ? (
         <CurriculumListItem
           schema={schema}
+          curriculum={curriculum}
           blockData={blockData}
           t={t}
+          id={id}
           onSave={addNew}
           onCancel={onCancel}
         />

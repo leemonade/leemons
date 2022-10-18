@@ -20,9 +20,17 @@ async function saveNode(
     async (transacting) => {
       _.forIn(datasetValues, (value, key) => {
         datasetValues[key].id = value.id || global.utils.randomString();
+        if (_.isArray(datasetValues[key].value)) {
+          _.forEach(datasetValues[key].value, (v) => {
+            v.id = v.id || global.utils.randomString();
+          });
+        }
+        if (_.isPlainObject(datasetValues[key].value)) {
+          _.forIn(datasetValues[key].value, (v) => {
+            v.id = v.id || global.utils.randomString();
+          });
+        }
       });
-
-      console.log(datasetValues);
 
       await table.nodes.update(
         { id: nodeId },

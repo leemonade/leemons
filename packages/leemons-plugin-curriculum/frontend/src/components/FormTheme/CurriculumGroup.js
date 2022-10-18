@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
+import { Box, Button } from '@bubbles-ui/components';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { useStore } from '@common';
 import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
@@ -75,6 +75,14 @@ function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSav
           onCancel={onCancel}
         />
       ))}
+
+      {store.showSaveButton ? (
+        <Box>
+          <Button variant="outline" loading={store.loading} onClick={() => save()}>
+            {t('save')}
+          </Button>
+        </Box>
+      ) : null}
     </Box>
   );
 }

@@ -17,7 +17,7 @@ import {
 import { isArray } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { useStore } from '@common';
+import { htmlToText, useStore } from '@common';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 
 const useStyle = createStyles((theme) => ({
@@ -75,9 +75,11 @@ function CurriculumGroupItem({
   const columns = React.useMemo(() => {
     const rules = { required: t('fieldRequired') };
     if (blockData.groupMax) {
-      rules.pattern = {
-        message: t('maxLength', { max: blockData.groupMax }),
-        value: new RegExp(`^.{0,${blockData.groupMax}}$`, 'g'),
+      rules.validate = (e) => {
+        const text = htmlToText(e);
+        if (text.length > blockData.groupMax) {
+          return t('maxLength', { max: blockData.groupMax });
+        }
       };
     }
     const result = [];
@@ -117,7 +119,7 @@ function CurriculumGroupItem({
             <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
           </Box>
         </Box>
-        <Box>
+        <Box sx={() => ({ maxHeight: 200, overflow: 'auto' })}>
           {blockData.groupTypeOfContents === 'field' ? (
             <Text color="primary" role="productive">
               {defaultValues.value}

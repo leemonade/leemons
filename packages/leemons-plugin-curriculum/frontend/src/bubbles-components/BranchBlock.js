@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { cloneDeep, find, findIndex, forEach, values } from 'lodash';
+import { cloneDeep, find, findIndex, forEach, keys, values } from 'lodash';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -376,19 +376,21 @@ function BranchBlock({
     const parents = store.curriculum.nodeLevels.slice(0, index);
     forEach(parents, (parent) => {
       const props = values(parent?.schema?.jsonSchema.properties) || [];
-      forEach(props, (prop) => {
+      const _keys = keys(parent?.schema?.jsonSchema.properties) || [];
+      forEach(props, (prop, key) => {
         data.push({
           label: `${parent.name} - ${prop.frontConfig.blockData.name}`,
-          value: `${parent.id}|${prop.frontConfig.blockData.id}`,
+          value: `${parent.id}|${_keys[key]}`,
           isParent: true,
         });
       });
     });
     const branchProps = values(branch?.schema?.jsonSchema.properties) || [];
-    forEach(branchProps, (prop) => {
+    const branchPropsKeys = keys(branch?.schema?.jsonSchema.properties) || [];
+    forEach(branchProps, (prop, key) => {
       data.push({
         label: `${branch.name} - ${prop.frontConfig.blockData.name}`,
-        value: `${branch.id}|${prop.frontConfig.blockData.id}`,
+        value: `${branch.id}|${branchPropsKeys[key]}`,
         isParent: false,
       });
     });
@@ -425,7 +427,7 @@ function BranchBlock({
               required: messages.fieldRequired,
             },
           },
-          valueRender: (value) => find(data, { value }).label,
+          valueRender: (value) => find(data, { value })?.label || '',
         },
         {
           Header: `${messages.typeOfRelation} *`,

@@ -13,9 +13,10 @@ import {
 } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { useStore } from '@common';
+import { htmlToText, useStore } from '@common';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import _ from 'lodash';
+import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -42,6 +43,8 @@ function CurriculumListItem({
   onRemove,
   onEdit,
   preview,
+  curriculum,
+  id,
   t,
 }) {
   const { classes } = useStyle();
@@ -55,7 +58,6 @@ function CurriculumListItem({
   }
 
   React.useEffect(() => {
-    console.log(blockData);
     if (_.isArray(blockData.contentRelations)) {
       /*
       const parent = _.find(blockData.contentRelations, {
@@ -98,7 +100,7 @@ function CurriculumListItem({
             <ActionButton tooltip={t('remove')} icon={<DeleteBinIcon />} onClick={onRemove} />
           </Box>
         </Box>
-        <Box>
+        <Box sx={() => ({ maxHeight: 200, overflow: 'auto' })}>
           {blockData.listType === 'field' ? (
             <Text color="primary" role="productive">
               {defaultValues.value}
@@ -110,14 +112,24 @@ function CurriculumListItem({
     );
   }
 
+  const valueRules = {
+    required: t('fieldRequired'),
+  };
+
+  if (blockData.max)
+    valueRules.validate = (e) => {
+      const text = htmlToText(e);
+      if (text.length > blockData.max) {
+        return t('maxLength', { max: blockData.max });
+      }
+    };
+
   return (
     <ContextContainer className={classes.card}>
       <Controller
         control={form.control}
         name="value"
-        rules={{
-          required: t('fieldRequired'),
-        }}
+        rules={valueRules}
         render={({ field }) => {
           if (blockData.listType === 'field') {
             return (
@@ -134,6 +146,17 @@ function CurriculumListItem({
             );
           }
         }}
+      />
+      <TagRelation
+        curriculum={curriculum}
+        blockData={blockData}
+        onChange={() => {}}
+        isShow={(e) => {
+          store.showSaveButton = e;
+          render();
+        }}
+        id={id}
+        t={t}
       />
       <Stack justifyContent="space-between" fullWidth>
         <Button variant="link" onClick={onCancel} loading={store.loading}>
@@ -161,6 +184,8 @@ CurriculumListItem.propTypes = {
   preview: PropTypes.bool,
   blockData: PropTypes.any,
   defaultValues: PropTypes.any,
+  curriculum: PropTypes.any,
+  id: PropTypes.any,
 };
 
 export default CurriculumListItem;
