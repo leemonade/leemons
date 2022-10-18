@@ -97,7 +97,6 @@ async function search(
           getByName(criteria, { indexable, assets: providerAssets || assets, transacting }),
           getByTagline(criteria, { indexable, assets: providerAssets || assets, transacting }),
           getByDescription(criteria, { indexable, assets: providerAssets || assets, transacting }),
-          // getByProvider(category, criteria, { assets, transacting }),
           tagsService.getTagsValues(criteria, {
             type: leemons.plugin.prefixPN(''),
             transacting,

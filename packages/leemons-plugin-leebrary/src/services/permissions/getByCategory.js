@@ -4,6 +4,7 @@ const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermission
 const { getPublic } = require('./getPublic');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets } = require('./getByAssets');
+const { byProvider: getByProvider } = require('../search/byProvider');
 
 async function getByCategory(
   categoryId,
@@ -16,6 +17,7 @@ async function getByCategory(
     showPublic,
     roles,
     searchInProvider,
+    providerQuery,
     userSession,
     transacting,
   } = {}
@@ -58,6 +60,23 @@ async function getByCategory(
       );
     } catch (e) {
       leemons.log.error(`Failed to get asset by status from categoryId ${categoryId}`);
+    }
+
+    // ES: Buscamos en el provider si se ha indicado
+    // EN: Search in the provider if indicated so
+    if (searchInProvider) {
+      try {
+        assetIds = await getByProvider(categoryId, '', {
+          query: providerQuery,
+          assets: assetIds,
+          published,
+          preferCurrent,
+          userSession,
+          transacting,
+        });
+      } catch (e) {
+        leemons.log.error(`Failed to get assets from provider: ${e.message}`);
+      }
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta

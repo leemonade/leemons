@@ -168,6 +168,7 @@ async function getAssets(ctx) {
     showPublic,
     searchInProvider,
     roles,
+    providerQuery,
   } = ctx.request.query;
   const { userSession } = ctx.state;
 
@@ -182,6 +183,7 @@ async function getAssets(ctx) {
   const displayPublic = trueValues.includes(showPublic);
   const searchProvider = trueValues.includes(searchInProvider);
   const parsedRoles = JSON.parse(roles || null) || [];
+  const _providerQuery = JSON.parse(providerQuery || null);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
     assets = await getByCriteria(
@@ -194,6 +196,7 @@ async function getAssets(ctx) {
         userSession,
         roles: parsedRoles,
         searchInProvider: searchProvider,
+        providerQuery: _providerQuery,
       }
     );
   } else {
@@ -205,6 +208,7 @@ async function getAssets(ctx) {
       userSession,
       roles: parsedRoles,
       searchInProvider: searchProvider,
+      providerQuery: _providerQuery,
     });
   }
 
