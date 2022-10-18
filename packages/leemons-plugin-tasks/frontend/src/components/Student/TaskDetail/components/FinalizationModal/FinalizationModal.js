@@ -78,7 +78,7 @@ export default function FinalizationModal({
           <Text>{localizations?.description}</Text>
         </Box>
         <Box className={cx(classes.buttons, { [classes.centerButtons]: !hasNextActivity })}>
-          <Link to={actionUrl} target="_blank">
+          <Link to={actionUrl} target={hasNextActivity ? '_blank' : undefined}>
             <Button variant={hasNextActivity ? 'link' : 'filled'}>{localizations?.action}</Button>
           </Link>
           {hasNextActivity && (
