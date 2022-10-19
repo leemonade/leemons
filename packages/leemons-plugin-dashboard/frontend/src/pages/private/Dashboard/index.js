@@ -1,11 +1,10 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useStore } from '@common';
+import { isBoolean } from 'lodash';
 import { COLORS, createStyles } from '@bubbles-ui/components';
-import { getProfilesRequest } from '@academic-portfolio/request';
-import { getUserProfilesRequest } from '@users/request';
-import { forEach } from 'lodash';
+import useIsTeacher from '@assignables/components/Ongoing/AssignmentList/hooks/useIsTeacher';
+import useIsStudent from '@assignables/components/Ongoing/AssignmentList/hooks/useIsStudent';
 import AcademicDashboard from './components/AcademicDashboard';
 import AdminDashboard from './components/AdminDashboard';
 
@@ -32,11 +31,16 @@ const Styles = createStyles((theme) => ({
 }));
 
 export default function Dashboard({ session }) {
-  const [store, render] = useStore({
-    loading: true,
-    isAcademicMode: false,
-  });
+  let loading = true;
+  const isStudent = useIsStudent();
+  const isTeacher = useIsTeacher();
+  const isOther = !isStudent && !isTeacher;
 
+  if (isBoolean(isStudent) && isBoolean(isTeacher)) {
+    loading = false;
+  }
+
+  /*
   async function init() {
     const [{ profiles: academicProfiles }, { profiles: userProfiles }] = await Promise.all([
       getProfilesRequest(),
@@ -61,9 +65,11 @@ export default function Dashboard({ session }) {
     init();
   }, []);
 
-  if (store.loading) return null;
+   */
 
-  if (store.isAcademicMode) {
+  if (loading) return null;
+
+  if (!isOther) {
     return <AcademicDashboard session={session} />;
   }
 
