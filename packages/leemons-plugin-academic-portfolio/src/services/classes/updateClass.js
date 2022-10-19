@@ -28,8 +28,13 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
 
       let goodGroup = null;
 
+      const cClass = await table.class.findOne(
+        { id: data.id },
+        { columns: ['program'], transacting }
+      );
+
       const program = await table.programs.findOne(
-        { id: data.program },
+        { id: cClass.program },
         { columns: ['id', 'useOneStudentGroup'], transacting }
       );
 

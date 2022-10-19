@@ -39,7 +39,7 @@ async function add(
               data.icon = data.icon || metas.logo;
             }
           } catch (err) {
-            console.error('Error getting bookmark metadata:', err);
+            console.error('Error getting bookmark metadata:', data.url, err);
           }
         }
       }

@@ -36,7 +36,10 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
 
     // First create the class group
     const groupsData = await Promise.all(
-      groups.map((group) => services.groups.addGroupIfNotExists(group))
+      groups.map((group) => {
+        if (group) return services.groups.addGroupIfNotExists(group);
+        return null;
+      })
     );
 
     // Then create the classes
@@ -62,12 +65,14 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
         program,
         seats,
         subject: subjectData.id,
-        group: groupsData[j].id,
+        group: groupsData[j]?.id,
         teachers: teachersData.map((teacherData) => {
           const teacher = find(teachers, { teacher: teacherData.user });
           return { teacher: teacherData.id, type: teacher.type };
         }),
       };
+
+      console.log('classroomData', classroomData);
 
       const classroom = await services.classes.addClass(classroomData, {
         userSession: users[creator],
@@ -135,6 +140,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {
       const { creator, ...program } = programs[programsKeys[i]];
+      console.log('Program', program);
       const programData = await services.programs.addProgram(program, {
         userSession: users[creator],
       });
