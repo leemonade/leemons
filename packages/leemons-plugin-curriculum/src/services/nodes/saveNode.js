@@ -28,6 +28,11 @@ async function saveNode(
         if (_.isPlainObject(datasetValues[key].value)) {
           _.forIn(datasetValues[key].value, (v) => {
             v.id = v.id || global.utils.randomString();
+            if (_.isArray(v.value)) {
+              _.forEach(v.value, (vv) => {
+                vv.id = vv.id || global.utils.randomString();
+              });
+            }
           });
         }
       });

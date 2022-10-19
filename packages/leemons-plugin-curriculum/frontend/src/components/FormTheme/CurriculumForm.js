@@ -23,7 +23,7 @@ function CurriculumForm({ id, schema, curriculum, onSave, defaultValues }) {
       store.loading = false;
       render();
     }, 250);
-  }, [defaultValues]);
+  }, [defaultValues, id]);
 
   function _onSave(e) {
     return onSave(form.getValues(), e);

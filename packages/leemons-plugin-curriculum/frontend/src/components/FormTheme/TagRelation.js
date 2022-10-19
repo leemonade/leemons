@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles, MultiSelect } from '@bubbles-ui/components';
-import { useStore } from '@common';
+import { htmlToText, useStore } from '@common';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -19,16 +19,13 @@ const TagRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
 
   function onChangeTags(values) {
     console.log(values);
-    /*
     props.onChange({
-      ...(props.value || { value: [], metadata: {} }),
+      ...(props.value || { metadata: {} }),
       metadata: {
         ...(props.value?.metadata || {}),
-        parentRelated: nodeValueId,
+        tagRelated: values,
       },
     });
-
-     */
   }
 
   const flatNodes = React.useMemo(() => {
@@ -54,24 +51,57 @@ const TagRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
         typeOfRelation: 'label',
       });
       if (labels.length) {
+        const nodeLevelsById = _.keyBy(curriculum.nodeLevels, 'id');
+        const selectData = [];
         _.forEach(labels, (label) => {
           const ids = label.relatedTo.split('|');
           const nodeLevelId = ids[0];
           const formValueId = ids[1];
           const nodes = _.filter(flatNodes, { nodeLevel: nodeLevelId });
-
           _.forEach(nodes, (node) => {
             if (node.id !== id) {
+              const nodeLevel = nodeLevelsById[node.nodeLevel];
+              const nodeLevelName =
+                nodeLevel.schema.compileJsonSchema.properties[formValueId].title;
               const nodeValue = node?.formValues?.[formValueId];
 
               if (nodeValue) {
-                // console.log(nodeValue);
+                if (_.isArray(nodeValue.value)) {
+                  _.forEach(nodeValue.value, (val) => {
+                    selectData.push({
+                      label: `${node.name}: ${nodeLevelName} - ${htmlToText(val.value)}`,
+                      value: `${nodeValue.id}|${val.id}`,
+                    });
+                  });
+                } else if (_.isObject(nodeValue.value)) {
+                  _.forIn(nodeValue.value, (val) => {
+                    if (_.isArray(val.value)) {
+                      _.forEach(val.value, (v) => {
+                        selectData.push({
+                          label: `${node.name}: ${nodeLevelName} - ${htmlToText(v.value)}`,
+                          value: `${nodeValue.id}|${val.id}|${v.id}`,
+                        });
+                      });
+                    } else if (val.value) {
+                      selectData.push({
+                        label: `${node.name}: ${nodeLevelName} - ${htmlToText(val.value)}`,
+                        value: `${nodeValue.id}|${val.id}`,
+                      });
+                    }
+                  });
+                } else if (nodeValue.value) {
+                  selectData.push({
+                    label: `${node.name}: ${nodeLevelName} - ${htmlToText(nodeValue.value)}`,
+                    value: nodeValue.id,
+                  });
+                }
                 show = true;
-                render();
               }
             }
           });
         });
+        store.selectData = selectData;
+        render();
       }
     }
     isShow(show);
@@ -83,7 +113,7 @@ const TagRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
         value={props.value?.metadata?.tagRelated}
         onChange={onChangeTags}
         data={store.selectData || []}
-        label={t('parentBlock', { name: store.selectParentName })}
+        label={t('selectTag')}
       />
     </Box>
   );
