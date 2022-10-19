@@ -64,6 +64,8 @@ function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSav
           defaultValues={value?.value?.[item.id] || {}}
           item={item}
           schema={schema}
+          curriculum={curriculum}
+          id={id}
           blockData={blockData}
           t={t}
           onEdit={() => {

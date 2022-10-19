@@ -88,6 +88,18 @@ function CurriculumListItem({
     }
   }, []);
 
+  const valueRules = {
+    required: t('fieldRequired'),
+  };
+
+  if (blockData.max)
+    valueRules.validate = (e) => {
+      const text = htmlToText(e);
+      if (text.length > blockData.max) {
+        return t('maxLength', { max: blockData.max });
+      }
+    };
+
   if (preview) {
     return (
       <Box className={classes.card}>
@@ -108,21 +120,29 @@ function CurriculumListItem({
           ) : null}
           {blockData.listType === 'textarea' ? <HtmlText>{defaultValues.value}</HtmlText> : null}
         </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
+          <Controller
+            control={form.control}
+            name="metadata.tagRelated"
+            render={({ field }) => (
+              <TagRelation
+                {...field}
+                curriculum={curriculum}
+                blockData={blockData}
+                isShow={(e) => {
+                  store.showSaveButton = e;
+                  render();
+                }}
+                readonly
+                id={id}
+                t={t}
+              />
+            )}
+          />
+        </Box>
       </Box>
     );
   }
-
-  const valueRules = {
-    required: t('fieldRequired'),
-  };
-
-  if (blockData.max)
-    valueRules.validate = (e) => {
-      const text = htmlToText(e);
-      if (text.length > blockData.max) {
-        return t('maxLength', { max: blockData.max });
-      }
-    };
 
   return (
     <ContextContainer className={classes.card}>
@@ -147,16 +167,22 @@ function CurriculumListItem({
           }
         }}
       />
-      <TagRelation
-        curriculum={curriculum}
-        blockData={blockData}
-        onChange={() => {}}
-        isShow={(e) => {
-          store.showSaveButton = e;
-          render();
-        }}
-        id={id}
-        t={t}
+      <Controller
+        control={form.control}
+        name="metadata.tagRelated"
+        render={({ field }) => (
+          <TagRelation
+            {...field}
+            curriculum={curriculum}
+            blockData={blockData}
+            isShow={(e) => {
+              store.showSaveButton = e;
+              render();
+            }}
+            id={id}
+            t={t}
+          />
+        )}
       />
       <Stack justifyContent="space-between" fullWidth>
         <Button variant="link" onClick={onCancel} loading={store.loading}>

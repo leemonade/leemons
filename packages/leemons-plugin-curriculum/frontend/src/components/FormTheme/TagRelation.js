@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { Box, createStyles, MultiSelect } from '@bubbles-ui/components';
+import { Badge, Box, createStyles, MultiSelect } from '@bubbles-ui/components';
 import { htmlToText, useStore } from '@common';
 
 const useStyle = createStyles((theme) => ({
@@ -13,19 +13,12 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-const TagRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
+const TagRelation = ({ readonly, blockData, curriculum, isShow, id, t, ...props }) => {
   const { classes } = useStyle();
   const [store, render] = useStore();
 
   function onChangeTags(values) {
-    console.log(values);
-    props.onChange({
-      ...(props.value || { metadata: {} }),
-      metadata: {
-        ...(props.value?.metadata || {}),
-        tagRelated: values,
-      },
-    });
+    props.onChange(values);
   }
 
   const flatNodes = React.useMemo(() => {
@@ -101,16 +94,29 @@ const TagRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
           });
         });
         store.selectData = selectData;
+        store.selectDataByValue = _.keyBy(selectData, 'value');
         render();
       }
     }
     isShow(show);
   }, []);
 
-  return (
+  return readonly ? (
+    <>
+      {props.value?.map((val) => {
+        if (store.selectDataByValue?.[val]?.label) {
+          return (
+            <Box sx={(theme) => ({ margin: theme.spacing[1] })}>
+              <Badge color="stroke" closable={false} label={store.selectDataByValue[val].label} />
+            </Box>
+          );
+        }
+      })}
+    </>
+  ) : (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
       <MultiSelect
-        value={props.value?.metadata?.tagRelated}
+        value={props.value || []}
         onChange={onChangeTags}
         data={store.selectData || []}
         label={t('selectTag')}
@@ -123,6 +129,8 @@ TagRelation.propTypes = {
   blockData: PropTypes.any,
   onChange: PropTypes.func,
   curriculum: PropTypes.any,
+  readonly: PropTypes.boolean,
+  isShow: PropTypes.any,
   value: PropTypes.any,
   id: PropTypes.string,
   t: PropTypes.func,

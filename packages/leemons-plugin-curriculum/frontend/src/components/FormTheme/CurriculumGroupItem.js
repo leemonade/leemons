@@ -19,6 +19,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { htmlToText, useStore } from '@common';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
+import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -38,11 +39,11 @@ const useStyle = createStyles((theme) => ({
 
 function CurriculumGroupItem({
   defaultValues,
-  schema,
+  curriculum,
+  id,
   blockData,
   onSave,
   onCancel,
-  onRemove,
   onEdit,
   preview,
   item,
@@ -135,6 +136,26 @@ function CurriculumGroupItem({
             />
           ) : null}
         </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
+          <Controller
+            control={form.control}
+            name="metadata.tagRelated"
+            render={({ field }) => (
+              <TagRelation
+                {...field}
+                curriculum={curriculum}
+                blockData={blockData}
+                isShow={(e) => {
+                  store.showSaveButton = e;
+                  render();
+                }}
+                readonly
+                id={id}
+                t={t}
+              />
+            )}
+          />
+        </Box>
       </Box>
     );
   }
@@ -184,6 +205,23 @@ function CurriculumGroupItem({
           }
         }}
       />
+      <Controller
+        control={form.control}
+        name="metadata.tagRelated"
+        render={({ field }) => (
+          <TagRelation
+            {...field}
+            curriculum={curriculum}
+            blockData={blockData}
+            isShow={(e) => {
+              store.showSaveButton = e;
+              render();
+            }}
+            id={id}
+            t={t}
+          />
+        )}
+      />
       <Stack justifyContent="space-between" fullWidth>
         <Button variant="link" onClick={onCancel} loading={store.loading}>
           {t('cancel')}
@@ -202,11 +240,13 @@ CurriculumGroupItem.defaultProps = {
 
 CurriculumGroupItem.propTypes = {
   t: PropTypes.func,
+  id: PropTypes.string,
   item: PropTypes.any,
   onEdit: PropTypes.func,
   onSave: PropTypes.func,
   onRemove: PropTypes.func,
   onCancel: PropTypes.func,
+  curriculum: PropTypes.any,
   schema: PropTypes.any,
   preview: PropTypes.bool,
   blockData: PropTypes.any,
