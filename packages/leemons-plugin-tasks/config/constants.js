@@ -93,8 +93,8 @@ const menuItems = [
     item: {
       key: 'tasks',
       order: 301,
-      iconSvg: '/public/tasks/menu-icon.svg',
-      activeIconSvg: '/public/tasks/menu-icon-active.svg',
+      iconSvg: '/public/tasks/tasks-menu-icon.svg',
+      activeIconSvg: '/public/tasks/tasks-menu-icon.svg',
       label: {
         en: 'Tasks',
         es: 'Tareas',
