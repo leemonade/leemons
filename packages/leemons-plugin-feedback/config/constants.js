@@ -20,8 +20,8 @@ const menuItems = [
   {
     item: {
       key: 'feedback',
-      order: 13,
-      iconSvg: '/public/feedback/menu-icon.svg',
+      order: 303,
+      iconSvg: '/public/feedback/menu-icon-active.svg',
       activeIconSvg: '/public/feedback/menu-icon-active.svg',
       label: {
         en: 'Feedback',

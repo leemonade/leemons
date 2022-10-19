@@ -4,7 +4,7 @@ async function addMain() {
   return add(
     {
       key: 'users',
-      order: 5,
+      order: 100,
       iconSvg: '/public/users/menu-icon.svg',
       activeIconSvg: '/public/users/menu-icon.svg',
       label: {
