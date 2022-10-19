@@ -157,12 +157,12 @@ async function importAcademicPortfolioSubjects({
 
         // Teacher
         classroom.teachers = teachers.filter((teacher) =>
-          teacher.group === group ? group.abbreviation : ''
+          group ? teacher.group === group.abbreviation : true
         );
 
         // Students
         classroom.students = students.filter((student) =>
-          student.group === group ? group.abbreviation : ''
+          group ? student.group === group.abbreviation : true
         );
 
         return classroom;
