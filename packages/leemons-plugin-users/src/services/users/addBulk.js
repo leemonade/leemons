@@ -16,7 +16,7 @@ const { addUserAvatar } = require('./addUserAvatar');
 
 async function addUserBulk(
   role,
-  { id, tags, password, birthdate, avatar, ...userData },
+  { id, tags, password, birthdate, avatar, created_at, ...userData },
   ctx,
   { profile, transacting } = {}
 ) {
@@ -45,6 +45,7 @@ async function addUserBulk(
     isNewUser = true;
   } else if (id) {
     await table.users.update(
+      { id },
       {
         ...userData,
         birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
@@ -54,7 +55,6 @@ async function addUserBulk(
       }
     );
   }
-
   let userAgent = await table.userAgent.findOne(
     {
       deleted_$null: false,
