@@ -42,16 +42,16 @@ export default function TaskSetupPage() {
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
       const developments = values?.metadata?.development;
-      if (developments?.length || store.currentTask.metadata?.development?.length) {
+      if (developments?.length || store.currentTask?.metadata?.development?.length) {
         const length = Math.max(
           developments?.length,
-          store.currentTask.metadata?.development?.length
+          store.currentTask?.metadata?.development?.length
         );
         const promises = [];
 
         for (let i = 0; i < length; i++) {
           const html = developments[i]?.development;
-          const oldHtml = store.currentTask.metadata?.development?.[i]?.development;
+          const oldHtml = store.currentTask?.metadata?.development?.[i]?.development;
 
           promises.push(processTextEditor(html, oldHtml).then((development) => ({ development })));
         }
