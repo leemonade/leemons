@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { isEmpty } = require('lodash');
+const { isEmpty, isNil } = require('lodash');
 const importProviders = require('./bulk/providers');
 
 async function initProviders() {
@@ -7,6 +7,7 @@ async function initProviders() {
     const providers = await importProviders();
     const storageProvider = 'leebrary-aws-s3';
     const emailProvider = 'emails-amazon-ses';
+    const smtpEmailProvider = 'emails-smtp';
 
     // ·····································
     // STORAGE PROVIDER
@@ -60,6 +61,27 @@ async function initProviders() {
         },
       });
       */
+    }
+
+    if (
+      providers.email &&
+      providers.email.provider === smtpEmailProvider &&
+      !isNil(providers.email.smtpPort) &&
+      !isEmpty(providers.email.smtpHost) &&
+      !isEmpty(providers.email.smtpUser)
+    ) {
+      const emailConfig = {
+        name: providers.email.name,
+        secure: providers.email.smtpSecure ?? false,
+        port: providers.email.smtpPort ?? 25,
+        host: providers.email.smtpHost,
+        user: providers.email.smtpUser,
+        pass: providers.email.smtpPass,
+      };
+
+      await leemons
+        .getPlugin('emails')
+        .services.email.addProvider({ providerName: smtpEmailProvider, config: emailConfig });
     }
 
     return providers;
