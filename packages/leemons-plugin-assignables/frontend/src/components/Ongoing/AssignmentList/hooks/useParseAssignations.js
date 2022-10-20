@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { LocaleDate, LocaleRelativeTime, unflatten } from '@common';
@@ -19,7 +19,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from 'react-query';
 import UnreadMessages from '@comunica/UnreadMessages';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import globalContext from '../../../../contexts/globalContext';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
 import prefixPN from '../../../../helpers/prefixPN';
@@ -478,7 +478,7 @@ export default function useParseAssignations(assignations, options) {
     return {};
   }, [translations]);
 
-  const { isTeacher } = useContext(globalContext);
+  const isTeacher = useIsTeacher();
 
   const parserToUse = useMemo(
     () => (isTeacher ? parseAssignationForTeacherView : parseAssignationForStudentView),

@@ -1,10 +1,10 @@
 import { getCookieToken } from '@users/session';
-import useAssignablesContext from '../useAssignablesContext';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import useAssignableInstances from '../assignableInstance/useAssignableInstancesQuery';
 import useAssignations from './useAssignations';
 
 export default function useAssignationsByProfile(ids) {
-  const { isTeacher } = useAssignablesContext();
+  const isTeacher = useIsTeacher();
 
   const token = getCookieToken(true);
   const user = token.centers[0].userAgentId;

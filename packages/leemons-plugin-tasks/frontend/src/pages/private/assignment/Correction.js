@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import useAssignation from '@assignables/hooks/assignations/useAssignations';
-import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
 import { useParams, useHistory } from 'react-router-dom';
 import { Loader, Text, createStyles, Box } from '@bubbles-ui/components';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useAssignableInstance from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import Correction from '../../../components/Correction';
 import StudentCorrection from '../../../components/StudentCorrection';
 
@@ -35,7 +35,7 @@ const styles = createStyles((theme) => ({
 }));
 
 export default function CorrectionPage() {
-  const { isTeacher } = useAssignablesContext();
+  const isTeacher = useIsTeacher();
   const isFirstUser = useRef(true);
   const history = useHistory();
   const { instance: instanceId } = useParams();
