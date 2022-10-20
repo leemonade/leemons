@@ -7,10 +7,10 @@ import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
-import useIsTeacher from '../Ongoing/AssignmentList/hooks/useIsTeacher';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;

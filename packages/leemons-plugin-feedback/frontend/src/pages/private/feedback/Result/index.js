@@ -30,9 +30,9 @@ import { NPSStatistics } from '@feedback/pages/private/feedback/Result/component
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { createDatasheet } from '@feedback/helpers/createDatasheet';
-import useIsTeacher from '@assignables/components/Ongoing/AssignmentList/hooks/useIsTeacher';
 import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 import dayjs from 'dayjs';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 

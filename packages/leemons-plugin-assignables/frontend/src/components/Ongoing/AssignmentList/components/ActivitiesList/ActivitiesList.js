@@ -1,19 +1,19 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import useSearchAssignableInstances from '../../../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useParseAssignations from '../../hooks/useParseAssignations';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
-import globalContext from '../../../../../contexts/globalContext';
 import prefixPN from '../../../../../helpers/prefixPN';
 import EmptyState from '../../../../../assets/EmptyState.png';
 
 function useAssignmentsColumns({ variant } = {}) {
-  const { isTeacher } = useContext(globalContext);
+  const isTeacher = useIsTeacher();
 
   const [, translations] = useTranslateLoader(
     prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`)

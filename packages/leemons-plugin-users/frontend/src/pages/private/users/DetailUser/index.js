@@ -112,6 +112,7 @@ function DetailUser({ session }) {
         secondSurname: config.secondSurname,
       };
       store.user = data.user;
+      store.isActived = !!store.user.active;
       store.userAgents = data.userAgents;
       store.centers = getUserAgentsCenters();
       store.formValues = {
@@ -289,6 +290,8 @@ function DetailUser({ session }) {
               form={form}
               config={store.config}
               isEditMode={store.isEditMode}
+              store={store}
+              render={render}
             />
             {store.userAgent && !store.hideDataset ? (
               <UserAgentDataset
