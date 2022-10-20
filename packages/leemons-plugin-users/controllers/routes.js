@@ -91,6 +91,16 @@ module.exports = [
     handler: 'users.registerPassword',
   },
   {
+    path: '/user/activate-user',
+    method: 'POST',
+    handler: 'users.activateUser',
+  },
+  {
+    path: '/user/activation-mail',
+    method: 'POST',
+    handler: 'users.sendWelcomeEmailToUser',
+  },
+  {
     path: '/user',
     method: 'GET',
     handler: 'users.detail',

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import {
@@ -12,14 +12,68 @@ import {
   Select,
   Stack,
   TextInput,
+  PasswordInput,
+  Modal,
 } from '@bubbles-ui/components';
 import { EMAIL_REGEX } from '@bubbles-ui/leemons';
-import { Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
+import { activateUserRequest, sendWelcomeEmailToUserRequest, recoverRequest } from '@users/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
-function PersonalInformation({ t, user, form, config, isEditMode }) {
+function PersonalInformation({ t, user, form, config, isEditMode, store, render }) {
   const [tp] = useTranslateLoader(prefixPN('create_users'));
+  const [activeModalOpened, setActiveModalOpened] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const {
+    watch,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const password = watch('password');
+  const repeatPassword = watch('repeatPassword');
+
+  const toggleModal = () => {
+    setActiveModalOpened(!activeModalOpened);
+  };
+
+  const sendActivationEmail = () => {
+    try {
+      sendWelcomeEmailToUserRequest({ user: store.user });
+      addSuccessAlert(t('activationEmailSent'));
+    } catch (err) {
+      addErrorAlert(err);
+    }
+  };
+
+  const sendRecoveryLink = () => {
+    try {
+      recoverRequest({ email: store.user.email });
+      addSuccessAlert(t('recoveryEmailSent'));
+    } catch (err) {
+      addErrorAlert(err);
+    }
+  };
+
+  const activeUserManually = () => {
+    handleSubmit(async ({ password: userPassword }) => {
+      setLoading(true);
+      try {
+        await activateUserRequest({ id: user.id, password: userPassword });
+        addSuccessAlert(t('activatedUser'));
+        toggleModal();
+        setLoading(false);
+        store.isActived = true;
+        render();
+      } catch (err) {
+        addErrorAlert(err);
+        setLoading(false);
+      }
+    })();
+  };
 
   return (
     <Grid columns={100}>
@@ -47,9 +101,69 @@ function PersonalInformation({ t, user, form, config, isEditMode }) {
           />
           <Box>
             <TextInput label={tp('passwordHeader')} disabled={true} />
-            <Stack fullWidth direction="row" justifyContent="flex-end">
-              <Button variant="link">{t('recoveryLink')}</Button>
+            <Stack fullWidth direction="column" alignItems="flex-end">
+              {store.isActived && (
+                <Button variant="link" onClick={sendRecoveryLink}>
+                  {t('recoveryLink')}
+                </Button>
+              )}
+              {!store.isActived && (
+                <Stack direction="column" alignItems="flex-end">
+                  <Button variant="link" onClick={sendActivationEmail}>
+                    {t('sendActivationEmail')}
+                  </Button>
+                  <Button variant="link" onClick={toggleModal} loading={loading}>
+                    {t('manualActivation')}
+                  </Button>
+                </Stack>
+              )}
             </Stack>
+            <Modal opened={activeModalOpened} onClose={toggleModal} withCloseButton={false}>
+              <Stack fullWidth direction="column" spacing={4}>
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{
+                    required: t('requiredPassword'),
+                    validate: () => {
+                      if (password !== repeatPassword) return t('passwordNotMatch');
+                      return true;
+                    },
+                  }}
+                  shouldUnregister
+                  render={({ field }) => (
+                    <PasswordInput
+                      {...field}
+                      label={t('provisionalPassword')}
+                      error={errors.password}
+                    />
+                  )}
+                />
+                <Controller
+                  name="repeatPassword"
+                  control={control}
+                  rules={{
+                    required: t('requiredPassword'),
+                    validate: () => {
+                      if (password !== repeatPassword) return t('passwordNotMatch');
+                      return true;
+                    },
+                  }}
+                  shouldUnregister
+                  render={({ field }) => (
+                    <PasswordInput
+                      {...field}
+                      label={t('repeatPassword')}
+                      error={errors.repeatPassword}
+                    />
+                  )}
+                />
+              </Stack>
+              <Stack fullWidth spacing={6} style={{ marginTop: 16 }} justifyContent="space-between">
+                <Button onClick={toggleModal}>{t('cancel')}</Button>
+                <Button onClick={activeUserManually}>{t('activeUser')}</Button>
+              </Stack>
+            </Modal>
           </Box>
           <Controller
             name="user.name"
@@ -149,6 +263,8 @@ PersonalInformation.propTypes = {
   form: PropTypes.object,
   config: PropTypes.object,
   isEditMode: PropTypes.bool,
+  store: PropTypes.object,
+  render: PropTypes.func,
 };
 
 export default PersonalInformation;

@@ -22,8 +22,6 @@ async function sendWelcomeEmailToUser(user, ctx, { transacting } = {}) {
       expDays: constants.daysForRegisterPassword,
     });
 
-  console.log('Resultado email');
-  console.log(email);
   return email;
 }
 
