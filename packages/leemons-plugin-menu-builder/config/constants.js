@@ -1,19 +1,25 @@
 module.exports = {
   mainMenuKey: 'plugins.menu-builder.main',
   CORE_PLUGINS: [
-    'leebrary',
+    'admin',
+    'dashboard',
+
+    'users',
     'grades',
     'academic-portfolio',
     'academic-calendar',
+
+    'calendar',
+    'assignables',
     'scores',
+
     'curriculum',
     'tasks',
     'tests',
+    'feedback',
+
+    'leebrary',
     'families',
-    'dashboard',
-    'users',
-    'calendar',
-    'assignables',
   ].map((item) => `plugins.${item}`),
   url: {
     base: 'menu-builder',
