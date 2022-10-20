@@ -7,6 +7,7 @@ async function sendWelcomeEmailToUser(user, ctx, { transacting } = {}) {
   const recovery = await table.userRegisterPassword.findOne({ user: user.id }, { transacting });
   const hostname = await getHostname();
 
+  if (!recovery) throw new Error('User is already active');
   const email = await leemons
     .getPlugin('emails')
     .services.email.sendAsPlatform(user.email, 'user-welcome', user.locale, {
