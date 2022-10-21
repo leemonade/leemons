@@ -33,7 +33,6 @@ export function CurriculumSelectContentsModal({
   // eslint-disable-next-line no-nested-ternary
   const subjects = isArray(_subjects) ? _subjects : _subjects ? [_subjects] : _subjects;
   const [t] = useTranslateLoader(prefixPN('selectContentModal'));
-  const [t2] = useTranslateLoader('plugins.multilanguage.formWithTheme');
   const [store, render] = useStore({ value });
 
   function getTreeData() {
@@ -119,7 +118,7 @@ export function CurriculumSelectContentsModal({
 
         <Tabs>
           <TabPanel label={t('curriculum')}>
-            <CurriculumTab t2={t2} subjects={subjects} t={t} store={store} render={render} />
+            <CurriculumTab subjects={subjects} t={t} store={store} render={render} />
           </TabPanel>
           <TabPanel
             notification={store.value?.length ? store.value?.length : null}

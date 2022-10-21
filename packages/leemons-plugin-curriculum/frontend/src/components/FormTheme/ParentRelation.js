@@ -13,7 +13,7 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-const ParentRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
+const ParentRelation = ({ children, blockData, curriculum, isShow, id, t, ...props }) => {
   const { classes } = useStyle();
   const [store, render] = useStore();
 
@@ -98,23 +98,28 @@ const ParentRelation = ({ blockData, curriculum, isShow, id, t, ...props }) => {
   }, []);
 
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
-      {store.type === 'input' ? (
-        <TextInput
-          value={parentRelatedValueText}
-          readOnly
-          label={t('parentBlock', { name: store.selectParentName })}
-        />
-      ) : null}
-      {store.type === 'select' ? (
-        <Select
-          value={props.value?.metadata?.parentRelated}
-          onChange={onChangeParent}
-          data={store.selectData}
-          label={t('parentBlock', { name: store.selectParentName })}
-        />
-      ) : null}
-    </Box>
+    <>
+      <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+        {store.type === 'input' ? (
+          <TextInput
+            value={parentRelatedValueText}
+            readOnly
+            label={t('parentBlock', { name: store.selectParentName })}
+          />
+        ) : null}
+        {store.type === 'select' ? (
+          <Select
+            value={props.value?.metadata?.parentRelated}
+            onChange={onChangeParent}
+            data={store.selectData}
+            label={t('parentBlock', { name: store.selectParentName })}
+          />
+        ) : null}
+        {children ? (
+          <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>{children}</Box>
+        ) : null}
+      </Box>
+    </>
   );
 };
 

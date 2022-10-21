@@ -61,6 +61,8 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
     render();
   }
 
+  console.log(blockData);
+
   return (
     <Box>
       <ParentRelation
