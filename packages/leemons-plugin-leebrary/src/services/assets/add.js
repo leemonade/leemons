@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil, isString, isArray, trim } = require('lodash');
+const { map, isEmpty, isNil, isString, isArray, trim, forEach } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
@@ -12,8 +12,14 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
 
 async function add(
   { file, cover, category, canAccess, ...data },
-  { newId, published = true, userSession, transacting: t } = {}
+  { newId, published = true, userSession, permissions: _permissions, transacting: t } = {}
 ) {
+  // eslint-disable-next-line no-nested-ternary
+  const pPermissions = _permissions
+    ? isArray(_permissions)
+      ? _permissions
+      : [_permissions]
+    : _permissions;
   return global.utils.withTransaction(
     async (transacting) => {
       // ES: Asignamos la categoría de "media-files" por defecto.
@@ -149,15 +155,31 @@ async function add(
 
       // ES: Primero, añadimos permisos al archivo
       // EN: First, add permission to the asset
-      await userService.permissions.addItem(
-        newAsset.id,
-        leemons.plugin.prefixPN(category.id),
-        {
-          permissionName,
-          actionNames: leemons.plugin.config.constants.assetRoles,
-        },
-        { isCustomPermission: true, transacting }
-      );
+      const permissionsPromises = [
+        userService.permissions.addItem(
+          newAsset.id,
+          leemons.plugin.prefixPN(category.id),
+          {
+            permissionName,
+            actionNames: leemons.plugin.config.constants.assetRoles,
+          },
+          { isCustomPermission: true, transacting }
+        ),
+      ];
+
+      if (pPermissions && pPermissions.length) {
+        forEach(pPermissions, ({ isCustomPermission, canEdit, ...per }) => {
+          permissionsPromises.push(
+            userService.permissions.addItem(
+              newAsset.id,
+              leemons.plugin.prefixPN(canEdit ? 'asset.can-edit' : 'asset.can-view'),
+              per,
+              { isCustomPermission, transacting }
+            )
+          );
+        });
+      }
+      await Promise.all(permissionsPromises);
 
       // ES: Luego, añade los permisos a los usuarios
       // EN: Then, add the permissions to the users

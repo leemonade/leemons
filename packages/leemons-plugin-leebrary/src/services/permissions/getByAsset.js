@@ -7,13 +7,22 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
   try {
     const { services: userService } = leemons.getPlugin('users');
 
-    const permissions = await userService.permissions.getUserAgentPermissions(
-      userSession.userAgents,
-      {
+    const [permissions, canView, canEdit] = await Promise.all([
+      userService.permissions.getUserAgentPermissions(userSession.userAgents, {
         query: { permissionName: getAssetPermissionName(assetId) },
         transacting,
-      }
-    );
+      }),
+      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+        userSession.userAgents,
+        leemons.plugin.prefixPN('asset.can-view'),
+        { item: assetId, transacting }
+      ),
+      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+        userSession.userAgents,
+        leemons.plugin.prefixPN('asset.can-edit'),
+        { item: assetId, transacting }
+      ),
+    ]);
 
     if (isEmpty(permissions)) {
       const asset = await tables.assets.find(
@@ -33,7 +42,14 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       (item) => item.permissionName.indexOf(assetId) > -1 // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
     );
 
-    const role = permission?.actionNames[0];
+    let role = permission?.actionNames[0];
+
+    if (canView.length && !role) {
+      role = 'viewer';
+    }
+    if (canEdit.length && (!role || role !== 'owner')) {
+      role = 'editor';
+    }
 
     return { role, permissions: getRolePermissions(role) };
   } catch (e) {
