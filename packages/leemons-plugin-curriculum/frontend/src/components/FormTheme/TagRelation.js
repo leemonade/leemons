@@ -119,14 +119,18 @@ const TagRelation = ({ readonly, blockData, curriculum, isShow, id, t, ...props 
       })}
     </>
   ) : (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
-      <MultiSelect
-        value={props.value || []}
-        onChange={onChangeTags}
-        data={store.selectData || []}
-        label={t('selectTag')}
-      />
-    </Box>
+    <>
+      {store.selectData?.length ? (
+        <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+          <MultiSelect
+            value={props.value || []}
+            onChange={onChangeTags}
+            data={store.selectData || []}
+            label={t('selectTag')}
+          />
+        </Box>
+      ) : null}
+    </>
   );
 };
 

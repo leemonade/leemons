@@ -215,5 +215,8 @@ module.exports = {
     curriculum: 'Plan de estudios',
     added: 'Añadido con éxito',
     searchContent: 'Buscar contenido',
+    knowledges: 'Conocimientos',
+    'qualifying-criteria': 'Criterio calificable',
+    'non-qualifying-criteria': 'Criterio no calificable',
   },
 };

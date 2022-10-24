@@ -213,5 +213,8 @@ module.exports = {
     curriculum: 'Curriculum',
     added: 'Added',
     searchContent: 'Search content',
+    knowledges: 'Knowledges',
+    'qualifying-criteria': 'Qualifying criteria',
+    'non-qualifying-criteria': 'Non qualifying criteria',
   },
 };

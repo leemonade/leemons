@@ -7,8 +7,6 @@ import {
   ContextContainer,
   Modal,
   Stack,
-  TabPanel,
-  Tabs,
   Title,
 } from '@bubbles-ui/components';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -18,7 +16,6 @@ import { useStore } from '@common';
 import { filter, find, forEach, isArray } from 'lodash';
 import { detailCurriculumRequest } from '../../request';
 import { CurriculumTab } from './components/CurriculumTab';
-import { CurriculumAdded } from './components/CurriculumAdded';
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumSelectContentsModal({
@@ -117,7 +114,9 @@ export function CurriculumSelectContentsModal({
           <ActionButton icon={<RemoveIcon />} onClick={onClose} />
         </Stack>
 
-        <Tabs>
+        <CurriculumTab t2={t2} subjects={subjects} t={t} store={store} render={render} />
+
+        {/* <Tabs>
           <TabPanel label={t('curriculum')}>
             <CurriculumTab t2={t2} subjects={subjects} t={t} store={store} render={render} />
           </TabPanel>
@@ -127,7 +126,7 @@ export function CurriculumSelectContentsModal({
           >
             <CurriculumAdded t={t} store={store} render={render} />
           </TabPanel>
-        </Tabs>
+        </Tabs> */}
 
         <Stack justifyContent="end" onClick={() => onChange(store.value)}>
           <Button>{t('saveButtonLabel')}</Button>

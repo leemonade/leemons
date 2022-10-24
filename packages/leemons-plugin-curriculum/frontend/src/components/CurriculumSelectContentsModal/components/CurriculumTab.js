@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, Col, Grid, Stack, Title } from '@bubbles-ui/components';
+import { TabPanel, Tabs } from '@bubbles-ui/components';
 import { find, forEach, forIn, groupBy, isArray } from 'lodash';
 import { CurriculumProp } from './CurriculumProp';
 
@@ -12,8 +12,10 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
     store.selectedNode = {
       ...node,
       _nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
+      propertiesByType: [],
     };
 
+    // TODO Añadir que se saquen de los padres todos los campos que no esten por algun hijo configurado como padre
     store.selectedNode._formProperties = [];
     if (store.selectedNode._nodeLevel?.schema?.compileJsonSchema) {
       forIn(store.selectedNode._nodeLevel.schema.compileJsonSchema.properties, (value, key) => {
@@ -23,6 +25,15 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
         });
       });
     }
+
+    const group = groupBy(
+      store.selectedNode._formProperties,
+      'frontConfig.blockData.curricularContent'
+    );
+
+    forIn(group, (value, key) => {
+      store.selectedNode.propertiesByType.push({ value, key });
+    });
 
     render();
   }
@@ -53,11 +64,27 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
     }
   }, [JSON.stringify(subjects), store.curriculum]);
 
-  const propertiesGrouped = groupBy(
-    store.selectedNode._formProperties,
-    'frontConfig.blockData.curricularContent'
+  return (
+    <Tabs>
+      {store.selectedNode?.propertiesByType.map(({ value, key }) => {
+        let count = 0;
+        forEach(value, ({ id }) => {
+          forEach(store.value, (str) => {
+            if (str.indexOf(`property.${store.selectedNode?.formValues[id].id}`) >= 0) count++;
+          });
+        });
+        return (
+          <TabPanel key={key} label={t(key)} notification={count || null}>
+            {value.map((prop, i) => (
+              <CurriculumProp t2={t2} key={i} store={store} render={render} item={prop} />
+            ))}
+          </TabPanel>
+        );
+      })}
+    </Tabs>
   );
 
+  /*
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
       <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
@@ -73,11 +100,11 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
         </Grid>
       </Box>
       <Grid columns={100}>
-        {/*
+
         <Col span={33}>
           <Tree rootId={0} treeData={store.treeData} onSelect={onSelect} />
         </Col>
-        */}
+
 
         <Col span={100}>
           {store.selectedNode
@@ -89,6 +116,8 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
       </Grid>
     </Box>
   );
+
+   */
 }
 
 CurriculumTab.propTypes = {

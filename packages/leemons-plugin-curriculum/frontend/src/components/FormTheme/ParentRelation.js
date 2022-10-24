@@ -13,7 +13,16 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-const ParentRelation = ({ children, blockData, curriculum, isShow, id, t, ...props }) => {
+const ParentRelation = ({
+  children,
+  hideLabel,
+  blockData,
+  curriculum,
+  isShow,
+  id,
+  t,
+  ...props
+}) => {
   const { classes } = useStyle();
   const [store, render] = useStore();
 
@@ -90,7 +99,12 @@ const ParentRelation = ({ children, blockData, curriculum, isShow, id, t, ...pro
             store.type = 'input';
             onChangeParent(nodeValue.id);
           }
-          isShow(true);
+
+          isShow(true, {
+            node,
+            nodeLevel,
+            property: nodeLevel.schema.compileJsonSchema.properties[formValueId],
+          });
           render();
         }
       }
@@ -104,7 +118,7 @@ const ParentRelation = ({ children, blockData, curriculum, isShow, id, t, ...pro
           <TextInput
             value={parentRelatedValueText}
             readOnly
-            label={t('parentBlock', { name: store.selectParentName })}
+            label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
           />
         ) : null}
         {store.type === 'select' ? (
@@ -112,7 +126,7 @@ const ParentRelation = ({ children, blockData, curriculum, isShow, id, t, ...pro
             value={props.value?.metadata?.parentRelated}
             onChange={onChangeParent}
             data={store.selectData}
-            label={t('parentBlock', { name: store.selectParentName })}
+            label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
           />
         ) : null}
         {children ? (
@@ -127,6 +141,9 @@ ParentRelation.propTypes = {
   blockData: PropTypes.any,
   onChange: PropTypes.func,
   curriculum: PropTypes.any,
+  hideLabel: PropTypes.bool,
+  isShow: PropTypes.any,
+  children: PropTypes.any,
   value: PropTypes.any,
   id: PropTypes.string,
   t: PropTypes.func,

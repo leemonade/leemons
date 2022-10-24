@@ -3,7 +3,17 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Badge, Box, Checkbox, InputWrapper, Paragraph, Stack, Text } from '@bubbles-ui/components';
+import {
+  Badge,
+  Box,
+  Checkbox,
+  InputWrapper,
+  Paragraph,
+  Stack,
+  TAGIFY_TAG_REGEX,
+  Text,
+  Title,
+} from '@bubbles-ui/components';
 import _, { forEach, forIn, isArray, isNil, isObject } from 'lodash';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
@@ -101,24 +111,59 @@ function NewValue({ blockData, showCheckboxs, store, value, render, baseValueId 
     render();
   }
 
-  function CheckBoxComponent(id, item) {
+  function CheckBoxComponent(id, item, title) {
     return (
-      <Stack fullWidth alignItems="start">
-        {showCheckboxs ? (
-          <Checkbox checked={store.value?.indexOf(id) >= 0} onChange={() => onChange(id)} />
-        ) : null}
-        <Stack alignItems="baseline">
-          {item.metadata?.index ? <Text strong>{`${item.metadata?.index}`}</Text> : null}
-          <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
-            <Paragraph
+      <Box>
+        <Stack fullWidth alignItems="start">
+          {showCheckboxs ? (
+            <Checkbox checked={store.value?.indexOf(id) >= 0} onChange={() => onChange(id)} />
+          ) : null}
+          <Stack sx={() => ({ marginTop: 6 })} alignItems="center">
+            {item.metadata?.index ? (
+              <Text role="productive" color="primary" strong>{`${item.metadata?.index}`}</Text>
+            ) : null}
+            <Box sx={(theme) => ({ flex: 1 })}>
+              <Text
+                strong
+                color="primary"
+                role="productive"
+                dangerouslySetInnerHTML={{
+                  __html: title || item.value,
+                }}
+              />
+            </Box>
+          </Stack>
+        </Stack>
+        {title ? (
+          <Box
+            sx={(theme) => ({
+              paddingLeft: theme.spacing[2],
+              marginTop: -2,
+              marginBottom: theme.spacing[1],
+            })}
+          >
+            <Text
+              role="productive"
               dangerouslySetInnerHTML={{
                 __html: item.value,
               }}
             />
           </Box>
-        </Stack>
-      </Stack>
+        ) : null}
+      </Box>
     );
+  }
+
+  function getGroupTitle(itemId) {
+    let finalText = blockData.showAs;
+    let array;
+    const item = _.find(blockData.elements, { id: itemId });
+    // eslint-disable-next-line no-cond-assign
+    while ((array = TAGIFY_TAG_REGEX.exec(blockData.showAs)) !== null) {
+      const json = JSON.parse(array[0])[0][0];
+      finalText = finalText.replace(array[0], item[json.id]);
+    }
+    return finalText;
   }
 
   if (isObject(value)) {
@@ -133,14 +178,28 @@ function NewValue({ blockData, showCheckboxs, store, value, render, baseValueId 
     }
     // Grupo
     const toReturn = [];
-    forIn(value, (val) => {
+    forIn(value, (val, k) => {
       const checks = [];
       if (isArray(val.value)) {
+        const che = [];
         forEach(val.value, (v) => {
-          checks.push(CheckBoxComponent(`${key}|value.${val.id}|value2.${v.id}`, v));
+          che.push(CheckBoxComponent(`${key}|value.${val.id}|value2.${v.id}`, v));
         });
+        checks.push(
+          <Box>
+            <Text
+              strong
+              color="primary"
+              role="productive"
+              dangerouslySetInnerHTML={{
+                __html: getGroupTitle(k),
+              }}
+            />
+            {che}
+          </Box>
+        );
       } else {
-        checks.push(CheckBoxComponent(`${key}|value.${val.id}`, val));
+        checks.push(CheckBoxComponent(`${key}|value.${val.id}`, val, getGroupTitle(k)));
       }
       toReturn.push(
         <Box>
@@ -164,20 +223,37 @@ NewValue.propTypes = {
   value: PropTypes.any,
   store: PropTypes.object,
   render: PropTypes.func,
+  blockData: PropTypes.any,
   baseValueId: PropTypes.string,
   showCheckboxs: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }) {
+  const [parentProperty, setParentProperty] = React.useState(null);
+
   let values;
   if (store.selectedNode?.formValues) {
     values = store.selectedNode?.formValues[item.id];
   }
 
+  function onParentFound(show, { property } = {}) {
+    if (show && property) setParentProperty(property);
+  }
+
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-      <InputWrapper label={<Box>{item.title}</Box>}>
+      <InputWrapper
+        label={
+          <Title
+            order={6}
+            sx={(theme) => ({ marginTop: theme.spacing[2], marginBottom: theme.spacing[2] })}
+          >
+            {parentProperty ? `${parentProperty.title} & ` : ''}
+            {item.title}
+          </Title>
+        }
+      >
         {isNil(values) ? (
           '-'
         ) : (
@@ -187,8 +263,9 @@ export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }
               blockData={item.frontConfig.blockData}
               value={values}
               onChange={() => {}}
-              isShow={() => {}}
+              isShow={onParentFound}
               id={store.selectedNode.id}
+              hideLabel
               t={t2}
             >
               {isArray(values.value) ? (
