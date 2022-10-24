@@ -24,16 +24,15 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       ),
     ]);
 
+    let role = null;
+
     if (isEmpty(permissions)) {
       const asset = await tables.assets.find(
         { id: assetId },
         { columns: ['id', 'public'], transacting }
       );
       if (asset[0]?.public) {
-        return {
-          role: 'public',
-          permissions: getRolePermissions('public'),
-        };
+        role = 'public';
       }
     }
 
@@ -42,7 +41,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       (item) => item.permissionName.indexOf(assetId) > -1 // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
     );
 
-    let role = permission?.actionNames[0];
+    role = permission?.actionNames[0];
 
     if (canView.length && !role) {
       role = 'viewer';
@@ -50,6 +49,8 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
     if (canEdit.length && (!role || role !== 'owner')) {
       role = 'editor';
     }
+
+    console.log('role', role);
 
     return { role, permissions: getRolePermissions(role) };
   } catch (e) {

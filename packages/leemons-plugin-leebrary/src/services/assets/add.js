@@ -10,6 +10,17 @@ const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 
+/*
+* permissions example
+* [
+    {
+      canEdit: true,
+      isCustomPermission: true,
+      permissionName: 'plugins.calendar.calendar.idcalendario',
+      actionNames: ['view', 'delete', 'admin', 'owner'],
+    },
+  ]
+* */
 async function add(
   { file, cover, category, canAccess, ...data },
   { newId, published = true, userSession, permissions: _permissions, transacting: t } = {}
