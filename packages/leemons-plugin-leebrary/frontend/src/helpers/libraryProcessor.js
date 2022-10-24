@@ -66,12 +66,12 @@ function getHtmlAssets(html, { onlyProcessed }) {
   return _.uniq(assets);
 }
 
-export async function libraryProcessor(html, oldHtml) {
+export async function libraryProcessor(html, oldHtml, { force }) {
   const regex = /<library (.*?)><\/library>/g;
   const parsedAssets = {};
   let processedHTML = html;
 
-  const oldHtmlAssets = getHtmlAssets(oldHtml, { onlyProcessed: true });
+  const oldHtmlAssets = force ? [] : getHtmlAssets(oldHtml, { onlyProcessed: true });
   const newHtmlAssets = [];
 
   try {
@@ -83,7 +83,7 @@ export async function libraryProcessor(html, oldHtml) {
 
         const propsObj = propsToObject(props);
 
-        if (propsObj.processed) {
+        if (propsObj.processed && !force) {
           newHtmlAssets.push(propsObj.id);
         } else {
           let newProps = parsedAssets[propsObj.id];

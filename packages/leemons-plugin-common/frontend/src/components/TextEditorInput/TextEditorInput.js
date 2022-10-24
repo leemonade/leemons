@@ -27,9 +27,9 @@ export function useProcessTextEditor() {
   );
 
   return React.useCallback(
-    async (html, oldHtml) =>
+    async (html, oldHtml, props) =>
       processors.reduce(
-        async (prevProcessorHTML, processor) => processor(await prevProcessorHTML, oldHtml),
+        async (prevProcessorHTML, processor) => processor(await prevProcessorHTML, oldHtml, props),
         html
       ),
     [processors]
