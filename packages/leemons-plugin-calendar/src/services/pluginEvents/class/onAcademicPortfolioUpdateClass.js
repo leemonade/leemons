@@ -16,7 +16,11 @@ function onAcademicPortfolioUpdateClass(
   return new Promise(async (resolve) => {
     try {
       const config = {
-        name: `${name}${groups?.abbreviation ? ` (${groups.abbreviation})` : ''}`,
+        name: `${name}${
+          groups?.abbreviation && groups.abbreviation !== '-auto-'
+            ? ` (${groups.abbreviation})`
+            : ''
+        }`,
         section: leemons.plugin.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
       };

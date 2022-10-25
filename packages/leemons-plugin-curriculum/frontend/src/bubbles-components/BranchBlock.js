@@ -89,7 +89,7 @@ function BranchBlock({
   const [customRightButton, setCustomRightButton] = React.useState();
 
   const {
-    getValues,
+    setValue,
     watch,
     control,
     handleSubmit,
@@ -381,7 +381,9 @@ function BranchBlock({
         data.push({
           label: `${parent.name} - ${prop.frontConfig.blockData.name}`,
           value: `${parent.id}|${_keys[key]}`,
-          isParent: true,
+          isParent:
+            formData.curricularContent &&
+            formData.curricularContent === prop.frontConfig.blockData.curricularContent,
         });
       });
     });
@@ -448,7 +450,22 @@ function BranchBlock({
         },
       ],
     };
-  }, [branch, formData.contentRelations]);
+  }, [branch, formData.contentRelations, formData.curricularContent]);
+
+  React.useEffect(() => {
+    if (formData.contentRelations) {
+      const index = findIndex(formData.contentRelations, { typeOfRelation: 'parent' });
+      if (index >= 0) {
+        const { relatedTo } = formData.contentRelations[index];
+        const nodeLevel = find(store.curriculum.nodeLevels, { id: relatedTo.split('|')[0] });
+        const prop = nodeLevel.schema.compileJsonSchema.properties[relatedTo.split('|')[1]];
+        if (prop.frontConfig.blockData.curricularContent !== formData.curricularContent) {
+          formData.contentRelations.splice(index, 1);
+          setValue('contentRelations', formData.contentRelations);
+        }
+      }
+    }
+  }, [formData.curricularContent]);
 
   return (
     <form
