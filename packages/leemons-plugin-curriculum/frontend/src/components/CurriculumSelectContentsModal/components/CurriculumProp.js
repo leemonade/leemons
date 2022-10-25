@@ -8,7 +8,6 @@ import {
   Box,
   Checkbox,
   InputWrapper,
-  Paragraph,
   Stack,
   TAGIFY_TAG_REGEX,
   Text,
@@ -18,49 +17,20 @@ import _, { forEach, forIn, isArray, isNil, isObject } from 'lodash';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
 
-function Value({ item, store, render, property, showCheckboxs }) {
-  const key = `curriculum.${store.curriculum.id}|nodeLevel.${store.selectedNode.nodeLevel}|node.${store.selectedNode.id}|property.${property.id}|value.${item.id}`;
-
-  function onChange() {
-    if (!isArray(store.value)) store.value = [];
-    const index = store.value.indexOf(key);
-    if (index >= 0) {
-      store.value.splice(index, 1);
-    } else {
-      store.value.push(key);
-    }
-    render();
-  }
-
-  return (
-    <Stack fullWidth alignItems="start">
-      {showCheckboxs ? (
-        <Checkbox checked={store.value?.indexOf(key) >= 0} onChange={onChange} />
-      ) : null}
-      <Stack alignItems="baseline">
-        {item.metadata?.index ? <Text strong>{`${item.metadata?.index}`}</Text> : null}
-        <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
-          <Paragraph
-            dangerouslySetInnerHTML={{
-              __html: item.value,
-            }}
-          />
-        </Box>
-      </Stack>
-    </Stack>
-  );
-}
-
-Value.propTypes = {
-  store: PropTypes.object,
-  render: PropTypes.func,
-  item: PropTypes.any,
-  property: PropTypes.any,
-  showCheckboxs: PropTypes.bool,
-};
-
-function NewValue({ blockData, showCheckboxs, store, value, render, baseValueId }) {
-  const key = `curriculum.${store.curriculum.id}|nodeLevel.${store.selectedNode.nodeLevel}|node.${store.selectedNode.id}|property.${baseValueId}`;
+function NewValue({
+  blockData,
+  nodeLevelId,
+  nodeId,
+  showCheckboxs,
+  store,
+  value,
+  render,
+  baseValueId,
+}) {
+  // console.log('value', value);
+  const key = `curriculum.${store.curriculum.id}|nodeLevel.${
+    nodeLevelId || store.selectedNode.nodeLevel
+  }|node.${nodeId || store.selectedNode.id}|property.${baseValueId}`;
 
   const flatNodes = React.useMemo(() => {
     const result = [];
@@ -167,6 +137,7 @@ function NewValue({ blockData, showCheckboxs, store, value, render, baseValueId 
   }
 
   if (isObject(value)) {
+    // console.log(value);
     if (value.id) {
       // Listado
       return (
@@ -223,7 +194,9 @@ NewValue.propTypes = {
   value: PropTypes.any,
   store: PropTypes.object,
   render: PropTypes.func,
+  nodeId: PropTypes.string,
   blockData: PropTypes.any,
+  nodeLevelId: PropTypes.string,
   baseValueId: PropTypes.string,
   showCheckboxs: PropTypes.bool,
 };
@@ -260,11 +233,11 @@ export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }
           <>
             <ParentRelation
               curriculum={store.curriculum}
-              blockData={item.frontConfig.blockData}
+              blockData={values.blockData || item.frontConfig.blockData}
               value={values}
               onChange={() => {}}
               isShow={onParentFound}
-              id={store.selectedNode.id}
+              id={values._nodeId || store.selectedNode.id}
               hideLabel
               t={t2}
             >
@@ -276,7 +249,9 @@ export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }
                     store={store}
                     baseValueId={values.id}
                     value={value}
-                    blockData={item.frontConfig.blockData}
+                    nodeId={values._nodeId}
+                    nodeLevelId={values._nodeLevelId}
+                    blockData={values.blockData || item.frontConfig.blockData}
                     showCheckboxs={showCheckboxs}
                   />
                 ))
@@ -286,7 +261,9 @@ export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }
                   store={store}
                   baseValueId={values.id}
                   value={values.value}
-                  blockData={item.frontConfig.blockData}
+                  nodeId={values._nodeId}
+                  nodeLevelId={values._nodeLevelId}
+                  blockData={values.blockData || item.frontConfig.blockData}
                   showCheckboxs={showCheckboxs}
                 />
               )}

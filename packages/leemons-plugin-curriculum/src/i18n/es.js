@@ -208,6 +208,7 @@ module.exports = {
   },
   selectContentModal: {
     title: 'Contenido',
+    unSelect: 'Des-seleccionar todo',
     saveButtonLabel: 'Añadir contenido',
     selectFromCurriculum: 'Seleccionar del plan de estudios',
     clearAll: 'Borrar todo',

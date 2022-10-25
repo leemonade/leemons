@@ -3,6 +3,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles, Select, TextInput } from '@bubbles-ui/components';
 import { useStore } from '@common';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -36,36 +37,7 @@ const ParentRelation = ({
     });
   }
 
-  const flatNodes = React.useMemo(() => {
-    const result = [];
-
-    function flatten(childrens) {
-      _.forEach(childrens, (child) => {
-        result.push(child);
-        if (_.isArray(child.childrens)) {
-          flatten(child.childrens);
-        }
-      });
-    }
-
-    flatten(curriculum.nodes);
-    return result;
-  }, [curriculum]);
-
-  const parentNodes = React.useMemo(() => {
-    const result = [];
-
-    function getParent(item) {
-      if (item.parentNode) {
-        const parent = _.find(flatNodes, { id: item.parentNode });
-        result.push(parent);
-        getParent(parent);
-      }
-    }
-
-    getParent(_.find(flatNodes, { id }));
-    return result;
-  }, [flatNodes]);
+  const parentNodes = React.useMemo(() => getParentNodes(curriculum.nodes, id), [curriculum]);
 
   const parentRelatedValueText = React.useMemo(() => {
     if (store.parentNodeValue) {

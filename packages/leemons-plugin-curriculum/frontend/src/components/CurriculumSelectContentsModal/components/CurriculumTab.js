@@ -3,7 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TabPanel, Tabs } from '@bubbles-ui/components';
-import { find, forEach, forIn, groupBy, isArray } from 'lodash';
+import { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -15,10 +16,16 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
       propertiesByType: [],
     };
 
-    // TODO Añadir que se saquen de los padres todos los campos que no esten por algun hijo configurado como padre
+    const parentsCantUse = [];
+
+    // Sacamos los campos del nodo seleccionado
     store.selectedNode._formProperties = [];
     if (store.selectedNode._nodeLevel?.schema?.compileJsonSchema) {
       forIn(store.selectedNode._nodeLevel.schema.compileJsonSchema.properties, (value, key) => {
+        const parentEl = find(value.frontConfig.blockData.contentRelations, {
+          typeOfRelation: 'parent',
+        });
+        if (parentEl) parentsCantUse.push(parentEl.relatedTo.split('|')[1]);
         store.selectedNode._formProperties.push({
           ...value,
           id: key,
@@ -26,20 +33,43 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
       });
     }
 
+    // Sacamos todos los padres y nos los recorremos sacando tambien sus campos
+    const parentNodes = getParentNodes(store.curriculum.nodes, store.selectedNode.id);
+    forEach(parentNodes, (parent) => {
+      store.selectedNode.formValues = {
+        ...store.selectedNode.formValues,
+        ...parent.formValues,
+      };
+      const nodeLevel = find(store.curriculum.nodeLevels, { id: parent.nodeLevel });
+      if (nodeLevel?.schema?.compileJsonSchema) {
+        forIn(nodeLevel.schema.compileJsonSchema.properties, (value, key) => {
+          const parentEl = find(value.frontConfig.blockData.contentRelations, {
+            typeOfRelation: 'parent',
+          });
+          if (parentEl) parentsCantUse.push(parentEl.relatedTo.split('|')[1]);
+          store.selectedNode._formProperties.push({
+            ...value,
+            id: key,
+          });
+        });
+      }
+    });
+
+    // Filtramos los capos y quitamos los que esten relacionados como padres
+    store.selectedNode._formProperties = filter(
+      store.selectedNode._formProperties,
+      (prop) => parentsCantUse.indexOf(prop.id) < 0
+    );
+
+    // Agrupamos por tipo de contenido para mostrarlo en tabs
     const group = groupBy(
       store.selectedNode._formProperties,
       'frontConfig.blockData.curricularContent'
     );
-
     forIn(group, (value, key) => {
       store.selectedNode.propertiesByType.push({ value, key });
     });
 
-    render();
-  }
-
-  function clearAll() {
-    store.value = [];
     render();
   }
 
@@ -65,7 +95,11 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
   }, [JSON.stringify(subjects), store.curriculum]);
 
   return (
-    <Tabs>
+    <Tabs
+      onChange={(e) => {
+        store.currentTab = e;
+      }}
+    >
       {store.selectedNode?.propertiesByType.map(({ value, key }) => {
         let count = 0;
         forEach(value, ({ id }) => {

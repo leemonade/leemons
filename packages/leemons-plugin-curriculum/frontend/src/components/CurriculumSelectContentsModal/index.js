@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -13,7 +14,7 @@ import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { useStore } from '@common';
-import { filter, find, forEach, isArray } from 'lodash';
+import { filter, find, forEach, forEachRight, forIn, isArray } from 'lodash';
 import { detailCurriculumRequest } from '../../request';
 import { CurriculumTab } from './components/CurriculumTab';
 
@@ -70,10 +71,26 @@ export function CurriculumSelectContentsModal({
     return items;
   }
 
+  function changeNodeFormValues(nodes) {
+    forEach(nodes, (node) => {
+      const nodeLevel = find(store.curriculum.nodeLevels, { id: node.nodeLevel });
+      forIn(node.formValues, (formValue, key) => {
+        formValue._nodeLevelId = node.nodeLevel;
+        formValue._nodeId = node.id;
+        formValue._blockData =
+          nodeLevel.schema.compileJsonSchema.properties[key].frontConfig.blockData;
+      });
+      if (node.childrens) changeNodeFormValues(node.childrens);
+    });
+  }
+
   async function init() {
     try {
       const { curriculum } = await detailCurriculumRequest(id, { withProgram: true });
       store.curriculum = curriculum;
+
+      changeNodeFormValues(store.curriculum.nodes);
+
       let course = null;
       const subject = find(store.curriculum.program.subjects, { id: subjects[0] });
 
@@ -87,6 +104,20 @@ export function CurriculumSelectContentsModal({
     } catch (error) {
       console.error(error);
     }
+    render();
+  }
+
+  function unSelect() {
+    const properties = store.currentTab
+      ? find(store.selectedNode.propertiesByType, { key: store.currentTab })
+      : store.selectedNode.propertiesByType[0];
+    forEach(properties.value, (prop) => {
+      forEachRight(store.value, (str, index) => {
+        if (str.indexOf(`property.${store.selectedNode?.formValues[prop.id].id}`) >= 0) {
+          store.value.splice(index, 1);
+        }
+      });
+    });
     render();
   }
 
@@ -116,20 +147,11 @@ export function CurriculumSelectContentsModal({
 
         <CurriculumTab t2={t2} subjects={subjects} t={t} store={store} render={render} />
 
-        {/* <Tabs>
-          <TabPanel label={t('curriculum')}>
-            <CurriculumTab t2={t2} subjects={subjects} t={t} store={store} render={render} />
-          </TabPanel>
-          <TabPanel
-            notification={store.value?.length ? store.value?.length : null}
-            label={t('added')}
-          >
-            <CurriculumAdded t={t} store={store} render={render} />
-          </TabPanel>
-        </Tabs> */}
-
-        <Stack justifyContent="end" onClick={() => onChange(store.value)}>
-          <Button>{t('saveButtonLabel')}</Button>
+        <Stack justifyContent="space-between">
+          <Button variant="light" onClick={unSelect}>
+            {t('unSelect')}
+          </Button>
+          <Button onClick={() => onChange(store.value)}>{t('saveButtonLabel')}</Button>
         </Stack>
       </ContextContainer>
     </Modal>

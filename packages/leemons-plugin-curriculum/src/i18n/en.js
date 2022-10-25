@@ -206,6 +206,7 @@ module.exports = {
   },
   selectContentModal: {
     title: 'Content',
+    unSelect: 'Deselect all',
     saveButtonLabel: 'Add contents',
     selectFromCurriculum: 'Select from curriculum',
     clearAll: 'Clear all',
