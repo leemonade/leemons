@@ -25,4 +25,21 @@ async function getEvents(calendar, { getPrivates = true, transacting } = {}) {
   }));
 }
 
+async function getEventsMultipleCalendars(_calendars, { getPrivates = true, transacting } = {}) {
+  const calendars = _.isArray(_calendars) ? _calendars : [_calendars];
+  const eventCalendars = await table.eventCalendar.find(
+    { calendar_$in: calendars },
+    { transacting }
+  );
+
+  const query = { id_$in: _.map(eventCalendars, 'event') };
+  if (!getPrivates) query.isPrivate = false;
+  const events = await table.events.find(query, { transacting });
+  return _.map(events, (event) => ({
+    ...event,
+    calendar,
+    data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+  }));
+}
+
 module.exports = { getEvents };
