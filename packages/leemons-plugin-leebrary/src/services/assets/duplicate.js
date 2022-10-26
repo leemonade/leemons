@@ -1,4 +1,4 @@
-const { omit, isEmpty } = require('lodash');
+const { omit, isEmpty, isArray } = require('lodash');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
 const { getByIds } = require('./getByIds');
 const { add } = require('./add');
@@ -7,8 +7,22 @@ const { getById: getCategory } = require('../categories/getById');
 
 async function duplicate(
   assetId,
-  { preserveName = false, newId, indexable, public: isPublic, userSession, transacting }
+  {
+    preserveName = false,
+    newId,
+    indexable,
+    public: isPublic,
+    userSession,
+    permissions: _permissions,
+    transacting,
+  }
 ) {
+  // eslint-disable-next-line no-nested-ternary
+  const pPermissions = _permissions
+    ? isArray(_permissions)
+      ? _permissions
+      : [_permissions]
+    : _permissions;
   // EN: Get the user permissions
   // ES: Obtener los permisos del usuario
   const { permissions } = await getPermissions(assetId, { userSession, transacting });
@@ -60,6 +74,7 @@ async function duplicate(
       ...filesData,
       name: ['true', true, 1, '1'].includes(preserveName) ? asset.name : `${asset.name} (1)`,
       categoryId: asset.category,
+      permissions: pPermissions,
       indexable:
         indexable === undefined ? asset.indexable : ['true', true, 1, '1'].includes(indexable),
       public: isPublic === undefined ? asset.public : ['true', true, 1, '1'].includes(isPublic),

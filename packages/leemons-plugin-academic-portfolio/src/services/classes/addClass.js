@@ -61,6 +61,14 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
       if (image) imageData.cover = image;
       const assetService = leemons.getPlugin('leebrary').services.assets;
       const assetImage = await assetService.add(imageData, {
+        permissions: [
+          {
+            canEdit: true,
+            isCustomPermission: true,
+            permissionName: leemons.plugin.prefixPN('programs'),
+            actionNames: ['update', 'admin'],
+          },
+        ],
         published: true,
         userSession,
         transacting,
