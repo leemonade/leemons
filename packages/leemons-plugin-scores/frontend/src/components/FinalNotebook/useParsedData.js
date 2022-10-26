@@ -70,11 +70,11 @@ export function useParsedData({ classes, periods, students, scores, courseScores
     () =>
       periods?.reduce((dates, period) => {
         const newDates = {};
-        if (period.startDate < dates.startDate) {
+        if (period.startDate < dates.startDate || !dates.startDate) {
           newDates.startDate = period.startDate;
         }
 
-        if (period.endDate > dates.endDate) {
+        if (period.endDate > dates.endDate || !dates.endDate) {
           newDates.endDate = period.endDate;
         }
 

@@ -1,4 +1,4 @@
-import cellToIndexes from '../helpers/cellToIndexes';
+import { cellToIndexes } from '../cellPositioning';
 
 /**
  *
@@ -6,8 +6,16 @@ import cellToIndexes from '../helpers/cellToIndexes';
  * @param {*} array
  * @param {*} initialPosition
  */
-export default function arrayToContent({ ws, array, initialPosition, getStyle }) {
+export default function arrayToContent({
+  ws,
+  array,
+  initialPosition,
+  getStyle,
+}) {
   const { columnIndex, row } = cellToIndexes(initialPosition);
+
+  const rowLength = array.length;
+  const columnLength = array[rowLength - 1].length;
 
   for (let i = 0; i < array.length; i++) {
     for (let j = 0; j < array[i].length; j++) {
@@ -24,4 +32,14 @@ export default function arrayToContent({ ws, array, initialPosition, getStyle })
       }
     }
   }
+
+  const lastCell = ws.getCell(
+    row + rowLength - 1,
+    columnIndex + columnLength - 1
+  );
+
+  return {
+    initialPosition,
+    lastPosition: lastCell._address,
+  };
 }
