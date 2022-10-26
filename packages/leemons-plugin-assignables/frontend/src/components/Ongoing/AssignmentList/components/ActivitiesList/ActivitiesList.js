@@ -238,7 +238,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     position: 'sticky',
     top: '0px',
     backgroundColor: 'white',
-    zIndex: 999,
+    zIndex: 10,
   };
 
   return (

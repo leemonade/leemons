@@ -103,7 +103,7 @@ export default function StudentsList({ labels, instance, students }) {
     position: 'sticky',
     top: '224px',
     backgroundColor: 'white',
-    zIndex: 999,
+    zIndex: 10,
   };
 
   const [page, setPage] = useState(1);
