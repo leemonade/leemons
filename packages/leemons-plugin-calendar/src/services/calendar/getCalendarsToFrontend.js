@@ -247,14 +247,23 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   // ES: Resultados con todos los eventos y calendarios a los que tiene acceso el usuario
   const result = {
     userCalendar,
-    ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id }) =>
-      id === userCalendar.id ? 0 : 1
-    ),
-    calendarConfig,
+    ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
+      try {
+        const met = JSON.parse(metadata);
+        return met.internalId || id === userCalendar.id ? 0 : 1;
+      } catch (e) {
+        return id === userCalendar.id ? 0 : 1;
+      }
+    }),
     configCalendars,
-    calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id }) =>
-      id === userCalendar.id ? 0 : 1
-    ),
+    calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
+      try {
+        const met = JSON.parse(metadata);
+        return met.internalId || id === userCalendar.id ? 0 : 1;
+      } catch (e) {
+        return id === userCalendar.id ? 0 : 1;
+      }
+    }),
     events: _.uniqBy(
       eventsFromCalendars
         .map((e) => ({
