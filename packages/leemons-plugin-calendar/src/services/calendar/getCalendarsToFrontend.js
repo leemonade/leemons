@@ -250,7 +250,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar.id ? 0 : 1;
       } catch (e) {
         return id === userCalendar.id ? 0 : 1;
       }
@@ -259,7 +259,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar.id ? 0 : 1;
       } catch (e) {
         return id === userCalendar.id ? 0 : 1;
       }

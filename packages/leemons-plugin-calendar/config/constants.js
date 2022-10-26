@@ -8,6 +8,11 @@ module.exports = {
       localizationName: { es: 'Calendario', en: 'Calendar' },
     },
     {
+      permissionName: `${permissionsPrefix}.menu.kanban`,
+      actions: ['view'],
+      localizationName: { es: 'Menu Kanban', en: 'Menu Kanban' },
+    },
+    {
       permissionName: `${permissionsPrefix}.calendar-configs`,
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Configurar calendario', en: 'Calendar setup' },
@@ -46,8 +51,8 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: `${permissionsPrefix}.calendar`,
-          actionNames: ['view', 'admin'],
+          permissionName: `${permissionsPrefix}.menu.kanban`,
+          actionNames: ['view'],
         },
       ],
     },
