@@ -234,6 +234,13 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     );
   }
 
+  const headerStyles = {
+    position: 'sticky',
+    top: '0px',
+    backgroundColor: 'white',
+    zIndex: 999,
+  };
+
   return (
     <>
       <PaginatedList
@@ -248,6 +255,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onPageChange={setPage}
         selectable={false}
         labels={labels.pagination}
+        headerStyles={headerStyles}
       />
     </>
   );
