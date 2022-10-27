@@ -1,4 +1,4 @@
-import { addCustomName, getCustomNamesRange } from '../../../helpers';
+import { addCustomName } from '../../../helpers';
 
 /* eslint-disable no-param-reassign */
 export function getStyle({ ws, contentArray }) {

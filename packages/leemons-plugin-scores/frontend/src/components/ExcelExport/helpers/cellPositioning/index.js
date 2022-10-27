@@ -1,2 +1,2 @@
-export { default as cellToIndexes } from "./cellToIndexes";
-export { default as indexesToCell } from "./indexesToCell";
+export { default as cellToIndexes } from './cellToIndexes';
+export { default as indexesToCell } from './indexesToCell';

@@ -23,20 +23,14 @@ function getStudentRows({ tableData }) {
       const popped = grades.pop();
 
       const finalGrade =
-        popped ??
-        Math.round(
-          grades.reduce((sum, g) => sum + (g === '-' ? 0 : g)) / grades.length
-        );
+        popped ?? Math.round(grades.reduce((sum, g) => sum + (g === '-' ? 0 : g)) / grades.length);
 
       periodScores.push(finalGrade);
 
-      return [...grades, { value: finalGrade, isCustom: !!popped }].filter(
-        (g) => g !== undefined
-      );
+      return [...grades, { value: finalGrade, isCustom: !!popped }].filter((g) => g !== undefined);
     });
 
-    const avgScore =
-      periodScores.reduce((sum, s) => sum + s) / periodScores.length;
+    const avgScore = periodScores.reduce((sum, s) => sum + s) / periodScores.length;
     return [
       student.surname,
       student.name,
@@ -53,12 +47,7 @@ function getStudentRows({ tableData }) {
  * ws: import("exceljs").Worksheet,
  * }} param0
  */
-export default function writeStudentsWithActivities({
-  ws,
-  tableData,
-  labels,
-  initialPosition,
-}) {
+export default function writeStudentsWithActivities({ ws, tableData, labels, initialPosition }) {
   const studentRows = getStudentRows({ tableData, labels });
   const contentArray = [[labels.surname, labels.name], ...studentRows];
 

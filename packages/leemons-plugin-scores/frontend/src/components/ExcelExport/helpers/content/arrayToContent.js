@@ -6,12 +6,7 @@ import { cellToIndexes } from '../cellPositioning';
  * @param {*} array
  * @param {*} initialPosition
  */
-export default function arrayToContent({
-  ws,
-  array,
-  initialPosition,
-  getStyle,
-}) {
+export default function arrayToContent({ ws, array, initialPosition, getStyle }) {
   const { columnIndex, row } = cellToIndexes(initialPosition);
 
   const rowLength = array.length;
@@ -33,10 +28,7 @@ export default function arrayToContent({
     }
   }
 
-  const lastCell = ws.getCell(
-    row + rowLength - 1,
-    columnIndex + columnLength - 1
-  );
+  const lastCell = ws.getCell(row + rowLength - 1, columnIndex + columnLength - 1);
 
   return {
     initialPosition,

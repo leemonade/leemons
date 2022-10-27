@@ -7,9 +7,7 @@ import getStyle from './getStyle';
 function getStudentRows({ tableData, labels }) {
   return tableData.value.map((student) => {
     const activities = tableData.activities.map((activity) => {
-      const studentActivity = student.activities.find(
-        (sa) => sa.id === activity.id
-      );
+      const studentActivity = student.activities.find((sa) => sa.id === activity.id);
 
       // const scale = tableData.grades.find(
       //   (grade) => grade.number === studentActivity?.score
@@ -23,9 +21,7 @@ function getStudentRows({ tableData, labels }) {
       };
     });
 
-    const customScoreScale = tableData.grades.find(
-      (grade) => grade.number === student.customScore
-    );
+    const customScoreScale = tableData.grades.find((grade) => grade.number === student.customScore);
 
     const calculatedScore = activities.reduce((avg, activity) => {
       if (
@@ -66,17 +62,9 @@ function getStudentRows({ tableData, labels }) {
  * ws: import("exceljs").Worksheet,
  * }} param0
  */
-export default function writeStudentsWithActivities({
-  ws,
-  tableData,
-  labels,
-  initialPosition,
-}) {
+export default function writeStudentsWithActivities({ ws, tableData, labels, initialPosition }) {
   const studentRows = getStudentRows({ tableData, labels });
-  const contentArray = [
-    [labels.group, '', labels.surname, labels.name],
-    ...studentRows,
-  ];
+  const contentArray = [[labels.group, '', labels.surname, labels.name], ...studentRows];
 
   arrayToContent({
     ws,
