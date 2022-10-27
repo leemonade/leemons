@@ -6,15 +6,20 @@ module.exports = {
   },
   attributes: {
     permissionName: {
-      type: 'string',
+      type: 'text',
       options: {
         notNull: true,
+        index: true,
+        indexOptions: {
+          indexType: 'FULLTEXT',
+        },
       },
     },
     actionName: {
       type: 'string',
       options: {
         notNull: true,
+        index: true,
       },
     },
   },
