@@ -450,9 +450,9 @@ class Leemons {
                 functions.push(this.xapiMiddleware(route.xapi, plugin.name));
               }
 
-              functions.push((ctx, next) => {
+              functions.push(async (ctx, next) => {
                 ctx._path = route.path;
-                next();
+                await next();
               });
 
               functions.push(handler);
