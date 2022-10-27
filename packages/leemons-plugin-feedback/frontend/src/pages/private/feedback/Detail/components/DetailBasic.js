@@ -18,7 +18,6 @@ export default function DetailBasic({ form, t, onNext }) {
         form={form}
         preview
         tagsPluginName="feedback"
-        tagsType="plugins.feedback.feedback"
         category="assignables.feedback"
       />
 

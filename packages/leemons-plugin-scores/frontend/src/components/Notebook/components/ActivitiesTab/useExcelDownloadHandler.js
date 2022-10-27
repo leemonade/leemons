@@ -4,8 +4,8 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
-import generateExcel from '@scores/components/ExcelExport/excel';
-import getFile from '@scores/components/ExcelExport/excel/config/getFile';
+import generateExcel from '@scores/components/ExcelExport/evaluationWB';
+import { getFile } from '@scores/components/ExcelExport/helpers/workbook';
 
 function useExcelLabels() {
   const [, translations] = useTranslateLoader(prefixPN('excel'));
@@ -37,9 +37,8 @@ export function useExcelDownloadHandler({
         const wb = generateExcel({
           headerShown: format === 'xlsx',
           tableData: { ...activitiesData, grades },
-
           period: {
-            period: filters.period?.name || '-',
+            period: filters.period?.period?.name ?? filters.period?.name ?? '-',
             startDate: new Date(filters.startDate),
             endDate: new Date(filters.endDate),
             program: programData.name,
@@ -48,10 +47,10 @@ export function useExcelDownloadHandler({
           labels: excelLabels,
         });
         getFile(wb, format);
+        fireEvent('plugins.scores::downloaded');
       } catch (e) {
         fireEvent('plugins.scores::download-scores-error', e);
       }
-      fireEvent('plugins.scores::downloaded');
     };
 
     addAction('plugins.scores::download-scores', onDownload);
