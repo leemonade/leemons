@@ -194,8 +194,16 @@ class Leemons {
     this.events.emit('willSetMiddlewares', 'leemons');
     this.backRouter.use(async (ctx, next) => {
       ctx._startAt = new Date();
+      ctx._id = uuid.v4();
+
       this.log.http(
-        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
+        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`,
+        {
+          id: ctx._id,
+          ip: ctx.ip,
+          url: ctx.path,
+          method: ctx.method,
+        }
       );
 
       await next();
@@ -209,7 +217,14 @@ class Leemons {
         this.log.http(
           chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
             ctx.ip
-          }} {gray ${end - start} ms}`
+          }} {gray ${end - start} ms}`,
+          {
+            id: ctx._id,
+            ip: ctx.ip,
+            url: ctx.path,
+            method: ctx.method,
+            path: ctx._path,
+          }
         );
       } catch (err) {
         console.error(err);
@@ -433,6 +448,11 @@ class Leemons {
               if (!_.isEmpty(route.xapi)) {
                 functions.push(this.xapiMiddleware(route.xapi, plugin.name));
               }
+
+              functions.push((ctx, next) => {
+                ctx._path = route.path;
+                next();
+              });
 
               functions.push(handler);
 
