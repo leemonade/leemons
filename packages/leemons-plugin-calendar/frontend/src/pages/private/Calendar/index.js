@@ -224,11 +224,12 @@ function Calendar({ session }) {
         const calendarSections = [];
         _.forIn(calendarsBySection, (calendars, sectionName) => {
           calendarSections.push({
-            calendars,
+            calendars: _.orderBy(calendars, ['metadata.internalId'], ['asc']),
             sectionName: getSectionName(sectionName, store.calendarSectionNamesTranslations),
           });
         });
         centersDataValues[data.center].sections = calendarSections;
+        console.log(centersDataValues[data.center].sections);
       });
 
       store.centersDataById = centersDataValues;
