@@ -14,13 +14,7 @@ export default function DetailBasic({ form, t, onNext }) {
 
   return (
     <ContextContainer divided>
-      <AssetFormInput
-        form={form}
-        preview
-        tagsPluginName="tests"
-        tagsType="plugins.tests.tests"
-        category="assignables.tests"
-      />
+      <AssetFormInput form={form} preview tagsPluginName="tests" category="assignables.tests" />
       <Stack fullWidth justifyContent="end">
         <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={next}>
           {t('continue')}
