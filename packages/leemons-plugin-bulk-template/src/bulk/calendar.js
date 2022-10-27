@@ -22,6 +22,9 @@ function getSubjectAndClassroom(programs, subjectString) {
   if (subject) {
     classroom = subject.classes.find((item) => item.groups.abbreviation === classroomKey);
   }
+  if (!classroomKey && !classroom && subject.classes.length) {
+    classroom = subject.classes[0];
+  }
 
   return { subject, classroom };
 }
