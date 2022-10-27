@@ -224,6 +224,7 @@ class Leemons {
             url: ctx.path,
             method: ctx.method,
             path: ctx._path,
+            duration: end - start,
           }
         );
       } catch (err) {
