@@ -255,6 +255,8 @@ module.exports = {
       endDate: 'Fecha de fin',
       program: 'Programa',
       subject: 'Asignatura',
+      course: 'Curso',
+      group: 'Grupo',
     },
     table: {
       type: 'Tipo',
@@ -263,7 +265,8 @@ module.exports = {
       deadline: 'Fecha límite/cierre',
       calificable: 'calificable',
       noCalificable: 'no calificable',
-      avg: 'Promedio',
+      avg: 'Calculada',
+      custom: 'Personalizada',
       notSubmitted: 'No entregado',
       group: 'Grupo',
       surname: 'Apellido',

@@ -10,6 +10,7 @@ import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationS
 import useScoresUpdateMutation from '@scores/hooks/scores/useScoresUpdateMutation';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
+import { useProgramDetail } from '@academic-portfolio/hooks';
 import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
 import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
 import { onDataChange } from './onDataChange';
@@ -17,6 +18,7 @@ import { useLocalFilters } from './useLocalFilters';
 import { useParsedData } from './useParsedData';
 import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
 import { useClassesManagers } from './useClassesManagers';
+import useExcelDownloadHandler from './useExcelDownloadHandler';
 
 export function useMatchingClasses({ filters }) {
   const cache = useCache();
@@ -174,6 +176,8 @@ export function FinalScores({ filters, localFilters }) {
   const localizations = useFinalScoresLocalization();
   const { mutateAsync: mutateScore } = useScoresUpdateMutation();
 
+  const { data: programData } = useProgramDetail(filters.program, { enabled: !!filters.program });
+
   const { data: scores, isLoading: scoresAreLoading } = useScores({
     students: _.map(students, 'id'),
     classes: _.map(classes, 'id'),
@@ -233,6 +237,21 @@ export function FinalScores({ filters, localFilters }) {
     students,
     scores,
     courseScores,
+  });
+
+  useExcelDownloadHandler({
+    classes: classesForTable,
+    students: studentsForTable,
+    filters: {
+      startDate,
+      endDate,
+      program: programData,
+      course: filters.course,
+      group: filters.group,
+      period: filters.period,
+      periods,
+    },
+    grades,
   });
 
   if (isLoading) {

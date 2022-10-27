@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Box, Button, createStyles } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { addAction, fireEvent } from 'leemons-hooks';
+import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 
 import _ from 'lodash';
 import { unflatten } from '@common';
@@ -44,13 +44,21 @@ function useHeaderLocalizations() {
 
 function onScoresDownload(extension) {
   let timer;
-  addAction('plugins.scores::downloaded-intercepted', () => {
-    clearTimeout(timer);
-  });
 
-  addAction('plugins.scores::download-scores-error', ({ args: [e] }) => {
+  const onClearTimer = () => {
+    clearTimeout(timer);
+
+    removeAction('plugins.scores::downloaded-intercepted', onClearTimer);
+  };
+
+  const onError = ({ args: [e] }) => {
     addErrorAlert(`Error downloading scores report ${e.message}`);
-  });
+
+    removeAction('plugins.scores::download-scores-error', onError);
+  };
+
+  addAction('plugins.scores::downloaded-intercepted', onClearTimer);
+  addAction('plugins.scores::download-scores-error', onError);
 
   fireEvent('plugins.scores::download-scores', extension);
   timer = setTimeout(() => {

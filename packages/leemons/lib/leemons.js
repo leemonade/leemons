@@ -126,7 +126,7 @@ class Leemons {
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
       } else {
-        this.log.info(chalk`{red ${target}} emitted {magenta ${event}}`);
+        this.log.debug(chalk`{red ${target}} emitted {magenta ${event}}`);
       }
     });
   }

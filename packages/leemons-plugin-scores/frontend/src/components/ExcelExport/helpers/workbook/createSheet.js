@@ -1,4 +1,5 @@
 import { Workbook } from 'exceljs';
+import { uuidv4 } from '@bubbles-ui/leemons';
 
 /**
  *
@@ -6,11 +7,15 @@ import { Workbook } from 'exceljs';
  * @param {string} title
  */
 export default function createSheet(wb, title) {
-  return wb.addWorksheet(title, {
+  const ws = wb.addWorksheet(title, {
     views: [
       {
         showGridLines: false,
       },
     ],
   });
+
+  ws._customNamesId = uuidv4();
+
+  return ws;
 }

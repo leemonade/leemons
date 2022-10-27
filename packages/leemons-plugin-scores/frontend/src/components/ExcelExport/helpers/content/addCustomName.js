@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import cellToIndexes from '../helpers/cellToIndexes';
+import { cellToIndexes } from '../cellPositioning';
 
 const global = window;
 
@@ -13,7 +13,10 @@ if (!global.customNames) {
  * cell: import("exceljs").Cell
  * }} param0
  */
-export function addCustomName({ name, cell }) {
+export function addCustomName({ ws, name: _name, cell }) {
+  const id = ws._customNamesId;
+  const name = `${id}__${_name}`;
+
   const { columnIndex, row } = cellToIndexes(cell.address);
   if (!global.customNames[name]) {
     global.customNames[name] = [
@@ -34,17 +37,23 @@ export function addCustomName({ name, cell }) {
   const actualNames = cell.names;
 
   if (!actualNames?.length) {
-    cell.names = [name];
+    cell.names = [_name];
   } else {
-    cell.names = [...actualNames, name];
+    cell.names = [...actualNames, _name];
   }
 }
 
-export function getCustomName(name) {
+export function getCustomName({ ws, name: _name }) {
+  const id = ws._customNamesId;
+  const name = `${id}__${_name}`;
+
   return global.customNames[name];
 }
 
-export function getCustomNamesRange(name, { colFixed, rowFixed } = {}) {
+export function getCustomNamesRange({ ws, name: _name, colFixed, rowFixed } = {}) {
+  const id = ws._customNamesId;
+  const name = `${id}__${_name}`;
+
   const cells = global.customNames[name];
 
   if (!cells) {
