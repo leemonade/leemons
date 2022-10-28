@@ -296,7 +296,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     usedCalendarIds = usedCalendarIds.concat(_.map(result.calendars, 'id'));
     usedCalendarIds = _.uniq(usedCalendarIds);
     // Cogemos las ids de los calendarios que entre los que tenemos sabemos que no pertenecen a nuestro programa
-    const [noClassCalendars, noProgramCalendars, calendarConfig] = await Promise.all([
+    const [noClassCalendars, noProgramCalendars] = await Promise.all([
       table.classCalendar.find(
         {
           calendar_$in: usedCalendarIds,
@@ -400,7 +400,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   console.time('11');
   // ES: Sacamos para todos los eventos que userAgents tiene permiso de ver y cuales son sus owers
-  const [viewPermissions, _ownerPermissions] = await Promise.all([
+  const [viewPermissions, _ownerPermissions, isAcademicStudent] = await Promise.all([
     leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
       {
         permissionName_$in: permissionNames,
@@ -415,6 +415,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       },
       { returnUserAgents: false, transacting }
     ),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.config.userSessionIsStudent(userSession, { transacting }),
   ]);
   console.timeEnd('11');
 
@@ -520,6 +523,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           event.startDate = instance.dates.deadline;
           event.endDate = instance.dates.deadline;
         }
+
+        console.log('assignation', assignation);
+
         if (instance && assignation) {
           event.disableDrag = true;
           const now = new Date();

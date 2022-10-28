@@ -5,6 +5,7 @@ module.exports = {
       type: 'uuid',
       options: {
         notNull: true,
+        index: true,
       },
     },
     major: {
