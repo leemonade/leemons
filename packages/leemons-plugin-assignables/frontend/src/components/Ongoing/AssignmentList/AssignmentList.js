@@ -69,10 +69,6 @@ export default function AssignmentList({
         label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
         value: 'history',
       },
-      {
-        label: labels?.filters?.evaluated?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
-        value: 'evaluated',
-      },
     ];
   }, [labels, archived]);
 

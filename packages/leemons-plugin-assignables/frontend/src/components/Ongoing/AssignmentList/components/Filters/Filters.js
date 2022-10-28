@@ -84,7 +84,7 @@ export default function Filters({
 
   const topBar = !(hideTabs && hideQuery) && (
     <Box className={cx(classes?.filterRow, classes?.spaceBetween, classes?.alignCenter)}>
-      {hideTabs ? (
+      {hideTabs || tabs?.length <= 1 ? (
         <Box />
       ) : (
         <Controller
