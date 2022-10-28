@@ -422,7 +422,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   console.timeEnd('11');
 
   console.time('12');
-  let [assignations, instances, kanbanColumns] = [[], [], []];
+  const [assignations, instances, kanbanColumns] = [[], [], []];
   const instanceIdEvents = {};
   try {
     const instancePromises = [];
@@ -430,6 +430,19 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
     const assignationsService = leemons.getPlugin('assignables').services.assignations;
 
+    const instanceIds = [];
+    _.forEach(result.events, (event) => {
+      if (event?.data?.instanceId) {
+        instanceIds.push(event?.data?.instanceId);
+      }
+    });
+
+    const a = await instanceService.getAssignableInstancesStatus(instanceIds, {
+      userSession,
+      transacting,
+    });
+
+    /*
     _.forEach(result.events, (event) => {
       if (event?.data?.instanceId) {
         instancePromises.push(
@@ -458,9 +471,12 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ]);
     console.timeEnd('13');
 
+
     assignations = _.map(_.filter(_assignations, { status: 'fulfilled' }), 'value');
     instances = _.map(_.filter(_instances, { status: 'fulfilled' }), 'value');
     kanbanColumns = _kanbanColumns;
+
+     */
   } catch (e) {
     console.error(e);
   }

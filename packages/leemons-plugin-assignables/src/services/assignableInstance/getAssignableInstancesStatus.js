@@ -9,6 +9,7 @@ const _ = require('lodash');
 const { getDates } = require('../dates');
 const { assignableInstances, assignations, grades } = require('../tables');
 const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
+const getUserPermissionMultiple = require('./permissions/assignableInstance/users/getUserPermissionMultiple');
 
 module.exports = async function getAssignableInstancesStatus(
   assignableInstanceIds,
@@ -23,19 +24,19 @@ module.exports = async function getAssignableInstancesStatus(
   // EN: Get user permissions for each instance
   // ES: Obtener los permisos del usuario para cada instancia
   console.time('permisos');
-  await Promise.all(
-    ids.map(async (id) => {
-      const permissions = await getUserPermission(id, { userSession, transacting });
 
-      if (!permissions.actions.includes('view')) {
-        throw new Error(`You do not have permissions to view the instance ${id}`);
-      }
+  const permissions = await getUserPermissionMultiple(ids, { userSession, transacting });
 
-      const isTeacher = permissions.actions.includes('edit');
+  _.forEach(permissions, (permission) => {
+    if (!permission.actions.includes('view')) {
+      throw new Error(
+        `You do not have permissions to view the instance ${permission.assignableInstance}`
+      );
+    }
+    const isTeacher = permissions.actions.includes('edit');
+    _.set(statusObject, `${permission.assignableInstance}.isTeacher`, isTeacher);
+  });
 
-      _.set(statusObject, `${id}.isTeacher`, isTeacher);
-    })
-  );
   console.timeEnd('permisos');
 
   const promises = [];
