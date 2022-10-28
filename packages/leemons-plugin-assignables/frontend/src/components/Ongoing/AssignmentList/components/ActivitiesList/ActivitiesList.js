@@ -150,6 +150,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     } else if (filters?.tab === 'history') {
       q.archived = true;
     } else if (filters?.tab === 'evaluated') {
+      q.archived = false;
       q.evaluated = true;
     }
 
