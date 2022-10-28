@@ -648,18 +648,16 @@ module.exports = async function searchAssignableInstances(
 
     if (isTeacher) {
       const instancesGroupedByDependencies = instances.reduce((groups, instance) => {
-        if (!instance.relatedAssignableInstances?.before?.length) {
+        if (
+          !instance.relatedAssignableInstances?.before?.length ||
+          !instance.relatedAssignableInstances?.before?.some((before) => instancesObject[before.id])
+        ) {
           return [
             ...groups,
             getInstanceGroup(instancesObject[instance.id], instancesObject).reverse(),
           ];
         }
 
-        if (
-          !instance.relatedAssignableInstances?.before.every((before) => instancesObject[before.id])
-        ) {
-          return [...groups, [instance]];
-        }
         return groups;
       }, []);
 
@@ -732,16 +730,15 @@ module.exports = async function searchAssignableInstances(
         );
 
         let assignationsGroupedByDependencies = instances.reduce((groups, instance) => {
-          if (!instance.relatedAssignableInstances?.before?.length) {
-            return [...groups, getInstanceGroup(instancesObject[instance.id], instancesObject)];
-          }
-
+          // EN: If its the first on the dependency tree, or the previous ones does not exists in the conext
+          // ES: Si es la primera en el árbol de dependencias, o las anteriores no existen en el contexto
           if (
-            !instance.relatedAssignableInstances?.before.every(
+            !instance.relatedAssignableInstances?.before?.length ||
+            !instance.relatedAssignableInstances?.before?.some(
               (before) => instancesObject[before.id]
             )
           ) {
-            return [...groups, [instance]];
+            return [...groups, getInstanceGroup(instancesObject[instance.id], instancesObject)];
           }
 
           return groups;
