@@ -830,6 +830,29 @@ module.exports = async function searchAssignableInstances(
           sorted.push(...sortByDates(newAssignations, ['deadline', 'start', 'visualization']));
         }
 
+        // EN: Sort next the non finished but opened activities
+        // ES: Ordenar después las actividades abiertas pero no terminadas
+        const nonFinishedAssignations = assignationsLeft
+          .filter((assignation) => {
+            const openDate = instanceDates[assignation.instance]?.open;
+            const endDate = assignationDates[assignation.id]?.end;
+
+            const isOpen = !openDate || !dayjs(openDate).isBefore(dayjs());
+            const isFinished = !!endDate;
+
+            return isOpen && !isFinished;
+          })
+          .map((assignation) => {
+            pull(assignationsLeft, assignation);
+            return assignation;
+          });
+
+        if (nonFinishedAssignations.length > 0) {
+          sorted.push(
+            ...sortByDates(nonFinishedAssignations, ['deadline', 'start', 'visualization'])
+          );
+        }
+
         // EN: Sort non-new activities
         // ES: Ordena las actividades no nuevas
         sorted.push(...sortByDates(assignationsLeft, ['deadline', 'start', 'visualization']));
