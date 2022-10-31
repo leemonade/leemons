@@ -6,10 +6,58 @@
  * alwaysAvailable
  */
 const _ = require('lodash');
+const dayjs = require('dayjs');
 const { getDates } = require('../dates');
 const { assignableInstances, assignations, grades } = require('../tables');
-const getUserPermission = require('./permissions/assignableInstance/users/getUserPermission');
 const getUserPermissionMultiple = require('./permissions/assignableInstance/users/getUserPermissionMultiple');
+
+function hasGrades(studentData) {
+  const studentGrades = studentData?.grades;
+
+  if (!studentGrades || !studentGrades.length) {
+    return false;
+  }
+
+  return studentGrades.some((grade) => grade.visibleToStudent);
+}
+
+function getStatus(studentData, instanceData) {
+  const startDate = dayjs(studentData?.timestamps?.start || null);
+  const deadline = dayjs(instanceData.dates?.deadline || null);
+  const archived = dayjs(instanceData.dates?.archived || null);
+
+  const started = instanceData.alwaysAvailable || !startDate.isBefore(dayjs());
+  const finished = !deadline.isBefore(dayjs()) || archived;
+
+  if (finished) {
+    if (hasGrades(studentData)) {
+      return 'evaluated';
+    }
+
+    const endDate = dayjs(studentData?.timestamps?.end || null);
+
+    const endDateIsLate = endDate.isValid() && endDate.isAfter(deadline);
+
+    if (endDateIsLate) {
+      return 'late';
+    }
+
+    if (endDate.isValid()) {
+      return 'submitted';
+    }
+
+    return 'closed';
+  }
+
+  if (started) {
+    if (startDate.isValid()) {
+      return 'started';
+    }
+    return 'opened';
+  }
+
+  return 'assigned';
+}
 
 module.exports = async function getAssignableInstancesStatus(
   assignableInstanceIds,
@@ -23,29 +71,28 @@ module.exports = async function getAssignableInstancesStatus(
 
   // EN: Get user permissions for each instance
   // ES: Obtener los permisos del usuario para cada instancia
-  console.time('permisos');
 
   const permissions = await getUserPermissionMultiple(ids, { userSession, transacting });
 
-  _.forEach(permissions, (permission) => {
+  permissions.forEach((permission) => {
     if (!permission.actions.includes('view')) {
       throw new Error(
         `You do not have permissions to view the instance ${permission.assignableInstance}`
       );
     }
-    const isTeacher = permissions.actions.includes('edit');
+    const isTeacher = permission.actions.includes('edit');
     _.set(statusObject, `${permission.assignableInstance}.isTeacher`, isTeacher);
   });
-
-  console.timeEnd('permisos');
 
   const promises = [];
 
   // EN: Get instance dates
   // ES: Obtener fechas de la instancia
   promises.push(
-    ...ids.map(async (id) => {
-      _.set(statusObject, `${id}.dates`, await getDates('assignableInstance', id, { transacting }));
+    getDates('assignableInstance', ids, { transacting }).then((instanceDates) => {
+      Object.entries(instanceDates).map(([id, datesObject]) =>
+        _.set(statusObject, `${id}.dates`, datesObject)
+      );
     })
   );
 
@@ -80,7 +127,6 @@ module.exports = async function getAssignableInstancesStatus(
     return query;
   });
 
-  console.time('Assignations found');
   const assignationsFound = await assignations.find(
     {
       $or: assignationsQuery,
@@ -93,33 +139,31 @@ module.exports = async function getAssignableInstancesStatus(
     {}
   );
 
-  console.timeEnd('Assignations found');
-
   const promises2 = [];
 
   // DATES
   promises2.push(
-    ...assignationsFound.map(async ({ id }) => {
-      _.set(assignationsObject, `${id}.dates`, await getDates('assignation', id, { transacting }));
-    })
+    getDates('assignation', _.map(assignationsFound, 'id'), { transacting }).then(
+      (assignationDates) => {
+        Object.entries(assignationDates).map(([id, datesObject]) =>
+          _.set(assignationsObject, `${id}.timestamps`, datesObject)
+        );
+      }
+    )
   );
 
   // GRADES
-  console.time('grades');
-  const gradesFound = await grades.find(
-    {
-      assignation_$in: _.map(assignationsFound, 'id'),
-      type: 'main',
-    },
-    { columns: ['grade', 'visibleToStudent', 'subject', 'assignation'] }
+  promises2.push(
+    grades.find(
+      {
+        assignation_$in: _.map(assignationsFound, 'id'),
+        type: 'main',
+      },
+      { columns: ['grade', 'visibleToStudent', 'subject', 'assignation'] }
+    )
   );
 
-  console.timeEnd('grades');
-
-  console.time('promises');
-  await Promise.all(promises);
-  await Promise.all(promises2);
-  console.timeEnd('promises');
+  const [, gradesFound] = await Promise.all([...promises2, ...promises]);
 
   gradesFound.forEach((grade) => {
     if (!assignationsObject[grade.assignation]?.grades) {
@@ -137,5 +181,16 @@ module.exports = async function getAssignableInstancesStatus(
     }
   });
 
-  return { statusObject, gradesFound, assignationsFound };
+  return ids.flatMap((id) => {
+    const instance = statusObject[id];
+
+    return instance.assignations.map((assignation) => ({
+      instance: id,
+      assignation: assignation.id,
+      status: getStatus(assignation, instance),
+      dates: instance.dates || {},
+      alwaysAvailable: instance.alwaysAvailable,
+      timestamps: assignation.timestamps || {},
+    }));
+  });
 };
