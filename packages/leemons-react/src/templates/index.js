@@ -17,7 +17,7 @@ function ReactQueryDevtoolsWrapper() {
   );
 
   useEffect(() => {
-    window.toogleQueryDevtools = (persist) =>
+    window.toggleQueryDevtools = (persist) =>
       setShowQueryDevtools((s) => {
         if (persist) {
           window.localStorage.setItem('showReactQueryDevTools', !s);
