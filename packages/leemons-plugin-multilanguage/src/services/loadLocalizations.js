@@ -1,7 +1,7 @@
-const es = require('./src/i18n/es');
-const en = require('./src/i18n/en');
+const es = require('../i18n/es');
+const en = require('../i18n/en');
 
-async function init() {
+async function loadLocalizations() {
   await leemons.plugin.services.common.getProvider().setManyByJSON(
     {
       es,
@@ -11,4 +11,4 @@ async function init() {
   );
 }
 
-module.exports = init;
+module.exports = loadLocalizations;
