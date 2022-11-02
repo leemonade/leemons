@@ -25,6 +25,7 @@ const { getById: getCategoryById } = require('../categories/getById');
 const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { getByUser: getPinsByUser } = require('../pins/getByUser');
 const { byProvider: getByProvider } = require('./byProvider');
+const { tables } = require('../tables');
 
 async function search(
   { criteria = '', type, category },
@@ -93,17 +94,33 @@ async function search(
       }
 
       if (!providerAssets || providerAssets.length) {
-        const [byName, byTagline, byDescription, byTags] = await Promise.all([
-          getByName(criteria, { indexable, assets: providerAssets || assets, transacting }),
-          getByTagline(criteria, { indexable, assets: providerAssets || assets, transacting }),
-          getByDescription(criteria, { indexable, assets: providerAssets || assets, transacting }),
+        const query = {
+          indexable,
+          $or: [
+            { name_$contains: criteria },
+            { tagline_$contains: criteria },
+            { description_$contains: criteria },
+          ],
+        };
+
+        const assetIds = providerAssets || assets;
+        if (!isEmpty(assetIds)) {
+          query.id_$in = assetIds;
+        }
+
+        if (categoryId) {
+          query.category = categoryId;
+        }
+
+        const [assetsFound, byTags] = await Promise.all([
+          tables.assets.find(query, { columns: ['id'], transacting }),
           tagsService.getTagsValues(criteria, {
             type: leemons.plugin.prefixPN(''),
             transacting,
           }),
         ]);
 
-        const matches = byName.concat(byTagline).concat(byDescription);
+        const matches = map(assetsFound, 'id');
 
         // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
         // EN: If there are resources, we must apply a previous filter as an intersection
@@ -119,22 +136,6 @@ async function search(
 
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
-      nothingFound = assets.length === 0;
-    }
-
-    // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
-    // EN: If we have the category, we filter the array of Assets with respect to that category
-    if (!nothingFound && categoryId) {
-      assets = (
-        await getByCategory(categoryId, { indexable, assets: uniq(assets), transacting })
-      ).map(({ id }) => id);
-      nothingFound = assets.length === 0;
-    }
-
-    // ES: Solo nos interesan los que sean indexables
-    // EN: Only interested in indexables
-    if (!nothingFound) {
-      assets = (await getIndexables(assets, { columns: ['id'], transacting })).map(({ id }) => id);
       nothingFound = assets.length === 0;
     }
 
@@ -155,9 +156,12 @@ async function search(
     // ES: Filtrar por estado publicado
     if (!nothingFound) {
       const { versionControl } = leemons.getPlugin('common').services;
+      console.time('9');
+      // TODO: Bad performance
       assets = await Promise.all(
         assets.map(({ asset }) => versionControl.getVersion(asset, { transacting }))
       );
+      console.timeEnd('9');
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
       }
@@ -231,7 +235,6 @@ async function search(
     // EN: For the case that you need sorting, we need a different logic
     if (!nothingFound && sortingBy && !isEmpty(sortingBy)) {
       const assetIds = assets.map((item) => item.asset);
-
       const [items] = await Promise.all([
         getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
       ]);
