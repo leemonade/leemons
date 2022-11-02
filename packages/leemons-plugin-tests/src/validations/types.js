@@ -8,7 +8,7 @@ const textSchema = {
 
 const textSchemaNullable = {
   type: 'string',
-  minLength: 1,
+  minLength: 0,
   maxLength: 65000,
   nullable: true,
 };
@@ -25,7 +25,7 @@ const stringSchema = {
 
 const stringSchemaNullable = {
   type: 'string',
-  minLength: 1,
+  minLength: 0,
   maxLength: 255,
   nullable: true,
 };

@@ -6,7 +6,7 @@ const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermi
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { getByCenterId } = require('../calendar-configs');
 const { getCalendars } = require('../calendar-configs/getCalendars');
-const { getEvents } = require('./getEvents');
+const { getEventsMultipleCalendars } = require('./getEvents');
 
 function hasGrades(studentData) {
   const grades = studentData?.grades;
@@ -16,43 +16,6 @@ function hasGrades(studentData) {
   }
 
   return grades.some((grade) => grade.type === 'main' && grade.visibleToStudent);
-}
-
-function getStatus(studentData, instanceData) {
-  // EN: This values are keys for the localization object prefixPN('activity_status')
-  // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
-
-  if (studentData.finished) {
-    if (hasGrades(studentData)) {
-      return 'evaluated';
-    }
-
-    const deadline = dayjs(instanceData.dates.deadline || null);
-    const endDate = dayjs(studentData?.timestamps?.end || null);
-
-    const endDateIsLate = endDate.isValid() && endDate.isAfter(deadline);
-
-    if (endDateIsLate) {
-      return 'late';
-    }
-
-    if (endDate.isValid()) {
-      return 'submitted';
-    }
-
-    return 'closed';
-  }
-
-  if (studentData.started) {
-    const startDate = dayjs(studentData?.timestamps?.start || null);
-
-    if (startDate.isValid()) {
-      return 'started';
-    }
-    return 'opened';
-  }
-
-  return 'assigned';
 }
 
 /**
@@ -143,14 +106,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       }
     ),
-    await Promise.all(
-      _.map(calendarIds, (calendarId) =>
-        getEvents(calendarId, {
-          getPrivates: false,
-          transacting,
-        })
-      )
-    ),
+    getEventsMultipleCalendars(calendarIds, { getPrivates: false, transacting }),
     table.events.find(
       { id_$in: eventIds },
       {
@@ -287,7 +243,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     usedCalendarIds = usedCalendarIds.concat(_.map(result.calendars, 'id'));
     usedCalendarIds = _.uniq(usedCalendarIds);
     // Cogemos las ids de los calendarios que entre los que tenemos sabemos que no pertenecen a nuestro programa
-    const [noClassCalendars, noProgramCalendars, calendarConfig] = await Promise.all([
+    const [noClassCalendars, noProgramCalendars] = await Promise.all([
       table.classCalendar.find(
         {
           calendar_$in: usedCalendarIds,
@@ -335,112 +291,51 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   programIds = _.uniq(programIds);
 
-  const [programs, isAcademic, ...calendarConfigs] = await Promise.all([
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.programs.programsByIds(programIds, { transacting }),
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.config.userSessionIsAcademic(userSession, { transacting }),
-    ..._.map(programIds, (programId) =>
-      leemons.getPlugin('academic-calendar').services.config.getConfig(programId, { transacting })
-    ),
-  ]);
-
-  let courses = [];
-
-  if (isAcademic) {
-    let classes = await Promise.all(
-      _.map(programs, (program) =>
-        leemons
-          .getPlugin('academic-portfolio')
-          .services.classes.listSessionClasses(
-            userSession,
-            { program: program.id },
-            { transacting }
-          )
-      )
-    );
-    classes = _.flatten(classes);
-    _.forEach(classes, (classe) => {
-      if (_.isArray(classe.courses)) {
-        courses = courses.concat(classe.courses);
-      } else {
-        courses.push(classe.courses);
-      }
-    });
-
-    courses = _.uniqBy(courses, 'id');
-  }
-
   /*
-  const programById = _.keyBy(programs, 'id');
-  const coursesById = _.keyBy(courses, 'id');
+    console.time('9');
+    const [programs, isAcademic, ...calendarConfigs] = await Promise.all([
+      leemons
+        .getPlugin('academic-portfolio')
+        .services.programs.programsByIds(programIds, { transacting }),
+      leemons
+        .getPlugin('academic-portfolio')
+        .services.config.userSessionIsAcademic(userSession, { transacting }),
+      ..._.map(programIds, (programId) =>
+        leemons.getPlugin('academic-calendar').services.config.getConfig(programId, { transacting })
+      ),
+    ]);
+    console.timeEnd('9');
 
-  const { getCourseName } = leemons.getPlugin('academic-portfolio').services.courses;
+    console.time('10');
 
-  _.forEach(calendarConfigs, (config) => {
-    if (config) {
-      _.forIn(config.courseDates, (value, key) => {
-        let good = true;
-        if (isAcademic) {
-          good = !!coursesById[key];
-        }
-        if (good) {
-          const course = _.find(programById[config.program].courses, { id: key });
-          const startEvent = {
-            id: null,
-            title: `{-_start_-}: ${getCourseName(course)} ${programById[config.program].name}`,
-            startDate: value.startDate,
-            endDate: value.startDate,
-            isAllDay: 1,
-            repeat: 'dont_repeat',
-            type: 'plugins.calendar.event',
-            status: 'active',
-            data: { hideInCalendar: false },
-            isPrivate: 0,
-            calendar: calendarByProgramId[config.program],
-            fromCalendar: true,
-            // bgColor: '#485264',
-            // borderColor: '#485264',
-            icon: '/public/calendar/arrow-chev-right.svg',
-            canNotOpened: true,
-          };
-          result.events.push(startEvent);
-          result.events.push({
-            ...startEvent,
-            title: `{-_end_-}: ${getCourseName(course)} ${programById[config.program].name}`,
-            startDate: value.endDate,
-            endDate: value.endDate,
-            icon: '/public/calendar/arrow-chev-left.svg',
-          });
+    let courses = [];
+    if (isAcademic) {
+      let classes = await Promise.all(
+        _.map(programs, (program) =>
+          leemons
+            .getPlugin('academic-portfolio')
+            .services.classes.listSessionClasses(
+              userSession,
+              { program: program.id },
+              { transacting }
+            )
+        )
+      );
+      classes = _.flatten(classes);
+      _.forEach(classes, (classe) => {
+        if (_.isArray(classe.courses)) {
+          courses = courses.concat(classe.courses);
+        } else {
+          courses.push(classe.courses);
         }
       });
+
+      courses = _.uniqBy(courses, 'id');
     }
-  });
 
-   */
 
-  /*
-  * {
-  id: '202f491f-9fbe-42cc-bb16-0e569d0fa0f4',
-  title: 'Inicio de curso',
-  startDate: 2021-09-08T00:00:00.000Z,
-  endDate: 2021-09-08T00:00:00.000Z,
-  isAllDay: 1,
-  repeat: 'dont_repeat',
-  type: 'plugins.calendar.event',
-  status: 'active',
-  data: { hideInCalendar: false },
-  isPrivate: 0,
-  deleted: 0,
-  created_at: 2022-06-20T13:54:12.000Z,
-  updated_at: 2022-06-20T13:54:12.000Z,
-  deleted_at: null,
-  calendar: '02d9f2cc-c3db-4a82-af8e-9b24c36ef980',
-  fromCalendar: true
-}
-*/
+  console.timeEnd('10');
+  */
 
   const permissionNames = [];
 
@@ -449,7 +344,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   });
 
   // ES: Sacamos para todos los eventos que userAgents tiene permiso de ver y cuales son sus owers
-  const [viewPermissions, _ownerPermissions] = await Promise.all([
+  const [viewPermissions, _ownerPermissions, isAcademicStudent] = await Promise.all([
     leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
       {
         permissionName_$in: permissionNames,
@@ -464,50 +359,42 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       },
       { returnUserAgents: false, transacting }
     ),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.config.userSessionIsStudent(userSession, { transacting }),
   ]);
 
-  let [assignations, instances, kanbanColumns] = [[], [], []];
+  let kanbanColumns = [];
   const instanceIdEvents = {};
+  let instanceStatusByInstance = {};
   try {
-    const instancePromises = [];
-    const assignationsPromises = [];
-    const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
-    const assignationsService = leemons.getPlugin('assignables').services.assignations;
+    if (isAcademicStudent) {
+      const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
 
-    _.forEach(result.events, (event) => {
-      if (event?.data?.instanceId) {
-        instancePromises.push(
-          instanceService.getAssignableInstance(event.data.instanceId, {
-            details: true,
-            userSession,
-            transacting,
-          })
-        );
-        assignationsPromises.push(
-          assignationsService.getAssignation(event.data.instanceId, userSession.userAgents[0].id, {
-            userSession,
-            transacting,
-          })
-        );
-        instanceIdEvents[event.id] = event.data.instanceId;
-      }
-    });
+      const instanceIds = [];
+      _.forEach(result.events, (event) => {
+        if (event?.data?.instanceId) {
+          instanceIds.push(event?.data?.instanceId);
+          instanceIdEvents[event.id] = event.data.instanceId;
+        }
+      });
 
-    const [_assignations, _instances, _kanbanColumns] = await Promise.all([
-      Promise.allSettled(assignationsPromises),
-      Promise.allSettled(instancePromises),
-      leemons.plugin.services.kanban.listColumns({ transacting }),
-    ]);
+      const [instanceStatus, _kanbanColumns] = await Promise.all([
+        instanceService.getAssignableInstancesStatus(instanceIds, {
+          userSession,
+          transacting,
+        }),
+        leemons.plugin.services.kanban.listColumns({ transacting }),
+      ]);
 
-    assignations = _.map(_.filter(_assignations, { status: 'fulfilled' }), 'value');
-    instances = _.map(_.filter(_instances, { status: 'fulfilled' }), 'value');
-    kanbanColumns = _kanbanColumns;
+      kanbanColumns = _kanbanColumns;
+      instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
+    } else {
+      kanbanColumns = await leemons.plugin.services.kanban.listColumns({ transacting });
+    }
   } catch (e) {
     console.error(e);
   }
-
-  const instancesById = _.keyBy(instances, 'id');
-  const assignationsByInstance = _.keyBy(assignations, 'instance');
 
   const userAgentIds = _.uniq(_.map(viewPermissions, 'userAgent'));
   const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
@@ -551,22 +438,20 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
       // --- Instancia
       if (instanceIdEvents[event.id]) {
-        const instance = instancesById[instanceIdEvents[event.id]];
-        const assignation = assignationsByInstance[instanceIdEvents[event.id]];
+        const instanceStatus = instanceStatusByInstance[instanceIdEvents[event.id]];
 
-        if (instance && (event.endDate || event.startDate) && instance.dates.deadline) {
-          event.startDate = instance.dates.deadline;
-          event.endDate = instance.dates.deadline;
+        if (instanceStatus && (event.endDate || event.startDate) && instanceStatus.dates.deadline) {
+          event.startDate = instanceStatus.dates.deadline;
+          event.endDate = instanceStatus.dates.deadline;
         }
-        if (instance && assignation) {
+
+        if (instanceStatus) {
           event.disableDrag = true;
           const now = new Date();
 
-          const status = getStatus(assignation, instance);
-
-          if (instance.dates.visualization) {
+          if (instanceStatus.dates.visualization) {
             // Si hay fecha de visualización
-            if (now > new Date(instance.dates.visualization)) {
+            if (now > new Date(instanceStatus.dates.visualization)) {
               // Si la fecha actual es mayor debe de poder ver el evento
               event.data.column = kanbanColumnsByOrder[1].id;
             } else {
@@ -574,31 +459,35 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
             }
           }
           // Si siempre tiene que estar disponible lo ponemos en por hacer
-          if (instance.alwaysAvailable) {
+          if (instanceStatus.alwaysAvailable) {
             event.data.column = kanbanColumnsByOrder[2].id;
           }
           // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
-          if (instance.dates.start) {
-            if (now > new Date(instance.dates.start)) {
+          if (instanceStatus.dates.start) {
+            if (now > new Date(instanceStatus.dates.start)) {
               event.data.column = kanbanColumnsByOrder[2].id;
             } else {
               return null;
             }
           }
 
-          if (status === 'assigned') {
+          if (instanceStatus.status === 'assigned') {
             event.data.column = kanbanColumnsByOrder[1].id;
           }
-          if (status === 'opened') {
+          if (instanceStatus.status === 'opened') {
             event.data.column = kanbanColumnsByOrder[2].id;
           }
-          if (status === 'started') {
+          if (instanceStatus.status === 'started') {
             event.data.column = kanbanColumnsByOrder[3].id;
           }
-          if (status === 'late' || status === 'submitted' || status === 'closed') {
+          if (
+            instanceStatus.status === 'late' ||
+            instanceStatus.status === 'submitted' ||
+            instanceStatus.status === 'closed'
+          ) {
             event.data.column = kanbanColumnsByOrder[4].id;
           }
-          if (status === 'evaluated') {
+          if (instanceStatus.status === 'evaluated') {
             event.data.column = kanbanColumnsByOrder[5].id;
           }
 
@@ -648,7 +537,6 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     }),
     _.isNil
   );
-
   return result;
 }
 
