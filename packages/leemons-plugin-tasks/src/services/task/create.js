@@ -20,7 +20,7 @@ module.exports = async function create(
 
     return leemons
       .getPlugin('common')
-      .services.versionControl.parseId(createdAssignable.id, null, { transacting });
+      .services.versionControl.parseId(createdAssignable.id, { transacting });
   } catch (error) {
     throw new Error(`Error creating task: ${error.message}`);
   }

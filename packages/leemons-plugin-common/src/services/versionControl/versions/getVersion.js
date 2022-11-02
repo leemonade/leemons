@@ -4,7 +4,7 @@ const {
 const get = require('../currentVersions/get');
 const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../helpers');
 
-async function getVersionMany(ids, { published, transacting } = {}) {
+async function getVersionMany(ids, { published, transacting, ignoreMissing = false } = {}) {
   const parsedIds = await parseId(ids, { verifyVersion: false, transacting });
 
   const uuids = parsedIds.map((id) => id.uuid);
@@ -17,7 +17,9 @@ async function getVersionMany(ids, { published, transacting } = {}) {
 
   // TODO: Add more difficult searches (between versions, greather than, etc)
   query.$or = parsedIds.map(({ version, uuid }) => {
-    const subQuery = {};
+    const subQuery = {
+      uuid,
+    };
 
     if (published !== undefined) {
       subQuery.published = published;
@@ -52,12 +54,20 @@ async function getVersionMany(ids, { published, transacting } = {}) {
 
   const versionsFound = await versions.find(query, { transacting });
 
-  if (!versionsFound?.length) {
+  if (!versionsFound?.length && !ignoreMissing) {
     throw new Error('Versions not found');
   }
 
   return parsedIds.map(({ uuid }) => {
     const versionFound = versionsFound.find((v) => v.uuid === uuid);
+
+    if (!versionFound) {
+      if (!ignoreMissing) {
+        throw new Error('Versions not found');
+      } else {
+        return null;
+      }
+    }
 
     const finalVersion = stringifyVersion(versionFound);
     const fullId = stringifyId(uuid, finalVersion);
@@ -66,11 +76,11 @@ async function getVersionMany(ids, { published, transacting } = {}) {
   });
 }
 
-module.exports = async function getVersion(id, { published, transacting } = {}) {
+module.exports = async function getVersion(id, { published, transacting, ignoreMissing } = {}) {
   const isArray = Array.isArray(id);
   const ids = isArray ? id : [id];
 
-  const idVerions = await getVersionMany(ids, { published, transacting });
+  const idVerions = await getVersionMany.call(this, ids, { published, transacting, ignoreMissing });
 
   return isArray ? idVerions : idVerions[0];
 };

@@ -30,7 +30,7 @@ module.exports = async function get(uuid, { transacting } = {}) {
   const isArray = Array.isArray(uuid);
   const uuids = isArray ? uuid : [uuid];
 
-  const entities = await getMany(uuids, { transacting });
+  const entities = await getMany.call(this, uuids, { transacting });
 
   return isArray ? entities : entities[0];
 };

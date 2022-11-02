@@ -39,20 +39,23 @@ module.exports = async function listVersionOfType(
 
     const fullIds = foundVersions.map((v) => stringifyId(v.uuid, stringifyVersion(v)));
 
-    const result = await getVersion.call(this, fullIds, { transacting });
+    const result = await getVersion.call(this, fullIds, { ignoreMissing: true, transacting });
 
     return _.compact(result);
   }
 
-  const parsedIds = parseId(
-    listOfEntities.map((entity) => ({
-      uuid: entity.uuid,
-      version: getDesiredVersion(entity.current, published, preferCurrent),
-    })),
-    { transacting }
-  );
+  const parsedIds = (
+    await parseId(
+      listOfEntities.map((entity) => ({
+        id: entity.uuid,
+        version: getDesiredVersion(entity.current, published, preferCurrent),
+      })),
+      { ignoreMissing: true, transacting }
+    )
+  ).filter(Boolean);
 
-  const result = await getVersion(
+  const result = await getVersion.call(
+    this,
     parsedIds.map((id) => id.fullId),
     { transacting }
   );

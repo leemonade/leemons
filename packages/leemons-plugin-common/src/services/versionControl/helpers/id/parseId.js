@@ -4,7 +4,7 @@ const stringifyId = require('./stringifyId');
 
 const specialVersions = ['latest', 'current', 'published', 'draft'];
 
-async function parseIdMany(ids, { verifyVersion = true, transacting } = {}) {
+async function parseIdMany(ids, { verifyVersion = true, transacting, ignoreMissing } = {}) {
   const parsedIds = ids.map((fullId) => {
     const fullIdIsString = typeof fullId === 'string';
     const id = fullIdIsString ? fullId : fullId.id;
@@ -51,13 +51,22 @@ async function parseIdMany(ids, { verifyVersion = true, transacting } = {}) {
 
     const versionsInfo = await getVersion.call(
       { calledFrom: 'plugins.common' },
-      idsWithSpecialVersions,
+      idsWithSpecialVersions.map((v) => v.fullId),
       {
+        ignoreMissing,
         transacting,
       }
     );
 
     versionsInfo.forEach((info, i) => {
+      if (!info && ignoreMissing) {
+        parsedIds.splice(
+          parsedIds.findIndex((id) => id === idsWithSpecialVersions[i]),
+          1
+        );
+        return;
+      }
+
       if (!isValidVersion(info.version)) {
         throw new Error('The provided version must be valid');
       }
@@ -70,11 +79,18 @@ async function parseIdMany(ids, { verifyVersion = true, transacting } = {}) {
   return parsedIds;
 }
 
-module.exports = async function parseId(id, { verifyVersion = true, transacting } = {}) {
+module.exports = async function parseId(
+  id,
+  { verifyVersion = true, transacting, ignoreMissing = false } = {}
+) {
   const isArray = Array.isArray(id);
   const ids = isArray ? id : [id];
 
-  const parsedIds = await parseIdMany(ids, { verifyVersion, transacting });
+  const parsedIds = await parseIdMany.call(this, ids, {
+    verifyVersion,
+    transacting,
+    ignoreMissing,
+  });
 
   if (isArray) {
     return parsedIds;
