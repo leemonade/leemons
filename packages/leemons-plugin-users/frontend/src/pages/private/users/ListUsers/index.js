@@ -99,6 +99,7 @@ function ListUsers() {
       query.$or = [
         { name_$contains: store.search.toLowerCase() },
         { surnames_$contains: store.search.toLowerCase() },
+        { secondSurname_$contains: store.search.toLowerCase() },
         { email_$contains: store.search.toLowerCase() },
         { phone_$contains: store.search.toLowerCase() },
         { birthdate_$contains: store.search.toLowerCase() },

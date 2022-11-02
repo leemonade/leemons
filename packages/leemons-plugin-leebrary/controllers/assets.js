@@ -108,10 +108,15 @@ async function removeAsset(ctx) {
 async function duplicateAsset(ctx) {
   const { id: assetId } = ctx.params;
   const { userSession } = ctx.state;
+  const { preserveName, indexable, public: isPublic } = ctx.request.body;
 
   const asset = await duplicate.call({ calledFrom: leemons.plugin.prefixPN('') }, assetId, {
+    preserveName,
+    indexable,
+    public: isPublic,
     userSession,
   });
+
   ctx.status = 200;
   ctx.body = {
     status: 200,
@@ -163,6 +168,7 @@ async function getAssets(ctx) {
     showPublic,
     searchInProvider,
     roles,
+    providerQuery,
   } = ctx.request.query;
   const { userSession } = ctx.state;
 
@@ -177,8 +183,10 @@ async function getAssets(ctx) {
   const displayPublic = trueValues.includes(showPublic);
   const searchProvider = trueValues.includes(searchInProvider);
   const parsedRoles = JSON.parse(roles || null) || [];
+  const _providerQuery = JSON.parse(providerQuery || null);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
+    console.time('citeriaend');
     assets = await getByCriteria(
       { category, criteria, type },
       {
@@ -189,8 +197,10 @@ async function getAssets(ctx) {
         userSession,
         roles: parsedRoles,
         searchInProvider: searchProvider,
+        providerQuery: _providerQuery,
       }
     );
+    console.timeEnd('citeriaend');
   } else {
     assets = await getByCategory(category, {
       published: assetPublished,
@@ -200,6 +210,7 @@ async function getAssets(ctx) {
       userSession,
       roles: parsedRoles,
       searchInProvider: searchProvider,
+      providerQuery: _providerQuery,
     });
   }
 

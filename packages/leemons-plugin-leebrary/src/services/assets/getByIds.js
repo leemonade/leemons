@@ -9,15 +9,23 @@ const {
   isNil,
   intersection,
   isArray,
+  uniqBy,
+  filter,
+  keyBy,
+  forEach,
 } = require('lodash');
-const {tables} = require('../tables');
-const {CATEGORIES} = require('../../../config/constants');
-const {getByAssets: getPermissions} = require('../permissions/getByAssets');
-const {getUsersByAsset} = require('../permissions/getUsersByAsset');
-const {find: findBookmarks} = require('../bookmarks/find');
+const {
+  getUserAgentsInfo,
+} = require('leemons-plugin-users/src/services/user-agents/getUserAgentsInfo');
+const { tables } = require('../tables');
+const { CATEGORIES } = require('../../../config/constants');
+const { getByAssets: getPermissions } = require('../permissions/getByAssets');
+const { getUsersByAsset } = require('../permissions/getUsersByAsset');
+const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
-const {getByIds: getCategories} = require('../categories/getByIds');
-const {getByAssets: getPins} = require('../pins/getByAssets');
+const { getByIds: getCategories } = require('../categories/getByIds');
+const { getByAssets: getPins } = require('../pins/getByAssets');
+const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 
 async function getByIds(
   assetsIds,
@@ -43,31 +51,73 @@ async function getByIds(
     query.indexable = indexable;
   }
 
-  let assets = await tables.assets.find(query, {transacting});
+  let assets = await tables.assets.find(query, { transacting });
 
   // ·········································································
   // PERMISSIONS & PERSONS
-
   if (checkPermissions && userSession) {
     let permissions = [];
 
     if (userSession || showPublic) {
-      permissions = await getPermissions(assetsIds, {showPublic, userSession, transacting});
+      permissions = await getPermissions(assetsIds, { showPublic, userSession, transacting });
     }
 
     const privateAssets = permissions.map((item) => item.asset);
     assets = assets.filter((asset) => privateAssets.includes(asset.id));
 
+    const getUsersAssetIds = [];
     for (let i = 0, l = assets.length; i < l; i++) {
       const asset = assets[i];
       const permission = permissions.find((item) => item.asset === asset.id);
       if (!isEmpty(permission?.permissions)) {
-        const {role: userRole, permissions: userPermissions} = permission;
+        const { permissions: userPermissions } = permission;
         if (userPermissions.edit) {
-          // eslint-disable-next-line no-await-in-loop
-          let assetPermissions = await getUsersByAsset(asset.id, {userSession});
+          getUsersAssetIds.push(asset.id);
+        }
+      }
+    }
+
+    if (getUsersAssetIds.length) {
+      const { services } = leemons.getPlugin('users');
+      const rawUserAgents = await services.permissions.findUsersWithPermissions(
+        {
+          permissionName_$in: map(getUsersAssetIds, getAssetPermissionName),
+        },
+        { returnRaw: true, transacting }
+      );
+      const userAgentIds = uniq(map(rawUserAgents, 'userAgent'));
+      const userAgents = await getUserAgentsInfo(userAgentIds, { transacting });
+      const userAgentsById = keyBy(userAgents, 'id');
+
+      for (let i = 0, l = assets.length; i < l; i++) {
+        const asset = assets[i];
+        if (getUsersAssetIds.includes(asset.id)) {
+          const permission = permissions.find((item) => item.asset === asset.id);
+          const assetPermissionName = getAssetPermissionName(asset.id);
+          const { role: userRole } = permission;
+          const rawPerm = filter(
+            rawUserAgents,
+            ({ permissionName }) => permissionName === assetPermissionName
+          );
+          const assetUserAgents = uniqBy(rawPerm, 'userAgent');
+
+          let assetPermissions = [];
+          forEach(assetUserAgents, (raw) => {
+            const userAgent = userAgentsById[raw.userAgent];
+            const perm = find(assetPermissions, { id: userAgent.user.id });
+            if (perm) {
+              perm.userAgentIds.push(userAgent.id);
+              perm.permissions.push(raw.actionName);
+            } else {
+              assetPermissions.push({
+                ...userAgent.user,
+                userAgentIds: [userAgent.id],
+                permissions: [raw.actionName],
+              });
+            }
+          });
           assetPermissions = assetPermissions.map((user) => {
-            const item = {...user};
+            const item = { ...user };
             item.editable = canAssignRole(userRole, item.permissions[0], item.permissions[0]);
             return item;
           });
@@ -79,35 +129,34 @@ async function getByIds(
 
   // ·········································································
   // FILES
-
   if (!isEmpty(assets) && withFiles) {
-    const assetsFiles = await tables.assetsFiles.find({asset_$in: ids}, {transacting});
+    const assetsFiles = await tables.assetsFiles.find({ asset_$in: ids }, { transacting });
     const fileIds = compact(
       uniq(map(assetsFiles, 'file').concat(assets.map((asset) => asset.cover)))
     );
 
     // ES: En caso de que algún asset sea un Bookmark, entonces recuperamos el icono
     // EN: In case one asset is a Bookmark, then we recover the icon
-    const bookmarks = await findBookmarks({asset_$in: ids}, {transacting});
+    const bookmarks = await findBookmarks({ asset_$in: ids }, { transacting });
     const iconFiles = compact(uniq(map(bookmarks, 'icon')));
     fileIds.push(...iconFiles);
 
-    const files = await tables.files.find({id_$in: fileIds}, {transacting});
+    const files = await tables.files.find({ id_$in: fileIds }, { transacting });
 
     assets = assets.map((asset) => {
       const items = assetsFiles
         .filter((assetFile) => assetFile.asset === asset.id)
-        .map((assetFile) => find(files, {id: assetFile.file}));
+        .map((assetFile) => find(files, { id: assetFile.file }));
 
       if (asset.cover) {
-        asset.cover = find(files, {id: asset.cover});
+        asset.cover = find(files, { id: asset.cover });
       }
 
-      const bookmark = find(bookmarks, {asset: asset.id});
+      const bookmark = find(bookmarks, { asset: asset.id });
 
       if (bookmark) {
         asset.url = bookmark.url;
-        asset.icon = find(files, {id: bookmark.icon});
+        asset.icon = find(files, { id: bookmark.icon });
         asset.fileType = 'bookmark';
         asset.metadata = [];
       }
@@ -128,22 +177,19 @@ async function getByIds(
   // ·········································································
   // TAGS
   let tags = [];
-
   if (withTags) {
     const tagsService = leemons.getPlugin('common').services.tags;
     tags = await Promise.all(
       assets.map((item) =>
-        tagsService.getValuesTags(item.id, {type: leemons.plugin.prefixPN(''), transacting})
+        tagsService.getValuesTags(item.id, { type: leemons.plugin.prefixPN(''), transacting })
       )
     );
-
   }
 
   // ·········································································
   // CATEGORY DATA
   let categories = [];
   let assetCategoryData = [];
-
   if (withCategory) {
     categories = await getCategories(uniq(assets.map((item) => item.category)), {
       transacting,
@@ -161,8 +207,8 @@ async function getByIds(
         return assetProviderService.getByIds(
           assets
             .filter((item) => item.category === category.id)
-            .map((item) => ({...item, category})),
-          {userSession, transacting}
+            .map((item) => ({ ...item, category })),
+          { userSession, transacting }
         );
       })
     );
@@ -175,7 +221,7 @@ async function getByIds(
   let pins = [];
 
   if (checkPins) {
-    pins = await getPins(assetsIds, {userSession, transacting});
+    pins = await getPins(assetsIds, { userSession, transacting });
   }
 
   // ·········································································
@@ -185,17 +231,17 @@ async function getByIds(
   const shareRoles = ['owner', 'editor'];
   const editRoles = ['owner', 'editor'];
   const assignRoles = ['owner', 'editor'];
-  const userAgents = userSession?.userAgents.map(({id}) => id) || [];
+  const userAgents = userSession?.userAgents.map(({ id }) => id) || [];
 
-  return assets.map((asset, index) => {
-    const item = {...asset};
+  const result = assets.map((asset, index) => {
+    const item = { ...asset };
 
     if (withCategory) {
-      const {key, duplicable, assignable} = find(categories, {id: asset.category});
+      const { key, duplicable, assignable } = find(categories, { id: asset.category });
       item.duplicable = duplicable;
       item.assignable = assignable;
       item.downloadable = key === CATEGORIES.MEDIA_FILES;
-      item.providerData = find(assetCategoryData, {asset: asset.id});
+      item.providerData = find(assetCategoryData, { asset: asset.id });
     }
 
     if (withTags) {
@@ -203,7 +249,7 @@ async function getByIds(
     }
 
     if (checkPins) {
-      const pin = find(pins, {asset: asset.id});
+      const pin = find(pins, { asset: asset.id });
       item.pinned = !isNil(pin?.id);
     }
 
@@ -235,6 +281,8 @@ async function getByIds(
 
     return item;
   });
+
+  return result;
 }
 
-module.exports = {getByIds};
+module.exports = { getByIds };

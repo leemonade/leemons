@@ -9,6 +9,7 @@ import { useFiltersStyle } from './Filters.style';
 export default function Filters({
   labels,
   tabs,
+  defaultFilters,
   onChange,
   value,
   hideTabs,
@@ -27,6 +28,7 @@ export default function Filters({
       type: 'all',
       tab: tabs?.[0]?.value,
       query: '',
+      ...defaultFilters,
     }),
     [tabs]
   );
@@ -82,7 +84,7 @@ export default function Filters({
 
   const topBar = !(hideTabs && hideQuery) && (
     <Box className={cx(classes?.filterRow, classes?.spaceBetween, classes?.alignCenter)}>
-      {hideTabs ? (
+      {hideTabs || tabs?.length <= 1 ? (
         <Box />
       ) : (
         <Controller
@@ -162,4 +164,5 @@ Filters.propTypes = {
   hideSubject: PropTypes.bool,
   hideStatus: PropTypes.bool,
   hideType: PropTypes.bool,
+  defaultFilters: PropTypes.object,
 };

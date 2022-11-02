@@ -37,7 +37,7 @@ const menuItems = [
   // Main
   {
     item: {
-      order: 5,
+      order: 103,
       key: 'portfolio-calendar',
       iconSvg: '/public/academic-calendar/menu-icon.svg',
       activeIconSvg: '/public/academic-calendar/menu-icon.svg',

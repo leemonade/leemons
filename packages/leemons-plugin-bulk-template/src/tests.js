@@ -51,7 +51,8 @@ async function initTests({ users, programs }) {
       } catch (e) {
         console.log('-- QBANK CREATION ERROR --');
         console.log(`qbank: ${qbank.name}`);
-        console.dir(qbank, { depth: null });
+        // console.dir(qbank, { depth: null });
+        console.log(`creator: ${creator}`);
         console.error(e);
       }
 
@@ -106,7 +107,7 @@ async function initTests({ users, programs }) {
       } catch (e) {
         console.log('-- TEST CREATION ERROR --');
         console.log(`test: ${test.name}`);
-        console.log(`creator: ${creator.name}`);
+        console.log(`creator: ${creator}`);
         console.error(e);
       }
     }

@@ -4,6 +4,7 @@ const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermission
 const { getPublic } = require('./getPublic');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets } = require('./getByAssets');
+const { byProvider: getByProvider } = require('../search/byProvider');
 
 async function getByCategory(
   categoryId,
@@ -16,6 +17,7 @@ async function getByCategory(
     showPublic,
     roles,
     searchInProvider,
+    providerQuery,
     userSession,
     transacting,
   } = {}
@@ -23,6 +25,7 @@ async function getByCategory(
   // TODO: Search in provider
   try {
     const { services: userService } = leemons.getPlugin('users');
+    console.time('end');
 
     const permissions = await userService.permissions.getUserAgentPermissions(
       userSession.userAgents,
@@ -36,7 +39,6 @@ async function getByCategory(
     );
 
     const publicAssets = showPublic ? await getPublic(categoryId, { indexable, transacting }) : [];
-
     // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
     // EN: Concatenate all IDs, and then get the intersection in accordance with their status
     let assetIds = permissions
@@ -44,11 +46,13 @@ async function getByCategory(
       .concat(publicAssets.map((item) => item.asset));
 
     try {
+      console.time('3');
       const { versionControl } = leemons.getPlugin('common').services;
       const assetByStatus = await versionControl.listVersionsOfType(
         leemons.plugin.prefixPN(categoryId),
         { published, preferCurrent, transacting }
       );
+      console.timeEnd('3');
 
       assetIds = uniq(
         intersection(
@@ -57,7 +61,26 @@ async function getByCategory(
         )
       );
     } catch (e) {
+      console.error(e);
+      console.timeEnd('3');
       leemons.log.error(`Failed to get asset by status from categoryId ${categoryId}`);
+    }
+
+    // ES: Buscamos en el provider si se ha indicado
+    // EN: Search in the provider if indicated so
+    if (searchInProvider) {
+      try {
+        assetIds = await getByProvider(categoryId, '', {
+          query: providerQuery,
+          assets: assetIds,
+          published,
+          preferCurrent,
+          userSession,
+          transacting,
+        });
+      } catch (e) {
+        leemons.log.error(`Failed to get assets from provider: ${e.message}`);
+      }
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
@@ -101,7 +124,7 @@ async function getByCategory(
         }
         return assetIds.includes(item.asset);
       });
-
+    console.timeEnd('end');
     return uniqBy(results, 'asset');
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);

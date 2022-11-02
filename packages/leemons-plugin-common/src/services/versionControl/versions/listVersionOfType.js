@@ -37,6 +37,7 @@ module.exports = async function listVersionOfType(
       { transacting }
     );
 
+    // TODO: Bad Performance
     const result = await Promise.all(
       foundVersions.map(async (v) => {
         const fullId = stringifyId(v.uuid, stringifyVersion(v));
@@ -50,6 +51,7 @@ module.exports = async function listVersionOfType(
     return _.compact(result);
   }
 
+  // TODO: Bad Performance
   const result = await Promise.all(
     listOfEntities.map(async (entity) => {
       try {

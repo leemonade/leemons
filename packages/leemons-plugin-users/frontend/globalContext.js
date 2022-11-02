@@ -9,12 +9,15 @@ import { SocketIoService } from '@socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
+import { useUpdateUserProfile } from '@users/hooks';
 
 export function Provider({ children }) {
   const [t] = useTranslateLoader(prefixPN('needDatasetDataModal'));
   const [store, render] = useStore();
 
   const history = useHistory();
+
+  useUpdateUserProfile();
 
   const apiSessionMiddleware = useCallback((ctx) => {
     if (!ctx.options) ctx.options = {};

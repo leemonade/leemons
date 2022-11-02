@@ -17,6 +17,7 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
+const { getClassesProgramInfo } = require('./listSessionClasses');
 
 async function addClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -61,6 +62,14 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
       if (image) imageData.cover = image;
       const assetService = leemons.getPlugin('leebrary').services.assets;
       const assetImage = await assetService.add(imageData, {
+        permissions: [
+          {
+            canEdit: true,
+            isCustomPermission: true,
+            permissionName: leemons.plugin.prefixPN('programs'),
+            actionNames: ['update', 'admin'],
+          },
+        ],
         published: true,
         userSession,
         transacting,
@@ -149,7 +158,14 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
 
       await Promise.all(promises);
 
-      const classe = (await classByIds(nClass.id, { transacting }))[0];
+      let classe = (await classByIds(nClass.id, { transacting }))[0];
+      [classe] = await getClassesProgramInfo(
+        {
+          programs: data.program,
+          classes: [classe],
+        },
+        { transacting }
+      );
       await leemons.events.emit('after-add-class', { class: classe, transacting });
 
       if (teachers) {

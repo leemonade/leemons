@@ -22,7 +22,7 @@ function useCurriculum(program) {
         setCurriculum(curriculumData.items[0]);
       }
     })();
-  }, program);
+  }, [program]);
 
   return curriculum;
 }

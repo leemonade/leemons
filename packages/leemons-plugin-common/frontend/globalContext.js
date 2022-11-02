@@ -4,6 +4,7 @@ import { TextEditorContext, TextEditorProvider } from '@common/context';
 
 export function Provider({ children }) {
   const [textEditorTools, setTextEditorTools] = useState({});
+  const [textEditorProcessors, setTextEditorProcessors] = useState({});
 
   const setTextEditorTool = (name, tool, props) => {
     const tools = { ...textEditorTools };
@@ -11,10 +12,22 @@ export function Provider({ children }) {
     setTextEditorTools(tools);
   };
 
+  const setTextEditorProcessor = (name, processor) => {
+    if (typeof processor !== 'function') {
+      throw new Error('The processor must be a function');
+    }
+
+    const processors = { ...textEditorProcessors };
+    processors[name] = processor;
+    setTextEditorProcessors(processors);
+  };
+
   const values = useMemo(
     () => ({
       textEditorTools,
       setTextEditorTool,
+      textEditorProcessors,
+      setTextEditorProcessor,
     }),
     [textEditorTools]
   );

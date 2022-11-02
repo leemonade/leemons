@@ -224,7 +224,7 @@ function Calendar({ session }) {
         const calendarSections = [];
         _.forIn(calendarsBySection, (calendars, sectionName) => {
           calendarSections.push({
-            calendars,
+            calendars: _.orderBy(calendars, ['metadata.internalId'], ['asc']),
             sectionName: getSectionName(sectionName, store.calendarSectionNamesTranslations),
           });
         });
@@ -381,6 +381,10 @@ function Calendar({ session }) {
   }, [store.center, store.loading]);
 
   if (store.loading) return <LoadingOverlay visible />;
+
+  if (store.activePage === 'schedule') {
+    console.log(store.schedule.events);
+  }
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
@@ -552,8 +556,8 @@ function Calendar({ session }) {
               style={{ height: '90%' }}
               currentView="week"
               hideToolbar={true}
-              minWeekDay={store.schedule.calendarConfig.minDayWeek}
-              maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
+              minimumStartDifference={0}
+              weekDays={store.schedule.calendarConfig.weekDays}
               minHour={store.schedule.calendarConfig.minHour}
               maxHour={store.schedule.calendarConfig.maxHour}
               timeslots={2}

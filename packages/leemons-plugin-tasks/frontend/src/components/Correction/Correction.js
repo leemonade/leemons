@@ -43,6 +43,7 @@ export default function Correction({ assignation, instance, loading }) {
       return key;
     });
   };
+  const showSaveButtons = !(!instance.requiresScoring && instance.allowFeedback);
 
   /*
     --- State ---
@@ -198,23 +199,25 @@ export default function Correction({ assignation, instance, loading }) {
           />
         </SubjectTabs>
       </Box>
-      <Box className={classes?.mainButtons}>
-        <Button
-          variant="outline"
-          loading={isLoading('save')}
-          disabled={loadingButton && !isLoading('save')}
-          onClick={handleSubmit(onSave(false, 'save'))}
-        >
-          {labels?.save}
-        </Button>
-        <Button
-          loading={isLoading('saveAndSend')}
-          disabled={loadingButton && !isLoading('saveAndSend')}
-          onClick={handleSubmit(onSave(true, 'saveAndSend'))}
-        >
-          {labels?.saveAndSend}
-        </Button>
-      </Box>
+      {showSaveButtons && (
+        <Box className={classes?.mainButtons}>
+          <Button
+            variant="outline"
+            loading={isLoading('save')}
+            disabled={loadingButton && !isLoading('save')}
+            onClick={handleSubmit(onSave(false, 'save'))}
+          >
+            {labels?.save}
+          </Button>
+          <Button
+            loading={isLoading('saveAndSend')}
+            disabled={loadingButton && !isLoading('saveAndSend')}
+            onClick={handleSubmit(onSave(true, 'saveAndSend'))}
+          >
+            {labels?.saveAndSend}
+          </Button>
+        </Box>
+      )}
     </>
   );
 }

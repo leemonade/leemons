@@ -6,7 +6,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, unflatten } from '@common';
+import { useStore, unflatten, useProcessTextEditor } from '@common';
 import {
   Setup,
   BasicData,
@@ -20,6 +20,33 @@ import publishTaskRequest from '../../../request/task/publishTask';
 import getTaskRequest from '../../../request/task/getTask';
 import useObserver from '../../../helpers/useObserver';
 
+async function processDevelopment({ values, store, processTextEditor }) {
+  const force = !!store.currentTask?.published;
+
+  const developments = values?.metadata?.development;
+  if (developments?.length || store.currentTask?.metadata?.development?.length) {
+    const length = Math.max(
+      developments?.length ?? 0,
+      store.currentTask?.metadata?.development?.length ?? 0
+    );
+    const promises = [];
+
+    for (let i = 0; i < length; i++) {
+      const html = developments[i]?.development;
+      const oldHtml = store.currentTask?.metadata?.development?.[i]?.development;
+
+      promises.push(
+        processTextEditor(html, oldHtml, { force }).then(
+          (development) => development && { development }
+        )
+      );
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    values.metadata.development = (await Promise.all(promises)).filter(Boolean);
+  }
+}
+
 export default function TaskSetupPage() {
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
@@ -30,6 +57,8 @@ export default function TaskSetupPage() {
     headerHeight: null,
   });
 
+  const processTextEditor = useProcessTextEditor();
+
   const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
 
   const history = useHistory();
@@ -39,6 +68,10 @@ export default function TaskSetupPage() {
 
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
+      console.log(values.metadata?.development);
+      await processDevelopment({ values, store, processTextEditor });
+      console.log(values.metadata.development);
+
       const body = {
         gradable: false,
         ...values,

@@ -14,7 +14,7 @@ export default function Notebook({ filters }) {
 
   return (
     <Box>
-      <Header filters={filters} variant="finalNotebook" />
+      <Header filters={filters} variant="finalNotebook" allowDownload />
       <Filters onChange={setLocalFilters} />
 
       <FinalScores filters={filters} localFilters={localFilters} />

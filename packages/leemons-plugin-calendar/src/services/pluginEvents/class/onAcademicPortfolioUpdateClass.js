@@ -7,13 +7,13 @@ function onAcademicPortfolioUpdateClass(
       id,
       color,
       groups,
-      subject: { name, icon },
+      subject: { name, icon, internalId },
     },
     transacting,
   }
 ) {
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const config = {
         name: `${name}${
@@ -23,6 +23,7 @@ function onAcademicPortfolioUpdateClass(
         }`,
         section: leemons.plugin.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
+        metadata: { internalId },
       };
 
       if (icon) {
@@ -36,7 +37,10 @@ function onAcademicPortfolioUpdateClass(
       );
 
       resolve();
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+      reject(e);
+    }
   });
 }
 

@@ -9,6 +9,7 @@ const { getProgramSubjects } = require('../programs/getProgramSubjects');
 const { getProgramSubjectTypes } = require('../programs/getProgramSubjectTypes');
 const { getManagers } = require('../managers/getManagers');
 const { getProgramCycles } = require('../programs/getProgramCycles');
+const { getClassesProgramInfo } = require('../classes/listSessionClasses');
 
 async function getTree(nodeTypes, { program, transacting } = {}) {
   const query = {};
@@ -27,7 +28,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     knowledges,
     subjects,
     subjectTypes,
-    { items: classes },
+    { items: _classes },
     cycles,
   ] = await Promise.all([
     table.programs.find({ id_$in: programIds }, { transacting }),
@@ -41,6 +42,17 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     listClasses(0, 99999, undefined, { query: { program_$in: programIds }, transacting }),
     getProgramCycles(programIds, { transacting }),
   ]);
+
+  let classes = _classes;
+  if (programIds?.length) {
+    classes = await getClassesProgramInfo(
+      {
+        programs: programIds,
+        classes,
+      },
+      { transacting }
+    );
+  }
 
   let managerIds = [];
   managerIds = managerIds.concat(_.map(programs, 'id'));
@@ -253,6 +265,12 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
       // eslint-disable-next-line no-param-reassign
       node.treeId = `${parentId ? `${parentId}.` : ''}${i}|${node.nodeType}|${node.value.id}`;
       if (node.childrens) {
+        // eslint-disable-next-line no-param-reassign
+        node.childrens = _.orderBy(
+          node.childrens,
+          ['value.subject.internalId', 'value.subject.name', 'value.name'],
+          ['asc', 'asc', 'asc']
+        );
         setTreeIds(node.childrens, node.treeId);
       }
     });

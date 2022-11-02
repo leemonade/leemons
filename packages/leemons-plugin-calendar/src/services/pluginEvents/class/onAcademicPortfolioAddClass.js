@@ -8,7 +8,7 @@ function onAcademicPortfolioAddClass(
       color,
       program,
       groups,
-      subject: { name, icon },
+      subject: { name, icon, internalId },
     },
     transacting,
   }
@@ -26,6 +26,7 @@ function onAcademicPortfolioAddClass(
         }`,
         section: leemons.plugin.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
+        metadata: { internalId },
       };
 
       if (icon) {

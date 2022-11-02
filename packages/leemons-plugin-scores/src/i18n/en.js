@@ -254,6 +254,8 @@ module.exports = {
       endDate: 'End date',
       program: 'Program',
       subject: 'Subject',
+      course: 'Course',
+      group: 'Group',
     },
     table: {
       type: 'Type',
@@ -262,7 +264,8 @@ module.exports = {
       deadline: 'Deadline/Close date',
       calificable: 'Qualifiable',
       noCalificable: 'non-qualifiable',
-      avg: 'Average',
+      avg: 'Calculates',
+      custom: 'Custom',
       notSubmitted: 'Not submitted',
       group: 'Group',
       surname: 'Surname',

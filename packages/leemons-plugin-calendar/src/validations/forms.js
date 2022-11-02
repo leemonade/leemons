@@ -19,6 +19,10 @@ const addCalendarSchema = {
     bgColor: stringSchema,
     borderColor: stringSchema,
     section: stringSchema,
+    metadata: {
+      type: 'object',
+      additionalProperties: true,
+    },
   },
   required: ['name', 'bgColor', 'section'],
   additionalProperties: false,

@@ -58,7 +58,7 @@ const menuItems = [
   {
     item: {
       key: 'scores',
-      order: 10,
+      order: 203,
       iconSvg: '/public/scores/menu-icon.svg',
       activeIconSvg: '/public/scores/menu-icon.svg',
       label: {

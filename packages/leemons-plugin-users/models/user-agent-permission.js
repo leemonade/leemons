@@ -11,19 +11,27 @@ module.exports = {
       },
     },
     permissionName: {
-      type: 'string',
+      type: 'text',
       options: {
         notNull: true,
+        index: true,
+        indexOptions: {
+          indexType: 'FULLTEXT',
+        },
       },
     },
     actionName: {
       type: 'string',
       options: {
         notNull: true,
+        index: true,
       },
     },
     target: {
       type: 'string',
+      options: {
+        index: true,
+      },
     },
     role: {
       references: {

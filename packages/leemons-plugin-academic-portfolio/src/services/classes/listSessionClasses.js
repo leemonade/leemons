@@ -75,4 +75,4 @@ async function listSessionClasses(
   return _.orderBy(classes, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
 }
 
-module.exports = { listSessionClasses };
+module.exports = { listSessionClasses, getClassesProgramInfo };

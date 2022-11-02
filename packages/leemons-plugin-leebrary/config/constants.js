@@ -37,7 +37,7 @@ const menuItems = [
   {
     item: {
       key: 'library',
-      order: 14,
+      order: 400,
       iconSvg: '/public/leebrary/menu-icon.svg',
       activeIconSvg: '/public/leebrary/menu-icon.svg',
       url: '/private/leebrary/',

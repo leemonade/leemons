@@ -48,7 +48,7 @@ export default function AssignmentList({
     return {};
   }, [translations]);
 
-  const [filters, setFilters] = useState(defaultFilters);
+  const [filters, setFilters] = useState(null);
 
   const tabs = useMemo(() => {
     if (!archived) {
@@ -68,10 +68,6 @@ export default function AssignmentList({
       {
         label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
         value: 'history',
-      },
-      {
-        label: labels?.filters?.evaluated?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
-        value: 'evaluated',
       },
     ];
   }, [labels, archived]);
@@ -101,6 +97,7 @@ export default function AssignmentList({
       <Filters
         labels={labels.filters}
         tabs={tabs}
+        defaultFilters={defaultFilters}
         value={filters}
         onChange={setFilters}
         {...filtersProps}

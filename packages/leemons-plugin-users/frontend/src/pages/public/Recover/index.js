@@ -1,12 +1,12 @@
 import React from 'react';
-import {useSession} from '@users/session';
+import { useSession } from '@users/session';
 import constants from '@users/constants';
-import {useForm} from 'react-hook-form';
-import {recoverRequest} from '@users/request';
-import {goLoginPage} from '@users/navigate';
-import {useHistory} from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { recoverRequest } from '@users/request';
+import { goLoginPage } from '@users/navigate';
+import { useHistory } from 'react-router-dom';
 import HeroBgLayout from '@users/layout/heroBgLayout';
-import {ChevLeftIcon} from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import {
   Alert,
   Box,
@@ -19,7 +19,7 @@ import {
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '@users/helpers/prefixPN';
 import tLoader from '@multilanguage/helpers/tLoader';
-import {useStore} from '@common';
+import { useStore } from '@common';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -31,11 +31,11 @@ const PageStyles = createStyles((theme) => ({
 }));
 
 export default function Recover() {
-  useSession({redirectTo: constants.base, redirectIfFound: true});
+  useSession({ redirectTo: constants.base, redirectIfFound: true });
 
   const [store, render] = useStore();
 
-  const [translations] = useTranslate({keysStartsWith: prefixPN('recover')});
+  const [translations] = useTranslate({ keysStartsWith: prefixPN('recover') });
   const t = tLoader(prefixPN('recover'), translations);
 
   const history = useHistory();
@@ -45,10 +45,10 @@ export default function Recover() {
     setValue,
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm();
 
-  register('email', {required: true});
+  register('email', { required: true });
   const email = watch('email');
 
   const onSubmit = async (data) => {
@@ -56,7 +56,7 @@ export default function Recover() {
       store.message = null;
       store.email = null;
       render();
-      const {code} = await recoverRequest(data);
+      const { code } = await recoverRequest(data);
       if (code === 1001) {
         store.message = t('accountNotActive');
       } else {
@@ -68,7 +68,7 @@ export default function Recover() {
     }
   };
 
-  const {classes} = PageStyles();
+  const { classes } = PageStyles();
 
   return (
     <HeroBgLayout>
@@ -84,7 +84,7 @@ export default function Recover() {
               />
               {store.email || store.message ? (
                 <Alert severity={store.message ? 'warning' : 'success'} closeable={false}>
-                  {store.message ? store.message : t('emailSendTo', {email: store.email})}
+                  {store.message ? store.message : t('emailSendTo', { email: store.email })}
                 </Alert>
               ) : null}
 
@@ -96,7 +96,7 @@ export default function Recover() {
 
               <Box>
                 <Button
-                  leftIcon={<ChevLeftIcon/>}
+                  leftIcon={<ChevLeftIcon />}
                   variant="link"
                   onClick={() => goLoginPage(history)}
                 >

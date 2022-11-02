@@ -18,7 +18,25 @@ import {
 } from './TextEditorInput.constants';
 import { TextEditorInputStyles } from './TextEditorInput.styles';
 
-const TextEditorInput = ({
+export function useProcessTextEditor() {
+  const { textEditorProcessors } = useTextEditor();
+
+  const processors = React.useMemo(
+    () => Object.values(textEditorProcessors),
+    [textEditorProcessors]
+  );
+
+  return React.useCallback(
+    async (html, oldHtml, props) =>
+      processors.reduce(
+        async (prevProcessorHTML, processor) => processor(await prevProcessorHTML, oldHtml, props),
+        html
+      ),
+    [processors]
+  );
+}
+
+export const TextEditorInput = ({
   label,
   description,
   help,
@@ -99,4 +117,3 @@ TextEditorInput.defaultProps = TEXT_EDITOR_INPUT_DEFAULT_PROPS;
 TextEditorInput.propTypes = TEXT_EDITOR_INPUT_PROP_TYPES;
 
 // eslint-disable-next-line import/prefer-default-export
-export { TextEditorInput };

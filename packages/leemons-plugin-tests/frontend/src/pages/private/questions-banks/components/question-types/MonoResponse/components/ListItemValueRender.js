@@ -33,7 +33,9 @@ export function ListItemValueRender({
           >
             <ViewOffIcon />
           </Box>
-        ) : null}
+        ) : (
+          <Box style={{ width: 18 }}></Box>
+        )}
 
         <Box>
           {withImages ? (

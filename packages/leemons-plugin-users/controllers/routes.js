@@ -91,6 +91,28 @@ module.exports = [
     handler: 'users.registerPassword',
   },
   {
+    path: '/user/activate-user',
+    method: 'POST',
+    handler: 'users.activateUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['admin'],
+      },
+    },
+  },
+  {
+    path: '/user/activation-mail',
+    method: 'POST',
+    handler: 'users.sendWelcomeEmailToUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['admin'],
+      },
+    },
+  },
+  {
     path: '/user',
     method: 'GET',
     handler: 'users.detail',
