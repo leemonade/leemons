@@ -18,43 +18,6 @@ function hasGrades(studentData) {
   return grades.some((grade) => grade.type === 'main' && grade.visibleToStudent);
 }
 
-function getStatus(studentData, instanceData) {
-  // EN: This values are keys for the localization object prefixPN('activity_status')
-  // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
-
-  if (studentData.finished) {
-    if (hasGrades(studentData)) {
-      return 'evaluated';
-    }
-
-    const deadline = dayjs(instanceData.dates.deadline || null);
-    const endDate = dayjs(studentData?.timestamps?.end || null);
-
-    const endDateIsLate = endDate.isValid() && endDate.isAfter(deadline);
-
-    if (endDateIsLate) {
-      return 'late';
-    }
-
-    if (endDate.isValid()) {
-      return 'submitted';
-    }
-
-    return 'closed';
-  }
-
-  if (studentData.started) {
-    const startDate = dayjs(studentData?.timestamps?.start || null);
-
-    if (startDate.isValid()) {
-      return 'started';
-    }
-    return 'opened';
-  }
-
-  return 'assigned';
-}
-
 /**
  * Add calendar with the provided key if not already exists
  * @public
@@ -422,69 +385,39 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   console.timeEnd('11');
 
   console.time('12');
-  const [assignations, instances, kanbanColumns] = [[], [], []];
+  let kanbanColumns = [];
   const instanceIdEvents = {};
+  let instanceStatusByInstance = {};
   try {
-    const instancePromises = [];
-    const assignationsPromises = [];
-    const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
-    const assignationsService = leemons.getPlugin('assignables').services.assignations;
+    if (isAcademicStudent) {
+      const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
 
-    const instanceIds = [];
-    _.forEach(result.events, (event) => {
-      if (event?.data?.instanceId) {
-        instanceIds.push(event?.data?.instanceId);
-      }
-    });
+      const instanceIds = [];
+      _.forEach(result.events, (event) => {
+        if (event?.data?.instanceId) {
+          instanceIds.push(event?.data?.instanceId);
+          instanceIdEvents[event.id] = event.data.instanceId;
+        }
+      });
 
-    const a = await instanceService.getAssignableInstancesStatus(instanceIds, {
-      userSession,
-      transacting,
-    });
+      const [instanceStatus, _kanbanColumns] = await Promise.all([
+        instanceService.getAssignableInstancesStatus(instanceIds, {
+          userSession,
+          transacting,
+        }),
+        leemons.plugin.services.kanban.listColumns({ transacting }),
+      ]);
 
-    /*
-    _.forEach(result.events, (event) => {
-      if (event?.data?.instanceId) {
-        instancePromises.push(
-          instanceService.getAssignableInstance(event.data.instanceId, {
-            details: true,
-            userSession,
-            transacting,
-          })
-        );
-        assignationsPromises.push(
-          assignationsService.getAssignation(event.data.instanceId, userSession.userAgents[0].id, {
-            userSession,
-            transacting,
-          })
-        );
-        instanceIdEvents[event.id] = event.data.instanceId;
-      }
-    });
-    console.timeEnd('12');
-
-    console.time('13');
-    const [_assignations, _instances, _kanbanColumns] = await Promise.all([
-      Promise.allSettled(assignationsPromises),
-      Promise.allSettled(instancePromises),
-      leemons.plugin.services.kanban.listColumns({ transacting }),
-    ]);
-    console.timeEnd('13');
-
-
-    assignations = _.map(_.filter(_assignations, { status: 'fulfilled' }), 'value');
-    instances = _.map(_.filter(_instances, { status: 'fulfilled' }), 'value');
-    kanbanColumns = _kanbanColumns;
-
-     */
+      kanbanColumns = _kanbanColumns;
+      instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
+    } else {
+      kanbanColumns = await leemons.plugin.services.kanban.listColumns({ transacting });
+    }
   } catch (e) {
     console.error(e);
   }
 
   console.time('14');
-  const instancesById = _.keyBy(instances, 'id');
-  const assignationsByInstance = _.keyBy(assignations, 'instance');
-
   const userAgentIds = _.uniq(_.map(viewPermissions, 'userAgent'));
   const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
   const ownerPermissionsByName = _.groupBy(_ownerPermissions, 'permissionName');
@@ -532,25 +465,20 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
       // --- Instancia
       if (instanceIdEvents[event.id]) {
-        const instance = instancesById[instanceIdEvents[event.id]];
-        const assignation = assignationsByInstance[instanceIdEvents[event.id]];
+        const instanceStatus = instanceStatusByInstance[instanceIdEvents[event.id]];
 
-        if (instance && (event.endDate || event.startDate) && instance.dates.deadline) {
-          event.startDate = instance.dates.deadline;
-          event.endDate = instance.dates.deadline;
+        if (instanceStatus && (event.endDate || event.startDate) && instanceStatus.dates.deadline) {
+          event.startDate = instanceStatus.dates.deadline;
+          event.endDate = instanceStatus.dates.deadline;
         }
 
-        console.log('assignation', assignation);
-
-        if (instance && assignation) {
+        if (instanceStatus) {
           event.disableDrag = true;
           const now = new Date();
 
-          const status = getStatus(assignation, instance);
-
-          if (instance.dates.visualization) {
+          if (instanceStatus.dates.visualization) {
             // Si hay fecha de visualización
-            if (now > new Date(instance.dates.visualization)) {
+            if (now > new Date(instanceStatus.dates.visualization)) {
               // Si la fecha actual es mayor debe de poder ver el evento
               event.data.column = kanbanColumnsByOrder[1].id;
             } else {
@@ -558,31 +486,35 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
             }
           }
           // Si siempre tiene que estar disponible lo ponemos en por hacer
-          if (instance.alwaysAvailable) {
+          if (instanceStatus.alwaysAvailable) {
             event.data.column = kanbanColumnsByOrder[2].id;
           }
           // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
-          if (instance.dates.start) {
-            if (now > new Date(instance.dates.start)) {
+          if (instanceStatus.dates.start) {
+            if (now > new Date(instanceStatus.dates.start)) {
               event.data.column = kanbanColumnsByOrder[2].id;
             } else {
               return null;
             }
           }
 
-          if (status === 'assigned') {
+          if (instanceStatus.status === 'assigned') {
             event.data.column = kanbanColumnsByOrder[1].id;
           }
-          if (status === 'opened') {
+          if (instanceStatus.status === 'opened') {
             event.data.column = kanbanColumnsByOrder[2].id;
           }
-          if (status === 'started') {
+          if (instanceStatus.status === 'started') {
             event.data.column = kanbanColumnsByOrder[3].id;
           }
-          if (status === 'late' || status === 'submitted' || status === 'closed') {
+          if (
+            instanceStatus.status === 'late' ||
+            instanceStatus.status === 'submitted' ||
+            instanceStatus.status === 'closed'
+          ) {
             event.data.column = kanbanColumnsByOrder[4].id;
           }
-          if (status === 'evaluated') {
+          if (instanceStatus.status === 'evaluated') {
             event.data.column = kanbanColumnsByOrder[5].id;
           }
 
