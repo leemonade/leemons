@@ -4,8 +4,10 @@ const {
 const get = require('../currentVersions/get');
 const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../helpers');
 
+async function getVersionMany(id, { published, version, transacting } = {}) {}
+
 module.exports = async function getVersion(id, { published, version, transacting } = {}) {
-  const { uuid, version: v } = await parseId(id, version, { verifyVersion: false });
+  const { uuid, version: v } = await parseId({ id, version }, { verifyVersion: false });
 
   const query = {
     uuid,

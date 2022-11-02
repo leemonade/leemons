@@ -5,7 +5,7 @@ const get = require('../currentVersions/get');
 const { parseId, parseVersion } = require('../helpers');
 
 module.exports = async function removeVersion(id, { published, version, transacting } = {}) {
-  const { uuid, version: v } = await parseId(id, version, { verifyVersion: false });
+  const { uuid, version: v } = await parseId({ id, version }, { verifyVersion: false });
   const query = { uuid };
 
   // EN: Verify ownership (get throws an error if not owned)

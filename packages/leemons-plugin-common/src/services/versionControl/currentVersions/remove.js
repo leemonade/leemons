@@ -8,7 +8,7 @@ const { parseId } = require('../helpers');
 module.exports = async function remove(id, published = 'all', { transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const { uuid, fullId } = await parseId(id, null, { transacting });
+      const { uuid, fullId } = await parseId(id, { transacting });
 
       if (!['all', 'version', true, false].includes(published)) {
         throw new Error('published must be one of: all, true, false');

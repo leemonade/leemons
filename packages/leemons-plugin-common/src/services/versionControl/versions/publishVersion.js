@@ -11,7 +11,7 @@ module.exports = async function publishVersion(
   publish = true,
   { version: v, setAsCurrent, transacting } = {}
 ) {
-  const { fullId, uuid, version } = await parseId(id, v);
+  const { fullId, uuid, version } = await parseId({ id, version: v });
   let versionToUpdate;
   try {
     versionToUpdate = await getVersion.bind(this)(fullId, { transacting });

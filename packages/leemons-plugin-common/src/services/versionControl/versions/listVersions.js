@@ -5,7 +5,7 @@ const get = require('../currentVersions/get');
 const { parseId, stringifyVersion } = require('../helpers');
 
 module.exports = async function listVersions(id, { published = 'all', transacting } = {}) {
-  const { uuid } = await parseId(id, '1.0.0');
+  const { uuid } = await parseId({ id, version: '1.0.0' });
 
   if (!['all', false, true].includes(published)) {
     throw new Error('The published parameter must be one of: all, false, true');
@@ -28,7 +28,7 @@ module.exports = async function listVersions(id, { published = 'all', transactin
   return Promise.all(
     results.map(async (result) => {
       const version = stringifyVersion(result);
-      const { fullId } = await parseId(result.uuid, version);
+      const { fullId } = await parseId({ id: result.uuid, version });
 
       return {
         uuid,
