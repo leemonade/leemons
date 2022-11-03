@@ -157,10 +157,7 @@ async function search(
     if (!nothingFound) {
       const { versionControl } = leemons.getPlugin('common').services;
       console.time('9');
-      // TODO: Bad performance
-      assets = await Promise.all(
-        assets.map(({ asset }) => versionControl.getVersion(asset, { transacting }))
-      );
+      assets = await versionControl.getVersion(map(assets, 'asset'), { transacting });
       console.timeEnd('9');
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
