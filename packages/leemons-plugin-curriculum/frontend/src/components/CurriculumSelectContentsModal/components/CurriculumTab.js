@@ -8,7 +8,7 @@ import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumTab({ subjects, store, render, t, t2 }) {
+export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 }) {
   function onSelect({ node }) {
     store.selectedNode = {
       ...node,
@@ -104,13 +104,21 @@ export function CurriculumTab({ subjects, store, render, t, t2 }) {
         let count = 0;
         forEach(value, ({ id }) => {
           forEach(store.value, (str) => {
-            if (str.indexOf(`property.${store.selectedNode?.formValues[id].id}`) >= 0) count++;
+            if (str.indexOf(`property.${store.selectedNode?.formValues[id]?.id}`) >= 0) count++;
           });
         });
         return (
           <TabPanel key={key} label={t(key)} notification={count || null}>
             {value.map((prop, i) => (
-              <CurriculumProp t2={t2} key={i} store={store} render={render} item={prop} />
+              <CurriculumProp
+                hideNoSelecteds={hideNoSelecteds}
+                showCheckboxs={!hideNoSelecteds}
+                t2={t2}
+                key={i}
+                store={store}
+                render={render}
+                item={prop}
+              />
             ))}
           </TabPanel>
         );
@@ -160,4 +168,5 @@ CurriculumTab.propTypes = {
   render: PropTypes.func,
   t: PropTypes.func,
   t2: PropTypes.func,
+  hideNoSelecteds: PropTypes.bool,
 };

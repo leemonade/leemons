@@ -21,6 +21,7 @@ function NewValue({
   blockData,
   nodeLevelId,
   nodeId,
+  hideNoSelecteds,
   showCheckboxs,
   store,
   value,
@@ -136,6 +137,17 @@ function NewValue({
     return finalText;
   }
 
+  function isInValues(id) {
+    let hi = false;
+    _.forEach(store.value, (sv) => {
+      if (sv.indexOf(id) >= 0) {
+        hi = true;
+        return false;
+      }
+    });
+    return hi;
+  }
+
   if (isObject(value)) {
     // console.log(value);
     if (value.id) {
@@ -154,7 +166,13 @@ function NewValue({
       if (isArray(val.value)) {
         const che = [];
         forEach(val.value, (v) => {
-          che.push(CheckBoxComponent(`${key}|value.${val.id}|value2.${v.id}`, v));
+          let canAdd = true;
+          if (hideNoSelecteds) {
+            if (!isInValues(v.id)) {
+              canAdd = false;
+            }
+          }
+          if (canAdd) che.push(CheckBoxComponent(`${key}|value.${val.id}|value2.${v.id}`, v));
         });
         checks.push(
           <Box>
@@ -170,7 +188,13 @@ function NewValue({
           </Box>
         );
       } else {
-        checks.push(CheckBoxComponent(`${key}|value.${val.id}`, val, getGroupTitle(k)));
+        let canAdd = true;
+        if (hideNoSelecteds) {
+          if (!isInValues(val.id)) {
+            canAdd = false;
+          }
+        }
+        if (canAdd) checks.push(CheckBoxComponent(`${key}|value.${val.id}`, val, getGroupTitle(k)));
       }
       toReturn.push(
         <Box>
@@ -196,13 +220,14 @@ NewValue.propTypes = {
   render: PropTypes.func,
   nodeId: PropTypes.string,
   blockData: PropTypes.any,
+  hideNoSelecteds: PropTypes.bool,
   nodeLevelId: PropTypes.string,
   baseValueId: PropTypes.string,
   showCheckboxs: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }) {
+export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showCheckboxs = true }) {
   const [parentProperty, setParentProperty] = React.useState(null);
 
   let values;
@@ -210,9 +235,94 @@ export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }
     values = store.selectedNode?.formValues[item.id];
   }
 
+  console.log(values);
+
+  const hide = React.useMemo(() => {
+    if (hideNoSelecteds) {
+      let hi = true;
+      if (isArray(values?.value)) {
+        _.forEach(values?.value, ({ id }) => {
+          _.forEach(store.value, (sv) => {
+            if (sv.indexOf(id) >= 0) {
+              hi = false;
+              return false;
+            }
+          });
+          if (!hi) return false;
+        });
+      } else {
+        _.forEach(store.value, (sv) => {
+          if (sv.indexOf(values?.value.id) >= 0) {
+            hi = false;
+            return false;
+          }
+        });
+      }
+      return hi;
+    }
+    return false;
+  }, [store.value]);
+
   function onParentFound(show, { property } = {}) {
     if (show && property) setParentProperty(property);
   }
+
+  function newArrayValues() {
+    return values?.value.map((value, index) => {
+      if (hideNoSelecteds) {
+        let hi = true;
+        _.forEach(store.value, (sv) => {
+          if (sv.indexOf(value.id) >= 0) {
+            hi = false;
+            return false;
+          }
+        });
+        if (hi) return null;
+      }
+      return (
+        <NewValue
+          key={index}
+          render={render}
+          store={store}
+          baseValueId={values.id}
+          value={value}
+          hideNoSelecteds={hideNoSelecteds}
+          nodeId={values._nodeId}
+          nodeLevelId={values._nodeLevelId}
+          blockData={values.blockData || item.frontConfig.blockData}
+          showCheckboxs={showCheckboxs}
+        />
+      );
+    });
+  }
+
+  function newValues() {
+    if (hideNoSelecteds) {
+      let hi = true;
+      _.forEach(store.value, (sv) => {
+        if (sv.indexOf(alues.value.id) >= 0) {
+          hi = false;
+          return false;
+        }
+      });
+      if (hi) return null;
+    }
+    return (
+      <NewValue
+        render={render}
+        store={store}
+        baseValueId={values.id}
+        value={values.value}
+        nodeId={values._nodeId}
+        hideNoSelecteds={hideNoSelecteds}
+        nodeLevelId={values._nodeLevelId}
+        blockData={values.blockData || item.frontConfig.blockData}
+        showCheckboxs={showCheckboxs}
+      />
+    );
+  }
+
+  if (hide) return null;
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
@@ -241,32 +351,7 @@ export function CurriculumProp({ t2, store, render, item, showCheckboxs = true }
               hideLabel
               t={t2}
             >
-              {isArray(values.value) ? (
-                values.value.map((value, index) => (
-                  <NewValue
-                    key={index}
-                    render={render}
-                    store={store}
-                    baseValueId={values.id}
-                    value={value}
-                    nodeId={values._nodeId}
-                    nodeLevelId={values._nodeLevelId}
-                    blockData={values.blockData || item.frontConfig.blockData}
-                    showCheckboxs={showCheckboxs}
-                  />
-                ))
-              ) : (
-                <NewValue
-                  render={render}
-                  store={store}
-                  baseValueId={values.id}
-                  value={values.value}
-                  nodeId={values._nodeId}
-                  nodeLevelId={values._nodeLevelId}
-                  blockData={values.blockData || item.frontConfig.blockData}
-                  showCheckboxs={showCheckboxs}
-                />
-              )}
+              {isArray(values.value) ? newArrayValues() : newValues()}
             </ParentRelation>
           </>
         )}
@@ -281,4 +366,5 @@ CurriculumProp.propTypes = {
   item: PropTypes.object,
   showCheckboxs: PropTypes.bool,
   t2: PropTypes.func,
+  hideNoSelecteds: PropTypes.bool,
 };
