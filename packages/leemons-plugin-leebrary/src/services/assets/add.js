@@ -49,7 +49,7 @@ async function add(
 
             if (isEmpty(trim(data.cover))) data.cover = null;
 
-            data.cover = data.cover || metas.image;
+            data.cover = cover ?? metas.image;
             cover = data.cover;
 
             if (!isEmpty(metas.logo)) {
