@@ -186,7 +186,6 @@ async function getAssets(ctx) {
   const _providerQuery = JSON.parse(providerQuery || null);
 
   if (!isEmpty(criteria) || !isEmpty(type)) {
-    console.time('citeriaend');
     assets = await getByCriteria(
       { category, criteria, type },
       {
@@ -200,7 +199,6 @@ async function getAssets(ctx) {
         providerQuery: _providerQuery,
       }
     );
-    console.timeEnd('citeriaend');
   } else {
     assets = await getByCategory(category, {
       published: assetPublished,

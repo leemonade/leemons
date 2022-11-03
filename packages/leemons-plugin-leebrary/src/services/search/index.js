@@ -156,9 +156,7 @@ async function search(
     // ES: Filtrar por estado publicado
     if (!nothingFound) {
       const { versionControl } = leemons.getPlugin('common').services;
-      console.time('9');
       assets = await versionControl.getVersion(map(assets, 'asset'), { transacting });
-      console.timeEnd('9');
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
       }

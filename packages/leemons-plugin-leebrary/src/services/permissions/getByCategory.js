@@ -25,7 +25,6 @@ async function getByCategory(
   // TODO: Search in provider
   try {
     const { services: userService } = leemons.getPlugin('users');
-    console.time('end');
 
     const permissions = await userService.permissions.getUserAgentPermissions(
       userSession.userAgents,
@@ -46,13 +45,11 @@ async function getByCategory(
       .concat(publicAssets.map((item) => item.asset));
 
     try {
-      console.time('3');
       const { versionControl } = leemons.getPlugin('common').services;
       const assetByStatus = await versionControl.listVersionsOfType(
         leemons.plugin.prefixPN(categoryId),
         { published, preferCurrent, transacting }
       );
-      console.timeEnd('3');
 
       assetIds = uniq(
         intersection(
@@ -62,7 +59,6 @@ async function getByCategory(
       );
     } catch (e) {
       console.error(e);
-      console.timeEnd('3');
       leemons.log.error(`Failed to get asset by status from categoryId ${categoryId}`);
     }
 
@@ -124,7 +120,6 @@ async function getByCategory(
         }
         return assetIds.includes(item.asset);
       });
-    console.timeEnd('end');
     return uniqBy(results, 'asset');
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
