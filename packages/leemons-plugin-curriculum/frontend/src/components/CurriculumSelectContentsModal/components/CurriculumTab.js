@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { TabPanel, Tabs } from '@bubbles-ui/components';
 import { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -94,6 +96,21 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
     }
   }, [JSON.stringify(subjects), store.curriculum]);
 
+  function getIcon(curricularContent) {
+    switch (curricularContent) {
+      case 'knowledges':
+        return <PluginSubjectsIcon />;
+      case 'qualifying-criteria':
+        return <StarIcon />;
+      case 'non-qualifying-criteria':
+        return <CutStarIcon />;
+      default:
+        return null;
+    }
+  }
+
+  console.log(store.selectedNode?.propertiesByType);
+
   return (
     <Tabs
       onChange={(e) => {
@@ -108,7 +125,7 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
           });
         });
         return (
-          <TabPanel key={key} label={t(key)} notification={count || null}>
+          <TabPanel key={key} label={t(key)} rightIcon={getIcon(key)} notification={count || null}>
             {value.map((prop, i) => (
               <CurriculumProp
                 hideNoSelecteds={hideNoSelecteds}
