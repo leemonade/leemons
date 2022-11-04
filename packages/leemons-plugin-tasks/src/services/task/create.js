@@ -22,6 +22,7 @@ module.exports = async function create(
       .getPlugin('common')
       .services.versionControl.parseId(createdAssignable.id, { transacting });
   } catch (error) {
-    throw new Error(`Error creating task: ${error.message}`);
+    error.message = `Error creating task: ${error.message}`;
+    throw error;
   }
 };

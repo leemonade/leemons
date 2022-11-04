@@ -57,9 +57,10 @@ module.exports = async function createAssignable(
             )
           );
         } catch (e) {
-          throw new Error(
-            "Some of the related assignables don't exists or you don't have permissions to access them"
-          );
+          e.message =
+            "Some of the related assignables don't exists or you don't have permissions to access them";
+
+          throw e;
         }
       }
 
@@ -78,7 +79,8 @@ module.exports = async function createAssignable(
           asset = assignableAsset;
         }
       } catch (e) {
-        throw new Error(`Error creating the asset: ${e.message}`);
+        e.message = `Error creating the asset: ${e.message}`;
+        throw e;
       }
 
       // EN: Create the resources
@@ -177,7 +179,8 @@ module.exports = async function createAssignable(
 
         return { id: assignableCreated.id, ...assignable, resources: resourcesToSave };
       } catch (e) {
-        throw new Error(`Failed to create assignable: ${e.message}`);
+        e.message = `Failed to create assignable: ${e.message}`;
+        throw e;
       }
     },
     assignables,

@@ -28,6 +28,7 @@ module.exports = async function saveSubjects(assignable, subjects, { transacting
       curriculum,
     }));
   } catch (e) {
-    throw new Error(`Failed to create subjects: ${e.message}`);
+    e.message = `Failed to create subjects: ${e.message}`;
+    throw e;
   }
 };

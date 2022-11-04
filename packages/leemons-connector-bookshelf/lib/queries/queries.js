@@ -307,7 +307,9 @@ function generateQueries(model /* connector */) {
       const str = `${e.code} ${e.message} ${e.sqlMessage}`;
       if (
         n < 10000 &&
-        (str.toLowerCase().indexOf('deadlock') >= 0 || str.toLowerCase().indexOf('timeout') >= 0)
+        (str.toLowerCase().indexOf('deadlock') >= 0 ||
+          str.toLowerCase().indexOf('timeout') >= 0 ||
+          str.toLowerCase().indexOf('ER_CON_COUNT_ERROR') >= 0)
       ) {
         await timeoutPromise(time);
         return reTry(func, args, time, n + 1);
