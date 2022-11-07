@@ -23,11 +23,14 @@ function hasGrades(studentData) {
 
 function getStatus(studentData, instanceData) {
   const startDate = dayjs(studentData?.timestamps?.start || null);
+  const instanceStartDate = dayjs(instanceData?.dates?.start || null);
   const deadline = dayjs(instanceData.dates?.deadline || null);
   const archived = dayjs(instanceData.dates?.archived || null);
 
-  const started = instanceData.alwaysAvailable || !startDate.isBefore(dayjs());
-  const finished = !deadline.isBefore(dayjs()) || archived;
+  const started =
+    instanceData.alwaysAvailable ||
+    (instanceStartDate.isValid() && !instanceStartDate.isAfter(dayjs()));
+  const finished = (deadline.isValid() && !deadline.isAfter(dayjs())) || archived.isValid();
 
   if (finished) {
     if (hasGrades(studentData)) {
@@ -118,11 +121,8 @@ module.exports = async function getAssignableInstancesStatus(
   const assignationsQuery = ids.map((id) => {
     const query = {
       instance: id,
+      user: userSession.userAgents[0].id,
     };
-
-    if (!statusObject[id].isTeacher) {
-      query.user = userSession.userAgents[0].id;
-    }
 
     return query;
   });
@@ -184,13 +184,28 @@ module.exports = async function getAssignableInstancesStatus(
   return ids.flatMap((id) => {
     const instance = statusObject[id];
 
-    return instance.assignations.map((assignation) => ({
-      instance: id,
-      assignation: assignation.id,
-      status: getStatus(assignation, instance),
-      dates: instance.dates || {},
-      alwaysAvailable: instance.alwaysAvailable,
-      timestamps: assignation.timestamps || {},
-    }));
+    if (instance.assignations) {
+      return instance.assignations.map((assignation) => ({
+        instance: id,
+        assignation: assignation.id,
+        status: getStatus(assignation, instance),
+        dates: instance.dates || {},
+        alwaysAvailable: instance.alwaysAvailable,
+        timestamps: assignation.timestamps || {},
+      }));
+    }
+    if (statusObject[id].isTeacher) {
+      return [
+        {
+          instance: id,
+          assignation: null,
+          status: null,
+          dates: instance.dates || {},
+          alwaysAvailable: instance.alwaysAvailable,
+          timestamps: null,
+        },
+      ];
+    }
+    return [];
   });
 };

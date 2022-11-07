@@ -368,30 +368,26 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   const instanceIdEvents = {};
   let instanceStatusByInstance = {};
   try {
-    if (isAcademicStudent) {
-      const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
+    const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
 
-      const instanceIds = [];
-      _.forEach(result.events, (event) => {
-        if (event?.data?.instanceId) {
-          instanceIds.push(event?.data?.instanceId);
-          instanceIdEvents[event.id] = event.data.instanceId;
-        }
-      });
+    const instanceIds = [];
+    _.forEach(result.events, (event) => {
+      if (event?.data?.instanceId) {
+        instanceIds.push(event?.data?.instanceId);
+        instanceIdEvents[event.id] = event.data.instanceId;
+      }
+    });
 
-      const [instanceStatus, _kanbanColumns] = await Promise.all([
-        instanceService.getAssignableInstancesStatus(instanceIds, {
-          userSession,
-          transacting,
-        }),
-        leemons.plugin.services.kanban.listColumns({ transacting }),
-      ]);
+    const [instanceStatus, _kanbanColumns] = await Promise.all([
+      instanceService.getAssignableInstancesStatus(instanceIds, {
+        userSession,
+        transacting,
+      }),
+      leemons.plugin.services.kanban.listColumns({ transacting }),
+    ]);
 
-      kanbanColumns = _kanbanColumns;
-      instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
-    } else {
-      kanbanColumns = await leemons.plugin.services.kanban.listColumns({ transacting });
-    }
+    kanbanColumns = _kanbanColumns;
+    instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
   } catch (e) {
     console.error(e);
   }
@@ -445,13 +441,19 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           event.endDate = instanceStatus.dates.deadline;
         }
 
-        if (instanceStatus) {
+        if (instanceStatus?.dates.archived) {
+          event.data.hideInCalendar = true;
+        }
+
+        console.log(instanceStatus);
+
+        if (instanceStatus && instanceStatus.assignation) {
           event.disableDrag = true;
           const now = new Date();
 
           if (instanceStatus.dates.visualization) {
             // Si hay fecha de visualización
-            if (now > new Date(instanceStatus.dates.visualization)) {
+            if (now >= new Date(instanceStatus.dates.visualization)) {
               // Si la fecha actual es mayor debe de poder ver el evento
               event.data.column = kanbanColumnsByOrder[1].id;
             } else {
@@ -464,9 +466,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           }
           // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
           if (instanceStatus.dates.start) {
-            if (now > new Date(instanceStatus.dates.start)) {
+            if (now >= new Date(instanceStatus.dates.start)) {
               event.data.column = kanbanColumnsByOrder[2].id;
-            } else {
+            } else if (!instanceStatus.dates.visualization) {
               return null;
             }
           }
@@ -489,6 +491,10 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           }
           if (instanceStatus.status === 'evaluated') {
             event.data.column = kanbanColumnsByOrder[5].id;
+          }
+
+          if (instanceStatus.dates.archived) {
+            event.data.column = kanbanColumnsByOrder[6].id;
           }
 
           /*
