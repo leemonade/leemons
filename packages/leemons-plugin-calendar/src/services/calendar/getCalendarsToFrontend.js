@@ -22,6 +22,10 @@ function getStatus(studentData, instanceData) {
   // EN: This values are keys for the localization object prefixPN('activity_status')
   // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
 
+  if (instanceData.dates.archived) {
+    return 'archived';
+  }
+
   if (studentData.finished) {
     if (hasGrades(studentData)) {
       return 'evaluated';
@@ -600,6 +604,10 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           }
           if (status === 'evaluated') {
             event.data.column = kanbanColumnsByOrder[5].id;
+          }
+          if (status === 'archived') {
+            event.data.column = kanbanColumnsByOrder[6].id;
+            event.data.hideInCalendar = true;
           }
 
           /*
