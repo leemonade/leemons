@@ -562,6 +562,11 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           event.startDate = instance.dates.deadline;
           event.endDate = instance.dates.deadline;
         }
+
+        if (instance?.dates?.archived) {
+          event.data.hideInCalendar = true;
+        }
+
         if (instance && assignation) {
           event.disableDrag = true;
           const now = new Date();
