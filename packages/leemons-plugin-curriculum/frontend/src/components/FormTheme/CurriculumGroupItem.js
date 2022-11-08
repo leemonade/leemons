@@ -86,7 +86,7 @@ function CurriculumGroupItem({
     }
     const result = [];
 
-    if (!blockData.groupListOrdered || blockData.groupListOrdered !== 'not-ordered') {
+    if (blockData.groupListOrdered && blockData.groupListOrdered !== 'not-ordered') {
       result.push({
         Header: ' ',
         accessor: 'order',

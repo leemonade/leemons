@@ -30,7 +30,6 @@ function NewBranchDetailValue({
   curriculum,
   onCloseBranch,
 }) {
-  console.log(defaultValues, curriculum);
   const [store, render] = useStore();
 
   const {
