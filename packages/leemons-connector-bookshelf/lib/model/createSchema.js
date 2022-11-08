@@ -161,7 +161,7 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
           if (property === true) {
             switch (optionName) {
               case 'index':
-                table.index([name], properties.options.indexName, properties.options.indexOptions);
+                // table.index([name], properties.options.indexName, properties.options.indexOptions);
                 break;
               case 'unique':
                 col.unique();
