@@ -445,7 +445,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
           event.data.hideInCalendar = true;
         }
 
-        console.log(instanceStatus);
+        // console.log(instanceStatus);
 
         if (instanceStatus && instanceStatus.assignation) {
           event.disableDrag = true;

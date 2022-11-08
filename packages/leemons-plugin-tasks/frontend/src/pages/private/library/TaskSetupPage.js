@@ -68,9 +68,9 @@ export default function TaskSetupPage() {
 
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
-      console.log(values.metadata?.development);
+      // console.log(values.metadata?.development);
       await processDevelopment({ values, store, processTextEditor });
-      console.log(values.metadata.development);
+      // console.log(values.metadata.development);
 
       const body = {
         gradable: false,
