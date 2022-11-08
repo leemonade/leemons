@@ -4,7 +4,7 @@ import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { useStore } from '@common';
 
-function CurriculumTextInput({ onChange, value, schema, onSave, t }) {
+function CurriculumTextInput({ onChange, isEditMode = true, value, schema, onSave, t }) {
   const [store, render] = useStore();
 
   function onChangeValue(e) {
@@ -21,12 +21,19 @@ function CurriculumTextInput({ onChange, value, schema, onSave, t }) {
 
   return (
     <ContextContainer>
-      <TextEditorInput label={schema.title} value={value?.value} onChange={onChangeValue} />
-      <Stack justifyContent="end">
-        <Button variant="outline" loading={store.loading} onClick={save}>
-          {t('save')}
-        </Button>
-      </Stack>
+      <TextEditorInput
+        readonly={!isEditMode}
+        label={schema.title}
+        value={value?.value}
+        onChange={onChangeValue}
+      />
+      {isEditMode ? (
+        <Stack justifyContent="end">
+          <Button variant="outline" loading={store.loading} onClick={save}>
+            {t('save')}
+          </Button>
+        </Stack>
+      ) : null}
     </ContextContainer>
   );
 }
@@ -37,6 +44,7 @@ CurriculumTextInput.defaultProps = {
 
 CurriculumTextInput.propTypes = {
   onChange: PropTypes.func,
+  isEditMode: PropTypes.bool,
   value: PropTypes.any,
   schema: PropTypes.any,
   onSave: PropTypes.func,

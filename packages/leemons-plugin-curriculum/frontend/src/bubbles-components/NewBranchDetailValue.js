@@ -7,6 +7,7 @@ import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import CurriculumForm from '@curriculum/components/FormTheme/CurriculumForm';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -20,11 +21,7 @@ export const NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES = {
 };
 
 function NewBranchDetailValue({
-  isSubject,
-  subjectData,
-  messages,
-  errorMessages,
-  isLoading,
+  isEditMode = true,
   onSubmit,
   defaultValues,
   schema,
@@ -33,6 +30,7 @@ function NewBranchDetailValue({
   curriculum,
   onCloseBranch,
 }) {
+  console.log(defaultValues, curriculum);
   const [store, render] = useStore();
 
   const {
@@ -97,6 +95,11 @@ function NewBranchDetailValue({
     };
   }, [schema, readonly]);
 
+  const parentNodes = React.useMemo(
+    () => getParentNodes(curriculum.nodes, defaultValues.id).reverse(),
+    [curriculum, defaultValues]
+  );
+
   /*
   const [form, formActions] = formWithTheme(
     goodDatasetConfig?.jsonSchema,
@@ -118,12 +121,16 @@ function NewBranchDetailValue({
 
   return (
     <ContextContainer>
-      <Title order={3}>{watch('name')}</Title>
+      <Title order={3}>
+        {!isEditMode ? parentNodes.map(({ name }) => `${name} > `) : null}
+        {watch('name')}
+      </Title>
 
       <Box>
         <CurriculumForm
           id={defaultValues.id}
           curriculum={curriculum}
+          isEditMode={isEditMode}
           schema={goodDatasetConfig?.jsonSchema}
           onSave={save}
           defaultValues={schemaFormValues}
@@ -165,6 +172,7 @@ NewBranchDetailValue.propTypes = {
   readonly: PropTypes.bool,
   curriculum: PropTypes.any,
   onCloseBranch: PropTypes.func,
+  isEditMode: PropTypes.bool,
 };
 
 export default NewBranchDetailValue;

@@ -7,7 +7,17 @@ import { useStore } from '@common';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';
 
-function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave, id, t }) {
+function CurriculumList({
+  onChange,
+  isEditMode = true,
+  value,
+  curriculum,
+  schema,
+  blockData,
+  onSave,
+  id,
+  t,
+}) {
   const [store, render] = useStore();
 
   async function save(e) {
@@ -61,14 +71,13 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
     render();
   }
 
-  console.log(blockData);
-
   return (
     <Box>
       <ParentRelation
         curriculum={curriculum}
         blockData={blockData}
         value={value}
+        isEditMode={isEditMode}
         onChange={onChange}
         isShow={(e) => {
           store.showSaveButton = e;
@@ -81,8 +90,9 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
       {value?.value.map((item, index) => (
         <CurriculumListItem
           key={index}
+          isEditMode={isEditMode}
           curriculum={curriculum}
-          preview={store.editingItem?.index !== index}
+          preview={!isEditMode ? true : store.editingItem?.index !== index}
           defaultValues={item}
           schema={schema}
           id={id}
@@ -101,7 +111,7 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
         />
       ))}
 
-      {store.isNewItem ? (
+      {store.isNewItem && isEditMode ? (
         <CurriculumListItem
           schema={schema}
           curriculum={curriculum}
@@ -112,7 +122,7 @@ function CurriculumList({ onChange, value, curriculum, schema, blockData, onSave
           onCancel={onCancel}
         />
       ) : null}
-      {!store.editingItem && !store.isNewItem ? (
+      {!store.editingItem && !store.isNewItem && isEditMode ? (
         <Stack justifyContent="space-between" fullWidth>
           <Box>
             <Button variant="light" leftIcon={<AddCircleIcon />} onClick={onNew}>
@@ -142,6 +152,7 @@ CurriculumList.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.any,
   schema: PropTypes.any,
+  isEditMode: PropTypes.bool,
   blockData: PropTypes.any,
   curriculum: PropTypes.any,
   onSave: PropTypes.func,

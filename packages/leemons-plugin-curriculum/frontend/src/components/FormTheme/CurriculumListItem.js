@@ -35,6 +35,7 @@ const useStyle = createStyles((theme) => ({
 }));
 
 function CurriculumListItem({
+  isEditMode = true,
   defaultValues,
   schema,
   blockData,
@@ -101,17 +102,42 @@ function CurriculumListItem({
     };
 
   if (preview) {
+    const tags = (
+      <Controller
+        control={form.control}
+        name="metadata.tagRelated"
+        render={({ field }) => (
+          <TagRelation
+            {...field}
+            curriculum={curriculum}
+            blockData={blockData}
+            isShow={(e) => {
+              store.showSaveButton = e;
+              render();
+            }}
+            readonly
+            id={id}
+            t={t}
+          />
+        )}
+      />
+    );
     return (
       <Box className={classes.card}>
         <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>
           <Text color="primary" role="productive" size="md" strong>
             {schema.title}
           </Text>
-          <Box className={classes.editButton}>
-            <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
-            <ActionButton tooltip={t('remove')} icon={<DeleteBinIcon />} onClick={onRemove} />
-          </Box>
+          {isEditMode ? (
+            <Box className={classes.editButton}>
+              <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
+              <ActionButton tooltip={t('remove')} icon={<DeleteBinIcon />} onClick={onRemove} />
+            </Box>
+          ) : null}
         </Box>
+        {!isEditMode ? (
+          <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>{tags}</Box>
+        ) : null}
         <Box sx={() => ({ maxHeight: 200, overflow: 'auto' })}>
           {blockData.listType === 'field' ? (
             <Text color="primary" role="productive">
@@ -120,26 +146,7 @@ function CurriculumListItem({
           ) : null}
           {blockData.listType === 'textarea' ? <HtmlText>{defaultValues.value}</HtmlText> : null}
         </Box>
-        <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-          <Controller
-            control={form.control}
-            name="metadata.tagRelated"
-            render={({ field }) => (
-              <TagRelation
-                {...field}
-                curriculum={curriculum}
-                blockData={blockData}
-                isShow={(e) => {
-                  store.showSaveButton = e;
-                  render();
-                }}
-                readonly
-                id={id}
-                t={t}
-              />
-            )}
-          />
-        </Box>
+        {isEditMode ? <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tags}</Box> : null}
       </Box>
     );
   }
@@ -204,6 +211,7 @@ CurriculumListItem.propTypes = {
   t: PropTypes.func,
   onEdit: PropTypes.func,
   onSave: PropTypes.func,
+  isEditMode: PropTypes.bool,
   onRemove: PropTypes.func,
   onCancel: PropTypes.func,
   schema: PropTypes.any,

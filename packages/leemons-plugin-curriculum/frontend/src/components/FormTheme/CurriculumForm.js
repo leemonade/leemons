@@ -10,7 +10,7 @@ import CurriculumList from '@curriculum/components/FormTheme/CurriculumList';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import CurriculumGroup from '@curriculum/components/FormTheme/CurriculumGroup';
 
-function CurriculumForm({ id, schema, curriculum, onSave, defaultValues }) {
+function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, defaultValues }) {
   const [store, render] = useStore({ loading: true });
   const [t] = useTranslateLoader('plugins.multilanguage.formWithTheme');
   const form = useForm({ defaultValues });
@@ -50,15 +50,32 @@ function CurriculumForm({ id, schema, curriculum, onSave, defaultValues }) {
                 id={id}
                 render={({ field }) => {
                   if (blockData.type === 'field') {
-                    return <CurriculumTextInput {...field} schema={value} onSave={_onSave} t={t} />;
+                    return (
+                      <CurriculumTextInput
+                        {...field}
+                        isEditMode={isEditMode}
+                        schema={value}
+                        onSave={_onSave}
+                        t={t}
+                      />
+                    );
                   }
                   if (blockData.type === 'textarea') {
-                    return <CurriculumWysiwyg {...field} schema={value} onSave={_onSave} t={t} />;
+                    return (
+                      <CurriculumWysiwyg
+                        {...field}
+                        isEditMode={isEditMode}
+                        schema={value}
+                        onSave={_onSave}
+                        t={t}
+                      />
+                    );
                   }
                   if (blockData.type === 'list') {
                     return (
                       <CurriculumList
                         {...field}
+                        isEditMode={isEditMode}
                         curriculum={curriculum}
                         blockData={blockData}
                         schema={value}
@@ -72,6 +89,7 @@ function CurriculumForm({ id, schema, curriculum, onSave, defaultValues }) {
                     return (
                       <CurriculumGroup
                         {...field}
+                        isEditMode={isEditMode}
                         curriculum={curriculum}
                         blockData={blockData}
                         schema={value}

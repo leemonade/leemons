@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { Box, createStyles, Select, TextInput } from '@bubbles-ui/components';
+import { Badge, Box, createStyles, InputWrapper, Select, TextInput } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 
@@ -19,6 +19,7 @@ const ParentRelation = ({
   hideLabel,
   blockData,
   curriculum,
+  isEditMode = true,
   isShow,
   id,
   t,
@@ -83,24 +84,59 @@ const ParentRelation = ({
     }
   }, []);
 
-  return (
-    <>
-      <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
-        {store.type === 'input' ? (
+  function print() {
+    if (isEditMode) {
+      if (store.type === 'input') {
+        return (
           <TextInput
             value={parentRelatedValueText}
             readOnly
             label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
           />
-        ) : null}
-        {store.type === 'select' ? (
+        );
+      }
+      if (store.type === 'select') {
+        return (
           <Select
             value={props.value?.metadata?.parentRelated}
             onChange={onChangeParent}
             data={store.selectData}
             label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
           />
-        ) : null}
+        );
+      }
+    } else {
+      if (store.type === 'input' && parentRelatedValueText) {
+        return (
+          <InputWrapper
+            label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
+          >
+            <Badge color="stroke" closable={false} label={parentRelatedValueText} />
+          </InputWrapper>
+        );
+      }
+      if (store.type === 'select' && props.value?.metadata?.parentRelated) {
+        const item = _.find(store.selectData, { value: props.value?.metadata?.parentRelated });
+        if (item) {
+          return (
+            <InputWrapper
+              label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
+            >
+              <Badge color="stroke" closable={false} label={item.label} />
+            </InputWrapper>
+          );
+        }
+        return null;
+      }
+      return null;
+    }
+    return null;
+  }
+
+  return (
+    <>
+      <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+        {print()}
         {children ? (
           <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>{children}</Box>
         ) : null}
@@ -110,6 +146,7 @@ const ParentRelation = ({
 };
 
 ParentRelation.propTypes = {
+  isEditMode: PropTypes.bool,
   blockData: PropTypes.any,
   onChange: PropTypes.func,
   curriculum: PropTypes.any,

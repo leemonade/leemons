@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
-import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
-import { ChevLeftIcon, RatingStarIcon, RedoIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { listCentersRequest } from '@users/request';
+import { ChevLeftIcon, RatingStarIcon, RedoIcon } from '@bubbles-ui/icons/outline';
 import {
-  ActionButton,
   Box,
   Button,
   Col,
@@ -13,7 +12,6 @@ import {
   Grid,
   LoadingOverlay,
   Stack,
-  Text,
   Tree,
   useTree,
 } from '@bubbles-ui/components';
@@ -21,7 +19,6 @@ import {
 import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { useStore } from '@common';
-import { CurriculumProp } from '@curriculum/components/CurriculumSelectContentsModal/components/CurriculumProp';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import {
@@ -477,7 +474,7 @@ function AddCurriculumStep3({ onPrev }) {
   );
 }
 */
-function AddCurriculumStep3New({ onPrev }) {
+function AddCurriculumStep3New({ onPrev, isEditMode }) {
   const [store, render] = useStore({
     loading: true,
   });
@@ -515,20 +512,13 @@ function AddCurriculumStep3New({ onPrev }) {
         {
           data: { items: centers },
         },
-        {
-          permissions: [{ actionNames }],
-        },
       ] = await Promise.all([
         detailCurriculumRequest(id),
         listCentersRequest({ page: 0, size: 999999 }),
-        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
       ]);
-
-      const isEditMode = actionNames.includes('admin') || actionNames.includes('edit');
 
       const { program } = await detailProgramRequest(c.program);
 
-      store.isEditMode = isEditMode;
       c.program = program;
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
@@ -710,37 +700,40 @@ function AddCurriculumStep3New({ onPrev }) {
   let groupChilds = null;
 
   if (store.activeRightSection === 'detail-branch-value') {
-    if (store.isEditMode) {
-      groupChilds = (
-        <NewBranchDetailValue
-          isSubject={store.activeNode.isSubject}
-          subjectData={store.activeNode.unUsedSubjects}
-          messages={messagesBranchValues}
-          errorMessages={errorMessagesBranchValues}
-          onSubmit={onAddBranchValue}
-          isLoading={store.saving}
-          curriculum={store.curriculum}
-          defaultValues={{
-            academicItem: store.activeNode.academicItem,
-            name: store.activeNode.name,
-            id: store.activeNode.id,
-          }}
-          schema={
-            store.activeNode.nodeLevel.schema
-              ? {
-                  jsonSchema: store.activeNode.nodeLevel.schema.compileJsonSchema,
-                  jsonUI: store.activeNode.nodeLevel.schema.compileJsonUI,
-                }
-              : null
-          }
-          schemaFormValues={store.activeNode.formValues}
-          onCloseBranch={() => {
-            store.activeRightSection = null;
-            store.activeNode = null;
-            render();
-          }}
-        />
-      );
+    groupChilds = (
+      <NewBranchDetailValue
+        isSubject={store.activeNode.isSubject}
+        subjectData={store.activeNode.unUsedSubjects}
+        messages={messagesBranchValues}
+        errorMessages={errorMessagesBranchValues}
+        onSubmit={onAddBranchValue}
+        isLoading={store.saving}
+        curriculum={store.curriculum}
+        isEditMode={isEditMode}
+        defaultValues={{
+          academicItem: store.activeNode.academicItem,
+          name: store.activeNode.name,
+          id: store.activeNode.id,
+        }}
+        schema={
+          store.activeNode.nodeLevel.schema
+            ? {
+                jsonSchema: store.activeNode.nodeLevel.schema.compileJsonSchema,
+                jsonUI: store.activeNode.nodeLevel.schema.compileJsonUI,
+              }
+            : null
+        }
+        schemaFormValues={store.activeNode.formValues}
+        onCloseBranch={() => {
+          store.activeRightSection = null;
+          store.activeNode = null;
+          render();
+        }}
+      />
+    );
+    /*
+    if (isEditMode) {
+
     } else {
       store.selectedNode = store.activeNode;
       const items = [];
@@ -791,6 +784,8 @@ function AddCurriculumStep3New({ onPrev }) {
         </ContextContainer>
       );
     }
+
+     */
   }
 
   if (store.loading) {
@@ -800,8 +795,8 @@ function AddCurriculumStep3New({ onPrev }) {
   return (
     <ContextContainer
       sx={(theme) => ({ marginBottom: theme.spacing[6] })}
-      title={t('pageTitle')}
-      description={store.isEditMode ? t('pageDescription') : null}
+      title={isEditMode ? t('pageTitle') : null}
+      description={isEditMode ? t('pageDescription') : null}
       divided
     >
       <Grid grow>
@@ -819,20 +814,7 @@ function AddCurriculumStep3New({ onPrev }) {
               initialOpen={tree.treeData ? [tree.treeData?.[0]?.id] : []}
               selectedNode={store.activeNode?.id}
             />
-            {!store.isEditMode ? (
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <Box
-                  sx={(theme) => ({
-                    display: 'inline',
-                    verticalAlign: 'middle',
-                    marginRight: theme.spacing[1],
-                  })}
-                >
-                  <RatingStarIcon />
-                </Box>
-                <Text color="primary">{t('starDescription')}</Text>
-              </Box>
-            ) : (
+            {isEditMode ? (
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                 <Button
                   fullWidth
@@ -843,7 +825,7 @@ function AddCurriculumStep3New({ onPrev }) {
                   {t('syncTree')}
                 </Button>
               </Box>
-            )}
+            ) : null}
           </Box>
         </Col>
         <Col span={9}>
@@ -857,7 +839,7 @@ function AddCurriculumStep3New({ onPrev }) {
         </Col>
       </Grid>
 
-      {store.isEditMode ? (
+      {isEditMode ? (
         <Stack justifyContent="space-between" fullWidth>
           <Button
             variant="outline"

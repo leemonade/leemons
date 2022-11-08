@@ -11,7 +11,14 @@ import {
   getPlatformLocalesRequest,
   listCentersRequest,
 } from '@users/request';
-import { Box, LoadingOverlay, PaginatedList, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
+import {
+  Box,
+  ContextContainer,
+  LoadingOverlay,
+  PaginatedList,
+  TabPanel,
+  Tabs,
+} from '@bubbles-ui/components';
 import { AdminPageHeader, LibraryCard } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -106,7 +113,6 @@ function ListCurriculum() {
   const headerValues = useMemo(
     () => ({
       title: t('page_title'),
-      description: t('page_description'),
     }),
     [t]
   );
@@ -182,16 +188,40 @@ function ListCurriculum() {
   );
 
   return (
-    <Stack direction="column" fullWidth fullHeight>
+    <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerValues}
         buttons={store.canAdd ? { new: tCommon('new') } : {}}
         onNew={() => history.push(`/private/curriculum/new`)}
       />
 
-      <Box style={{ flex: 1 }}>
-        <Tabs usePageLayout={true} fullHeight>
-          <TabPanel label={t('published')}>
+      <Tabs usePageLayout panelColor="solid" fullHeight fullWidth>
+        <TabPanel label={t('published')}>
+          <Box style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}>
+            <LoadingOverlay visible={loading} overlayOpacity={0} />
+            {!loading && !isEmpty(curriculums) && (
+              <Box
+                sx={(theme) => ({
+                  paddingBottom: theme.spacing[5],
+                  paddingTop: theme.spacing[5],
+                })}
+              >
+                <PaginatedList
+                  {...serverData}
+                  {...listProps}
+                  items={filter(serverData.items, { published: true })}
+                  selectable
+                  columns={columns}
+                  loading={loading}
+                  layout="grid"
+                  onSelect={handleOnSelect}
+                />
+              </Box>
+            )}
+          </Box>
+        </TabPanel>
+        {store.canAdd ? (
+          <TabPanel label={t('draft')}>
             <Box
               style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
             >
@@ -206,7 +236,7 @@ function ListCurriculum() {
                   <PaginatedList
                     {...serverData}
                     {...listProps}
-                    items={filter(serverData.items, { published: true })}
+                    items={filter(serverData.items, { published: false })}
                     selectable
                     columns={columns}
                     loading={loading}
@@ -217,37 +247,9 @@ function ListCurriculum() {
               )}
             </Box>
           </TabPanel>
-          {store.canAdd ? (
-            <TabPanel label={t('draft')}>
-              <Box
-                style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
-              >
-                <LoadingOverlay visible={loading} overlayOpacity={0} />
-                {!loading && !isEmpty(curriculums) && (
-                  <Box
-                    sx={(theme) => ({
-                      paddingBottom: theme.spacing[5],
-                      paddingTop: theme.spacing[5],
-                    })}
-                  >
-                    <PaginatedList
-                      {...serverData}
-                      {...listProps}
-                      items={filter(serverData.items, { published: false })}
-                      selectable
-                      columns={columns}
-                      loading={loading}
-                      layout="grid"
-                      onSelect={handleOnSelect}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </TabPanel>
-          ) : null}
-        </Tabs>
-      </Box>
-    </Stack>
+        ) : null}
+      </Tabs>
+    </ContextContainer>
   );
 }
 

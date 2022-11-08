@@ -3,7 +3,7 @@ module.exports = {
     view: 'Ver',
     delete: 'Borrar',
     deleted: 'Curriculum borrado',
-    page_title: 'Biblioteca de Curricula',
+    page_title: 'Librería de Curricula',
     published: 'Publicados',
     draft: 'Borradores',
     page_description:

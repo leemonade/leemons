@@ -41,6 +41,7 @@ function CurriculumGroupItem({
   defaultValues,
   curriculum,
   id,
+  isEditMode = true,
   blockData,
   onSave,
   onCancel,
@@ -110,16 +111,39 @@ function CurriculumGroupItem({
   }, []);
 
   if (preview) {
+    const tag = (
+      <Controller
+        control={form.control}
+        name="metadata.tagRelated"
+        render={({ field }) => (
+          <TagRelation
+            {...field}
+            curriculum={curriculum}
+            blockData={blockData}
+            isShow={(e) => {
+              store.showSaveButton = e;
+              render();
+            }}
+            readonly
+            id={id}
+            t={t}
+          />
+        )}
+      />
+    );
     return (
       <Box className={classes.card}>
         <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>
           <Text color="primary" role="productive" size="md" strong>
             {getTitle()}
           </Text>
-          <Box className={classes.editButton}>
-            <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
-          </Box>
+          {isEditMode ? (
+            <Box className={classes.editButton}>
+              <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
+            </Box>
+          ) : null}
         </Box>
+        {!isEditMode ? <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>{tag}</Box> : null}
         <Box sx={() => ({ maxHeight: 200, overflow: 'auto' })}>
           {blockData.groupTypeOfContents === 'field' ? (
             <Text color="primary" role="productive">
@@ -136,26 +160,7 @@ function CurriculumGroupItem({
             />
           ) : null}
         </Box>
-        <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-          <Controller
-            control={form.control}
-            name="metadata.tagRelated"
-            render={({ field }) => (
-              <TagRelation
-                {...field}
-                curriculum={curriculum}
-                blockData={blockData}
-                isShow={(e) => {
-                  store.showSaveButton = e;
-                  render();
-                }}
-                readonly
-                id={id}
-                t={t}
-              />
-            )}
-          />
-        </Box>
+        {isEditMode ? <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tag}</Box> : null}
       </Box>
     );
   }
@@ -251,6 +256,7 @@ CurriculumGroupItem.propTypes = {
   preview: PropTypes.bool,
   blockData: PropTypes.any,
   defaultValues: PropTypes.any,
+  isEditMode: PropTypes.bool,
 };
 
 export default CurriculumGroupItem;

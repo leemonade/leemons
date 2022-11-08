@@ -6,7 +6,17 @@ import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation'
 import { useStore } from '@common';
 import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
 
-function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSave, id, t }) {
+function CurriculumGroup({
+  onChange,
+  isEditMode = true,
+  value,
+  curriculum,
+  schema,
+  blockData,
+  onSave,
+  id,
+  t,
+}) {
   const [store, render] = useStore();
 
   async function save(e) {
@@ -47,6 +57,7 @@ function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSav
       <ParentRelation
         curriculum={curriculum}
         blockData={blockData}
+        isEditMode={isEditMode}
         value={value}
         onChange={onChange}
         isShow={(e) => {
@@ -60,7 +71,8 @@ function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSav
       {blockData?.elements.map((item, index) => (
         <CurriculumGroupItem
           key={index}
-          preview={store.editingItem?.index !== index}
+          isEditMode={isEditMode}
+          preview={!isEditMode ? true : store.editingItem?.index !== index}
           defaultValues={value?.value?.[item.id] || {}}
           item={item}
           schema={schema}
@@ -78,7 +90,7 @@ function CurriculumGroup({ onChange, value, curriculum, schema, blockData, onSav
         />
       ))}
 
-      {store.showSaveButton ? (
+      {store.showSaveButton && isEditMode ? (
         <Box>
           <Button variant="outline" loading={store.loading} onClick={() => save()}>
             {t('save')}
@@ -102,6 +114,7 @@ CurriculumGroup.propTypes = {
   onSave: PropTypes.func,
   id: PropTypes.string,
   t: PropTypes.func,
+  isEditMode: PropTypes.bool,
 };
 
 export default CurriculumGroup;

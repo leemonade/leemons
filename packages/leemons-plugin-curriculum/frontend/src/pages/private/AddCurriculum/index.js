@@ -14,7 +14,7 @@ import { useStore } from '@common';
 import AddCurriculumStep0 from '@curriculum/pages/private/AddCurriculumStep0';
 import { useHistory, useParams } from 'react-router-dom';
 import { detailCurriculumRequest } from '@curriculum/request';
-import { listCentersRequest } from '@users/request';
+import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { find } from 'lodash';
 import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';
@@ -73,16 +73,23 @@ function AddCurriculum() {
         {
           data: { items: centers },
         },
+        {
+          permissions: [{ actionNames }],
+        },
       ] = await Promise.all([
         detailCurriculumRequest(id),
         listCentersRequest({ page: 0, size: 999999 }),
+        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
       ]);
+
+      const isEditMode = actionNames.includes('admin') || actionNames.includes('edit');
 
       const { program } = await detailProgramRequest(c.program);
 
       c.program = program;
       c.center = find(centers, { id: c.center });
 
+      store.isEditMode = false; // isEditMode;
       store.curriculum = c;
       store.currentStep = store.curriculum.step || 1;
     } catch (e) {
@@ -118,7 +125,12 @@ function AddCurriculum() {
         <AddCurriculumStep0 key="0" onNext={onStep0} />,
         <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
         <AddCurriculumStep2 key="2" onNext={onStep2} curriculum={store.curriculum} />,
-        <AddCurriculumStep3 key="3" onPrev={onPrev3} curriculum={store.curriculum} />,
+        <AddCurriculumStep3
+          key="3"
+          onPrev={onPrev3}
+          curriculum={store.curriculum}
+          isEditMode={store.isEditMode}
+        />,
       ][store.currentStep],
     [store.currentStep]
   );
@@ -134,7 +146,7 @@ function AddCurriculum() {
       <Title order={2} className={classes.title}>
         {title}
       </Title>
-      <HorizontalStepper {...stepperConfig} />
+      {store.isEditMode ? <HorizontalStepper {...stepperConfig} /> : null}
       <Box className={classes.container}>{page}</Box>
     </PageContainer>
   );
