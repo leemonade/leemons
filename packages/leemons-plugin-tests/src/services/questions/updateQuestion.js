@@ -133,7 +133,7 @@ async function updateQuestion(data, { userSession, published, transacting: _tran
           },
           { transacting }
         ),
-        tagsService.setTagsToValues('plugins.tests.questionBanks', tags || [], id, {
+        tagsService.setTagsToValues('plugins.tests.questions', tags || [], id, {
           transacting,
         }),
       ]);

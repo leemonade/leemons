@@ -72,7 +72,7 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
         }),
       };
 
-      console.log('classroomData', classroomData);
+      // console.log('classroomData', classroomData);
 
       const classroom = await services.classes.addClass(classroomData, {
         userSession: users[creator],
@@ -140,7 +140,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {
       const { creator, ...program } = programs[programsKeys[i]];
-      console.log('Program', program);
+      // console.log('Program', program);
       const programData = await services.programs.addProgram(program, {
         userSession: users[creator],
       });

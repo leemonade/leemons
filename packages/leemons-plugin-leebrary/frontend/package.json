@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/components": "^1.0.42",
-    "@bubbles-ui/icons": "^1.0.26",
-    "@bubbles-ui/leemons": "^1.0.42",
-    "@bubbles-ui/editors": "^1.0.42",
+    "@bubbles-ui/components": "1.1.01",
+    "@bubbles-ui/icons": "1.1.0",
+    "@bubbles-ui/leemons": "1.1.0",
+    "@bubbles-ui/editors": "1.1.0",
     "lodash": "^4.17.21",
     "react-hook-form": "^7.22.1",
     "prop-types": "^15.7.2"

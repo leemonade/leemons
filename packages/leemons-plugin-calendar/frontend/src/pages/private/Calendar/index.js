@@ -383,7 +383,7 @@ function Calendar({ session }) {
   if (store.loading) return <LoadingOverlay visible />;
 
   if (store.activePage === 'schedule') {
-    console.log(store.schedule.events);
+    // console.log(store.schedule.events);
   }
 
   return (
