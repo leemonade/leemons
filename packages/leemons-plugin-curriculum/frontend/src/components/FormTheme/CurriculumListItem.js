@@ -36,6 +36,7 @@ const useStyle = createStyles((theme) => ({
 
 function CurriculumListItem({
   isEditMode = true,
+  label,
   defaultValues,
   schema,
   blockData,
@@ -125,9 +126,11 @@ function CurriculumListItem({
     return (
       <Box className={classes.card}>
         <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>
-          <Text color="primary" role="productive" size="md" strong>
-            {schema.title}
-          </Text>
+          {label ? (
+            <Text color="primary" role="productive" size="md" strong>
+              {label}
+            </Text>
+          ) : null}
           {isEditMode ? (
             <Box className={classes.editButton}>
               <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
@@ -159,18 +162,10 @@ function CurriculumListItem({
         rules={valueRules}
         render={({ field }) => {
           if (blockData.listType === 'field') {
-            return (
-              <TextInput {...field} error={form.formState.errors.value} label={schema.title} />
-            );
+            return <TextInput {...field} error={form.formState.errors.value} label={label} />;
           }
           if (blockData.listType === 'textarea') {
-            return (
-              <TextEditorInput
-                {...field}
-                error={form.formState.errors.value}
-                label={schema.title}
-              />
-            );
+            return <TextEditorInput {...field} error={form.formState.errors.value} label={label} />;
           }
         }}
       />

@@ -32,6 +32,7 @@ function BranchBlockListCustomOrder({ ...props }) {
     errorMessages,
     selectData,
     withPrevious = true,
+    tagifyProps,
     form: {
       control,
       setValue,
@@ -82,7 +83,7 @@ function BranchBlockListCustomOrder({ ...props }) {
 
   return (
     <Box style={{ position: 'relative' }}>
-      <Stack fullWidth alignItems="flex-end" spacing={2}>
+      <Stack fullWidth alignItems="start" spacing={2}>
         <Controller
           name="listOrderedText"
           control={control}
@@ -94,7 +95,7 @@ function BranchBlockListCustomOrder({ ...props }) {
               className={classes.label}
               value={field.value}
               onRemove={(e) => {
-                field.onChange(e.detail.tagify.getInputValue());
+                if (e?.detail) field.onChange(e.detail.tagify.getInputValue());
               }}
               onChange={(e) => {
                 field.onChange(e.detail.value);
@@ -111,17 +112,20 @@ function BranchBlockListCustomOrder({ ...props }) {
               }}
               label={messages.codeComposerLabel}
               required
+              {...tagifyProps}
             />
           )}
         />
         {canAddOrder ? (
-          <Button
-            variant="light"
-            leftIcon={<AddCircleIcon />}
-            onClick={() => setShowAddOrder(true)}
-          >
-            {messages.addNumeration}
-          </Button>
+          <Box sx={(theme) => ({ marginTop: theme.spacing[5] })}>
+            <Button
+              variant="light"
+              leftIcon={<AddCircleIcon />}
+              onClick={() => setShowAddOrder(true)}
+            >
+              {messages.addNumeration}
+            </Button>
+          </Box>
         ) : null}
       </Stack>
       <BranchBlockListCustomOrderFieldOrder

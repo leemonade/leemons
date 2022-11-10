@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
-  Checkbox,
   ContextContainer,
   NumberInput,
   Paper,
@@ -14,6 +13,7 @@ import {
   Text,
   Transition,
 } from '@bubbles-ui/components';
+import { numberToEncodedLetter } from '@common';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 const scaleY = {
@@ -23,19 +23,18 @@ const scaleY = {
   transitionProperty: 'transform, opacity',
 };
 
-export function getExampleTextForListOrderedConfig(config) {
+export function getExampleTextForListOrderedConfig(config, init = 1) {
   if (config && config.numberingStyle) {
     if (config.numberingStyle === 'style-1') {
       if (config.numberingDigits) {
-        return `${'1'.padStart(config.numberingDigits, '0')},${'2'.padStart(
-          config.numberingDigits,
-          '0'
-        )}`;
+        return `${init.toString().padStart(config.numberingDigits, '0')},${(init + 1)
+          .toString()
+          .padStart(config.numberingDigits, '0')}`;
       }
       return '1,2';
     }
     if (config.numberingStyle === 'style-2') {
-      return 'A,B';
+      return `${numberToEncodedLetter(init)},${numberToEncodedLetter(init + 1)}`;
     }
   }
   return null;
@@ -137,19 +136,6 @@ function BranchBlockListCustomOrderFieldOrder({
                   <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                     <Text role="productive">{getExampleTextForListOrderedConfig(watch())}</Text>
                   </Box>
-                </Box>
-              ) : null}
-
-              {withPrevious ? (
-                <Box sx={(theme) => ({ marginTop: -theme.spacing[4], marginLeft: '-8px' })}>
-                  <Controller
-                    name="numberingContinueFromPrevious"
-                    control={control}
-                    defaultValue={false}
-                    render={({ field }) => (
-                      <Checkbox label={messages.listNumberingContinueFromPrevious} {...field} />
-                    )}
-                  />
                 </Box>
               ) : null}
 

@@ -403,6 +403,16 @@ function BranchBlockGroup2({ ...props }) {
               selectData={selectData}
               form={props.form}
               withPrevious={false}
+              tagifyProps={{
+                withSuggestions: true,
+                whitelist,
+                settings: {
+                  mode: 'mix',
+                  pattern: /@/,
+                  editTags: false,
+                  whitelist,
+                },
+              }}
             />
           </Box>
         ) : null}

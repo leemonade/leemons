@@ -79,5 +79,6 @@ module.exports = {
     maxLength: 'Máximo {max} caracteres',
     newItemList: 'Nuevo item de la lista',
     selectTag: 'Seleccionar etiquetas (Soft Skills)',
+    startAt: 'Empezar en...',
   },
 };

@@ -89,7 +89,7 @@ function AddCurriculum() {
       c.program = program;
       c.center = find(centers, { id: c.center });
 
-      store.isEditMode = false; // isEditMode;
+      store.isEditMode = isEditMode;
       store.curriculum = c;
       store.currentStep = store.curriculum.step || 1;
     } catch (e) {
