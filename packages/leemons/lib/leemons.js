@@ -736,7 +736,7 @@ class Leemons {
       this.events.emit('appDidStart', 'leemons');
       this.log.info(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
-        process.send('running');
+        process.send('ready');
       }
       this.started = true;
     });
