@@ -381,9 +381,7 @@ function BranchBlock({
         data.push({
           label: `${parent.name} - ${prop.frontConfig.blockData.name}`,
           value: `${parent.id}|${_keys[key]}`,
-          isParent:
-            formData.curricularContent &&
-            formData.curricularContent === prop.frontConfig.blockData.curricularContent,
+          isParent: true, // formData.curricularContent && formData.curricularContent === prop.frontConfig.blockData.curricularContent,
         });
       });
     });

@@ -14,6 +14,33 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
+export function getParentNodeIfHave(blockData, parentNodes) {
+  if (_.isArray(blockData.contentRelations)) {
+    const parent = _.find(blockData.contentRelations, {
+      typeOfRelation: 'parent',
+    });
+    if (parent) {
+      const ids = parent.relatedTo.split('|');
+      const nodeLevelId = ids[0];
+      const formValueId = ids[1];
+      const node = _.find(parentNodes, { nodeLevel: nodeLevelId });
+      const nodeValue = node?.formValues?.[formValueId];
+      return {
+        node,
+        nodeValue,
+        nodeLevelId,
+        formValueId,
+      };
+    }
+  }
+  return {
+    node: null,
+    nodeValue: null,
+    nodeLevelId: null,
+    formValueId: null,
+  };
+}
+
 const ParentRelation = ({
   children,
   hideLabel,
@@ -57,61 +84,52 @@ const ParentRelation = ({
 
   React.useEffect(() => {
     isShow(false);
-    if (_.isArray(blockData.contentRelations)) {
-      const parent = _.find(blockData.contentRelations, {
-        typeOfRelation: 'parent',
-      });
-      if (parent) {
-        const ids = parent.relatedTo.split('|');
-        const nodeLevelId = ids[0];
-        const formValueId = ids[1];
-        const node = _.find(parentNodes, { nodeLevel: nodeLevelId });
-        const nodeValue = node?.formValues?.[formValueId];
-        if (nodeValue) {
-          const nodeLevel = _.find(curriculum.nodeLevels, { id: nodeLevelId });
-          store.parentNodeValue = nodeValue.value;
-          store.selectParentName = `${nodeLevel.name} - ${node.name}`;
-          if (_.isArray(nodeValue.value)) {
-            store.type = 'select';
-            store.selectData = _.map(nodeValue.value, (v) => ({ label: v.value, value: v.id }));
-          } else if (_.isPlainObject(nodeValue.value)) {
-            store.type = 'select';
-            store.selectData = [];
-            _.forIn(nodeValue.value, (item) => {
-              if (_.isArray(item.value)) {
-                _.forEach(item.value, (v) => {
-                  store.selectData.push({
-                    label: v.value,
-                    value: `${nodeValue.id}|${item.id}|${v.id}`,
-                  });
-                });
-              } else {
-                store.selectData.push({
-                  label: item.value,
-                  value: `${nodeValue.id}|${item.id}`,
-                });
-              }
+    const { node, nodeValue, nodeLevelId, formValueId } = getParentNodeIfHave(
+      blockData,
+      parentNodes
+    );
+    if (node && nodeValue) {
+      const nodeLevel = _.find(curriculum.nodeLevels, { id: nodeLevelId });
+      store.parentNodeValue = nodeValue.value;
+      store.selectParentName = `${nodeLevel.name} - ${node.name}`;
+      if (_.isArray(nodeValue.value)) {
+        store.type = 'select';
+        store.selectData = _.map(nodeValue.value, (v) => ({ label: v.value, value: v.id }));
+      } else if (_.isPlainObject(nodeValue.value)) {
+        store.type = 'select';
+        store.selectData = [];
+        _.forIn(nodeValue.value, (item) => {
+          if (_.isArray(item.value)) {
+            _.forEach(item.value, (v) => {
+              store.selectData.push({
+                label: v.value,
+                value: `${nodeValue.id}|${item.id}|${v.id}`,
+              });
             });
           } else {
-            store.type = 'input';
-            onChangeParent(nodeValue.id);
+            store.selectData.push({
+              label: item.value,
+              value: `${nodeValue.id}|${item.id}`,
+            });
           }
-
-          isShow(true, {
-            node,
-            nodeLevel,
-            property: nodeLevel.schema.compileJsonSchema.properties[formValueId],
-          });
-          render();
-        }
+        });
+      } else {
+        store.type = 'input';
+        onChangeParent(nodeValue.id);
       }
+
+      isShow(true, {
+        node,
+        nodeLevel,
+        property: nodeLevel.schema.compileJsonSchema.properties[formValueId],
+      });
+      render();
     }
   }, []);
 
   function print() {
     if (isEditMode) {
       if (store.type === 'input') {
-        console.log(1, parentRelatedValueText);
         return (
           <TextInput
             value={parentRelatedValueText}
@@ -121,7 +139,6 @@ const ParentRelation = ({
         );
       }
       if (store.type === 'select') {
-        console.log(2);
         return (
           <Select
             value={props.value?.metadata?.parentRelated}
@@ -133,7 +150,6 @@ const ParentRelation = ({
       }
     } else {
       if (store.type === 'input' && parentRelatedValueText) {
-        console.log(3);
         return (
           <InputWrapper
             label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
@@ -145,7 +161,6 @@ const ParentRelation = ({
       if (store.type === 'select' && props.value?.metadata?.parentRelated) {
         const item = _.find(store.selectData, { value: props.value?.metadata?.parentRelated });
         if (item) {
-          console.log(4);
           return (
             <InputWrapper
               label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}

@@ -29,12 +29,16 @@ export function getExampleTextForListOrderedConfig(config, init = 1) {
       if (config.numberingDigits) {
         return `${init.toString().padStart(config.numberingDigits, '0')},${(init + 1)
           .toString()
-          .padStart(config.numberingDigits, '0')}`;
+          .padStart(config.numberingDigits, '0')},${(init + 2)
+          .toString()
+          .padStart(config.numberingDigits, '0')}...`;
       }
-      return '1,2';
+      return '1,2,3...';
     }
     if (config.numberingStyle === 'style-2') {
-      return `${numberToEncodedLetter(init)},${numberToEncodedLetter(init + 1)}`;
+      return `${numberToEncodedLetter(init)},${numberToEncodedLetter(
+        init + 1
+      )},${numberToEncodedLetter(init + 2)}...`;
     }
   }
   return null;

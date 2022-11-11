@@ -3,46 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button, Stack, TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { numberToEncodedLetter, useStore } from '@common';
+import { useStore } from '@common';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';
 import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
-
-export function getListItemTitleNumbered(blockData, values, index) {
-  if (values?.metadata?.initNumber) {
-    if (blockData.listOrdered === 'style-1') {
-      return values.metadata.initNumber + index;
-    }
-    if (blockData.listOrdered === 'style-2') {
-      return numberToEncodedLetter(values.metadata.initNumber + index);
-    }
-    if (blockData.listOrdered === 'custom') {
-      let finalText = blockData.listOrderedText;
-      let array;
-      // eslint-disable-next-line no-cond-assign
-      while ((array = TAGIFY_TAG_REGEX.exec(blockData.listOrderedText)) !== null) {
-        const json = JSON.parse(array[0])[0][0];
-        console.log(array);
-        if (json.numberingStyle) {
-          if (json.numberingStyle === 'style-1') {
-            finalText = finalText.replace(
-              array[0],
-              (values.metadata.initNumber + index).toString().padStart(json.numberingDigits, '0')
-            );
-          }
-          if (json.numberingStyle === 'style-2') {
-            finalText = finalText.replace(
-              array[0],
-              numberToEncodedLetter(values.metadata.initNumber + index)
-            );
-          }
-        }
-      }
-      return finalText;
-    }
-  }
-  return null;
-}
+import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
 
 function CurriculumList({
   onChange,
@@ -56,6 +21,10 @@ function CurriculumList({
   t,
 }) {
   const [store, render] = useStore();
+
+  function getTitle(values, index) {
+    return getItemTitleNumberedWithParents(curriculum, blockData, id, values, index);
+  }
 
   async function save(e) {
     store.loading = true;
@@ -170,7 +139,7 @@ function CurriculumList({
       {value?.value.map((item, index) => (
         <CurriculumListItem
           key={index}
-          label={getListItemTitleNumbered(blockData, value, index)}
+          label={getTitle(value, index)}
           isEditMode={isEditMode}
           curriculum={curriculum}
           preview={!isEditMode ? true : store.editingItem?.index !== index}

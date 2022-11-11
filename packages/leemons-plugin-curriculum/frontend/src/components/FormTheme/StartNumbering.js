@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, NumberInput, Stack } from '@bubbles-ui/components';
+import { Box, createStyles, NumberInput } from '@bubbles-ui/components';
 import { numberToEncodedLetter, useStore } from '@common';
 import { getExampleTextForListOrderedConfig } from '@curriculum/bubbles-components/BranchBlockListCustomOrderFieldOrder';
 
@@ -34,28 +34,31 @@ const StartNumbering = ({ t, type, custom, ...props }) => {
         return getExampleTextForListOrderedConfig(custom, props.value.metadata.initNumber);
       }
       if (type === 'numbers') {
-        return `${props.value.metadata.initNumber},${props.value.metadata.initNumber + 1}`;
+        return `${props.value.metadata.initNumber},${props.value.metadata.initNumber + 1},${
+          props.value.metadata.initNumber + 2
+        }...`;
       }
       if (type === 'vocals') {
         return `${numberToEncodedLetter(props.value.metadata.initNumber)},${numberToEncodedLetter(
           props.value.metadata.initNumber + 1
-        )}`;
+        )},${numberToEncodedLetter(props.value.metadata.initNumber + 2)}...`;
       }
     }
   }
 
   return (
     <Box className={classes.root}>
-      <Stack fullWidth>
-        <Box>
+      <Box style={{ display: 'flex' }}>
+        <Box style={{ width: 150 }}>
           <NumberInput
+            min={1}
             label={t('startAt')}
             value={props.value?.metadata?.initNumber}
             onChange={onChange}
           />
         </Box>
         <Box className={classes.numbers}>{getDemo()}</Box>
-      </Stack>
+      </Box>
     </Box>
   );
 };

@@ -14,12 +14,14 @@ import {
   Text,
   TextInput,
 } from '@bubbles-ui/components';
-import { isArray } from 'lodash';
+import _, { forEach, isArray, isNumber } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { htmlToText, useStore } from '@common';
+import { htmlToText, numberToEncodedLetter, useStore } from '@common';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
+import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
+import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -53,6 +55,8 @@ function CurriculumGroupItem({
   const { classes } = useStyle();
   const [store, render] = useStore();
   const form = useForm({ defaultValues });
+  const values = form.watch();
+  const initNumber = form.watch('metadata.initNumber');
 
   React.useEffect(() => {
     form.reset(defaultValues);
@@ -64,15 +68,60 @@ function CurriculumGroupItem({
     })();
   }
 
-  function getTitle() {
-    let finalText = blockData.showAs;
+  function getTitle(index, text = 'showAs') {
+    let finalText = blockData[text];
     let array;
-    while ((array = TAGIFY_TAG_REGEX.exec(blockData.showAs)) !== null) {
+    while ((array = TAGIFY_TAG_REGEX.exec(blockData[text])) !== null) {
       const json = JSON.parse(array[0])[0][0];
-      finalText = finalText.replace(array[0], item[json.id]);
+      if (json.numberingStyle && isNumber(index)) {
+        if (json.numberingStyle === 'style-1') {
+          finalText = finalText.replace(
+            array[0],
+            (initNumber + index).toString().padStart(json.numberingDigits, '0')
+          );
+        }
+        if (json.numberingStyle === 'style-2') {
+          finalText = finalText.replace(array[0], numberToEncodedLetter(initNumber + index));
+        }
+      } else {
+        finalText = finalText.replace(array[0], item[json.id]);
+      }
     }
     return finalText;
   }
+
+  const customNumberingStyle = React.useMemo(() => {
+    let result = null;
+    if (blockData.listOrderedText) {
+      let array;
+      // eslint-disable-next-line no-cond-assign
+      while ((array = TAGIFY_TAG_REGEX.exec(blockData.listOrderedText)) !== null) {
+        const json = JSON.parse(array[0])[0][0];
+        if (json.numberingStyle) {
+          result = json;
+        }
+      }
+    }
+    return result;
+  }, [blockData]);
+
+  const useOrder = React.useMemo(() => {
+    if (blockData.groupListOrdered === 'style-1') {
+      return 'numbers';
+    }
+    if (blockData.groupListOrdered === 'style-2') {
+      return 'vocals';
+    }
+    if (blockData.groupListOrdered === 'custom' && customNumberingStyle) {
+      if (customNumberingStyle.numberingStyle === 'style-1') {
+        return 'numbers';
+      }
+      if (customNumberingStyle.numberingStyle === 'style-2') {
+        return 'vocals';
+      }
+    }
+    return null;
+  }, [blockData, customNumberingStyle]);
 
   const columns = React.useMemo(() => {
     const rules = { required: t('fieldRequired') };
@@ -109,6 +158,10 @@ function CurriculumGroupItem({
 
     return result;
   }, []);
+
+  function getNumbering(index) {
+    return getItemTitleNumberedWithParents(curriculum, blockData, id, values, index, item);
+  }
 
   if (preview) {
     const tag = (
@@ -172,6 +225,25 @@ function CurriculumGroupItem({
           {getTitle()}
         </Text>
       </Box>
+
+      {useOrder && isEditMode ? (
+        <Controller
+          control={form.control}
+          name="metadata.initNumber"
+          render={({ field }) => (
+            <StartNumbering
+              t={t}
+              custom={customNumberingStyle}
+              type={useOrder}
+              value={values}
+              onChange={(e) => {
+                field.onChange(e.metadata.initNumber);
+              }}
+            />
+          )}
+        />
+      ) : null}
+
       <Controller
         control={form.control}
         name="value"
@@ -187,9 +259,12 @@ function CurriculumGroupItem({
           }
           if (blockData.groupTypeOfContents === 'list') {
             const val = isArray(field.value) ? field.value : [];
+            forEach(val, (v, i) => {
+              v.order = getNumbering(i);
+            });
             return (
               <TableInput
-                data={val}
+                data={_.cloneDeep(val)}
                 onChange={(e) => {
                   field.onChange(e);
                 }}
