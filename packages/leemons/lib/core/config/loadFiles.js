@@ -11,7 +11,7 @@ const vm = require('./vm');
  */
 async function loadJSFile(
   file,
-  { filter = null, allowedPath = null, env = {}, execFunction = true } = {}
+  { filter = null, allowedPath = null, env = {}, execFunction = true, plugin, type } = {}
 ) {
   let allowedDir = allowedPath;
   try {
@@ -19,7 +19,9 @@ async function loadJSFile(
       allowedDir = path.dirname(file);
     }
     // Load the file in a VM (for security reasons)
-    const fileContent = await vm(allowedDir, filter, env).runFile(file);
+    const fileContent = await vm({ allowedPath: allowedDir, filter, env, plugin, type }).runFile(
+      file
+    );
     if (typeof fileContent === 'function' && execFunction) {
       return fileContent({ leemons });
     }
@@ -58,6 +60,8 @@ async function loadFile(
     allowedPath = null,
     env = {},
     execFunction = true,
+    plugin,
+    type,
   } = {}
 ) {
   const extension = path.extname(file);
@@ -65,7 +69,7 @@ async function loadFile(
   if (await fs.exists(file)) {
     // If it is a JS file and it is allowed, then load it
     if (extension === '.js' && accept.includes('.js')) {
-      return loadJSFile(file, { filter, allowedPath, env, execFunction });
+      return loadJSFile(file, { filter, allowedPath, env, execFunction, plugin, type });
     }
     // If it is a JSON file and it is allowed, then load it
     if (extension === '.json' && accept.includes('.json')) {
@@ -96,6 +100,8 @@ async function loadFiles(
     env = {},
     allowedPath = null,
     execFunction = true,
+    plugin,
+    type,
   } = {}
 ) {
   // If the directory doesn't exists, return an empty object
@@ -133,6 +139,8 @@ async function loadFiles(
           allowedPath,
           env,
           execFunction,
+          plugin,
+          type,
         });
 
         // Append to the current config

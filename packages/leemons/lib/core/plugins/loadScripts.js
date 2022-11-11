@@ -44,6 +44,8 @@ class ScriptLoader {
           filter,
           allowedPath: plugin.dir.app,
           exclude,
+          plugin,
+          type: this.singularTarget,
         });
         if (_.isFunction(beforeDidLoadEventCallback)) beforeDidLoadEventCallback(result);
         if (didLoadEvent) {
@@ -133,8 +135,18 @@ class ScriptLoader {
 
           // Try to load routes.js, if not exists, load routes.json, if none exists, set the routes to empty array
           const routes =
-            (await loadFile(`${routesDir}.js`, { env, filter, allowedPath: plugin.dir.app })) ||
-            (await loadFile(`${routesDir}.json`, { env, filter, allowedPath: plugin.dir.app })) ||
+            (await loadFile(`${routesDir}.js`, {
+              env,
+              filter,
+              allowedPath: plugin.dir.app,
+              plugin,
+            })) ||
+            (await loadFile(`${routesDir}.json`, {
+              env,
+              filter,
+              allowedPath: plugin.dir.app,
+              plugin,
+            })) ||
             [];
 
           leemons.events.emit(
@@ -185,6 +197,7 @@ class ScriptLoader {
       allowedPath: plugin.dir.app,
       env,
       execFunction: false,
+      plugin,
     });
 
     if (_.isFunction(func)) {
@@ -230,7 +243,7 @@ class ScriptLoader {
         plugin,
         dir: plugin.dir.events,
         willLoadEvent: 'WillSetEvents',
-        didLoadEvent: null, //'DidSetEvents',
+        didLoadEvent: null, // 'DidSetEvents',
         failStatus: PLUGIN_STATUS.eventsFailed,
         env,
         filter,

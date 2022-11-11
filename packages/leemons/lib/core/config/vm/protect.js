@@ -1,4 +1,5 @@
 const fs = require('fs');
+const fsPromises = require('fs/promises');
 const path = require('path');
 const _ = require('lodash');
 
@@ -37,7 +38,18 @@ function protectMethod(module, method, check, errormsg = `The method ${method} i
 }
 
 // Generate a FS allowing the operations inside the given path
-module.exports = (allowedRelPath) => {
+module.exports = (allowedRelPath, plugin, type) => {
+  // EN: Do not protect fs method for the core plugins that need full access
+  // ES: Para aquellos plugins core que necesiten acceso total, dejar de proteger el fs
+  console.log('plugin', plugin?.name, 'type', type);
+  if (
+    type === 'plugin' &&
+    ['leebrary', 'admin'].includes(plugin.name)
+    // || type === 'provider' && [].includes(plugin.name)
+  ) {
+    return () => ({ fs, 'fs/promises': fsPromises });
+  }
+
   // Generate an absolute path for the allowed directory
   const allowedPath = path.isAbsolute(allowedRelPath)
     ? allowedRelPath
@@ -83,62 +95,130 @@ module.exports = (allowedRelPath) => {
   // Protect the given methods
   function protect() {
     // FS
-    return _.fromPairs([
-      protectMethod(fs, 'writeFile', checkPath, error),
-      protectMethod(fs, 'writeFileSync', checkPath, error),
-      protectMethod(fs, 'readFile', checkPath, error),
-      protectMethod(fs, 'readFileSync', checkPath, error),
-      protectMethod(fs, 'copyFile', checkMultiPath, multiPathError),
-      protectMethod(fs, 'copyFileSync', checkMultiPath, multiPathError),
-      protectMethod(fs, 'open', checkPath, error),
-      protectMethod(fs, 'openSync', checkPath, error),
-      protectMethod(fs, 'rename', checkMultiPath, multiPathError),
-      protectMethod(fs, 'renameSync', checkMultiPath, multiPathError),
-      protectMethod(fs, 'exists', checkPath, error),
-      protectMethod(fs, 'existsSync', checkPath, error),
-      protectMethod(fs, 'access', checkPath, error),
-      protectMethod(fs, 'accessSync', checkPath, error),
-      protectMethod(fs, 'chown', checkPath, error),
-      protectMethod(fs, 'chownSync', checkPath, error),
-      protectMethod(fs, 'chown', checkPath, error),
-      protectMethod(fs, 'chownSync', checkPath, error),
-      protectMethod(fs, 'chmod', checkPath, error),
-      protectMethod(fs, 'chmodSync', checkPath, error),
-      protectMethod(fs, 'lchown', checkPath, error),
-      protectMethod(fs, 'lchownSync', checkPath, error),
-      protectMethod(fs, 'link', checkMultiPath, multiPathError),
-      protectMethod(fs, 'linkSync', checkMultiPath, multiPathError),
-      protectMethod(fs, 'lstat', checkPath, error),
-      protectMethod(fs, 'lstatSync', checkPath, error),
-      protectMethod(fs, 'mkdir', checkPath, error),
-      protectMethod(fs, 'mkdirSync', checkPath, error),
-      protectMethod(fs, 'mkdtemp', checkPath, error),
-      protectMethod(fs, 'mkdtempSync', checkPath, error),
-      protectMethod(fs, 'opendir', checkPath, error),
-      protectMethod(fs, 'opendirSync', checkPath, error),
-      protectMethod(fs, 'readdir', checkPath, error),
-      protectMethod(fs, 'readdirSync', checkPath, error),
-      protectMethod(fs, 'readdirSync', checkPath, error),
-      protectMethod(fs, 'readlink', checkPath, error),
-      protectMethod(fs, 'readlinkSync', checkPath, error),
-      protectMethod(fs, 'realpath', checkPath, error),
-      protectMethod(fs, 'realpathSync', checkPath, error),
-      protectMethod(fs, 'rmdir', checkPath, error),
-      protectMethod(fs, 'rmdirSync', checkPath, error),
-      protectMethod(fs, 'stat', checkPath, error),
-      protectMethod(fs, 'statSync', checkPath, error),
-      protectMethod(fs, 'symlink', checkPath, error),
-      protectMethod(fs, 'symlinkSync', checkPath, error),
-      protectMethod(fs, 'unwatchFile', checkPath, error),
-      protectMethod(fs, 'unlink', checkPath, error),
-      protectMethod(fs, 'unlinkSync', checkPath, error),
-      protectMethod(fs, 'utimes', checkPath, error),
-      protectMethod(fs, 'utimesSync', checkPath, error),
-      protectMethod(fs, 'watch', checkPath, error),
-      protectMethod(fs, 'watchFile', checkPath, error),
-      protectMethod(fs, 'createReadStream', checkPath, error),
-      protectMethod(fs, 'createWriteStream', checkPath, error),
-    ]);
+    return {
+      fs: _.fromPairs([
+        ['close', fs.close],
+        ['closeSync', fs.closeSync],
+        ['constants', fs.constants],
+        ['read', fs.read],
+        ['readSync', fs.readSync],
+        ['write', fs.write],
+        ['writeSync', fs.writeSync],
+
+        ...[
+          { method: 'access' },
+          { method: 'accessSync' },
+          { method: 'appendFile' },
+          { method: 'appendFileSyn' },
+          { method: 'chmod' },
+          { method: 'chmodSync' },
+          { method: 'chown' },
+          { method: 'chownSync' },
+          { method: 'createReadStream' },
+          { method: 'createWriteStream' },
+          { method: 'exists' },
+          { method: 'existsSync' },
+          { method: 'lchmod' },
+          { method: 'lchmodSync' },
+          { method: 'lchown' },
+          { method: 'lchownSync' },
+          { method: 'lutimes' },
+          { method: 'lstat' },
+          { method: 'lstatSync' },
+          { method: 'mkdir' },
+          { method: 'mkdirSync' },
+          { method: 'readdir' },
+          { method: 'readdirSync' },
+          { method: 'readFile' },
+          { method: 'readFileSync' },
+          { method: 'readlink' },
+          { method: 'readlinkSync' },
+          { method: 'realpath' },
+          { method: 'realpathSync' },
+          { method: 'open' },
+          { method: 'openSync' },
+          { method: 'opendir' },
+          { method: 'opendirSync' },
+          { method: 'readlink' },
+          { method: 'readlinkSync' },
+          { method: 'rmdir' },
+          { method: 'rmdirSync' },
+          { method: 'rm' },
+          { method: 'rmsync' },
+
+          { method: 'stat' },
+          { method: 'statSync' },
+          { method: 'symlink' },
+          { method: 'symlinkSync' },
+          { method: 'truncate' },
+          { method: 'truncateSync' },
+          { method: 'unlink' },
+          { method: 'unlinkSync' },
+          { method: 'unwatchFile' },
+          { method: 'utimes' },
+          { method: 'utimesSync' },
+          { method: 'watch' },
+          { method: 'watchFile' },
+          { method: 'writeFile' },
+          { method: 'writeFileSync' },
+
+          { method: 'copyFile', isMultiPath: true },
+          { method: 'copyFileSync', isMultiPath: true },
+          { method: 'cp', isMultiPath: true },
+          { method: 'cpSync', isMultiPath: true },
+          { method: 'link', isMultiPath: true },
+          { method: 'linkSync', isMultiPath: true },
+          { method: 'rename', isMultiPath: true },
+          { method: 'renameSync', isMultiPath: true },
+        ].map(({ method, isMultiPath = false }) =>
+          protectMethod(
+            fs,
+            method,
+            isMultiPath ? checkMultiPath : checkPath,
+            isMultiPath ? multiPathError : error
+          )
+        ),
+      ]),
+      'fs/promises': _.fromPairs([
+        ...[
+          { method: 'access' },
+          { method: 'appendFile' },
+          { method: 'chmod' },
+          { method: 'chown' },
+          { method: 'lchmod' },
+          { method: 'lchown' },
+          { method: 'lstat' },
+          { method: 'mkdir' },
+          { method: 'open' },
+          { method: 'opendir' },
+          { method: 'readdir' },
+          { method: 'readFile' },
+          { method: 'readlink' },
+          { method: 'realpath' },
+          { method: 'rmdir' },
+          { method: 'rm' },
+          { method: 'stat' },
+          { method: 'truncate' },
+          { method: 'unlink' },
+          { method: 'utimes' },
+          { method: 'watch' },
+          { method: 'writeFile' },
+
+          { method: 'copyFile', isMultiPath: true },
+          { method: 'cp', isMultiPath: true },
+          { method: 'link', isMultiPath: true },
+          { method: 'rename', isMultiPath: true },
+          { method: 'symlink', isMultiPath: true },
+        ].map(({ method, isMultiPath = false }) =>
+          protectMethod(
+            fsPromises,
+            method,
+            isMultiPath ? checkMultiPath : checkPath,
+            isMultiPath ? multiPathError : error
+          )
+        ),
+      ]),
+    };
   }
 
   // return the protection generator for the given directory

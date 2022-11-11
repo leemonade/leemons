@@ -1,4 +1,5 @@
 const { isArray } = require('lodash');
+const fs = require('fs/promises');
 const { unlink: unlinkFiles } = require('../assets/files/unlink');
 const { tables } = require('../tables');
 
@@ -19,7 +20,7 @@ async function remove(fileIds, assetId, { soft, userSession, transacting } = {})
       // ES: Eliminar el archivo del proveedor
 
       if (file.provider === 'sys') {
-        await leemons.fs.unlink(file.uri);
+        await fs.unlink(file.uri);
       } else {
         const provider = leemons.getProvider(file.provider);
         if (provider?.services?.provider?.remove) {

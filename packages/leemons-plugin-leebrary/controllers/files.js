@@ -1,4 +1,5 @@
 const { isEmpty } = require('lodash');
+const fs = require('fs/promises');
 const fileService = require('../src/services/files');
 const { getByFile } = require('../src/services/assets/files/getByFile');
 const { getByIds } = require('../src/services/assets/getByIds');
@@ -53,7 +54,7 @@ async function getFileContent(ctx) {
     let fileSize = file.size;
 
     if (!fileSize && file.provider === 'sys') {
-      const fileHandle = await leemons.fs.open(file.uri, 'r');
+      const fileHandle = await fs.open(file.uri, 'r');
       const stats = await fileHandle.stat(file.uri);
       fileSize = stats.size;
     }
