@@ -6,7 +6,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, unflatten, useProcessTextEditor } from '@common';
+import { useStore, unflatten, useProcessTextEditor, useSearchParams } from '@common';
 import {
   Setup,
   BasicData,
@@ -48,6 +48,7 @@ async function processDevelopment({ values, store, processTextEditor }) {
 }
 
 export default function TaskSetupPage() {
+  const searchParams = useSearchParams();
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
   const loading = useRef(null);
@@ -94,6 +95,8 @@ export default function TaskSetupPage() {
         messageKey = 'update_done';
       }
 
+      const isCreating = searchParams.has('fromNew') || !store?.currentTask?.id;
+
       const {
         task: { fullId },
       } = await saveTaskRequest(store?.currentTask?.id, body);
@@ -109,7 +112,7 @@ export default function TaskSetupPage() {
       history.push(
         redirectTo === 'library'
           ? '/private/tasks/library'
-          : `/private/tasks/library/edit/${fullId}`
+          : `/private/tasks/library/edit/${fullId}${isCreating ? '?fromNew' : ''}`
       );
 
       emitEvent('taskSaved');
