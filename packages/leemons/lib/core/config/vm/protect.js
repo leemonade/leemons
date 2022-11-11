@@ -41,7 +41,6 @@ function protectMethod(module, method, check, errormsg = `The method ${method} i
 module.exports = (allowedRelPath, plugin, type) => {
   // EN: Do not protect fs method for the core plugins that need full access
   // ES: Para aquellos plugins core que necesiten acceso total, dejar de proteger el fs
-  console.log('plugin', plugin?.name, 'type', type);
   if (
     type === 'plugin' &&
     ['leebrary', 'admin'].includes(plugin.name)
