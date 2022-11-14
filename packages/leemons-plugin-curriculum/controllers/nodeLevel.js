@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const nodeLevelsService = require('../src/services/nodeLevels');
 
 async function postNodeLevels(ctx) {

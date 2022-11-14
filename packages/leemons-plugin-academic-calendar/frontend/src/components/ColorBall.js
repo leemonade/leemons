@@ -9,6 +9,8 @@ const useStyle = createStyles((theme, { colors, withBorder, rotate, isSquare, wi
     verticalAlign: 'middle',
     width: withArrow ? 18 : 23,
     height: 23,
+    minWidth: 24,
+    minHeight: 24,
     borderRadius: isSquare ? '4px' : '50%',
     border:
       (withBorder && !isSquare) || withArrow
