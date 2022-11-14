@@ -116,7 +116,6 @@ function GradeVariation({
             <Text color="secondary">{description}</Text>
           </Box>
         ),
-        description,
         value: v,
       }))}
       value={selectedValue}
