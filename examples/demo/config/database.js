@@ -11,7 +11,7 @@ module.exports = {
         host: process.env['DATABASE_HOST'],
         pool: {
           min: 5,
-          max: 1000,
+          max: 50,
         },
       },
     },
