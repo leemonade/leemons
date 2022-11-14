@@ -9,7 +9,7 @@ export function useParsedData({ classes, periods, students, scores, courseScores
 
   const programManagers = React.useMemo(
     () =>
-      classes[0]?.managers?.filter(({ type }) => type === 'course')?.map((manager) => manager.id),
+      classes?.[0]?.managers?.filter(({ type }) => type === 'course')?.map((manager) => manager.id),
     [classes]
   );
 
