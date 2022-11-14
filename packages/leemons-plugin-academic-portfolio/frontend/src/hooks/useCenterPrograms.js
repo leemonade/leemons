@@ -1,5 +1,5 @@
 import { listProgramsRequest } from '@academic-portfolio/request';
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 
 export default function useCenterPrograms(centers, { enabled = true } = {}) {
   const _centers = Array.isArray(centers) ? centers : [centers];

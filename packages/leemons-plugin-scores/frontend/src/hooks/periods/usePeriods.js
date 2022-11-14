@@ -1,6 +1,6 @@
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { listPeriodsRequest } from '@scores/requests';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function usePeriods({ page, size, query: q, sort }) {
   const userAgents = useUserAgents();

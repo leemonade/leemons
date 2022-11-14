@@ -1,5 +1,5 @@
 import { listClasses } from '@academic-portfolio/request/classes';
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 
 export default function useProgramClasses(programId, { enabled = true } = {}) {
   const programIds = Array.isArray(programId) ? programId : [programId];

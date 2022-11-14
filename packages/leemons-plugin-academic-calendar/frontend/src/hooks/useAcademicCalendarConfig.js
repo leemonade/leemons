@@ -1,4 +1,4 @@
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 import { getConfig } from '@academic-calendar/request/config';
 
 function useAcademicCalendarConfig(program) {

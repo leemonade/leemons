@@ -1,5 +1,5 @@
 import { getSubjectDetails } from '@academic-portfolio/request/subjects';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function useSubjectDetails(subjectId, { enabled = true } = {}) {
   const query = useQuery(

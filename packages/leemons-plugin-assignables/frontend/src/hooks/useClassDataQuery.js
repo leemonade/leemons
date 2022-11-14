@@ -1,4 +1,4 @@
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 import getClassData from '../helpers/getClassData';
 
 function getClassDataWithLabel({ classes, labels }) {
