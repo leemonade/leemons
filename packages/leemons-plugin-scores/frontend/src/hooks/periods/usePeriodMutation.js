@@ -1,5 +1,5 @@
 import { addPeriodRequest, removePeriodRequest } from '@scores/requests';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function usePeriodMutation() {
   const queryClient = useQueryClient();

@@ -6,7 +6,7 @@ import { getUserAgentsInfoRequest } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { UserDisplayItem } from '@bubbles-ui/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import UnreadMessages from '@comunica/UnreadMessages';
 import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';

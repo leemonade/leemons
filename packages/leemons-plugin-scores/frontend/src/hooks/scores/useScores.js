@@ -1,5 +1,5 @@
 import getScores from '@scores/requests/scores/getScores';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function useScores({ students, classes, gradedBy, periods, published }) {
   const query = {

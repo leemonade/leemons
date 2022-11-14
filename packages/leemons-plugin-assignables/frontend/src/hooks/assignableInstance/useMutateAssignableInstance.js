@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import updateAssignableInstance from '../../requests/assignableInstances/updateAssignableInstance';
 
 export default function useMutateAssignableInstance(details = true) {

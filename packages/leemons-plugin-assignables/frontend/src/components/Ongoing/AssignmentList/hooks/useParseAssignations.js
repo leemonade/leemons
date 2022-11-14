@@ -16,7 +16,7 @@ import { EditIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import UnreadMessages from '@comunica/UnreadMessages';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { useIsTeacher } from '@academic-portfolio/hooks';
