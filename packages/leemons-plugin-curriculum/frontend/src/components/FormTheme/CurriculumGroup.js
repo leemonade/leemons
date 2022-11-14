@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, Button } from '@bubbles-ui/components';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
@@ -35,8 +36,9 @@ function CurriculumGroup({
   function onUpdate(itemId, newValues) {
     store.editingItem = null;
     if (!value) value = {};
-    if (!value.value) value.value = {};
+    if (!value.value || !_.isPlainObject(value.value)) value.value = {};
     value.value[itemId] = newValues;
+    console.log(value);
     onChange({ ...value });
     setTimeout(() => {
       save(true);
@@ -75,6 +77,7 @@ function CurriculumGroup({
           preview={!isEditMode ? true : store.editingItem?.index !== index}
           defaultValues={value?.value?.[item.id] || {}}
           item={item}
+          parentRelated={value?.metadata?.parentRelated}
           schema={schema}
           curriculum={curriculum}
           id={id}

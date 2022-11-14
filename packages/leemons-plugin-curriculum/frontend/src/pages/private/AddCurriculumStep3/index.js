@@ -524,6 +524,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
       store.curriculum = c;
+      console.log(c);
       store.loading = false;
     } catch (e) {
       store.loading = false;

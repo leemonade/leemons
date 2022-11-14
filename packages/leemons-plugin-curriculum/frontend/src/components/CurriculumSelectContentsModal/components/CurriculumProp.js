@@ -13,13 +13,16 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import _, { forEach, forIn, isArray, isNil, isObject } from 'lodash';
+import _, { forEach, forIn, isArray, isNil, isObject, isPlainObject } from 'lodash';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
+import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
 
 function NewValue({
+  keyIndex,
   blockData,
   nodeLevelId,
+  baseValue,
   nodeId,
   hideNoSelecteds,
   showCheckboxs,
@@ -28,7 +31,6 @@ function NewValue({
   render,
   baseValueId,
 }) {
-  // console.log('value', value);
   const key = `curriculum.${store.curriculum.id}|nodeLevel.${
     nodeLevelId || store.selectedNode.nodeLevel
   }|node.${nodeId || store.selectedNode.id}|property.${baseValueId}`;
@@ -82,7 +84,25 @@ function NewValue({
     render();
   }
 
-  function CheckBoxComponent(id, item, title) {
+  function getNumbering(index, item, v) {
+    const va = v || value;
+    return getItemTitleNumberedWithParents(
+      store.curriculum,
+      blockData,
+      nodeId,
+      {
+        ...va,
+        metadata: {
+          ...va?.metadata,
+          parentRelated: baseValue?.metadata?.parentRelated || va?.metadata?.parentRelated,
+        },
+      },
+      index,
+      item
+    );
+  }
+
+  function CheckBoxComponent(id, item, title, label) {
     return (
       <Box>
         <Stack fullWidth alignItems="start">
@@ -99,7 +119,7 @@ function NewValue({
                 color="primary"
                 role="productive"
                 dangerouslySetInnerHTML={{
-                  __html: title || item.value,
+                  __html: title || label || item.value,
                 }}
               />
             </Box>
@@ -116,7 +136,7 @@ function NewValue({
             <Text
               role="productive"
               dangerouslySetInnerHTML={{
-                __html: item.value,
+                __html: label || item.value,
               }}
             />
           </Box>
@@ -125,10 +145,14 @@ function NewValue({
     );
   }
 
+  function getGroupItem(itemId) {
+    return _.find(blockData.elements, { id: itemId });
+  }
+
   function getGroupTitle(itemId) {
     let finalText = blockData.showAs;
     let array;
-    const item = _.find(blockData.elements, { id: itemId });
+    const item = getGroupItem(itemId);
     // eslint-disable-next-line no-cond-assign
     while ((array = TAGIFY_TAG_REGEX.exec(blockData.showAs)) !== null) {
       const json = JSON.parse(array[0])[0][0];
@@ -149,12 +173,11 @@ function NewValue({
   }
 
   if (isObject(value)) {
-    // console.log(value);
     if (value.id) {
       // Listado
       return (
         <Box>
-          {CheckBoxComponent(`${key}|value.${value.id}`, value)}
+          {CheckBoxComponent(`${key}|value.${value.id}`, value, undefined, getNumbering(keyIndex))}
           {tags}
         </Box>
       );
@@ -165,17 +188,25 @@ function NewValue({
       const checks = [];
       if (isArray(val.value)) {
         const che = [];
-        forEach(val.value, (v) => {
+        forEach(val.value, (v, i) => {
           let canAdd = true;
           if (hideNoSelecteds) {
             if (!isInValues(v.id)) {
               canAdd = false;
             }
           }
-          if (canAdd) che.push(CheckBoxComponent(`${key}|value.${val.id}|value2.${v.id}`, v));
+          if (canAdd)
+            che.push(
+              CheckBoxComponent(
+                `${key}|value.${val.id}|value2.${v.id}`,
+                v,
+                undefined,
+                getNumbering(i, getGroupItem(k), val)
+              )
+            );
         });
         checks.push(
-          <Box>
+          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
             <Text
               strong
               color="primary"
@@ -219,7 +250,9 @@ NewValue.propTypes = {
   store: PropTypes.object,
   render: PropTypes.func,
   nodeId: PropTypes.string,
+  baseValue: PropTypes.any,
   blockData: PropTypes.any,
+  keyIndex: PropTypes.any,
   hideNoSelecteds: PropTypes.bool,
   nodeLevelId: PropTypes.string,
   baseValueId: PropTypes.string,
@@ -235,12 +268,19 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
     values = store.selectedNode?.formValues[item.id];
   }
 
-  console.log(values);
-
   const hide = React.useMemo(() => {
     if (hideNoSelecteds) {
       let hi = true;
-      if (isArray(values?.value)) {
+      if (isPlainObject(values?.value)) {
+        _.forIn(values?.value, ({ id }) => {
+          _.forEach(store.value, (sv) => {
+            if (sv.indexOf(id) >= 0) {
+              hi = false;
+              return false;
+            }
+          });
+        });
+      } else if (isArray(values?.value)) {
         _.forEach(values?.value, ({ id }) => {
           _.forEach(store.value, (sv) => {
             if (sv.indexOf(id) >= 0) {
@@ -282,6 +322,7 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
       return (
         <NewValue
           key={index}
+          keyIndex={index}
           render={render}
           store={store}
           baseValueId={values.id}
@@ -299,12 +340,16 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
   function newValues() {
     if (hideNoSelecteds) {
       let hi = true;
-      _.forEach(store.value, (sv) => {
-        if (sv.indexOf(alues.value.id) >= 0) {
-          hi = false;
-          return false;
-        }
-      });
+      if (!isPlainObject(values.value)) {
+        _.forEach(store.value, (sv) => {
+          if (sv.indexOf(values.value.id) >= 0) {
+            hi = false;
+            return false;
+          }
+        });
+      } else {
+        hi = false;
+      }
       if (hi) return null;
     }
     return (
@@ -312,6 +357,7 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
         render={render}
         store={store}
         baseValueId={values.id}
+        baseValue={values}
         value={values.value}
         nodeId={values._nodeId}
         hideNoSelecteds={hideNoSelecteds}
@@ -347,6 +393,7 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
               value={values}
               onChange={() => {}}
               isShow={onParentFound}
+              isEditMode={false}
               id={values._nodeId || store.selectedNode.id}
               hideLabel
               t={t2}

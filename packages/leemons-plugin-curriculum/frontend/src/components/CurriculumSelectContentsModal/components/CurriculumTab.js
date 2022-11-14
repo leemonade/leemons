@@ -109,8 +109,6 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
     }
   }
 
-  console.log(store.selectedNode?.propertiesByType);
-
   return (
     <Tabs
       onChange={(e) => {

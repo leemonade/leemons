@@ -42,6 +42,7 @@ const useStyle = createStyles((theme) => ({
 function CurriculumGroupItem({
   defaultValues,
   curriculum,
+  parentRelated,
   id,
   isEditMode = true,
   blockData,
@@ -139,6 +140,9 @@ function CurriculumGroupItem({
       result.push({
         Header: ' ',
         accessor: 'order',
+        input: {
+          node: <Box />,
+        },
       });
     }
 
@@ -160,7 +164,17 @@ function CurriculumGroupItem({
   }, []);
 
   function getNumbering(index) {
-    return getItemTitleNumberedWithParents(curriculum, blockData, id, values, index, item);
+    return getItemTitleNumberedWithParents(
+      curriculum,
+      blockData,
+      id,
+      {
+        ...values,
+        metadata: { ...values?.metadata, parentRelated },
+      },
+      index,
+      item
+    );
   }
 
   if (preview) {
@@ -332,6 +346,7 @@ CurriculumGroupItem.propTypes = {
   blockData: PropTypes.any,
   defaultValues: PropTypes.any,
   isEditMode: PropTypes.bool,
+  parentRelated: PropTypes.string,
 };
 
 export default CurriculumGroupItem;

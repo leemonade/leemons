@@ -331,6 +331,7 @@ function BranchBlockGroup2({ ...props }) {
           }}
           render={({ field }) => (
             <InputWrapper error={errors.columns}>
+              wefwfe
               <TableInput {...field} data={field.value} {...columnsConfig} />
             </InputWrapper>
           )}
