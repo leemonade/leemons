@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getCookieToken } from '@users/session';
 import searchAssignableInstances from '../../requests/assignableInstances/searchAssignableInstances';
 

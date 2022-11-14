@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import hooks from 'leemons-hooks';
 
 export function useUpdateUserProfile() {
@@ -10,13 +10,13 @@ export function useUpdateUserProfile() {
     const onUserChangeProfile = ({ args: [currentProfile] }) => {
       saving = true;
       localStorage.setItem('currentProfile', currentProfile.id);
-      queryClient.setQueryData('user profile', currentProfile.id);
+      queryClient.setQueryData(['user profile'], currentProfile.id);
     };
 
     const onUserCookieChange = () => {
       if (!saving) {
         localStorage.removeItem('currentProfile');
-        queryClient.invalidateQueries('user profile');
+        queryClient.invalidateQueries(['user profile']);
       } else {
         saving = false;
       }
