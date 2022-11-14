@@ -69,7 +69,7 @@ export default function getStyle({ tableData, ws }) {
 
     if (isCalculatedScoreCel) {
       cell.value = {
-        formula: `SUMPRODUCT(scores_${row},weights,--(types="calificable"))`,
+        formula: `IFERROR(SUMPRODUCT(scores_${row},weights,--(types="calificable")),0)`,
         result: cell.value || 0,
       };
 
