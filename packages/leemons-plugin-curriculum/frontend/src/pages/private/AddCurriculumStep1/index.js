@@ -5,7 +5,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { FolderIcon } from '@bubbles-ui/icons/outline';
 import {
-  Alert,
   Box,
   Button,
   Checkbox,
@@ -69,6 +68,23 @@ function AddCurriculumStep1({ curriculum, onNext }) {
       ),
     });
     parent++;
+    if (curriculum.program.haveKnowledge) {
+      treeData.push({
+        id: parent + 1,
+        parent,
+        draggable: false,
+        text: (
+          <Checkbox
+            label={t('knowledges')}
+            checked={store.nodeLevels.indexOf('knowledges') >= 0}
+            onChange={(e) => {
+              onCheckboxChange(e, 'knowledges', 4);
+            }}
+          />
+        ),
+      });
+      parent++;
+    }
     if (curriculum.program.cycles?.length) {
       treeData.push({
         id: parent + 1,
@@ -84,6 +100,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
           />
         ),
       });
+      parent++;
     }
     if (curriculum.program.courses.length) {
       treeData.push({
@@ -96,23 +113,6 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             checked={store.nodeLevels.indexOf('courses') >= 0}
             onChange={(e) => {
               onCheckboxChange(e, 'courses', 2);
-            }}
-          />
-        ),
-      });
-      parent++;
-    }
-    if (curriculum.program.haveKnowledge) {
-      treeData.push({
-        id: parent + 1,
-        parent,
-        draggable: false,
-        text: (
-          <Checkbox
-            label={t('knowledges')}
-            checked={store.nodeLevels.indexOf('knowledges') >= 0}
-            onChange={(e) => {
-              onCheckboxChange(e, 'knowledges', 4);
             }}
           />
         ),
@@ -173,6 +173,8 @@ function AddCurriculumStep1({ curriculum, onNext }) {
     render();
   }
 
+  console.log(tree);
+
   return (
     <ContextContainer title={t('title')} description={t('description')} divided>
       <Box>
@@ -184,9 +186,6 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             canToggleItems={false}
             canSelectItems={false}
           />
-          <Alert severity="warning" closeable={false} title={t('alertTitle')}>
-            <Box dangerouslySetInnerHTML={{ __html: t('alertDescription') }} />
-          </Alert>
         </ContextContainer>
       </Box>
       <Stack justifyContent="end">
