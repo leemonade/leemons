@@ -24,12 +24,14 @@ export default function useSessionClasses(
     }
   );
 
+  const queryInfo = { ...query };
+
   if (query.isSuccess) {
-    query.data = query.data.classes;
+    queryInfo.data = query.data.classes;
   }
 
   if (showType && query.isSuccess) {
-    query.data = query.data.map((klass) => {
+    queryInfo.data = queryInfo.data.map((klass) => {
       const teacher = klass.teachers.find((t) => userAgents.includes(t.teacher));
       const teacherType = teacher?.type;
 
@@ -40,5 +42,5 @@ export default function useSessionClasses(
     });
   }
 
-  return query;
+  return queryInfo;
 }
