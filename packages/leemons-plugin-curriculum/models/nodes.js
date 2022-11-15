@@ -53,7 +53,7 @@ module.exports = {
        */
     },
     treeId: {
-      type: 'string',
+      type: 'text',
     },
     data: {
       type: 'json',

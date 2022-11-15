@@ -78,7 +78,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             label={t('knowledges')}
             checked={store.nodeLevels.indexOf('knowledges') >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'knowledges', 4);
+              onCheckboxChange(e, 'knowledges', 1);
             }}
           />
         ),
@@ -95,7 +95,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             label={t('cycles')}
             checked={store.nodeLevels.indexOf('cycles') >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'cycles', 1);
+              onCheckboxChange(e, 'cycles', 2);
             }}
           />
         ),
@@ -112,7 +112,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             label={t('courses')}
             checked={store.nodeLevels.indexOf('courses') >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'courses', 2);
+              onCheckboxChange(e, 'courses', 3);
             }}
           />
         ),
@@ -128,7 +128,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
           label={t('subjectType')}
           checked={store.nodeLevels.indexOf('subjectType') >= 0}
           onChange={(e) => {
-            onCheckboxChange(e, 'subjectType', 5);
+            onCheckboxChange(e, 'subjectType', 4);
           }}
         />
       ),
@@ -164,6 +164,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
           });
         }
       });
+      console.log(toSend);
       await addNodeLevelsRequest(curriculum.id, toSend);
       onNext();
     } catch (e) {
@@ -172,8 +173,6 @@ function AddCurriculumStep1({ curriculum, onNext }) {
     store.saving = false;
     render();
   }
-
-  console.log(tree);
 
   return (
     <ContextContainer title={t('title')} description={t('description')} divided>
