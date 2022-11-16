@@ -84,6 +84,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         },
         { transacting }
       );
+
       const promises = [];
       // ES: Añadimos todas las relaciones de la clase
 
@@ -133,7 +134,9 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         promises.push(addGroup(nClass.id, goodGroup, { transacting }));
       }
 
-      if (_.isNull(goodGroup) || teachers) await removeTeachersByClass(nClass.id, { transacting });
+      if (_.isNull(goodGroup) || teachers) {
+        await removeTeachersByClass(nClass.id, { transacting });
+      }
 
       if (teachers)
         await Promise.all(
