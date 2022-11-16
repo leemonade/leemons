@@ -85,6 +85,23 @@ function AddCurriculumStep1({ curriculum, onNext }) {
       });
       parent++;
     }
+
+    treeData.push({
+      id: parent + 1,
+      parent,
+      draggable: false,
+      text: (
+        <Checkbox
+          label={t('subjectType')}
+          checked={store.nodeLevels.indexOf('subjectType') >= 0}
+          onChange={(e) => {
+            onCheckboxChange(e, 'subjectType', 2);
+          }}
+        />
+      ),
+    });
+    parent++;
+
     if (curriculum.program.cycles?.length) {
       treeData.push({
         id: parent + 1,
@@ -95,7 +112,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             label={t('cycles')}
             checked={store.nodeLevels.indexOf('cycles') >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'cycles', 2);
+              onCheckboxChange(e, 'cycles', 3);
             }}
           />
         ),
@@ -112,28 +129,14 @@ function AddCurriculumStep1({ curriculum, onNext }) {
             label={t('courses')}
             checked={store.nodeLevels.indexOf('courses') >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'courses', 3);
+              onCheckboxChange(e, 'courses', 4);
             }}
           />
         ),
       });
       parent++;
     }
-    treeData.push({
-      id: parent + 1,
-      parent,
-      draggable: false,
-      text: (
-        <Checkbox
-          label={t('subjectType')}
-          checked={store.nodeLevels.indexOf('subjectType') >= 0}
-          onChange={(e) => {
-            onCheckboxChange(e, 'subjectType', 4);
-          }}
-        />
-      ),
-    });
-    parent++;
+
     treeData.push({
       id: parent + 1,
       parent,
@@ -164,7 +167,6 @@ function AddCurriculumStep1({ curriculum, onNext }) {
           });
         }
       });
-      console.log(toSend);
       await addNodeLevelsRequest(curriculum.id, toSend);
       onNext();
     } catch (e) {

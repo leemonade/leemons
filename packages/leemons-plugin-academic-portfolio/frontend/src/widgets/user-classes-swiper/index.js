@@ -137,18 +137,20 @@ function UserClassesSwiperWidget({ program }) {
       >
         {store.classes.map((classe, index) => {
           const name = `${classe.subject.name} - ${classe.subject.internalId}`;
-          const group = classe.groups.isAlone
-            ? null
-            : classe.groups
-            ? classe.groups.abbreviation
-            : null;
-          const course = classe.groups.isAlone
-            ? null
-            : isArray(classe.courses)
-            ? t('multiCourse')
-            : classe.courses
-            ? getCourseName(classe.courses)
-            : null;
+          const group =
+            !classe.groups || classe.groups.isAlone
+              ? null
+              : classe.groups
+              ? classe.groups.abbreviation
+              : null;
+          const course =
+            !classe.groups || classe.groups.isAlone
+              ? null
+              : isArray(classe.courses)
+              ? t('multiCourse')
+              : classe.courses
+              ? getCourseName(classe.courses)
+              : null;
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
