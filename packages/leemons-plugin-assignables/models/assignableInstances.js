@@ -61,13 +61,16 @@ module.exports = {
       type: 'richtext',
     },
     curriculum: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     metadata: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     relatedAssignableInstances: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     event: {
       type: 'uuid',

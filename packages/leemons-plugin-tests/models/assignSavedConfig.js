@@ -9,7 +9,8 @@ module.exports = {
       type: 'string',
     },
     config: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     userAgent: {
       type: 'string',

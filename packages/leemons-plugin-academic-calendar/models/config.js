@@ -28,13 +28,15 @@ module.exports = {
       type: 'boolean',
     },
     courseDates: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       /*
       {courseID: {startDate: Date, endDate: Date}}
       */
     },
     courseEvents: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       /*
         {courseId: [{
           periodName: String,
@@ -48,7 +50,8 @@ module.exports = {
       */
     },
     substagesDates: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       /*
       {courseId: {substageId: {startDate: Date, endDate: Date}}}
       */
@@ -57,7 +60,8 @@ module.exports = {
       type: 'boolean',
     },
     breaks: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       /*
       [{name: 'Recreo', courses: [courseId], startDate: Date, endDate: Date}]
       */

@@ -56,7 +56,8 @@ module.exports = {
       type: 'text',
     },
     data: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

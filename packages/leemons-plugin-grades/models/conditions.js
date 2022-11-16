@@ -11,7 +11,8 @@ module.exports = {
     },
     // program ID | course ID | subject-type ID | knowledge ID | subject ID
     sourceIds: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     // gpa (Media) | cpp (Credits per program) | cpc (Credits per course) | grade | enrolled | credits | cbcg (Credits by course group)
     data: {
@@ -19,7 +20,8 @@ module.exports = {
     },
     // For now only courseIds
     dataTargets: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     // gte | lte | gt | lt | eq | neq
     operator: {
