@@ -13,25 +13,19 @@ const { table } = require('../../tables');
 async function markAllUserAgentsForUserProfileToReloadPermissions(
   user,
   profile,
-  { transacting: _transacting } = {}
+  { transacting } = {}
 ) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const profileRoles = await table.profileRole.find(
-        { profile },
-        {
-          columns: ['id', 'role'],
-          transacting,
-        }
-      );
-      return await table.userAgent.updateMany(
-        { role_$in: _.map(profileRoles, 'role'), user },
-        { reloadPermissions: true },
-        { transacting }
-      );
-    },
-    table.profiles,
-    _transacting
+  const profileRoles = await table.profileRole.find(
+    { profile },
+    {
+      columns: ['id', 'role'],
+      transacting,
+    }
+  );
+  return table.userAgent.updateMany(
+    { role_$in: _.map(profileRoles, 'role'), user },
+    { reloadPermissions: true },
+    { transacting }
   );
 }
 
