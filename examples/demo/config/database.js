@@ -3,7 +3,7 @@ module.exports = {
     mysql: {
       connector: 'bookshelf',
       settings: {
-        client: 'mysql2',
+        client: 'mysql',
         database: process.env['DATABASE_DATABASE'],
         username: process.env['DATABASE_USERNAME'],
         password: process.env['DATABASE_PASSWORD'],
