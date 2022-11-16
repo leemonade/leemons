@@ -14,7 +14,8 @@ module.exports = {
       },
     },
     courses: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

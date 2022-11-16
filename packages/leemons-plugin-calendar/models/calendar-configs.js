@@ -75,13 +75,15 @@ module.exports = {
       },
     },
     notSchoolDays: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       options: {
         notNull: true,
       },
     },
     schoolDays: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       options: {
         notNull: true,
       },

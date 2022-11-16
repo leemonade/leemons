@@ -8,7 +8,8 @@ module.exports = {
       type: 'uuid',
     },
     deliverable: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     type: {
       type: 'string',

@@ -24,7 +24,8 @@ module.exports = {
       type: 'string',
     },
     value: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     searchableValueString: {
       type: 'richtext',
@@ -33,7 +34,8 @@ module.exports = {
       type: 'richtext',
     },
     metadata: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

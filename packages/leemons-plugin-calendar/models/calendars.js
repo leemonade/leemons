@@ -37,7 +37,8 @@ module.exports = {
       },
     },
     metadata: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

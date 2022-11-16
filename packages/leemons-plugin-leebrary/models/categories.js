@@ -38,7 +38,8 @@ module.exports = {
     listItemComponent: { type: 'string' },
     detailComponent: { type: 'string' },
     canUse: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

@@ -18,6 +18,7 @@ async function addLocales(langs) {
         localesData[locale] = await fs.readFile(localePath, 'utf8');
         localesData[locale] = JSON.parse(localesData[locale]);
       } catch (err) {
+        console.error(err);
         leemons.log.error(`Unable to load locale: ${localePath}`);
       }
     }

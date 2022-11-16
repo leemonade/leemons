@@ -23,7 +23,8 @@ module.exports = {
     },
     // ES: Aqui se almacena toda la configuración adicional segun el tipo de pregunta
     properties: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

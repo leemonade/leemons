@@ -32,22 +32,26 @@ module.exports = {
       type: 'string',
     },
     resources: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     submission: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     instructionsForTeachers: {
       type: 'richtext',
     },
     relatedAssignables: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     instructionsForStudents: {
       type: 'richtext',
     },
     metadata: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

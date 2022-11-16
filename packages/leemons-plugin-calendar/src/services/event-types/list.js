@@ -12,7 +12,10 @@ const { table } = require('../tables');
 async function list({ transacting } = {}) {
   let eventTypes = await table.eventTypes.find(undefined, { transacting });
   eventTypes = _.sortBy(eventTypes, 'order');
-  return _.map(eventTypes, (eventType) => ({ ...eventType, config: JSON.parse(eventType.config) }));
+  return _.map(eventTypes, (eventType) => ({
+    ...eventType,
+    config: JSON.parse(eventType.config),
+  }));
 }
 
 module.exports = { list };
