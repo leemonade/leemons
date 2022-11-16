@@ -80,8 +80,6 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
         );
       }
 
-      throw new Error('a');
-
       // -- Asset ---
 
       if (props.name) {
