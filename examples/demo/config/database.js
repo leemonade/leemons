@@ -1,4 +1,3 @@
-console.log(process.env['USE_CUSTOM_ROLLBACK'] === 'true');
 module.exports = {
   connections: {
     mysql: {
