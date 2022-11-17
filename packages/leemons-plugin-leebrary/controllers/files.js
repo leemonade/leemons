@@ -103,21 +103,24 @@ async function getCoverFileContent(ctx) {
       "You don't have permissions to view this Asset or doens't exists"
     );
   }
+  if (asset.cover) {
+    const { readStream, fileName, contentType } = await fileService.dataForReturnFile(asset.cover);
 
-  const { readStream, fileName, contentType } = await fileService.dataForReturnFile(
-    assets[0].cover
-  );
+    const mediaType = contentType.split('/')[0];
 
-  const mediaType = contentType.split('/')[0];
+    ctx.status = 200;
+    ctx.body = readStream;
+    ctx.set('Content-Type', contentType);
 
-  ctx.status = 200;
-  ctx.body = readStream;
-  ctx.set('Content-Type', contentType);
-
-  if (['image', 'video', 'audio'].includes(mediaType)) {
-    // TODO: handle content disposition for images, video and audio. Taking care of download param
+    if (['image', 'video', 'audio'].includes(mediaType)) {
+      // TODO: handle content disposition for images, video and audio. Taking care of download param
+    } else {
+      ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
+    }
   } else {
-    ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
+    ctx.status = 400;
+    // ctx.body = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
+    // ctx.set('Content-Type', 'image/svg+xml');
   }
 }
 

@@ -31,105 +31,102 @@ async function add(
       ? _permissions
       : [_permissions]
     : _permissions;
+
+  // ES: Asignamos la categoría de "media-files" por defecto.
+  // EN: Assign the "media-files" category by default.
+  data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
+
+  // ES: En caso de que se quiera crear un Bookmark, pero no vengan los datos desde el frontend, los obtenemos.
+  // EN: In case you want to create a Bookmark, but not come from the frontend, we get them.
+  if (data.categoryKey === CATEGORIES.BOOKMARKS) {
+    if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
+      try {
+        const { body: html } = await global.utils.got(data.url);
+        const metas = await global.utils.metascraper({ html, url: data.url });
+        data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
+        data.description = data.description || metas.description;
+
+        if (isEmpty(trim(data.cover))) data.cover = null;
+
+        data.cover = cover ?? metas.image;
+        cover = data.cover;
+
+        if (!isEmpty(metas.logo)) {
+          data.icon = data.icon || metas.logo;
+        }
+      } catch (err) {
+        console.error('Error getting bookmark metadata:', data.url, err);
+      }
+    }
+  }
+
+  await validateAddAsset(data);
+
+  const { categoryId, categoryKey, tags, ...assetData } = data;
+
+  if (userSession) {
+    assetData.fromUser = userSession.id;
+    assetData.fromUserAgent =
+      userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
+  }
+
+  if (isEmpty(category)) {
+    if (!isEmpty(categoryId)) {
+      // eslint-disable-next-line no-param-reassign
+      category = await getCategoryById(categoryId);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      category = await getCategoryByKey(categoryKey);
+    }
+  } else if (isString(category)) {
+    // Checks if uuid is passed
+    if (
+      category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
+    ) {
+      // eslint-disable-next-line no-param-reassign
+      category = await getCategoryById(category);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      category = await getCategoryByKey(category);
+    }
+  }
+
+  let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
+  if (isArray(category?.canUse) && category?.canUse.length) {
+    canUse = canUse.concat(category.canUse);
+  }
+
+  if (category?.canUse !== '*' && !canUse.includes(this.calledFrom)) {
+    throw new global.utils.HttpError(
+      403,
+      `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`
+    );
+  }
+
+  // ··········································································
+  // UPLOAD FILE
+
+  // EN: Upload the file to the provider
+  // ES: Subir el archivo al proveedor
+
+  let newFile;
+  let coverFile;
+
+  // Media files
+  if (!isEmpty(file)) {
+    newFile = await uploadFromSource(file, { name: assetData.name }, { transacting: t });
+
+    if (newFile?.type?.indexOf('image') === 0) {
+      coverFile = newFile;
+    }
+  }
+
+  if (!coverFile && !isEmpty(cover)) {
+    coverFile = await uploadFromSource(cover, { name: assetData.name }, { transacting: t });
+  }
+
   return global.utils.withTransaction(
     async (transacting) => {
-      // ES: Asignamos la categoría de "media-files" por defecto.
-      // EN: Assign the "media-files" category by default.
-      data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
-
-      // ES: En caso de que se quiera crear un Bookmark, pero no vengan los datos desde el frontend, los obtenemos.
-      // EN: In case you want to create a Bookmark, but not come from the frontend, we get them.
-      if (data.categoryKey === CATEGORIES.BOOKMARKS) {
-        if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
-          try {
-            const { body: html } = await global.utils.got(data.url);
-            const metas = await global.utils.metascraper({ html, url: data.url });
-            data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
-            data.description = data.description || metas.description;
-
-            if (isEmpty(trim(data.cover))) data.cover = null;
-
-            data.cover = cover ?? metas.image;
-            cover = data.cover;
-
-            if (!isEmpty(metas.logo)) {
-              data.icon = data.icon || metas.logo;
-            }
-          } catch (err) {
-            console.error('Error getting bookmark metadata:', data.url, err);
-          }
-        }
-      }
-
-      await validateAddAsset(data);
-
-      const { categoryId, categoryKey, tags, ...assetData } = data;
-
-      if (userSession) {
-        assetData.fromUser = userSession.id;
-        assetData.fromUserAgent =
-          userSession.userAgents && userSession.userAgents.length
-            ? userSession.userAgents[0].id
-            : null;
-      }
-
-      if (isEmpty(category)) {
-        if (!isEmpty(categoryId)) {
-          // eslint-disable-next-line no-param-reassign
-          category = await getCategoryById(categoryId, { transacting });
-        } else {
-          // eslint-disable-next-line no-param-reassign
-          category = await getCategoryByKey(categoryKey, { transacting });
-        }
-      } else if (isString(category)) {
-        // Checks if uuid is passed
-        if (
-          category.match(
-            /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-          )
-        ) {
-          // eslint-disable-next-line no-param-reassign
-          category = await getCategoryById(category, { transacting });
-        } else {
-          // eslint-disable-next-line no-param-reassign
-          category = await getCategoryByKey(category, { transacting });
-        }
-      }
-
-      let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
-      if (isArray(category?.canUse) && category?.canUse.length) {
-        canUse = canUse.concat(category.canUse);
-      }
-
-      if (category?.canUse !== '*' && !canUse.includes(this.calledFrom)) {
-        throw new global.utils.HttpError(
-          403,
-          `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`
-        );
-      }
-
-      // ··········································································
-      // UPLOAD FILE
-
-      // EN: Upload the file to the provider
-      // ES: Subir el archivo al proveedor
-
-      let newFile;
-      let coverFile;
-
-      // Media files
-      if (!isEmpty(file)) {
-        newFile = await uploadFromSource(file, { name: assetData.name }, { transacting });
-
-        if (newFile?.type?.indexOf('image') === 0) {
-          coverFile = newFile;
-        }
-      }
-
-      if (!coverFile && !isEmpty(cover)) {
-        coverFile = await uploadFromSource(cover, { name: assetData.name }, { transacting });
-      }
-
       // ··········································································
       // CREATE ASSET
 
