@@ -359,14 +359,17 @@ function generateQueries(model /* connector */) {
   }
 
   async function transaction(f) {
-    const id = randomString();
-    try {
-      return await f(id);
-    } catch (e) {
-      if (!transactingHasError()) await rollback(id);
-      throw e;
+    if (model.config.useCustomRollback) {
+      const id = randomString();
+      try {
+        return await f(id);
+      } catch (e) {
+        if (!transactingHasError()) await rollback(id);
+        throw e;
+      }
     }
-    // return model.ORM.transaction(f);
+
+    return model.ORM.transaction(f);
   }
 
   async function timeoutPromise(time) {
