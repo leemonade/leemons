@@ -10,7 +10,13 @@ function TypeNotFound({ labels }) {
 }
 
 export default function Submission({ assignation, labels }) {
-  const [state, setState] = useState({ 0: true });
+  const [state, setState] = useState([]);
+
+  React.useEffect(() => {
+    if (!state.length && labels?.title) {
+      setState([labels.title]);
+    }
+  }, [labels?.title !== undefined]);
   const submissionType = assignation?.instance?.assignable?.submission?.type;
   const { classes } = styles();
 
@@ -36,7 +42,7 @@ export default function Submission({ assignation, labels }) {
   }
 
   return (
-    <ActivityAccordion state={state} onChange={setState}>
+    <ActivityAccordion value={state} onChange={setState}>
       <ActivityAccordionPanel label={labels?.title} icon={<PluginAssignmentsIcon />}>
         <Box className={classes?.accordionPanel}>
           <Component assignation={assignation} labels={labels} />

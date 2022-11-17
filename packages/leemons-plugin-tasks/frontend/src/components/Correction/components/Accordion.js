@@ -29,7 +29,7 @@ function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, 
             <ScoreInput
               {...scoreInputProps}
               tags={[]}
-              value={{ score: field?.value }}
+              state={{ score: field?.value }}
               decimalPrecision={2}
               decimalSeparator=","
               direction="ltr"
@@ -91,10 +91,7 @@ export default function Accordion({
   // EN: Start with the accordion opened
   // ES: Iniciar con el acordeón abierto
   const initialState = useMemo(() => {
-    const defaultState = {
-      0: true,
-      1: true,
-    };
+    const defaultState = [labels?.punctuation];
     if (!state) {
       setState(defaultState);
       return defaultState;
@@ -159,120 +156,46 @@ export default function Accordion({
     </>
   );
 
-  if (instance?.requiresScoring && instance?.allowFeedback) {
-    const panels = [
-      <ActivityAccordionPanel
-        label={labels?.punctuation}
-        icon={<RatingStarIcon />}
-        rightSection={
-          <Badge
-            label={
-              <ContextContainer direction="row" spacing={1}>
-                <Text>{labels?.minToPromote}</Text>
-                <Badge
-                  label={
-                    evaluationSystem?.minScaleToPromote?.letter ||
-                    evaluationSystem?.minScaleToPromote?.number
-                  }
-                  closable={false}
-                  severity="warning"
-                />
-              </ContextContainer>
+  return (
+    <>
+      <ActivityAccordion noFlex onChange={setState} value={state || initialState}>
+        {!!instance.requiresScoring && (
+          <ActivityAccordionPanel
+            label={labels?.punctuation}
+            icon={<RatingStarIcon />}
+            rightSection={
+              <Badge
+                label={
+                  <ContextContainer direction="row" spacing={1}>
+                    <Text>{labels?.minToPromote}</Text>
+                    <Badge
+                      label={
+                        evaluationSystem?.minScaleToPromote?.letter ||
+                        evaluationSystem?.minScaleToPromote?.number
+                      }
+                      closable={false}
+                      severity="warning"
+                    />
+                  </ContextContainer>
+                }
+                closable={false}
+              />
             }
-            closable={false}
-          />
-        }
-      >
-        <Grades
-          classes={classes}
-          evaluationSystem={evaluationSystem}
-          scoreInputProps={scoreInputProps}
-          control={control}
-          subject={subject}
-          user={user}
-        />
-      </ActivityAccordionPanel>,
-    ];
-    if (!store.room)
-      panels.push(
-        <ActivityAccordionPanel
-          label={labels?.feedbackForStudent}
-          icon={<PluginComunicaIcon />}
-          rightSection={<Badge label={labels?.optional} closable={false} />}
-        >
-          <Feedback classes={classes} subject={subject} control={control} user={user} />
-        </ActivityAccordionPanel>
-      );
-    return (
-      <>
-        <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-          {panels}
-        </ActivityAccordion>
-        {Chat}
-      </>
-    );
-  }
-  if (instance?.requiresScoring && !instance?.allowFeedback) {
-    return (
-      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-        <ActivityAccordionPanel
-          label={labels?.punctuation}
-          icon={<RatingStarIcon />}
-          rightSection={
-            <Badge
-              label={
-                <ContextContainer direction="row" spacing={1}>
-                  <Text>{labels?.minToPromote}</Text>
-                  gatitosdd
-                  <Badge
-                    label={
-                      evaluationSystem?.minScaleToPromote?.letter ||
-                      evaluationSystem?.minScaleToPromote?.number
-                    }
-                    closable={false}
-                    severity="warning"
-                  />
-                </ContextContainer>
-              }
-              closable={false}
+          >
+            <Grades
+              classes={classes}
+              evaluationSystem={evaluationSystem}
+              scoreInputProps={scoreInputProps}
+              control={control}
+              subject={subject}
+              user={user}
             />
-          }
-        >
-          <Grades
-            classes={classes}
-            evaluationSystem={evaluationSystem}
-            scoreInputProps={scoreInputProps}
-            control={control}
-            subject={subject}
-            user={user}
-          />
-        </ActivityAccordionPanel>
+          </ActivityAccordionPanel>
+        )}
       </ActivityAccordion>
-    );
-  }
-  if (!instance?.requiresScoring && instance?.allowFeedback) {
-    const panels = [];
-    if (!store.room)
-      panels.push(
-        <ActivityAccordionPanel
-          label={labels?.feedbackForStudent}
-          icon={<PluginComunicaIcon />}
-          rightSection={<Badge label={labels?.optional} closable={false} />}
-        >
-          <Feedback classes={classes} subject={subject} control={control} user={user} />
-        </ActivityAccordionPanel>
-      );
-    return (
-      <>
-        <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-          {panels}
-        </ActivityAccordion>
-        {Chat}
-      </>
-    );
-  }
-
-  return null;
+      {!!instance?.allowFeedback && Chat}
+    </>
+  );
 }
 
 Accordion.propTypes = {
