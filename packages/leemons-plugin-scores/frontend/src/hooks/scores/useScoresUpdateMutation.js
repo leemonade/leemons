@@ -1,5 +1,5 @@
 import setScores from '@scores/requests/scores/setScores';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function useScoresUpdateMutation() {
   const queryClient = useQueryClient();

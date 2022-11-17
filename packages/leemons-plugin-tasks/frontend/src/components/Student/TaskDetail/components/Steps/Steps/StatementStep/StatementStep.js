@@ -12,7 +12,7 @@ import {
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {

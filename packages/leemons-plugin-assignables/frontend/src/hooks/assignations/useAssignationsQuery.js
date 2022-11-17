@@ -1,4 +1,4 @@
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 import getAssignation from '../../requests/assignations/getAssignation';
 
 export default function useAssignations(instances, details = true, { enabled = true }) {

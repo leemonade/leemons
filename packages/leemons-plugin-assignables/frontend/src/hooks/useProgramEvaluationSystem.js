@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function useProgramEvaluationSystem(instance) {
   const program =
