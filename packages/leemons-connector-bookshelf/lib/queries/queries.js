@@ -370,6 +370,7 @@ function generateQueries(model /* connector */) {
         throw e;
       }
     }
+
     return model.ORM.transaction(f);
   }
 
