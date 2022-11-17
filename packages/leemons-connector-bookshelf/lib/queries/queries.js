@@ -363,7 +363,7 @@ function generateQueries(model /* connector */) {
       const id = randomString();
       try {
         const result = await f(id);
-        finishRollback();
+        finishRollback(id);
         return result;
       } catch (e) {
         if (!transactingHasError()) await rollback(id);
@@ -375,7 +375,10 @@ function generateQueries(model /* connector */) {
 
   function finishRollback(transacting) {
     if (_.isString(transacting)) {
-      if (rollbacks[transacting]) delete rollbacks[transacting];
+      if (rollbacks[transacting]) {
+        rollbacks[transacting] = undefined;
+        delete rollbacks[transacting];
+      }
     }
   }
 

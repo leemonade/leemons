@@ -53,7 +53,15 @@ class Connector {
   }
 
   destroy() {
-    return Promise.all(Object.values(this.connections).map((connection) => connection.destroy()));
+    return Promise.all(
+      Object.values(this.connections).map((connection) => {
+        try {
+          return connection.destroy();
+        } catch (e) {
+          return null;
+        }
+      })
+    );
   }
 
   /**

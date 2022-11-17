@@ -173,22 +173,22 @@ function CurriculumList({
         />
       ) : null}
       {!store.editingItem && !store.isNewItem && isEditMode ? (
-        <Stack justifyContent="space-between" fullWidth>
+        <Box>
           <Box>
             <Button variant="light" leftIcon={<AddCircleIcon />} onClick={onNew}>
               {t('addNewElementToList')}
             </Button>
           </Box>
           {store.showSaveButton || useOrder ? (
-            <Box>
-              <Button variant="outline" loading={store.loading} onClick={() => save()}>
-                {t('save')}
-              </Button>
-            </Box>
-          ) : (
-            <Box />
-          )}
-        </Stack>
+            <Stack fullWidth justifyContent="end">
+              <Box>
+                <Button variant="outline" loading={store.loading} onClick={() => save()}>
+                  {t('save')}
+                </Button>
+              </Box>
+            </Stack>
+          ) : null}
+        </Box>
       ) : null}
     </Box>
   );
