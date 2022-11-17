@@ -361,12 +361,20 @@ function generateQueries(model /* connector */) {
   async function transaction(f) {
     const id = randomString();
     try {
-      return await f(id);
+      const result = await f(id);
+      finishRollback();
+      return result;
     } catch (e) {
       if (!transactingHasError()) await rollback(id);
       throw e;
     }
     // return model.ORM.transaction(f);
+  }
+
+  function finishRollback(transacting) {
+    if (_.isString(transacting)) {
+      if (rollbacks[transacting]) delete rollbacks[transacting];
+    }
   }
 
   async function timeoutPromise(time) {
@@ -396,7 +404,6 @@ function generateQueries(model /* connector */) {
   }
 
   async function rollback(transacting) {
-    console.log('en el rollback');
     // TODO: Añadir a  todas las funciones que tambien se registre que estan en proceso por si peta algo y hay otras peticiones en proceso primero que terminen y luego ya hacemos rollback de todo
     if (
       _.isString(transacting) &&
@@ -409,6 +416,8 @@ function generateQueries(model /* connector */) {
       // Solo empezamos a hacer rollback si no quedan acciones pendientes del backend
       if (rollbacks[transacting].pendingActions === 0) {
         const curAction = rollbacks[transacting].actions[rollbacks[transacting].actions.length - 1];
+        console.log('rollback', curAction.action);
+
         if (curAction.action === 'removeOne') {
           await curAction.modelActions.delete(curAction.data);
         }

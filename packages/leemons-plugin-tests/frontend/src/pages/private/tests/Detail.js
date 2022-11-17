@@ -9,7 +9,6 @@ import {
   ContextContainer,
   ImageLoader,
   PageContainer,
-  useAccordionState,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -41,7 +40,7 @@ export default function Detail() {
     currentStep: 0,
   });
 
-  const [accordionState, accordionFunctions] = useAccordionState({ initialState: {} });
+  const [accordionState, setAccordionState] = React.useState([]);
 
   const history = useHistory();
   const params = useParams();
@@ -236,12 +235,7 @@ export default function Detail() {
 
       <PageContainer noFlex>
         <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-          <ActivityAccordion
-            state={accordionState}
-            onChange={(e) => {
-              accordionFunctions.setState(e);
-            }}
-          >
+          <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
             {accordion}
           </ActivityAccordion>
         </Box>
