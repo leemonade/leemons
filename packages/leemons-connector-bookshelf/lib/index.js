@@ -32,8 +32,9 @@ class Connector {
 
     return Promise.all(
       bookshelfConnections.map((connection) => {
+        const { connection: ORMConnection, config } = this.connections[connection.name];
         // Initialize the ORM
-        const ORM = new Bookshelf(this.connections[connection.name]);
+        const ORM = new Bookshelf(ORMConnection);
 
         // Use uuid plugin
         ORM.plugin(bookshelfUUID);
@@ -42,6 +43,7 @@ class Connector {
           ORM,
           connection,
           connector: this,
+          config,
         };
         this.contexts.set(connection.name, ctx);
 
@@ -51,7 +53,15 @@ class Connector {
   }
 
   destroy() {
-    return Promise.all(Object.values(this.connections).map((connection) => connection.destroy()));
+    return Promise.all(
+      Object.values(this.connections).map((connection) => {
+        try {
+          return connection.destroy();
+        } catch (e) {
+          return null;
+        }
+      })
+    );
   }
 
   /**

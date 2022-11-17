@@ -2,6 +2,7 @@ module.exports = {
   connections: {
     mysql: {
       connector: 'bookshelf',
+      useCustomRollback: process.env['USE_CUSTOM_ROLLBACK'] === 'true',
       settings: {
         client: 'mysql2',
         database: process.env['DATABASE_DATABASE'],

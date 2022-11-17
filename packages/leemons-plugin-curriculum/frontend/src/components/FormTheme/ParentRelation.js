@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { Badge, Box, createStyles, InputWrapper, Select, TextInput } from '@bubbles-ui/components';
-import { useStore } from '@common';
+import { htmlToText, useStore } from '@common';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 
 const useStyle = createStyles((theme) => ({
@@ -94,7 +94,10 @@ const ParentRelation = ({
       store.selectParentName = `${nodeLevel.name} - ${node.name}`;
       if (_.isArray(nodeValue.value)) {
         store.type = 'select';
-        store.selectData = _.map(nodeValue.value, (v) => ({ label: v.value, value: v.id }));
+        store.selectData = _.map(nodeValue.value, (v) => ({
+          label: htmlToText(v.value),
+          value: v.id,
+        }));
       } else if (_.isPlainObject(nodeValue.value)) {
         store.type = 'select';
         store.selectData = [];
@@ -102,13 +105,13 @@ const ParentRelation = ({
           if (_.isArray(item.value)) {
             _.forEach(item.value, (v) => {
               store.selectData.push({
-                label: v.value,
+                label: htmlToText(v.value),
                 value: `${nodeValue.id}|${item.id}|${v.id}`,
               });
             });
           } else {
             store.selectData.push({
-              label: item.value,
+              label: htmlToText(item.value),
               value: `${nodeValue.id}|${item.id}`,
             });
           }

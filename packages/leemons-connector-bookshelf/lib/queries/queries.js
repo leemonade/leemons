@@ -359,14 +359,27 @@ function generateQueries(model /* connector */) {
   }
 
   async function transaction(f) {
-    const id = randomString();
-    try {
-      return await f(id);
-    } catch (e) {
-      if (!transactingHasError()) await rollback(id);
-      throw e;
+    if (model.config.useCustomRollback) {
+      const id = randomString();
+      try {
+        const result = await f(id);
+        finishRollback(id);
+        return result;
+      } catch (e) {
+        if (!transactingHasError()) await rollback(id);
+        throw e;
+      }
     }
-    // return model.ORM.transaction(f);
+    return model.ORM.transaction(f);
+  }
+
+  function finishRollback(transacting) {
+    if (_.isString(transacting)) {
+      if (rollbacks[transacting]) {
+        rollbacks[transacting] = undefined;
+        delete rollbacks[transacting];
+      }
+    }
   }
 
   async function timeoutPromise(time) {
@@ -396,8 +409,6 @@ function generateQueries(model /* connector */) {
   }
 
   async function rollback(transacting) {
-    console.log('en el rollback');
-    // TODO: Añadir a  todas las funciones que tambien se registre que estan en proceso por si peta algo y hay otras peticiones en proceso primero que terminen y luego ya hacemos rollback de todo
     if (
       _.isString(transacting) &&
       rollbacks[transacting] &&
@@ -410,7 +421,7 @@ function generateQueries(model /* connector */) {
       if (rollbacks[transacting].pendingActions === 0) {
         const curAction = rollbacks[transacting].actions[rollbacks[transacting].actions.length - 1];
         if (curAction.action === 'removeOne') {
-          await curAction.modelActions.delete(curAction.data);
+          await curAction.modelActions.delete({ id: curAction.data });
         }
         if (curAction.action === 'update') {
           await curAction.modelActions.update({ id: curAction.data.id }, curAction.data);
@@ -426,6 +437,7 @@ function generateQueries(model /* connector */) {
         if (curAction.action === 'createMany') {
           await Promise.all(_.map(curAction.data, (item) => curAction.modelActions.create(item)));
         }
+        rollbacks[transacting].actions.pop();
         await rollback(transacting);
       } else {
         setTimeout(() => {
@@ -454,7 +466,7 @@ function generateQueries(model /* connector */) {
 
   function initRollbackIfNeed(transacting) {
     if (_.isString(transacting)) {
-      if (!_.isArray(rollbacks[transacting]))
+      if (!rollbacks[transacting])
         rollbacks[transacting] = {
           actions: [],
           error: false,
