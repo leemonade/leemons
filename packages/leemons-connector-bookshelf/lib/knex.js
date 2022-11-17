@@ -100,7 +100,12 @@ async function initKnex(connector, connections) {
         );
       }
       // Save the connection
-      _.set(connector, `connections.${connection.name}`, dbConnection);
+      _.set(connector, `connections.${connection.name}`, {
+        connection: dbConnection,
+        config: {
+          useCustomRollback: _.get(connection, 'useCustomRollback', false),
+        },
+      });
     })
   );
 }
