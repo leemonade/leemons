@@ -3,16 +3,14 @@ import updateAssignableInstance from '../../requests/assignableInstances/updateA
 
 export default function useMutateAssignableInstance(details = true) {
   const queryClient = useQueryClient();
-  return useMutation(
-    async (props) => {
+  return useMutation({
+    mutationFn: async (props) => {
       await updateAssignableInstance(props);
       return props;
     },
-    {
-      onSuccess: (data) => {
-        const key = ['assignableInstances', { id: data.id, details }];
-        queryClient.invalidateQueries(key);
-      },
-    }
-  );
+    onSuccess: (data) => {
+      const key = ['assignableInstances', { id: data.id, details }];
+      queryClient.invalidateQueries(key);
+    },
+  });
 }
