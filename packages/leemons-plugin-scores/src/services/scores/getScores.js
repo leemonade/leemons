@@ -36,5 +36,5 @@ module.exports = async function getScores(
 
   const scoresFound = await scores.find(query, { transacting });
 
-  return scoresFound;
+  return scoresFound.map((score) => ({ ...score, grade: parseFloat(score.grade) }));
 };
