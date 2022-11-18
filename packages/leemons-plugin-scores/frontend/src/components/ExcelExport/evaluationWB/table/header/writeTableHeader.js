@@ -1,6 +1,5 @@
 import { map } from 'lodash';
 import { arrayToContent } from '../../../helpers';
-import addConditionalFormatting from './addConditionalFormatting';
 import { getStyle } from './getStyle';
 
 function parseActivities({ activities, labels }) {
@@ -41,6 +40,4 @@ export default function writeHeader({ ws, activities, labels, initialPosition })
     initialPosition,
     getStyle: getStyle({ ws, contentArray, labels }),
   });
-
-  addConditionalFormatting(ws);
 }

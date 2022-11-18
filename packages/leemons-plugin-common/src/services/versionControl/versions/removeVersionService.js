@@ -3,7 +3,7 @@ const { parseId } = require('../helpers');
 const removeVersion = require('./removeVersion');
 
 module.exports = async function removeVersionService(id, { published, version, transacting } = {}) {
-  const { uuid, version: v, fullId } = await parseId(id, version, { verifyVersion: false });
+  const { uuid, version: v, fullId } = await parseId({ id, version }, { verifyVersion: false });
 
   try {
     const { current } = await get.bind(this)(uuid, { transacting });

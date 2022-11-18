@@ -23,7 +23,8 @@ module.exports = {
       },
     },
     classes: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       options: {
         notNull: true,
       },
@@ -35,7 +36,8 @@ module.exports = {
       type: 'string',
     },
     metadata: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     emailSended: {
       type: 'boolean',

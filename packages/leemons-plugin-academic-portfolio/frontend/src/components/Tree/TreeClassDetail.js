@@ -153,12 +153,12 @@ const TreeClassDetail = ({
       <RadioGroup
         variant="icon"
         data={[
-          { label: messages.basicInformation, value: 1 },
+          { label: messages.basicInformation, value: '1' },
           {
             label: messages.groupsOfClasse,
-            value: 2,
+            value: '2',
           },
-          { label: messages.studentsEnrolled, value: 3 },
+          { label: messages.studentsEnrolled, value: '3' },
         ]}
         fullWidth
         onChange={(page) => {
@@ -167,7 +167,7 @@ const TreeClassDetail = ({
         }}
         value={store.page}
       />
-      {store.page === 1 ? (
+      {store.page === '1' ? (
         <form onSubmit={handleSubmit(onBeforeSaveSubject)} autoComplete="off">
           <ContextContainer direction="column" fullWidth>
             <Box>
@@ -285,7 +285,7 @@ const TreeClassDetail = ({
           </ContextContainer>
         </form>
       ) : null}
-      {store.page === 2 ? (
+      {store.page === '2' ? (
         <Box>
           {!program.useOneStudentGroup && (
             <Box>
@@ -348,7 +348,7 @@ const TreeClassDetail = ({
         </Box>
       ) : null}
 
-      {store.page === 3 ? (
+      {store.page === '3' ? (
         <Box>
           {program.useOneStudentGroup ? (
             <TreeClassroomUsersDetail

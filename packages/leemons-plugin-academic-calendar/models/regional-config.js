@@ -15,15 +15,18 @@ module.exports = {
       type: 'string',
     },
     regionalEvents: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       // [{name: 'Recreo',  startDate: Date, endDate: Date}]
     },
     localEvents: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       // [{name: 'Recreo',  startDate: Date, endDate: Date}]
     },
     daysOffEvents: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       // [{name: 'Recreo',  startDate: Date, endDate: Date}]
     },
   },

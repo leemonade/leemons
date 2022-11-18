@@ -238,6 +238,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           questionsToCreate.push(question);
         }
       });
+
       _.forEach(currentQuestionsIds, (questionId) => {
         if (!_.find(questions, { id: questionId })) {
           questionsToDelete.push(questionId);

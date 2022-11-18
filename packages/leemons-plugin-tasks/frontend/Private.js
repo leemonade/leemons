@@ -1,10 +1,11 @@
 import React from 'react';
-import { Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
+import { useSearchParams } from '@common';
 
 const AssignmentPage = loadable(() =>
   pMinDelay(import('./src/pages/private/assignment/AssignmentPage'), 1000)
@@ -24,6 +25,7 @@ const Correction = loadable(() =>
 
 export default function Private() {
   const { path } = useRouteMatch();
+  const query = useSearchParams();
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
@@ -38,7 +40,11 @@ export default function Private() {
 
       {/* TEACHER VIEW */}
       <Route path={`${path}/library/edit/:id`}>
-        <SetupTask key="edit" session={session} fallback={<LoadingOverlay visible />} />
+        <SetupTask
+          key={query.has('fromNew') ? 'create' : 'edit'}
+          session={session}
+          fallback={<LoadingOverlay visible />}
+        />
       </Route>
       <Route path={`${path}/library/create`}>
         <SetupTask key="create" session={session} fallback={<LoadingOverlay visible />} />

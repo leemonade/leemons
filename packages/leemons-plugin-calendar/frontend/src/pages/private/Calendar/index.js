@@ -229,7 +229,6 @@ function Calendar({ session }) {
           });
         });
         centersDataValues[data.center].sections = calendarSections;
-        console.log(centersDataValues[data.center].sections);
       });
 
       store.centersDataById = centersDataValues;
@@ -382,6 +381,10 @@ function Calendar({ session }) {
   }, [store.center, store.loading]);
 
   if (store.loading) return <LoadingOverlay visible />;
+
+  if (store.activePage === 'schedule') {
+    // console.log(store.schedule.events);
+  }
 
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
@@ -553,8 +556,8 @@ function Calendar({ session }) {
               style={{ height: '90%' }}
               currentView="week"
               hideToolbar={true}
-              minWeekDay={store.schedule.calendarConfig.minDayWeek}
-              maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
+              minimumStartDifference={0}
+              weekDays={store.schedule.calendarConfig.weekDays}
               minHour={store.schedule.calendarConfig.minHour}
               maxHour={store.schedule.calendarConfig.maxHour}
               timeslots={2}

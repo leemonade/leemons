@@ -34,6 +34,7 @@ export default function getStyle({ tableData, ws }) {
     if (isScoreCol) {
       index++;
     }
+
     const isLastCurrentSubjectCol = index === periodsLength[subjectIndex];
 
     if (isFirstRow && isStudentDataCol) {
@@ -68,7 +69,7 @@ export default function getStyle({ tableData, ws }) {
         )}`;
 
         cell.value = {
-          formula: `AVERAGE(${range})`,
+          formula: `IFERROR(AVERAGE(${range}),0)`,
           result: cell.value.value,
         };
       }
@@ -121,7 +122,7 @@ export default function getStyle({ tableData, ws }) {
       addCustomName({ ws, name: 'customScores', cell });
     }
 
-    if (isLastCurrentSubjectCol) {
+    if (isLastCurrentSubjectCol && isFirstScoreRow) {
       const subjectRow = absoluteRow - row - headersHeight + 2;
       ws.mergeCells(
         `${indexesToCell(subjectRow, absoluteCol - index + 1)}:${indexesToCell(
@@ -129,12 +130,12 @@ export default function getStyle({ tableData, ws }) {
           absoluteCol
         )}`
       );
-
-      index = 0;
-      subjectIndex++;
     }
 
     if (isLastCurrentSubjectCol) {
+      index = 0;
+      subjectIndex++;
+
       border.right = {
         style: 'medium',
         color: {

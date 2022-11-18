@@ -5,6 +5,24 @@ const CLIENTS = {
   postgre: 'pg',
   sqlite: 'sqlite3',
   mysql: 'mysql',
+  mysql2: 'mysql2',
+};
+
+const CONNECTION_FILTERS = {
+  mysql2: (config) =>
+    _.pick(config, [
+      'charset',
+      'database',
+      'host',
+      'password',
+      'port',
+      'socketPath',
+      'database',
+      'ssl',
+      'timezone',
+      'user',
+      'multipleStatements',
+    ]),
 };
 
 async function initKnex(connector, connections) {
@@ -20,6 +38,9 @@ async function initKnex(connector, connections) {
       switch (connection.settings.client) {
         case 'mysql':
           client = CLIENTS.mysql;
+          break;
+        case 'mysql2':
+          client = CLIENTS.mysql2;
           break;
         case 'postgre':
         case 'postgres':
@@ -58,11 +79,15 @@ async function initKnex(connector, connections) {
           schema: _.get(connection.settings, 'schema', 'public'),
           socketPath: _.get(connection.settings, 'socketPath'),
           ssl: _.get(connection.settings, 'ssl', false),
-          timezone: _.get(connection.settings, 'timezone', 'utc'),
+          timezone: _.get(connection.settings, 'timezone', '+00:00'),
           user: _.get(connection.settings, 'username') || _.get(connection.settings, 'user'),
           multipleStatements: true,
         },
       };
+
+      if (_.has(CONNECTION_FILTERS, client)) {
+        config.connection = CONNECTION_FILTERS[client](config.connection);
+      }
 
       let dbConnection;
       try {
@@ -75,7 +100,12 @@ async function initKnex(connector, connections) {
         );
       }
       // Save the connection
-      _.set(connector, `connections.${connection.name}`, dbConnection);
+      _.set(connector, `connections.${connection.name}`, {
+        connection: dbConnection,
+        config: {
+          useCustomRollback: _.get(connection, 'useCustomRollback', false),
+        },
+      });
     })
   );
 }

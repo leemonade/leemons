@@ -37,7 +37,8 @@ module.exports = {
       type: 'float',
     },
     properties: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

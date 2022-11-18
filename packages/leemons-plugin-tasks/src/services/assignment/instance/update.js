@@ -17,8 +17,6 @@ module.exports = async function update(
   },
   { transacting } = {}
 ) {
-  // const { fullId, id } = await parseId(task, null, { transacting });
-
   const instanceExists = await getInstance(instanceId, { columns: ['id'], transacting });
 
   if (!instanceExists) {

@@ -13,6 +13,7 @@ export * from './useApi';
 export * from './userImage';
 export * from './useStore';
 export * from './useQuery';
+export * from './useSearchParams';
 export * from './tags';
 export * from './LocaleDate';
 export * from './numberToEncodedLetter';

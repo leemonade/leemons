@@ -38,7 +38,6 @@ async function getByCategory(
     );
 
     const publicAssets = showPublic ? await getPublic(categoryId, { indexable, transacting }) : [];
-
     // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
     // EN: Concatenate all IDs, and then get the intersection in accordance with their status
     let assetIds = permissions
@@ -59,6 +58,7 @@ async function getByCategory(
         )
       );
     } catch (e) {
+      console.error(e);
       leemons.log.error(`Failed to get asset by status from categoryId ${categoryId}`);
     }
 
@@ -120,7 +120,6 @@ async function getByCategory(
         }
         return assetIds.includes(item.asset);
       });
-
     return uniqBy(results, 'asset');
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);

@@ -16,7 +16,7 @@ import {
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 // TODO: Move to assignables
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
@@ -116,7 +116,6 @@ function GradeVariation({
             <Text color="secondary">{description}</Text>
           </Box>
         ),
-        description,
         value: v,
       }))}
       value={selectedValue}

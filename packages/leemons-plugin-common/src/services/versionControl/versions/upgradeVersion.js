@@ -11,7 +11,7 @@ module.exports = async function upgradeVersion(
   upgrade = 'major',
   { published = false, version, transacting, setAsCurrent } = {}
 ) {
-  const { uuid, version: v } = await parseId(id, version);
+  const { uuid, version: v } = await parseId({ id, version });
   const versionObject = await parseVersion(v);
 
   const query = {

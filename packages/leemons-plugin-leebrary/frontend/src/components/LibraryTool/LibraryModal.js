@@ -189,7 +189,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
               <Button size="xs" variant="light" onClick={onCancelHandler}>
                 {labels.cancel}
               </Button>
-              <Button size="xs" type="submit" disabled={disableCondition()}>
+              <Button size="xs" onClick={handleSubmit(submitHandler)} disabled={disableCondition()}>
                 {currentTool.editing ? labels.update : labels.add}
               </Button>
             </Stack>

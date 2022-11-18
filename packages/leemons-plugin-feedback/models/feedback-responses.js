@@ -27,7 +27,10 @@ module.exports = {
         collection: 'plugins_feedback::feedback-questions',
       },
     },
-    response: { type: 'json' },
+    response: {
+      type: 'text',
+      textType: 'mediumText',
+    },
   },
   primaryKey: {
     type: 'uuid',
