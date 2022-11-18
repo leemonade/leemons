@@ -5,8 +5,8 @@ export default function usePeriodMutation() {
   const queryClient = useQueryClient();
   const queryKey = ['periods'];
 
-  return useMutation(
-    async ({ period, action = 'write' }) => {
+  return useMutation({
+    mutationFn: async ({ period, action = 'write' }) => {
       if (action === 'write') {
         if (period.id) {
           throw new Error('Period updates are not supported yet');
@@ -23,10 +23,8 @@ export default function usePeriodMutation() {
 
       throw new Error(`Unknown action '${action}'. Must be one of [write, remove]`);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(queryKey);
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKey);
+    },
+  });
 }

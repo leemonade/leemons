@@ -21,5 +21,7 @@ module.exports = async function getGrade(
     query.visibleToStudent = visibleToStudent;
   }
 
-  return grades.find(query, { transacting });
+  const gradesFound = await grades.find(query, { transacting });
+
+  return gradesFound.map((grade) => ({ ...grade, grade: parseFloat(grade.grade) }));
 };
