@@ -84,7 +84,6 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
       store.curriculum = c;
-      console.log(c);
       store.loading = false;
     } catch (e) {
       store.loading = false;
@@ -159,6 +158,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
   }
 
   async function onSelect({ node }) {
+    console.log(node);
     const { nodeLevelsById, unUsedSubjects } = getDataForNode();
 
     store.activeNode = {
@@ -260,7 +260,10 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
 
   let groupChilds = null;
 
-  if (store.activeRightSection === 'detail-branch-value') {
+  if (
+    store.activeRightSection === 'detail-branch-value' &&
+    store.activeNode.nodeLevel?.schema?.compileJsonSchema
+  ) {
     groupChilds = (
       <NewBranchDetailValue
         isSubject={store.activeNode.isSubject}

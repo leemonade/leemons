@@ -76,6 +76,7 @@ module.exports = {
     save: 'Save',
     addNewElementToList: 'Add new list item',
     parentBlock: 'Parent block ({name})',
+    selectBlock: 'Select block...',
     fieldRequired: 'Field required',
     maxLength: 'Must be {max} characters',
     newItemList: 'New list item',

@@ -75,6 +75,7 @@ module.exports = {
     save: 'Guardar',
     addNewElementToList: 'Añadir nuevo elemento lista',
     parentBlock: 'Bloque padre ({name})',
+    selectBlock: 'Seleccionar bloque...',
     fieldRequired: 'Campo necesario',
     maxLength: 'Máximo {max} caracteres',
     newItemList: 'Nuevo item de la lista',

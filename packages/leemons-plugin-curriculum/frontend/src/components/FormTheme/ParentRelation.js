@@ -146,6 +146,7 @@ const ParentRelation = ({
           <Select
             value={props.value?.metadata?.parentRelated}
             onChange={onChangeParent}
+            placeholder={t('selectBlock')}
             data={store.selectData}
             label={hideLabel ? null : t('parentBlock', { name: store.selectParentName })}
           />
