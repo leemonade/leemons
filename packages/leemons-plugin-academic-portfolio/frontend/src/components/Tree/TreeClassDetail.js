@@ -48,7 +48,7 @@ const TreeClassDetail = ({
   const { openConfirmationModal } = useLayout();
   const [store, render] = useStore({
     createMode,
-    page: createMode ? 2 : 1,
+    page: createMode ? '2' : '1',
   });
   const {
     reset,
