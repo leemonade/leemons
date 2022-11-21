@@ -1,8 +1,8 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
-import { htmlToText, useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import {htmlToText, useStore} from '@common';
+import {useHistory, useParams} from 'react-router-dom';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -10,38 +10,41 @@ import {
   Box,
   Button,
   Stack,
-  Text,
-  Title,
-  TextClamp,
   Switch,
+  Text,
+  TextClamp,
+  Title,
 } from '@bubbles-ui/components';
-import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
+import {getFeedbackRequest, getFeedbackResultsRequest} from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import {
   DataFileBarsQuestionIcon,
+  DownloadIcon,
   FormImageIcon,
   GaugeDashboardIcon,
   NavigationMenuLeftIcon,
   PluginRankingIcon,
   QuestionExclamationIcon,
-  DownloadIcon,
 } from '@bubbles-ui/icons/outline';
-import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
-import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { createDatasheet } from '@feedback/helpers/createDatasheet';
-import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
+import {NPSStatistics} from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
+import {
+  LikertStatistics
+} from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
+import {addErrorAlert, addSuccessAlert} from '@layout/alert';
+import {createDatasheet} from '@feedback/helpers/createDatasheet';
+import useMutateAssignableInstance
+  from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 import dayjs from 'dayjs';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import {useIsTeacher} from '@academic-portfolio/hooks';
 import ResultStyles from './Result.styles';
-import { OpenResponse, SelectResponse } from './components';
+import {OpenResponse, SelectResponse} from './components';
 
 const questionsByType = {
-  likertScale: <LikertStatistics />,
-  singleResponse: <SelectResponse />,
-  multiResponse: <SelectResponse />,
-  netPromoterScore: <NPSStatistics />,
-  openResponse: <OpenResponse />,
+  likertScale: <LikertStatistics/>,
+  singleResponse: <SelectResponse/>,
+  multiResponse: <SelectResponse/>,
+  netPromoterScore: <NPSStatistics/>,
+  openResponse: <OpenResponse/>,
 };
 
 function padTo2Digits(num) {
@@ -52,11 +55,12 @@ export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
   const [store, render] = useStore({
     loading: true,
-    accordionState: { 0: true },
   });
-  const { mutateAsync } = useMutateAssignableInstance();
+  const [accordionState, setAccordionState] = React.useState(['info']);
 
-  const { classes } = ResultStyles({}, { name: 'Result' });
+  const {mutateAsync} = useMutateAssignableInstance();
+
+  const {classes} = ResultStyles({}, {name: 'Result'});
 
   const isTeacher = useIsTeacher();
   const history = useHistory();
@@ -66,7 +70,7 @@ export default function Result() {
     try {
       store.loading = true;
       render();
-      const instance = await getAssignableInstance({ id: params.id });
+      const instance = await getAssignableInstance({id: params.id});
 
       const [result, feedback] = await Promise.all([
         getFeedbackResultsRequest(params.id),
@@ -100,19 +104,19 @@ export default function Result() {
     };
     return (
       <Stack spacing={2}>
-        <Badge label={questionTypes[question.type]} closable={false} />
-        <Badge label={question.required ? t('required') : t('notRequired')} closable={false} />
+        <Badge label={questionTypes[question.type]} closable={false}/>
+        <Badge label={question.required ? t('required') : t('notRequired')} closable={false}/>
       </Stack>
     );
   };
 
   const getQuestionIcons = (questionType, hasImage) => {
     const questionTypes = {
-      likertScale: <PluginRankingIcon />,
-      singleResponse: hasImage ? <FormImageIcon /> : <QuestionExclamationIcon />,
-      multiResponse: hasImage ? <FormImageIcon /> : <QuestionExclamationIcon />,
-      netPromoterScore: <GaugeDashboardIcon />,
-      openResponse: <NavigationMenuLeftIcon />,
+      likertScale: <PluginRankingIcon/>,
+      singleResponse: hasImage ? <FormImageIcon/> : <QuestionExclamationIcon/>,
+      multiResponse: hasImage ? <FormImageIcon/> : <QuestionExclamationIcon/>,
+      netPromoterScore: <GaugeDashboardIcon/>,
+      openResponse: <NavigationMenuLeftIcon/>,
     };
 
     return questionTypes[questionType];
@@ -121,6 +125,7 @@ export default function Result() {
   const renderQuestions = () => {
     const questionBoxs = store.feedback.questions.map((question, index) => (
       <ActivityAccordionPanel
+        itemValue={question.id}
         label={
           <TextClamp>
             <Text role="productive" color="primary" stronger size="md">{`${index + 1}. ${htmlToText(
@@ -171,7 +176,7 @@ export default function Result() {
       newDates.close = null;
     }
     try {
-      await mutateAsync({ id: store.instanceId, dates: newDates });
+      await mutateAsync({id: store.instanceId, dates: newDates});
       addSuccessAlert(closed ? t('closeAction.closedFeedback') : t('closeAction.openedFeedback'));
     } catch (e) {
       addErrorAlert(
@@ -188,7 +193,7 @@ export default function Result() {
     };
 
     try {
-      await mutateAsync({ id: store.instanceId, dates: newDates });
+      await mutateAsync({id: store.instanceId, dates: newDates});
       addSuccessAlert(
         archived ? t('archiveAction.archivedFeedback') : t('archiveAction.unarchiedFeedback')
       );
@@ -227,14 +232,14 @@ export default function Result() {
             <Stack spacing={3}>
               <Button
                 variant="outline"
-                rightIcon={<DownloadIcon />}
+                rightIcon={<DownloadIcon/>}
                 onClick={() => downloadDatasheet('csv')}
               >
                 CSV
               </Button>
               <Button
                 variant="outline"
-                rightIcon={<DownloadIcon />}
+                rightIcon={<DownloadIcon/>}
                 onClick={() => downloadDatasheet('xls')}
               >
                 XLS
@@ -246,36 +251,35 @@ export default function Result() {
           <Title order={5} role="productive" color="quartiary">
             {t('feedback')}
           </Title>
-          <Title order={3} style={{ marginTop: 2 }}>
+          <Title order={3} style={{marginTop: 2}}>
             {store.feedback.name}
           </Title>
         </Box>
         <ActivityAccordion
-          state={store.accordionState}
-          onChange={(e) => {
-            store.accordionState = e;
-            render();
-          }}
+          multiple
+          state={accordionState}
+          onChange={setAccordionState}
         >
           <ActivityAccordionPanel
+            itemValue={'info'}
             label={t('generalInformation')}
             color="solid"
-            icon={<DataFileBarsQuestionIcon />}
+            icon={<DataFileBarsQuestionIcon/>}
           >
             <Stack fullWidth fullHeight spacing={2} className={classes.generalInformation}>
-              <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+              <Box className={classes.infoBox} style={{maxWidth: 140}}>
                 <Text role="productive" color="primary" size="xs">
                   {t('started')}
                 </Text>
                 <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
               </Box>
-              <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+              <Box className={classes.infoBox} style={{maxWidth: 140}}>
                 <Text role="productive" color="primary" size="xs">
                   {t('sent')}
                 </Text>
                 <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
               </Box>
-              <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+              <Box className={classes.infoBox} style={{maxWidth: 140}}>
                 <Text role="productive" color="primary" size="xs">
                   {t('completed')}
                 </Text>
