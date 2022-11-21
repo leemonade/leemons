@@ -79,7 +79,7 @@ module.exports = {
     fieldRequired: 'Campo necesario',
     maxLength: 'Máximo {max} caracteres',
     newItemList: 'Nuevo item de la lista',
-    selectTag: 'Seleccionar etiquetas (Soft Skills)',
+    selectTag: 'Seleccionar etiquetas',
     startAt: 'Empezar en...',
   },
 };

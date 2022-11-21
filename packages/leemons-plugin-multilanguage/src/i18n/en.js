@@ -80,6 +80,6 @@ module.exports = {
     fieldRequired: 'Field required',
     maxLength: 'Must be {max} characters',
     newItemList: 'New list item',
-    selectTag: 'Select labels (Soft Skills)',
+    selectTag: 'Select labels',
   },
 };
