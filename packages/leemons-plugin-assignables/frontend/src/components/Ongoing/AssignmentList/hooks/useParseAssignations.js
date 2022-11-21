@@ -144,7 +144,7 @@ function StudentActions({ assignation, labels }) {
     }
 
     return assignation.relatedAssignableInstances.before.every(
-      (instance) => instance.timestamps?.end
+      (instance) => !instance.required || instance.timestamps?.end
     );
   }, [assignation?.relatedAssignableInstances]);
 
