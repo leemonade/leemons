@@ -57,6 +57,7 @@ module.exports = {
           evaluationSystem: 'Evaluation system',
           creditSystem: 'No need for credit system',
           credits: 'Total credits',
+          totalHours: 'Total hours',
           oneStudentGroup: 'This program has only one group of students',
           groupsIDAbbrev: 'Groups ID Abbreviation',
           maxGroupAbbreviation: 'Max abbreviation length for groups',

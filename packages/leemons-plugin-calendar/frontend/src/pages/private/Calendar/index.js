@@ -285,8 +285,14 @@ function Calendar({ session }) {
           ...classe,
           bgColor: classe.color,
           borderColor: classe.color,
-          fullName: `${classe.subject.name} (${classe.groups.abbreviation})`,
-          name: `${classe.subject.name} (${classe.groups.abbreviation})`,
+          fullName: `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
+            /(\(-auto-\))/g,
+            ''
+          ),
+          name: `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
+            /(\(-auto-\))/g,
+            ''
+          ),
           showEvents: true,
           icon: classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null,
         })),

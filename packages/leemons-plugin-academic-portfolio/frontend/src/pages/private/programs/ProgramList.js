@@ -122,12 +122,13 @@ export default function ProgramList() {
       let messageKey = 'common.create_done';
 
       if (!isEmpty(store.currentProgram)) {
-        const { name, abbreviation, credits, image, color } = values;
+        const { name, abbreviation, credits, image, color, totalHours } = values;
         body = {
           id: store.currentProgram.id,
           name,
           abbreviation,
           credits,
+          totalHours,
           image,
           color,
         };
