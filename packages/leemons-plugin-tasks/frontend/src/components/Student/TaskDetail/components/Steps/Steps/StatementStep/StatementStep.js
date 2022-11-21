@@ -127,13 +127,11 @@ function useSupportImage(assignable) {
       getAssetsByIdsRequest([assignable?.metadata?.leebrary?.statementImage?.[0]], {
         indexable: false,
         showPublic: true,
-      }).then((response) => response.assets[0]),
+      })
+        .then((response) => response.assets[0])
+        .then((asset) => (asset ? prepareAsset(asset) : asset)),
     { enabled: !!assignable?.metadata?.leebrary?.statementImage?.[0] }
   );
-
-  if (query.data) {
-    query.data = prepareAsset(query.data);
-  }
 
   return query;
 }
