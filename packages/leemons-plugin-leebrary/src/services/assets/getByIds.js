@@ -26,6 +26,7 @@ const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
 const { getByAssets: getPins } = require('../pins/getByAssets');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
+const { getClassesPermissions } = require('../permissions/getClassesPermissions');
 
 async function getByIds(
   assetsIds,
@@ -56,6 +57,7 @@ async function getByIds(
   // ·········································································
   // PERMISSIONS & PERSONS
   if (checkPermissions && userSession) {
+    const classesPermissionsPerAsset = await getClassesPermissions(assetsIds, { transacting });
     let permissions = [];
 
     if (userSession || showPublic) {
@@ -68,6 +70,9 @@ async function getByIds(
     const getUsersAssetIds = [];
     for (let i = 0, l = assets.length; i < l; i++) {
       const asset = assets[i];
+      const classesWithPermissions = classesPermissionsPerAsset[i];
+
+      asset.classesCanAccess = classesWithPermissions;
       const permission = permissions.find((item) => item.asset === asset.id);
       if (!isEmpty(permission?.permissions)) {
         const { permissions: userPermissions } = permission;
