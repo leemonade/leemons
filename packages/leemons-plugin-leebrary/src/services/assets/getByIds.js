@@ -57,7 +57,12 @@ async function getByIds(
   // ·········································································
   // PERMISSIONS & PERSONS
   if (checkPermissions && userSession) {
-    const classesPermissionsPerAsset = await getClassesPermissions(assetsIds, { transacting });
+    const classesPermissionsPerAsset = await getClassesPermissions(assetsIds, {
+      withInfo: true,
+      transacting,
+      userSession,
+    });
+
     let permissions = [];
 
     if (userSession || showPublic) {

@@ -709,8 +709,9 @@ const AssetList = ({
         <Box
           skipFlex
           sx={(theme) => ({ marginTop: theme.spacing[5] })}
-          style={{ cursor: loading ? 'wait' : 'default'}}>
-          <Box style={{ pointerEvents: loading ? 'none' : 'auto'}}>
+          style={{ cursor: loading ? 'wait' : 'default' }}
+        >
+          <Box style={{ pointerEvents: loading ? 'none' : 'auto' }}>
             <RadioGroup
               data={categoriesRadioData}
               variant="icon"
