@@ -9,7 +9,7 @@ module.exports = {
     const permissions = await set(
       asset,
       { isPublic, classesCanAccess, canAccess },
-      { userSession }
+      { deleteMissing: true, userSession }
     );
 
     ctx.status = 200;

@@ -10,7 +10,7 @@ const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 const { update: updateAsset } = require('../assets/update');
 
 async function setAssetPermissionsForClasses(
-  { asset, classesCanAccess, assignerRole },
+  { asset, classesCanAccess, assignerRole, target },
   { transacting }
 ) {
   const classesPermissionNames = classesCanAccess.map(
@@ -76,6 +76,7 @@ async function setAssetPermissionsForClasses(
       leemons.plugin.prefixPN(`asset.can-edit`),
       editorClasses.map((klass) => ({
         actionNames: ['view'],
+        target,
         permissionName: `plugins.academic-portfolio.class.${klass.class}`,
       })),
       { transacting, isCustomPermission: true }
@@ -85,6 +86,7 @@ async function setAssetPermissionsForClasses(
       leemons.plugin.prefixPN(`asset.can-view`),
       viewerClasses.map((klass) => ({
         actionNames: ['view'],
+        target,
         permissionName: `plugins.academic-portfolio.class.${klass.class}`,
       })),
       { transacting, isCustomPermission: true }
@@ -175,6 +177,7 @@ async function set(
     // EN: Get the assigner and assignee roles
     // ES: Obtener los roles del asignador y del asignado
     const { role: assignerRole } = await getByAsset(assetId, { userSession, transacting });
+
     const [assetData] = await getByIds([assetId], { userSession });
 
     if (assignerRole !== 'owner' && (isPublic || assetData.public)) {
@@ -270,7 +273,7 @@ async function set(
 
     if (classesCanAccess?.length) {
       await setAssetPermissionsForClasses(
-        { asset: assetId, classesCanAccess, assignerRole },
+        { asset: assetId, classesCanAccess, assignerRole, target: categoryId },
         { userSession, transacting }
       );
     }

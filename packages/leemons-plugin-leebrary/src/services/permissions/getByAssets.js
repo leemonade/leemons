@@ -23,12 +23,12 @@ async function getByAssets(assetIds, { showPublic, userSession, transacting } = 
         userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
           userSession.userAgents,
           leemons.plugin.prefixPN('asset.can-view'),
-          { item: assetsIds, transacting }
+          { ignoreOriginalTarget: true, item: assetsIds, transacting }
         ),
         userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
           userSession.userAgents,
           leemons.plugin.prefixPN('asset.can-edit'),
-          { item: assetsIds, transacting }
+          { ignoreOriginalTarget: true, item: assetsIds, transacting }
         ),
       ]);
       [permissions, viewItems, editItems] = responses;
