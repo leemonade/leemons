@@ -308,8 +308,8 @@ async function set(
 
         // EN: Check if assigner can assign role to assignee
         // ES: Comprobar si el asignador puede asignar el rol al asignado
-        if (!canUnassignRole(assignerRole, assigneeRole, assigneeRole)) {
-          throw new global.utils.HttpError(401, "You don't have permission to assign this role");
+        if (!canUnassignRole(assignerRole, assigneeRole)) {
+          throw new global.utils.HttpError(401, "You don't have permission to unassign this role");
         }
 
         // Remove all permissions to the asset
