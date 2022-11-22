@@ -12,12 +12,11 @@ const {
 const addStatementSchema = {
   type: 'object',
   properties: {
-    user: stringSchema,
+    actor: stringSchema,
     verb: stringSchema,
     object: stringSchema,
-    type: stringSchema,
   },
-  required: ['user', 'verb', 'object'],
+  required: ['actor', 'verb', 'object'],
   additionalProperties: true,
 };
 
