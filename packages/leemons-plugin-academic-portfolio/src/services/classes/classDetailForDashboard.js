@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 const { listSessionClasses } = require('./listSessionClasses');
 
@@ -17,11 +18,18 @@ async function classDetailForDashboard(classId, userSession, { transacting } = {
   }
 
   const [classe] = await classByIds(classId, { transacting });
-  const [programClasses, students, parentStudents, teachers] = await Promise.all([
+  const [programClasses, students, parentStudents, teachers, program] = await Promise.all([
     listSessionClasses(userSession, { program: classe.program }, { transacting }),
     userServices.users.getUserAgentsInfo(classe.students, { transacting }),
     userServices.users.getUserAgentsInfo(classe.parentStudents, { transacting }),
     userServices.users.getUserAgentsInfo(_.map(classe.teachers, 'teacher'), { transacting }),
+    table.programs.findOne(
+      { id: classe.program },
+      {
+        columns: ['hideStudentsToStudents'],
+        transacting,
+      }
+    ),
   ]);
 
   const teachersById = _.keyBy(teachers, 'id');
@@ -31,6 +39,7 @@ async function classDetailForDashboard(classId, userSession, { transacting } = {
       ...classe,
       students,
       parentStudents,
+      hideStudentsToStudents: program.hideStudentsToStudents,
       teachers: _.map(classe.teachers, (teacher) => ({
         ...teacher,
         teacher: teachersById[teacher.teacher],

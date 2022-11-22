@@ -27,6 +27,8 @@ const addProgramSchema = {
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
     useOneStudentGroup: booleanSchema,
+    hideStudentsToStudents: booleanSchema,
+    totalHours: numberSchema,
     cycles: {
       type: 'array',
       items: {
@@ -178,6 +180,8 @@ const updateProgramSchema = {
     credits: integerSchemaNullable,
     treeType: integerSchema,
     managers: arrayStringSchema,
+    hideStudentsToStudents: booleanSchema,
+    totalHours: numberSchema,
   },
   required: ['id'],
   additionalProperties: false,
