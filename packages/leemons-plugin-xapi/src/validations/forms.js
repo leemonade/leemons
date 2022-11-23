@@ -1,20 +1,20 @@
 const { LeemonsValidator } = global.utils;
-const {
-  stringSchema,
-  booleanSchema,
-  integerSchema,
-  arrayStringSchema,
-  integerSchemaNullable,
-  stringSchemaNullable,
-  numberSchema,
-} = require('./types');
+const { stringSchema, arrayStringRequiredSchema } = require('./types');
 
 const addStatementSchema = {
   type: 'object',
   properties: {
-    actor: stringSchema,
-    verb: stringSchema,
-    object: stringSchema,
+    actor: {
+      oneOf: [stringSchema, arrayStringRequiredSchema],
+    },
+    verb: {
+      type: 'object',
+      additionalProperties: true,
+    },
+    object: {
+      type: 'object',
+      additionalProperties: true,
+    },
   },
   required: ['actor', 'verb', 'object'],
   additionalProperties: true,

@@ -16,7 +16,6 @@ module.exports = {
         },
       },
     },
-    /*
     mongo: {
       connector: 'mongoose',
       settings: {
@@ -33,7 +32,6 @@ module.exports = {
         },
       },
     },
-    */
   },
   defaultConnection: 'mysql',
 };

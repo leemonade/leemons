@@ -101,6 +101,9 @@
       ],
       "@widgets/*": [
         "./packages/leemons-plugin-widgets/frontend/src/*"
+      ],
+      "@xapi/*": [
+        "./packages/leemons-plugin-xapi/frontend/src/*"
       ]
     }
   },

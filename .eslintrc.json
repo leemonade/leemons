@@ -75,6 +75,7 @@
           "@timetable",
           "@users",
           "@widgets",
+          "@xapi",
           "@bubbles-ui"
         ]
       }
