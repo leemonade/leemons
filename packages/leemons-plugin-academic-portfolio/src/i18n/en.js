@@ -61,6 +61,8 @@ module.exports = {
           groupsIDAbbrev: 'Groups ID Abbreviation',
           maxGroupAbbreviation: 'Max abbreviation length for groups',
           maxGroupAbbreviationIsOnlyNumbers: 'Only numbers',
+          privacy: 'Privacy',
+          hideStudentsToStudents: 'Hide the list of users to student profile',
           buttonNext: 'Next',
         },
         descriptions: {
