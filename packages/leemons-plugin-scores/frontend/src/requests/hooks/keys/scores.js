@@ -1,7 +1,7 @@
 export const allScoresKey = [
   {
     plugin: 'plugin.scores',
-    scope: 'periods',
+    scope: 'scores',
   },
 ];
 
