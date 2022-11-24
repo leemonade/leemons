@@ -6,7 +6,6 @@ export default function usePeriodMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: [{ mutation: 'periods' }],
     mutationFn: async ({ period, action = 'write' }) => {
       if (action === 'write') {
         if (period.id) {
