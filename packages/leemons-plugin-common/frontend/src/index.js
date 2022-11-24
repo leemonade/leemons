@@ -24,6 +24,8 @@ export * from './useCache';
 export * from './stringMatch';
 export * from './components';
 export * from './ellipsis';
+export * from './useIdle';
+export * from './useBeforeUnload';
 
 function htmlToText(html) {
   const el = document.createElement('div');

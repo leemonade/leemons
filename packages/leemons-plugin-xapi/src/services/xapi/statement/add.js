@@ -34,7 +34,7 @@ function getUserAgentActor(userAgent, hostname) {
  * */
 async function add(
   { actor, verb, object, context, result, attachments, type = 'learning' },
-  { userSession }
+  { ip, userSession }
 ) {
   const { services: userService } = leemons.getPlugin('users');
 
@@ -71,18 +71,32 @@ async function add(
   const statement = {
     actor: actorStatement,
     verb,
-    object: JSON.parse(JSON.stringify(object).replace(/{hostname}/g, hostname)),
+    object: JSON.parse(
+      JSON.stringify(object)
+        .replace(/{hostname}/g, hostname)
+        .replace(/{ip}/g, ip)
+    ),
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   };
 
   if (context)
-    statement.context = JSON.parse(JSON.stringify(context).replace(/{hostname}/g, hostname));
+    statement.context = JSON.parse(
+      JSON.stringify(context)
+        .replace(/{hostname}/g, hostname)
+        .replace(/{ip}/g, ip)
+    );
   if (result)
-    statement.result = JSON.parse(JSON.stringify(result).replace(/{hostname}/g, hostname));
+    statement.result = JSON.parse(
+      JSON.stringify(result)
+        .replace(/{hostname}/g, hostname)
+        .replace(/{ip}/g, ip)
+    );
   if (attachments)
     statement.attachments = JSON.parse(
-      JSON.stringify(attachments).replace(/{hostname}/g, hostname)
+      JSON.stringify(attachments)
+        .replace(/{hostname}/g, hostname)
+        .replace(/{ip}/g, ip)
     );
 
   if (authority) {
