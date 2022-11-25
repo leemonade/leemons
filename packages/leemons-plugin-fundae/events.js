@@ -1,5 +1,4 @@
-const _ = require('lodash');
-const { permissions, menuItems, assignableRoles } = require('./config/constants');
+const { permissions, menuItems } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { addLocales } = require('./src/services/locales/addLocales');
 
@@ -30,22 +29,13 @@ async function events(isInstalled) {
     });
 
     leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.feedback:init-permissions'],
+      ['plugins.menu-builder:init-main-menu', 'plugins.fundae:init-permissions'],
       async () => {
         await initMenuBuilder();
       }
     );
-
-    leemons.events.once('plugins.assignables:init-plugin', async () => {
-      const assignablesPlugin = leemons.getPlugin('assignables');
-      await Promise.all(
-        _.map(assignableRoles, (role) =>
-          assignablesPlugin.services.assignables.registerRole(role.role, role.options)
-        )
-      );
-    });
   } else {
-    leemons.events.once('plugins.feedback:pluginDidInit', async () => {
+    leemons.events.once('plugins.fundae:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
       leemons.events.emit('init-submenu');
