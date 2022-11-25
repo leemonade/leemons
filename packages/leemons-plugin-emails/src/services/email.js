@@ -140,7 +140,7 @@ class Email {
       }
     });
     const transportersArray = await Promise.all(promises);
-    const transporters = _.flatten(transportersArray);
+    const transporters = _.flattenDeep(transportersArray);
     if (!sendMailTransporter)
       sendMailTransporter = global.utils.nodemailer.createTransport({
         sendmail: true,
@@ -379,7 +379,7 @@ class Email {
         info.error = false;
         return info;
       } catch (err) {
-        console.error('Error email:', err);
+        console.error('Error email:', err, transporters[index]);
         return Email.startToTrySendEmail(from, to, email, transporters, index + 1);
       }
     }
