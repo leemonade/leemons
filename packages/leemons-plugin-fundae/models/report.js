@@ -12,6 +12,9 @@ module.exports = {
     program: {
       type: 'string',
     },
+    percentageCompleted: {
+      type: 'integer',
+    },
     course: {
       type: 'string',
     },

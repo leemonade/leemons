@@ -17,19 +17,29 @@ import { addErrorAlert } from '@layout/alert';
 import { getCentersWithToken } from '@users/session';
 import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/request';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { generateReportRequest, listReportsRequest } from '@fundae/request';
 
 export default function Index() {
   const [t] = useTranslateLoader(prefixPN('reports'));
   const [store, render] = useStore({
     loading: true,
+    page: 0,
+    perPage: 10,
   });
+
+  async function list() {
+    try {
+      const a = await listReportsRequest(store.page, store.perPage);
+      console.log(a);
+    } catch (e) {}
+  }
 
   async function init() {
     try {
       store.loading = true;
       render();
 
-      const { profiles } = await getProfilesRequest();
+      const [{ profiles }] = await Promise.all([getProfilesRequest(), list()]);
       store.profiles = profiles;
       store.centerId = getCentersWithToken()[0].id;
 
@@ -67,7 +77,25 @@ export default function Index() {
     render();
   }
 
-  async function generate() {}
+  async function generate() {
+    try {
+      store.generating = true;
+      render();
+      await generateReportRequest({
+        userAgents: store.selectedUserAgents,
+        course: store.courseId,
+        program: store.programId,
+      });
+      store.selectedUserAgents = [];
+      store.courseId = null;
+      store.page = 0;
+      list();
+    } catch (e) {
+      addErrorAlert(e);
+    }
+    store.generating = false;
+    render();
+  }
 
   React.useEffect(() => {
     init();
@@ -133,6 +161,7 @@ export default function Index() {
                       size="sm"
                       disabled={!store.selectedUserAgents || !store.selectedUserAgents.length}
                       onClick={generate}
+                      loading={store.generating}
                     >
                       {t('generateReport')}
                     </Button>
