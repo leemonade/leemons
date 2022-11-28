@@ -3,7 +3,10 @@ const reportService = require('../src/services/report');
 
 async function generate(ctx) {
   const { userAgents, program, course } = ctx.request.body;
-  const reports = await reportService.generate(userAgents, program, { course });
+  const reports = await reportService.generate(userAgents, program, {
+    userSession: ctx.state.userSession,
+    course,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, reports };
 }

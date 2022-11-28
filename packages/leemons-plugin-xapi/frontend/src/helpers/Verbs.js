@@ -1,4 +1,20 @@
 class Verbs {
+  constructor() {
+    this.INITIALIZED = Verbs.INITIALIZED;
+    this.TERMINATED = Verbs.TERMINATED;
+    this.SUSPENDED = Verbs.SUSPENDED;
+    this.RESUMED = Verbs.RESUMED;
+    this.PASSED = Verbs.PASSED;
+    this.FAILED = Verbs.FAILED;
+    this.SCORED = Verbs.SCORED;
+    this.COMPLETED = Verbs.COMPLETED;
+    this.RESPONDED = Verbs.RESPONDED;
+    this.COMMENTED = Verbs.COMMENTED;
+    this.VOIDED = Verbs.VOIDED;
+    this.PROGRESSED = Verbs.PROGRESSED;
+    this.ANSWERED = Verbs.ANSWERED;
+  }
+
   static INITIALIZED = {
     id: 'http://adlnet.gov/expapi/verbs/initialized',
     display: {

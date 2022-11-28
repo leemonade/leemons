@@ -5,5 +5,11 @@ module.exports = {
     courseLabel: 'Course',
     studentsLabel: 'Students',
     generateReport: 'Generate report',
+    show: 'Show',
+    goTo: 'Go to',
+    reportsGenerated: 'Reports generated',
+    student: 'Student',
+    program: 'Program',
+    startDate: 'Created date',
   },
 };

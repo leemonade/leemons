@@ -1,17 +1,24 @@
 import React from 'react';
+import _ from 'lodash';
 import {
   Box,
   Button,
   Col,
+  ContextContainer,
   Grid,
   LoadingOverlay,
   PageContainer,
+  Pager,
+  Progress,
   Stack,
+  Table,
+  Title,
 } from '@bubbles-ui/components';
+import { SocketIoService } from '@socket-io/service';
+import { LocaleDate, useStore } from '@common';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@fundae/helpers/prefixPN';
-import { useStore } from '@common';
 import { SelectCourse, SelectProgram } from '@academic-portfolio/components/Selectors';
 import { addErrorAlert } from '@layout/alert';
 import { getCentersWithToken } from '@users/session';
@@ -25,12 +32,62 @@ export default function Index() {
     loading: true,
     page: 0,
     perPage: 10,
+    totalPages: 0,
   });
+
+  const tableHeaders = [
+    {
+      Header: t('student'),
+      accessor: 'studentName',
+      className: 'text-left',
+    },
+    {
+      Header: t('program'),
+      accessor: 'programName',
+      className: 'text-left',
+    },
+    {
+      Header: t('startDate'),
+      accessor: 'created',
+      className: 'text-left',
+    },
+    {
+      Header: ' ',
+      accessor: 'addons',
+      className: 'text-left',
+    },
+  ];
+
+  function updateStoreData() {
+    store.data = _.map(store.data, (item) => {
+      let addons = null;
+      if (item.percentageCompleted < 100) {
+        addons = (
+          <Box style={{ display: 'flex', alignItems: 'center' }}>
+            <Box style={{ width: 100 }}>
+              <Progress value={item.percentageCompleted} />
+            </Box>
+            <Box sx={(theme) => ({ fontSize: 12, fontWeight: 500, marginLeft: theme.spacing[1] })}>
+              {item.percentageCompleted}%
+            </Box>
+          </Box>
+        );
+      }
+      return {
+        ...item,
+        created: <LocaleDate date={item.created_at} />,
+        addons,
+      };
+    });
+  }
 
   async function list() {
     try {
-      const a = await listReportsRequest(store.page, store.perPage);
-      console.log(a);
+      const result = await listReportsRequest(store.page, store.perPage);
+      store.totalPages = result.data.totalPages;
+      store.data = result.data.items;
+      updateStoreData();
+      render();
     } catch (e) {}
   }
 
@@ -101,6 +158,15 @@ export default function Index() {
     init();
   }, []);
 
+  SocketIoService.useOn('FUNDAE_REPORT_CHANGE', (event, data) => {
+    const index = _.findIndex(store.data, { id: data.id });
+    if (index >= 0) {
+      store.data[index].percentageCompleted = data.percentageCompleted;
+      updateStoreData();
+      render();
+    }
+  });
+
   if (store.loading) return <LoadingOverlay visible />;
 
   return (
@@ -112,64 +178,96 @@ export default function Index() {
           }}
         />
         <PageContainer>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[6] })}>
-            <Grid grow>
-              <Col span={3}>
-                <SelectProgram
-                  firstSelected
-                  label={t('programLabel')}
-                  onChange={onSelectProgram}
-                  center={store.centerId}
-                  value={store.programId}
-                />
-              </Col>
-              {store.hasCourses ? (
+          <ContextContainer>
+            <Box sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+              <Grid grow>
                 <Col span={3}>
-                  <SelectCourse
+                  <SelectProgram
                     firstSelected
-                    label={t('courseLabel')}
-                    onChange={onSelectCourse}
-                    program={store.programId}
-                    value={store.courseId}
+                    label={t('programLabel')}
+                    onChange={onSelectProgram}
+                    center={store.centerId}
+                    value={store.programId}
                   />
                 </Col>
-              ) : null}
-              <Col span={6}>
-                <Stack fullWidth spacing={1}>
-                  <Box>
-                    <SelectUserAgent
-                      disabled={
-                        !(
-                          store.programId &&
-                          ((store.hasCourses && store.courseId) || !store.hasCourses)
-                        )
-                      }
-                      value={store.selectedUserAgents}
-                      centers={[store.centerId]}
-                      profiles={[store.profiles?.student]}
-                      programs={store.programId}
-                      courses={store.courseId}
-                      onChange={onChangeUserAgent}
-                      maxSelectedValues={9999}
-                      label={t('studentsLabel')}
-                      itemRenderProps={{}}
-                      valueRenderProps={{}}
+                {store.hasCourses ? (
+                  <Col span={3}>
+                    <SelectCourse
+                      firstSelected
+                      label={t('courseLabel')}
+                      onChange={onSelectCourse}
+                      program={store.programId}
+                      value={store.courseId}
                     />
-                  </Box>
-                  <Box sx={(theme) => ({ marginTop: theme.spacing[5] })} skipFlex>
-                    <Button
-                      size="sm"
-                      disabled={!store.selectedUserAgents || !store.selectedUserAgents.length}
-                      onClick={generate}
-                      loading={store.generating}
-                    >
-                      {t('generateReport')}
-                    </Button>
-                  </Box>
+                  </Col>
+                ) : null}
+                <Col span={6}>
+                  <Stack fullWidth spacing={1}>
+                    <Box>
+                      <SelectUserAgent
+                        disabled={
+                          !(
+                            store.programId &&
+                            ((store.hasCourses && store.courseId) || !store.hasCourses)
+                          )
+                        }
+                        value={store.selectedUserAgents}
+                        centers={[store.centerId]}
+                        profiles={[store.profiles?.student]}
+                        programs={store.programId}
+                        courses={store.courseId}
+                        onChange={onChangeUserAgent}
+                        maxSelectedValues={9999}
+                        label={t('studentsLabel')}
+                        itemRenderProps={{}}
+                        valueRenderProps={{}}
+                      />
+                    </Box>
+                    <Box sx={(theme) => ({ marginTop: theme.spacing[5] })} skipFlex>
+                      <Button
+                        size="sm"
+                        disabled={!store.selectedUserAgents || !store.selectedUserAgents.length}
+                        onClick={generate}
+                        loading={store.generating}
+                      >
+                        {t('generateReport')}
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Col>
+              </Grid>
+            </Box>
+
+            <Box>
+              <Title order={4}>{t('reportsGenerated')}</Title>
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <Table columns={tableHeaders} data={store.data} />
+              </Box>
+
+              {store.totalPages > 1 && (
+                <Stack fullWidth justifyContent={'center'}>
+                  <Pager
+                    labels={{
+                      goTo: t('goTo'),
+                      show: t('show'),
+                    }}
+                    page={store.page}
+                    totalPages={Math.ceil(store.totalPages)}
+                    withSize={true}
+                    size={store.perPage}
+                    onSizeChange={(e) => {
+                      store.perPage = e;
+                      list();
+                    }}
+                    onChange={(e) => {
+                      store.page = e;
+                      list();
+                    }}
+                  />
                 </Stack>
-              </Col>
-            </Grid>
-          </Box>
+              )}
+            </Box>
+          </ContextContainer>
         </PageContainer>
       </Stack>
     </Box>

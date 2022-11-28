@@ -21,5 +21,8 @@ module.exports = {
     userAgent: {
       type: 'string',
     },
+    creator: {
+      type: 'string',
+    },
   },
 };
