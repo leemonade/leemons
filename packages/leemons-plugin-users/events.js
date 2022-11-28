@@ -116,6 +116,11 @@ async function events(isInstalled) {
     createInitialProfiles();
   });
 
+  // Emails
+  leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
+    await initEmails();
+  });
+
   if (!isInstalled) {
     const initUsers = async () => {
       const actionsService = require('./src/services/actions');
@@ -161,11 +166,6 @@ async function events(isInstalled) {
         await initUsers();
       }
     );
-
-    // Emails
-    leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
-      await initEmails();
-    });
 
     leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
       try {
