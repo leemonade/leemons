@@ -83,6 +83,22 @@ async function getInstancesClasses({ instances, userSession }) {
   return instancesClassesObj;
 }
 
+async function grantUserAccessToEvens({ student, instances, transacting }) {
+  const instancesWithEvents = await tables.assignableInstances.find(
+    { id_$in: instances },
+    { column: ['event'] }
+  );
+  const calendarServices = leemons.getPlugin('calendar').services.calendar;
+
+  await Promise.all(
+    instancesWithEvents.map(({ event }) =>
+      calendarServices.grantAccessUserAgentToEvent(event, [student], 'view', {
+        transacting,
+      })
+    )
+  );
+}
+
 async function addStudentToInstances({ student, instances, userSession }) {
   return global.utils.withTransaction(async (transacting) => {
     // EN: Check if user is on the instances
@@ -127,6 +143,10 @@ async function addStudentToInstances({ student, instances, userSession }) {
         );
       })
     );
+
+    // EN: Grant users to access the events
+    // ES: Da permiso a los usuarios para ver los eventos
+    await grantUserAccessToEvens({ student, instances, transacting });
   }, tables.assignations);
 }
 
