@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { stringMatch, useCache } from '@common';
-import useScores from '@scores/hooks/scores/useScores';
+import { useScores } from '@scores/requests/hooks/queries';
 
 function parseStudentsData({ studentsData, values: _values, scores, isSubmitted }) {
   const values = _.cloneDeep(_values);

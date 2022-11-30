@@ -83,6 +83,8 @@ async function createAssignableInstance(
       });
       event = newEvent.id;
 
+      await assignableInstances.update({ id }, { event });
+
       // EN: Create the item permission
       // ES: Crea el permiso del item
       await registerPermission(id, assignable.id, { userSession, transacting });

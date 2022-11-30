@@ -9,7 +9,7 @@ import {
   TextClamp,
   Title,
 } from '@bubbles-ui/components';
-import { usePeriods as usePeriodsRequest } from '@scores/hooks';
+import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
 import _ from 'lodash';
 import { unflatten, useCache } from '@common';
 import { useForm, Controller, useWatch } from 'react-hook-form';

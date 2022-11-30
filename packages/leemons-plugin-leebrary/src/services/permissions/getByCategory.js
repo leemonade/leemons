@@ -1,10 +1,24 @@
-const { isEmpty, sortBy, intersection, uniqBy, uniq, forEach, findIndex } = require('lodash');
+const {
+  isEmpty,
+  sortBy,
+  intersection,
+  uniqBy,
+  uniq,
+  forEach,
+  findIndex,
+  map,
+  groupBy,
+  find,
+  omit,
+} = require('lodash');
+const semver = require('semver');
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 const { getPublic } = require('./getPublic');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets } = require('./getByAssets');
 const { byProvider: getByProvider } = require('../search/byProvider');
+const { tables } = require('../tables');
 
 async function getByCategory(
   categoryId,
@@ -120,13 +134,12 @@ async function getByCategory(
       );
     }
 
-    const results = permissions
+    let results = permissions
       .map((item) => ({
         asset: getAssetIdFromPermissionName(item.permissionName),
         role: item.actionNames[0],
         permissions: getRolePermissions(item.actionNames[0]),
       }))
-      .concat(publicAssets)
       .filter((item) => {
         if (roles?.length && !roles.includes(item.role)) {
           return false;
@@ -134,32 +147,85 @@ async function getByCategory(
         return assetIds.includes(item.asset);
       });
 
-    forEach(viewItems, (asset) => {
-      const index = findIndex(results, { asset });
-      if (index < 0) {
-        results.push({
-          asset,
-          role: 'viewer',
-          permissions: getRolePermissions('viewer'),
-        });
-      }
-    });
-
-    forEach(editItems, (asset) => {
-      const index = findIndex(results, { asset });
-      if (index >= 0) {
-        if (results[index].role === 'viewer') {
-          results[index].role = 'editor';
-          results[index].permissions = getRolePermissions('editor');
+    if (!roles?.length || roles.includes('viewer')) {
+      forEach(viewItems, (asset) => {
+        const index = findIndex(results, { asset });
+        if (index < 0) {
+          results.push({
+            asset,
+            role: 'viewer',
+            permissions: getRolePermissions('viewer'),
+          });
         }
-      } else {
-        results.push({
-          asset,
-          role: 'editor',
-          permissions: getRolePermissions('editor'),
-        });
-      }
-    });
+      });
+    }
+
+    if (!roles?.length || roles.includes('editor')) {
+      forEach(editItems, (asset) => {
+        const index = findIndex(results, { asset });
+        if (index >= 0) {
+          if (results[index].role === 'viewer') {
+            results[index].role = 'editor';
+            results[index].permissions = getRolePermissions('editor');
+          }
+        } else {
+          results.push({
+            asset,
+            role: 'editor',
+            permissions: getRolePermissions('editor'),
+          });
+        }
+      });
+    }
+
+    if (indexable === true) {
+      const indexableAssetsIds = await tables.assets.find(
+        { id_$in: map(results, 'asset'), indexable: true },
+        { transacting, columns: ['id'] }
+      );
+
+      const indexableAssetsObject = indexableAssetsIds.reduce(
+        (obj, { id }) => ({ ...obj, [id]: true }),
+        {}
+      );
+
+      results = results.filter(({ asset }) => indexableAssetsObject[asset]);
+    }
+
+    results = uniqBy(results.concat(publicAssets), 'asset');
+
+    if (preferCurrent) {
+      const versionControlServices = leemons.getPlugin('common').services.versionControl;
+
+      results = await Promise.all(
+        results.map(async (asset) => ({
+          ...(await versionControlServices.parseId(asset.asset, {
+            verifyVersion: false,
+            ignoreMissing: true,
+          })),
+          ...asset,
+        }))
+      );
+
+      // TODO: Remove and use setAsCurrent on asset creation
+      // EN: Filter by preferCurrent status
+      // ES: Filtrar por estado preferCurrent
+      const groupedAssets = groupBy(results, (asset) => asset.uuid);
+
+      // EN: Get the latest versions of each uuid
+      // ES: Obtener la última versión de cada uuid
+      results = map(groupedAssets, (values) => {
+        const versions = map(values, (id) => id.version);
+
+        const latest = semver.maxSatisfying(versions, '*');
+
+        return omit(
+          find(values, (id) => id.version === latest),
+          ['uuid', 'version', 'fullId']
+        );
+      });
+    }
+
     return uniqBy(results, 'asset');
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);

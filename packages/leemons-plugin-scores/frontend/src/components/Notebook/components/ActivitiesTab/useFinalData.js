@@ -1,4 +1,4 @@
-import useScores from '@scores/hooks/scores/useScores';
+import { useScores } from '@scores/requests/hooks/queries';
 import { useUserAgentsInfo } from '@users/hooks';
 import React from 'react';
 import _ from 'lodash';
