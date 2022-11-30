@@ -1,7 +1,8 @@
+const _ = require('lodash');
 const { tables } = require('../tables');
 
 async function listReports(page, size, program, course, { transacting } = {}) {
-  return global.utils.paginate(
+  const response = await global.utils.paginate(
     tables.report,
     page,
     size,
@@ -10,6 +11,18 @@ async function listReports(page, size, program, course, { transacting } = {}) {
       transacting,
     }
   );
+
+  const userServices = leemons.getPlugin('users').services;
+  const userAgents = await userServices.users.getUserAgentsInfo(_.map(response.items, 'userAgent'));
+
+  const userAgentsById = _.keyBy(userAgents, 'id');
+
+  response.items = _.map(response.items, (item) => ({
+    ...item,
+    userAgent: userAgentsById[item.userAgent],
+  }));
+
+  return response;
 }
 
 module.exports = { listReports };

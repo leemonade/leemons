@@ -11,5 +11,7 @@ module.exports = {
     student: 'Estudiante',
     program: 'Programa',
     startDate: 'Fecha creación',
+    downloadPDF: 'Descargar en PDF',
+    retry: 'Reintentar',
   },
 };

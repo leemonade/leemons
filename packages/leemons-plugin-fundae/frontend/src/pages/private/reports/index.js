@@ -4,8 +4,10 @@ import {
   Box,
   Button,
   Col,
+  COLORS,
   ContextContainer,
   Grid,
+  IconButton,
   LoadingOverlay,
   PageContainer,
   Pager,
@@ -14,6 +16,7 @@ import {
   Table,
   Title,
 } from '@bubbles-ui/components';
+import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
 import { SocketIoService } from '@socket-io/service';
 import { LocaleDate, useStore } from '@common';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
@@ -24,13 +27,21 @@ import { addErrorAlert } from '@layout/alert';
 import { getCentersWithToken } from '@users/session';
 import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/request';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { generateReportRequest, listReportsRequest } from '@fundae/request';
+import { generateReportRequest, listReportsRequest, retryReportRequest } from '@fundae/request';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
+import { useReactToPrint } from 'react-to-print';
+import { Pdf } from '@fundae/pages/private/reports/pdf';
 
 export default function Index() {
+  const printRef = React.useRef();
   const [t] = useTranslateLoader(prefixPN('reports'));
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+  });
+
   const [store, render] = useStore({
     loading: true,
-    page: 0,
+    page: 1,
     perPage: 10,
     totalPages: 0,
   });
@@ -58,6 +69,18 @@ export default function Index() {
     },
   ];
 
+  function downloadPDF(item) {
+    store.downloadReport = { ...item.report, created_at: item.created_at, item };
+    render();
+    setTimeout(() => {
+      handlePrint();
+    }, 100);
+  }
+
+  function retry(item) {
+    retryReportRequest(item.id);
+  }
+
   function updateStoreData() {
     store.data = _.map(store.data, (item) => {
       let addons = null;
@@ -73,9 +96,44 @@ export default function Index() {
           </Box>
         );
       }
+      if (item.percentageCompleted === 100) {
+        addons = (
+          <Box>
+            <IconButton
+              onClick={() => downloadPDF(item)}
+              icon={<DownloadIcon height={16} width={16} />}
+              color="primary"
+              rounded
+              label={t('downloadPDF')}
+            />
+          </Box>
+        );
+      }
+      if (item.percentageCompleted === 0) {
+        addons = (
+          <Box>
+            <Button
+              size="xs"
+              color="fatic"
+              variant="outline"
+              onClick={() => retry(item)}
+              leftIcon={<AlertWarningTriangleIcon style={{ color: COLORS.fatic01 }} />}
+            >
+              {t('retry')}
+            </Button>
+          </Box>
+        );
+      }
       return {
         ...item,
         created: <LocaleDate date={item.created_at} />,
+        studentName: [
+          item.userAgent.user.name,
+          item.userAgent.user.surnames,
+          item.userAgent.user.secondSurname,
+        ]
+          .filter((item) => !_.isEmpty(item))
+          .join(' '),
         addons,
       };
     });
@@ -83,7 +141,7 @@ export default function Index() {
 
   async function list() {
     try {
-      const result = await listReportsRequest(store.page, store.perPage);
+      const result = await listReportsRequest(store.page - 1, store.perPage);
       store.totalPages = result.data.totalPages;
       store.data = result.data.items;
       updateStoreData();
@@ -145,7 +203,7 @@ export default function Index() {
       });
       store.selectedUserAgents = [];
       store.courseId = null;
-      store.page = 0;
+      store.page = 1;
       list();
     } catch (e) {
       addErrorAlert(e);
@@ -162,6 +220,7 @@ export default function Index() {
     const index = _.findIndex(store.data, { id: data.id });
     if (index >= 0) {
       store.data[index].percentageCompleted = data.percentageCompleted;
+      if (data.report) store.data[index].report = data.report;
       updateStoreData();
       render();
     }
@@ -270,6 +329,7 @@ export default function Index() {
           </ContextContainer>
         </PageContainer>
       </Stack>
+      {store.downloadReport ? <Pdf ref={printRef} report={store.downloadReport} /> : null}
     </Box>
   );
 }

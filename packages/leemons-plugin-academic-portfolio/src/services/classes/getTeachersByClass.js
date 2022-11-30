@@ -6,7 +6,7 @@ async function getTeachersByClass(classe, { type, returnIds, transacting: _trans
     async (transacting) => {
       const classes = _.isArray(classe) ? classe : [classe];
       const query = {
-        class_$in: _.map(classes, 'id'),
+        class_$in: _.map(classes, (c) => (_.isString(c) ? c : c.id)),
       };
 
       if (type) {
@@ -18,7 +18,9 @@ async function getTeachersByClass(classe, { type, returnIds, transacting: _trans
         transacting,
       });
 
-      return returnIds ? _.map(classTeachers, 'teacher') : classTeachers;
+      return returnIds
+        ? _.uniq(_.map(classTeachers, 'teacher'))
+        : _.uniqBy(classTeachers, 'teacher');
     },
     table.class,
     _transacting

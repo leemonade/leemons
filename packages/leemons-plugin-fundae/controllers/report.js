@@ -11,6 +11,12 @@ async function generate(ctx) {
   ctx.body = { status: 200, reports };
 }
 
+async function retry(ctx) {
+  await reportService.retry(ctx.request.body.id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -33,5 +39,6 @@ async function list(ctx) {
 
 module.exports = {
   generate,
+  retry,
   list,
 };

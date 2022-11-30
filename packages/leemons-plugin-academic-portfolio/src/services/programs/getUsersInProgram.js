@@ -2,7 +2,10 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function getUsersInProgram(program, { course, transacting } = {}) {
+async function getUsersInProgram(
+  program,
+  { course, transacting, onlyStudents, onlyTeachers } = {}
+) {
   const programs = _.isArray(program) ? program : [program];
   const courses = course ? (_.isArray(course) ? course : [course]) : null;
   const classes = await table.class.find(
@@ -25,7 +28,10 @@ async function getUsersInProgram(program, { course, transacting } = {}) {
     table.classTeacher.find({ class_$in: classIds }, { columns: ['teacher'], transacting }),
   ]);
 
-  return _.map(students, 'student').concat(_.map(teachers, 'teacher'));
+  if (onlyStudents) return _.uniq(_.map(students, 'student'));
+  if (onlyTeachers) return _.uniq(_.map(teachers, 'teacher'));
+
+  return _.uniq(_.map(students, 'student').concat(_.map(teachers, 'teacher')));
 }
 
 module.exports = { getUsersInProgram };

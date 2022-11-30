@@ -15,6 +15,17 @@ module.exports = [
     },
   },
   {
+    path: '/report/retry',
+    method: 'POST',
+    handler: 'report.retry',
+    authenticated: true,
+    allowedPermissions: {
+      [permissions.fundae]: {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+  {
     path: '/report/list',
     method: 'GET',
     handler: 'report.list',

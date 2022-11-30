@@ -15,8 +15,10 @@ const { listSessionClasses } = require('./listSessionClasses');
 const { listSubjectClasses } = require('./listSubjectClasses');
 const { addClassStudentsMany } = require('./addClassStudentsMany');
 const { addClassTeachersMany } = require('./addClassTeachersMany');
+const { getClassesUnderProgram } = require('./getClassesUnderProgram');
 const { classDetailForDashboard } = require('./classDetailForDashboard');
 const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
+const { getClassesUnderProgramCourse } = require('./getClassesUnderProgramCourse');
 
 module.exports = {
   addClass,
@@ -36,6 +38,8 @@ module.exports = {
   listSessionClasses,
   addClassStudentsMany,
   addClassTeachersMany,
+  getClassesUnderProgram,
   classDetailForDashboard,
   getBasicClassesByProgram,
+  getClassesUnderProgramCourse,
 };

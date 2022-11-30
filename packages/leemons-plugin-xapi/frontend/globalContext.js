@@ -56,7 +56,6 @@ export function Provider({ children }) {
         }
         if (program) startProgram(program);
       } else {
-        console.log(store.idle, idle);
         // ES: Si el usuario lleva parado el tiempo especificado registramos que ya no esta viendo ese programa
         if (idle && store.idle !== idle) {
           stopProgram(program);

@@ -12,6 +12,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
+import { XAPI } from '@xapi';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
@@ -392,6 +393,26 @@ function Calendar({ session }) {
     // console.log(store.schedule.events);
   }
 
+  function onClickClassRoom() {
+    XAPI.addLogStatement({
+      verb: XAPI.VERBS.INITIALIZED,
+      object: {
+        objectType: 'Activity',
+        id: '{hostname}/api/open/virtual-classroom',
+        definition: {
+          extensions: {
+            id: store.activeSchedule.id,
+            name: store.activeSchedule.subject.name,
+            url: store.activeSchedule.classroom,
+          },
+          description: {
+            'en-US': 'Open virtual classroom',
+          },
+        },
+      },
+    });
+  }
+
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
       <Box style={{ width: '250px' }}>
@@ -519,6 +540,7 @@ function Calendar({ session }) {
                 mainTeacher: t('mainTeacher'),
               }}
               locale={locale}
+              onClickClassRoom={onClickClassRoom}
               event={store.activeSchedule}
               opened={!!store.activeSchedule}
               onClose={() => {
