@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
+import { uniqBy } from 'lodash';
 
 export default function useSubjects(task) {
   const { data: classes } = useSessionClasses({}, { enabled: !task?.subjects?.length });
@@ -17,10 +18,13 @@ export default function useSubjects(task) {
 
   return useMemo(
     () =>
-      subjectDetails?.map((subject) => ({
-        label: subject.name,
-        value: subject.id,
-      })) || [],
+      uniqBy(
+        subjectDetails?.map((subject) => ({
+          label: subject.name,
+          value: subject.id,
+        })),
+        'value'
+      ) || [],
     [subjectDetails]
   );
 }
