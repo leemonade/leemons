@@ -106,7 +106,7 @@ function useSubjects({ labels, control }) {
   }, [classesData, selectedProgram, labels?.allSubjects, labels?.subjectGroups, multiClassData]);
 }
 
-function SubjectItem({ subject, ...props }) {
+function SubjectItem({ subject, isValueComponent, ...props }) {
   if (!subject) {
     return null;
   }
@@ -119,6 +119,7 @@ function SubjectItem({ subject, ...props }) {
           flexDirection: 'row',
           gap: theme.spacing[2],
           alignItems: 'center',
+          width: isValueComponent && '22ch',
         })}
       >
         <Box
@@ -126,10 +127,10 @@ function SubjectItem({ subject, ...props }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            minWidth: 26,
-            minHeight: 26,
-            maxWidth: 26,
-            maxHeight: 26,
+            minWidth: 20,
+            minHeight: 20,
+            maxWidth: 20,
+            maxHeight: 20,
             borderRadius: '50%',
             backgroundColor: subject?.color,
           })}
@@ -145,7 +146,7 @@ function SubjectItem({ subject, ...props }) {
             src={typeof subject?.icon === 'string' ? subject.icon : getClassIcon({ subject })}
           />
         </Box>
-        <Text>{subject.label}</Text>
+        <Text truncated>{subject.label}</Text>
       </Box>
     </Box>
   );
@@ -193,7 +194,11 @@ function SelectAutoClearable({ data, value, onChange, ...props }) {
       value={[value]}
       onChange={(v) => onChange(v[0])}
       valueComponent={(item) => (
-        <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
+        <SubjectItem
+          {...item}
+          isValueComponent
+          subject={data.find((d) => d.value === item.value)}
+        />
       )}
       itemComponent={(item) => (
         <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
@@ -219,6 +224,11 @@ function SubjectFilters({ onChange, loading }) {
   // const classes = useClasses(control);
   const subjects = useSubjects({ labels, control });
 
+  const inputRootStyle = {
+    width: 260,
+    minWidth: 260,
+  };
+
   return (
     <>
       <Controller
@@ -231,6 +241,7 @@ function SubjectFilters({ onChange, loading }) {
             data={programs}
             searchable
             disabled={!!loading}
+            style={inputRootStyle}
           />
         )}
       />
@@ -244,6 +255,7 @@ function SubjectFilters({ onChange, loading }) {
             placeholder={labels?.subject}
             searchable
             disabled={!subjects.length || !!loading}
+            style={inputRootStyle}
           />
         )}
       />
