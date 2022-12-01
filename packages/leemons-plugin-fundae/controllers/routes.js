@@ -27,7 +27,7 @@ module.exports = [
   },
   {
     path: '/report/list',
-    method: 'GET',
+    method: 'POST',
     handler: 'report.list',
     authenticated: true,
     allowedPermissions: {

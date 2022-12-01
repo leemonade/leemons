@@ -26,6 +26,7 @@ export * from './components';
 export * from './ellipsis';
 export * from './useIdle';
 export * from './useBeforeUnload';
+export * from './context';
 
 function htmlToText(html) {
   const el = document.createElement('div');

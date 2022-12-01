@@ -65,7 +65,7 @@ export const PdfStyles = createStyles((theme) => ({
   },
 }));
 
-export const Pdf = React.forwardRef(({ report }, ref) => {
+export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
   const { classes } = PdfStyles();
   const {
     theme: { squareLogoUrl },
@@ -74,6 +74,8 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
   let course = null;
   if (report.item.course) {
     course = _.find(report.courses, { id: report.item.course });
+  } else {
+    [course] = report.courses;
   }
   let coursesDates = null;
   if (course) {
@@ -85,7 +87,7 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
   }
 
   return (
-    <Box style={{ display: 'block' }}>
+    <Box style={{ display: show ? 'block' : 'none' }}>
       <Box
         ref={ref}
         style={{
@@ -110,7 +112,7 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               )}
             </Box>
             <Box>
-              <Title order={3}>Informe de seguimiento</Title>
+              <Title order={3}>{t('followUpReport')}</Title>
             </Box>
           </Stack>
           <ContextContainer>
@@ -129,32 +131,32 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[4] })}>
                 <Box>
                   <Title order={6}>
-                    Alumno/a: {report.userAgentName} ({report.userAgentId})
+                    {t('student')}: {report.userAgentName} ({report.userAgentId})
                   </Title>
                 </Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                   <Title order={6}>
-                    Fecha emisión: {new Date(report.created_at).toLocaleString()}
+                    {t('emitDate')}: {new Date(report.created_at).toLocaleString()}
                   </Title>
                 </Box>
               </Box>
             </Box>
 
             <Box>
-              <Box className={classes.tableTitle}>Datos del curso</Box>
+              <Box className={classes.tableTitle}>{t('courseData')}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>F.inicio curso</th>
-                    <th>F. fin curso</th>
-                    <th>Horas curso</th>
-                    <th>NºAlumnos</th>
-                    <th>Ex. Plataf</th>
-                    <th>Ex. Scorm</th>
-                    <th>Tol. Ex.</th>
-                    <th>Nº Lecciones</th>
-                    <th>Nº Videoconferencias</th>
-                    <th>Nº Tutores</th>
+                    <th>{t('fCourseInit')}</th>
+                    <th>{t('fCourseEnd')}</th>
+                    <th>{t('courseHours')}</th>
+                    <th>{t('nStudents')}</th>
+                    <th>{t('examsPlatform')}</th>
+                    <th>{t('examsScorm')}</th>
+                    <th>{t('totalExams')}</th>
+                    <th>{t('nLessons')}</th>
+                    <th>{t('nVideoconferences')}</th>
+                    <th>{t('nTutors')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -179,7 +181,7 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
                     <td>Need def</td>
                     <td>{report.totalExams}</td>
                     <td>{report.lessonsPlatfom}</td>
-                    <td>Need def</td>
+                    <td>{report.classVideoN}</td>
                     <td>{report.nTeachers}</td>
                   </tr>
                 </tbody>
@@ -190,36 +192,38 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
             <Box>
               <Box>
                 <Title order={6}>
-                  Alumno/a: {report.userAgentName} ({report.userAgentId})
+                  {t('student')}: {report.userAgentName} ({report.userAgentId})
                 </Title>
               </Box>
               <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                 <Title order={6}>
-                  Curso: {report.programId} - {coursesDates ? `${coursesDates} - ` : ''}{' '}
+                  {t('course')}: {report.programId} - {coursesDates ? `${coursesDates} - ` : ''}{' '}
                   {report.programName} ({report.programAbbreviation})
                 </Title>
               </Box>
               <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                <Title order={6}>Email: {report.userAgentEmail}</Title>
+                <Title order={6}>
+                  {t('email')}: {report.userAgentEmail}
+                </Title>
               </Box>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>Resumen</Box>
+              <Box className={classes.tableTitle}>{t('resume')}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>F. 1ª conexión</th>
-                    <th>F. Última conexión</th>
-                    <th>T. Total (Horas)</th>
-                    <th>Nº Con.</th>
-                    <th>% Controles aprendizaje</th>
-                    <th>Exámenes realizados</th>
-                    <th>Lecciones completadas</th>
-                    <th>Int. foros</th>
-                    <th>Int. chats</th>
-                    <th>Mens. enviados</th>
-                    <th>Mens. rec.</th>
-                    <th>Int. videoconf.</th>
+                    <th>{t('firstCon')}</th>
+                    <th>{t('lastCon')}</th>
+                    <th>{t('totalTime')}</th>
+                    <th>{t('nCon')}</th>
+                    <th>{t('learningControls')}</th>
+                    <th>{t('examsPerformed')}</th>
+                    <th>{t('examsCompleted')}</th>
+                    <th>{t('intForums')}</th>
+                    <th>{t('intChats')}</th>
+                    <th>{t('messagesSended')}</th>
+                    <th>{t('receivedMessages')}</th>
+                    <th>{t('intVideo')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -249,14 +253,14 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               </table>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>Conexiones</Box>
+              <Box className={classes.tableTitle}>{t('connections')}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>F. Entrada curso</th>
-                    <th>F. Salida curso</th>
-                    <th>Tiempo en el curso</th>
-                    <th>IP</th>
+                    <th>{t('courseEntryDate')}</th>
+                    <th>{t('courseDepartureDate')}</th>
+                    <th>{t('timeInCourse')}</th>
+                    <th>{t('ip')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -272,21 +276,21 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               </table>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>Evaluaciones</Box>
+              <Box className={classes.tableTitle}>{t('evaluations')}</Box>
               {_.map(report.exams, (subject) => (
                 <Box>
                   <Box className={classes.tableSubTitle}>{subject.name}</Box>
                   <table className={classes.table}>
                     <thead>
                       <tr>
-                        <th>Nº Ex.</th>
-                        <th>Exámen</th>
-                        <th>T. Módulo</th>
-                        <th>Calificación</th>
-                        <th>Calificación (Letra)</th>
-                        <th>F. Evaluación</th>
-                        <th>Estado</th>
-                        <th>F. Estado</th>
+                        <th>{t('nEx')}</th>
+                        <th>{t('exam')}</th>
+                        <th>{t('tModule')}</th>
+                        <th>{t('calification')}</th>
+                        <th>{t('calificationLetter')}</th>
+                        <th>{t('evaluationDate')}</th>
+                        <th>{t('state')}</th>
+                        <th>{t('stateDate')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -300,7 +304,7 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
                           <td>
                             {item.deliveredOn ? new Date(item.deliveredOn).toLocaleString() : ''}
                           </td>
-                          <td>{item.status ? 'Presentado' : 'No'}</td>
+                          <td>{item.status ? t('submitted') : t('noSubmitted')}</td>
                           <td>
                             {item.evaluatedOn ? new Date(item.evaluatedOn).toLocaleString() : ''}
                           </td>
@@ -312,7 +316,7 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               ))}
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>Chats Privados</Box>
+              <Box className={classes.tableTitle}>{t('privateChats')}</Box>
               {_.map(report.privateChats, (chat) => {
                 let lastDay = null;
                 const userAgentsById = _.keyBy(chat.userAgents, 'id');
@@ -370,13 +374,13 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               })}
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>Videoconferencias</Box>
+              <Box className={classes.tableTitle}>{t('videoconferencing')}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>Asignatura</th>
-                    <th>F. Acceso</th>
-                    <th>Url</th>
+                    <th>{t('subject')}</th>
+                    <th>{t('dateAccess')}</th>
+                    <th>{t('url')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -391,13 +395,13 @@ export const Pdf = React.forwardRef(({ report }, ref) => {
               </table>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>Accesos a material didáctico</Box>
+              <Box className={classes.tableTitle}>{t('didacticMaterial')}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>Nombre</th>
-                    <th>Primer Acceso</th>
-                    <th>Último acceso</th>
+                    <th>{t('name')}</th>
+                    <th>{t('firstAccess')}</th>
+                    <th>{t('lastAccess')}</th>
                   </tr>
                 </thead>
                 <tbody>

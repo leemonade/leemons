@@ -12,7 +12,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import { XAPI } from '@xapi';
+import { useCommon, useLocale, useStore } from '@common';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
@@ -25,7 +25,6 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import hooks from 'leemons-hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
-import { useLocale, useStore } from '@common';
 import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
@@ -47,6 +46,7 @@ function academicCalendarImport(component) {
 }
 
 function Calendar({ session }) {
+  const { getShare } = useCommon();
   const locale = useLocale();
   const history = useHistory();
   const [store, render] = useStore({
@@ -394,23 +394,28 @@ function Calendar({ session }) {
   }
 
   function onClickClassRoom() {
-    XAPI.addLogStatement({
-      verb: XAPI.VERBS.INITIALIZED,
-      object: {
-        objectType: 'Activity',
-        id: '{hostname}/api/open/virtual-classroom',
-        definition: {
-          extensions: {
-            id: store.activeSchedule.id,
-            name: store.activeSchedule.subject.name,
-            url: store.activeSchedule.classroom,
-          },
-          description: {
-            'en-US': 'Open virtual classroom',
+    const addLogStatement = getShare('xapi', 'addLogStatement');
+    const verbs = getShare('xapi', 'verbs');
+    console.log(addLogStatement, verbs, 'flipa');
+    if (addLogStatement) {
+      addLogStatement({
+        verb: verbs.INITIALIZED,
+        object: {
+          objectType: 'Activity',
+          id: '{hostname}/api/open/virtual-classroom',
+          definition: {
+            extensions: {
+              id: store.activeSchedule.id,
+              name: store.activeSchedule.subject.name,
+              url: store.activeSchedule.classroom,
+            },
+            description: {
+              'en-US': 'Open virtual classroom',
+            },
           },
         },
-      },
-    });
+      });
+    }
   }
 
   return (

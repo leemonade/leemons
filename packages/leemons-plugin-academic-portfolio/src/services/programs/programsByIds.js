@@ -9,7 +9,11 @@ const { getProgramSubstages } = require('./getProgramSubstages');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 const { getProgramCycles } = require('./getProgramCycles');
 
-async function programsByIds(ids, { userSession, transacting } = {}) {
+async function programsByIds(ids, { onlyProgram, userSession, transacting } = {}) {
+  if (onlyProgram) {
+    return table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting });
+  }
+
   const [
     programs,
     programCenter,

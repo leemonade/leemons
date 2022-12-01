@@ -127,6 +127,7 @@ export default function Index() {
       return {
         ...item,
         created: <LocaleDate date={item.created_at} />,
+        programName: item.program.name,
         studentName: [
           item.userAgent.user.name,
           item.userAgent.user.surnames,
@@ -141,7 +142,17 @@ export default function Index() {
 
   async function list() {
     try {
-      const result = await listReportsRequest(store.page - 1, store.perPage);
+      const filters = {};
+      if (store.filterProgramId) {
+        filters.program = store.filterProgramId;
+      }
+      if (store.filterCourseId) {
+        filters.course = store.filterCourseId;
+      }
+      if (store.filterSelectedUserAgents?.length) {
+        filters.userAgent_$in = store.filterSelectedUserAgents;
+      }
+      const result = await listReportsRequest(store.page - 1, store.perPage, filters);
       store.totalPages = result.data.totalPages;
       store.data = result.data.items;
       updateStoreData();
@@ -181,14 +192,47 @@ export default function Index() {
     render();
   }
 
+  async function onFilterSelectProgram(programId) {
+    store.filterCourseId = null;
+    store.filterSelectedUserAgents = [];
+    store.filterProgramId = programId;
+    render();
+    const {
+      data: { items },
+    } = await listCoursesRequest({ page: 0, size: 9999, program: programId });
+    store.filterHasCourses = items.length;
+    // ES: Si isAlone es true significa que el programa no tiene cursos y es el grupo creado por defecto
+    if (items[0].isAlone) {
+      store.filterHasCourses = false;
+    }
+    store.page = 1;
+    list();
+    render();
+  }
+
   async function onSelectCourse(courseId) {
     store.selectedUserAgents = [];
     store.courseId = courseId;
     render();
   }
 
+  async function onFilterSelectCourse(courseId) {
+    store.filterSelectedUserAgents = [];
+    store.filterCourseId = courseId;
+    store.page = 1;
+    list();
+    render();
+  }
+
   async function onChangeUserAgent(e) {
     store.selectedUserAgents = e;
+    render();
+  }
+
+  async function onFilterChangeUserAgent(e) {
+    store.filterSelectedUserAgents = e;
+    store.page = 1;
+    list();
     render();
   }
 
@@ -203,6 +247,9 @@ export default function Index() {
       });
       store.selectedUserAgents = [];
       store.courseId = null;
+      store.filterProgramId = null;
+      store.filterCourseId = null;
+      store.filterSelectedUserAgents = [];
       store.page = 1;
       list();
     } catch (e) {
@@ -299,6 +346,49 @@ export default function Index() {
 
             <Box>
               <Title order={4}>{t('reportsGenerated')}</Title>
+
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <Grid grow>
+                  <Col span={2}>
+                    <SelectProgram
+                      clearable
+                      label={t('programLabel')}
+                      onChange={onFilterSelectProgram}
+                      center={store.centerId}
+                      value={store.filterProgramId}
+                    />
+                  </Col>
+                  {store.filterHasCourses ? (
+                    <Col span={2}>
+                      <SelectCourse
+                        clearable
+                        label={t('courseLabel')}
+                        onChange={onFilterSelectCourse}
+                        program={store.filterProgramId}
+                        value={store.filterCourseId}
+                      />
+                    </Col>
+                  ) : null}
+                  {store.filterProgramId &&
+                  ((store.filterHasCourses && store.filterCourseId) || !store.filterHasCourses) ? (
+                    <Col span={6}>
+                      <SelectUserAgent
+                        value={store.filterSelectedUserAgents}
+                        centers={[store.centerId]}
+                        profiles={[store.profiles?.student]}
+                        programs={store.filterProgramId}
+                        courses={store.filterCourseId}
+                        onChange={onFilterChangeUserAgent}
+                        maxSelectedValues={9999}
+                        label={t('studentsLabel')}
+                        itemRenderProps={{}}
+                        valueRenderProps={{}}
+                      />
+                    </Col>
+                  ) : null}
+                </Grid>
+              </Box>
+
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                 <Table columns={tableHeaders} data={store.data} />
               </Box>
@@ -329,7 +419,9 @@ export default function Index() {
           </ContextContainer>
         </PageContainer>
       </Stack>
-      {store.downloadReport ? <Pdf ref={printRef} report={store.downloadReport} /> : null}
+      {store.downloadReport ? (
+        <Pdf ref={printRef} show={false} t={t} report={store.downloadReport} />
+      ) : null}
     </Box>
   );
 }

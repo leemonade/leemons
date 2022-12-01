@@ -86,6 +86,8 @@ async function startGeneration(report, dataToSocket) {
       });
     }
 
+    const courseDates = course ? _.find(toSave.courses, { id: course.id }) : toSave.courses[0];
+
     const [[userAgentInfo]] = await Promise.all([
       userServices.users.getUserAgentsInfo([report.userAgent]),
       updateReportPer(report, 10, dataToSocket),
@@ -125,6 +127,35 @@ async function startGeneration(report, dataToSocket) {
       classesPromise,
       updateReportPer(report, 25, dataToSocket),
     ]);
+
+    toSave.classVideoN = 0;
+
+    function getDaysBetweenDates(start, end, weekDay) {
+      const result = [];
+      // Copy start date
+      const current = new Date(start);
+      // Shift to next of required days
+      current.setDate(current.getDate() + ((weekDay - current.getDay() + 7) % 7));
+      // While less than end date, add dates to result array
+      while (current < end) {
+        result.push(new Date(+current));
+        current.setDate(current.getDate() + 7);
+      }
+      return result;
+    }
+
+    if (courseDates?.startDate && courseDates?.endDate) {
+      const classes = await academicPortfolioServices.classes.classByIds(classesIds);
+      _.forEach(classes, (classe) => {
+        _.forEach(classe.schedule, ({ dayWeek }) => {
+          toSave.classVideoN += getDaysBetweenDates(
+            new Date(courseDates.startDate),
+            new Date(courseDates.endDate),
+            dayWeek
+          ).length;
+        });
+      });
+    }
 
     const [xapiVirtualClass, xapiProgramViewDates, xapiLeebraryMediaFiles] = await Promise.all([
       xapiServices.xapi.find({

@@ -29,7 +29,9 @@ async function list(ctx) {
   });
   if (validator.validate(ctx.request.query)) {
     const { page, size } = ctx.request.query;
-    const data = await reportService.listReports(parseInt(page, 10), parseInt(size, 10));
+    const data = await reportService.listReports(parseInt(page, 10), parseInt(size, 10), {
+      filters: ctx.request.body.filters,
+    });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
