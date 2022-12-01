@@ -156,7 +156,7 @@ export function Provider({ children }) {
 
   async function load() {
     try {
-      const { theme: th } = await getPlatformThemeRequest();
+      const { theme: th, jsonTheme } = await getPlatformThemeRequest();
       const mainColor = colord(th.mainColor);
       const mainColorLight = 1 - mainColor.brightness();
       const mainColorHSL = colord(th.mainColor).toHsl();
@@ -171,6 +171,7 @@ export function Provider({ children }) {
 
       const newTheme = {
         ...BUBBLES_THEME,
+        other: jsonTheme,
       };
 
       if (!sameColor) {
