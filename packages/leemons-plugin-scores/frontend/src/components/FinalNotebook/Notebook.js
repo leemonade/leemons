@@ -13,7 +13,7 @@ export default function Notebook({ filters }) {
   }
 
   return (
-    <Box>
+    <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Header filters={filters} variant="finalNotebook" allowDownload />
       <Filters onChange={setLocalFilters} />
 

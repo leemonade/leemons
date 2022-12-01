@@ -69,6 +69,35 @@ module.exports = {
       },
     },
   },
+  studentScoresPage: {
+    header: {
+      student: {
+        title: 'Mis puntuaciones',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como estudiante puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      class: {
+        label: 'Clase',
+        placeholder: 'Clase...',
+      },
+      period: {
+        label: 'Seleccionar periodo',
+        placeholder: 'Periodo de evaluación...',
+        custom: 'Periodo personalizado',
+        final: 'Evaluación final',
+      },
+      startDate: {
+        label: 'Inicio',
+        placeholder: 'Seleccionar fecha de inicio',
+      },
+      endDate: {
+        label: 'Fin',
+        placeholder: 'Seleccionar fecha de fin',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Periodo "{{name}}" eliminado correctamente',
@@ -223,6 +252,20 @@ module.exports = {
           error: 'El periodo {{period}} no puede ser reportado: {{error}}',
         },
       },
+    },
+    students: {
+      averageScore: 'Nota media',
+      subject: {
+        label: 'Seleccionar asignatura',
+        placeholder: 'Asignatura',
+      },
+      type: {
+        label: 'Seleccionar tipo',
+        placeholder: 'Tipo',
+        clear: 'Borrar',
+      },
+      seeNonCalificable: 'Ver actividades no calificables',
+      notDelivered: 'No entregado',
     },
   },
   finalNotebook: {

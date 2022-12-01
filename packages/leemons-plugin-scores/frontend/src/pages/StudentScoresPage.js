@@ -1,8 +1,8 @@
 import React from 'react';
 import Notebook from '@scores/components/Notebook';
 import { Box, createStyles } from '@bubbles-ui/components';
-import { Filters } from '../components/ScoresPage/Filters';
-import { Header } from '../components/ScoresPage/Header';
+import { Filters } from '../components/StudentScoresPage/Filters';
+import { Header } from '../components/StudentScoresPage/Header';
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -28,14 +28,15 @@ export default function ScoresPage() {
     --- State ---
   */
   const [filters, setFilters] = React.useState({});
+  const [klasses, setKlasses] = React.useState();
 
   return (
     <Box className={classes.root}>
       <Box className={classes.headerContainer}>
-        <Header variant={'scoresPage'} />
-        <Filters onChange={setFilters} />
+        <Header />
+        <Filters onChange={setFilters} setKlasses={setKlasses} />
       </Box>
-      <Notebook filters={filters} />
+      <Notebook filters={filters} klasses={klasses} isStudent />
     </Box>
   );
 }

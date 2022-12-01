@@ -69,6 +69,35 @@ module.exports = {
       },
     },
   },
+  studentScoresPage: {
+    header: {
+      student: {
+        title: 'My scores',
+        description:
+          'Welcome to your evaluation notebook. As a student you can do custom searches or use the pre-defined periods created by your center for each program and course.',
+      },
+    },
+    filters: {
+      class: {
+        label: 'Class',
+        placeholder: 'Class...',
+      },
+      period: {
+        label: 'Select period',
+        placeholder: 'Evaluation period...',
+        custom: 'Custom period',
+        final: 'Final evaluation',
+      },
+      startDate: {
+        label: 'Start date',
+        placeholder: 'Select start date...',
+      },
+      endDate: {
+        label: 'End date',
+        placeholder: 'Select end date...',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Period "{{name}}" removed successfully',
@@ -222,6 +251,20 @@ module.exports = {
           error: "The period {{period}} can't be submitted: {{error}}",
         },
       },
+    },
+    students: {
+      averageScore: 'Average score',
+      subject: {
+        label: 'Select subject',
+        placeholder: 'Subject',
+      },
+      type: {
+        label: 'Select type',
+        placeholder: 'Type',
+        clear: 'Clear',
+      },
+      seeNonCalificable: 'See non-calificable activities',
+      notDelivered: 'Not delivered',
     },
   },
   finalNotebook: {

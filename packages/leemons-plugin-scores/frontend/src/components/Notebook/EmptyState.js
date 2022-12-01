@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, createStyles, Paragraph, Title, useResizeObserver } from '@bubbles-ui/components';
+import { Box, createStyles, Paragraph, Title } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -7,7 +7,7 @@ import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';
 import noFilters from './assets/noFilters.png';
 
-const useEmptyStateStyles = createStyles((theme, { top }) => ({
+const useEmptyStateStyles = createStyles((theme, {}) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
@@ -15,8 +15,8 @@ const useEmptyStateStyles = createStyles((theme, { top }) => ({
     alignItems: 'center',
     gap: theme.spacing[7],
     width: '100%',
-    height: `calc(100vh - ${top}px)`,
     padding: theme.spacing[8],
+    flex: 1,
   },
   text: {
     display: 'flex',
@@ -49,14 +49,12 @@ function useEmptyStateLocalizations() {
   return labels;
 }
 export function EmptyState() {
-  const [ref, rect] = useResizeObserver();
   const { theme } = useLayout();
-  const top = React.useMemo(() => ref?.current?.getBoundingClientRect()?.top, [rect]);
-  const { classes } = useEmptyStateStyles({ top });
+  const { classes } = useEmptyStateStyles({});
   const labels = useEmptyStateLocalizations();
 
   return (
-    <Box className={classes.root} ref={ref}>
+    <Box className={classes.root}>
       {theme.usePicturesEmptyStates && <img src={noFilters} className={classes.image} />}
       <Box className={classes.text}>
         <Title>{labels.title}</Title>
