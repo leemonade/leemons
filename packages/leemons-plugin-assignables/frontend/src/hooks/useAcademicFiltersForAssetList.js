@@ -177,8 +177,12 @@ function useOnChange({ onChange, watch, getValues }) {
 
 function SelectAutoClearable({ data, value, onChange, ...props }) {
   React.useEffect(() => {
-    if (value && typeof onChange === 'function' && !data.find((item) => item.value === value)) {
-      onChange(null);
+    if (typeof onChange === 'function') {
+      if (value && !data.find((item) => item.value === value)) {
+        onChange(null);
+      } else if (!value && data?.length && data[0].value === 'all') {
+        onChange('all');
+      }
     }
   }, [data]);
 
