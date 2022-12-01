@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { forEach, isNil, isString } from 'lodash';
+import { forEach, isNil, isString, isEmpty } from 'lodash';
 import { useLocation } from 'react-router-dom';
 import {
   BUBBLES_THEME,
@@ -171,7 +171,7 @@ export function Provider({ children }) {
 
       const newTheme = {
         ...BUBBLES_THEME,
-        other: jsonTheme,
+        other: isEmpty(jsonTheme) ? BUBBLES_THEME.other : jsonTheme,
       };
 
       if (!sameColor) {
