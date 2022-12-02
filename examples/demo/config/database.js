@@ -25,6 +25,7 @@ module.exports = {
         password: process.env['NOSQL_PASSWORD'],
         port: process.env['NOSQL_PORT'],
         host: process.env['NOSQL_HOST'],
+        srv: process.env['NOSQL_SRV'],
         // replicaSet: process.env['NOSQL_CLUSTER'],
         pool: {
           min: 5,

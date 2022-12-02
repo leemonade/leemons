@@ -14,7 +14,7 @@ function encodeURI(config) {
   const protocol = config.connection.srv ? 'mongodb+srv' : 'mongodb';
 
   const hosts = [
-    { host: config.connection.host, port: config.connection.port },
+    { host: config.connection.host, port: config.connection.srv ? null : config.connection.port },
     ...config.replicaSet,
   ].map(({ host, port }) => {
     const _port = port ? `:${port}` : '';
