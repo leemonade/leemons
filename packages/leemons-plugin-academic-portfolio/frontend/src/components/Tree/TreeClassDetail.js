@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {
   Box,
   Button,
@@ -16,36 +16,38 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import {AddCircleIcon, DeleteBinIcon} from '@bubbles-ui/icons/outline';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { useStore } from '@common';
-import { forEach, isArray, isString, map } from 'lodash';
-import { useLayout } from '@layout/context';
-import { TreeClassroomUsersDetail } from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';
-import { TreeClassroomDetail } from './TreeClassroomDetail';
+import {useStore} from '@common';
+import {forEach, isArray, isString, map} from 'lodash';
+import {useLayout} from '@layout/context';
+import {
+  TreeClassroomUsersDetail
+} from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';
+import {TreeClassroomDetail} from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
-  messagesAddUsers,
-  classe,
-  classes,
-  program,
-  messages,
-  onSaveSubject,
-  onSaveClass,
-  onNew,
-  addClassUsers,
-  selectClass,
-  saving,
-  removing,
-  removeSubject,
-  onRemoveClass,
-  removeUserFromClass,
-  center,
-  item: treeItem,
-  teacherSelect,
-  createMode = false,
-}) => {
-  const { openConfirmationModal } = useLayout();
+                           messagesAddUsers,
+                           classe,
+                           classes,
+                           program,
+                           messages,
+                           onSaveSubject,
+                           onSaveClass,
+                           onNew,
+                           addClassUsers,
+                           selectClass,
+                           saving,
+                           removing,
+                           removeSubject,
+                           onRemoveClass,
+                           removeUserFromClass,
+                           center,
+                           item: treeItem,
+                           teacherSelect,
+                           createMode = false,
+                         }) => {
+  const {openConfirmationModal} = useLayout();
   const [store, render] = useStore({
     createMode,
     page: createMode ? '2' : '1',
@@ -54,8 +56,8 @@ const TreeClassDetail = ({
     reset,
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: classe.subject });
+    formState: {errors},
+  } = useForm({defaultValues: classe.subject});
 
   React.useEffect(() => {
     let subjectType = null;
@@ -108,15 +110,15 @@ const TreeClassDetail = ({
 
   const selects = React.useMemo(
     () => ({
-      courses: map(program.courses, ({ name, index, id }) => ({
+      courses: map(program.courses, ({name, index, id}) => ({
         label: `${name ? `${name} (${index}º)` : `${index}º`}`,
         value: id,
       })),
-      knowledges: map(program.knowledges, ({ name, id }) => ({
+      knowledges: map(program.knowledges, ({name, id}) => ({
         label: name,
         value: id,
       })),
-      subjectTypes: map(program.subjectTypes, ({ name, id }) => ({
+      subjectTypes: map(program.subjectTypes, ({name, id}) => ({
         label: name,
         value: id,
       })),
@@ -153,12 +155,12 @@ const TreeClassDetail = ({
       <RadioGroup
         variant="icon"
         data={[
-          { label: messages.basicInformation, value: '1' },
+          {label: messages.basicInformation, value: '1'},
           {
             label: messages.groupsOfClasse,
             value: '2',
           },
-          { label: messages.studentsEnrolled, value: '3' },
+          {label: messages.studentsEnrolled, value: '3'},
         ]}
         fullWidth
         onChange={(page) => {
@@ -174,8 +176,8 @@ const TreeClassDetail = ({
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: messages.subjectNameRequired }}
-                render={({ field }) => (
+                rules={{required: messages.subjectNameRequired}}
+                render={({field}) => (
                   <TextInput error={errors.name} label={messages.subjectNameLabel} {...field} />
                 )}
               />
@@ -184,8 +186,8 @@ const TreeClassDetail = ({
               <Controller
                 control={control}
                 name="subjectType"
-                rules={{ required: messages.subjectTypeRequired }}
-                render={({ field }) => (
+                rules={{required: messages.subjectTypeRequired}}
+                render={({field}) => (
                   <Select
                     data={selects.subjectTypes}
                     error={errors.subjectType}
@@ -201,7 +203,7 @@ const TreeClassDetail = ({
                 <Controller
                   control={control}
                   name="course"
-                  render={({ field }) => {
+                  render={({field}) => {
                     if (program.moreThanOneAcademicYear) {
                       return (
                         <MultiSelect
@@ -224,8 +226,8 @@ const TreeClassDetail = ({
                 <Controller
                   control={control}
                   name="knowledge"
-                  rules={{ required: messages.knowledgeRequired }}
-                  render={({ field }) => (
+                  rules={{required: messages.knowledgeRequired}}
+                  render={({field}) => (
                     <Select
                       data={selects.knowledges}
                       error={errors.knowledge}
@@ -241,7 +243,7 @@ const TreeClassDetail = ({
               <Controller
                 control={control}
                 name="image"
-                render={({ field }) => (
+                render={({field}) => (
                   <InputWrapper label={messages.imageSubjectLabel}>
                     <ImagePicker {...field} />
                   </InputWrapper>
@@ -253,7 +255,7 @@ const TreeClassDetail = ({
               <Controller
                 control={control}
                 name="icon"
-                render={({ field }) => (
+                render={({field}) => (
                   <InputWrapper label={messages.iconLabel}>
                     <ImagePicker {...field} />
                   </InputWrapper>
@@ -265,13 +267,13 @@ const TreeClassDetail = ({
               <Controller
                 control={control}
                 name="color"
-                render={({ field }) => <ColorInput label={messages.colorLabel} {...field} />}
+                render={({field}) => <ColorInput label={messages.colorLabel} {...field} />}
               />
             </Box>
 
             <Stack fullWidth justifyContent="space-between">
               <Button
-                leftIcon={<DeleteBinIcon />}
+                leftIcon={<DeleteBinIcon/>}
                 variant="outline"
                 loading={removing}
                 onClick={() => removeSubject(classe.subject.id)}
@@ -291,7 +293,7 @@ const TreeClassDetail = ({
             <Box>
               <Button
                 variant="light"
-                leftIcon={<AddCircleIcon />}
+                leftIcon={<AddCircleIcon/>}
                 disabled={store.createMode}
                 onClick={() => {
                   onNew(treeItem);
@@ -422,4 +424,4 @@ TreeClassDetail.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { TreeClassDetail };
+export {TreeClassDetail};

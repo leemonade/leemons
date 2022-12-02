@@ -3,11 +3,11 @@ import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { unflatten, useCache, useLocale } from '@common';
 import _ from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
-import useScores from '@scores/hooks/scores/useScores';
+import { useScores } from '@scores/requests/hooks/queries';
 import { ScoresReviewerTable } from '@bubbles-ui/leemons';
 import { Box, Loader } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useScoresUpdateMutation from '@scores/hooks/scores/useScoresUpdateMutation';
+import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useProgramDetail } from '@academic-portfolio/hooks';
@@ -174,7 +174,7 @@ export function FinalScores({ filters, localFilters }) {
   const { grades, isLoading: gradesAreLoading } = useGrades({ filters });
   const locale = useLocale();
   const localizations = useFinalScoresLocalization();
-  const { mutateAsync: mutateScore } = useScoresUpdateMutation();
+  const { mutateAsync: mutateScore } = useScoresMutation();
 
   const { data: programData } = useProgramDetail(filters.program, { enabled: !!filters.program });
 

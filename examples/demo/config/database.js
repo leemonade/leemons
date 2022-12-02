@@ -4,7 +4,7 @@ module.exports = {
       connector: 'bookshelf',
       useCustomRollback: process.env['USE_CUSTOM_ROLLBACK'] === 'true',
       settings: {
-        client: 'mysql2',
+        client: 'mysql',
         database: process.env['DATABASE_DATABASE'],
         username: process.env['DATABASE_USERNAME'],
         password: process.env['DATABASE_PASSWORD'],

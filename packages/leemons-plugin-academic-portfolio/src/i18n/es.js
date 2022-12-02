@@ -62,6 +62,8 @@ module.exports = {
           groupsIDAbbrev: 'Código de abreviatura de grupos',
           maxGroupAbbreviation: 'Longitud máxima de abreviatura',
           maxGroupAbbreviationIsOnlyNumbers: 'Numérico',
+          privacy: 'Privacidad',
+          hideStudentsToStudents: 'Ocultar el listado de usuarios al perfil de estudiante',
           buttonNext: 'Siguiente',
         },
         descriptions: {

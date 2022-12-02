@@ -1,0 +1,1 @@
+export { useVariantForQueryKey } from './useVariantForQueryKey';

@@ -2,14 +2,17 @@ import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
 
+export function getMultiClassData(labels) {
+  return {
+    id: 'multiSubject',
+    name: labels?.groupName || labels?.multiSubject,
+    icon: '/public/assets/svgs/module-three.svg',
+    color: '#67728E',
+  };
+}
 export default async function getClassData(classes, labels = { multiSubject: 'Multi-Subject' }) {
   if (classes.length > 1) {
-    return {
-      id: 'multiSubject',
-      name: labels?.groupName || labels?.multiSubject,
-      icon: '/public/assets/svgs/module-three.svg',
-      color: '#67728E',
-    };
+    return getMultiClassData(labels);
   }
 
   const klass = classes[0];

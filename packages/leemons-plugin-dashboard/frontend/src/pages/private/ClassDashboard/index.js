@@ -1,32 +1,33 @@
 /* eslint-disable no-nested-ternary */
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import {find, isArray, map} from 'lodash';
-import {getShare, useLocale, useStore} from '@common';
+import { find, isArray, map } from 'lodash';
+import { getShare, useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
-import {Box, createStyles, LoadingOverlay, TabPanel, Tabs} from '@bubbles-ui/components';
-import {ClassroomHeaderBar, HeaderBackground, HeaderDropdown} from '@bubbles-ui/leemons';
-import {useHistory, useParams} from 'react-router-dom';
-import {classDetailForDashboardRequest} from '@academic-portfolio/request';
-import {ZoneWidgets} from '@widgets';
-import {getLocalizations} from '@multilanguage/useTranslate';
-import {getClassImage} from '@academic-portfolio/helpers/getClassImage';
-import {getClassIcon} from '@academic-portfolio/helpers/getClassIcon';
-import {LayoutContext} from '@layout/context/layout';
+import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
+import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
+import { useHistory, useParams } from 'react-router-dom';
+import { classDetailForDashboardRequest } from '@academic-portfolio/request';
+import { ZoneWidgets } from '@widgets';
+import { getLocalizations } from '@multilanguage/useTranslate';
+import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { LayoutContext } from '@layout/context/layout';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const rightZoneWidth = '320px';
 
-const Styles = createStyles((theme, {hideRightSide, haveScrollBar}) => ({
+const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar }) => ({
   leftSide: {
-    width: hideRightSide ? '100%' : `calc(100% - ${rightZoneWidth})`,
+    width: hideRightSide || hideStudents ? '100%' : `calc(100% - ${rightZoneWidth})`,
     transition: '300ms',
   },
   rightSide: {
     width: rightZoneWidth,
     height: '100vh',
     position: 'fixed',
-    right: hideRightSide ? `-${rightZoneWidth}` : haveScrollBar ? '14px' : 0,
+    right: hideRightSide || hideStudents ? `-${rightZoneWidth}` : haveScrollBar ? '14px' : 0,
     top: 0,
     backgroundColor: theme.colors.uiBackground02,
     padding: theme.spacing[4],
@@ -71,8 +72,8 @@ const Styles = createStyles((theme, {hideRightSide, haveScrollBar}) => ({
   },
 }));
 
-export default function ClassDashboard({session}) {
-  const {layoutState} = useContext(LayoutContext);
+export default function ClassDashboard({ session }) {
+  const { layoutState } = useContext(LayoutContext);
 
   const locale = useLocale();
   const [store, render] = useStore({
@@ -82,12 +83,14 @@ export default function ClassDashboard({session}) {
     hideRightSide: false,
     haveScrollBar: false,
   });
-  const {classes: styles} = Styles({
+  const { classes: styles } = Styles({
     hideRightSide: store.hideRightSide,
     haveScrollBar: store.haveScrollBar,
+    hideStudents: store.hideStudents,
   });
   const [t] = useTranslateLoader(prefixPN('classDashboard'));
-  const {id} = useParams();
+  const { id } = useParams();
+  const isStudent = useIsStudent();
   const history = useHistory();
 
   function onResize() {
@@ -111,8 +114,12 @@ export default function ClassDashboard({session}) {
     store.loading = true;
     render();
     store.idLoaded = id;
-    const {classe, programClasses} = await classDetailForDashboardRequest(id);
+    const { classe, programClasses } = await classDetailForDashboardRequest(id);
 
+    store.hideStudents = false;
+    if (isStudent && classe.hideStudentsToStudents) {
+      store.hideStudents = true;
+    }
     store.class = classe;
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
@@ -120,8 +127,8 @@ export default function ClassDashboard({session}) {
       const group = programClass.groups.isAlone
         ? null
         : programClass.groups
-          ? programClass.groups.abbreviation
-          : null;
+        ? programClass.groups.abbreviation
+        : null;
       return {
         id: programClass.id,
         color: programClass.color,
@@ -151,14 +158,14 @@ export default function ClassDashboard({session}) {
   }
 
   async function onGetZone(zone) {
-    const {items} = await getLocalizations({keys: map(zone.widgetItems, 'properties.label')});
+    const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
     store.widgetLabels = items;
     render();
   }
 
   async function onGetRightZone(zone) {
     if (zone.widgetItems && zone.widgetItems.length) {
-      const {items} = await getLocalizations({keys: map(zone.widgetItems, 'properties.label')});
+      const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
       store.selectedRightTab = zone.widgetItems[0].id;
       store.rightWidgetSelect = map(zone.widgetItems, (item) => ({
         value: item.id,
@@ -170,8 +177,8 @@ export default function ClassDashboard({session}) {
   }
 
   React.useEffect(() => {
-    if (id && (!store.idLoaded || id !== store.idLoaded)) init();
-  }, [id]);
+    if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null) init();
+  }, [id, isStudent]);
 
   const headerProps = {};
   const classImage = store.class ? getClassImage(store.class) : null;
@@ -187,19 +194,23 @@ export default function ClassDashboard({session}) {
   }
 
   const mainTeacher = store.class
-    ? find(store.class.teachers, {type: 'main-teacher'}).teacher
+    ? find(store.class.teachers, { type: 'main-teacher' }).teacher
     : null;
 
   const classTabs = React.useCallback(
-    ({Component, key, properties}) => {
+    ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
+
+      if (properties.label === 'plugins.academic-portfolio.tabDetail.label' && store.hideStudents) {
+        return null;
+      }
 
       return (
         <TabPanel
           label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
           key={key}
         >
-          <Component {...properties} classe={store.class} session={session}/>
+          <Component {...properties} classe={store.class} session={session} />
         </TabPanel>
       );
     },
@@ -207,9 +218,9 @@ export default function ClassDashboard({session}) {
   );
 
   const classRightTabs = React.useCallback(
-    ({Component, key, properties}) =>
+    ({ Component, key, properties }) =>
       store.selectedRightTab === key ? (
-        <Component {...properties} key={key} classe={store.class} session={session}/>
+        <Component {...properties} key={key} classe={store.class} session={session} />
       ) : null,
     [store.selectedRightTab, store.class, session]
   );
@@ -240,14 +251,14 @@ export default function ClassDashboard({session}) {
 
   return (
     <>
-      {store.loading ? <LoadingOverlay visible/> : null}
+      {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
         <Box className={styles.header}>
-          <HeaderBackground {...headerProps} styles={{position: 'absolute'}}/>
-          <Box style={{position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5}}>
-            <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass}/>
+          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
+          <Box style={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}>
+            <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
             <ClassroomHeaderBar
-              labels={{virtualClassroom: t('virtualClassroom')}}
+              labels={{ virtualClassroom: t('virtualClassroom') }}
               onVirtualClassroomOpen={onVirtualClassroomOpen}
               classRoom={{
                 schedule: store.class?.schedule,
@@ -294,7 +305,7 @@ export default function ClassDashboard({session}) {
                   store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
                   render();
                 }}
-                style={{width: '100%'}}
+                style={{ width: '100%' }}
               />
             }
           >
@@ -302,20 +313,21 @@ export default function ClassDashboard({session}) {
           </ZoneWidgets>
         ) : null}
       </Box>
-      <Box className={styles.rightSide}>
-        {!!store.rightWidgetSelect && (
-          <Tabs
-            onChange={(e) => {
-              store.selectedRightTab = store.rightWidgetSelect[e].value;
-              render();
-            }}
-          >
-            {store.rightWidgetSelect.map(({label, id: tabId}) => (
-              <TabPanel label={label} id={tabId} key={tabId}/>
-            ))}
-          </Tabs>
-        )}
-        {/* {store.rightWidgetSelect ? (
+      {!store.hideStudents ? (
+        <Box className={styles.rightSide}>
+          {!!store.rightWidgetSelect && (
+            <Tabs
+              onChange={(e) => {
+                store.selectedRightTab = store.rightWidgetSelect[e].value;
+                render();
+              }}
+            >
+              {store.rightWidgetSelect.map(({ label, id: tabId }) => (
+                <TabPanel label={label} id={tabId} key={tabId} />
+              ))}
+            </Tabs>
+          )}
+          {/* {store.rightWidgetSelect ? (
           <RadioGroup
             variant="icon"
             data={store.rightWidgetSelect || []}
@@ -327,14 +339,15 @@ export default function ClassDashboard({session}) {
             value={store.selectedRightTab}
           />
         ) : null} */}
-        <Box className={styles.rightSidewidgetsContainer}>
-          {!store.loading ? (
-            <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
-              {classRightTabs}
-            </ZoneWidgets>
-          ) : null}
+          <Box className={styles.rightSidewidgetsContainer}>
+            {!store.loading ? (
+              <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
+                {classRightTabs}
+              </ZoneWidgets>
+            ) : null}
+          </Box>
         </Box>
-      </Box>
+      ) : null}
     </>
   );
 }

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
-import { Controller, useForm, FormProvider } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -196,7 +196,7 @@ function useCurriculumFields({ assignable }) {
 
     const subjectLevel = curriculumDetails.nodeLevels.find((level) => level.type === 'subject');
 
-    if (subjectLevel) {
+    if (subjectLevel?.schema?.compileJsonSchema) {
       const curriculumFields = subjectLevel.schema.compileJsonSchema.properties;
 
       const parsedCurriculumFields = Object.entries(curriculumFields).map(([id, field]) => ({

@@ -81,6 +81,8 @@ const AssetList = ({
   preferCurrent,
   searchInProvider,
   roles,
+  filters,
+  filterComponents,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -164,7 +166,7 @@ const AssetList = ({
     }, 500);
   };
 
-  const loadAssets = async (categoryId, criteria = '', type = '') => {
+  const loadAssets = async (categoryId, criteria = '', type = '', filters) => {
     if (!loadingRef.current.loading || loadingRef.current.firstTime) {
       loadingRef.current.loading = true;
       loadingRef.current.firstTime = false;
@@ -174,6 +176,7 @@ const AssetList = ({
       try {
         setAsset(null);
         const query = {
+          providerQuery: filters ? JSON.stringify(filters) : null,
           category: categoryId,
           criteria,
           type,
@@ -376,15 +379,15 @@ const AssetList = ({
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
     } else if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchDebounced, assetType);
+      loadAssets(category?.id, searchDebounced, assetType, filters);
     }
-  }, [searchDebounced, category, pinned, assetType]);
+  }, [searchDebounced, category, pinned, assetType, filters]);
 
   useEffect(() => {
     if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchProp, assetType);
+      loadAssets(category?.id, searchProp, assetType, filters);
     }
-  }, [searchProp, category, assetType, showPublic, pinned, published]);
+  }, [searchProp, category, assetType, showPublic, pinned, published, filters]);
 
   // ·········································································
   // HANDLERS
@@ -680,6 +683,7 @@ const AssetList = ({
               disabled={loading}
             />
           )}
+          {!!filterComponents && filterComponents({ loading })}
           {!isEmpty(assetTypes) && canChangeType && (
             <Select
               skipFlex
@@ -709,8 +713,9 @@ const AssetList = ({
         <Box
           skipFlex
           sx={(theme) => ({ marginTop: theme.spacing[5] })}
-          style={{ cursor: loading ? 'wait' : 'default'}}>
-          <Box style={{ pointerEvents: loading ? 'none' : 'auto'}}>
+          style={{ cursor: loading ? 'wait' : 'default' }}
+        >
+          <Box style={{ pointerEvents: loading ? 'none' : 'auto' }}>
             <RadioGroup
               data={categoriesRadioData}
               variant="icon"
@@ -721,7 +726,6 @@ const AssetList = ({
           </Box>
         </Box>
       )}
-
       {/* PAGINATED LIST ········· */}
       <Stack
         fullHeight

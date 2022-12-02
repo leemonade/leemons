@@ -9,6 +9,12 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: theme.spacing[5],
+    height: '100%',
+  },
+  headerContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[5],
   },
 }));
 
@@ -16,7 +22,7 @@ export default function ScoresPage() {
   /*
     --- Style ---
   */
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
 
   /*
     --- State ---
@@ -25,7 +31,7 @@ export default function ScoresPage() {
 
   return (
     <Box className={classes.root}>
-      <Box className={cx(classes.root)}>
+      <Box className={classes.headerContainer}>
         <Header variant={'scoresPage'} />
         <Filters onChange={setFilters} />
       </Box>

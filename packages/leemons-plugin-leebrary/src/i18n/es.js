@@ -89,6 +89,8 @@ module.exports = {
         title: 'Permisos del recurso',
         addUsers: 'Añadir usuarios',
         addUsersDescription: 'Compartir el recurso y asignar permisos',
+        addClasses: 'Añadir clases',
+        addClassesDescription: 'Compartir el recurso y asignar permisos',
         isPublic: 'Este recurso es público',
         saveButton: 'Guardar permisos',
         shareButton: 'Compartir',

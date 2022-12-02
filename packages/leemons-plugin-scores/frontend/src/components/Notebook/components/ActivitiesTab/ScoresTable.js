@@ -3,7 +3,7 @@ import { Box } from '@bubbles-ui/components';
 import { ScoresBasicTable } from '@bubbles-ui/leemons';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useScoresUpdateMutation from '@scores/hooks/scores/useScoresUpdateMutation';
+import { useScoresMutation } from '@scores/requests/hooks/mutations';
 
 function printSuccessMessage({ labels, student, activity, score }) {
   addSuccessAlert(
@@ -115,7 +115,7 @@ function onDataChange(
 
 export function ScoresTable({ activitiesData, grades, filters, onOpen, labels }) {
   const { mutateAsync: assignationScoreMutateAsync } = useStudentAssignationMutation();
-  const { mutateAsync: customScoreMutateAsync } = useScoresUpdateMutation();
+  const { mutateAsync: customScoreMutateAsync } = useScoresMutation();
   const data = React.useMemo(
     () => ({
       labels: {

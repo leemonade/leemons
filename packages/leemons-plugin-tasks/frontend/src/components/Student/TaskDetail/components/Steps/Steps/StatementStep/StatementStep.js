@@ -77,7 +77,7 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                 {curriculum?.curriculum?.length && (
                   <Box sx={tabPanelStyle}>
                     <Box>
-                      <CurriculumListContents value={curriculum?.curriculum} />
+                      <CurriculumListContents value={curriculum?.curriculum} subjects={id} />
                     </Box>
                   </Box>
                 )}

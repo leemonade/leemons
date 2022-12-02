@@ -37,8 +37,30 @@ async function sendTest(ctx) {
   } else {
     throw validator.error;
   }
+  */
+}
 
-   */
+async function sendCustomTest(ctx) {
+  /*
+  const validator = new global.utils.LeemonsValidator({
+    type: 'object',
+    properties: {
+      from: { type: 'string' },
+      to: { type: 'string' },
+      body: { type: 'string' },
+      subject: { type: 'string' },
+    },
+    required: ['from', 'to', 'body', 'subject'],
+    additionalProperties: false,
+  });
+  if (validator.validate(ctx.request.body)) {
+    const data = await emailService.sendCustomTest(ctx.request.body);
+    ctx.status = 200;
+    ctx.body = { status: 200, data };
+  } else {
+    throw validator.error;
+  }
+  */
 }
 
 async function saveProvider(ctx) {
@@ -68,4 +90,5 @@ module.exports = {
   saveProvider,
   providers,
   sendTest,
+  sendCustomTest,
 };

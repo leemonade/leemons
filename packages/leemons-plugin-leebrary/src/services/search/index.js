@@ -91,6 +91,8 @@ async function search(
           userSession,
           transacting,
         });
+
+        nothingFound = !providerAssets?.length;
       }
 
       if (!providerAssets || providerAssets.length) {
