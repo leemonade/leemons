@@ -1,11 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextEditorContext, TextEditorProvider } from '@common/context';
-import { CommonProvider } from '@common/context/common';
-import { useStore } from '@common';
 
 export function Provider({ children }) {
-  const [store, render] = useStore({ shared: {} });
   const [textEditorTools, setTextEditorTools] = useState({});
   const [textEditorProcessors, setTextEditorProcessors] = useState({});
 
@@ -35,37 +32,7 @@ export function Provider({ children }) {
     [textEditorTools]
   );
 
-  function share(plugin, name, func) {
-    console.log(plugin, name, func);
-    if (!store.shared[plugin.toLowerCase()]) store.shared[plugin.toLowerCase()] = {};
-    store.shared[plugin.toLowerCase()][name.toLowerCase()] = func;
-    console.log(store);
-  }
-
-  function getShare(plugin, name) {
-    console.log(store, plugin, name);
-    return store.shared?.[plugin.toLowerCase()]?.[name.toLowerCase()];
-  }
-
-  function existsShare(plugin, name) {
-    return !!store.shared?.[plugin.toLowerCase()]?.[name.toLowerCase()];
-  }
-
-  return (
-    <TextEditorProvider value={values}>
-      <CommonProvider
-        value={{
-          ...store,
-          render,
-          share,
-          getShare,
-          existsShare,
-        }}
-      >
-        {children}
-      </CommonProvider>
-    </TextEditorProvider>
-  );
+  return <TextEditorProvider value={values}>{children}</TextEditorProvider>;
 }
 
 Provider.propTypes = {

@@ -12,7 +12,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import { useCommon, useLocale, useStore } from '@common';
+import { getShare, useLocale, useStore } from '@common';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
@@ -46,7 +46,6 @@ function academicCalendarImport(component) {
 }
 
 function Calendar({ session }) {
-  const { getShare } = useCommon();
   const locale = useLocale();
   const history = useHistory();
   const [store, render] = useStore({
@@ -396,7 +395,6 @@ function Calendar({ session }) {
   function onClickClassRoom() {
     const addLogStatement = getShare('xapi', 'addLogStatement');
     const verbs = getShare('xapi', 'verbs');
-    console.log(addLogStatement, verbs, 'flipa');
     if (addLogStatement) {
       addLogStatement({
         verb: verbs.INITIALIZED,
