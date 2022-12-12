@@ -363,7 +363,9 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
           nodeId={values._nodeId}
           nodeLevelId={values._nodeLevelId}
           blockData={values.blockData || item.frontConfig.blockData}
-          onParentNumbering={onParentNumbering}
+          onParentNumbering={(e) => {
+            if (index === 0) onParentNumbering(e);
+          }}
           showCheckboxs={showCheckboxs}
         />
       );
