@@ -6,7 +6,7 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import unflatten from '@academic-portfolio/helpers/unflatten';
 import { get } from 'lodash';
 
-function useStatus(labels) {
+function useProgress(labels) {
   const [, translations] = useTranslateLoader(prefixPN('activity_status'));
 
   const localizations = React.useMemo(() => {
@@ -29,19 +29,31 @@ function useStatus(labels) {
         label: labels?.seeAll,
       },
       {
-        value: 'opened',
-        label: localizations?.opened,
+        value: 'notStarted',
+        label: localizations?.notStarted,
       },
       {
-        value: 'closed',
-        label: localizations?.closed,
+        value: 'started',
+        label: localizations?.started,
+      },
+      {
+        value: 'finished',
+        label: `${localizations?.submitted}/${localizations?.ended}`,
+      },
+      {
+        value: 'evaluated',
+        label: localizations?.evaluated,
+      },
+      {
+        value: 'notSubmitted',
+        label: `${localizations?.notSubmitted} (${localizations?.late})`,
       },
     ],
     [localizations, labels?.seeAll]
   );
 }
 
-export default function Status({ labels, value, onChange }) {
-  const status = useStatus(labels);
-  return <Select label={labels?.status} data={status} value={value} onChange={onChange} />;
+export default function Progress({ labels, value, onChange }) {
+  const status = useProgress(labels);
+  return <Select label={labels?.progress} data={status} value={value} onChange={onChange} />;
 }

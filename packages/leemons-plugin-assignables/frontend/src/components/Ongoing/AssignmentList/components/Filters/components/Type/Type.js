@@ -2,14 +2,14 @@ import React, { useMemo } from 'react';
 import { unflatten } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import CenterAlignedSelect from '../CenterAlignedSelect';
-import prefixPN from '../../../../../../../helpers/prefixPN';
+import { Select } from '@bubbles-ui/components';
+import prefixPN from '@assignables/helpers/prefixPN';
 
 function capitalize(str) {
   return str[0].toUpperCase() + str.substring(1, str.length);
 }
 
-function useRoles() {
+export function useRoles() {
   const [, translations] = useTranslateLoader(prefixPN('roles'));
 
   const roles = useMemo(() => {
@@ -36,8 +36,7 @@ export default function Type({ labels, value, onChange }) {
   const roles = useRoles();
 
   return (
-    <CenterAlignedSelect
-      orientation="horizontal"
+    <Select
       label={labels?.type}
       data={[
         {

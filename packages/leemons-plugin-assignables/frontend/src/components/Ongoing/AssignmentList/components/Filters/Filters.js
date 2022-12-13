@@ -1,10 +1,38 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+
+import { Box, SearchInput, useDebouncedValue } from '@bubbles-ui/components';
+
 import { difference } from 'lodash';
-import { useForm, Controller } from 'react-hook-form';
-import { Box, SearchInput, SegmentedControl } from '@bubbles-ui/components';
-import { Subject, Status, Type } from './components';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import { Subject, Status, Type, Sort } from './components';
 import { useFiltersStyle } from './Filters.style';
+import Progress from './components/Progress';
+
+function useOnChange({ control, onChange }) {
+  const value = useWatch({
+    control,
+    disabled: typeof onChange !== 'function',
+  });
+
+  const [debouncedValue] = useDebouncedValue(value);
+
+  useEffect(() => {
+    if (typeof onChange === 'function') {
+      onChange(debouncedValue);
+    }
+  }, [debouncedValue]);
+}
+
+function useOnValueChange({ setValue, getValues, value }) {
+  useEffect(() => {
+    if (value) {
+      const values = getValues();
+      const diff = difference(value, values);
+      diff.map((key) => setValue(key, value[key]));
+    }
+  }, [value]);
+}
 
 export default function Filters({
   labels,
@@ -12,144 +40,93 @@ export default function Filters({
   defaultFilters,
   onChange,
   value,
-  hideTabs,
-  hideQuery,
   hideSubject,
   hideStatus,
+  hideProgress,
   hideType,
 }) {
-  /*
-    --- FORM STATE ---
-  */
   const defaultValues = useMemo(
     () => ({
       subject: 'all',
       status: 'all',
+      progress: 'all',
       type: 'all',
-      tab: tabs?.[0]?.value,
+      sort: 'assignation',
       query: '',
       ...defaultFilters,
     }),
     [tabs]
   );
-
-  const { control, setValue, getValues, watch } = useForm({ defaultValues });
-
-  useEffect(() => {
-    if (!value) {
-      onChange(defaultValues);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (value) {
-      const values = getValues();
-
-      const diff = difference(value, values);
-
-      diff.map((key) => setValue(key, value[key]));
-    }
-  }, [value]);
-
-  useEffect(() => {
-    if (typeof onChange !== 'function') {
-      return () => {};
-    }
-
-    let timer;
-    const subscription = watch((values) => {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      timer = setTimeout(() => {
-        onChange(values);
-
-        clearTimeout(timer);
-        timer = null;
-      }, 200);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timer);
-    };
-  }, [watch, onChange]);
-
-  /*
-    --- RENDER ---
-  */
+  const { control, setValue, getValues } = useForm({
+    defaultValues,
+  });
 
   const { classes, cx } = useFiltersStyle();
 
-  const topBar = !(hideTabs && hideQuery) && (
-    <Box className={cx(classes?.filterRow, classes?.spaceBetween, classes?.alignCenter)}>
-      {hideTabs || tabs?.length <= 1 ? (
-        <Box />
-      ) : (
+  useOnChange({ control, onChange });
+  useOnValueChange({ setValue, getValues, value });
+
+  return (
+    <Box className={cx(classes?.root)}>
+      <Box className={classes.search}>
         <Controller
           control={control}
-          name="tab"
+          name="query"
           render={({ field }) => (
-            <SegmentedControl
-              classNames={{
-                root: classes.segmentRoot,
-                label: classes.segmentLabel,
-                active: classes.segmentActive,
-                labelActive: classes.segmentLabelActive,
-                control: classes.segmentControl,
-              }}
-              data={tabs}
+            <SearchInput
+              placeholder={labels?.search}
+              label={labels?.search}
+              variant="filled"
               {...field}
             />
           )}
         />
-      )}
-      {hideQuery ? (
-        <Box />
-      ) : (
-        <Box className={classes?.halfWidth}>
+      </Box>
+      {!!hideSubject || (
+        <Box className={classes.input}>
           <Controller
+            name="subject"
             control={control}
-            name="query"
-            render={({ field }) => (
-              <SearchInput placeholder={labels?.search} variant="filled" {...field} />
-            )}
+            render={({ field }) => <Subject labels={labels} {...field} />}
           />
         </Box>
       )}
-    </Box>
-  );
-  const bottomBar = !(hideSubject && hideStatus && hideType) && (
-    <Box className={cx(classes?.filterRow, classes?.gap, classes?.multiRow)}>
-      {hideSubject || (
-        <Controller
-          name="subject"
-          control={control}
-          render={({ field }) => <Subject labels={labels} {...field} />}
-        />
+      {!!hideStatus || (
+        <Box className={classes.input}>
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => <Status labels={labels} {...field} />}
+          />
+        </Box>
       )}
-      {hideStatus || (
-        <Controller
-          name="status"
-          control={control}
-          render={({ field }) => <Status labels={labels} {...field} />}
-        />
+      {!!hideProgress || (
+        <Box className={classes.input}>
+          <Controller
+            name="progress"
+            control={control}
+            render={({ field }) => <Progress labels={labels} {...field} />}
+          />
+        </Box>
       )}
-      {hideType || (
-        <Controller
-          name="type"
-          control={control}
-          render={({ field }) => <Type labels={labels} {...field} />}
-        />
+      {!!hideType || (
+        <Box className={classes.input}>
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => <Type labels={labels} {...field} />}
+          />
+        </Box>
       )}
-    </Box>
-  );
-
-  return (
-    <Box className={classes?.root}>
-      {topBar}
-      {bottomBar}
+      {!!hideType || (
+        <Box className={classes.input}>
+          <Controller
+            name="sort"
+            control={control}
+            render={({ field }) => <Sort labels={labels} {...field} />}
+          />
+        </Box>
+      )}
     </Box>
   );
 }
@@ -159,10 +136,9 @@ Filters.propTypes = {
   tabs: PropTypes.array,
   onChange: PropTypes.func,
   value: PropTypes.object,
-  hideTabs: PropTypes.bool,
-  hideQuery: PropTypes.bool,
   hideSubject: PropTypes.bool,
   hideStatus: PropTypes.bool,
+  hideProgress: PropTypes.bool,
   hideType: PropTypes.bool,
   defaultFilters: PropTypes.object,
 };

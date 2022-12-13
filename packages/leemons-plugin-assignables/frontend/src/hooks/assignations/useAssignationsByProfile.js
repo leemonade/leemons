@@ -13,20 +13,4 @@ export default function useAssignationsByProfile(ids) {
     return useAssignableInstances({ id: ids });
   }
   return useAssignations(ids?.map((id) => ({ instance: id, user })));
-
-  // useEffect(async () => {
-  //   if (isTeacher) {
-  //     const teacherResults = await getAssignableInstances({ ids });
-
-  //     setResults(teacherResults);
-  //   } else {
-  //     const studentResults = await getAssignations({ ids, user });
-
-  //     setResults(studentResults);
-  //   }
-
-  //   setLoading(false);
-  // }, [isTeacher, ids, user]);
-
-  // return [results, loading];
 }

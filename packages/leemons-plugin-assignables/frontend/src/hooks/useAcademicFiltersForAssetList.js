@@ -1,16 +1,16 @@
 import React from 'react';
-import { Box, Select, ImageLoader, Text } from '@bubbles-ui/components';
+import { Select } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
 import { useUserCenters } from '@users/hooks';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import { getSessionConfig } from '@users/session';
+import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 
-function useAssignablesAssetListLocalizations() {
+export function useAssignablesAssetListLocalizations() {
   const [, translations] = useTranslateLoader('plugins.assignables.assetListFilters');
 
   return React.useMemo(() => {
@@ -99,57 +99,11 @@ function useSubjects({ labels, control }) {
         ...subject,
         group:
           subject.type === 'main-teacher'
-            ? labels?.subectGroups?.mySubjects
-            : labels?.subectGroups?.collaborations,
+            ? labels?.subjectGroups?.mySubjects
+            : labels?.subjectGroups?.collaborations,
       })),
     ];
   }, [classesData, selectedProgram, labels?.allSubjects, labels?.subjectGroups, multiClassData]);
-}
-
-function SubjectItem({ subject, isValueComponent, ...props }) {
-  if (!subject) {
-    return null;
-  }
-
-  return (
-    <Box {...props}>
-      <Box
-        sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: theme.spacing[2],
-          alignItems: 'center',
-          width: isValueComponent && '22ch',
-        })}
-      >
-        <Box
-          sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 20,
-            minHeight: 20,
-            maxWidth: 20,
-            maxHeight: 20,
-            borderRadius: '50%',
-            backgroundColor: subject?.color,
-          })}
-        >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={typeof subject?.icon === 'string' ? subject.icon : getClassIcon({ subject })}
-          />
-        </Box>
-        <Text truncated>{subject.label}</Text>
-      </Box>
-    </Box>
-  );
 }
 
 function useOnChange({ onChange, watch, getValues }) {
@@ -176,37 +130,6 @@ function useOnChange({ onChange, watch, getValues }) {
   }, [watch, onSubmit]);
 }
 
-function SelectAutoClearable({ data, value, onChange, ...props }) {
-  React.useEffect(() => {
-    if (typeof onChange === 'function') {
-      if (value && !data.find((item) => item.value === value)) {
-        onChange(null);
-      } else if (!value && data?.length && data[0].value === 'all') {
-        onChange('all');
-      }
-    }
-  }, [data]);
-
-  return (
-    <Select
-      {...props}
-      data={data}
-      value={[value]}
-      onChange={(v) => onChange(v[0])}
-      valueComponent={(item) => (
-        <SubjectItem
-          {...item}
-          isValueComponent
-          subject={data.find((d) => d.value === item.value)}
-        />
-      )}
-      itemComponent={(item) => (
-        <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
-      )}
-    />
-  );
-}
-
 function SubjectFilters({ onChange, loading }) {
   const sessionConfig = getSessionConfig();
   const selectedProgram = sessionConfig?.program || 'all';
@@ -221,7 +144,6 @@ function SubjectFilters({ onChange, loading }) {
   const labels = useAssignablesAssetListLocalizations();
 
   const programs = usePrograms({ labels });
-  // const classes = useClasses(control);
   const subjects = useSubjects({ labels, control });
 
   const inputRootStyle = {
@@ -249,7 +171,7 @@ function SubjectFilters({ onChange, loading }) {
         control={control}
         name={'subject'}
         render={({ field }) => (
-          <SelectAutoClearable
+          <SelectSubject
             {...field}
             data={subjects}
             placeholder={labels?.subject}

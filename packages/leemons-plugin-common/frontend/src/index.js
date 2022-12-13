@@ -28,6 +28,7 @@ export * from './useIdle';
 export * from './useBeforeUnload';
 export * from './context';
 export * from './share';
+export * from './hashObject';
 
 function htmlToText(html) {
   const el = document.createElement('div');

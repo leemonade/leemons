@@ -1,53 +1,98 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles } from '@bubbles-ui/components';
-import { useStore } from '@common';
+import { Box, Text, createStyles, ImageLoader } from '@bubbles-ui/components';
 import RoomService from '@comunica/RoomService';
+import CommentIcon from './icons/CommentIcon.svg';
 
-// eslint-disable-next-line import/prefer-default-export
 export const UnreadMessagesStyles = createStyles((theme) => ({
-  root: {
-    backgroundColor: theme.colors.interactive01,
-    color: theme.colors.uiBackground04,
-    width: 16,
-    height: 16,
-    borderRadius: '50%',
-    fontSize: 10,
+  iconWrapper: {
+    position: 'relative',
+  },
+  icon: {
+    width: 30,
+    height: 24,
+    position: 'relative',
+    display: 'block',
+  },
+  unreadCount: {
+    position: 'absolute',
+    width: 30,
+    height: 24,
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  unreadCountText: {
+    color: theme.other.global.content.color.text['default--reverse'],
+  },
+  text: {
+    color: theme.other.global.content.color.text.subtle,
+  },
+  root: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing[2],
   },
 }));
 
-function UnreadMessages({ rooms }) {
-  const { classes } = UnreadMessagesStyles({}, { name: 'UnreadMessages' });
-  const [store, render] = useStore({});
+export function useRoomsMessageCount(rooms) {
+  const [messages, setMessages] = React.useState({ unread: 0, count: 0, read: 0 });
 
-  async function load() {
-    store.count = await RoomService.getUnreadMessages(rooms);
-    render();
-  }
+  const getNewMessages = React.useCallback(
+    async (chatKeys) => {
+      const unread = await RoomService.getUnreadMessages(chatKeys);
+      const count = await RoomService.getMessagesCount(chatKeys);
 
-  React.useEffect(() => {
-    load();
-  }, [rooms]);
+      setMessages({ unread, count, read: count - unread });
+    },
+    [setMessages]
+  );
 
   RoomService.watchRooms(rooms, () => {
-    store.count++;
-    render();
+    getNewMessages(rooms);
   });
 
   RoomService.watchOnReadRooms(rooms, () => {
-    load();
+    getNewMessages(rooms);
   });
 
-  if (!store.count) return null;
-  return <Box className={classes.root}>{store.count}</Box>;
+  React.useEffect(() => {
+    getNewMessages(rooms);
+  }, [rooms]);
+
+  return messages;
+}
+
+export function UnreadMessages({ rooms }) {
+  const { unread, count } = useRoomsMessageCount(rooms);
+
+  const { classes } = UnreadMessagesStyles({}, { name: 'UnreadMessages' });
+
+  if (!count) {
+    return <Text className={classes.text}>-</Text>;
+  }
+
+  return (
+    <Box className={classes.root}>
+      {!!unread && (
+        <Box className={classes.icon}>
+          <ImageLoader width={30} height={24} src={CommentIcon} />
+          <Box className={classes.unreadCount}>
+            <Text strong className={classes.unreadCountText}>
+              {unread > 99 ? '+99' : unread}
+            </Text>
+          </Box>
+        </Box>
+      )}
+      <Text className={classes.text}>({count > 999 ? '+999' : count})</Text>
+    </Box>
+  );
 }
 
 UnreadMessages.propTypes = {
   rooms: PropTypes.any,
 };
 
-export { UnreadMessages };
 export default UnreadMessages;

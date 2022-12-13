@@ -7,5 +7,6 @@ module.exports = {
   addUserAgents: room.addUserAgents,
   removeUserAgents: room.removeUserAgents,
   getUserAgentRooms: room.getUserAgentRooms,
+  getRoomsMessageCount: room.getRoomsMessageCount,
   getUnreadMessages: room.getUnreadMessages,
 };
