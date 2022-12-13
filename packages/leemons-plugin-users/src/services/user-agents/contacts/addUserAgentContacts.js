@@ -51,41 +51,36 @@ async function addUserAgentContacts(
       const roleProfileByRole = _.keyBy(roleProfile, 'role');
       const userAgentsById = _.keyBy(userAgents, 'id');
 
-      const promises = [];
-
-      _.forEach(fromUserAgents, (fromUserAgent) => {
-        const gPromises = [];
+      for (let i = 0, l = fromUserAgents.length; i < l; i++) {
+        const fromUserAgent = fromUserAgents[i];
         const fromCenter = roleCenterByRole[userAgentsById[fromUserAgent].role].center;
         const fromProfile = roleProfileByRole[userAgentsById[fromUserAgent].role].profile;
-        _.forEach(toUserAgents, (toUserAgent) => {
+        for (let ii = 0, ll = toUserAgents.length; ii < ll; ii++) {
+          const toUserAgent = toUserAgents[ii];
           const toCenter = roleCenterByRole[userAgentsById[toUserAgent].role].center;
           const toProfile = roleProfileByRole[userAgentsById[toUserAgent].role].profile;
-          gPromises.push(
-            table.userAgentContacts.set(
-              {
-                fromUserAgent,
-                toUserAgent,
-                pluginName,
-                target,
-              },
-              {
-                fromUserAgent,
-                fromCenter,
-                fromProfile,
-                toUserAgent,
-                toCenter,
-                toProfile,
-                pluginName,
-                target,
-              },
-              { transacting }
-            )
+          await global.utils.timeoutPromise(100);
+          await table.userAgentContacts.set(
+            {
+              fromUserAgent,
+              toUserAgent,
+              pluginName,
+              target,
+            },
+            {
+              fromUserAgent,
+              fromCenter,
+              fromProfile,
+              toUserAgent,
+              toCenter,
+              toProfile,
+              pluginName,
+              target,
+            },
+            { transacting }
           );
-        });
-        promises.push(Promise.all(gPromises));
-      });
-
-      return Promise.all(promises);
+        }
+      }
     },
     table.userAgentContacts,
     _transacting
