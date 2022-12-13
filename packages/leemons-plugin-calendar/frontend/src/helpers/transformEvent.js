@@ -47,9 +47,9 @@ export default function transformEvent(_event, calendars, { columns, isTeacher, 
       const instance = {
         dates: {
           deadline: event.endDate,
-          start: event.startDate,
+          start: event.instanceData ? event.startDate : event.created_at,
         },
-        status: null,
+        status: event.instanceData?.status || 'opened',
       };
       event.deadline = parseDeadline(isTeacher, isTeacher ? instance : { instance });
     }

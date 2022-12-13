@@ -169,7 +169,8 @@ export function parseDeadline(isTeacher, obj) {
       }
 
       if (isDeadline) {
-        main = 'late';
+        main = labels.late;
+        severity = 'high';
       } else if (daysUntilDeadline <= 5) {
         severity = 'medium';
         if (daysUntilDeadline <= 2) {

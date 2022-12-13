@@ -172,6 +172,7 @@ module.exports = {
     filter: 'Filtrar por',
     archived: 'Ver tareas archivadas',
     selectCalendarsSubjects: 'Todas las asignaturas',
+    onlyByMy: 'Solo las creadas por mi',
   },
   userProgramCalendar: {
     calendar: 'Calendario',

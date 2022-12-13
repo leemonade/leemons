@@ -304,7 +304,7 @@ function NewCalendarEventModal({
     // eslint-disable-next-line prefer-const
     ref.current.saving = true;
     render();
-    let { startDate, endDate, startTime, endTime, ...formData } = _formData;
+    let { startDate, endDate, deadline, uniqClasses, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
     if (formData.isAllDay) {
