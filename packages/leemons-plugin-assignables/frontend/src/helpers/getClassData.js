@@ -1,11 +1,15 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getSubjectCredits } from '@academic-portfolio/request/subjects';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
 
 export function getMultiClassData(labels) {
+  const name = labels?.groupName
+    ? `${labels?.multiSubject} - ${labels?.groupName}`
+    : labels?.multiSubject;
   return {
     id: 'multiSubject',
-    name: labels?.groupName || labels?.multiSubject,
+    name,
     icon: '/public/assets/svgs/module-three.svg',
     color: '#67728E',
   };
@@ -18,6 +22,10 @@ export default async function getClassData(classes, labels = { multiSubject: 'Mu
   const klass = classes[0];
   const response = await classByIdsRequest(klass);
   const data = response.classes[0];
+  const { subjectCredits } = await getSubjectCredits({
+    program: data.subject.program,
+    subject: data.subject.id,
+  });
 
   return {
     id: klass,
@@ -30,5 +38,7 @@ export default async function getClassData(classes, labels = { multiSubject: 'Mu
     groupName: labels?.groupName || data?.groups?.isAlone ? '' : data?.groups?.name,
     icon: getClassIcon(data),
     color: data?.color,
+    customGroup: !!labels?.groupName,
+    subjectCompiledInternalId: subjectCredits.compiledInternalId,
   };
 }
