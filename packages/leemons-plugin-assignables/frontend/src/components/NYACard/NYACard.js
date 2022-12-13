@@ -106,7 +106,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
   };
 }
 
-function parseDeadline(isTeacher, obj) {
+export function parseDeadline(isTeacher, obj) {
   let instance = obj;
 
   if (!isTeacher) {
@@ -139,8 +139,8 @@ function parseDeadline(isTeacher, obj) {
   const isDeadline = deadline.isValid() && !deadline.isAfter(today);
 
   if (!isTeacher) {
-    const submission = dayjs(obj?.timestamps?.end || null);
-    const status = getStatus(obj, instance);
+    const submission = dayjs(obj?.timestamps?.end || instance?.timestamps?.end || null);
+    const status = instance.status || getStatus(obj, instance);
     if (status === 'evaluated') {
       main = labels.evaluated;
       if (deadline.isValid()) {
