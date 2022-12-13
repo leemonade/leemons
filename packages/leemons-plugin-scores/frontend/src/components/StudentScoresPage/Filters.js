@@ -1,44 +1,14 @@
 import React from 'react';
-import { Box, createStyles, DatePicker, ImageLoader, Select } from '@bubbles-ui/components';
-import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
+import { Box, createStyles, DatePicker, Select } from '@bubbles-ui/components';
 import _ from 'lodash';
-import { unflatten, useCache } from '@common';
+import { unflatten } from '@common';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
-
-function ClassIcon({ class: klass, dropdown = false }) {
-  return (
-    <Box
-      sx={() => ({
-        position: dropdown ? 'static' : 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 26,
-        minHeight: 26,
-        maxWidth: 26,
-        maxHeight: 26,
-        borderRadius: '50%',
-        backgroundColor: klass?.color,
-      })}
-    >
-      <ImageLoader
-        sx={() => ({
-          borderRadius: 0,
-          filter: 'brightness(0) invert(1)',
-        })}
-        forceImage
-        width={16}
-        height={16}
-        src={getClassIcon(klass)}
-      />
-    </Box>
-  );
-}
+import { getSessionConfig } from '@users/session';
+import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
+import { useProgramDetail } from '@academic-portfolio/hooks';
+import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
@@ -66,7 +36,7 @@ const useFiltersStyles = createStyles((theme) => ({
 }));
 
 function useFiltersLocalizations() {
-  const key = prefixPN('scoresPage.filters');
+  const key = prefixPN('studentScoresPage.filters');
   const [, translations] = useTranslateLoader(key);
 
   const localizations = React.useMemo(() => {
@@ -85,25 +55,7 @@ function useFiltersLocalizations() {
   return localizations;
 }
 
-function useSelectedClass({ classes, control }) {
-  const selectedClassId = useWatch({
-    control,
-    name: 'class',
-    defaultValue: null,
-  });
-
-  return React.useMemo(() => {
-    if (!selectedClassId || !classes?.length) {
-      return null;
-    }
-
-    const classFound = classes.find((klass) => klass.id === selectedClassId);
-
-    return classFound;
-  }, [selectedClassId, classes]);
-}
-
-function useSelectedPeriod({ periods, control, selectedClass, finalLabel }) {
+function useSelectedPeriod({ periods, control, program, selectedCourse, finalLabel }) {
   const [periodSelected, startDate, endDate] = useWatch({
     control,
     name: ['period', 'startDate', 'endDate'],
@@ -127,10 +79,7 @@ function useSelectedPeriod({ periods, control, selectedClass, finalLabel }) {
   if (period === 'final') {
     const academicPeriods = periods.filter((p) => p?.periods);
 
-    const { program } = selectedClass;
-    const course = selectedClass.courses.id;
-
-    const periodsInFinal = academicPeriods.map((p) => p?.periods?.[program]?.[course]);
+    const periodsInFinal = academicPeriods.map((p) => p?.periods?.[program]?.[selectedCourse]);
 
     selectedPeriod = {
       startDate: academicPeriods[0]?.startDate,
@@ -138,25 +87,25 @@ function useSelectedPeriod({ periods, control, selectedClass, finalLabel }) {
       id: 'final',
       name: finalLabel,
       program,
-      course,
+      selectedCourse,
       type: 'academic-calendar',
       realPeriods: periodsInFinal,
       periods: academicPeriods,
     };
   } else if (selectedPeriod) {
-    if (selectedPeriod.periods && selectedClass) {
+    if (selectedPeriod.periods && selectedCourse) {
       selectedPeriod = {
         ..._.omit(selectedPeriod, ['id', 'programs', 'courses', 'periods']),
-        program: selectedClass.program,
-        course: selectedClass.courses.id,
-        id: selectedPeriod.periods[selectedClass.program][selectedClass.courses.id],
+        program,
+        course: selectedCourse,
+        id: selectedPeriod.periods[program][selectedCourse],
         type: 'academic-calendar',
       };
     } else {
       selectedPeriod = {
         ..._.omit(selectedPeriod, ['programs', 'courses']),
-        program: selectedPeriod.programs[0],
-        course: selectedPeriod.courses[0] || null,
+        program,
+        course: selectedCourse || null,
         type: 'scores',
       };
     }
@@ -182,82 +131,6 @@ function usePeriodTypes() {
 
     return {};
   }, [translations]);
-}
-
-function usePeriods({ selectedClass, classes }) {
-  const periodTypes = usePeriodTypes();
-
-  const cache = useCache();
-  const { data: periodsResponse, isLoading } = usePeriodsRequest({
-    page: 0,
-    size: 9999,
-  });
-
-  const adminPeriods = React.useMemo(
-    () =>
-      cache(
-        'adminPeriods',
-        periodsResponse?.items?.map((period) => ({
-          ..._.omit(period, ['program', 'course']),
-          programs: [period.program].filter(Boolean),
-          courses: [period.course].filter(Boolean),
-        })) || []
-      ),
-    [periodsResponse]
-  );
-
-  const academicCalendarPeriods = useAcademicCalendarPeriods({ classes });
-
-  const periods = React.useMemo(() => {
-    const allPeriods = [
-      ...adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })),
-      ...academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })),
-    ];
-
-    if (!allPeriods.length) {
-      return [];
-    }
-
-    return allPeriods
-      ?.filter((period) => {
-        if (!selectedClass) {
-          return false;
-        }
-
-        if (period.courses?.length) {
-          return (
-            period.programs.includes(selectedClass.program) &&
-            period.courses.includes(selectedClass.courses?.id)
-          );
-        }
-
-        if (period.programs?.length) {
-          return period.programs.includes(selectedClass.program);
-        }
-
-        return true;
-      })
-      ?.sort((a, b) => {
-        if (a.group !== b.group) {
-          if (a.group === periodTypes?.academicCalendar) {
-            return -1;
-          }
-
-          return 1;
-        }
-
-        return (
-          (new Date(a.startDate).getTime() - new Date(b.startDate).getTime()) * 100 +
-          (new Date(a.endDate).getTime() - new Date(b.endDate).getTime()) * 10 +
-          a.name.localeCompare(b.name)
-        );
-      });
-  }, [adminPeriods, academicCalendarPeriods, selectedClass, periodTypes]);
-
-  return {
-    periods,
-    isLoading,
-  };
 }
 
 function PickDate({ control, name, localizations }) {
@@ -304,40 +177,47 @@ function PickDate({ control, name, localizations }) {
 export function Filters({ onChange, setKlasses }) {
   const { classes, cx } = useFiltersStyles();
   const localizations = useFiltersLocalizations();
-  const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({});
-  const { control } = useForm();
-
-  const selectedClass = useSelectedClass({ classes: classesData, control });
-  const { periods } = usePeriods({ selectedClass, classes: classesData });
+  const { control, watch } = useForm();
+  const { program } = getSessionConfig();
+  const { data: programDetails } = useProgramDetail(program, {
+    enabled: !!program,
+  });
+  const { data: classesData } = useProgramClasses(program, { enabled: !!program });
+  const courses = React.useMemo(
+    () => programDetails?.courses.map((course) => ({ value: course.id, label: course.name })),
+    [programDetails]
+  );
+  const selectedCourse = watch('class');
+  const { periods } = useMatchingAcademicCalendarPeriods({
+    classes: classesData,
+    filters: { program, course: selectedCourse },
+  });
   const periodTypes = usePeriodTypes();
-
   const selectedPeriod = useSelectedPeriod({
     periods,
     control,
-    selectedClass,
+    program,
+    selectedCourse,
     finalLabel: localizations?.period?.final,
   });
 
   // Emit onChange
   React.useEffect(() => {
-    if (selectedClass && selectedPeriod.isComplete) {
+    if (selectedCourse && selectedPeriod.isComplete) {
       onChange({
         period: selectedPeriod,
-        program: selectedClass?.program,
-        subject: selectedClass?.subject?.id,
-        group: selectedClass?.groups?.id,
+        program,
         startDate: selectedPeriod.startDate,
         endDate: selectedPeriod.endDate,
 
-        class: selectedClass,
         isCustom: selectedPeriod.isCustom,
       });
     }
-  }, [JSON.stringify(selectedClass), JSON.stringify(selectedPeriod)]);
+  }, [JSON.stringify(selectedCourse), JSON.stringify(selectedPeriod)]);
 
   React.useEffect(() => {
-    if (classesData) setKlasses(classesData);
-  }, [JSON.stringify(classesData)]);
+    if (classesData) setKlasses(classesData.filter((klass) => klass.courses.id === selectedCourse));
+  }, [JSON.stringify(classesData), selectedCourse]);
 
   return (
     <Box className={classes.root}>
@@ -348,21 +228,9 @@ export function Filters({ onChange, setKlasses }) {
             name="class"
             render={({ field }) => (
               <Select
-                label={localizations.class?.label}
-                placeholder={localizations.class?.placeholder}
-                data={classesData?.map((klass) => {
-                  const klassName =
-                    !klass.groups.isAlone && klass.groups?.name
-                      ? `${klass.subject.name} - ${klass.groups.name}`
-                      : klass.subject.name;
-                  return {
-                    value: klass.id,
-                    c: klass,
-                    label: klassName,
-                    icon: <ClassIcon class={klass} dropdown />,
-                  };
-                })}
-                disabled={dataIsLoading}
+                label={localizations.course?.label}
+                placeholder={localizations.course?.placeholder}
+                data={courses}
                 autoSelectOneOption
                 {...field}
               />

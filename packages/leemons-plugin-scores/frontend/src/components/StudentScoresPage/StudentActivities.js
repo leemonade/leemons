@@ -5,7 +5,6 @@ import {
   Loader,
   Select,
   Switch,
-  MultiSelect,
   ImageLoader,
   createStyles,
   ScoreFronstage,
@@ -139,7 +138,7 @@ const StudentActivitiesStyles = createStyles((theme) => ({
   },
   filters: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'end',
     gap: 24,
     backgroundColor: theme.other.global.background.color.surface.subtle,
     paddingInline: 48,
@@ -155,11 +154,14 @@ const StudentActivitiesStyles = createStyles((theme) => ({
     overflowY: 'hidden',
     overflowX: 'auto',
   },
+  switchContainer: {
+    height: '40px',
+  },
 }));
 
 export default function StudentActivities({ klasses, filters, labels }) {
   const [localFilters, setLocalFilters] = React.useState({
-    subjects: [],
+    subject: '',
     type: '',
     seeNonCalificable: false,
   });
@@ -209,7 +211,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-      classActivities.length;
+        classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
@@ -221,9 +223,9 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const date = activityAssignation.timestamps.end
       ? new Date(activityAssignation.timestamps.end)
       : labels.notDelivered;
-    const grade = activityAssignation.grades.find(
-      (assignationGrade) => assignationGrade.subject === klassId
-    )?.grade;
+    const grade =
+      activityAssignation.grades.find((assignationGrade) => assignationGrade.subject === klassId)
+        ?.grade || 0;
     return { activityScore: grade, activityDate: date };
   };
 
@@ -290,8 +292,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const { filteredActivities, classesIds } = filterActivities();
     const uniqueClassesIds = [...new Set(classesIds)];
     const filteredClasses = klasses.filter((klass) =>
-      localFilters.subjects?.length > 0
-        ? localFilters.subjects.includes(klass.id) && uniqueClassesIds.includes(klass.id)
+      localFilters.subject
+        ? localFilters.subject === klass.id && uniqueClassesIds.includes(klass.id)
         : uniqueClassesIds.includes(klass.id)
     );
 
@@ -324,9 +326,11 @@ export default function StudentActivities({ klasses, filters, labels }) {
   React.useEffect(() => {
     renderScores();
   }, [
+    JSON.stringify(filters),
     JSON.stringify(data),
     JSON.stringify(activities),
     JSON.stringify(assignationsData),
+    JSON.stringify(scores),
     evaluationSystem,
     localFilters,
   ]);
@@ -334,7 +338,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.filters}>
-        <MultiSelect
+        <Select
           label={labels.subject.label}
           placeholder={labels.subject.placeholder}
           data={klasses.map((klass) => {
@@ -349,8 +353,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
               icon: <ClassIcon class={klass} dropdown />,
             };
           })}
-          value={localFilters.subjects}
-          onChange={(value) => handleFilterOnChange('subjects', value)}
+          value={localFilters.subject}
+          onChange={(value) => handleFilterOnChange('subject', value)}
           clearable={labels.type.clear}
         />
         <Select
@@ -361,11 +365,13 @@ export default function StudentActivities({ klasses, filters, labels }) {
           onChange={(value) => handleFilterOnChange('type', value)}
           clearable={labels.type.clear}
         />
-        <Switch
-          label={labels.seeNonCalificable}
-          value={localFilters.seeNonCalificable}
-          onChange={(value) => handleFilterOnChange('seeNonCalificable', value)}
-        />
+        <Box className={classes.switchContainer}>
+          <Switch
+            label={labels.seeNonCalificable}
+            value={localFilters.seeNonCalificable}
+            onChange={(value) => handleFilterOnChange('seeNonCalificable', value)}
+          />
+        </Box>
       </Box>
       <Box className={classes.scoreContainer}>{renderedScores}</Box>
     </Box>

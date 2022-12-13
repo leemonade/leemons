@@ -49,7 +49,7 @@ export default function Notebook({ filters, isStudent, klasses }) {
   const labels = useNotebookLocalizations(key);
 
   if (isEmpty(filters)) {
-    return <EmptyState />;
+    return <EmptyState isStudent={isStudent} />;
   }
 
   return (

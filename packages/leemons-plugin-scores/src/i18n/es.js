@@ -78,9 +78,9 @@ module.exports = {
       },
     },
     filters: {
-      class: {
-        label: 'Clase',
-        placeholder: 'Clase...',
+      course: {
+        label: 'Curso',
+        placeholder: 'Curso...',
       },
       period: {
         label: 'Seleccionar periodo',
@@ -197,6 +197,11 @@ module.exports = {
       title: 'Seleccionar clase y periodo',
       description:
         'Selecciona la clase o grupo y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
+    },
+    noCourseSelected: {
+      title: 'Seleccionar curso y periodo',
+      description:
+        'Selecciona el curso y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
       title: 'Sin resultados',

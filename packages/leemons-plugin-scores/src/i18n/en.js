@@ -78,9 +78,9 @@ module.exports = {
       },
     },
     filters: {
-      class: {
-        label: 'Class',
-        placeholder: 'Class...',
+      course: {
+        label: 'Course',
+        placeholder: 'Course...',
       },
       period: {
         label: 'Select period',
@@ -197,6 +197,11 @@ module.exports = {
       title: 'Select class and period',
       description:
         'Select the class or group and then filter by evaluation periods. You can also export these reports to excel or csv.',
+    },
+    noCourseSelected: {
+      title: 'Select course and period',
+      description:
+        'Select the course and then filter by evaluation periods. You can also export these reports to excel or csv.',
     },
     noResults: {
       title: 'No results',

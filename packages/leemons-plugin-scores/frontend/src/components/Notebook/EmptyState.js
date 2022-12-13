@@ -32,13 +32,14 @@ const useEmptyStateStyles = createStyles((theme, {}) => ({
     maxWidth: '50%',
   },
 }));
-function useEmptyStateLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('notebook.noClassSelected'));
+function useEmptyStateLocalizations(isStudent) {
+  const key = `notebook.${isStudent ? 'noCourseSelected' : 'noClassSelected'}`;
+  const [, translations] = useTranslateLoader(prefixPN(key));
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('notebook.noClassSelected'));
+      const data = _.get(res, prefixPN(key));
 
       return data;
     }
@@ -48,10 +49,10 @@ function useEmptyStateLocalizations() {
 
   return labels;
 }
-export function EmptyState() {
+export function EmptyState({ isStudent }) {
   const { theme } = useLayout();
   const { classes } = useEmptyStateStyles({});
-  const labels = useEmptyStateLocalizations();
+  const labels = useEmptyStateLocalizations(isStudent);
 
   return (
     <Box className={classes.root}>
