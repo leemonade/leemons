@@ -436,8 +436,10 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       if (instanceIdEvents[event.id]) {
         const instanceStatus = instanceStatusByInstance[instanceIdEvents[event.id]];
 
+        event.instanceData = instanceStatus;
+
         if (instanceStatus && (event.endDate || event.startDate) && instanceStatus.dates.deadline) {
-          event.startDate = instanceStatus.dates.deadline;
+          event.startDate = instanceStatus.dates.start;
           event.endDate = instanceStatus.dates.deadline;
         }
 

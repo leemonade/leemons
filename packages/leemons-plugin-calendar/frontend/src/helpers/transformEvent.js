@@ -1,6 +1,7 @@
-import { cloneDeep, keyBy, uniq } from 'lodash';
+import { cloneDeep, find, keyBy, uniq } from 'lodash';
+import { parseDeadline } from '@assignables/components/NYACard/NYACard';
 
-export default function transformEvent(_event, calendars, { t, translate }) {
+export default function transformEvent(_event, calendars, { columns, isTeacher, t, translate }) {
   const event = cloneDeep(_event);
   // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');
@@ -9,7 +10,13 @@ export default function transformEvent(_event, calendars, { t, translate }) {
     classes.push(event.calendar);
   }
   classes = uniq(classes);
+  event.uniqClasses = classes;
   if (classes.length >= 2) {
+    const calendar = calendarsByKey[event.calendar];
+    if (calendar.isUserCalendar) {
+      event.image = calendar.image;
+      event.calendarName = null;
+    }
     event.icon = '/public/assets/svgs/module-three.svg';
     event.bgColor = '#67728E';
     event.borderColor = '#67728E';
@@ -32,6 +39,22 @@ export default function transformEvent(_event, calendars, { t, translate }) {
     }
   }
   event.title = translate(event.title);
+
+  const column = find(columns, { id: event?.data?.column });
+
+  if (column && column.order <= 3) {
+    if (event.startDate && event.endDate) {
+      const instance = {
+        dates: {
+          deadline: event.endDate,
+          start: event.instanceData ? event.startDate : event.created_at,
+        },
+        status: event.instanceData?.status || 'opened',
+      };
+      event.deadline = parseDeadline(isTeacher, isTeacher ? instance : { instance });
+    }
+  }
+
   // }
 
   return event;
