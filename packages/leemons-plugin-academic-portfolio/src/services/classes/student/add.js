@@ -1,4 +1,3 @@
-const { map } = require('lodash');
 const { table } = require('../../tables');
 const {
   addPermissionsBetweenStudentsAndTeachers,
@@ -16,7 +15,7 @@ async function add(_class, student, { transacting } = {}) {
     { transacting }
   );
 
-  await addPermissionsBetweenStudentsAndTeachers(_class, { transacting });
+  addPermissionsBetweenStudentsAndTeachers(_class);
 
   await leemons.events.emit('after-add-class-student', { class: _class, student, transacting });
   return classStudent;
