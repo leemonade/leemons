@@ -298,8 +298,7 @@ const LibraryForm = ({
                     </Box>
                     <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
                       <Button
-                        size="sm"
-                        color="tertiary"
+                        color="secondary"
                         leftIcon={<CommonFileSearchIcon />}
                         onClick={handleCheckUrl}
                         loading={checking}
