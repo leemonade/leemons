@@ -523,10 +523,8 @@ const AssetList = ({
     }
   }, [asset]);
 
-  const headerOffset = useMemo(() => {
-    const offsets = childRef.current?.getBoundingClientRect() || childRect;
-    return Math.round(offsets.top + childRect.height + childRect.top);
-  }, [childRect, isEmbedded]);
+  const offsets = childRef.current?.getBoundingClientRect() || childRect;
+  const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
 
   const listProps = useMemo(() => {
     if (!showThumbnails && layout === 'grid') {
