@@ -388,11 +388,6 @@ function Calendar({ session }) {
 
   if (store.loading) return <LoadingOverlay visible />;
 
-  if (store.activePage === 'schedule') {
-    // console.log(store.schedule.events);
-  }
-  console.log(JSON.stringify(store.centersDataById[store.center.id].events));
-
   return (
     <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
       <Box style={{ width: '250px' }}>
@@ -490,6 +485,10 @@ function Calendar({ session }) {
               previous: t('previous'),
               next: t('next'),
               showWeekends: t('showWeekends'),
+              display: t('display'),
+              entirePeriod: t('entirePeriod'),
+              onlyInitAndEnd: t('onlyInitAndEnd'),
+              onlyEnd: t('onlyEnd'),
               allDay: t('allDay'),
               init: t('init'),
               end: t('end'),
