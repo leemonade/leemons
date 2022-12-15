@@ -14,7 +14,7 @@ import { LocaleDate, unflatten } from '@common';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { usePeriods } from '@scores/hooks';
+import { usePeriods } from '@scores/requests/hooks/queries';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';

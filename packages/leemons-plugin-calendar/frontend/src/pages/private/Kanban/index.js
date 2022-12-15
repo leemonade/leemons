@@ -127,6 +127,11 @@ function Kanban({ session }) {
           });
         }
 
+        if (ref.current.filters.onlyByMy) {
+          const { userAgentId } = getCentersWithToken(true)[0];
+          cards = _.filter(cards, (c) => c.owners.includes(userAgentId));
+        }
+
         cols.push({
           id: column.id,
           title: getColumnName(column.nameKey),

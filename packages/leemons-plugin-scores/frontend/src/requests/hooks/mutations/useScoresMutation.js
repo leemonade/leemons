@@ -1,14 +1,14 @@
 import setScores from '@scores/requests/scores/setScores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { allScoresKey } from '../keys/scores';
 
-export default function useScoresUpdateMutation() {
+export default function useScoresMutation() {
   const queryClient = useQueryClient();
-  const queryKey = ['scores'];
 
   return useMutation({
-    mutationFn: async ({ scores }) => setScores(scores),
+    mutationFn: ({ scores }) => setScores(scores),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries(allScoresKey);
     },
   });
 }

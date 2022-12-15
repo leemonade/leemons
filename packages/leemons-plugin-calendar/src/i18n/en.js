@@ -172,6 +172,7 @@ module.exports = {
     filter: 'Filter by',
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
+    onlyByMy: 'Only those created by me',
   },
   userProgramCalendar: {
     calendar: 'Calendar',
