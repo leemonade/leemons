@@ -113,12 +113,17 @@ module.exports = {
   },
   activity_deadline_header: {
     noDeadline: 'Sin fecha límite',
-    deadline: 'Fecha límite',
-    deadlineExtraTime: 'Añadir tiempo extra',
-    closeTask: 'Cerrar actividad',
-    archiveTask: 'Archivar actividad',
+    deadline: 'Entrega',
+    deadlineExtraTime: 'Añadir tiempo',
+    closeTask: 'Cerrar',
+    archiveTask: 'Archivar',
     save: 'Guardar',
     cancel: 'Cancelar',
+    period: 'Tipo de periodo',
+    startDate: 'Fecha de inicio',
+    startHour: 'Hora de inicio',
+    endDate: 'Fecha de fin',
+    endHour: 'Hora de fin',
   },
   activity_dashboard: {
     closeAction: {
@@ -143,6 +148,12 @@ module.exports = {
       messages: {
         success: 'Actividad {{verb}}',
         error: 'Error {{verb}} actividad: {{error}}',
+      },
+    },
+    start: {
+      messages: {
+        success: 'Fecha de inicio de la actividad actualizada',
+        error: 'Error al actualizar la fecha de inicio: {{error}}',
       },
     },
     deadline: {
