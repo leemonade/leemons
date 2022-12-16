@@ -4,11 +4,11 @@ import { Button, Box, Paper, ContextContainer, Stack, TagifyInput } from '@bubbl
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { LocaleDuration } from '@common/LocaleDate';
+import { TextEditorInput } from '@common/components/TextEditorInput';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
 import { ImagePicker } from '../../../components/ImagePicker';
-import { TextEditorInput } from '@common/components/TextEditorInput';
 
 export default function TestPage() {
   const [items, setItems] = useState([]);
@@ -144,7 +144,7 @@ export default function TestPage() {
 
         <ContextContainer title="TextEditorInput">
           <Box>
-            <TextEditorInput onChange={(val) => console.log(val)} />
+            <TextEditorInput onChange={(val) => console.log(val)} useJSON />
           </Box>
         </ContextContainer>
       </ContextContainer>
