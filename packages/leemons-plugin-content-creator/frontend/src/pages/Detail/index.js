@@ -128,7 +128,7 @@ export default function Index() {
           onResize={handleOnHeaderResize}
         />
 
-        <Box>Hola Mundo</Box>
+        <Box>Hello Content Creator</Box>
       </Stack>
     </Box>
   );
