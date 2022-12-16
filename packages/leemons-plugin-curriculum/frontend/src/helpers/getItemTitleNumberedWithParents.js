@@ -4,7 +4,15 @@ import _ from 'lodash';
 import { getItemTitleNumbered } from '@curriculum/helpers/getItemTitleNumbered';
 
 // eslint-disable-next-line import/prefer-default-export
-export function getItemTitleNumberedWithParents(curriculum, blockData, id, values, index, item) {
+export function getItemTitleNumberedWithParents(
+  curriculum,
+  blockData,
+  id,
+  values,
+  index,
+  item,
+  onlyGetParent
+) {
   let parentTitle = '';
   if (values?.metadata?.parentRelated) {
     const parents = getParentNodes(curriculum.nodes, id);
@@ -48,6 +56,7 @@ export function getItemTitleNumberedWithParents(curriculum, blockData, id, value
         }
       }
     }
+    if (onlyGetParent) return parentTitle;
   }
   const title = getItemTitleNumbered(blockData, values, index, false, item);
   if (title) return `${parentTitle ? `${parentTitle}.` : ''}${title}`;

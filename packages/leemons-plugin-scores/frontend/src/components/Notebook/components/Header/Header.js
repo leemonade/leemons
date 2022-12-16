@@ -11,18 +11,23 @@ import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { addErrorAlert } from '@layout/alert';
 import { useTitle } from './useTitle';
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((theme, { isStudent }) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
     gap: theme.spacing[2],
-    backgroundColor: theme.colors.interactive03h,
-    paddingTop: theme.spacing[3],
-    paddingBottom: theme.spacing[3],
-    paddingLeft: theme.spacing[5],
-    paddingRight: theme.spacing[5],
+    backgroundColor: isStudent
+      ? theme.other.global.background.color.surface.muted
+      : theme.colors.interactive03h,
+    padding: isStudent ? '16px 48px' : `${theme.spacing[3]}px ${theme.spacing[5]}px`,
   },
   title: {
+    span: isStudent
+      ? {
+          color: theme.other.global.content.color.text.default,
+          ...theme.other.global.content.typo.heading.lg,
+        }
+      : {},
     flex: 1,
   },
 }));
@@ -66,11 +71,11 @@ function onScoresDownload(extension) {
   }, 1000);
 }
 
-export default function Header({ filters = {}, variant, allowDownload }) {
+export default function Header({ filters = {}, variant, allowDownload, isStudent }) {
   /*
     --- Styles ---
   */
-  const { classes } = useStyles();
+  const { classes } = useStyles({ isStudent });
 
   /*
   --- Localizations ---
@@ -81,7 +86,7 @@ export default function Header({ filters = {}, variant, allowDownload }) {
   --- Data fetching ---
   */
   const { data: subjectData } = useSubjectClasses(filters.subject, { enabled: !!filters.subject });
-  const title = useTitle({ subject: subjectData, filters, variant });
+  const title = useTitle({ subject: subjectData, filters, variant, isStudent });
 
   return (
     <Box className={classes.root}>
@@ -90,7 +95,7 @@ export default function Header({ filters = {}, variant, allowDownload }) {
         <>
           <Button
             variant="outline"
-            size="xs"
+            size="sm"
             position="center"
             leftIcon={<DownloadIcon />}
             onClick={() => onScoresDownload('xlsx')}
@@ -99,7 +104,7 @@ export default function Header({ filters = {}, variant, allowDownload }) {
           </Button>
           <Button
             variant="outline"
-            size="xs"
+            size="sm"
             position="center"
             leftIcon={<DownloadIcon />}
             onClick={() => onScoresDownload('csv')}

@@ -6,6 +6,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import AssetList from '@leebrary/components/AssetList';
 import { prepareAsset } from '@leebrary/helpers/prepareAsset';
+import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
 import { prefixPN } from '../../../helpers';
 
 const LibraryPageStyles = createStyles((theme) => ({
@@ -29,6 +30,7 @@ export default function LibraryPage() {
   const [t] = useTranslateLoader(prefixPN('library_page'));
   const { t: tCommonHeader } = useCommonTranslate('page_header');
   const [currentAsset, setCurrentAsset] = React.useState(null);
+  const academicFilters = useAcademicFiltersForAssetList();
 
   const history = useHistory();
 
@@ -78,7 +80,6 @@ export default function LibraryPage() {
         onNew={handleOnNewTask}
         fullWidth
       />
-
       <Tabs
         usePageLayout
         panelColor="solid"
@@ -90,6 +91,7 @@ export default function LibraryPage() {
         <TabPanel label={headerLabels.published}>
           <Box className={classes.tabPane}>
             <AssetList
+              {...academicFilters}
               canShowPublicToggle={false}
               published
               showPublic
@@ -105,6 +107,7 @@ export default function LibraryPage() {
         <TabPanel label={headerLabels.draft}>
           <Box className={classes.tabPane}>
             <AssetList
+              {...academicFilters}
               canShowPublicToggle={false}
               published={false}
               showPublic

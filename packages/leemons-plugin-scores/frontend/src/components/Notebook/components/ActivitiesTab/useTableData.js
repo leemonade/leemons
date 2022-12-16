@@ -36,7 +36,10 @@ function useSelectedClasses(filters) {
 function useActivities(activities) {
   const previousResult = React.useRef([]);
 
-  const assignableInstancesQueries = useAssignableInstances({ id: activities || [] });
+  const assignableInstancesQueries = useAssignableInstances({
+    id: activities || [],
+    enabled: !!activities?.length,
+  });
 
   const assignableInstances = React.useMemo(
     () => map(assignableInstancesQueries, 'data').filter(Boolean),
@@ -106,7 +109,9 @@ function useFilteredAssignableInstances({ assignableInstances, filters }) {
 }
 
 function useGrades(assignableInstances) {
-  const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0]);
+  const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0], {
+    enabled: !!assignableInstances?.length,
+  });
   const cache = useCache();
   const grades = React.useMemo(
     () =>
@@ -133,6 +138,8 @@ function usePeriodData({ filters, localFilters }) {
       { enabled: !!selectedClasses.length }
     );
 
+  const hasActivities = !isLoadingSearchAssignableInstances && activities.length;
+
   const { assignableInstances, isLoading: assignableInstancesAreLoading } =
     useActivities(activities);
 
@@ -146,11 +153,12 @@ function usePeriodData({ filters, localFilters }) {
 
   const grades = useGrades(assignableInstances);
 
-  const isLoading =
-    isLoadingSearchAssignableInstances ||
-    isLoadingStudentsData ||
-    assignableInstancesAreLoading ||
-    !selectedClasses?.length;
+  const isLoading = !hasActivities
+    ? false
+    : isLoadingSearchAssignableInstances ||
+      isLoadingStudentsData ||
+      assignableInstancesAreLoading ||
+      !selectedClasses?.length;
 
   const activitiesData = useParsedActivities(
     isLoading,
@@ -165,7 +173,7 @@ function usePeriodData({ filters, localFilters }) {
   const cache = useCache();
 
   return {
-    isLoading,
+    isLoading: isLoading ? isLoadingSearchAssignableInstances && !activities?.length : false,
     activitiesData: cache('activitiesData', activitiesData),
     grades,
   };

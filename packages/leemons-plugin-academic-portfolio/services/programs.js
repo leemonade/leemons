@@ -3,6 +3,7 @@ const {
   listPrograms,
   programsByIds,
   getUserPrograms,
+  getUsersInProgram,
   isUserInsideProgram,
   getProgramEvaluationSystem,
 } = require('../src/services/programs');
@@ -12,6 +13,7 @@ module.exports = {
   listPrograms,
   programsByIds,
   getUserPrograms,
+  getUsersInProgram,
   isUserInsideProgram,
   getProgramEvaluationSystem,
 };

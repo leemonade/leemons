@@ -108,7 +108,6 @@ export function Filters({ onChange }) {
           }}
         />
       </Box>
-
       <Controller
         control={control}
         name={'futureEvaluations'}

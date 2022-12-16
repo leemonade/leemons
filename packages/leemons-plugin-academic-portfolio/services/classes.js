@@ -8,6 +8,8 @@ const {
   addClass,
   listClasses,
   updateClassMany,
+  getClassesUnderProgram,
+  getClassesUnderProgramCourse,
 } = require('../src/services/classes');
 const { addClassStudentsMany } = require('../src/services/classes/addClassStudentsMany');
 const { listSessionClasses } = require('../src/services/classes/listSessionClasses');
@@ -33,4 +35,6 @@ module.exports = {
   removeTeachersByClass,
   addStudentsToClasses: addClassStudentsMany,
   listClasses,
+  getClassesUnderProgram,
+  getClassesUnderProgramCourse,
 };

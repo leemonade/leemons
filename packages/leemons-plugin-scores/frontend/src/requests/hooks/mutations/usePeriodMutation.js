@@ -1,9 +1,9 @@
 import { addPeriodRequest, removePeriodRequest } from '@scores/requests';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { allPeriodsKey } from '../keys/periods';
 
 export default function usePeriodMutation() {
   const queryClient = useQueryClient();
-  const queryKey = ['periods'];
 
   return useMutation({
     mutationFn: async ({ period, action = 'write' }) => {
@@ -24,7 +24,7 @@ export default function usePeriodMutation() {
       throw new Error(`Unknown action '${action}'. Must be one of [write, remove]`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries(allPeriodsKey);
     },
   });
 }

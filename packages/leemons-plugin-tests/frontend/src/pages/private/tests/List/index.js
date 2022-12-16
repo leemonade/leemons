@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import AssetList from '@leebrary/components/AssetList';
 import { prepareAsset } from '@leebrary/helpers/prepareAsset';
+import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
@@ -24,6 +25,7 @@ export default function List() {
   const [t] = useTranslateLoader(prefixPN('testsList'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const [currentAsset, setCurrentAsset] = React.useState(null);
+  const academicFilters = useAcademicFiltersForAssetList();
 
   const history = useHistory();
 
@@ -83,6 +85,7 @@ export default function List() {
         <TabPanel label={t('published')}>
           <Box className={classes.tabPane}>
             <AssetList
+              {...academicFilters}
               canShowPublicToggle={false}
               published={true}
               asset={currentAsset}
@@ -97,6 +100,7 @@ export default function List() {
         <TabPanel label={t('draft')}>
           <Box className={classes.tabPane}>
             <AssetList
+              {...academicFilters}
               canShowPublicToggle={false}
               published={false}
               asset={currentAsset}

@@ -22,7 +22,7 @@ module.exports = function webpackConfig({
 
   /** @type {import("webpack").Configuration} */
   const config = {
-    mode: 'development',
+    mode: isDev ? 'development' : 'production',
     entry: [path.join(app, 'index.js'), path.resolve(app, 'hotManagement.js')],
     output: {
       path: build,

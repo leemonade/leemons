@@ -46,6 +46,8 @@ const SelectUserAgent = forwardRef(
     {
       profiles,
       centers,
+      programs,
+      courses,
       maxSelectedValues = 1,
       users,
       onlyContacts,
@@ -84,6 +86,14 @@ const SelectUserAgent = forwardRef(
 
         if (centers) {
           filters.center = centers;
+        }
+
+        if (programs) {
+          filters.program = programs;
+        }
+
+        if (courses) {
+          filters.course = courses;
         }
 
         const response = await searchUserAgentsRequest(filters, {
@@ -248,6 +258,10 @@ const SelectUserAgent = forwardRef(
       }
     }, [profiles]);
 
+    useEffect(() => {
+      search('');
+    }, [courses, programs]);
+
     // EN: Concat the selected values with the data array
     // ES: Concatenamos los valores seleccionados con el array de datos
     const data = cloneDeep(store.data);
@@ -330,6 +344,8 @@ SelectUserAgent.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  programs: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  courses: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   maxSelectedValues: PropTypes.number,
   onlyContacts: PropTypes.bool,
   returnItem: PropTypes.bool,

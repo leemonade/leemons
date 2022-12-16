@@ -69,6 +69,35 @@ module.exports = {
       },
     },
   },
+  studentScoresPage: {
+    header: {
+      student: {
+        title: 'Mis puntuaciones',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como estudiante puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      course: {
+        label: 'Curso',
+        placeholder: 'Curso...',
+      },
+      period: {
+        label: 'Seleccionar periodo',
+        placeholder: 'Periodo de evaluación...',
+        custom: 'Periodo personalizado',
+        final: 'Evaluación final',
+      },
+      startDate: {
+        label: 'Inicio',
+        placeholder: 'Seleccionar fecha de inicio',
+      },
+      endDate: {
+        label: 'Fin',
+        placeholder: 'Seleccionar fecha de fin',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Periodo "{{name}}" eliminado correctamente',
@@ -169,6 +198,11 @@ module.exports = {
       description:
         'Selecciona la clase o grupo y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
     },
+    noCourseSelected: {
+      title: 'Seleccionar curso y periodo',
+      description:
+        'Selecciona el curso y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
+    },
     noResults: {
       title: 'Sin resultados',
       description: 'No hemos encontrado resultados para tu búsqueda.',
@@ -223,6 +257,20 @@ module.exports = {
           error: 'El periodo {{period}} no puede ser reportado: {{error}}',
         },
       },
+    },
+    students: {
+      averageScore: 'Nota media',
+      subject: {
+        label: 'Seleccionar asignatura',
+        placeholder: 'Asignatura',
+      },
+      type: {
+        label: 'Seleccionar tipo',
+        placeholder: 'Tipo',
+        clear: 'Borrar',
+      },
+      seeNonCalificable: 'Ver actividades no calificables',
+      notDelivered: 'No entregado',
     },
   },
   finalNotebook: {

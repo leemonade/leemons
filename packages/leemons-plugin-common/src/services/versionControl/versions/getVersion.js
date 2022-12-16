@@ -4,6 +4,8 @@ const {
 const get = require('../currentVersions/get');
 const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../helpers');
 
+const specialVersions = ['latest', 'current', 'published', 'draft'];
+
 async function getVersionMany(ids, { published, transacting, ignoreMissing = false } = {}) {
   const parsedIds = await parseId(ids, { verifyVersion: false, transacting });
 
@@ -52,14 +54,20 @@ async function getVersionMany(ids, { published, transacting, ignoreMissing = fal
     return subQuery;
   });
 
-  const versionsFound = await versions.find(query, { transacting });
+  const versionsFound = (await versions.find(query, { transacting })).map((version) => ({
+    ...version,
+    version: stringifyVersion(version),
+  }));
 
   if (!versionsFound?.length && !ignoreMissing) {
     throw new Error('Versions not found');
   }
 
-  return parsedIds.map(({ uuid }) => {
-    const versionFound = versionsFound.find((v) => v.uuid === uuid);
+  return parsedIds.map(({ version, uuid }) => {
+    const isSpecialVersion = specialVersions.includes(version);
+    const versionFound = versionsFound.find(
+      (v) => v.uuid === uuid && (isSpecialVersion || v.version === version)
+    );
 
     if (!versionFound) {
       if (!ignoreMissing) {

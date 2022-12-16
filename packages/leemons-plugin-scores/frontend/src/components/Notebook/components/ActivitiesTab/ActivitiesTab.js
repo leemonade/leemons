@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box, Loader, useResizeObserver } from '@bubbles-ui/components';
+import { Box, Loader } from '@bubbles-ui/components';
 
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
-import useScoresUpdateMutation from '@scores/hooks/scores/useScoresUpdateMutation';
+import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import { Filters } from './Filters';
 import { ScoresTable } from './ScoresTable';
 import { EmptyState } from './EmptyState';
@@ -12,23 +12,18 @@ import { useExcelDownloadHandler } from './useExcelDownloadHandler';
 import { useTableData } from './useTableData';
 
 function LoadingState() {
-  const [ref, rect] = useResizeObserver();
-
-  const top = React.useMemo(() => ref.current?.getBoundingClientRect()?.top, [ref, rect]);
-
   return (
     <Box
       sx={(theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: `calc(100vh - ${top}px)`,
+        flex: 1,
         width: '100%',
         backgroundColor: theme.white,
       })}
-      ref={ref}
     >
-      {ref.current && <Loader />}
+      <Loader />
     </Box>
   );
 }
@@ -128,7 +123,7 @@ function getStudentsScores({ activitiesData, grades, isLoading, period, class: k
 export default function ActivitiesTab({ filters, labels }) {
   const [localFilters, setLocalFilters] = React.useState({});
   const { activitiesData, grades, isLoading } = useTableData({ filters, localFilters });
-  const { mutateAsync } = useScoresUpdateMutation();
+  const { mutateAsync } = useScoresMutation();
 
   const { data: programData } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
   const { data: subjectData } = useSubjectDetails(filters.subject, { enabled: !!filters.subject });
@@ -136,7 +131,7 @@ export default function ActivitiesTab({ filters, labels }) {
   useExcelDownloadHandler({ activitiesData, grades, filters, programData, subjectData });
 
   return (
-    <Box>
+    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Filters
         onChange={setLocalFilters}
         period={filters?.period}

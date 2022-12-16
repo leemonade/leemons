@@ -2,7 +2,15 @@ import React from 'react';
 import { Text } from '@bubbles-ui/components';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 
-function getNotebookTitle({ subject, filters }) {
+function getNotebookTitle({ subject, filters, isStudent, programName }) {
+  if (isStudent) {
+    return (
+      <Text strong color="primary" size="md">
+        {programName}
+      </Text>
+    );
+  }
+
   if (!subject) {
     return <Text></Text>;
   }
@@ -48,12 +56,12 @@ function getFinalNotebookTitle({ filters, program }) {
   );
 }
 
-export function useTitle({ subject, filters, variant }) {
+export function useTitle({ subject, filters, variant, isStudent }) {
   const { data: program } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
 
   return React.useMemo(() => {
     if (variant === 'notebook') {
-      return getNotebookTitle({ subject, filters });
+      return getNotebookTitle({ subject, filters, isStudent, programName: program?.name });
     }
     if (variant === 'finalNotebook') {
       return getFinalNotebookTitle({ filters, program });

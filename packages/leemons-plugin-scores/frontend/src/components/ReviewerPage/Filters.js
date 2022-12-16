@@ -227,7 +227,6 @@ export default function Filters({ onChange }) {
             />
           )}
         />
-
         <Controller
           control={control}
           name={'course'}
@@ -248,7 +247,6 @@ export default function Filters({ onChange }) {
             );
           }}
         />
-
         <Controller
           control={control}
           name={'group'}
@@ -269,7 +267,6 @@ export default function Filters({ onChange }) {
             );
           }}
         />
-
         <Controller
           control={control}
           name={'period'}
