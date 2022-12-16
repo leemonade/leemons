@@ -32,18 +32,32 @@ import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { useReactToPrint } from 'react-to-print';
 import { Pdf } from '@fundae/pages/private/reports/pdf';
 
+function toDate(a) {
+  if (a) {
+    const dateObj = new Date(a);
+    const month = dateObj.getUTCMonth() + 1;
+    const day = dateObj.getUTCDate();
+    const year = dateObj.getUTCFullYear();
+    return `${year}-${month}-${day}`;
+  }
+  return null;
+}
+
 export default function Index() {
   const printRef = React.useRef();
   const [t] = useTranslateLoader(prefixPN('reports'));
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-  });
-
   const [store, render] = useStore({
     loading: true,
     page: 1,
     perPage: 10,
     totalPages: 0,
+  });
+
+  store.handlePrint = useReactToPrint({
+    content: () => printRef.current,
+    documentTitle: `${t('report')} - ${store.downloadReport?.userAgentName} - ${toDate(
+      store.downloadReport?.created_at
+    )}`,
   });
 
   const tableHeaders = [
@@ -73,7 +87,7 @@ export default function Index() {
     store.downloadReport = { ...item.report, created_at: item.created_at, item };
     render();
     setTimeout(() => {
-      handlePrint();
+      store.handlePrint();
     }, 100);
   }
 
@@ -126,7 +140,19 @@ export default function Index() {
       }
       return {
         ...item,
-        created: <LocaleDate date={item.created_at} />,
+        created: (
+          <LocaleDate
+            date={item.created_at}
+            options={{
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              second: 'numeric',
+            }}
+          />
+        ),
         programName: item.program.name,
         studentName: [
           item.userAgent.user.name,
@@ -349,7 +375,7 @@ export default function Index() {
 
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                 <Grid grow>
-                  <Col span={2}>
+                  <Col span={3}>
                     <SelectProgram
                       clearable
                       label={t('programLabel')}
@@ -358,8 +384,9 @@ export default function Index() {
                       value={store.filterProgramId}
                     />
                   </Col>
-                  {store.filterHasCourses ? (
-                    <Col span={2}>
+
+                  <Col span={3}>
+                    {store.filterHasCourses ? (
                       <SelectCourse
                         clearable
                         label={t('courseLabel')}
@@ -367,11 +394,13 @@ export default function Index() {
                         program={store.filterProgramId}
                         value={store.filterCourseId}
                       />
-                    </Col>
-                  ) : null}
-                  {store.filterProgramId &&
-                  ((store.filterHasCourses && store.filterCourseId) || !store.filterHasCourses) ? (
-                    <Col span={6}>
+                    ) : null}
+                  </Col>
+
+                  <Col span={6}>
+                    {store.filterProgramId &&
+                    ((store.filterHasCourses && store.filterCourseId) ||
+                      !store.filterHasCourses) ? (
                       <SelectUserAgent
                         value={store.filterSelectedUserAgents}
                         centers={[store.centerId]}
@@ -384,8 +413,8 @@ export default function Index() {
                         itemRenderProps={{}}
                         valueRenderProps={{}}
                       />
-                    </Col>
-                  ) : null}
+                    ) : null}
+                  </Col>
                 </Grid>
               </Box>
 

@@ -8,6 +8,7 @@ async function addStatement(ctx) {
     if (ctx.state.userSession.userAgents.length > 1) {
       actor = _.map(ctx.state.userSession.userAgents, 'id');
     }
+
     await add(
       { ...ctx.request.body, actor },
       {

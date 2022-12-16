@@ -53,9 +53,10 @@ module.exports = {
     calificationLetter: 'Calificación (Letra)',
     evaluationDate: 'F. Evaluación',
     state: 'Estado',
+    privateChat: 'Chat privado:',
     stateDate: 'F. Estado',
     submitted: 'Presentado',
-    noSubmitted: 'No',
+    noSubmitted: 'No presentado',
     privateChats: 'Chats Privados',
     videoconferencing: 'Videoconferencias',
     subject: 'Asignatura',
@@ -66,5 +67,6 @@ module.exports = {
     firstAccess: 'Primer Acceso',
     lastAccess: 'Último acceso',
     followUpReport: 'Informe de seguimiento',
+    report: 'Informe',
   },
 };

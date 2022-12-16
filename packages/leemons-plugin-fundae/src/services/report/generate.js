@@ -59,6 +59,10 @@ async function startGeneration(report, dataToSocket) {
     const coursesLength = program.courses.length;
     const courseIsAlone = coursesLength === 1 ? program.courses[0].isAlone : false;
 
+    const center = await userServices.centers.detail(program.centers[0]);
+
+    toSave.centerId = center.id;
+    toSave.centerName = center.name;
     toSave.programId = program.id;
     toSave.programName = program.name;
     toSave.programHours = program.totalHours;

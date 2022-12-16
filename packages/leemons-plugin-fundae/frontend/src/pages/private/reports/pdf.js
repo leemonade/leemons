@@ -100,16 +100,32 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
         <ContextContainer divided>
           <Stack fullWidth justifyContent="space-between" alignItems="center">
             <Box>
-              {!_.isEmpty(squareLogoUrl) ? (
-                <ImageLoader
-                  src={squareLogoUrl}
-                  forceImage
-                  className={classes.logoUrl}
-                  height="auto"
-                />
-              ) : (
-                <Logo isotype className={classes.logo} />
-              )}
+              <Box
+                sx={(theme) => ({
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                })}
+              >
+                {!_.isEmpty(squareLogoUrl) ? (
+                  <ImageLoader
+                    src={squareLogoUrl}
+                    forceImage
+                    className={classes.logoUrl}
+                    height="auto"
+                  />
+                ) : (
+                  <Logo isotype className={classes.logo} />
+                )}
+              </Box>
+              <Box
+                sx={(theme) => ({
+                  marginLeft: theme.spacing[4],
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                })}
+              >
+                <Title order={3}>{report.centerName}</Title>
+              </Box>
             </Box>
             <Box>
               <Title order={3}>{t('followUpReport')}</Title>
@@ -322,7 +338,9 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                 const userAgentsById = _.keyBy(chat.userAgents, 'id');
                 return (
                   <Box sx={(theme) => ({ border: `1px solid ${theme.colors.uiBackground03}` })}>
-                    <Box className={classes.tableSubTitle}>{chat.key}</Box>
+                    <Box className={classes.tableSubTitle}>
+                      {t('privateChat')} {chat.name || chat.key}
+                    </Box>
                     <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
                       {_.map(chat.messages, (message, index) => {
                         const comp = [];

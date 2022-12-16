@@ -12,6 +12,9 @@ module.exports = {
         unique: true,
       },
     },
+    name: {
+      type: 'string',
+    },
     useEncrypt: {
       type: 'boolean',
     },
