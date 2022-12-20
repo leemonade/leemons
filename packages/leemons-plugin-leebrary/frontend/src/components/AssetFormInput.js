@@ -24,6 +24,7 @@ const AssetFormInput = ({
   category: categoryKey,
   preview,
   previewVariant,
+  advancedConfig,
   labels,
   placeholders,
   errorMessages,
@@ -85,6 +86,7 @@ const AssetFormInput = ({
       type={null}
       form={form}
       pluginName="leebrary"
+      advancedConfig={advancedConfig}
       tagsType={prefixPN('')}
       useTags={!!tagsPluginName}
       hideTitle
@@ -137,6 +139,7 @@ AssetFormInput.propTypes = {
   placeholders: PropTypes.object,
   errorMessages: PropTypes.object,
   previewVariant: PropTypes.string,
+  advancedConfig: PropTypes.object,
 };
 
 export { AssetFormInput };

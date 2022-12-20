@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
+import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
@@ -9,7 +9,9 @@ import {
   FileUpload,
   ImageLoader,
   ImagePreviewInput,
+  Select,
   Stack,
+  Switch,
   Textarea,
   TextInput,
   useResizeObserver,
@@ -17,7 +19,9 @@ import {
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert } from '@layout/alert';
-import { TagsAutocomplete, useRequestErrorMessage } from '@common';
+import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
+import { getUserProgramsRequest } from '@academic-portfolio/request';
+import SelectSubjects from '@leebrary/components/SelectSubjects';
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
@@ -97,9 +101,13 @@ const LibraryForm = ({
   form,
   onlyImages,
   hideTitle,
+  advancedConfig,
   hideSubmit,
   onChange = () => {},
 }) => {
+  const [store, render] = useStore({
+    programs: null,
+  });
   const [isImage, setIsImage] = useState(onlyImages);
   const [checking, setChecking] = useState(false);
   const [urlMetadata, setUrlMetadata] = useState({});
@@ -136,6 +144,16 @@ const LibraryForm = ({
   const coverFile = watch('cover');
   const assetFile = watch('file');
   const bookmarkUrl = watch('url');
+  const program = watch('program');
+
+  async function loadAdvancedConfig() {
+    store.programs = null;
+    if (advancedConfig?.program?.show) {
+      const { programs } = await getUserProgramsRequest();
+      store.programs = _.map(programs, (program) => ({ label: program.name, value: program.id }));
+    }
+    render();
+  }
 
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
@@ -146,6 +164,10 @@ const LibraryForm = ({
       });
     }
   }, [asset]);
+
+  useEffect(() => {
+    loadAdvancedConfig();
+  }, [JSON.stringify(advancedConfig)]);
 
   useEffect(() => {
     if (!isEmpty(assetFile)) {
@@ -430,6 +452,49 @@ const LibraryForm = ({
             </ContextContainer>
           )}
           {children}
+
+          {store.programs ? (
+            <Switch
+              onChange={(e) => {
+                store.showAdvancedConfig = e;
+                render();
+              }}
+              checked={store.showAdvancedConfig}
+              label={labels.advancedConfig}
+            />
+          ) : null}
+
+          {store.showAdvancedConfig ? (
+            <ContextContainer subtitle={labels.advancedConfig}>
+              <Controller
+                control={control}
+                name="program"
+                shouldUnregister
+                render={({ field }) => (
+                  <Select
+                    autoSelectOneOption
+                    label={labels.program}
+                    data={store.programs}
+                    {...field}
+                  />
+                )}
+              />
+            </ContextContainer>
+          ) : null}
+
+          {program ? (
+            <ContextContainer subtitle={labels.subjects}>
+              <Controller
+                control={control}
+                name="subjects"
+                shouldUnregister
+                render={({ field }) => (
+                  <SelectSubjects {...labels.subjectSelects} programId={program} {...field} />
+                )}
+              />
+            </ContextContainer>
+          ) : null}
+
           {!hideSubmit && (
             <Stack justifyContent={'end'} fullWidth>
               <Button type="submit" loading={loading}>

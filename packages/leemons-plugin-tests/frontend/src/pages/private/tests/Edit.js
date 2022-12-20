@@ -226,7 +226,14 @@ export default function Edit() {
           currentStep={store.currentStep}
           data={steps}
         >
-          {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
+          {store.currentStep === 0 && (
+            <DetailBasic
+              t={t}
+              advancedConfig={{ program: { show: true } }}
+              form={form}
+              onNext={() => setStep(1)}
+            />
+          )}
           {store.currentStep === 1 && (
             <DetailConfig
               store={store}

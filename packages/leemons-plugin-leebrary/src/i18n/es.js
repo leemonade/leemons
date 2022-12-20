@@ -34,6 +34,9 @@ module.exports = {
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
         browseFile: 'Click para buscar un archivo',
+        advancedConfig: 'Configuración avanzada',
+        program: 'Programa',
+        subjects: 'Asignaturas',
         dropFile: 'o arrastrar aquí desde el ordenador',
         search: 'Buscar en la librería',
         submitForm: 'Añadir a la librería',
@@ -50,6 +53,51 @@ module.exports = {
           plural: 'Palabras',
         },
         preview: 'Vista previa',
+        subjectSelects: {
+          labels: {
+            title: 'Configuración',
+            center: 'Centro',
+            program: 'Programa',
+            course: 'Curso',
+            subjects: 'Asignaturas',
+            showOtherSubjects: 'Añadir otras asignaturas en las que colaboro',
+            subject: 'Asignatura',
+            level: 'Nivel',
+            buttonNext: 'Siguiente',
+            buttonPrev: 'Anterior',
+            preTask: {
+              toggler: 'Añadir una actividad previa',
+              mandatory: 'Obligatoria para empezar la Tarea',
+              condition: 'Condición',
+              conditions: {
+                take: 'Realizar sólo el Test',
+                greater: 'Aprobar el Test con una nota igual o superior a',
+              },
+            },
+          },
+          placeholders: {
+            center: 'Seleccionar...',
+            program: 'Seleccionar...',
+            course: 'Seleccionar...',
+            subject: 'Seleccionar...',
+            addSubject: 'Añadir asignatura',
+            level: 'Seleccionar...',
+          },
+          errorMessages: {
+            program: {
+              required: 'Campo necesario',
+            },
+            course: {
+              required: 'Campo necesario',
+            },
+            subject: {
+              required: 'Campo necesario',
+            },
+            level: {
+              required: 'Campo necesario',
+            },
+          },
+        },
       },
       descriptions: {
         featuredImage: 'Cambiar la imagen por defecto de la página web',

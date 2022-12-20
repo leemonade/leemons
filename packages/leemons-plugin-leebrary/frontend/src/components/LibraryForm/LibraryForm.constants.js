@@ -35,6 +35,15 @@ export const LIBRARY_FORM_PROP_TYPES = {
   helps: PropTypes.object,
   descriptions: PropTypes.object,
   errorMessages: PropTypes.object,
+  advancedConfig: PropTypes.shape({
+    program: PropTypes.shape({
+      show: PropTypes.bool,
+    }),
+    subjects: PropTypes.shape({
+      show: PropTypes.bool,
+      showLevel: PropTypes.bool,
+    }),
+  }),
   asset: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
