@@ -303,9 +303,14 @@ module.exports = {
     closed: 'Cerrada',
   },
   need_your_attention: {
-    title: 'Necesita tu atención',
+    activitiesTitle: 'Actividades pendientes',
+    evaluationsTitle: 'Evaluaciones pendientes',
+    ownEvaluations: 'Mis evaluaciones',
     new: 'Nueva',
-    emptyState: 'No hay actividades programadas',
+    activitiesEmptyState: 'No hay actividades pendientes',
+    evaluationsEmptyState: 'No hay evaluaciones pendientes',
+    seeAllActivities: 'Ver todas las actividades',
+    seeAllEvaluations: 'Ver todas las evaluaciones',
     assigment: {
       subject: 'Asignatura',
       submission: 'Entregadas',

@@ -7,22 +7,26 @@ function getClassDataWithLabel({ classes, labels }) {
 
 export default function useClassData(instances, labels = {}) {
   const _instances = (Array.isArray(instances) ? instances : [instances])?.filter(Boolean);
-
   const queries = useQueries({
-    queries: _instances.map(({ classes, metadata }) => ({
-      queryKey: [
-        'plugins.assignables.classData',
-        { classes, multiSubjectLabel: labels?.multiSubject, groupNameLabel: metadata?.groupName },
-      ],
-      queryFn: () =>
-        getClassDataWithLabel({
-          classes,
-          labels: {
-            multiSubject: labels?.multiSubject,
-            groupName: metadata?.groupName,
-          },
-        }),
-    })),
+    queries: _instances.map((_instance) => {
+      const instance = _instance?.instance ? _instance.instance : _instance;
+      const { classes, metadata } = instance;
+
+      return {
+        queryKey: [
+          'plugins.assignables.classData',
+          { classes, multiSubjectLabel: labels?.multiSubject, groupNameLabel: metadata?.groupName },
+        ],
+        queryFn: () =>
+          getClassDataWithLabel({
+            classes,
+            labels: {
+              multiSubject: labels?.multiSubject,
+              groupName: metadata?.groupName,
+            },
+          }),
+      };
+    }),
   });
 
   if (Array.isArray(instances)) {

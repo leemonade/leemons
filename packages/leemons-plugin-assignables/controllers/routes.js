@@ -44,4 +44,10 @@ module.exports = [
     handler: 'activities.searchOngoing',
     authenticated: true,
   },
+  {
+    method: 'GET',
+    path: '/activities/search/nya',
+    handler: 'activities.searchNyaActivities',
+    authenticated: true,
+  },
 ];

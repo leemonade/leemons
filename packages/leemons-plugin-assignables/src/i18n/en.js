@@ -292,9 +292,14 @@ module.exports = {
     closed: 'Closed',
   },
   need_your_attention: {
-    title: 'Needs attention',
+    activitiesTitle: 'Pending activities',
+    evaluationsTitle: 'Pending evaluations',
+    ownEvaluations: 'My evaluations',
     new: 'New',
-    emptyState: 'There are no scheduled activities',
+    activitiesEmptyState: 'There are no pending activities',
+    evaluationsEmptyState: 'There are no pending evaluations',
+    seeAllActivities: 'See all the activities',
+    seeAllEvaluations: 'See all the evaluations',
     assigment: {
       subject: 'Subject',
       submission: 'Submissions',
