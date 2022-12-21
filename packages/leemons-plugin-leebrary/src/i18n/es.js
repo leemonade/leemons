@@ -1,4 +1,11 @@
 module.exports = {
+  tableInput: {
+    add: 'Añadir',
+    remove: 'Eliminar',
+    edit: 'Editar',
+    accept: 'Aceptar',
+    cancel: 'Cancelar',
+  },
   home: {
     navbar: {
       title: 'Librería',
@@ -48,6 +55,7 @@ module.exports = {
         updatedSuccess: 'Recurso actualizado con éxito',
         url: 'URL (enlace web)',
         checkUrl: 'Comprobar url',
+        color: 'Color',
         wordCounter: {
           single: 'Palabra',
           plural: 'Palabras',
@@ -124,6 +132,12 @@ module.exports = {
         },
         url: {
           required: 'URL es necesaria',
+        },
+        program: {
+          required: 'Programa es necesario',
+        },
+        subject: {
+          required: 'Asignatura es necesario',
         },
       },
     },

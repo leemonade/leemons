@@ -1,4 +1,11 @@
 module.exports = {
+  tableInput: {
+    add: 'Add',
+    remove: 'Remove',
+    edit: 'Edit',
+    accept: 'Accept',
+    cancel: 'Cancel',
+  },
   home: {
     navbar: {
       title: 'Library',
@@ -48,6 +55,7 @@ module.exports = {
         updatedSuccess: 'Asset successfully updated',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
+        color: 'Color',
         wordCounter: {
           single: 'Word',
           plural: 'Words',
@@ -137,6 +145,12 @@ module.exports = {
         },
         tags: {
           required: 'Write a tag to add it',
+        },
+        program: {
+          required: 'Program is required',
+        },
+        subject: {
+          required: 'Subject is required',
         },
       },
     },

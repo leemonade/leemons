@@ -21,6 +21,19 @@ const addAssetSchema = {
     category: {
       oneOf: [stringSchemaNullable, { type: 'object', nullable: true }],
     },
+    program: stringSchemaNullable,
+    subjects: {
+      nullable: true,
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          subject: stringSchema,
+          level: stringSchemaNullable,
+        },
+        required: ['subject'],
+      },
+    },
   },
   required: ['name'],
   anyOf: [{ required: ['categoryId'] }, { required: ['categoryKey'] }, { required: ['category'] }],

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Select, ImageLoader, Text } from '@bubbles-ui/components';
+import { Box, ImageLoader, Select, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
@@ -58,8 +58,11 @@ function usePrograms({ labels }) {
   );
 }
 
-function useSubjects({ labels, control }) {
-  const selectedProgram = useWatch({ control, name: 'program' });
+export function useSubjects({ labels, control, selectedProgram, useAll = true }) {
+  if (!selectedProgram) {
+    // eslint-disable-next-line no-param-reassign
+    selectedProgram = useWatch({ control, name: 'program' });
+  }
   const { data: classesData } = useSessionClasses({ showType: true });
   const multiClassData = getMultiClassData();
 
@@ -87,14 +90,20 @@ function useSubjects({ labels, control }) {
       }
     });
 
-    return [
-      {
+    const result = [];
+
+    if (useAll) {
+      result.push({
         label: labels?.allSubjects,
         value: 'all',
         group: labels?.allSubjects,
         icon: multiClassData.icon,
         color: multiClassData.color,
-      },
+      });
+    }
+
+    return [
+      ...result,
       ...Object.values(subjects).map((subject) => ({
         ...subject,
         group:
@@ -176,7 +185,7 @@ function useOnChange({ onChange, watch, getValues }) {
   }, [watch, onSubmit]);
 }
 
-function SelectAutoClearable({ data, value, onChange, ...props }) {
+export function SelectAutoClearable({ data, value, onChange, ...props }) {
   React.useEffect(() => {
     if (typeof onChange === 'function') {
       if (value && !data.find((item) => item.value === value)) {

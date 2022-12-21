@@ -60,7 +60,11 @@ const NewAssetPage = () => {
                 <BookmarkBasicData categoryId={category?.id} onSave={setAsset} />
               ) : (
                 <MediaBasicData
-                  advancedConfig={{ program: { show: true } }}
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
                   file={file}
                   categoryId={category?.id}
                   onSave={setAsset}

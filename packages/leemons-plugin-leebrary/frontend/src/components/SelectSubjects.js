@@ -1,17 +1,20 @@
 import React, { useMemo } from 'react';
-import _, { find } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import { ContextContainer, Select, TableInput } from '@bubbles-ui/components';
+import { ContextContainer, TableInput } from '@bubbles-ui/components';
 import {
   SelectLevelsOfDifficulty,
   useLevelsOfDifficulty,
 } from '@assignables/components/LevelsOfDifficulty';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import {
+  SelectAutoClearable,
+  useSubjects,
+} from '@assignables/hooks/useAcademicFiltersForAssetList';
 import useTableInputLabels from '../helpers/useTableInputLabels';
-import ConditionalInput from './ConditionalInput';
 
-function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
+function useSubjectColumns({ labels, placeholders, errorMessages, subjects, showLevel }) {
   const difficultyLevels = useLevelsOfDifficulty();
+
   return useMemo(() => {
     const columns = [];
 
@@ -20,13 +23,11 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
       accessor: 'subject',
       input: {
         node: (
-          <Select
+          <SelectAutoClearable
             data={subjects}
-            placeholder={placeholders?.subject}
-            disabled={!subjects?.length}
+            placeholder={labels?.subject}
             searchable
-            required
-            autoSelectOneOption
+            disabled={!subjects.length}
           />
         ),
         rules: { required: errorMessages?.subject?.required },
@@ -34,21 +35,23 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
       valueRender: (v) => find(subjects, { value: v })?.label,
     });
 
-    columns.push({
-      Header: labels?.level,
-      accessor: 'level',
-      input: {
-        node: (
-          <SelectLevelsOfDifficulty
-            placeholder={placeholders?.level}
-            required
-            disabled={!subjects?.length}
-          />
-        ),
-        rules: { required: errorMessages?.level?.required },
-      },
-      valueRender: (v) => find(difficultyLevels, { value: v })?.label,
-    });
+    if (showLevel) {
+      columns.push({
+        Header: labels?.level,
+        accessor: 'level',
+        input: {
+          node: (
+            <SelectLevelsOfDifficulty
+              placeholder={placeholders?.level}
+              required
+              disabled={!subjects?.length}
+            />
+          ),
+          rules: { required: errorMessages?.level?.required },
+        },
+        valueRender: (v) => find(difficultyLevels, { value: v })?.label,
+      });
+    }
 
     return columns;
   }, [labels, subjects, difficultyLevels]);
@@ -59,131 +62,35 @@ export default function SelectSubjects({
   labels,
   placeholders,
   errorMessages,
+  maxOne,
+  showLevel,
   value,
   onChange,
   errors,
 }) {
   const tableInputLabels = useTableInputLabels();
-
-  const { data: classes } = useSessionClasses({ program: programId, showType: true, type: null });
-
-  console.log(classes);
-
-  const subjects = classes?.map((klass) => ({
-    value: klass.subject.subject || klass.subject.id,
-    label: klass.subject.name,
-    type: klass.type,
-  }));
-  const uniqSubjects = _.uniqBy(subjects, 'value');
-
-  const subjectsToUse = useMemo(() => {
-    if (programId) {
-      return uniqSubjects;
-    }
-
-    return null;
-  }, [programId, uniqSubjects]);
-
-  const mainTeacherSubjects = useMemo(() => {
-    if (subjectsToUse) {
-      return subjectsToUse.filter((subject) => subject.type === 'main-teacher');
-    }
-
-    return [];
-  }, [subjectsToUse]);
-
-  const otherTypeTeacherSubjects = useMemo(() => {
-    if (subjectsToUse) {
-      return subjectsToUse.filter((subject) => subject.type !== 'main-teacher');
-    }
-
-    return [];
-  }, [subjectsToUse]);
+  const subjects = useSubjects({ labels, selectedProgram: programId, useAll: false });
 
   const mainTeacherSubjectsColumns = useSubjectColumns({
     labels,
     placeholders,
     errorMessages,
-    subjects: mainTeacherSubjects,
+    subjects,
+    showLevel,
   });
-
-  const otherTypeTeacherSubjectsColumns = useSubjectColumns({
-    labels,
-    placeholders,
-    errorMessages,
-    subjects: otherTypeTeacherSubjects,
-  });
-
-  const mainTeacherValues = useMemo(() => {
-    if (value) {
-      return value.filter((subject) =>
-        mainTeacherSubjects.find(({ value: id }) => id === subject.subject)
-      );
-    }
-
-    return [];
-  }, [value, mainTeacherSubjects]);
-
-  const otherTypeTeacherValues = useMemo(() => {
-    if (value) {
-      return value.filter((subject) =>
-        otherTypeTeacherSubjects.find(({ value: id }) => id === subject.subject)
-      );
-    }
-
-    return [];
-  }, [value, otherTypeTeacherSubjects]);
-
-  const handleChange = (type) => (newValues) => {
-    if (type === 'main-teacher') {
-      onChange([...otherTypeTeacherValues, ...newValues]);
-    } else if (type === 'other-type') {
-      onChange([...mainTeacherValues, ...newValues]);
-    }
-  };
-
-  const [show, setShow] = React.useState(false);
-
-  React.useEffect(() => {
-    if (otherTypeTeacherValues.length) {
-      setShow(true);
-    }
-  }, [otherTypeTeacherValues]);
 
   return (
     /* Subject container */
-    <ContextContainer title={labels?.subjects}>
+    <ContextContainer>
       <TableInput
-        data={mainTeacherValues}
-        onChange={handleChange('main-teacher')}
+        data={value || []}
+        onChange={onChange}
         columns={mainTeacherSubjectsColumns}
         labels={tableInputLabels}
         unique
         sortable
+        disabledAddButton={!!(maxOne && value?.length)}
         error={errors?.subjects}
-      />
-      <ConditionalInput
-        value={show}
-        onChange={(newShow) => {
-          if (!newShow) {
-            onChange(mainTeacherValues);
-          }
-
-          setShow(newShow);
-        }}
-        showOnTrue
-        label={labels?.showOtherSubjects}
-        render={() => (
-          <TableInput
-            data={otherTypeTeacherValues}
-            onChange={handleChange('other-type')}
-            columns={otherTypeTeacherSubjectsColumns}
-            labels={tableInputLabels}
-            unique
-            sortable
-            error={errors?.subjects}
-          />
-        )}
       />
     </ContextContainer>
   );
@@ -227,6 +134,8 @@ SelectSubjects.propTypes = {
     subjects: PropTypes.string,
     summary: PropTypes.string,
   }),
+  maxOne: PropTypes.bool,
+  showLevel: PropTypes.bool,
   onChange: PropTypes.func,
   teacherType: PropTypes.string,
 };

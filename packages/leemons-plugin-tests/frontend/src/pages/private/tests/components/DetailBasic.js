@@ -6,7 +6,7 @@ import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 
 export default function DetailBasic({ form, t, onNext, advancedConfig }) {
   async function next() {
-    const formGood = await form.trigger(['name']);
+    const formGood = await form.trigger(['name', 'program', 'subjects']);
     if (formGood) {
       onNext();
     }

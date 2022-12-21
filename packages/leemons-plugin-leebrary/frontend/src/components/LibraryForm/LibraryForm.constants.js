@@ -42,6 +42,7 @@ export const LIBRARY_FORM_PROP_TYPES = {
     subjects: PropTypes.shape({
       show: PropTypes.bool,
       showLevel: PropTypes.bool,
+      maxOne: PropTypes.bool,
     }),
   }),
   asset: PropTypes.shape({

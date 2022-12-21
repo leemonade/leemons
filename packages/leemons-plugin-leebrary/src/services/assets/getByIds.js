@@ -13,6 +13,7 @@ const {
   filter,
   keyBy,
   forEach,
+  groupBy,
 } = require('lodash');
 const {
   getUserAgentsInfo,
@@ -20,7 +21,6 @@ const {
 const { tables } = require('../tables');
 const { CATEGORIES } = require('../../../config/constants');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
-const { getUsersByAsset } = require('../permissions/getUsersByAsset');
 const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
@@ -32,6 +32,7 @@ async function getByIds(
   assetsIds,
   {
     withFiles,
+    withSubjects = true,
     withTags = true,
     withCategory = true,
     checkPins = true,
@@ -135,6 +136,19 @@ async function getByIds(
         }
       }
     }
+  }
+
+  // ·········································································
+  // SUBJECT
+  if (!isEmpty(assets) && withSubjects) {
+    const assetsSubjects = await tables.assetsSubjects.find({ asset_$in: ids }, { transacting });
+
+    const subjectsByAsset = groupBy(assetsSubjects, 'asset');
+
+    assets = assets.map((asset) => {
+      asset.subjects = subjectsByAsset[asset.id];
+      return asset;
+    });
   }
 
   // ·········································································

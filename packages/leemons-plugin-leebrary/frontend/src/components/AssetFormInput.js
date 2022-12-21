@@ -111,6 +111,21 @@ const AssetFormInput = ({
               locale={locale}
               single
             />
+            {advancedConfig?.colorToRight || advancedConfig?.fileToRight ? (
+              <LibraryForm
+                {...formLabels}
+                asset={{ ...asset, file, cover: preparedAsset.cover }}
+                type={null}
+                form={form}
+                pluginName="leebrary"
+                advancedConfigMode
+                advancedConfig={advancedConfig}
+                tagsType={prefixPN('')}
+                useTags={!!tagsPluginName}
+                hideTitle
+                hideSubmit
+              />
+            ) : null}
           </InputWrapper>
         </Box>
       </Box>

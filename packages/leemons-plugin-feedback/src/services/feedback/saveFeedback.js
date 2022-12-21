@@ -38,10 +38,14 @@ async function saveFeedback(_data, { userSession, transacting: _transacting } = 
         },
         role: 'feedback',
         statement: data.introductoryText,
-        subjects: [],
+        subjects: _.map(data.subjects, ({ level, subject }) => ({
+          level,
+          subject,
+          program: data.program,
+        })),
         gradable: false,
         metadata: {
-          questions: questions.length,
+          questions: questions?.length,
           thanksMessage: data.thanksMessage,
         },
       };

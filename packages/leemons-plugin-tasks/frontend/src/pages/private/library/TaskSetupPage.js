@@ -1,19 +1,13 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react';
-import { isEmpty, isNil, isArray } from 'lodash';
-import { useParams, useHistory } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { isArray, isEmpty, isNil } from 'lodash';
+import { useHistory, useParams } from 'react-router-dom';
 import { Box, Stack } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, unflatten, useProcessTextEditor, useSearchParams } from '@common';
-import {
-  Setup,
-  BasicData,
-  ConfigData,
-  ContentData,
-  InstructionData,
-} from '../../../components/TaskSetupPage';
+import { unflatten, useProcessTextEditor, useSearchParams, useStore } from '@common';
+import { BasicData, ContentData, InstructionData, Setup } from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
 import publishTaskRequest from '../../../request/task/publishTask';
@@ -290,17 +284,27 @@ export default function TaskSetupPage() {
             content: (
               <BasicData
                 {...basicData}
+                advancedConfig={{
+                  alwaysOpen: true,
+                  fileToRight: true,
+                  colorToRight: true,
+                  program: { show: true, required: true },
+                  subjects: { show: true, required: true, showLevel: true, maxOne: false },
+                }}
                 useObserver={useSaveObserver}
                 onNameChange={handleOnNameChange}
               />
             ),
             status: 'OK',
           },
+          /*
           {
             label: configData.step_label,
             content: <ConfigData useObserver={useSaveObserver} {...configData} />,
             status: 'OK',
           },
+
+           */
           {
             label: contentData.step_label,
             content: <ContentData useObserver={useSaveObserver} {...contentData} />,

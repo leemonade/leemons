@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { prefixPN } from './prefixPN';
+import { prefixPN } from '.';
 
 export default function useTableInputLabels() {
   const [tableInputLabels, setTableInputLabels] = useState({});
@@ -10,7 +10,7 @@ export default function useTableInputLabels() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.tableInput;
+      const data = res.plugins.leebrary.tableInput;
 
       setTableInputLabels(data);
 
