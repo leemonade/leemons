@@ -60,7 +60,7 @@ const LibraryTool = ({ label, ...props }) => {
           icon={<LibraryIcon height={16} width={16} />}
           actived={libraryModalOpened || editor?.isActive('library')}
           onClick={handleOnEdit}
-        ></Button>
+        />
       }
     >
       <LibraryModal

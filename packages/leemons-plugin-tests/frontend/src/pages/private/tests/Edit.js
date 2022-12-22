@@ -42,12 +42,16 @@ export default function Edit() {
 
   const form = useForm();
   const formValues = form.watch();
+  store.isValid = form.formState.isValid;
 
   async function saveAsDraft() {
     try {
       store.saving = 'duplicate';
       render();
-      await saveTestRequest({ ...formValues, published: false });
+      console.log(formValues);
+      const { subjects, ...toSend } = formValues;
+      toSend.subjects = subjects.map(({ subject }) => subject);
+      await saveTestRequest({ ...toSend, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests');
     } catch (error) {
@@ -61,7 +65,9 @@ export default function Edit() {
     try {
       store.saving = 'edit';
       render();
-      const { test } = await saveTestRequest({ ...formValues, published: true });
+      const { subjects, ...toSend } = formValues;
+      toSend.subjects = subjects.map(({ subject }) => subject);
+      const { test } = await saveTestRequest({ ...toSend, published: true });
       addSuccessAlert(t('published'));
       if (redictToAssign) {
         history.push(`/private/tests/assign/${test.id}`);
@@ -180,17 +186,6 @@ export default function Edit() {
       );
   }
 
-  React.useEffect(() => {
-    const subscription = form.watch(() => {
-      debounce(async () => {
-        store.isValid = await form.trigger();
-        render();
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const handleOnHeaderResize = (size) => {
     store.headerHeight = size?.height - 1;
     render();
@@ -226,7 +221,20 @@ export default function Edit() {
           currentStep={store.currentStep}
           data={steps}
         >
-          {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
+          {store.currentStep === 0 && (
+            <DetailBasic
+              t={t}
+              advancedConfig={{
+                alwaysOpen: true,
+                fileToRight: true,
+                colorToRight: true,
+                program: { show: true, required: true },
+                subjects: { show: true, required: true, showLevel: false, maxOne: true },
+              }}
+              form={form}
+              onNext={() => setStep(1)}
+            />
+          )}
           {store.currentStep === 1 && (
             <DetailConfig
               store={store}

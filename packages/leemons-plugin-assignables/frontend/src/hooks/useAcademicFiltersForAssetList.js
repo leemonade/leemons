@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select } from '@bubbles-ui/components';
+
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
@@ -58,8 +59,11 @@ function usePrograms({ labels }) {
   );
 }
 
-function useSubjects({ labels, control }) {
-  const selectedProgram = useWatch({ control, name: 'program' });
+export function useSubjects({ labels, control, selectedProgram, useAll = true }) {
+  if (!selectedProgram) {
+    // eslint-disable-next-line no-param-reassign
+    selectedProgram = useWatch({ control, name: 'program' });
+  }
   const { data: classesData } = useSessionClasses({ showType: true });
   const multiClassData = getMultiClassData();
 
@@ -87,14 +91,20 @@ function useSubjects({ labels, control }) {
       }
     });
 
-    return [
-      {
+    const result = [];
+
+    if (useAll) {
+      result.push({
         label: labels?.allSubjects,
         value: 'all',
         group: labels?.allSubjects,
         icon: multiClassData.icon,
         color: multiClassData.color,
-      },
+      });
+    }
+
+    return [
+      ...result,
       ...Object.values(subjects).map((subject) => ({
         ...subject,
         group:
@@ -128,6 +138,37 @@ function useOnChange({ onChange, watch, getValues }) {
 
     return subscription.unsubscribe;
   }, [watch, onSubmit]);
+}
+
+export function SelectAutoClearable({ data, value, onChange, ...props }) {
+  React.useEffect(() => {
+    if (typeof onChange === 'function') {
+      if (value && !data.find((item) => item.value === value)) {
+        onChange(null);
+      } else if (!value && data?.length && data[0].value === 'all') {
+        onChange('all');
+      }
+    }
+  }, [data]);
+
+  return (
+    <Select
+      {...props}
+      data={data}
+      value={[value]}
+      onChange={(v) => onChange(v[0])}
+      valueComponent={(item) => (
+        <SubjectItem
+          {...item}
+          isValueComponent
+          subject={data.find((d) => d.value === item.value)}
+        />
+      )}
+      itemComponent={(item) => (
+        <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
+      )}
+    />
+  );
 }
 
 function SubjectFilters({ onChange, loading }) {

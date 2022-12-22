@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Stack, ContextContainer } from '@bubbles-ui/components';
+import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import AssetFormInput from '@leebrary/components/AssetFormInput';
 
-export default function DetailBasic({ form, t, onNext }) {
+export default function DetailBasic({ advancedConfig, form, t, onNext }) {
   async function next() {
     const formGood = await form.trigger(['name']);
     if (formGood) {
@@ -17,6 +17,7 @@ export default function DetailBasic({ form, t, onNext }) {
       <AssetFormInput
         form={form}
         preview
+        advancedConfig={advancedConfig}
         tagsPluginName="feedback"
         category="assignables.feedback"
       />
@@ -31,6 +32,7 @@ export default function DetailBasic({ form, t, onNext }) {
 }
 
 DetailBasic.propTypes = {
+  advancedConfig: PropTypes.object,
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,

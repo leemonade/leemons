@@ -47,6 +47,12 @@ module.exports = {
         defaultTo: true,
       },
     },
+    center: {
+      type: 'uuid',
+    },
+    program: {
+      type: 'uuid',
+    },
   },
   primaryKey: {
     specificType: 'varchar(255)',

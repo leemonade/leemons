@@ -1,4 +1,11 @@
 module.exports = {
+  tableInput: {
+    add: 'Add',
+    remove: 'Remove',
+    edit: 'Edit',
+    accept: 'Accept',
+    cancel: 'Cancel',
+  },
   home: {
     navbar: {
       title: 'Library',
@@ -32,6 +39,9 @@ module.exports = {
         tags: 'Tags',
         addTag: 'Add tag',
         browseFile: 'Click to browse your files',
+        advancedConfig: 'Advanced config',
+        program: 'Program',
+        subjects: 'Subjects',
         dropFile: 'or drop a computer file here',
         changeImage: 'Change image',
         uploadButton: 'Upload image',
@@ -45,11 +55,70 @@ module.exports = {
         updatedSuccess: 'Asset successfully updated',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
+        color: 'Color',
         wordCounter: {
           single: 'Word',
           plural: 'Words',
         },
         preview: 'Thumbnail preview',
+        subjectSelects: {
+          labels: {
+            configTitle: 'Configure',
+            center: 'Center',
+            program: 'Program',
+            course: 'Course',
+            subjectsTitle: 'Subjects',
+            subject: 'Subject',
+            addSubject: 'Add subject',
+            level: 'Level',
+            levelValues: {
+              begginer: 'Beginner',
+              intermediate: 'Intermediate',
+            },
+            buttonNext: 'Next',
+            buttonPrev: 'Previous',
+            preTask: {
+              toggler: 'Add a pre-task activity',
+              mandatory: 'Mandatory to start the Task',
+              condition: 'Condition to start the Task',
+              conditions: {
+                take: 'Only take the test',
+                greater: 'Pass the test with a score higher than',
+              },
+            },
+            title: 'Configuration',
+            subjects: 'Subjects',
+            showOtherSubjects: 'Add subjects I collaborate in',
+          },
+          placeholders: {
+            center: 'Select...',
+            program: 'Select...',
+            course: 'Select...',
+            subject: 'Select...',
+            level: 'Select...',
+            addSubject: 'Add subject',
+          },
+          errorMessages: {
+            program: {
+              required: 'Required field',
+            },
+            course: {
+              required: 'Required field',
+            },
+            subjects: {
+              required: 'Required field',
+            },
+            level: {
+              required: 'Required field',
+            },
+            summary: {
+              required: 'Required field',
+            },
+            subject: {
+              required: 'Required field',
+            },
+          },
+        },
       },
       descriptions: {
         featuredImage: "Only to change the webpage's default featured image",
@@ -76,6 +145,12 @@ module.exports = {
         },
         tags: {
           required: 'Write a tag to add it',
+        },
+        program: {
+          required: 'Program is required',
+        },
+        subject: {
+          required: 'Subject is required',
         },
       },
     },
