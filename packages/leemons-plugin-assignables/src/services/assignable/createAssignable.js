@@ -69,8 +69,20 @@ module.exports = async function createAssignable(
       let asset;
       try {
         if (!_id) {
+          console.log(subjects);
+          const assetProgram = subjects?.length ? subjects[0].program : null;
+          const assetSubjects = subjects?.length
+            ? subjects.map(({ subject, level }) => ({ subject, level }))
+            : null;
+
           const savedAsset = await saveAsset(
-            { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
+            {
+              ...assignableAsset,
+              program: assetProgram,
+              subjects: assetSubjects,
+              category: `assignables.${assignable.role}`,
+              public: true,
+            },
             { published: false, userSession, transacting }
           );
 

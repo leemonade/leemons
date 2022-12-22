@@ -12,7 +12,8 @@ module.exports = {
       },
     },
     value: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

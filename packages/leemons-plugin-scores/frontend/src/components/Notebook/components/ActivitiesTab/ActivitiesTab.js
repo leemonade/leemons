@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Loader, useResizeObserver } from '@bubbles-ui/components';
+import { Box, Loader } from '@bubbles-ui/components';
 
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
@@ -12,23 +12,18 @@ import { useExcelDownloadHandler } from './useExcelDownloadHandler';
 import { useTableData } from './useTableData';
 
 function LoadingState() {
-  const [ref, rect] = useResizeObserver();
-
-  const top = React.useMemo(() => ref.current?.getBoundingClientRect()?.top, [ref, rect]);
-
   return (
     <Box
       sx={(theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: `calc(100vh - ${top}px)`,
+        flex: 1,
         width: '100%',
         backgroundColor: theme.white,
       })}
-      ref={ref}
     >
-      {ref.current && <Loader />}
+      <Loader />
     </Box>
   );
 }
@@ -136,7 +131,7 @@ export default function ActivitiesTab({ filters, labels }) {
   useExcelDownloadHandler({ activitiesData, grades, filters, programData, subjectData });
 
   return (
-    <Box>
+    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Filters
         onChange={setLocalFilters}
         period={filters?.period}

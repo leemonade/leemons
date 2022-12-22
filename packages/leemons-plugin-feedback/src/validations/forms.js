@@ -20,6 +20,19 @@ const saveQuestionBankSchema = {
     tagline: stringSchemaNullable,
     description: textSchemaNullable,
     color: stringSchemaNullable,
+    program: stringSchemaNullable,
+    subjects: {
+      nullable: true,
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['subject'],
+        properties: {
+          subject: stringSchema,
+          level: stringSchemaNullable,
+        },
+      },
+    },
     tags: {
       type: 'array',
       items: stringSchema,
@@ -32,7 +45,7 @@ const saveQuestionBankSchema = {
       type: ['object', 'string'],
       nullable: true,
     },
-    introductoryText: { type: 'string' },
+    introductoryText: { type: 'string', nullable: true },
     thanksMessage: { type: 'string' },
     published: booleanSchema,
     questions: {

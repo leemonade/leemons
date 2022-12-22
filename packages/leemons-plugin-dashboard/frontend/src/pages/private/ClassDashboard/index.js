@@ -2,7 +2,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { find, isArray, map } from 'lodash';
-import { useLocale, useStore } from '@common';
+import { getShare, useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
@@ -225,6 +225,30 @@ export default function ClassDashboard({ session }) {
     [store.selectedRightTab, store.class, session]
   );
 
+  function onVirtualClassroomOpen() {
+    const addLogStatement = getShare('xapi', 'addLogStatement');
+    const verbs = getShare('xapi', 'verbs');
+    if (addLogStatement) {
+      addLogStatement({
+        verb: verbs.INITIALIZED,
+        object: {
+          objectType: 'Activity',
+          id: '{hostname}/api/open/virtual-classroom',
+          definition: {
+            extensions: {
+              id: store.class.id,
+              name: store.class.subject.name,
+              url: store.class.virtualUrl,
+            },
+            description: {
+              'en-US': 'Open virtual classroom',
+            },
+          },
+        },
+      });
+    }
+  }
+
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
@@ -235,6 +259,7 @@ export default function ClassDashboard({ session }) {
             <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
             <ClassroomHeaderBar
               labels={{ virtualClassroom: t('virtualClassroom') }}
+              onVirtualClassroomOpen={onVirtualClassroomOpen}
               classRoom={{
                 schedule: store.class?.schedule,
                 address: store.class?.address,

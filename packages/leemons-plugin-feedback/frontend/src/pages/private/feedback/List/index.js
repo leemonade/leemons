@@ -73,7 +73,6 @@ export default function List() {
         onNew={() => goCreatePage()}
         fullWidth
       />
-
       <Tabs
         panelColor="solid"
         usePageLayout

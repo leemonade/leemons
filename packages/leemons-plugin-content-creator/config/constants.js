@@ -1,0 +1,85 @@
+const permissionsPrefix = 'plugins.content-creator';
+
+const permissionNames = {
+  creator: `${permissionsPrefix}.content-creator`,
+};
+
+const permissions = [
+  {
+    permissionName: permissionNames.creator,
+    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    localizationName: {
+      es: 'Creador de contenidos',
+      en: 'Content creator',
+    },
+  },
+];
+
+const menuItems = [
+  // Main
+  {
+    item: {
+      key: 'content-creator',
+      order: 303,
+      iconSvg: '/public/content-creator/menu-icon-active.svg',
+      activeIconSvg: '/public/content-creator/menu-icon-active.svg',
+      label: {
+        en: 'Content creator',
+        es: 'Creador de contenidos',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.creator,
+        actionNames: ['view', 'admin'],
+      },
+    ],
+  },
+  // List
+  {
+    item: {
+      key: 'content-creator-library',
+      order: 2,
+      parentKey: 'content-creator',
+      url: '/private/content-creator',
+      label: {
+        en: 'Documents library',
+        es: 'Librería de documentos',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.creator,
+        actionNames: ['view', 'admin'],
+      },
+    ],
+  },
+  // New
+  {
+    item: {
+      key: 'content-creator-new',
+      order: 3,
+      parentKey: 'content-creator',
+      url: '/private/content-creator/new',
+      label: {
+        en: 'New document',
+        es: 'Nuevo documento',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.creator,
+        actionNames: ['create', 'admin'],
+      },
+    ],
+  },
+];
+
+module.exports = {
+  pluginName: permissionsPrefix,
+  permissions: {
+    permissions,
+    names: permissionNames,
+  },
+  menuItems,
+};

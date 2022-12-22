@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-import { Stack, Button, ContextContainer, useDebouncedCallback } from '@bubbles-ui/components';
+import { Button, ContextContainer, Stack, useDebouncedCallback } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AssetFormInput } from '@leebrary/components/AssetFormInput';
 
@@ -10,6 +10,7 @@ function BasicData({
   labels,
   placeholders,
   helps,
+  advancedConfig,
   errorMessages,
   onNext,
   sharedData,
@@ -24,6 +25,8 @@ function BasicData({
 
   const defaultValues = {
     ...sharedData.asset,
+    program: sharedData.program,
+    subjects: sharedData.subjects,
   };
 
   const coverFile = useRef(null);
@@ -52,17 +55,23 @@ function BasicData({
   }, [taskName]);
 
   useEffect(() => {
-    reset(sharedData.asset);
+    reset({
+      ...sharedData.asset,
+      program: sharedData.program,
+      subjects: sharedData.subjects,
+    });
   }, [sharedData]);
 
   const onSubmit = useCallback(
-    (e) => {
+    ({ program, subjects, ...e }) => {
       if (coverFile.current) {
         e.cover = coverFile.current;
       }
       const data = {
         ...sharedData,
         asset: e,
+        program,
+        subjects,
         metadata: {
           ...sharedData.metadata,
           visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'basicData']),
@@ -128,6 +137,7 @@ function BasicData({
       <AssetFormInput
         form={formData}
         {...{ labels, placeholders, helps, errorMessages }}
+        advancedConfig={advancedConfig}
         category="assignables.task"
         tagsPluginName="tasks"
         preview
@@ -154,6 +164,7 @@ BasicData.propTypes = {
   onNext: PropTypes.func,
   useObserver: PropTypes.func,
   onNameChange: PropTypes.func,
+  advancedConfig: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -14,7 +14,7 @@ function encodeURI(config) {
   const protocol = config.connection.srv ? 'mongodb+srv' : 'mongodb';
 
   const hosts = [
-    { host: config.connection.host, port: config.connection.port },
+    { host: config.connection.host, port: config.connection.srv ? null : config.connection.port },
     ...config.replicaSet,
   ].map(({ host, port }) => {
     const _port = port ? `:${port}` : '';
@@ -26,6 +26,8 @@ function encodeURI(config) {
 
 function getMongoConnection(connection) {
   return new Promise((resolve, reject) => {
+    const isFalsy = (value) => !['true', true, 1, '1'].includes(value);
+
     const config = {
       pool: {
         min: _.get(connection.settings, 'pool.min', 5),
@@ -38,7 +40,7 @@ function getMongoConnection(connection) {
         authDatabase: _.get(connection.settings, 'authDatabase'),
         user: _.get(connection.settings, 'username') || _.get(connection.settings, 'user'),
         password: _.get(connection.settings, 'password'),
-        srv: _.get(connection.settings, 'srv', false),
+        srv: !isFalsy(_.get(connection.settings, 'srv', false)),
       },
 
       replicaSet: _.get(connection.settings, 'replicaSet', []),

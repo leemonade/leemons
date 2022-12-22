@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, HtmlText, TabPanel, Tabs, Title } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { isEmpty } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -62,7 +62,7 @@ export default function Resume(props) {
               {curriculum ? (
                 <Box sx={tabPanelStyle}>
                   <Box>
-                    <CurriculumListContents value={curriculum} />
+                    <CurriculumListContents value={curriculum} subjects={map(subjects, 'id')} />
                   </Box>
                 </Box>
               ) : null}

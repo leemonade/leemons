@@ -7,25 +7,29 @@ import { prefixPN } from '@scores/helpers';
 import { Header } from './components/Header';
 import ActivitiesTab from './components/ActivitiesTab';
 import { EmptyState } from './EmptyState';
+import StudentActivities from '../StudentScoresPage/StudentActivities';
 
 const useNotebookStyles = createStyles((theme) => ({
   root: {
     width: '100%',
     boxSizing: 'border-box',
     transition: 'width 0.3s ease-in-out',
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
   },
   tabHeader: {
-    backgroundColor: theme.colors.interactive03h,
+    flex: 1,
   },
 }));
 
-function useNotebookLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('notebook.tabs'));
+function useNotebookLocalizations(key) {
+  const [, translations] = useTranslateLoader(prefixPN(key));
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('notebook.tabs'));
+      const data = _.get(res, prefixPN(key));
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
@@ -38,27 +42,32 @@ function useNotebookLocalizations() {
   return labels;
 }
 
-export default function Notebook({ filters }) {
+export default function Notebook({ filters, isStudent, klasses }) {
   const { classes } = useNotebookStyles();
 
-  const labels = useNotebookLocalizations();
+  const key = isStudent ? 'notebook.students' : 'notebook.tabs';
+  const labels = useNotebookLocalizations(key);
 
   if (isEmpty(filters)) {
-    return <EmptyState />;
+    return <EmptyState isStudent={isStudent} />;
   }
 
   return (
     <Box className={classes.root}>
-      <Header filters={filters} variant="notebook" allowDownload />
-      <Tabs className={classes.tabHeader}>
-        <TabPanel label={labels.activities.title}>
-          <ActivitiesTab
-            key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
-            filters={filters}
-            labels={labels.activities}
-          />
-        </TabPanel>
-      </Tabs>
+      <Header filters={filters} variant="notebook" allowDownload isStudent={isStudent} />
+      {isStudent ? (
+        <StudentActivities klasses={klasses} filters={filters} labels={labels} />
+      ) : (
+        <Tabs className={classes.tabHeader}>
+          <TabPanel label={labels.activities.title} className={classes.tabPanel}>
+            <ActivitiesTab
+              key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
+              filters={filters}
+              labels={labels.activities}
+            />
+          </TabPanel>
+        </Tabs>
+      )}
     </Box>
   );
 }

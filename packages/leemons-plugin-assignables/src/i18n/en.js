@@ -314,4 +314,14 @@ module.exports = {
       previous: 'The previous activity must be completed first',
     },
   },
+  assetListFilters: {
+    program: 'Program...',
+    subject: 'Subject...',
+    allPrograms: 'All the programs',
+    allSubjects: 'All the subjects',
+    subectGroups: {
+      mySubjects: 'My subjects',
+      collaborations: 'Collaborations',
+    },
+  },
 };

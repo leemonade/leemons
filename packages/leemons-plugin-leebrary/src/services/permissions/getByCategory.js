@@ -150,7 +150,7 @@ async function getByCategory(
     if (!roles?.length || roles.includes('viewer')) {
       forEach(viewItems, (asset) => {
         const index = findIndex(results, { asset });
-        if (index < 0) {
+        if (index < 0 && assetIds.includes(asset)) {
           results.push({
             asset,
             role: 'viewer',
@@ -168,7 +168,7 @@ async function getByCategory(
             results[index].role = 'editor';
             results[index].permissions = getRolePermissions('editor');
           }
-        } else {
+        } else if (assetIds.includes(asset)) {
           results.push({
             asset,
             role: 'editor',
@@ -192,7 +192,10 @@ async function getByCategory(
       results = results.filter(({ asset }) => indexableAssetsObject[asset]);
     }
 
-    results = uniqBy(results.concat(publicAssets), 'asset');
+    results = uniqBy(
+      results.concat(publicAssets.filter(({ asset }) => assetIds.includes(asset))),
+      'asset'
+    );
 
     if (preferCurrent) {
       const versionControlServices = leemons.getPlugin('common').services.versionControl;

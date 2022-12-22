@@ -62,7 +62,7 @@ async function add(
 
   await validateAddAsset(data);
 
-  const { categoryId, categoryKey, tags, ...assetData } = data;
+  const { categoryId, categoryKey, tags, subjects, ...assetData } = data;
 
   if (userSession) {
     assetData.fromUser = userSession.id;
@@ -155,6 +155,14 @@ async function add(
         { transacting }
       );
 
+      if (subjects && subjects.length) {
+        await Promise.all(
+          map(subjects, (item) =>
+            tables.assetsSubjects.create({ asset: newAsset.id, ...item }, { transacting })
+          )
+        );
+      }
+
       // ··········································································
       // ADD PERMISSIONS
 
@@ -188,7 +196,6 @@ async function add(
         });
       }
       await Promise.all(permissionsPromises);
-
       // ES: Luego, añade los permisos a los usuarios
       // EN: Then, add the permissions to the users
       const permissions = [];

@@ -129,6 +129,7 @@ export default function ProgramList() {
           name,
           abbreviation,
           credits,
+          totalHours,
           image,
           color,
           totalHours: totalHours || 0,

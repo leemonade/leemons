@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, createStyles, Text, Title, useResizeObserver } from '@bubbles-ui/components';
+import { Box, createStyles, Text, Title } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -13,7 +13,8 @@ const useEmptyStateStyles = createStyles((theme, { top, bottom }) => ({
     boxSizing: 'border-box',
     alignItems: 'center',
     justifyContent: 'center',
-    height: `calc(100vh - ${top}px)`,
+    // height: `calc(100vh - ${top}px)`,
+    flex: 1,
     width: '100%',
     backgroundColor: theme.white,
     padding: theme.spacing[2],
@@ -25,7 +26,7 @@ const useEmptyStateStyles = createStyles((theme, { top, bottom }) => ({
     gap: theme.spacing[4],
   },
   image: {
-    maxHeight: bottom - top,
+    // maxHeight: bottom - top,
     maxWidth: 573,
   },
   text: { maxWidth: 250 },
@@ -45,29 +46,20 @@ function useEmptyStateLocalizations() {
 }
 
 export function EmptyState() {
-  const [ref, rect] = useResizeObserver();
   const { theme } = useLayout();
-  const { top, bottom } = React.useMemo(() => {
-    const boundingRect = ref.current?.getBoundingClientRect();
-
-    return { top: boundingRect?.top, bottom: boundingRect?.bottom };
-  }, [ref, rect]);
-
-  const { classes } = useEmptyStateStyles({ top, bottom });
+  const { classes } = useEmptyStateStyles({});
 
   const labels = useEmptyStateLocalizations();
 
   return (
-    <Box className={classes.root} ref={ref}>
-      {ref.current && (
-        <Box className={classes.container}>
-          {theme.usePicturesEmptyStates && <img src={noResults} className={classes.image} />}
-          <Box className={classes.test}>
-            <Title>{labels?.title}</Title>
-            <Text>{labels?.description}</Text>
-          </Box>
+    <Box className={classes.root}>
+      <Box className={classes.container}>
+        {theme.usePicturesEmptyStates && <img src={noResults} className={classes.image} />}
+        <Box className={classes.test}>
+          <Title>{labels?.title}</Title>
+          <Text>{labels?.description}</Text>
         </Box>
-      )}
+      </Box>
     </Box>
   );
 }

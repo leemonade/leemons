@@ -77,6 +77,7 @@ module.exports = async function getAssignableInstance(
             transacting,
           });
         } catch (e) {
+          console.error(e);
           throw new Error(
             `Error getting the students data of the assignable instance: ${e.message}`
           );

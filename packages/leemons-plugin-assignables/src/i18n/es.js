@@ -312,4 +312,14 @@ module.exports = {
     show: 'Mostrar',
     goTo: 'Ir a',
   },
+  assetListFilters: {
+    program: 'Programa...',
+    subject: 'Asignatura...',
+    allPrograms: 'Todos los programas',
+    allSubjects: 'Todas las asignaturas',
+    subectGroups: {
+      mySubjects: 'Mis asignaturas',
+      collaborations: 'Colaboraciones',
+    },
+  },
 };

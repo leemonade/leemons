@@ -225,6 +225,9 @@ function ActivityItem({ instance }) {
 }
 
 function SubjectItem({ classData, fullLength }) {
+  const className = classData.customGroup
+    ? `${classData.subjectName} - ${classData.subjectCompiledInternalId} - ${classData.name}`
+    : classData.name;
   return (
     <Box
       sx={(theme) => ({
@@ -247,19 +250,21 @@ function SubjectItem({ classData, fullLength }) {
           backgroundColor: classData?.color,
         })}
       >
-        <ImageLoader
-          sx={() => ({
-            borderRadius: 0,
-            filter: 'brightness(0) invert(1)',
-          })}
-          forceImage
-          width={16}
-          height={16}
-          src={classData?.icon}
-        />
+        {classData?.icon && (
+          <ImageLoader
+            sx={() => ({
+              borderRadius: 0,
+              filter: 'brightness(0) invert(1)',
+            })}
+            forceImage
+            width={16}
+            height={16}
+            src={classData?.icon}
+          />
+        )}
       </Box>
       <TextClamp lines={1}>
-        <Text>{fullLength ? classData?.name : classData?.groupName || classData?.name}</Text>
+        <Text>{fullLength ? className : classData?.groupName || className}</Text>
       </TextClamp>
     </Box>
   );
