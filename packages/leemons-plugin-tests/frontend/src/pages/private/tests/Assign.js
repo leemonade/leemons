@@ -85,8 +85,8 @@ export default function Assign() {
       store.configs = configs;
       store.test = test;
       store.assignable = {
-        subjects: map(test.subjects, ({ subject }, i) => ({
-          subject,
+        subjects: map(test.subjects, (id, i) => ({
+          subject: id,
           program: test.program,
           // EN: As long as curriculum is not subject-specific, we provide it in the first subject, so less calculations are needed.
           // ES: Mientras que el curriculum no sea específico por asignatura, se proporciona en la primera asignatura, por lo que se hace menos cálculos.
