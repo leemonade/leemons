@@ -109,6 +109,7 @@ export default function Edit() {
           // eslint-disable-next-line camelcase
           test: { deleted, deleted_at, created_at, updated_at, ...props },
         } = await getTestRequest(params.id);
+        props.subjects = map(props.subjects, (subject) => ({ subject }));
         form.reset({ ...props, questions: map(props.questions, 'id') });
       }
       await load();
