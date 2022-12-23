@@ -4,7 +4,16 @@ const { getById: getCategoryById } = require('../categories/getById');
 async function byProvider(
   categoryId,
   criteria,
-  { details = false, assets: assetsIds, category, transacting } = {}
+  {
+    query,
+    details = false,
+    assets: assetsIds,
+    category,
+    published,
+    preferCurrent,
+    userSession,
+    transacting,
+  } = {}
 ) {
   if (!category && categoryId) {
     // eslint-disable-next-line no-param-reassign
@@ -16,10 +25,19 @@ async function byProvider(
   }
 
   try {
-    const provider = leemons.getProvider(category.provider);
+    const provider = leemons.getProvider(category.provider) || leemons.getPlugin(category.provider);
+
+    if (typeof provider?.services?.assets?.search !== 'function') {
+      return null;
+    }
 
     const assets = await provider.services.assets.search(criteria, {
+      query,
+      category,
       assets: assetsIds,
+      published,
+      preferCurrent,
+      userSession,
       transacting,
     });
 

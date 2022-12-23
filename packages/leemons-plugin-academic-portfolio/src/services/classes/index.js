@@ -7,6 +7,7 @@ const { updateClassMany } = require('./updateClassMany');
 const { addClassStudents } = require('./addClassStudents');
 const { addClassTeachers } = require('./addClassTeachers');
 const { addInstanceClass } = require('./addInstanceClass');
+const { getTeachersByClass } = require('./getTeachersByClass');
 const { listStudentClasses } = require('./listStudentClasses');
 const { listTeacherClasses } = require('./listTeacherClasses');
 const { removeClassesByIds } = require('./removeClassesByIds');
@@ -27,6 +28,7 @@ module.exports = {
   addClassTeachers,
   addClassStudents,
   addInstanceClass,
+  getTeachersByClass,
   listSubjectClasses,
   listStudentClasses,
   listTeacherClasses,

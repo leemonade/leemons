@@ -14,6 +14,7 @@ module.exports = {
     multiSubject: 'Multi-Subject',
     start: 'Start',
     end: 'End',
+    course: 'Course',
   },
   calendar: {
     month: 'Month',
@@ -27,6 +28,8 @@ module.exports = {
     calendar: 'Calendar',
     schedule: 'Schedule',
     centers: 'Centers',
+    programCalendar: 'Calendar of program - ',
+    program: 'Program',
     close: 'Close',
     allDay: 'All day',
     init: 'Init',
@@ -169,6 +172,7 @@ module.exports = {
     filter: 'Filter by',
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
+    onlyByMy: 'Only those created by me',
   },
   userProgramCalendar: {
     calendar: 'Calendar',

@@ -36,7 +36,9 @@ function SelectCenter({ firstSelected, onChange, value: userValue, ...props }) {
     }
   }, []);
 
-  return <Select {...props} data={data} value={value} onChange={handleOnChange} />;
+  return (
+    <Select {...props} data={data} value={value} autoSelectOneOption onChange={handleOnChange} />
+  );
 }
 
 SelectCenter.propTypes = {

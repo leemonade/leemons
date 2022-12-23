@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { createStyles, getFontProductive } from '@bubbles-ui/components';
 
 export const TestStyles = createStyles((theme, {}) => ({
@@ -27,11 +28,12 @@ export const TestStyles = createStyles((theme, {}) => ({
     position: 'absolute',
     top: '50%',
     left: 0,
-    width: 340,
+    width: '100%',
     transform: 'translateY(-50%)',
     display: 'flex',
     textAlign: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
+    gap: 48,
   },
   howItWorksModalContainer: {
     padding: theme.spacing[2],
@@ -59,6 +61,14 @@ export const TestStyles = createStyles((theme, {}) => ({
     paddingBottom: theme.spacing[4],
     backgroundColor: theme.colors.uiBackground02,
   },
+  resumeBoxWithBorder: {
+    border: `1px solid ${theme.colors.ui01}`,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingRight: 0,
+    paddingLeft: 16,
+    backgroundColor: theme.colors.mainWhite,
+  },
   resumeBoxBig: {
     width: '100%',
     display: 'flex',
@@ -80,6 +90,28 @@ export const TestStyles = createStyles((theme, {}) => ({
     color: theme.colors.text01,
     fontSize: theme.fontSizes[1],
     textAlign: 'left',
+  },
+  weightColorRed: {
+    strong: {
+      color: theme.colors.fatic01,
+      fontWeight: 600,
+    },
+  },
+  weightColorGreen: {
+    strong: {
+      color: theme.colors.fatic02,
+      fontWeight: 600,
+    },
+  },
+  resumeLabelWithBorder: {
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    paddingBlock: 32,
+    paddingLeft: 16,
+    borderLeft: `1px solid ${theme.colors.ui01}`,
+    marginLeft: 4,
   },
   resumeLabelBig: {
     width: 'calc(100% - 80px)',
@@ -190,7 +222,7 @@ export const TestStyles = createStyles((theme, {}) => ({
     backgroundPosition: 'left center',
     backgroundSize: '100% auto ',
     paddingLeft: 100,
-    paddingRight: 150,
+    paddingRight: 100,
     paddingTop: 36,
     paddingBottom: 36,
     position: 'relative',

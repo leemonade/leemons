@@ -20,11 +20,12 @@ async function addStudentsClassesUnderNodeTree(
         transacting,
       });
 
-      return Promise.all(
+      const result = await Promise.all(
         _.map(classes, (_class) =>
           addClassStudents({ class: _class.id, students }, { transacting })
         )
       );
+      return result;
     },
     table.class,
     _transacting

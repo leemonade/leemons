@@ -15,7 +15,11 @@ async function events(isInstalled) {
   if (!isInstalled) {
     // Menu
     leemons.events.once(
-      ['plugins.users:init-menu', 'plugins.families:init-permissions'],
+      [
+        'plugins.users:init-menu',
+        'plugins.families:init-permissions',
+        'plugins.menu-builder:pluginDidLoadServices',
+      ],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
           // eslint-disable-next-line no-await-in-loop

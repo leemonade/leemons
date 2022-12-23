@@ -31,7 +31,8 @@ module.exports = {
       type: 'integer',
     },
     config: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

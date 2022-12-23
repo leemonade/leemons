@@ -1,11 +1,12 @@
 const _ = require('lodash');
-const { table } = require('../src/services/tables');
+const {table} = require('../src/services/tables');
 const calendar = require('../src/services/calendar');
 const events = require('../src/services/events');
 const eventTypes = require('../src/services/event-types');
-const { validateKeyPrefix } = require('../src/validations/exists');
+const {validateKeyPrefix} = require('../src/validations/exists');
+const {addFromUser} = require("../src/services/events/addFromUser");
 
-function addEvent(key, event, { transacting } = {}) {
+function addEvent(key, event, {transacting} = {}) {
   const keys = _.isArray(key) ? key : [key];
   // Check if keys start with 'plugins.assignables'
   _.forEach(keys, (k) => {
@@ -17,39 +18,39 @@ function addEvent(key, event, { transacting } = {}) {
     }
   });
 
-  return events.add(key, event, { transacting });
+  return events.add(key, event, {transacting});
 }
 
-function grantAccessUserAgentToEvent(id, userAgentId, actionName, { transacting } = {}) {
+function grantAccessUserAgentToEvent(id, userAgentId, actionName, {transacting} = {}) {
   if (!this.calledFrom.startsWith('plugins.assignables')) {
     throw new Error('You can not have access');
   }
-  return events.grantAccessUserAgentToEvent(id, userAgentId, actionName, { transacting });
+  return events.grantAccessUserAgentToEvent(id, userAgentId, actionName, {transacting});
 }
 
-function unGrantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting } = {}) {
+function unGrantAccessUserAgentToEvent(id, userAgentId, {actionName, transacting} = {}) {
   if (!this.calledFrom.startsWith('plugins.assignables')) {
     throw new Error('You can not have access');
   }
-  return events.grantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting });
+  return events.grantAccessUserAgentToEvent(id, userAgentId, {actionName, transacting});
 }
 
-function removeEvent(id, { transacting } = {}) {
+function removeEvent(id, {transacting} = {}) {
   if (!this.calledFrom.startsWith('plugins.assignables')) {
     throw new Error('You can not have access');
   }
-  return events.remove(id, { transacting });
+  return events.remove(id, {transacting});
 }
 
-function updateEvent(id, data, { calendar: _calendar, transacting } = {}) {
+function updateEvent(id, data, {calendar: _calendar, transacting} = {}) {
   if (!this.calledFrom.startsWith('plugins.assignables')) {
     throw new Error('You can not have access');
   }
-  return events.update(id, data, { calendar: _calendar, transacting });
+  return events.update(id, data, {calendar: _calendar, transacting});
 }
 
 function getCalendarsByClass(classe) {
-  return table.classCalendar.find({ class_$in: _.isArray(classe) ? classe : [classe] });
+  return table.classCalendar.find({class_$in: _.isArray(classe) ? classe : [classe]});
 }
 
 module.exports = {
@@ -65,6 +66,7 @@ module.exports = {
   grantAccessUserAgentToCalendar: calendar.grantAccessUserAgentToCalendar,
   unGrantAccessUserAgentToCalendar: calendar.unGrantAccessUserAgentToCalendar,
   addEvent,
+  addEventFromUser: addFromUser,
   removeEvent,
   updateEvent,
   getCalendarsByClass,

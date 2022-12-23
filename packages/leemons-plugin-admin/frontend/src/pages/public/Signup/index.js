@@ -6,6 +6,7 @@ import {
   Select,
   TextInput,
   PasswordInput,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
 import { isEmpty } from 'lodash';
 import Cookies from 'js-cookie';
@@ -41,9 +42,9 @@ const Signup = () => {
   // FORM
 
   const defaultValues = {
-    email: null,
+    email: '',
     password: '',
-    confirmPassword: '',
+    repeatPassword: '',
     locale,
   };
 
@@ -104,96 +105,107 @@ const Signup = () => {
 
   return (
     <HeroWrapper quote={{ q: t.welcome.quote?.title, a: t.welcome.quote?.description }}>
-      <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <ContextContainer title={t.signup.title} description={t.signup.description}>
-          <Box>
-            <Controller
-              control={control}
-              name="email"
-              rules={{
-                required: t.signup.errorMessages?.email?.required || 'Field required',
-                pattern: {
-                  value: EMAIL_REGEX,
-                  message: t.signup.errorMessages?.email?.invalidFormat || 'Invalid email format',
-                },
-              }}
-              render={({ field }) => (
-                <TextInput
-                  label={t.signup.labels?.email}
-                  placeholder={t.signup.placeholders?.email}
-                  error={errors.email}
-                  required
-                  {...field}
-                />
-              )}
-            />
-          </Box>
-          <Controller
-            name="password"
-            control={control}
-            rules={{
-              required: t.signup.errorMessages?.password?.required || 'Field required',
-            }}
-            render={({ field }) => (
-              <PasswordInput
-                label={t.signup.labels?.password}
-                placeholder={t.signup.placeholders?.password}
-                error={
-                  isSubmitted && password !== repeatPassword
-                    ? t.signup.errorMessages?.password?.notMatch
-                    : errors.password
-                }
-                required
-                {...field}
+      <form
+        onSubmit={handleSubmit((e) => {
+          if (e.password === e.repeatPassword) {
+            handleOnSubmit(e);
+          }
+        })}
+        autoComplete="off"
+      >
+        {translations && !isEmpty(translations.items) ? (
+          <ContextContainer title={t.signup.title} description={t.signup.description}>
+            <Box>
+              <Controller
+                control={control}
+                name="email"
+                rules={{
+                  required: t.signup.errorMessages?.email?.required || 'Field required',
+                  pattern: {
+                    value: EMAIL_REGEX,
+                    message: t.signup.errorMessages?.email?.invalidFormat || 'Invalid email format',
+                  },
+                }}
+                render={({ field }) => (
+                  <TextInput
+                    label={t.signup.labels?.email}
+                    placeholder={t.signup.placeholders?.email}
+                    error={errors.email}
+                    required
+                    {...field}
+                  />
+                )}
               />
-            )}
-          />
-
-          <Box>
+            </Box>
             <Controller
-              name="repeatPassword"
+              name="password"
               control={control}
               rules={{
-                required: t.signup.errorMessages?.repeatPassword?.required || 'Field required',
+                required: t.signup.errorMessages?.password?.required || 'Field required',
               }}
               render={({ field }) => (
                 <PasswordInput
-                  label={t.signup.labels?.repeatPassword}
-                  placeholder={t.signup.placeholders?.repeatPassword}
+                  label={t.signup.labels?.password}
+                  placeholder={t.signup.placeholders?.password}
                   error={
                     isSubmitted && password !== repeatPassword
                       ? t.signup.errorMessages?.password?.notMatch
-                      : errors.repeatPassword
+                      : errors.password
                   }
                   required
                   {...field}
                 />
               )}
             />
-          </Box>
-          <Box>
-            <Controller
-              control={control}
-              name="locale"
-              rules={{
-                required: t.signup.errorMessages?.lang?.required || 'Field required',
-              }}
-              render={({ field }) => (
-                <Select
-                  label={t.signup.labels?.lang}
-                  placeholder={t.signup.placeholders?.lang}
-                  data={LOCALES}
-                  {...field}
-                />
-              )}
-            />
-          </Box>
-          <Box>
-            <Button type="submit" loading={loading}>
-              {t.signup.labels?.nextButton}
-            </Button>
-          </Box>
-        </ContextContainer>
+
+            <Box>
+              <Controller
+                name="repeatPassword"
+                control={control}
+                rules={{
+                  required: t.signup.errorMessages?.repeatPassword?.required || 'Field required',
+                }}
+                render={({ field }) => (
+                  <PasswordInput
+                    label={t.signup.labels?.repeatPassword}
+                    placeholder={t.signup.placeholders?.repeatPassword}
+                    error={
+                      isSubmitted && password !== repeatPassword
+                        ? t.signup.errorMessages?.password?.notMatch
+                        : errors.repeatPassword
+                    }
+                    required
+                    {...field}
+                  />
+                )}
+              />
+            </Box>
+            <Box>
+              <Controller
+                control={control}
+                name="locale"
+                rules={{
+                  required: t.signup.errorMessages?.lang?.required || 'Field required',
+                }}
+                render={({ field }) => (
+                  <Select
+                    label={t.signup.labels?.lang}
+                    placeholder={t.signup.placeholders?.lang}
+                    data={LOCALES}
+                    {...field}
+                  />
+                )}
+              />
+            </Box>
+            <Box>
+              <Button type="submit" loading={loading}>
+                {t.signup.labels?.nextButton}
+              </Button>
+            </Box>
+          </ContextContainer>
+        ) : (
+          <LoadingOverlay visible />
+        )}
       </form>
     </HeroWrapper>
   );

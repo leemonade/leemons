@@ -15,13 +15,17 @@ async function removeClassesByIds(ids, { soft, userSession, transacting: _transa
       const classesIds = _.map(classes, 'id');
       await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
 
-      await leemons.getPlugin('users').services.permissions.removeItems({
-        item_$in: _.map(classes, 'id'),
-        type: 'plugins.academic-portfolio.class',
-      });
+      await leemons.getPlugin('users').services.permissions.removeItems(
+        {
+          item_$in: _.map(classes, 'id'),
+          type: 'plugins.academic-portfolio.class',
+        },
+        { transacting }
+      );
 
       const assetService = leemons.getPlugin('leebrary').services.assets;
-      await Promise.all(
+
+      await Promise.allSettled(
         _.map(classes, (classe) =>
           assetService.remove(
             { id: classe.image.id },

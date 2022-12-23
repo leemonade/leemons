@@ -89,6 +89,8 @@ module.exports = {
         title: 'Resource permissions',
         addUsers: 'Add users',
         addUsersDescription: 'To share resource and set permissions',
+        addClasses: 'Add classes',
+        addClassesDescription: 'To share resource and set permissions',
         isPublic: 'This resource is public',
         saveButton: 'Save permissions',
         shareButton: 'Share',

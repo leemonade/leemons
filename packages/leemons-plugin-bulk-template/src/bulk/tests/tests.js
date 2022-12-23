@@ -7,53 +7,55 @@ const converter = new showdown.Converter();
 
 async function importTests({ programs, qbanks, questions }) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
-  const items = await itemsImport(filePath, 'te_tests', 40, true, true);
+  const items = await itemsImport(filePath, 'te_tests', 50, true, true);
 
-  keys(items).forEach((key) => {
-    const test = items[key];
+  keys(items)
+    .filter((key) => !isNil(key) && !isEmpty(key))
+    .forEach((key) => {
+      const test = items[key];
 
-    // Qbank program
-    const program = programs[test.program];
-    if (program) {
-      test.program = program.id;
-      test.subjects = (test.subjects || '')
-        ?.split(',')
+      // Qbank program
+      const program = programs[test.program];
+      if (program) {
+        test.program = program.id;
+        test.subjects = (test.subjects || '')
+          ?.split(',')
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val))
+          .map((subject) => program.subjects[subject]?.id);
+      }
+
+      test.questions = (test.questions || '')
+        ?.split('|')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
-        .map((subject) => program.subjects[subject]?.id);
-    }
+        .map((question) => questions[question]?.id);
 
-    test.questions = (test.questions || '')
-      ?.split('|')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((question) => questions[question]?.id);
+      // Tags
+      test.tags = (test.tags || '')
+        ?.split(',')
+        .map((val) => trim(val))
+        .filter((val) => !isEmpty(val));
 
-    // Tags
-    test.tags = (test.tags || '')
-      ?.split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val));
+      test.tags = test.tags || [];
 
-    test.tags = test.tags || [];
+      if (test.questionBank) test.questionBank = qbanks[test.questionBank]?.id;
+      if (test.statement) test.statement = converter.makeHtml(test.statement || '');
 
-    if (test.questionBank) test.questionBank = qbanks[test.questionBank]?.id;
-    if (test.statement) test.statement = converter.makeHtml(test.statement || '');
+      if (test.instructionsForTeachers && !isEmpty(test.instructionsForTeachers)) {
+        test.instructionsForTeachers = converter.makeHtml(test.instructionsForTeachers);
+      }
 
-    if (test.instructionsForTeachers && !isEmpty(test.instructionsForTeachers)) {
-      test.instructionsForTeachers = converter.makeHtml(test.instructionsForTeachers);
-    }
+      if (test.instructionsForStudents && !isEmpty(test.instructionsForStudents)) {
+        test.instructionsForStudents = converter.makeHtml(test.instructionsForStudents);
+      }
 
-    if (test.instructionsForStudents && !isEmpty(test.instructionsForStudents)) {
-      test.instructionsForStudents = converter.makeHtml(test.instructionsForStudents);
-    }
+      if (!isNil(test.useAllQuestions)) test.filters = { useAllQuestions: test.useAllQuestions };
 
-    if (!isNil(test.useAllQuestions)) test.filters = { useAllQuestions: test.useAllQuestions };
+      delete test.useAllQuestions;
 
-    delete test.useAllQuestions;
-
-    items[key] = test;
-  });
+      items[key] = test;
+    });
 
   /*
   const mock = {

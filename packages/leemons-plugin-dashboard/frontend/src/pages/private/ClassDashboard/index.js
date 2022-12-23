@@ -5,14 +5,7 @@ import { find, isArray, map } from 'lodash';
 import { useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
-import {
-  Box,
-  createStyles,
-  LoadingOverlay,
-  RadioGroup,
-  TabPanel,
-  Tabs,
-} from '@bubbles-ui/components';
+import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useHistory, useParams } from 'react-router-dom';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
@@ -21,19 +14,20 @@ import { getLocalizations } from '@multilanguage/useTranslate';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { LayoutContext } from '@layout/context/layout';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const rightZoneWidth = '320px';
 
-const Styles = createStyles((theme, { hideRightSide, haveScrollBar }) => ({
+const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar }) => ({
   leftSide: {
-    width: hideRightSide ? '100%' : `calc(100% - ${rightZoneWidth})`,
+    width: hideRightSide || hideStudents ? '100%' : `calc(100% - ${rightZoneWidth})`,
     transition: '300ms',
   },
   rightSide: {
     width: rightZoneWidth,
     height: '100vh',
     position: 'fixed',
-    right: hideRightSide ? `-${rightZoneWidth}` : haveScrollBar ? '14px' : 0,
+    right: hideRightSide || hideStudents ? `-${rightZoneWidth}` : haveScrollBar ? '14px' : 0,
     top: 0,
     backgroundColor: theme.colors.uiBackground02,
     padding: theme.spacing[4],
@@ -92,9 +86,11 @@ export default function ClassDashboard({ session }) {
   const { classes: styles } = Styles({
     hideRightSide: store.hideRightSide,
     haveScrollBar: store.haveScrollBar,
+    hideStudents: store.hideStudents,
   });
   const [t] = useTranslateLoader(prefixPN('classDashboard'));
   const { id } = useParams();
+  const isStudent = useIsStudent();
   const history = useHistory();
 
   function onResize() {
@@ -119,15 +115,20 @@ export default function ClassDashboard({ session }) {
     render();
     store.idLoaded = id;
     const { classe, programClasses } = await classDetailForDashboardRequest(id);
-    console.log('id:', id);
-    console.log('classe:', classe);
-    console.log('programClasses:', programClasses);
 
+    store.hideStudents = false;
+    if (isStudent && classe.hideStudentsToStudents) {
+      store.hideStudents = true;
+    }
     store.class = classe;
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
       const courseMultiple = isArray(programClass.courses);
-      const group = programClass.groups ? programClass.groups.abbreviation : null;
+      const group = programClass.groups.isAlone
+        ? null
+        : programClass.groups
+        ? programClass.groups.abbreviation
+        : null;
       return {
         id: programClass.id,
         color: programClass.color,
@@ -145,7 +146,6 @@ export default function ClassDashboard({ session }) {
     });
 
     store.loading = false;
-    console.log('store:', store);
     render();
 
     setTimeout(() => {
@@ -177,8 +177,8 @@ export default function ClassDashboard({ session }) {
   }
 
   React.useEffect(() => {
-    if (id && (!store.idLoaded || id !== store.idLoaded)) init();
-  }, [id]);
+    if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null) init();
+  }, [id, isStudent]);
 
   const headerProps = {};
   const classImage = store.class ? getClassImage(store.class) : null;
@@ -200,6 +200,10 @@ export default function ClassDashboard({ session }) {
   const classTabs = React.useCallback(
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
+
+      if (properties.label === 'plugins.academic-portfolio.tabDetail.label' && store.hideStudents) {
+        return null;
+      }
 
       return (
         <TabPanel
@@ -284,8 +288,21 @@ export default function ClassDashboard({ session }) {
           </ZoneWidgets>
         ) : null}
       </Box>
-      <Box className={styles.rightSide}>
-        {store.rightWidgetSelect ? (
+      {!store.hideStudents ? (
+        <Box className={styles.rightSide}>
+          {!!store.rightWidgetSelect && (
+            <Tabs
+              onChange={(e) => {
+                store.selectedRightTab = store.rightWidgetSelect[e].value;
+                render();
+              }}
+            >
+              {store.rightWidgetSelect.map(({ label, id: tabId }) => (
+                <TabPanel label={label} id={tabId} key={tabId} />
+              ))}
+            </Tabs>
+          )}
+          {/* {store.rightWidgetSelect ? (
           <RadioGroup
             variant="icon"
             data={store.rightWidgetSelect || []}
@@ -296,16 +313,16 @@ export default function ClassDashboard({ session }) {
             }}
             value={store.selectedRightTab}
           />
-        ) : null}
-
-        <Box className={styles.rightSidewidgetsContainer}>
-          {!store.loading ? (
-            <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
-              {classRightTabs}
-            </ZoneWidgets>
-          ) : null}
+        ) : null} */}
+          <Box className={styles.rightSidewidgetsContainer}>
+            {!store.loading ? (
+              <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
+                {classRightTabs}
+              </ZoneWidgets>
+            ) : null}
+          </Box>
         </Box>
-      </Box>
+      ) : null}
     </>
   );
 }

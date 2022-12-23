@@ -31,6 +31,7 @@ async function grantAccessUserAgentToCalendar(key, userAgentId, actionName, { tr
       },
       { transacting }
     );
+
   if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
   return true;
 }

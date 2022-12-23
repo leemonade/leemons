@@ -70,7 +70,7 @@ const menuItems = [
   {
     item: {
       key: 'activities',
-      order: 10,
+      order: 202,
       iconSvg: '/public/assignables/menu-icon.svg',
       activeIconSvg: '/public/assignables/menu-icon.svg',
       label: {

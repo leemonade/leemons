@@ -48,7 +48,7 @@ async function remove(classe, { transacting }) {
     });
     await Promise.all([
       leemons.plugin.services.calendar.remove(classCalendar.calendar, { transacting }),
-      table.classCalendar.remove({ id: classCalendar }, { transacting }),
+      table.classCalendar.delete({ id: classCalendar }, { transacting }),
       ...promises,
     ]);
   }

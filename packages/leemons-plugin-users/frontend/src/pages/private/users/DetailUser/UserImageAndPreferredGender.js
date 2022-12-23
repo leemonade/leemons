@@ -7,9 +7,9 @@ import {
   createStyles,
   InputWrapper,
   Select,
+  ModalZoom,
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-
 import { useStore } from '@common';
 import { Controller } from 'react-hook-form';
 import { updateUserImageRequest } from '@users/request';
@@ -61,15 +61,17 @@ function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
 
   const avatar = form.watch('user.avatar');
 
+  SocketIoService.useOn('USER_CHANGE_AVATAR', (event, { url }) => {
+    const a = avatar.split('?');
+    if (url === a[0]) {
+      form.setValue('user.avatar', `${url}?t=${Date.now()}`);
+    }
+  });
+
   function addData(name, e) {
     store[name].push({ label: e, value: e });
     render();
   }
-
-  SocketIoService.useOn('USER_CHANGE_AVATAR', () => {
-    const split = avatar.split('?');
-    form.setValue('user.avatar', `${split[0]}?${Date.now()}`);
-  });
 
   async function saveImage(file) {
     try {
@@ -97,13 +99,17 @@ function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
 
   return (
     <ContextContainer direction="row" alignItems="center">
-      <Box sx={() => ({ position: 'relative' })}>
-        {isEditMode || isMe ? (
-          <Box className={styles.imageOver} onClick={selectImage}>
-            {t('changeAvatar')}
-          </Box>
-        ) : null}
-        <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+      <Box>
+        <Box sx={() => ({ display: 'inline-block', position: 'relative' })}>
+          {isEditMode || isMe ? (
+            <Box className={styles.imageOver} onClick={selectImage}>
+              {t('changeAvatar')}
+            </Box>
+          ) : null}
+          <ModalZoom>
+            <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+          </ModalZoom>
+        </Box>
       </Box>
       <InputWrapper label={t('preferredGenderLabel')}>
         <ContextContainer direction="row">

@@ -57,7 +57,9 @@ async function getUserAgentsInfo(
   if (withProfile) {
     const profileRole = await table.profileRole.find({ role_$in: roles }, { transacting });
     const profiles = await table.profiles.find(
-      { id_$in: _.map(profileRole, 'profile') },
+      {
+        $or: [{ id_$in: _.map(profileRole, 'profile') }, { role_$in: roles }],
+      },
       { transacting }
     );
     profileRoleByRole = _.keyBy(profileRole, 'role');

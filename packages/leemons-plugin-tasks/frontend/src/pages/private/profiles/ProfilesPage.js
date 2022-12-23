@@ -34,18 +34,20 @@ export default function ProfilesPage() {
   // ----------------------------------------------------------------------
   // SETTINGS
 
-  useEffect(async () => {
-    const profiles = await getProfiles(['teacher', 'student']);
+  useEffect(() => {
+    (async () => {
+      const profiles = await getProfiles(['teacher', 'student']);
 
-    profiles
-      .filter(({ profile }) => profile)
-      .forEach(({ key, profile }) => {
-        const state = getFieldState(key);
+      profiles
+        .filter(({ profile }) => profile)
+        .forEach(({ key, profile }) => {
+          const state = getFieldState(key);
 
-        if (!state.isTouched) {
-          setValue(key, profile);
-        }
-      });
+          if (!state.isTouched) {
+            setValue(key, profile);
+          }
+        });
+    })();
   }, []);
 
   const onSubmit = async (data) => {

@@ -14,7 +14,7 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
       const { assignations: assignationsService, assignableInstances: assignableInstancesService } =
         leemons.getPlugin('assignables').services;
 
-      const [{ timestamps, finished }, [questionResponse], instance] = await Promise.all([
+      const [{ timestamps, finished, metadata }, [questionResponse], instance] = await Promise.all([
         assignationsService.getAssignation(data.instance, userSession.userAgents[0].id, {
           userSession,
           transacting,
@@ -81,8 +81,6 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         }
       );
 
-      // console.log(questions);
-
       result = await table.userAgentAssignableInstanceResponses.set(
         {
           instance: data.instance,
@@ -105,6 +103,13 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
             grade: note,
             gradedBy: 'auto-graded',
           })),
+          metadata: {
+            ...metadata,
+            score: {
+              count: Object.values(questions).filter(({ status }) => status === 'ok').length,
+              total: Object.values(questions).length,
+            },
+          },
         },
         {
           userSession,

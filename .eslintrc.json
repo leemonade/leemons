@@ -27,6 +27,19 @@
     "prettier"
   ],
   "rules": {
+    "no-plusplus": "off",
+    "import/no-dynamic-requires": "off",
+    "import/no-extraneous-dependencies": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-underscore-dangle": "off",
+    "prettier/prettier": [
+      2,
+      {},
+      {
+        "usePrettierrc": true
+      }
+    ],
+    "import/no-names-as-default": "off",
     "import/no-unresolved": [
       2,
       {
@@ -38,10 +51,15 @@
           "@assignables",
           "@calendar",
           "@common",
+          "@comunica",
           "@curriculum",
           "@dashboard",
           "@dataset",
           "@emails",
+          "@emails-amazon-ses",
+          "@emails-smtp",
+          "@families",
+          "@feedback",
           "@grades",
           "@layout",
           "@leebrary",
@@ -60,19 +78,6 @@
           "@bubbles-ui"
         ]
       }
-    ],
-    "no-plusplus": "off",
-    "import/no-dynamic-requires": "off",
-    "import/no-extraneous-dependencies": "off",
-    "react/react-in-jsx-scope": "off",
-    "no-underscore-dangle": "off",
-    "prettier/prettier": [
-      "error",
-      {},
-      {
-        "usePrettierrc": true
-      }
-    ],
-    "import/no-names-as-default": "off"
+    ]
   }
 }

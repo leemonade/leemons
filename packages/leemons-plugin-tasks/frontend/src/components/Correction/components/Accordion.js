@@ -1,17 +1,21 @@
 import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import {
-  Box,
-  Text,
   ActivityAccordion,
   ActivityAccordionPanel,
   Badge,
+  Box,
+  Button,
   ContextContainer,
   ScoreInput,
+  Text,
 } from '@bubbles-ui/components';
 import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorInput } from '@bubbles-ui/editors';
+import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
+import ChatButton from '@comunica/ChatButton';
+import { useStore } from '@common';
 
 function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {
   return (
@@ -25,7 +29,7 @@ function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, 
             <ScoreInput
               {...scoreInputProps}
               tags={[]}
-              value={{ score: field?.value }}
+              state={{ score: field?.value }}
               decimalPrecision={2}
               decimalSeparator=","
               direction="ltr"
@@ -75,7 +79,9 @@ export default function Accordion({
   user,
   instance,
   context,
+  assignationId,
 }) {
+  const [store, render] = useStore();
   const { control } = useFormContext();
   const { tabsState, updateTabState } = useContext(context);
 
@@ -85,10 +91,7 @@ export default function Accordion({
   // EN: Start with the accordion opened
   // ES: Iniciar con el acordeón abierto
   const initialState = useMemo(() => {
-    const defaultState = {
-      0: true,
-      1: true,
-    };
+    const defaultState = [labels?.punctuation];
     if (!state) {
       setState(defaultState);
       return defaultState;
@@ -97,103 +100,102 @@ export default function Accordion({
     return state;
   }, []);
 
-  if (instance?.requiresScoring && instance?.allowFeedback) {
-    return (
-      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-        <ActivityAccordionPanel
-          label={labels?.punctuation}
-          icon={<RatingStarIcon />}
-          rightSection={
-            <Badge
-              label={
-                <ContextContainer direction="row" spacing={1}>
-                  <Text>{labels?.minToPromote}</Text>
-                  <Badge
-                    label={
-                      evaluationSystem?.minScaleToPromote?.letter ||
-                      evaluationSystem?.minScaleToPromote?.number
-                    }
-                    closable={false}
-                    severity="warning"
-                  />
-                </ContextContainer>
-              }
-              closable={false}
-            />
-          }
-        >
-          <Grades
-            classes={classes}
-            evaluationSystem={evaluationSystem}
-            scoreInputProps={scoreInputProps}
-            control={control}
-            subject={subject}
-            user={user}
-          />
-        </ActivityAccordionPanel>
+  const Chat = (
+    <>
+      {store.room ? (
+        <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[10] })}>
+          <ContextContainer alignItems="center">
+            <Text size="md" color="primary" strong>
+              {labels?.chatTeacherDescription}
+            </Text>
+            <Box>
+              <Button
+                rounded
+                rightIcon={<PluginComunicaIcon />}
+                onClick={() => {
+                  store.chatOpened = true;
+                  render();
+                }}
+              >
+                {labels?.chatButtonStudent}
+              </Button>
+            </Box>
+          </ContextContainer>
+        </Box>
+      ) : null}
 
-        <ActivityAccordionPanel
-          label={labels?.feedbackForStudent}
-          icon={<PluginComunicaIcon />}
-          rightSection={<Badge label={labels?.optional} closable={false} />}
-        >
-          <Feedback classes={classes} subject={subject} control={control} user={user} />
-        </ActivityAccordionPanel>
-      </ActivityAccordion>
-    );
-  }
-  if (instance?.requiresScoring && !instance?.allowFeedback) {
-    return (
-      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-        <ActivityAccordionPanel
-          label={labels?.punctuation}
-          icon={<RatingStarIcon />}
-          rightSection={
-            <Badge
-              label={
-                <ContextContainer direction="row" spacing={1}>
-                  <Text>{labels?.minToPromote}</Text>
-                  <Badge
-                    label={
-                      evaluationSystem?.minScaleToPromote?.letter ||
-                      evaluationSystem?.minScaleToPromote?.number
-                    }
-                    closable={false}
-                    severity="warning"
-                  />
-                </ContextContainer>
-              }
-              closable={false}
-            />
-          }
-        >
-          <Grades
-            classes={classes}
-            evaluationSystem={evaluationSystem}
-            scoreInputProps={scoreInputProps}
-            control={control}
-            subject={subject}
-            user={user}
-          />
-        </ActivityAccordionPanel>
-      </ActivityAccordion>
-    );
-  }
-  if (!instance?.requiresScoring && instance?.allowFeedback) {
-    return (
-      <ActivityAccordion noFlex onChange={setState} state={state || initialState}>
-        <ActivityAccordionPanel
-          label={labels?.feedbackForStudent}
-          icon={<PluginComunicaIcon />}
-          rightSection={<Badge label={labels?.optional} closable={false} />}
-        >
-          <Feedback classes={classes} subject={subject} control={control} user={user} />
-        </ActivityAccordionPanel>
-      </ActivityAccordion>
-    );
-  }
+      <ChatDrawer
+        onClose={() => {
+          store.chatOpened = false;
+          render();
+        }}
+        opened={store.chatOpened}
+        onRoomLoad={(room) => {
+          store.room = room;
+          render();
+        }}
+        onMessage={() => {
+          store.room.unreadMessages += 1;
+          render();
+        }}
+        onMessagesMarkAsRead={() => {
+          store.room.unreadMessages = 0;
+          render();
+        }}
+        room={`plugins.assignables.subject|${subject}.assignation|${assignationId}.userAgent|${user}`}
+      />
+      {store.room ? (
+        <ChatButton
+          room={store.room}
+          onClick={() => {
+            store.chatOpened = true;
+            render();
+          }}
+        />
+      ) : null}
+    </>
+  );
 
-  return null;
+  return (
+    <>
+      <ActivityAccordion noFlex onChange={setState} value={state || initialState}>
+        {!!instance.requiresScoring && (
+          <ActivityAccordionPanel
+            label={labels?.punctuation}
+            icon={<RatingStarIcon />}
+            rightSection={
+              <Badge
+                label={
+                  <ContextContainer direction="row" spacing={1}>
+                    <Text>{labels?.minToPromote}</Text>
+                    <Badge
+                      label={
+                        evaluationSystem?.minScaleToPromote?.letter ||
+                        evaluationSystem?.minScaleToPromote?.number
+                      }
+                      closable={false}
+                      severity="warning"
+                    />
+                  </ContextContainer>
+                }
+                closable={false}
+              />
+            }
+          >
+            <Grades
+              classes={classes}
+              evaluationSystem={evaluationSystem}
+              scoreInputProps={scoreInputProps}
+              control={control}
+              subject={subject}
+              user={user}
+            />
+          </ActivityAccordionPanel>
+        )}
+      </ActivityAccordion>
+      {!!instance?.allowFeedback && Chat}
+    </>
+  );
 }
 
 Accordion.propTypes = {
@@ -205,4 +207,5 @@ Accordion.propTypes = {
   subject: PropTypes.string,
   context: PropTypes.object,
   user: PropTypes.string,
+  assignationId: PropTypes.string,
 };

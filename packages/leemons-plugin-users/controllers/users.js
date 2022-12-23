@@ -99,7 +99,7 @@ async function recover(ctx) {
       console.error(e);
       // Always send 200 so hackers can't know if the email exists
       ctx.status = 200;
-      ctx.body = { status: 200, message: 'Email sent' };
+      ctx.body = { status: 200, code: e.code, message: 'Email sent' };
     }
   } else {
     throw validator.error;
@@ -314,6 +314,12 @@ async function createBulk(ctx) {
   ctx.body = { status: 200, users };
 }
 
+async function deleteUserAgent(ctx) {
+  await userAgentsService.deleteById(ctx.params.id, { soft: true });
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 async function list(ctx) {
   const validator = new global.utils.LeemonsValidator({
     type: 'object',
@@ -487,6 +493,23 @@ async function updateSessionConfig(ctx) {
   ctx.body = { status: 200, data };
 }
 
+async function activateUser(ctx) {
+  const user = await usersService.activateUser(ctx.request.body.id, ctx.request.body.password);
+  ctx.status = 200;
+  ctx.body = { status: 200, user };
+}
+
+async function sendWelcomeEmailToUser(ctx) {
+  try {
+    const email = await usersService.sendWelcomeEmailToUser(ctx.request.body.user, ctx);
+    ctx.status = 200;
+    ctx.body = { status: 200, email };
+  } catch (e) {
+    ctx.status = 200;
+    ctx.body = { status: 200, code: e.code, message: 'Email sent' };
+  }
+}
+
 module.exports = {
   list,
   reset,
@@ -499,6 +522,7 @@ module.exports = {
   centers: _centers,
   updateUser,
   createBulk,
+  activateUser,
   profileToken,
   detailForPage,
   updateUserAgent,
@@ -513,7 +537,9 @@ module.exports = {
   removeRememberLogin,
   centerProfileToken,
   updateUserAvatar,
+  deleteUserAgent,
   canRegisterPassword,
+  sendWelcomeEmailToUser,
   getDataForUserAgentDatasets,
   saveDataForUserAgentDatasets,
 };

@@ -97,6 +97,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.task"
               onSelectItem={handleOnSelectTask}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>
@@ -111,6 +112,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.task"
               onSelectItem={handleOnSelectTask}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>

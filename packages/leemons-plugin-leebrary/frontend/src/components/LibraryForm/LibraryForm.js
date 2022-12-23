@@ -74,10 +74,6 @@ function getCoverUrl(cover) {
     return cover;
   }
 
-  if (isString(cover)) {
-    console.log('A ver qué llega aquí:', cover);
-  }
-
   return null;
 }
 
@@ -173,7 +169,9 @@ const LibraryForm = ({
     }
   }, [onlyImages, isImage]);
 
-  useEffect(() => onChange(formValues), [formValues]);
+  useEffect(() => {
+    onChange(formValues);
+  }, [formValues]);
 
   // ························································
   // HANDLERS

@@ -41,15 +41,16 @@ function newProfileAdded(title, t1, t2) {
 
                 <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#F7F8FA" style="background-color: #F7F8FA;">
                     <tr>
-                        <td align="center" style="text-align: center; padding: 10px 45px 25px; font-family: 'Lexend', Century Gothic,CenturyGothic,AppleGothic,sans-serif;">
-                            <img src="{{it.__logoUrl}}" />
-                        </td>
-                    </tr>
-                    <tr>
                       <td align="center" style="text-align: center; padding: 10px 45px; font-family:'Lexend', Century Gothic,CenturyGothic,AppleGothic,sans-serif; font-size: 20px; line-height: 25px; font-weight: 400; color: #212B3D;">
                           ${title}
                       </td>
                     </tr>
+                    <tr>
+                        <td align="center" style="text-align: center; padding: 10px 45px 25px; font-family: 'Lexend', Century Gothic,CenturyGothic,AppleGothic,sans-serif;">
+                            <img src="{{it.__logoUrl}}" />
+                        </td>
+                    </tr>
+
                     <tr>
                         <td align="center" style="text-align: center; padding: 10px 45px 25px; font-family: 'Inter', Verdana, sans-serif; font-size: 16px; line-height: 20px; font-weight: 600; color: #212B3D;">
                             ${t1}

@@ -1,4 +1,4 @@
-const { keys, trim, isEmpty, toLower } = require('lodash');
+const { keys, trim, isNil, isEmpty, toLower } = require('lodash');
 const path = require('path');
 const itemsImport = require('../helpers/simpleListImport');
 
@@ -6,55 +6,57 @@ async function importAcademicPortfolioPrograms(centers, grades) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
   const items = await itemsImport(filePath, 'ap_programs', 40, true, true);
 
-  keys(items).forEach((key) => {
-    const program = items[key];
+  keys(items)
+    .filter((key) => !isNil(key) && !isEmpty(key))
+    .forEach((key) => {
+      const program = items[key];
 
-    // ·····················································
-    // CENTERS
+      // ·····················································
+      // CENTERS
 
-    program.centers = program.centers
-      .split(',')
-      .map((val) => trim(val))
-      .filter((val) => !isEmpty(val))
-      .map((val) => centers[val]?.id);
-
-    // ·····················································
-    // GRADES
-
-    program.evaluationSystem = grades[program.evaluationSystem]?.id;
-
-    // ·····················································
-    // SUBSTAGES
-
-    if (!isEmpty(program.substages)) {
-      program.substages = program.substages
+      program.centers = program.centers
         .split(',')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
-        .map((val) => {
-          const [name, abbreviation] = val.split('|');
-          return { name, abbreviation };
-        });
+        .map((val) => centers[val]?.id);
 
-      program.substagesFrequency = toLower(program.substagesFrequency);
-      program.haveSubstagesPerCourse = true;
-      program.numberOfSubstages = program.substages.length;
-      program.useDefaultSubstagesName = false;
-    } else {
-      program.haveSubstagesPerCourse = false;
-    }
+      // ·····················································
+      // GRADES
 
-    // ·····················································
-    // SUBJECTS
+      program.evaluationSystem = grades[program.evaluationSystem]?.id;
 
-    if (program.subjectsFirstDigit) {
-      program.subjectsFirstDigit = 'course';
-    } else {
-      program.subjectsFirstDigit = 'none';
-    }
+      // ·····················································
+      // SUBSTAGES
 
-    items[key] = program;
-  });
+      if (!isEmpty(program.substages)) {
+        program.substages = program.substages
+          .split(',')
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val))
+          .map((val) => {
+            const [name, abbreviation] = val.split('|');
+            return { name, abbreviation };
+          });
+
+        program.substagesFrequency = toLower(program.substagesFrequency);
+        program.haveSubstagesPerCourse = true;
+        program.numberOfSubstages = program.substages.length;
+        program.useDefaultSubstagesName = false;
+      } else {
+        program.haveSubstagesPerCourse = false;
+      }
+
+      // ·····················································
+      // SUBJECTS
+
+      if (program.subjectsFirstDigit) {
+        program.subjectsFirstDigit = 'course';
+      } else {
+        program.subjectsFirstDigit = 'none';
+      }
+
+      items[key] = program;
+    });
 
   // console.dir(items, { depth: null });
   /*

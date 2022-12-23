@@ -4,19 +4,15 @@ const callbacks = {
 };
 
 async function sendCallbacks(type, { ...params }) {
-  console.log(callbacks, type);
   for (let i = 0, l = callbacks[type].length; i < l; i++) {
     // eslint-disable-next-line no-await-in-loop
     await callbacks[type][i](...params);
   }
 }
 function onCallback(type, callback) {
-  console.log('vamos a registrar callback', type, callbacks[type].indexOf(callback));
   if (callbacks[type].indexOf(callback) < 0) {
-    console.log('callback registrado');
     callbacks[type].push(callback);
   }
-  console.log(callbacks);
 }
 function offCallback(type, callback) {
   const index = callbacks[type].indexOf(callback);

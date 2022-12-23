@@ -1,18 +1,19 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { PaginatedList, Loader, Box, Text, ImageLoader } from '@bubbles-ui/components';
+import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useLayout } from '@layout/context';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import useSearchAssignableInstances from '../../../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useParseAssignations from '../../hooks/useParseAssignations';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
-import globalContext from '../../../../../contexts/globalContext';
 import prefixPN from '../../../../../helpers/prefixPN';
 import EmptyState from '../../../../../assets/EmptyState.png';
 
-function useAssignmentsColumns() {
-  const { isTeacher } = useContext(globalContext);
+function useAssignmentsColumns({ variant } = {}) {
+  const isTeacher = useIsTeacher();
 
   const [, translations] = useTranslateLoader(
     prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`)
@@ -61,10 +62,13 @@ function useAssignmentsColumns() {
           Header: labels.students || '',
           accessor: 'students',
         },
+        /*
         {
           Header: labels.open || '',
           accessor: 'open',
         },
+
+         */
         {
           Header: labels.ongoing || '',
           accessor: 'ongoing',
@@ -74,28 +78,41 @@ function useAssignmentsColumns() {
           accessor: 'completed',
         },
         {
+          Header: labels.unreadMessages || '',
+          accessor: 'unreadMessages',
+        },
+        {
           Header: '',
           accessor: 'actions',
         },
       ];
     }
 
+    // student
     return [
       ...commonColumns,
       {
         Header: labels.status || '',
         accessor: 'status',
       },
-      {
+      variant !== 'evaluated' && {
         Header: labels.submission || '',
         accessor: 'submission',
+      },
+      variant === 'evaluated' && {
+        Header: labels.grade || '',
+        accessor: 'grade',
+      },
+      {
+        Header: labels.unreadMessages || '',
+        accessor: 'unreadMessages',
       },
       {
         Header: '',
         accessor: 'actions',
       },
-    ];
-  }, [isTeacher, labels]);
+    ].filter(Boolean);
+  }, [isTeacher, labels, variant]);
 
   return columns;
 }
@@ -103,6 +120,7 @@ function useAssignmentsColumns() {
 export default function ActivitiesList({ filters, subjectFullLength = true }) {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+  const { theme: themeLayout } = useLayout();
 
   const query = useMemo(() => {
     const q = {};
@@ -132,19 +150,24 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     } else if (filters?.tab === 'history') {
       q.archived = true;
     } else if (filters?.tab === 'evaluated') {
+      q.archived = false;
       q.evaluated = true;
     }
 
     return q;
   }, [filters]);
 
-  const [, translations] = useTranslateLoader(prefixPN('pagination'));
+  const [, translations] = useTranslateLoader([
+    prefixPN('pagination'),
+    prefixPN('activities_list'),
+  ]);
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
         pagination: _.get(res, prefixPN('pagination')),
+        activitiesList: _.get(res, prefixPN('activities_list')),
       };
     }
 
@@ -182,7 +205,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     }
   );
 
-  const columns = useAssignmentsColumns();
+  const columns = useAssignmentsColumns({ variant: filters?.tab });
 
   const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
 
@@ -204,12 +227,20 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
           gap: theme.spacing[1],
         })}
       >
-        <ImageLoader src={EmptyState} width={142} height={149} />
-        {/* TRANSLATE: Translate empty state */}
-        <Text color="primary">No hay actividades programadas</Text>
+        {themeLayout.usePicturesEmptyStates && (
+          <ImageLoader src={EmptyState} width={142} height={149} />
+        )}
+        <Text color="primary">{labels.activitiesList?.emptyState}</Text>
       </Box>
     );
   }
+
+  const headerStyles = {
+    position: 'sticky',
+    top: '0px',
+    backgroundColor: 'white',
+    zIndex: 10,
+  };
 
   return (
     <>
@@ -225,6 +256,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onPageChange={setPage}
         selectable={false}
         labels={labels.pagination}
+        headerStyles={headerStyles}
       />
     </>
   );

@@ -5,6 +5,8 @@ const { exist } = require('./exist');
 const { remove } = require('./remove');
 const { findOne } = require('./findOne');
 const { addBasicIfNeed } = require('./addBasicIfNeed');
+const { getItemPermissions } = require('./getItemPermissions');
+const { getUserAgentsWithPermissionsForItem } = require('./getUserAgentsWithPermissionsForItem');
 
 module.exports = {
   add,
@@ -14,4 +16,6 @@ module.exports = {
   remove,
   findOne,
   addBasicIfNeed,
+  getItemPermissions,
+  getUserAgentsWithPermissionsForItem,
 };

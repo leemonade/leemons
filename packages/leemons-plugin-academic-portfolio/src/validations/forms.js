@@ -26,6 +26,24 @@ const addProgramSchema = {
     color: stringSchemaNullable,
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
+    useOneStudentGroup: booleanSchema,
+    hideStudentsToStudents: booleanSchema,
+    totalHours: numberSchema,
+    cycles: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: stringSchema,
+          courses: {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+          },
+        },
+      },
+    },
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -135,7 +153,7 @@ function validateAddProgram(data) {
     if (!data.useDefaultSubstagesName) {
       validator = new LeemonsValidator(addProgramSubstage2Schema);
 
-      console.log(data.substages);
+      // console.log(data.substages);
       if (!validator.validate(data)) {
         throw validator.error;
       }
@@ -161,6 +179,9 @@ const updateProgramSchema = {
     },
     credits: integerSchemaNullable,
     treeType: integerSchema,
+    managers: arrayStringSchema,
+    hideStudentsToStudents: booleanSchema,
+    totalHours: numberSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -198,6 +219,7 @@ const addKnowledgeSchema = {
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     subjects: arrayStringSchema,
+    managers: arrayStringSchema,
   },
   required: ['name', 'abbreviation', 'program', 'color', 'icon'],
   additionalProperties: false,
@@ -253,6 +275,7 @@ const updateKnowledgeSchema = {
     icon: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    managers: arrayStringSchema,
   },
   required: ['id', 'name', 'abbreviation', 'color', 'icon'],
   additionalProperties: false,
@@ -313,6 +336,7 @@ const addSubjectTypeSchema = {
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     subjects: arrayStringSchema,
+    managers: arrayStringSchema,
   },
   required: ['name', 'groupVisibility', 'program'],
   additionalProperties: false,
@@ -350,6 +374,7 @@ const updateSubjectTypeSchema = {
     groupVisibility: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    managers: arrayStringSchema,
   },
   required: ['id', 'name', 'groupVisibility'],
   additionalProperties: false,
@@ -388,6 +413,7 @@ const addCourseSchema = {
     abbreviation: stringSchema,
     program: stringSchema,
     number: integerSchema,
+    isAlone: booleanSchema,
   },
   required: ['program'],
   additionalProperties: false,
@@ -421,7 +447,9 @@ const addGroupSchema = {
     name: stringSchema,
     abbreviation: stringSchema,
     program: stringSchema,
+    isAlone: booleanSchema,
     subjects: arrayStringSchema,
+    managers: arrayStringSchema,
     aditionalData: {
       type: 'object',
       properties: {
@@ -448,16 +476,25 @@ async function validateAddGroup(data, { transacting } = {}) {
     throw new Error('The program does not exist');
   }
 
-  if (program.maxGroupAbbreviation) {
-    // ES: Comprobamos si el nombre del grupo es mayor que el maximo
-    if (data.abbreviation.length > program.maxGroupAbbreviation)
-      throw new Error('The group abbreviation is longer than the specified length');
+  if (program.useOneStudentGroup) {
+    const group = await table.groups.count(
+      { program: data.program, type: 'group' },
+      { transacting }
+    );
+    if (group) throw new Error('This program configured as one group, you can´t add a new group');
   }
 
-  // ES: Comprobamos si el nombre del grupo es solo numeros
-  if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new Error('The group abbreviation must be only numbers');
+  if (!data.isAlone) {
+    if (program.maxGroupAbbreviation) {
+      // ES: Comprobamos si el nombre del grupo es mayor que el maximo
+      if (data.abbreviation.length > program.maxGroupAbbreviation)
+        throw new Error('The group abbreviation is longer than the specified length');
+    }
 
+    // ES: Comprobamos si el nombre del grupo es solo numeros
+    if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
+      throw new Error('The group abbreviation must be only numbers');
+  }
   // ES: Comprobamos que no exista ya el grupo
   const groupCount = await table.groups.count(
     {
@@ -477,6 +514,18 @@ const duplicateGroupSchema = {
     id: stringSchema,
     name: stringSchema,
     abbreviation: stringSchema,
+    teachers: booleanSchema,
+    students: {
+      oneOf: [
+        {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+        { type: 'boolean' },
+      ],
+    },
   },
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
@@ -529,6 +578,7 @@ const updateCourseSchema = {
     name: stringSchema,
     abbreviation: stringSchema,
     number: stringSchema,
+    managers: arrayStringSchema,
   },
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
@@ -567,6 +617,7 @@ const updateGroupSchema = {
     id: stringSchema,
     name: stringSchema,
     abbreviation: stringSchema,
+    managers: arrayStringSchema,
   },
   required: ['id', 'name', 'abbreviation'],
   additionalProperties: false,
@@ -618,7 +669,7 @@ async function validateInternalIdHaveGoodFormat(program, internalId, { transacti
   if (internalId.length !== subjectDigits)
     throw new Error('internalId does not have the required number of digits');
   // ES: Comprobamos si son numeros
-  if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
+  // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
 }
 
 const addSubjectSchema = {
@@ -690,6 +741,7 @@ const updateSubjectSchema = {
     credits: numberSchema,
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
+    color: stringSchemaNullable,
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -720,7 +772,7 @@ async function validateUpdateSubject(data, { transacting } = {}) {
     throw validator.error;
   }
 
-  if (course || internalId) {
+  if (internalId) {
     const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
 
     if (!validator2.validate({ course, internalId })) {
@@ -829,6 +881,8 @@ const addClassSchema = {
     subjectType: stringSchema,
     knowledge: stringSchemaNullable,
     color: stringSchema,
+    virtualUrl: stringSchemaNullable,
+    address: stringSchemaNullable,
     icon: {
       type: ['string', 'object'],
       nullable: true,
@@ -873,9 +927,12 @@ async function validateAddClass(data, { transacting }) {
     throw validator.error;
   }
 
-  const haveMultiCourses = await programHaveMultiCourses(data.program, { transacting });
+  const program = await table.programs.findOne(
+    { id: data.program },
+    { columns: ['id', 'moreThanOneAcademicYear', 'useOneStudentGroup'], transacting }
+  );
 
-  if (!haveMultiCourses) {
+  if (!program.moreThanOneAcademicYear) {
     if (isArray(data.course) && data.course.length > 1) {
       throw new Error('Class does not have multi courses');
     }
@@ -1065,6 +1122,7 @@ const updateClassSchema = {
     course: {
       oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
     },
+    program: stringSchema,
     group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,
@@ -1155,7 +1213,46 @@ function validateUpdateClassMany(data) {
   }
 }
 
+const addCycleSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    program: stringSchema,
+    courses: arrayStringSchema,
+  },
+  required: ['name', 'program', 'courses'],
+  additionalProperties: false,
+};
+
+function validateAddCycle(data) {
+  const validator = new LeemonsValidator(addCycleSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const updateCycleSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    managers: arrayStringSchema,
+  },
+  required: ['name'],
+  additionalProperties: false,
+};
+
+function validateUpdateCycle(data) {
+  const validator = new LeemonsValidator(updateCycleSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
+  validateAddCycle,
   validateAddClass,
   validateAddGroup,
   validateAddCourse,
@@ -1163,6 +1260,7 @@ module.exports = {
   validateAddProgram,
   validateUpdateClass,
   validateUpdateGroup,
+  validateUpdateCycle,
   validateUpdateCourse,
   validateAddKnowledge,
   validateUpdateProgram,

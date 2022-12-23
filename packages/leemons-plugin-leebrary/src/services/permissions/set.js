@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { map } = require('lodash');
+const { map, uniq } = require('lodash');
 const { validateSetPermissions } = require('../../validations/forms');
 const { getByIds } = require('../assets/getByIds');
 const { getByAsset } = require('./getByAsset');
@@ -8,6 +8,139 @@ const canUnassignRole = require('./helpers/canUnassignRole');
 const validateRole = require('./helpers/validateRole');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 const { update: updateAsset } = require('../assets/update');
+
+async function setAssetPermissionsForClasses(
+  { asset, classesCanAccess, assignerRole, target },
+  { transacting }
+) {
+  const classesPermissionNames = classesCanAccess.map(
+    ({ class: classId }) => `plugins.academic-portfolio.class.${classId}`
+  );
+
+  const { services: userService } = leemons.getPlugin('users');
+  const permissions = await userService.permissions.findItems(
+    {
+      item: asset,
+      permissionName_$in: classesPermissionNames,
+      type_$startsWith: leemons.plugin.prefixPN('asset'),
+    },
+    { transacting }
+  );
+
+  const oldRoles = permissions.reduce((obj, permission) => {
+    const role = permission.type.includes('can-edit') ? 'editor' : 'viewer';
+    return {
+      ...obj,
+      [permission.permissionName.replace(`plugins.academic-portfolio.class.`, '')]: role,
+    };
+  }, {});
+
+  // EN: Check if the user can assign all of the new given roles
+  // ES: Comprobar si el usuario puede asignar todos los nuevos roles
+  classesCanAccess
+    .map((klass) => ({
+      role: klass.role,
+      oldRole: oldRoles[klass.class] ?? undefined,
+    }))
+    .forEach((klass) => {
+      if (!canAssignRole(assignerRole, klass.oldRole, klass.role)) {
+        throw new global.utils.HttpError(
+          401,
+          `You don't have permission to unassign this role: ${klass.role}`
+        );
+      }
+    });
+
+  // EN: Remove existing permissions for classes
+  // ES: Eliminar permisos de las clases existentes
+  await userService.permissions.removeItems(
+    {
+      type_$in: [
+        leemons.plugin.prefixPN('asset.can-edit'),
+        leemons.plugin.prefixPN('asset.can-view'),
+      ],
+      item: asset,
+      permissionName_$in: classesPermissionNames,
+    },
+    { transacting }
+  );
+
+  // EN: Save permissions for the classes
+  // ES: Guardar los permisos para las clases
+  const editorClasses = classesCanAccess.filter((klass) => klass.role === 'editor');
+  const viewerClasses = classesCanAccess.filter((klass) => klass.role === 'viewer');
+
+  await Promise.all([
+    userService.permissions.addItem(
+      asset,
+      leemons.plugin.prefixPN(`asset.can-edit`),
+      editorClasses.map((klass) => ({
+        actionNames: ['view'],
+        target,
+        permissionName: `plugins.academic-portfolio.class.${klass.class}`,
+      })),
+      { transacting, isCustomPermission: true }
+    ),
+    userService.permissions.addItem(
+      asset,
+      leemons.plugin.prefixPN(`asset.can-view`),
+      viewerClasses.map((klass) => ({
+        actionNames: ['view'],
+        target,
+        permissionName: `plugins.academic-portfolio.class.${klass.class}`,
+      })),
+      { transacting, isCustomPermission: true }
+    ),
+  ]);
+}
+
+async function removeMissingClassesPermissions(
+  { asset, classesCanAccess, assignerRole },
+  { transacting }
+) {
+  const { services: userService } = leemons.getPlugin('users');
+  const classesPermissionNames = classesCanAccess.map(
+    ({ class: classId }) => `plugins.academic-portfolio.class.${classId}`
+  );
+
+  // EN: Get all the classes that were assigned
+  // ES: Obtener todas las clases que estaban asignadas
+  const permissions = await userService.permissions.findItems(
+    {
+      item: asset,
+      permissionName_$nin: classesPermissionNames,
+      type_$startsWith: leemons.plugin.prefixPN('asset'),
+    },
+    { transacting }
+  );
+
+  // EN: Check that all the classes can be unassigned
+  // ES: Comprobar que todas las clases se pueden desasignar
+  const roles = uniq(
+    permissions.map((permission) =>
+      permission.type === leemons.plugin.prefixPN('asset.can-edit') ? 'editor' : 'viewer'
+    )
+  );
+  roles.forEach((role) => {
+    if (!canUnassignRole(assignerRole, role)) {
+      throw new global.utils.HttpError(
+        401,
+        `You don't have permission to unassign this role: ${role}`
+      );
+    }
+  });
+
+  // EN: Remove the old classes
+  // ES: Eliminar las clases antiguas
+  await userService.permissions.removeItems(
+    {
+      item: asset,
+      permissionName_$nin: classesPermissionNames,
+      type_$startsWith: leemons.plugin.prefixPN('asset'),
+    },
+    { transacting }
+  );
+}
 
 /**
  * Set userAgents permissions / roles in order to access to the specified assetID
@@ -20,33 +153,39 @@ const { update: updateAsset } = require('../assets/update');
  * */
 async function set(
   assetId,
-  { isPublic, canAccess },
+  { isPublic, classesCanAccess, canAccess },
   { deleteMissing, userSession, transacting } = {}
 ) {
   try {
     await validateSetPermissions({ asset: assetId, canAccess, isPublic });
 
     if (!isPublic) {
-      for (let i = 0, len = canAccess.length; i < len; i++) {
-        const { role } = canAccess[i];
+      const roles = [];
+      if (canAccess.length) {
+        roles.push(...canAccess.map(({ role }) => role));
+      }
+      if (classesCanAccess.length) {
+        roles.push(...classesCanAccess.map(({ role }) => role));
+      }
+      roles.forEach((role) => {
         if (!validateRole(role)) {
           throw new global.utils.HttpError(412, `Invalid role: ${role}}`);
         }
-      }
+      });
     }
 
     // EN: Get the assigner and assignee roles
     // ES: Obtener los roles del asignador y del asignado
     const { role: assignerRole } = await getByAsset(assetId, { userSession, transacting });
+
     const [assetData] = await getByIds([assetId], { userSession });
 
-    if (isPublic) {
-      if (assignerRole === 'owner') {
-        return updateAsset({ ...assetData, public: true }, { userSession, transacting });
-      }
+    if (assignerRole !== 'owner' && (isPublic || assetData.public)) {
       throw new global.utils.HttpError(412, 'Only owner can set public permissions');
-    } else if (assetData.public) {
-      await updateAsset({ ...assetData, public: false }, { userSession, transacting });
+    }
+
+    if (isPublic || assetData.public) {
+      return updateAsset({ ...assetData, public: isPublic }, { userSession, transacting });
     }
 
     const categoryId = assetData?.category;
@@ -54,7 +193,7 @@ async function set(
     const { services: userService } = leemons.getPlugin('users');
     const result = [];
 
-    for (let i = 0, len = canAccess.length; i < len; i++) {
+    for (let i = 0, len = canAccess?.length || 0; i < len; i++) {
       const { userAgent, role } = canAccess[i];
 
       // Skip iteration if user is whos calls
@@ -132,7 +271,19 @@ async function set(
       }
     }
 
+    if (classesCanAccess?.length) {
+      await setAssetPermissionsForClasses(
+        { asset: assetId, classesCanAccess, assignerRole, target: categoryId },
+        { userSession, transacting }
+      );
+    }
+
     if (deleteMissing) {
+      await removeMissingClassesPermissions(
+        { asset: assetId, classesCanAccess, assignerRole },
+        { transacting }
+      );
+
       const toUpdate = map(canAccess, 'userAgent');
       let toRemove = await userService.permissions.findUserAgentsWithPermission({
         permissionName,
@@ -157,8 +308,8 @@ async function set(
 
         // EN: Check if assigner can assign role to assignee
         // ES: Comprobar si el asignador puede asignar el rol al asignado
-        if (!canUnassignRole(assignerRole, assigneeRole, assigneeRole)) {
-          throw new global.utils.HttpError(401, "You don't have permission to assign this role");
+        if (!canUnassignRole(assignerRole, assigneeRole)) {
+          throw new global.utils.HttpError(401, "You don't have permission to unassign this role");
         }
 
         // Remove all permissions to the asset

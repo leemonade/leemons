@@ -1,0 +1,67 @@
+{
+  "permissions": [
+    {
+      "permissionName": "plugins.users.users",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.users.user-data",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.users.centers",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.users.profiles",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.dataset.dataset",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.calendar.calendar",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.timetable.config",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.timetable.timetable",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.leebrary.library",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "plugins.admin.setup",
+      "actionNames": [
+        "admin"
+      ]
+    }
+  ],
+  "name": "SuperAdmin",
+  "description": "Profile for platform super-administrators",
+  "indexable": false
+}

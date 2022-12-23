@@ -14,15 +14,20 @@ async function add({ url, iconUrl }, asset, { transacting: t } = {}) {
       let icon;
 
       if (!isEmpty(iconUrl)) {
-        // EN: Upload the file to the provider
-        // ES: Subir el archivo al proveedor
-        const iconFile = await uploadFileFromUrl(
-          iconUrl,
-          { name: asset.name || 'icon' },
-          { transacting }
-        );
+        try {
+          // EN: Upload the file to the provider
+          // ES: Subir el archivo al proveedor
+          const iconFile = await uploadFileFromUrl(
+            iconUrl,
+            { name: asset.name || 'icon' },
+            { transacting }
+          );
 
-        icon = iconFile?.id;
+          icon = iconFile?.id;
+        } catch (e) {
+          console.error('ERROR: downloading icon:', iconUrl);
+          console.log('Despite the error, continue creating Asset ...');
+        }
       }
 
       const bookmark = await tables.bookmarks.create(

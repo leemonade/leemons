@@ -1,4 +1,4 @@
-const { range, keys, findIndex, trim, isEmpty, toLower } = require('lodash');
+const { range, keys, findIndex, trim, isEmpty, isNil, toLower } = require('lodash');
 const path = require('path');
 const getColumns = require('./helpers/getColumns');
 const DataImporter = require('./helpers/getXlsImporter')();
@@ -23,7 +23,7 @@ async function importUsers(centers, profiles) {
 
   const fields = keys(data[0])
     .map((key) => data[0][key])
-    .filter((val) => val !== '');
+    .filter((key) => !isNil(key) && !isEmpty(key));
 
   // ·····················································
   // ITEM FIELDS START COLUMN INDEX

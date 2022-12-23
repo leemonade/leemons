@@ -1,25 +1,30 @@
-import { useState, useEffect } from 'react';
-import _ from 'lodash';
-import { getSubjectDetails } from '@academic-portfolio/request/subjects';
+import { useMemo } from 'react';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import { useSubjectDetails } from '@academic-portfolio/hooks';
+import { uniqBy } from 'lodash';
 
 export default function useSubjects(task) {
-  const [data, setData] = useState([]);
-  const { subjects } = task;
+  const { data: classes } = useSessionClasses({}, { enabled: !task?.subjects?.length });
 
-  useEffect(async () => {
-    if (!subjects?.length) {
-      return;
+  const subjects = useMemo(() => {
+    if (task?.subjects) {
+      return task?.subjects?.map(({ subject }) => subject);
     }
 
-    const subjectsData = (await getSubjectDetails(_.map(subjects, 'subject')))?.data;
+    return classes?.map((klass) => klass.subject.id) || [];
+  }, [task?.subjects, classes]);
 
-    setData(
-      subjectsData.map((subject) => ({
-        label: subject.name,
-        value: subject.id,
-      }))
-    );
-  }, [subjects]);
+  const { data: subjectDetails } = useSubjectDetails(subjects, { enabled: !!subjects });
 
-  return data;
+  return useMemo(
+    () =>
+      uniqBy(
+        subjectDetails?.map((subject) => ({
+          label: subject.name,
+          value: subject.id,
+        })),
+        'value'
+      ) || [],
+    [subjectDetails]
+  );
 }

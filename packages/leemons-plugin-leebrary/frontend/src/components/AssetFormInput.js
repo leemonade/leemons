@@ -21,7 +21,6 @@ const AssetFormInput = ({
   asset,
   file,
   tagsPluginName,
-  tagsType,
   category: categoryKey,
   preview,
   previewVariant,
@@ -73,7 +72,6 @@ const AssetFormInput = ({
   }
 
   React.useEffect(() => {
-    console.log(categoryKey);
     if (categoryKey) loadCategory();
   }, [categoryKey]);
 
@@ -86,8 +84,8 @@ const AssetFormInput = ({
       asset={{ ...asset, file, cover: preparedAsset.cover }}
       type={null}
       form={form}
-      pluginName={tagsPluginName}
-      tagsType={tagsType}
+      pluginName="leebrary"
+      tagsType={prefixPN('')}
       useTags={!!tagsPluginName}
       hideTitle
       hideSubmit

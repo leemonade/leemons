@@ -3,6 +3,8 @@ const { toLower, isEmpty } = require('lodash');
 const mime = require('mime-types');
 const pathSys = require('path');
 const stream = require('stream');
+const fs = require('fs');
+const fsPromises = require('fs/promises');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 const { getById } = require('./getById');
@@ -112,26 +114,30 @@ function getRemoteContentType(url) {
 function download(url, compress) {
   return new Promise((resolve, reject) => {
     (async () => {
-      const downloadStream = global.utils.got(url, { isStream: true });
-      const fileWriterStream = leemons.fs.createTempWriteStream();
-      const contentType = await getRemoteContentType(url);
+      try {
+        const downloadStream = global.utils.got(url, { isStream: true });
+        const fileWriterStream = leemons.fs.createTempWriteStream();
+        const contentType = await getRemoteContentType(url);
 
-      const [fileType] = contentType.split('/');
-      const extension = mime.extension(contentType);
+        const [fileType] = contentType.split('/');
+        const extension = mime.extension(contentType);
 
-      downloadStream.on('error', (error) => reject(error));
+        downloadStream.on('error', (error) => reject(error));
 
-      fileWriterStream
-        .on('error', (error) => reject(error))
-        .on('finish', () => {
-          fileWriterStream.end();
-          resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
-        });
+        fileWriterStream
+          .on('error', (error) => reject(error))
+          .on('finish', () => {
+            fileWriterStream.end();
+            resolve({ stream: fileWriterStream, path: fileWriterStream.path, contentType });
+          });
 
-      if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
-        downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
-      } else {
-        downloadStream.pipe(fileWriterStream);
+        if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
+          downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
+        } else {
+          downloadStream.pipe(fileWriterStream);
+        }
+      } catch (error) {
+        reject(error);
       }
     })();
   });
@@ -176,12 +182,12 @@ function createTemp(readStream, contentType) {
         dataToWrite = await streamToBuffer(dataToWrite);
       }
 
-      leemons.fs.write(info.fd, dataToWrite, (e) => {
+      fs.write(info.fd, dataToWrite, (e) => {
         if (e) {
           reject(e);
         }
 
-        leemons.fs.close(info.fd, (error) => {
+        fs.close(info.fd, (error) => {
           if (error) {
             reject(error);
           }
@@ -199,7 +205,7 @@ async function upload(file, { name }, { transacting } = {}) {
   const { path, type } = file;
   const extension = mime.extension(type);
 
-  const fileHandle = await leemons.fs.open(path, 'r');
+  const fileHandle = await fsPromises.open(path, 'r');
   const stats = await fileHandle.stat(path);
   const fileSize = stats.size;
 
@@ -223,7 +229,7 @@ async function upload(file, { name }, { transacting } = {}) {
       }
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
 
-      const { track: tracks } = JSON.parse(metainfo).media;
+      const { track: tracks } = JSON.parse(metainfo)?.media || { track: [] };
       tracks.forEach((track) => {
         metadata = getMetaProps(track, metadata);
       });
@@ -260,6 +266,7 @@ async function upload(file, { name }, { transacting } = {}) {
     type,
     extension,
     uri: '',
+    size: fileSize,
     metadata: JSON.stringify(metadata),
   };
 
@@ -283,7 +290,7 @@ async function upload(file, { name }, { transacting } = {}) {
   if (providerName) {
     const provider = leemons.getProvider(providerName);
     if (provider?.services?.provider?.upload) {
-      const buffer = await leemons.fs.readFile(path);
+      const buffer = await fsPromises.readFile(path);
       urlData.provider = providerName;
 
       urlData.uri = await provider.services.provider.upload(newFile, buffer, { transacting });
@@ -304,8 +311,8 @@ async function upload(file, { name }, { transacting } = {}) {
       `${newFile.id}.${newFile.extension}`
     );
 
-    const buffer = await leemons.fs.readFile(path);
-    await leemons.fs.writeFile(urlData.uri, buffer);
+    const buffer = await fsPromises.readFile(path);
+    await fsPromises.writeFile(urlData.uri, buffer);
   }
 
   // EN: Update the asset with the new URI and provider
@@ -347,10 +354,15 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
   }
+  try {
+    const { path, contentType } = await download(url, true);
 
-  const { path, contentType } = await download(url, true);
-
-  return upload({ path, type: contentType }, { name }, { userSession, transacting });
+    return upload({ path, type: contentType }, { name }, { userSession, transacting });
+  } catch (err) {
+    console.error('ERROR: downloading file:', url);
+    console.dir(url, { depth: null });
+    throw new Error(`-- ERROR: downloading file ${url} --`);
+  }
 }
 
 module.exports = { upload, uploadFromUrl, uploadFromFileStream, uploadImage };

@@ -6,17 +6,30 @@ import SubjectSelector from './AssignStudents/components/SubjectSelector';
 import AssigneeTypeSelector from './AssignStudents/components/AssigneeTypeSelector';
 import AssigneeSelector from './AssignStudents/components/AssigneeSelector';
 
-export default function AssignStudents({ labels, profile, onChange, assignable, ...props }) {
+export default function AssignStudents({
+  labels,
+  profile,
+  onChange,
+  assignable,
+  defaultValue,
+  showResultsCheck,
+  showCorrectAnswersCheck,
+  ...props
+}) {
   const form = useForm({
-    subjects: [],
-    type: null,
-    assignee: [],
+    defaultValues: {
+      subjects: defaultValue?.subjects || [],
+      type: defaultValue?.type || null,
+      assignee: defaultValue?.assignee || [],
+      assignmentSetup: null,
+    },
   });
-  const { control, watch } = form;
+
+  const { control, watch, setValue } = form;
 
   useEffect(() => {
     const subscription = watch((data) => {
-      onChange(data.assignee);
+      onChange(data);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -42,7 +55,18 @@ export default function AssignStudents({ labels, profile, onChange, assignable, 
               control={control}
               name="assignee"
               render={({ field }) => (
-                <AssigneeSelector {...field} labels={labels} profile={profile} />
+                <AssigneeSelector
+                  {...field}
+                  onChange={(value, data) => {
+                    setValue('assignmentSetup', data);
+                    field.onChange(value);
+                  }}
+                  defaultValue={defaultValue}
+                  labels={labels}
+                  profile={profile}
+                  showResultsCheck={showResultsCheck}
+                  showCorrectAnswersCheck={showCorrectAnswersCheck}
+                />
               )}
             />
           </PageContainer>
@@ -57,4 +81,10 @@ AssignStudents.propTypes = {
   profile: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   assignable: PropTypes.shape({}),
+  defaultValue: PropTypes.shape({
+    subjects: PropTypes.arrayOf(PropTypes.string),
+    type: PropTypes.string,
+    assignee: PropTypes.arrayOf(PropTypes.string),
+  }),
+  showResultsCheck: PropTypes.bool,
 };

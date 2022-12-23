@@ -12,11 +12,7 @@ const initTasks = require('./src/tasks');
 const initTests = require('./src/tests');
 const initCalendar = require('./src/calendar');
 const initProviders = require('./src/providers');
-
-async function initAdmin() {
-  const { services } = leemons.getPlugin('admin');
-  await services.settings.update({ status: 'INSTALLED', configured: true });
-}
+const initAdmin = require('./src/admin');
 
 async function events(isInstalled) {
   const { chalk } = global.utils;
@@ -90,6 +86,10 @@ async function events(isInstalled) {
       ],
       async () => {
         try {
+          leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Admin plugin ...}`);
+          await initAdmin();
+          leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Admin plugin`);
+
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Users plugin ...}`);
           config.centers = await initCenters();
           leemons.events.emit('init-centers', config.centers);
@@ -105,8 +105,6 @@ async function events(isInstalled) {
           config.grades = await initGrades(config.centers);
           leemons.events.emit('init-grades', config.grades);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Academic Rules plugin`);
-
-          await initAdmin();
         } catch (e) {
           // console.error(e);
         }
@@ -123,7 +121,7 @@ async function events(isInstalled) {
         'plugins.bulk-template:init-users',
       ],
       async () => {
-        await initFamilies(config.profiles, config.users);
+        // await initFamilies(config.profiles, config.users);
       }
     );
 

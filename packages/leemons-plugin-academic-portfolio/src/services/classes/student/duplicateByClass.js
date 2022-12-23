@@ -1,5 +1,8 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
+const {
+  addPermissionsBetweenStudentsAndTeachers,
+} = require('../addPermissionsBetweenStudentsAndTeachers');
 
 async function duplicateByClass(
   classIds,
@@ -59,6 +62,12 @@ async function duplicateByClass(
       _.forEach(classStudents, ({ id }, index) => {
         duplications.classStudents[id] = newItems[index];
       });
+
+      await Promise.all(
+        _.map(classIds, (_class) =>
+          addPermissionsBetweenStudentsAndTeachers(_class, { transacting })
+        )
+      );
 
       await leemons.events.emit('after-duplicate-classes-students', {
         classStudents,

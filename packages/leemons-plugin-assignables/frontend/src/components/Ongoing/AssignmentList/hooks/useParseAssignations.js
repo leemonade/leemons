@@ -1,22 +1,25 @@
-import React, { useMemo, useContext, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import { LocaleDate, LocaleRelativeTime, useApi, unflatten } from '@common';
+import { LocaleDate, LocaleRelativeTime, unflatten } from '@common';
 import {
   Badge,
-  Text,
-  ContextContainer,
-  Button,
-  ImageLoader,
   Box,
+  ContextContainer,
+  ImageLoader,
+  Text,
   TextClamp,
+  createStyles,
+  Tooltip,
 } from '@bubbles-ui/components';
-import { ViewOnIcon, EditIcon } from '@bubbles-ui/icons/outline';
+import { EditIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useQuery } from 'react-query';
-import globalContext from '../../../../contexts/globalContext';
+import { useQuery } from '@tanstack/react-query';
+import UnreadMessages from '@comunica/UnreadMessages';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import getClassData from '../../../../helpers/getClassData';
 import getStatus from '../../../Details/components/UsersList/helpers/getStatus';
 import prefixPN from '../../../../helpers/prefixPN';
@@ -44,18 +47,22 @@ function getStudentsStatusForTeacher(assignation) {
     completed: 0,
   };
 
-  students.map((student) => {
+  students.forEach((student) => {
     const {
       timestamps: { open, start, end },
     } = student;
 
-    if (end) {
+    const isEnded = !!end;
+    const isStarted = start || isEnded;
+    const isOpened = open || isStarted;
+
+    if (isEnded) {
       status.completed += 1;
     }
-    if (start) {
+    if (isStarted) {
       status.ongoing += 1;
     }
-    if (open) {
+    if (isOpened) {
       status.open += 1;
     }
   });
@@ -72,7 +79,6 @@ function getStudentsStatusForTeacher(assignation) {
 
     return (
       <ContextContainer direction="row">
-        {/* {value} */}
         <Badge severity={severity} label={`${percentage}%`} closable={false} radius="default " />
       </ContextContainer>
     );
@@ -92,26 +98,36 @@ function getTimeReferenceColor(date) {
   return 'primary';
 }
 
-function TeacherActions({ id }) {
-  const history = useHistory();
+const useActionIconStyles = createStyles((theme) => ({
+  enabled: {
+    color: theme.colors.interactive01,
+  },
+  disabled: {
+    // There is no disabled token
+    color: '#C3C8CE',
+    cursor: 'not-allowed',
+  },
+}));
 
-  const redirectToInstance = useCallback(
-    () => window.open(`/private/assignables/details/${id}`, '_blank'),
-    [history, id]
+function ActionIcon({ icon, disabled }) {
+  const { classes } = useActionIconStyles();
+
+  return <Box className={disabled ? classes.disabled : classes.enabled}>{icon}</Box>;
+}
+
+function TeacherActions({ instance }) {
+  const { id } = instance;
+  const role = instance?.assignable?.roleDetails;
+
+  const dashboardUrl = React.useMemo(
+    () => () => (role.dashboardUrl || '/private/assignables/details/:id').replace(':id', id),
+    [id, role?.dashboardUrl]
   );
-  // const redirectToInstance = useCallback(
-  //   () => history.push(`/private/assignables/details/${id}`),
-  //   [history, id]
-  // );
 
   return (
-    <Button
-      iconOnly
-      variant="link"
-      color="primary"
-      rightIcon={<ViewOnIcon />}
-      onClick={redirectToInstance}
-    />
+    <Link to={dashboardUrl}>
+      <ActionIcon icon={<ViewOnIcon />} />
+    </Link>
   );
 }
 
@@ -119,8 +135,19 @@ function StudentActions({ assignation, labels }) {
   const id = assignation?.instance?.id;
   const role = assignation?.instance?.assignable?.roleDetails;
   const user = assignation?.user;
+  const showRevisionPage =
+    assignation?.instance?.showResults || assignation?.instance?.showCorrectAnswers;
 
-  const history = useHistory();
+  const hasPreviousActivitiesCompleted = React.useMemo(() => {
+    if (!assignation?.relatedAssignableInstances?.before?.length) {
+      return true;
+    }
+
+    return assignation.relatedAssignableInstances.before.every(
+      (instance) => !instance.required || instance.timestamps?.end
+    );
+  }, [assignation?.relatedAssignableInstances]);
+
   const activityUrl = useMemo(
     () => role.studentDetailUrl.replace(':id', id).replace(':user', user),
     [id, role?.studentDetailUrl]
@@ -129,100 +156,52 @@ function StudentActions({ assignation, labels }) {
     role.evaluationDetailUrl.replace(':id', id).replace(':user', user)
   );
 
-  // const dates = assignation?.instance?.dates;
-  // const timestamps = assignation?.timestamps;
   const finished = assignation?.finished;
   const started = assignation?.started;
 
-  // const now = dayjs();
-  // const visualization = dayjs(dates?.visualization);
-  // const start = dayjs(dates?.start);
-  // const alwaysAvailable = !(dates?.start && dates?.deadline);
-
-  // const redirectToInstance = useCallback(() => history.push(activityUrl), [history, activityUrl]);
-  // const redirectToRevision = useCallback(() => history.push(revisionUrl), [history, revisionUrl]);
-  const redirectToInstance = useCallback(
-    () => window.open(activityUrl, '_blank'),
-    [history, activityUrl]
-  );
-  const redirectToRevision = useCallback(
-    () => window.open(revisionUrl, '_blank'),
-    [history, revisionUrl]
-  );
-
   if (finished) {
+    if (showRevisionPage) {
+      return (
+        <Link to={revisionUrl}>
+          <ActionIcon icon={<ViewOnIcon />} />
+        </Link>
+      );
+    }
     return (
-      <Button
-        iconOnly
-        variant="link"
-        color="primary"
-        rightIcon={<ViewOnIcon />}
-        onClick={redirectToRevision}
-      />
+      <Tooltip label={labels?.student_actions?.disabled?.results} position="left">
+        <ActionIcon icon={<ViewOnIcon />} disabled />
+      </Tooltip>
     );
-    // const hasCorrections = assignation?.grades
-    //   ?.filter((grade) => grade.type === 'main')
-    //   .some((grade) => grade.visibleToStudent);
-    // if (hasCorrections) {
-    //   return (
-    //     <Button variant="outline" onClick={redirectToRevision}>
-    //       {labels?.student_actions?.correction}
-    //     </Button>
-    //   );
-    // }
-    // return (
-    //   <Button variant="outline" onClick={redirectToRevision}>
-    //     {labels?.student_actions?.review}
-    //   </Button>
-    // );
   }
 
   if (!started) {
+    if (!hasPreviousActivitiesCompleted) {
+      return (
+        <Tooltip label={labels?.student_actions?.disabled?.previous} position="left">
+          <ActionIcon icon={<ViewOnIcon />} disabled />
+        </Tooltip>
+      );
+    }
+
     return (
-      <Button
-        iconOnly
-        variant="link"
-        color="primary"
-        rightIcon={<ViewOnIcon />}
-        onClick={redirectToInstance}
-      />
+      <Link to={activityUrl}>
+        <ActionIcon icon={<ViewOnIcon />} />
+      </Link>
     );
   }
 
+  if (!hasPreviousActivitiesCompleted) {
+    return (
+      <Tooltip label={labels?.student_actions?.disabled?.previous} position="left">
+        <ActionIcon icon={<EditIcon />} disabled />
+      </Tooltip>
+    );
+  }
   return (
-    <Button
-      iconOnly
-      variant="link"
-      color="primary"
-      rightIcon={<EditIcon />}
-      onClick={redirectToInstance}
-    />
+    <Link to={activityUrl}>
+      <ActionIcon icon={<EditIcon />} />
+    </Link>
   );
-  // if (alwaysAvailable) {
-  //   if (timestamps?.start) {
-  //     return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
-  //   }
-  //   // Start <= x < Deadline
-  //   return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
-  // }
-
-  // if (started) {
-  //   if (timestamps?.start) {
-  //     return <Button onClick={redirectToInstance}>{labels?.student_actions?.continue}</Button>;
-  //   }
-  //   // Start <= x < Deadline
-  //   return <Button onClick={redirectToInstance}>{labels?.student_actions?.start}</Button>;
-  // }
-  // // Visualization <= x < Start
-  // if (!now.isBefore(visualization) && visualization.isValid() && !started) {
-  //   return (
-  //     <Button variant="outline" onClick={redirectToInstance}>
-  //       {labels?.student_actions?.view}
-  //     </Button>
-  //   );
-  // }
-  // if (!now.isBefore(start) && start.isValid()) {
-  // }
 }
 
 function ActivityItem({ instance }) {
@@ -260,8 +239,10 @@ function SubjectItem({ classData, fullLength }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: 26,
-          height: 26,
+          minWidth: 26,
+          minHeight: 26,
+          maxWidth: 26,
+          maxHeight: 26,
           borderRadius: '50%',
           backgroundColor: classData?.color,
         })}
@@ -345,6 +326,53 @@ function TimeReference({ assignation, status, labels }) {
   );
 }
 
+function Grade({ grade, instance, show }) {
+  const evaluationSystem = useProgramEvaluationSystem(instance);
+
+  const gradeToPrint = React.useMemo(() => {
+    if (evaluationSystem?.type === 'letter') {
+      let letterGrade = null;
+      for (let i = 0, scalesLength = evaluationSystem?.scales?.length; i < scalesLength; i++) {
+        const scale = evaluationSystem.scales[i];
+        if (grade >= scale?.number) {
+          letterGrade = scale?.letter;
+        } else {
+          break;
+        }
+      }
+
+      return letterGrade;
+    }
+
+    const maxGrade = evaluationSystem?.maxScale?.number;
+    const minGrade = evaluationSystem?.minScale?.number;
+
+    if (grade >= maxGrade) {
+      return maxGrade;
+    }
+    if (grade <= minGrade) {
+      return minGrade;
+    }
+
+    return grade.toFixed(2);
+  }, [grade, evaluationSystem]);
+
+  const gradeColor = React.useMemo(() => {
+    const minGradeToPromote = evaluationSystem?.minScaleToPromote?.number;
+
+    if (grade >= minGradeToPromote) {
+      return 'success';
+    }
+    return 'error';
+  }, [grade, evaluationSystem]);
+
+  if (!show || !evaluationSystem) {
+    return '-';
+  }
+
+  return <Text color={gradeColor}>{gradeToPrint}</Text>;
+}
+
 async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
   const classData = await getClassData(instance.classes, {
@@ -353,7 +381,6 @@ async function parseAssignationForCommonView(instance, labels, { subjectFullLeng
   });
 
   return {
-    // TODO: Create unique id
     id: instance.id,
     activity: <ActivityItem instance={instance} />,
     parsedDates: {
@@ -369,11 +396,19 @@ async function parseAssignationForTeacherView(instance, labels, options) {
   const studentsStatus = getStudentsStatusForTeacher(instance);
 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
+
+  let rooms = [];
+  _.forEach(instance.students, ({ chatKeys }) => {
+    rooms = rooms.concat(chatKeys);
+  });
+  rooms = _.uniq(rooms);
+
   return {
     ...commonData,
     ...studentsStatus,
     students: instance?.students?.length,
-    actions: <TeacherActions id={instance.id} />,
+    actions: <TeacherActions instance={instance} />,
+    unreadMessages: <UnreadMessages rooms={rooms} />,
   };
 }
 
@@ -381,6 +416,18 @@ async function parseAssignationForStudentView(assignation, labels, options) {
   const { instance } = assignation;
   const _status = getStatus(assignation, instance);
   const status = labels?.activity_status?.[_status];
+
+  const calculatedGrade = assignation?.grades
+    ?.filter(({ type }) => type === 'main')
+    .reduce(
+      ({ total, count }, { grade }) => ({
+        count: count + 1,
+        total: total + grade,
+      }),
+      { total: 0, count: 0 }
+    );
+
+  const avgGrade = calculatedGrade.total / calculatedGrade.count;
 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
   return {
@@ -390,17 +437,12 @@ async function parseAssignationForStudentView(assignation, labels, options) {
     submission: (
       <TimeReference assignation={assignation} status={_status} labels={labels.activity_status} />
     ),
-    // !instance.dates.deadline || instance.dates.end ? (
-    //   '-'
-    // ) : (
-    //   <Text color={timeReferenceColor}>
-    //     {timeReference < 0 ? (
-    //       labels?.student_actions?.notSubmitted
-    //     ) : (
-    //       <LocaleRelativeTime seconds={Math.abs(timeReference)} short />
-    //     )}
-    //   </Text>
-    // ),
+    unreadMessages: <UnreadMessages rooms={assignation.chatKeys} />,
+    grade: instance?.requiresScoring ? (
+      <Grade grade={avgGrade} instance={instance} show={calculatedGrade?.count > 0} />
+    ) : (
+      <Text color="success">{labels?.activity_status?.evaluated}</Text>
+    ),
   };
 }
 
@@ -436,7 +478,7 @@ export default function useParseAssignations(assignations, options) {
     return {};
   }, [translations]);
 
-  const { isTeacher } = useContext(globalContext);
+  const isTeacher = useIsTeacher();
 
   const parserToUse = useMemo(
     () => (isTeacher ? parseAssignationForTeacherView : parseAssignationForStudentView),
@@ -461,7 +503,6 @@ export default function useParseAssignations(assignations, options) {
         parserToUse,
       })
   );
-  // const [parsedAssignations, , loading] = useApi(parseAssignations, parseAssignationsOptions);
 
   return result;
 }

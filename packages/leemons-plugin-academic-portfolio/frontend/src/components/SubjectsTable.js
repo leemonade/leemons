@@ -24,7 +24,7 @@ import {
   map,
   set,
 } from 'lodash';
-import { useStore } from '@common';
+import { useLocale, useStore } from '@common';
 import { useForm } from 'react-hook-form';
 import { forEachRight } from 'lodash/collection';
 
@@ -125,6 +125,7 @@ function SubjectsTable({
   onUpdate = () => {},
   onlyNewSubject = false,
 }) {
+  const locale = useLocale();
   const [store, render] = useStore({
     tempSubjects: [],
     tempGroups: [],
@@ -160,7 +161,7 @@ function SubjectsTable({
         }
 
         evForm.setValue(`${prefix}internalId`, subjectCredit?.internalId || null);
-        evForm.setValue(`${prefix}credits`, subjectCredit?.credits || null);
+        evForm.setValue(`${prefix}credits`, subjectCredit?.credits || undefined);
         evForm.setValue(`${prefix}subjectType`, classe?.subjectType?.id || null);
         evForm.setValue(`${prefix}knowledges`, classe?.knowledges?.id || null);
       }
@@ -343,7 +344,7 @@ function SubjectsTable({
       input: {
         node: (
           <EnableIfFormPropHasValue property="subject">
-            <NumberInput data={selects.subjectTypes} required />
+            <NumberInput required />
           </EnableIfFormPropHasValue>
         ),
         rules: { required: messages.subjectTypeRequired },
@@ -370,37 +371,40 @@ function SubjectsTable({
     ),
   });
 
-  columns.push({
-    Header: messages.group,
-    accessor: 'groups',
-    input: {
-      rules: {
-        pattern: {
-          message: (program.maxGroupAbbreviationIsOnlyNumbers
-            ? messages.groupNumbers
-            : messages.groupAny
-          ).replace('{max}', program.maxGroupAbbreviation),
-          value: new RegExp(
-            `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
-              program.maxGroupAbbreviation
-            }}|.{36})$`,
-            'g'
-          ),
+  if (!program.useOneStudentGroup) {
+    columns.push({
+      Header: messages.group,
+      accessor: 'groups',
+      input: {
+        rules: {
+          pattern: {
+            message: (program.maxGroupAbbreviationIsOnlyNumbers
+              ? messages.groupNumbers
+              : messages.groupAny
+            ).replace('{max}', program.maxGroupAbbreviation),
+            value: new RegExp(
+              `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+                program.maxGroupAbbreviation
+              }}|.{36})$`,
+              'g'
+            ),
+          },
+          required: messages.groupRequired
         },
-      },
 
-      node: (
-        <Group
-          selectGroups={selects.groups}
-          program={program}
-          onCreateGroup={onCreateGroup}
-          onlyNewSubject={onlyNewSubject}
-          messages={messages}
-        />
-      ),
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+        node: (
+          <Group
+            selectGroups={selects.groups}
+            program={program}
+            onCreateGroup={onCreateGroup}
+            onlyNewSubject={onlyNewSubject}
+            messages={messages}
+          />
+        ),
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   if (program.haveSubstagesPerCourse) {
     columns.push({
@@ -445,9 +449,11 @@ function SubjectsTable({
     Header: messages.schedule,
     accessor: 'schedule',
     input: {
-      node: <ScheduleInput label={false} />,
+      node: <ScheduleInput locale={locale} label={false} />,
     },
-    valueRender: (value) => <ScheduleInput label={false} value={value} readOnly={true} />,
+    valueRender: (value) => (
+      <ScheduleInput locale={locale} label={false} value={value} readOnly={true} />
+    ),
   });
 
   async function _onAdd({ tableInputRowId, ...formData }) {

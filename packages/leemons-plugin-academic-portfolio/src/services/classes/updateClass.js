@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { isArray, map } = require('lodash');
+const { isArray } = require('lodash');
 const { table } = require('../tables');
 const { validateUpdateClass } = require('../../validations/forms');
 const { existKnowledgeInProgram } = require('../knowledges/existKnowledgeInProgram');
@@ -9,7 +9,6 @@ const { existSubstageInProgram } = require('../substages/existSubstageInProgram'
 const { add: addSubstage } = require('./substage/add');
 const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
 const { existCourseInProgram } = require('../courses/existCourseInProgram');
-const { add: addCourse } = require('./course/add');
 const { removeByClass: removeCourseByClass } = require('./course/removeByClass');
 const { existGroupInProgram } = require('../groups/existGroupInProgram');
 const { add: addGroup } = require('./group/add');
@@ -21,13 +20,44 @@ const { processScheduleForClass } = require('./processScheduleForClass');
 const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
+const { getClassesProgramInfo } = require('./listSessionClasses');
 
 async function updateClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateClass(data, { transacting });
+
+      let goodGroup = null;
+
+      const cClass = await table.class.findOne(
+        { id: data.id },
+        { columns: ['program'], transacting }
+      );
+
+      const program = await table.programs.findOne(
+        { id: cClass.program },
+        { columns: ['id', 'useOneStudentGroup'], transacting }
+      );
+
+      if (program.useOneStudentGroup) {
+        const group = await table.groups.findOne(
+          {
+            isAlone: true,
+            type: 'group',
+            program: program.id,
+          },
+          { columns: ['id'], transacting }
+        );
+        goodGroup = group.id;
+      }
+
       const { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } =
         data;
+
+      if (!goodGroup && group) {
+        goodGroup = group;
+      }
+
       // ES: Actualizamos la clase
       let nClass = await table.class.update({ id }, rest, { transacting });
 
@@ -54,6 +84,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         },
         { transacting }
       );
+
       const promises = [];
       // ES: Añadimos todas las relaciones de la clase
 
@@ -88,27 +119,24 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
           throw new Error('course not in program');
         }
         const courses = isArray(course) ? course : [course];
-        promises.push(
-          Promise.all([
-            Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting }))),
-            setToAllClassesWithSubject(nClass.subject, courses, { transacting }),
-          ])
-        );
+        promises.push(setToAllClassesWithSubject(nClass.subject, courses, { transacting }));
       }
 
-      if (_.isNull(group) || group) await removeGroupByClass(nClass.id, { transacting });
-      if (group) {
+      if (_.isNull(goodGroup) || goodGroup) await removeGroupByClass(nClass.id, { transacting });
+      if (goodGroup) {
         // ES: Comprobamos que todos los cursos existen y pertenecen al programa
-        if (!(await existGroupInProgram(group, nClass.program, { transacting }))) {
+        if (!(await existGroupInProgram(goodGroup, nClass.program, { transacting }))) {
           throw new Error('group not in program');
         }
-        if (await isUsedInSubject(nClass.subject, group, { classe: nClass.id, transacting })) {
+        if (await isUsedInSubject(nClass.subject, goodGroup, { classe: nClass.id, transacting })) {
           throw new Error('group is already used in subject');
         }
-        promises.push(addGroup(nClass.id, group, { transacting }));
+        promises.push(addGroup(nClass.id, goodGroup, { transacting }));
       }
 
-      if (_.isNull(group) || teachers) await removeTeachersByClass(nClass.id, { transacting });
+      if (_.isNull(goodGroup) || teachers) {
+        await removeTeachersByClass(nClass.id, { transacting });
+      }
 
       if (teachers)
         await Promise.all(
@@ -133,7 +161,14 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
 
       await Promise.all(promises);
 
-      const classe = (await classByIds(nClass.id, { transacting }))[0];
+      let classe = (await classByIds(nClass.id, { transacting }))[0];
+      [classe] = await getClassesProgramInfo(
+        {
+          programs: program.id,
+          classes: [classe],
+        },
+        { transacting }
+      );
 
       await leemons.events.emit('after-update-class', { class: classe, transacting });
 

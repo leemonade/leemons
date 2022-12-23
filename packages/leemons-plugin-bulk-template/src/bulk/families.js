@@ -1,5 +1,5 @@
 const path = require('path');
-const { keys, trim, isEmpty, toLower, isNil } = require('lodash');
+const { keys, trim, isEmpty, isNil, toLower } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
 async function importFamilies(users) {

@@ -31,6 +31,30 @@ module.exports = {
         unique: true,
       },
     },
+    timezone: {
+      type: 'string',
+    },
+    firstDayOfWeek: {
+      type: 'number',
+    },
+    country: {
+      type: 'string',
+    },
+    city: {
+      type: 'string',
+    },
+    postalCode: {
+      type: 'string',
+    },
+    street: {
+      type: 'string',
+    },
+    phone: {
+      type: 'string',
+    },
+    contactEmail: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

@@ -21,6 +21,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@users/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
 import { useStore } from '@common';
+
 import { listUsersRequest } from '../../../../request';
 import { SelectCenter } from '../../../../components/SelectCenter';
 import { SelectProfile } from '../../../../components/SelectProfile';
@@ -98,6 +99,7 @@ function ListUsers() {
       query.$or = [
         { name_$contains: store.search.toLowerCase() },
         { surnames_$contains: store.search.toLowerCase() },
+        { secondSurname_$contains: store.search.toLowerCase() },
         { email_$contains: store.search.toLowerCase() },
         { phone_$contains: store.search.toLowerCase() },
         { birthdate_$contains: store.search.toLowerCase() },
@@ -174,7 +176,7 @@ function ListUsers() {
   }
 
   async function onPageSizeChange(size) {
-    store.size = size;
+    store.size = Number(size);
     await load();
   }
 

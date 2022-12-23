@@ -78,8 +78,8 @@ async function updateFromUser(userSession, id, data, { transacting: _transacting
           calendar = _.map(c, 'id');
         }
 
-        await unGrantAccessEventUsers(id, { transacting });
         if (data?.users) {
+          await unGrantAccessEventUsers(id, { transacting });
           /*
           _.forEach(userSession.userAgents, ({ id: uId }) => {
             if (data.users.includes(uId)) {

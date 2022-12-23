@@ -6,51 +6,18 @@ const { registerDates } = require('../dates');
 const { assignations } = require('../tables');
 const registerGrade = require('../grades/registerGrade');
 const { validateAssignation } = require('../../helpers/validators/assignation');
+const { sendEmail } = require('../assignableInstance/sendEmail');
 
-async function sendEmail(instance, userAgentByIds, user, classes, btnUrl, subjectIconUrl) {
-  try {
-    /*
-    const userAssignableInstances = await searchAssignableInstances(
-      {
-        limit: 4,
-        archived: false,
-        evaluated: false,
-      },
-      {
-        userSession: { userAgents: [{ id: user }] },
-      }
-    );
+async function checkIfStudentIsOnInstance(user, instance) {
+  const assignationsCount = await assignations.count(
+    {
+      instance,
+      user,
+    },
+    { column: ['id'] }
+  );
 
-     */
-
-    const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    const date1 = new Date(instance.dates.deadline);
-
-    const dateTimeFormat2 = new Intl.DateTimeFormat(userAgentByIds[user].user.locale, options1);
-    const date = dateTimeFormat2.format(date1);
-
-    leemons
-      .getPlugin('emails')
-      .services.email.sendAsEducationalCenter(
-        userAgentByIds[user].user.email,
-        'user-create-assignation',
-        userAgentByIds[user].user.locale,
-        {
-          instance,
-          classes,
-          btnUrl,
-          subjectIconUrl,
-          taskDate: date,
-        },
-        userAgentByIds[user].center.id
-      )
-      .then(() => {
-        console.log(`Email enviado a ${userAgentByIds[user].email}`);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  } catch (e) {}
+  return assignationsCount > 0;
 }
 
 module.exports = async function createAssignation(
@@ -86,29 +53,18 @@ module.exports = async function createAssignation(
         }),
       ]);
 
+      const comunicaServices = leemons.getPlugin('comunica').services;
       const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
       const classesData = await academicPortfolioServices.classes.classByIds(instance.classes, {
+        withTeachers: true,
         userSession,
         transacting,
       });
 
-      instance.assignable.asset.url =
-        ctx.request.header.origin +
-        leemons.getPlugin('leebrary').services.assets.getCoverUrl(instance.assignable.asset.id);
+      const hostname = await leemons.getPlugin('users').services.platform.getHostname();
 
       const _classes = _.uniqBy(classesData, 'subject.id');
       const userAgentByIds = _.keyBy(userAgents, 'id');
-
-      let subjectIconUrl =
-        // eslint-disable-next-line no-nested-ternary
-        _classes.length > 1
-          ? `${ctx.request.header.origin}/public/assets/svgs/module-three.svg`
-          : _classes[0].subject.icon.cover
-          ? ctx.request.header.origin +
-            leemons.getPlugin('leebrary').services.assets.getCoverUrl(_classes[0].subject.icon.id)
-          : null;
-
-      subjectIconUrl = null;
 
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
@@ -117,6 +73,16 @@ module.exports = async function createAssignation(
         // ES: Crea la asignación
         return await Promise.all(
           users.map(async (user) => {
+            const isOnInstance = await checkIfStudentIsOnInstance(user, assignableInstanceId, {
+              userSession,
+              transacting,
+            });
+
+            if (isOnInstance) {
+              throw new Error(
+                `The student ${user} is already assigned to instance ${assignableInstanceId}`
+              );
+            }
             const assignation = await assignations.create(
               {
                 instance: assignableInstanceId,
@@ -130,15 +96,44 @@ module.exports = async function createAssignation(
               { transacting }
             );
 
-            if (instance.dates.deadline) {
-              sendEmail(
-                instance,
-                userAgentByIds,
-                user,
-                _classes,
-                `${ctx.request.header.origin}/private/assignables/ongoing`,
-                subjectIconUrl
+            const roomsPromises = [];
+
+            _.forEach(_classes, ({ subject: { id: subjectId } }) => {
+              const teachers = [];
+              _.forEach(classesData, (data) => {
+                if (data.subject.id === subjectId) {
+                  _.forEach(data.teachers, (teacher) => {
+                    if (teacher.type === 'main-teacher')
+                      teachers.push(
+                        _.isString(teacher.teacher) ? teacher.teacher : teacher.teacher.id
+                      );
+                  });
+                }
+              });
+
+              roomsPromises.push(
+                comunicaServices.room.add(
+                  leemons.plugin.prefixPN(
+                    `subject|${subjectId}.assignation|${assignation.id}.userAgent|${user}`
+                  ),
+                  {
+                    userAgents: _.compact(_.uniq(teachers).concat(user)),
+                  }
+                )
               );
+            });
+
+            await Promise.all(roomsPromises);
+
+            if (instance?.sendMail) {
+              sendEmail({
+                instance,
+                userSession,
+                userAgent: userAgentByIds[user],
+                classes: _classes,
+                ctx,
+                hostname,
+              });
             }
 
             // EN: Save the timestamps

@@ -86,7 +86,6 @@ module.exports = async function updateAssignable(
     }
 
     let assetId = currentAssignable.asset.id;
-
     const asset = await updateAsset(
       {
         ..._.defaults(object.asset, currentAssignable.asset),
@@ -344,6 +343,7 @@ module.exports = async function updateAssignable(
       published,
     };
   } catch (e) {
+    console.log(e);
     throw new Error(`Error updating assignable: ${e.message}`);
   }
 };

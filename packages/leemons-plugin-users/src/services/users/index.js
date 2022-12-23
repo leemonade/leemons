@@ -15,6 +15,8 @@ const { isSuperAdmin } = require('./isSuperAdmin');
 const { profileToken } = require('./profileToken');
 const { detailForPage } = require('./detailForPage');
 const { getResetConfig } = require('./getResetConfig');
+const { updateEmail } = require('./updateEmail');
+const { updatePassword } = require('./updatePassword');
 const { canRegisterPassword } = require('./canRegisterPassword');
 const { comparePassword } = require('./bcrypt/comparePassword');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
@@ -22,6 +24,7 @@ const { hasPermissionCTX } = require('./hasPermissionCTX');
 const { registerPassword } = require('./registerPassword');
 const { centerProfileToken } = require('./centerProfileToken');
 const { updateAvatar } = require('./updateAvatar');
+const { activateUser } = require('./activateUser');
 
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
@@ -51,11 +54,14 @@ module.exports = {
   centers,
   canReset,
   profiles,
+  updateEmail,
+  activateUser,
   updateAvatar,
   isSuperAdmin,
   profileToken,
   detailForPage,
   getResetConfig,
+  updatePassword,
   comparePassword,
   encryptPassword,
   registerPassword,

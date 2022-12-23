@@ -1,4 +1,4 @@
-const apm = require('leemons-telemetry').start('Leemons App');
+const apm = require('leemons-telemetry').start(process.env.leemons_telemetry_name ?? 'Leemons App');
 const fs = require('fs-extra');
 
 const cluster = require('cluster');
@@ -150,9 +150,21 @@ async function setupBack(leemons) {
      * connection and load back again
      */
     handler: async () => {
-      if (leemons.canReloadBackend) {
-        await handler();
-      }
+      return new Promise(async (resolve) => {
+        if (leemons.canReloadBackend) {
+          if (leemons.events) {
+            leemons.events.once('appWillReload', async () => {
+              await handler();
+              resolve();
+            });
+
+            leemons.events.emit('appWillReload');
+          } else {
+            await handler();
+            resolve();
+          }
+        }
+      });
     },
     logger: leemons.log,
   });
@@ -299,9 +311,13 @@ module.exports = async ({ level: logLevel = 'debug' }) => {
 
       switch (message.message) {
         case 'kill':
-          leemons.server.destroy(() => {
-            process.send({ ...message, message: 'killed' });
+          leemons.events.once('appWillReload', () => {
+            leemons.server.destroy(() => {
+              process.send({ ...message, message: 'killed' });
+            });
           });
+          leemons.events.emit('appWillReload');
+
           break;
         case 'reload-back-front':
           (async () => {

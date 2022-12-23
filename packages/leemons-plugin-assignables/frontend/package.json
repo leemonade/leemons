@@ -7,8 +7,8 @@
     "@loadable/component": "^5.15.2",
     "dayjs": "^1.11.2",
     "lodash": "^4.17.21",
-    "react-query": "^3.39.1",
+    "@tanstack/react-query": "^4.16.1",
     "react-router": "^6.3.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^5"
   }
 }

@@ -12,7 +12,14 @@ async function getLocales(ctx) {
   ctx.body = { status: 200, locales };
 }
 
+async function getTheme(ctx) {
+  const theme = await platformService.getTheme();
+  ctx.status = 200;
+  ctx.body = { status: 200, theme };
+}
+
 module.exports = {
   getDefaultLocale,
   getLocales,
+  getTheme,
 };

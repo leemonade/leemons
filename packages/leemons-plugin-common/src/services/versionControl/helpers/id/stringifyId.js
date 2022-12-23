@@ -3,7 +3,7 @@ const stringifyVersion = require('../versions/stringifyVersion');
 
 module.exports = function stringifyId(id, _version, { verifyVersion = true } = {}) {
   let version = _version;
-  if (typeof id !== 'string') {
+  if (typeof _version !== 'string') {
     try {
       version = stringifyVersion(_version);
     } catch (e) {

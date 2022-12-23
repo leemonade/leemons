@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { isArray, forEach, uniq, map, uniqBy } = require('lodash');
+const { isArray, forEach, uniq, map, uniqBy, groupBy } = require('lodash');
 const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
 const { table } = require('../tables');
 
@@ -11,7 +11,7 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<string[]>}
  * */
-async function findUsersWithPermissions(permissions, { transacting } = {}) {
+async function findUsersWithPermissions(permissions, { returnRaw, transacting } = {}) {
   const _permissions = isArray(permissions) ? permissions : [permissions];
   const query = {
     $or: [],
@@ -25,6 +25,8 @@ async function findUsersWithPermissions(permissions, { transacting } = {}) {
   });
 
   const response = await table.userAgentPermission.find(query, { transacting });
+
+  if (returnRaw) return response;
 
   const userAgentIds = uniq(map(response, 'userAgent'));
   const userAgents = await getUserAgentsInfo(userAgentIds, { transacting });

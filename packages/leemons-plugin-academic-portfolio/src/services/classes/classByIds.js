@@ -133,7 +133,7 @@ async function classByIds(
     return stu;
   };
 
-  return _.map(classes, ({ id, subject, subjectType, ...rest }) => {
+  const response = _.map(classes, ({ id, subject, subjectType, ...rest }) => {
     let _students = studentsByClass[id] ? _.map(studentsByClass[id], 'student') : [];
     if (childClassesByClass[id]) {
       _.forEach(childClassesByClass[id], (childClass) => {
@@ -173,15 +173,8 @@ async function classByIds(
         : [],
     };
   });
+
+  return _.orderBy(response, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
 }
 
 module.exports = { classByIds };
-
-/*
- *
- * clase 1 (15 alumnos) (asientos 20)
- *   ref clase 2 (2 alumnos)
- *     ref clase 3 (2 alumnos)
- *       ref clase 4 (1 alumnos)
- *       ref clase 5 (1 alumnos)
- * */

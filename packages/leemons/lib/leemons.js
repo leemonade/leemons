@@ -2,6 +2,7 @@ const http = require('http');
 const Koa = require('koa');
 const Router = require('koa-router');
 const Static = require('koa-static');
+const cors = require('@koa/cors');
 const request = require('request');
 const events = require('events-async');
 const execa = require('execa');
@@ -125,7 +126,7 @@ class Leemons {
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
       } else {
-        this.log.info(chalk`{red ${target}} emitted {magenta ${event}}`);
+        this.log.debug(chalk`{red ${target}} emitted {magenta ${event}}`);
       }
     });
   }
@@ -140,6 +141,17 @@ class Leemons {
 
   // Initialize the server config with http server
   initServer() {
+    // Enable global cors
+    if (process.env.CORS) {
+      leemons.log.debug('CORS ENABLED: Allowing all incoming traffic');
+
+      const options = {
+        origin: '*',
+      };
+
+      this.app.use(cors(options));
+    }
+
     // Add front router to KOA
     this.app.use(this.frontRouter.routes());
     // Add backRouter to app
@@ -182,8 +194,16 @@ class Leemons {
     this.events.emit('willSetMiddlewares', 'leemons');
     this.backRouter.use(async (ctx, next) => {
       ctx._startAt = new Date();
+      ctx._id = uuid.v4();
+
       this.log.http(
-        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
+        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`,
+        {
+          id: ctx._id,
+          ip: ctx.ip,
+          url: ctx.path,
+          method: ctx.method,
+        }
       );
 
       await next();
@@ -197,7 +217,15 @@ class Leemons {
         this.log.http(
           chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
             ctx.ip
-          }} {gray ${end - start} ms}`
+          }} {gray ${end - start} ms}`,
+          {
+            id: ctx._id,
+            ip: ctx.ip,
+            url: ctx.path,
+            method: ctx.method,
+            path: ctx._path,
+            duration: end - start,
+          }
         );
       } catch (err) {
         console.error(err);
@@ -268,6 +296,15 @@ class Leemons {
       try {
         // TODO: Ahora mismo con que cualquiera de los user auth tenga permiso pasa al controlador, aqui entra la duda de si se le deberian de pasar todos los user auth o solo los que tengan permiso, por qe es posible que relacione algun dato a un user auth que realmente no deberia de tener acceso
         // TODO QUITAR LOS USER AUTH QUE NO TENGAN EL PERMISO
+        if (!ctx.state.userSession) {
+          ctx.status = 401;
+          ctx.body = {
+            status: 401,
+            message:
+              'No user session found for check permissions, check if endpoint have [authenticated: true] property',
+          };
+          return undefined;
+        }
         const hasPermission = await this.plugins.users.services.users.hasPermissionCTX(
           ctx.state.userSession,
           allowedPermissions
@@ -370,6 +407,27 @@ class Leemons {
       this.reload();
     });
 
+    if (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) {
+      this.backRouter.get('/api/database/restore', async (ctx) => {
+        try {
+          await this.db.reloadDatabase();
+
+          ctx.status = 200;
+          ctx.body = {
+            status: 200,
+            message: 'Database reloaded',
+          };
+        } catch (e) {
+          ctx.status = 500;
+          ctx.body = {
+            status: 500,
+            message: 'Error reloading database',
+            details: e.message,
+          };
+        }
+      });
+    }
+
     plugins.forEach((plugin) => {
       if (_.isArray(plugin.routes)) {
         plugin.routes.forEach((route) => {
@@ -391,6 +449,11 @@ class Leemons {
               if (!_.isEmpty(route.xapi)) {
                 functions.push(this.xapiMiddleware(route.xapi, plugin.name));
               }
+
+              functions.push(async (ctx, next) => {
+                ctx._path = route.path;
+                await next();
+              });
 
               functions.push(handler);
 
@@ -591,7 +654,7 @@ class Leemons {
   async loadAppConfig() {
     return withTelemetry('loadAppConfig', async () => {
       leemons.events.emit('appWillLoadConfig', 'leemons');
-      this.config = (await loadConfiguration(this)).configProvider;
+      this.config = (await loadConfiguration(this, { useProcessEnv: true })).configProvider;
       leemons.events.emit('appDidLoadConfig', 'leemons');
 
       if (this.config.get('config.insecure', false)) {
@@ -673,7 +736,7 @@ class Leemons {
       this.events.emit('appDidStart', 'leemons');
       this.log.info(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
-        process.send('running');
+        process.send('ready');
       }
       this.started = true;
     });

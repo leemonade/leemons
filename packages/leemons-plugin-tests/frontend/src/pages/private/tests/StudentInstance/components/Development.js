@@ -36,6 +36,7 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/hint.png"
           styles={styles}
+          withRedColor={cluePer.value !== 0}
           label={
             cluePer.value !== 0
               ? t('clueWithPer', {
@@ -103,16 +104,19 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/blank-questions.png"
           styles={styles}
+          withRedColor={
+            !store.config.canOmitQuestions || (store.config.canOmitQuestions && store.config.omit)
+          }
           label={
             // eslint-disable-next-line no-nested-ternary
-            !store.config.canOmitQuestions
-              ? t('noBlankQuestions')
-              : store.config.omit
-              ? t('blankQuestionsScores', {
-                  per: store.config.omit,
-                  points: store.questionsInfo.perOmitQuestion,
-                })
-              : t('blankQuestions')
+            store.config.canOmitQuestions
+              ? store.config.omit
+                ? t('blankQuestionsScores', {
+                    per: store.config.omit,
+                    points: store.questionsInfo.perOmitQuestion,
+                  })
+                : t('blankQuestions')
+              : t('noBlankQuestions')
           }
         />
       </Box>
@@ -122,10 +126,15 @@ export default function Development(props) {
           cx={cx}
           icon="/public/tests/error-questions.png"
           styles={styles}
-          label={t('errorQuestions', {
-            per: store.config.wrong,
-            points: store.questionsInfo.perErrorQuestion,
-          })}
+          withRedColor={store.config.wrong}
+          label={
+            store.config.wrong
+              ? t('errorQuestions', {
+                  per: store.config.wrong,
+                  points: store.questionsInfo.perErrorQuestion,
+                })
+              : t('noErrorQuestions')
+          }
         />
       </Box>
 
@@ -152,13 +161,13 @@ export default function Development(props) {
               </Box>
             ) : null}
           </Box>
-          <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" />
+          {/* <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" /> */}
           {durationSeconds ? (
             <Box
               sx={() => ({
                 position: 'absolute',
                 bottom: '0px',
-                width: '340px',
+                width: '100%',
                 textAlign: 'center',
               })}
             >

@@ -22,6 +22,9 @@ function getSubjectAndClassroom(programs, subjectString) {
   if (subject) {
     classroom = subject.classes.find((item) => item.groups.abbreviation === classroomKey);
   }
+  if (!classroomKey && !classroom && subject.classes.length) {
+    classroom = subject.classes[0];
+  }
 
   return { subject, classroom };
 }
@@ -37,7 +40,7 @@ async function importEvents({ users, programs }) {
   // console.dir(kanbanColumns, { depth: null });
 
   const calendars = {};
-  const itemsKeys = keys(items);
+  const itemsKeys = keys(items).filter((key) => !isNil(key) && !isEmpty(key));
 
   for (let i = 0, l = itemsKeys.length; i < l; i++) {
     const key = itemsKeys[i];
@@ -132,6 +135,8 @@ async function importEvents({ users, programs }) {
             const classesData = classes
               .map((item) => {
                 const { classroom } = getSubjectAndClassroom(programs, item);
+
+                if (!classroom?.id) return null;
 
                 return creatorCalendars.find((calendar) => calendar.key.indexOf(classroom.id) > 0)
                   ?.id;

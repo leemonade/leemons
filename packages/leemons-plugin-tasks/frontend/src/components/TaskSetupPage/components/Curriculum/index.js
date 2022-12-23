@@ -10,17 +10,19 @@ import { listCurriculumsByProgramRequest } from '@curriculum/request';
 function useCurriculum(program) {
   const [curriculum, setCurriculum] = useState(null);
 
-  useEffect(async () => {
-    if (!program) {
-      return;
-    }
+  useEffect(() => {
+    (async () => {
+      if (!program) {
+        return;
+      }
 
-    const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
+      const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
 
-    if (curriculumData.count) {
-      setCurriculum(curriculumData.items[0]);
-    }
-  }, program);
+      if (curriculumData.count) {
+        setCurriculum(curriculumData.items[0]);
+      }
+    })();
+  }, [program]);
 
   return curriculum;
 }

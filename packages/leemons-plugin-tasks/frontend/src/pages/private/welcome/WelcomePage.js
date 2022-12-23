@@ -49,7 +49,9 @@ export default function WelcomePage() {
   // ·······························································
   // INIT DATA LOAD
 
-  useEffect(() => loadSettings(), []);
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   // ·······························································
   // HANDLERS

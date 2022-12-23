@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
-import { TextInput, Alert, Loader, ContextContainer, Switch } from '@bubbles-ui/components';
+import { TextInput, Alert, Loader, ContextContainer, Switch, Box } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 
 export default function SelectCustomGroup({
@@ -11,17 +11,23 @@ export default function SelectCustomGroup({
   onChange,
   value,
   groupedClassesWithSelectedSubjects,
+  showResultsCheck,
+  showCorrectAnswersCheck,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
-      showToStudents: true,
+      showToStudents: value?.[0]?.showToStudents === undefined ? true : value?.[0]?.showToStudents,
+      showResults: true,
+      showCorrectAnswers: true,
+      name: value?.[0]?.name,
+      assignees: value?.[0]?.students || [],
     },
   });
 
   const { assignableStudents, subjects, classes } = groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
-    const handleChange = (v) => {
+    const handleChange = (v, { name: fieldChanged } = {}) => {
       if (v.name?.length && v.assignees?.length) {
         // EN: Get the groups that are selected through their students
         // ES: Obtener los grupos que seleccionaron a través de sus estudiantes
@@ -58,8 +64,15 @@ export default function SelectCustomGroup({
 
         // EN: Do not update if same values
         // ES: No actualizar si son iguales
-        if (!value || !_.isEqual(value, classesMatchingStudents)) {
-          onChange(classesMatchingStudents);
+        if (
+          !value ||
+          !_.isEqual(value, classesMatchingStudents) ||
+          ['showResults', 'showCorrectAnswers'].includes(fieldChanged)
+        ) {
+          onChange(classesMatchingStudents, {
+            showResults: v.showResults,
+            showCorrectAnswers: v.showCorrectAnswers,
+          });
         }
       } else if (!value || value?.length) {
         onChange([]);
@@ -101,19 +114,49 @@ export default function SelectCustomGroup({
           />
         )}
       />
-      <Controller
-        name="showToStudents"
-        shouldUnregister
-        control={control}
-        render={({ field }) => (
-          <Switch
-            {...field}
-            checked={!field.value}
-            onChange={(v) => field.onChange(!v)}
-            label={labels?.showToStudents}
+      <Box>
+        <Controller
+          name="showToStudents"
+          shouldUnregister
+          control={control}
+          render={({ field }) => (
+            <Switch
+              {...field}
+              checked={!field.value}
+              onChange={(v) => field.onChange(!v)}
+              label={labels?.showToStudents}
+            />
+          )}
+        />
+        {showResultsCheck && (
+          <Controller
+            control={control}
+            name={'showResults'}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showResults}
+              />
+            )}
           />
         )}
-      />
+        {showCorrectAnswersCheck && (
+          <Controller
+            control={control}
+            name={'showCorrectAnswers'}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showCorrectAnswers}
+              />
+            )}
+          />
+        )}
+      </Box>
     </ContextContainer>
   );
 }
@@ -140,4 +183,6 @@ SelectCustomGroup.propTypes = {
     subjects: PropTypes.arrayOf(PropTypes.string).isRequired,
     assignableStudents: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
+  showResultsCheck: PropTypes.bool,
+  showCorrectAnswersCheck: PropTypes.bool,
 };

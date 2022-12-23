@@ -2,6 +2,27 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 
+async function getClassesProgramInfo({ programs: _programs, classes }, { transacting }) {
+  const programsIds = Array.isArray(_programs) ? _programs : [_programs];
+
+  const subjectIds = _.uniq(_.map(classes, (classe) => classe.subject.id));
+
+  const subjectsCredits = await table.programSubjectsCredits.find(
+    {
+      program_$in: programsIds,
+      subject_$in: subjectIds,
+    },
+    { transacting }
+  );
+
+  const creditsBySubject = _.keyBy(subjectsCredits, 'subject');
+
+  return _.map(classes, (classe) => ({
+    ...classe,
+    subject: { ...creditsBySubject[classe.subject.id], ...classe.subject },
+  }));
+}
+
 async function listSessionClasses(
   userSession,
   { program, type } = {},
@@ -41,25 +62,17 @@ async function listSessionClasses(
     classIds = _.map(programClasses, 'id');
   }
 
-  const classes = await classByIds(classIds, { withProgram, withTeachers, transacting });
+  let classes = await classByIds(classIds, { withProgram, withTeachers, transacting });
 
-  if (program) {
-    const subjectIds = _.uniq(_.map(classes, (classe) => classe.subject.id));
-    const subjectCredits = await table.programSubjectsCredits.find(
-      {
-        program,
-        subject_$in: subjectIds,
-      },
-      { transacting }
-    );
-    const creditsBySubject = _.keyBy(subjectCredits, 'subject');
-    _.forEach(classes, (classe) => {
-      // eslint-disable-next-line no-param-reassign
-      classe.subject = { ...classe.subject, ...creditsBySubject[classe.subject.id] };
-    });
-  }
+  classes = await getClassesProgramInfo(
+    {
+      programs: program || _.uniq(_.map(classes, 'subject.program')),
+      classes,
+    },
+    { transacting }
+  );
 
-  return classes;
+  return _.orderBy(classes, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
 }
 
-module.exports = { listSessionClasses };
+module.exports = { listSessionClasses, getClassesProgramInfo };

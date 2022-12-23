@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
+const cron = require('node-cron');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
 // const execa = require('execa');
@@ -43,6 +44,12 @@ squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   const value = _.get(it, prop, '');
   return _.isArray(value) || _.isObject(value) ? `-*-*-${JSON.stringify(value)}-*-*-` : value;
 });
+
+function diffHours(dt2, dt1) {
+  let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= 60 * 60;
+  return Math.abs(Math.round(diff));
+}
 
 module.exports = {
   env,
@@ -88,4 +95,28 @@ module.exports = {
   sharp,
   getDiff,
   chalk,
+  cron: {
+    ...cron,
+    schedule: (cronReg, callback) => {
+      let schedule = null;
+      leemons.events.once('appDidLoadBack', () => {
+        schedule = cron.schedule(cronReg, callback);
+      });
+      leemons.events.once('appWillReload', () => {
+        if (schedule) {
+          schedule.stop();
+        }
+      });
+      return schedule;
+    },
+  },
+  encrypt: (payload, secretKey) =>
+    jwt.sign({ payload }, secretKey, {
+      expiresIn: 60 * 60 * 24 * 365 * 9999, // 9999 years
+    }),
+  decrypt: (token, secretKey) => {
+    const { payload } = jwt.verify(token, secretKey);
+    return payload;
+  },
+  diffHours,
 };

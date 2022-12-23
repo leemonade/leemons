@@ -1,7 +1,13 @@
+const userWeekly = require('./emails/userWeekly');
 const newActivity = require('./emails/userCreateAssignation');
+const rememberActivityTimeout = require('./emails/userRememberAssignationTimeout');
 const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { pluginName, menuItems, permissions, widgets } = require('./config/constants');
+const { afterRemoveClassesTeachers } = require('./src/services/events/afterRemoveClassesTeachers');
+const { afterAddClassTeacher } = require('./src/services/events/afterAddClassTeacher');
+const { sendRememberEmails } = require('./src/services/events/sendRememberEmail');
+const { sendWeeklyEmails } = require('./src/services/events/sendWeeklyEmail');
 
 async function initEmails() {
   await leemons
@@ -23,6 +29,44 @@ async function initEmails() {
       leemons.getPlugin('emails').services.email.types.active
     );
   leemons.events.emit('init-email-recover-password');
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-remember-assignation-timeout',
+      'es',
+      'Esta actividad finaliza pronto',
+      rememberActivityTimeout.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-remember-assignation-timeout',
+      'en',
+      'This activity ends soon',
+      rememberActivityTimeout.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-weekly-resume',
+      'es',
+      'Aquí tienes tus actividades pendientes',
+      userWeekly.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-weekly-resume',
+      'en',
+      'Have a look to your pending activities',
+      userWeekly.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
   leemons.events.emit('init-emails');
 }
 
@@ -95,10 +139,15 @@ function initWidgets(isInstalled) {
 
       leemons.events.emit('init-widget-items');
     });
+  } else {
+    leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
+      leemons.events.emit('init-widget-zones');
+      leemons.events.emit('init-widget-items');
+    });
   }
 }
 
-async function events(isInstalled) {
+function initMultilanguage() {
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
@@ -106,6 +155,41 @@ async function events(isInstalled) {
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
+}
+
+function handleAcademicPortfolio() {
+  leemons.events.on(
+    'plugins.academic-portfolio:after-add-class-student',
+    async (event, { class: klass, student }) => {
+      // eslint-disable-next-line global-require
+      const addStudentToOpenInstancesWithClass = require('./src/services/assignations/addStudentToOpenInstancesWithClass');
+      addStudentToOpenInstancesWithClass({ student, class: klass });
+    }
+  );
+}
+
+async function events(isInstalled) {
+  global.utils.cron.schedule('0 * * * *', () => {
+    sendRememberEmails();
+  });
+  global.utils.cron.schedule('0 10 * * *', () => {
+    sendWeeklyEmails();
+  });
+
+  leemons.events.once('appDidLoadBack', () => {
+    sendRememberEmails();
+  });
+
+  leemons.events.on('plugins.academic-portfolio:after-add-class-teacher', async (event, data) => {
+    await afterAddClassTeacher(data);
+  });
+
+  leemons.events.on(
+    'plugins.academic-portfolio:after-remove-classes-teachers',
+    async (event, data) => {
+      await afterRemoveClassesTeachers(data);
+    }
+  );
 
   // Emails
   leemons.events.once('plugins.emails:pluginDidLoadServices', async () => {
@@ -127,9 +211,12 @@ async function events(isInstalled) {
     }
   );
 
+  initMultilanguage();
   initPermissions(isInstalled);
   initMenuBuilder(isInstalled);
   initWidgets(isInstalled);
+
+  handleAcademicPortfolio();
 
   // TODO cuando se cambie el profesor de la clase en academic -portfolio se lance un evento que pille assignable para quitarle el permiso al profesor sobre los eventos y darselo al nuevo profesor
 }

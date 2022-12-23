@@ -14,7 +14,13 @@ function CorrectionButton({ studentData, instanceData, label }) {
   return <Button onClick={redirect}>{label}</Button>;
 }
 
-export default function getActions(studentData, instanceData, localizations, subjects) {
+export default function getActions(
+  studentData,
+  instanceData,
+  localizations,
+  subjects,
+  { reminder }
+) {
   if (studentData.finished) {
     if (!instanceData?.requiresScoring && !instanceData?.allowFeedback) {
       return null;
@@ -40,7 +46,16 @@ export default function getActions(studentData, instanceData, localizations, sub
   }
 
   if (!studentData.timestamps?.start) {
-    return <Button variant="link">{localizations.sendReminder}</Button>;
+    return (
+      <Button
+        variant="link"
+        onClick={() => {
+          reminder(studentData);
+        }}
+      >
+        {localizations.sendReminder}
+      </Button>
+    );
   }
   return <></>;
 }

@@ -6,9 +6,9 @@ const menuItems = [
   {
     config: {
       key: 'dashboard',
-      order: 2,
-      iconSvg: '/public/assets/svgs/plugin-dashboard.svg',
-      activeIconSvg: '/public/assets/svgs/plugin-dashboard.svg',
+      order: 1,
+      iconSvg: '/public/dashboard/menu-icon.svg',
+      activeIconSvg: '/public/dashboard/menu-icon.svg',
       url: '/private/dashboard',
       label: {
         en: 'Dashboard',

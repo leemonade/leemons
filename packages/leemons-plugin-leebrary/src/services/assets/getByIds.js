@@ -9,7 +9,14 @@ const {
   isNil,
   intersection,
   isArray,
+  uniqBy,
+  filter,
+  keyBy,
+  forEach,
 } = require('lodash');
+const {
+  getUserAgentsInfo,
+} = require('leemons-plugin-users/src/services/user-agents/getUserAgentsInfo');
 const { tables } = require('../tables');
 const { CATEGORIES } = require('../../../config/constants');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
@@ -18,6 +25,8 @@ const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
 const { getByAssets: getPins } = require('../pins/getByAssets');
+const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
+const { getClassesPermissions } = require('../permissions/getClassesPermissions');
 
 async function getByIds(
   assetsIds,
@@ -47,8 +56,13 @@ async function getByIds(
 
   // ·········································································
   // PERMISSIONS & PERSONS
-
   if (checkPermissions && userSession) {
+    const classesPermissionsPerAsset = await getClassesPermissions(assetsIds, {
+      withInfo: true,
+      transacting,
+      userSession,
+    });
+
     let permissions = [];
 
     if (userSession || showPublic) {
@@ -58,14 +72,60 @@ async function getByIds(
     const privateAssets = permissions.map((item) => item.asset);
     assets = assets.filter((asset) => privateAssets.includes(asset.id));
 
+    const getUsersAssetIds = [];
     for (let i = 0, l = assets.length; i < l; i++) {
       const asset = assets[i];
+      const classesWithPermissions = classesPermissionsPerAsset[i];
+
+      asset.classesCanAccess = classesWithPermissions;
       const permission = permissions.find((item) => item.asset === asset.id);
       if (!isEmpty(permission?.permissions)) {
-        const { role: userRole, permissions: userPermissions } = permission;
+        const { permissions: userPermissions } = permission;
         if (userPermissions.edit) {
-          // eslint-disable-next-line no-await-in-loop
-          let assetPermissions = await getUsersByAsset(asset.id, { userSession });
+          getUsersAssetIds.push(asset.id);
+        }
+      }
+    }
+
+    if (getUsersAssetIds.length) {
+      const { services } = leemons.getPlugin('users');
+      const rawUserAgents = await services.permissions.findUsersWithPermissions(
+        {
+          permissionName_$in: map(getUsersAssetIds, getAssetPermissionName),
+        },
+        { returnRaw: true, transacting }
+      );
+      const userAgentIds = uniq(map(rawUserAgents, 'userAgent'));
+      const userAgents = await getUserAgentsInfo(userAgentIds, { transacting });
+      const userAgentsById = keyBy(userAgents, 'id');
+
+      for (let i = 0, l = assets.length; i < l; i++) {
+        const asset = assets[i];
+        if (getUsersAssetIds.includes(asset.id)) {
+          const permission = permissions.find((item) => item.asset === asset.id);
+          const assetPermissionName = getAssetPermissionName(asset.id);
+          const { role: userRole } = permission;
+          const rawPerm = filter(
+            rawUserAgents,
+            ({ permissionName }) => permissionName === assetPermissionName
+          );
+          const assetUserAgents = uniqBy(rawPerm, 'userAgent');
+
+          let assetPermissions = [];
+          forEach(assetUserAgents, (raw) => {
+            const userAgent = userAgentsById[raw.userAgent];
+            const perm = find(assetPermissions, { id: userAgent.user.id });
+            if (perm) {
+              perm.userAgentIds.push(userAgent.id);
+              perm.permissions.push(raw.actionName);
+            } else {
+              assetPermissions.push({
+                ...userAgent.user,
+                userAgentIds: [userAgent.id],
+                permissions: [raw.actionName],
+              });
+            }
+          });
           assetPermissions = assetPermissions.map((user) => {
             const item = { ...user };
             item.editable = canAssignRole(userRole, item.permissions[0], item.permissions[0]);
@@ -79,7 +139,6 @@ async function getByIds(
 
   // ·········································································
   // FILES
-
   if (!isEmpty(assets) && withFiles) {
     const assetsFiles = await tables.assetsFiles.find({ asset_$in: ids }, { transacting });
     const fileIds = compact(
@@ -128,7 +187,6 @@ async function getByIds(
   // ·········································································
   // TAGS
   let tags = [];
-
   if (withTags) {
     const tagsService = leemons.getPlugin('common').services.tags;
     tags = await Promise.all(
@@ -142,7 +200,6 @@ async function getByIds(
   // CATEGORY DATA
   let categories = [];
   let assetCategoryData = [];
-
   if (withCategory) {
     categories = await getCategories(uniq(assets.map((item) => item.category)), {
       transacting,
@@ -186,7 +243,7 @@ async function getByIds(
   const assignRoles = ['owner', 'editor'];
   const userAgents = userSession?.userAgents.map(({ id }) => id) || [];
 
-  return assets.map((asset, index) => {
+  const result = assets.map((asset, index) => {
     const item = { ...asset };
 
     if (withCategory) {
@@ -234,6 +291,8 @@ async function getByIds(
 
     return item;
   });
+
+  return result;
 }
 
 module.exports = { getByIds };

@@ -12,7 +12,9 @@ async function addStudentsToClassesUnderNodeTree(
   return global.utils.withTransaction(
     async (transacting) => {
       const nodeTypes = await getProgramTreeTypes(program, { transacting });
-      return addStudentsClassesUnderNodeTree(nodeTypes, nodeType, nodeId, students);
+      return addStudentsClassesUnderNodeTree(nodeTypes, nodeType, nodeId, students, {
+        transacting,
+      });
     },
     table.programs,
     _transacting

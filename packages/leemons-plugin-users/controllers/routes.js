@@ -91,6 +91,28 @@ module.exports = [
     handler: 'users.registerPassword',
   },
   {
+    path: '/user/activate-user',
+    method: 'POST',
+    handler: 'users.activateUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['admin'],
+      },
+    },
+  },
+  {
+    path: '/user/activation-mail',
+    method: 'POST',
+    handler: 'users.sendWelcomeEmailToUser',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['admin'],
+      },
+    },
+  },
+  {
     path: '/user',
     method: 'GET',
     handler: 'users.detail',
@@ -195,6 +217,9 @@ module.exports = [
       'plugins.users.users': {
         actions: ['create', 'admin'],
       },
+      'plugins.admin.setup': {
+        actions: ['update', 'create', 'admin'],
+      },
     },
   },
   {
@@ -220,6 +245,20 @@ module.exports = [
     method: 'POST',
     handler: 'users.updateUserAgent',
     authenticated: true,
+  },
+  {
+    path: '/user-agent/:id',
+    method: 'DELETE',
+    handler: 'users.deleteUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['delete', 'admin'],
+      },
+      'plugins.admin.setup': {
+        actions: ['delete', 'admin'],
+      },
+    },
   },
   {
     path: '/user-agent/:id/detail/page',
@@ -340,6 +379,39 @@ module.exports = [
       'plugins.users.centers': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
+      'plugins.admin.setup': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+
+  {
+    path: '/centers/add',
+    method: 'POST',
+    handler: 'centers.add',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+      'plugins.admin.setup': {
+        actions: ['update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+
+  {
+    path: '/centers/remove',
+    method: 'POST',
+    handler: 'centers.remove',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.centers': {
+        actions: ['delete', 'admin'],
+      },
+      'plugins.admin.setup': {
+        actions: ['delete', 'admin'],
+      },
     },
   },
 
@@ -355,5 +427,10 @@ module.exports = [
     path: '/platform/locales',
     method: 'GET',
     handler: 'platform.getLocales',
+  },
+  {
+    path: '/platform/theme',
+    method: 'GET',
+    handler: 'platform.getTheme',
   },
 ];

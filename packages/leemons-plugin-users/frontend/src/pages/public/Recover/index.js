@@ -53,8 +53,15 @@ export default function Recover() {
 
   const onSubmit = async (data) => {
     try {
-      await recoverRequest(data);
-      store.email = data.email;
+      store.message = null;
+      store.email = null;
+      render();
+      const { code } = await recoverRequest(data);
+      if (code === 1001) {
+        store.message = t('accountNotActive');
+      } else {
+        store.email = data.email;
+      }
       render();
     } catch (err) {
       console.error(err);
@@ -75,9 +82,9 @@ export default function Recover() {
                 value={email}
                 onChange={(e) => setValue('email', e)}
               />
-              {store.email ? (
-                <Alert severity="success" closeable={false}>
-                  {t('emailSendTo', { email: store.email })}
+              {store.email || store.message ? (
+                <Alert severity={store.message ? 'warning' : 'success'} closeable={false}>
+                  {store.message ? store.message : t('emailSendTo', { email: store.email })}
                 </Alert>
               ) : null}
 

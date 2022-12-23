@@ -6,11 +6,10 @@ import {
   createStyles,
   InputWrapper,
   Stack,
-  Switch,
   TabPanel,
   Tabs,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@common/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';
@@ -26,6 +25,7 @@ import Curriculum from './components/Curriculum';
 import Objectives from './components/Objectives';
 import Submissions from './components/Submissions';
 import StatementImage from './components/StatementImage';
+import Development from './components/Development';
 
 const ContentDataStyles = createStyles((theme) => ({
   tabPane: {
@@ -151,7 +151,6 @@ function ContentData({
         <ContextContainer {...props} divided>
           <ContextContainer divided>
             <ContextContainer title={labels?.statementAndDevelopmentTitle}>
-              {/* TODO: Make the statement required (Not allowed with TextEditor) */}
               <Controller
                 control={control}
                 name="statement"
@@ -168,17 +167,10 @@ function ContentData({
                 )}
               />
               <StatementImage labels={labels} />
-              <Controller
-                control={control}
-                name="development"
-                render={({ field }) => (
-                  <TextEditorInput
-                    {...field}
-                    label={labels.development}
-                    placeholder={placeholders.development}
-                    error={errors.development}
-                  />
-                )}
+              <Development
+                label={labels.development}
+                placeholder={placeholders.development}
+                name="metadata.development"
               />
             </ContextContainer>
 

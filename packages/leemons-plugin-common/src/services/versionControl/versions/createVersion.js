@@ -9,7 +9,7 @@ module.exports = async function createVersion(
   id,
   { version, published = false, transacting } = {}
 ) {
-  const { uuid, version: v, fullId } = await parseId(id, version);
+  const { uuid, version: v, fullId } = await parseId({ id, version });
   const { major, minor, patch } = parseVersion(v);
 
   // EN: Check if uuid exists
@@ -47,5 +47,5 @@ module.exports = async function createVersion(
     { transacting }
   );
 
-  return parseId(uuid, version);
+  return parseId({ id: uuid, version });
 };

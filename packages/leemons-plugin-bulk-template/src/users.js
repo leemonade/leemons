@@ -36,7 +36,9 @@ async function initUsers(centers, profiles) {
 
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
-      pool.add(() => _addUser(itemKey, users));
+      if (itemKey !== 'super') {
+        pool.add(() => _addUser(itemKey, users));
+      }
     }
 
     leemons.log.debug('Batch processing users ...');

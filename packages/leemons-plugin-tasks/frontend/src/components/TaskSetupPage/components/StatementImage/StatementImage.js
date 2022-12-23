@@ -53,18 +53,20 @@ export default function StatementImage({ labels }) {
     --- Resources state ---
   */
   const [resources, setResources] = useState([]);
-  useEffect(async () => {
-    const formResources = getValues('metadata.leebrary.statementImage');
-    if (formResources?.length) {
-      const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
-      const newAssets = await getAssetsByIds(formResources, { public: true });
+  useEffect(() => {
+    (async () => {
+      const formResources = getValues('metadata.leebrary.statementImage');
+      if (formResources?.length) {
+        const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
+        const newAssets = await getAssetsByIds(formResources, { public: true });
 
-      const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
-      const preparedAssets = assets?.map(prepareAsset);
-      if (preparedAssets?.length) {
-        setResources(preparedAssets);
+        const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
+        const preparedAssets = assets?.map(prepareAsset);
+        if (preparedAssets?.length) {
+          setResources(preparedAssets);
+        }
       }
-    }
+    })();
   }, []);
 
   /*

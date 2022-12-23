@@ -120,7 +120,7 @@ export default function Edit() {
 
   React.useEffect(() => {
     if (params?.id) init();
-  }, [params]);
+  }, [params?.id]);
 
   let component = null;
   const steps = [

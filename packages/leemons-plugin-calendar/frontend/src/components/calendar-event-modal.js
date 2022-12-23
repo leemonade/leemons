@@ -304,7 +304,7 @@ function NewCalendarEventModal({
     // eslint-disable-next-line prefer-const
     ref.current.saving = true;
     render();
-    let { startDate, endDate, startTime, endTime, ...formData } = _formData;
+    let { startDate, endDate, deadline, uniqClasses, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
     if (formData.isAllDay) {
@@ -366,7 +366,9 @@ function NewCalendarEventModal({
   }
 
   useEffect(() => {
-    if (session && opened && (!event || event.id !== ref.current.eventId)) init();
+    if (session && opened && (!event || event.id !== ref.current.eventId)) {
+      init();
+    }
   }, [session, event]);
 
   useEffect(() => {
@@ -484,18 +486,23 @@ export const useCalendarEventModal = () => {
     />
   );
 
-  return [
-    function toggle() {
-      store.opened = !store.opened;
-      render();
-    },
-    function Component(data) {
+  const Component = React.useCallback(
+    (data) => {
       if (data?.event?.canNotOpened) {
         store.opened = false;
         return null;
       }
       return React.cloneElement(element, data);
     },
+    [store.opened]
+  );
+
+  return [
+    function toggle() {
+      store.opened = !store.opened;
+      render();
+    },
+    Component,
     {
       opened: store.opened,
       openModal: () => {

@@ -1,6 +1,7 @@
 const Bookshelf = require('bookshelf');
 const bookshelfUUID = require('bookshelf-uuid');
 const _ = require('lodash');
+const fs = require('fs/promises');
 
 const { initKnex } = require('./knex');
 const mountModels = require('./model/mountModel');
@@ -31,8 +32,9 @@ class Connector {
 
     return Promise.all(
       bookshelfConnections.map((connection) => {
+        const { connection: ORMConnection, config } = this.connections[connection.name];
         // Initialize the ORM
-        const ORM = new Bookshelf(this.connections[connection.name]);
+        const ORM = new Bookshelf(ORMConnection);
 
         // Use uuid plugin
         ORM.plugin(bookshelfUUID);
@@ -41,6 +43,7 @@ class Connector {
           ORM,
           connection,
           connector: this,
+          config,
         };
         this.contexts.set(connection.name, ctx);
 
@@ -50,7 +53,15 @@ class Connector {
   }
 
   destroy() {
-    return Promise.all(Object.values(this.connections).map((connection) => connection.destroy()));
+    return Promise.all(
+      Object.values(this.connections).map((connection) => {
+        try {
+          return connection.destroy();
+        } catch (e) {
+          return null;
+        }
+      })
+    );
   }
 
   /**
@@ -71,6 +82,33 @@ class Connector {
         return mountModels(_models, ctx);
       })
     );
+  }
+
+  async reloadDatabase() {
+    try {
+      const contexts = [...this.contexts.values()];
+      return await Promise.all(
+        contexts.map(async (ctx) => {
+          const restoreFile = await (
+            await fs.readFile(ctx.connection.restoreFile, 'utf8')
+          ).toString();
+
+          const { ORM } = ctx;
+
+          this.leemons.log.silly(
+            `Restoring database ${ctx.connection.database} on connection ${ctx.connection.name}`
+          );
+          await ORM.knex.raw(restoreFile);
+          this.leemons.log.silly(
+            `Restored database ${ctx.connection.database} on connection ${ctx.connection.name}`
+          );
+          return true;
+        })
+      );
+    } catch (e) {
+      this.leemons.log.error(e.message);
+      throw e;
+    }
   }
 }
 

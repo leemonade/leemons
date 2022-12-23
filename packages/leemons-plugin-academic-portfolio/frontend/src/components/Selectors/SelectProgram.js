@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useMemo } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { useApi } from '@common';
 import PropTypes from 'prop-types';
 import { Select } from '@bubbles-ui/components';
@@ -19,7 +19,7 @@ async function getData(center) {
 }
 
 const SelectProgram = forwardRef(
-  ({ center, value: userValue, onChange, ensureIntegrity, ...props }, ref) => {
+  ({ firstSelected, center, value: userValue, onChange, ensureIntegrity, ...props }, ref) => {
     const [value, setValue] = useState(userValue);
 
     // EN: Get programs from API on center change
@@ -48,6 +48,12 @@ const SelectProgram = forwardRef(
       setValue(userValue);
     }, [userValue]);
 
+    useEffect(() => {
+      if (firstSelected && data.length > 0) {
+        handleChange(data[0].value);
+      }
+    }, [data]);
+
     // EN: Ensure that the value is valid (exists in the data)
     // ES: Asegurar que el valor es válido (existe en los datos)
     useEffect(() => {
@@ -71,6 +77,7 @@ const SelectProgram = forwardRef(
         disabled={!data?.length}
         onChange={handleChange}
         value={value}
+        autoSelectOneOption
       />
     );
   }
@@ -82,6 +89,7 @@ SelectProgram.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
   ensureIntegrity: PropTypes.bool,
+  firstSelected: PropTypes.bool,
 };
 
 export { SelectProgram };

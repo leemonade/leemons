@@ -19,7 +19,7 @@ module.exports = {
         'Esta actividad está siempre disponible y puede realizarse en cualquier momento.',
       closeDateToogle: 'Fecha límite para correcciones del profesor',
       closeDate: 'Fecha límite para corregir',
-      messageToStudentsToogle: 'Añadir mensaje para los estudiantes',
+      messageToStudentsToogle: 'Notificar a los estudiantes',
       messageToStudents: 'Mensaje para los estudiantes',
       showCurriculumToogle: 'Mostrar curriculum',
       content: 'Contenidos',
@@ -32,10 +32,21 @@ module.exports = {
         customGroups: 'Grupos personalizados',
         session: 'Sesión',
       },
+      relations: {
+        toggle: 'Establecer relación con otra actividad',
+        before: 'Actividad anterior',
+        required: 'Dependencia obligatoria',
+      },
       selectStudentsTitle: '¿Quién realizará la actividad?',
       excludeStudents: 'Excluir estudiantes',
+      showResults: 'Ocultar informe de resultados',
+      showCorrectAnswers: 'Ocultar soluciones a los estudiantes al terminar',
+      addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
+      clearStudents: 'Borrar estudiantes',
       subjects: {
-        title: 'Asignaturas que se evaluarán en esta actividad',
+        nonCalificableTitle:
+          'Selecciona al menos una de tus asignaturas para ver los grupos disponibles',
+        calificableTitle: 'Asignaturas que se evaluarán en esta actividad',
         subtitle: 'NOTA: Al menos una de ellas',
       },
       unableToAssignStudentsMessage:
@@ -54,7 +65,8 @@ module.exports = {
       units: 'unidad',
     },
     descriptions: {
-      messageToStudents: 'Este mensaje será el mensaje por defecto para todos los estudiantes.',
+      messageToStudents:
+        'Enviar un mensaje de notificación para hacer la actividad. Puede añadirse un texto personalizado',
       visualizationDate:
         'NOTA: La actividad estará disponible para su consulta, pero no podrá ser completada hasta la fecha de inicio.',
       closeDateToogle: 'NOTA: Después de esta fecha, no se pueden hacer correcciones',
@@ -171,12 +183,21 @@ module.exports = {
         label: 'Acciones',
         SEND_REMINDER: 'Enviar recordatorio',
       },
+      rememberModal: {
+        title: 'Enviar recordatorio a estudiantes que:',
+        notOpen: 'No han abierto la actividad',
+        notEnd: 'No han finalizado la actividad',
+        send: 'Enviar',
+        sended: 'Recordatorio enviado',
+      },
       studentListcolumns: {
         student: 'Estudiantes',
         status: 'Estado',
         completed: 'Completada',
         avgTime: 'Tiempo medio',
         score: 'Puntuación',
+        unreadMessages: 'Mensajes',
+        sendReminder: 'Enviar recordatorio',
       },
     },
     placeholders: {
@@ -202,6 +223,7 @@ module.exports = {
     sendReminder: 'Enviar recordatorio',
     evaluate: 'Evaluar',
     review: 'Revisar',
+    reminderSended: 'Recordatorio enviado',
   },
   student_actions: {
     continue: 'Continuar',
@@ -210,6 +232,10 @@ module.exports = {
     notSubmitted: 'No entregado',
     correction: 'Revisar',
     review: 'Revisar',
+    disabled: {
+      results: 'Los resultados han sido ocultados por tu profesor',
+      previous: 'La actividad anterior debe completarse primero',
+    },
   },
   levelsOfDifficulty: {
     beginner: 'Principiante',
@@ -230,6 +256,7 @@ module.exports = {
       open: 'Abierta',
       ongoing: 'Comenzada',
       completed: 'Completada',
+      unreadMessages: 'Mensajes',
     },
     student: {
       task: 'Tarea',
@@ -238,6 +265,8 @@ module.exports = {
       deadline: 'Fecha límite',
       status: 'Estado',
       submission: 'Entrega',
+      grade: 'Puntuación',
+      unreadMessages: 'Mensajes',
     },
   },
   multiSubject: 'Multi-asignatura',
@@ -250,6 +279,9 @@ module.exports = {
     status: 'Estado',
     type: 'Tipo',
     seeAll: 'Ver todas',
+  },
+  activities_list: {
+    emptyState: 'No hay actividades aún',
   },
   ongoing: {
     ongoing: 'Actividades en curso',
@@ -266,10 +298,14 @@ module.exports = {
   need_your_attention: {
     title: 'Necesita tu atención',
     new: 'Nueva',
+    emptyState: 'No hay actividades programadas',
     assigment: {
       subject: 'Asignatura',
       submission: 'Entregadas',
       avgTime: 'Tiempo medio',
+      grade: 'Puntuación',
+      score: 'Respuestas correctas',
+      activityType: 'Tipo de actividad',
     },
   },
   pagination: {

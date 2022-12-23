@@ -1,11 +1,9 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useStore } from '@common';
+import { isBoolean } from 'lodash';
 import { COLORS, createStyles } from '@bubbles-ui/components';
-import { getProfilesRequest } from '@academic-portfolio/request';
-import { getUserProfilesRequest } from '@users/request';
-import { forEach } from 'lodash';
+import { useIsAcademicProfile } from '@academic-portfolio/hooks';
 import AcademicDashboard from './components/AcademicDashboard';
 import AdminDashboard from './components/AdminDashboard';
 
@@ -32,38 +30,17 @@ const Styles = createStyles((theme) => ({
 }));
 
 export default function Dashboard({ session }) {
-  const [store, render] = useStore({
-    loading: true,
-    isAcademicMode: false,
-  });
+  let loading = true;
 
-  async function init() {
-    const [{ profiles: academicProfiles }, { profiles: userProfiles }] = await Promise.all([
-      getProfilesRequest(),
-      getUserProfilesRequest(),
-    ]);
-    // eslint-disable-next-line consistent-return
-    forEach(userProfiles, (userProfile) => {
-      if (
-        userProfile.id === academicProfiles.teacher ||
-        userProfile.id === academicProfiles.student
-      ) {
-        store.isAcademicMode = true;
-        return false;
-      }
-    });
+  const isAcademicProfile = useIsAcademicProfile();
 
-    store.loading = false;
-    render();
+  if (isBoolean(isAcademicProfile)) {
+    loading = false;
   }
 
-  React.useEffect(() => {
-    init();
-  }, []);
+  if (loading) return null;
 
-  if (store.loading) return null;
-
-  if (store.isAcademicMode) {
+  if (isAcademicProfile) {
     return <AcademicDashboard session={session} />;
   }
 

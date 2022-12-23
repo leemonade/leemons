@@ -26,7 +26,7 @@ function filterLeemons(filter) {
   return filtered;
 }
 
-module.exports = (allowedPath, filter = null, env = {}) => {
+module.exports = ({ allowedPath, filter = null, env = {}, plugin, type }) => {
   // Set the allowed routes for imports
   const root = [
     allowedPath,
@@ -47,6 +47,7 @@ module.exports = (allowedPath, filter = null, env = {}) => {
     'zlib',
     'constants',
     'fs',
+    'fs/promises',
     'util',
     'os',
     'events',
@@ -65,9 +66,7 @@ module.exports = (allowedPath, filter = null, env = {}) => {
       // Allow the following node-builtin modules
       builtin,
       // Ensure a protected use of FS (only access inside the given directory)
-      mock: {
-        fs: protect(allowedPath)(),
-      },
+      mock: protect(allowedPath, plugin, type)(),
     },
   });
 

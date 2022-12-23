@@ -119,7 +119,7 @@ const menuItems = [
   {
     item: {
       key: 'rules',
-      order: 3,
+      order: 101,
       iconSvg: '/public/grades/menu-icon.svg',
       activeIconSvg: '/public/grades/menu-icon.svg',
       label: {

@@ -17,6 +17,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import getCourseName from '@academic-portfolio/helpers/getCourseName';
+import { addErrorAlert } from '@layout/alert';
 import { listSessionClassesRequest } from '../../request';
 import { getClassImage } from '../../helpers/getClassImage';
 import { getClassIcon } from '../../helpers/getClassIcon';
@@ -103,6 +104,7 @@ function UserClassesSwiperWidget({ program }) {
       const { classes } = await listSessionClassesRequest({ program: program.id });
       store.classes = classes;
     } catch (error) {
+      addErrorAlert(error);
       console.error(error);
     }
     store.loading = false;
@@ -135,12 +137,20 @@ function UserClassesSwiperWidget({ program }) {
       >
         {store.classes.map((classe, index) => {
           const name = `${classe.subject.name} - ${classe.subject.internalId}`;
-          const group = classe.groups ? classe.groups.abbreviation : null;
-          const course = isArray(classe.courses)
-            ? t('multiCourse')
-            : classe.courses
-            ? getCourseName(classe.courses)
-            : null;
+          const group =
+            !classe.groups || classe.groups.isAlone
+              ? null
+              : classe.groups
+              ? classe.groups.abbreviation
+              : null;
+          const course =
+            !classe.groups || classe.groups.isAlone
+              ? null
+              : isArray(classe.courses)
+              ? t('multiCourse')
+              : classe.courses
+              ? getCourseName(classe.courses)
+              : null;
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
@@ -192,12 +202,14 @@ function UserClassesSwiperWidget({ program }) {
                       </Text>
                     </TextClamp>
                   </Box>
-                  <TextClamp lines={1} showTooltip>
-                    <Text size="sm" strong>
-                      {course}
-                      {group ? (course ? `- ${group}` : group) : null}
-                    </Text>
-                  </TextClamp>
+                  <Box style={{ height: '17px' }}>
+                    <TextClamp lines={1} showTooltip>
+                      <Text size="sm" strong>
+                        {course}
+                        {group ? (course ? `- ${group}` : group) : null}
+                      </Text>
+                    </TextClamp>
+                  </Box>
                 </Stack>
               </Stack>
             </Box>

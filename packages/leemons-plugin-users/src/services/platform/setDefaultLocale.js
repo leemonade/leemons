@@ -12,7 +12,7 @@ const { table } = require('../tables');
 async function setDefaultLocale(locale, { transacting } = {}) {
   if (!(await translations().locales.has(locale, { transacting })))
     throw new Error(`The locale '${locale}' not exists`);
-  return table.config.set(
+  const a = await table.config.set(
     { key: 'platform-locale' },
     {
       key: 'platform-locale',
@@ -20,6 +20,8 @@ async function setDefaultLocale(locale, { transacting } = {}) {
     },
     { transacting }
   );
+  await leemons.events.emit('change-platform-locale', { locale, transacting });
+  return a;
 }
 
 module.exports = setDefaultLocale;

@@ -48,15 +48,13 @@ async function removeFromUser(userSession, id, { transacting: _transacting } = {
          */
       ]);
 
-      console.log(eventPermission, permissionConfigEvent);
-
       // ES: Si el usuario es owner del calendario o del evento entonces procedemos a
       // borrar/cancelar el evento por que tiene permiso para hacerlo
       if (
         (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) ||
         (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0)
       ) {
-        return removeOrCancel(id, { transacting });
+        return removeOrCancel(id, { forceDelete: true, transacting });
       }
       // ES: Si el usuario tiene permiso para ver el evento y quiere borrarlo, le quitamos el permiso
       if (eventPermission && eventPermission.actionNames.indexOf('view') >= 0) {

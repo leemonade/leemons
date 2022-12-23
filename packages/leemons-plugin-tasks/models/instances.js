@@ -28,7 +28,8 @@ module.exports = {
     message: { type: 'richtext' },
     status: { type: 'string' },
     showCurriculum: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

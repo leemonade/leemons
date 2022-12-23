@@ -36,6 +36,10 @@ module.exports = {
         notNull: true,
       },
     },
+    metadata: {
+      type: 'text',
+      textType: 'mediumText',
+    },
   },
   primaryKey: {
     type: 'uuid',

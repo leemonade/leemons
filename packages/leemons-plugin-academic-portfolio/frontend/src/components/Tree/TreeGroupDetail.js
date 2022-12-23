@@ -7,6 +7,7 @@ import {
   Button,
   ContextContainer,
   Paragraph,
+  Stack,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
@@ -21,6 +22,7 @@ const TreeGroupDetail = ({
   center,
   onSave,
   saving,
+  managersSelect,
   item,
   selectSubjectsNode,
 }) => {
@@ -54,7 +56,8 @@ const TreeGroupDetail = ({
             {/* eslint-disable-next-line no-nested-ternary */}
             {duplicateMode ? messages.duplicateTitle : group ? messages.title : messages.titleNew}
           </Title>
-          <Alert closeable={false}>{messages.duplicateWarning}</Alert>
+          {duplicateMode ? <Alert closeable={false}>{messages.duplicateWarning}</Alert> : null}
+
           <Box>
             <Controller
               name="abbreviation"
@@ -105,6 +108,22 @@ const TreeGroupDetail = ({
             />
           </Box>
 
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
+
           {group ? (
             <SelectUsersForAddToClasses
               onChange={onChangeAddUsers}
@@ -112,6 +131,7 @@ const TreeGroupDetail = ({
               center={center}
               messages={messagesAddUsers}
               tree={item}
+              ignoreAddedUsers={duplicateMode}
             />
           ) : null}
 
@@ -136,11 +156,13 @@ const TreeGroupDetail = ({
             </>
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -159,6 +181,7 @@ TreeGroupDetail.propTypes = {
   item: PropTypes.object,
   messagesAddUsers: PropTypes.object,
   center: PropTypes.string,
+  managersSelect: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -58,6 +58,7 @@ export default function Assign() {
         classes,
         curriculum: curriculum ? omit(curriculum, 'toogle') : {},
         alwaysAvailable: alwaysAvailable || false,
+        showCorrectAnswers: store.data.assignStudents.assignmentSetup.showCorrectAnswers,
         dates: alwaysAvailable ? {} : dates,
       };
 
@@ -94,7 +95,6 @@ export default function Assign() {
       };
       render();
     } catch (error) {
-      console.log(error);
       addErrorAlert(error);
     }
   }
@@ -133,6 +133,7 @@ export default function Assign() {
             {store.currentStep === 0 && (
               <Form
                 defaultValues={store.data}
+                showCorrectAnswersCheck
                 onSubmit={handleAssignment}
                 assignable={store.assignable}
                 sendButton={
@@ -159,7 +160,7 @@ export default function Assign() {
                 }}
                 onSend={(e) => {
                   let filters = {
-                    wrong: 50,
+                    wrong: 0,
                     canOmitQuestions: true,
                     allowClues: true,
                     omit: 0,

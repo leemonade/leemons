@@ -182,13 +182,14 @@ export default function SubjectList() {
     return null;
   }
 
-  async function updateSubject({ id, course, internalId, credits }) {
+  async function updateSubject({ id, course, internalId, credits, color }) {
     try {
       const { subject } = await updateSubjectRequest({
         id,
         course,
         internalId,
         credits,
+        color,
       });
       return subject;
     } catch (err) {
@@ -248,6 +249,7 @@ export default function SubjectList() {
         ...data,
         course: courses,
         knowledge: knowledges,
+        program: store.program.id,
         substage: substages,
         group: groups,
         schedule: schedule ? schedule.days : [],
@@ -281,6 +283,7 @@ export default function SubjectList() {
           course: isArray(data.courses) ? null : data.courses,
           internalId: data.internalId,
           credits: data.credits,
+          color: data.color,
         });
         if (!subject) return null;
       }
@@ -335,6 +338,30 @@ export default function SubjectList() {
     );
   }
 
+  let help1 = null;
+  let help2 = null;
+  let help3 = null;
+
+  if (store.program?.moreThanOneAcademicYear) {
+    if (store.program?.cycles?.length) {
+      help1 = messages.programTreeType.opt1DescriptionNoCourseCycle;
+      help2 = messages.programTreeType.opt2DescriptionNoCourseCycle;
+      help3 = messages.programTreeType.opt3DescriptionNoCourseCycle;
+    } else {
+      help1 = messages.programTreeType.opt1DescriptionNoCourse;
+      help2 = messages.programTreeType.opt2DescriptionNoCourse;
+      help3 = messages.programTreeType.opt3DescriptionNoCourse;
+    }
+  } else if (store.program?.cycles?.length) {
+    help1 = messages.programTreeType.opt1DescriptionCycle;
+    help2 = messages.programTreeType.opt2DescriptionCycle;
+    help3 = messages.programTreeType.opt3DescriptionCycle;
+  } else {
+    help1 = messages.programTreeType.opt1Description;
+    help2 = messages.programTreeType.opt2Description;
+    help3 = messages.programTreeType.opt3Description;
+  }
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
@@ -359,6 +386,7 @@ export default function SubjectList() {
                     placeholder={t('programPlaceholder')}
                     onChange={onProgramChange}
                     value={store.selectProgram}
+                    autoSelectOneOption
                   />
                 </Box>
               </ContextContainer>
@@ -396,6 +424,7 @@ export default function SubjectList() {
                                 centers={store.center}
                               />
                             }
+                            onlyNewSubject={!!store.program?.useOneStudentGroup}
                           />,
                           <ProgramTreeType
                             key="3"
@@ -406,25 +435,19 @@ export default function SubjectList() {
                               {
                                 value: 1,
                                 label: messages.programTreeType.opt1Label,
-                                help: store.program.moreThanOneAcademicYear
-                                  ? messages.programTreeType.opt1DescriptionNoCourse
-                                  : messages.programTreeType.opt1Description,
+                                help: help1,
                                 helpPosition: 'bottom',
                               },
                               {
                                 value: 2,
                                 label: messages.programTreeType.opt2Label,
-                                help: store.program.moreThanOneAcademicYear
-                                  ? messages.programTreeType.opt2DescriptionNoCourse
-                                  : messages.programTreeType.opt2Description,
+                                help: help2,
                                 helpPosition: 'bottom',
                               },
                               {
                                 value: 3,
                                 label: messages.programTreeType.opt3Label,
-                                help: store.program.moreThanOneAcademicYear
-                                  ? messages.programTreeType.opt3DescriptionNoCourse
-                                  : messages.programTreeType.opt3Description,
+                                help: help3,
                                 helpPosition: 'bottom',
                               },
                               {

@@ -4,6 +4,7 @@ import { isArray, isNil, isEmpty } from 'lodash';
 import { todayQuoteRequest } from '@users/request';
 import { Box, createStyles, ThemeProvider } from '@bubbles-ui/components';
 import { LoginBg } from '@bubbles-ui/leemons';
+import { useLayout } from '@layout/context';
 
 const HeroBgLayoutStyles = createStyles(() => ({
   root: {
@@ -19,6 +20,7 @@ const HeroBgLayoutStyles = createStyles(() => ({
 
 export default function HeroBgLayout({ children, quote: quoteProp, dobleQuoted }) {
   const [quote, setQuote] = useState({});
+  const { theme } = useLayout();
 
   useEffect(() => {
     let mounted = true;
@@ -41,12 +43,16 @@ export default function HeroBgLayout({ children, quote: quoteProp, dobleQuoted }
 
   const { classes } = HeroBgLayoutStyles();
   return (
-    <ThemeProvider>
-      <Box className={classes.root}>
-        <LoginBg author={quote?.a || ''} quote={quote?.q || ''} dobleQuoted={dobleQuoted} />
-        <Box className={classes.content}>{children}</Box>
-      </Box>
-    </ThemeProvider>
+    <Box className={classes.root}>
+      <LoginBg
+        author={quote?.a || ''}
+        quote={quote?.q || ''}
+        dobleQuoted={dobleQuoted}
+        accentColor={!isEmpty(theme.mainColor) ? theme.mainColor : undefined}
+        logoUrl={theme.logoUrl}
+      />
+      <Box className={classes.content}>{children}</Box>
+    </Box>
   );
 }
 HeroBgLayout.defaultProps = {

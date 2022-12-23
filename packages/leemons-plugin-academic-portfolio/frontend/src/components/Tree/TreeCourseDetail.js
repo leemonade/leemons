@@ -7,6 +7,7 @@ import {
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
@@ -20,6 +21,7 @@ const TreeCourseDetail = ({
   messages,
   onSave,
   onGoProgram,
+  managersSelect,
   saving,
 }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
@@ -55,6 +57,21 @@ const TreeCourseDetail = ({
               )}
             />
           </Box>
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
           <Box>
             <Controller
               name="number"
@@ -83,11 +100,13 @@ const TreeCourseDetail = ({
             />
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -102,6 +121,7 @@ TreeCourseDetail.propTypes = {
   saving: PropTypes.bool,
   item: PropTypes.object,
   center: PropTypes.string,
+  managersSelect: PropTypes.any,
   messagesAddUsers: PropTypes.object,
 };
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import _ from 'lodash';
@@ -43,6 +43,7 @@ export default function Correction({ assignation, instance, loading }) {
       return key;
     });
   };
+  const showSaveButtons = !(!instance.requiresScoring && instance.allowFeedback);
 
   /*
     --- State ---
@@ -133,7 +134,7 @@ export default function Correction({ assignation, instance, loading }) {
         visibleToStudent: sendToStudent,
       };
 
-      if (assignation.instance.requiresScoring && !grade.score) {
+      if (assignation.instance.requiresScoring && _.isNil(grade.score)) {
         throw new Error('The score is required');
       }
 
@@ -193,27 +194,30 @@ export default function Correction({ assignation, instance, loading }) {
             labels={labels}
             instance={instance}
             user={assignation?.user}
+            assignationId={assignation.id}
             scoreInputProps={scoreInputProps}
           />
         </SubjectTabs>
       </Box>
-      <Box className={classes?.mainButtons}>
-        <Button
-          variant="outline"
-          loading={isLoading('save')}
-          disabled={loadingButton && !isLoading('save')}
-          onClick={handleSubmit(onSave(false, 'save'))}
-        >
-          {labels?.save}
-        </Button>
-        <Button
-          loading={isLoading('saveAndSend')}
-          disabled={loadingButton && !isLoading('saveAndSend')}
-          onClick={handleSubmit(onSave(true, 'saveAndSend'))}
-        >
-          {labels?.saveAndSend}
-        </Button>
-      </Box>
+      {showSaveButtons && (
+        <Box className={classes?.mainButtons}>
+          <Button
+            variant="outline"
+            loading={isLoading('save')}
+            disabled={loadingButton && !isLoading('save')}
+            onClick={handleSubmit(onSave(false, 'save'))}
+          >
+            {labels?.save}
+          </Button>
+          <Button
+            loading={isLoading('saveAndSend')}
+            disabled={loadingButton && !isLoading('saveAndSend')}
+            onClick={handleSubmit(onSave(true, 'saveAndSend'))}
+          >
+            {labels?.saveAndSend}
+          </Button>
+        </Box>
+      )}
     </>
   );
 }

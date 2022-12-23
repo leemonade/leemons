@@ -43,11 +43,17 @@ async function _removeCustomPermission(userAgentId, data, { transacting } = {}) 
 
   const query = {
     permissionName: data.permissionName,
-    target: data.target || null,
-    center: data.center || null,
     userAgent: userAgentId,
     role_$null: true,
   };
+
+  if (data.target !== undefined) {
+    query.target = data.target;
+  }
+
+  if (data.center !== undefined) {
+    query.center = data.center;
+  }
 
   if (data.actionNames) query.actionName_$in = data.actionNames;
 

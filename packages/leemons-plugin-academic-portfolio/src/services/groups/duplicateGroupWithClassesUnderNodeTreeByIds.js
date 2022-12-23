@@ -6,7 +6,14 @@ const { duplicateClassesByIds } = require('../classes/duplicateClassesByIds');
 async function duplicateGroupWithClassesUnderNodeTreeByIds(
   nodeTypes,
   ids,
-  { students = false, teachers = false, name, abbreviation, transacting: _transacting } = {}
+  {
+    students = false,
+    teachers = false,
+    name,
+    abbreviation,
+    userSession,
+    transacting: _transacting,
+  } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -51,6 +58,7 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds(
         knowledges: true,
         students,
         teachers,
+        userSession,
         transacting,
       });
 

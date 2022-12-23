@@ -34,19 +34,21 @@ const SelectSubject = forwardRef(
 
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
-    useEffect(async () => {
-      if (program) {
-        const {
-          data: { items },
-        } = await listSubjectsRequest({ page: 0, size: 9999, program, course });
+    useEffect(() => {
+      (async () => {
+        if (program) {
+          const {
+            data: { items },
+          } = await listSubjectsRequest({ page: 0, size: 9999, program, course });
 
-        setData(
-          items.map(({ id, name }) => ({
-            value: id,
-            label: name,
-          }))
-        );
-      }
+          setData(
+            items.map(({ id, name }) => ({
+              value: id,
+              label: name,
+            }))
+          );
+        }
+      })();
     }, [program, course]);
 
     return (

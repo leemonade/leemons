@@ -13,13 +13,13 @@ import {
   UserDisplayItem,
 } from '@bubbles-ui/components';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { AlertWarningTriangleIcon, BlockIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert } from '@layout/alert';
-import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { LocaleDate, useStore } from '@common';
-import { cloneDeep, filter, findIndex, forEach, isNil, map } from 'lodash';
-import SelectUserAgent, { SelectUserAgentValueComponent } from '@users/components/SelectUserAgent';
-import { getProfilesRequest } from '../../../request';
+import {AlertWarningTriangleIcon, BlockIcon, DeleteBinIcon} from '@bubbles-ui/icons/solid';
+import {addErrorAlert} from '@layout/alert';
+import {AddCircleIcon} from '@bubbles-ui/icons/outline';
+import {LocaleDate, useStore} from '@common';
+import {cloneDeep, filter, findIndex, forEach, isNil, map} from 'lodash';
+import SelectUserAgent, {SelectUserAgentValueComponent} from '@users/components/SelectUserAgent';
+import {getProfilesRequest} from '../../../request';
 
 function getSeverity(classes, value) {
   let count = 0;
@@ -37,7 +37,7 @@ function getSeverity(classes, value) {
   return severity;
 }
 
-const ItemComponent = ({ classes, onMouseDown, ...props }) => {
+const ItemComponent = ({classes, onMouseDown, ...props}) => {
   const severity = getSeverity(classes, props.value);
   return (
     <UserDisplayItem
@@ -56,9 +56,9 @@ ItemComponent.propTypes = {
   onMouseDown: PropTypes.func,
 };
 
-const ValueComponent = ({ classes, ...props }) => {
+const ValueComponent = ({classes, ...props}) => {
   const severity = getSeverity(classes, props.value);
-  return <SelectUserAgentValueComponent {...props} severity={severity} />;
+  return <SelectUserAgentValueComponent {...props} severity={severity}/>;
 };
 
 ValueComponent.propTypes = {
@@ -67,7 +67,7 @@ ValueComponent.propTypes = {
   onMouseDown: PropTypes.func,
 };
 
-const ByData = ({ classes, center, messages, onChange, disableSave }) => {
+const ByData = ({classes, center, messages, onChange, disableSave}) => {
   const [store, render] = useStore({
     allChecked: false,
     userAgentsChecked: [],
@@ -102,7 +102,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
           seats: isNil(classe.seats)
             ? 0
             : classe.seats -
-              (classes[index].students.length + classes[index].parentStudents.length),
+            (classes[index].students.length + classes[index].parentStudents.length),
         });
       }
     });
@@ -120,7 +120,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   }
 
   async function init() {
-    const { profiles } = await getProfilesRequest();
+    const {profiles} = await getProfilesRequest();
     store.profile = profiles.student;
     render();
   }
@@ -142,7 +142,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
 
   let tableHeaders = [];
 
-  const warnings = filter(store.userAgentsChecked, { severity: 'warning' });
+  const warnings = filter(store.userAgentsChecked, {severity: 'warning'});
 
   if (warnings.length) {
     tableHeaders.push({
@@ -159,8 +159,8 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       className: 'text-left',
     },
     {
-      Header: messages.emailHeader,
-      accessor: 'email',
+      Header: messages.surnameHeader,
+      accessor: 'surnames',
       className: 'text-left',
     },
     {
@@ -169,8 +169,8 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       className: 'text-left',
     },
     {
-      Header: messages.surnameHeader,
-      accessor: 'surnames',
+      Header: messages.emailHeader,
+      accessor: 'email',
       className: 'text-left',
     },
     {
@@ -186,7 +186,6 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   ]);
 
   function onChangeUserAgent(e, userAgent) {
-    console.log(e, userAgent);
     const ids = getSelectedUserAgentsIds();
     if (!ids.includes(e)) {
       store.selectUserAgent = userAgent;
@@ -203,7 +202,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   }
 
   function removeUserAgent(id) {
-    const index = findIndex(store.userAgentsChecked, { value: id });
+    const index = findIndex(store.userAgentsChecked, {value: id});
     if (index >= 0) {
       store.userAgentsChecked.splice(index, 1);
       emit();
@@ -224,21 +223,21 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
         />
       ),
       severity,
-      birthdate: <LocaleDate date={store.selectUserAgent.birthdate} />,
+      birthdate: <LocaleDate date={store.selectUserAgent.birthdate}/>,
       classStatusDom: (
         <Stack alignItems="center">
           {severity === 'warning' ? (
-            <AlertWarningTriangleIcon style={{ color: COLORS.fatic03 }} />
+            <AlertWarningTriangleIcon style={{color: COLORS.fatic03}}/>
           ) : null}
-          {severity === 'error' ? <BlockIcon style={{ color: COLORS.fatic01 }} /> : null}
+          {severity === 'error' ? <BlockIcon style={{color: COLORS.fatic01}}/> : null}
         </Stack>
       ),
       actions: (
-        <Box style={{ textAlign: 'right', width: '100%' }}>
+        <Box style={{textAlign: 'right', width: '100%'}}>
           <ActionButton
             onClick={() => removeUserAgent(userAgent.value)}
             tooltip={messages.removeUser}
-            icon={<RemoveIcon />}
+            icon={<DeleteBinIcon/>}
           />
         </Box>
       ),
@@ -249,7 +248,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   }
 
   return (
-    <ContextContainer fullWidth sx={(theme) => ({ paddingTop: theme.spacing[4] })}>
+    <ContextContainer fullWidth sx={(theme) => ({paddingTop: theme.spacing[4]})}>
       <Stack fullWidth spacing={1}>
         <Box>
           <SelectUserAgent
@@ -259,12 +258,12 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
             onChange={onChangeUserAgent}
             itemRenderProps={{}}
             valueRenderProps={{}}
-            itemComponent={(e) => <ItemComponent {...e} classes={classes} />}
-            valueComponent={(e) => <ValueComponent {...e} classes={classes} />}
+            itemComponent={(e) => <ItemComponent {...e} classes={classes}/>}
+            valueComponent={(e) => <ValueComponent {...e} classes={classes}/>}
           />
         </Box>
         <Box skipFlex>
-          <Button variant="light" size="sm" leftIcon={<AddCircleIcon />} onClick={addUserAgent}>
+          <Button variant="light" size="sm" leftIcon={<AddCircleIcon/>} onClick={addUserAgent}>
             {messages.addStudent}
           </Button>
         </Box>
@@ -273,13 +272,13 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       {store.classesExceed?.length ? (
         <Alert severity="error" closeable={false}>
           {messages.seatsError1}
-          <br />
+          <br/>
           {store.classesExceed.map((classe) => (
             <>
               {messages.seatsClassError
                 .replace('{{className}}', classe.classe.name)
                 .replace('{{seats}}', classe.seats)}
-              <br />
+              <br/>
             </>
           ))}
           {messages.seatsError2}
@@ -287,7 +286,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       ) : null}
       {store.userAgentsChecked?.length ? (
         <Box>
-          <Table columns={tableHeaders} data={store.userAgentsChecked} />
+          <Table columns={tableHeaders} data={store.userAgentsChecked}/>
         </Box>
       ) : null}
     </ContextContainer>
@@ -303,4 +302,4 @@ ByData.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { ByData };
+export {ByData};

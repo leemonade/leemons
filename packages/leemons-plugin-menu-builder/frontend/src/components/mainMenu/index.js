@@ -7,12 +7,17 @@ import { useSession } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@socket-io/service';
+import { getUserCentersRequest } from '@users/request';
+import { useStore } from '@common';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
-  const [avatar, setAvatar] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [store, render] = useStore({
+    onlyOneProfile: false,
+    isLoading: false,
+  });
+
   const [loadMenu, setLoadMenu] = useState(false);
   const [menuData, setMenuData] = useState([]);
 
@@ -23,13 +28,17 @@ export default function MainMenu({ subNavWidth, ...props }) {
     setLoadMenu(true);
   };
 
+  async function load() {
+    const { centers } = await getUserCentersRequest();
+    if (centers.length === 1 && centers[0].profiles.length === 1) {
+      store.onlyOneProfile = true;
+      render();
+    }
+  }
+
   SocketIoService.useOn('USER_CHANGE_LOCALE', () => {
     forceReload.current = true;
     reloadMenu();
-  });
-
-  SocketIoService.useOn('USER_CHANGE_AVATAR', () => {
-    setAvatar(`${session.avatar}?${Date.now()}`);
   });
 
   useEffect(() => {
@@ -38,6 +47,10 @@ export default function MainMenu({ subNavWidth, ...props }) {
       hooks.removeAction('menu-builder:reload-menu', reloadMenu);
     };
   });
+
+  useEffect(() => {
+    load();
+  }, []);
 
   useEffect(() => {
     setLoadMenu(true);
@@ -59,16 +72,20 @@ export default function MainMenu({ subNavWidth, ...props }) {
     (async () => {
       try {
         if (loadMenu) {
-          setIsLoading(true);
+          store.isLoading = true;
+          render();
           const menu = await getMenu('plugins.menu-builder.main', forceReload.current);
           if (mounted) {
             setMenuData(menu);
-            setIsLoading(false);
+            store.isLoading = false;
+            render();
             setLoadMenu(false);
             forceReload.current = false;
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        //
+      }
     })();
     return () => {
       mounted = false;
@@ -81,7 +98,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     <MainNav
       {...props}
       menuData={menuData}
-      isLoading={isLoading}
+      isLoading={store.isLoading}
       subNavWidth={subNavWidth}
       hideSubNavOnClose={false}
       useRouter={true}
@@ -90,7 +107,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         ...(session.isSuperAdmin
           ? { name: '', surnames: '' }
           : { name: session.name, surnames: session.surnames }),
-        avatar: avatar || session.avatar,
+        avatar: session.avatar,
       }}
       sessionMenu={{
         id: 'menu-0',
@@ -107,15 +124,20 @@ export default function MainMenu({ subNavWidth, ...props }) {
                   window: 'SELF',
                   disabled: null,
                 },
-                {
-                  id: 'menu-2',
-                  label: t('switchProfile'),
-                  order: 1,
-                  url: '/private/users/select-profile',
-                  window: 'SELF',
-                  disabled: null,
-                },
-              ]),
+              ].concat(
+                store.onlyOneProfile
+                  ? []
+                  : [
+                      {
+                        id: 'menu-2',
+                        label: t('switchProfile'),
+                        order: 1,
+                        url: '/private/users/select-profile',
+                        window: 'SELF',
+                        disabled: null,
+                      },
+                    ]
+              )),
           {
             id: 'menu-3',
             label: t('changeLanguage'),
@@ -126,8 +148,16 @@ export default function MainMenu({ subNavWidth, ...props }) {
           },
           {
             id: 'menu-4',
+            label: t('emailPreference'),
+            order: 3,
+            url: '/private/emails/preference',
+            window: 'SELF',
+            disabled: null,
+          },
+          {
+            id: 'menu-5',
             label: t('logout'),
-            order: 2,
+            order: 4,
             url: '/private/users/logout',
             window: 'SELF',
             disabled: null,

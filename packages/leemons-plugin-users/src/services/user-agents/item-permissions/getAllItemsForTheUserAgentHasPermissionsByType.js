@@ -6,7 +6,14 @@ async function getAllItemsForTheUserAgentHasPermissionsByType(
   _userAgentId,
   _type,
   // eslint-disable-next-line camelcase
-  { returnAllItemPermission, type_$startssWith, transacting } = {}
+  {
+    target,
+    ignoreOriginalTarget,
+    returnAllItemPermission,
+    type_$startssWith,
+    transacting,
+    item,
+  } = {}
 ) {
   const query = await getBaseAllPermissionsQuery(_userAgentId, { transacting });
 
@@ -15,6 +22,20 @@ async function getAllItemsForTheUserAgentHasPermissionsByType(
     query.type_$startssWith = _type;
   } else {
     query.type = _type;
+  }
+
+  if (ignoreOriginalTarget) {
+    query.$or = _.map(query.$or, ({ target: t, ...q }) => q);
+  }
+
+  if (target) {
+    const targetArr = _.isArray(target) ? target : [target];
+    query.target_$in = targetArr;
+  }
+
+  if (item) {
+    const itemArr = _.isArray(item) ? item : [item];
+    query.item_$in = itemArr;
   }
 
   const items = await find(query, {

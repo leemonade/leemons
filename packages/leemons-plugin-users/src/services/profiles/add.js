@@ -15,7 +15,7 @@ const { updateProfileTranslations } = require('./updateProfileTranslations');
  * */
 async function add(
   { name, description, permissions, translations, indexable },
-  { transacting: _transacting } = {}
+  { transacting: _transacting, sysName = null } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -28,6 +28,7 @@ async function add(
           description,
           uri: global.utils.slugify(name, { lower: true }),
           indexable,
+          sysName,
         },
         { transacting }
       );

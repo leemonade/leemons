@@ -14,6 +14,7 @@ module.exports = {
     multiSubject: 'Multi-Asignatura',
     start: 'Inicio',
     end: 'Final',
+    course: 'Curso',
   },
   calendar: {
     month: 'Mes',
@@ -26,6 +27,8 @@ module.exports = {
     showWeekends: 'Mostrar fines de semana',
     calendar: 'Calendario',
     schedule: 'Horario',
+    program: 'Programa',
+    programCalendar: 'Calendario del programa - ',
     centers: 'Centros',
     close: 'Cerrar',
     allDay: 'Todo el dia',
@@ -38,7 +41,7 @@ module.exports = {
     classes: 'Clases',
     weekSchedule: 'Horario semanal',
     course: 'Curso',
-    attendanceControl: 'Ir al dashboard de la asignatura',
+    attendanceControl: 'Ir al panel de control de la asignatura',
     mainTeacher: '(profesor principal)',
     everyWeekInWorkdays: 'Cada semana en días laborables',
     group: 'Grupo',
@@ -169,6 +172,7 @@ module.exports = {
     filter: 'Filtrar por',
     archived: 'Ver tareas archivadas',
     selectCalendarsSubjects: 'Todas las asignaturas',
+    onlyByMy: 'Solo las creadas por mi',
   },
   userProgramCalendar: {
     calendar: 'Calendario',

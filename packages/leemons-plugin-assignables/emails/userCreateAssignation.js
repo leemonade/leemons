@@ -67,25 +67,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
             bgcolor="#F7F8FA"
             style="background-color: #f7f8fa"
           >
-            <tr>
-              <td
-                align="center"
-                style="
-                  text-align: center;
-                  padding: 10px 45px 0px;
-                  font-family: 'Lexend', Century Gothic, CenturyGothic,
-                    AppleGothic, sans-serif;
-                "
-              >
-                <img
-                  src="{{it.__logoUrl}}"
-                  height="96"
-                  width="96"
-                  style="border-radius: 50%"
-                />
-              </td>
-            </tr>
-            <tr>
+          <tr>
               <td
                 align="center"
                 style="
@@ -107,16 +89,79 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                 align="center"
                 style="
                   text-align: center;
-                  padding: 24px 45px 32px;
-                  font-family: 'Inter', Verdana, sans-serif;
-                  font-size: 14px;
-                  line-height: 22.4px;
-                  color: #5b6577;
+                  padding: 10px 45px 0px;
+                  font-family: 'Lexend', Century Gothic, CenturyGothic,
+                    AppleGothic, sans-serif;
                 "
               >
-                ${t1}
+                <img
+                  src="{{it.__logoUrl}}"
+                  height="96"
+                  width="96"
+                  style="border-radius: 50%"
+                />
               </td>
             </tr>
+
+            {{ @if (it.instance.messageToAssignees) }}
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    text-align: center;
+                    padding: 24px 45px 32px;
+                    font-family: 'Inter', Verdana, sans-serif;
+                    font-size: 18px;
+                    line-height: 22.4px;
+                    font-weight: 600;
+                    color: #5b6577;
+                  "
+                >
+                 {{*it.instance.messageToAssignees}}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    text-align: center;
+                    padding: 24px 45px 32px;
+                    font-family: 'Inter', Verdana, sans-serif;
+                    font-size: 14px;
+                    line-height: 22.4px;
+                    color: #212B3D;
+                    align-items: flex-end;
+                    display: block;
+                    justify-content: center;
+                  "
+                >
+                <img
+                  src="{{it.userSession.avatarUrl}}"
+                  height="36"
+                  width="36"
+                  style="border-radius: 50%; margin-right: 8px; display: inline-block;vertical-align: middle;"
+                />
+                 {{it.userSession.name}} {{it.userSession.surnames}}
+                </td>
+              </tr>
+              {{ #else }}
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    text-align: center;
+                    padding: 24px 45px 32px;
+                    font-family: 'Inter', Verdana, sans-serif;
+                    font-size: 14px;
+                    line-height: 22.4px;
+                    color: #5b6577;
+                  "
+                >
+                 ${t1}
+                </td>
+               </tr>
+              {{ /if}}
+
           </table>
           <table
         cellpadding="0"
@@ -167,7 +212,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 display: flex;
                                 height: 100%;
                                 justify-content: flex-end;
-                                border-top: 8px solid #dc5571;
+                                border-top: 8px solid {{ it.instance.assignable.asset.color }};
                               "
                           >
                             <div
@@ -212,14 +257,9 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                       width: 20px;
                                       border-radius: 50%;
                                       text-align: center;
-                                        line-height: 20px;
-                                      {{ @if (it.classes.length === 1) }}
-                                        background-color: {{ it.classes[0].color }};
-                                      {{ #else }}
-                                        background-color: #67728E;
-                                      {{ /if}}
-
-                                    "
+                                      line-height: 20px;
+                                      background-color: {{ it.classColor }};
+                                   "
                                 >
 
                                 {{ @if (it.subjectIconUrl) }}
@@ -281,7 +321,8 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                           >${texts.startActivity}
                           </div
                           >
-                          <div
+                          {{ @if (it.taskDate) }}
+                             <div
                             style="
                                 font-family: 'Inter', Verdana, sans-serif;
                                 font-size: 12.5px;
@@ -289,12 +330,24 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                                 color: #5b6577;
                               "
                           >${texts.delivery}: {{it.taskDate}}
-                          </div
-                          >
+                          </div>
+                           {{ /if}}
+
                         </div>
                       </div>
                     </div>
                     <div style="padding: 16px; text-align: start">
+                          {{ @if (it.instance.assignable.asset.tagline) }}
+                            <div style="
+                              font-family: 'Inter', Verdana, sans-serif;
+                              font-size: 13px;
+                              line-height: 16.5px;
+                              color: #1A202B;
+                              marginBottom: 4px;
+                            ">
+                             {{ it.instance.assignable.asset.tagline }}
+                             </div>
+                           {{ /if}}
                           <span
                             style="
                               font-family: 'Inter', Verdana, sans-serif;

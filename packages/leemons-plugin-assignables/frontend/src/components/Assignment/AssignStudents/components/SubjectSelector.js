@@ -6,6 +6,15 @@ import { useSubjects } from '../hooks';
 export default function SubjectSelector({ labels, onChange, value, assignable }) {
   const subjects = useSubjects(assignable);
 
+  const subjectsProcessed = React.useMemo(
+    () =>
+      subjects.map((subject) => ({
+        ...subject,
+        checked: value?.includes(subject.value),
+      })),
+    [subjects, value]
+  );
+
   if (subjects.length <= 1) {
     const subject = subjects[0];
     if (subject && !(value?.length === 1 && value[0] === subject.value)) {
@@ -15,8 +24,15 @@ export default function SubjectSelector({ labels, onChange, value, assignable })
   }
 
   return (
-    <ContextContainer title={labels?.subjects?.title} subtitle={labels?.subjects?.subtitle}>
-      <CheckBoxGroup variant="boxed" data={subjects} value={value} onChange={onChange} />
+    <ContextContainer
+      title={
+        assignable?.subjects?.length
+          ? labels?.subjects?.calificableTitle
+          : labels?.subjects?.nonCalificableTitle
+      }
+      subtitle={labels?.subjects?.subtitle}
+    >
+      <CheckBoxGroup variant="boxed" data={subjectsProcessed} onChange={onChange} />
     </ContextContainer>
   );
 }

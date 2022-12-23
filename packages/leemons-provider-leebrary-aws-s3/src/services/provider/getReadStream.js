@@ -1,14 +1,17 @@
 const { getS3AndConfig } = require('./getS3AndConfig');
 
-async function getReadStream(Key, { transacting } = {}) {
+async function getReadStream(Key, { transacting, start = -1, end = -1 } = {}) {
   const { s3, config } = await getS3AndConfig({ transacting });
+  const params = {
+    Bucket: config.bucket,
+    Key,
+  };
 
-  const result = await s3
-    .getObject({
-      Bucket: config.bucket,
-      Key,
-    })
-    .promise();
+  if (start > -1 && end > -1) {
+    params.Range = `bytes=${start}-${end}`;
+  }
+
+  const result = await s3.getObject(params).promise();
 
   return result.Body;
 }

@@ -1,5 +1,5 @@
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function useUserAgentsInfo(ids, options = {}) {
   const query = useQuery(

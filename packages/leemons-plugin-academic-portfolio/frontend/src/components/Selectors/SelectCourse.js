@@ -33,18 +33,20 @@ const SelectCourse = forwardRef(({ program, value: userValue, onChange, ...props
 
   // EN: Get programs from API on center change
   // ES: Obtener programas desde API en cambio de centro
-  useEffect(async () => {
-    if (program) {
-      const {
-        data: { items },
-      } = await listCoursesRequest({ page: 0, size: 9999, program });
+  useEffect(() => {
+    (async () => {
+      if (program) {
+        const {
+          data: { items },
+        } = await listCoursesRequest({ page: 0, size: 9999, program });
 
-      setData(
-        items
-          .sort((a, b) => a.index - b.index)
-          .map(({ id, name, index }) => ({ value: id, label: name || index }))
-      );
-    }
+        setData(
+          items
+            .sort((a, b) => a.index - b.index)
+            .map(({ id, name, index }) => ({ value: id, label: name || index }))
+        );
+      }
+    })();
   }, [program]);
 
   return (

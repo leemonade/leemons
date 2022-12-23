@@ -1,6 +1,11 @@
-const { getSubjectCredits, addSubject } = require('../src/services/subjects');
+const {
+  getSubjectCredits,
+  addSubject,
+  getTeachersBySubjects,
+} = require('../src/services/subjects');
 
 module.exports = {
+  getTeachersBySubjects,
   getSubjectCredits,
   addSubject,
 };

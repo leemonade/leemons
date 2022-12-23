@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const { keys } = require('lodash');
 const importTasks = require('./bulk/tasks');
+const _delay = require('./bulk/helpers/delay');
 
 async function initTasks(config) {
   const { services } = leemons.getPlugin('tasks');
@@ -23,10 +24,13 @@ async function initTasks(config) {
         leemons.log.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);
       } catch (e) {
         console.log('-- TASK CREATION ERROR --');
-        console.dir(task, { depth: null });
-        console.dir(creator, { depth: null });
+        // console.dir(task, { depth: null });
+        console.log(`task: ${task.asset?.name}`);
+        console.log(`creator: ${creator.name}`);
         console.error(e);
       }
+
+      await _delay(3000);
     }
 
     return tasks;

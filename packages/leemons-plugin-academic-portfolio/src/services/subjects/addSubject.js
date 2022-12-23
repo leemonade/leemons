@@ -25,11 +25,27 @@ async function addSubject(_data, { userSession, transacting: _transacting } = {}
       const assetService = leemons.getPlugin('leebrary').services.assets;
       const [assetImage, assetIcon] = await Promise.all([
         assetService.add(imageData, {
+          permissions: [
+            {
+              canEdit: true,
+              isCustomPermission: true,
+              permissionName: leemons.plugin.prefixPN('programs'),
+              actionNames: ['update', 'admin'],
+            },
+          ],
           published: true,
           userSession,
           transacting,
         }),
         assetService.add(iconData, {
+          permissions: [
+            {
+              canEdit: true,
+              isCustomPermission: true,
+              permissionName: leemons.plugin.prefixPN('programs'),
+              actionNames: ['update', 'admin'],
+            },
+          ],
           published: true,
           userSession,
           transacting,

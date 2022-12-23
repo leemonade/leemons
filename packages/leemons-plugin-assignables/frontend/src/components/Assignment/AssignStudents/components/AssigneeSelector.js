@@ -6,7 +6,15 @@ import SelectClass from './SelectClass';
 import SelectCustomGroup from './SelectCustomGroup';
 import { useGroupedClassesWithSelectedSubjects } from '../hooks';
 
-export default function AssigneeSelector({ labels, profile, onChange, value }) {
+export default function AssigneeSelector({
+  labels,
+  profile,
+  onChange,
+  value,
+  defaultValue,
+  showResultsCheck,
+  showCorrectAnswersCheck,
+}) {
   const { control } = useFormContext();
   const [profiles, setProfiles] = useState(null);
 
@@ -17,9 +25,11 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
     name: 'type',
   });
 
-  useEffect(async () => {
-    const p = await getProfiles(profile);
-    setProfiles([p[0].profile]);
+  useEffect(() => {
+    (async () => {
+      const p = await getProfiles(profile);
+      setProfiles([p[0].profile]);
+    })();
   }, []);
 
   if (!profiles) {
@@ -34,7 +44,10 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
           profiles={profiles}
           value={value}
           onChange={onChange}
+          defaultValue={defaultValue?.assignmentSetup}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+          showResultsCheck={showResultsCheck}
+          showCorrectAnswersCheck={showCorrectAnswersCheck}
         />
       );
     case 'customGroups':
@@ -45,6 +58,8 @@ export default function AssigneeSelector({ labels, profile, onChange, value }) {
           value={value}
           onChange={onChange}
           groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+          showResultsCheck={showResultsCheck}
+          showCorrectAnswersCheck={showCorrectAnswersCheck}
         />
       );
     case 'session':
@@ -60,4 +75,6 @@ AssigneeSelector.propTypes = {
   profile: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array.isRequired,
+  showResultsCheck: PropTypes.bool,
+  defaultValue: PropTypes.object,
 };

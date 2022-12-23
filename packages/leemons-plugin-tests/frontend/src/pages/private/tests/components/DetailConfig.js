@@ -33,6 +33,7 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
               error={isDirty ? form.formState.errors.program : null}
               label={t('programLabel')}
               data={store.programsData || []}
+              autoSelectOneOption
               {...field}
             />
           )}
@@ -49,6 +50,7 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
               label={t('subjectLabel')}
               disabled={!program}
               data={store.subjectsByProgram[program] || []}
+              autoSelectOneOption
               {...field}
               value={field.value ? field.value[0] : field.value}
               onChange={(e) => {

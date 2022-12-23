@@ -52,18 +52,20 @@ export default function Attachments({ labels }) {
     --- Resources state ---
   */
   const [resources, setResources] = useState([]);
-  useEffect(async () => {
-    const formResources = getValues('resources');
-    if (formResources?.length) {
-      const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
-      const newAssets = await getAssetsByIds(formResources, { public: true });
+  useEffect(() => {
+    (async () => {
+      const formResources = getValues('resources');
+      if (formResources?.length) {
+        const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
+        const newAssets = await getAssetsByIds(formResources, { public: true });
 
-      const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
-      const preparedAssets = assets?.map(prepareAsset);
-      if (preparedAssets?.length) {
-        setResources(preparedAssets);
+        const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
+        const preparedAssets = assets?.map(prepareAsset);
+        if (preparedAssets?.length) {
+          setResources(preparedAssets);
+        }
       }
-    }
+    })();
   }, []);
 
   /*

@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
@@ -37,6 +38,7 @@ export function ButtonNavigation({
         {showLastButton ? (
           <Button
             position="left"
+            variant={isLastButton ? null : 'outline'}
             rightIcon={<ChevronRightIcon />}
             rounded
             compact

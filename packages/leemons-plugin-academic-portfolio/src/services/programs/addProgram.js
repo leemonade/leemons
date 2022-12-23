@@ -6,10 +6,20 @@ const { addSubstage } = require('../substages/addSubstage');
 const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
 const enableMenuItemService = require('../menu-builder/enableItem');
+const { addCycle } = require('../cycle');
+const { addGroup } = require('../groups/addGroup');
 
 async function addProgram(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
+      if (!data.maxSubstageAbbreviationIsOnlyNumbers) {
+        // eslint-disable-next-line no-param-reassign
+        data.maxSubstageAbbreviationIsOnlyNumbers = false;
+      }
+      if (!data.maxNumberOfCourses) {
+        // eslint-disable-next-line no-param-reassign
+        data.maxNumberOfCourses = 1;
+      }
       validateAddProgram(data);
       const {
         centers,
@@ -18,6 +28,7 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
         customSubstages,
         names,
         coursesOffset,
+        cycles,
         ...programData
       } = data;
       let substages = _substages;
@@ -70,8 +81,8 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       if (_.isArray(substages)) {
         // ES: Generamos los substages
         await Promise.all(
-          _.map(substages, (substage) =>
-            addSubstage({ ...substage, program: program.id }, { transacting })
+          _.map(substages, (substage, index) =>
+            addSubstage({ ...substage, program: program.id, index }, { transacting })
           )
         );
       }
@@ -95,7 +106,7 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       const coursesNames = names || [];
       const offset = coursesOffset || 0;
 
-      if (data.maxNumberOfCourses) {
+      if (data.maxNumberOfCourses >= 2) {
         for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
           const courseIndex = i + 1 + offset;
 
@@ -117,9 +128,22 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
               program: program.id,
               number: data.courseCredits ? data.courseCredits : 0,
               name: coursesNames[0] || `${1 + offset}`,
+              isAlone: true,
             },
             { index: 1 + offset, transacting }
           )
+        );
+      }
+
+      if (program.useOneStudentGroup) {
+        await addGroup(
+          {
+            name: '-auto-',
+            abbreviation: '-auto-',
+            program: program.id,
+            isAlone: true,
+          },
+          { transacting }
         );
       }
 
@@ -130,6 +154,29 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       await Promise.all(promises);
 
       const _program = (await programsByIds([program.id], { userSession, transacting }))[0];
+
+      if (cycles?.length && _program.courses?.length) {
+        const coursesByIndex = _.keyBy(_program.courses, 'index');
+        const cyclePromises = [];
+        _.forEach(cycles, (cycle) => {
+          const cycleCourses = [];
+          _.forEach(cycle.courses, (c) => {
+            cycleCourses.push(coursesByIndex[c].id);
+          });
+          cyclePromises.push(
+            addCycle(
+              {
+                ...cycle,
+                program: _program.id,
+                courses: cycleCourses,
+              },
+              { transacting }
+            )
+          );
+        });
+        await Promise.all(cyclePromises);
+      }
+
       await leemons.events.emit('after-add-program', {
         program: _program,
         transacting,

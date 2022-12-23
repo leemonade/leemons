@@ -41,15 +41,17 @@ export default function AssignmentPage() {
 
   const { id } = useParams();
 
-  useEffect(async () => {
-    setLoading(true);
-    if (!id) {
-      return;
-    }
-    const t = await getTaskRequest({ id });
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      if (!id) {
+        return;
+      }
+      const t = await getTaskRequest({ id });
 
-    setLoading(false);
-    setTask(t);
+      setLoading(false);
+      setTask(t);
+    })();
   }, [id]);
 
   const handleAssignment = async (values) => {

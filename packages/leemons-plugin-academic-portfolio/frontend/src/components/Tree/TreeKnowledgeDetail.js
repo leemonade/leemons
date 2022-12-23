@@ -8,6 +8,7 @@ import {
   ContextContainer,
   NumberInput,
   Paragraph,
+  Stack,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
@@ -22,6 +23,7 @@ const TreeKnowledgeDetail = ({
   messages,
   onSave,
   saving,
+  managersSelect,
   selectSubjectsNode,
 }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
@@ -60,6 +62,7 @@ const TreeKnowledgeDetail = ({
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{knowledge ? messages.title : messages.titleNew}</Title>
           <Box>
+            gatitos
             <Controller
               control={control}
               name="name"
@@ -69,6 +72,21 @@ const TreeKnowledgeDetail = ({
               )}
             />
           </Box>
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
           <Box>
             <Controller
               name="abbreviation"
@@ -142,11 +160,13 @@ const TreeKnowledgeDetail = ({
             />
           ) : null}
 
-          <Box>
-            <Button disabled={disableSave} loading={saving} type="submit">
-              {messages.save}
-            </Button>
-          </Box>
+          <Stack fullWidth alignItems="end" justifyContent="end">
+            <Box>
+              <Button disabled={disableSave} loading={saving} type="submit">
+                {messages.save}
+              </Button>
+            </Box>
+          </Stack>
         </ContextContainer>
       </form>
     </Box>
@@ -163,6 +183,7 @@ TreeKnowledgeDetail.propTypes = {
   item: PropTypes.object,
   center: PropTypes.string,
   messagesAddUsers: PropTypes.object,
+  managersSelect: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

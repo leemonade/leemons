@@ -1,4 +1,4 @@
-import { isString, map } from 'lodash';
+import { isString } from 'lodash';
 
 async function listSubjects({ page, size, program, course }) {
   return leemons.api(
@@ -82,6 +82,13 @@ async function updateSubjectCredits(body) {
   });
 }
 
+async function removeSubject(id) {
+  return leemons.api(`academic-portfolio/subject/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
 async function getSubjectCredits({ program, subject }) {
   return leemons.api(`academic-portfolio/subject/credits?program=${program}&subject=${subject}`, {
     allAgents: true,
@@ -130,4 +137,5 @@ export {
   getSubjectsCredits,
   listSubjectCreditsForProgram,
   getSubjectDetails,
+  removeSubject,
 };

@@ -3,12 +3,12 @@ import constants from '@users/constants';
 import { logoutSession } from '@users/session';
 import { goSelectProfilePage } from '@users/navigate';
 import { useHistory } from 'react-router-dom';
-import { getCentersWithToken } from '../../../session';
+// import { getCentersWithToken } from '../../../session';
 
 function Home() {
   const history = useHistory();
 
-  console.log(getCentersWithToken());
+  // console.log(getCentersWithToken());
 
   const logout = () => {
     logoutSession(history, `/${constants.base}`);

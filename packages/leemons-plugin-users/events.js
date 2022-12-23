@@ -13,6 +13,9 @@ const {
   addUsers,
 } = require('./src/services/menu-builder');
 const { addLocales } = require('./src/services/locales/addLocales');
+const {
+  createInitialProfiles,
+} = require('./src/services/profiles/createInitialProfiles/createInitialProfiles');
 
 async function initEmails() {
   await leemons
@@ -107,6 +110,10 @@ async function events(isInstalled) {
     } = require('./src/services/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
 
     await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(event);
+  });
+
+  leemons.events.once('plugins.users:change-platform-locale', async () => {
+    createInitialProfiles();
   });
 
   if (!isInstalled) {

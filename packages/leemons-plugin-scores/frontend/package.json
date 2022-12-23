@@ -1,0 +1,12 @@
+{
+  "name": "scores-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "exceljs": "^4.3.0",
+    "lodash": "^4.17.21",
+    "react-hook-form": "^7.34.2",
+    "@tanstack/react-query": "^4.16.1"
+  }
+}

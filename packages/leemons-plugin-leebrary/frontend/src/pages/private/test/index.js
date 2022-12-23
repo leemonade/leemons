@@ -8,6 +8,7 @@ import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
 import { ImagePicker } from '../../../components/ImagePicker';
+import { TextEditorInput } from '@common/components/TextEditorInput';
 
 export default function TestPage() {
   const [items, setItems] = useState([]);
@@ -138,6 +139,12 @@ export default function TestPage() {
         <ContextContainer title="LocaleDuration">
           <Box>
             <LocaleDuration seconds={200} />
+          </Box>
+        </ContextContainer>
+
+        <ContextContainer title="TextEditorInput">
+          <Box>
+            <TextEditorInput onChange={(val) => console.log(val)} />
           </Box>
         </ContextContainer>
       </ContextContainer>

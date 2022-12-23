@@ -5,4 +5,5 @@ module.exports = {
   setConfig: provider.setConfig,
   upload: provider.upload,
   remove: provider.remove,
+  clone: provider.clone,
 };
