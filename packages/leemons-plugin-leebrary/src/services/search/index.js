@@ -26,6 +26,8 @@ const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { getByUser: getPinsByUser } = require('../pins/getByUser');
 const { byProvider: getByProvider } = require('./byProvider');
 const { tables } = require('../tables');
+const { getAssetsByProgram } = require('../assets/getAssetsByProgram');
+const { getAssetsBySubject } = require('../assets/getAssetsBySubject');
 
 async function search(
   { criteria = '', type, category },
@@ -41,6 +43,8 @@ async function search(
     pinned,
     showPublic,
     roles,
+    programs,
+    subjects,
     userSession,
     transacting,
   } = {}
@@ -82,7 +86,7 @@ async function search(
       const tagsService = leemons.getPlugin('common').services.tags;
 
       let providerAssets = null;
-      if (searchInProvider) {
+      if (searchInProvider && categoryId) {
         providerAssets = await getByProvider(categoryId, criteria, {
           query: providerQuery,
           assets,
@@ -140,6 +144,24 @@ async function search(
       assets = await getAssetsByType(type, { assets, transacting });
       nothingFound = assets.length === 0;
     }
+
+    if (programs) {
+      assets = await getAssetsByProgram(programs, { assets, transacting });
+      nothingFound = assets.length === 0;
+    }
+
+    if (subjects) {
+      assets = await getAssetsBySubject(subjects, { assets, transacting });
+      nothingFound = assets.length === 0;
+    }
+
+    if (indexable && assets && assets.length) {
+      assets = await getIndexables(assets, { columns: ['id'], transacting });
+      assets = map(assets, 'id');
+      nothingFound = assets.length === 0;
+    }
+
+    // Search by subject
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver

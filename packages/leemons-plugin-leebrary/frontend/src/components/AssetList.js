@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { find, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import {
   Box,
+  ImageLoader,
   LoadingOverlay,
   PaginatedList,
   RadioGroup,
@@ -11,7 +12,6 @@ import {
   Stack,
   useDebouncedValue,
   useResizeObserver,
-  ImageLoader,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
@@ -62,6 +62,8 @@ const AssetList = ({
   search: searchProp,
   layout: layoutProp,
   showPublic: showPublicProp,
+  programs,
+  subjects,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -88,6 +90,11 @@ const AssetList = ({
   onTypeChange = () => {},
   onLoading = () => {},
 }) => {
+  if (categoryProp?.key?.includes('leebrary-subject')) {
+    // eslint-disable-next-line no-param-reassign
+    subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
+  }
+
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
   const [categories, setCategories] = useState(categoriesProp);
@@ -185,10 +192,17 @@ const AssetList = ({
           pinned,
           preferCurrent,
           searchInProvider,
+          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
+          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
           roles: JSON.stringify(roles || []),
         };
-        // console.log('query:', query);
+
+        if (categoryProp?.key?.includes('leebrary-subject')) {
+          delete query.category;
+        }
+
         const response = await getAssetsRequest(query);
+
         const results = response?.assets || [];
         // console.log('results:', results);
         setAssets(uniqBy(results, 'asset'));
@@ -888,6 +902,10 @@ AssetList.propTypes = {
   allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
   searchInProvider: PropTypes.bool,
   roles: PropTypes.arrayOf(PropTypes.string),
+  programs: PropTypes.array,
+  subjects: PropTypes.array,
+  filters: PropTypes.any,
+  filterComponents: PropTypes.any,
 };
 
 export { AssetList };

@@ -169,12 +169,16 @@ async function getAssets(ctx) {
     searchInProvider,
     roles,
     providerQuery,
+    programs,
+    subjects,
   } = ctx.request.query;
   const { userSession } = ctx.state;
 
+  /*
   if (isEmpty(category)) {
     throw new global.utils.HttpError(400, 'Not category was specified');
   }
+  */
 
   const trueValues = ['true', true, '1', 1];
 
@@ -184,8 +188,10 @@ async function getAssets(ctx) {
   const searchProvider = trueValues.includes(searchInProvider);
   const parsedRoles = JSON.parse(roles || null) || [];
   const _providerQuery = JSON.parse(providerQuery || null);
+  const _programs = JSON.parse(programs || null);
+  const _subjects = JSON.parse(subjects || null);
 
-  if (!isEmpty(criteria) || !isEmpty(type)) {
+  if (!isEmpty(criteria) || !isEmpty(type) || isEmpty(category)) {
     assets = await getByCriteria(
       { category, criteria, type },
       {
@@ -197,6 +203,8 @@ async function getAssets(ctx) {
         roles: parsedRoles,
         searchInProvider: searchProvider,
         providerQuery: _providerQuery,
+        programs: _programs,
+        subjects: _subjects,
       }
     );
   } else {
