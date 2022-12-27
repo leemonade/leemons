@@ -178,6 +178,9 @@ module.exports = {
     selectCalendarsSubjects: 'All subjects',
     onlyByMy: 'Only those created by me',
   },
+  kanbanTaskCard: {
+    delivery: 'Delivery',
+  },
   userProgramCalendar: {
     calendar: 'Calendar',
     allSubjects: 'All subjects',

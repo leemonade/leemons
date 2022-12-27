@@ -34,6 +34,8 @@ function Kanban({ session }) {
   });
   const prefix = prefixPN('kanbanFiltersOptions');
   const [, translations] = useTranslateLoader(prefix);
+  const prefixCard = prefixPN('kanbanTaskCard');
+  const [, translationsCard] = useTranslateLoader(prefixCard);
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   const [, setR] = useState();
@@ -55,6 +57,21 @@ function Kanban({ session }) {
     }
     return {};
   }, [translations]);
+  const filterMessagesCard = useMemo(() => {
+    if (translationsCard && translationsCard.items) {
+      return _.reduce(
+        translationsCard.items,
+        (acc, value, key) => {
+          acc[key.replace(`${prefixCard}.`, '')] = value;
+          return acc;
+        },
+        {}
+      );
+    }
+    return {};
+  }, [translationsCard]);
+
+  console.log(filterMessagesCard);
 
   // ES: Consultas
   // EN: Queries
@@ -296,7 +313,12 @@ function Kanban({ session }) {
             disableCardDrag={false} // ref.current.filters.calendars.length
             icon={icon}
             itemRender={(props) => (
-              <KanbanTaskCard {...props} config={ref.current.data} onClick={onClickCard} />
+              <KanbanTaskCard
+                {...props}
+                labels={filterMessagesCard}
+                config={ref.current.data}
+                onClick={onClickCard}
+              />
             )}
           />
         ) : null}

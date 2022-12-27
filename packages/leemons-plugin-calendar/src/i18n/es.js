@@ -178,6 +178,9 @@ module.exports = {
     selectCalendarsSubjects: 'Todas las asignaturas',
     onlyByMy: 'Solo las creadas por mi',
   },
+  kanbanTaskCard: {
+    delivery: 'Entrega',
+  },
   userProgramCalendar: {
     calendar: 'Calendario',
     allSubjects: 'Todas las asignaturas',

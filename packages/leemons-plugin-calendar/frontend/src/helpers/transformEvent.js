@@ -26,13 +26,14 @@ export default function transformEvent(_event, calendars, { columns, isTeacher, 
     if (!calendar) {
       calendar = calendarsByKey[event.calendar];
     }
+    const eventCalendar = calendarsByKey[event.calendar];
     event.icon = event.icon || calendar.icon;
     event.bgColor = event.bgColor || calendar.bgColor;
     event.borderColor = event.borderColor || calendar.borderColor;
     event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
-    if (calendar.isUserCalendar && !classes.length) {
-      event.image = calendar.image;
-      event.calendarName = null;
+    if (eventCalendar.isUserCalendar) {
+      event.image = eventCalendar.image;
+      // event.calendarName = null;
     }
     if (!event.icon && !calendar.isClass && !calendar.isUserCalendar) {
       event.icon = '/public/assets/svgs/alarm-bell.svg';

@@ -176,7 +176,7 @@ export function parseDeadline(isTeacher, obj) {
         if (daysUntilDeadline <= 2) {
           severity = 'high';
         }
-        main = <LocaleRelativeTime seconds={durationInSeconds} />;
+        main = <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />;
       } else {
         main = labels?.startActivity;
       }
@@ -221,7 +221,9 @@ export function parseDeadline(isTeacher, obj) {
           if (daysUntilClose < 0) {
             backgroundColor = 'error';
           }
-          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+          secondary = (
+            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+          );
         } else if (dateToShow) {
           secondary = labels?.evaluation;
         }
@@ -240,7 +242,9 @@ export function parseDeadline(isTeacher, obj) {
             backgroundColor = 'error';
           }
 
-          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+          secondary = (
+            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+          );
         } else if (dateToShow) {
           secondary = labels?.submission;
         }
