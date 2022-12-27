@@ -9,6 +9,8 @@ module.exports = {
   home: {
     navbar: {
       title: 'Library',
+      subjects: 'Asignaturas',
+      sharedWithMe: 'Shared with me',
       quickAccess: 'Quick access',
       uploadButton: 'Upload or Create',
       createNewTitle: 'Create new',
