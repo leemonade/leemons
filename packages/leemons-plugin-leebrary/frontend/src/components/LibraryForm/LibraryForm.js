@@ -118,6 +118,7 @@ const LibraryForm = ({
 }) => {
   const [store, render] = useStore({
     programs: null,
+    showAdvancedConfig: !!asset?.program,
   });
   const [isImage, setIsImage] = useState(onlyImages);
   const [checking, setChecking] = useState(false);
@@ -140,6 +141,8 @@ const LibraryForm = ({
     color: asset?.color || '',
     cover: asset?.cover || null,
     url: asset?.url || null,
+    program: asset?.program || null,
+    subjects: asset?.subjects || null,
   };
 
   const {
@@ -314,6 +317,8 @@ const LibraryForm = ({
   );
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
+
+  console.log(store);
 
   return (
     <Box ref={boxRef}>

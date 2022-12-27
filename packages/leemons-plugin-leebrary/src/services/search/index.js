@@ -269,6 +269,8 @@ async function search(
       assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
 
+    console.log('rsult', uniqBy(assets, 'asset') || []);
+
     return uniqBy(assets, 'asset') || [];
   } catch (e) {
     console.log(e);

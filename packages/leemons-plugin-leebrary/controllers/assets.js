@@ -66,6 +66,10 @@ async function setAsset(ctx) {
 
   let asset;
 
+  if (assetData.subjects) {
+    assetData.subjects = JSON.parse(assetData.subjects);
+  }
+
   if (id) {
     asset = await update.call(
       { calledFrom: leemons.plugin.prefixPN('') },
