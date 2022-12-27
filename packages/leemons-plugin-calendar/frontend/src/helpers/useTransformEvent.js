@@ -11,7 +11,7 @@ async function getKanbanColumns() {
   return _.orderBy(columns, ['order'], ['asc']);
 }
 
-export default function useTransformEvent() {
+export default function useTransformEvent({ forKanban } = {}) {
   const [store, render] = useStore({
     columns: [],
   });
@@ -31,6 +31,7 @@ export default function useTransformEvent() {
     (event, calendars) =>
       transformEvent(event, calendars, {
         columns: store.columns,
+        forKanban,
         isTeacher,
         t,
         translate,

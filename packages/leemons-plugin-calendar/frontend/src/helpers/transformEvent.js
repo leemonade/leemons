@@ -1,7 +1,11 @@
 import { cloneDeep, find, keyBy, uniq } from 'lodash';
 import { parseDeadline } from '@assignables/components/NYACard/NYACard';
 
-export default function transformEvent(_event, calendars, { columns, isTeacher, t, translate }) {
+export default function transformEvent(
+  _event,
+  calendars,
+  { forKanban, columns, isTeacher, t, translate }
+) {
   const event = cloneDeep(_event);
   // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');
@@ -14,7 +18,7 @@ export default function transformEvent(_event, calendars, { columns, isTeacher, 
   if (classes.length >= 2) {
     const calendar = calendarsByKey[event.calendar];
     if (calendar.isUserCalendar) {
-      event.image = calendar.image;
+      // event.image = calendar.image;
       event.calendarName = null;
     }
     event.icon = '/public/assets/svgs/module-three.svg';
@@ -31,7 +35,12 @@ export default function transformEvent(_event, calendars, { columns, isTeacher, 
     event.bgColor = event.bgColor || calendar.bgColor;
     event.borderColor = event.borderColor || calendar.borderColor;
     event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
-    if (eventCalendar.isUserCalendar) {
+    if (!forKanban) {
+      if (calendar.isUserCalendar && !classes.length) {
+        event.image = calendar.image;
+        event.calendarName = null;
+      }
+    } else if (eventCalendar.isUserCalendar) {
       event.image = eventCalendar.image;
       // event.calendarName = null;
     }

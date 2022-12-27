@@ -20,7 +20,7 @@ import hooks from 'leemons-hooks';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Kanban({ session }) {
-  const [transformEv, evLoading] = useTransformEvent();
+  const [transformEv, evLoading] = useTransformEvent({ forKanban: true });
   const ref = useRef({
     loading: true,
     mounted: true,
