@@ -45,7 +45,7 @@ function usePrograms({ labels }) {
         : [
             {
               value: 'all',
-              label: labels?.allPrograms,
+              label: labels?.allPrograms || '',
             },
             ...programsQueries?.flatMap((queryInfo) => {
               const centerPrograms = queryInfo.data;
@@ -95,9 +95,9 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
 
     if (useAll) {
       result.push({
-        label: labels?.allSubjects,
+        label: labels?.allSubjects || '',
         value: 'all',
-        group: labels?.allSubjects,
+        group: labels?.allSubjects || '',
         icon: multiClassData.icon,
         color: multiClassData.color,
       });
