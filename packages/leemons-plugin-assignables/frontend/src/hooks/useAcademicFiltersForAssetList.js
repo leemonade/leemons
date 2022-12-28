@@ -9,7 +9,7 @@ import { getMultiClassData } from '@assignables/helpers/getClassData';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import { getSessionConfig } from '@users/session';
-import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
+import { SelectSubject, SubjectItem } from '@academic-portfolio/components/SelectSubject';
 
 export function useAssignablesAssetListLocalizations() {
   const [, translations] = useTranslateLoader('plugins.assignables.assetListFilters');

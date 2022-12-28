@@ -17,8 +17,8 @@ export default function transformEvent(
   event.uniqClasses = classes;
   if (classes.length >= 2) {
     const calendar = calendarsByKey[event.calendar];
-    if (calendar.isUserCalendar) {
-      // event.image = calendar.image;
+    if (calendar.isUserCalendar && !event.data.instanceId) {
+      event.image = calendar.image;
       event.calendarName = null;
     }
     event.icon = '/public/assets/svgs/module-three.svg';
@@ -38,11 +38,15 @@ export default function transformEvent(
     if (!forKanban) {
       if (calendar.isUserCalendar && !classes.length) {
         event.image = calendar.image;
-        event.calendarName = null;
       }
-    } else if (eventCalendar.isUserCalendar) {
-      event.image = eventCalendar.image;
-      // event.calendarName = null;
+    } else {
+      event.calendarName = null;
+      if (eventCalendar.isUserCalendar) {
+        event.image = eventCalendar.image;
+      }
+      if (classes.length) {
+        event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
+      }
     }
     if (!event.icon && !calendar.isClass && !calendar.isUserCalendar) {
       event.icon = '/public/assets/svgs/alarm-bell.svg';
