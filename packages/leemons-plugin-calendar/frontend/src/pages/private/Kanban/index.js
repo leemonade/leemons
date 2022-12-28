@@ -71,8 +71,6 @@ function Kanban({ session }) {
     return {};
   }, [translationsCard]);
 
-  console.log(filterMessagesCard);
-
   // ES: Consultas
   // EN: Queries
   async function getKanbanColumns() {
