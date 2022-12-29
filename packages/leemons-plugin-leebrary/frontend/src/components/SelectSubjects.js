@@ -19,7 +19,7 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects, show
     const columns = [];
 
     columns.push({
-      Header: labels?.subject,
+      Header: labels?.subject || '',
       accessor: 'subject',
       input: {
         node: (
@@ -37,7 +37,7 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects, show
 
     if (showLevel) {
       columns.push({
-        Header: labels?.level,
+        Header: labels?.level || '',
         accessor: 'level',
         input: {
           node: (
