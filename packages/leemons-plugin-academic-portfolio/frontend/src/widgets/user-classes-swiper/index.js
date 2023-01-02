@@ -179,6 +179,7 @@ function UserClassesSwiperWidget({ program }) {
                         <Box className={styles.icon}>
                           <ImageLoader
                             height="12px"
+                            width="12px"
                             imageStyles={{
                               width: 12,
                               position: 'absolute',

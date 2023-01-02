@@ -99,7 +99,7 @@ function RoleName({ role }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.icon}>
-        <ImageLoader src={role.icon} height={16} />
+        <ImageLoader src={role.icon} height={16} width={16} />
       </Box>
       <Text className={classes.text} transform="capitalize">
         {roleName}
