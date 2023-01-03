@@ -19,7 +19,11 @@ async function newAsset(assetData, categoryId, categoryKey) {
 
   Object.keys(data).forEach((key) => {
     if (data[key] !== undefined && (typeof data[key] !== 'string' || data[key]?.length > 0)) {
-      formData.append(key, data[key]);
+      if (key === 'subjects') {
+        formData.append(key, JSON.stringify(data[key]));
+      } else {
+        formData.append(key, data[key]);
+      }
     }
   });
 

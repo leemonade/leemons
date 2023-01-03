@@ -32,7 +32,11 @@ module.exports = async function removeAssignable(
       })
     ).map((v) => v.fullId);
 
-    return removeAssignables.call(this, versions, { userSession, transacting });
+    const result = await removeAssignables.call(this, versions, { userSession, transacting });
+    return {
+      ...result,
+      versions,
+    };
   }
 
   throw new Error('Invalid removeAll value');

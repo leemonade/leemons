@@ -1,10 +1,11 @@
 import React, { useMemo, useEffect } from 'react';
-import { ActivityCountdown, createStyles, Box, getFontProductive } from '@bubbles-ui/components';
+import { ActivityCountdown, createStyles, Box } from '@bubbles-ui/components';
 import { useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 import dayjsDuration from 'dayjs/plugin/duration';
 
 import { useLayout } from '@layout/context';
+import FinalizationModal from '../FinalizationModal';
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -27,7 +28,6 @@ const useCountdownDate = (assignation) =>
   useMemo(() => {
     const instance = assignation?.instance;
     const startDate = dayjs(assignation?.timestamps?.start || null);
-    // const deadline = dayjs(instance?.dates?.deadline || null);
     const [durationValue, durationUnits] = instance?.duration?.split(' ') || [];
 
     if (!startDate.isValid() || !durationValue || !durationUnits) {
@@ -36,10 +36,6 @@ const useCountdownDate = (assignation) =>
     const duration = dayjs.duration({ [durationUnits]: durationValue });
     const endDate = startDate.add(duration.asSeconds(), 'seconds');
 
-    // if (deadline.isValid() && deadline.isBefore(endDate)) {
-    //   endDate = deadline;
-    // }
-
     if (!endDate.isValid()) {
       return null;
     }
@@ -47,70 +43,59 @@ const useCountdownDate = (assignation) =>
     return endDate;
   }, [assignation]);
 
-export default function Countdown({ assignation, show = true, onTimeout }) {
+export default function Countdown({
+  assignation,
+  show = true,
+  onTimeout,
+  localizations,
+  updateTimestamps,
+}) {
   const { classes } = useStyles();
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const opened = React.useRef(false);
-  const history = useHistory();
-
-  const labels = {
-    title: 'El tiempo establecido para completar esta actividad ha finalizado.',
-    description:
-      'Si has guardado algún archivo previamente, ha sido enviado automáticamente, en caso contrario, no se ha efectuado ninguna entrega.\nPuedes revisar la entrega pulsando en "Revisar entrega" o visitar la sección de Actividades en curso',
-    confirm: 'Revisar entrega',
-    cancel: 'Actividades en curso',
-  };
-  const showTimeoutModal = useMemo(
-    () =>
-      openConfirmationModal({
-        title: labels.title,
-        description: labels.description,
-        labels: {
-          confirm: labels.confirm,
-          cancel: labels.cancel,
-        },
-        onConfirm: () => {
-          const role = assignation?.instance?.assignable?.roleDetails;
-          const revisionUrl = role.evaluationDetailUrl
-            .replace(':id', assignation?.instance?.id)
-            .replace(':user', assignation?.user);
-          history.push(revisionUrl);
-        },
-        onCancel: () => {
-          history.push('/private/assignables/ongoing');
-        },
-      }),
-    [history]
-  );
+  const toggleModal = React.useRef(null);
 
   const endDate = useCountdownDate(assignation);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (endDate?.isValid() && !opened.current) {
       const timeUntilEnd = endDate?.diff(dayjs(), 'millisecond');
 
       if (timeUntilEnd <= 0) {
         onTimeout?.();
-        showTimeoutModal();
+        toggleModal.current();
         opened.current = true;
       } else {
         const timer = setTimeout(() => {
           onTimeout?.();
-          showTimeoutModal();
+          toggleModal.current();
           opened.current = true;
         }, timeUntilEnd);
 
         return () => clearTimeout(timer);
       }
     }
-  }, [endDate?.format(), showTimeoutModal]);
+
+    return undefined;
+  }, [endDate?.format()]);
 
   if (!endDate || !show) {
     return null;
   }
 
+  const role = assignation?.instance?.assignable?.roleDetails;
+  const revisionUrl = role.evaluationDetailUrl
+    .replace(':id', assignation?.instance?.id)
+    .replace(':user', assignation?.user);
+
   return (
     <Box className={classes?.root}>
+      <FinalizationModal
+        actionUrl={revisionUrl}
+        assignation={assignation}
+        localizations={localizations}
+        toggleModal={toggleModal}
+        updateTimestamps={updateTimestamps}
+      />
       <Box className={classes.countdown}>
         <ActivityCountdown finish={endDate.toDate()} />
       </Box>

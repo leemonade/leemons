@@ -4,6 +4,7 @@ const { keys, isEmpty, findIndex, uniqBy, isNil } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
+const _delay = require('./bulk/helpers/delay');
 
 async function initTests({ users, programs }) {
   const { services } = leemons.getPlugin('tests');
@@ -50,9 +51,12 @@ async function initTests({ users, programs }) {
       } catch (e) {
         console.log('-- QBANK CREATION ERROR --');
         console.log(`qbank: ${qbank.name}`);
-        console.dir(qbank, { depth: null });
+        // console.dir(qbank, { depth: null });
+        console.log(`creator: ${creator}`);
         console.error(e);
       }
+
+      await _delay(10000);
 
       // ·····················································
       // POST-PROCESSING QUESTIONS
@@ -103,7 +107,7 @@ async function initTests({ users, programs }) {
       } catch (e) {
         console.log('-- TEST CREATION ERROR --');
         console.log(`test: ${test.name}`);
-        console.log(`creator: ${creator.name}`);
+        console.log(`creator: ${creator}`);
         console.error(e);
       }
     }

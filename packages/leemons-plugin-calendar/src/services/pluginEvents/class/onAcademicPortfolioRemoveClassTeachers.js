@@ -9,7 +9,7 @@ async function remove(classCalendar, teacher, { transacting }) {
     leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
       leemons.plugin.prefixPN(`class.${classCalendar.class}`),
       teacher,
-      'owner',
+      ['owner', 'view'],
       { transacting }
     ),
   ]);

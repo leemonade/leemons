@@ -24,6 +24,10 @@ const { getAssetsByType } = require('../files/getAssetsByType');
 const { getById: getCategoryById } = require('../categories/getById');
 const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { getByUser: getPinsByUser } = require('../pins/getByUser');
+const { byProvider: getByProvider } = require('./byProvider');
+const { tables } = require('../tables');
+const { getAssetsByProgram } = require('../assets/getAssetsByProgram');
+const { getAssetsBySubject } = require('../assets/getAssetsBySubject');
 
 async function search(
   { criteria = '', type, category },
@@ -34,8 +38,13 @@ async function search(
     published = true,
     indexable = true,
     preferCurrent,
+    searchInProvider,
+    providerQuery,
     pinned,
     showPublic,
+    roles,
+    programs,
+    subjects,
     userSession,
     transacting,
   } = {}
@@ -76,28 +85,59 @@ async function search(
     if (!isEmpty(criteria)) {
       const tagsService = leemons.getPlugin('common').services.tags;
 
-      const [byName, byTagline, byDescription, byTags] = await Promise.all([
-        getByName(criteria, { indexable, assets, transacting }),
-        getByTagline(criteria, { indexable, assets, transacting }),
-        getByDescription(criteria, { indexable, assets, transacting }),
-        // getByProvider(category, criteria, { assets, transacting }),
-        tagsService.getTagsValues(criteria, {
-          type: leemons.plugin.prefixPN(''),
+      let providerAssets = null;
+      if (searchInProvider && categoryId) {
+        providerAssets = await getByProvider(categoryId, criteria, {
+          query: providerQuery,
+          assets,
+          published,
+          preferCurrent,
+          userSession,
           transacting,
-        }),
-      ]);
+        });
 
-      const matches = byName.concat(byTagline).concat(byDescription);
-
-      // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
-      // EN: If there are resources, we must apply a previous filter as an intersection
-      if (!isEmpty(assets)) {
-        assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
-      } else {
-        assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+        nothingFound = !providerAssets?.length;
       }
 
-      nothingFound = assets.length === 0;
+      if (!providerAssets || providerAssets.length) {
+        const query = {
+          indexable,
+          $or: [
+            { name_$contains: criteria },
+            { tagline_$contains: criteria },
+            { description_$contains: criteria },
+          ],
+        };
+
+        const assetIds = providerAssets || assets;
+        if (!isEmpty(assetIds)) {
+          query.id_$in = assetIds;
+        }
+
+        if (categoryId) {
+          query.category = categoryId;
+        }
+
+        const [assetsFound, byTags] = await Promise.all([
+          tables.assets.find(query, { columns: ['id'], transacting }),
+          tagsService.getTagsValues(criteria, {
+            type: leemons.plugin.prefixPN(''),
+            transacting,
+          }),
+        ]);
+
+        const matches = map(assetsFound, 'id');
+
+        // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
+        // EN: If there are resources, we must apply a previous filter as an intersection
+        if (!isEmpty(assets)) {
+          assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+        } else {
+          assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+        }
+
+        nothingFound = assets.length === 0;
+      }
     }
 
     if (type) {
@@ -105,21 +145,23 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    // ES: Si viene la categoría, filtramos todo el array de Assets con respecto a esa categoría
-    // EN: If we have the category, we filter the array of Assets with respect to that category
-    if (!nothingFound && categoryId) {
-      assets = (
-        await getByCategory(categoryId, { indexable, assets: uniq(assets), transacting })
-      ).map(({ id }) => id);
+    if (programs) {
+      assets = await getAssetsByProgram(programs, { assets, transacting });
       nothingFound = assets.length === 0;
     }
 
-    // ES: Solo nos interesan los que sean indexables
-    // EN: Only interested in indexables
-    if (!nothingFound) {
-      assets = (await getIndexables(assets, { columns: ['id'], transacting })).map(({ id }) => id);
+    if (subjects) {
+      assets = await getAssetsBySubject(subjects, { assets, transacting });
       nothingFound = assets.length === 0;
     }
+
+    if (indexable && assets && assets.length) {
+      assets = await getIndexables(assets, { columns: ['id'], transacting });
+      assets = map(assets, 'id');
+      nothingFound = assets.length === 0;
+    }
+
+    // Search by subject
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
@@ -138,9 +180,7 @@ async function search(
     // ES: Filtrar por estado publicado
     if (!nothingFound) {
       const { versionControl } = leemons.getPlugin('common').services;
-      assets = await Promise.all(
-        assets.map(({ asset }) => versionControl.getVersion(asset, { transacting }))
-      );
+      assets = await versionControl.getVersion(map(assets, 'asset'), { transacting });
       if (published !== 'all') {
         assets = assets.filter(({ published: isPublished }) => isPublished === published);
       }
@@ -201,14 +241,19 @@ async function search(
         assets = assets.map(({ fullId }) => fullId);
       }
 
-      assets = assetsWithPermissions.filter(({ asset }) => assets.includes(asset));
+      assets = assetsWithPermissions.filter(({ asset, role }) => {
+        if (roles?.length && !roles.includes(role)) {
+          return false;
+        }
+
+        return assets.includes(asset);
+      });
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic
     if (!nothingFound && sortingBy && !isEmpty(sortingBy)) {
       const assetIds = assets.map((item) => item.asset);
-
       const [items] = await Promise.all([
         getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
       ]);
@@ -223,6 +268,8 @@ async function search(
 
       assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
+
+    console.log('rsult', uniqBy(assets, 'asset') || []);
 
     return uniqBy(assets, 'asset') || [];
   } catch (e) {

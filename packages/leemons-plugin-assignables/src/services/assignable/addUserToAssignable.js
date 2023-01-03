@@ -17,9 +17,9 @@ module.exports = async function addUserToAssignable(
     assignable = await getAssignable.bind(this)(assignableId, { userSession, transacting });
     assignerRole = (await getUserPermission(assignable, { userSession, transacting })).role;
   } catch (e) {
-    throw new Error(
-      `The assignable ${assignableId} does not exist or you don't have access to it.`
-    );
+    e.message = `The assignable ${assignableId} does not exist or you don't have access to it.`;
+
+    throw e;
   }
 
   // EN: Get the assignable roles of the assigner.

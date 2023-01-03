@@ -22,7 +22,7 @@ function useCurriculum(program) {
         setCurriculum(curriculumData.items[0]);
       }
     })();
-  }, program);
+  }, [program]);
 
   return curriculum;
 }
@@ -68,7 +68,7 @@ export default function Curriculum({
                 }}
                 onClose={() => setShow(false)}
               />
-              <CurriculumListContents {...field} value={value} />
+              <CurriculumListContents {...field} value={value} subjects={subjects} />
 
               <Stack>
                 <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(true)}>

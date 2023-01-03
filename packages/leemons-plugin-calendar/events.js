@@ -120,7 +120,7 @@ async function events(isInstalled) {
           config: {
             titleLabel: 'plugins.calendar.taskTitleLabel',
             titlePlaceholder: 'plugins.calendar.taskPlaceholder',
-            fromLabel: 'plugins.calendar.fromLabelDeadline',
+            // fromLabel: 'plugins.calendar.fromLabelDeadline',
             hideAllDay: true,
             hideRepeat: true,
           },

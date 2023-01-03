@@ -16,6 +16,7 @@ async function initPlatform() {
       services.platform.setDefaultLocale(locale),
       services.platform.setEmail(email),
       services.platform.setHostname(hostname),
+      services.platform.setAppearanceDarkMode(true),
     ]);
 
     return platform;

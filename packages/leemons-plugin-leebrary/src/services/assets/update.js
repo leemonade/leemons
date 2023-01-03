@@ -1,5 +1,14 @@
 /* eslint-disable no-param-reassign */
-const { defaults, cloneDeep, isEqual, differenceWith, isEmpty, pick } = require('lodash');
+const {
+  map,
+  isArray,
+  defaults,
+  cloneDeep,
+  isEqual,
+  differenceWith,
+  isEmpty,
+  pick,
+} = require('lodash');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
 const { tables } = require('../tables');
 const { validateAddAsset } = require('../../validations/forms');
@@ -37,8 +46,16 @@ async function update(
     throw new Error('No changes detected');
   }
   data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
+  if (isArray(data.subjects)) {
+    data.subjects = map(data.subjects, ({ subject, level }) => ({
+      subject,
+      level,
+    }));
+  }
   const { id, ...assetData } = data;
   let assetId = id;
+
+  console.log(assetData);
   await validateAddAsset(assetData);
 
   // EN: Get user's permissions
@@ -69,6 +86,7 @@ async function update(
     'public',
     'indexable',
     'tags',
+    'subjects',
   ];
 
   const category = await getCategory(currentAsset.category, { transacting });

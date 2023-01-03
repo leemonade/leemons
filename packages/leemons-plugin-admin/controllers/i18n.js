@@ -1,10 +1,11 @@
 const path = require('path');
+const fs = require('fs/promises');
 
 module.exports = {
   getLang: async (ctx) => {
     const { page, lang } = ctx.params;
     try {
-      const localeData = await leemons.fs.readFile(
+      const localeData = await fs.readFile(
         path.resolve(__dirname, `../src/i18n/${lang}.json`),
         'utf8'
       );

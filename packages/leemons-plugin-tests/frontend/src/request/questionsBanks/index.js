@@ -16,7 +16,8 @@ async function saveQuestionBank(_body) {
     if (question.questionImage && !isString(question.questionImage)) {
       if (question.questionImage.id) {
         // eslint-disable-next-line no-param-reassign
-        body.questions[index].questionImage = question.questionImage.cover.id;
+        if (question.questionImage.cover)
+          body.questions[index].questionImage = question.questionImage.cover.id;
       } else {
         questionsFiles.push({ index, name: 'questionImage', file: question.questionImage });
       }
@@ -24,7 +25,8 @@ async function saveQuestionBank(_body) {
     if (question.properties.image && !isString(question.properties.image)) {
       if (question.properties.image.id) {
         // eslint-disable-next-line no-param-reassign
-        body.questions[index].properties.image = question.properties.image.cover.id;
+        if (question.properties.image.cover)
+          body.questions[index].properties.image = question.properties.image.cover.id;
       } else {
         questionsFiles.push({ index, name: 'properties.image', file: question.properties.image });
       }
@@ -34,8 +36,9 @@ async function saveQuestionBank(_body) {
         if (response.value.image && !isString(response.value.image)) {
           if (response.value.image.id) {
             // eslint-disable-next-line no-param-reassign
-            body.questions[index].properties.responses[i].value.image =
-              response.value.image.cover.id;
+            if (response.value.image.cover)
+              body.questions[index].properties.responses[i].value.image =
+                response.value.image.cover.id;
           } else {
             questionsFiles.push({
               index,

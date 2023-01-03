@@ -1,16 +1,14 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
-const fs = require('fs/promises');
-const fss = require('fs');
 const execa = require('execa');
 const temp = require('temp');
-const {loadConfiguration} = require('../config/loadConfig');
-const {getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins} = require('./getPlugins');
-const {computeDependencies, checkMissingDependencies, sortByDeps} = require('./dependencies');
-const {getStatus, PLUGIN_STATUS} = require('./pluginsStatus');
+const { loadConfiguration } = require('../config/loadConfig');
+const { getPluginsInfoFromDB, getLocalPlugins, getExternalPlugins } = require('./getPlugins');
+const { computeDependencies, checkMissingDependencies, sortByDeps } = require('./dependencies');
+const { getStatus, PLUGIN_STATUS } = require('./pluginsStatus');
 const ScriptLoader = require('./loadScripts');
 const transformServices = require('./transformServices');
-const {LeemonsSocket} = require('../../socket.io');
+const { LeemonsSocket } = require('../../socket.io');
 
 // Automatically track and cleanup files at exit
 temp.track();
@@ -33,7 +31,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
   // Load configuration for each plugin
   let plugins = await Promise.all(
     [...localPlugins, ...externalPlugins].map(async (plugin) => {
-      const {env, configProvider: config} = await loadConfiguration(plugin, {
+      const { env, configProvider: config } = await loadConfiguration(plugin, {
         dir: plugin.path,
         defaultDirs: {
           config: 'config',
@@ -70,7 +68,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
   // Merge DB info with plugins config, if the plugin is missing, create it
   // as missing
-  pluginsInfo.forEach(({name, path: pluginPath, version, id, source, ...pluginInfo}) => {
+  pluginsInfo.forEach(({ name, path: pluginPath, version, id, source, ...pluginInfo }) => {
     const equivalentPlugin = plugins.find(
       (plugin) => plugin.name === name && plugin.dir.app === pluginPath
     );
@@ -83,7 +81,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         source,
         version,
         id,
-        dir: {app: pluginPath},
+        dir: { app: pluginPath },
         status: {
           ...getStatus(pluginInfo, PLUGIN_STATUS.missing),
           ...pluginInfo,
@@ -116,7 +114,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         plugins.findIndex((_plugin, j) => j !== i && plugin.name === _plugin.name) > -1 &&
         plugin.id === undefined
       ) {
-        return {...plugin, status: PLUGIN_STATUS.duplicated};
+        return { ...plugin, status: PLUGIN_STATUS.duplicated };
       }
 
       // TODO: Can crash (When the plugin can't be added to the DB)
@@ -168,7 +166,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
   plugins
     .filter((plugin) => unsatisfiedPlugins.includes(plugin.name))
     .forEach((plugin) => {
-      _.set(plugin, 'status', {...plugin.status, ...PLUGIN_STATUS.missingDeps});
+      _.set(plugin, 'status', { ...plugin.status, ...PLUGIN_STATUS.missingDeps });
     });
 
   // Get each loading function for the plugin
@@ -185,56 +183,25 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           emitToAll: LeemonsSocket.worker.emitToAll,
           onConnection: LeemonsSocket.worker.onConnection,
         });
+
         _.set(filter, 'leemons.fs', {
-          copyFile: (...rest) => {
-            if (plugin.name === 'leebrary') return fs.copyFile(...rest);
-            throw new Error('Only the plugin leebrary have access to copyFile');
-          },
-          readFile: (...rest) => {
-            if (['leebrary', 'admin'].includes(plugin.name)) return fs.readFile(...rest);
-            throw new Error('Only the plugins [leebrary, admin] have access to readFile');
-          },
-          writeFile: (...rest) => {
-            if (plugin.name === 'leebrary') return fs.writeFile(...rest);
-            throw new Error('Only the plugin leebrary have access to writeFile');
-          },
-          open: (...rest) => {
-            if (plugin.name === 'leebrary') return fs.open(...rest);
-            throw new Error('Only the plugin leebrary have access to open');
-          },
-          close: (...rest) => {
-            if (plugin.name === 'leebrary') return fss.close(...rest);
-            throw new Error('Only the plugin leebrary have access to close');
-          },
-          unlink: (...rest) => {
-            if (plugin.name === 'leebrary') return fs.unlink(...rest);
-            throw new Error('Only the plugin leebrary have access to unlink');
-          },
-          createReadStream: (...rest) => {
-            if (plugin.name === 'leebrary') return fss.createReadStream(...rest);
-            throw new Error('Only the plugin leebrary have access to createReadStream');
-          },
-          write: (...rest) => {
-            if (plugin.name === 'leebrary') return fss.write(...rest);
-            throw new Error('Only the plugin leebrary have access to write');
-          },
-          createWriteStream: (...rest) => {
-            if (plugin.name === 'leebrary') return fs.createWriteStream(...rest);
-            throw new Error('Only the plugin leebrary have access to createWriteStream');
-          },
           createTempWriteStream: () => {
-            if (plugin.name === 'leebrary') return temp.createWriteStream();
+            if (plugin.name === 'leebrary' && singularTarget === 'plugin')
+              return temp.createWriteStream();
             throw new Error('Only the plugin leebrary have access to createTempWriteStream');
           },
           mkTempDir: (...rest) => {
-            if (plugin.name === 'leebrary') return temp.mkdir(...rest);
+            if (plugin.name === 'leebrary' && singularTarget === 'plugin')
+              return temp.mkdir(...rest);
             throw new Error('Only the plugin leebrary have access to mkTempDir');
           },
           openTemp: (...rest) => {
-            if (plugin.name === 'leebrary') return temp.open(...rest);
+            if (plugin.name === 'leebrary' && singularTarget === 'plugin')
+              return temp.open(...rest);
             throw new Error('Only the plugin leebrary have access to open temp files');
           },
         });
+
         _.set(filter, 'leemons.utils', {
           stopAutoServerReload: () => {
             if (target === 'plugins' && plugin.name === 'package-manager') {
@@ -342,7 +309,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
           _.set(filter, `leemons.${name}`, getPluggable(value));
         });
 
-        const {query} = filter.leemons;
+        const { query } = filter.leemons;
         _.set(filter, 'leemons.query', (modelName) => query(modelName, plugin.name));
 
         return filter;
@@ -393,7 +360,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
 
   // for (let i = 0; i < pluginsLength; i++) {
   async function loadPlugin(i) {
-    const {plugin, scripts} = pluginsFunctions[i] || {};
+    const { plugin, scripts } = pluginsFunctions[i] || {};
 
     if (plugin && !plugin.status.didLoad) {
       // If no plugin depends on it load it asynchronously
@@ -496,14 +463,14 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
     return new Promise((resolve) => {
       // Create a Map with all the plugins that needs loading
       const remainingPlugins = new Map();
-      pluginsFunctions.forEach(({plugin}) =>
+      pluginsFunctions.forEach(({ plugin }) =>
         remainingPlugins.set(`${target}.${plugin.name}`, plugin)
       );
       if (remainingPlugins.size === 0) {
         resolve();
       }
 
-      const eventHandler = ({target: eventTarget}) => {
+      const eventHandler = ({ target: eventTarget }) => {
         remainingPlugins.delete(eventTarget);
         // When no remaininingPlugins to be loaded, then the plugins are loaded
         if (remainingPlugins.size === 0) {
@@ -524,9 +491,9 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
   leemons.events.emit(`${target}DidLoad`, 'leemons');
 
   // Save the enabled plugins on leemons
-  _.set(leemons, target, _.fromPairs(pluginsFunctions.map(({plugin}) => [plugin.name, plugin])));
+  _.set(leemons, target, _.fromPairs(pluginsFunctions.map(({ plugin }) => [plugin.name, plugin])));
 
-  return pluginsFunctions.map(({plugin}) => plugin);
+  return pluginsFunctions.map(({ plugin }) => plugin);
 }
 
 module.exports = {

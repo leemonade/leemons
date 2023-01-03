@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { ContextContainer } from '@bubbles-ui/components';
-import { unflatten, TagsAutocomplete, useRequestErrorMessage } from '@common';
+import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LibraryForm } from '../LibraryForm/LibraryForm';
@@ -12,6 +12,7 @@ import { newAssetRequest, updateAssetRequest } from '../../request';
 
 const BasicData = ({
   file,
+  advancedConfig,
   asset: assetProp,
   categoryId,
   editing,
@@ -84,6 +85,7 @@ const BasicData = ({
     <LibraryForm
       {...props}
       {...formLabels}
+      advancedConfig={advancedConfig}
       loading={loading}
       asset={{ ...assetProp, file, cover: preparedAsset.cover }}
       onSubmit={handleOnSubmit}

@@ -23,7 +23,8 @@ module.exports = {
       */
     },
     message: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     isEncrypt: {
       type: 'boolean',

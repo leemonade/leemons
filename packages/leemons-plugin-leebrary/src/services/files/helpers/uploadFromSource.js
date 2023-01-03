@@ -7,7 +7,7 @@ const {
   uploadImage,
 } = require('../upload');
 
-async function uploadFromSource(source, { name }, { transacting }) {
+async function uploadFromSource(source, { name }, { transacting } = {}) {
   let resultFile;
 
   if (isString(source)) {

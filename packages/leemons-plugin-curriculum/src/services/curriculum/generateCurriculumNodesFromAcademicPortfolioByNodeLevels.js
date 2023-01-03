@@ -1,24 +1,23 @@
+/* eslint-disable no-await-in-loop */
 const _ = require('lodash');
-const { table } = require('../tables');
-const { nodeLevelsByCurriculum } = require('../nodeLevels/nodeLevelsByCurriculum');
-const { curriculumByIds } = require('./curriculumByIds');
+const {table} = require('../tables');
+const {nodeLevelsByCurriculum} = require('../nodeLevels/nodeLevelsByCurriculum');
+const {curriculumByIds} = require('./curriculumByIds');
 
 async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
   curriculumId,
-  { transacting: _transacting } = {}
+  {transacting: _transacting} = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const curriculum = await table.curriculums.findOne({ id: curriculumId }, { transacting });
+      const curriculum = await table.curriculums.findOne({id: curriculumId}, {transacting});
       if (!curriculum) throw new Error('Curriculum not found');
-      const nodes = await table.nodes.count({ curriculum: curriculum.id }, { transacting });
-      if (nodes) throw new Error('Curriculum already has nodes');
 
       if (curriculum.step === 2) {
-        await table.curriculums.update({ id: curriculumId }, { step: 3 }, { transacting });
+        await table.curriculums.update({id: curriculumId}, {step: 3}, {transacting});
       }
 
-      const nodeLevels = await nodeLevelsByCurriculum(curriculumId, { transacting });
+      const nodeLevels = await nodeLevelsByCurriculum(curriculumId, {transacting});
       // ES: Ordenamos los node levels por levelOrder
       // EN: Sort node levels by levelOrder
       const nodeLevelsOrdered = _.sortBy(nodeLevels, 'levelOrder');
@@ -31,66 +30,82 @@ async function generateCurriculumNodesFromAcademicPortfolioByNodeLevels(
 
       const types = _.map(nodeLevelsAcademicPortfolio, 'type');
 
-      const tree = await leemons
-        .getPlugin('academic-portfolio')
-        .services.common.getTreeNodes(
+      const [tree, currentNodes] = await Promise.all([
+        leemons
+          .getPlugin('academic-portfolio')
+          .services.common.getTreeNodes(
           _.uniq(['center', 'program'].concat(types)),
           'program',
           curriculum.program,
-          { transacting }
-        );
+          {transacting}
+        ),
+        table.nodes.find({curriculum: curriculum.id}, {columns: ['id', 'treeId'], transacting}),
+      ]);
 
+      const currentTreeIds = _.map(currentNodes, 'treeId');
+      const treeIds = [];
+
+      let child;
       const createNodes = async (parentNode, childrens, deepLevel, levels) => {
-        const results = [];
         for (let i = 0, l = childrens.length; i < l; i++) {
-          if (childrens[i].nodeType !== 'class') {
-            if (childrens[i].value.type === 'course') {
+          child = childrens[i];
+          if (child.nodeType !== 'class') {
+            if (child.value.type === 'course') {
               // eslint-disable-next-line no-param-reassign
-              childrens[i].value.name = leemons
+              child.value.name = leemons
                 .getPlugin('academic-portfolio')
-                .services.courses.getCourseName(childrens[i].value);
+                .services.courses.getCourseName(child.value);
             }
-            // eslint-disable-next-line no-await-in-loop
-            const node = await table.nodes.create(
-              {
-                name:
-                  childrens[i].value && childrens[i].value.name
-                    ? childrens[i].value.name
-                    : 'undefined',
-                nodeOrder: i,
-                academicItem:
-                  childrens[i].value && childrens[i].value.id ? childrens[i].value.id : null,
-                parentNode: parentNode.id,
-                nodeLevel: levels[deepLevel].id,
-                curriculum: curriculum.id,
-              },
-              { transacting }
-            );
-            results.push(node);
-            if (childrens[i].childrens) {
-              results.push(
-                // eslint-disable-next-line no-await-in-loop
-                ...(await createNodes(node, childrens[i].childrens, deepLevel + 1, levels))
+
+            let node = null;
+            if (currentTreeIds.includes(child.treeId)) {
+              if (child.childrens && child.childrens.length) {
+                treeIds.push(child.treeId);
+                node = await table.nodes.update(
+                  {treeId: child.treeId},
+                  {name: child.value && child.value.name ? child.value.name : 'undefined'},
+                  {transacting}
+                );
+              }
+            } else if (child.childrens && child.childrens.length) {
+              treeIds.push(child.treeId);
+              node = await table.nodes.create(
+                {
+                  name: child.value && child.value.name ? child.value.name : 'undefined',
+                  nodeOrder: i,
+                  academicItem: child.value && child.value.id ? child.value.id : null,
+                  parentNode: parentNode.id,
+                  nodeLevel: levels[deepLevel].id,
+                  curriculum: curriculum.id,
+                  treeId: child.treeId,
+                },
+                {transacting}
               );
+            }
+            if (child.childrens) {
+              await createNodes(node, child.childrens, deepLevel + 1, levels);
             }
           }
         }
-        return results;
       };
 
       if (tree.length) {
         await createNodes(
-          { id: null },
+          {id: null},
           types[0] === 'program' ? tree : tree[0].childrens,
           0,
           nodeLevelsAcademicPortfolio
         );
+        const treeIdsToRemove = _.filter(currentTreeIds, (id) => !treeIds.includes(id));
+        if (treeIdsToRemove.length) {
+          await table.nodes.deleteMany({treeId_$in: treeIdsToRemove}, {transacting});
+        }
       }
-      return (await curriculumByIds(curriculum.id, { transacting }))[0];
+      return (await curriculumByIds(curriculum.id, {transacting}))[0];
     },
     table.curriculums,
     _transacting
   );
 }
 
-module.exports = { generateCurriculumNodesFromAcademicPortfolioByNodeLevels };
+module.exports = {generateCurriculumNodesFromAcademicPortfolioByNodeLevels};

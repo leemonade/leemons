@@ -3,15 +3,26 @@ import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useAssignablesContext from '@assignables/hooks/useAssignablesContext';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Link } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
 
+function capitalizeFirstLetter(str) {
+  return `${str[0].toUpperCase()}${str.substring(1)}`;
+}
+
 function parseAssignation({ isTeacher, instance, subject, labels }) {
+  const commonInfo = {
+    subject: {
+      name: subject.name,
+    },
+  };
+
   if (isTeacher) {
     const { students } = instance;
 
@@ -44,22 +55,58 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
     const total = students.length;
     return {
+      ...commonInfo,
       // Only if finished
       completed: (submission / total).toFixed(2),
       submission,
       total,
-      subject: {
-        name: subject.name,
-      },
       labels: labels?.assigment,
       avgTime,
     };
   }
 
-  return null;
+  const { count: gradeCount, sum: gradeSum } = instance.grades?.reduce(
+    ({ count, sum }, grade) => {
+      if (grade.type === 'main') {
+        return {
+          count: count + 1,
+          sum: sum + grade.grade,
+        };
+      }
+      return { count, sum };
+    },
+    { count: 0, sum: 0 }
+  );
+
+  const avgGrade = gradeCount > 0 ? gradeSum / gradeCount : 0;
+
+  const role = instance?.instance?.assignable?.role;
+  const roleName = labels?.roles?.[role]?.singular || role;
+
+  let submission;
+  let total;
+
+  if (instance?.metadata?.score && instance.instance.requiresScoring) {
+    total = instance?.metadata?.score?.total || 0;
+    submission = instance?.metadata?.score?.count || 0;
+  }
+
+  return {
+    ...commonInfo,
+    grade: avgGrade.toFixed(avgGrade % 1 === 0 ? 0 : 2),
+    submission,
+    total,
+    activityType: capitalizeFirstLetter(roleName),
+    labels: _.omit(
+      labels?.assigment,
+      [!instance?.metadata?.score && 'score', !instance.instance.requiresScoring && 'grade'].filter(
+        Boolean
+      )
+    ),
+  };
 }
 
-function parseDeadline(isTeacher, obj) {
+export function parseDeadline(isTeacher, obj) {
   let instance = obj;
 
   if (!isTeacher) {
@@ -92,8 +139,8 @@ function parseDeadline(isTeacher, obj) {
   const isDeadline = deadline.isValid() && !deadline.isAfter(today);
 
   if (!isTeacher) {
-    const submission = dayjs(obj?.timestamps?.end || null);
-    const status = getStatus(obj, instance);
+    const submission = dayjs(obj?.timestamps?.end || instance?.timestamps?.end || null);
+    const status = instance.status || getStatus(obj, instance);
     if (status === 'evaluated') {
       main = labels.evaluated;
       if (deadline.isValid()) {
@@ -122,13 +169,14 @@ function parseDeadline(isTeacher, obj) {
       }
 
       if (isDeadline) {
-        main = 'late';
+        main = labels.late;
+        severity = 'high';
       } else if (daysUntilDeadline <= 5) {
         severity = 'medium';
         if (daysUntilDeadline <= 2) {
           severity = 'high';
         }
-        main = <LocaleRelativeTime seconds={durationInSeconds} />;
+        main = <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />;
       } else {
         main = labels?.startActivity;
       }
@@ -173,7 +221,9 @@ function parseDeadline(isTeacher, obj) {
           if (daysUntilClose < 0) {
             backgroundColor = 'error';
           }
-          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+          secondary = (
+            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+          );
         } else if (dateToShow) {
           secondary = labels?.evaluation;
         }
@@ -192,7 +242,9 @@ function parseDeadline(isTeacher, obj) {
             backgroundColor = 'error';
           }
 
-          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+          secondary = (
+            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+          );
         } else if (dateToShow) {
           secondary = labels?.submission;
         }
@@ -266,22 +318,18 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     icon: subjectData.icon,
   };
 
-  let onClick = () => window.open(`/private/assignables/details/${instance.id}`, '_blank');
-
   const roleDetails = instance?.assignable?.roleDetails;
 
-  if (!isTeacher) {
-    if (!object.finished) {
-      const activityUrl = roleDetails.studentDetailUrl
-        .replace(':id', instance.id)
-        .replace(':user', object.user);
-      onClick = () => window.open(activityUrl, '_blank');
-    } else {
-      const revisionUrl = roleDetails.evaluationDetailUrl
-        .replace(':id', instance.id)
-        .replace(':user', object.user);
-      onClick = () => window.open(revisionUrl, '_blank');
-    }
+  let url;
+  if (isTeacher) {
+    url = (roleDetails.dashboardUrl || '/private/assignables/details/:id').replace(
+      ':id',
+      instance.id
+    );
+  } else if (!object.finished) {
+    url = roleDetails.studentDetailUrl.replace(':id', instance.id).replace(':user', object.user);
+  } else {
+    url = roleDetails.evaluationDetailUrl.replace(':id', instance.id).replace(':user', object.user);
   }
 
   return {
@@ -291,14 +339,12 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     subject: showSubject ? subject : null,
     isNew: object?.timestamps?.open === undefined && !isTeacher,
     asset: prepareAsset(instance.assignable.asset),
-    onClick,
+    url,
   };
-  // }
-  // );
 }
 
 export function usePreparedInstance(instance, query, labels) {
-  const { isTeacher } = useAssignablesContext();
+  const isTeacher = useIsTeacher();
 
   const options = React.useMemo(
     () => ({
@@ -319,21 +365,8 @@ export function usePreparedInstance(instance, query, labels) {
   return results;
 }
 
-export default function NYACard({
-  instance,
-  showSubject,
-  labels: _labels,
-  classData,
-  //  asset,
-  // assignment,
-  // deadlineProps,
-  // subject,
-  // badge,
-  // variantTitle,
-  // role,
-  // isNew,
-  // labels
-}) {
+export default function NYACard({ instance, showSubject, labels: _labels, classData }) {
+  const isTeacher = useIsTeacher();
   const locale = useLocale();
   const useOwnLabels = useMemo(() => _labels === undefined, []);
 
@@ -374,50 +407,52 @@ export default function NYACard({
   }
 
   return (
-    <Box
-      key={preparedInstance?.id}
-      style={{
-        cursor: 'pointer',
-        height: '100%',
-      }}
-      onClick={preparedInstance?.onClick}
-    >
-      <LibraryCard
-        fullHeight
-        asset={{
-          ...preparedInstance?.asset,
-          hideDashboardIcons: true,
+    <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
+      <Box
+        key={preparedInstance?.id}
+        style={{
+          height: '100%',
         }}
-        variant="assigment"
-        dashboard
-        shadow
-        locale={locale}
-        assigment={preparedInstance?.assignment}
-        deadlineProps={preparedInstance?.deadlineProps}
-        subject={preparedInstance?.subject}
-        badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
-        variantTitle={
-          labels?.roles?.[preparedInstance?.assignable?.role] || preparedInstance?.assignable?.role
-        }
-        variantIcon={
-          <Box
-            style={{
-              position: 'relative',
-            }}
-          >
-            <ImageLoader
+      >
+        <LibraryCard
+          fullHeight
+          asset={{
+            ...preparedInstance?.asset,
+            hideDashboardIcons: true,
+          }}
+          variant="assigment"
+          role={isTeacher ? 'teacher' : 'student'}
+          dashboard
+          shadow
+          locale={locale}
+          assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
+          deadlineProps={preparedInstance?.deadlineProps}
+          subject={preparedInstance?.subject}
+          badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
+          variantTitle={
+            labels?.roles?.[preparedInstance?.assignable?.role]?.singular ||
+            preparedInstance?.assignable?.role
+          }
+          variantIcon={
+            <Box
               style={{
-                width: 12,
-                height: 12,
                 position: 'relative',
               }}
-              width={12}
-              height={12}
-              src={preparedInstance?.assignable?.roleDetails?.icon}
-            />
-          </Box>
-        }
-      />
-    </Box>
+            >
+              <ImageLoader
+                style={{
+                  width: 12,
+                  height: 12,
+                  position: 'relative',
+                }}
+                width={12}
+                height={12}
+                src={preparedInstance?.assignable?.roleDetails?.icon}
+              />
+            </Box>
+          }
+        />
+      </Box>
+    </Link>
   );
 }

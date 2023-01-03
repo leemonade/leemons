@@ -126,7 +126,13 @@ module.exports = [
     handler: 'program.addStudentsToClassesUnderNodeTree',
     authenticated: true,
   },
-
+  // Cycles
+  {
+    path: '/cycle',
+    method: 'PUT',
+    handler: 'cycle.putCycle',
+    authenticated: true,
+  },
   // Knowledges
   {
     path: '/knowledge',

@@ -1,5 +1,5 @@
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { listSessionClassesRequest } from '../request';
 
 export default function useSessionClasses(
@@ -24,12 +24,14 @@ export default function useSessionClasses(
     }
   );
 
+  const queryInfo = { ...query };
+
   if (query.isSuccess) {
-    query.data = query.data.classes;
+    queryInfo.data = query.data.classes;
   }
 
   if (showType && query.isSuccess) {
-    query.data = query.data.map((klass) => {
+    queryInfo.data = queryInfo.data.map((klass) => {
       const teacher = klass.teachers.find((t) => userAgents.includes(t.teacher));
       const teacherType = teacher?.type;
 
@@ -40,5 +42,5 @@ export default function useSessionClasses(
     });
   }
 
-  return query;
+  return queryInfo;
 }

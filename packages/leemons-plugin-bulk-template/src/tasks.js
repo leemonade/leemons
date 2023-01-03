@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const { keys } = require('lodash');
 const importTasks = require('./bulk/tasks');
+const _delay = require('./bulk/helpers/delay');
 
 async function initTasks(config) {
   const { services } = leemons.getPlugin('tasks');
@@ -28,6 +29,8 @@ async function initTasks(config) {
         console.log(`creator: ${creator.name}`);
         console.error(e);
       }
+
+      await _delay(3000);
     }
 
     return tasks;

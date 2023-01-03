@@ -33,6 +33,9 @@ module.exports = {
         defaultTo: null,
       },
     },
+    useOneStudentGroup: {
+      type: 'boolean',
+    },
     maxGroupAbbreviation: {
       type: 'integer',
       options: {
@@ -119,9 +122,18 @@ module.exports = {
         defaultTo: 1,
       },
     },
+    totalHours: {
+      type: 'integer',
+    },
+    hideStudentsToStudents: {
+      type: 'boolean',
+    },
     evaluationSystem: {
       // TODO: Add reference to plugins grade
       type: 'uuid',
+    },
+    totalHours: {
+      type: 'integer',
     },
   },
   primaryKey: {

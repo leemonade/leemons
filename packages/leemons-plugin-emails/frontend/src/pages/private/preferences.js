@@ -59,7 +59,6 @@ export default function Preferences() {
     try {
       store.saving = true;
       render();
-      console.log(getValues());
       await saveConfigRequest(getValues());
       addSuccessAlert(t('settingsSaved'));
     } catch (e) {

@@ -16,7 +16,7 @@ module.exports = async function update(
     );
     const version = await leemons
       .getPlugin('common')
-      .services.versionControl.parseId(assignable.id, null, { transacting });
+      .services.versionControl.parseId(assignable.id, { transacting });
 
     return { ...assignable, ...version };
 

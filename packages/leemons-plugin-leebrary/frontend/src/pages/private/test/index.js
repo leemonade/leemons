@@ -4,6 +4,7 @@ import { Button, Box, Paper, ContextContainer, Stack, TagifyInput } from '@bubbl
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { LocaleDuration } from '@common/LocaleDate';
+import { TextEditorInput } from '@common/components/TextEditorInput';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
@@ -138,6 +139,12 @@ export default function TestPage() {
         <ContextContainer title="LocaleDuration">
           <Box>
             <LocaleDuration seconds={200} />
+          </Box>
+        </ContextContainer>
+
+        <ContextContainer title="TextEditorInput">
+          <Box>
+            <TextEditorInput onChange={(val) => console.log(val)} useJSON />
           </Box>
         </ContextContainer>
       </ContextContainer>

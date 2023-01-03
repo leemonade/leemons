@@ -1,23 +1,22 @@
 /* eslint-disable no-unreachable */
-import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { isEmpty, isArray, find } from 'lodash';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { find, isArray, isEmpty } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
-import { Box, Stack, ActionButton, Grid, Col } from '@bubbles-ui/components';
+import { ActionButton, Box, Col, Grid, Stack } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useRequestErrorMessage, LocaleDate } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useRequestErrorMessage } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
 import {
-  Setup,
   BasicData as MediaBasicData,
-  PermissionsData,
   BookmarkBasicData,
+  PermissionsData,
+  Setup,
 } from '../../../components/AssetSetup';
 import { getAssetsByIdsRequest } from '../../../request';
-import { prepareAsset } from '../../../helpers/prepareAsset';
 
 const EditAssetPage = () => {
   const { file, setView, category, setCategory, categories, setAsset, asset } =
@@ -97,6 +96,11 @@ const EditAssetPage = () => {
                 />
               ) : (
                 <MediaBasicData
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
                   file={asset.file}
                   categoryId={asset.category}
                   asset={asset}

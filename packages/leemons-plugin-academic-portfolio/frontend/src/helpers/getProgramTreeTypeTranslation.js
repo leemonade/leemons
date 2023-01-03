@@ -14,5 +14,11 @@ export function getProgramTreeTypeTranslation(t) {
     opt3DescriptionNoCourse: t('programTreeType.opt3DescriptionNoCourse'),
     opt4Label: t('programTreeType.opt4Label'),
     opt4Description: t('programTreeType.opt4Description'),
+    opt1DescriptionCycle: t('programTreeType.opt1DescriptionCycle'),
+    opt1DescriptionNoCourseCycle: t('programTreeType.opt1DescriptionNoCourseCycle'),
+    opt2DescriptionCycle: t('programTreeType.opt2DescriptionCycle'),
+    opt2DescriptionNoCourseCycle: t('programTreeType.opt2DescriptionNoCourseCycle'),
+    opt3DescriptionCycle: t('programTreeType.opt3DescriptionCycle'),
+    opt3DescriptionNoCourseCycle: t('programTreeType.opt3DescriptionNoCourseCycle'),
   };
 }

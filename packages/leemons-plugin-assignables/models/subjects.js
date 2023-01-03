@@ -21,7 +21,8 @@ module.exports = {
       type: 'string',
     },
     curriculum: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
 };

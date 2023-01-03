@@ -2,6 +2,7 @@ module.exports = {
   connections: {
     mysql: {
       connector: 'bookshelf',
+      useCustomRollback: process.env['USE_CUSTOM_ROLLBACK'] === 'true',
       settings: {
         client: 'mysql',
         database: process.env['DATABASE_DATABASE'],
@@ -11,7 +12,7 @@ module.exports = {
         host: process.env['DATABASE_HOST'],
         pool: {
           min: 5,
-          max: 1000,
+          max: 50,
         },
       },
     },
@@ -24,6 +25,7 @@ module.exports = {
         password: process.env['NOSQL_PASSWORD'],
         port: process.env['NOSQL_PORT'],
         host: process.env['NOSQL_HOST'],
+        srv: process.env['NOSQL_SRV'],
         // replicaSet: process.env['NOSQL_CLUSTER'],
         pool: {
           min: 5,

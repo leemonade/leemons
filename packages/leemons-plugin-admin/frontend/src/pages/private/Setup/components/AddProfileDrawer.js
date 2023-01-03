@@ -122,7 +122,7 @@ const AddProfileDrawer = ({ opened, onClose, onSave, profile: _profile = {} }) =
   React.useEffect(() => {
     reset({});
     localesForm.reset({});
-    console.log('reseteamos', _profile);
+    // console.log('reseteamos', _profile);
     store.profile = null;
     if (_profile?.id) load();
   }, [JSON.stringify(_profile)]);

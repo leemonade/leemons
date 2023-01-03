@@ -191,7 +191,7 @@ function printInstructions(urls) {
  *
  * @param {import('webpack').Compiler} compiler
  */
-module.exports = async function parseWebpackMessage(compiler) {
+async function parseWebpackMessage(compiler) {
   const { isTTY } = process.stdout;
   const urls = prepareUrls(
     'http',
@@ -259,4 +259,9 @@ module.exports = async function parseWebpackMessage(compiler) {
       }
     }
   });
+}
+
+module.exports = {
+  parseWebpackMessage,
+  formatWebpackMessages,
 };

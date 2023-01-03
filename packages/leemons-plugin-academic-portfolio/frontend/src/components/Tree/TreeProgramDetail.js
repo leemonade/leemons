@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Controller, useForm} from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -11,18 +11,19 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import {SelectUsersForAddToClasses} from './SelectUsersForAddToClasses';
+import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeProgramDetail = ({
-                             item,
-                             center,
-                             messagesAddUsers,
-                             program,
-                             messages,
-                             onSave,
-                             onGoProgram,
-                             saving,
-                           }) => {
+  item,
+  center,
+  messagesAddUsers,
+  program,
+  messages,
+  onSave,
+  managersSelect,
+  onGoProgram,
+  saving,
+}) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
   const {
@@ -30,8 +31,8 @@ const TreeProgramDetail = ({
     control,
     setValue,
     handleSubmit,
-    formState: {errors},
-  } = useForm({defaultValues: program});
+    formState: { errors },
+  } = useForm({ defaultValues: program });
 
   React.useEffect(() => {
     reset(program);
@@ -54,12 +55,27 @@ const TreeProgramDetail = ({
             <Controller
               control={control}
               name="name"
-              rules={{required: messages.nameRequired}}
-              render={({field}) => (
+              rules={{ required: messages.nameRequired }}
+              render={({ field }) => (
                 <TextInput label={messages.nameLabel} error={errors.name} required {...field} />
               )}
             />
           </Box>
+          {managersSelect ? (
+            <Box>
+              <Controller
+                control={control}
+                name="managers"
+                render={({ field }) =>
+                  React.cloneElement(managersSelect, {
+                    label: messagesAddUsers.managersLabel,
+                    maxSelectedValues: 999,
+                    ...field,
+                  })
+                }
+              />
+            </Box>
+          ) : null}
           <Box>
             <Controller
               control={control}
@@ -69,7 +85,7 @@ const TreeProgramDetail = ({
                 maxLength: 8,
                 minLength: 1,
               }}
-              render={({field}) => (
+              render={({ field }) => (
                 <TextInput
                   label={messages.abbreviationLabel}
                   help={messages.abbreviationHelper}
@@ -86,7 +102,7 @@ const TreeProgramDetail = ({
               <Controller
                 name="credits"
                 control={control}
-                render={({field}) => (
+                render={({ field }) => (
                   <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
                 )}
               />
@@ -131,7 +147,8 @@ TreeProgramDetail.propTypes = {
   item: PropTypes.object,
   center: PropTypes.string,
   messagesAddUsers: PropTypes.object,
+  managersSelect: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export {TreeProgramDetail};
+export { TreeProgramDetail };

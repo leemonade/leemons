@@ -17,9 +17,9 @@ const menuItems = [
   {
     config: {
       key: 'curriculum',
-      order: 9,
-      iconSvg: '/public/assets/svgs/curriculum.svg',
-      activeIconSvg: '/public/assets/svgs/curriculum.svg',
+      order: 300,
+      iconSvg: '/public/curriculum/curriculum.svg',
+      activeIconSvg: '/public/curriculum/curriculum-active.svg',
       label: {
         en: 'Curriculum',
         es: 'Curriculum',

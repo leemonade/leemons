@@ -26,7 +26,14 @@ async function update(key, config, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateNotExistCalendarKey(key, { transacting });
-      return table.calendars.update({ key }, { ...config }, { transacting });
+      return table.calendars.update(
+        { key },
+        {
+          ...config,
+          metadata: JSON.stringify(config.metadata),
+        },
+        { transacting }
+      );
     },
     table.calendars,
     _transacting

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { isArray, isEmpty, isNil } from 'lodash';
+import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from 'lodash';
 import {
   Alert,
   Anchor,
@@ -122,14 +122,18 @@ export default function ProgramList() {
       let messageKey = 'common.create_done';
 
       if (!isEmpty(store.currentProgram)) {
-        const { name, abbreviation, credits, image, color } = values;
+        const { name, abbreviation, credits, image, color, totalHours, hideStudentsToStudents } =
+          values;
         body = {
           id: store.currentProgram.id,
           name,
           abbreviation,
           credits,
+          totalHours,
           image,
           color,
+          totalHours: totalHours || 0,
+          hideStudentsToStudents: !!hideStudentsToStudents,
         };
         apiCall = updateProgramRequest;
         messageKey = 'common.update_done';
@@ -259,9 +263,22 @@ export default function ProgramList() {
         value: key,
       }));
 
+      const values = store.currentProgram ? cloneDeep(store.currentProgram) : {};
+      if (values.cycles) {
+        const coursesById = keyBy(values.courses, 'id');
+        values.cycles = map(values.cycles, (cycle) => ({
+          ...cycle,
+          courses: map(cycle.courses, (courseId) => coursesById[courseId]?.index),
+        }));
+      }
+
       return {
         editable: isEmpty(store.currentProgram),
-        values: store.currentProgram || {},
+        values: {
+          ...values,
+          haveCycles: !!values.cycles?.length,
+          maxNumberOfCourses: values.courses?.length,
+        },
         labels: { title: isEmpty(store.currentProgram) ? title : editTitle },
         data: [
           {

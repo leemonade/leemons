@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDom from 'react-dom';
-import { QueryClientProvider, QueryClient } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import App from './App';
 import { Provider as GlobalProvider } from './contexts/global';
 
@@ -17,7 +17,7 @@ function ReactQueryDevtoolsWrapper() {
   );
 
   useEffect(() => {
-    window.toogleQueryDevtools = (persist) =>
+    window.toggleQueryDevtools = (persist) =>
       setShowQueryDevtools((s) => {
         if (persist) {
           window.localStorage.setItem('showReactQueryDevTools', !s);

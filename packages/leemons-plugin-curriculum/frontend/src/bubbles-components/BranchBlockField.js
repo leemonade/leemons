@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
-import { Box, Checkbox, Group, NumberInput } from '@bubbles-ui/components';
+import { Box, Checkbox, Group } from '@bubbles-ui/components';
 
 function BranchBlockField({
   messages,
@@ -40,42 +40,8 @@ function BranchBlockField({
       {watch('limitCharacters') ? (
         <Box>
           <Group grow align="start">
-            <Box>
-              <Controller
-                name="min"
-                control={control}
-                rules={{
-                  required: errorMessages.fieldMinRequired,
-                }}
-                render={({ field }) => (
-                  <NumberInput
-                    label={messages.fieldMinLabel}
-                    placeholder={messages.fieldMinPlaceholder}
-                    error={errors.min?.message}
-                    required
-                    {...field}
-                  />
-                )}
-              />
-            </Box>
-            <Box>
-              <Controller
-                name="max"
-                control={control}
-                rules={{
-                  required: errorMessages.fieldMaxRequired,
-                }}
-                render={({ field }) => (
-                  <NumberInput
-                    label={messages.fieldMaxLabel}
-                    placeholder={messages.fieldMaxPlaceholder}
-                    error={errors.max?.message}
-                    required
-                    {...field}
-                  />
-                )}
-              />
-            </Box>
+            <Box></Box>
+            <Box></Box>
           </Group>
         </Box>
       ) : null}

@@ -7,7 +7,7 @@ const converter = new showdown.Converter();
 
 async function importTests({ programs, qbanks, questions }) {
   const filePath = path.resolve(__dirname, '../data.xlsx');
-  const items = await itemsImport(filePath, 'te_tests', 40, true, true);
+  const items = await itemsImport(filePath, 'te_tests', 50, true, true);
 
   keys(items)
     .filter((key) => !isNil(key) && !isEmpty(key))

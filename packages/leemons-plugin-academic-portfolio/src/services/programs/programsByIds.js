@@ -7,19 +7,34 @@ const { getProgramGroups } = require('./getProgramGroups');
 const { getProgramCourses } = require('./getProgramCourses');
 const { getProgramSubstages } = require('./getProgramSubstages');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
+const { getProgramCycles } = require('./getProgramCycles');
 
-async function programsByIds(ids, { userSession, transacting } = {}) {
-  const [programs, programCenter, substages, courses, groups, knowledges, subjects, subjectTypes] =
-    await Promise.all([
-      table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-      table.programCenter.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-      getProgramSubstages(ids, { transacting }),
-      getProgramCourses(ids, { transacting }),
-      getProgramGroups(ids, { transacting }),
-      getProgramKnowledges(ids, { transacting }),
-      getProgramSubjects(ids, { transacting }),
-      getProgramSubjectTypes(ids, { transacting }),
-    ]);
+async function programsByIds(ids, { onlyProgram, userSession, transacting } = {}) {
+  if (onlyProgram) {
+    return table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting });
+  }
+
+  const [
+    programs,
+    programCenter,
+    substages,
+    courses,
+    groups,
+    knowledges,
+    subjects,
+    subjectTypes,
+    cycles,
+  ] = await Promise.all([
+    table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+    table.programCenter.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+    getProgramSubstages(ids, { transacting }),
+    getProgramCourses(ids, { transacting }),
+    getProgramGroups(ids, { transacting }),
+    getProgramKnowledges(ids, { transacting }),
+    getProgramSubjects(ids, { transacting }),
+    getProgramSubjectTypes(ids, { transacting }),
+    getProgramCycles(ids, { transacting }),
+  ]);
 
   let imagesById = null;
   if (userSession) {
@@ -39,6 +54,7 @@ async function programsByIds(ids, { userSession, transacting } = {}) {
   const subjectsByProgram = _.groupBy(subjects, 'program');
   const subjectTypesByProgram = _.groupBy(subjectTypes, 'program');
   const centersByProgram = _.groupBy(programCenter, 'program');
+  const cyclesByProgram = _.groupBy(cycles, 'program');
 
   const treeTypes = await Promise.all(
     programs.map((program) => getProgramTreeTypes(program, { transacting }))
@@ -60,6 +76,7 @@ async function programsByIds(ids, { userSession, transacting } = {}) {
     customSubstages: substageByProgram[program.id]
       ? _.filter(substageByProgram[program.id], ({ number }) => !_.isNil(number))
       : [],
+    cycles: cyclesByProgram[program.id] ? cyclesByProgram[program.id] : [],
   }));
 }
 

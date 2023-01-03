@@ -37,7 +37,7 @@ import { activeMenuItemDependencies } from '../../../helpers/activeMenuItemDepen
 import { getScaleLabel } from '../../../helpers/getScaleLabel';
 
 export default function PromotionsList() {
-  const [t] = useTranslateLoader(prefixPN('promotionsPage'));
+  const [t, translations] = useTranslateLoader(prefixPN('promotionsPage'));
   const [tC] = useTranslateLoader(prefixPN('conditionOptions'));
   const [tP] = useTranslateLoader(prefixPN('promotionDetail'));
 
@@ -250,7 +250,6 @@ export default function PromotionsList() {
 
   async function onSubmit(e) {
     try {
-      console.log(e);
       if (!store.saving) {
         store.saving = true;
         render();
@@ -291,8 +290,6 @@ export default function PromotionsList() {
     return m;
   }, [t]);
 
-  console.log(store.selectData);
-
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={headerValues} />
@@ -304,9 +301,11 @@ export default function PromotionsList() {
               <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
-                    <Box>
-                      <SelectCenter label={t('selectCenter')} onChange={onSelectCenter} />
-                    </Box>
+                    {translations && (
+                      <Box>
+                        <SelectCenter label={t('selectCenter')} onChange={onSelectCenter} />
+                      </Box>
+                    )}
                     {store.center && (
                       <Box>
                         <Tree

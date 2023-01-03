@@ -34,12 +34,10 @@ async function getCalendars(id, { withEvents, transacting } = {}) {
       'calendar'
     );
   }
-  return _.map(calendars, (calendar) => {
-    return {
-      ...calendar,
-      events: eventsByCalendar ? eventsByCalendar[calendar.id] || [] : [],
-    };
-  });
+  return _.map(calendars, (calendar) => ({
+    ...calendar,
+    events: eventsByCalendar ? eventsByCalendar[calendar.id] || [] : [],
+  }));
 }
 
 module.exports = { getCalendars };

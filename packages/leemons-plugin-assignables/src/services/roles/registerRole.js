@@ -4,7 +4,14 @@ const getRole = require('./getRole');
 
 module.exports = async function registerRole(
   role,
-  { transacting: t, teacherDetailUrl, studentDetailUrl, evaluationDetailUrl, ...data } = {}
+  {
+    transacting: t,
+    teacherDetailUrl,
+    studentDetailUrl,
+    evaluationDetailUrl,
+    dashboardUrl,
+    ...data
+  } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -38,6 +45,7 @@ module.exports = async function registerRole(
           teacherDetailUrl,
           studentDetailUrl,
           evaluationDetailUrl,
+          dashboardUrl,
           plugin: this.calledFrom,
           icon: data.menu.item.iconSvg,
         },
@@ -46,12 +54,19 @@ module.exports = async function registerRole(
 
       // EN: Save the localizations
       // ES: Guardar las localizaciones
-      const localizations = data.menu.item.label;
+      const plural = data.pluralName;
+      const singular = data.singularName;
 
       const multilanguageCommon = leemons.getPlugin('multilanguage').services.common.getProvider();
       await multilanguageCommon.addManyByKey(
-        leemons.plugin.prefixPN(`roles.${role}`),
-        localizations,
+        leemons.plugin.prefixPN(`roles.${role}.plural`),
+        plural,
+        { transacting }
+      );
+
+      await multilanguageCommon.addManyByKey(
+        leemons.plugin.prefixPN(`roles.${role}.singular`),
+        singular,
         { transacting }
       );
 

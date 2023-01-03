@@ -3,23 +3,30 @@ import { useForm } from 'react-hook-form';
 import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-/*
 import {
   Alert,
   Button,
-  FormControl,
-  Input,
-  Label,
+  TextInput,
   Modal,
   PageContainer,
-  PageHeader,
+  RadioGroup,
   Radio,
+  Box,
+  Textarea,
   Select,
+  ContextContainer,
+  Title,
+  Stack,
   Table,
-  useModal,
-} from 'leemons--ui';
-
- */
+  Text,
+  UserDisplayItem,
+} from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import {
+  DeleteBinIcon,
+  FamilyChildIcon,
+  SingleActionsGraduateMaleIcon,
+} from '@bubbles-ui/icons/outline';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -34,7 +41,6 @@ import {
 } from '@families/request';
 import { constants } from '@families/constants';
 import moment from 'moment';
-import { UserImage } from '@common/userImage';
 import { useAsync } from '@common/useAsync';
 import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -42,6 +48,7 @@ import hooks from 'leemons-hooks';
 import { PackageManagerService } from '@package-manager/services';
 import RelationSelect from '@families/components/relationSelect';
 import loadable from '@loadable/component';
+import { SearchUserDrawer, UserListBox } from '@families/components/';
 
 function dynamicImport(component) {
   return loadable(() =>
@@ -70,44 +77,29 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
       {
         Header: ' ',
         accessor: (currentUser) => (
-          <div className="text-left">
-            <FormControl>
-              <Radio
-                name="searchUserModalUser"
-                color="primary"
-                checked={currentUser.id === selectedUser?.id}
-                onChange={() => setSelectedUser(currentUser)}
-                value={currentUser.id}
-              />
-            </FormControl>
-          </div>
+          <Radio
+            name="searchUserModalUser"
+            checked={currentUser.id === selectedUser?.id}
+            onChange={() => setSelectedUser(currentUser)}
+            value={currentUser.id}
+          />
         ),
-        className: 'text-left',
       },
       {
         Header: t('table.email'),
-        accessor: (field) => (
-          <div className="flex flex-row items-center">
-            <UserImage />
-            <span className="pl-2">{field.email}</span>
-          </div>
-        ),
-        className: 'text-left',
+        accessor: (field) => <UserDisplayItem {...field} variant="email" />,
       },
       {
         Header: t('table.name'),
-        accessor: ({ name }) => <div className="text-center">{name}</div>,
-        className: 'text-center',
+        accessor: ({ name }) => <Text>{name}</Text>,
       },
       {
         Header: t('table.surname'),
-        accessor: ({ surname }) => <div className="text-center">{surname}</div>,
-        className: 'text-center',
+        accessor: ({ surnames }) => <Text>{surnames}</Text>,
       },
       {
         Header: t('table.created_at'),
         accessor: ({ created_at }) => moment(created_at).format('L'),
-        className: 'text-center',
       },
     ],
     [t, selectedUser]
@@ -165,106 +157,68 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
   if (error) return <ErrorAlert />;
   if (!users || !users.length) {
     return (
-      <>
-        <div className="text-sm text-secondary mb-6">{t('search_user_to_add')}</div>
-        <FormControl multiple={true}>
-          <div className="flex flex-row gap-4">
-            <Label text={t('search_by_name')} labelPosition="right">
-              <Radio
-                name="searchUsersFilter"
-                checked={selectedFilter === 'name'}
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                color="primary"
-                value="name"
-              />
-            </Label>
-            <Label text={t('search_by_email')} labelPosition="right">
-              <Radio
-                name="searchUsersFilter"
-                checked={selectedFilter === 'email'}
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                color="primary"
-                value="email"
-              />
-            </Label>
-          </div>
-        </FormControl>
-        <FormControl formError={inputValueRequired ? { message: tCommonForm('required') } : null}>
-          <Input
-            outlined={true}
-            className="w-full mt-6"
-            placeholder={t(`enter_${selectedFilter}`)}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-        </FormControl>
-        {users ? (
-          <Alert className="mt-4" color="error">
-            <label>{t('no_users_to_add')}</label>
-          </Alert>
-        ) : null}
-        <div className="text-right mt-6">
-          <Button color="primary" loading={loading} onClick={search}>
+      <Stack direction="column" spacing={2}>
+        <RadioGroup
+          label={t('search_user_to_add')}
+          name="searchUsersFilter"
+          data={[
+            { value: 'name', label: t('search_by_name') },
+            { value: 'email', label: t('search_by_email') },
+          ]}
+          onChange={setSelectedFilter}
+        />
+        <TextInput
+          placeholder={t(`enter_${selectedFilter}`)}
+          error={inputValueRequired ? tCommonForm('required') : ''}
+          value={inputValue}
+          onChange={setInputValue}
+        />
+        {users && <Alert severity="error">{t('no_users_to_add')}</Alert>}
+        <Box>
+          <Button loading={loading} onClick={search}>
             {t('search')}
           </Button>
-        </div>
-      </>
+        </Box>
+      </Stack>
     );
   }
   return (
-    <div>
-      <FormControl
+    <Box>
+      {/* <FormControl
         multiple={true}
         formError={!selectedUser && dirty ? { message: tCommonForm('required') } : null}
-      >
-        <Table columns={tableHeaders} data={users} />
-      </FormControl>
-
+      > */}
+      <Table columns={tableHeaders} data={users} />
       {type === 'guardian' ? (
-        <div className="flex flex-row mt-4 gap-4">
-          <FormControl
+        <Stack spacing={4}>
+          <RelationSelect
             label={t('guardian_relation')}
-            formError={
-              relationError === 'need-relation' ? { message: tCommonForm('required') } : null
-            }
-          >
-            <RelationSelect
-              value={selectedRelation}
+            error={relationError === 'need-relation' ? tCommonForm('required') : ''}
+            value={selectedRelation}
+            onChange={(e) => {
+              setRelationError(null);
+              setSelectedRelation(e);
+            }}
+          />
+          {selectedRelation === 'other' && (
+            <TextInput
+              label={t('specify_relation')}
+              error={relationError === 'need-other-relation' ? tCommonForm('required') : ''}
+              value={otherRelationValue}
               onChange={(e) => {
                 setRelationError(null);
-                setSelectedRelation(e.target.value);
+                setOtherRelationValue(e);
               }}
-              className="w-full max-w-xs"
             />
-          </FormControl>
-          {selectedRelation === 'other' ? (
-            <FormControl
-              label={t('specify_relation')}
-              formError={
-                relationError === 'need-other-relation'
-                  ? { message: tCommonForm('required') }
-                  : null
-              }
-            >
-              <Input
-                outlined={true}
-                value={otherRelationValue}
-                onChange={(e) => {
-                  setRelationError(null);
-                  setOtherRelationValue(e.target.value);
-                }}
-              />
-            </FormControl>
-          ) : null}
-        </div>
+          )}
+        </Stack>
       ) : null}
-
-      <div className="text-right mt-6">
+      <Box>
         <Button color="primary" loading={loading} onClick={add}>
           {t('add')}
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
@@ -295,15 +249,8 @@ function Detail() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [_permissions, setPermissions] = useState([]);
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
-
-  const [removeModal, toggleRemoveModal] = useModal({
-    animated: true,
-    title: t('remove_modal.title'),
-    message: t('remove_modal.message'),
-    cancelLabel: t('remove_modal.cancel'),
-    actionLabel: t('remove_modal.action'),
-    onAction: () => deleteFamily(),
-  });
+  const [removeModalOpened, setRemoveModalOpened] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const permissions = useMemo(() => {
     const response = {
@@ -314,7 +261,7 @@ function Detail() {
     };
     const permissionsByName = _.keyBy(_permissions, 'permissionName');
     _.forIn(response, (value, key) => {
-      const info = permissionsByName[constants.permissions[key]];
+      const info = permissionsByName[constants?.permissions[key]];
       if (info) {
         if (info.actionNames.indexOf('view') >= 0) value.view = true;
         if (info.actionNames.indexOf('update') >= 0) value.update = true;
@@ -322,11 +269,6 @@ function Detail() {
     });
     return response;
   }, [_permissions]);
-
-  const [modal, toggleModal] = useModal({
-    animated: true,
-    title: t(`assign_${addType}_to_family`),
-  });
 
   const goodDatasetConfig = useMemo(() => {
     const response = _.cloneDeep(datasetConfig);
@@ -369,10 +311,10 @@ function Detail() {
       } catch (e) {}
       const [{ permissions }, phoneNumbersInstalled] = await Promise.all([
         getPermissionsWithActionsIfIHaveRequest([
-          constants.permissions.basicInfo,
-          constants.permissions.customInfo,
-          constants.permissions.guardiansInfo,
-          constants.permissions.studentsInfo,
+          constants?.permissions.basicInfo,
+          constants?.permissions.customInfo,
+          constants?.permissions.guardiansInfo,
+          constants?.permissions.studentsInfo,
         ]),
         PackageManagerService.isPluginInstalled('leemons-plugin-families-emergency-numbers'),
       ]);
@@ -499,7 +441,7 @@ function Detail() {
   };
 
   const onCancelButton = () => {
-    if (family?.id) {
+    if (family.id) {
       setIsEditMode(false);
     } else {
       history.push('/private/families/list');
@@ -507,24 +449,24 @@ function Detail() {
   };
 
   const onDeleteButton = () => {
-    toggleRemoveModal();
+    setRemoveModalOpened(false);
   };
 
   const onAddGuardian = () => {
     setAddType('guardian');
-    toggleModal();
+    setModalOpened(true);
   };
 
   const onAddStudent = () => {
     setAddType('student');
-    toggleModal();
+    setModalOpened(true);
   };
 
   const addMember = (member) => {
     let value = getValues(addType);
     value = value || [];
     setValue(addType, [...value, member]);
-    toggleModal();
+    setModalOpened(!modalOpened);
   };
 
   const removeMember = (type, memberId) => {
@@ -538,181 +480,262 @@ function Detail() {
     setValue('emergencyPhoneNumbers', e);
   };
 
-  return 'Hay que remaquetar esta pagina con bubbles-ui';
-
-  /*
   return (
     <>
       {!error && !loading ? (
         <>
-          <Modal {...removeModal} />
-          <Modal {...modal} className="max-w-xl">
+          <Modal
+            opened={removeModalOpened}
+            onClose={() => setRemoveModalOpened(false)}
+            title={t('remove_modal.title')}
+          >
+            <Stack direction="column" spacing={4}>
+              <Text>{t('remove_modal.message')}</Text>
+              <Stack justifyContent="space-between" spacing={4}>
+                <Button onClick={() => setRemoveModalOpened(false)}>Cancel</Button>
+                <Button onClick={deleteFamily}>Remove</Button>
+              </Stack>
+            </Stack>
+          </Modal>
+          {/* <Modal
+            opened={modalOpened}
+            onClose={() => setModalOpened(false)}
+            title={t(`assign_${addType}_to_family`)}
+          >
             <SearchUsersModal
               t={t}
               type={addType}
               alreadyExistingMembers={members}
               onAdd={addMember}
             />
-          </Modal>
+          </Modal> */}
+          <SearchUserDrawer
+            opened={modalOpened}
+            onClose={() => setModalOpened(false)}
+            onBack={() => setModalOpened(false)}
+            t={t}
+            type={addType}
+            alreadyExistingMembers={members}
+            onAdd={addMember}
+          />
+          <AdminPageHeader
+            values={{ title: watch('name') }}
+            placeholders={{ title: t('title_placeholder') }}
+            editMode={isEditMode}
+            loading={saveLoading}
+            // registerFormTitle={
+            //   isEditMode
+            //     ? permissions.basicInfo.update
+            //       ? register('name', { required: tCommonForm('required') })
+            //       : null
+            //     : null
+            // }
+            // registerFormTitleErrors={errors.name}
+            // titlePlaceholder={t('title_placeholder')}
+            // saveButtonLoading={saveLoading}
+            buttons={{
+              new: isEditMode ? tCommonHeader('save') : '',
+              edit: isEditMode
+                ? tCommonHeader('cancel')
+                : family?.id
+                ? tCommonHeader('delete')
+                : '',
+              cancel: isEditMode ? '' : tCommonHeader('edit'),
+            }}
+            onSave={() => (formActions.isLoaded() ? formActions.submit() : null)}
+            onCancel={(e) => (isEditMode ? onCancelButton(e) : onDeleteButton(e))}
+            onEdit={onEditButton}
+            fullWidth
+          />
           <form onSubmit={handleSubmit(onSubmit)}>
-            <PageHeader
-              registerFormTitle={
-                isEditMode
-                  ? permissions.basicInfo.update
-                    ? register('name', { required: tCommonForm('required') })
-                    : null
-                  : null
-              }
-              registerFormTitleErrors={errors.name}
-              titlePlaceholder={t('title_placeholder')}
-              title={watch('name')}
-              saveButton={isEditMode ? tCommonHeader('save') : null}
-              saveButtonLoading={saveLoading}
-              onSaveButton={() => (formActions.isLoaded() ? formActions.submit() : null)}
-              cancelButton={
-                isEditMode ? tCommonHeader('cancel') : family?.id ? tCommonHeader('delete') : null
-              }
-              onCancelButton={(e) => (isEditMode ? onCancelButton(e) : onDeleteButton(e))}
-              editButton={isEditMode ? null : tCommonHeader('edit')}
-              onEditButton={onEditButton}
-            />
-            <div className="bg-primary-content">
-              <PageContainer>
-                <div className="flex flex-row gap-6">
-
+            <PageContainer fullWidth>
+              <Stack spacing={10} style={{ marginTop: 36, width: '100%' }}>
+                <Stack direction="column" spacing={6}>
+                  {permissions.guardiansInfo.view && (
+                    <UserListBox
+                      title={t('guardians')}
+                      icon={<FamilyChildIcon height={32} width={32} />}
+                      label="No tutors yet"
+                      // relationship={'Married'}
+                      type={'guardian'}
+                      isEditing={isEditMode}
+                      data={guardians}
+                      onClick={onAddGuardian}
+                      onRemove={removeMember}
+                      t={t}
+                      permissions={permissions}
+                    />
+                  )}
+                  {/*
                   {permissions.guardiansInfo.view ? (
-                    <div className="w-full">
-                      <div className="flex flex-row justify-between items-center">
-                        <div>{t('guardians')}</div>
-                        {isEditMode && guardians.length < 2 && permissions.guardiansInfo.update ? (
+                    <Box>
+                      <Stack justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Text>{t('guardians')}</Text>
+                        </Box>
+                        {isEditMode && guardians.length < 2 && permissions.guardiansInfo.update && (
                           <Button type="button" color="secondary" onClick={onAddGuardian}>
                             <PlusIcon className="w-6 h-6 mr-1" />
                             {t('add_guardian')}
                           </Button>
-                        ) : null}
-                      </div>
-
-                      <div className="flex flex-row">
+                        )}
+                      </Stack>
+                      <Stack className="flex flex-row">
                         {guardians.map((guardian) => (
-                          <div key={guardian.id} className="flex flex-row items-center p-4">
-                            <div>
-                              <UserImage user={guardian} />
-                            </div>
-                            <div className="ml-2">
-                              {guardian.name} {guardian.surname || ''}
-                              <div>
+                          <Stack alignItems="center" key={guardian.id}>
+                            <UserDisplayItem {...guardian} />
+                            <Box className="ml-2">
+                              <Text>
+                                {guardian.name} {guardian.surname || ''}
+                              </Text>
+                              <Text>
                                 {t(
                                   guardian.memberType.replace('plugins.families.detail_page.', '')
                                 )}
-                              </div>
-                            </div>
-                            {isEditMode && permissions.guardiansInfo.update ? (
-                              <TrashIcon
-                                className="w-5 ml-2 cursor-pointer"
+                              </Text>
+                            </Box>
+                            {isEditMode && permissions.guardiansInfo.update && (
+                              <DeleteBinIcon
                                 onClick={() => removeMember('guardian', guardian.id)}
                               />
-                            ) : null}
-                          </div>
+                            )}
+                          </Stack>
                         ))}
-                      </div>
-
+                      </Stack>
                       {guardians.length >= 2 && permissions.guardiansInfo.view ? (
-                        <div className="flex">
-                          <FormControl
-                            label={t('guardian_relation')}
-                            formError={errors.maritalStatus}
-                          >
-                            <Select
-                              {...register('maritalStatus')}
-                              outlined={true}
-                              disabled={!permissions.guardiansInfo.update}
-                            >
-                              <option value="..." disabled={true}>
-                                {t('maritalStatus.select_marital_status')}
-                              </option>
-                              <option value={t('maritalStatus.married', undefined, true)}>
-                                {t('maritalStatus.married')}
-                              </option>
-                              <option value={t('maritalStatus.divorced', undefined, true)}>
-                                {t('maritalStatus.divorced')}
-                              </option>
-                              <option value={t('maritalStatus.domestic_partners', undefined, true)}>
-                                {t('maritalStatus.domestic_partners')}
-                              </option>
-                              <option value={t('maritalStatus.cohabitants', undefined, true)}>
-                                {t('maritalStatus.cohabitants')}
-                              </option>
-                              <option value={t('maritalStatus.separated', undefined, true)}>
-                                {t('maritalStatus.separated')}
-                              </option>
-                            </Select>
-                          </FormControl>
-                        </div>
+                        <Select
+                          label={t('guardian_relation')}
+                          data={[
+                            { value: '...', label: t('maritalStatus.select_marital_status') },
+                            {
+                              value: t('maritalStatus.married', undefined, true),
+                              label: t('maritalStatus.married', undefined, true),
+                            },
+                            {
+                              value: t('maritalStatus.divorced', undefined, true),
+                              label: t('maritalStatus.divorced'),
+                            },
+                            {
+                              value: t('maritalStatus.domestic_partners', undefined, true),
+                              label: t('maritalStatus.domestic_partners'),
+                            },
+                            {
+                              value: t('maritalStatus.cohabitants', undefined, true),
+                              label: t('maritalStatus.cohabitants'),
+                            },
+                            {
+                              value: t('maritalStatus.separated', undefined, true),
+                              label: t('maritalStatus.separated'),
+                            },
+                          ]}
+                          disabled={!permissions.guardiansInfo.update}
+                        />
                       ) : null}
-                    </div>
+                    </Box>
                   ) : null}
+                        */}
+                  {permissions.studentsInfo.view && (
+                    <UserListBox
+                      title={t('students')}
+                      icon={<SingleActionsGraduateMaleIcon height={32} width={32} />}
+                      label="No students yet"
+                      // relationship={'Married'}
+                      type={'student'}
+                      isEditing={isEditMode}
+                      data={students}
+                      onClick={onAddStudent}
+                      onRemove={removeMember}
+                      t={t}
+                      permissions={permissions}
+                    />
+                  )}
+                  {/*
+                  permissions.studentsInfo.view ? (
+                    <Box>
+                      <Text>{t('students')}</Text>
+                      {isEditMode && permissions.studentsInfo.update ? (
+                        <Button type="button" color="secondary" onClick={onAddStudent}>
+                          <PlusIcon className="w-6 h-6 mr-1" />
+                          {t('add_student')}
+                        </Button>
+                      ) : null}
 
-
-                  {permissions.studentsInfo.view ? (
-                    <div className="w-full">
-                      <div className="flex flex-row justify-between items-center">
-                        <div>{t('students')}</div>
-                        {isEditMode && permissions.studentsInfo.update ? (
-                          <Button type="button" color="secondary" onClick={onAddStudent}>
-                            <PlusIcon className="w-6 h-6 mr-1" />
-                            {t('add_student')}
-                          </Button>
-                        ) : null}
-                      </div>
-
-                      <div className="flex flex-row">
+                      <Stack>
                         {students.map((student) => (
-                          <div key={student.id} className="flex flex-row items-center p-4">
-                            <div>
-                              <UserImage user={student} />
-                            </div>
-                            <div className="ml-2">
-                              {student.name} {student.surname || ''}
-                            </div>
-                            {isEditMode && permissions.studentsInfo.update ? (
-                              <TrashIcon
-                                className="w-5 ml-2 cursor-pointer"
-                                onClick={() => removeMember('student', student.id)}
-                              />
-                            ) : null}
-                          </div>
+                          <Box key={student.id}>
+                            <UserDisplayItem {...student} />
+                            {student.name} {student.surname || ''}
+                            {isEditMode && permissions.studentsInfo.update && (
+                              <DeleteBinIcon onClick={() => removeMember('student', student.id)} />
+                            )}
+                          </Box>
                         ))}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </PageContainer>
-            </div>
+                      </Stack>
+                    </Box>
+                  ) : null
+                  */}
+                </Stack>
+                <Stack direction="column" spacing={6} fullWidth>
+                  <UserListBox
+                    title={'Emergency Phone numbers'}
+                    icon={<FamilyChildIcon height={32} width={32} />}
+                    label="No Emergency Numbers"
+                    // relationship={'Married'}
+                    type={'phones'}
+                    isEditing={isEditMode}
+                    data={students}
+                    onClick={onAddStudent}
+                    onRemove={removeMember}
+                    t={t}
+                    permissions={permissions}
+                    fullWidth
+                  />
+                  {permissions.customInfo.view && (
+                    <ContextContainer title={t('other_information')}>
+                      <TextInput
+                        label="CRM Old ID"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <Textarea
+                        label="Family Address"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <TextInput
+                        label="Main Contact Phone"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <TextInput
+                        label="Visa Status"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                      />
+                      <Select
+                        label="Member of public Administration"
+                        placeholder="Placeholder"
+                        orientation="horizontal"
+                        data={[]}
+                      />
+                    </ContextContainer>
+                  )}
+                  <ContextContainer title={'Permissions'}></ContextContainer>
+                </Stack>
+              </Stack>
+            </PageContainer>
           </form>
-
-          {permissions.customInfo.view ? (
-            <div className="bg-primary-content">
-              <PageContainer>
-                <div>{t('other_information')}</div>
-
-                {form}
-              </PageContainer>
-            </div>
-          ) : null}
-
-          <EmergencyNumbers
+          {/* <EmergencyNumbers
             editMode={isEditMode}
             onChangePhoneNumbers={onChangePhoneNumbers}
             phoneNumbers={watch('emergencyPhoneNumbers')}
-          />
+          /> */}
         </>
       ) : (
         <ErrorAlert />
       )}
     </>
   );
-
-   */
 }
 
 export default Detail;

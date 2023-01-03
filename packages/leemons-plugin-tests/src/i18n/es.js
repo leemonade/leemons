@@ -66,7 +66,7 @@ module.exports = {
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
-    explanationLabel: 'Explicación',
+    explanationLabel: 'EXPLICACIÓN',
     caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Pistas',
     addClue: 'Añadir pista',
@@ -238,15 +238,15 @@ module.exports = {
     test: 'TEST',
     instructionsForTest: 'Instrucciones para hacer este test',
     clueWithoutPer:
-      'El uso de pistas no resta ninguna puntuación, es decir, puedes pedir pistas sin penalización.',
+      '<span><strong>El uso de pistas no resta ninguna puntuación</strong>, es decir, puedes pedir pistas sin penalización.</span>',
     clueWithPer:
-      'El uso de pistas resta un {per}% de la pregunta, es decir, restarán {points} por cada pista utilizada.',
+      '<span><strong>El uso de pistas resta un {per}% de la pregunta</strong>, es decir, restarán {points} por cada pista utilizada.</span>',
     questions: 'Preguntas',
-    perQuestion: 'Cada pregunta',
+    perQuestion: 'Puntos por pregunta',
     totalPoints: 'Puntuación total',
     minScore: 'Puntuación mínima',
     maxScore: 'Puntuación máxima',
-    minToApprove: 'Min. para aprobar',
+    minToApprove: 'Puntos para aprobar',
     importantInformation: 'Información importante',
     informationOnlyView: 'Este test esta en modo "solo consulta"',
     informationStart: 'La fecha de inicio para poder realizar este test es: {date}',
@@ -270,17 +270,16 @@ module.exports = {
     nextButton: 'Siguiente',
     finishButton: 'Finalizar',
     selectResponse: 'Seleccionar respuesta',
-    noBlankQuestions: 'No puedes dejar preguntas en blanco',
+    noBlankQuestions: '<strong>No puedes dejar preguntas en blanco</strong>',
     blankQuestions:
-      '<strong>Puedes dejar preguntas en blanco</strong> y estas no puntuarán (es decir, puntúan 0)',
+      '<span><strong>Puedes dejar preguntas en blanco </strong> y estas no puntuarán (es decir, puntúan 0)</span>',
     blankQuestionsScores:
-      '<strong>Puedes dejar preguntas en blanco</strong> y estas <strong>restaran el {per}%</strong> de su valor (es decir, puntúan {points})',
+      '<span><strong>Puedes dejar preguntas en blanco  y estas restaran el {per}%</strong> de su valor (es decir, puntúan {points})</span>',
     errorQuestions:
-      'Las <strong>contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}',
-    noErrorQuestions: 'Las contestaciones erroneas no restan puntos',
-    finishTestModalTitle: 'Finalizar y entregar este test',
-    finishTestModalDescription:
-      'Si haces click en "Confirmar entrega", tu test será enviado a un revisor y ya no podrás modificar ningun respuesta o responder a preguntas sin contestar <br/><br/> Una vez que confirmes la entrega, el sistema te mostrará los resultados del test (exceptuando las preguntas abiertas)',
+      '<span><strong>Las contestaciones erróneas restan el {per}%</strong> de su valor, es decir, puntúan {points}</span>',
+    noErrorQuestions: '<strong>Las contestaciones erroneas no restan puntos</strong>',
+    finishTestModalTitle: 'Test finalizado',
+    finishTestModalDescription: 'Tu respuestas han sido enviadas con éxito',
     confirmSubmission: 'Confirmar entrega',
     cancelSubmission: 'Cancelar',
     finishForceTestModalTitle: 'El tiempo establecido para completar este test ha finalizado.',
@@ -298,6 +297,9 @@ module.exports = {
     explanation: 'Explicación',
     returnToTable: 'Volver a la tabla',
     clueN: '{number}ª Pista',
+    pendingActivities: 'Actividades pendientes',
+    viewResults: 'Consultar resultados',
+    nextActivity: 'Siguiente actividad',
   },
   testAssign: {
     pageTitle: 'Asignar Test:',

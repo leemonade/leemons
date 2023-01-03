@@ -99,7 +99,7 @@ export default function UserList({ instance }) {
           />
           <Button>{labels?.assignStudent}</Button>
         </Stack> */}
-        <StudentsList labels={labels} students={filteredStudents} />
+        <StudentsList instance={instance} labels={labels} students={filteredStudents} />
       </ContextContainer>
     </>
   );

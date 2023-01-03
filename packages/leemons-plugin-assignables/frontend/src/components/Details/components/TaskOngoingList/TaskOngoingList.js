@@ -194,7 +194,6 @@ const TaskOngoingList = ({ instance }) => {
           withOverlay
           blur={10}
         />
-
         <TaskDeadlineHeader
           {...instanceData.taskDeadlineHeader}
           onDeadlineChange={onDeadlineChange}

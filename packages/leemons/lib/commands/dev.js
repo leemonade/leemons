@@ -1,4 +1,4 @@
-const apm = require('leemons-telemetry').start('Leemons App');
+const apm = require('leemons-telemetry').start(process.env.leemons_telemetry_name ?? 'Leemons App');
 const fs = require('fs-extra');
 
 const cluster = require('cluster');

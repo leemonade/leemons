@@ -121,7 +121,7 @@ async function events(isInstalled) {
         'plugins.bulk-template:init-users',
       ],
       async () => {
-        await initFamilies(config.profiles, config.users);
+        // await initFamilies(config.profiles, config.users);
       }
     );
 

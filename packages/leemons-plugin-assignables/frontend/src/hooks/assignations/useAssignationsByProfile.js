@@ -1,10 +1,10 @@
 import { getCookieToken } from '@users/session';
-import useAssignablesContext from '../useAssignablesContext';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import useAssignableInstances from '../assignableInstance/useAssignableInstancesQuery';
 import useAssignations from './useAssignations';
 
 export default function useAssignationsByProfile(ids) {
-  const { isTeacher } = useAssignablesContext();
+  const isTeacher = useIsTeacher();
 
   const token = getCookieToken(true);
   const user = token.centers[0].userAgentId;
@@ -13,20 +13,4 @@ export default function useAssignationsByProfile(ids) {
     return useAssignableInstances({ id: ids });
   }
   return useAssignations(ids?.map((id) => ({ instance: id, user })));
-
-  // useEffect(async () => {
-  //   if (isTeacher) {
-  //     const teacherResults = await getAssignableInstances({ ids });
-
-  //     setResults(teacherResults);
-  //   } else {
-  //     const studentResults = await getAssignations({ ids, user });
-
-  //     setResults(studentResults);
-  //   }
-
-  //   setLoading(false);
-  // }, [isTeacher, ids, user]);
-
-  // return [results, loading];
 }

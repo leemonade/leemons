@@ -9,6 +9,8 @@ import {
   ContextContainer,
   UserDisplayItem,
   Paragraph,
+  Switch,
+  Box,
 } from '@bubbles-ui/components';
 import { SelectUserAgent } from '@users/components';
 import { useForm, Controller } from 'react-hook-form';
@@ -47,6 +49,7 @@ NonAssignableStudents.propTypes = {
     unableToAssignStudentsMessage: PropTypes.string,
   }),
 };
+
 export default function SelectClass({
   labels,
   profiles,
@@ -54,11 +57,15 @@ export default function SelectClass({
   value,
   defaultValue,
   groupedClassesWithSelectedSubjects,
+  showResultsCheck,
+  showCorrectAnswersCheck,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       excluded: [],
       ...defaultValue,
+      showResults: true,
+      showCorrectAnswers: true,
       showExcluded: _.isNil(defaultValue?.showExcluded)
         ? defaultValue?.excluded?.length > 0
         : defaultValue?.showExcluded,
@@ -68,7 +75,7 @@ export default function SelectClass({
   const { classes, nonAssignableStudents, assignableStudents } = groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
-    const handleChange = (data) => {
+    const handleChange = (data, { name: fieldChanged } = {}) => {
       if (!data?.assignees) {
         return;
       }
@@ -104,7 +111,11 @@ export default function SelectClass({
       });
 
       if (assignees.length) {
-        if (!value || !_.isEqual(value, assignees)) {
+        if (
+          !value ||
+          !_.isEqual(value, assignees) ||
+          ['addNewClassStudents', 'showResults', 'showCorrectAnswers'].includes(fieldChanged)
+        ) {
           onChange(assignees, data);
         }
       } else if (!value || value?.length) {
@@ -166,34 +177,71 @@ export default function SelectClass({
       {!!nonAssignableStudents?.length && (
         <NonAssignableStudents users={nonAssignableStudents} labels={labels} />
       )}
-      <Controller
-        name="showExcluded"
-        control={control}
-        render={({ field: { value: show, onChange: onToggle } }) => (
-          <ConditionalInput
-            label={labels?.excludeStudents}
-            value={!!show}
-            showOnTrue
-            onChange={onToggle}
-            render={() => (
-              <Controller
-                name="excluded"
-                control={control}
-                render={({ field }) => (
-                  <SelectUserAgent
-                    {...field}
-                    clearable={labels?.clearStudents}
-                    label={labels?.excludeStudents}
-                    maxSelectedValues={0}
-                    users={assignableStudents}
-                    profiles={profiles}
-                  />
-                )}
+      <Box>
+        <Controller
+          name="addNewClassStudents"
+          control={control}
+          render={({ field }) => (
+            <Switch {...field} label={labels?.addNewClassStudents} checked={field.value} />
+          )}
+        />
+        <Controller
+          name="showExcluded"
+          control={control}
+          render={({ field: { value: show, onChange: onToggle } }) => (
+            <ConditionalInput
+              label={labels?.excludeStudents}
+              value={!!show}
+              showOnTrue
+              onChange={onToggle}
+              render={() => (
+                <Controller
+                  name="excluded"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectUserAgent
+                      {...field}
+                      clearable={labels?.clearStudents}
+                      label={labels?.excludeStudents}
+                      maxSelectedValues={0}
+                      users={assignableStudents}
+                      profiles={profiles}
+                    />
+                  )}
+                />
+              )}
+            />
+          )}
+        />
+        {showResultsCheck && (
+          <Controller
+            control={control}
+            name={'showResults'}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showResults}
               />
             )}
           />
         )}
-      />
+        {showCorrectAnswersCheck && (
+          <Controller
+            control={control}
+            name={'showCorrectAnswers'}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showCorrectAnswers}
+              />
+            )}
+          />
+        )}
+      </Box>
     </ContextContainer>
   );
 }
@@ -205,6 +253,7 @@ SelectClass.propTypes = {
     unableToAssignStudentsMessage: PropTypes.string,
     matchingStudents: PropTypes.string,
     noStudentsToAssign: PropTypes.string,
+    addNewClassStudents: PropTypes.string,
   }),
   profiles: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
@@ -226,5 +275,9 @@ SelectClass.propTypes = {
     assignees: PropTypes.arrayOf(PropTypes.string),
     excluded: PropTypes.arrayOf(PropTypes.string),
     showExcluded: PropTypes.bool,
+    showResults: PropTypes.bool,
+    showCorrectAnswers: PropTypes.bool,
   }),
+  showResultsCheck: PropTypes.bool,
+  showCorrectAnswersCheck: PropTypes.bool,
 };

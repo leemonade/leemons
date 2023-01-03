@@ -57,9 +57,10 @@ module.exports = async function createAssignable(
             )
           );
         } catch (e) {
-          throw new Error(
-            "Some of the related assignables don't exists or you don't have permissions to access them"
-          );
+          e.message =
+            "Some of the related assignables don't exists or you don't have permissions to access them";
+
+          throw e;
         }
       }
 
@@ -68,8 +69,20 @@ module.exports = async function createAssignable(
       let asset;
       try {
         if (!_id) {
+          console.log(subjects);
+          const assetProgram = subjects?.length ? subjects[0].program : null;
+          const assetSubjects = subjects?.length
+            ? subjects.map(({ subject, level }) => ({ subject, level }))
+            : null;
+
           const savedAsset = await saveAsset(
-            { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
+            {
+              ...assignableAsset,
+              program: assetProgram,
+              subjects: assetSubjects,
+              category: `assignables.${assignable.role}`,
+              public: true,
+            },
             { published: false, userSession, transacting }
           );
 
@@ -78,7 +91,8 @@ module.exports = async function createAssignable(
           asset = assignableAsset;
         }
       } catch (e) {
-        throw new Error(`Error creating the asset: ${e.message}`);
+        e.message = `Error creating the asset: ${e.message}`;
+        throw e;
       }
 
       // EN: Create the resources
@@ -177,7 +191,8 @@ module.exports = async function createAssignable(
 
         return { id: assignableCreated.id, ...assignable, resources: resourcesToSave };
       } catch (e) {
-        throw new Error(`Failed to create assignable: ${e.message}`);
+        e.message = `Failed to create assignable: ${e.message}`;
+        throw e;
       }
     },
     assignables,

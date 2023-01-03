@@ -50,7 +50,7 @@ const TreeClassDetail = ({
   const {openConfirmationModal} = useLayout();
   const [store, render] = useStore({
     createMode,
-    page: createMode ? 2 : 1,
+    page: createMode ? '2' : '1',
   });
   const {
     reset,
@@ -74,12 +74,12 @@ const TreeClassDetail = ({
     reset({
       ...(classes?.[0].subject || {}),
       // eslint-disable-next-line no-nested-ternary
-      course: classes[0]
+      course: classes?.[0]
         ? isArray(classes[0].courses)
           ? map(classes[0].courses, 'id')
-          : classes[0].courses.id
+          : classes[0].courses?.id
         : null,
-      color: classes[0] ? classes[0].color : null,
+      color: classes?.[0] ? classes[0].color : null,
       subjectType,
       knowledge,
     });
@@ -155,12 +155,12 @@ const TreeClassDetail = ({
       <RadioGroup
         variant="icon"
         data={[
-          {label: messages.basicInformation, value: 1},
+          {label: messages.basicInformation, value: '1'},
           {
             label: messages.groupsOfClasse,
-            value: 2,
+            value: '2',
           },
-          {label: messages.studentsEnrolled, value: 3},
+          {label: messages.studentsEnrolled, value: '3'},
         ]}
         fullWidth
         onChange={(page) => {
@@ -169,7 +169,7 @@ const TreeClassDetail = ({
         }}
         value={store.page}
       />
-      {store.page === 1 ? (
+      {store.page === '1' ? (
         <form onSubmit={handleSubmit(onBeforeSaveSubject)} autoComplete="off">
           <ContextContainer direction="column" fullWidth>
             <Box>
@@ -198,7 +198,7 @@ const TreeClassDetail = ({
               />
             </Box>
 
-            {program.maxNumberOfCourses > 0 ? (
+            {program.maxNumberOfCourses > 1 ? (
               <Box>
                 <Controller
                   control={control}
@@ -287,76 +287,114 @@ const TreeClassDetail = ({
           </ContextContainer>
         </form>
       ) : null}
-      {store.page === 2 ? (
+      {store.page === '2' ? (
         <Box>
-          <Box>
-            <Button
-              variant="light"
-              leftIcon={<AddCircleIcon/>}
-              disabled={store.createMode}
-              onClick={() => {
-                onNew(treeItem);
-              }}
-            >
-              {messages.newClassroom}
-            </Button>
-          </Box>
-          <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
-            {tabs}
-            {classes.map((item) => (
-              <TabPanel
+          {!program.useOneStudentGroup && (
+            <Box>
+              <Button
+                variant="light"
+                leftIcon={<AddCircleIcon/>}
                 disabled={store.createMode}
-                key={item.id}
-                label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+                onClick={() => {
+                  onNew(treeItem);
+                }}
               >
-                <TreeClassroomDetail
-                  messagesAddUsers={messagesAddUsers}
-                  removeUserFromClass={removeUserFromClass}
-                  program={program}
-                  classe={item}
-                  messages={messages}
-                  saving={saving}
-                  removing={removing}
-                  onSave={onSaveClass}
-                  center={center}
-                  item={treeItem}
-                  onRemoveClass={onRemoveClass}
-                  addClassUsers={addClassUsers}
-                  teacherSelect={teacherSelect}
-                />
-              </TabPanel>
-            ))}
-          </Tabs>
+                {messages.newClassroom}
+              </Button>
+            </Box>
+          )}
+          {program.useOneStudentGroup ? (
+            <TreeClassroomDetail
+              messagesAddUsers={messagesAddUsers}
+              removeUserFromClass={removeUserFromClass}
+              program={program}
+              classe={classes?.[0]}
+              messages={messages}
+              saving={saving}
+              removing={removing}
+              onSave={onSaveClass}
+              center={center}
+              item={treeItem}
+              onRemoveClass={onRemoveClass}
+              addClassUsers={addClassUsers}
+              teacherSelect={teacherSelect}
+            />
+          ) : (
+            <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
+              {tabs}
+              {classes?.map((item) => (
+                <TabPanel
+                  disabled={store.createMode}
+                  key={item.id}
+                  label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+                >
+                  <TreeClassroomDetail
+                    messagesAddUsers={messagesAddUsers}
+                    removeUserFromClass={removeUserFromClass}
+                    program={program}
+                    classe={item}
+                    messages={messages}
+                    saving={saving}
+                    removing={removing}
+                    onSave={onSaveClass}
+                    center={center}
+                    item={treeItem}
+                    onRemoveClass={onRemoveClass}
+                    addClassUsers={addClassUsers}
+                    teacherSelect={teacherSelect}
+                  />
+                </TabPanel>
+              ))}
+            </Tabs>
+          )}
         </Box>
       ) : null}
 
-      {store.page === 3 ? (
+      {store.page === '3' ? (
         <Box>
-          <Tabs onTabClick={selectClass}>
-            {classes.map((item) => (
-              <TabPanel
-                disabled={store.createMode}
-                key={item.id}
-                label={item.groups?.abbreviation || item.groups?.name || item.treeName}
-              >
-                <TreeClassroomUsersDetail
-                  messagesAddUsers={messagesAddUsers}
-                  removeUserFromClass={removeUserFromClass}
-                  program={program}
-                  classe={item}
-                  messages={messages}
-                  saving={saving}
-                  removing={removing}
-                  onSave={onSaveClass}
-                  center={center}
-                  item={treeItem}
-                  onRemoveClass={onRemoveClass}
-                  addClassUsers={addClassUsers}
-                  teacherSelect={teacherSelect}
-                />
-              </TabPanel>
-            ))}
-          </Tabs>
+          {program.useOneStudentGroup ? (
+            <TreeClassroomUsersDetail
+              messagesAddUsers={messagesAddUsers}
+              removeUserFromClass={removeUserFromClass}
+              program={program}
+              classe={classes?.[0]}
+              messages={messages}
+              saving={saving}
+              removing={removing}
+              onSave={onSaveClass}
+              center={center}
+              item={treeItem}
+              onRemoveClass={onRemoveClass}
+              addClassUsers={addClassUsers}
+              teacherSelect={teacherSelect}
+            />
+          ) : (
+            <Tabs onTabClick={selectClass}>
+              {classes.map((item) => (
+                <TabPanel
+                  disabled={store.createMode}
+                  key={item.id}
+                  label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+                >
+                  <TreeClassroomUsersDetail
+                    messagesAddUsers={messagesAddUsers}
+                    removeUserFromClass={removeUserFromClass}
+                    program={program}
+                    classe={item}
+                    messages={messages}
+                    saving={saving}
+                    removing={removing}
+                    onSave={onSaveClass}
+                    center={center}
+                    item={treeItem}
+                    onRemoveClass={onRemoveClass}
+                    addClassUsers={addClassUsers}
+                    teacherSelect={teacherSelect}
+                  />
+                </TabPanel>
+              ))}
+            </Tabs>
+          )}
         </Box>
       ) : null}
     </ContextContainer>

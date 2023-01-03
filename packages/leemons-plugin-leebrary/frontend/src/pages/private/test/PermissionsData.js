@@ -133,7 +133,7 @@ const PermissionsData = ({ sharing }) => {
         },
         editable: false,
         valueRender: (value) => <UserDisplayItem {...value} variant="inline" size="xs" />,
-        style: { width: '60%' },
+        style: { width: '50%' },
       },
       {
         Header: 'Role',
@@ -198,6 +198,7 @@ const PermissionsData = ({ sharing }) => {
                         columns={USERS_COLUMNS}
                         labels={USER_LABELS}
                         showHeaders={false}
+                        forceShowInputs
                         sortable={false}
                         onBeforeAdd={checkIfUserIsAdded}
                         resetOnAdd

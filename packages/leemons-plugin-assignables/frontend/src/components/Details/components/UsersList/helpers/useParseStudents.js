@@ -1,16 +1,20 @@
 import React, { useMemo } from 'react';
 import _ from 'lodash';
-import { LocaleDate, LocaleDuration, unflatten } from '@common';
+import { LocaleDate, LocaleDuration, unflatten, useStore } from '@common';
 import dayjs from 'dayjs';
 import { getUserAgentsInfoRequest } from '@users/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { UserDisplayItem } from '@bubbles-ui/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import UnreadMessages from '@comunica/UnreadMessages';
-import getStatus from './getStatus';
-import getActions from './getActions';
+import { useLayout } from '@layout/context';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import prefixPN from '../../../../../helpers/prefixPN';
+import getActions from './getActions';
+import getStatus from './getStatus';
 
 function useUserAgentsInfo(students) {
   const users = students.map((student) => student.user);
@@ -67,6 +71,12 @@ export default function useParseStudents(instance, statusLabels) {
   const subjects = useClassesSubjects(instance?.classes);
   const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
 
+  const { openConfirmationModal } = useLayout();
+  const [store, render] = useStore({
+    rememberType: 'open',
+  });
+  const [, , , getErrorMessage] = useRequestErrorMessage();
+
   const localizations = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
@@ -78,6 +88,23 @@ export default function useParseStudents(instance, statusLabels) {
 
     return {};
   }, [translations]);
+
+  async function reminder({ user }) {
+    openConfirmationModal({
+      title: localizations.sendReminder,
+      onConfirm: async () => {
+        try {
+          await sendReminder({
+            assignableInstanceId: instance.id,
+            users: [user],
+          });
+          addSuccessAlert(localizations.reminderSended);
+        } catch (err) {
+          addErrorAlert(getErrorMessage(err));
+        }
+      },
+    })();
+  }
 
   return useMemo(() => {
     if (!instance?.students?.length) {
@@ -110,7 +137,7 @@ export default function useParseStudents(instance, statusLabels) {
           '-'
         ),
       score: getStudentAverageScore(student),
-      actions: getActions(student, instance, localizations, subjects),
+      actions: getActions(student, instance, localizations, subjects, { reminder }),
       userInfo: student.userInfo,
     }));
   }, [students, subjects]);

@@ -91,10 +91,7 @@ export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
   }
 
   // Add a loading property
-  let loading = false;
-  if (isValidating || (data === undefined && !error)) {
-    loading = true;
-  }
+  const loading = !data && !error;
 
   // Return in array for letting the user decide the names
   return [data, error, loading];

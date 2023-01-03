@@ -1,26 +1,48 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react';
-import { isEmpty, isNil, isArray } from 'lodash';
-import { useParams, useHistory } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { isArray, isEmpty, isNil } from 'lodash';
+import { useHistory, useParams } from 'react-router-dom';
 import { Box, Stack } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, unflatten } from '@common';
-import {
-  Setup,
-  BasicData,
-  ConfigData,
-  ContentData,
-  InstructionData,
-} from '../../../components/TaskSetupPage';
+import { unflatten, useProcessTextEditor, useSearchParams, useStore } from '@common';
+import { BasicData, ContentData, InstructionData, Setup } from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
 import publishTaskRequest from '../../../request/task/publishTask';
 import getTaskRequest from '../../../request/task/getTask';
 import useObserver from '../../../helpers/useObserver';
 
+async function processDevelopment({ values, store, processTextEditor }) {
+  const force = !!store.currentTask?.published;
+
+  const developments = values?.metadata?.development;
+  if (developments?.length || store.currentTask?.metadata?.development?.length) {
+    const length = Math.max(
+      developments?.length ?? 0,
+      store.currentTask?.metadata?.development?.length ?? 0
+    );
+    const promises = [];
+
+    for (let i = 0; i < length; i++) {
+      const html = developments[i]?.development;
+      const oldHtml = store.currentTask?.metadata?.development?.[i]?.development;
+
+      promises.push(
+        processTextEditor(html, oldHtml, { force }).then(
+          (development) => development && { development }
+        )
+      );
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    values.metadata.development = (await Promise.all(promises)).filter(Boolean);
+  }
+}
+
 export default function TaskSetupPage() {
+  const searchParams = useSearchParams();
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
   const loading = useRef(null);
@@ -29,6 +51,8 @@ export default function TaskSetupPage() {
     taskName: null,
     headerHeight: null,
   });
+
+  const processTextEditor = useProcessTextEditor();
 
   const { useObserver: useSaveObserver, emitEvent, subscribe, unsubscribe } = useObserver();
 
@@ -39,6 +63,10 @@ export default function TaskSetupPage() {
 
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
+      // console.log(values.metadata?.development);
+      await processDevelopment({ values, store, processTextEditor });
+      // console.log(values.metadata.development);
+
       const body = {
         gradable: false,
         ...values,
@@ -61,6 +89,8 @@ export default function TaskSetupPage() {
         messageKey = 'update_done';
       }
 
+      const isCreating = searchParams.has('fromNew') || !store?.currentTask?.id;
+
       const {
         task: { fullId },
       } = await saveTaskRequest(store?.currentTask?.id, body);
@@ -76,7 +106,7 @@ export default function TaskSetupPage() {
       history.push(
         redirectTo === 'library'
           ? '/private/tasks/library'
-          : `/private/tasks/library/edit/${fullId}`
+          : `/private/tasks/library/edit/${fullId}${isCreating ? '?fromNew' : ''}`
       );
 
       emitEvent('taskSaved');
@@ -254,17 +284,27 @@ export default function TaskSetupPage() {
             content: (
               <BasicData
                 {...basicData}
+                advancedConfig={{
+                  alwaysOpen: true,
+                  fileToRight: true,
+                  colorToRight: true,
+                  program: { show: true, required: true },
+                  subjects: { show: true, required: true, showLevel: true, maxOne: false },
+                }}
                 useObserver={useSaveObserver}
                 onNameChange={handleOnNameChange}
               />
             ),
             status: 'OK',
           },
+          /*
           {
             label: configData.step_label,
             content: <ConfigData useObserver={useSaveObserver} {...configData} />,
             status: 'OK',
           },
+
+           */
           {
             label: contentData.step_label,
             content: <ContentData useObserver={useSaveObserver} {...contentData} />,

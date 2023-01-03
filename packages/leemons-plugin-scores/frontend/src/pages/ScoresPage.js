@@ -1,12 +1,21 @@
 import React from 'react';
-import { Box, createStyles } from '@bubbles-ui/components';
-import PeriodSelector from '@scores/components/PeriodSelector/PeriodSelector';
 import Notebook from '@scores/components/Notebook';
-import { usePeriods } from '@scores/hooks';
-import { omitBy, isNil, isEqual } from 'lodash';
+import { Box, createStyles } from '@bubbles-ui/components';
+import { Filters } from '../components/ScoresPage/Filters';
+import { Header } from '../components/ScoresPage/Header';
 
 const useStyles = createStyles((theme) => ({
-  root: { display: 'flex', flexDirection: 'row' },
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[5],
+    height: '100%',
+  },
+  headerContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[5],
+  },
 }));
 
 export default function ScoresPage() {
@@ -18,48 +27,15 @@ export default function ScoresPage() {
   /*
     --- State ---
   */
-  const [isOpened, setIsOpened] = React.useState(true);
-  const [periodFetchingFilters, setPeriodFetchingFilters] = React.useState({});
   const [filters, setFilters] = React.useState({});
-
-  const { data: periodsResponse } = usePeriods({
-    page: 0,
-    size: 9999,
-    query: omitBy(periodFetchingFilters, isNil),
-  });
-  const periods = periodsResponse?.items;
 
   return (
     <Box className={classes.root}>
-      <PeriodSelector
-        fields={{
-          center: true,
-          program: true,
-          course: true,
-          subject: true,
-          group: true,
-        }}
-        requiredFields={['program', 'course', 'subject', 'group']}
-        fixed
-        opened={isOpened}
-        periods={periods || []}
-        onPeriodChange={(v) => {
-          if (
-            v.program !== periodFetchingFilters.program ||
-            v.course !== periodFetchingFilters.course
-          ) {
-            setPeriodFetchingFilters({
-              program: v.program,
-            });
-          }
-        }}
-        onPeriodSubmit={(v) => {
-          if (!isEqual(v, filters)) {
-            setFilters(v);
-          }
-        }}
-      />
-      <Notebook isOpened={isOpened} onOpenChange={setIsOpened} filters={filters} />
+      <Box className={classes.headerContainer}>
+        <Header variant={'scoresPage'} />
+        <Filters onChange={setFilters} />
+      </Box>
+      <Notebook filters={filters} />
     </Box>
   );
 }

@@ -13,6 +13,14 @@ module.exports = {
       },
        */
     },
+    regionalConfig: {
+      type: 'string',
+      /*
+      references: {
+        collection: 'plugins_academic-calendar::regional-config',
+      },
+       */
+    },
     allCoursesHaveSameConfig: {
       type: 'boolean',
     },
@@ -20,40 +28,40 @@ module.exports = {
       type: 'boolean',
     },
     courseDates: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       /*
       {courseID: {startDate: Date, endDate: Date}}
+      */
+    },
+    courseEvents: {
+      type: 'text',
+      textType: 'mediumText',
+      /*
+        {courseId: [{
+          periodName: String,
+          dayType: 'schoolDays' || 'nonSchoolDays',
+          withoutOrdinaryDays: Boolean,
+          startDate: Date,
+          endDate: Date || null,
+          color: String
+        }]
+        }
+      */
+    },
+    substagesDates: {
+      type: 'text',
+      textType: 'mediumText',
+      /*
+      {courseId: {substageId: {startDate: Date, endDate: Date}}}
       */
     },
     allCoursesHaveSameDays: {
       type: 'boolean',
     },
-    courseDays: {
-      type: 'json',
-      /*
-      Se almacenan los weekDay de la semana
-      {courseID: [1,2,5]}
-      */
-    },
-    allCoursesHaveSameHours: {
-      type: 'boolean',
-    },
-    allDaysHaveSameHours: {
-      type: 'boolean',
-    },
-    courseHours: {
-      type: 'json',
-      /*
-      Se almacenan los weekDay de la semana
-      {courseId: {
-      1: {startDate: Date, endDate: Date},
-      2: {startDate: Date, endDate: Date},
-      5: {startDate: Date, endDate: Date}
-      }}
-      */
-    },
     breaks: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
       /*
       [{name: 'Recreo', courses: [courseId], startDate: Date, endDate: Date}]
       */

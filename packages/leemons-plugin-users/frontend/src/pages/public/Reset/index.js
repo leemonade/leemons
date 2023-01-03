@@ -79,7 +79,6 @@ export default function Reset() {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
       await resetRequest(getToken(), data.password);
       goLoginPage(history);
     } catch (err) {

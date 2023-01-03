@@ -31,19 +31,23 @@ module.exports = {
       type: 'richtext',
     },
     submissions: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     preTask: {
       type: 'string',
     },
     preTaskOptions: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     selfReflection: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     feedback: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     instructionsForTeacher: {
       type: 'richtext',

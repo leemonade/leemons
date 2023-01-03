@@ -8,9 +8,12 @@ async function postCurriculum(ctx) {
 }
 
 async function getCurriculum(ctx) {
+  /*
+  Old indexs
   try {
     await curriculumService.recalculeAllIndexes(ctx.request.params.id, ctx.state.userSession);
   } catch (e) {}
+   */
   const [curriculum] = await curriculumService.curriculumByIds(ctx.request.params.id, {
     ...ctx.request.body,
     userSession: ctx.state.userSession,

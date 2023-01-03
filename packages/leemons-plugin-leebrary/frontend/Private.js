@@ -18,21 +18,19 @@ export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
-    <div>
-      <Switch>
-        <Route path={`${path}/test-permissions/:asset`}>
-          <TestPermissionsPage session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/test`}>
-          <TestPage session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/upload`}>
-          <UploadPage session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-        <Route path={`${path}/`}>
-          <HomePage session={session} fallback={<LoadingOverlay visible />} />
-        </Route>
-      </Switch>
-    </div>
+    <Switch>
+      <Route path={`${path}/test-permissions/:asset`}>
+        <TestPermissionsPage session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/test`}>
+        <TestPage session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/upload`}>
+        <UploadPage session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/`}>
+        <HomePage session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+    </Switch>
   );
 }

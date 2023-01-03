@@ -10,6 +10,7 @@ const { duplicateByClass: duplicateCourseByClass } = require('./course/duplicate
 const { duplicateByClass: duplicateGroupByClass } = require('./group/duplicateByClass');
 const { addClassStudentsMany } = require('./addClassStudentsMany');
 const { processScheduleForClass } = require('./processScheduleForClass');
+const { getClassesProgramInfo } = require('./listSessionClasses');
 
 async function duplicateClassesByIds(
   ids,
@@ -95,7 +96,14 @@ async function duplicateClassesByIds(
 
       await Promise.all(
         _.map(newClasses, async (nClass) => {
-          const classe = (await classByIds(nClass.id, { transacting }))[0];
+          let classe = (await classByIds(nClass.id, { transacting }))[0];
+          [classe] = await getClassesProgramInfo(
+            {
+              programs: classe.program,
+              classes: [classe],
+            },
+            { transacting }
+          );
           await leemons.events.emit('after-add-class', { class: classe, transacting });
         })
       );

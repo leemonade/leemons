@@ -20,6 +20,12 @@ module.exports = [
     handler: 'assignableInstance.update',
     authenticated: true,
   },
+  {
+    method: 'POST',
+    path: '/assignableInstances/reminder',
+    handler: 'assignableInstance.sendReminder',
+    authenticated: true,
+  },
   /**
    * Assignations
    */
@@ -27,6 +33,21 @@ module.exports = [
     method: 'GET',
     path: '/assignableInstances/:instance/assignations/:user',
     handler: 'assignations.get',
+    authenticated: true,
+  },
+  /**
+   * Activities
+   */
+  {
+    method: 'GET',
+    path: '/activities/search/ongoing',
+    handler: 'activities.searchOngoing',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/activities/search/nya',
+    handler: 'activities.searchNyaActivities',
     authenticated: true,
   },
 ];

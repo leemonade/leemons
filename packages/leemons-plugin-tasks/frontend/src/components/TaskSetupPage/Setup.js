@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
 import { VerticalStepperContainer } from '@bubbles-ui/components';
@@ -77,7 +77,6 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
       setActive(active - 1);
     }
   };
-
   // ----------------------------------------------------------------
   // COMPONENT
 

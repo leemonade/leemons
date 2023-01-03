@@ -4,7 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "leemons-utils": "0.0.1-beta.0",
+    "leemons-utils": "0.0.1",
     "lodash": "^4.17.21"
   }
 }

@@ -37,39 +37,28 @@ module.exports = async function listVersionOfType(
       { transacting }
     );
 
-    const result = await Promise.all(
-      foundVersions.map(async (v) => {
-        const fullId = stringifyId(v.uuid, stringifyVersion(v));
+    const fullIds = foundVersions.map((v) => stringifyId(v.uuid, stringifyVersion(v)));
 
-        const version = await getVersion.call(this, fullId, { transacting });
-
-        return version;
-      })
-    );
+    const result = await getVersion.call(this, fullIds, { ignoreMissing: true, transacting });
 
     return _.compact(result);
   }
 
-  const result = await Promise.all(
-    listOfEntities.map(async (entity) => {
-      try {
-        const { fullId } = await parseId.call(
-          this,
-          entity.uuid,
-          getDesiredVersion(entity.current, published, preferCurrent),
-          {
-            transacting,
-          }
-        );
+  const parsedIds = (
+    await parseId(
+      listOfEntities.map((entity) => ({
+        id: entity.uuid,
+        version: getDesiredVersion(entity.current, published, preferCurrent),
+      })),
+      { ignoreMissing: true, transacting }
+    )
+  ).filter(Boolean);
 
-        return getVersion.bind(this)(fullId, { transacting });
-      } catch (error) {
-        if (error.message === 'Version not found') {
-          return null;
-        }
-        throw error;
-      }
-    })
+  const result = await getVersion.call(
+    this,
+    parsedIds.map((id) => id.fullId),
+    { transacting }
   );
+
   return _.compact(result);
 };

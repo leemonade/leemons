@@ -53,8 +53,13 @@ const assignableInstanceValidationObject = {
         format: 'uuid',
       },
     },
+    sendMail: {
+      type: 'boolean',
+      nullable: true,
+    },
     messageToAssignees: {
       type: 'string',
+      nullable: true,
       maxLength: 16777215,
     },
     curriculum: {
@@ -70,6 +75,9 @@ const assignableInstanceValidationObject = {
           type: 'boolean',
         },
       },
+    },
+    addNewClassStudents: {
+      type: 'boolean',
     },
     metadata: {
       type: 'object',

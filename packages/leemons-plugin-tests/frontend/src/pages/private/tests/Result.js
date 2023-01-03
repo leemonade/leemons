@@ -24,7 +24,6 @@ import {
   Table,
   Text,
   Title,
-  useAccordionState,
 } from '@bubbles-ui/components';
 import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 
@@ -55,7 +54,7 @@ export default function Result() {
     useQuestionMode: false,
   });
 
-  const [accordionState, accordionFunctions] = useAccordionState({ initialState: {} });
+  const [accordionState, setAccordionState] = React.useState([]);
 
   const levels = useLevelsOfDifficulty();
   const history = useHistory();
@@ -75,9 +74,13 @@ export default function Result() {
   }
 
   async function getIfTeacher() {
-    const { feedback } = await getFeedbackRequest(params.id, getUserId());
-    store.isTeacher = feedback.isTeacher;
-    render();
+    try {
+      const { feedback } = await getFeedbackRequest(params.id, getUserId());
+      store.isTeacher = feedback.isTeacher;
+      render();
+    } catch (error) {
+      addErrorAlert(error);
+    }
   }
 
   async function init() {
@@ -286,7 +289,6 @@ export default function Result() {
         await setFeedbackRequest(store.instance.id, getUserId(), store.feedback);
         addSuccessAlert(t('feedbackDone'));
       } catch (e) {
-        console.log(e);
         addErrorAlert(e);
       }
     }
@@ -312,42 +314,46 @@ export default function Result() {
       </ActivityAccordionPanel>
     );
   }
-  accordion.push(
-    <ActivityAccordionPanel
-      key={2}
-      label={t('questions')}
-      rightSection={
+  if (store.instance?.showCorrectAnswers || store.isTeacher) {
+    accordion.push(
+      <ActivityAccordionPanel
+        key={2}
+        itemValue={'2'}
+        label={t('questions')}
+        rightSection={
+          <Box>
+            <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
+          </Box>
+        }
+        icon={
+          <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+            <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
+          </Box>
+        }
+      >
         <Box>
-          <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
+          {store.useQuestionMode ? (
+            <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
+          ) : (
+            <>
+              <Box className={styles.showTestBar}>
+                <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
+                  {t('showInTests')}
+                </Button>
+              </Box>
+              <Table columns={tableHeaders} data={tableData} />
+            </>
+          )}
         </Box>
-      }
-      icon={
-        <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-          <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
-        </Box>
-      }
-    >
-      <Box>
-        {store.useQuestionMode ? (
-          <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
-        ) : (
-          <>
-            <Box className={styles.showTestBar}>
-              <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
-                {t('showInTests')}
-              </Button>
-            </Box>
-            <Table columns={tableHeaders} data={tableData} />
-          </>
-        )}
-      </Box>
-    </ActivityAccordionPanel>
-  );
+      </ActivityAccordionPanel>
+    );
+  }
   if (!store.room) {
     if (store.isTeacher || (!store.isTeacher && store.feedback)) {
       accordion.push(
         <ActivityAccordionPanel
           key={2}
+          itemValue={'2'}
           label={t('feedbackForStudent')}
           icon={
             <Box style={{ position: 'relative', width: '24px', height: '24px' }}>
@@ -379,7 +385,9 @@ export default function Result() {
     }
   }
 
-  const userNote = store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number;
+  const userNote = parseFloat(
+    store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number
+  );
 
   let scale = null;
   forEach(orderBy(store.evaluationSystem?.scales, ['number'], ['asc']), (s) => {
@@ -463,12 +471,7 @@ export default function Result() {
                     <Title order={3}>{store.instance.assignable.asset.name}</Title>
                   </Stack>
                 </ScoreFeedback>
-                <ActivityAccordion
-                  state={accordionState}
-                  onChange={(e) => {
-                    accordionFunctions.setState(e);
-                  }}
-                >
+                <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
                   {accordion}
                 </ActivityAccordion>
                 {store.isTeacher && !store.room ? (
@@ -481,8 +484,8 @@ export default function Result() {
                   >
                     <Button
                       onClick={() => {
-                        if (!accordionState[2]) {
-                          accordionFunctions.toggle(2);
+                        if (!accordionState.includes('2')) {
+                          setAccordionState([...accordionState, '2']);
                         } else {
                           sendFeedback();
                         }
