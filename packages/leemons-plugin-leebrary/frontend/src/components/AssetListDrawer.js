@@ -71,6 +71,7 @@ const AssetListDrawer = ({
 
   const LibraryList = (
     <AssetList
+      data-cypress-id="selectAssetFromDrawer"
       {...props}
       category={category}
       categories={categories}

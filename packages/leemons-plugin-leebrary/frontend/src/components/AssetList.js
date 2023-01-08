@@ -89,6 +89,7 @@ const AssetList = ({
   onEditItem = () => {},
   onTypeChange = () => {},
   onLoading = () => {},
+  ...props
 }) => {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
@@ -660,6 +661,7 @@ const AssetList = ({
 
   return (
     <Stack
+      {...props}
       ref={containerRef}
       direction="column"
       fullWidth
@@ -771,6 +773,7 @@ const AssetList = ({
               sx={(theme) => ({
                 paddingBottom: theme.spacing[5],
               })}
+              data-cypress-id="paginatedAssetList"
             >
               <PaginatedList
                 {...serverData}

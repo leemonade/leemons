@@ -91,6 +91,7 @@ const AssetFormInput = ({
       useTags={!!tagsPluginName}
       hideTitle
       hideSubmit
+      data-cypress-id="libraryFormMain"
     >
       {children}
     </LibraryForm>
@@ -124,6 +125,7 @@ const AssetFormInput = ({
                 useTags={!!tagsPluginName}
                 hideTitle
                 hideSubmit
+                data-cypress-id="libraryFormRight"
               />
             ) : null}
           </InputWrapper>

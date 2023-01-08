@@ -149,8 +149,11 @@ function ContentData({
     <FormProvider {...formData}>
       <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
         <ContextContainer {...props} divided>
-          <ContextContainer divided>
-            <ContextContainer title={labels?.statementAndDevelopmentTitle}>
+          <ContextContainer divided data-cypress-id="taskSetup">
+            <ContextContainer
+              title={labels?.statementAndDevelopmentTitle}
+              data-cypress-id="taskStatementAndDevelopment"
+            >
               <Controller
                 control={control}
                 name="statement"
@@ -174,11 +177,11 @@ function ContentData({
               />
             </ContextContainer>
 
-            <ContextContainer title={labels?.attachmentsTitle}>
+            <ContextContainer title={labels?.attachmentsTitle} data-cypress-id="taskAttachments">
               <Attachments labels={labels} />
             </ContextContainer>
 
-            <ContextContainer title={labels.subjects}>
+            <ContextContainer title={labels.subjects} data-cypress-id="taskSubjects">
               {!!subjects?.length && (
                 <InputWrapper required>
                   <Tabs>
@@ -228,7 +231,7 @@ function ContentData({
               )}
             </ContextContainer>
 
-            <ContextContainer title={labels?.submission?.title}>
+            <ContextContainer title={labels?.submission?.title} data-cypress-id="taskSubmission">
               {/* <Methodology
                 labels={labels}
                 errorMessages={errorMessages}
@@ -245,7 +248,7 @@ function ContentData({
               <Submissions labels={labels} errorMessages={errorMessages} />
             </ContextContainer>
           </ContextContainer>
-          <Stack fullWidth justifyContent="space-between">
+          <Stack fullWidth justifyContent="space-between" data-cypress-id="taskSetupFooter">
             <Box>
               <Button
                 compact

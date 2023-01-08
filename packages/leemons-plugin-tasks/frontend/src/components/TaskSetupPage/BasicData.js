@@ -143,7 +143,7 @@ function BasicData({
         preview
         previewVariant="task"
       />
-      <Stack fullWidth justifyContent="end">
+      <Stack fullWidth justifyContent="end" data-cypress-id="taskSetupFooter">
         <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={handleOnSubmit}>
           {labels.buttonNext}
         </Button>

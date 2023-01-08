@@ -115,6 +115,7 @@ const LibraryForm = ({
   advancedConfig,
   hideSubmit,
   onChange = () => {},
+  ...props
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -318,12 +319,11 @@ const LibraryForm = ({
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
-  console.log(store);
-
   return (
     <Box ref={boxRef}>
       <form autoComplete="off" onSubmit={handleSubmit(handleOnSubmit)}>
         <ContextContainer
+          {...props}
           title={!hideTitle ? labels.title : undefined}
           divided={!advancedConfigMode}
           sx={(theme) => ({ marginTop: advancedConfigMode ? theme.spacing[4] : 0 })}
@@ -549,7 +549,7 @@ const LibraryForm = ({
           {!advancedConfigMode ? (
             <>
               {isTeacher ? (
-                <>
+                <ContextContainer data-cypress-id="libraryFormAdvancedConfig">
                   {store.programs && !store.alwaysOpen ? (
                     <Switch
                       onChange={(e) => {
@@ -604,7 +604,7 @@ const LibraryForm = ({
                       />
                     </ContextContainer>
                   ) : null}
-                </>
+                </ContextContainer>
               ) : null}
 
               {!hideSubmit && (

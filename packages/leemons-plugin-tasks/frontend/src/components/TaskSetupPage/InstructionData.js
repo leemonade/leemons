@@ -174,7 +174,7 @@ function InstructionData({
             )}
           />
         </ContextContainer>
-        <Stack fullWidth justifyContent="space-between">
+        <Stack fullWidth justifyContent="space-between" data-cypress-id="taskSetupFooter">
           <Box>
             <Button
               compact
@@ -186,7 +186,7 @@ function InstructionData({
             </Button>
           </Box>
           <Box>
-            <ContextContainer direction="row">
+            <ContextContainer direction="row" data-cypress-id="taskSetupFooterPublish">
               <Button
                 loading={loading === 'onlyPublish'}
                 variant="outline"
