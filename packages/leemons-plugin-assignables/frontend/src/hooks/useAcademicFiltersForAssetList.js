@@ -73,8 +73,12 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
     }
 
     const subjects = {};
+    let goodClasses = classesData;
+    if (selectedProgram && selectedProgram !== 'all') {
+      goodClasses = _.filter(goodClasses, { program: selectedProgram });
+    }
 
-    classesData.forEach((klass) => {
+    goodClasses.forEach((klass) => {
       if (!subjects[klass.subject.id]) {
         subjects[klass.subject.id] = {
           label: klass.subject.name,

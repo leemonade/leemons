@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useApi } from '@common';
 import PropTypes from 'prop-types';
-import { Select } from '@bubbles-ui/components';
+import { MultiSelect, Select } from '@bubbles-ui/components';
 import { listProgramsRequest } from '../../request';
 
 // EN: Parse data fetched from the server
@@ -19,7 +19,10 @@ async function getData(center) {
 }
 
 const SelectProgram = forwardRef(
-  ({ firstSelected, center, value: userValue, onChange, ensureIntegrity, ...props }, ref) => {
+  (
+    { firstSelected, center, value: userValue, onChange, ensureIntegrity, multiple, ...props },
+    ref
+  ) => {
     const [value, setValue] = useState(userValue);
 
     // EN: Get programs from API on center change
@@ -68,6 +71,20 @@ const SelectProgram = forwardRef(
         handleChange(null);
       }
     }, [data, loading, value]);
+
+    if (multiple) {
+      return (
+        <MultiSelect
+          {...props}
+          ref={ref}
+          data={data || []}
+          disabled={!data?.length}
+          onChange={handleChange}
+          value={value}
+          autoSelectOneOption
+        />
+      );
+    }
 
     return (
       <Select

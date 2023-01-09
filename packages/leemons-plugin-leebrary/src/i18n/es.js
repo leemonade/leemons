@@ -151,10 +151,14 @@ module.exports = {
       },
       labels: {
         title: 'Permisos del recurso',
-        addUsers: 'Añadir usuarios',
-        addUsersDescription: 'Compartir el recurso y asignar permisos',
-        addClasses: 'Añadir clases',
-        addClassesDescription: 'Compartir el recurso y asignar permisos',
+        addUsers: 'Añadir usuarios individuales',
+        addUsersDescription:
+          'Los docentes verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
+        programs: 'Programas educativos',
+        program: 'Programa',
+        addClasses: 'Añadir grupos',
+        addClassesDescription:
+          'Los estudiantes verán este recurso en su carpeta de asignatura correspondiente.',
         isPublic: 'Este recurso es público',
         saveButton: 'Guardar permisos',
         shareButton: 'Compartir',

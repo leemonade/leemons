@@ -20,6 +20,19 @@ async function add(_class, student, { transacting } = {}) {
     { transacting }
   );
 
+  try {
+    await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+      student,
+      {
+        permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+        actionNames: ['view'],
+      },
+      { transacting }
+    );
+  } catch (e) {
+    // Nothing
+  }
+
   if (!program.hideStudentsToStudents) {
     addPermissionsBetweenStudentsAndTeachers(_class, { transacting });
   }

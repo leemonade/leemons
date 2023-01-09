@@ -318,8 +318,6 @@ const LibraryForm = ({
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
-  console.log(store);
-
   return (
     <Box ref={boxRef}>
       <form autoComplete="off" onSubmit={handleSubmit(handleOnSubmit)}>
