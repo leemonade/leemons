@@ -183,7 +183,7 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
           <ScoreFeedback
             program={assignable.subjects[0].program}
             isCalificable={instance.requiresScoring}
-            score={instance.requiresScoring && score}
+            score={instance.requiresScoring && score.toFixed(2)}
             rooms={instance.allowFeedback && assignation.chatKeys}
           />
         </Box>
