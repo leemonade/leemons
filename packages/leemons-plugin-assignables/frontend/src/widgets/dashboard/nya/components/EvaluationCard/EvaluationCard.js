@@ -4,9 +4,9 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { get } from 'lodash';
-import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import ScoreFeedback from './components/ScoreFeedback';
+import { Link } from 'react-router-dom';
 
 function useRoleLocalization(role) {
   const localizationKey = prefixPN(`roles.${role}.singular`);
@@ -145,7 +145,7 @@ const useEvaluationCardStyles = createStyles((theme) => ({
 export default function EvaluationCard({ assignation, showSubject, classData }) {
   const { instance } = assignation;
   const { assignable } = instance;
-  const { asset } = assignable;
+  const { asset, roleDetails } = assignable;
 
   const subject = {
     label: classData?.subjectName,
@@ -166,29 +166,32 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
   const { classes } = useEvaluationCardStyles();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.leftContainer}>
-        <Box className={classes.topLeftSection}>
-          <TextClamp lines={2}>
-            <Text className={classes.activityName}>{asset.name}</Text>
-          </TextClamp>
-          <RoleName role={assignable.roleDetails} />
+    <Link to={roleDetails.evaluationDetailUrl?.replace(':id', instance.id)?.replace(':user', assignation.user)} style={{ textDecoration: 'none' }}>
+      <Box className={classes.root}>
+        <Box className={classes.leftContainer}>
+          <Box className={classes.topLeftSection}>
+            <TextClamp lines={2}>
+              <Text className={classes.activityName}>{asset.name}</Text>
+            </TextClamp>
+            <RoleName role={assignable.roleDetails} />
+          </Box>
+          <Box className={classes.botLeftSection}>
+            <SubjectItem subject={subject} />
+          </Box>
         </Box>
-        <Box className={classes.botLeftSection}>
-          <SubjectItem subject={subject} />
-        </Box>
-      </Box>
-      <Box>
         <Box>
-          <ScoreFeedback
-            program={assignable.subjects[0].program}
-            isCalificable={instance.requiresScoring}
-            score={instance.requiresScoring && score.toFixed(2)}
-            rooms={instance.allowFeedback && assignation.chatKeys}
-          />
+          <Box>
+            <ScoreFeedback
+              program={assignable.subjects[0].program}
+              isCalificable={instance.requiresScoring}
+              score={instance.requiresScoring && score.toFixed(2)}
+              rooms={instance.allowFeedback && assignation.chatKeys}
+            />
+          </Box>
+          <Box></Box>
         </Box>
-        <Box></Box>
       </Box>
-    </Box>
+    </Link>
+
   );
 }
