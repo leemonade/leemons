@@ -4,6 +4,7 @@ const {
 const { filterAssignationsByInstance } = require('./filterAssignationsByInstance');
 const { filterAssignationsByProgress } = require('./filterAssignationsByProgress');
 const { filterAssignationsByStudentDidOpen } = require('./filterAssignationsByStudentDidOpen');
+const { filterInstancesByEvaluable } = require('./filterInstancesByEvaluable');
 const { filterInstancesByProgramAndSubjects } = require('./filterInstancesByProgramAndSubjects');
 const { filterInstancesByRoleAndQuery } = require('./filterInstancesByRoleAndQuery');
 const { filterInstancesByStatusAndArchived } = require('./filterInstancesByStatusAndArchived');
@@ -16,4 +17,5 @@ module.exports = {
   filterInstancesByRoleAndQuery,
   filterInstancesByStatusAndArchived,
   filterAssignationsByDaysUntilDeadline,
+  filterInstancesByEvaluable
 };
