@@ -221,6 +221,8 @@ async function getAssets(ctx) {
       roles: parsedRoles,
       searchInProvider: searchProvider,
       providerQuery: _providerQuery,
+      programs: _programs,
+      subjects: _subjects,
     });
   }
 

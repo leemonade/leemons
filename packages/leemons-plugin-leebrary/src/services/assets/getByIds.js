@@ -269,6 +269,23 @@ async function getByIds(
     pins = await getPins(assetsIds, { userSession, transacting });
   }
 
+  const programsById = {};
+  const programIds = [];
+  forEach(assets, (asset) => {
+    if (asset.program) {
+      programIds.push(asset.program);
+    }
+  });
+
+  if (programIds.length) {
+    const programs = await leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.programsByIds(programIds, {
+        onlyProgram: true,
+        transacting,
+      });
+    programsById = keyBy(programs, 'id');
+  }
   // ·········································································
   // FINALLY
 
@@ -280,6 +297,10 @@ async function getByIds(
 
   const result = assets.map((asset, index) => {
     const item = { ...asset };
+
+    if (item.program) {
+      item.programName = programsById[item.program].name;
+    }
 
     item.adminPrograms = adminProgramsByItem[item.id] || [];
 

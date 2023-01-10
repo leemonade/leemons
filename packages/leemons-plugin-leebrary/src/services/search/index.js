@@ -59,6 +59,13 @@ async function search(
     subjects = providerQuery.subjects;
   }
 
+  if (!providerQuery?.program && programs) {
+    providerQuery.program = programs[0];
+  }
+  if (!providerQuery?.subjects && subjects) {
+    providerQuery.subjects = subjects;
+  }
+
   let assets = [];
   let nothingFound = false;
 

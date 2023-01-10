@@ -182,6 +182,10 @@ const ListAssetPage = () => {
   if (category?.key === 'pins' && (isTeacher || isStudent)) {
     props = academicFilters;
   }
+  if (category?.key === 'media-files' && isTeacher) {
+    props = academicFilters;
+    props.searchInProvider = false;
+  }
 
   return !isNil(categories) && !isEmpty(categories) ? (
     <AssetList
