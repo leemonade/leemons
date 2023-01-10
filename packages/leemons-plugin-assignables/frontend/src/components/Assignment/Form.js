@@ -283,12 +283,12 @@ export default function Form({
       },
       dates: defaultValues?.dates
         ? Object.entries(defaultValues?.dates).reduce(
-            (acc, [key, value]) => ({
-              ...acc,
-              [key]: value ? new Date(value) : null,
-            }),
-            {}
-          )
+          (acc, [key, value]) => ({
+            ...acc,
+            [key]: value ? new Date(value) : null,
+          }),
+          {}
+        )
         : {},
     },
   });
@@ -590,7 +590,7 @@ export default function Form({
           />
 
           {!curriculumFields?.data?.curriculum?.length &&
-          !curriculumFields?.data?.objectives ? null : (
+            !curriculumFields?.data?.objectives ? null : (
             <Controller
               control={control}
               name="curriculum.toogle"
@@ -607,31 +607,31 @@ export default function Form({
                         {!curriculumFields?.data?.curriculum?.length
                           ? null
                           : curriculumFields.data.curriculum.map((curriculumField) => (
-                              <Controller
-                                key={curriculumField.id}
-                                control={control}
-                                name={`curriculum.${curriculumField.id}`}
-                                shouldUnregister={true}
-                                render={({ field }) => (
-                                  <Switch
-                                    {...field}
-                                    checked={field.value}
-                                    label={
-                                      <Box
-                                        sx={(theme) => ({
-                                          display: 'flex',
-                                          flexDirection: 'row',
-                                          gap: theme.spacing[1],
-                                        })}
-                                      >
-                                        {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
-                                        <Text>{curriculumField.label}</Text>
-                                      </Box>
-                                    }
-                                  />
-                                )}
-                              />
-                            ))}
+                            <Controller
+                              key={curriculumField.id}
+                              control={control}
+                              name={`curriculum.${curriculumField.id}`}
+                              shouldUnregister={true}
+                              render={({ field }) => (
+                                <Switch
+                                  {...field}
+                                  checked={field.value}
+                                  label={
+                                    <Box
+                                      sx={(theme) => ({
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        gap: theme.spacing[1],
+                                      })}
+                                    >
+                                      {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
+                                      <Text>{curriculumField.label}</Text>
+                                    </Box>
+                                  }
+                                />
+                              )}
+                            />
+                          ))}
                         {!curriculumFields?.data?.objectives ? null : (
                           <Controller
                             control={control}

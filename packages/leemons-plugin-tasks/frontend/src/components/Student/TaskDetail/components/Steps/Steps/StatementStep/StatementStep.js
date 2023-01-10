@@ -16,39 +16,11 @@ import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
-  const curriculumKeysToShow = Object.entries(showCurriculumObj)
-    .filter(([, value]) => value)
-    .map(([key]) => key);
+  const subjects = useClassesSubjects(assignation.instance.classes);
 
-  const showCurriculum = curriculumKeysToShow?.length > 0;
-
-  if (!showCurriculum) {
+  if (Object.keys(showCurriculumObj).length === 0) {
     return null;
   }
-
-  const { instance } = assignation;
-  const { assignable } = instance;
-
-  const curriculumValuesToShow = assignable.subjects.map((subject) => {
-    const curriculum = {};
-
-    if (curriculumKeysToShow.includes('objectives')) {
-      curriculum.objectives = subject.curriculum.objectives;
-    }
-
-    if (subject.curriculum.curriculum) {
-      curriculum.curriculum = subject.curriculum.curriculum.filter((key) => {
-        const regex = new RegExp(`${curriculumKeysToShow.join('|')}`, 'i');
-        return regex.test(key);
-      });
-    }
-    return {
-      ...subject,
-      curriculum,
-    };
-  });
-
-  const subjects = useClassesSubjects(instance.classes);
 
   return (
     <ContextContainer>
@@ -57,7 +29,9 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
       </Title>
       <Tabs>
         {subjects.map(({ id, name }) => {
-          const { curriculum } = curriculumValuesToShow.find((s) => s.subject === id);
+          const { curriculum } = assignation.instance.assignable.subjects.find(
+            (s) => s.subject === id
+          );
           const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
           return (
             <TabPanel key={id} label={name}>
@@ -74,14 +48,14 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                   gap: theme.spacing[4],
                 })}
               >
-                {curriculum?.curriculum?.length && (
+                {!!curriculum?.curriculum?.length && (
                   <Box sx={tabPanelStyle}>
                     <Box>
                       <CurriculumListContents value={curriculum?.curriculum} subjects={id} />
                     </Box>
                   </Box>
                 )}
-                {!!curriculumKeysToShow.includes('objectives') && !!curriculum?.objectives?.length && (
+                {!!['objectives'].includes('objectives') && !!curriculum?.objectives?.length && (
                   <Box sx={tabPanelStyle}>
                     <Box>
                       <Title color="primary" order={5}>
@@ -92,13 +66,13 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
                         {`
                       <ul>
                       ${curriculum?.objectives
-                        ?.map(
-                          (objective) =>
-                            `<li>
+                            ?.map(
+                              (objective) =>
+                                `<li>
                             ${objective}
                           </li>`
-                        )
-                        ?.join('')}
+                            )
+                            ?.join('')}
                       </ul>
                     `}
                       </HtmlText>
