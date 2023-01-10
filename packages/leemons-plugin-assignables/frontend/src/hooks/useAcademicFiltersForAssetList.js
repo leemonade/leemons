@@ -167,6 +167,7 @@ export function SelectAutoClearable({ data, value, onChange, ...props }) {
       itemComponent={(item) => (
         <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
       )}
+      dropdownPosition="flip"
     />
   );
 }
