@@ -36,8 +36,6 @@ function getStudentRows({ tableData, labels }) {
     }, 0);
 
     return [
-      'Not defined',
-      '',
       student.surname,
       student.name,
       ...activities.map((activity) => {
@@ -64,7 +62,7 @@ function getStudentRows({ tableData, labels }) {
  */
 export default function writeStudentsWithActivities({ ws, tableData, labels, initialPosition }) {
   const studentRows = getStudentRows({ tableData, labels });
-  const contentArray = [[labels.group, '', labels.surname, labels.name], ...studentRows];
+  const contentArray = [[labels.surname, labels.name], ...studentRows];
 
   arrayToContent({
     ws,
