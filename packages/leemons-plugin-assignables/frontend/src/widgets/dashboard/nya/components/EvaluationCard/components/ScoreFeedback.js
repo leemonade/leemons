@@ -46,6 +46,8 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
       height: 198,
       display: 'flex',
       flexDirection: 'column',
+      borderTopRightRadius: theme.other.global.border.radius.md,
+      borderBottomRightRadius: theme.other.global.border.radius.md,
     },
     container: {
       display: 'flex',

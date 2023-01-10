@@ -108,39 +108,45 @@ function RoleName({ role }) {
   );
 }
 
-const useEvaluationCardStyles = createStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    height: '100%',
-  },
-  leftContainer: {
-    paddingLeft: theme.spacing[5],
-    paddingRight: theme.spacing[4],
-    flex: '1 0',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  activityName: theme.other.global.content.typoMobile.heading.xsm,
-  topLeftSection: {
-    paddingTop: theme.spacing[4],
-    borderBottom: `${theme.other.global.border.width.sm} solid ${theme.other.global.border.color.line.default}`,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: theme.spacing[2],
-    paddingBottom: theme.spacing[3],
-    flex: '1 0',
-    minHeight: '50%',
-  },
-  botLeftSection: {
-    paddingTop: theme.spacing[6],
-    paddingBottom: theme.spacing[5],
-    flex: '1 0',
-    height: '50%',
-  },
-}));
+const useEvaluationCardStyles = createStyles((theme) => {
+  const borderTheme = theme.other.global.border;
+
+  return {
+    root: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      height: '100%',
+      border: `${borderTheme.width.md} solid ${borderTheme.color.line.muted}`,
+      borderRadius: borderTheme.radius.md,
+    },
+    leftContainer: {
+      paddingLeft: theme.spacing[5],
+      paddingRight: theme.spacing[4],
+      flex: '1 0',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    activityName: theme.other.global.content.typoMobile.heading.xsm,
+    topLeftSection: {
+      paddingTop: theme.spacing[4],
+      borderBottom: `${theme.other.global.border.width.sm} solid ${theme.other.global.border.color.line.default}`,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      gap: theme.spacing[2],
+      paddingBottom: theme.spacing[3],
+      flex: '1 0',
+      minHeight: '50%',
+    },
+    botLeftSection: {
+      paddingTop: theme.spacing[6],
+      paddingBottom: theme.spacing[5],
+      flex: '1 0',
+      height: '50%',
+    },
+  };
+});
 
 export default function EvaluationCard({ assignation, showSubject, classData }) {
   const { instance } = assignation;
