@@ -71,7 +71,7 @@ export function Provider({ children }) {
         opened={store.showUpdateDatasetModal}
       >
         <Box>
-          <Button color="fatic" onClick={goSetDatasetValues}>
+          <Button color="phatic" onClick={goSetDatasetValues}>
             {t('goPageButton')}
           </Button>
         </Box>

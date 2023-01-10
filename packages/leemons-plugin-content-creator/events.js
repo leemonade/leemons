@@ -1,4 +1,5 @@
-const { permissions, menuItems } = require('./config/constants');
+const { map } = require('lodash');
+const { permissions, menuItems, assignableRoles } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { addLocales } = require('./src/services/locales/addLocales');
 
@@ -34,6 +35,15 @@ async function events(isInstalled) {
         await initMenuBuilder();
       }
     );
+
+    leemons.events.once('plugins.assignables:init-plugin', async () => {
+      const assignablesPlugin = leemons.getPlugin('assignables');
+      await Promise.all(
+        map(assignableRoles, (role) =>
+          assignablesPlugin.services.assignables.registerRole(role.role, role.options)
+        )
+      );
+    });
   } else {
     leemons.events.once('plugins.content-creator:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');

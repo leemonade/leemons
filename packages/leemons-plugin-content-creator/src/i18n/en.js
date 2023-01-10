@@ -60,4 +60,13 @@ module.exports = {
     duplicate: 'Duplicate',
     duplicated: 'Duplicated',
   },
+  contentCreatorDetail: {
+    titlePlaceholder: 'Write the name of the document',
+    saveDraft: 'Save as draft',
+    publish: 'Publish',
+    schemaLabel: 'Schema',
+    formatLabel: 'Format',
+    savedAsDraft: 'Saved as draft',
+    published: 'Published',
+  },
 };
