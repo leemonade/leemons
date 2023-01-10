@@ -185,7 +185,7 @@ function useCurriculumFields({ assignable }) {
     detailCurriculumRequest(curriculum?.id)
   );
 
-  const { data, isLoading } = query;
+  const { data, isLoading, isError, error } = query;
 
   const curriculumDetails = data?.curriculum;
 
@@ -199,16 +199,14 @@ function useCurriculumFields({ assignable }) {
     if (subjectLevel?.schema?.compileJsonSchema) {
       const curriculumFields = subjectLevel.schema.compileJsonSchema.properties;
 
-      const parsedCurriculumFields = Object.entries(curriculumFields).map(([id, field]) => ({
-        id,
+      const parsedCurriculumFields = Object.values(curriculumFields).map((field) => ({
+        id: field.id,
         label: field.title,
         isEvaluationCriteria: field.frontConfig.blockData.evaluationCriteria,
       }));
 
       return {
-        curriculum: parsedCurriculumFields.filter((field) =>
-          selectedCurriculumValues.some((value) => value.includes(`property.${field.id}`))
-        ),
+        curriculum: parsedCurriculumFields,
         objectives: _.last(selectedCurriculumValues) === 'objectives',
       };
     }
@@ -216,7 +214,7 @@ function useCurriculumFields({ assignable }) {
     return { curriculum: null, objectives: _.last(selectedCurriculumValues) === 'objectives' };
   }, [curriculumDetails]);
 
-  return { ...query, data: finalData };
+  return { isLoading, isError, error, data: finalData };
 }
 
 function useFormLocalizations() {
