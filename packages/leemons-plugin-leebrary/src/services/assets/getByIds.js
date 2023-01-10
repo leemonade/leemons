@@ -58,7 +58,7 @@ async function getByIds(
   // ·········································································
   // PERMISSIONS & PERSONS
   if (checkPermissions && userSession) {
-    const classesPermissionsPerAsset = await getClassesPermissions(assetsIds, {
+    const classesPermissionsPerAsset = await getClassesPermissions(map(assets, 'id'), {
       withInfo: true,
       transacting,
       userSession,
