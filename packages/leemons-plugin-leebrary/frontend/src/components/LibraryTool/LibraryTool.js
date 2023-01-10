@@ -62,6 +62,7 @@ const LibraryTool = ({ label, ...props }) => {
           onClick={handleOnEdit}
         />
       }
+      zIndex={10}
     >
       <LibraryModal
         labels={{

@@ -55,13 +55,14 @@ export default function Index() {
     try {
       store.saving = 'edit';
       render();
-      const { document } = await saveDocumentRequest({ ...formValues, published: true });
-      addSuccessAlert(t('published'));
-      if (goAssign) {
-        history.push(`/private/content-creator/assign/${document.id}`);
-      } else {
-        history.push('/private/content-creator');
-      }
+      // const { document } = await saveDocumentRequest({ ...formValues, published: true });
+      // addSuccessAlert(t('published'));
+      addSuccessAlert('TODO');
+      // if (goAssign) {
+      //   history.push(`/private/content-creator/assign/${document.id}`);
+      // } else {
+      //   history.push('/private/content-creator');
+      // }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -147,7 +148,7 @@ export default function Index() {
           buttonsIcons={{
             edit: <SetupContent size="16" />,
           }}
-          isEditMode={store.isNew}
+          isEditMode
           icon={<DocumentIcon />}
           onChange={onTitleChangeHandler}
           onEdit={() => saveAsPublish()}
