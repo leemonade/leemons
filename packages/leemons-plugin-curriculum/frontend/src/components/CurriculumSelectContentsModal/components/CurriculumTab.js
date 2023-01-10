@@ -12,6 +12,7 @@ import { CurriculumProp } from './CurriculumProp';
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 }) {
   function onSelect({ node }) {
+    console.log(node);
     store.selectedNode = {
       ...node,
       _nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
@@ -92,7 +93,8 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
 
   React.useEffect(() => {
     if (isArray(subjects) && subjects.length && store.curriculum) {
-      onSelect({ node: getNodeByAcademicItem(store.curriculum.nodes, subjects[0]) });
+      const node = getNodeByAcademicItem(store.curriculum.nodes, subjects[0]);
+      if (node) onSelect({ node });
     }
   }, [JSON.stringify(subjects), store.curriculum]);
 
