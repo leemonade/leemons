@@ -43,12 +43,22 @@ async function search(
     pinned,
     showPublic,
     roles,
-    programs,
-    subjects,
+    programs: _programs,
+    subjects: _subjects,
     userSession,
     transacting,
   } = {}
 ) {
+  let programs = _programs;
+  let subjects = _subjects;
+
+  if (!programs && providerQuery?.program) {
+    programs = [providerQuery.program];
+  }
+  if (!subjects && providerQuery?.subjects) {
+    subjects = providerQuery.subjects;
+  }
+
   let assets = [];
   let nothingFound = false;
 

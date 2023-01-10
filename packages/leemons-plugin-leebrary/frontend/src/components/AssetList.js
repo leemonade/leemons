@@ -176,6 +176,7 @@ const AssetList = ({
   const loadAssets = async (categoryId, criteria = '', type = '', filters) => {
     if (!loadingRef.current.loading || loadingRef.current.firstTime) {
       loadingRef.current.loading = true;
+      loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
       setLoading(true);
@@ -203,6 +204,17 @@ const AssetList = ({
 
         const response = await getAssetsRequest(query);
 
+        if (loadingRef.current.waitQuery) {
+          loadingRef.current.loading = false;
+          loadAssets(
+            loadingRef.current.waitQuery.categoryId,
+            loadingRef.current.waitQuery.criteria,
+            loadingRef.current.waitQuery.type,
+            loadingRef.current.waitQuery.filters
+          );
+          return null;
+        }
+
         const results = response?.assets || [];
         // console.log('results:', results);
         setAssets(uniqBy(results, 'asset'));
@@ -215,6 +227,13 @@ const AssetList = ({
         clearAssetLoading();
         addErrorAlert(getErrorMessage(err));
       }
+    } else {
+      loadingRef.current.waitQuery = {
+        categoryId,
+        criteria,
+        type,
+        filters,
+      };
     }
   };
 
@@ -370,10 +389,13 @@ const AssetList = ({
     if (!isEmpty(category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(category.id);
+    } else if (categoryProp?.key === 'pins') {
+      const cat = find(categories, { key: 'media-files' });
+      if (cat) loadAssetTypes(cat.id);
     } else {
       setAssetTypes(null);
     }
-  }, [category]);
+  }, [category, categoryProp]);
 
   useEffect(() => {
     if (assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {

@@ -7,7 +7,9 @@ async function getAssetsBySubject(subject, { assets, transacting }) {
     subject_$in: subjects,
   };
   if (isArray(assets) && assets.length) {
-    query.id_$in = assets;
+    query.asset_$in = assets;
+  } else {
+    return [];
   }
   const _assets = await tables.assetsSubjects.find(query, { columns: ['asset'], transacting });
   return uniq(map(_assets, 'asset'));
