@@ -160,7 +160,7 @@ export default function Index() {
           useSchema
           labels={{
             format: t('formatLabel'),
-            // schema: t('schemaLabel')
+            schema: t('schemaLabel'),
           }}
           onChange={onContentChangeHandler}
           value={formValues.content}

@@ -44,13 +44,13 @@ export const ContentEditorInputStyles = createStyles((theme, { isSchemaOpened, e
       maxWidth: isSchemaOpened ? 300 : 40,
       flex: 1,
       position: 'relative',
-      transition: 'all 0.2s',
+      transition: 'all 0.400s',
       overflow: 'hidden',
     },
     schemaTranslate: {
       transform: !isSchemaOpened && 'translateX(calc(-100% + 40px))',
       position: 'absolute',
-      transition: 'transform 0.3s',
+      transition: 'transform 0.400s',
       width: '100%',
       height: '100%',
     },
@@ -74,8 +74,11 @@ export const ContentEditorInputStyles = createStyles((theme, { isSchemaOpened, e
       overflowY: isSchemaOpened && 'auto',
     },
     schemaLabel: {
+      maxWidth: isSchemaOpened ? 200 : 0,
       color: globalTheme.content.color.text.emphasis,
       ...globalTheme.content.typo.heading.xsm,
+      transition: 'max-width 300ms',
+      overflow: 'hidden',
     },
     title: {
       color: globalTheme.content.color.text.muted,

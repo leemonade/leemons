@@ -155,9 +155,7 @@ const ContentEditorInput = ({
 
           <ButtonGroup>
             {toolbars.link && <LinkTool />}
-            {leemonsTools.map((item, i) => (
-              <React.Fragment key={item.tool.id || `t-${i}`}>{item.tool}</React.Fragment>
-            ))}
+            {leemonsTools.map((item) => item.tool)}
           </ButtonGroup>
 
           {children}
