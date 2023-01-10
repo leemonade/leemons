@@ -202,7 +202,6 @@ function SubjectFilters({ onChange, loading }) {
             {...field}
             placeholder={labels?.program}
             data={programs}
-            searchable
             disabled={!!loading}
             style={inputRootStyle}
           />
@@ -216,7 +215,6 @@ function SubjectFilters({ onChange, loading }) {
             {...field}
             data={subjects}
             placeholder={labels?.subject}
-            searchable
             disabled={!subjects.length || !!loading}
             style={inputRootStyle}
           />
