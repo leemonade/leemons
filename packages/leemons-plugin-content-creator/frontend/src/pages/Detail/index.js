@@ -133,7 +133,7 @@ export default function Index() {
   if (store.loading || tLoading) return <LoadingOverlay visible />;
 
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
+    <Box style={{ height: '100vh' }}>
       <Stack direction="column" fullHeight>
         <PageHeader
           placeholders={{ title: t('titlePlaceholder') }}

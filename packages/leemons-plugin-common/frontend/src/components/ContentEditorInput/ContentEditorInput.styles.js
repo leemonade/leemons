@@ -15,11 +15,21 @@ export const ContentEditorInputStyles = createStyles((theme, { isSchemaOpened, e
       paddingBlock: 32,
       paddingInline: 24,
       backgroundColor: theme.other.global.background.color.surface.subtle,
-      // backgroundColor: 'black',
       flex: 1,
       overflowY: 'auto',
       display: 'flex',
       justifyContent: 'center',
+      '::-webkit-scrollbar': {
+        width: '12px',
+        border: `1px solid ${globalTheme.border.color.line.muted}`,
+      },
+      '::-webkit-scrollbar-track': {
+        backgroundColor: globalTheme.background.color.surface.default,
+      },
+      '::-webkit-scrollbar-thumb': {
+        backgroundColor: globalTheme.background.color.surface.muted,
+        borderRadius: 8,
+      },
     },
     editor: {
       ...editorStyles,
@@ -30,6 +40,7 @@ export const ContentEditorInputStyles = createStyles((theme, { isSchemaOpened, e
       paddingInline: 48,
       width: '210mm',
       minHeight: '297mm',
+      height: 'max-content',
     },
     toolbarRoot: {
       padding: '8px 16px 16px 24px',
@@ -44,13 +55,13 @@ export const ContentEditorInputStyles = createStyles((theme, { isSchemaOpened, e
       maxWidth: isSchemaOpened ? 300 : 40,
       flex: 1,
       position: 'relative',
-      transition: 'all 0.400s',
+      transition: 'all 0.2s',
       overflow: 'hidden',
     },
     schemaTranslate: {
       transform: !isSchemaOpened && 'translateX(calc(-100% + 40px))',
       position: 'absolute',
-      transition: 'transform 0.400s',
+      transition: 'transform 0.3s',
       width: '100%',
       height: '100%',
     },
@@ -72,6 +83,16 @@ export const ContentEditorInputStyles = createStyles((theme, { isSchemaOpened, e
       gap: 16,
       height: 'calc(100% - 53px)',
       overflowY: isSchemaOpened && 'auto',
+      '::-webkit-scrollbar': {
+        width: '12px',
+      },
+      '::-webkit-scrollbar-track': {
+        backgroundColor: globalTheme.background.color.surface.subtle,
+      },
+      '::-webkit-scrollbar-thumb': {
+        backgroundColor: globalTheme.background.color.surface.muted,
+        borderRadius: 8,
+      },
     },
     schemaLabel: {
       maxWidth: isSchemaOpened ? 200 : 0,
