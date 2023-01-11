@@ -7,6 +7,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const AddCurriculum = loadable(() => pMinDelay(import('./src/pages/private/AddCurriculum'), 1000));
+/*
 const AddCurriculumStep1 = loadable(() =>
   pMinDelay(import('./src/pages/private/AddCurriculumStep1'), 1000)
 );
@@ -16,6 +17,8 @@ const AddCurriculumStep2 = loadable(() =>
 const AddCurriculumStep3 = loadable(() =>
   pMinDelay(import('./src/pages/private/AddCurriculumStep3'), 1000)
 );
+
+ */
 const CurriculumView = loadable(() =>
   pMinDelay(import('./src/pages/private/CurriculumView'), 1000)
 );
@@ -32,6 +35,20 @@ export default function Private() {
       <Route path={`${path}/new`}>
         <AddCurriculum session={session} fallback={<LoadingOverlay visible />} />
       </Route>
+      <Route path={`${path}/list`}>
+        <ListCurriculum session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/:id/view`}>
+        <CurriculumView session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/:id`}>
+        <AddCurriculum session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+    </Switch>
+  );
+}
+
+/*
       <Route path={`${path}/:id/step/1`}>
         <AddCurriculumStep1 session={session} fallback={<LoadingOverlay visible />} />
       </Route>
@@ -40,13 +57,4 @@ export default function Private() {
       </Route>
       <Route path={`${path}/:id/step/3`}>
         <AddCurriculumStep3 session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/:id/view`}>
-        <CurriculumView session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/list`}>
-        <ListCurriculum session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-    </Switch>
-  );
-}
+      </Route> */

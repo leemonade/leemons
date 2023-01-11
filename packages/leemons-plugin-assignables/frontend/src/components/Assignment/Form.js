@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -16,7 +16,7 @@ import {
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 // TODO: Move to assignables
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
@@ -25,6 +25,7 @@ import { detailCurriculumRequest, listCurriculumsByProgramRequest } from '@curri
 import { RatingStarIcon } from '@bubbles-ui/icons/outline';
 import prefixPN from '../../helpers/prefixPN';
 import AssignStudents from './AssignStudents';
+import RelatedInstancesPicker from './RelatedInstancesPicker';
 
 function GradeVariation({
   onChange,
@@ -32,52 +33,59 @@ function GradeVariation({
   variations = ['calificable', 'punctuation-evaluable', 'evaluable', 'no-evaluable'],
   labels,
 }) {
-  const data = useMemo(
-    () =>
-      [
-        {
-          label: labels?.calificable?.label,
-          description: labels?.calificable?.description,
-          value: 'calificable',
-          variation: {
-            gradable: true,
-            requiresScoring: true,
-            allowFeedback: true,
-          },
+  const data = useMemo(() => {
+    const allVariations = [
+      {
+        label: labels?.calificable?.label,
+        description: labels?.calificable?.description,
+        value: 'calificable',
+        variation: {
+          gradable: true,
+          requiresScoring: true,
+          allowFeedback: true,
         },
-        {
-          label: labels?.punctuationEvaluable?.label,
-          description: labels?.punctuationEvaluable?.description,
-          value: 'punctuation-evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: true,
-            allowFeedback: true,
-          },
+      },
+      {
+        label: labels?.punctuationEvaluable?.label,
+        description: labels?.punctuationEvaluable?.description,
+        value: 'punctuation-evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: true,
+          allowFeedback: true,
         },
-        {
-          label: labels?.evaluable?.label,
-          description: labels?.evaluable?.description,
-          value: 'evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: false,
-            allowFeedback: true,
-          },
+      },
+      {
+        label: labels?.evaluable?.label,
+        description: labels?.evaluable?.description,
+        value: 'evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: false,
+          allowFeedback: true,
         },
-        {
-          label: labels?.notEvaluable?.label,
-          description: labels?.notEvaluable?.description,
-          value: 'no-evaluable',
-          variation: {
-            gradable: false,
-            requiresScoring: false,
-            allowFeedback: false,
-          },
+      },
+      {
+        label: labels?.notEvaluable?.label,
+        description: labels?.notEvaluable?.description,
+        value: 'no-evaluable',
+        variation: {
+          gradable: false,
+          requiresScoring: false,
+          allowFeedback: false,
         },
-      ].filter((variation) => variations.includes(variation.value)),
-    [labels, ...variations]
-  );
+      },
+    ];
+    const variationsToUse = allVariations.filter((variation) =>
+      variations.includes(variation.value)
+    );
+
+    if (!variationsToUse?.length) {
+      return [allVariations[allVariations.length - 1]];
+    }
+
+    return variationsToUse;
+  }, [labels, ...variations]);
 
   const selectedValue = useMemo(() => {
     if (value) {
@@ -89,6 +97,7 @@ function GradeVariation({
     }
 
     onChange(data[0].variation);
+
     return data[0].value;
   }, [JSON.stringify(value)]);
 
@@ -107,7 +116,6 @@ function GradeVariation({
             <Text color="secondary">{description}</Text>
           </Box>
         ),
-        description,
         value: v,
       }))}
       value={selectedValue}
@@ -177,7 +185,7 @@ function useCurriculumFields({ assignable }) {
     detailCurriculumRequest(curriculum?.id)
   );
 
-  const { data, isLoading } = query;
+  const { data, isLoading, isError, error } = query;
 
   const curriculumDetails = data?.curriculum;
 
@@ -188,19 +196,17 @@ function useCurriculumFields({ assignable }) {
 
     const subjectLevel = curriculumDetails.nodeLevels.find((level) => level.type === 'subject');
 
-    if (subjectLevel) {
+    if (subjectLevel?.schema?.compileJsonSchema) {
       const curriculumFields = subjectLevel.schema.compileJsonSchema.properties;
 
-      const parsedCurriculumFields = Object.entries(curriculumFields).map(([id, field]) => ({
-        id,
+      const parsedCurriculumFields = Object.values(curriculumFields).map((field) => ({
+        id: field.id,
         label: field.title,
         isEvaluationCriteria: field.frontConfig.blockData.evaluationCriteria,
       }));
 
       return {
-        curriculum: parsedCurriculumFields.filter((field) =>
-          selectedCurriculumValues.some((value) => value.includes(`property.${field.id}`))
-        ),
+        curriculum: parsedCurriculumFields,
         objectives: _.last(selectedCurriculumValues) === 'objectives',
       };
     }
@@ -208,51 +214,16 @@ function useCurriculumFields({ assignable }) {
     return { curriculum: null, objectives: _.last(selectedCurriculumValues) === 'objectives' };
   }, [curriculumDetails]);
 
-  return { ...query, data: finalData };
+  return { isLoading, isError, error, data: finalData };
 }
 
-export default function Form({
-  defaultValues = {},
-  onSubmit: parentSubmit,
-  assignable,
-  sendButton,
-  variations,
-}) {
-  const [, translations] = useTranslateLoader(prefixPN('assignment_form'));
-  const {
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      ...defaultValues,
-      gradeVariation: {
-        gradable: defaultValues?.gradable,
-        requiresScoring: defaultValues?.requiresScoring,
-        allowFeedback: defaultValues?.allowFeedback,
-      },
-      dates: defaultValues?.dates
-        ? Object.entries(defaultValues?.dates).reduce(
-            (acc, [key, value]) => ({
-              ...acc,
-              [key]: value ? new Date(value) : null,
-            }),
-            {}
-          )
-        : {},
-    },
-  });
+function useFormLocalizations() {
+  const [, translations] = useTranslateLoader([
+    prefixPN('assignment_form'),
+    prefixPN('multiSubject'),
+  ]);
 
-  const {
-    labels,
-    placeholders,
-    descriptions,
-    assignTo,
-    modes,
-    gradeVariation: gradeVariationLabels,
-  } = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = res.plugins.assignables.assignment_form;
@@ -273,7 +244,7 @@ export default function Form({
       ];
 
       return {
-        labels: data.labels,
+        labels: { ...data.labels, multiSubject: _.get(res, prefixPN('multiSubject')) },
         gradeVariation: data.gradeVariations,
         placeholders: data.placeholders,
         descriptions: data.descriptions,
@@ -290,6 +261,54 @@ export default function Form({
       assignTo: [],
     };
   }, [translations]);
+}
+
+export default function Form({
+  defaultValues = {},
+  onSubmit: parentSubmit,
+  assignable,
+  sendButton,
+  variations,
+  showResultsCheck,
+  showCorrectAnswersCheck,
+  hideDuration,
+}) {
+  const form = useForm({
+    defaultValues: {
+      ...defaultValues,
+      gradeVariation: {
+        gradable: defaultValues?.gradable,
+        requiresScoring: defaultValues?.requiresScoring,
+        allowFeedback: defaultValues?.allowFeedback,
+      },
+      dates: defaultValues?.dates
+        ? Object.entries(defaultValues?.dates).reduce(
+          (acc, [key, value]) => ({
+            ...acc,
+            [key]: value ? new Date(value) : null,
+          }),
+          {}
+        )
+        : {},
+    },
+  });
+
+  const {
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = form;
+
+  const {
+    labels,
+    placeholders,
+    descriptions,
+    assignTo,
+    modes,
+    gradeVariation: gradeVariationLabels,
+  } = useFormLocalizations();
 
   const onSubmit = ({ gradeVariation, ...data }) => {
     if (typeof parentSubmit === 'function') {
@@ -306,267 +325,281 @@ export default function Form({
 
   const isAllDay = watch('isAllDay');
   const deadline = watch('dates.deadline');
+  const gradeVariation = watch('gradeVariation');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-      <ContextContainer divided>
-        <Controller
-          control={control}
-          name="assignees"
-          rules={{ required: labels?.required }}
-          render={({ field }) => (
-            <AssignStudents
-              {...field}
-              error={errors?.assignees}
-              profile="student"
-              assignable={assignable}
-              labels={labels}
-              modes={modes}
-              assignTo={assignTo}
-              defaultValue={{
-                assignee: field.value,
-                type: defaultValues?.assignStudents?.type,
-                subjects: defaultValues?.assignStudents?.subjects,
-                assignmentSetup: {
-                  ...defaultValues?.assignStudents?.assignmentSetup,
-                  addNewClassStudents: defaultValues?.addNewClassStudents || false,
-                },
-              }}
-              onChange={(value) => {
-                field.onChange(value.assignee);
-                setValue('addNewClassStudents', value?.assignmentSetup?.addNewClassStudents);
-                setValue('assignStudents', {
-                  subjects: value.subjects,
-                  type: value.type,
-                  assignmentSetup: _.omit(value.assignmentSetup, ['addNewClassStudents']),
-                });
-              }}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="gradeVariation"
-          render={({ field }) => (
-            <GradeVariation
-              {...field}
-              error={errors?.gradeVariation}
-              variations={variations}
-              labels={gradeVariationLabels}
-            />
-          )}
-        />
+    <FormProvider {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+        <ContextContainer divided>
+          <Controller
+            control={control}
+            name="assignees"
+            rules={{ required: labels?.required }}
+            render={({ field }) => (
+              <AssignStudents
+                {...field}
+                showResultsCheck={showResultsCheck}
+                showCorrectAnswersCheck={showCorrectAnswersCheck}
+                error={errors?.assignees}
+                profile="student"
+                assignable={assignable}
+                labels={labels}
+                modes={modes}
+                assignTo={assignTo}
+                defaultValue={{
+                  assignee: field.value,
+                  type: defaultValues?.assignStudents?.type,
+                  subjects: defaultValues?.assignStudents?.subjects,
+                  assignmentSetup: {
+                    ...defaultValues?.assignStudents?.assignmentSetup,
+                    addNewClassStudents: defaultValues?.addNewClassStudents || false,
+                  },
+                }}
+                onChange={(value) => {
+                  field.onChange(value.assignee);
+                  setValue('addNewClassStudents', value?.assignmentSetup?.addNewClassStudents);
+                  setValue('assignStudents', {
+                    subjects: value.subjects,
+                    type: value.type,
+                    assignmentSetup: _.omit(value.assignmentSetup, ['addNewClassStudents']),
+                  });
+                }}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="gradeVariation"
+            render={({ field }) => (
+              <GradeVariation
+                {...field}
+                error={errors?.gradeVariation}
+                variations={variations}
+                labels={gradeVariationLabels}
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="alwaysAvailable"
-          render={({ field: alwaysOpenField }) => (
-            <ConditionalInput
-              {...alwaysOpenField}
-              initialValue={!!defaultValues?.alwaysAvailable}
-              label={labels?.alwaysOpenToogle}
-              showOnTrue={false}
-              render={() => (
-                <>
-                  <Grid>
-                    <Grid.Col span={6}>
-                      {/* <ContextContainer direction="row"> */}
-                      <Controller
-                        control={control}
-                        name="dates.start"
-                        rules={{ required: labels?.required }}
-                        render={({ field }) => (
-                          <DatePicker
-                            {...field}
-                            withTime
-                            minDate={new Date()}
-                            error={errors?.dates?.start}
-                            label={labels?.startDate}
-                            placeholder={placeholders?.date}
-                          />
-                        )}
-                      />
-                    </Grid.Col>
-
-                    <Grid.Col span={6}>
-                      <Controller
-                        control={control}
-                        name="dates.deadline"
-                        rules={{ required: labels?.required }}
-                        render={({ field }) => {
-                          const startDate = watch('dates.start');
-
-                          if (field.value && !startDate) {
-                            field.onChange(null);
-                          } else if (startDate && !field.value) {
-                            field.onChange(startDate);
-                          }
-
-                          return (
-                            <DatePicker
-                              {...field}
-                              onChange={(e) => {
-                                if (isAllDay) {
-                                  setAllDay(e);
-                                } else {
-                                  field.onChange(e);
-                                }
-                              }}
-                              withTime={startDate && !isAllDay}
-                              error={errors?.dates?.deadline}
-                              label={labels?.deadline}
-                              minDate={startDate}
-                              disabled={!startDate}
-                              placeholder={placeholders?.date}
-                            />
-                          );
-                        }}
-                      />
-                    </Grid.Col>
-                    {/* </ContextContainer> */}
-                  </Grid>
-                  <Grid>
-                    <Grid.Col span={6}>
-                      <ConditionalInput
-                        initialValue={!!defaultValues?.dates?.visualization}
-                        label={labels?.visualizationDateToogle}
-                        help={descriptions?.visualizationDate}
-                        render={() => (
-                          <ContextContainer direction="row" alignItems="end">
-                            <Controller
-                              control={control}
-                              name="dates.visualization"
-                              shouldUnregister={true}
-                              rules={{ required: labels?.required }}
-                              render={({ field }) => {
-                                const startDate = watch('dates.start');
-                                return (
-                                  <DatePicker
-                                    {...field}
-                                    withTime
-                                    minDate={new Date()}
-                                    maxDate={startDate}
-                                    error={errors?.dates?.visualization}
-                                    label={labels?.visualizationDate}
-                                    placeholder={placeholders?.date}
-                                  />
-                                );
-                              }}
-                            />
-                          </ContextContainer>
-                        )}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+          <Controller
+            control={control}
+            name="alwaysAvailable"
+            render={({ field: alwaysOpenField }) => (
+              <ConditionalInput
+                {...alwaysOpenField}
+                initialValue={!!defaultValues?.alwaysAvailable}
+                label={labels?.alwaysOpenToogle}
+                showOnTrue={false}
+                render={() => (
+                  <>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        {/* <ContextContainer direction="row"> */}
                         <Controller
                           control={control}
-                          name="isAllDay"
+                          name="dates.start"
+                          rules={{ required: labels?.required }}
                           render={({ field }) => (
-                            <Switch
-                              checked={field.value}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                if (e && deadline) {
-                                  setAllDay(deadline);
-                                }
-                              }}
-                              helpPosition="bottom"
-                              label={labels?.isAllDay}
-                              help={descriptions?.isAllDay}
+                            <DatePicker
+                              {...field}
+                              withTime
+                              minDate={new Date()}
+                              error={errors?.dates?.start}
+                              label={labels?.startDate}
+                              placeholder={placeholders?.date}
                             />
                           )}
                         />
-                      </Box>
-                      <ConditionalInput
-                        label={`${labels?.closeDateToogle}\n `}
-                        initialValue={!!defaultValues?.dates?.close}
-                        help={descriptions?.closeDateToogle}
-                        render={() => (
-                          <ContextContainer direction="row" alignItems="end">
-                            <Controller
-                              control={control}
-                              name="dates.close"
-                              shouldUnregister={true}
-                              rules={{ required: labels?.required }}
-                              render={({ field }) => {
-                                const deadline = watch('dates.deadline');
-                                return (
-                                  <DatePicker
-                                    {...field}
-                                    withTime
-                                    minDate={deadline}
-                                    error={errors?.dates?.close}
-                                    label={labels?.closeDate}
-                                    placeholder={placeholders?.date}
-                                  />
-                                );
-                              }}
-                            />
-                          </ContextContainer>
+                      </Grid.Col>
+
+                      <Grid.Col span={6}>
+                        <Controller
+                          control={control}
+                          name="dates.deadline"
+                          rules={{ required: labels?.required }}
+                          render={({ field }) => {
+                            const startDate = watch('dates.start');
+
+                            if (field.value && !startDate) {
+                              field.onChange(null);
+                            } else if (startDate && !field.value) {
+                              field.onChange(startDate);
+                            }
+
+                            return (
+                              <DatePicker
+                                {...field}
+                                onChange={(e) => {
+                                  if (isAllDay) {
+                                    setAllDay(e);
+                                  } else {
+                                    field.onChange(e);
+                                  }
+                                }}
+                                withTime={startDate && !isAllDay}
+                                error={errors?.dates?.deadline}
+                                label={labels?.deadline}
+                                minDate={startDate}
+                                disabled={!startDate}
+                                placeholder={placeholders?.date}
+                              />
+                            );
+                          }}
+                        />
+                      </Grid.Col>
+                      {/* </ContextContainer> */}
+                    </Grid>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <ConditionalInput
+                          initialValue={!!defaultValues?.dates?.visualization}
+                          label={labels?.visualizationDateToogle}
+                          help={descriptions?.visualizationDate}
+                          render={() => (
+                            <ContextContainer direction="row" alignItems="end">
+                              <Controller
+                                control={control}
+                                name="dates.visualization"
+                                shouldUnregister={true}
+                                rules={{ required: labels?.required }}
+                                render={({ field }) => {
+                                  const startDate = watch('dates.start');
+                                  return (
+                                    <DatePicker
+                                      {...field}
+                                      withTime
+                                      minDate={new Date()}
+                                      maxDate={startDate}
+                                      error={errors?.dates?.visualization}
+                                      label={labels?.visualizationDate}
+                                      placeholder={placeholders?.date}
+                                    />
+                                  );
+                                }}
+                              />
+                            </ContextContainer>
+                          )}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+                          <Controller
+                            control={control}
+                            name="isAllDay"
+                            render={({ field }) => (
+                              <Switch
+                                checked={field.value}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  if (e && deadline) {
+                                    setAllDay(deadline);
+                                  }
+                                }}
+                                helpPosition="bottom"
+                                label={labels?.isAllDay}
+                                help={descriptions?.isAllDay}
+                              />
+                            )}
+                          />
+                        </Box>
+                        {(gradeVariation.gradable || gradeVariation.allowFeedback) && (
+                          <ConditionalInput
+                            label={`${labels?.closeDateToogle}\n `}
+                            initialValue={!!defaultValues?.dates?.close}
+                            help={descriptions?.closeDateToogle}
+                            render={() => (
+                              <ContextContainer direction="row" alignItems="end">
+                                <Controller
+                                  control={control}
+                                  name="dates.close"
+                                  shouldUnregister={true}
+                                  rules={{ required: labels?.required }}
+                                  render={({ field }) => {
+                                    const deadline = watch('dates.deadline');
+                                    return (
+                                      <DatePicker
+                                        {...field}
+                                        withTime
+                                        minDate={deadline}
+                                        error={errors?.dates?.close}
+                                        label={labels?.closeDate}
+                                        placeholder={placeholders?.date}
+                                      />
+                                    );
+                                  }}
+                                />
+                              </ContextContainer>
+                            )}
+                          />
                         )}
-                      />
-                    </Grid.Col>
-                  </Grid>
-                </>
-              )}
-            />
-          )}
-        />
+                      </Grid.Col>
+                    </Grid>
+                  </>
+                )}
+              />
+            )}
+          />
 
-        <ConditionalInput
-          label={labels?.limitedExecutionToogle}
-          help={descriptions?.limitedExecution}
-          initialValue={!!defaultValues?.duration}
-          render={() => (
-            <Controller
-              control={control}
-              name="duration"
-              shouldUnregister={true}
-              rules={{ required: labels?.required }}
-              render={({ field }) => (
-                <TimeUnitsInput
-                  error={errors?.duration}
-                  label={labels?.limitedExecution}
-                  {...field}
+          <RelatedInstancesPicker labels={labels} />
+          {!hideDuration && (
+            <ConditionalInput
+              label={labels?.limitedExecutionToogle}
+              help={descriptions?.limitedExecution}
+              initialValue={!!defaultValues?.duration}
+              render={() => (
+                <Controller
+                  control={control}
+                  name="duration"
+                  shouldUnregister={true}
+                  rules={{ required: labels?.required }}
+                  render={({ field }) => (
+                    <TimeUnitsInput
+                      error={errors?.duration}
+                      label={labels?.limitedExecution}
+                      {...field}
+                    />
+                  )}
                 />
               )}
             />
           )}
-        />
-        <ConditionalInput
-          label={labels?.messageToStudentsToogle}
-          help={descriptions?.messageToStudents}
-          initialValue={!!defaultValues?.messageToAssignees}
-          render={() => (
-            <Controller
-              control={control}
-              name="messageToAssignees"
-              shouldUnregister={true}
-              rules={{ required: labels?.required }}
-              render={({ field }) => (
-                <TextEditorInput
-                  error={errors?.messageToAssignees}
-                  label={labels?.messageToStudents}
-                  {...field}
-                />
-              )}
-            />
-          )}
-        />
-
-        {!curriculumFields?.data?.curriculum?.length &&
-        !curriculumFields?.data?.objectives ? null : (
           <Controller
             control={control}
-            name="curriculum.toogle"
-            render={({ field: showField }) => (
+            name={'sendMail'}
+            render={({ field: sendMailField }) => (
               <ConditionalInput
-                {...showField}
-                // TODO: Initial show if curriculum selected
-                label={labels?.showCurriculumToogle}
-                render={
-                  () =>
+                {...sendMailField}
+                label={labels?.messageToStudentsToogle}
+                help={descriptions?.messageToStudents}
+                initialValue={!!defaultValues?.messageToAssignees}
+                render={() => (
+                  <Controller
+                    control={control}
+                    name="messageToAssignees"
+                    shouldUnregister={true}
+                    render={({ field }) => (
+                      <TextEditorInput
+                        error={errors?.messageToAssignees}
+                        label={labels?.messageToStudents}
+                        {...field}
+                      />
+                    )}
+                  />
+                )}
+              />
+            )}
+          />
+
+          {!curriculumFields?.data?.curriculum?.length &&
+            !curriculumFields?.data?.objectives ? null : (
+            <Controller
+              control={control}
+              name="curriculum.toogle"
+              render={({ field: showField }) => (
+                <ConditionalInput
+                  {...showField}
+                  // TODO: Initial show if curriculum selected
+                  label={labels?.showCurriculumToogle}
+                  render={() =>
                     curriculumFields.isLoading ? (
                       <Loader />
                     ) : (
@@ -574,31 +607,31 @@ export default function Form({
                         {!curriculumFields?.data?.curriculum?.length
                           ? null
                           : curriculumFields.data.curriculum.map((curriculumField) => (
-                              <Controller
-                                key={curriculumField.id}
-                                control={control}
-                                name={`curriculum.${curriculumField.id}`}
-                                shouldUnregister={true}
-                                render={({ field }) => (
-                                  <Switch
-                                    {...field}
-                                    checked={field.value}
-                                    label={
-                                      <Box
-                                        sx={(theme) => ({
-                                          display: 'flex',
-                                          flexDirection: 'row',
-                                          gap: theme.spacing[1],
-                                        })}
-                                      >
-                                        {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
-                                        <Text>{curriculumField.label}</Text>
-                                      </Box>
-                                    }
-                                  />
-                                )}
-                              />
-                            ))}
+                            <Controller
+                              key={curriculumField.id}
+                              control={control}
+                              name={`curriculum.${curriculumField.id}`}
+                              shouldUnregister={true}
+                              render={({ field }) => (
+                                <Switch
+                                  {...field}
+                                  checked={field.value}
+                                  label={
+                                    <Box
+                                      sx={(theme) => ({
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        gap: theme.spacing[1],
+                                      })}
+                                    >
+                                      {curriculumField.isEvaluationCriteria && <RatingStarIcon />}
+                                      <Text>{curriculumField.label}</Text>
+                                    </Box>
+                                  }
+                                />
+                              )}
+                            />
+                          ))}
                         {!curriculumFields?.data?.objectives ? null : (
                           <Controller
                             control={control}
@@ -615,41 +648,16 @@ export default function Form({
                         )}
                       </>
                     )
-                  // <>
-                  //   <Controller
-                  //     control={control}
-                  //     name="curriculum.content"
-                  //     shouldUnregister={true}
-                  //     render={({ field }) => (
-                  //       <Switch {...field} checked={field.value} label={labels?.content} />
-                  //     )}
-                  //   />
-                  //   <Controller
-                  //     control={control}
-                  //     name="curriculum.assessmentCriteria"
-                  //     shouldUnregister={true}
-                  //     render={({ field }) => (
-                  //       <Switch {...field} checked={field.value} label={labels?.assessmentCriteria} />
-                  //     )}
-                  //   />
-                  //   <Controller
-                  //     control={control}
-                  //     name="curriculum.objectives"
-                  //     shouldUnregister={true}
-                  //     render={({ field }) => (
-                  //       <Switch {...field} checked={field.value} label={labels?.objectives} />
-                  //     )}
-                  //   />
-                  // </>
-                }
-              />
-            )}
-          />
-        )}
+                  }
+                />
+              )}
+            />
+          )}
 
-        <Box>{sendButton || <Button type="submit">{labels?.submit}</Button>}</Box>
-      </ContextContainer>
-    </form>
+          <Box>{sendButton || <Button type="submit">{labels?.submit}</Button>}</Box>
+        </ContextContainer>
+      </form>
+    </FormProvider>
   );
 }
 
@@ -666,4 +674,5 @@ Form.propTypes = {
   control: PropTypes.object,
   curriculumFields: PropTypes.object,
   defaultValues: PropTypes.object,
+  hideDuration: PropTypes.bool,
 };

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const { getDates } = require('../dates');
-const { assignations, assignableInstances } = require('../tables');
+const { assignations, assignableInstances, classes } = require('../tables');
 const getGrade = require('../grades/getGrade');
 const getUserPermission = require('../assignableInstance/permissions/assignableInstance/users/getUserPermission');
 const getSubjects = require('../subjects/getSubjects');
@@ -25,7 +25,7 @@ module.exports = async function getAssignation(
     throw new Error('Assignation not found or your are not allowed to view it');
   }
 
-  let [assignation, { assignable }] = await Promise.all([
+  let [assignation, { relatedAssignableInstances }, assignedClasses] = await Promise.all([
     assignations.findOne(
       {
         instance: assignableInstanceId,
@@ -35,9 +35,16 @@ module.exports = async function getAssignation(
     ),
     assignableInstances.findOne(
       { id: assignableInstanceId },
-      { columns: ['assignable'], transacting }
+      { columns: ['relatedAssignableInstances'], transacting }
     ),
+    classes.find({
+      assignableInstance: assignableInstanceId
+    }, { columns: ['class'] })
   ]);
+
+  relatedAssignableInstances = relatedAssignableInstances
+    ? JSON.parse(relatedAssignableInstances)
+    : null;
 
   if (!assignation) {
     throw new Error('Assignation not found or your are not allowed to view it');
@@ -47,11 +54,11 @@ module.exports = async function getAssignation(
     getDates('assignableInstance', assignableInstanceId, {
       transacting,
     }),
-    getSubjects(assignable, { transacting }),
+    leemons.getPlugin('academic-portfolio').services.classes.classByIds(_.map(assignedClasses, 'class'), { userSession, transacting })
   ]);
 
   const chatKeys = [];
-  _.forEach(subjects, ({ subject }) => {
+  _.forEach(_.map(subjects, 'subject.id'), (subject) => {
     chatKeys.push(
       `plugins.assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${user}`
     );
@@ -62,6 +69,29 @@ module.exports = async function getAssignation(
     classes: JSON.parse(assignation.classes),
     metadata: JSON.parse(assignation.metadata),
   };
+
+  if (relatedAssignableInstances?.before?.length) {
+    const relatedInstancesTimestamps = await Promise.all(
+      relatedAssignableInstances.before.map(async (instance) => {
+        const relatedAssignation = await assignations.findOne(
+          {
+            instance: instance.id,
+            user,
+          },
+          { transacting, columns: ['id'] }
+        );
+
+        return getDates('assignation', relatedAssignation.id, { transacting });
+      })
+    );
+
+    assignation.relatedAssignableInstances = {
+      before: relatedAssignableInstances.before.map((instance, i) => ({
+        ...instance,
+        timestamps: relatedInstancesTimestamps[i],
+      })),
+    };
+  }
 
   const [timestamps, grades] = await Promise.all([
     getDates('assignation', assignation.id, { transacting }),

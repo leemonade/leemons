@@ -384,7 +384,7 @@ export default function TreePage() {
     try {
       store.saving = true;
       render();
-      console.log('onSaveCycle', d);
+      // console.log('onSaveCycle', d);
       await updateCycleRequest({ id, name, managers });
       store.tree = await getProgramTree();
       setAgainActiveTree();
@@ -900,7 +900,7 @@ export default function TreePage() {
           render();
         },
         onCancel: () => {
-          console.log('on cancel');
+          // console.log('on cancel');
           reject();
         },
       })();

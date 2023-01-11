@@ -3,8 +3,9 @@ const { upload } = require('./upload');
 const { remove } = require('./remove');
 const { getById } = require('./getById');
 const { getByIds } = require('./getByIds');
-const { uploadFiles } = require('./uploadFiles');
+const { duplicate } = require('./duplicate');
 const { getByUser } = require('./getByUser');
+const { uploadFiles } = require('./uploadFiles');
 const { dataForReturnFile } = require('./dataForReturnFile');
 
 module.exports = {
@@ -13,6 +14,7 @@ module.exports = {
   remove,
   getById,
   getByIds,
+  duplicate,
   getByUser,
   uploadFiles,
   dataForReturnFile,

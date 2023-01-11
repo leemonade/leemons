@@ -3,6 +3,8 @@ const { toLower, isEmpty } = require('lodash');
 const mime = require('mime-types');
 const pathSys = require('path');
 const stream = require('stream');
+const fs = require('fs');
+const fsPromises = require('fs/promises');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 const { getById } = require('./getById');
@@ -180,12 +182,12 @@ function createTemp(readStream, contentType) {
         dataToWrite = await streamToBuffer(dataToWrite);
       }
 
-      leemons.fs.write(info.fd, dataToWrite, (e) => {
+      fs.write(info.fd, dataToWrite, (e) => {
         if (e) {
           reject(e);
         }
 
-        leemons.fs.close(info.fd, (error) => {
+        fs.close(info.fd, (error) => {
           if (error) {
             reject(error);
           }
@@ -203,7 +205,7 @@ async function upload(file, { name }, { transacting } = {}) {
   const { path, type } = file;
   const extension = mime.extension(type);
 
-  const fileHandle = await leemons.fs.open(path, 'r');
+  const fileHandle = await fsPromises.open(path, 'r');
   const stats = await fileHandle.stat(path);
   const fileSize = stats.size;
 
@@ -264,6 +266,7 @@ async function upload(file, { name }, { transacting } = {}) {
     type,
     extension,
     uri: '',
+    size: fileSize,
     metadata: JSON.stringify(metadata),
   };
 
@@ -287,7 +290,7 @@ async function upload(file, { name }, { transacting } = {}) {
   if (providerName) {
     const provider = leemons.getProvider(providerName);
     if (provider?.services?.provider?.upload) {
-      const buffer = await leemons.fs.readFile(path);
+      const buffer = await fsPromises.readFile(path);
       urlData.provider = providerName;
 
       urlData.uri = await provider.services.provider.upload(newFile, buffer, { transacting });
@@ -308,8 +311,8 @@ async function upload(file, { name }, { transacting } = {}) {
       `${newFile.id}.${newFile.extension}`
     );
 
-    const buffer = await leemons.fs.readFile(path);
-    await leemons.fs.writeFile(urlData.uri, buffer);
+    const buffer = await fsPromises.readFile(path);
+    await fsPromises.writeFile(urlData.uri, buffer);
   }
 
   // EN: Update the asset with the new URI and provider

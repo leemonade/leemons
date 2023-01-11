@@ -28,7 +28,7 @@ export default function QuestionNoteClues(props) {
         <Text size="md" color="tertiary" role="productive">
           {clue.text}
         </Text>
-        <Box className={styles.questionCluePerson} />
+        {/* <Box className={styles.questionCluePerson} /> */}
       </Box>
     ));
   }

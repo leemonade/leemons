@@ -14,6 +14,7 @@ module.exports = async function registerPermission(assignable, { transacting }) 
       { isCustomPermission: true, transacting }
     );
   } catch (e) {
-    throw new Error(`Error registering permission: ${e.message}`);
+    e.message = `Error registering permission: ${e.message}`;
+    throw e;
   }
 };

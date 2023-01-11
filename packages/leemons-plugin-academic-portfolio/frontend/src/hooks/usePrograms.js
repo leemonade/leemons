@@ -1,6 +1,6 @@
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import { getCookieToken } from '@users/session';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function usePrograms({ enabled = true } = {}) {
   const token = getCookieToken(true);

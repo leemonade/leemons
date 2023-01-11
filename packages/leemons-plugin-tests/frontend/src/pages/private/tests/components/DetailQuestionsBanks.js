@@ -47,7 +47,7 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
         page: store.page,
         size: store.size,
         published: true,
-        subjects,
+        subjects: _.map(subjects, 'subject'),
       });
 
       if (questionBank) {

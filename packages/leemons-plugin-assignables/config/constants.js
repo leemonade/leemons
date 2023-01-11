@@ -70,7 +70,7 @@ const menuItems = [
   {
     item: {
       key: 'activities',
-      order: 10,
+      order: 202,
       iconSvg: '/public/assignables/menu-icon.svg',
       activeIconSvg: '/public/assignables/menu-icon.svg',
       label: {
@@ -99,24 +99,6 @@ const menuItems = [
     permissions: [
       {
         permissionName: permissionNames.ongoing,
-        actionNames: ['view'],
-      },
-    ],
-  },
-  {
-    item: {
-      key: 'activities.history',
-      order: 2,
-      parentKey: 'activities',
-      url: '/private/assignables/history',
-      label: {
-        en: 'History',
-        es: 'Histórico',
-      },
-    },
-    permissions: [
-      {
-        permissionName: permissionNames.history,
         actionNames: ['view'],
       },
     ],

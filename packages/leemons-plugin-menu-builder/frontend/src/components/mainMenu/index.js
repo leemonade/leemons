@@ -83,7 +83,9 @@ export default function MainMenu({ subNavWidth, ...props }) {
             forceReload.current = false;
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        //
+      }
     })();
     return () => {
       mounted = false;

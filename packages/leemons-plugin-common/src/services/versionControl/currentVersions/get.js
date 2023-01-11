@@ -3,29 +3,34 @@ const {
 } = require('../../tables');
 const verifyOwnership = require('../helpers/type/verifyOwnership');
 
-module.exports = async function get(uuid, { transacting } = {}) {
-  try {
-    const versionedEntity = await currentVersions.findOne(
-      {
-        id: uuid,
-      },
-      { transacting }
-    );
+async function getMany(uuids, { transacting } = {}) {
+  const versionedEntities = await currentVersions.find(
+    {
+      id_$in: uuids,
+    },
+    { transacting }
+  );
 
-    const { type } = versionedEntity;
-
-    if (!verifyOwnership(type, this)) {
-      throw new Error('You are not allowed to access this version');
+  return versionedEntities.map((entity) => {
+    if (!verifyOwnership(entity.type, this)) {
+      throw new Error(
+        `The uuid ${entity.id} does not exist in the version control system or you don't have permissions`
+      );
     }
 
     return {
-      uuid: versionedEntity.id,
-      current: versionedEntity.published,
-      type: versionedEntity.type,
+      uuid: entity.id,
+      current: entity.published,
+      type: entity.type,
     };
-  } catch (e) {
-    throw new Error(
-      `The uuid ${uuid} does not exist in the version control system or you don't have permissions`
-    );
-  }
+  });
+}
+
+module.exports = async function get(uuid, { transacting } = {}) {
+  const isArray = Array.isArray(uuid);
+  const uuids = isArray ? uuid : [uuid];
+
+  const entities = await getMany.call(this, uuids, { transacting });
+
+  return isArray ? entities : entities[0];
 };

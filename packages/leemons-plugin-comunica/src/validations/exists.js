@@ -6,7 +6,8 @@ function validateKeyPrefix(_key, calledFrom) {
   if (calledFrom) {
     const keys = _.isArray(_key) ? _key : [_key];
     _.forEach(keys, (key) => {
-      if (!key.startsWith(calledFrom)) throw new Error(`The key must begin with ${calledFrom}`);
+      if (!key.startsWith(calledFrom) && calledFrom !== 'plugins.fundae')
+        throw new Error(`The key must begin with ${calledFrom}`);
     });
   }
 }

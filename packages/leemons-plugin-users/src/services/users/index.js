@@ -24,6 +24,7 @@ const { hasPermissionCTX } = require('./hasPermissionCTX');
 const { registerPassword } = require('./registerPassword');
 const { centerProfileToken } = require('./centerProfileToken');
 const { updateAvatar } = require('./updateAvatar');
+const { activateUser } = require('./activateUser');
 
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
@@ -54,12 +55,13 @@ module.exports = {
   canReset,
   profiles,
   updateEmail,
-  updatePassword,
+  activateUser,
   updateAvatar,
   isSuperAdmin,
   profileToken,
   detailForPage,
   getResetConfig,
+  updatePassword,
   comparePassword,
   encryptPassword,
   registerPassword,

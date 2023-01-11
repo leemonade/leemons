@@ -29,4 +29,10 @@ module.exports = [
     handler: 'room.getUnreadMessages',
     authenticated: true,
   },
+  {
+    path: '/room/messages/count',
+    method: 'POST',
+    handler: 'room.getRoomsMessageCount',
+    authenticated: true,
+  },
 ];

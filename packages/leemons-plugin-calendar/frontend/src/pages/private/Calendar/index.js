@@ -35,6 +35,7 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
 import ReactToPrint from 'react-to-print';
 import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import { useLayout } from '@layout/context';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -57,6 +58,7 @@ function Calendar({ session }) {
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const { theme } = useLayout();
 
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
@@ -222,7 +224,7 @@ function Calendar({ session }) {
         const calendarSections = [];
         _.forIn(calendarsBySection, (calendars, sectionName) => {
           calendarSections.push({
-            calendars,
+            calendars: _.orderBy(calendars, ['metadata.internalId'], ['asc']),
             sectionName: getSectionName(sectionName, store.calendarSectionNamesTranslations),
           });
         });
@@ -283,8 +285,14 @@ function Calendar({ session }) {
           ...classe,
           bgColor: classe.color,
           borderColor: classe.color,
-          fullName: `${classe.subject.name} (${classe.groups.abbreviation})`,
-          name: `${classe.subject.name} (${classe.groups.abbreviation})`,
+          fullName: `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
+            /(\(-auto-\))/g,
+            ''
+          ),
+          name: `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
+            /(\(-auto-\))/g,
+            ''
+          ),
           showEvents: true,
           icon: classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null,
         })),
@@ -385,6 +393,9 @@ function Calendar({ session }) {
       <Box style={{ width: '250px' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
+          lightMode={!theme.useDarkMode}
+          drawerColor={theme.menuDrawerColor}
+          mainColor={theme.menuMainColor}
           showPageControl={
             store.scheduleCenter?.[store.center?.id]?.allClasses?.length &&
             store.scheduleCenter?.[store.center?.id]?.config
@@ -474,6 +485,10 @@ function Calendar({ session }) {
               previous: t('previous'),
               next: t('next'),
               showWeekends: t('showWeekends'),
+              display: t('display'),
+              entirePeriod: t('entirePeriod'),
+              onlyInitAndEnd: t('onlyInitAndEnd'),
+              onlyEnd: t('onlyEnd'),
               allDay: t('allDay'),
               init: t('init'),
               end: t('end'),
@@ -547,8 +562,8 @@ function Calendar({ session }) {
               style={{ height: '90%' }}
               currentView="week"
               hideToolbar={true}
-              minWeekDay={store.schedule.calendarConfig.minDayWeek}
-              maxWeekDay={store.schedule.calendarConfig.maxDayWeek}
+              minimumStartDifference={0}
+              weekDays={store.schedule.calendarConfig.weekDays}
               minHour={store.schedule.calendarConfig.minHour}
               maxHour={store.schedule.calendarConfig.maxHour}
               timeslots={2}

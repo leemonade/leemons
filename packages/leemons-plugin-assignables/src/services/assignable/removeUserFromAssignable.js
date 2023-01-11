@@ -16,9 +16,8 @@ module.exports = async function removeUserFromAssignable(
     assignable = await getAssignable.bind(this)(assignableId, { userSession, transacting });
     assignerRole = (await getUserPermission(assignable, { userSession, transacting })).role;
   } catch (e) {
-    throw new Error(
-      `The assignable ${assignableId} does not exist or you don't have access to it.`
-    );
+    e.message = `The assignable ${assignableId} does not exist or you don't have access to it.`;
+    throw e;
   }
 
   // EN: Check if the user has permissions to remove the user from the assignable

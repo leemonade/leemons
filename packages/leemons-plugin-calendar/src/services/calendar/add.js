@@ -27,7 +27,14 @@ async function add(key, config, { transacting: _transacting } = {}) {
       await validateExistCalendarKey(key, { transacting });
 
       const permissionConfig = getPermissionConfig(key);
-      const calendar = await table.calendars.create({ key, ...config }, { transacting });
+      const calendar = await table.calendars.create(
+        {
+          key,
+          ...config,
+          metadata: JSON.stringify(config.metadata),
+        },
+        { transacting }
+      );
       await leemons
         .getPlugin('users')
         .services.permissions.addItem(calendar.id, permissionConfig.type, permissionConfig.all, {

@@ -9,7 +9,7 @@ import { goLoginPage } from '@users/navigate';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import loadable from '@loadable/component';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Box, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
+import { Box, LoadingOverlay, UserDisplayItemList, ImageLoader } from '@bubbles-ui/components';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -37,6 +37,41 @@ function dynamicImport(pluginName, component) {
     import(`@leemons/plugins/${pluginName}/src/widgets/calendar/${component}.js`)
   );
 }
+
+function ClassIcon({ class: klass, dropdown = false }) {
+  return (
+    <Box
+      sx={() => ({
+        position: dropdown ? 'static' : 'absolute',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 24,
+        minHeight: 24,
+        maxWidth: 24,
+        maxHeight: 24,
+        borderRadius: '50%',
+        backgroundColor: klass?.bgColor,
+      })}
+    >
+      <ImageLoader
+        sx={() => ({
+          borderRadius: 0,
+          filter: 'brightness(0) invert(1)',
+        })}
+        forceImage
+        width={14}
+        height={14}
+        src={klass.icon}
+      />
+    </Box>
+  );
+}
+
+ClassIcon.propTypes = {
+  class: PropTypes.object,
+  dropdown: PropTypes.bool,
+};
 
 function UsersComponent(props) {
   return (
@@ -304,7 +339,7 @@ function NewCalendarEventModal({
     // eslint-disable-next-line prefer-const
     ref.current.saving = true;
     render();
-    let { startDate, endDate, startTime, endTime, ...formData } = _formData;
+    let { startDate, endDate, deadline, uniqClasses, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
     if (formData.isAllDay) {
@@ -411,7 +446,10 @@ function NewCalendarEventModal({
         selectData={{
           repeat: ref.current.repeat,
           eventTypes: ref.current.eventTypes,
-          calendars: ref.current.calendarData?.ownerCalendars,
+          calendars: ref.current.calendarData?.ownerCalendars.map((value) => {
+            if (!value.isClass) return value;
+            return { ...value, icon: <ClassIcon class={value} dropdown /> };
+          }),
         }}
         onSubmit={onSubmit}
         UsersComponent={
@@ -468,6 +506,7 @@ NewCalendarEventModal.propTypes = {
   reff: PropTypes.any,
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export const useCalendarEventModal = () => {
   const [store, render] = useStore({
     opened: false,

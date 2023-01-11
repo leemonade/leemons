@@ -52,6 +52,13 @@ module.exports = {
       },
        */
     },
+    treeId: {
+      type: 'text',
+    },
+    data: {
+      type: 'text',
+      textType: 'mediumText',
+    },
   },
   primaryKey: {
     type: 'uuid',

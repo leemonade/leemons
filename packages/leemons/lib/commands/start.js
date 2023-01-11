@@ -1,4 +1,4 @@
-require('leemons-telemetry').start('Leemons App');
+require('leemons-telemetry').start(process.env.leemons_telemetry_name ?? 'Leemons App');
 
 const { getAvailablePort } = require('leemons-utils/lib/port');
 const createLogger = require('leemons-logger');

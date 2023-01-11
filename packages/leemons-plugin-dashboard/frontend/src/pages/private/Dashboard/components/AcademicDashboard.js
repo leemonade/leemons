@@ -5,11 +5,12 @@ import { useStore } from '@common';
 import { Box, ContextContainer, createStyles, PageContainer } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@dashboard/helpers/prefixPN';
-import { getUserProgramsRequest } from '@academic-portfolio/request';
+import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { ZoneWidgets } from '@widgets';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { find, isNil, map } from 'lodash';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
+import { useHistory } from 'react-router-dom';
 
 const rightZoneWidth = '320px';
 const Styles = createStyles((theme) => ({
@@ -33,15 +34,23 @@ export default function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
   });
+  const history = useHistory();
   const { classes: styles } = Styles();
   const [t] = useTranslateLoader(prefixPN('dashboard'));
 
-  function selectProgram(program) {
+  async function selectProgram(program) {
     store.selectedProgram = find(store.programs, { id: program.id });
     if (isNil(store.selectedProgram)) {
       [store.selectedProgram] = store.programs;
     }
     updateSessionConfig({ program: store.selectedProgram.id });
+    if (store.programs.length === 1) {
+      const { classes } = await listSessionClassesRequest({ program: program.id });
+
+      if (classes.length === 1) {
+        history.replace(`/private/dashboard/class/${classes[0].id}`);
+      }
+    }
     render();
   }
 
@@ -56,9 +65,9 @@ export default function AcademicDashboard({ session }) {
       if (store.programs.length > 0) {
         const sessionConfig = getSessionConfig();
         if (sessionConfig.program) {
-          selectProgram({ id: sessionConfig.program });
+          await selectProgram({ id: sessionConfig.program });
         } else {
-          selectProgram(store.programs[0]);
+          await selectProgram(store.programs[0]);
         }
       }
     } catch (e) {

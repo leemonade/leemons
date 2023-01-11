@@ -4,6 +4,7 @@ const { getConfig } = require('./getConfig');
 const { setConfig } = require('./setConfig');
 const { upload } = require('./upload');
 const { remove } = require('./remove');
+const { clone } = require('./clone');
 
 module.exports = {
   getS3AndConfig,
@@ -12,4 +13,5 @@ module.exports = {
   setConfig,
   upload,
   remove,
+  clone,
 };

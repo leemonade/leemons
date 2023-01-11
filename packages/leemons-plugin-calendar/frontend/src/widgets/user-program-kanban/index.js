@@ -61,9 +61,25 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     },
   });
   const [t] = useTranslateLoader(prefixPN('userProgramKanban'));
+  const prefixCard = prefixPN('kanbanTaskCard');
+  const [, translationsCard] = useTranslateLoader(prefixCard);
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   const history = useHistory();
+
+  const filterMessagesCard = React.useMemo(() => {
+    if (translationsCard && translationsCard.items) {
+      return _.reduce(
+        translationsCard.items,
+        (acc, value, key) => {
+          acc[key.replace(`${prefixCard}.`, '')] = value;
+          return acc;
+        },
+        {}
+      );
+    }
+    return {};
+  }, [translationsCard]);
 
   const onNewEvent = () => {
     store.selectedEvent = null;
@@ -332,7 +348,12 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
             onChange={onChange}
             disableCardDrag={false}
             itemRender={(props) => (
-              <KanbanTaskCard {...props} config={store.data} onClick={onClickCard} />
+              <KanbanTaskCard
+                {...props}
+                labels={filterMessagesCard}
+                config={store.data}
+                onClick={onClickCard}
+              />
             )}
           />
         </Box>

@@ -13,11 +13,28 @@ export * from './useApi';
 export * from './userImage';
 export * from './useStore';
 export * from './useQuery';
+export * from './useSearchParams';
 export * from './tags';
 export * from './LocaleDate';
 export * from './numberToEncodedLetter';
 export * from './linkify';
 export * from './isValidHttpUrl';
+export * from './randomString';
+export * from './useCache';
+export * from './stringMatch';
+export * from './components';
+export * from './ellipsis';
+export * from './useIdle';
+export * from './useBeforeUnload';
+export * from './context';
+export * from './share';
+export * from './hashObject';
+
+function htmlToText(html) {
+  const el = document.createElement('div');
+  el.innerHTML = html;
+  return el.innerText;
+}
 
 export {
   formWithTheme,
@@ -26,4 +43,5 @@ export {
   unflatten,
   useRequestErrorMessage,
   getRequestErrorMessage,
+  htmlToText,
 };

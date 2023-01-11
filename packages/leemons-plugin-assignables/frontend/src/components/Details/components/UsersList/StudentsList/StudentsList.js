@@ -44,7 +44,7 @@ export default function StudentsList({ labels, instance, students }) {
       onConfirm: async () => {
         try {
           const { rememberType } = store;
-          console.log(instance);
+          // console.log(instance);
           await sendReminder({
             assignableInstanceId: instance.id,
             type: rememberType,
@@ -99,6 +99,13 @@ export default function StudentsList({ labels, instance, students }) {
     return cols;
   }, [labels, instance?.requiresScoring]);
 
+  const headerStyles = {
+    position: 'sticky',
+    top: '224px',
+    backgroundColor: 'white',
+    zIndex: 10,
+  };
+
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
@@ -118,6 +125,7 @@ export default function StudentsList({ labels, instance, students }) {
       onSizeChange={setSize}
       selectable
       labels={labels?.pagination}
+      headerStyles={headerStyles}
     ></PaginatedList>
   );
 }

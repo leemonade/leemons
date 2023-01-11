@@ -21,10 +21,10 @@ const AssetFormInput = ({
   asset,
   file,
   tagsPluginName,
-  tagsType,
   category: categoryKey,
   preview,
   previewVariant,
+  advancedConfig,
   labels,
   placeholders,
   errorMessages,
@@ -73,7 +73,6 @@ const AssetFormInput = ({
   }
 
   React.useEffect(() => {
-    console.log(categoryKey);
     if (categoryKey) loadCategory();
   }, [categoryKey]);
 
@@ -86,8 +85,9 @@ const AssetFormInput = ({
       asset={{ ...asset, file, cover: preparedAsset.cover }}
       type={null}
       form={form}
-      pluginName={tagsPluginName}
-      tagsType={tagsType}
+      pluginName="leebrary"
+      advancedConfig={advancedConfig}
+      tagsType={prefixPN('')}
       useTags={!!tagsPluginName}
       hideTitle
       hideSubmit
@@ -111,6 +111,21 @@ const AssetFormInput = ({
               locale={locale}
               single
             />
+            {advancedConfig?.colorToRight || advancedConfig?.fileToRight ? (
+              <LibraryForm
+                {...formLabels}
+                asset={{ ...asset, file, cover: preparedAsset.cover }}
+                type={null}
+                form={form}
+                pluginName="leebrary"
+                advancedConfigMode
+                advancedConfig={advancedConfig}
+                tagsType={prefixPN('')}
+                useTags={!!tagsPluginName}
+                hideTitle
+                hideSubmit
+              />
+            ) : null}
           </InputWrapper>
         </Box>
       </Box>
@@ -139,6 +154,7 @@ AssetFormInput.propTypes = {
   placeholders: PropTypes.object,
   errorMessages: PropTypes.object,
   previewVariant: PropTypes.string,
+  advancedConfig: PropTypes.object,
 };
 
 export { AssetFormInput };

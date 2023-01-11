@@ -59,6 +59,8 @@
           "@emails-amazon-ses",
           "@emails-smtp",
           "@families",
+          "@feedback",
+          "@fundae",
           "@grades",
           "@layout",
           "@leebrary",
@@ -74,6 +76,7 @@
           "@timetable",
           "@users",
           "@widgets",
+          "@xapi",
           "@bubbles-ui"
         ]
       }

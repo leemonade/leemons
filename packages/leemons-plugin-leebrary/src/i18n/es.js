@@ -1,7 +1,16 @@
 module.exports = {
+  tableInput: {
+    add: 'Añadir',
+    remove: 'Eliminar',
+    edit: 'Editar',
+    accept: 'Aceptar',
+    cancel: 'Cancelar',
+  },
   home: {
     navbar: {
       title: 'Librería',
+      subjects: 'Asignaturas',
+      sharedWithMe: 'Compartido conmigo',
       quickAccess: 'Acceso rápido',
       uploadButton: 'Subir o crear',
       createNewTitle: 'Crear nuevo',
@@ -34,6 +43,9 @@ module.exports = {
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
         browseFile: 'Click para buscar un archivo',
+        advancedConfig: 'Configuración avanzada',
+        program: 'Programa',
+        subjects: 'Asignaturas',
         dropFile: 'o arrastrar aquí desde el ordenador',
         search: 'Buscar en la librería',
         submitForm: 'Añadir a la librería',
@@ -45,11 +57,57 @@ module.exports = {
         updatedSuccess: 'Recurso actualizado con éxito',
         url: 'URL (enlace web)',
         checkUrl: 'Comprobar url',
+        color: 'Color',
         wordCounter: {
           single: 'Palabra',
           plural: 'Palabras',
         },
         preview: 'Vista previa',
+        subjectSelects: {
+          labels: {
+            title: 'Configuración',
+            center: 'Centro',
+            program: 'Programa',
+            course: 'Curso',
+            subjects: 'Asignaturas',
+            showOtherSubjects: 'Añadir otras asignaturas en las que colaboro',
+            subject: 'Asignatura',
+            level: 'Nivel',
+            buttonNext: 'Siguiente',
+            buttonPrev: 'Anterior',
+            preTask: {
+              toggler: 'Añadir una actividad previa',
+              mandatory: 'Obligatoria para empezar la Tarea',
+              condition: 'Condición',
+              conditions: {
+                take: 'Realizar sólo el Test',
+                greater: 'Aprobar el Test con una nota igual o superior a',
+              },
+            },
+          },
+          placeholders: {
+            center: 'Seleccionar...',
+            program: 'Seleccionar...',
+            course: 'Seleccionar...',
+            subject: 'Seleccionar...',
+            addSubject: 'Añadir asignatura',
+            level: 'Seleccionar...',
+          },
+          errorMessages: {
+            program: {
+              required: 'Campo necesario',
+            },
+            course: {
+              required: 'Campo necesario',
+            },
+            subject: {
+              required: 'Campo necesario',
+            },
+            level: {
+              required: 'Campo necesario',
+            },
+          },
+        },
       },
       descriptions: {
         featuredImage: 'Cambiar la imagen por defecto de la página web',
@@ -77,6 +135,12 @@ module.exports = {
         url: {
           required: 'URL es necesaria',
         },
+        program: {
+          required: 'Programa es necesario',
+        },
+        subject: {
+          required: 'Asignatura es necesario',
+        },
       },
     },
     permissionsData: {
@@ -89,6 +153,8 @@ module.exports = {
         title: 'Permisos del recurso',
         addUsers: 'Añadir usuarios',
         addUsersDescription: 'Compartir el recurso y asignar permisos',
+        addClasses: 'Añadir clases',
+        addClassesDescription: 'Compartir el recurso y asignar permisos',
         isPublic: 'Este recurso es público',
         saveButton: 'Guardar permisos',
         shareButton: 'Compartir',

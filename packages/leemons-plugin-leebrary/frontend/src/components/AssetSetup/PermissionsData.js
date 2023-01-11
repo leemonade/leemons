@@ -15,12 +15,16 @@ import {
   Paragraph,
   Switch,
   UserDisplayItem,
+  ImageLoader,
+  Text,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { unflatten, useRequestErrorMessage } from '@common';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
@@ -32,15 +36,74 @@ const ROLES = [
   { label: 'Commentor', value: 'commentor' },
 ];
 
+function ClassItem({ class: klass, ...props }) {
+  if (!klass) {
+    return null;
+  }
+
+  return (
+    <Box {...props}>
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          flexDirection: 'row',
+          gap: theme.spacing[2],
+          alignItems: 'center',
+        })}
+      >
+        <Box
+          sx={() => ({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 26,
+            minHeight: 26,
+            maxWidth: 26,
+            maxHeight: 26,
+            borderRadius: '50%',
+            backgroundColor: klass?.color,
+          })}
+        >
+          <ImageLoader
+            sx={() => ({
+              borderRadius: 0,
+              filter: 'brightness(0) invert(1)',
+            })}
+            forceImage
+            width={16}
+            height={16}
+            src={getClassIcon(klass)}
+          />
+        </Box>
+        <Text>{`${klass.subject.name}${
+          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+        }`}</Text>
+      </Box>
+    </Box>
+  );
+}
 const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
   const [asset, setAsset] = useState(assetProp);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
+  const [selectedClasses, setSelectedClasses] = useState([]);
   const [roles, setRoles] = useState([]);
   const [isPublic, setIsPublic] = useState(asset?.public);
   const params = useParams();
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const { data: classes } = useSessionClasses();
+  const classesData = useMemo(
+    () =>
+      classes?.map((klass) => ({
+        value: klass.id,
+        label: klass.groups.isAlone
+          ? klass.subject.name
+          : `${klass.subject.name} - ${klass.groups.name}`,
+        ...klass,
+      })) ?? [],
+    [classes]
+  );
 
   // ··············································································
   // DATA PROCESS
@@ -61,7 +124,11 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
           userAgent: userData.user.value || userData.user.userAgentIds[0],
           role: userData.role,
         }));
-      await setPermissionsRequest(asset.id, { canAccess, isPublic });
+      const classesCanAccess = selectedClasses.map((klass) => ({
+        class: klass.class[0],
+        role: klass.role,
+      }));
+      await setPermissionsRequest(asset.id, { canAccess, classesCanAccess, isPublic });
       setLoading(false);
       addSuccessAlert(
         sharing
@@ -92,7 +159,16 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
       setIsPublic(asset?.public);
     }
 
-    const { canAccess } = asset;
+    const { canAccess, classesCanAccess } = asset;
+
+    if (isArray(classesCanAccess)) {
+      setSelectedClasses(
+        classesCanAccess.map((klass) => ({
+          class: [klass.class],
+          role: klass.role,
+        }))
+      );
+    }
     if (isArray(canAccess)) {
       setUsersData(
         canAccess.map((user) => ({
@@ -127,6 +203,14 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
     return isNil(found);
   };
 
+  const checkIfClassIsAdded = (newClass) => {
+    const found = find(
+      selectedClasses,
+      (selectedClass) => selectedClass.class[0] === newClass.class[0]
+    );
+    return isNil(found);
+  };
+
   // ··············································································
   // LABELS & STATICS
 
@@ -141,7 +225,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         },
         editable: false,
         valueRender: (value) => <UserDisplayItem {...value} variant="inline" size="xs" />,
-        style: { width: '60%' },
+        style: { width: '50%' },
       },
       {
         Header: 'Role',
@@ -166,6 +250,50 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
       cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
     }),
     [t]
+  );
+
+  const CLASSES_COLUMNS = useMemo(
+    () => [
+      {
+        Header: 'Class',
+        accessor: 'class',
+        input: {
+          node: (
+            <Select
+              itemComponent={(item) => (
+                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
+              )}
+              valueComponent={(item) => (
+                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
+              )}
+              data={classesData}
+            />
+          ),
+          rules: { required: 'Required field' },
+        },
+        editable: false,
+        valueRender: (values) =>
+          values.map((value) => (
+            <ClassItem
+              key={value}
+              class={classesData.find((klass) => klass.id === value)}
+              variant="inline"
+              size="xs"
+            />
+          )),
+      },
+      {
+        Header: 'Role',
+        accessor: 'role',
+        input: {
+          node: <Select />,
+          rules: { required: 'Required field' },
+          data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
+        },
+        valueRender: (value) => find(roles, { value })?.label,
+      },
+    ],
+    [roles, classesData]
   );
 
   // ··············································································
@@ -193,26 +321,50 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
               </Box>
 
               {!isPublic && (
-                <ContextContainer>
-                  <Box>
-                    <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-                    <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
-                  </Box>
-                  {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                    <TableInput
-                      data={usersData}
-                      onChange={setUsersData}
-                      columns={USERS_COLUMNS}
-                      labels={USER_LABELS}
-                      showHeaders={false}
-                      sortable={false}
-                      onBeforeAdd={checkIfUserIsAdded}
-                      resetOnAdd
-                      editable
-                      unique
-                    />
-                  )}
-                </ContextContainer>
+                <>
+                  <ContextContainer>
+                    <Box>
+                      <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
+                      <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
+                    </Box>
+                    {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
+                      <TableInput
+                        data={selectedClasses}
+                        onChange={setSelectedClasses}
+                        columns={CLASSES_COLUMNS}
+                        labels={USER_LABELS}
+                        showHeaders={false}
+                        forceShowInputs
+                        sortable={false}
+                        onBeforeAdd={checkIfClassIsAdded}
+                        resetOnAdd
+                        editable
+                        unique
+                      />
+                    )}
+                  </ContextContainer>
+                  <ContextContainer>
+                    <Box>
+                      <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
+                      <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
+                    </Box>
+                    {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
+                      <TableInput
+                        data={usersData}
+                        onChange={setUsersData}
+                        columns={USERS_COLUMNS}
+                        labels={USER_LABELS}
+                        showHeaders={false}
+                        forceShowInputs
+                        sortable={false}
+                        onBeforeAdd={checkIfUserIsAdded}
+                        resetOnAdd
+                        editable
+                        unique
+                      />
+                    )}
+                  </ContextContainer>
+                </>
               )}
               <Stack justifyContent={'end'} fullWidth>
                 <Button loading={loading} onClick={handleOnClick}>

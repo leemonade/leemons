@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { find, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import {
   Box,
+  ImageLoader,
   LoadingOverlay,
   PaginatedList,
   RadioGroup,
@@ -11,7 +12,6 @@ import {
   Stack,
   useDebouncedValue,
   useResizeObserver,
-  ImageLoader,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
@@ -62,7 +62,8 @@ const AssetList = ({
   search: searchProp,
   layout: layoutProp,
   showPublic: showPublicProp,
-  canShowPublicToggle,
+  programs,
+  subjects,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -80,12 +81,20 @@ const AssetList = ({
   searchEmptyComponent,
   allowChangeCategories,
   preferCurrent,
+  searchInProvider,
+  roles,
+  filters,
+  filterComponents,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
-  onShowPublic = () => {},
   onLoading = () => {},
 }) => {
+  if (categoryProp?.key?.includes('leebrary-subject')) {
+    // eslint-disable-next-line no-param-reassign
+    subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
+  }
+
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
   const [categories, setCategories] = useState(categoriesProp);
@@ -122,7 +131,8 @@ const AssetList = ({
     [onlyThumbnails, category]
   );
 
-  useEffect(() => console.log(assetType), [assetType]);
+  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
+
   // ·········································································
   // DATA PROCESSING
 
@@ -163,7 +173,7 @@ const AssetList = ({
     }, 500);
   };
 
-  const loadAssets = async (categoryId, criteria = '', type = '') => {
+  const loadAssets = async (categoryId, criteria = '', type = '', filters) => {
     if (!loadingRef.current.loading || loadingRef.current.firstTime) {
       loadingRef.current.loading = true;
       loadingRef.current.firstTime = false;
@@ -173,6 +183,7 @@ const AssetList = ({
       try {
         setAsset(null);
         const query = {
+          providerQuery: filters ? JSON.stringify(filters) : null,
           category: categoryId,
           criteria,
           type,
@@ -180,9 +191,18 @@ const AssetList = ({
           showPublic: !pinned ? showPublic : true,
           pinned,
           preferCurrent,
+          searchInProvider,
+          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
+          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
+          roles: JSON.stringify(roles || []),
         };
-        // console.log('query:', query);
+
+        if (categoryProp?.key?.includes('leebrary-subject')) {
+          delete query.category;
+        }
+
         const response = await getAssetsRequest(query);
+
         const results = response?.assets || [];
         // console.log('results:', results);
         setAssets(uniqBy(results, 'asset'));
@@ -373,15 +393,15 @@ const AssetList = ({
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
     } else if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchDebounced, assetType);
+      loadAssets(category?.id, searchDebounced, assetType, filters);
     }
-  }, [searchDebounced, category, pinned, assetType]);
+  }, [searchDebounced, category, pinned, assetType, filters]);
 
   useEffect(() => {
     if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchProp, assetType);
+      loadAssets(category?.id, searchProp, assetType, filters);
     }
-  }, [searchProp, category, assetType, showPublic, pinned, published]);
+  }, [searchProp, category, assetType, showPublic, pinned, published, filters]);
 
   // ·········································································
   // HANDLERS
@@ -496,7 +516,6 @@ const AssetList = ({
   }, [category]);
 
   const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
-  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
   const toggleDetail = (val) => {
     if (!val) {
@@ -518,10 +537,8 @@ const AssetList = ({
     }
   }, [asset]);
 
-  const headerOffset = useMemo(() => {
-    const offsets = childRef.current?.getBoundingClientRect() || childRect;
-    return Math.round(offsets.top + childRect.height + childRect.top);
-  }, [childRect, isEmbedded]);
+  const offsets = childRef.current?.getBoundingClientRect() || childRect;
+  const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
 
   const listProps = useMemo(() => {
     if (!showThumbnails && layout === 'grid') {
@@ -675,8 +692,10 @@ const AssetList = ({
               variant={isEmbedded ? 'default' : 'filled'}
               onChange={setSearhCriteria}
               value={searchCriteria}
+              disabled={loading}
             />
           )}
+          {!!filterComponents && filterComponents({ loading })}
           {!isEmpty(assetTypes) && canChangeType && (
             <Select
               skipFlex
@@ -684,6 +703,7 @@ const AssetList = ({
               value={assetType}
               onChange={handleOnTypeChange}
               placeholder={t('labels.resourceTypes')}
+              disabled={loading}
             />
           )}
         </Stack>
@@ -702,17 +722,22 @@ const AssetList = ({
 
       {/* CATEGORY RADIO GROUP ···· */}
       {allowChangeCategories !== false && !isNil(categories) && !isEmpty(categories) && (
-        <Box skipFlex sx={(theme) => ({ marginTop: theme.spacing[5] })}>
-          <RadioGroup
-            data={categoriesRadioData}
-            variant="icon"
-            onChange={handleOnChangeCategory}
-            value={category.key}
-            fullWidth
-          />
+        <Box
+          skipFlex
+          sx={(theme) => ({ marginTop: theme.spacing[5] })}
+          style={{ cursor: loading ? 'wait' : 'default' }}
+        >
+          <Box style={{ pointerEvents: loading ? 'none' : 'auto' }}>
+            <RadioGroup
+              data={categoriesRadioData}
+              variant="icon"
+              onChange={handleOnChangeCategory}
+              value={category.key}
+              fullWidth
+            />
+          </Box>
         </Box>
       )}
-
       {/* PAGINATED LIST ········· */}
       <Stack
         fullHeight
@@ -875,6 +900,12 @@ AssetList.propTypes = {
   onLoading: PropTypes.func,
   preferCurrent: PropTypes.bool,
   allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+  searchInProvider: PropTypes.bool,
+  roles: PropTypes.arrayOf(PropTypes.string),
+  programs: PropTypes.array,
+  subjects: PropTypes.array,
+  filters: PropTypes.any,
+  filterComponents: PropTypes.any,
 };
 
 export { AssetList };

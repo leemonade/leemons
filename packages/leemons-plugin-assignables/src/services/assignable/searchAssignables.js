@@ -125,7 +125,7 @@ module.exports = async function searchAssignables(
     if (program) {
       const ids = await searchByProgram(program, { transacting });
 
-      query.id_$in = query.id_$in?.length ? _.intersection(query.id_$in, ids) : ids;
+      query.id_$in = Array.isArray(query.id_$in) ? _.intersection(query.id_$in, ids) : ids;
     }
 
     // EN: Get all the assignables matching the query

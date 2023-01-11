@@ -1,168 +1,163 @@
-import React, { useEffect, useState } from 'react';
-import { find, forEach, map } from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { forEach, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
-import { listCentersRequest } from '@users/request';
+import { FolderIcon } from '@bubbles-ui/icons/outline';
 import {
-  Alert,
   Box,
   Button,
   Checkbox,
   ContextContainer,
-  LoadingOverlay,
-  PageContainer,
-  Paper,
+  InputWrapper,
   Stack,
   Tree,
   useTree,
 } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useHistory, useParams } from 'react-router-dom';
-import { detailProgramRequest } from '@academic-portfolio/request';
-import { addNodeLevelsRequest, detailCurriculumRequest } from '../../../request';
+import { useHistory } from 'react-router-dom';
+import { useStore } from '@common';
+import { addNodeLevelsRequest } from '../../../request';
 
-function AddCurriculumStep1() {
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+function AddCurriculumStep1({ curriculum, onNext }) {
   const [t, translations] = useTranslateLoader(prefixPN('addCurriculumStep1'));
-  const [curriculum, setCurriculum] = useState({});
   const defaultNodeLevels = [];
-  defaultNodeLevels[1] = 'program';
-  defaultNodeLevels[6] = 'subject';
-  const [nodeLevels, setNodeLevels] = useState(defaultNodeLevels);
+  defaultNodeLevels[0] = 'program';
+  defaultNodeLevels[10] = 'subject';
+  const [store, render] = useStore({
+    loading: true,
+    saving: false,
+    nodeLevels: defaultNodeLevels,
+  });
 
   const tree = useTree();
   const history = useHistory();
-  const { id } = useParams();
 
   function onCheckboxChange(event, nodeLevel, levelOrder) {
     if (event) {
-      nodeLevels[levelOrder] = nodeLevel;
-      setNodeLevels([...nodeLevels]);
+      store.nodeLevels[levelOrder] = nodeLevel;
     } else {
-      delete nodeLevels[levelOrder];
-      setNodeLevels([...nodeLevels]);
+      delete store.nodeLevels[levelOrder];
     }
+    render();
   }
 
-  useEffect(() => {
-    tree.setTreeData([
-      /*
-      {
-        id: 'program',
-        parent: 0,
-        draggable: false,
-        text: (
-          <Checkbox
-            label={t('program')}
-            checked={nodeLevels.indexOf('program') >= 0}
-            onChange={(e) => onCheckboxChange(e, 'program', 1)}
-          />
-        ),
-      },
-
-       */
-      {
-        id: 'courses',
-        parent: 0,
-        draggable: false,
-        text: (
-          <Checkbox
-            label={t('courses')}
-            checked={nodeLevels.indexOf('courses') >= 0}
-            onChange={(e, event) => {
-              onCheckboxChange(e, 'courses', 2);
-            }}
-          />
-        ),
-      },
-      {
-        id: 'groups',
-        parent: 'courses',
-        draggable: false,
-        text: (
-          <Checkbox
-            label={t('groups')}
-            checked={nodeLevels.indexOf('groups') >= 0}
-            onChange={(e, event) => {
-              onCheckboxChange(e, 'groups', 3);
-            }}
-          />
-        ),
-      },
-      {
-        id: 'knowledges',
-        parent: 'subjectType',
+  React.useEffect(() => {
+    let parent = 0;
+    const treeData = [];
+    treeData.push({
+      id: parent + 1,
+      parent,
+      draggable: false,
+      text: (
+        <InputWrapper
+          label={
+            <>
+              <Box
+                sx={(theme) => ({
+                  marginRight: theme.spacing[2],
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                })}
+              >
+                <FolderIcon />
+              </Box>
+              {t('program')}
+            </>
+          }
+        />
+      ),
+    });
+    parent++;
+    if (curriculum.program.haveKnowledge) {
+      treeData.push({
+        id: parent + 1,
+        parent,
         draggable: false,
         text: (
           <Checkbox
             label={t('knowledges')}
-            checked={nodeLevels.indexOf('knowledges') >= 0}
-            onChange={(e, event) => {
-              onCheckboxChange(e, 'knowledges', 4);
+            checked={store.nodeLevels.indexOf('knowledges') >= 0}
+            onChange={(e) => {
+              onCheckboxChange(e, 'knowledges', 1);
             }}
           />
         ),
-      },
-      {
-        id: 'subjectType',
-        parent: 'groups',
+      });
+      parent++;
+    }
+
+    treeData.push({
+      id: parent + 1,
+      parent,
+      draggable: false,
+      text: (
+        <Checkbox
+          label={t('subjectType')}
+          checked={store.nodeLevels.indexOf('subjectType') >= 0}
+          onChange={(e) => {
+            onCheckboxChange(e, 'subjectType', 2);
+          }}
+        />
+      ),
+    });
+    parent++;
+
+    if (curriculum.program.cycles?.length) {
+      treeData.push({
+        id: parent + 1,
+        parent,
         draggable: false,
         text: (
           <Checkbox
-            label={t('subjectType')}
-            checked={nodeLevels.indexOf('subjectType') >= 0}
-            onChange={(e, event) => {
-              onCheckboxChange(e, 'subjectType', 5);
+            label={t('cycles')}
+            checked={store.nodeLevels.indexOf('cycles') >= 0}
+            onChange={(e) => {
+              onCheckboxChange(e, 'cycles', 3);
             }}
           />
         ),
-      },
-      {
-        id: 'subject',
-        parent: 'knowledges',
+      });
+      parent++;
+    }
+    if (curriculum.program.courses.length) {
+      treeData.push({
+        id: parent + 1,
+        parent,
         draggable: false,
         text: (
-          <Checkbox label={t('subject')} disabled checked={nodeLevels.indexOf('subject') >= 0} />
+          <Checkbox
+            label={t('courses')}
+            checked={store.nodeLevels.indexOf('courses') >= 0}
+            onChange={(e) => {
+              onCheckboxChange(e, 'courses', 4);
+            }}
+          />
         ),
-      },
-    ]);
-  }, [translations, nodeLevels]);
-
-  async function load() {
-    try {
-      setLoading(true);
-      const [
-        { curriculum: c },
-        {
-          data: { items: centers },
-        },
-      ] = await Promise.all([
-        detailCurriculumRequest(id),
-        listCentersRequest({ page: 0, size: 999999 }),
-      ]);
-
-      const { program } = await detailProgramRequest(c.program);
-
-      c.program = program;
-      c.center = find(centers, { id: c.center });
-
-      setCurriculum(c);
-      setLoading(false);
-    } catch (e) {
-      setLoading(false);
+      });
+      parent++;
     }
-  }
 
-  useEffect(() => {
-    load();
-  }, []);
+    treeData.push({
+      id: parent + 1,
+      parent,
+      draggable: false,
+      text: (
+        <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+          <InputWrapper label={t('subject')} />
+        </Box>
+      ),
+    });
+    parent++;
+
+    tree.setTreeData(treeData);
+  }, [translations, store.nodeLevels, curriculum]);
 
   async function save() {
     try {
-      setSaving(true);
+      store.saving = true;
+      render();
       const toSend = [];
-      forEach(nodeLevels, (nodeLevel) => {
+      forEach(store.nodeLevels, (nodeLevel) => {
         if (nodeLevel) {
           toSend.push({
             name: t(nodeLevel),
@@ -173,56 +168,39 @@ function AddCurriculumStep1() {
         }
       });
       await addNodeLevelsRequest(curriculum.id, toSend);
-      await history.push(`/private/curriculum/${curriculum.id}/step/2`);
-      setSaving(false);
+      onNext();
     } catch (e) {
-      setSaving(false);
+      // Nothing
     }
+    store.saving = false;
+    render();
   }
 
-  if (loading) {
-    return <LoadingOverlay visible />;
-  }
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        values={{
-          title: `${curriculum.name} <br/> (${curriculum.center.name}|${curriculum.program.name})`,
-          description: t('description1') + t('description2'),
-        }}
-      />
-
-      <Paper fullHeight color="solid" shadow="none" padding={0}>
-        <PageContainer>
-          <ContextContainer divided padded="vertical">
-            <Box>
-              <ContextContainer>
-                <Paper fullWidth padding={5}>
-                  <ContextContainer divided>
-                    <Tree
-                      {...tree}
-                      rootId={0}
-                      initialOpen={map(tree.treeData, 'id')}
-                      canToggleItems={false}
-                      canSelectItems={false}
-                    />
-                  </ContextContainer>
-                </Paper>
-                <Alert severity="warning" closeable={false} title={t('alertTitle')}>
-                  <Box dangerouslySetInnerHTML={{ __html: t('alertDescription') }} />
-                </Alert>
-              </ContextContainer>
-            </Box>
-            <Stack justifyContent="end">
-              <Button onClick={save} loading={saving} type="submit">
-                {t('saveButtonLabel')}
-              </Button>
-            </Stack>
-          </ContextContainer>
-        </PageContainer>
-      </Paper>
+    <ContextContainer title={t('title')} description={t('description')} divided>
+      <Box>
+        <ContextContainer>
+          <Tree
+            {...tree}
+            rootId={0}
+            initialOpen={map(tree.treeData, 'id')}
+            canToggleItems={false}
+            canSelectItems={false}
+          />
+        </ContextContainer>
+      </Box>
+      <Stack justifyContent="end">
+        <Button onClick={save} loading={store.saving} type="submit">
+          {t('saveButtonLabel')}
+        </Button>
+      </Stack>
     </ContextContainer>
   );
 }
+
+AddCurriculumStep1.propTypes = {
+  curriculum: PropTypes.any,
+  onNext: PropTypes.func,
+};
 
 export default AddCurriculumStep1;

@@ -143,6 +143,7 @@ function generateModel(models, ctx) {
     const fullModel = {
       ..._.cloneDeep(model),
       ORM: ctx.ORM,
+      config: ctx.config,
       model: ctx.ORM.model(model.modelName, Model),
     };
 

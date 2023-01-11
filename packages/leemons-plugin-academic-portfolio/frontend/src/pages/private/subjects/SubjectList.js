@@ -249,6 +249,7 @@ export default function SubjectList() {
         ...data,
         course: courses,
         knowledge: knowledges,
+        program: store.program.id,
         substage: substages,
         group: groups,
         schedule: schedule ? schedule.days : [],
@@ -385,6 +386,7 @@ export default function SubjectList() {
                     placeholder={t('programPlaceholder')}
                     onChange={onProgramChange}
                     value={store.selectProgram}
+                    autoSelectOneOption
                   />
                 </Box>
               </ContextContainer>

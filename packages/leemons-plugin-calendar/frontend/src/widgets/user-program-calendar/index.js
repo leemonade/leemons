@@ -1,7 +1,17 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, IconButton, Loader, Select, Stack, Text } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  IconButton,
+  ImageLoader,
+  Loader,
+  Select,
+  Stack,
+  Text,
+  Title,
+} from '@bubbles-ui/components';
 import { AddIcon as PlusIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -39,7 +49,7 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
   });
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
-  const [tC] = useTranslateLoader(prefixPN('calendar'));
+  const [tc] = useTranslateLoader(prefixPN('calendar'));
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   const history = useHistory();
@@ -56,27 +66,35 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
       }
     }
     forEach(store.centerData.events, (event) => {
-      // console.log(event, calendarIds, calendarIds.includes(event.calendar), store.selectedCalendar);
-      if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
-        // eslint-disable-next-line consistent-return
-        forEach(event.data.classes, (calendar) => {
-          if (
-            (!store.selectedCalendar ||
-              store.selectedCalendar === '*' ||
-              calendar === store.selectedCalendar) &&
-            calendarIds.includes(calendar)
-          ) {
-            events.push(transformEv(event, store.centerData.calendars));
-            return false;
-          }
-        });
-      } else if (
-        (!store.selectedCalendar ||
-          store.selectedCalendar === '*' ||
-          event.calendar === store.selectedCalendar) &&
-        calendarIds.includes(event.calendar)
-      ) {
-        events.push(transformEv(event, store.centerData.calendars));
+      let canShowInCalendar = true;
+
+      if (event.data?.hideInCalendar) {
+        canShowInCalendar = false;
+      }
+
+      if (canShowInCalendar) {
+        // console.log(event, calendarIds, calendarIds.includes(event.calendar), store.selectedCalendar);
+        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
+          // eslint-disable-next-line consistent-return
+          forEach(event.data.classes, (calendar) => {
+            if (
+              (!store.selectedCalendar ||
+                store.selectedCalendar === '*' ||
+                calendar === store.selectedCalendar) &&
+              calendarIds.includes(calendar)
+            ) {
+              events.push(transformEv(event, store.centerData.calendars));
+              return false;
+            }
+          });
+        } else if (
+          (!store.selectedCalendar ||
+            store.selectedCalendar === '*' ||
+            event.calendar === store.selectedCalendar) &&
+          calendarIds.includes(event.calendar)
+        ) {
+          events.push(transformEv(event, store.centerData.calendars));
+        }
       }
     });
     return events;
@@ -220,6 +238,39 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
             eventClick={onEventClick}
             events={store.filteredEvents || []}
             {...store.fullCalendarConfig}
+            messages={{
+              month: tc('month'),
+              week: tc('week'),
+              day: tc('day'),
+              agenda: tc('agenda'),
+              today: tc('today'),
+              previous: tc('previous'),
+              next: tc('next'),
+              showWeekends: tc('showWeekends'),
+              display: tc('display'),
+              entirePeriod: tc('entirePeriod'),
+              onlyInitAndEnd: tc('onlyInitAndEnd'),
+              onlyEnd: tc('onlyEnd'),
+              allDay: tc('allDay'),
+              init: tc('init'),
+              end: tc('end'),
+              date: tc('date'),
+              time: tc('time'),
+              event: tc('event'),
+              noEventsInRange: (
+                <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
+                  <Title order={2}>{tc('empty')}</Title>
+                  <Box sx={(theme) => ({ display: 'flex', marginTop: theme.spacing[12] })}>
+                    <ImageLoader
+                      src={'/public/calendar/no-events.png'}
+                      imageStyles={{ margin: '0px auto' }}
+                      width={300}
+                      height={240}
+                    />
+                  </Box>
+                </Box>
+              ),
+            }}
             locale={session?.locale}
             showToolbarAddButton={false}
             showToolbarViewSwitcher={false}
@@ -239,12 +290,6 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
                 </Box>
               </Stack>
             }
-            messages={{
-              today: tC('today'),
-              previous: tC('previous'),
-              next: tC('next'),
-              showWeekends: tC('showWeekends'),
-            }}
           />
         </Box>
       ) : (

@@ -20,6 +20,7 @@ const { processScheduleForClass } = require('./processScheduleForClass');
 const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
+const { getClassesProgramInfo } = require('./listSessionClasses');
 
 async function updateClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -28,8 +29,13 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
 
       let goodGroup = null;
 
+      const cClass = await table.class.findOne(
+        { id: data.id },
+        { columns: ['program'], transacting }
+      );
+
       const program = await table.programs.findOne(
-        { id: data.program },
+        { id: cClass.program },
         { columns: ['id', 'useOneStudentGroup'], transacting }
       );
 
@@ -78,6 +84,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         },
         { transacting }
       );
+
       const promises = [];
       // ES: Añadimos todas las relaciones de la clase
 
@@ -127,7 +134,9 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         promises.push(addGroup(nClass.id, goodGroup, { transacting }));
       }
 
-      if (_.isNull(goodGroup) || teachers) await removeTeachersByClass(nClass.id, { transacting });
+      if (_.isNull(goodGroup) || teachers) {
+        await removeTeachersByClass(nClass.id, { transacting });
+      }
 
       if (teachers)
         await Promise.all(
@@ -152,7 +161,14 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
 
       await Promise.all(promises);
 
-      const classe = (await classByIds(nClass.id, { transacting }))[0];
+      let classe = (await classByIds(nClass.id, { transacting }))[0];
+      [classe] = await getClassesProgramInfo(
+        {
+          programs: program.id,
+          classes: [classe],
+        },
+        { transacting }
+      );
 
       await leemons.events.emit('after-update-class', { class: classe, transacting });
 

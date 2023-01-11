@@ -155,11 +155,24 @@ async function createTable(model, ctx, useUpdate = false, storedData, transactin
         }
       }
 
-      // Set the property options (notNull, unique...)
+      // Set the property options (index, notNull, unique...)
       if (properties.options) {
         _.forEach(properties.options, (property, optionName) => {
           if (property === true) {
             switch (optionName) {
+              case 'index':
+                try {
+                  /*
+                  table.index(
+                    [name],
+                    properties.options.indexName,
+                    properties.options.indexOptions
+                  );
+                   */
+                } catch (e) {
+                  // It is possible that the index already exists and throws error, we ignore it.
+                }
+                break;
               case 'unique':
                 col.unique();
                 break;

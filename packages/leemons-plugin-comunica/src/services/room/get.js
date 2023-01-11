@@ -6,7 +6,7 @@ const {
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 
-async function get(key, userAgent, { transacting: _transacting } = {}) {
+async function get(key, userAgent, { returnUserAgents, transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
@@ -37,6 +37,17 @@ async function get(key, userAgent, { transacting: _transacting } = {}) {
       room.unreadMessages = messagesUnread ? messagesUnread.count : 0;
       room.messages = nMessages;
       room.userAgents = _.map(userAgents, (a) => ({ userAgent: a.userAgent, deleted: a.deleted }));
+
+      if (returnUserAgents) {
+        const userAgen = await leemons
+          .getPlugin('users')
+          .services.users.getUserAgentsInfo(_.map(userAgents, 'userAgent'), { withProfile: true });
+        const userAgentsById = _.keyBy(userAgen, 'id');
+        room.userAgents = _.map(userAgents, (a) => ({
+          userAgent: userAgentsById[a.userAgent],
+          deleted: a.deleted,
+        }));
+      }
 
       return room;
     },

@@ -49,6 +49,7 @@ NonAssignableStudents.propTypes = {
     unableToAssignStudentsMessage: PropTypes.string,
   }),
 };
+
 export default function SelectClass({
   labels,
   profiles,
@@ -56,11 +57,15 @@ export default function SelectClass({
   value,
   defaultValue,
   groupedClassesWithSelectedSubjects,
+  showResultsCheck,
+  showCorrectAnswersCheck,
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
       excluded: [],
       ...defaultValue,
+      showResults: true,
+      showCorrectAnswers: true,
       showExcluded: _.isNil(defaultValue?.showExcluded)
         ? defaultValue?.excluded?.length > 0
         : defaultValue?.showExcluded,
@@ -106,7 +111,11 @@ export default function SelectClass({
       });
 
       if (assignees.length) {
-        if (!value || !_.isEqual(value, assignees) || fieldChanged === 'addNewClassStudents') {
+        if (
+          !value ||
+          !_.isEqual(value, assignees) ||
+          ['addNewClassStudents', 'showResults', 'showCorrectAnswers'].includes(fieldChanged)
+        ) {
           onChange(assignees, data);
         }
       } else if (!value || value?.length) {
@@ -204,6 +213,34 @@ export default function SelectClass({
             />
           )}
         />
+        {showResultsCheck && (
+          <Controller
+            control={control}
+            name={'showResults'}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showResults}
+              />
+            )}
+          />
+        )}
+        {showCorrectAnswersCheck && (
+          <Controller
+            control={control}
+            name={'showCorrectAnswers'}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={!field.value}
+                onChange={(v) => field.onChange(!v)}
+                label={labels?.showCorrectAnswers}
+              />
+            )}
+          />
+        )}
       </Box>
     </ContextContainer>
   );
@@ -238,5 +275,9 @@ SelectClass.propTypes = {
     assignees: PropTypes.arrayOf(PropTypes.string),
     excluded: PropTypes.arrayOf(PropTypes.string),
     showExcluded: PropTypes.bool,
+    showResults: PropTypes.bool,
+    showCorrectAnswers: PropTypes.bool,
   }),
+  showResultsCheck: PropTypes.bool,
+  showCorrectAnswersCheck: PropTypes.bool,
 };

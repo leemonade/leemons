@@ -134,6 +134,7 @@
       "lookAndFeel": "Brand look & feel",
       "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud.",
       "logoUrl": "Logo URL",
+      "squareLogoUrl": "Logo URL for side menu",
       "logoUrlInvalid": "Logo URL is invalid",
       "mainColor": "Main color (accent color)",
       "superAdminCredentials": "Super-admin credentials",
@@ -145,7 +146,11 @@
       "phone": "Phone",
       "contactName": "Contact name",
       "administrativeContactInfo": "Administrative contact info (optional)",
-      "administrativeContactInfoDescription": "This information will be use only as notification signature in order to complain GDPR and other privacy international laws.Please check if this information is mandatory in your country."
+      "administrativeContactInfoDescription": "This information will be use only as notification signature in order to complain GDPR and other privacy international laws.Please check if this information is mandatory in your country.",
+      "useDarkMode": "Enable Dark mode in the side menu",
+      "menuMainColor": "Main menu color",
+      "menuDrawerColor": "Side submenu color",
+      "usePicturesEmptyStates": "Use illustrations when no results are found in the listings"
     },
     "finish": {
       "label": "Finish",

@@ -81,8 +81,8 @@ async function addProgram(data, { userSession, transacting: _transacting } = {})
       if (_.isArray(substages)) {
         // ES: Generamos los substages
         await Promise.all(
-          _.map(substages, (substage) =>
-            addSubstage({ ...substage, program: program.id }, { transacting })
+          _.map(substages, (substage, index) =>
+            addSubstage({ ...substage, program: program.id, index }, { transacting })
           )
         );
       }

@@ -5,7 +5,7 @@ const { addUserAgents } = require('./addUserAgents');
 
 async function add(
   key,
-  { userAgents = [], useEncrypt = true, viewPermissions, transacting: _transacting } = {}
+  { name, userAgents = [], useEncrypt = true, viewPermissions, transacting: _transacting } = {}
 ) {
   validateKeyPrefix(key, this.calledFrom);
 
@@ -16,6 +16,7 @@ async function add(
       const room = await table.room.create(
         {
           key,
+          name,
           useEncrypt,
         },
         { transacting }

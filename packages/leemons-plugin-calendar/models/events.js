@@ -47,7 +47,8 @@ module.exports = {
       },
     },
     data: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     isPrivate: {
       type: 'boolean',

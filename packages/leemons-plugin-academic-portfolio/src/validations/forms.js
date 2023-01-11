@@ -27,6 +27,8 @@ const addProgramSchema = {
     centers: arrayStringSchema,
     evaluationSystem: stringSchema,
     useOneStudentGroup: booleanSchema,
+    hideStudentsToStudents: booleanSchema,
+    totalHours: numberSchema,
     cycles: {
       type: 'array',
       items: {
@@ -53,6 +55,7 @@ const addProgramSchema = {
       maxLength: 8,
     },
     credits: integerSchemaNullable,
+    totalHours: integerSchemaNullable,
     maxGroupAbbreviation: integerSchema,
     maxGroupAbbreviationIsOnlyNumbers: booleanSchema,
     maxNumberOfCourses: integerSchema,
@@ -151,7 +154,7 @@ function validateAddProgram(data) {
     if (!data.useDefaultSubstagesName) {
       validator = new LeemonsValidator(addProgramSubstage2Schema);
 
-      console.log(data.substages);
+      // console.log(data.substages);
       if (!validator.validate(data)) {
         throw validator.error;
       }
@@ -176,8 +179,11 @@ const updateProgramSchema = {
       maxLength: 8,
     },
     credits: integerSchemaNullable,
+    totalHours: integerSchemaNullable,
     treeType: integerSchema,
     managers: arrayStringSchema,
+    hideStudentsToStudents: booleanSchema,
+    totalHours: numberSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -461,7 +467,6 @@ const addGroupSchema = {
 };
 
 async function validateAddGroup(data, { transacting } = {}) {
-  console.log('validateAddGroup');
   const validator = new LeemonsValidator(addGroupSchema);
 
   if (!validator.validate(data)) {
@@ -1119,6 +1124,7 @@ const updateClassSchema = {
     course: {
       oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
     },
+    program: stringSchema,
     group: stringSchemaNullable,
     subject: stringSchemaNullable,
     subjectType: stringSchemaNullable,

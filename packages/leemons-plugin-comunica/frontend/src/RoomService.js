@@ -96,6 +96,18 @@ class RoomService {
     });
     return count;
   }
+
+  static async getMessagesCount(keys) {
+    const { count } = await leemons.api(`comunica/room/messages/count`, {
+      allAgents: true,
+      method: 'POST',
+      body: {
+        keys,
+      },
+    });
+
+    return count;
+  }
 }
 
 export { RoomService };

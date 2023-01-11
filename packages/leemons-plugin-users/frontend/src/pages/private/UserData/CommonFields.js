@@ -8,9 +8,10 @@ import {
   Paragraph,
   Stack,
   Table,
+  Box,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { PlusIcon } from '@heroicons/react/outline';
+import { AddIcon } from '@bubbles-ui/icons/outline';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { useAsync } from '@common/useAsync';
 import {
@@ -199,15 +200,18 @@ function CommonFields({ t }) {
           <>
             <Stack alignItems="center" justifyContent="space-between">
               <Paragraph>{t('basic.description')}</Paragraph>
-              <Button color="secondary" onClick={newItem}>
-                <PlusIcon className="w-6 h-6 mr-1" />
+              <Button leftIcon={<AddIcon />} onClick={newItem}>
                 {t('dataset.add_field')}
               </Button>
             </Stack>
             <Paper>
               <Table columns={tableHeaders} data={tableItems} />
             </Paper>
-            {tableItems && tableItems.length ? <Paper>{form}</Paper> : null}
+            {tableItems && tableItems.length ? (
+              <Paper>
+                <Box style={{ width: '50%' }}>{form}</Box>
+              </Paper>
+            ) : null}
           </>
         ) : null}
       </ContextContainer>

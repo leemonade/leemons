@@ -126,7 +126,7 @@ class Leemons {
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
       } else {
-        this.log.info(chalk`{red ${target}} emitted {magenta ${event}}`);
+        this.log.debug(chalk`{red ${target}} emitted {magenta ${event}}`);
       }
     });
   }
@@ -194,8 +194,16 @@ class Leemons {
     this.events.emit('willSetMiddlewares', 'leemons');
     this.backRouter.use(async (ctx, next) => {
       ctx._startAt = new Date();
+      ctx._id = uuid.v4();
+
       this.log.http(
-        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`
+        chalk`Start connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip}}`,
+        {
+          id: ctx._id,
+          ip: ctx.ip,
+          url: ctx.path,
+          method: ctx.method,
+        }
       );
 
       await next();
@@ -209,7 +217,15 @@ class Leemons {
         this.log.http(
           chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
             ctx.ip
-          }} {gray ${end - start} ms}`
+          }} {gray ${end - start} ms}`,
+          {
+            id: ctx._id,
+            ip: ctx.ip,
+            url: ctx.path,
+            method: ctx.method,
+            path: ctx._path,
+            duration: end - start,
+          }
         );
       } catch (err) {
         console.error(err);
@@ -433,6 +449,11 @@ class Leemons {
               if (!_.isEmpty(route.xapi)) {
                 functions.push(this.xapiMiddleware(route.xapi, plugin.name));
               }
+
+              functions.push(async (ctx, next) => {
+                ctx._path = route.path;
+                await next();
+              });
 
               functions.push(handler);
 
@@ -715,7 +736,7 @@ class Leemons {
       this.events.emit('appDidStart', 'leemons');
       this.log.info(`Listening on http://localhost:${process.env.PORT}`);
       if (process.send) {
-        process.send('running');
+        process.send('ready');
       }
       this.started = true;
     });

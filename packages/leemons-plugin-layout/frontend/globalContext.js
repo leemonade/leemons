@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { forEach, isNil, isString } from 'lodash';
+import { forEach, isNil, isString, isEmpty } from 'lodash';
 import { useLocation } from 'react-router-dom';
 import {
   BUBBLES_THEME,
@@ -31,7 +31,7 @@ LayoutWrapper.propTypes = {
   isPrivate: PropTypes.bool,
 };
 
-function LayoutProviderWrapper({ children }) {
+function LayoutProviderWrapper({ children, theme: themeProp }) {
   const [layoutState, setLayoutState] = useState({
     loading: false,
     contentRef: useRef(),
@@ -132,6 +132,7 @@ function LayoutProviderWrapper({ children }) {
           setLoading,
           setContentRef,
           scrollTo,
+          theme: themeProp,
           openDeleteConfirmationModal,
           openConfirmationModal,
           openModal: modals.openModal,
@@ -146,14 +147,16 @@ function LayoutProviderWrapper({ children }) {
 
 LayoutProviderWrapper.propTypes = {
   children: PropTypes.node,
+  theme: PropTypes.any,
 };
 
 export function Provider({ children }) {
   const [theme, setTheme] = useState(BUBBLES_THEME);
+  const [platformTheme, setPlatformTheme] = useState({});
 
   async function load() {
     try {
-      const { theme: th } = await getPlatformThemeRequest();
+      const { theme: th, jsonTheme } = await getPlatformThemeRequest();
       const mainColor = colord(th.mainColor);
       const mainColorLight = 1 - mainColor.brightness();
       const mainColorHSL = colord(th.mainColor).toHsl();
@@ -168,6 +171,7 @@ export function Provider({ children }) {
 
       const newTheme = {
         ...BUBBLES_THEME,
+        other: isEmpty(jsonTheme) ? BUBBLES_THEME.other : jsonTheme,
       };
 
       if (!sameColor) {
@@ -190,6 +194,7 @@ export function Provider({ children }) {
         };
       }
 
+      setPlatformTheme(th);
       setTheme(newTheme);
     } catch (error) {
       // Nothing
@@ -210,7 +215,7 @@ export function Provider({ children }) {
   return (
     <ThemeProvider theme={theme}>
       <ModalsProvider>
-        <LayoutProviderWrapper>{children}</LayoutProviderWrapper>
+        <LayoutProviderWrapper theme={platformTheme}>{children}</LayoutProviderWrapper>
       </ModalsProvider>
     </ThemeProvider>
   );

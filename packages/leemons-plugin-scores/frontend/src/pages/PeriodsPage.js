@@ -4,7 +4,7 @@ import PeriodSelector from '@scores/components/PeriodSelector/PeriodSelector';
 import PeriodList from '@scores/components/PeriodList/PeriodList';
 import { useLocale, unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { usePeriodMutation } from '@scores/hooks';
+import { usePeriodMutation } from '@scores/requests/hooks/mutations';
 import _, { isFunction } from 'lodash';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -18,7 +18,7 @@ const useStyle = createStyles((theme) => ({
 }));
 
 export default function PeriodsPage() {
-  const { mutateAsync } = usePeriodMutation();
+  const { mutate } = usePeriodMutation();
 
   const { classes } = useStyle();
   const locale = useLocale();
@@ -54,13 +54,16 @@ export default function PeriodsPage() {
             public: share,
           };
 
-          mutateAsync({ period })
-            .then(() => addSuccessAlert(labels.addSuccess?.replace('{{name}}', name)))
-            .catch((e) =>
-              addErrorAlert(
-                labels.addError?.replace('{{name}}', name)?.replace('{{error}}', e.message)
-              )
-            );
+          mutate(
+            { period },
+            {
+              onSuccess: () => addSuccessAlert(labels.addSuccess?.replace('{{name}}', name)),
+              onError: (e) =>
+                addErrorAlert(
+                  labels.addError?.replace('{{name}}', name)?.replace('{{error}}', e.message)
+                ),
+            }
+          );
         }}
         locale={locale}
         fields={{
@@ -73,26 +76,30 @@ export default function PeriodsPage() {
 
       <PeriodList
         onRemove={(period, onSuccess, onError) =>
-          mutateAsync({ period, action: 'remove' })
-            .then((result) => {
-              addSuccessAlert(labels.removeSuccess?.replace('{{name}}', period.name));
-              if (isFunction(onSuccess)) {
-                onSuccess(result);
-              }
-            })
-            .catch((e) => {
-              addErrorAlert(
-                labels.removeError
-                  ?.replace('{{name}}', period.name)
-                  .replace(
-                    '{{error}}',
-                    e?.error?.substring('Error removing period: '.length) || e.message
-                  )
-              );
-              if (isFunction(onError)) {
-                onError(e);
-              }
-            })
+          mutate(
+            { period, action: 'remove' },
+            {
+              onSuccess: (result) => {
+                addSuccessAlert(labels.removeSuccess?.replace('{{name}}', period.name));
+                if (isFunction(onSuccess)) {
+                  onSuccess(result);
+                }
+              },
+              onError: (e) => {
+                addErrorAlert(
+                  labels.removeError
+                    ?.replace('{{name}}', period.name)
+                    .replace(
+                      '{{error}}',
+                      e?.error?.substring('Error removing period: '.length) || e.message
+                    )
+                );
+                if (isFunction(onError)) {
+                  onError(e);
+                }
+              },
+            }
+          )
         }
       />
     </Box>

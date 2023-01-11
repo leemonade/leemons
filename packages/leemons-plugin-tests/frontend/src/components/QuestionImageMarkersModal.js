@@ -45,7 +45,7 @@ export const QuestionImageMarkersModalStyles = createStyles((theme, { isLight })
 }));
 
 // eslint-disable-next-line import/prefer-default-export
-export function QuestionImageMarkersModal({ src, value = {}, onChange, onClose, opened }) {
+export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onClose, opened }) {
   const [t] = useTranslateLoader(prefixPN('questionImageModal'));
   const [store, render] = useStore({
     list: value.list || [],

@@ -70,7 +70,6 @@ function createConnectorRegistry({ connections, defaultConnection }, databaseMan
           const connectorModels = modelsByConnector[name];
 
           if (!connectorModels?.length) {
-            leemons.log.warn(`No models found for connector ${name}`);
             return;
           }
 

@@ -66,6 +66,10 @@ async function setAsset(ctx) {
 
   let asset;
 
+  if (assetData.subjects) {
+    assetData.subjects = JSON.parse(assetData.subjects);
+  }
+
   if (id) {
     asset = await update.call(
       { calledFrom: leemons.plugin.prefixPN('') },
@@ -108,10 +112,15 @@ async function removeAsset(ctx) {
 async function duplicateAsset(ctx) {
   const { id: assetId } = ctx.params;
   const { userSession } = ctx.state;
+  const { preserveName, indexable, public: isPublic } = ctx.request.body;
 
   const asset = await duplicate.call({ calledFrom: leemons.plugin.prefixPN('') }, assetId, {
+    preserveName,
+    indexable,
+    public: isPublic,
     userSession,
   });
+
   ctx.status = 200;
   ctx.body = {
     status: 200,
@@ -154,18 +163,39 @@ async function getAsset(ctx) {
 }
 
 async function getAssets(ctx) {
-  const { category, criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
+  const {
+    category,
+    criteria,
+    type,
+    published,
+    preferCurrent,
+    showPublic,
+    searchInProvider,
+    roles,
+    providerQuery,
+    programs,
+    subjects,
+  } = ctx.request.query;
   const { userSession } = ctx.state;
 
+  /*
   if (isEmpty(category)) {
     throw new global.utils.HttpError(400, 'Not category was specified');
   }
+  */
+
+  const trueValues = ['true', true, '1', 1];
 
   let assets;
-  const assetPublished = ['true', true, '1', 1].includes(published);
-  const displayPublic = ['true', true, '1', 1].includes(showPublic);
+  const assetPublished = trueValues.includes(published);
+  const displayPublic = trueValues.includes(showPublic);
+  const searchProvider = trueValues.includes(searchInProvider);
+  const parsedRoles = JSON.parse(roles || null) || [];
+  const _providerQuery = JSON.parse(providerQuery || null);
+  const _programs = JSON.parse(programs || null);
+  const _subjects = JSON.parse(subjects || null);
 
-  if (!isEmpty(criteria) || !isEmpty(type)) {
+  if (!isEmpty(criteria) || !isEmpty(type) || isEmpty(category)) {
     assets = await getByCriteria(
       { category, criteria, type },
       {
@@ -174,6 +204,11 @@ async function getAssets(ctx) {
         showPublic: displayPublic,
         preferCurrent,
         userSession,
+        roles: parsedRoles,
+        searchInProvider: searchProvider,
+        providerQuery: _providerQuery,
+        programs: _programs,
+        subjects: _subjects,
       }
     );
   } else {
@@ -183,6 +218,9 @@ async function getAssets(ctx) {
       preferCurrent,
       showPublic: displayPublic,
       userSession,
+      roles: parsedRoles,
+      searchInProvider: searchProvider,
+      providerQuery: _providerQuery,
     });
   }
 

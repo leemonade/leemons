@@ -5,6 +5,45 @@ import { Controller } from 'react-hook-form';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useTestsTypes } from '../../../../helpers/useTestsTypes';
 
+/*
+* <Controller
+          control={form.control}
+          name="program"
+          rules={{ required: t('programRequired') }}
+          render={({ field }) => (
+            <Select
+              required
+              error={isDirty ? form.formState.errors.program : null}
+              label={t('programLabel')}
+              data={store.programsData || []}
+              autoSelectOneOption
+              {...field}
+            />
+          )}
+        />
+
+        <Controller
+          control={form.control}
+          name="subjects"
+          rules={{ required: t('subjectRequired') }}
+          render={({ field }) => (
+            <Select
+              required
+              error={isDirty ? form.formState.errors.subjects : null}
+              label={t('subjectLabel')}
+              disabled={!program}
+              data={store.subjectsByProgram[program] || []}
+              autoSelectOneOption
+              {...field}
+              value={field.value ? field.value[0] : field.value}
+              onChange={(e) => {
+                field.onChange(e ? [e] : e);
+              }}
+            />
+          )}
+        />
+* */
+
 export default function DetailConfig({ store, form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
   const testTypes = useTestsTypes();
@@ -23,41 +62,6 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
   return (
     <ContextContainer divided>
       <ContextContainer>
-        <Controller
-          control={form.control}
-          name="program"
-          rules={{ required: t('programRequired') }}
-          render={({ field }) => (
-            <Select
-              required
-              error={isDirty ? form.formState.errors.program : null}
-              label={t('programLabel')}
-              data={store.programsData || []}
-              {...field}
-            />
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="subjects"
-          rules={{ required: t('subjectRequired') }}
-          render={({ field }) => (
-            <Select
-              required
-              error={isDirty ? form.formState.errors.subjects : null}
-              label={t('subjectLabel')}
-              disabled={!program}
-              data={store.subjectsByProgram[program] || []}
-              {...field}
-              value={field.value ? field.value[0] : field.value}
-              onChange={(e) => {
-                field.onChange(e ? [e] : e);
-              }}
-            />
-          )}
-        />
-
         <Controller
           control={form.control}
           name="type"

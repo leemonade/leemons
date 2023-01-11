@@ -122,14 +122,18 @@ export default function ProgramList() {
       let messageKey = 'common.create_done';
 
       if (!isEmpty(store.currentProgram)) {
-        const { name, abbreviation, credits, image, color } = values;
+        const { name, abbreviation, credits, image, color, totalHours, hideStudentsToStudents } =
+          values;
         body = {
           id: store.currentProgram.id,
           name,
           abbreviation,
           credits,
+          totalHours,
           image,
           color,
+          totalHours: totalHours || 0,
+          hideStudentsToStudents: !!hideStudentsToStudents,
         };
         apiCall = updateProgramRequest;
         messageKey = 'common.update_done';

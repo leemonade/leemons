@@ -2,11 +2,12 @@ import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useLocale, useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { forEach, isString } from 'lodash';
+import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import {
   Box,
   Button,
@@ -23,6 +24,7 @@ import getClassData from '@assignables/helpers/getClassData';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
+import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import { StudentInstanceStyles } from './StudentInstance.style';
 import Resume from './components/Resume';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
@@ -38,7 +40,7 @@ import { calculeInfoValues } from './helpers/calculeInfoValues';
 import QuestionList from './components/QuestionList';
 import { getConfigByInstance } from './helpers/getConfigByInstance';
 
-export default function StudentInstance() {
+function StudentInstance() {
   const locale = useLocale();
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
@@ -48,6 +50,7 @@ export default function StudentInstance() {
     currentStep: 0,
     maxNavigatedStep: 0,
     viewMode: false,
+    modalMode: 1,
   });
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
@@ -67,11 +70,6 @@ export default function StudentInstance() {
   async function onStartQuestions() {
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'start', getUserId());
     store.timestamps = timestamps;
-    render();
-  }
-
-  function closeFinishModal() {
-    store.showFinishModal = false;
     render();
   }
 
@@ -99,6 +97,8 @@ export default function StudentInstance() {
       history.push(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
       store.showFinishModal = true;
+      const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+      store.timestamps = timestamps;
       render();
     }
   }
@@ -132,6 +132,10 @@ export default function StudentInstance() {
           };
         }
       });
+      store.nextActivityUrl = await getNextActivityUrl(store.assignation);
+      store.hasNextActivity =
+        store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
+        store.nextActivityUrl;
       store.timestamps = timestamps;
       store.config = getConfigByInstance(store.instance);
       store.questionsInfo = calculeInfoValues(
@@ -146,34 +150,12 @@ export default function StudentInstance() {
       store.class = classe;
       store.idLoaded = params.id;
       store.loading = false;
-
-      // console.log(store);
+      store.modalMode = store.hasNextActivity ? 2 : 1;
 
       render();
     } catch (error) {
-      console.log(error);
       addErrorAlert(error);
     }
-  }
-
-  async function finishTest() {
-    // console.log('finishTest');
-    store.showFinishModal = false;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
-    store.timestamps = timestamps;
-
-    /*
-    store.loading = true;
-    store.idLoaded = '';
-    store.isFirstStep = true;
-    store.currentStep = 0;
-    store.maxNavigatedStep = 0;
-    store.viewMode = false;
-    render();
-    init();
-     */
-
-    history.push(`/private/tests/result/${params.id}/${getUserId()}`);
   }
 
   async function forceFinishTest() {
@@ -230,29 +212,6 @@ export default function StudentInstance() {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
   }, [params, translations]);
 
-  const headerProps = React.useMemo(() => {
-    if (store.instance) {
-      if (store.instance.assignable?.asset?.cover) {
-        return {
-          blur: 10,
-          withBlur: true,
-          image: getFileUrl(
-            isString(store.instance.assignable.asset.cover)
-              ? store.instance.assignable.asset.cover
-              : store.instance.assignable.asset.cover.id
-          ),
-          backgroundPosition: 'center',
-        };
-      }
-      return {
-        withBlur: false,
-        withGradient: false,
-        color: store.instance.assignable.asset.color,
-      };
-    }
-    return {};
-  }, [store.instance]);
-
   const taskHeaderProps = React.useMemo(() => {
     if (store.instance) {
       return {
@@ -280,22 +239,6 @@ export default function StudentInstance() {
     return {};
   }, [store.instance, store.class, store.isFirstStep]);
 
-  const taskDeadlineProps = React.useMemo(() => {
-    if (store.instance && store.instance.dates.deadline) {
-      return {
-        label: t('delivery'),
-        deadline: new Date(store.instance.dates.deadline),
-        styles: {
-          position: 'absolute',
-          top: '50%',
-          right: store.isFirstStep ? 8 : 0,
-          transform: 'translateY(-50%)',
-        },
-      };
-    }
-    return null;
-  }, [store.instance, store.isFirstStep]);
-
   const verticalStepperProps = React.useMemo(() => {
     if (store.instance) {
       const commonProps = { styles, classes, t, store, render, cx, prevStep, nextStep, goToStep };
@@ -316,15 +259,6 @@ export default function StudentInstance() {
           component: <Resume {...commonProps} />,
         });
       }
-      /*
-      if (store.instance?.assignable?.statement) {
-        steps.push({
-          label: t('statement'),
-          status: 'OK',
-          component: <Statement {...commonProps} />,
-        });
-      }
-      */
       const testProps = { onStartQuestions };
 
       steps.push({
@@ -348,10 +282,6 @@ export default function StudentInstance() {
         isQuestion: true,
       });
 
-      forEach(store.questions, (question, index) => {
-        const isLast = index === store.questions.length - 1;
-      });
-
       return {
         data: steps,
       };
@@ -369,6 +299,15 @@ export default function StudentInstance() {
   if (store.loading) {
     return null;
   }
+
+  const goToOnGoing = () => {
+    history.push('/private/assignables/ongoing');
+  };
+
+  const goToResults = (e, openInNewTab = false) => {
+    if (openInNewTab) window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank');
+    else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
+  };
 
   return (
     <ActivityContainer
@@ -407,7 +346,13 @@ export default function StudentInstance() {
         <Modal
           title={t('finishTestModalTitle')}
           opened={store.showFinishModal}
-          onClose={closeFinishModal}
+          onClose={() => {}}
+          centerTitle
+          centered
+          withCloseButton={false}
+          closeOnEscape={false}
+          closeOnClickOutside={false}
+          size={480}
         >
           <Box className={styles.howItWorksModalContainer}>
             <Text
@@ -417,12 +362,33 @@ export default function StudentInstance() {
             />
           </Box>
           <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <Stack fullWidth justifyContent="space-between">
-              <Button variant="link" onClick={closeFinishModal}>
-                {t('cancelSubmission')}
-              </Button>
-              <Button onClick={finishTest}>{t('confirmSubmission')}</Button>
-            </Stack>
+            {store.modalMode === 1 ? (
+              <Stack justifyContent="space-between">
+                <Button variant="light" compact onClick={goToOnGoing}>
+                  {t('pendingActivities')}
+                </Button>
+                <Button compact onClick={goToResults}>
+                  {t('viewResults')}
+                </Button>
+              </Stack>
+            ) : null}
+            {store.modalMode === 2 ? (
+              <Stack fullWidth justifyContent="space-between">
+                <Button
+                  variant="light"
+                  rightIcon={<ExpandDiagonalIcon />}
+                  compact
+                  onClick={() => goToResults(null, true)}
+                >
+                  {t('viewResults')}
+                </Button>
+                <Link to={store.nextActivityUrl}>
+                  <Button rightIcon={<ChevronRightIcon />} compact>
+                    {t('nextActivity')}
+                  </Button>
+                </Link>
+              </Stack>
+            ) : null}
           </Box>
         </Modal>
         <Modal
@@ -467,112 +433,10 @@ export default function StudentInstance() {
       </>
     </ActivityContainer>
   );
+}
 
-  /*
-  return (
-    <Box className={classes.root}>
-      <Box className={classes.header}>
-        <HeaderBackground
-          styles={{
-            position: 'absolute',
-            zIndex: -1,
-          }}
-          {...headerProps}
-        />
-        <TaskHeader {...taskHeaderProps} size={store.isFirstStep ? 'md' : 'sm'} />
-        {!store.viewMode && taskDeadlineProps ? (
-          <TaskDeadline
-            {...taskDeadlineProps}
-            locale={locale}
-            size={store.isFirstStep ? 'md' : 'sm'}
-          />
-        ) : null}
-      </Box>
-      <Box className={classes.mainContent}>
-        <Box className={classes.verticalStepper}>
-          <Box className={classes.verticalStepperContent}>
-            <VerticalStepper
-              {...verticalStepperProps}
-              currentStep={store.currentStep}
-              onChangeActiveIndex={(e) => {
-                store.currentStep = e;
-                render();
-              }}
-            />
-          </Box>
-        </Box>
-        <Box className={classes.pages}>
-          <Box className={classes.pagesContent}>
-            {verticalStepperProps.data[store.currentStep]
-              ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                  isFirstStep: !store.currentStep,
-                })
-              : null}
-          </Box>
-        </Box>
-      </Box>
-      <Modal
-        title={t('finishTestModalTitle')}
-        opened={store.showFinishModal}
-        onClose={closeFinishModal}
-      >
-        <Box className={styles.howItWorksModalContainer}>
-          <Text
-            dangerouslySetInnerHTML={{
-              __html: t('finishTestModalDescription'),
-            }}
-          />
-        </Box>
-        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-          <Stack fullWidth justifyContent="space-between">
-            <Button variant="link" onClick={closeFinishModal}>
-              {t('cancelSubmission')}
-            </Button>
-            <Button onClick={finishTest}>{t('confirmSubmission')}</Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Modal
-        title={t('finishForceTestModalTitle')}
-        opened={store.showForceFinishModal}
-        onClose={closeForceFinishModal}
-        withCloseButton={false}
-        closeOnEscape={false}
-        closeOnClickOutside={false}
-      >
-        <Box className={styles.howItWorksModalContainer}>
-          <Paragraph
-            dangerouslySetInnerHTML={{
-              __html: t('finishForceTestModalDescription'),
-            }}
-          />
-        </Box>
-        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-          <Stack fullWidth justifyContent="space-between">
-            <Button
-              variant="link"
-              onClick={() => {
-                store.showForceFinishModal = false;
-                render();
-                history.push(`/private/assignables/ongoing`);
-              }}
-            >
-              {t('activitiesInCourse')}
-            </Button>
-            <Button
-              onClick={() => {
-                store.showForceFinishModal = false;
-                render();
-                history.push(`/private/tests/result/${params.id}/${getUserId()}`);
-              }}
-            >
-              {t('reviewResults')}
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-    </Box>
-  );
+export default function StudentInstanceContainer() {
+  const { id, user } = useParams();
 
-   */
+  return <StudentInstance key={`studentInstance.${id}.user.${user}`} />;
 }

@@ -9,6 +9,8 @@ const { getUserAgentsInfo } = require('./getUserAgentsInfo');
  * @param {
  * {
  *    profile: string | undefined,
+ *    program: string | undefined,
+ *    course: string | undefined,
  *    user: {
  *      name: string | undefined,
  *      surnames: string | undefined,
@@ -21,7 +23,7 @@ const { getUserAgentsInfo } = require('./getUserAgentsInfo');
  * */
 
 async function searchUserAgents(
-  { profile, center, user, ignoreUserIds },
+  { profile, center, user, program, course, ignoreUserIds },
   {
     withProfile,
     withCenter,
@@ -144,10 +146,20 @@ async function searchUserAgents(
 
   // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
   // EN: Finally, the agents and their corresponding users according to the filters
-  const userAgents = await table.userAgent.find(finalQuery, {
+  let userAgents = await table.userAgent.find(finalQuery, {
     columns: ['id'],
     transacting,
   });
+
+  if (program) {
+    const usersAgentIdsInProgram = await leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.getUsersInProgram(program, {
+        course,
+        transacting,
+      });
+    userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
+  }
 
   return getUserAgentsInfo(_.map(userAgents, 'id'), {
     withProfile,

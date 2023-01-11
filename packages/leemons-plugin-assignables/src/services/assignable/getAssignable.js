@@ -84,6 +84,8 @@ module.exports = async function getAssignable(
       published: isPublished,
     };
   } catch (e) {
-    throw new Error(`The assignable ${id} does not exist or you don't have access to it.`);
+    e.messasge = `The assignable ${id} does not exist or you don't have access to it.`;
+
+    throw e;
   }
 };

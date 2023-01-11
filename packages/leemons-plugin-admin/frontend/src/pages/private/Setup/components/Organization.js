@@ -12,6 +12,7 @@ import {
   Stack,
   TextInput,
   Title,
+  Switch,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
@@ -47,6 +48,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
     reset,
     control,
     setValue,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -59,6 +61,8 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
     loading: true,
     selectedCenter: null,
   });
+
+  const useDarkMode = watch('useDarkMode');
 
   async function load() {
     try {
@@ -137,19 +141,36 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
             >
               <Stack fullWidth spacing={6}>
                 <Box>
-                  <Controller
-                    name="logoUrl"
-                    control={control}
-                    rules={{
-                      pattern: {
-                        value: /^(http|https):\/\//,
-                        message: t('logoUrlInvalid'),
-                      },
-                    }}
-                    render={({ field }) => (
-                      <TextInput error={errors.logoUrl} label={t('logoUrl')} {...field} />
-                    )}
-                  />
+                  <Box>
+                    <Controller
+                      name="logoUrl"
+                      control={control}
+                      rules={{
+                        pattern: {
+                          value: /^(http|https):\/\//,
+                          message: t('logoUrlInvalid'),
+                        },
+                      }}
+                      render={({ field }) => (
+                        <TextInput error={errors.logoUrl} label={t('logoUrl')} {...field} />
+                      )}
+                    />
+                  </Box>
+                  <Box mt={20}>
+                    <Controller
+                      name="squareLogoUrl"
+                      control={control}
+                      rules={{
+                        pattern: {
+                          value: /^(http|https):\/\//,
+                          message: t('logoUrlInvalid'),
+                        },
+                      }}
+                      render={({ field }) => (
+                        <TextInput error={errors.logoUrl} label={t('squareLogoUrl')} {...field} />
+                      )}
+                    />
+                  </Box>
                 </Box>
                 <Box>
                   <Controller
@@ -166,6 +187,58 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                   />
                 </Box>
               </Stack>
+              <Box>
+                <Controller
+                  name="useDarkMode"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch {...field} label={t('useDarkMode')} checked={!!field.value} />
+                  )}
+                />
+              </Box>
+              {useDarkMode ? (
+                <Stack fullWidth spacing={6}>
+                  <Box>
+                    <Controller
+                      name="menuMainColor"
+                      control={control}
+                      render={({ field }) => (
+                        <ColorInput
+                          error={errors.menuMainColor}
+                          label={t('menuMainColor')}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Box>
+                  <Box>
+                    <Controller
+                      name="menuDrawerColor"
+                      control={control}
+                      render={({ field }) => (
+                        <ColorInput
+                          error={errors.menuDrawerColor}
+                          label={t('menuDrawerColor')}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Box>
+                </Stack>
+              ) : null}
+              <Box>
+                <Controller
+                  name="usePicturesEmptyStates"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      {...field}
+                      label={t('usePicturesEmptyStates')}
+                      checked={!!field.value}
+                    />
+                  )}
+                />
+              </Box>
             </ContextContainer>
             <ContextContainer
               subtitle={t('superAdminCredentials')}

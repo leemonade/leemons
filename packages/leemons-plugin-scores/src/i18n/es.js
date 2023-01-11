@@ -1,4 +1,103 @@
 module.exports = {
+  scoresPage: {
+    header: {
+      admin: {
+        title: 'Periodos de Evaluación',
+        description:
+          'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
+      },
+      teacher: {
+        title: 'Cuaderno de Evaluación',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      title: 'Buscar periodo',
+      class: {
+        label: 'Clase',
+        placeholder: 'Clase...',
+      },
+      period: {
+        label: 'Periodo de evaluación',
+        placeholder: 'Periodo de evaluación...',
+        custom: 'Periodo personalizado',
+        final: 'Evaluación final',
+      },
+      startDate: {
+        label: 'Fecha inicio',
+        placeholder: 'Fecha inicio...',
+      },
+      endDate: {
+        label: 'Fecha fin',
+        placeholder: 'Fecha fin...',
+      },
+    },
+  },
+  reviewPage: {
+    header: {
+      admin: {
+        title: 'Notas finales',
+        description:
+          'Como administrador, puedes crear periodos de tiempo personalizados para facilitar la labor de evaluación de los profesores, por ejemplo, pre-definiendo los periodos de evaluación por programa y curso.',
+      },
+      teacher: {
+        title: 'Notas finales',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como profesor puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      title: 'Buscar periodo',
+      program: {
+        label: 'Programa',
+        placeholder: 'Seleccionar programa...',
+      },
+      course: {
+        label: 'Curso',
+        placeholder: 'Seleccionar curso...',
+      },
+      group: {
+        label: 'Grupo',
+        placeholder: 'Seleccionar grupos...',
+        all: 'Todos los grupos',
+      },
+      period: {
+        label: 'Periodo',
+        placeholder: 'Seleccionar periodo...',
+        all: 'Todos los periodos',
+      },
+    },
+  },
+  studentScoresPage: {
+    header: {
+      student: {
+        title: 'Mis puntuaciones',
+        description:
+          'Bienvenido a tu cuaderno de evaluación. Como estudiante puedes hacer búsquedas libres o utilizar los periodos pre-definidos por tu centro educativo para cada programa y curso.',
+      },
+    },
+    filters: {
+      course: {
+        label: 'Curso',
+        placeholder: 'Curso...',
+      },
+      period: {
+        label: 'Seleccionar periodo',
+        placeholder: 'Periodo de evaluación...',
+        custom: 'Periodo personalizado',
+        final: 'Evaluación final',
+      },
+      startDate: {
+        label: 'Inicio',
+        placeholder: 'Seleccionar fecha de inicio',
+      },
+      endDate: {
+        label: 'Fin',
+        placeholder: 'Seleccionar fecha de fin',
+      },
+    },
+  },
   periods: {
     alerts: {
       removeSuccess: 'Periodo "{{name}}" eliminado correctamente',
@@ -86,14 +185,23 @@ module.exports = {
       endDate: 'Fecha de fin',
     },
   },
+  periodTypes: {
+    custom: 'Periodos personalizados',
+    academicCalendar: 'Periodos del calendario académico',
+  },
   notebook: {
     header: {
       export: 'Descargar',
     },
     noClassSelected: {
-      title: 'Cuaderno de Evaluación',
+      title: 'Seleccionar clase y periodo',
       description:
-        'El cuaderno de evaluación te permiten evaluar las actividades calificables y no calificables. Selecciona el programa, curso, clase y luego filtrar por periodos de tiempo. También puedes exportar estos informes a excel o csv.',
+        'Selecciona la clase o grupo y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
+    },
+    noCourseSelected: {
+      title: 'Seleccionar curso y periodo',
+      description:
+        'Selecciona el curso y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
     },
     noResults: {
       title: 'Sin resultados',
@@ -111,21 +219,81 @@ module.exports = {
           },
           search: 'Buscar por {{filterBy.toLowerCase}}',
           nonCalificables: 'Ver no calificables',
+          evaluationReport: {
+            label: 'Enviar informe de evaluación',
+            disabledTooltip: {
+              invalidPeriod:
+                'Los informes de evaluación solo están disponibles en los periodos del calendario académico',
+              submittedPeriod: 'El informe de evaluación ya ha sido enviado',
+            },
+            modal: {
+              title: 'Enviar informe',
+              msg1: 'Una vez enviado el informe al revisor/administrador de tu organización, las notas de las actividades calificables no podrán modificarse, te aconsejamos revisar bien las puntuaciones antes de hacer el envío.',
+              msg2: 'Recuerda que las notas personalizadas por evaluación, sustituyen a las notas calculadas y que estas solo podrán modificarse por un revisor/administrador una vez entregado el informe.',
+              confirm: 'Enviar informe',
+              cancel: 'Cancelar',
+            },
+          },
+          finalReport: {
+            label: 'Enviar informe final',
+          },
         },
         scoresTable: {
           table: {
             students: 'Estudiantes',
             noActivity: 'No entregado',
             avgScore: 'Nota promedio',
-            gradingTasks: 'Actividades calificables',
+            calculated: 'Calculada',
+            custom: 'Personalizada',
             attendance: 'Asistencia',
           },
-          updatedSuccess:
-            'Actualizada la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
-          updatedError:
-            'Error actualizando la nota de {{student}} en la actividad de {{activity}} a un {{score}}',
+          updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',
+          updatedError: 'Error actualizando la nota de {{student}} en {{activity}} a un {{score}}',
+        },
+        periodSubmission: {
+          noData: 'Todavía no hay datos que enviar',
+          noPeriod: 'El periodo debe ser un periodo del calendario académico',
+          success: 'El periodo {{period}} ha sido reportado',
+          error: 'El periodo {{period}} no puede ser reportado: {{error}}',
         },
       },
+    },
+    students: {
+      averageScore: 'Nota media',
+      subject: {
+        label: 'Seleccionar asignatura',
+        placeholder: 'Asignatura',
+      },
+      type: {
+        label: 'Seleccionar tipo',
+        placeholder: 'Tipo',
+        clear: 'Borrar',
+      },
+      seeNonCalificable: 'Ver actividades no calificables',
+      notDelivered: 'No entregado',
+    },
+  },
+  finalNotebook: {
+    filters: {
+      filterBy: {
+        student: 'Estudiante',
+        subject: 'Asignatura',
+        group: 'Grupo',
+      },
+      searchBy: 'Buscar por {{noun}}',
+      hideFutureEvaluations: 'Ocultar evaluaciones futuras',
+    },
+    reviewerTable: {
+      students: 'Estudiantes',
+      noActivity: 'No entregada',
+      avgScore: 'Nota media',
+      gradingTasks: 'Calculada',
+      customScore: 'Personalizada',
+    },
+    update: {
+      success: 'Nota actualizada para {{student}} en {{subject}} a un {{score}}',
+      fail: 'La nota no ha podido ser actualizada para {{student}} en {{subject}} a un {{score}}',
+      course: 'el curso',
     },
   },
   excel: {
@@ -135,6 +303,8 @@ module.exports = {
       endDate: 'Fecha de fin',
       program: 'Programa',
       subject: 'Asignatura',
+      course: 'Curso',
+      group: 'Grupo',
     },
     table: {
       type: 'Tipo',
@@ -143,7 +313,8 @@ module.exports = {
       deadline: 'Fecha límite/cierre',
       calificable: 'calificable',
       noCalificable: 'no calificable',
-      avg: 'Promedio',
+      avg: 'Calculada',
+      custom: 'Personalizada',
       notSubmitted: 'No entregado',
       group: 'Grupo',
       surname: 'Apellido',

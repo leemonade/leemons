@@ -92,7 +92,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                     borderColor: forCalendar ? '#ffffff' : '#000000',
                     rotate: -45,
                     oneDayStyle: true,
-                    zIndex: -10,
+                    zIndex: -6,
                   },
                 },
               });
@@ -137,7 +137,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                     leftArrow: false,
                     rightArrow: false,
                     oneDayStyle: true,
-                    zIndex: -6,
+                    zIndex: -10,
                   },
                 },
               });
@@ -212,7 +212,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                     borderColor: '#000000',
                     leftArrow: false,
                     rightArrow: false,
-                    zIndex: -12,
+                    zIndex: -4,
                   },
                 },
               });
@@ -232,7 +232,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                     borderColor: forCalendar ? '#ffffff' : '#000000',
                     rotate: -45,
                     oneDayStyle: true,
-                    zIndex: -10,
+                    zIndex: -6,
                   },
                 },
               });

@@ -8,6 +8,11 @@ module.exports = {
       localizationName: { es: 'Calendario', en: 'Calendar' },
     },
     {
+      permissionName: `${permissionsPrefix}.menu.kanban`,
+      actions: ['view'],
+      localizationName: { es: 'Menu Kanban', en: 'Menu Kanban' },
+    },
+    {
       permissionName: `${permissionsPrefix}.calendar-configs`,
       actions: ['view', 'create', 'update', 'delete', 'admin'],
       localizationName: { es: 'Configurar calendario', en: 'Calendar setup' },
@@ -22,9 +27,9 @@ module.exports = {
     {
       config: {
         key: 'calendar',
-        order: 7,
-        iconSvg: '/public/assets/svgs/calendar.svg',
-        activeIconSvg: '/public/assets/svgs/calendar.svg',
+        order: 200,
+        iconSvg: '/public/calendar/calendar.svg',
+        activeIconSvg: '/public/calendar/calendar.svg',
         url: '/private/calendar/home',
         label: { es: 'Calendario', en: 'Calendar' },
       },
@@ -38,7 +43,7 @@ module.exports = {
     {
       config: {
         key: 'kanban',
-        order: 8,
+        order: 201,
         iconSvg: '/public/calendar/plugin-kanban.svg',
         activeIconSvg: '/public/calendar/plugin-kanban-active.svg',
         url: '/private/calendar/kanban',
@@ -46,8 +51,8 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: `${permissionsPrefix}.calendar`,
-          actionNames: ['view', 'admin'],
+          permissionName: `${permissionsPrefix}.menu.kanban`,
+          actionNames: ['view'],
         },
       ],
     },

@@ -13,6 +13,9 @@ module.exports = {
     evaluationDetailUrl: {
       type: 'string',
     },
+    dashboardUrl: {
+      type: 'string',
+    },
     plugin: {
       type: 'string',
     },

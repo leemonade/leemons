@@ -108,9 +108,12 @@ export default function useTaskOngoingInstanceParser(instance) {
     },
     taskDeadlineHeader: {
       title: instance?.assignable?.asset?.name,
-      subtitle: classData.name,
+      subtitle: classData.customGroup
+        ? `${classData.subjectName} - ${classData.subjectCompiledInternalId} - ${classData.name}`
+        : classData.name,
       icon: classData.icon,
       color: classData.color,
+      startDate: instance?.dates?.start ? new Date(instance?.dates?.start) : null,
       deadline: instance?.dates?.deadline ? new Date(instance?.dates?.deadline) : null,
       // TODO: UPDATE
       locale,

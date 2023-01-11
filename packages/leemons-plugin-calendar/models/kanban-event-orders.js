@@ -16,7 +16,8 @@ module.exports = {
       },
     },
     events: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

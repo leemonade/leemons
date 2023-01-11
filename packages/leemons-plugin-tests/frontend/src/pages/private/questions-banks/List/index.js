@@ -92,6 +92,7 @@ export default function List() {
               variant="embedded"
               category="tests-questions-banks"
               onSelectItem={goDetailPage}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>
@@ -105,6 +106,7 @@ export default function List() {
               variant="embedded"
               category="tests-questions-banks"
               onSelectItem={goDetailPage}
+              roles={['owner']}
             />
           </Box>
         </TabPanel>

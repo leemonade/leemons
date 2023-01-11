@@ -37,7 +37,7 @@ const menuItems = [
   // Main
   {
     item: {
-      order: 5,
+      order: 103,
       key: 'portfolio-calendar',
       iconSvg: '/public/academic-calendar/menu-icon.svg',
       activeIconSvg: '/public/academic-calendar/menu-icon.svg',
@@ -76,7 +76,7 @@ const menuItems = [
   {
     item: {
       key: 'program-calendar',
-      order: 1,
+      order: 2,
       parentKey: 'portfolio-calendar',
       url: '/private/academic-calendar/program-calendars',
       label: {

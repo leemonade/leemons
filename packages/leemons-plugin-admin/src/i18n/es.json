@@ -134,6 +134,7 @@
       "lookAndFeel": "Apariencia",
       "lookAndFeelDescription": "Puedes cambiar la URL del logo más tarde, cuando tu Mediateca Leemons esté lista y correctamente configurada en la nube.",
       "logoUrl": "URL del logo",
+      "squareLogoUrl": "URL del logo para el menu lateral",
       "logoUrlInvalid": "La URL del logo no es válida",
       "mainColor": "Color principal",
       "superAdminCredentials": "Credenciales del super-admin",
@@ -145,7 +146,11 @@
       "phone": "Teléfono",
       "contactName": "Nombre de contacto",
       "administrativeContactInfo": "Información de contacto administrativa (opcional)",
-      "administrativeContactInfoDescription": "Esta información se utilizará únicamente como firma de notificación para cumplir con el GDPR y otras leyes internacionales de privacidad."
+      "administrativeContactInfoDescription": "Esta información se utilizará únicamente como firma de notificación para cumplir con el GDPR y otras leyes internacionales de privacidad.",
+      "useDarkMode": "Activar modo Dark en el menú lateral",
+      "menuMainColor": "Color del menú principal",
+      "menuDrawerColor": "Color del submenú lateral",
+      "usePicturesEmptyStates": "Usar ilustraciones cuando no se encuentren resultados en los listados"
     },
     "finish": {
       "label": "Fin",

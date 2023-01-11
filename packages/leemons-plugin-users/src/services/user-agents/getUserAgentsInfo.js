@@ -38,8 +38,6 @@ async function getUserAgentsInfo(
     }
   );
 
-  console.log(userAgents);
-
   const users = await table.users.find(
     { id_$in: _.map(userAgents, 'user') },
     {

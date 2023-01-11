@@ -4,14 +4,19 @@ import { Box } from '@bubbles-ui/components';
 import { isNil } from 'lodash';
 
 export default function InfoCard(props) {
-  const { styles, number, label, icon, cx, reverse } = props;
+  const { styles, number, label, icon, cx, reverse, withRedColor } = props;
 
   let root = styles.resumeBox;
   let labelClass = styles.resumeLabel;
 
   if (icon) {
-    root = cx(root, styles.resumeBoxBig);
-    labelClass = cx(labelClass, styles.resumeLabelBig);
+    root = cx(root, styles.resumeBoxBig, styles.resumeBoxWithBorder);
+    labelClass = cx(
+      labelClass,
+      styles.resumeLabelBig,
+      styles.resumeLabelWithBorder,
+      withRedColor ? styles.weightColorRed : styles.weightColorGreen
+    );
   }
   if (reverse) {
     root = cx(root, styles.reverseResumeBoxBig);
@@ -26,11 +31,12 @@ export default function InfoCard(props) {
             height: ' 49px',
             backgroundImage: `url(${icon})`,
             backgroundSize: 'cover',
+            paddingBlock: 24,
           }}
         />
       ) : null}
       {!isNil(number) ? <Box className={styles.resumeNumber}>{number}</Box> : null}
-      <Box className={labelClass} dangerouslySetInnerHTML={{ __html: label }} />
+      <Box className={labelClass} style={{}} dangerouslySetInnerHTML={{ __html: label }} />
     </Box>
   );
 }
@@ -42,4 +48,5 @@ InfoCard.propTypes = {
   icon: PropTypes.string,
   cx: PropTypes.any,
   reverse: PropTypes.bool,
+  withRedColor: PropTypes.bool,
 };

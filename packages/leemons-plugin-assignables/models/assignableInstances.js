@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'assignableInstances',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     assignable: {
       type: 'string',
@@ -37,17 +40,37 @@ module.exports = {
         defaultTo: 0,
       },
     },
+    showResults: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: 1,
+      },
+    },
+    showCorrectAnswers: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: 1,
+      },
+    },
+    sendMail: {
+      type: 'boolean',
+    },
     messageToAssignees: {
       type: 'richtext',
     },
     curriculum: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     metadata: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     relatedAssignableInstances: {
-      type: 'json',
+      type: 'text',
+      textType: 'mediumText',
     },
     event: {
       type: 'uuid',

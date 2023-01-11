@@ -35,4 +35,19 @@ module.exports = [
     handler: 'assignations.get',
     authenticated: true,
   },
+  /**
+   * Activities
+   */
+  {
+    method: 'GET',
+    path: '/activities/search/ongoing',
+    handler: 'activities.searchOngoing',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/activities/search/nya',
+    handler: 'activities.searchNyaActivities',
+    authenticated: true,
+  },
 ];

@@ -1,0 +1,34 @@
+XAPI.addLogStatement({
+      verb: XAPI.VERBS.INITIALIZED,
+      object: {
+        objectType: 'Activity',
+        id: '{hostname}/api/view/program',
+        definition: {
+          extensions: {
+            id: program,
+             ip: '{ip}',
+          },
+          description: {
+            'en-US': 'Start to view Program',
+          },
+        },
+      },
+    });
+
+XAPI.addLogStatement({
+      verb: XAPI.VERBS.TERMINATED,
+      object: {
+        objectType: 'Activity',
+        id: '{hostname}/api/view/program',
+        definition: {
+          extensions: {
+            id: program,
+             ip: '{ip}',
+          },
+          description: {
+            'en-US': 'End to view Program',
+          },
+        },
+      },
+    });
+

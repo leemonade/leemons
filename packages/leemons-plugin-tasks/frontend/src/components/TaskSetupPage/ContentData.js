@@ -6,11 +6,11 @@ import {
   createStyles,
   InputWrapper,
   Stack,
-  Switch,
   TabPanel,
   Tabs,
+  SegmentedControl,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput } from '@common/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';
@@ -26,6 +26,7 @@ import Curriculum from './components/Curriculum';
 import Objectives from './components/Objectives';
 import Submissions from './components/Submissions';
 import StatementImage from './components/StatementImage';
+import Development from './components/Development';
 
 const ContentDataStyles = createStyles((theme) => ({
   tabPane: {
@@ -53,6 +54,8 @@ function ContentData({
   // FORM
 
   const { classes } = ContentDataStyles();
+
+  const [curriculumTab, setCurriculumTab] = React.useState(0);
 
   const defaultValues = {
     gradable: false,
@@ -151,7 +154,6 @@ function ContentData({
         <ContextContainer {...props} divided>
           <ContextContainer divided>
             <ContextContainer title={labels?.statementAndDevelopmentTitle}>
-              {/* TODO: Make the statement required (Not allowed with TextEditor) */}
               <Controller
                 control={control}
                 name="statement"
@@ -168,17 +170,10 @@ function ContentData({
                 )}
               />
               <StatementImage labels={labels} />
-              <Controller
-                control={control}
-                name="development"
-                render={({ field }) => (
-                  <TextEditorInput
-                    {...field}
-                    label={labels.development}
-                    placeholder={placeholders.development}
-                    error={errors.development}
-                  />
-                )}
+              <Development
+                label={labels.development}
+                placeholder={placeholders.development}
+                name="metadata.development"
               />
             </ContextContainer>
 
@@ -187,33 +182,50 @@ function ContentData({
             </ContextContainer>
 
             <ContextContainer title={labels.subjects}>
-              {!!subjects?.length && (
+              {subjects?.length > 1 && (
+                <SegmentedControl
+                  data={subjects?.map((subject, i) => ({ value: i, label: subject.label }))}
+                  value={`${curriculumTab}`}
+                  onChange={(value) => setCurriculumTab(Number(value))}
+                />
+              )}
+
+              {
+                <Box className={classes.tabPane}>
+                  <ContextContainer>
+                    <Controller
+                      control={control}
+                      name="program"
+                      render={({ field: { value: program } }) => (
+                        <Curriculum
+                          addLabel={labels?.addFromCurriculum}
+                          program={program}
+                          subjects={subjects[curriculumTab]?.value}
+                          name={`curriculum.${subjects[curriculumTab]?.value}.curriculum`}
+                          type="curriculum"
+                        />
+                      )}
+                    />
+                    <Objectives
+                      name={`curriculum.${subjects[curriculumTab]?.value}.objectives`}
+                      label={labels.objectives || ''}
+                      error={errors.objectives}
+                    />
+                  </ContextContainer>
+                </Box>
+              }
+              {/* {!!subjects?.length && (
                 <InputWrapper required>
                   <Tabs>
                     {subjects?.map((subject, index) => (
                       <TabPanel key={index} label={subject?.label}>
                         <Box className={classes.tabPane}>
                           <ContextContainer>
-                            {/* <Controller
-                              control={control}
-                              name="program"
-                              render={({ field: { value: program } }) => (
-                                <Curriculum
-                                  label={labels?.content || ''}
-                                  addLabel={labels?.addFromCurriculum}
-                                  program={program}
-                                  subjects={subject.value}
-                                  name={`curriculum.${subject.value}.contents`}
-                                  type="content"
-                                />
-                              )}
-                            /> */}
                             <Controller
                               control={control}
                               name="program"
                               render={({ field: { value: program } }) => (
                                 <Curriculum
-                                  // label={labels?.assessmentCriteria || ''}
                                   addLabel={labels?.addFromCurriculum}
                                   program={program}
                                   subjects={subject.value}
@@ -233,7 +245,7 @@ function ContentData({
                     ))}
                   </Tabs>
                 </InputWrapper>
-              )}
+              )} */}
             </ContextContainer>
 
             <ContextContainer title={labels?.submission?.title}>

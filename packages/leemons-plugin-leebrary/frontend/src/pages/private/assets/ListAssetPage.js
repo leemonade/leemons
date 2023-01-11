@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
-import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
 import { AssetList } from '../../../components/AssetList';
@@ -14,6 +14,7 @@ function useQuery() {
 const ListAssetPage = () => {
   const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
+
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
   const [assetType, setAssetType] = useState('');

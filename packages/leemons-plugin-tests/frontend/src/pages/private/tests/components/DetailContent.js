@@ -23,7 +23,7 @@ export default function DetailContent({ store, form, t, onNext, onPrev }) {
   const subjectIds = form.getValues('subjects');
 
   const subjects = store.subjectsByProgram[programId];
-  const subject = find(subjects, { value: subjectIds[0] });
+  const subject = find(subjects, { value: subjectIds[0].subject });
 
   return (
     <ContextContainer divided>

@@ -1,11 +1,16 @@
+/* eslint-disable no-use-before-define */
 const _ = require('lodash');
 const pmap = require('p-map');
 
 const { buildQuery } = require('leemons-utils');
 const { parseFilters } = require('leemons-utils');
+const randomString = require('leemons-utils/lib/randomString');
+
+const rollbacks = {};
 
 function generateQueries(model /* connector */) {
   const bookshelfModel = model.model;
+
   const selectAttributes = (attributes) =>
     _.pickBy(attributes, (value, key) => {
       if (key === 'deleted') {
@@ -22,11 +27,23 @@ function generateQueries(model /* connector */) {
 
   // Creates one new item
   async function create(newItem, { transacting } = {}) {
-    const attributes = selectAttributes(newItem);
-    return bookshelfModel
-      .forge(attributes)
-      .save(null, { method: 'insert', transacting })
-      .then((res) => res.toJSON());
+    if (!transactingHasError(transacting)) {
+      try {
+        addPendingTransacting(transacting);
+        const attributes = selectAttributes(newItem);
+        const result = await bookshelfModel
+          .forge(attributes)
+          .save(null, { method: 'insert', transacting })
+          .then((res) => res.toJSON());
+        addToRollbacks(transacting, 'removeOne', result.id);
+        lessPendingTransacting(transacting);
+        return result;
+      } catch (e) {
+        lessPendingTransacting(transacting);
+        throw e;
+      }
+    }
+    return null;
   }
 
   // Creates many items in one transaction
@@ -43,66 +60,96 @@ function generateQueries(model /* connector */) {
     }
 
     // If we are not on a transaction, make a new transaction
-    return model.ORM.transaction((t) =>
-      pmap(newItems, (newItem) => create(newItem, { transacting: t }))
-    );
+    return transaction((t) => pmap(newItems, (newItem) => create(newItem, { transacting: t })));
   }
 
   // Updates one item matching the query
   async function update(query, updatedItem, { transacting } = {}) {
-    const filters = parseFilters({ filters: query, model });
-    const newQuery = buildQuery(model, filters);
+    if (!transactingHasError(transacting)) {
+      try {
+        addPendingTransacting(transacting);
+        const filters = parseFilters({ filters: query, model });
+        const newQuery = buildQuery(model, filters);
 
-    const entry = await bookshelfModel.query(newQuery).fetch({ transacting, require: false });
+        const entry = await bookshelfModel.query(newQuery).fetch({ transacting, require: false });
 
-    if (!entry) {
-      const err = new Error('entry.notFound');
-      err.status = 404;
-      throw err;
+        if (!entry) {
+          const err = new Error('entry.notFound');
+          err.status = 404;
+          throw err;
+        }
+
+        if (!_.has(updatedItem, 'updated_at')) {
+          _.set(updatedItem, 'updated_at', new Date());
+        }
+        const attributes = selectAttributes(updatedItem);
+
+        if (Object.keys(attributes).length > 0) {
+          const res = await entry.save(attributes, { method: 'update', patch: true, transacting });
+          addToRollbacks(transacting, 'update', res._previousAttributes);
+          lessPendingTransacting(transacting);
+          return res.toJSON();
+        }
+        lessPendingTransacting(transacting);
+        return entry.toJSON();
+      } catch (e) {
+        lessPendingTransacting(transacting);
+      }
     }
-
-    if (!_.has(updatedItem, 'updated_at')) {
-      _.set(updatedItem, 'updated_at', new Date());
-    }
-    const attributes = selectAttributes(updatedItem);
-
-    return Object.keys(attributes).length > 0
-      ? entry
-          .save(attributes, { method: 'update', patch: true, transacting })
-          .then((res) => res.toJSON())
-      : entry.toJSON();
+    return null;
   }
 
   // Updated many items in one transaction
   async function updateMany(query, updatedItem, { transacting } = {}) {
-    const filters = parseFilters({ filters: query, model });
-    const newQuery = buildQuery(model, filters);
-
-    const entry = () => bookshelfModel.query(newQuery);
-
-    if (!_.has(updatedItem, 'updated_at')) {
-      _.set(updatedItem, 'updated_at', new Date());
-    }
-
-    const attributes = selectAttributes(updatedItem);
-
-    const updatedCount = await entry().count({ transacting });
-
-    if (updatedCount > 0) {
+    if (!transactingHasError(transacting)) {
       try {
-        await entry().save(attributes, {
-          method: 'update',
-          patch: true,
-          transacting,
-        });
-      } catch (err) {
-        if (err.message !== 'EmptyResponse') {
-          throw err;
+        addPendingTransacting(transacting);
+        const filters = parseFilters({ filters: query, model });
+        const newQuery = buildQuery(model, filters);
+
+        const entry = () => bookshelfModel.query(newQuery);
+
+        if (!_.has(updatedItem, 'updated_at')) {
+          _.set(updatedItem, 'updated_at', new Date());
         }
+
+        const attributes = selectAttributes(updatedItem);
+
+        const promises = [entry().count({ transacting })];
+
+        if (_.isString(transacting)) {
+          promises.push(find(query, { columns: ['id', ...Object.keys(attributes)] }));
+        }
+
+        const [updatedCount, items] = await Promise.all(promises);
+
+        if (updatedCount > 0) {
+          try {
+            await entry().save(attributes, {
+              method: 'update',
+              patch: true,
+              transacting,
+            });
+            if (items && items.length) {
+              addToRollbacks(transacting, 'updateMany', items);
+            }
+          } catch (err) {
+            if (err.message !== 'EmptyResponse') {
+              throw err;
+            }
+            if (items && items.length) {
+              addToRollbacks(transacting, 'updateMany', items);
+            }
+          }
+        }
+        lessPendingTransacting(transacting);
+        return { count: updatedCount };
+      } catch (e) {
+        lessPendingTransacting(transacting);
+        throw e;
       }
     }
-
-    return { count: updatedCount };
+    return null;
   }
 
   // Deletes one item matching the query
@@ -110,27 +157,41 @@ function generateQueries(model /* connector */) {
     query,
     { soft = model.schema.options.softDelete || false, transacting } = {}
   ) {
-    const filters = parseFilters({ filters: { ...query, $limit: 1 }, model });
-    const newQuery = buildQuery(model, filters);
+    if (!transactingHasError(transacting)) {
+      try {
+        addPendingTransacting(transacting);
+        const filters = parseFilters({ filters: { ...query, $limit: 1 }, model });
+        const newQuery = buildQuery(model, filters);
 
-    const entry = await bookshelfModel.query(newQuery).fetch({ transacting, require: false });
+        const entry = await bookshelfModel.query(newQuery).fetch({ transacting, require: false });
 
-    if (!entry) {
-      const err = new Error('entry.notFound');
-      err.status = 404;
-      throw err;
-    }
+        if (!entry) {
+          const err = new Error('entry.notFound');
+          err.status = 404;
+          throw err;
+        }
 
-    if (soft) {
-      const fields = { deleted: true };
-      if (model.schema.options.useTimestamps) {
-        fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        if (soft) {
+          const fields = { deleted: true };
+          if (model.schema.options.useTimestamps) {
+            fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          }
+          const res = await entry.save(fields, { method: 'update', patch: true, transacting });
+          addToRollbacks(transacting, 'update', res._previousAttributes);
+          lessPendingTransacting(transacting);
+          return { deleted: true, soft: true };
+        }
+        const entryData = entry.toJSON();
+        await entry.destroy({ transacting });
+        addToRollbacks(transacting, 'create', entryData);
+        lessPendingTransacting(transacting);
+        return { deleted: true, soft: false };
+      } catch (e) {
+        lessPendingTransacting(transacting);
+        throw e;
       }
-      await entry.save(fields, { method: 'update', patch: true, transacting });
-      return { deleted: true, soft: true };
     }
-    await entry.destroy({ transacting });
-    return { deleted: true, soft: false };
+    return null;
   }
 
   // Deletes many items matching the query
@@ -138,39 +199,56 @@ function generateQueries(model /* connector */) {
     query,
     { soft = model.schema.options.softDelete || false, transacting } = {}
   ) {
-    const filters = parseFilters({ filters: query, model });
-    const newQuery = buildQuery(model, filters);
+    if (!transactingHasError(transacting)) {
+      try {
+        addPendingTransacting(transacting);
+        const filters = parseFilters({ filters: query, model });
+        const newQuery = buildQuery(model, filters);
 
-    const entries = () => bookshelfModel.query(newQuery);
+        const entries = () => bookshelfModel.query(newQuery);
 
-    const deletedCount = await entries().count({ transacting });
+        const promises = [entries().count({ transacting })];
 
-    try {
-      if (deletedCount > 0) {
-        if (soft) {
-          const fields = { deleted: true };
-          if (model.schema.options.useTimestamps) {
-            fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          }
+        if (_.isString(transacting)) {
+          promises.push(find(query));
+        }
 
-          await entries().save(fields, { method: 'update', patch: true, transacting });
-        } else {
-          try {
-            await entries().destroy({ transacting });
-          } catch (err) {
-            if (err.message.indexOf('No Rows Deleted') === -1) {
-              throw err;
+        const [deletedCount, items] = await Promise.all(promises);
+
+        try {
+          if (deletedCount > 0) {
+            if (soft) {
+              const fields = { deleted: true };
+              if (model.schema.options.useTimestamps) {
+                fields.deleted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+              }
+
+              await entries().save(fields, { method: 'update', patch: true, transacting });
+              addToRollbacks(transacting, 'updateMany', items);
+            } else {
+              try {
+                await entries().destroy({ transacting });
+                addToRollbacks(transacting, 'createMany', items);
+              } catch (err) {
+                if (err.message.indexOf('No Rows Deleted') === -1) {
+                  throw err;
+                }
+              }
             }
           }
+        } catch (err) {
+          if (err.message !== 'EmptyResponse') {
+            throw err;
+          }
         }
-      }
-    } catch (err) {
-      if (err.message !== 'EmptyResponse') {
-        throw err;
+        lessPendingTransacting(transacting);
+        return { count: deletedCount, soft };
+      } catch (e) {
+        lessPendingTransacting(transacting);
+        throw e;
       }
     }
-
-    return { count: deletedCount, soft };
+    return null;
   }
 
   // Finds all items based on a query
@@ -249,15 +327,7 @@ function generateQueries(model /* connector */) {
       });
 
       if (entry) {
-        if (!_.has(item, 'updated_at')) {
-          _.set(item, 'updated_at', new Date());
-        }
-        const attributes = selectAttributes(item);
-        return Object.keys(attributes).length > 0
-          ? entry
-              .save(attributes, { method: 'update', patch: true, transacting })
-              .then((res) => res.toJSON())
-          : entry.toJSON();
+        return update(query, item, { transacting });
       }
 
       return create({ ...query, ...item }, { transacting });
@@ -283,13 +353,34 @@ function generateQueries(model /* connector */) {
     }
 
     // If we are not on a transaction, make a new transaction
-    return model.ORM.transaction((t) =>
+    return transaction((t) =>
       pmap(newItems, (newItem) => set(newItem.query, newItem.item, { transacting: t }))
     );
   }
 
   async function transaction(f) {
+    if (model.config.useCustomRollback) {
+      const id = randomString();
+      try {
+        const result = await f(id);
+        finishRollback(id);
+        return result;
+      } catch (e) {
+        if (!transactingHasError()) await rollback(id);
+        throw e;
+      }
+    }
+
     return model.ORM.transaction(f);
+  }
+
+  function finishRollback(transacting) {
+    if (_.isString(transacting)) {
+      if (rollbacks[transacting]) {
+        rollbacks[transacting] = undefined;
+        delete rollbacks[transacting];
+      }
+    }
   }
 
   async function timeoutPromise(time) {
@@ -307,7 +398,9 @@ function generateQueries(model /* connector */) {
       const str = `${e.code} ${e.message} ${e.sqlMessage}`;
       if (
         n < 10000 &&
-        (str.toLowerCase().indexOf('deadlock') >= 0 || str.toLowerCase().indexOf('timeout') >= 0)
+        (str.toLowerCase().indexOf('deadlock') >= 0 ||
+          str.toLowerCase().indexOf('timeout') >= 0 ||
+          str.toLowerCase().indexOf('ER_CON_COUNT_ERROR') >= 0)
       ) {
         await timeoutPromise(time);
         return reTry(func, args, time, n + 1);
@@ -316,7 +409,46 @@ function generateQueries(model /* connector */) {
     }
   }
 
-  return {
+  async function rollback(transacting) {
+    if (
+      _.isString(transacting) &&
+      rollbacks[transacting] &&
+      rollbacks[transacting].actions &&
+      rollbacks[transacting].actions.length
+    ) {
+      // Al empezar a hacer rollback marcamos como que hay un error
+      rollbacks[transacting].error = true;
+      // Solo empezamos a hacer rollback si no quedan acciones pendientes del backend
+      if (rollbacks[transacting].pendingActions === 0) {
+        const curAction = rollbacks[transacting].actions[rollbacks[transacting].actions.length - 1];
+        if (curAction.action === 'removeOne') {
+          await curAction.modelActions.delete({ id: curAction.data });
+        }
+        if (curAction.action === 'update') {
+          await curAction.modelActions.update({ id: curAction.data.id }, curAction.data);
+        }
+        if (curAction.action === 'updateMany') {
+          await Promise.all(
+            _.map(curAction.data, (item) => curAction.modelActions.update({ id: item.id }, item))
+          );
+        }
+        if (curAction.action === 'create') {
+          await curAction.modelActions.create(curAction.data);
+        }
+        if (curAction.action === 'createMany') {
+          await Promise.all(_.map(curAction.data, (item) => curAction.modelActions.create(item)));
+        }
+        rollbacks[transacting].actions.pop();
+        await rollback(transacting);
+      } else {
+        setTimeout(() => {
+          rollback(transacting);
+        }, 10);
+      }
+    }
+  }
+
+  const modelActions = {
     create: (...args) => reTry(create, args),
     createMany: (...args) => reTry(createMany, args),
     update: (...args) => reTry(update, args),
@@ -329,8 +461,51 @@ function generateQueries(model /* connector */) {
     count: (...args) => reTry(count, args),
     set: (...args) => reTry(set, args),
     setMany: (...args) => reTry(setMany, args),
+    rollback,
     transaction,
   };
+
+  function initRollbackIfNeed(transacting) {
+    if (_.isString(transacting)) {
+      if (!rollbacks[transacting])
+        rollbacks[transacting] = {
+          actions: [],
+          error: false,
+          pendingActions: 0,
+        };
+    }
+  }
+
+  function addToRollbacks(transacting, action, data) {
+    if (_.isString(transacting)) {
+      initRollbackIfNeed(transacting);
+      rollbacks[transacting].actions.push({ action, data, bookshelfModel, modelActions });
+    }
+  }
+
+  function addPendingTransacting(transacting) {
+    if (_.isString(transacting)) {
+      initRollbackIfNeed(transacting);
+      rollbacks[transacting].pendingActions++;
+    }
+  }
+
+  function lessPendingTransacting(transacting) {
+    if (_.isString(transacting)) {
+      initRollbackIfNeed(transacting);
+      rollbacks[transacting].pendingActions--;
+    }
+  }
+
+  function transactingHasError(transacting) {
+    if (_.isString(transacting)) {
+      initRollbackIfNeed(transacting);
+      return rollbacks[transacting].error;
+    }
+    return false;
+  }
+
+  return modelActions;
 }
 
 module.exports = generateQueries;

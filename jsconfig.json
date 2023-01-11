@@ -54,6 +54,12 @@
       "@families/*": [
         "./packages/leemons-plugin-families/frontend/src/*"
       ],
+      "@feedback/*": [
+        "./packages/leemons-plugin-feedback/frontend/src/*"
+      ],
+      "@fundae/*": [
+        "./packages/leemons-plugin-fundae/frontend/src/*"
+      ],
       "@grades/*": [
         "./packages/leemons-plugin-grades/frontend/src/*"
       ],
@@ -98,6 +104,9 @@
       ],
       "@widgets/*": [
         "./packages/leemons-plugin-widgets/frontend/src/*"
+      ],
+      "@xapi/*": [
+        "./packages/leemons-plugin-xapi/frontend/src/*"
       ]
     }
   },

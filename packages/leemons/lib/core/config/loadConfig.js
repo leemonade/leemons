@@ -29,6 +29,7 @@ async function loadConfiguration(
   const configDir = path.resolve(dir, defaultDirs.config);
 
   // Read main config file
+
   const configFile =
     (await loadFile(path.join(configDir, 'config.json'))) ||
     (await loadFile(path.join(configDir, 'config.js')));

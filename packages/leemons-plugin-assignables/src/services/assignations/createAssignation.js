@@ -117,6 +117,7 @@ module.exports = async function createAssignation(
                     `subject|${subjectId}.assignation|${assignation.id}.userAgent|${user}`
                   ),
                   {
+                    name: instance.assignable.asset.name,
                     userAgents: _.compact(_.uniq(teachers).concat(user)),
                   }
                 )
@@ -125,14 +126,16 @@ module.exports = async function createAssignation(
 
             await Promise.all(roomsPromises);
 
-            sendEmail({
-              instance,
-              userSession,
-              userAgent: userAgentByIds[user],
-              classes: _classes,
-              ctx,
-              hostname,
-            });
+            if (instance?.sendMail) {
+              sendEmail({
+                instance,
+                userSession,
+                userAgent: userAgentByIds[user],
+                classes: _classes,
+                ctx,
+                hostname,
+              });
+            }
 
             // EN: Save the timestamps
             // ES: Guarda los timestamps
