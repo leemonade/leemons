@@ -8,6 +8,7 @@ import {
   Stack,
   TabPanel,
   Tabs,
+  SegmentedControl,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@common/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
@@ -53,6 +54,8 @@ function ContentData({
   // FORM
 
   const { classes } = ContentDataStyles();
+
+  const [curriculumTab, setCurriculumTab] = React.useState(0);
 
   const defaultValues = {
     gradable: false,
@@ -182,33 +185,50 @@ function ContentData({
             </ContextContainer>
 
             <ContextContainer title={labels.subjects} data-cypress-id="taskSubjects">
-              {!!subjects?.length && (
+              {subjects?.length > 1 && (
+                <SegmentedControl
+                  data={subjects?.map((subject, i) => ({ value: i, label: subject.label }))}
+                  value={`${curriculumTab}`}
+                  onChange={(value) => setCurriculumTab(Number(value))}
+                />
+              )}
+
+              {
+                <Box className={classes.tabPane}>
+                  <ContextContainer>
+                    <Controller
+                      control={control}
+                      name="program"
+                      render={({ field: { value: program } }) => (
+                        <Curriculum
+                          addLabel={labels?.addFromCurriculum}
+                          program={program}
+                          subjects={subjects[curriculumTab]?.value}
+                          name={`curriculum.${subjects[curriculumTab]?.value}.curriculum`}
+                          type="curriculum"
+                        />
+                      )}
+                    />
+                    <Objectives
+                      name={`curriculum.${subjects[curriculumTab]?.value}.objectives`}
+                      label={labels.objectives || ''}
+                      error={errors.objectives}
+                    />
+                  </ContextContainer>
+                </Box>
+              }
+              {/* {!!subjects?.length && (
                 <InputWrapper required>
                   <Tabs>
                     {subjects?.map((subject, index) => (
                       <TabPanel key={index} label={subject?.label}>
                         <Box className={classes.tabPane}>
                           <ContextContainer>
-                            {/* <Controller
-                              control={control}
-                              name="program"
-                              render={({ field: { value: program } }) => (
-                                <Curriculum
-                                  label={labels?.content || ''}
-                                  addLabel={labels?.addFromCurriculum}
-                                  program={program}
-                                  subjects={subject.value}
-                                  name={`curriculum.${subject.value}.contents`}
-                                  type="content"
-                                />
-                              )}
-                            /> */}
                             <Controller
                               control={control}
                               name="program"
                               render={({ field: { value: program } }) => (
                                 <Curriculum
-                                  // label={labels?.assessmentCriteria || ''}
                                   addLabel={labels?.addFromCurriculum}
                                   program={program}
                                   subjects={subject.value}
@@ -228,7 +248,8 @@ function ContentData({
                     ))}
                   </Tabs>
                 </InputWrapper>
-              )}
+              )}{' '}
+              */}
             </ContextContainer>
 
             <ContextContainer title={labels?.submission?.title} data-cypress-id="taskSubmission">

@@ -6,6 +6,7 @@ import { prefixPN } from '@scores/helpers';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 import generateExcel from '@scores/components/ExcelExport/evaluationWB';
 import { getFile } from '@scores/components/ExcelExport/helpers/workbook';
+import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
 
 function useExcelLabels() {
   const [, translations] = useTranslateLoader(prefixPN('excel'));
@@ -29,6 +30,18 @@ export function useExcelDownloadHandler({
 }) {
   const excelLabels = useExcelLabels();
 
+  const roles = useRoles();
+
+  const roleNames = React.useMemo(() => {
+    const names = {};
+
+    roles.forEach((role) => {
+      names[role.value] = role.label;
+    });
+
+    return names;
+  }, [roles]);
+
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
       fireEvent('plugins.scores::downloaded-intercepted');
@@ -44,6 +57,7 @@ export function useExcelDownloadHandler({
             program: programData.name,
             subject: subjectData.name,
           },
+          types: roleNames,
           labels: excelLabels,
         });
         getFile(wb, format);
@@ -55,7 +69,7 @@ export function useExcelDownloadHandler({
 
     addAction('plugins.scores::download-scores', onDownload);
     return () => removeAction('plugins.scores::download-scores', onDownload);
-  }, [activitiesData, grades]);
+  }, [activitiesData, grades, roleNames]);
 }
 
 export default useExcelDownloadHandler;

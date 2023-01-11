@@ -2,7 +2,7 @@ import { createWorkbook, createSheet, cellToIndexes, indexesToCell } from '../he
 import { writeHeader } from './header';
 import { writeTable } from './table';
 
-export default function generateEvaluationWB({ headerShown, tableData, labels, period }) {
+export default function generateEvaluationWB({ headerShown, tableData, labels, period, types }) {
   const wb = createWorkbook();
   const ws = createSheet(wb, 'notebook');
 
@@ -20,6 +20,7 @@ export default function generateEvaluationWB({ headerShown, tableData, labels, p
     ws,
     tableData,
     labels: labels.table,
+    types,
     initialPosition: renderPosition,
   });
 

@@ -6,7 +6,7 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import unflatten from '@academic-portfolio/helpers/unflatten';
 import { get } from 'lodash';
 
-function useProgress(labels) {
+export function useProgress(labels) {
   const [, translations] = useTranslateLoader(prefixPN('activity_status'));
 
   const localizations = React.useMemo(() => {

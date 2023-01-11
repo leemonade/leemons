@@ -188,7 +188,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     () => (assignationsAreLoading ? [] : assignations.map((assignation) => assignation.data)),
     [assignations]
   );
-  const evaluationSystem = useProgramEvaluationSystem(assignationsData[0]?.instance, {
+  const evaluationSystem = useProgramEvaluationSystem(filters.program, {
     enabled: assignationsData?.length > 0,
   });
   const useLetterScore = useMemo(() => evaluationSystem?.type !== 'numeric', [evaluationSystem]);

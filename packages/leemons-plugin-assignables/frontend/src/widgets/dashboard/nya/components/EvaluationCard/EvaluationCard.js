@@ -4,9 +4,9 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { get } from 'lodash';
-import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import ScoreFeedback from './components/ScoreFeedback';
+import { Link } from 'react-router-dom';
 
 function useRoleLocalization(role) {
   const localizationKey = prefixPN(`roles.${role}.singular`);
@@ -108,44 +108,50 @@ function RoleName({ role }) {
   );
 }
 
-const useEvaluationCardStyles = createStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    height: '100%',
-  },
-  leftContainer: {
-    paddingLeft: theme.spacing[5],
-    paddingRight: theme.spacing[4],
-    flex: '1 0',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  activityName: theme.other.global.content.typoMobile.heading.xsm,
-  topLeftSection: {
-    paddingTop: theme.spacing[4],
-    borderBottom: `${theme.other.global.border.width.sm} solid ${theme.other.global.border.color.line.default}`,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: theme.spacing[2],
-    paddingBottom: theme.spacing[3],
-    flex: '1 0',
-    minHeight: '50%',
-  },
-  botLeftSection: {
-    paddingTop: theme.spacing[6],
-    paddingBottom: theme.spacing[5],
-    flex: '1 0',
-    height: '50%',
-  },
-}));
+const useEvaluationCardStyles = createStyles((theme) => {
+  const borderTheme = theme.other.global.border;
+
+  return {
+    root: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      height: '100%',
+      border: `${borderTheme.width.md} solid ${borderTheme.color.line.muted}`,
+      borderRadius: borderTheme.radius.md,
+    },
+    leftContainer: {
+      paddingLeft: theme.spacing[5],
+      paddingRight: theme.spacing[4],
+      flex: '1 0',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    activityName: theme.other.global.content.typoMobile.heading.xsm,
+    topLeftSection: {
+      paddingTop: theme.spacing[4],
+      borderBottom: `${theme.other.global.border.width.sm} solid ${theme.other.global.border.color.line.default}`,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      gap: theme.spacing[2],
+      paddingBottom: theme.spacing[3],
+      flex: '1 0',
+      minHeight: '50%',
+    },
+    botLeftSection: {
+      paddingTop: theme.spacing[6],
+      paddingBottom: theme.spacing[5],
+      flex: '1 0',
+      height: '50%',
+    },
+  };
+});
 
 export default function EvaluationCard({ assignation, showSubject, classData }) {
   const { instance } = assignation;
   const { assignable } = instance;
-  const { asset } = assignable;
+  const { asset, roleDetails } = assignable;
 
   const subject = {
     label: classData?.subjectName,
@@ -166,29 +172,32 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
   const { classes } = useEvaluationCardStyles();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.leftContainer}>
-        <Box className={classes.topLeftSection}>
-          <TextClamp lines={2}>
-            <Text className={classes.activityName}>{asset.name}</Text>
-          </TextClamp>
-          <RoleName role={assignable.roleDetails} />
+    <Link to={roleDetails.evaluationDetailUrl?.replace(':id', instance.id)?.replace(':user', assignation.user)} style={{ textDecoration: 'none' }}>
+      <Box className={classes.root}>
+        <Box className={classes.leftContainer}>
+          <Box className={classes.topLeftSection}>
+            <TextClamp lines={2}>
+              <Text className={classes.activityName}>{asset.name}</Text>
+            </TextClamp>
+            <RoleName role={assignable.roleDetails} />
+          </Box>
+          <Box className={classes.botLeftSection}>
+            <SubjectItem subject={subject} />
+          </Box>
         </Box>
-        <Box className={classes.botLeftSection}>
-          <SubjectItem subject={subject} />
-        </Box>
-      </Box>
-      <Box>
         <Box>
-          <ScoreFeedback
-            program={assignable.subjects[0].program}
-            isCalificable={instance.requiresScoring}
-            score={instance.requiresScoring && score}
-            rooms={instance.allowFeedback && assignation.chatKeys}
-          />
+          <Box>
+            <ScoreFeedback
+              program={assignable.subjects[0].program}
+              isCalificable={instance.requiresScoring}
+              score={instance.requiresScoring && score.toFixed(2)}
+              rooms={instance.allowFeedback && assignation.chatKeys}
+            />
+          </Box>
+          <Box></Box>
         </Box>
-        <Box></Box>
       </Box>
-    </Box>
+    </Link>
+
   );
 }

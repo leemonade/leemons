@@ -18,11 +18,11 @@ function parseActivities({ activities, labels }) {
  * ws: import("exceljs").Worksheet
  * }} param0
  */
-export default function writeHeader({ ws, activities, labels, initialPosition }) {
+export default function writeHeader({ ws, activities, labels, types, initialPosition }) {
   const parsedactivities = parseActivities({ activities, labels });
 
   const contentArray = [
-    [labels.type, ...map(parsedactivities, 'type'), '', ''],
+    [labels.type, ...parsedactivities.map((activity) => types[activity.type]), '', ''],
     [labels.evaluation, ...map(parsedactivities, 'evaluation'), '', ''],
     [labels.activity, ...map(parsedactivities, 'name'), '', ''],
     [labels.deadline, ...map(parsedactivities, 'deadline'), '', ''],

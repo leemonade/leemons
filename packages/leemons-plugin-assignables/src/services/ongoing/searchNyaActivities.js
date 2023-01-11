@@ -11,6 +11,7 @@ const {
   filterAssignationsByDaysUntilDeadline,
   filterAssignationsByInstance,
   filterInstancesByProgramAndSubjects,
+  filterInstancesByEvaluable,
 } = require('./helpers/filters');
 const {
   filterInstancesByStudentCompletionPercentage,
@@ -26,7 +27,9 @@ module.exports = async function searchNyaActivities(query, { userSession, transa
     === TEACHER ===
   */
   if (isTeacher) {
-    const instances = await getTeacherInstances({ userSession, transacting });
+    let instances = await getTeacherInstances({ userSession, transacting });
+
+    instances = filterInstancesByEvaluable({ instances, evaluable: true });
 
     const dates = await getActivitiesDates(
       {
