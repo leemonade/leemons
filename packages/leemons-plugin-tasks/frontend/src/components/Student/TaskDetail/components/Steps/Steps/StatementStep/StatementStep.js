@@ -5,9 +5,8 @@ import {
   ContextContainer,
   HtmlText,
   ImageLoader,
-  TabPanel,
-  Tabs,
   Title,
+  SegmentedControl,
 } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
@@ -15,10 +14,83 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 
+function CurriculumTab({ subjects, curriculumTab, labels }) {
+  const subject = subjects[curriculumTab];
+
+  if (!subject) {
+    return null;
+  }
+
+  const { curriculum, subject: id } = subject;
+
+  console.log('Curriculum', subject);
+
+  const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
+  return (
+    <Box key={id}>
+      {/*
+        EN: Box to add margin
+        ES: Box para agregar margen
+      */}
+      <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
+
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          flexDirection: 'column',
+          gap: theme.spacing[4],
+        })}
+      >
+        {!!curriculum?.curriculum?.length && (
+          <Box sx={tabPanelStyle}>
+            <Box>
+              <CurriculumListContents value={curriculum?.curriculum} subjects={id} />
+            </Box>
+          </Box>
+        )}
+        {!!['objectives'].includes('objectives') && !!curriculum?.objectives?.length && (
+          <Box sx={tabPanelStyle}>
+            <Box>
+              <Title color="primary" order={5}>
+                {labels?.objectives}
+              </Title>
+              {/* TODO: Use react lists */}
+              <HtmlText>
+                {`
+              <ul>
+              ${curriculum?.objectives
+                    ?.map(
+                      (objective) =>
+                        `<li>
+                    ${objective}
+                  </li>`
+                    )
+                    ?.join('')}
+              </ul>
+            `}
+              </HtmlText>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+}
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
   const subjects = useClassesSubjects(assignation.instance.classes);
 
-  if (Object.keys(showCurriculumObj).length === 0) {
+  const subjectsWithCurriculum = React.useMemo(
+    () =>
+      assignation?.instance?.assignable?.subjects?.map((subject) => ({
+        ...subject,
+        name: subjects.find((s) => s.id === subject.subject)?.name,
+      })),
+    [subjects, assignation?.instance?.assignable?.subjects]
+  );
+
+  const [curriculumTab, setCurriculumTab] = React.useState(0);
+
+  if (Object.keys(showCurriculumObj).length === 0 || subjectsWithCurriculum?.length === 0) {
     return null;
   }
 
@@ -27,63 +99,22 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
       <Title order={4} color="primary">
         {labels?.title}
       </Title>
-      <Tabs>
-        {subjects.map(({ id, name }) => {
-          const { curriculum } = assignation.instance.assignable.subjects.find(
-            (s) => s.subject === id
-          );
-          const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
-          return (
-            <TabPanel key={id} label={name}>
-              {/*
-                EN: Box to add margin
-                ES: Box para agregar margen
-              */}
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
-
-              <Box
-                sx={(theme) => ({
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: theme.spacing[4],
-                })}
-              >
-                {!!curriculum?.curriculum?.length && (
-                  <Box sx={tabPanelStyle}>
-                    <Box>
-                      <CurriculumListContents value={curriculum?.curriculum} subjects={id} />
-                    </Box>
-                  </Box>
-                )}
-                {!!['objectives'].includes('objectives') && !!curriculum?.objectives?.length && (
-                  <Box sx={tabPanelStyle}>
-                    <Box>
-                      <Title color="primary" order={5}>
-                        {labels?.objectives}
-                      </Title>
-                      {/* TODO: Use react lists */}
-                      <HtmlText>
-                        {`
-                      <ul>
-                      ${curriculum?.objectives
-                            ?.map(
-                              (objective) =>
-                                `<li>
-                            ${objective}
-                          </li>`
-                            )
-                            ?.join('')}
-                      </ul>
-                    `}
-                      </HtmlText>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
-            </TabPanel>
-          );
-        })}
-      </Tabs>
+      {subjectsWithCurriculum?.length > 1 && (
+        <SegmentedControl
+          data={subjectsWithCurriculum.map((subject, i) => ({
+            value: `${i}`,
+            label: subject.name,
+          }))}
+          value={`${curriculumTab}`}
+          onChange={(value) => setCurriculumTab(Number(value))}
+        />
+      )}
+      <CurriculumTab
+        curriculumTab={curriculumTab}
+        subjects={subjectsWithCurriculum}
+        assignation={assignation}
+        labels={labels}
+      />
     </ContextContainer>
   );
 }
