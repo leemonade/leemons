@@ -93,18 +93,17 @@ export const TextEditorInput = ({
           onChange={onChange}
           editorClassname={cx(classes.editor, editorClassname)}
         >
+          {toolbars.heading && <HeadingsTool paragraph={false} />}
           {toolbars.color && <ColorTool />}
           {toolbars.style && <TransformsTool />}
+          {toolbars.link && <LinkTool />}
+          {toolbars.list && <ListIndentTool />}
+          {toolbars.align && <TextAlignTool />}
+          {toolbars.formulation && <ScriptsTool />}
 
           {leemonsTools.map((item, i) => (
             <React.Fragment key={item.tool.id || `t-${i}`}>{item.tool}</React.Fragment>
           ))}
-
-          {toolbars.link && <LinkTool />}
-          {toolbars.heading && <HeadingsTool paragraph={false} />}
-          {toolbars.list && <ListIndentTool />}
-          {toolbars.align && <TextAlignTool />}
-          {toolbars.formulation && <ScriptsTool />}
 
           {children}
         </TextEditor>

@@ -5,7 +5,7 @@ export default function getStyle({ tableData, ws }) {
   return (cell, { relRow: row, relCol: col, row: absoluteRow, col: absoluteCol }) => {
     const border = {};
 
-    const studentDataLength = 4;
+    const studentDataLength = 2;
 
     const isFirstRow = row === 0;
     const isFirstScoreRow = row === 1;
@@ -49,6 +49,8 @@ export default function getStyle({ tableData, ws }) {
 
       addCustomName({ ws, name: 'scores', cell });
       addCustomName({ ws, name: `scores_${row}`, cell });
+
+      cell.numFmt = '0.00';
     }
 
     if (!isStudentDataCol && isFirstScoreRow) {
@@ -73,6 +75,8 @@ export default function getStyle({ tableData, ws }) {
         result: cell.value || 0,
       };
 
+      cell.numFmt = '0.00';
+
       addCustomName({ ws, name: 'avgScores', cell });
     }
 
@@ -81,10 +85,11 @@ export default function getStyle({ tableData, ws }) {
       if ((leftCell.value.result || 0) === cell.value) {
         cell.value = {
           formula: `ROUND(${leftCell._address},0)`,
-          result: cell.value,
+          result: Math.round(cell.value),
         };
       }
 
+      cell.numFmt = '0';
       addCustomName({ ws, name: 'customScores', cell });
     }
 

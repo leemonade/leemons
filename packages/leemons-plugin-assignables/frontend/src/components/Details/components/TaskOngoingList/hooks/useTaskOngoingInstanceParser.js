@@ -113,6 +113,7 @@ export default function useTaskOngoingInstanceParser(instance) {
         : classData.name,
       icon: classData.icon,
       color: classData.color,
+      startDate: instance?.dates?.start ? new Date(instance?.dates?.start) : null,
       deadline: instance?.dates?.deadline ? new Date(instance?.dates?.deadline) : null,
       // TODO: UPDATE
       locale,

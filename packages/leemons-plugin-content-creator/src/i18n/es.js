@@ -48,7 +48,7 @@ module.exports = {
   documentCard: {
     view: 'Vista previa',
     edit: 'Editar',
-    feedback: 'Feedback',
+    document: 'Documento',
     assign: 'Asignar',
     delete: 'Borrar',
     deleted: 'Borrado',
@@ -61,5 +61,14 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+  },
+  contentCreatorDetail: {
+    titlePlaceholder: 'Escribe el nombre del documento...',
+    saveDraft: 'Guardar borrador',
+    publish: 'Publicar',
+    schemaLabel: 'Esquema',
+    formatLabel: 'Formato',
+    savedAsDraft: 'Guardado como borrador',
+    published: 'Publicado',
   },
 };
