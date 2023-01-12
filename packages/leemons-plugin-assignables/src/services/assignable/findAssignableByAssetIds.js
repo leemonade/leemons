@@ -1,4 +1,5 @@
-const getAssignable = require('./getAssignable');
+const { map } = require('lodash');
+const getAssignables = require('./getAssignables');
 
 module.exports = async function findAssignableByAssetIds(
   assets,
@@ -6,24 +7,15 @@ module.exports = async function findAssignableByAssetIds(
 ) {
   // EN: Get the details of each assignable (if no permissions, don't return it)
   // ES: Obtiene los detalles de cada asignable (si no tiene permisos, no lo devuelve)
-  return (
-    await Promise.all(
-      assets.map(async ({ id }) => {
-        try {
-          const assignable = await getAssignable.call({ calledFrom: 'plugins.assignables' }, id, {
-            columns: [],
-            userSession,
-            transacting,
-            deleted,
-          });
 
-          // 'assignables.'.length = 12
+  const assetIds = map(assets, 'id');
+  const assignables = await getAssignables(assetIds, {
+    columns: [],
+    deleted,
+    userSession,
+    transacting,
+    throwOnMissing: false,
+  });
 
-          return { ...assignable };
-        } catch (e) {
-          return null;
-        }
-      })
-    )
-  ).filter((a) => a);
+  return assignables;
 };

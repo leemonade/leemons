@@ -10,7 +10,6 @@ import {
   ScoreFronstage,
 } from '@bubbles-ui/components';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
-import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import _, { capitalize, map } from 'lodash';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
@@ -19,8 +18,9 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useScores } from '@scores/requests/hooks/queries';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
-import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import EmptyState from '../Notebook/components/ActivitiesTab/EmptyState';
 
 function ClassIcon({ class: klass, dropdown = false }) {
@@ -73,25 +73,14 @@ function LoadingState() {
 function useActivities(activities) {
   const previousResult = React.useRef([]);
 
-  const assignableInstancesQueries = useAssignableInstances({
-    id: activities || [],
+  const {
+    data: assignableInstances,
+    isLoading,
+    isRefetching,
+  } = useInstances({
+    ids: activities || [],
     enabled: !!activities?.length,
   });
-
-  const assignableInstances = React.useMemo(
-    () => map(assignableInstancesQueries, 'data').filter(Boolean),
-    [assignableInstancesQueries]
-  );
-
-  const isLoading = React.useMemo(
-    () => assignableInstancesQueries.some((q) => q.isLoading),
-    [assignableInstancesQueries]
-  );
-
-  const isRefetching = React.useMemo(
-    () => assignableInstancesQueries.some((q) => q.isRefetching),
-    [assignableInstancesQueries]
-  );
 
   if (isRefetching || isLoading) {
     return {
@@ -175,19 +164,14 @@ export default function StudentActivities({ klasses, filters, labels }) {
     finished_$lt: filters.endDate,
   });
   const { assignableInstances: activities, isLoading: activitiesIsLoading } = useActivities(data);
-  const assignations = useAssignations(
-    data ? data.map((instance) => ({ instance, user })) : [],
-    true,
-    { enabled: !!data?.length }
-  );
-  const assignationsAreLoading = useMemo(
-    () => assignations.some((assignation) => assignation.isLoading),
-    [assignations]
-  );
-  const assignationsData = useMemo(
-    () => (assignationsAreLoading ? [] : assignations.map((assignation) => assignation.data)),
-    [assignations]
-  );
+  const { isLoading: assignationsAreLoading, data: assignationsData } = useAssignations({
+    queries: data ? data.map((instance) => ({ instance, user })) : [],
+    details: true,
+    fetchInstance: true,
+    enabled: !!data?.length,
+    placeholderData: [],
+  });
+
   const evaluationSystem = useProgramEvaluationSystem(filters.program, {
     enabled: assignationsData?.length > 0,
   });
@@ -211,7 +195,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-        classActivities.length || 0;
+      classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
