@@ -269,7 +269,7 @@ async function getByIds(
     pins = await getPins(assetsIds, { userSession, transacting });
   }
 
-  const programsById = {};
+  let programsById = {};
   const programIds = [];
   forEach(assets, (asset) => {
     if (asset.program) {
