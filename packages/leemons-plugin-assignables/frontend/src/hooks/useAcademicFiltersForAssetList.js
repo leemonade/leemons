@@ -171,6 +171,7 @@ export function SelectAutoClearable({ data, value, onChange, ...props }) {
       itemComponent={(item) => (
         <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
       )}
+      dropdownPosition="flip"
     />
   );
 }
@@ -214,7 +215,6 @@ function SubjectFilters({ onChange, loading, hideProgramSelect }) {
           )}
         />
       ) : null}
-
       <Controller
         control={control}
         name={'subject'}
@@ -223,7 +223,6 @@ function SubjectFilters({ onChange, loading, hideProgramSelect }) {
             {...field}
             data={subjects}
             placeholder={labels?.subject}
-            searchable
             disabled={!subjects.length || !!loading}
             style={inputRootStyle}
           />

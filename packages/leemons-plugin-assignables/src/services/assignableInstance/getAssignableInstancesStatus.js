@@ -23,43 +23,42 @@ function hasGrades(studentData) {
 
 function getStatus(studentData, instanceData) {
   const startDate = dayjs(studentData?.timestamps?.start || null);
+  const endDate = dayjs(studentData?.timestamps?.end || null);
   const instanceStartDate = dayjs(instanceData?.dates?.start || null);
   const deadline = dayjs(instanceData.dates?.deadline || null);
-  const archived = dayjs(instanceData.dates?.archived || null);
+  const closeDate = dayjs(instanceData.dates?.closed || null);
 
+  const endDateIsLate = endDate.isValid() && (endDate.isAfter(deadline) || endDate.isAfter(closeDate));
   const started =
     instanceData.alwaysAvailable ||
     (instanceStartDate.isValid() && !instanceStartDate.isAfter(dayjs()));
-  const finished = (deadline.isValid() && !deadline.isAfter(dayjs())) || archived.isValid();
+  const finished = deadline.isValid() && (!deadline.isAfter(dayjs()) || closeDate.isValid());
 
-  if (finished) {
+  if (finished || endDate.isValid()) {
     if (hasGrades(studentData)) {
-      return 'evaluated';
+      return 'evaluated'
     }
 
-    const endDate = dayjs(studentData?.timestamps?.end || null);
-
-    const endDateIsLate = endDate.isValid() && endDate.isAfter(deadline);
-
     if (endDateIsLate) {
-      return 'late';
+      return 'late'
     }
 
     if (endDate.isValid()) {
-      return 'submitted';
+      return 'submitted'
     }
 
-    return 'closed';
+    return 'closed'
   }
 
   if (started) {
     if (startDate.isValid()) {
-      return 'started';
+      return 'started'
     }
-    return 'opened';
+
+    return 'opened'
   }
 
-  return 'assigned';
+  return 'assigned'
 }
 
 module.exports = async function getAssignableInstancesStatus(

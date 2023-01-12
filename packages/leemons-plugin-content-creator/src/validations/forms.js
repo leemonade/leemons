@@ -1,18 +1,15 @@
 const _ = require('lodash');
 
 const { LeemonsValidator } = global.utils;
-const { booleanSchemaNullable } = require('leemons-plugin-academic-calendar/src/validations/types');
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
   textSchema,
-  numberSchema,
-  integerSchemaNullable,
 } = require('./types');
 
-const saveQuestionBankSchema = {
+const saveDocumentSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
@@ -32,40 +29,22 @@ const saveQuestionBankSchema = {
       type: ['object', 'string'],
       nullable: true,
     },
-    introductoryText: { type: 'string' },
-    thanksMessage: { type: 'string' },
-    published: booleanSchema,
-    questions: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: [],
-        properties: {
-          id: stringSchema,
-          type: stringSchema,
-          question: textSchema,
-          required: booleanSchemaNullable,
-          order: integerSchemaNullable,
-          properties: {
-            type: 'object',
-            additionalProperties: true,
-          },
-        },
-      },
+    introductoryText: { type: 'string', nullable: true },
+    content: {
+      type: 'string',
+      nullable: true,
     },
+    published: booleanSchema,
   },
   required: ['name'],
   additionalProperties: false,
 };
 
-function validateSaveFeedback(data) {
-  const schema = _.cloneDeep(saveQuestionBankSchema);
+function validateSaveDocument(data) {
+  const schema = _.cloneDeep(saveDocumentSchema);
   if (data.published) {
-    schema.properties.thanksMessage = textSchema;
     schema.properties.introductoryText = textSchema;
-    schema.required = ['name', 'questions', 'introductoryText', 'thanksMessage'];
-    schema.properties.questions.items.required = ['type', 'question'];
+    schema.required = ['name', 'introductoryText'];
   }
   const validator = new LeemonsValidator(schema);
 
@@ -75,5 +54,5 @@ function validateSaveFeedback(data) {
 }
 
 module.exports = {
-  validateSaveFeedback,
+  validateSaveDocument,
 };

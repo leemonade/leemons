@@ -81,6 +81,8 @@ export default function getStyle({ tableData, ws }) {
         addCustomName({ ws, name: 'scores', cell: upperCell });
       }
 
+      cell.numFmt = '0.00';
+
       addCustomName({ ws, name: 'scores', cell });
       addCustomName({ ws, name: `scores_${row}`, cell });
     }
@@ -106,6 +108,8 @@ export default function getStyle({ tableData, ws }) {
         formula: `SUMPRODUCT(scores_${row},--(types="final"))/SUMPRODUCT(--(types="final"))`,
         result: cell.value || 0,
       };
+
+      cell.numFmt = '0.00';
 
       addCustomName({ ws, name: 'avgScores', cell });
     }

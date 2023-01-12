@@ -26,7 +26,6 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects, show
           <SelectAutoClearable
             data={subjects}
             placeholder={labels?.subject}
-            searchable
             disabled={!subjects.length}
           />
         ),

@@ -9,7 +9,7 @@ module.exports = {
   home: {
     navbar: {
       title: 'Library',
-      subjects: 'Asignaturas',
+      subjects: 'Subjects',
       sharedWithMe: 'Shared with me',
       quickAccess: 'Quick access',
       uploadButton: 'Upload or Create',

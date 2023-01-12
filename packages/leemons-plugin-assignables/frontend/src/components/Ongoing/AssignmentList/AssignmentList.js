@@ -169,6 +169,7 @@ export default function AssignmentList({
                   hideStatus={isStudent}
                   hideProgress={isTeacher}
                   defaultFilters={defaultFilters}
+                  useRouter
                   {...filtersProps}
                 />
                 <ActivitiesList

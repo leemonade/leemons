@@ -381,7 +381,9 @@ function BranchBlock({
         data.push({
           label: `${parent.name} - ${prop.frontConfig.blockData.name}`,
           value: `${parent.id}|${_keys[key]}`,
-          isParent: true, // formData.curricularContent && formData.curricularContent === prop.frontConfig.blockData.curricularContent,
+          isParent:
+            formData.curricularContent &&
+            formData.curricularContent === prop.frontConfig.blockData.curricularContent,
         });
       });
     });
@@ -514,9 +516,10 @@ function BranchBlock({
               key="contentRelations"
               name="contentRelations"
               control={control}
-              render={({ field }) => (
-                <TableInput {...field} data={field.value || []} {...relationData} />
-              )}
+              render={({ field }) => {
+                console.log(field.value, relationData);
+                return <TableInput {...field} data={field.value || []} {...relationData} />;
+              }}
             />
           ) : null}
 

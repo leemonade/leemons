@@ -1,12 +1,11 @@
-import { listSessionClassesRequest } from '@academic-portfolio/request';
 import React from 'react';
 import _ from 'lodash';
-import { unflatten, useApi } from '@common';
+import { unflatten } from '@common';
 import { Select } from '@bubbles-ui/components';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
-function useSortTypes() {
+export function useSortTypes() {
   const [, translations] = useTranslateLoader(prefixPN('sortTypes'));
 
   const localizations = React.useMemo(() => {

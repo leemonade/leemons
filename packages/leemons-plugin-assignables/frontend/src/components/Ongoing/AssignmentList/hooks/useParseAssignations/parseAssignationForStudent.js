@@ -152,7 +152,7 @@ function Progress({ assignation }) {
 }
 
 function getDashboardURL(assignation) {
-  const { instance } = assignation;
+  const { instance, timestamps: { end } } = assignation;
   const {
     alwaysAvailable,
     dates: { start, deadline: _deadline, closed },
@@ -163,9 +163,10 @@ function getDashboardURL(assignation) {
   const startDate = dayjs(start || null);
   const deadline = dayjs(_deadline || null);
   const closeDate = dayjs(closed || null);
+  const endTimestamp = dayjs(end || null);
 
   const isOpen =
-    !closeDate.isValid() &&
+    !closeDate.isValid() && !endTimestamp.isValid() &&
     (alwaysAvailable || (!now.isBefore(startDate) && now.isBefore(deadline)));
 
   if (isOpen) {
