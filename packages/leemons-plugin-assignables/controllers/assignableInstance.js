@@ -3,25 +3,48 @@ const services = leemons.plugin.services.assignableInstances;
 module.exports = {
   get: async (ctx) => {
     const { id } = ctx.params;
-    const { details } = ctx.query;
+    const { details, ids, throwOnMissing, relatedInstances } = ctx.query;
 
-    try {
-      const assignableInstance = await services.getAssignableInstance(id, {
-        details: details === 'true',
-        userSession: ctx.state.userSession,
-      });
+    if (id) {
+      try {
+        const assignableInstance = await services.getAssignableInstance(id, {
+          details: details === 'true',
+          userSession: ctx.state.userSession,
+        });
 
-      ctx.status = 200;
-      ctx.body = {
-        status: 200,
-        assignableInstance,
-      };
-    } catch (e) {
-      ctx.status = 500;
-      ctx.body = {
-        status: 500,
-        message: e.message,
-      };
+        ctx.status = 200;
+        ctx.body = {
+          status: 200,
+          assignableInstance,
+        };
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = {
+          status: 500,
+          message: e.message,
+        };
+      }
+    } else {
+      try {
+        const instances = await services.getAssignableInstances(Array.isArray(ids) ? ids : [ids], {
+          details: details === 'true',
+          throwOnMissing: throwOnMissing === 'true',
+          relatedAssignableInstances: relatedInstances === 'true',
+          userSession: ctx.state.userSession,
+        });
+
+        ctx.status = 200;
+        ctx.body = {
+          status: 200,
+          instances,
+        };
+      } catch (e) {
+        ctx.status = 500;
+        ctx.body = {
+          status: 500,
+          message: e.message,
+        };
+      }
     }
   },
   update: async (ctx) => {

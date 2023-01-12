@@ -1,5 +1,4 @@
 import React from 'react';
-import useAssignations from '@assignables/hooks/assignations/useAssignations';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
@@ -8,6 +7,7 @@ import _ from 'lodash';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { Loader } from '@bubbles-ui/components';
 import { ActivityContainer } from '@bubbles-ui/leemons';
+import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import Steps from './components/Steps';
 
 function useTaskDetailLocalizations() {
@@ -36,8 +36,12 @@ export default function TaskDetail({ id, student }) {
   const [isFirstStep, setIsFirstStep] = React.useState(true);
 
   const { data: assignation, isLoading: assignationIsLoading } = useAssignations({
-    instance: id,
-    user: student,
+    query: {
+      instance: id,
+      user: student,
+    },
+    fetchInstance: true,
+    details: true,
   });
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
