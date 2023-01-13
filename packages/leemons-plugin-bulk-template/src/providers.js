@@ -2,9 +2,9 @@
 const { isEmpty, isNil } = require('lodash');
 const importProviders = require('./bulk/providers');
 
-async function initProviders() {
+async function initProviders(file) {
   try {
-    const providers = await importProviders();
+    const providers = await importProviders(file);
     const storageProvider = 'leebrary-aws-s3';
     const emailProvider = 'emails-amazon-ses';
     const smtpEmailProvider = 'emails-smtp';

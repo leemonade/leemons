@@ -2,11 +2,11 @@
 const { keys, isEmpty } = require('lodash');
 const importEvents = require('./bulk/calendar');
 
-async function initCalendar({ users, programs }) {
+async function initCalendar(file, { users, programs }) {
   const { services } = leemons.getPlugin('calendar');
 
   try {
-    const events = await importEvents({ programs, users });
+    const events = await importEvents(file, { programs, users });
     const eventKeys = keys(events);
     const { chalk } = global.utils;
 

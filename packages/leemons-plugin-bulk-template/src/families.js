@@ -2,14 +2,14 @@ const { keys, map, uniq } = require('lodash');
 const importFamilyProfiles = require('./bulk/families/profiles');
 const importFamilies = require('./bulk/families');
 
-async function initFamilies(profiles, users) {
+async function initFamilies(file, profiles, users) {
   const { services } = leemons.getPlugin('families');
 
   try {
     // ·····················································
     // FAMILY PROFILES
 
-    const { guardian, student } = await importFamilyProfiles(profiles);
+    const { guardian, student } = await importFamilyProfiles(file, profiles);
 
     await services.config.setGuardianProfile(guardian.id);
     await services.config.setStudentProfile(student.id);
@@ -17,7 +17,7 @@ async function initFamilies(profiles, users) {
     // ·····················································
     // FAMILY RELATIONSHIPS
 
-    const families = await importFamilies(users);
+    const families = await importFamilies(file, users);
     const familiesData = [];
 
     keys(families).forEach((key) => {

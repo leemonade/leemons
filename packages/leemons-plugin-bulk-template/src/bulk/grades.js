@@ -1,9 +1,7 @@
-const path = require('path');
 const { keys, trim, isEmpty, isNil, toLower } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
-async function importGrades(centers) {
-  const filePath = path.resolve(__dirname, 'data.xlsx');
+async function importGrades(filePath, centers) {
   const items = await itemsImport(filePath, 'ar_evaluations', 20);
 
   keys(items)

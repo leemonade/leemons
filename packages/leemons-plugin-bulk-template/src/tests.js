@@ -6,7 +6,7 @@ const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
 const _delay = require('./bulk/helpers/delay');
 
-async function initTests({ users, programs }) {
+async function initTests(file, { users, programs }) {
   const { services } = leemons.getPlugin('tests');
   const { chalk } = global.utils;
 
@@ -14,7 +14,7 @@ async function initTests({ users, programs }) {
     // ·····················································
     // QUESTIONS
 
-    const { items: questionsItems, questions } = await importQuestions();
+    const { items: questionsItems, questions } = await importQuestions(file);
 
     const categories = uniqBy(
       questions.map((question) => ({ value: question.category })),
@@ -24,7 +24,7 @@ async function initTests({ users, programs }) {
     // ·····················································
     // QBANKS
 
-    const qbanks = await importQbanks(programs);
+    const qbanks = await importQbanks(file, programs);
     const qbanksKeys = keys(qbanks);
 
     for (let i = 0, len = qbanksKeys.length; i < len; i++) {
@@ -86,7 +86,7 @@ async function initTests({ users, programs }) {
     // ·····················································
     // TESTS
 
-    const tests = await importTests({ qbanks, programs, questions: questionsItems });
+    const tests = await importTests(file, { qbanks, programs, questions: questionsItems });
     const testsKeys = keys(tests);
 
     for (let i = 0, len = testsKeys.length; i < len; i++) {

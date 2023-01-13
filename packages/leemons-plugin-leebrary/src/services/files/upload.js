@@ -101,13 +101,17 @@ function getMetaProps(data, result = {}) {
 
 function getRemoteContentType(url) {
   return new Promise((resolve, reject) => {
-    global.utils
-      .got(url, { isStream: true })
-      .on('response', (response) => {
-        response.destroy();
-        resolve(response.headers['content-type']);
-      })
-      .on('error', (error) => reject(error));
+    try {
+      global.utils
+        .got(url, { isStream: true })
+        .on('response', (response) => {
+          response.destroy();
+          resolve(response.headers['content-type']);
+        })
+        .on('error', (error) => reject(error));
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 

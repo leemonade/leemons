@@ -1,3 +1,4 @@
+const path = require('path');
 const initPlatform = require('./src/platform');
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
@@ -13,9 +14,13 @@ const initTests = require('./src/tests');
 const initCalendar = require('./src/calendar');
 const initProviders = require('./src/providers');
 const initAdmin = require('./src/admin');
+const pluginConfig = require('./config/config');
 
 async function events(isInstalled) {
   const { chalk } = global.utils;
+
+  const docPath = path.resolve(__dirname, 'data.xlsx');
+  console.log('docPath:', docPath);
 
   const config = {
     profiles: null,
@@ -24,7 +29,7 @@ async function events(isInstalled) {
     programs: null,
   };
 
-  if (!isInstalled) {
+  if (!isInstalled && pluginConfig.enableEvents) {
     // ·······························································
     // LOCALES
 
@@ -36,10 +41,10 @@ async function events(isInstalled) {
       ],
       async () => {
         leemons.log.debug(chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`);
-        await initLocales();
+        await initLocales(docPath);
         leemons.events.emit('init-locales');
 
-        await initPlatform();
+        await initPlatform(docPath);
         leemons.events.emit('init-platform');
         leemons.log.info(chalk`{cyan.bold BULK} Platform initialized`);
       }
@@ -57,7 +62,7 @@ async function events(isInstalled) {
       ],
       async () => {
         leemons.log.debug(chalk`{cyan.bold BULK} {gray Init Providers ...}`);
-        await initProviders();
+        await initProviders(docPath);
         leemons.events.emit('init-providers');
         leemons.log.info(chalk`{cyan.bold BULK} Providers initialized`);
       }
@@ -87,22 +92,22 @@ async function events(isInstalled) {
       async () => {
         try {
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Admin plugin ...}`);
-          await initAdmin();
+          await initAdmin(docPath);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Admin plugin`);
 
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Users plugin ...}`);
-          config.centers = await initCenters();
+          config.centers = await initCenters(docPath);
           leemons.events.emit('init-centers', config.centers);
 
-          config.profiles = await initProfiles();
+          config.profiles = await initProfiles(docPath);
           leemons.events.emit('init-profiles', config.profiles);
 
-          config.users = await initUsers(config.centers, config.profiles);
+          config.users = await initUsers(docPath, config.centers, config.profiles);
           leemons.events.emit('init-users', config.users);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Users plugin`);
 
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Academic Rules plugin ...}`);
-          config.grades = await initGrades(config.centers);
+          config.grades = await initGrades(docPath, config.centers);
           leemons.events.emit('init-grades', config.grades);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Academic Rules plugin`);
         } catch (e) {
@@ -121,7 +126,7 @@ async function events(isInstalled) {
         'plugins.bulk-template:init-users',
       ],
       async () => {
-        // await initFamilies(config.profiles, config.users);
+        // await initFamilies(docPath, config.profiles, config.users);
       }
     );
 
@@ -137,7 +142,7 @@ async function events(isInstalled) {
       ],
       async () => {
         leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
-        config.assets = await initLibrary(config);
+        config.assets = await initLibrary(docPath, config);
         leemons.events.emit('init-leebrary', config.assets);
         leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
       }
@@ -158,7 +163,7 @@ async function events(isInstalled) {
       async () => {
         try {
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`);
-          config.programs = await initAcademicPortfolio(config);
+          config.programs = await initAcademicPortfolio(docPath, config);
           leemons.events.emit('init-academic-portfolio', config.programs);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
         } catch (e) {
@@ -175,7 +180,7 @@ async function events(isInstalled) {
       async () => {
         try {
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
-          await initCalendar(config);
+          await initCalendar(docPath, config);
           leemons.events.emit('init-calendar');
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Calendar plugin`);
         } catch (e) {
@@ -197,7 +202,7 @@ async function events(isInstalled) {
       async () => {
         try {
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
-          config.tests = await initTests(config);
+          config.tests = await initTests(docPath, config);
           leemons.events.emit('init-tests', config.tests);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Tests plugin`);
         } catch (e) {
@@ -219,7 +224,7 @@ async function events(isInstalled) {
       async () => {
         try {
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
-          config.tasks = await initTasks(config);
+          config.tasks = await initTasks(docPath, config);
           leemons.events.emit('init-tasks', config.tasks);
           leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
         } catch (e) {

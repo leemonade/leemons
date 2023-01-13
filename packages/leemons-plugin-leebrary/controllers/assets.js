@@ -273,8 +273,13 @@ async function getUrlMetadata(ctx) {
   if (isEmpty(url)) {
     throw new global.utils.HttpError(400, 'url is required');
   }
-  const { body: html } = await global.utils.got(url);
-  const metas = await global.utils.metascraper({ html, url });
+  let metas = {};
+  try {
+    const { body: html } = await global.utils.got(url);
+    metas = await global.utils.metascraper({ html, url });
+  } catch (e) {
+    throw new Error(`Error getting URL metadata: ${url}`, { cause: e });
+  }
 
   ctx.status = 200;
   ctx.body = { status: 200, metas };
