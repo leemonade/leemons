@@ -180,7 +180,12 @@ const ListAssetPage = () => {
   // RENDER
 
   let props = {};
-  if (category?.key === 'pins' && (isTeacher || isStudent)) {
+  if (
+    (category?.key === 'pins' ||
+      category?.key === 'assignables.task' ||
+      category?.key === 'assignables.tests') &&
+    (isTeacher || isStudent)
+  ) {
     props = academicFilters;
   }
   if (category?.key === 'media-files' && isTeacher) {

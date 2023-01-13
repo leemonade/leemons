@@ -87,6 +87,17 @@ function ClassItem({ class: klass, ...props }) {
   );
 }
 
+const SelectAgents = ({ usersData, ...props }) => (
+  <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
+);
+
+const RoleSelect = (props) => {
+  if (!props.value) {
+    props.onChange('viewer');
+  }
+  return <Select {...props} />;
+};
+
 const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
   const [asset, setAsset] = useState(assetProp);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -261,7 +272,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         Header: 'User',
         accessor: 'user',
         input: {
-          node: <SelectUserAgent returnItem />,
+          node: <SelectAgents usersData={usersData} />,
           rules: { required: 'Required field' },
         },
         editable: false,
@@ -272,14 +283,14 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         Header: 'Role',
         accessor: 'role',
         input: {
-          node: <Select />,
+          node: <RoleSelect />,
           rules: { required: 'Required field' },
           data: roles,
         },
         valueRender: (value) => find(roles, { value })?.label,
       },
     ],
-    [roles]
+    [roles, usersData]
   );
 
   const USER_LABELS = useMemo(
