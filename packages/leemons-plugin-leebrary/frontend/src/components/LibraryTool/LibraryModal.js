@@ -122,7 +122,7 @@ const LibraryModal = ({
     const preparedAsset = prepareAsset(item);
     if (openLibraryDrawer) {
       if (isFunction(onChange))
-        onChange({ width: '100%', align: 'left', display: 'card', asset: preparedAsset });
+        onChange({ width: '100%', align: 'left', display: 'player', asset: preparedAsset });
     } else {
       setAsset(preparedAsset);
       setAssetType('');
