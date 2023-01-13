@@ -96,7 +96,7 @@ export default function Index() {
   const setTitleIfItsUndefined = (value, forceTitle) => {
     const parser = new DOMParser();
     const htmlContent = parser.parseFromString(value, 'text/html').body.getElementsByTagName('*');
-    const firstElement = htmlContent[0]?.innerHTML;
+    const firstElement = htmlContent[0]?.textContent;
     if (!store.titleValue || forceTitle) form.setValue('name', firstElement);
   };
 

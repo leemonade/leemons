@@ -20,7 +20,7 @@ const menuItems = [
   {
     item: {
       key: 'content-creator',
-      order: 303,
+      order: 304,
       iconSvg: '/public/content-creator/menu-icon-active.svg',
       activeIconSvg: '/public/content-creator/menu-icon-active.svg',
       label: {
