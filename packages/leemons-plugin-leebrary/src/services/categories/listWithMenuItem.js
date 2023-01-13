@@ -10,6 +10,7 @@ async function listWithMenuItem(page, size, { transacting, userSession } = {}) {
     transacting,
   });
 
+  /*
   const orderKeys = [
     'media-files',
     'bookmarks',
@@ -22,7 +23,9 @@ async function listWithMenuItem(page, size, { transacting, userSession } = {}) {
     (a, b) => orderKeys.indexOf(a.key) - orderKeys.indexOf(b.key)
   );
 
-  const result = items
+   */
+
+  const result = categories.items
     .map((category) => ({
       ...category,
       menuItem: find(menuItems, { key: leemons.plugin.prefixPN(category.key) }),

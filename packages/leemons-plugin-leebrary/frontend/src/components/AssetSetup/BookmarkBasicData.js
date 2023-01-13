@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { ContextContainer } from '@bubbles-ui/components';
-import { unflatten, TagsAutocomplete, useRequestErrorMessage } from '@common';
+import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LibraryForm } from '../LibraryForm/LibraryForm';
@@ -13,6 +13,7 @@ import { newAssetRequest, updateAssetRequest } from '../../request';
 const BookmarkBasicData = ({
   asset: assetProp,
   editing,
+  advancedConfig,
   categoryId,
   onSave = () => {},
   onNext = () => {},
@@ -72,6 +73,7 @@ const BookmarkBasicData = ({
       );
       onNext();
     } catch (err) {
+      console.error(err);
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
@@ -83,6 +85,7 @@ const BookmarkBasicData = ({
   return (
     <LibraryForm
       {...formLabels}
+      advancedConfig={advancedConfig}
       asset={{ ...assetProp, cover: preparedAsset.cover }}
       type="bookmarks"
       loading={loading}

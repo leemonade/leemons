@@ -337,6 +337,8 @@ module.exports = {
     },
   },
   assetListFilters: {
+    programLabel: 'Program',
+    subjectLabel: 'Subjects',
     program: 'Program...',
     subject: 'Subject...',
     allPrograms: 'All the programs',

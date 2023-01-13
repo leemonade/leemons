@@ -216,6 +216,9 @@ module.exports = {
       updated: 'Last change',
     },
     labels: {
+      search: 'Search',
+      searchPlaceholder: 'Search for resources',
+      type: 'Type',
       duplicateSuccess: 'Asset successfully duplicated',
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',

@@ -570,6 +570,7 @@ const AssetList = ({
             {...p}
             variant={cardVariant || 'media'}
             category={category || { key: 'media-file' }}
+            realCategory={categoryProp}
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
@@ -601,7 +602,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout, category, isEmbedded, showThumbnails]);
+  }, [layout, category, categoryProp, isEmbedded, showThumbnails]);
 
   const listLayouts = useMemo(
     () => [
@@ -697,9 +698,10 @@ const AssetList = ({
         padding={isEmbedded ? 0 : 5}
         style={
           isEmbedded
-            ? { flex: 0 }
+            ? { flex: 0, alignItems: 'end' }
             : {
                 flex: 0,
+                alignItems: 'end',
                 width: containerRect.width,
                 top: containerRect.top,
                 position: 'fixed',
@@ -715,6 +717,8 @@ const AssetList = ({
               onChange={setSearhCriteria}
               value={searchCriteria}
               disabled={loading}
+              label={t('labels.search')}
+              placeholder={t('labels.searchPlaceholder')}
             />
           )}
           {!!filterComponents && filterComponents({ loading })}
@@ -724,6 +728,7 @@ const AssetList = ({
               data={assetTypes}
               value={assetType}
               onChange={handleOnTypeChange}
+              label={t('labels.type')}
               placeholder={t('labels.resourceTypes')}
               disabled={loading}
             />

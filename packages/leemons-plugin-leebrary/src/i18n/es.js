@@ -11,7 +11,7 @@ module.exports = {
       title: 'Librería',
       subjects: 'Asignaturas',
       sharedWithMe: 'Compartido conmigo',
-      quickAccess: 'Acceso rápido',
+      quickAccess: 'Destacados',
       uploadButton: 'Subir o crear',
       createNewTitle: 'Crear nuevo',
       uploadTitle: 'Subir archivo',
@@ -203,6 +203,9 @@ module.exports = {
       updated: 'Última modificación',
     },
     labels: {
+      search: 'Buscar',
+      searchPlaceholder: 'Buscar recursos',
+      type: 'Tipo',
       duplicateSuccess: 'Recurso duplicado con éxito',
       removeSuccess: 'Recurso eliminado con éxito',
       pinnedSuccess: 'Recurso anclado con éxito',

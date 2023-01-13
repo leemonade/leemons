@@ -336,6 +336,8 @@ module.exports = {
     goTo: 'Ir a',
   },
   assetListFilters: {
+    programLabel: 'Programa',
+    subjectLabel: 'Asignatura',
     program: 'Programa...',
     subject: 'Asignatura...',
     allPrograms: 'Todos los programas',
