@@ -280,7 +280,7 @@ async function getByIds(
   if (programIds.length) {
     const programs = await leemons
       .getPlugin('academic-portfolio')
-      .services.programs.programsByIds(programIds, {
+      .services.programs.programsByIds(uniq(programIds), {
         onlyProgram: true,
         transacting,
       });
@@ -299,7 +299,7 @@ async function getByIds(
     const item = { ...asset };
 
     if (item.program) {
-      item.programName = programsById[item.program].name;
+      item.programName = programsById[item.program]?.name;
     }
 
     item.adminPrograms = adminProgramsByItem[item.id] || [];

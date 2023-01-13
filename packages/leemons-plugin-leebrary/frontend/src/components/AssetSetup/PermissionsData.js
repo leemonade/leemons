@@ -198,7 +198,11 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
 
     const { canAccess, classesCanAccess } = asset;
 
-    if (isArray(classesCanAccess)) {
+    if (isArray(classesCanAccess) && classesCanAccess.length) {
+      const classe = find(classes, { id: classesCanAccess[0].class });
+      if (classe) {
+        setSelectedProgram(classe.program);
+      }
       setSelectedClasses(
         classesCanAccess.map((klass) => ({
           class: [klass.class],
@@ -215,7 +219,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         }))
       );
     }
-  }, [asset]);
+  }, [asset, classes]);
 
   useEffect(() => {
     if (!isEmpty(translations)) {
@@ -370,17 +374,19 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
 
               {!isPublic && (profileSysName === 'teacher' || profileSysName === 'student') && (
                 <ContextContainer>
-                  <Box>
-                    <Select
-                      label={t('permissionsData.labels.programs')}
-                      value={selectedProgram}
-                      onChange={(e) => {
-                        setSelectedClasses([]);
-                        setSelectedProgram(e);
-                      }}
-                      data={programsData}
-                    />
-                  </Box>
+                  {profileSysName === 'teacher' ? (
+                    <Box>
+                      <Select
+                        label={t('permissionsData.labels.programs')}
+                        value={selectedProgram}
+                        onChange={(e) => {
+                          setSelectedClasses([]);
+                          setSelectedProgram(e);
+                        }}
+                        data={programsData}
+                      />
+                    </Box>
+                  ) : null}
 
                   <Box>
                     <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
@@ -392,7 +398,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
                       onChange={setSelectedClasses}
                       columns={CLASSES_COLUMNS}
                       labels={USER_LABELS}
-                      disabled={!selectedProgram}
+                      disabled={profileSysName === 'student' ? false : !selectedProgram}
                       showHeaders={false}
                       forceShowInputs
                       sortable={false}
