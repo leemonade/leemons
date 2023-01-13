@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect } from 'react';
-import { isEmpty, keys, get } from 'lodash';
+import React, { useMemo } from 'react';
+import { isEmpty, keys } from 'lodash';
 import { Box, InputWrapper, useId } from '@bubbles-ui/components';
 import {
   TextEditor,
@@ -12,9 +12,7 @@ import {
   LinkTool,
 } from '@bubbles-ui/editors';
 import { useTextEditor } from '@common/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@common/helpers/prefixPN';
-import unflatten from '@common/unflatten';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { TextEditorInputStyles } from './TextEditorInput.styles';
 import {
   TEXT_EDITOR_INPUT_DEFAULT_PROPS,
@@ -55,8 +53,7 @@ export const TextEditorInput = ({
   editorClassname,
   ...props
 }) => {
-  const [, translations] = useTranslateLoader(prefixPN('textEditor'));
-  const [editorLabels, setEditorLabels] = React.useState({});
+  const editorLabels = useEditorLabels();
   const uuid = useId();
   const { textEditorTools } = useTextEditor();
 
@@ -81,17 +78,6 @@ export const TextEditorInput = ({
     { hasError, editorStyles },
     { name: 'TextEditorInput' }
   );
-
-  useEffect(() => {
-    if (isEmpty(toolLabels) && translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = get(res, prefixPN('textEditor'));
-
-      if (!isEmpty(data)) setEditorLabels(data);
-    } else {
-      setEditorLabels(toolLabels);
-    }
-  }, [toolLabels, translations]);
 
   if (isEmpty(editorLabels)) return null;
 

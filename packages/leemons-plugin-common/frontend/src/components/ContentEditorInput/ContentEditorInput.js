@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { keys, get, isEmpty } from 'lodash';
+import { keys, isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import {
   TextEditor,
@@ -13,9 +13,7 @@ import {
   ButtonGroup,
 } from '@bubbles-ui/editors';
 import { useTextEditor } from '@common/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@common/helpers/prefixPN';
-import unflatten from '@common/unflatten';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
@@ -39,8 +37,7 @@ const ContentEditorInput = ({
   editorClassname,
   ...props
 }) => {
-  const [, translations] = useTranslateLoader(prefixPN('textEditor'));
-  const [editorLabels, setEditorLabels] = React.useState({});
+  const editorLabels = useEditorLabels();
   const [schema, setSchema] = useState([]);
   const [isSchemaOpened, setIsSchemaOpened] = useState(openSchema);
 
@@ -70,17 +67,6 @@ const ContentEditorInput = ({
   useEffect(() => {
     if (openSchema !== isSchemaOpened) setIsSchemaOpened(openSchema);
   }, [openSchema]);
-
-  useEffect(() => {
-    if (isEmpty(toolLabels) && translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = get(res, prefixPN('textEditor'));
-
-      if (!isEmpty(data)) setEditorLabels(data);
-    } else {
-      setEditorLabels(toolLabels);
-    }
-  }, [toolLabels, translations]);
 
   if (isEmpty(editorLabels)) return null;
 
