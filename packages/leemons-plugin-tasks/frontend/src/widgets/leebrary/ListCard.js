@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 
-import { AssignIcon, DuplicateIcon } from '@bubbles-ui/icons/outline';
+import { AssignIcon, DuplicateIcon, PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -159,6 +159,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       asset={asset}
       menuItems={menuItems}
       variant="task"
+      variantIcon={<PluginAssignmentsIcon />}
       // TRANSLATE
       variantTitle={taskLabel}
       className={classes.root}

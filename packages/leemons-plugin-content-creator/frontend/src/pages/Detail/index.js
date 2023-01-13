@@ -1,16 +1,23 @@
 import React from 'react';
-import { Box, LoadingOverlay, Stack, useDebouncedCallback } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import {
+  Box,
+  PageHeader,
+  LoadingOverlay,
+  Stack,
+  useDebouncedCallback,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { DocumentIcon } from '@content-creator/components/icons';
+import { DocumentIcon, SetupContent } from '@content-creator/components/icons';
 import prefixPN from '@content-creator/helpers/prefixPN';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import { saveDocumentRequest, getDocumentRequest } from '@content-creator/request';
 
 export default function Index() {
-  const [t] = useTranslateLoader(prefixPN('contentCreatorDetail'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -20,6 +27,8 @@ export default function Index() {
     loading: true,
     isNew: false,
     headerHeight: null,
+    titleValue: '',
+    document: {},
   });
 
   const history = useHistory();
@@ -32,7 +41,7 @@ export default function Index() {
     try {
       store.saving = 'duplicate';
       render();
-      // await saveFeedbackRequest({ ...formValues, published: false });
+      await saveDocumentRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/content-creator');
     } catch (error) {
@@ -46,14 +55,14 @@ export default function Index() {
     try {
       store.saving = 'edit';
       render();
-      // const { feedback } = await saveFeedbackRequest({ ...formValues, published: true });
-      const { document } = {};
-      addSuccessAlert(t('published'));
-      if (goAssign) {
-        history.push(`/private/content-creator/assign/${document.id}`);
-      } else {
-        history.push('/private/content-creator');
-      }
+      // const { document } = await saveDocumentRequest({ ...formValues, published: true });
+      // addSuccessAlert(t('published'));
+      addSuccessAlert('TODO');
+      // if (goAssign) {
+      //   history.push(`/private/content-creator/assign/${document.id}`);
+      // } else {
+      //   history.push('/private/content-creator');
+      // }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -70,8 +79,10 @@ export default function Index() {
         const {
           // eslint-disable-next-line camelcase
           document: { deleted, deleted_at, created_at, updated_at, ...props },
-        } = {}; // await getFeedbackRequest(params.id);
+        } = await getDocumentRequest(params.id);
 
+        store.titleValue = props.name;
+        store.document = { ...props };
         form.reset(props);
       }
       store.idLoaded = params.id;
@@ -81,6 +92,24 @@ export default function Index() {
       addErrorAlert(error);
     }
   }
+
+  const setTitleIfItsUndefined = (value, forceTitle) => {
+    const parser = new DOMParser();
+    const htmlContent = parser.parseFromString(value, 'text/html').body.getElementsByTagName('*');
+    const firstElement = htmlContent[0]?.innerHTML;
+    if (!store.titleValue || forceTitle) form.setValue('name', firstElement);
+  };
+
+  const onTitleChangeHandler = (value) => {
+    form.setValue('name', value);
+    store.titleValue = value;
+    render();
+  };
+
+  const onContentChangeHandler = (value) => {
+    setTitleIfItsUndefined(value);
+    form.setValue('content', value);
+  };
 
   React.useEffect(() => {
     if (params?.id && store.idLoaded !== params?.id) init();
@@ -101,34 +130,42 @@ export default function Index() {
     store.headerHeight = size?.height - 1;
     render();
   };
-
-  if (store.loading) return <LoadingOverlay visible />;
+  if (store.loading || tLoading) return <LoadingOverlay visible />;
 
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
+    <Box style={{ height: '100vh' }}>
       <Stack direction="column" fullHeight>
-        <AdminPageHeader
+        <PageHeader
+          placeholders={{ title: t('titlePlaceholder') }}
           values={{
             // eslint-disable-next-line no-nested-ternary
-            title: formValues.name
-              ? formValues.name
-              : store.isNew
-              ? t('pageTitleNew', { name: '' })
-              : t('pageTitle', { name: '' }),
+            title: formValues.name,
           }}
           buttons={{
-            duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            // edit: store.isValid && !store.isNew ? t('publish') : undefined,
+            duplicate: t('saveDraft'),
+            edit: t('publish'),
           }}
+          buttonsIcons={{
+            edit: <SetupContent size={16} />,
+          }}
+          isEditMode
           icon={<DocumentIcon />}
-          variant="teacher"
+          onChange={onTitleChangeHandler}
           onEdit={() => saveAsPublish()}
           onDuplicate={() => saveAsDraft()}
           loading={store.saving}
           onResize={handleOnHeaderResize}
+          fullWidth
         />
-
-        <Box>Hello Content Creator</Box>
+        <ContentEditorInput
+          useSchema
+          schemaLabel={t('schemaLabel')}
+          labels={{
+            format: t('formatLabel'),
+          }}
+          onChange={onContentChangeHandler}
+          value={formValues.content}
+        />
       </Stack>
     </Box>
   );

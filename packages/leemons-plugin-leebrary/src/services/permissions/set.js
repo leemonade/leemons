@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { map, uniq } = require('lodash');
+const { map, uniq, filter, forEach, isArray } = require('lodash');
 const { validateSetPermissions } = require('../../validations/forms');
 const { getByIds } = require('../assets/getByIds');
 const { getByAsset } = require('./getByAsset');
@@ -8,6 +8,7 @@ const canUnassignRole = require('./helpers/canUnassignRole');
 const validateRole = require('./helpers/validateRole');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 const { update: updateAsset } = require('../assets/update');
+const { tables } = require('../tables');
 
 async function setAssetPermissionsForClasses(
   { asset, classesCanAccess, assignerRole, target },
@@ -136,6 +137,7 @@ async function removeMissingClassesPermissions(
     {
       item: asset,
       permissionName_$nin: classesPermissionNames,
+      permissionName_$startsWith: 'plugins.academic-portfolio.class.',
       type_$startsWith: leemons.plugin.prefixPN('asset'),
     },
     { transacting }
@@ -153,12 +155,13 @@ async function removeMissingClassesPermissions(
  * */
 async function set(
   assetId,
-  { isPublic, classesCanAccess, canAccess },
+  { isPublic, programsCanAccess, classesCanAccess, canAccess },
   { deleteMissing, userSession, transacting } = {}
 ) {
   try {
     await validateSetPermissions({ asset: assetId, canAccess, isPublic });
 
+    // ES: Si no es publico comprobamos si los roles que se quieren usar existen
     if (!isPublic) {
       const roles = [];
       if (canAccess.length) {
@@ -185,7 +188,7 @@ async function set(
     }
 
     if (isPublic || assetData.public) {
-      return updateAsset({ ...assetData, public: isPublic }, { userSession, transacting });
+      await updateAsset({ ...assetData, public: isPublic }, { userSession, transacting });
     }
 
     const categoryId = assetData?.category;
@@ -271,7 +274,84 @@ async function set(
       }
     }
 
+    if (isArray(programsCanAccess)) {
+      const currentPermissions = await userService.permissions.getItemPermissions(
+        assetData.id,
+        leemons.plugin.prefixPN('asset.can-view'),
+        { transacting }
+      );
+      const currentPermissionNames = map(currentPermissions, 'permissionName');
+
+      const toDelete = [];
+      const toNothing = [];
+      const toAdd = [];
+
+      forEach(programsCanAccess, (program) => {
+        const perm = `plugins.academic-portfolio.program.inside.${program}`;
+        if (currentPermissionNames.includes(perm)) {
+          toNothing.push(perm);
+        } else {
+          toAdd.push(perm);
+        }
+      });
+
+      forEach(currentPermissionNames, (programPermission) => {
+        if (
+          programPermission.startsWith('plugins.academic-portfolio.program.inside.') &&
+          !toNothing.includes(programPermission)
+        ) {
+          toDelete.push(programPermission);
+        }
+      });
+
+      if (toDelete.length) {
+        await userService.permissions.removeItems(
+          {
+            item: assetData.id,
+            type: leemons.plugin.prefixPN('asset.can-view'),
+            permissionName_$in: toDelete,
+          },
+          { transacting }
+        );
+      }
+
+      if (toAdd.length) {
+        await Promise.all(
+          map(toAdd, (pName) =>
+            userService.permissions.addItem(
+              assetData.id,
+              leemons.plugin.prefixPN('asset.can-view'),
+              {
+                permissionName: pName,
+                actionNames: ['view'],
+              },
+              { isCustomPermission: true, transacting }
+            )
+          )
+        );
+      }
+    }
+
     if (classesCanAccess?.length) {
+      const classesIds = map(classesCanAccess, 'class');
+      const classes = await leemons
+        .getPlugin('academic-portfolio')
+        .services.classes.classByIds(classesIds);
+      const classesSubjectIds = uniq(map(classes, 'subject.id'));
+      const alreadySubjectIds = map(assetData.subjects, 'subject');
+      const toAddSubjectIds = filter(
+        classesSubjectIds,
+        (subjectId) => !alreadySubjectIds.includes(subjectId)
+      );
+
+      if (toAddSubjectIds && toAddSubjectIds.length) {
+        await Promise.all(
+          map(toAddSubjectIds, (item) =>
+            tables.assetsSubjects.create({ asset: assetData.id, subject: item }, { transacting })
+          )
+        );
+      }
+
       await setAssetPermissionsForClasses(
         { asset: assetId, classesCanAccess, assignerRole, target: categoryId },
         { userSession, transacting }
@@ -306,25 +386,31 @@ async function set(
           transacting,
         });
 
-        // EN: Check if assigner can assign role to assignee
-        // ES: Comprobar si el asignador puede asignar el rol al asignado
-        if (!canUnassignRole(assignerRole, assigneeRole)) {
-          throw new global.utils.HttpError(401, "You don't have permission to unassign this role");
-        }
+        if (assignerRole !== 'owner' && assigneeRole !== 'owner') {
+          // EN: Check if assigner can assign role to assignee
+          // ES: Comprobar si el asignador puede asignar el rol al asignado
+          if (!canUnassignRole(assignerRole, assigneeRole)) {
+            throw new global.utils.HttpError(
+              401,
+              "You don't have permission to unassign this role"
+            );
+          }
 
-        // Remove all permissions to the asset
-        await userService.permissions.removeCustomUserAgentPermission(
-          userAgent,
-          {
-            permissionName,
-          },
-          { transacting }
-        );
+          // Remove all permissions to the asset
+          await userService.permissions.removeCustomUserAgentPermission(
+            userAgent,
+            {
+              permissionName,
+            },
+            { transacting }
+          );
+        }
       }
     }
 
     return result;
   } catch (e) {
+    console.error(e);
     throw new global.utils.HttpError(500, `Failed to set permissions: ${e.message}`);
   }
 }

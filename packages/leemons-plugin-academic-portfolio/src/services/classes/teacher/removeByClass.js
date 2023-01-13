@@ -18,6 +18,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         { soft, transacting }
       );
 
+      // TODO Add remove `plugins.academic-portfolio.program.inside.${program.id}`
+
       await Promise.all(
         _.map(classTeachers, (classTeacher) =>
           leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(

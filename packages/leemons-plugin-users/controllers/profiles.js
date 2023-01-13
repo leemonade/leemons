@@ -1,4 +1,5 @@
 const profileService = require('../src/services/profiles');
+const usersService = require('../src/services/users');
 
 const permissionsValidation = {
   type: 'array',
@@ -124,6 +125,12 @@ async function update(ctx) {
   }
 }
 
+async function getProfileSysName(ctx) {
+  const sysName = await profileService.getProfileSysName(ctx.state.userSession);
+  ctx.status = 200;
+  ctx.body = { status: 200, sysName };
+}
+
 async function addAllPermissionsToAllProfiles(ctx) {
   if (process.env.NODE_ENV !== 'production') {
     const profile = await profileService.addAllPermissionsToAllProfiles();
@@ -140,5 +147,6 @@ module.exports = {
   add,
   detail,
   update,
+  getProfileSysName,
   addAllPermissionsToAllProfiles,
 };
