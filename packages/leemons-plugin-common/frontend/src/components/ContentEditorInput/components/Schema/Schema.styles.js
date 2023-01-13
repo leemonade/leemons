@@ -72,6 +72,9 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened }) => {
       minHeight: 20,
       minWidth: 20,
     },
+    schemaElement: {
+      cursor: 'pointer',
+    },
   };
 });
 

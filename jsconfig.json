@@ -33,6 +33,9 @@
       "@comunica/*": [
         "./packages/leemons-plugin-comunica/frontend/src/*"
       ],
+      "@content-creator/*": [
+        "./packages/leemons-plugin-content-creator/frontend/src/*"
+      ],
       "@curriculum/*": [
         "./packages/leemons-plugin-curriculum/frontend/src/*"
       ],
