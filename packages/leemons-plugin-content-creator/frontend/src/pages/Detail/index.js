@@ -146,7 +146,7 @@ export default function Index() {
             edit: t('publish'),
           }}
           buttonsIcons={{
-            edit: <SetupContent size="16" />,
+            edit: <SetupContent size={16} />,
           }}
           isEditMode
           icon={<DocumentIcon />}
@@ -159,9 +159,9 @@ export default function Index() {
         />
         <ContentEditorInput
           useSchema
+          schemaLabel={t('schemaLabel')}
           labels={{
             format: t('formatLabel'),
-            schema: t('schemaLabel'),
           }}
           onChange={onContentChangeHandler}
           value={formValues.content}
