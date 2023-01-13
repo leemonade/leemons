@@ -5,7 +5,7 @@ async function list(page = 0, size = 10, { transacting } = {}) {
     tables.categories,
     page,
     size,
-    { id_$null: false },
+    { id_$null: false, $sort: 'order:asc' },
     { transacting }
   );
 

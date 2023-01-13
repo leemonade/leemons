@@ -8,6 +8,11 @@ async function paginate(
   const _query = { ...query };
   _query.$offset = page * size;
   _query.$limit = size;
+  if (query.$sort) {
+    delete query.$sort;
+  }
+
+  console.log(_query);
   const [count, items] = await Promise.all([
     table.count(query || {}, { columns: forceColumnsOnCount ? columns : undefined, transacting }),
     table.find(_query, { columns, transacting }),

@@ -176,7 +176,7 @@ export function SelectAutoClearable({ data, value, onChange, ...props }) {
   );
 }
 
-function SubjectFilters({ onChange, loading, hideProgramSelect }) {
+function SubjectFilters({ onChange, loading, hideProgramSelect, useLabels }) {
   const sessionConfig = getSessionConfig();
   const selectedProgram = sessionConfig?.program || 'all';
   const { control, watch, getValues } = useForm({
@@ -206,6 +206,7 @@ function SubjectFilters({ onChange, loading, hideProgramSelect }) {
           render={({ field }) => (
             <Select
               {...field}
+              label={useLabels ? labels?.programLabel : null}
               placeholder={labels?.program}
               data={programs}
               searchable
@@ -222,6 +223,7 @@ function SubjectFilters({ onChange, loading, hideProgramSelect }) {
           <SelectSubject
             {...field}
             data={subjects}
+            label={useLabels ? labels?.subjectLabel : null}
             placeholder={labels?.subject}
             disabled={!subjects.length || !!loading}
             style={inputRootStyle}
@@ -232,13 +234,18 @@ function SubjectFilters({ onChange, loading, hideProgramSelect }) {
   );
 }
 
-export function useAcademicFiltersForAssetList({ hideProgramSelect } = {}) {
+export function useAcademicFiltersForAssetList({ hideProgramSelect, useLabels } = {}) {
   const [filters, setFilters] = React.useState(undefined);
   const onChange = React.useCallback(setFilters);
 
   return {
     filterComponents: ({ loading }) => (
-      <SubjectFilters hideProgramSelect={hideProgramSelect} onChange={onChange} loading={loading} />
+      <SubjectFilters
+        hideProgramSelect={hideProgramSelect}
+        useLabels
+        onChange={onChange}
+        loading={loading}
+      />
     ),
     filters,
     searchInProvider: !!filters?.program || !!filters?.subjects?.length,

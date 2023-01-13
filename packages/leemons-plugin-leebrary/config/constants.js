@@ -77,6 +77,7 @@ const categories = [
     duplicable: true,
     provider: 'leebrary',
     canUse: '*',
+    order: 2,
     menu: {
       item: {
         iconSvg: '/public/leebrary/media-files.svg',
@@ -100,6 +101,7 @@ const categories = [
     duplicable: true,
     provider: 'leebrary',
     canUse: '*',
+    order: 3,
     menu: {
       item: {
         iconSvg: '/public/leebrary/bookmarks.svg',
