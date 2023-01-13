@@ -33,6 +33,9 @@ export const LIBRARY_MODAL_DEFAULT_PROPS = {
     cancel: '',
     add: '',
     update: '',
+    card: '',
+    embed: '',
+    player: '',
   },
   placeholders: {
     width: '',
@@ -51,6 +54,9 @@ export const LIBRARY_MODAL_PROP_TYPES = {
     cancel: PropTypes.string,
     add: PropTypes.string,
     update: PropTypes.string,
+    card: PropTypes.string,
+    embed: PropTypes.string,
+    player: PropTypes.string,
   }),
   placeholders: PropTypes.any,
   errorMessages: PropTypes.any,
@@ -124,7 +130,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
                   compact
                   leftIcon={<AddCircleIcon height={16} width={16} />}
                 >
-                  Añadir
+                  {labels.add}
                 </Button>
               ) : (
                 <Stack justifyContent="space-between" alignItems="center">
@@ -160,9 +166,9 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
                   placeholder={placeholders.display}
                   error={errors.display}
                   data={[
-                    { label: 'Card', value: 'card' },
-                    { label: 'Embed', value: 'embed' },
-                    { label: 'Player', value: 'player' },
+                    { label: labels.card, value: 'card' },
+                    { label: labels.embed, value: 'embed' },
+                    { label: labels.player, value: 'player' },
                   ]}
                 />
               )}
@@ -175,7 +181,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
                 <RadioGroup
                   {...field}
                   variant="icon"
-                  size="xs"
+                  size="sm"
                   label={labels.align}
                   data={[
                     { value: 'left', icon: <EditorLeftAlignIcon height={16.5} width={16} /> },
@@ -186,10 +192,10 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
               )}
             />
             <Stack fullWidth justifyContent="space-between">
-              <Button size="xs" variant="light" onClick={onCancelHandler}>
+              <Button size="sm" variant="light" onClick={onCancelHandler}>
                 {labels.cancel}
               </Button>
-              <Button size="xs" onClick={handleSubmit(submitHandler)} disabled={disableCondition()}>
+              <Button size="sm" onClick={handleSubmit(submitHandler)} disabled={disableCondition()}>
                 {currentTool.editing ? labels.update : labels.add}
               </Button>
             </Stack>

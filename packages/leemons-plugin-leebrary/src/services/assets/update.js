@@ -55,7 +55,6 @@ async function update(
   const { id, ...assetData } = data;
   let assetId = id;
 
-  console.log(assetData);
   await validateAddAsset(assetData);
 
   // EN: Get user's permissions
@@ -86,6 +85,7 @@ async function update(
     'public',
     'indexable',
     'tags',
+    'program',
     'subjects',
   ];
 
@@ -104,7 +104,9 @@ async function update(
 
   // EN: Diff the current values with the new ones
   // ES: Compara los valores actuales con los nuevos
-  const { object: updateObject, diff } = getDiff(newData, currentData);
+  const { object: _updateObject, diff } = getDiff(newData, currentData);
+
+  const { subjects, ...updateObject } = _updateObject;
 
   // ·········································································
   // DUPLICATE ASSET
@@ -148,6 +150,17 @@ async function update(
   } else if (!diff.length) {
     return currentAsset;
     // throw new Error('No changes detected');
+  }
+
+  if (diff.includes('subjects')) {
+    await tables.assetsSubjects.deleteMany({ asset: assetId }, { transacting });
+    if (subjects && subjects.length) {
+      await Promise.all(
+        map(subjects, (item) =>
+          tables.assetsSubjects.create({ asset: assetId, ...item }, { transacting })
+        )
+      );
+    }
   }
 
   // ·········································································
@@ -207,7 +220,7 @@ async function update(
   // ES: Actualizar el asset
   const asset = await tables.assets.update({ id: assetId }, updateObject, { transacting });
 
-  return { ...asset, file: newFile, cover: coverFile, tags: newData.tags };
+  return { ...asset, subjects, file: newFile, cover: coverFile, tags: newData.tags };
 }
 
 module.exports = { update };

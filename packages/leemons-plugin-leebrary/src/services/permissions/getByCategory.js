@@ -19,6 +19,8 @@ const { getByIds } = require('../assets/getByIds');
 const { getByAssets } = require('./getByAssets');
 const { byProvider: getByProvider } = require('../search/byProvider');
 const { tables } = require('../tables');
+const { getAssetsByProgram } = require('../assets/getAssetsByProgram');
+const { getAssetsBySubject } = require('../assets/getAssetsBySubject');
 
 async function getByCategory(
   categoryId,
@@ -32,12 +34,31 @@ async function getByCategory(
     roles,
     searchInProvider,
     providerQuery,
+    programs: _programs,
+    subjects: _subjects,
     userSession,
     transacting,
   } = {}
 ) {
   // TODO: Search in provider
   try {
+    let programs = _programs;
+    let subjects = _subjects;
+
+    if (!programs && providerQuery?.program) {
+      programs = [providerQuery.program];
+    }
+    if (!subjects && providerQuery?.subjects) {
+      subjects = providerQuery.subjects;
+    }
+
+    if (!providerQuery?.program && programs) {
+      providerQuery.program = programs[0];
+    }
+    if (!providerQuery?.subjects && subjects) {
+      providerQuery.subjects = subjects;
+    }
+
     const { services: userService } = leemons.getPlugin('users');
 
     const [permissions, viewItems, editItems] = await Promise.all([
@@ -104,6 +125,14 @@ async function getByCategory(
       } catch (e) {
         leemons.log.error(`Failed to get assets from provider: ${e.message}`);
       }
+    }
+
+    if (programs) {
+      assetIds = await getAssetsByProgram(programs, { assets: assetIds, transacting });
+    }
+
+    if (subjects) {
+      assetIds = await getAssetsBySubject(subjects, { assets: assetIds, transacting });
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
@@ -231,6 +260,7 @@ async function getByCategory(
 
     return uniqBy(results, 'asset');
   } catch (e) {
+    console.error(e);
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }

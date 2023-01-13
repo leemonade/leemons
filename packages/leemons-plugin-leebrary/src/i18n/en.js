@@ -164,10 +164,14 @@ module.exports = {
       },
       labels: {
         title: 'Resource permissions',
-        addUsers: 'Add users',
-        addUsersDescription: 'To share resource and set permissions',
-        addClasses: 'Add classes',
-        addClassesDescription: 'To share resource and set permissions',
+        addUsers: 'Add individual users',
+        addUsersDescription:
+          'Teachers will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
+        programs: 'Educational programs',
+        program: 'Program',
+        addClasses: 'Add groups',
+        addClassesDescription:
+          'Students will see this resource in their corresponding subject folder.',
         isPublic: 'This resource is public',
         saveButton: 'Save permissions',
         shareButton: 'Share',
@@ -212,6 +216,9 @@ module.exports = {
       updated: 'Last change',
     },
     labels: {
+      search: 'Search',
+      searchPlaceholder: 'Search for resources',
+      type: 'Type',
       duplicateSuccess: 'Asset successfully duplicated',
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',

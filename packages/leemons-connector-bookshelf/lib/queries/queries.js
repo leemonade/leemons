@@ -55,6 +55,9 @@ function generateQueries(model /* connector */) {
         }`
       );
     }
+
+    console.log('transacting', transacting);
+
     if (transacting) {
       return pmap(newItems, (newItem) => create(newItem, { transacting }));
     }
@@ -366,6 +369,7 @@ function generateQueries(model /* connector */) {
         finishRollback(id);
         return result;
       } catch (e) {
+        console.error(e);
         if (!transactingHasError()) await rollback(id);
         throw e;
       }

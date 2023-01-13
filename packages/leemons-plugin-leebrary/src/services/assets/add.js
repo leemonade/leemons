@@ -284,7 +284,7 @@ async function add(
 
       await Promise.all(promises);
 
-      return { ...newAsset, file: newFile, cover: coverFile, tags };
+      return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
     },
     tables.assets,
     t

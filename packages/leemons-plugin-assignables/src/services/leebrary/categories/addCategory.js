@@ -2,6 +2,7 @@ const leebrary = require('../leebrary');
 
 module.exports = async function addCategory(
   {
+    order,
     role,
     creatable,
     createUrl,
@@ -15,6 +16,7 @@ module.exports = async function addCategory(
 ) {
   return leebrary().categories.add(
     {
+      order,
       key: role,
       creatable: Boolean(creatable && createUrl),
       duplicable: true,

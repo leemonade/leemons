@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { LibraryDetail } from '@bubbles-ui/leemons';
 import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
+
 import prefixPN from '@tests/helpers/prefixPN';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -108,6 +110,7 @@ const Detail = ({ asset, onRefresh, ...props }) => {
         metadata,
       }}
       variant="task"
+      variantIcon={<PluginAssignmentsIcon />}
       variantTitle={t('task')}
       toolbarItems={toolbarItems}
       onDelete={handleDelete}

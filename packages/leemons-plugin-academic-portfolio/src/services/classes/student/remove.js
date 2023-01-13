@@ -1,13 +1,15 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
+const { getUserPrograms } = require('../../programs');
+const { getClassProgram } = require('../getClassProgram');
 
 async function remove(classId, studentId, { soft, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
-      const classStudent = await table.classStudent.findOne(
-        { class: classId, student: studentId },
-        { soft, transacting }
-      );
+      const [classStudent, program] = await Promise.all([
+        table.classStudent.findOne({ class: classId, student: studentId }, { soft, transacting }),
+        getClassProgram(classId),
+      ]);
       if (!classStudent) {
         throw new Error(`Class student with class ${classId} and student ${studentId} not found`);
       }
@@ -34,6 +36,20 @@ async function remove(classId, studentId, { soft, transacting: _transacting } = 
         },
         { transacting }
       );
+
+      const programs = await getUserPrograms({ userAgents: [{ id: studentId }] });
+      if (programs.length) {
+        const programsIds = _.keyBy(programs, 'id');
+        if (!programsIds.includes(program.id)) {
+          await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
+            classStudent.student,
+            {
+              permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+            },
+            { transacting }
+          );
+        }
+      }
 
       await leemons.events.emit('after-remove-students-from-class', {
         classStudent,

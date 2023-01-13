@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import {
   cloneDeep,
+  filter,
   find,
   findIndex,
   flattenDeep,
@@ -48,6 +49,7 @@ const SelectUserAgent = forwardRef(
       centers,
       programs,
       courses,
+      selectedUsers,
       maxSelectedValues = 1,
       users,
       onlyContacts,
@@ -298,6 +300,11 @@ const SelectUserAgent = forwardRef(
       return [value];
     }, [inputValue]);
 
+    let toData = usersData || data;
+    if (selectedUsers) {
+      toData = filter(toData, ({ id }) => !selectedUsers.includes(id));
+    }
+
     if (maxSelectedValues === 1) {
       return (
         <Select
@@ -308,7 +315,7 @@ const SelectUserAgent = forwardRef(
           itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
           valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
           maxSelectedValues={maxSelectedValues}
-          data={usersData || data}
+          data={toData}
           // EN: The value can be an array or a single value (string), so convert it to an array
           // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
           value={uniq(flattenDeep(propValue))}
@@ -327,7 +334,7 @@ const SelectUserAgent = forwardRef(
           <ValueComponent {...p} {...valueRenderProps} onRemove={onRemoveHandler} />
         )}
         maxSelectedValues={maxSelectedValues}
-        data={usersData || data}
+        data={toData}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
         value={uniq(flattenDeep(propValue))}

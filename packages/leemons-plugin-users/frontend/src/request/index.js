@@ -46,6 +46,7 @@ import saveDataForUserAgentDatasets from './saveDataForUserAgentDatasets';
 import getPermissionsWithActionsIfIHave from './getPermissionsWithActionsIfIHave';
 import removeRememberLogin from './removeRememberLogin';
 import getPlatformTheme from './getPlatformTheme';
+import getProfileSysName from './getProfileSysName';
 
 export const loginRequest = login;
 export const resetRequest = reset;
@@ -71,6 +72,7 @@ export const listProfilesRequest = listProfiles;
 export const updateProfileRequest = updateProfile;
 export const getUserCentersRequest = getUserCenters;
 export const getPlatformThemeRequest = getPlatformTheme;
+export const getProfileSysNameRequest = getProfileSysName;
 export const updateSessionConfigRequest = updateSessionConfig;
 export const listPermissionsRequest = listPermissions;
 export const getUserProfilesRequest = getUserProfiles;

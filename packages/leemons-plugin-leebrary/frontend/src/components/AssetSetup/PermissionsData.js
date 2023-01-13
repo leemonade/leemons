@@ -1,22 +1,22 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { find, isArray, isEmpty, isNil } from 'lodash';
+import _, { find, isArray, isEmpty, isNil } from 'lodash';
 import { useParams } from 'react-router-dom';
 import {
-  Box,
-  Paper,
-  ContextContainer,
-  Button,
-  TableInput,
-  Stack,
   Alert,
-  Select,
-  Title,
-  Paragraph,
-  Switch,
-  UserDisplayItem,
+  Box,
+  Button,
+  ContextContainer,
   ImageLoader,
+  Paper,
+  Paragraph,
+  Select,
+  Stack,
+  Switch,
+  TableInput,
   Text,
+  Title,
+  UserDisplayItem,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -24,7 +24,11 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { unflatten, useRequestErrorMessage } from '@common';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import usePrograms from '@academic-portfolio/hooks/usePrograms';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
+import { SelectProgram } from '@academic-portfolio/components';
+import { getCentersWithToken } from '@users/session';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
@@ -82,28 +86,66 @@ function ClassItem({ class: klass, ...props }) {
     </Box>
   );
 }
+
+const SelectAgents = ({ usersData, ...props }) => (
+  <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
+);
+
+const RoleSelect = (props) => {
+  if (!props.value) {
+    props.onChange('viewer');
+  }
+  return <Select {...props} />;
+};
+
 const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
   const [asset, setAsset] = useState(assetProp);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [selectedClasses, setSelectedClasses] = useState([]);
+  const [selectedProgram, setSelectedProgram] = useState(null);
   const [roles, setRoles] = useState([]);
-  const [isPublic, setIsPublic] = useState(asset?.public);
+  const [adminPrograms, setAdminPrograms] = useState(assetProp.adminPrograms || []);
+  const [isPublic, setIsPublic] = useState(adminPrograms.length || asset?.public);
   const params = useParams();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { data: classes } = useSessionClasses();
-  const classesData = useMemo(
-    () =>
-      classes?.map((klass) => ({
+  const { data: programs } = usePrograms();
+  const profileSysName = useGetProfileSysName();
+
+  const programsData = useMemo(() => {
+    let goodPrograms = programs;
+    if (asset?.program) {
+      goodPrograms = _.filter(programs, { id: asset.program });
+    }
+    return (
+      goodPrograms?.map((program) => ({
+        value: program.id,
+        label: program.name,
+      })) ?? []
+    );
+  }, [programs, asset?.program]);
+
+  const classesData = useMemo(() => {
+    let goodClasses = classes;
+    if (selectedProgram) {
+      goodClasses = _.filter(goodClasses, { program: selectedProgram });
+    }
+    if (asset?.subjects?.length) {
+      const subjectsIds = _.map(asset.subjects, 'subject');
+      goodClasses = _.filter(goodClasses, ({ subject }) => subjectsIds.includes(subject.id));
+    }
+    return (
+      goodClasses?.map((klass) => ({
         value: klass.id,
         label: klass.groups.isAlone
           ? klass.subject.name
           : `${klass.subject.name} - ${klass.groups.name}`,
         ...klass,
-      })) ?? [],
-    [classes]
-  );
+      })) ?? []
+    );
+  }, [classes, selectedProgram, asset?.subjects]);
 
   // ··············································································
   // DATA PROCESS
@@ -128,7 +170,13 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         class: klass.class[0],
         role: klass.role,
       }));
-      await setPermissionsRequest(asset.id, { canAccess, classesCanAccess, isPublic });
+
+      await setPermissionsRequest(asset.id, {
+        canAccess,
+        programsCanAccess: isPublic ? adminPrograms : [],
+        classesCanAccess,
+        isPublic,
+      });
       setLoading(false);
       addSuccessAlert(
         sharing
@@ -156,12 +204,16 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
 
   useEffect(() => {
     if (asset?.public !== isPublic) {
-      setIsPublic(asset?.public);
+      // setIsPublic(asset?.public);
     }
 
     const { canAccess, classesCanAccess } = asset;
 
-    if (isArray(classesCanAccess)) {
+    if (isArray(classesCanAccess) && classesCanAccess.length) {
+      const classe = find(classes, { id: classesCanAccess[0].class });
+      if (classe) {
+        setSelectedProgram(classe.program);
+      }
       setSelectedClasses(
         classesCanAccess.map((klass) => ({
           class: [klass.class],
@@ -178,7 +230,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         }))
       );
     }
-  }, [asset]);
+  }, [asset, classes]);
 
   useEffect(() => {
     if (!isEmpty(translations)) {
@@ -220,7 +272,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         Header: 'User',
         accessor: 'user',
         input: {
-          node: <SelectUserAgent returnItem />,
+          node: <SelectAgents usersData={usersData} />,
           rules: { required: 'Required field' },
         },
         editable: false,
@@ -231,14 +283,14 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         Header: 'Role',
         accessor: 'role',
         input: {
-          node: <Select />,
+          node: <RoleSelect />,
           rules: { required: 'Required field' },
           data: roles,
         },
         valueRender: (value) => find(roles, { value })?.label,
       },
     ],
-    [roles]
+    [roles, usersData]
   );
 
   const USER_LABELS = useMemo(
@@ -312,60 +364,84 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
           </Paper>
           {isArray(asset?.canAccess) ? (
             <ContextContainer divided>
-              <Box>
-                <Switch
-                  checked={isPublic}
-                  onChange={setIsPublic}
-                  label={t('permissionsData.labels.isPublic')}
-                />
-              </Box>
+              {profileSysName === 'admin' ? (
+                <Box>
+                  <Switch
+                    checked={isPublic}
+                    onChange={setIsPublic}
+                    label={t('permissionsData.labels.isPublic')}
+                  />
+                  {isPublic ? (
+                    <SelectProgram
+                      multiple
+                      label={t('permissionsData.labels.program')}
+                      center={getCentersWithToken()[0].id}
+                      value={adminPrograms}
+                      onChange={setAdminPrograms}
+                    />
+                  ) : null}
+                </Box>
+              ) : null}
 
-              {!isPublic && (
-                <>
-                  <ContextContainer>
+              {!isPublic && (profileSysName === 'teacher' || profileSysName === 'student') && (
+                <ContextContainer>
+                  {profileSysName === 'teacher' ? (
                     <Box>
-                      <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
-                      <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
-                    </Box>
-                    {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                      <TableInput
-                        data={selectedClasses}
-                        onChange={setSelectedClasses}
-                        columns={CLASSES_COLUMNS}
-                        labels={USER_LABELS}
-                        showHeaders={false}
-                        forceShowInputs
-                        sortable={false}
-                        onBeforeAdd={checkIfClassIsAdded}
-                        resetOnAdd
-                        editable
-                        unique
+                      <Select
+                        label={t('permissionsData.labels.programs')}
+                        value={selectedProgram}
+                        onChange={(e) => {
+                          setSelectedClasses([]);
+                          setSelectedProgram(e);
+                        }}
+                        data={programsData}
                       />
-                    )}
-                  </ContextContainer>
-                  <ContextContainer>
-                    <Box>
-                      <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-                      <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
                     </Box>
-                    {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                      <TableInput
-                        data={usersData}
-                        onChange={setUsersData}
-                        columns={USERS_COLUMNS}
-                        labels={USER_LABELS}
-                        showHeaders={false}
-                        forceShowInputs
-                        sortable={false}
-                        onBeforeAdd={checkIfUserIsAdded}
-                        resetOnAdd
-                        editable
-                        unique
-                      />
-                    )}
-                  </ContextContainer>
-                </>
+                  ) : null}
+
+                  <Box>
+                    <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
+                    <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
+                  </Box>
+                  {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
+                    <TableInput
+                      data={selectedClasses}
+                      onChange={setSelectedClasses}
+                      columns={CLASSES_COLUMNS}
+                      labels={USER_LABELS}
+                      disabled={profileSysName === 'student' ? false : !selectedProgram}
+                      showHeaders={false}
+                      forceShowInputs
+                      sortable={false}
+                      onBeforeAdd={checkIfClassIsAdded}
+                      resetOnAdd
+                      editable
+                      unique
+                    />
+                  )}
+                </ContextContainer>
               )}
+              <ContextContainer>
+                <Box>
+                  <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
+                  <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
+                </Box>
+                {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
+                  <TableInput
+                    data={usersData}
+                    onChange={setUsersData}
+                    columns={USERS_COLUMNS}
+                    labels={USER_LABELS}
+                    showHeaders={false}
+                    forceShowInputs
+                    sortable={false}
+                    onBeforeAdd={checkIfUserIsAdded}
+                    resetOnAdd
+                    editable
+                    unique
+                  />
+                )}
+              </ContextContainer>
               <Stack justifyContent={'end'} fullWidth>
                 <Button loading={loading} onClick={handleOnClick}>
                   {sharing

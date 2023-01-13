@@ -221,6 +221,8 @@ async function getAssets(ctx) {
       roles: parsedRoles,
       searchInProvider: searchProvider,
       providerQuery: _providerQuery,
+      programs: _programs,
+      subjects: _subjects,
     });
   }
 
@@ -311,9 +313,10 @@ async function removeAssetPin(ctx) {
 }
 
 async function getPinnedAssets(ctx) {
-  const { criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
+  const { criteria, type, published, preferCurrent, showPublic, providerQuery } = ctx.request.query;
   const { userSession } = ctx.state;
 
+  const _providerQuery = JSON.parse(providerQuery || null);
   const assetPublished = ['true', true, '1', 1].includes(published);
   const displayPublic = ['true', true, '1', 1].includes(showPublic);
 
@@ -325,6 +328,7 @@ async function getPinnedAssets(ctx) {
       published: assetPublished,
       showPublic: displayPublic,
       preferCurrent,
+      providerQuery: _providerQuery,
       userSession,
     }
   );

@@ -56,6 +56,27 @@ async function getByIds(
   let assets = await tables.assets.find(query, { transacting });
 
   // ·········································································
+  // ADMIN PROGRAMS
+  const { services: userService } = leemons.getPlugin('users');
+  const currentPermissions = await userService.permissions.getItemPermissions(
+    map(assets, 'id'),
+    leemons.plugin.prefixPN('asset.can-view'),
+    { transacting, returnRaw: true }
+  );
+
+  const adminProgramsByItem = {};
+  forEach(currentPermissions, (permission) => {
+    if (permission.permissionName.startsWith('plugins.academic-portfolio.program.inside.')) {
+      if (!adminProgramsByItem[permission.item]) {
+        adminProgramsByItem[permission.item] = [];
+      }
+      adminProgramsByItem[permission.item].push(
+        permission.permissionName.replace('plugins.academic-portfolio.program.inside.', '')
+      );
+    }
+  });
+
+  // ·········································································
   // PERMISSIONS & PERSONS
   if (checkPermissions && userSession) {
     const classesPermissionsPerAsset = await getClassesPermissions(map(assets, 'id'), {
@@ -248,6 +269,23 @@ async function getByIds(
     pins = await getPins(assetsIds, { userSession, transacting });
   }
 
+  let programsById = {};
+  const programIds = [];
+  forEach(assets, (asset) => {
+    if (asset.program) {
+      programIds.push(asset.program);
+    }
+  });
+
+  if (programIds.length) {
+    const programs = await leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.programsByIds(uniq(programIds), {
+        onlyProgram: true,
+        transacting,
+      });
+    programsById = keyBy(programs, 'id');
+  }
   // ·········································································
   // FINALLY
 
@@ -259,6 +297,12 @@ async function getByIds(
 
   const result = assets.map((asset, index) => {
     const item = { ...asset };
+
+    if (item.program) {
+      item.programName = programsById[item.program]?.name;
+    }
+
+    item.adminPrograms = adminProgramsByItem[item.id] || [];
 
     if (withCategory) {
       const { key, duplicable, assignable } = find(categories, { id: asset.category });

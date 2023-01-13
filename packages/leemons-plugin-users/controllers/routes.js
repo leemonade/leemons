@@ -309,6 +309,12 @@ module.exports = [
     },
   },
   {
+    path: '/profile/sysName',
+    method: 'GET',
+    handler: 'profiles.getProfileSysName',
+    authenticated: true,
+  },
+  {
     path: '/profile/detail/:uri',
     method: 'GET',
     handler: 'profiles.detail',
