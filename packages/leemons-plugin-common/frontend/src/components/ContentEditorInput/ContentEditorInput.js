@@ -35,6 +35,7 @@ const ContentEditorInput = ({
   useSchema,
   editorStyles,
   editorClassname,
+  openLibraryModal,
   ...props
 }) => {
   const editorLabels = useEditorLabels();
@@ -105,6 +106,7 @@ const ContentEditorInput = ({
                 key: item.tool.id || `t-${i}`,
                 ...editorLabels.libraryTool,
                 alignLabels: editorLabels.textAlignTool,
+                openLibraryModal,
               })
             )}
           </ButtonGroup>

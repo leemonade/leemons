@@ -1,9 +1,7 @@
 const { keys, isNil, isEmpty } = require('lodash');
-const path = require('path');
 const itemsImport = require('../helpers/simpleListImport');
 
-async function importAcademicPortfolioSubjectTypes(programs) {
-  const filePath = path.resolve(__dirname, '../data.xlsx');
+async function importAcademicPortfolioSubjectTypes(filePath, programs) {
   const items = await itemsImport(filePath, 'ap_subject_types', 20);
 
   keys(items)

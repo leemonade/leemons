@@ -1,12 +1,10 @@
-const path = require('path');
 const { keys, trim, isEmpty, isNil } = require('lodash');
 const showdown = require('showdown');
 const itemsImport = require('../helpers/simpleListImport');
 
 const converter = new showdown.Converter();
 
-async function importTests({ programs, qbanks, questions }) {
-  const filePath = path.resolve(__dirname, '../data.xlsx');
+async function importTests(filePath, { programs, qbanks, questions }) {
   const items = await itemsImport(filePath, 'te_tests', 50, true, true);
 
   keys(items)

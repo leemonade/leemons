@@ -8,6 +8,24 @@ import { SCHEMA_DEFAULT_PROPS, SCHEMA_PROP_TYPES } from './Schema.constants';
 export const Schema = ({ schema, schemaLabel, isSchemaOpened, setIsSchemaOpened }) => {
   const { classes } = SchemaStyles({ isSchemaOpened }, { name: 'ContentEditor-Schema' });
 
+  const scrollElementIntoView = (element) => {
+    const containerElement = element.parentElement;
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    containerElement.focus({ preventScroll: true });
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+
+    range.setStart(element, 1);
+    range.collapse(true);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
   return (
     <Box className={classes.schemaContainer}>
       <Box className={classes.schemaTranslate}>
@@ -22,14 +40,13 @@ export const Schema = ({ schema, schemaLabel, isSchemaOpened, setIsSchemaOpened 
         </Box>
         <Box className={classes.schema}>
           {schema.map((element, index) => {
-            const { level } = element.attrs;
+            const acceptedElements = ['library', 'heading'];
             const isLibrary = element.type === 'library';
-
-            // If it is a paragraph, there is no content or a title lower than h2 we do not print it.
+            // If the element is not a heading level 1 or 2, is not an accepted element or it has no content return false.
             if (
-              element.type === 'paragraph' ||
-              (!element.content && !isLibrary) ||
-              (element.type === 'heading' && level > 2)
+              !acceptedElements.includes(element.type) ||
+              (element.type === 'heading' && element.attrs?.level > 2) ||
+              !element.content
             )
               return false;
 
@@ -38,14 +55,20 @@ export const Schema = ({ schema, schemaLabel, isSchemaOpened, setIsSchemaOpened 
               : element.content[0].text;
 
             return (
-              <Box key={index}>
+              <Box
+                key={index}
+                onClick={() => scrollElementIntoView(element.attrs.html)}
+                className={classes.schemaElement}
+              >
                 {isLibrary ? (
                   <Box style={{ overflow: 'hidden', paddingLeft: 10 }}>
                     <FileItemDisplay size={18} filename={schemaElementName} />
                   </Box>
                 ) : (
                   <TextClamp lines={1}>
-                    <Box className={classes[`${level === 1 ? 'title' : 'subtitle'}`]}>
+                    <Box
+                      className={classes[`${element.attrs?.level === 1 ? 'title' : 'subtitle'}`]}
+                    >
                       {schemaElementName}
                     </Box>
                   </TextClamp>

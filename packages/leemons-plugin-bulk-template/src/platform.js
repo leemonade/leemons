@@ -2,11 +2,11 @@
 const { keys } = require('lodash');
 const importPlatform = require('./bulk/platform');
 
-async function initPlatform() {
+async function initPlatform(file) {
   const { services } = leemons.getPlugin('users');
 
   try {
-    const platform = await importPlatform();
+    const platform = await importPlatform(file);
     const itemKeys = keys(platform);
 
     const itemKey = itemKeys[0]; // Just one platform

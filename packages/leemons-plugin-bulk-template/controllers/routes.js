@@ -13,4 +13,20 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/load-stress-data',
+    method: 'POST',
+    handler: 'stress.load',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.users': {
+        actions: ['admin'],
+      },
+    },
+  },
+  {
+    path: '/init-super',
+    method: 'GET',
+    handler: 'users.initSuper',
+  },
 ];

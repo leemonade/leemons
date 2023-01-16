@@ -41,6 +41,9 @@ module.exports = {
       type: 'text',
       textType: 'mediumText',
     },
+    order: {
+      type: 'integer',
+    },
   },
   primaryKey: {
     type: 'uuid',

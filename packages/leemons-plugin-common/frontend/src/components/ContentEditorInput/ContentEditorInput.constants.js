@@ -11,6 +11,7 @@ export const CONTENT_EDITOR_INPUT_DEFAULT_PROPS = {
   editorStyles: {},
   openSchema: false,
   useSchema: false,
+  openLibraryModal: true,
 };
 export const CONTENT_EDITOR_INPUT_PROP_TYPES = {
   placeholder: PropTypes.string,
@@ -109,4 +110,5 @@ export const CONTENT_EDITOR_INPUT_PROP_TYPES = {
   editorClassname: PropTypes.string,
   openSchema: PropTypes.bool,
   useSchema: PropTypes.bool,
+  openLibraryModal: PropTypes.bool,
 };

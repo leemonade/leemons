@@ -87,6 +87,17 @@ function ClassItem({ class: klass, ...props }) {
   );
 }
 
+const SelectAgents = ({ usersData, ...props }) => (
+  <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
+);
+
+const RoleSelect = (props) => {
+  if (!props.value) {
+    props.onChange('viewer');
+  }
+  return <Select {...props} />;
+};
+
 const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
   const [asset, setAsset] = useState(assetProp);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -198,7 +209,11 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
 
     const { canAccess, classesCanAccess } = asset;
 
-    if (isArray(classesCanAccess)) {
+    if (isArray(classesCanAccess) && classesCanAccess.length) {
+      const classe = find(classes, { id: classesCanAccess[0].class });
+      if (classe) {
+        setSelectedProgram(classe.program);
+      }
       setSelectedClasses(
         classesCanAccess.map((klass) => ({
           class: [klass.class],
@@ -215,7 +230,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         }))
       );
     }
-  }, [asset]);
+  }, [asset, classes]);
 
   useEffect(() => {
     if (!isEmpty(translations)) {
@@ -257,7 +272,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         Header: 'User',
         accessor: 'user',
         input: {
-          node: <SelectUserAgent returnItem />,
+          node: <SelectAgents usersData={usersData} />,
           rules: { required: 'Required field' },
         },
         editable: false,
@@ -268,14 +283,14 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
         Header: 'Role',
         accessor: 'role',
         input: {
-          node: <Select />,
+          node: <RoleSelect />,
           rules: { required: 'Required field' },
           data: roles,
         },
         valueRender: (value) => find(roles, { value })?.label,
       },
     ],
-    [roles]
+    [roles, usersData]
   );
 
   const USER_LABELS = useMemo(
@@ -370,17 +385,19 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
 
               {!isPublic && (profileSysName === 'teacher' || profileSysName === 'student') && (
                 <ContextContainer>
-                  <Box>
-                    <Select
-                      label={t('permissionsData.labels.programs')}
-                      value={selectedProgram}
-                      onChange={(e) => {
-                        setSelectedClasses([]);
-                        setSelectedProgram(e);
-                      }}
-                      data={programsData}
-                    />
-                  </Box>
+                  {profileSysName === 'teacher' ? (
+                    <Box>
+                      <Select
+                        label={t('permissionsData.labels.programs')}
+                        value={selectedProgram}
+                        onChange={(e) => {
+                          setSelectedClasses([]);
+                          setSelectedProgram(e);
+                        }}
+                        data={programsData}
+                      />
+                    </Box>
+                  ) : null}
 
                   <Box>
                     <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
@@ -392,7 +409,7 @@ const PermissionsData = ({ asset: assetProp, sharing, onNext = () => {} }) => {
                       onChange={setSelectedClasses}
                       columns={CLASSES_COLUMNS}
                       labels={USER_LABELS}
-                      disabled={!selectedProgram}
+                      disabled={profileSysName === 'student' ? false : !selectedProgram}
                       showHeaders={false}
                       forceShowInputs
                       sortable={false}

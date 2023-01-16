@@ -2,11 +2,11 @@
 const { keys } = require('lodash');
 const importLocales = require('./bulk/locales');
 
-async function initLocales() {
+async function initLocales(file) {
   const { services } = leemons.getPlugin('users');
 
   try {
-    const locales = await importLocales();
+    const locales = await importLocales(file);
     const itemKeys = keys(locales);
 
     for (let i = 0, len = itemKeys.length; i < len; i++) {

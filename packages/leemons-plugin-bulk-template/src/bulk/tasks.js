@@ -1,4 +1,3 @@
-const path = require('path');
 const { keys, trim, isEmpty, isNil, toLower, pick } = require('lodash');
 const showdown = require('showdown');
 const mime = require('mime');
@@ -169,8 +168,7 @@ function getDataType(extensions) {
   }, {});
 }
 
-async function importTasks({ users, centers, programs, assets }) {
-  const filePath = path.resolve(__dirname, 'data.xlsx');
+async function importTasks(filePath, { users, centers, programs, assets }) {
   const items = await itemsImport(filePath, 'ta_tasks', 40);
   const subjects = await itemsImport(filePath, 'ta_task_subjects', 40);
 
