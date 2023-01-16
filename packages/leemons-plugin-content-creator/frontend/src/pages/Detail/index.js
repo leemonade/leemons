@@ -165,6 +165,7 @@ export default function Index() {
           }}
           onChange={onContentChangeHandler}
           value={formValues.content}
+          openLibraryModal={false}
         />
       </Stack>
     </Box>
