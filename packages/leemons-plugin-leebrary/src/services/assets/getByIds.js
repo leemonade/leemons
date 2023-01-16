@@ -98,14 +98,17 @@ async function getByIds(
     for (let i = 0, l = assets.length; i < l; i++) {
       const asset = assets[i];
       const classesWithPermissions = classesPermissionsPerAsset[i];
-
+      asset.isPrivate = true;
+      if (classesWithPermissions.length) {
+        asset.isPrivate = false;
+      }
       asset.classesCanAccess = classesWithPermissions;
       const permission = permissions.find((item) => item.asset === asset.id);
       if (!isEmpty(permission?.permissions)) {
         const { permissions: userPermissions } = permission;
-        if (userPermissions.edit) {
-          getUsersAssetIds.push(asset.id);
-        }
+        // if (userPermissions.edit) {
+        getUsersAssetIds.push(asset.id);
+        // }
       }
     }
 
@@ -154,6 +157,23 @@ async function getByIds(
             return item;
           });
           assets[i].canAccess = assetPermissions;
+          if (assets[i].canAccess?.length) {
+            const noOwners = filter(
+              assets[i].canAccess,
+              (item) => !item.permissions?.includes('owner')
+            );
+            if (noOwners.length) {
+              assets[i].isPrivate = false;
+            }
+          }
+
+          const _permission = permissions.find((item) => item.asset === asset.id);
+          if (!isEmpty(_permission?.permissions)) {
+            const { permissions: userPermissions } = _permission;
+            if (!userPermissions.edit) {
+              assets[i].canAccess = null;
+            }
+          }
         }
       }
     }
