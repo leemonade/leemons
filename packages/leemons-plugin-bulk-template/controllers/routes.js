@@ -24,4 +24,9 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/init-super',
+    method: 'GET',
+    handler: 'users.initSuper',
+  },
 ];

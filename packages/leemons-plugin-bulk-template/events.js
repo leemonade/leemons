@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const initPlatform = require('./src/platform');
 const initUsers = require('./src/users');
 const initCenters = require('./src/centers');
@@ -14,13 +15,11 @@ const initTests = require('./src/tests');
 const initCalendar = require('./src/calendar');
 const initProviders = require('./src/providers');
 const initAdmin = require('./src/admin');
-const pluginConfig = require('./config/config');
 
 async function events(isInstalled) {
   const { chalk } = global.utils;
 
   const docPath = path.resolve(__dirname, 'data.xlsx');
-  console.log('docPath:', docPath);
 
   const config = {
     profiles: null,
@@ -29,7 +28,7 @@ async function events(isInstalled) {
     programs: null,
   };
 
-  if (!isInstalled && pluginConfig.enableEvents) {
+  if (!isInstalled && fs.existsSync(docPath)) {
     // ·······························································
     // LOCALES
 

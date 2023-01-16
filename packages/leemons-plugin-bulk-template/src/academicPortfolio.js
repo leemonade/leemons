@@ -223,6 +223,7 @@ async function initAcademicPortfolio(
         knowledgeAreas,
         subjectTypes,
         weekdays,
+        apProfiles,
       };
     }
 
