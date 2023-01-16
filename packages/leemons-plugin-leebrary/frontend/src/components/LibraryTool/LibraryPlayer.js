@@ -26,13 +26,14 @@ export const LIBRARY_PLAYER_PROP_TYPES = {
       width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       display: PropTypes.oneOf(LIBRARY_PLAYER_DISPLAYS),
       align: PropTypes.oneOf(LIBRARY_PLAYER_ALIGNS),
+      readOnly: PropTypes.bool,
     }),
   }),
 };
 
 const LibraryPlayer = ({
   node: {
-    attrs: { asset, width, display, align },
+    attrs: { asset, width, display, align, readOnly },
   },
 }) => {
   const isWidthNum = /^\d+$/.test(width);
@@ -57,6 +58,7 @@ const LibraryPlayer = ({
           width={width}
           framed={!['image'].includes(asset.fileType)}
           controlBar
+          canPlay={readOnly}
         />
       );
     }

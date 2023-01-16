@@ -294,7 +294,7 @@ const AssetList = ({
   };
 
   const reloadAssets = () => {
-    loadAssets(category.id);
+    loadAssets(category?.id, searchDebounced, assetType, filters);
   };
 
   const duplicateAsset = async (id) => {

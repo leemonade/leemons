@@ -67,6 +67,7 @@ const LibraryTool = ({
     toolModalOpen,
     currentTool,
     openBubbleMenu,
+    closeBubbleMenu,
     editToolData,
     closeToolModal,
   } = useTextEditor();
@@ -87,7 +88,14 @@ const LibraryTool = ({
     editToolData(
       'library',
       !isEmpty(content) ? content : currentTool.data,
-      !isEmpty(content.asset)
+      !isEmpty(content.asset),
+      <LibraryBubbleMenu
+        editor={editor}
+        handleOnChange={handleOnChange}
+        labels={labels}
+        alignLabels={alignLabels}
+        bubbleMenu={bubbleMenu}
+      />
     );
   };
 
@@ -111,8 +119,11 @@ const LibraryTool = ({
           labels={labels}
           alignLabels={alignLabels}
           bubbleMenu={bubbleMenu}
-        />
+        />,
+        { offset: [0, 100] }
       );
+    } else {
+      closeBubbleMenu();
     }
   }, [editor.isActive('library')]);
 
@@ -142,6 +153,7 @@ const LibraryTool = ({
         onCancel={() => closeToolModal()}
         onChange={handleOnChange}
         openLibraryModal={openLibraryModal}
+        readOnly={readOnly}
       />
     </Popover>
   );

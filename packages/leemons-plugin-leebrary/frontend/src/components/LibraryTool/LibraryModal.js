@@ -64,6 +64,7 @@ export const LIBRARY_MODAL_PROP_TYPES = {
   openLibraryModal: PropTypes.bool,
   onCancel: PropTypes.func,
   onChange: PropTypes.func,
+  readOnly: PropTypes.bool,
 };
 
 const LibraryModal = ({
@@ -73,6 +74,7 @@ const LibraryModal = ({
   openLibraryModal,
   onCancel,
   onChange,
+  readOnly,
   ...props
 }) => {
   const { currentTool } = useTextEditor();
@@ -95,6 +97,7 @@ const LibraryModal = ({
       width: currentTool.data.width || '100%',
       display: currentTool.data.display || 'card',
       align: currentTool.data.align || 'left',
+      readOnly,
     },
   });
 
@@ -122,7 +125,13 @@ const LibraryModal = ({
     const preparedAsset = prepareAsset(item);
     if (openLibraryDrawer) {
       if (isFunction(onChange))
-        onChange({ width: '100%', align: 'left', display: 'player', asset: preparedAsset });
+        onChange({
+          width: '100%',
+          align: 'left',
+          display: 'player',
+          asset: preparedAsset,
+          readOnly,
+        });
     } else {
       setAsset(preparedAsset);
       setAssetType('');
