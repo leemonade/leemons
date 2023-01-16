@@ -21,6 +21,8 @@ import {
 } from './ContentEditorInput.constants';
 import { Schema } from './components/Schema/Schema';
 
+const CONTENT_EDITOR_ACCEPTED_TAGS = ['library'];
+
 const ContentEditorInput = ({
   error,
   required,
@@ -91,6 +93,7 @@ const ContentEditorInput = ({
           editorClassname={cx(classes.editor, editorClassname)}
           toolbarClassname={classes.toolbarRoot}
           editorContainerClassname={classes.editorContainer}
+          acceptedTags={CONTENT_EDITOR_ACCEPTED_TAGS}
         >
           {toolbars.heading && <HeadingsTool labels={editorLabels.headingsTool} />}
           {toolbars.color && <ColorTool label={editorLabels.colorTool} />}
