@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
+const { getByAsset: getBookmark } = require('../bookmarks/getByAsset');
 const { add } = require('./add');
 const { getById: getCategory } = require('../categories/getById');
 const { duplicate: duplicateFile } = require('../files/duplicate');
@@ -37,18 +38,51 @@ async function duplicate(
   const asset = await tables.assets.findOne({ id: assetId }, { transacting });
   if (!asset) throw new global.utils.HttpError(422, 'Asset not found');
 
-  let cover = null;
-  if (asset.cover) cover = await tables.files.findOne({ id: asset.cover }, { transacting });
-
-  const assetFiles = await tables.assetsFiles.find({ asset: assetId }, { transacting });
-  const files = await tables.files.find({ id_$in: _.map(assetFiles, 'file') }, { transacting });
-
   const category = await getCategory(asset.category, { transacting });
 
   if (!category?.duplicable) {
     throw new global.utils.HttpError(401, 'Assets in this category cannot be duplicated');
   }
 
+  const fileIds = [];
+
+  // ·········································································
+  // BOOKMARK
+  // ES: En caso de que el asset sea un Bookmark, entonces recuperamos los datos
+  // EN: In case the asset is a Bookmark, then we recover the data
+  const bookmark = await getBookmark(assetId, { transacting });
+
+  if (bookmark) {
+    asset.fileType = 'bookmark';
+    asset.metadata = [];
+
+    if (bookmark.icon) fileIds.push(bookmark.icon);
+  }
+
+  // ·········································································
+  // FILES
+  if (asset.cover) {
+    // cover = await tables.files.findOne({ id: asset.cover }, { transacting });
+    fileIds.push(asset.cover);
+  }
+
+  const assetFiles = await tables.assetsFiles.find({ asset: assetId }, { transacting });
+  fileIds.push(..._.map(assetFiles, 'file'));
+
+  const files = await tables.files.find({ id_$in: fileIds }, { transacting });
+
+  const cover = _.find(files, { id: asset.cover });
+
+  // ·········································································
+  // TAGS
+  const tagsService = leemons.getPlugin('common').services.tags;
+  const [tags] = await tagsService.getValuesTags(assetId, {
+    type: leemons.plugin.prefixPN(''),
+    transacting,
+  });
+
+  // ·········································································
+  // ASSET CREATION
   const assetData = _.omit(asset, [
     'id',
     'file',
@@ -60,11 +94,11 @@ async function duplicate(
     'created_at',
     'updated_at',
   ]);
-
   const newAsset = await add.call(
     this,
     {
       ...assetData,
+      tags,
       name: ['true', true, 1, '1'].includes(preserveName) ? asset.name : `${asset.name} (1)`,
       categoryId: asset.category,
       permissions: pPermissions,
@@ -72,13 +106,31 @@ async function duplicate(
         indexable === undefined ? asset.indexable : ['true', true, 1, '1'].includes(indexable),
       public: isPublic === undefined ? asset.public : ['true', true, 1, '1'].includes(isPublic),
     },
-    { newId, userSession, transacting }
+    { newId, userSession, transacting, duplicating: true }
   );
+
+  // ·········································································
+  // POST CREATION
 
   if (cover) {
     const coverFile = await duplicateFile(cover, { transacting });
     if (coverFile)
       await tables.assets.update({ id: newAsset.id }, { cover: coverFile.id }, { transacting });
+  }
+
+  if (bookmark) {
+    let newIconId = null;
+
+    if (bookmark.icon) {
+      const icon = _.find(files, { id: bookmark.icon });
+      const newIcon = await duplicateFile(icon, { transacting });
+      newIconId = newIcon?.id;
+    }
+
+    await tables.bookmarks.create(
+      { url: bookmark.url, asset: newAsset.id, icon: newIconId },
+      { transacting }
+    );
   }
 
   if (files.length) {
