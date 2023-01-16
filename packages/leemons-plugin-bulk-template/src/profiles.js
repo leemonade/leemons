@@ -2,11 +2,11 @@
 const { keys, isArray, isEmpty } = require('lodash');
 const importProfiles = require('./bulk/profiles');
 
-async function initProfiles() {
+async function initProfiles(file) {
   const { services } = leemons.getPlugin('users');
 
   try {
-    const profiles = await importProfiles();
+    const profiles = await importProfiles(file);
     const itemsKeys = keys(profiles);
 
     // ·····················································

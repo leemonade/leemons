@@ -305,35 +305,15 @@ const SelectUserAgent = forwardRef(
       toData = filter(toData, ({ id }) => !selectedUsers.includes(id));
     }
 
-    if (maxSelectedValues === 1) {
-      return (
-        <Select
-          {...props}
-          ref={ref}
-          searchable
-          onSearchChange={usersData ? undefined : search}
-          itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
-          valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
-          maxSelectedValues={maxSelectedValues}
-          data={toData}
-          // EN: The value can be an array or a single value (string), so convert it to an array
-          // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
-          value={uniq(flattenDeep(propValue))}
-          onChange={handleChange}
-        />
-      );
-    }
     return (
-      <MultiSelect
+      <Select
         {...props}
         ref={ref}
         searchable
         onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
-        valueComponent={(p) => (
-          <ValueComponent {...p} {...valueRenderProps} onRemove={onRemoveHandler} />
-        )}
-        maxSelectedValues={maxSelectedValues}
+        valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
+        multiple={!maxSelectedValues === 1}
         data={toData}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array

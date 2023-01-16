@@ -120,7 +120,12 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
   }
 }
 
-async function initAcademicPortfolio({ centers, profiles, users, grades }) {
+async function initAcademicPortfolio(
+  file,
+  { centers, profiles, users, grades },
+  skipSubjects = false,
+  returnAll = false
+) {
   const { services } = leemons.getPlugin('academic-portfolio');
   const { services: timetableService } = leemons.getPlugin('timetable');
   const weekdays = timetableService.timetable.getWeekdays();
@@ -129,13 +134,13 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     // ·····················································
     // SETTINGS
 
-    let apProfiles = await importProfiles(profiles);
+    let apProfiles = await importProfiles(file, profiles);
     apProfiles = await services.settings.setProfiles(apProfiles);
 
     // ·····················································
     // PROGRAMS
 
-    const programs = await importPrograms(centers, grades);
+    const programs = await importPrograms(file, centers, grades);
     const programsKeys = keys(programs);
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {
@@ -150,7 +155,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     // ·····················································
     // KNOWLEDGE AREAS
 
-    const knowledgeAreas = await importKnowledgeAreas(programs);
+    const knowledgeAreas = await importKnowledgeAreas(file, programs);
     const knowledgeAreasKeys = keys(knowledgeAreas);
 
     for (let i = 0, len = knowledgeAreasKeys.length; i < len; i++) {
@@ -175,7 +180,7 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     // ·····················································
     // SUBJECT TYPES
 
-    const subjectTypes = await importSubjectTypes(programs);
+    const subjectTypes = await importSubjectTypes(file, programs);
     const subjectTypesKeys = keys(subjectTypes);
 
     for (let i = 0, len = subjectTypesKeys.length; i < len; i++) {
@@ -188,27 +193,39 @@ async function initAcademicPortfolio({ centers, profiles, users, grades }) {
     // ·····················································
     // SUBJECTS
 
-    const subjects = await importSubjects({
-      programs,
-      knowledgeAreas,
-      subjectTypes,
-      users,
-      weekdays,
-    });
-    const subjectsKeys = keys(subjects);
+    if (!skipSubjects) {
+      const subjects = await importSubjects(file, {
+        programs,
+        knowledgeAreas,
+        subjectTypes,
+        users,
+        weekdays,
+      });
+      const subjectsKeys = keys(subjects);
 
-    for (let i = 0, len = subjectsKeys.length; i < len; i++) {
-      const key = subjectsKeys[i];
-      pool.add(() => _addSubjectAndClassroom(key, subjects, users, programs, apProfiles));
+      for (let i = 0, len = subjectsKeys.length; i < len; i++) {
+        const key = subjectsKeys[i];
+        pool.add(() => _addSubjectAndClassroom(key, subjects, users, programs, apProfiles));
+      }
+
+      leemons.log.debug('Batch processing Subjects & Classrooms ...');
+      await pool.all();
+      leemons.log.info('Classrooms CREATED');
     }
-
-    leemons.log.debug('Batch processing Subjects & Classrooms ...');
-    await pool.all();
-    leemons.log.info('Classrooms CREATED');
 
     // ·····················································
     // MENU BUILDER
     await services.settings.enableAllMenuItems();
+
+    if (returnAll) {
+      return {
+        programs,
+        knowledgeAreas,
+        subjectTypes,
+        weekdays,
+        apProfiles,
+      };
+    }
 
     return programs;
   } catch (err) {

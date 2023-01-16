@@ -3,12 +3,12 @@ const { keys } = require('lodash');
 const importTasks = require('./bulk/tasks');
 const _delay = require('./bulk/helpers/delay');
 
-async function initTasks(config) {
+async function initTasks(file, config) {
   const { services } = leemons.getPlugin('tasks');
   const { chalk } = global.utils;
 
   try {
-    const tasks = await importTasks(config);
+    const tasks = await importTasks(file, config);
 
     const tasksKeys = keys(tasks);
 

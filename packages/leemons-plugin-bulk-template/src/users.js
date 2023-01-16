@@ -29,9 +29,9 @@ async function _addUser(key, users) {
   users[key] = { ...itemData, profiles: uniq(userProfiles) };
 }
 
-async function initUsers(centers, profiles) {
+async function initUsers(file, centers, profiles) {
   try {
-    const users = await importUsers(centers, profiles);
+    const users = await importUsers(file, centers, profiles);
     const itemsKeys = keys(users);
 
     for (let i = 0, len = itemsKeys.length; i < len; i++) {

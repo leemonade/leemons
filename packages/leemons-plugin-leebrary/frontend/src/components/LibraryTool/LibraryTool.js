@@ -15,6 +15,7 @@ export const LIBRARY_TOOL_DEFAULT_PROPS = {
   errorMessages: {},
   bubbleMenu: {},
   alignLabels: {},
+  openLibraryModal: true,
 };
 
 export const LIBRARY_TOOL_PROP_TYPES = {
@@ -47,6 +48,7 @@ export const LIBRARY_TOOL_PROP_TYPES = {
     justify: PropTypes.string,
     right: PropTypes.string,
   }),
+  openLibraryModal: PropTypes.bool,
 };
 
 const LibraryTool = ({
@@ -56,6 +58,7 @@ const LibraryTool = ({
   errorMessages,
   bubbleMenu,
   alignLabels,
+  openLibraryModal,
   ...props
 }) => {
   const {
@@ -114,7 +117,6 @@ const LibraryTool = ({
   }, [editor.isActive('library')]);
 
   if (readOnly) return null;
-
   return (
     <Popover
       opened={libraryModalOpened}
@@ -139,6 +141,7 @@ const LibraryTool = ({
         errorMessages={errorMessages}
         onCancel={() => closeToolModal()}
         onChange={handleOnChange}
+        openLibraryModal={openLibraryModal}
       />
     </Popover>
   );
