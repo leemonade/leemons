@@ -11,6 +11,7 @@ import {
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorViewer } from '@common/components';
+import dayjs from 'dayjs';
 import LimitedTimeAlert from '../../../LimitedTimeAlert';
 import { AnimatedPane } from './AnimatedPane';
 
@@ -97,6 +98,11 @@ export default function DevelopmentStep({
 
   const [ref, rect] = useResizeObserver();
 
+  const now = dayjs();
+  const startDate = dayjs(assignation?.instance?.dates?.start || null);
+  const canSubmit =
+    assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+
   React.useEffect(() => {
     setButtons(
       <>
@@ -141,7 +147,7 @@ export default function DevelopmentStep({
             variant={hasNextStep ? 'outline' : 'filled'}
             rightIcon={<ChevRightIcon />}
             rounded
-            disabled={!!animation}
+            disabled={!!animation || !canSubmit}
           >
             {hasNextStep ? _labels?.buttons?.next : _labels?.buttons?.finish}
           </Button>
@@ -150,7 +156,7 @@ export default function DevelopmentStep({
           <Button
             variant="filled"
             rightIcon={<ChevRightIcon />}
-            disabled={!!animation}
+            disabled={!!animation || !canSubmit}
             rounded
             onClick={onNextStep}
           >
@@ -171,6 +177,8 @@ export default function DevelopmentStep({
     _labels?.buttons,
     hasNextActivity,
     animation,
+
+    canSubmit,
   ]);
 
   const { classes, theme } = useDevelopmentStepStyles({ marginTop });

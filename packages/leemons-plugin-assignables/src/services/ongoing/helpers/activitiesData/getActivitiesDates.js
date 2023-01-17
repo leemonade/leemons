@@ -2,7 +2,7 @@ const { map } = require('lodash');
 const tables = require('../../../tables');
 
 async function getActivitiesDates({ instances, assignations, filters }, { transacting }) {
-  const { status, progress, isArchived, sort, studentDidOpen } = filters;
+  const { status, progress, isArchived, sort, studentDidOpen, studentCanSee } = filters;
 
   if (!(status || progress || isArchived !== undefined || studentDidOpen !== undefined)) {
     return {};
@@ -31,6 +31,10 @@ async function getActivitiesDates({ instances, assignations, filters }, { transa
 
   if (['start', 'deadline'].includes(sort)) {
     instanceNames.push('start', 'deadline');
+  }
+
+  if (studentCanSee) {
+    instanceNames.push('visibility', 'start');
   }
 
   const dates = await tables.dates.find(
