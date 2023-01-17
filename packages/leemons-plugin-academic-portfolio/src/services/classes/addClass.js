@@ -19,7 +19,19 @@ const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 
+const imagePermissions = [
+  {
+    canEdit: true,
+    isCustomPermission: true,
+    permissionName: leemons.plugin.prefixPN('programs'),
+    actionNames: ['update', 'admin'],
+  },
+];
+
 async function addClass(data, { userSession, transacting: _transacting } = {}) {
+  const assetService = leemons.getPlugin('leebrary').services.assets;
+  const roomService = leemons.getPlugin('comunica').services.room;
+
   return global.utils.withTransaction(
     async (transacting) => {
       await validateAddClass(data, { transacting });
@@ -60,16 +72,9 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
         name: nClass.id,
       };
       if (image) imageData.cover = image;
-      const assetService = leemons.getPlugin('leebrary').services.assets;
+
       const assetImage = await assetService.add(imageData, {
-        permissions: [
-          {
-            canEdit: true,
-            isCustomPermission: true,
-            permissionName: leemons.plugin.prefixPN('programs'),
-            actionNames: ['update', 'admin'],
-          },
-        ],
+        permissions: imagePermissions,
         published: true,
         userSession,
         transacting,
@@ -176,7 +181,22 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
         );
       }
 
-      return (await classByIds(nClass.id, { transacting }))[0];
+      const _class = (await classByIds(nClass.id, { transacting }))[0];
+
+      let subName = program.name;
+      if (_class.groups?.abbreviation) {
+        subName += ` - ${_class.groups?.abbreviation}`;
+      }
+      await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), {
+        name: _class.subject.name,
+        subName,
+        image,
+        imagePermissions,
+        userSession,
+        transacting,
+      });
+
+      return _class;
     },
     table.groups,
     _transacting

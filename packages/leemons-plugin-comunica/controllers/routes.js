@@ -1,5 +1,11 @@
 module.exports = [
   {
+    path: '/room/list',
+    method: 'GET',
+    handler: 'room.getRoomList',
+    authenticated: true,
+  },
+  {
     path: '/room/:key/messages',
     method: 'GET',
     handler: 'room.getMessages',

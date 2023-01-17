@@ -22,7 +22,18 @@ const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubj
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 
+const imagePermissions = [
+  {
+    canEdit: true,
+    isCustomPermission: true,
+    permissionName: leemons.plugin.prefixPN('programs'),
+    actionNames: ['update', 'admin'],
+  },
+];
+
 async function updateClass(data, { userSession, transacting: _transacting } = {}) {
+  const roomService = leemons.getPlugin('comunica').services.room;
+
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateClass(data, { transacting });
@@ -171,6 +182,26 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
       );
 
       await leemons.events.emit('after-update-class', { class: classe, transacting });
+
+      let subName = program.name;
+      if (classe.groups?.abbreviation) {
+        subName += ` - ${classe.groups?.abbreviation}`;
+      }
+      const roomKey = leemons.plugin.prefixPN(`room.class.${nClass.id}`);
+      const roomExists = await roomService.exists(roomKey, { transacting });
+      const roomConfig = {
+        name: classe.subject.name,
+        subName,
+        image,
+        imagePermissions,
+        userSession,
+        transacting,
+      };
+      if (roomExists) {
+        await roomService.update(roomKey, roomConfig);
+      } else {
+        await roomService.add(roomKey, roomConfig);
+      }
 
       return classe;
     },

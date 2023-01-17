@@ -15,6 +15,9 @@ module.exports = {
     name: {
       type: 'string',
     },
+    subName: {
+      type: 'string',
+    },
     parentRoom: {
       type: 'string',
     },

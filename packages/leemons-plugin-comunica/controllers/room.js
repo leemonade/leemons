@@ -52,10 +52,17 @@ async function getRoomsMessageCount(ctx) {
   ctx.body = { status: 200, count };
 }
 
+async function getRoomList(ctx) {
+  const rooms = await roomService.getUserAgentRoomsList(ctx.state.userSession.userAgents[0].id);
+  ctx.status = 200;
+  ctx.body = { status: 200, rooms };
+}
+
 module.exports = {
   getRoomsMessageCount,
   markMessagesAsRead,
   getUnreadMessages,
+  getRoomList,
   sendMessage,
   getMessages,
   getRoom,

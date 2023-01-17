@@ -1,16 +1,15 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 const { validateKeyPrefix, validateExistRoomKey } = require('../../validations/exists');
-const { addUserAgents } = require('./addUserAgents');
 
 async function add(
   key,
   {
     name,
+    subName,
     image,
     imagePermissions,
     parentRoom,
-    viewPermissions,
     userSession,
     transacting: _transacting,
   } = {}
@@ -27,8 +26,8 @@ async function add(
         {
           key,
           name,
+          subName,
           parentRoom,
-          useEncrypt,
         },
         { transacting }
       );
@@ -40,28 +39,29 @@ async function add(
         name: room.id,
       };
       if (image) imageData.cover = image;
-
-      const assetImage = await assetService.add(imageData, {
-        permissions: imagePermissions,
-        published: true,
-        userSession,
-        transacting,
-      });
-
-      room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
-
-      if (viewPermissions) {
-        await leemons
-          .getPlugin('users')
-          .services.permissions.addItem(key, 'plugins.comunica.room.view', viewPermissions, {
-            isCustomPermission: true,
+      let assetImage = null;
+      if (!_.isUndefined(image)) {
+        if (room.image) {
+          assetImage = await assetService.update(
+            { id: room.image, ...imageData },
+            {
+              published: true,
+              userSession,
+              transacting,
+            }
+          );
+        } else {
+          assetImage = await assetService.add(imageData, {
+            permissions: imagePermissions,
+            published: true,
+            userSession,
             transacting,
           });
+        }
+        room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
       }
 
-      if (userAgents.length > 0) {
-        await addUserAgents.call(this, room.key, userAgents, { transacting });
-      }
+      return room;
     },
     table.room,
     _transacting

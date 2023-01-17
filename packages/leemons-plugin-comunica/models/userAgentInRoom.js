@@ -22,6 +22,9 @@ module.exports = {
       }
       */
     },
+    muted: {
+      type: 'boolean',
+    },
     encryptKey: {
       type: 'string',
       options: {

@@ -7,6 +7,7 @@ async function add(
   key,
   {
     name,
+    subName,
     image,
     imagePermissions,
     userAgents = [],
@@ -29,6 +30,7 @@ async function add(
         {
           key,
           name,
+          subName,
           parentRoom,
           useEncrypt,
         },
@@ -36,21 +38,23 @@ async function add(
       );
 
       // ES: Añadimos el asset de la imagen
-      const imageData = {
-        indexable: false,
-        public: true,
-        name: room.id,
-      };
-      if (image) imageData.cover = image;
+      if (image) {
+        const imageData = {
+          indexable: false,
+          public: true,
+          name: room.id,
+          cover: image,
+        };
 
-      const assetImage = await assetService.add(imageData, {
-        permissions: imagePermissions,
-        published: true,
-        userSession,
-        transacting,
-      });
+        const assetImage = await assetService.add(imageData, {
+          permissions: imagePermissions,
+          published: true,
+          userSession,
+          transacting,
+        });
 
-      room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
+        room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
+      }
 
       if (viewPermissions) {
         await leemons

@@ -108,6 +108,15 @@ class RoomService {
 
     return count;
   }
+
+  static async getRoomsList() {
+    const { rooms } = await leemons.api(`comunica/room/list`, {
+      allAgents: true,
+      method: 'GET',
+    });
+
+    return rooms;
+  }
 }
 
 export { RoomService };

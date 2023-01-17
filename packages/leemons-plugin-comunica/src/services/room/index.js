@@ -10,6 +10,7 @@ const { removeUserAgents } = require('./removeUserAgents');
 const { getUnreadMessages } = require('./getUnreadMessages');
 const { getUserAgentRooms } = require('./getUserAgentRooms');
 const { getRoomsMessageCount } = require('./getRoomsMessageCount');
+const { getUserAgentRoomsList } = require('./getUserAgentRoomsList');
 
 module.exports = {
   add,
@@ -24,4 +25,5 @@ module.exports = {
   getUnreadMessages,
   getUserAgentRooms,
   getRoomsMessageCount,
+  getUserAgentRoomsList,
 };
