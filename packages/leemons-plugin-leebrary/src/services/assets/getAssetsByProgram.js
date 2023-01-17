@@ -8,6 +8,8 @@ async function getAssetsByProgram(program, { assets, transacting }) {
   };
   if (isArray(assets) && assets.length) {
     query.id_$in = assets;
+  } else {
+    return [];
   }
   const _assets = await tables.assets.find(query, { columns: ['id'], transacting });
   return map(_assets, 'id');

@@ -5,6 +5,7 @@ import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { LocaleDuration } from '@common/LocaleDate';
 import { TextEditorInput } from '@common/components/TextEditorInput';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
@@ -47,7 +48,7 @@ export default function TestPage() {
   }, []);
 
   return (
-    <Paper shadow="none">
+    <Paper fullWidth shadow="none">
       <ContextContainer divided>
         <Button onClick={uploadFile}>Añadir archivo</Button>
         <ContextContainer title="Archivos">
@@ -145,6 +146,15 @@ export default function TestPage() {
         <ContextContainer title="TextEditorInput">
           <Box>
             <TextEditorInput onChange={(val) => console.log(val)} useJSON />
+          </Box>
+        </ContextContainer>
+        <ContextContainer title="ContentEditorInput">
+          <Box>
+            <ContentEditorInput
+              useSchema
+              onChange={(val) => console.log(val)}
+              labels={{ schema: 'Esquema' }}
+            />
           </Box>
         </ContextContainer>
       </ContextContainer>

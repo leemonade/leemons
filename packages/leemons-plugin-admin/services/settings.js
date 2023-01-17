@@ -1,7 +1,8 @@
-const { findOne, update, registerAdmin } = require('../src/services/settings');
+const { findOne, update, registerAdmin, setLanguages } = require('../src/services/settings');
 
 module.exports = {
   findOne,
   update,
   registerAdmin,
+  setLanguages,
 };

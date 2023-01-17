@@ -23,7 +23,14 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
 * */
 async function add(
   { file, cover, category, canAccess, ...data },
-  { newId, published = true, userSession, permissions: _permissions, transacting: t } = {}
+  {
+    newId,
+    published = true,
+    userSession,
+    permissions: _permissions,
+    transacting: t,
+    duplicating = false,
+  } = {}
 ) {
   // eslint-disable-next-line no-nested-ternary
   const pPermissions = _permissions
@@ -259,7 +266,7 @@ async function add(
       // ··········································································
       // CREATE BOOKMARK
 
-      if (category.key === CATEGORIES.BOOKMARKS) {
+      if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
         promises.push(
           addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
             transacting,
@@ -284,7 +291,7 @@ async function add(
 
       await Promise.all(promises);
 
-      return { ...newAsset, file: newFile, cover: coverFile, tags };
+      return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
     },
     tables.assets,
     t

@@ -74,8 +74,8 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
   );
 
   const toSave = [];
-  _.forEach(_data, (d) => {
-    _.forEach(d.actionNames, (actionName) => {
+  _.forEach(_data, ({ actionNames, ...d }) => {
+    _.forEach(actionNames, (actionName) => {
       toSave.push({
         ...d,
         actionName,
@@ -84,7 +84,6 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
       });
     });
   });
-
   return table.itemPermissions.createMany(toSave, { transacting });
 }
 

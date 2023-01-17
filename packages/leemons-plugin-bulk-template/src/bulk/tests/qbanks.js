@@ -1,9 +1,7 @@
-const path = require('path');
 const { keys, trim, isNil, isEmpty } = require('lodash');
 const itemsImport = require('../helpers/simpleListImport');
 
-async function importQbanks(programs) {
-  const filePath = path.resolve(__dirname, '../data.xlsx');
+async function importQbanks(filePath, programs) {
   const items = await itemsImport(filePath, 'te_qbanks', 40, true, true);
 
   keys(items)

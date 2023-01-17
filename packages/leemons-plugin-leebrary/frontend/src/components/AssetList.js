@@ -176,6 +176,7 @@ const AssetList = ({
   const loadAssets = async (categoryId, criteria = '', type = '', filters) => {
     if (!loadingRef.current.loading || loadingRef.current.firstTime) {
       loadingRef.current.loading = true;
+      loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
       setLoading(true);
@@ -203,6 +204,17 @@ const AssetList = ({
 
         const response = await getAssetsRequest(query);
 
+        if (loadingRef.current.waitQuery) {
+          loadingRef.current.loading = false;
+          loadAssets(
+            loadingRef.current.waitQuery.categoryId,
+            loadingRef.current.waitQuery.criteria,
+            loadingRef.current.waitQuery.type,
+            loadingRef.current.waitQuery.filters
+          );
+          return null;
+        }
+
         const results = response?.assets || [];
         // console.log('results:', results);
         setAssets(uniqBy(results, 'asset'));
@@ -215,6 +227,13 @@ const AssetList = ({
         clearAssetLoading();
         addErrorAlert(getErrorMessage(err));
       }
+    } else {
+      loadingRef.current.waitQuery = {
+        categoryId,
+        criteria,
+        type,
+        filters,
+      };
     }
   };
 
@@ -275,7 +294,7 @@ const AssetList = ({
   };
 
   const reloadAssets = () => {
-    loadAssets(category.id);
+    loadAssets(category?.id, searchDebounced, assetType, filters);
   };
 
   const duplicateAsset = async (id) => {
@@ -370,10 +389,13 @@ const AssetList = ({
     if (!isEmpty(category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(category.id);
+    } else if (categoryProp?.key === 'pins') {
+      const cat = find(categories, { key: 'media-files' });
+      if (cat) loadAssetTypes(cat.id);
     } else {
       setAssetTypes(null);
     }
-  }, [category]);
+  }, [category, categoryProp]);
 
   useEffect(() => {
     if (assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {
@@ -548,6 +570,7 @@ const AssetList = ({
             {...p}
             variant={cardVariant || 'media'}
             category={category || { key: 'media-file' }}
+            realCategory={categoryProp}
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
@@ -579,7 +602,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout, category, isEmbedded, showThumbnails]);
+  }, [layout, category, categoryProp, isEmbedded, showThumbnails]);
 
   const listLayouts = useMemo(
     () => [
@@ -675,9 +698,10 @@ const AssetList = ({
         padding={isEmbedded ? 0 : 5}
         style={
           isEmbedded
-            ? { flex: 0 }
+            ? { flex: 0, alignItems: 'end' }
             : {
                 flex: 0,
+                alignItems: 'end',
                 width: containerRect.width,
                 top: containerRect.top,
                 position: 'fixed',
@@ -693,6 +717,8 @@ const AssetList = ({
               onChange={setSearhCriteria}
               value={searchCriteria}
               disabled={loading}
+              label={t('labels.search')}
+              placeholder={t('labels.searchPlaceholder')}
             />
           )}
           {!!filterComponents && filterComponents({ loading })}
@@ -702,6 +728,7 @@ const AssetList = ({
               data={assetTypes}
               value={assetType}
               onChange={handleOnTypeChange}
+              label={t('labels.type')}
               placeholder={t('labels.resourceTypes')}
               disabled={loading}
             />

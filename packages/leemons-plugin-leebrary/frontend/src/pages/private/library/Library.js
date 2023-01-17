@@ -46,6 +46,7 @@ const LibraryPageContent = () => {
         image: typeof subject?.image === 'string' ? subject.image : getClassImage({ subject }),
       }));
     }
+
     setCategories(
       result.map((data) => ({
         ...data,

@@ -2,11 +2,11 @@
 const { keys } = require('lodash');
 const importGrades = require('./bulk/grades');
 
-async function initGrades(centers) {
+async function initGrades(file, centers) {
   const { services } = leemons.getPlugin('grades');
 
   try {
-    const grades = await importGrades(centers);
+    const grades = await importGrades(file, centers);
     const itemsKeys = keys(grades);
 
     for (let i = 0, len = itemsKeys.length; i < len; i++) {

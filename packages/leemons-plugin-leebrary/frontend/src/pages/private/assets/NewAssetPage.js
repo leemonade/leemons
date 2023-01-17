@@ -57,7 +57,15 @@ const NewAssetPage = () => {
             label: labels.basicData,
             content:
               category.key === 'bookmarks' ? (
-                <BookmarkBasicData categoryId={category?.id} onSave={setAsset} />
+                <BookmarkBasicData
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
+                  categoryId={category?.id}
+                  onSave={setAsset}
+                />
               ) : (
                 <MediaBasicData
                   advancedConfig={{

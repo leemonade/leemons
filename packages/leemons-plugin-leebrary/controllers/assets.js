@@ -221,6 +221,8 @@ async function getAssets(ctx) {
       roles: parsedRoles,
       searchInProvider: searchProvider,
       providerQuery: _providerQuery,
+      programs: _programs,
+      subjects: _subjects,
     });
   }
 
@@ -273,8 +275,13 @@ async function getUrlMetadata(ctx) {
   if (isEmpty(url)) {
     throw new global.utils.HttpError(400, 'url is required');
   }
-  const { body: html } = await global.utils.got(url);
-  const metas = await global.utils.metascraper({ html, url });
+  let metas = {};
+  try {
+    const { body: html } = await global.utils.got(url);
+    metas = await global.utils.metascraper({ html, url });
+  } catch (e) {
+    throw new Error(`Error getting URL metadata: ${url}`, { cause: e });
+  }
 
   ctx.status = 200;
   ctx.body = { status: 200, metas };
@@ -306,9 +313,10 @@ async function removeAssetPin(ctx) {
 }
 
 async function getPinnedAssets(ctx) {
-  const { criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
+  const { criteria, type, published, preferCurrent, showPublic, providerQuery } = ctx.request.query;
   const { userSession } = ctx.state;
 
+  const _providerQuery = JSON.parse(providerQuery || null);
   const assetPublished = ['true', true, '1', 1].includes(published);
   const displayPublic = ['true', true, '1', 1].includes(showPublic);
 
@@ -320,6 +328,7 @@ async function getPinnedAssets(ctx) {
       published: assetPublished,
       showPublic: displayPublic,
       preferCurrent,
+      providerQuery: _providerQuery,
       userSession,
     }
   );

@@ -1,11 +1,17 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function getItemPermissions(item, type, { transacting } = {}) {
-  const results = await table.itemPermissions.find({ item, type }, { transacting });
+async function getItemPermissions(item, type, { returnRaw, transacting } = {}) {
+  const items = _.isArray(item) ? item : [item];
+  const results = await table.itemPermissions.find({ item_$in: items, type }, { transacting });
+
+  if (returnRaw) {
+    return results;
+  }
+
   const permissions = {};
   _.forEach(results, (result) => {
-    if (permissions[result.permissionName]) {
+    if (!permissions[result.permissionName]) {
       permissions[result.permissionName] = {
         permissionName: result.permissionName,
         actionNames: [],

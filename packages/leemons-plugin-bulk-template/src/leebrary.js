@@ -3,11 +3,11 @@ const { keys } = require('lodash');
 const importLibrary = require('./bulk/library');
 const _delay = require('./bulk/helpers/delay');
 
-async function initLibrary({ users }) {
+async function initLibrary(file, { users }) {
   const { services } = leemons.getPlugin('leebrary');
 
   try {
-    const assets = await importLibrary({ users });
+    const assets = await importLibrary(file, { users });
     const assetsKeys = keys(assets);
 
     for (let i = 0, len = assetsKeys.length; i < len; i++) {

@@ -20,7 +20,7 @@ const menuItems = [
   {
     item: {
       key: 'content-creator',
-      order: 303,
+      order: 304,
       iconSvg: '/public/content-creator/menu-icon-active.svg',
       activeIconSvg: '/public/content-creator/menu-icon-active.svg',
       label: {
@@ -75,6 +75,43 @@ const menuItems = [
   },
 ];
 
+const assignableRoles = [
+  {
+    role: 'content-creator',
+    options: {
+      teacherDetailUrl: '/private/content-creator/detail/:id',
+      studentDetailUrl: '/private/content-creator/student/:id/:user',
+      evaluationDetailUrl: '/private/content-creator/result/:id/:user',
+      dashboardUrl: '/private/content-creator/result/:id',
+      creatable: true,
+      createUrl: '/private/content-creator/new',
+      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      pluralName: { en: 'contents', es: 'contenidos' },
+      singularName: { en: 'content', es: 'contenido' },
+      menu: {
+        item: {
+          iconSvg: '/public/content-creator/menu-icon-active.svg',
+          activeIconSvg: '/public/content-creator/menu-icon-active.svg',
+          label: {
+            en: 'Content creator',
+            es: 'Creador de contenidos',
+          },
+        },
+        permissions: [
+          {
+            permissionName: permissionNames.creator,
+            actionNames: ['view', 'admin'],
+          },
+        ],
+      },
+
+      componentOwner: 'plugins.content-creator',
+      listCardComponent: 'DocumentListCard',
+      detailComponent: 'DocumentDetail',
+    },
+  },
+];
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -82,4 +119,5 @@ module.exports = {
     names: permissionNames,
   },
   menuItems,
+  assignableRoles,
 };
