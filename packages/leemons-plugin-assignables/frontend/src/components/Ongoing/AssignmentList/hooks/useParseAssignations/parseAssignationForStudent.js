@@ -168,7 +168,9 @@ function getDashboardURL(assignation) {
   const endTimestamp = dayjs(end || null);
 
   const isFinished =
-    (alwaysAvailable && closeDate.isValid()) || endTimestamp.isValid() || !deadline.isAfter(now);
+    (alwaysAvailable && closeDate.isValid()) ||
+    endTimestamp.isValid() ||
+    (deadline.isValid() && !deadline.isAfter(now));
 
   if (!isFinished) {
     return roleDetails.studentDetailUrl
