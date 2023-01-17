@@ -117,6 +117,7 @@ module.exports = async function createAssignation(
                     `subject|${subjectId}.assignation|${assignation.id}.userAgent|${user}`
                   ),
                   {
+                    userSession,
                     name: instance.assignable.asset.name,
                     userAgents: _.compact(_.uniq(teachers).concat(user)),
                   }

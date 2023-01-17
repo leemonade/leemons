@@ -15,6 +15,9 @@ module.exports = {
     name: {
       type: 'string',
     },
+    parentRoom: {
+      type: 'string',
+    },
     useEncrypt: {
       type: 'boolean',
     },
