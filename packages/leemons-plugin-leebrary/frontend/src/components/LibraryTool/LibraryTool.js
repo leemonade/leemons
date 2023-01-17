@@ -120,7 +120,7 @@ const LibraryTool = ({
           alignLabels={alignLabels}
           bubbleMenu={bubbleMenu}
         />,
-        { offset: [0, 100] }
+        { offset: [0, -40] }
       );
     } else {
       closeBubbleMenu();

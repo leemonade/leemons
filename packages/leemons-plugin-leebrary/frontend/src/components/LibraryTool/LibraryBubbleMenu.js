@@ -47,8 +47,9 @@ export const LibraryBubbleMenu = ({
     return content;
   };
 
+  const data = getData();
+
   const handleChangeData = (property) => {
-    const data = getData();
     const propertyKey = Object.keys(property)[0];
     const propertyValue = Object.values(property)[0];
     handleOnChange({ ...data, [propertyKey]: propertyValue });
@@ -64,11 +65,13 @@ export const LibraryBubbleMenu = ({
           icon={<LayoutAgendaIcon height={20} width={20} />}
           onClick={() => handleChangeData({ width: '100%' })}
           tooltip={bubbleMenu.fullWidth}
+          active={data.width === '100%'}
         />
         <ActionButton
           icon={<LayoutTwoColumsIcon height={20} width={20} />}
           onClick={() => handleChangeData({ width: '50%' })}
           tooltip={bubbleMenu.twoColumns}
+          active={data.width === '50%'}
         />
       </Box>
       {/* Align */}
@@ -77,17 +80,20 @@ export const LibraryBubbleMenu = ({
           icon={<EditorLeftAlignIcon height={20} width={20} />}
           onClick={() => handleChangeData({ align: 'left' })}
           tooltip={alignLabels.left}
+          active={data.align === 'left'}
         />
         <ActionButton
           icon={<EditorCenterAlignIcon height={20} width={20} />}
           onClick={() => handleChangeData({ align: 'center' })}
           tooltip={alignLabels.center}
+          active={data.align === 'center'}
         />
         {/* <ActionButton icon={<EditorJustifiedAlignIcon height={20} width={20} />} /> */}
         <ActionButton
           icon={<EditorRightAlignIcon height={20} width={20} />}
           onClick={() => handleChangeData({ align: 'right' })}
           tooltip={alignLabels.right}
+          active={data.align === 'right'}
         />
       </Box>
       {/* Format */}
@@ -96,16 +102,19 @@ export const LibraryBubbleMenu = ({
           label={labels.embed?.toUpperCase()}
           style={actionButtonStyles}
           onClick={() => handleChangeData({ display: 'embed' })}
+          active={data.display === 'embed'}
         />
         <ActionButton
           label={labels.card?.toUpperCase()}
           style={actionButtonStyles}
           onClick={() => handleChangeData({ display: 'card' })}
+          active={data.display === 'card'}
         />
         <ActionButton
           label={labels.player?.toUpperCase()}
           style={actionButtonStyles}
           onClick={() => handleChangeData({ display: 'player' })}
+          active={data.display === 'player'}
         />
       </Box>
       {/* Actions */}
@@ -116,7 +125,6 @@ export const LibraryBubbleMenu = ({
           tooltip={bubbleMenu.library}
         />
         <ActionButton
-          active
           icon={<DeleteBinIcon height={20} width={20} />}
           onClick={removeHandler}
           tooltip={bubbleMenu.remove}
