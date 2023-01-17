@@ -84,11 +84,16 @@ module.exports = async function searchOngoingActivities(query, { userSession, tr
 
   assignations = filterAssignationsByInstance({ assignations, instances });
   const dates = await getActivitiesDates(
-    { instances, assignations, filters: query },
+    { instances, assignations, filters: { ...query, studentCanSee: true } },
     { transacting }
   );
 
-  instances = filterInstancesByStatusAndArchived({ instances, filters: query, dates });
+  instances = filterInstancesByStatusAndArchived({
+    instances,
+    filters: query,
+    dates,
+    hideNonVisible: true,
+  });
   assignations = filterAssignationsByInstance({ assignations, instances });
 
   assignations = await filterAssignationsByProgress({
