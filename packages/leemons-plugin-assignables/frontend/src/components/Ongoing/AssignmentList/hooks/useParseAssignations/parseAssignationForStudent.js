@@ -152,24 +152,27 @@ function Progress({ assignation }) {
 }
 
 function getDashboardURL(assignation) {
-  const { instance, timestamps: { end } } = assignation;
+  const {
+    instance,
+    timestamps: { end },
+  } = assignation;
   const {
     alwaysAvailable,
-    dates: { start, deadline: _deadline, closed },
+    dates: { deadline: _deadline, closed },
     assignable: { roleDetails },
   } = instance;
 
   const now = dayjs();
-  const startDate = dayjs(start || null);
   const deadline = dayjs(_deadline || null);
   const closeDate = dayjs(closed || null);
   const endTimestamp = dayjs(end || null);
 
-  const isOpen =
-    !closeDate.isValid() && !endTimestamp.isValid() &&
-    (alwaysAvailable || (!now.isBefore(startDate) && now.isBefore(deadline)));
+  const isFinished =
+    (alwaysAvailable && closeDate.isValid()) ||
+    endTimestamp.isValid() ||
+    (deadline.isValid() && !deadline.isAfter(now));
 
-  if (isOpen) {
+  if (!isFinished) {
     return roleDetails.studentDetailUrl
       .replace(':id', instance.id)
       .replace(':user', assignation.user);

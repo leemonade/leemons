@@ -1,18 +1,36 @@
 const dayjs = require('dayjs');
 const { getInstancesStatus } = require('../activitiesStatus');
 
-function filterInstancesByStatusAndArchived({ instances, filters, dates }) {
+function filterInstancesByStatusAndArchived({ instances, filters, dates, hideNonVisible }) {
   const { status: desiredStatus } = filters;
 
   const filterByStatus = ['open', 'closed', 'scheduled'].includes(desiredStatus);
   const filterByArchived = filters.isArchived !== undefined;
 
+  let filteredInstances = instances;
+  const datesPerInstance = dates.instances;
+
+  // EN: Filter instances by visibility date for students
+  // ES: Filtrar instancias por fecha de visibilidad para estudiantes
+  if (hideNonVisible) {
+    filteredInstances = filteredInstances.filter((instance) => {
+      const { visibility, start } = datesPerInstance[instance.id] || {};
+      const { alwaysAvailable } = instance;
+      const now = dayjs();
+      const visibilityDate = dayjs(visibility || null);
+      const startDate = dayjs(start || null);
+
+      return (
+        alwaysAvailable ||
+        (startDate.isValid() && !now.isBefore(startDate)) ||
+        (visibilityDate.isValid() && !now.isBefore(visibilityDate))
+      );
+    });
+  }
+
   if (!filterByArchived && !filterByStatus) {
     return instances;
   }
-
-  const datesPerInstance = dates.instances;
-  let filteredInstances = instances;
 
   if (filterByStatus) {
     const instancesWithDates = instances.map((instance) => ({
