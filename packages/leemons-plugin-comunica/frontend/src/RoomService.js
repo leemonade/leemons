@@ -117,6 +117,25 @@ class RoomService {
 
     return rooms;
   }
+
+  static async getConfig() {
+    const { config } = await leemons.api(`comunica/config`, {
+      allAgents: true,
+      method: 'GET',
+    });
+
+    return config;
+  }
+
+  static async saveConfig(body) {
+    const { config } = await leemons.api(`comunica/config`, {
+      allAgents: true,
+      method: 'POST',
+      body,
+    });
+
+    return config;
+  }
 }
 
 export { RoomService };

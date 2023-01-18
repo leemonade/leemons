@@ -1,5 +1,17 @@
 module.exports = [
   {
+    path: '/config',
+    method: 'GET',
+    handler: 'config.get',
+    authenticated: true,
+  },
+  {
+    path: '/config',
+    method: 'POST',
+    handler: 'config.save',
+    authenticated: true,
+  },
+  {
     path: '/room/list',
     method: 'GET',
     handler: 'room.getRoomList',

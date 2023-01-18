@@ -53,7 +53,9 @@ async function getRoomsMessageCount(ctx) {
 }
 
 async function getRoomList(ctx) {
-  const rooms = await roomService.getUserAgentRoomsList(ctx.state.userSession.userAgents[0].id);
+  const rooms = await roomService.getUserAgentRoomsList(ctx.state.userSession.userAgents[0].id, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, rooms };
 }

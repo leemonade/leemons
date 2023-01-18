@@ -8,6 +8,9 @@ async function add(
   {
     name,
     subName,
+    bgColor,
+    icon,
+    iconPermissions,
     image,
     imagePermissions,
     userAgents = [],
@@ -30,6 +33,7 @@ async function add(
         {
           key,
           name,
+          bgColor,
           subName,
           parentRoom,
           useEncrypt,
@@ -54,6 +58,25 @@ async function add(
         });
 
         room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
+      }
+
+      // ES: Añadimos el asset de la imagen
+      if (icon) {
+        const iconData = {
+          indexable: false,
+          public: true,
+          name: room.id,
+          cover: icon,
+        };
+
+        const iconImage = await assetService.add(iconData, {
+          permissions: iconPermissions,
+          published: true,
+          userSession,
+          transacting,
+        });
+
+        room = await table.room.update({ id: room.id }, { icon: iconImage.id }, { transacting });
       }
 
       if (viewPermissions) {

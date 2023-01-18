@@ -21,6 +21,15 @@ module.exports = {
     parentRoom: {
       type: 'string',
     },
+    image: {
+      type: 'string',
+    },
+    icon: {
+      type: 'string',
+    },
+    bgColor: {
+      type: 'string',
+    },
     useEncrypt: {
       type: 'boolean',
     },

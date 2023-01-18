@@ -18,15 +18,7 @@ const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubj
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getClassesProgramInfo } = require('./listSessionClasses');
-
-const imagePermissions = [
-  {
-    canEdit: true,
-    isCustomPermission: true,
-    permissionName: leemons.plugin.prefixPN('programs'),
-    actionNames: ['update', 'admin'],
-  },
-];
+const { classRoomImagePermissions } = require('./classRoomImagePermissions');
 
 async function addClass(data, { userSession, transacting: _transacting } = {}) {
   const assetService = leemons.getPlugin('leebrary').services.assets;
@@ -190,8 +182,9 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
       await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), {
         name: _class.subject.name,
         subName,
+        bgColor: _class.subject.color,
         image,
-        imagePermissions,
+        imagePermissions: classRoomImagePermissions,
         userSession,
         transacting,
       });

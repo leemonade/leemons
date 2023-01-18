@@ -4,6 +4,7 @@ module.exports = {
   add: room.add,
   get: room.get,
   exists: room.exist,
+  update: room.update,
   getMessages: room.getMessages,
   addUserAgents: room.addUserAgents,
   existUserAgent: room.existUserAgent,

@@ -1,12 +1,15 @@
 const _ = require('lodash');
 const { table } = require('../tables');
-const { validateKeyPrefix, validateExistRoomKey } = require('../../validations/exists');
+const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
 
-async function add(
+async function update(
   key,
   {
     name,
     subName,
+    bgColor,
+    icon,
+    iconPermissions,
     image,
     imagePermissions,
     parentRoom,
@@ -20,17 +23,16 @@ async function add(
 
   return global.utils.withTransaction(
     async (transacting) => {
-      await validateExistRoomKey(key, { transacting });
+      await validateNotExistRoomKey(key, { transacting });
 
-      let room = await table.room.create(
-        {
-          key,
-          name,
-          subName,
-          parentRoom,
-        },
-        { transacting }
-      );
+      const toUpdate = {};
+
+      if (name) toUpdate.name = name;
+      if (bgColor) toUpdate.bgColor = bgColor;
+      if (subName) toUpdate.subName = subName;
+      if (parentRoom) toUpdate.parentRoom = parentRoom;
+
+      let room = await table.room.update({ key }, toUpdate, { transacting });
 
       // ES: Añadimos el asset de la imagen
       const imageData = {
@@ -61,6 +63,35 @@ async function add(
         room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
       }
 
+      // ES: Añadimos el asset de la imagen
+      const iconData = {
+        indexable: false,
+        public: true,
+        name: room.id,
+      };
+      if (icon) iconData.cover = icon;
+      let iconImage = null;
+      if (!_.isUndefined(icon)) {
+        if (room.icon) {
+          iconImage = await assetService.update(
+            { id: room.icon, ...iconData },
+            {
+              published: true,
+              userSession,
+              transacting,
+            }
+          );
+        } else {
+          iconImage = await assetService.add(iconData, {
+            permissions: iconPermissions,
+            published: true,
+            userSession,
+            transacting,
+          });
+        }
+        room = await table.room.update({ id: room.id }, { icon: iconImage.id }, { transacting });
+      }
+
       return room;
     },
     table.room,
@@ -68,4 +99,4 @@ async function add(
   );
 }
 
-module.exports = { add };
+module.exports = { update };

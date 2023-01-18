@@ -21,15 +21,7 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
-
-const imagePermissions = [
-  {
-    canEdit: true,
-    isCustomPermission: true,
-    permissionName: leemons.plugin.prefixPN('programs'),
-    actionNames: ['update', 'admin'],
-  },
-];
+const { classRoomImagePermissions } = require('./classRoomImagePermissions');
 
 async function updateClass(data, { userSession, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -47,7 +39,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
 
       const program = await table.programs.findOne(
         { id: cClass.program },
-        { columns: ['id', 'useOneStudentGroup'], transacting }
+        { columns: ['id', 'name', 'useOneStudentGroup'], transacting }
       );
 
       if (program.useOneStudentGroup) {
@@ -191,9 +183,10 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
       const roomExists = await roomService.exists(roomKey, { transacting });
       const roomConfig = {
         name: classe.subject.name,
+        bgColor: classe.subject.color,
         subName,
         image,
-        imagePermissions,
+        imagePermissions: classRoomImagePermissions,
         userSession,
         transacting,
       };

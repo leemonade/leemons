@@ -6,6 +6,7 @@ const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
+const { classRoomImagePermissions } = require('../classes/classRoomImagePermissions');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -65,6 +66,25 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
       );
 
       await table.class.updateMany({ subject: subject.id }, { color }, { transacting });
+      const classesWithSubject = await table.class.find(
+        { subject: subject.id },
+        { columns: ['id'], transacting }
+      );
+      const roomService = leemons.getPlugin('comunica').services.room;
+      await Promise.all(
+        _.map(classesWithSubject, (item) =>
+          roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), {
+            name: subject.name,
+            image,
+            icon,
+            iconPermissions: classRoomImagePermissions,
+            bgColor: color,
+            imagePermissions: classRoomImagePermissions,
+            userSession,
+            transacting,
+          })
+        )
+      );
 
       const courses = isArray(course) ? course : [course];
       await setToAllClassesWithSubject(subject.id, courses, { transacting });

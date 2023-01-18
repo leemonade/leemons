@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
+async function getUserAgentRoomsList(userAgent, { userSession, transacting } = {}) {
   const uair = await table.userAgentInRoom.find({ userAgent }, { transacting });
   const [rooms, unreadMessages] = await Promise.all([
-    table.room.find({ id_$in: _.map(uair, 'room') }, { transacting }),
+    table.room.find({ key_$in: _.map(uair, 'room') }, { transacting }),
     table.roomMessagesUnRead.find(
       {
         room_$in: _.map(uair, 'room'),
@@ -25,14 +25,14 @@ async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
       }
       withParent[room.parentRoom].push({
         ...room,
-        muted: uairByRoom[room.id]?.muted && false,
-        unreadMessages: unreadMessagesByRoom[room.id]?.count && 0,
+        muted: uairByRoom[room.id]?.muted || false,
+        unreadMessages: unreadMessagesByRoom[room.id]?.count || 0,
       });
     } else {
       result.push({
         ...room,
-        muted: uairByRoom[room.id]?.muted && false,
-        unreadMessages: unreadMessagesByRoom[room.id]?.count && 0,
+        muted: uairByRoom[room.id]?.muted || false,
+        unreadMessages: unreadMessagesByRoom[room.id]?.count || 0,
       });
     }
   });
