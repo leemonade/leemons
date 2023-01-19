@@ -12,13 +12,13 @@ function RoomAvatar({ room }) {
       result.image = (
         <ImageLoader
           className={classes.image}
-          src={getAssetUrl(room.image)}
+          src={room.imageIsUrl ? room.image : getAssetUrl(room.image)}
           width={56}
           height={56}
         />
       );
     }
-    if (room.icon) {
+    if (!room.image && room.icon) {
       result.icon = (
         <ImageLoader
           src={getAssetUrl(room.icon)}

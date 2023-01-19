@@ -3,10 +3,13 @@ import { Box, Text } from '@bubbles-ui/components';
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import PropTypes from 'prop-types';
 import { RoomAvatar } from '@comunica/components/RoomAvatar/RoomAvatar';
+import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import { ChatListDrawerItemStyles } from './ChatListDrawerItem.styles';
 
-function ChatListDrawerItem({ room, onClick = () => {} }) {
+function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
   const { classes } = ChatListDrawerItemStyles({}, { name: 'ChatListDrawerItem' });
+
+  const room = React.useMemo(() => getRoomParsed(_room), [_room]);
 
   return (
     <Box onClick={onClick} className={classes.item}>
@@ -16,7 +19,7 @@ function ChatListDrawerItem({ room, onClick = () => {} }) {
           {room.name ? (
             <Box style={{ lineHeight: '1.2rem' }}>
               <Text size="md" role="productive" transform="capitalize" color="tertiary" strong>
-                {room.name}
+                {t(room.name, room.nameReplaces, false, room.name)}
               </Text>
             </Box>
           ) : null}
@@ -41,6 +44,7 @@ function ChatListDrawerItem({ room, onClick = () => {} }) {
 }
 
 ChatListDrawerItem.propTypes = {
+  t: PropTypes.func,
   room: PropTypes.any,
   onClick: PropTypes.func,
 };

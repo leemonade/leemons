@@ -13,5 +13,9 @@ module.exports = {
     activities: 'Actividades',
     clean: 'Limpiar',
     myConversations: 'Mis conversaciones',
+    teachersOfSubject: 'Docentes: {subjectName}',
+    multisubjects: 'Multi-Asignatura',
+    activityGroup: 'Grupo actividad',
+    return: 'Volver',
   },
 };

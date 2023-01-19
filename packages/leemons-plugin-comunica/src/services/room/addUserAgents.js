@@ -14,7 +14,7 @@ async function add(room, userAgent, { transacting }) {
   if (response) {
     // Si la existe el usuario en la sala, pero borrado se le reactiva
     if (response.deleted) {
-      return table.userAgentInRoom.update(
+      const result = await table.userAgentInRoom.update(
         {
           deleted_$null: false,
           room,
@@ -26,11 +26,15 @@ async function add(room, userAgent, { transacting }) {
         },
         { transacting }
       );
+      leemons.socket.emit(userAgent, `COMUNICA:ROOM:ADDED`, {
+        room,
+      });
+      return result;
     }
     return response;
   }
   // Si el usuario no esta en la sala le añadimos
-  return table.userAgentInRoom.create(
+  const result = await table.userAgentInRoom.create(
     {
       room,
       userAgent,
@@ -38,6 +42,10 @@ async function add(room, userAgent, { transacting }) {
     },
     { transacting }
   );
+  leemons.socket.emit(userAgent, `COMUNICA:ROOM:ADDED`, {
+    room,
+  });
+  return result;
 }
 
 async function addUserAgents(key, _userAgents, { transacting: _transacting } = {}) {

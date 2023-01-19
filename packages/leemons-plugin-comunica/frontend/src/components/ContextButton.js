@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Box, createStyles, Text } from '@bubbles-ui/components';
+import { Box, createStyles, Text, useDebouncedCallback } from '@bubbles-ui/components';
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import SocketIoService from '@socket-io/service';
@@ -57,6 +57,7 @@ export const ContextButtonStyles = createStyles((theme, {}) => ({
 }));
 
 function ContextButton() {
+  const debouncedFunction = useDebouncedCallback(100);
   const [store, render] = useStore();
   const { classes } = ContextButtonStyles({}, { name: 'ContextButton' });
 
@@ -65,7 +66,6 @@ function ContextButton() {
     _.forEach(store.rooms, (room) => {
       store.unreadMessages += room.unreadMessages;
     });
-    // TODO: Add if muted
   }
 
   async function load() {
@@ -89,6 +89,10 @@ function ContextButton() {
     if (event === 'COMUNICA:CONFIG') {
       store.config = data;
       render();
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:ADDED') {
+      debouncedFunction(load);
       return;
     }
     _.forEach(store.rooms, (room, index) => {

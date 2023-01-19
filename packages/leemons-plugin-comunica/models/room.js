@@ -16,13 +16,14 @@ module.exports = {
       type: 'string',
     },
     nameReplaces: {
-      type: 'string',
+      type: 'text',
+      textType: 'mediumText',
     },
     subName: {
       type: 'string',
     },
     parentRoom: {
-      type: 'string',
+      type: 'text',
     },
     image: {
       type: 'string',
@@ -41,6 +42,10 @@ module.exports = {
     },
     useEncrypt: {
       type: 'boolean',
+    },
+    metadata: {
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

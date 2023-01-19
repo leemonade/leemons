@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 function tLoader(prefix, translations) {
-  return (key, replaces, returnFullKey) => {
+  return (key, replaces, returnFullKey, callback) => {
     const tKey = `${prefix}.${key}`;
     if (returnFullKey) return tKey;
     if (
@@ -17,7 +17,7 @@ function tLoader(prefix, translations) {
       }
       return item;
     }
-    return '';
+    return callback || '';
   };
 }
 

@@ -13,6 +13,7 @@ async function update(
     bgColor,
     icon,
     image,
+    metadata,
     parentRoom,
     transacting: _transacting,
   } = {}
@@ -32,8 +33,9 @@ async function update(
       if (bgColor) toUpdate.bgColor = bgColor;
       if (subName) toUpdate.subName = subName;
       if (initDate) toUpdate.initDate = initDate;
+      if (metadata) toUpdate.metadata = JSON.stringify(metadata);
       if (parentRoom) toUpdate.parentRoom = parentRoom;
-      if (nameReplaces) toUpdate.nameReplaces = nameReplaces;
+      if (nameReplaces) toUpdate.nameReplaces = JSON.stringify(nameReplaces);
 
       return table.room.update({ key }, toUpdate, { transacting });
     },

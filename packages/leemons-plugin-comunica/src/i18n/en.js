@@ -13,5 +13,9 @@ module.exports = {
     activities: 'Activities',
     clean: 'Clean',
     myConversations: 'My conversations',
+    teachersOfSubject: 'Teachers: {subjectName}',
+    multisubjects: 'Multi-Subjects',
+    activityGroup: 'Activity group',
+    return: 'Return',
   },
 };

@@ -185,9 +185,9 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         type: leemons.plugin.prefixPN('class'),
         bgColor: classe.subject.color,
         subName,
-        image: assetImage.id,
         transacting,
       };
+      if (assetImage.cover) roomConfig.image = assetImage.id;
       if (roomExists) {
         await roomService.update(roomKey, roomConfig);
       } else {

@@ -71,15 +71,16 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
       );
       const roomService = leemons.getPlugin('comunica').services.room;
       await Promise.all(
-        _.map(classesWithSubject, (item) =>
-          roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), {
+        _.map(classesWithSubject, (item) => {
+          const roomData = {
             name: subject.name,
-            image: assetImage.id,
-            icon: assetIcon.id,
             bgColor: color,
             transacting,
-          })
-        )
+          };
+          if (assetImage.cover) roomData.image = assetImage.id;
+          if (assetIcon.cover) roomData.icon = assetIcon.id;
+          return roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), roomData);
+        })
       );
 
       const courses = isArray(course) ? course : [course];

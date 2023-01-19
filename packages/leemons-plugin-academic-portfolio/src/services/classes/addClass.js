@@ -32,7 +32,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
 
         const program = await table.programs.findOne(
           { id: data.program },
-          { columns: ['id', 'useOneStudentGroup'], transacting }
+          { columns: ['id', 'name', 'useOneStudentGroup'], transacting }
         );
 
         if (program.useOneStudentGroup) {
@@ -165,6 +165,21 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
         await Promise.all(promises);
 
         let classe = (await classByIds(nClass.id, { transacting }))[0];
+
+        let subName = program.name;
+        if (classe.groups?.abbreviation) {
+          subName += ` - ${classe.groups?.abbreviation}`;
+        }
+        const roomData = {
+          name: classe.subject.name,
+          type: leemons.plugin.prefixPN('class'),
+          subName,
+          bgColor: classe.subject.color,
+          transacting,
+        };
+        if (assetImage.cover) roomData.image = assetImage.id;
+        await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), roomData);
+
         [classe] = await getClassesProgramInfo(
           {
             programs: data.program,
@@ -182,22 +197,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           );
         }
 
-        const _class = (await classByIds(nClass.id, { transacting }))[0];
-
-        let subName = program.name;
-        if (_class.groups?.abbreviation) {
-          subName += ` - ${_class.groups?.abbreviation}`;
-        }
-        await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), {
-          name: _class.subject.name,
-          type: leemons.plugin.prefixPN('class'),
-          subName,
-          bgColor: _class.subject.color,
-          image: assetImage.id,
-          transacting,
-        });
-
-        return _class;
+        return (await classByIds(nClass.id, { transacting }))[0];
       } catch (e) {
         console.error(e);
       }

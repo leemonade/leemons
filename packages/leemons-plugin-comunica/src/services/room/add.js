@@ -11,9 +11,10 @@ async function add(
     initDate,
     subName,
     bgColor,
-    nameReplaces,
+    nameReplaces = {},
     icon,
     image,
+    metadata = {},
     userAgents = [],
     parentRoom,
     useEncrypt = true,
@@ -32,7 +33,7 @@ async function add(
           key,
           name,
           type,
-          nameReplaces,
+          nameReplaces: JSON.stringify(nameReplaces),
           initDate,
           bgColor,
           subName,
@@ -40,6 +41,7 @@ async function add(
           image,
           parentRoom,
           useEncrypt,
+          metadata: JSON.stringify(metadata),
         },
         { transacting }
       );
@@ -56,6 +58,7 @@ async function add(
       if (userAgents.length > 0) {
         await addUserAgents.call(this, room.key, userAgents, { transacting });
       }
+      return room;
     },
     table.room,
     _transacting
