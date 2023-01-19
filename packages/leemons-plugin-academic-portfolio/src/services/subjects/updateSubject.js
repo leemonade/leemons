@@ -6,7 +6,6 @@ const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
-const { classRoomImagePermissions } = require('../classes/classRoomImagePermissions');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -75,12 +74,9 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
         _.map(classesWithSubject, (item) =>
           roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), {
             name: subject.name,
-            image,
-            icon,
-            iconPermissions: classRoomImagePermissions,
+            image: assetImage.id,
+            icon: assetIcon.id,
             bgColor: color,
-            imagePermissions: classRoomImagePermissions,
-            userSession,
             transacting,
           })
         )

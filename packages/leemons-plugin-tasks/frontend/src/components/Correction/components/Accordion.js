@@ -14,7 +14,7 @@ import {
 import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
-import ChatButton from '@comunica/ChatButton';
+import ChatButton from '@comunica/components/ChatButton';
 import { useStore } from '@common';
 
 function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {

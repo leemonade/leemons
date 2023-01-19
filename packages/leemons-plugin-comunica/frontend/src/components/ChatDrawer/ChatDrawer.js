@@ -20,7 +20,7 @@ import { addErrorAlert } from '@layout/alert';
 import { getCentersWithToken } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
-import { MembersList } from '../components';
+import { MembersList } from '../MembersList/MembersList';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
 function ChatDrawer({

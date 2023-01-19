@@ -15,6 +15,9 @@ module.exports = {
     name: {
       type: 'string',
     },
+    nameReplaces: {
+      type: 'string',
+    },
     subName: {
       type: 'string',
     },
@@ -29,6 +32,12 @@ module.exports = {
     },
     bgColor: {
       type: 'string',
+    },
+    type: {
+      type: 'string',
+    },
+    initDate: {
+      type: 'datetime',
     },
     useEncrypt: {
       type: 'boolean',

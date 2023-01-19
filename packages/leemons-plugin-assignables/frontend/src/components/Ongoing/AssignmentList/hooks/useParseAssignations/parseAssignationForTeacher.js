@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Text, Badge } from '@bubbles-ui/components';
+import { Badge } from '@bubbles-ui/components';
 
 import { forEach, get, uniq } from 'lodash';
 
-import UnreadMessages from '@comunica/UnreadMessages';
+import UnreadMessages from '@comunica/components/UnreadMessages';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import { unflatten } from '@common';
@@ -34,13 +34,13 @@ function Completion({ instance }) {
     const totalTime = deadline - startDate;
     const elapsedTime = now - startDate;
     /*
-      EN: This formula comes from the following rule of three:
-      ES: Esta formula sale de la siguiente regla de tres:
+          EN: This formula comes from the following rule of three:
+          ES: Esta formula sale de la siguiente regla de tres:
 
-        totalTime        100%             100% * elapsedTime
-      -------------  =  ------ ;  x%  =  --------------------
-       elapsedTime        x%                  totalTime
-    */
+            totalTime        100%             100% * elapsedTime
+          -------------  =  ------ ;  x%  =  --------------------
+           elapsedTime        x%                  totalTime
+        */
     const elapsedPercentage = (100 * elapsedTime) / totalTime;
 
     if (elapsedPercentage <= 25) {

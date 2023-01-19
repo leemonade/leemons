@@ -1,10 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
 import { Box, createStyles, Text } from '@bubbles-ui/components';
-import { CommentIcon } from '@bubbles-ui/icons/solid';
+import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import SocketIoService from '@socket-io/service';
-import ChatListDrawer from '@comunica/ChatListDrawer/ChatListDrawer';
+import { ChatListDrawer } from '@comunica/components';
 import { RoomService } from '../RoomService';
 
 export const ContextButtonStyles = createStyles((theme, {}) => ({
@@ -39,7 +39,7 @@ export const ContextButtonStyles = createStyles((theme, {}) => ({
     top: '50%',
     transform: 'translate(-50%, -50%)',
     textAlign: 'center',
-
+    display: 'inline-flex',
     color: theme.other.global.background.color.primary.emphasis,
     '&:after': {
       position: 'absolute',
@@ -69,6 +69,7 @@ function ContextButton() {
   }
 
   async function load() {
+    store.config = await RoomService.getConfig();
     store.rooms = await RoomService.getRoomsList();
     calculeRoomsData();
     render();
@@ -84,10 +85,26 @@ function ContextButton() {
   }, []);
 
   SocketIoService.useOnAny((event, data) => {
+    console.log('SocketIoService', event, data);
     if (event === 'COMUNICA:CONFIG') {
       store.config = data;
       render();
+      return;
     }
+    _.forEach(store.rooms, (room, index) => {
+      if (`COMUNICA:ROOM:${room.key}` === event) {
+        store.rooms[index].unreadMessages += 1;
+        calculeRoomsData();
+        render();
+        return false;
+      }
+      if (`COMUNICA:ROOM:READED:${room.key}` === event) {
+        store.rooms[index].unreadMessages = 0;
+        calculeRoomsData();
+        render();
+        return false;
+      }
+    });
   });
 
   return (
@@ -95,11 +112,16 @@ function ContextButton() {
       <Box className={classes.root}>
         <Box className={classes.chatBullet} onClick={toggleDrawer}>
           <CommentIcon className={classes.chatIcon} />
-          {store.unreadMessages ? (
+          {store.unreadMessages && !store.config?.muted ? (
             <Box className={classes.unreadMessages}>
               <Text role="productive" size="xs" strong>
                 {store.unreadMessages > 99 ? '+99' : store.unreadMessages}
               </Text>
+            </Box>
+          ) : null}
+          {store.config?.muted ? (
+            <Box className={classes.unreadMessages}>
+              <VolumeControlOffIcon />
             </Box>
           ) : null}
         </Box>

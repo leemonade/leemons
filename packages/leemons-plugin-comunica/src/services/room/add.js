@@ -7,77 +7,42 @@ async function add(
   key,
   {
     name,
+    type,
+    initDate,
     subName,
     bgColor,
+    nameReplaces,
     icon,
-    iconPermissions,
     image,
-    imagePermissions,
     userAgents = [],
     parentRoom,
     useEncrypt = true,
     viewPermissions,
-    userSession,
     transacting: _transacting,
   } = {}
 ) {
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
     async (transacting) => {
       await validateExistRoomKey(key, { transacting });
 
-      let room = await table.room.create(
+      const room = await table.room.create(
         {
           key,
           name,
+          type,
+          nameReplaces,
+          initDate,
           bgColor,
           subName,
+          icon,
+          image,
           parentRoom,
           useEncrypt,
         },
         { transacting }
       );
-
-      // ES: Añadimos el asset de la imagen
-      if (image) {
-        const imageData = {
-          indexable: false,
-          public: true,
-          name: room.id,
-          cover: image,
-        };
-
-        const assetImage = await assetService.add(imageData, {
-          permissions: imagePermissions,
-          published: true,
-          userSession,
-          transacting,
-        });
-
-        room = await table.room.update({ id: room.id }, { image: assetImage.id }, { transacting });
-      }
-
-      // ES: Añadimos el asset de la imagen
-      if (icon) {
-        const iconData = {
-          indexable: false,
-          public: true,
-          name: room.id,
-          cover: icon,
-        };
-
-        const iconImage = await assetService.add(iconData, {
-          permissions: iconPermissions,
-          published: true,
-          userSession,
-          transacting,
-        });
-
-        room = await table.room.update({ id: room.id }, { icon: iconImage.id }, { transacting });
-      }
 
       if (viewPermissions) {
         await leemons

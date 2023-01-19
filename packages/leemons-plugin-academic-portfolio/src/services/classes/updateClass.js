@@ -21,7 +21,6 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
-const { classRoomImagePermissions } = require('./classRoomImagePermissions');
 
 async function updateClass(data, { userSession, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -183,11 +182,10 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
       const roomExists = await roomService.exists(roomKey, { transacting });
       const roomConfig = {
         name: classe.subject.name,
+        type: leemons.plugin.prefixPN('class'),
         bgColor: classe.subject.color,
         subName,
-        image,
-        imagePermissions: classRoomImagePermissions,
-        userSession,
+        image: assetImage.id,
         transacting,
       };
       if (roomExists) {

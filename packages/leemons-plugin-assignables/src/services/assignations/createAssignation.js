@@ -69,6 +69,18 @@ module.exports = async function createAssignation(
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
 
+        // Creamos la sala que estara a primera altura
+        comunicaServices.room.add(leemons.plugin.prefixPN(`instance:${assignableInstanceId}`), {
+          userSession,
+          name: instance.assignable.asset.name,
+          subName: _classes.length > 1 ? 'multisubjects' : _classes[0].subject.name,
+          parentRoom: null,
+          image: _classes[0].subject.image?.id,
+          icon: _classes[0].subject.icon?.id,
+          type: leemons.plugin.prefixPN('assignation'),
+          userAgents: _.compact(_.uniq(teachers).concat(user)),
+        });
+
         // EN: Create the assignation
         // ES: Crea la asignación
         return await Promise.all(
@@ -98,7 +110,7 @@ module.exports = async function createAssignation(
 
             const roomsPromises = [];
 
-            _.forEach(_classes, ({ subject: { id: subjectId } }) => {
+            _.forEach(_classes, ({ subject: { id: subjectId, name: subjectName } }) => {
               const teachers = [];
               _.forEach(classesData, (data) => {
                 if (data.subject.id === subjectId) {
@@ -118,7 +130,12 @@ module.exports = async function createAssignation(
                   ),
                   {
                     userSession,
-                    name: instance.assignable.asset.name,
+                    name: 'teachersOfSubject', // instance.assignable.asset.name,
+                    nameReplaces: {
+                      subjectName,
+                    },
+                    parentRoom: null,
+                    type: leemons.plugin.prefixPN('assignation'),
                     userAgents: _.compact(_.uniq(teachers).concat(user)),
                   }
                 )

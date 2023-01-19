@@ -26,13 +26,13 @@ async function getUserAgentRoomsList(userAgent, { userSession, transacting } = {
       withParent[room.parentRoom].push({
         ...room,
         muted: uairByRoom[room.id]?.muted || false,
-        unreadMessages: unreadMessagesByRoom[room.id]?.count || 0,
+        unreadMessages: unreadMessagesByRoom[room.key]?.count || 0,
       });
     } else {
       result.push({
         ...room,
         muted: uairByRoom[room.id]?.muted || false,
-        unreadMessages: unreadMessagesByRoom[room.id]?.count || 0,
+        unreadMessages: unreadMessagesByRoom[room.key]?.count || 0,
       });
     }
   });

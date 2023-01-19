@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { Text, Badge } from '@bubbles-ui/components';
+import { Badge } from '@bubbles-ui/components';
 
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import { unflatten } from '@common';
 import { get } from 'lodash';
-import UnreadMessages from '@comunica/UnreadMessages';
+import UnreadMessages from '@comunica/components/UnreadMessages';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 

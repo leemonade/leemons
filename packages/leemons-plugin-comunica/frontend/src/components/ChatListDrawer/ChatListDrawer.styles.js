@@ -35,18 +35,4 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
     paddingRight: theme.spacing[4],
     paddingBottom: theme.spacing[4],
   },
-  item: {
-    paddingLeft: theme.spacing[6],
-    paddingRight: theme.spacing[6],
-    paddingBottom: theme.spacing[3],
-    paddingTop: theme.spacing[3],
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing[4],
-  },
-  itemTitleContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: theme.spacing[1],
-  },
 }));
