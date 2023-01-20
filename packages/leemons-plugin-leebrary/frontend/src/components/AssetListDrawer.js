@@ -85,7 +85,15 @@ const AssetListDrawer = ({
   );
 
   return (
-    <Drawer position={position} opened={opened} size={size} close={false} shadow={shadow} empty>
+    <Drawer
+      position={position}
+      opened={opened}
+      size={size}
+      close={false}
+      shadow={shadow}
+      onClose={onClose}
+      empty
+    >
       <Paper
         color="solid"
         shadow="none"

@@ -57,8 +57,7 @@ const LibraryPlayer = ({
           asset={asset}
           width={width}
           framed={!['image'].includes(asset.fileType)}
-          controlBar
-          canPlay={readOnly}
+          canPlay={!!readOnly}
         />
       );
     }

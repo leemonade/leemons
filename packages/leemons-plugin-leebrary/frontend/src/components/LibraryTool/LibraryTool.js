@@ -124,6 +124,7 @@ const LibraryTool = ({
       );
     } else {
       closeBubbleMenu();
+      closeToolModal();
     }
   }, [editor.isActive('library')]);
 
