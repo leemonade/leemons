@@ -57,7 +57,7 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
     const childrens = getRoomChildrens(store.originalRooms, room);
     if (childrens.length) {
       store.canOpenIntermediateDrawer = false;
-      store.intermediateRooms = [{ ...room, childrens }];
+      store.intermediateRooms.push({ ...room, childrens });
       render();
       // Esperamos para que se renderize y despues se ponga el opened a true y asi se anime
       setTimeout(() => {
@@ -71,17 +71,37 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
   }
 
   function goBackIntermediateRoom() {
+    store.canOpenIntermediateSecondDrawer = false;
+    if (store.intermediateRooms.length > 1) {
+      store.canOpenIntermediateSecondDrawer = true;
+    }
     store.canOpenIntermediateDrawer = false;
     render();
     // Esperamos a borrarlo para que se anime el que se cierra
     setTimeout(() => {
+      store.canOpenIntermediateSecondDrawer = false;
       store.intermediateRooms.pop();
+    }, 500);
+  }
+
+  function closeAll() {
+    store.selectedRoom = null;
+    store.canOpenIntermediateDrawer = false;
+    onClose();
+    render();
+    // Esperamos a borrarlo para que se anime el que se cierra
+    setTimeout(() => {
+      store.intermediateRooms = [];
+      render();
     }, 300);
   }
 
   function onCloseRoom() {
-    store.selectedRoom = null;
-    render();
+    closeAll();
+  }
+
+  function onCloseIntermediate() {
+    closeAll();
   }
 
   React.useEffect(() => {
@@ -114,9 +134,11 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
           opened &&
           !store.selectedRoom &&
           (!store.intermediateRooms.length ||
-            (!store.canOpenIntermediateDrawer && store.intermediateRooms.length))
+            (!store.canOpenIntermediateSecondDrawer &&
+              !store.canOpenIntermediateDrawer &&
+              store.intermediateRooms.length))
         }
-        size={360}
+        size={430}
         close={false}
         empty
       >
@@ -142,7 +164,7 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
               }
             />
           </Box>
-          <Box>
+          <Box className={classes.listItems}>
             {store.rooms.map((room) => (
               <ChatListDrawerItem
                 key={room.id}
@@ -154,24 +176,32 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
           </Box>
         </Box>
       </Drawer>
-      <ChatDrawer
-        onClose={onCloseRoom}
-        room={store.selectedRoom?.key}
-        opened={!!store.selectedRoom}
-      />
+
       {store.intermediateRooms.map((room, index) => {
-        const isLast = store.intermediateRooms.length - 1 === index;
+        let open = store.intermediateRooms.length - 1 === index;
+        if (!store.canOpenIntermediateDrawer) {
+          open = false;
+        }
+        if (store.canOpenIntermediateSecondDrawer) {
+          open = store.intermediateRooms.length - 2 === index;
+        }
         return (
           <ChatListDrawerIntermediate
             key={room.id}
             room={room}
             t={t}
-            opened={isLast && store.canOpenIntermediateDrawer}
+            opened={open && !store.selectedRoom}
+            onClickRoom={onClickRoom}
             onReturn={goBackIntermediateRoom}
-            onClose={goBackIntermediateRoom}
+            onClose={onCloseIntermediate}
           />
         );
       })}
+      <ChatDrawer
+        onClose={onCloseRoom}
+        room={store.selectedRoom?.key}
+        opened={!!store.selectedRoom}
+      />
     </>
   );
 }

@@ -27,7 +27,7 @@ function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
           {room.subName ? (
             <Box style={{ lineHeight: '1.2rem' }}>
               <Text role="productive" transform="capitalize" color="soft">
-                {room.subName}
+                {t(room.subName, {}, false, room.subName)}
               </Text>
             </Box>
           ) : null}

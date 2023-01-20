@@ -139,7 +139,7 @@ function ChatDrawer({
   });
 
   return (
-    <Drawer opened={opened} size={360} close={false} empty>
+    <Drawer opened={opened} size={430} close={false} empty>
       <MembersList
         t={t}
         userAgents={store.userAgents}

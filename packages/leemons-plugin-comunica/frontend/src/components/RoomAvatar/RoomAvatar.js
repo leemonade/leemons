@@ -5,7 +5,12 @@ import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { RoomAvatarStyles } from './RoomAvatar.styles';
 
 function RoomAvatar({ room }) {
-  const { classes } = RoomAvatarStyles({}, { name: 'RoomAvatar' });
+  const { classes } = RoomAvatarStyles(
+    {
+      imageSquare: room.type === 'plugins.assignables.assignation',
+    },
+    { name: 'RoomAvatar' }
+  );
   const avatar = React.useMemo(() => {
     const result = {};
     if (room.image) {
@@ -13,6 +18,7 @@ function RoomAvatar({ room }) {
         <ImageLoader
           className={classes.image}
           src={room.imageIsUrl ? room.image : getAssetUrl(room.image)}
+          forceImage
           width={56}
           height={56}
         />
@@ -21,7 +27,8 @@ function RoomAvatar({ room }) {
     if (!room.image && room.icon) {
       result.icon = (
         <ImageLoader
-          src={getAssetUrl(room.icon)}
+          src={room.metadata.iconIsUrl ? room.icon : getAssetUrl(room.icon)}
+          forceImage
           width={result.image ? 12 : 26}
           height={result.image ? 12 : 26}
         />

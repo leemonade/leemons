@@ -9,7 +9,7 @@ export const ChatDrawerStyles = createStyles((theme) => ({
     height: '100%',
     justifyContent: 'end',
     borderLeft: `1px solid ${theme.colors.ui01}`,
-    width: 360,
+    width: 430,
     flexDirection: 'column',
   },
   header: {
@@ -19,10 +19,6 @@ export const ChatDrawerStyles = createStyles((theme) => ({
     backgroundColor: theme.colors.mainWhite,
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
     zIndex: 2,
-  },
-  chatWrapper: {
-    height: '100%',
-    display: 'flex',
   },
   messages: {
     backgroundColor: theme.colors.ui03,

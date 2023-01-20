@@ -1,15 +1,15 @@
 import { createStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
-export const RoomAvatarStyles = createStyles((theme) => ({
+export const RoomAvatarStyles = createStyles((theme, { imageSquare }) => ({
   itemImage: {
     position: 'relative',
     display: 'inline-block',
   },
   image: {
-    borderRadius: '50%',
+    borderRadius: imageSquare ? '2px' : '50%',
     img: {
-      borderRadius: '50%',
+      borderRadius: imageSquare ? '2px' : '50%',
     },
   },
   imageIcon: {

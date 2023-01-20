@@ -1,10 +1,8 @@
 import _ from 'lodash';
-import { getCentersWithToken } from '@users/session';
+import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
 
 export function getRoomParsed(room) {
-  const { userAgentId } = getCentersWithToken()[0];
-  const _userAgent = _.find(_.map(room.userAgents, 'userAgent'), { id: userAgentId });
-  const isTeacher = _userAgent.profile.sysName === 'teacher';
+  const isTeacher = isTeacherByRoom(room);
 
   const config = {
     ...room,

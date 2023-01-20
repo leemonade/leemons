@@ -30,8 +30,6 @@ async function createInstanceRoom(
 
   const userAgents = _.compact(_.uniq(teachers).concat(users));
 
-  console.log('roomAlreadyExists', roomAlreadyExists);
-
   // Creamos la sala que estara a primera altura
   if (!roomAlreadyExists) {
     return comunicaServices.room.add(roomKey, {
@@ -39,8 +37,9 @@ async function createInstanceRoom(
       subName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
       parentRoom: null,
       image: instance.assignable.asset.id,
-      icon: classes.length > 1 ? null : classes[0].subject.icon?.id,
-      bgColor: classes.length > 1 ? null : classes[0].subject.icon?.id,
+      icon:
+        classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
+      bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       type: leemons.plugin.prefixPN('assignation'),
       userAgents,
       transacting,
@@ -67,25 +66,25 @@ function getAllTeachers(classes, classesData) {
 }
 
 async function createSubjectsRooms(
-  { assignableInstanceId, parentKey, subjects, teachers },
+  { assignableInstanceId, parentKey, classes, teachers },
   { transacting } = {}
 ) {
   const comunicaServices = leemons.getPlugin('comunica').services;
 
-  async function createSubjectRoom(subject) {
+  async function createSubjectRoom(classe) {
     const roomKey = leemons.plugin.prefixPN(
-      `instance:${assignableInstanceId}:subject:${subject.id}`
+      `instance:${assignableInstanceId}:subject:${classe.subject.id}`
     );
     const roomAlreadyExists = await comunicaServices.room.exists(roomKey, { transacting });
 
     // Creamos la sala que estara a primera altura
     if (!roomAlreadyExists) {
       return comunicaServices.room.add(roomKey, {
-        name: subject.name,
+        name: classe.subject.name,
         parentRoom: parentKey,
-        image: subject.image?.id,
-        icon: subject.icon?.id,
-        bgColor: subject.color,
+        image: classe.subject.image?.id,
+        icon: classe.subject.icon?.id,
+        bgColor: classe.color,
         type: leemons.plugin.prefixPN('assignation.subject'),
         userAgents: teachers,
         transacting,
@@ -98,16 +97,16 @@ async function createSubjectsRooms(
 
   const result = {};
 
-  const r = await Promise.all(_.map(subjects, createSubjectRoom));
-  _.forEach(subjects, ({ id }, index) => {
-    result[id] = r[index];
+  const r = await Promise.all(_.map(classes, createSubjectRoom));
+  _.forEach(classes, (classe, index) => {
+    result[classe.subject.id] = r[index];
   });
 
   return result;
 }
 
 async function createGroupRoom(
-  { assignableInstanceId, parentKey, subjects, teachers, users },
+  { assignableInstanceId, parentKey, classes, teachers, users },
   { transacting } = {}
 ) {
   const comunicaServices = leemons.getPlugin('comunica').services;
@@ -120,11 +119,15 @@ async function createGroupRoom(
   if (!roomAlreadyExists) {
     return comunicaServices.room.add(roomKey, {
       name: 'activityGroup',
-      subName: _.map(subjects, 'name').join(','),
+      subName: _.map(classes, 'subject.name').join(','),
       parentRoom: parentKey,
-      icon: subjects.length > 1 ? null : subjects[0].icon?.id,
-      bgColor: subjects.length > 1 ? null : subjects[0].icon?.id,
+      icon:
+        classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
+      bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       type: leemons.plugin.prefixPN('assignation.group'),
+      metadata: {
+        iconIsUrl: classes.length > 1,
+      },
       userAgents,
       transacting,
     });
@@ -135,19 +138,21 @@ async function createGroupRoom(
 }
 
 async function addUserSubjectRoom(
-  { parentKey, subject, assignation, user, teachers },
+  { parentKey, classe, assignation, user, teachers },
   { transacting }
 ) {
   const comunicaServices = leemons.getPlugin('comunica').services;
   return comunicaServices.room.add(
     leemons.plugin.prefixPN(
-      `subject|${subject.id}.assignation|${assignation.id}.userAgent|${user}`
+      `subject|${classe.subject.id}.assignation|${assignation.id}.userAgent|${user}`
     ),
     {
       name: 'teachersOfSubject', // instance.assignable.asset.name,
       nameReplaces: {
-        subjectName: subject.name,
+        subjectName: classe.subject.name,
       },
+      icon: classe.subject.icon?.id,
+      bgColor: classe.color,
       parentRoom: parentKey,
       type: leemons.plugin.prefixPN('assignation.user'),
       userAgents: _.compact(_.uniq(teachers).concat(user)),
@@ -205,6 +210,10 @@ module.exports = async function createAssignation(
       try {
         const { indexable, classes, group, grades, timestamps, status, metadata } = options;
 
+        // Saber si la fecha que se quiere es la de visualizacion o la de inicio de la tarea.
+        // instance.dates.visualization
+        // instance.dates.start
+
         // TODO @MIGUEL
         console.log(1);
         const teachers = getAllTeachers(_classes, classesData);
@@ -219,13 +228,11 @@ module.exports = async function createAssignation(
           { transacting }
         );
 
-        console.log('instanceRoom', instanceRoom);
-
         console.log(2);
         // TODO @MIGUEL
         await createGroupRoom({
           assignableInstanceId,
-          subjects: _.map(_classes, 'subject'),
+          classes: _classes,
           parentKey: instanceRoom.key,
           teachers,
           users,
@@ -236,7 +243,7 @@ module.exports = async function createAssignation(
         const subjectRooms = await createSubjectsRooms({
           assignableInstanceId,
           parentKey: instanceRoom.key,
-          subjects: _.map(_classes, 'subject'),
+          classes: _classes,
           teachers,
         });
 
@@ -269,10 +276,10 @@ module.exports = async function createAssignation(
 
             const roomsPromises = [];
 
-            _.forEach(_classes, ({ subject }) => {
+            _.forEach(_classes, (classe) => {
               const _teachers = [];
               _.forEach(classesData, (data) => {
-                if (data.subject.id === subject.id) {
+                if (data.subject.id === classe.subject.id) {
                   _.forEach(data.teachers, (teacher) => {
                     if (teacher.type === 'main-teacher')
                       _teachers.push(
@@ -287,8 +294,8 @@ module.exports = async function createAssignation(
               roomsPromises.push(
                 addUserSubjectRoom(
                   {
-                    parentKey: `${subjectRooms[subject.id].key}|${instanceRoom.key}`,
-                    subject,
+                    parentKey: `${subjectRooms[classe.subject.id].key}|${instanceRoom.key}`,
+                    classe,
                     assignation,
                     user,
                     teachers: _teachers,

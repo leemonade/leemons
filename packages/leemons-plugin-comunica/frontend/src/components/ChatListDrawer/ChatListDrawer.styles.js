@@ -9,7 +9,7 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
     height: '100%',
     justifyContent: 'start',
     borderLeft: `1px solid ${theme.colors.ui01}`,
-    width: 360,
+    width: 430,
     flexDirection: 'column',
   },
   header: {
@@ -34,5 +34,8 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
     paddingLeft: theme.spacing[4],
     paddingRight: theme.spacing[4],
     paddingBottom: theme.spacing[4],
+  },
+  listItems: {
+    overflowY: 'auto',
   },
 }));
