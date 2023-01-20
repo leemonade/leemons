@@ -211,7 +211,7 @@ module.exports = {
     },
   },
   assignment_page: {
-    page_title: 'Asignar tarea',
+    action: 'Asignar tarea',
   },
   assignment_form: {
     labels: {

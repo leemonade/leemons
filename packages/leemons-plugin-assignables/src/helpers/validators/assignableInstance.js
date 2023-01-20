@@ -36,6 +36,7 @@ const assignableInstanceValidationObject = {
     },
     duration: {
       type: 'string',
+      nullable: true,
     },
     gradable: {
       type: 'boolean',

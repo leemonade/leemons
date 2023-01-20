@@ -108,8 +108,7 @@ module.exports = {
     duplicated: 'Duplicated',
   },
   feedbackAssign: {
-    pageTitle: 'Assign feedback:',
-    assign: 'Assign',
+    assign: 'Assign feedback',
     assignDone: 'Feedback assigned',
   },
   studentInstance: {
