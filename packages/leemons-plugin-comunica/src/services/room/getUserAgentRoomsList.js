@@ -31,7 +31,7 @@ async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
       ...room,
       nameReplaces: JSON.parse(room.nameReplaces),
       metadata: JSON.parse(room.metadata),
-      muted: uairByRoom[room.id]?.muted || false,
+      muted: uairByRoom[room.key]?.muted || false,
       unreadMessages: unreadMessagesByRoom[room.key]?.count || 0,
       userAgents: _.map(userAgentsByRoom[room.key], (a) => ({
         userAgent: userAgentsById[a.userAgent],

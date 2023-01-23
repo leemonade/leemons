@@ -91,6 +91,12 @@ function ContextButton() {
       render();
       return;
     }
+    if (event === 'COMUNICA:CONFIG:ROOM') {
+      const index = _.findIndex(store.rooms, { key: data.room });
+      store.rooms[index].muted = !!data.muted;
+      render();
+      return;
+    }
     if (event === 'COMUNICA:ROOM:ADDED') {
       debouncedFunction(load);
       return;

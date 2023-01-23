@@ -15,6 +15,7 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
   header: {
     padding: 16,
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: theme.colors.mainWhite,
     zIndex: 2,

@@ -7,6 +7,7 @@ const { getMessages } = require('./getMessages');
 const { sendMessage } = require('./sendMessage');
 const { addUserAgents } = require('./addUserAgents');
 const { existUserAgent } = require('./existUserAgent');
+const { toggleMutedRoom } = require('./toggleMutedRoom');
 const { removeUserAgents } = require('./removeUserAgents');
 const { getUnreadMessages } = require('./getUnreadMessages');
 const { getUserAgentRooms } = require('./getUserAgentRooms');
@@ -23,6 +24,7 @@ module.exports = {
   sendMessage,
   addUserAgents,
   existUserAgent,
+  toggleMutedRoom,
   removeUserAgents,
   getUnreadMessages,
   getUserAgentRooms,

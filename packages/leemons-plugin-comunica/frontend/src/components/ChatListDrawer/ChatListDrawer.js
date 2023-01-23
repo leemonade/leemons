@@ -21,6 +21,7 @@ import _ from 'lodash';
 import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
 import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
 import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';
+import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
@@ -53,11 +54,30 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
     render();
   }
 
+  function recalcule() {
+    store.rooms = getRoomsByParent(store.originalRooms);
+    if (store.intermediateRooms?.length) {
+      const interm = [];
+      _.forEach(store.intermediateRooms, (room) => {
+        interm.push({
+          ...room,
+          childrens: getRoomChildrens(store.originalRooms, room),
+          unreadMessages: getTotalUnreadMessages(room.childrens, store.originalRooms),
+        });
+      });
+      store.intermediateRooms = interm;
+    }
+  }
+
   function onClickRoom(room) {
     const childrens = getRoomChildrens(store.originalRooms, room);
     if (childrens.length) {
       store.canOpenIntermediateDrawer = false;
-      store.intermediateRooms.push({ ...room, childrens });
+      store.intermediateRooms.push({
+        ...room,
+        childrens,
+        unreadMessages: getTotalUnreadMessages(childrens, store.originalRooms),
+      });
       render();
       // Esperamos para que se renderize y despues se ponga el opened a true y asi se anime
       setTimeout(() => {
@@ -96,6 +116,11 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
     }, 300);
   }
 
+  function closeSelectedRoom() {
+    store.selectedRoom = null;
+    render();
+  }
+
   function onCloseRoom() {
     closeAll();
   }
@@ -108,19 +133,28 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
     load();
   }, []);
 
-  SocketIoService.useOnAny((event) => {
+  SocketIoService.useOnAny((event, data) => {
     if (event === 'COMUNICA:ROOM:ADDED') {
       debouncedFunction(load);
+      return;
+    }
+    if (event === 'COMUNICA:CONFIG:ROOM') {
+      const index = _.findIndex(store.originalRooms, { key: data.room });
+      store.originalRooms[index].muted = !!data.muted;
+      recalcule();
+      render();
       return;
     }
     _.forEach(store.originalRooms, (room, index) => {
       if (`COMUNICA:ROOM:${room.key}` === event) {
         store.originalRooms[index].unreadMessages += 1;
+        recalcule();
         render();
         return false;
       }
       if (`COMUNICA:ROOM:READED:${room.key}` === event) {
         store.originalRooms[index].unreadMessages = 0;
+        recalcule();
         render();
         return false;
       }
@@ -199,6 +233,7 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
       })}
       <ChatDrawer
         onClose={onCloseRoom}
+        onReturn={closeSelectedRoom}
         room={store.selectedRoom?.key}
         opened={!!store.selectedRoom}
       />

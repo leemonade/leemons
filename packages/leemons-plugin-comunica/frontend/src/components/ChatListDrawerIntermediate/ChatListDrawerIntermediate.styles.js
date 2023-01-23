@@ -13,13 +13,14 @@ export const ChatListDrawerIntermediateStyles = createStyles((theme) => ({
     flexDirection: 'column',
   },
   header: {
-    padding: 16,
+    padding: `${theme.spacing[2]}px ${theme.spacing[4]}px`,
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: theme.colors.mainWhite,
     zIndex: 2,
     button: {
-      color: theme.other.buttonAction.content.color.default,
+      color: theme.other.buttonAction.content.color.primary.default,
     },
   },
   headerRight: {

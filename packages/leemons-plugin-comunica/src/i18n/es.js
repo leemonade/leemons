@@ -4,6 +4,10 @@ module.exports = {
     showLess: 'Mostrar menos',
     showMore: 'Mostrar más',
     members: 'Miembros',
+    muteRoom: 'Silenciar',
+    unmuteRoom: 'Desactivar silencio',
+    setRoom: 'Fijar sala',
+    information: 'Información',
   },
   chatListDrawer: {
     focus: 'Focus',

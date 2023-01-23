@@ -42,6 +42,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/room/:key/mute',
+    method: 'POST',
+    handler: 'room.toggleMutedRoom',
+    authenticated: true,
+  },
+  {
     path: '/room/messages/unread',
     method: 'POST',
     handler: 'room.getUnreadMessages',

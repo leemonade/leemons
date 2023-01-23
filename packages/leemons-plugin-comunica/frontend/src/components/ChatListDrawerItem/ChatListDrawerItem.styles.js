@@ -19,6 +19,7 @@ export const ChatListDrawerItemStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: theme.spacing[1],
+    paddingRight: theme.spacing[4],
   },
   itemIcons: {
     display: 'flex',

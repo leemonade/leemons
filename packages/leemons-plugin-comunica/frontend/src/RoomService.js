@@ -22,8 +22,19 @@ class RoomService {
     return RoomService.sendMessageToRoom(this.room, message);
   }
 
+  toggleRoomMute() {
+    return RoomService.toggleRoomMute(this.room);
+  }
+
   watchRoom(callback) {
     return RoomService.watchRoom(this.room, callback);
+  }
+
+  static toggleRoomMute(key) {
+    return leemons.api(`comunica/room/${key}/mute`, {
+      allAgents: true,
+      method: 'POST',
+    });
   }
 
   static watchRoom(key, callback) {

@@ -7,18 +7,21 @@ export const ChatDrawerStyles = createStyles((theme) => ({
     zIndex: 9999,
     display: 'flex',
     height: '100%',
-    justifyContent: 'end',
+    justifyContent: 'start',
     borderLeft: `1px solid ${theme.colors.ui01}`,
     width: 430,
     flexDirection: 'column',
   },
   header: {
-    padding: 16,
+    padding: `${theme.spacing[2]}px ${theme.spacing[4]}px`,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: theme.colors.mainWhite,
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
     zIndex: 2,
+    button: {
+      color: theme.other.buttonAction.content.color.primary.default,
+    },
   },
   messages: {
     backgroundColor: theme.colors.ui03,
@@ -36,13 +39,18 @@ export const ChatDrawerStyles = createStyles((theme) => ({
   sendMessage: {
     display: 'flex',
     alignItems: 'end',
-    paddingInline: 8,
-    paddingBlock: 16,
-    gap: 8,
-    backgroundColor: theme.colors.mainWhite,
-    boxShadow: '0px -4px 8px rgba(0, 0, 0, 0.15)',
+    padding: theme.spacing[4],
+    gap: theme.spacing[2],
+    backgroundColor: theme.colors.ui03,
   },
   textarea: {
     flex: 1,
+  },
+  config: {
+    padding: theme.spacing[2],
+    maxWidth: '250px',
+    '.mantine-Button-inner': {
+      justifyContent: 'start',
+    },
   },
 }));

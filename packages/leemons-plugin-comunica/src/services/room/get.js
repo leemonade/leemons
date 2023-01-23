@@ -6,7 +6,7 @@ const {
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 
-async function get(key, userAgent, { returnUserAgents, transacting: _transacting } = {}) {
+async function get(key, userAgent, { returnUserAgents = true, transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
@@ -49,7 +49,14 @@ async function get(key, userAgent, { returnUserAgents, transacting: _transacting
         }));
       }
 
-      return room;
+      const uair = _.find(userAgents, { userAgent });
+
+      return {
+        ...room,
+        nameReplaces: JSON.parse(room.nameReplaces),
+        metadata: JSON.parse(room.metadata),
+        muted: uair?.muted || false,
+      };
     },
     table.room,
     _transacting

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ImageLoader, Text, Title } from '@bubbles-ui/components';
+import { Box, ImageLoader } from '@bubbles-ui/components';
 import { RoomAvatar } from '@comunica/components';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
+import { VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { RoomHeaderStyles } from './RoomHeader.styles';
 
 function RoomHeader({ room, t }) {
@@ -37,20 +38,23 @@ function RoomHeader({ room, t }) {
         <RoomAvatar room={room} />
         <Box>
           {room.name ? (
-            <Box>
-              <Title order={3}>{t(room.name, {}, false, room.name)}</Title>
-            </Box>
+            <Box className={classes.title}>{t(room.name, room.nameReplaces, false, room.name)}</Box>
           ) : null}
 
           {room.subName ? (
             <Box className={classes.subNameContainer}>
               {subNameIcon}
-              <Box className={classes.subName}>
-                <Text role="productive">{t(room.subName, {}, false, room.subName)}</Text>
-              </Box>
+              <Box className={classes.subName}>{t(room.subName, {}, false, room.subName)}</Box>
             </Box>
           ) : null}
         </Box>
+      </Box>
+      <Box className={classes.rightSide}>
+        {room.muted ? (
+          <Box className={classes.muteIcon}>
+            <VolumeControlOffIcon />
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );

@@ -60,10 +60,20 @@ async function getRoomList(ctx) {
   ctx.body = { status: 200, rooms };
 }
 
+async function toggleMutedRoom(ctx) {
+  const muted = await roomService.toggleMutedRoom(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, muted };
+}
+
 module.exports = {
   getRoomsMessageCount,
   markMessagesAsRead,
   getUnreadMessages,
+  toggleMutedRoom,
   getRoomList,
   sendMessage,
   getMessages,

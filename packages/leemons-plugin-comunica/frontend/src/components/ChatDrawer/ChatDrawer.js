@@ -1,31 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { keyBy, map, orderBy, uniqBy } from 'lodash';
+import _, { map, orderBy } from 'lodash';
 import {
   ActionButton,
   Badge,
   Box,
+  Button,
   ChatMessage,
   Drawer,
   IconButton,
+  Popover,
   Textarea,
-  UserDisplayItemList,
 } from '@bubbles-ui/components';
-import { MoveRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import {
+  ChevronLeftIcon,
+  PluginSettingsIcon,
+  RemoveIcon,
+  SendMessageIcon,
+} from '@bubbles-ui/icons/outline';
 import { useLocale, useStore } from '@common';
 import RoomService from '@comunica/RoomService';
-import { getUserAgentsInfoRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
 import { getCentersWithToken } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
-import { MembersList } from '../MembersList/MembersList';
+import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
+import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
 function ChatDrawer({
   room,
   opened,
+  onReturn = () => {},
   onClose = () => {},
   onMessage = () => {},
   onRoomLoad = () => {},
@@ -33,6 +40,7 @@ function ChatDrawer({
 }) {
   const { classes } = ChatDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatDrawer'));
+  const [td] = useTranslateLoader(prefixPN('chatListDrawer'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
   const scrollRef = React.useRef();
@@ -46,13 +54,15 @@ function ChatDrawer({
 
   async function load() {
     store.userAgent = getCentersWithToken()[0].userAgentId;
-    store.room = await store.service.getRoom();
+    store.room = getRoomParsed(await store.service.getRoom());
     store.messages = await store.service.getRoomMessages();
     store.messages = orderBy(store.messages, 'created_at', 'asc');
     store.messages = map(store.messages, (message) => ({
       ...message,
       created_at: new Date(message.created_at),
     }));
+    store.userAgentsById = _.keyBy(_.map(store.room.userAgents, 'userAgent'), 'id');
+    /*
     const { userAgents } = await getUserAgentsInfoRequest(map(store.room.userAgents, 'userAgent'), {
       withProfile: true,
     });
@@ -66,11 +76,23 @@ function ChatDrawer({
     store.userAgentsById = keyBy(store.userAgents, 'id');
     const profiles = uniqBy(userAgents, 'profile.id');
     store.profiles = map(profiles, 'profile');
+    */
+
     render();
     onRoomLoad(store.room);
     setTimeout(() => {
       scrollToBottom();
     }, 10);
+  }
+
+  async function toggleMute() {
+    store.room.muted = !store.room.muted;
+    render();
+    const { muted } = await store.service.toggleRoomMute();
+    if (store.room.muted !== muted) {
+      store.room.muted = muted;
+      render();
+    }
   }
 
   async function sendMessage() {
@@ -138,6 +160,125 @@ function ChatDrawer({
     }
   });
 
+  return (
+    <Drawer opened={opened} size={430} close={false} empty>
+      <Box className={classes.wrapper}>
+        <Box className={classes.header}>
+          <Button
+            variant="link"
+            color="secondary"
+            onClick={onReturn}
+            leftIcon={<ChevronLeftIcon width={12} height={12} />}
+          >
+            {td('return')}
+          </Button>
+          <Box className={classes.headerRight}>
+            <Popover
+              target={
+                <ActionButton
+                  onClick={onClose}
+                  icon={<PluginSettingsIcon width={16} height={16} />}
+                />
+              }
+            >
+              <Box className={classes.config}>
+                <Button onClick={toggleMute} fullWidth variant="light" color="secondary">
+                  {store.room?.muted ? t('unmuteRoom') : t('muteRoom')}
+                </Button>
+                <Button fullWidth variant="light" color="secondary">
+                  {t('setRoom')}
+                </Button>
+                <Button fullWidth variant="light" color="secondary">
+                  {t('information')}
+                </Button>
+              </Box>
+            </Popover>
+
+            <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+          </Box>
+        </Box>
+        {store.room ? (
+          <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
+            <RoomHeader t={td} room={store.room} />
+          </Box>
+        ) : null}
+        <Box ref={scrollRef} className={classes.messages}>
+          {store.messages &&
+            store.messages.map((message, index) => {
+              const comp = [];
+              let forceUserImage = false;
+              const day = new Date(message.created_at).toLocaleDateString(locale, {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              });
+              if (index === 0 || store.lastDay !== day) {
+                store.lastDay = day;
+                forceUserImage = true;
+                comp.push(
+                  <Box className={classes.date} key={`date-${index}`}>
+                    <Badge label={day} closable={false} size="md" />
+                  </Box>
+                );
+              }
+              comp.push(
+                <Box
+                  key={message.id}
+                  sx={(theme) => ({
+                    marginTop:
+                      index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                        ? theme.spacing[4]
+                        : 0,
+                  })}
+                >
+                  <ChatMessage
+                    showUser={
+                      forceUserImage || index === 0
+                        ? true
+                        : store.messages[index - 1].userAgent !== message.userAgent
+                    }
+                    isTeacher={
+                      store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'teacher'
+                    }
+                    isAdmin={
+                      store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
+                    }
+                    isOwn={message.userAgent === store.userAgent}
+                    user={store.userAgentsById?.[message.userAgent]?.user}
+                    message={{ ...message.message, date: message.created_at }}
+                  />
+                </Box>
+              );
+              return comp;
+            })}
+        </Box>
+        <Box className={classes.sendMessage}>
+          <Textarea
+            value={store.newMessage}
+            minRows={1}
+            name="message"
+            placeholder={t('writeNewMessage')}
+            className={classes.textarea}
+            onKeyPress={(e) => {
+              if (e.code === 'Enter' || e.charCode === 13) {
+                sendMessage();
+                e.stopPropagation();
+                e.preventDefault();
+              }
+            }}
+            onChange={(e) => {
+              store.newMessage = e;
+              render();
+            }}
+          />
+          <IconButton onClick={sendMessage} icon={<SendMessageIcon />} color="primary" rounded />
+        </Box>
+      </Box>
+    </Drawer>
+  );
+
+  /*
   return (
     <Drawer opened={opened} size={430} close={false} empty>
       <MembersList
@@ -218,10 +359,6 @@ function ChatDrawer({
             })}
         </Box>
         <Box className={classes.sendMessage}>
-          {/*  <IconButton
-                icon={<AddCircleIcon height={16} width={16} className={classes.addIcon} />}
-                rounded
-              /> */}
 
           <Textarea
             value={store.newMessage}
@@ -246,12 +383,15 @@ function ChatDrawer({
       </Box>
     </Drawer>
   );
+
+   */
 }
 
 ChatDrawer.propTypes = {
   room: PropTypes.string,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
+  onReturn: PropTypes.func,
   onMessage: PropTypes.func,
   onRoomLoad: PropTypes.func,
   onMessagesMarkAsRead: PropTypes.func,
