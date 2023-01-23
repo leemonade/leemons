@@ -21,7 +21,7 @@ import {
 } from './ContentEditorInput.constants';
 import { Schema } from './components/Schema/Schema';
 
-const CONTENT_EDITOR_ACCEPTED_TAGS = ['library'];
+const CONTENT_EDITOR_ACCEPTED_TAGS = [{ type: 'library', updateWithoutContent: true }];
 
 const ContentEditorInput = ({
   error,
