@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ActionButton,
   Box,
+  CheckBoxGroup,
   Drawer,
   Popover,
   Switch,
@@ -26,7 +27,7 @@ import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
 
-function ChatListDrawer({ opened, onClose = () => {} }) {
+function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} }) {
   const debouncedFunction = useDebouncedCallback(100);
   const { classes } = ChatListDrawerStyles({}, { name: 'ChatListDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
@@ -47,15 +48,9 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
     render();
   }
 
-  async function load() {
-    store.originalRooms = await RoomService.getRoomsList();
-    store.config = await RoomService.getConfig();
-    store.rooms = getRoomsByParent(store.originalRooms);
-    render();
-  }
-
   function recalcule() {
     store.rooms = getRoomsByParent(store.originalRooms);
+    store.roomTypes = _.uniq(_.map(store.rooms, 'type'));
     if (store.intermediateRooms?.length) {
       const interm = [];
       _.forEach(store.intermediateRooms, (room) => {
@@ -67,6 +62,39 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
       });
       store.intermediateRooms = interm;
     }
+    if (store.typeFilters?.length) {
+      store.rooms = _.filter(store.rooms, (room) => store.typeFilters.includes(room.type));
+    }
+    if (store.nameFilter?.length) {
+      store.rooms = _.filter(store.rooms, (room) => {
+        if (room.name) {
+          if (
+            t(room.name, room.nameReplaces, false, room.name)
+              .toLowerCase()
+              .includes(store.nameFilter.toLowerCase())
+          ) {
+            return true;
+          }
+        }
+        if (room.subName) {
+          if (
+            t(room.subName, {}, false, room.subName)
+              .toLowerCase()
+              .includes(store.nameFilter.toLowerCase())
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
+    }
+  }
+
+  async function load() {
+    store.originalRooms = await RoomService.getRoomsList();
+    store.config = await RoomService.getConfig();
+    recalcule();
+    render();
   }
 
   function onClickRoom(room) {
@@ -86,6 +114,7 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
       }, 10);
     } else {
       store.selectedRoom = room;
+      onRoomOpened(room);
       render();
     }
   }
@@ -107,6 +136,7 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
   function closeAll() {
     store.selectedRoom = null;
     store.canOpenIntermediateDrawer = false;
+    onRoomOpened(null);
     onClose();
     render();
     // Esperamos a borrarlo para que se anime el que se cierra
@@ -118,6 +148,7 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
 
   function closeSelectedRoom() {
     store.selectedRoom = null;
+    onRoomOpened(null);
     render();
   }
 
@@ -127,6 +158,18 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
 
   function onCloseIntermediate() {
     closeAll();
+  }
+
+  function onChangeNameFilter(e) {
+    store.nameFilter = e;
+    recalcule();
+    render();
+  }
+
+  function onChangeTypeFilters(e) {
+    store.typeFilters = e;
+    recalcule();
+    render();
   }
 
   React.useEffect(() => {
@@ -189,12 +232,27 @@ function ChatListDrawer({ opened, onClose = () => {} }) {
           </Box>
           <Box className={classes.input}>
             <TextInput
+              value={store.nameFilter}
+              onChange={onChangeNameFilter}
               placeholder={t('search')}
               icon={<SearchIcon width={16} height={16} />}
               rightSection={
-                <Popover target={<ActionButton icon={<FilterIcon width={16} height={16} />} />}>
-                  <Box style={{ padding: 8 }}>I'm a popover</Box>
-                </Popover>
+                store.roomTypes ? (
+                  <Popover target={<ActionButton icon={<FilterIcon width={16} height={16} />} />}>
+                    <Box>
+                      <CheckBoxGroup
+                        orientation="vertical"
+                        direction="row"
+                        onChange={onChangeTypeFilters}
+                        value={store.typeFilters}
+                        data={store.roomTypes.map((type) => ({
+                          label: t(type.replace(/\./g, '_')),
+                          value: type,
+                        }))}
+                      />
+                    </Box>
+                  </Popover>
+                ) : null
               }
             />
           </Box>

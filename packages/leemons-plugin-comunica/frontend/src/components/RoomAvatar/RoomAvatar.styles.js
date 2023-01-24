@@ -1,7 +1,7 @@
 import { createStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
-export const RoomAvatarStyles = createStyles((theme, { imageSquare }) => ({
+export const RoomAvatarStyles = createStyles((theme, { size, imageSquare }) => ({
   itemImage: {
     position: 'relative',
     display: 'inline-block',
@@ -16,8 +16,8 @@ export const RoomAvatarStyles = createStyles((theme, { imageSquare }) => ({
     position: 'absolute',
     right: 0,
     bottom: 0,
-    width: 20,
-    height: 20,
+    width: size * 0.3571,
+    height: size * 0.3571,
     borderRadius: '50%',
     display: 'flex',
     justifyContent: 'center',
@@ -31,8 +31,8 @@ export const RoomAvatarStyles = createStyles((theme, { imageSquare }) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 56,
-    height: 56,
+    width: size,
+    height: size,
     img: {
       filter: 'brightness(0) invert(1)',
     },

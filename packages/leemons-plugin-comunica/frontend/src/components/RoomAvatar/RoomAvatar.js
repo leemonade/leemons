@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { RoomAvatarStyles } from './RoomAvatar.styles';
 
-function RoomAvatar({ room }) {
+function RoomAvatar({ room, size = 56 }) {
   const { classes } = RoomAvatarStyles(
     {
       imageSquare: room.type === 'plugins.assignables.assignation',
+      size,
     },
     { name: 'RoomAvatar' }
   );
@@ -19,8 +20,8 @@ function RoomAvatar({ room }) {
           className={classes.image}
           src={room.imageIsUrl ? room.image : getAssetUrl(room.image)}
           forceImage
-          width={56}
-          height={56}
+          width={size}
+          height={size}
         />
       );
     }
@@ -29,8 +30,8 @@ function RoomAvatar({ room }) {
         <ImageLoader
           src={room.metadata.iconIsUrl ? room.icon : getAssetUrl(room.icon)}
           forceImage
-          width={result.image ? 12 : 26}
-          height={result.image ? 12 : 26}
+          width={result.image ? size * 0.2142 : size * 0.4642}
+          height={result.image ? size * 0.2142 : size * 0.4642}
         />
       );
     }
@@ -63,6 +64,7 @@ function RoomAvatar({ room }) {
 
 RoomAvatar.propTypes = {
   room: PropTypes.any,
+  size: PropTypes.number,
 };
 
 export { RoomAvatar };

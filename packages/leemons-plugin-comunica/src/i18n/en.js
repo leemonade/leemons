@@ -21,5 +21,7 @@ module.exports = {
     multisubjects: 'Multi-Subjects',
     activityGroup: 'Activity group',
     return: 'Return',
+    plugins_assignables_assignation: 'Activities',
+    'plugins_academic-portfolio_class': 'Subjects',
   },
 };

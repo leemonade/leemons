@@ -21,5 +21,7 @@ module.exports = {
     multisubjects: 'Multi-Asignatura',
     activityGroup: 'Grupo actividad',
     return: 'Volver',
+    plugins_assignables_assignation: 'Actividades',
+    'plugins_academic-portfolio_class': 'Asignaturas',
   },
 };

@@ -4,7 +4,11 @@ import { Box, createStyles, Text, useDebouncedCallback } from '@bubbles-ui/compo
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import SocketIoService from '@socket-io/service';
-import { ChatListDrawer } from '@comunica/components';
+import { ChatListDrawer, RoomAvatar } from '@comunica/components';
+import { useNotifications } from '@bubbles-ui/notifications';
+import { getCentersWithToken } from '@users/session';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@comunica/helpers/prefixPN';
 import { RoomService } from '../RoomService';
 
 export const ContextButtonStyles = createStyles((theme, {}) => ({
@@ -56,9 +60,11 @@ export const ContextButtonStyles = createStyles((theme, {}) => ({
   },
 }));
 
-function ContextButton() {
+function ContextButton({ onShowDrawerChange }) {
   const debouncedFunction = useDebouncedCallback(100);
   const [store, render] = useStore();
+  const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
+  const notifications = useNotifications('chat');
   const { classes } = ContextButtonStyles({}, { name: 'ContextButton' });
 
   function calculeRoomsData() {
@@ -69,6 +75,7 @@ function ContextButton() {
   }
 
   async function load() {
+    store.userAgent = getCentersWithToken()[0].userAgentId;
     store.config = await RoomService.getConfig();
     store.rooms = await RoomService.getRoomsList();
     calculeRoomsData();
@@ -77,7 +84,12 @@ function ContextButton() {
 
   function toggleDrawer() {
     store.showDrawer = !store.showDrawer;
+    onShowDrawerChange(store.showDrawer);
     render();
+  }
+
+  function onRoomOpened(room) {
+    store.roomOpened = room;
   }
 
   React.useEffect(() => {
@@ -103,6 +115,20 @@ function ContextButton() {
     }
     _.forEach(store.rooms, (room, index) => {
       if (`COMUNICA:ROOM:${room.key}` === event) {
+        if (
+          store.userAgent !== data.userAgent &&
+          !room.muted &&
+          !store.config?.muted &&
+          store.roomOpened?.id !== room.id
+        ) {
+          if (data.message?.type === 'text') {
+            notifications.showNotification({
+              title: t(room.name, room.nameReplaces, false, room.name),
+              message: data.message.content,
+              leftSide: <RoomAvatar room={room} size={32} />,
+            });
+          }
+        }
         store.rooms[index].unreadMessages += 1;
         calculeRoomsData();
         render();
@@ -136,7 +162,11 @@ function ContextButton() {
           ) : null}
         </Box>
       </Box>
-      <ChatListDrawer opened={store.showDrawer} onClose={toggleDrawer} />
+      <ChatListDrawer
+        opened={store.showDrawer}
+        onRoomOpened={onRoomOpened}
+        onClose={toggleDrawer}
+      />
     </>
   );
 }
