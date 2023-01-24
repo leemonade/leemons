@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Box, createStyles, Text, useDebouncedCallback } from '@bubbles-ui/components';
+import { Box, createStyles, useDebouncedCallback } from '@bubbles-ui/components';
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import SocketIoService from '@socket-io/service';
@@ -11,54 +11,58 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import { RoomService } from '../RoomService';
 
-export const ContextButtonStyles = createStyles((theme, {}) => ({
-  root: {
-    position: 'fixed',
-    zIndex: 5,
-    bottom: theme.spacing[7],
-    right: theme.spacing[7],
-  },
-  chatBullet: {
-    width: 56,
-    height: 56,
-    backgroundColor: theme.other.global.background.color.primary.default,
-    borderRadius: '50%',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: theme.other.global.background.color.primary.emphasis,
+export const ContextButtonStyles = createStyles((theme) => {
+  console.log(theme);
+  return {
+    root: {
+      position: 'fixed',
+      zIndex: 5,
+      bottom: theme.spacing[7],
+      right: theme.spacing[7],
     },
-  },
-  chatIcon: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    width: 32,
-    height: 29,
-    color: 'white',
-    transform: 'translate(-50%, -50%)',
-  },
-  unreadMessages: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    textAlign: 'center',
-    display: 'inline-flex',
-    color: theme.other.global.background.color.primary.emphasis,
-    '&:after': {
+    chatBullet: {
+      width: 56,
+      height: 56,
+      backgroundColor: theme.other.global.background.color.primary.default,
+      borderRadius: '50%',
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: theme.other.global.background.color.primary.emphasis,
+      },
+    },
+    chatIcon: {
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      width: 32,
+      height: 29,
+      color: 'white',
+      transform: 'translate(-50%, -50%)',
+    },
+    unreadMessages: {
       position: 'absolute',
       left: '50%',
       top: '50%',
       transform: 'translate(-50%, -50%)',
-      backgroundColor: 'white',
-      display: 'block',
-      content: '""',
-      width: 22,
-      height: 16,
-      zIndex: -1,
+      textAlign: 'center',
+      display: 'inline-flex',
+      color: theme.other.global.background.color.primary.emphasis,
+      ...theme.other.global.content.typoMobile.body['lg--bold'],
+      '&:after': {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: 'white',
+        display: 'block',
+        content: '""',
+        width: 22,
+        height: 16,
+        zIndex: -1,
+      },
     },
-  },
-}));
+  };
+});
 
 function ContextButton({ onShowDrawerChange }) {
   const debouncedFunction = useDebouncedCallback(100);
@@ -150,9 +154,7 @@ function ContextButton({ onShowDrawerChange }) {
           <CommentIcon className={classes.chatIcon} />
           {store.unreadMessages && !store.config?.muted ? (
             <Box className={classes.unreadMessages}>
-              <Text role="productive" size="xs" strong>
-                {store.unreadMessages > 99 ? '+99' : store.unreadMessages}
-              </Text>
+              {store.unreadMessages > 99 ? '+99' : store.unreadMessages}
             </Box>
           ) : null}
           {store.config?.muted ? (

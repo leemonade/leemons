@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ActionButton,
   Box,
+  Button,
   CheckBoxGroup,
   Drawer,
   Popover,
@@ -172,6 +173,12 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     render();
   }
 
+  function cleanTypesFilter() {
+    store.typeFilters = [];
+    recalcule();
+    render();
+  }
+
   React.useEffect(() => {
     load();
   }, []);
@@ -239,17 +246,22 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
               rightSection={
                 store.roomTypes ? (
                   <Popover target={<ActionButton icon={<FilterIcon width={16} height={16} />} />}>
-                    <Box>
+                    <Box className={classes.filterContainer}>
                       <CheckBoxGroup
                         orientation="vertical"
-                        direction="row"
+                        direction="column"
                         onChange={onChangeTypeFilters}
-                        value={store.typeFilters}
                         data={store.roomTypes.map((type) => ({
                           label: t(type.replace(/\./g, '_')),
                           value: type,
+                          checked: store.typeFilters?.includes(type),
                         }))}
                       />
+                    </Box>
+                    <Box className={classes.filterClean}>
+                      <Button onClick={cleanTypesFilter} fullWidth size="sm">
+                        {t('clean')}
+                      </Button>
                     </Box>
                   </Popover>
                 ) : null

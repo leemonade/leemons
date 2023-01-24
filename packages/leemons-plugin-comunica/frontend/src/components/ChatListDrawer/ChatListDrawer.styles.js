@@ -39,4 +39,11 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
   listItems: {
     overflowY: 'auto',
   },
+  filterContainer: {
+    padding: theme.spacing[4],
+  },
+  filterClean: {
+    padding: theme.spacing[4],
+    borderTop: `1px solid ${theme.other.global.border.color.line.muted}`,
+  },
 }));
