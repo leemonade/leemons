@@ -64,9 +64,9 @@ export default function NYA({ classe, program }) {
 
 NYA.propTypes = {
   classe: PropTypes.shape({
-    id: 'string',
+    id: PropTypes.string,
   }),
   program: PropTypes.shape({
-    id: 'string',
+    id: PropTypes.string,
   }),
 };
