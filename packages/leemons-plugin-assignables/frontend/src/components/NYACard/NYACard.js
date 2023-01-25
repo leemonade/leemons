@@ -428,7 +428,7 @@ export default function NYACard({ instance, showSubject, labels: _labels, classD
           assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
           deadlineProps={preparedInstance?.deadlineProps}
           subject={preparedInstance?.subject}
-          badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
+          badge={preparedInstance?.isNew ? labels?.new?.toUpperCase() : ''}
           variantTitle={
             labels?.roles?.[preparedInstance?.assignable?.role]?.singular ||
             preparedInstance?.assignable?.role
