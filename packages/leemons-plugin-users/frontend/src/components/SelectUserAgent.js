@@ -14,14 +14,7 @@ import {
   map,
   uniq,
 } from 'lodash';
-import {
-  ActionButton,
-  Box,
-  MultiSelect,
-  Select,
-  Stack,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
+import { ActionButton, Box, Select, Stack, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -146,14 +139,6 @@ const SelectUserAgent = forwardRef(
       values = maxSelectedValues === 1 ? values[0] || null : values;
       const userAgent = maxSelectedValues === 1 ? find(store.data, { value: values }) : undefined;
       onChange(values, userAgent);
-    }
-
-    function onRemoveHandler(userId) {
-      const index = inputValue.indexOf(userId);
-      if (index > -1) {
-        inputValue.splice(index, 1);
-        handleChange(inputValue);
-      }
     }
 
     // EN: Handle controlled input value by adding the selected values to the data array
@@ -313,7 +298,7 @@ const SelectUserAgent = forwardRef(
         onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
         valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
-        multiple={!maxSelectedValues === 1}
+        multiple={maxSelectedValues !== 1}
         data={toData}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
@@ -340,6 +325,7 @@ SelectUserAgent.propTypes = {
   valueRenderProps: PropTypes.object,
   itemComponent: PropTypes.any,
   valueComponent: PropTypes.any,
+  selectedUsers: PropTypes.any,
 };
 
 SelectUserAgentValueComponent.propTypes = {
