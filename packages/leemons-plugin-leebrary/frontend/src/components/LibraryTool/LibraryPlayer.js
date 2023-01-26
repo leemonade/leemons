@@ -58,6 +58,7 @@ const LibraryPlayer = ({
           width={width}
           framed={!['image'].includes(asset.fileType)}
           canPlay={!!readOnly}
+          useAudioCard
         />
       );
     }
@@ -69,16 +70,6 @@ const LibraryPlayer = ({
     );
   };
 
-  /*
-style={{
-            display: 'flex',
-            justifyContent: align,
-            marginTop: 20,
-            margiBottom: 20,
-            marginLeft: ['left'].includes(align) ? 0 : 20,
-            marginRight: ['right'].includes(align) ? 0 : 20,
-          }}
-  */
   return (
     <NodeViewWrapper className="library-extension">
       {!asset || isEmpty(asset) ? (

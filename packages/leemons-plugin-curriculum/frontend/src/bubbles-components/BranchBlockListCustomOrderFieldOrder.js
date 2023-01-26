@@ -19,7 +19,7 @@ import { RemoveIcon } from '@bubbles-ui/icons/outline';
 const scaleY = {
   in: { opacity: 1, transform: 'scaleY(1)' },
   out: { opacity: 0, transform: 'scaleY(0)' },
-  common: { transformOrigin: 'top' },
+  common: { transformOrigin: 'bottom' },
   transitionProperty: 'transform, opacity',
 };
 
@@ -72,7 +72,7 @@ function BranchBlockListCustomOrderFieldOrder({
             ...styles,
             zIndex: 10,
             position: 'absolute',
-            top: '100%',
+            bottom: '100%',
             left: 0,
             width: 300,
           }}
