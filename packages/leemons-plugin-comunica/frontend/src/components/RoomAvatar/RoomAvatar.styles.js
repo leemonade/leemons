@@ -3,8 +3,10 @@ import { createStyles } from '@bubbles-ui/components';
 // eslint-disable-next-line import/prefer-default-export
 export const RoomAvatarStyles = createStyles((theme, { size, imageSquare }) => ({
   itemImage: {
-    position: 'relative',
     display: 'inline-block',
+  },
+  itemContent: {
+    position: 'relative',
   },
   image: {
     borderRadius: imageSquare ? '2px' : '50%',
@@ -12,7 +14,7 @@ export const RoomAvatarStyles = createStyles((theme, { size, imageSquare }) => (
       borderRadius: imageSquare ? '2px' : '50%',
     },
   },
-  imageIcon: {
+  attachedIcon: {
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -22,6 +24,7 @@ export const RoomAvatarStyles = createStyles((theme, { size, imageSquare }) => (
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: theme.other.badge.background.color.secondary.default,
     img: {
       filter: 'brightness(0) invert(1)',
     },

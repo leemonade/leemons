@@ -25,11 +25,20 @@ module.exports = {
     muted: {
       type: 'boolean',
     },
+    attached: {
+      type: 'datetime',
+    },
     encryptKey: {
       type: 'string',
       options: {
         notNull: true,
       },
+    },
+    isAdmin: {
+      type: 'boolean',
+    },
+    adminMuted: {
+      type: 'boolean',
     },
   },
   primaryKey: {

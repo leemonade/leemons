@@ -13,7 +13,7 @@ async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
       },
       { transacting }
     ),
-    table.userAgentInRoom.find({ room_$in: roomKeys }, { transacting }),
+    table.userAgentInRoom.find({ room_$in: roomKeys, deleted_$null: false }, { transacting }),
   ]);
 
   const userAgentsByRoom = _.groupBy(userAgents, 'room');
@@ -32,9 +32,14 @@ async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
       nameReplaces: JSON.parse(room.nameReplaces),
       metadata: JSON.parse(room.metadata),
       muted: uairByRoom[room.key]?.muted || false,
+      attached: uairByRoom[room.key]?.attached || null,
+      isAdmin: uairByRoom[room.key]?.isAdmin || null,
+      adminMuted: uairByRoom[room.key]?.adminMuted || null,
       unreadMessages: unreadMessagesByRoom[room.key]?.count || 0,
       userAgents: _.map(userAgentsByRoom[room.key], (a) => ({
         userAgent: userAgentsById[a.userAgent],
+        adminMuted: a.adminMuted,
+        isAdmin: a.isAdmin,
         deleted: a.deleted,
       })),
     });

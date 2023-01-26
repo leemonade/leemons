@@ -35,29 +35,40 @@ function RoomAvatar({ room, size = 56 }) {
         />
       );
     }
+    if (room.attached) {
+      result.attached = (
+        <ImageLoader
+          src="/public/assets/svgs/attached.svg"
+          forceImage
+          width={size * 0.2142}
+          height={size * 0.2142}
+        />
+      );
+    }
     if (room.bgColor) {
       result.color = room.bgColor;
     }
     return result;
-  }, [room.icon, room.image, room.bgColor]);
+  }, [room.icon, room.attached, room.image, room.bgColor]);
 
   return (
     <Box className={classes.itemImage}>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {avatar.image ? (
-        <>
-          {avatar.image}
-          {avatar.icon ? (
-            <Box className={classes.imageIcon} style={{ backgroundColor: avatar.color }}>
+      <Box className={classes.itemContent}>
+        {/* eslint-disable-next-line no-nested-ternary */}
+        {avatar.image ? (
+          <>
+            {avatar.image}
+            {avatar.attached ? <Box className={classes.attachedIcon}>{avatar.attached}</Box> : null}
+          </>
+        ) : avatar.icon ? (
+          <>
+            <Box style={{ backgroundColor: avatar.color }} className={classes.itemIconContainer}>
               {avatar.icon}
             </Box>
-          ) : null}
-        </>
-      ) : avatar.icon ? (
-        <Box style={{ backgroundColor: avatar.color }} className={classes.itemIconContainer}>
-          {avatar.icon}
-        </Box>
-      ) : null}
+            {avatar.attached ? <Box className={classes.attachedIcon}>{avatar.attached}</Box> : null}
+          </>
+        ) : null}
+      </Box>
     </Box>
   );
 }

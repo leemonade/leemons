@@ -6,7 +6,7 @@ const {
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 
-async function toggleMutedRoom(key, userAgent, { transacting: _transacting } = {}) {
+async function toggleAttachedRoom(key, userAgent, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
@@ -24,17 +24,17 @@ async function toggleMutedRoom(key, userAgent, { transacting: _transacting } = {
 
       userAgentRoom = await table.userAgentInRoom.update(
         { id: userAgentRoom.id },
-        { muted: !userAgentRoom.muted },
+        { attached: userAgentRoom.attached ? null : new Date() },
         { transacting }
       );
 
       leemons.socket.emit(userAgent, `COMUNICA:CONFIG:ROOM`, userAgentRoom);
 
-      return userAgentRoom.muted;
+      return userAgentRoom.attached;
     },
     table.room,
     _transacting
   );
 }
 
-module.exports = { toggleMutedRoom };
+module.exports = { toggleAttachedRoom };

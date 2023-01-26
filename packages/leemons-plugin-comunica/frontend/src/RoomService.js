@@ -26,8 +26,75 @@ class RoomService {
     return RoomService.toggleRoomMute(this.room);
   }
 
+  toggleAdminRoomMute(userAgent) {
+    return RoomService.toggleAdminRoomMute(this.room, userAgent);
+  }
+
+  toggleRoomAttached() {
+    return RoomService.toggleRoomAttached(this.room);
+  }
+
   watchRoom(callback) {
     return RoomService.watchRoom(this.room, callback);
+  }
+
+  adminRemoveUserAgentFromRoom(userAgent) {
+    return RoomService.adminRemoveUserAgentFromRoom(this.room, userAgent);
+  }
+
+  adminUpdateRoomName(name) {
+    return RoomService.adminUpdateRoomName(this.room, name);
+  }
+
+  adminAddUsersToRoom(userAgents) {
+    return RoomService.adminAddUsersToRoom(this.room, userAgents);
+  }
+
+  static adminAddUsersToRoom(key, userAgents) {
+    return leemons.api(`comunica/room/${key}/admin/users`, {
+      allAgents: true,
+      method: 'POST',
+      body: {
+        userAgents,
+      },
+    });
+  }
+
+  static adminUpdateRoomName(key, name) {
+    return leemons.api(`comunica/room/${key}/admin/name`, {
+      allAgents: true,
+      method: 'POST',
+      body: {
+        name,
+      },
+    });
+  }
+
+  static adminRemoveUserAgentFromRoom(key, userAgent) {
+    return leemons.api(`comunica/room/${key}/admin/remove`, {
+      allAgents: true,
+      method: 'POST',
+      body: {
+        userAgent,
+      },
+    });
+  }
+
+  static toggleAdminRoomMute(key, userAgent) {
+    return leemons.api(`comunica/room/${key}/admin/mute`, {
+      allAgents: true,
+      method: 'POST',
+      body: {
+        userAgent,
+      },
+    });
+  }
+
+  static toggleRoomAttached(key) {
+    return leemons.api(`comunica/room/${key}/attach`, {
+      allAgents: true,
+      method: 'POST',
+    });
   }
 
   static toggleRoomMute(key) {

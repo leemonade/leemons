@@ -48,6 +48,36 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/room/:key/admin/mute',
+    method: 'POST',
+    handler: 'room.toggleAdminMutedRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/remove',
+    method: 'POST',
+    handler: 'room.adminRemoveUserAgent',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/name',
+    method: 'POST',
+    handler: 'room.adminUpdateRoomName',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/users',
+    method: 'POST',
+    handler: 'room.adminAddUsersToRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/attach',
+    method: 'POST',
+    handler: 'room.toggleAttachedRoom',
+    authenticated: true,
+  },
+  {
     path: '/room/messages/unread',
     method: 'POST',
     handler: 'room.getUnreadMessages',

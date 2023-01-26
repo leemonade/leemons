@@ -26,12 +26,17 @@ async function add(room, userAgent, { transacting }) {
         },
         { transacting }
       );
-      leemons.socket.emit(userAgent, `COMUNICA:ROOM:ADDED`, {
-        room,
-      });
-      return result;
+      return {
+        added: true,
+        userAgent,
+        result,
+      };
     }
-    return response;
+    return {
+      added: false,
+      userAgent,
+      result: response,
+    };
   }
   // Si el usuario no esta en la sala le añadimos
   const result = await table.userAgentInRoom.create(
@@ -42,14 +47,19 @@ async function add(room, userAgent, { transacting }) {
     },
     { transacting }
   );
-  leemons.socket.emit(userAgent, `COMUNICA:ROOM:ADDED`, {
-    room,
-  });
-  return result;
+  return {
+    added: true,
+    userAgent,
+    result,
+  };
 }
 
-async function addUserAgents(key, _userAgents, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
+async function addUserAgents(
+  key,
+  _userAgents,
+  { ignoreCalledFrom, transacting: _transacting } = {}
+) {
+  if (!ignoreCalledFrom) validateKeyPrefix(key, this.calledFrom);
 
   const userAgents = _.isArray(_userAgents) ? _userAgents : [_userAgents];
 
@@ -57,10 +67,48 @@ async function addUserAgents(key, _userAgents, { transacting: _transacting } = {
     async (transacting) => {
       await validateNotExistRoomKey(key, { transacting });
 
-      const responses = await Promise.all(
+      const currentUserAgentsInRoom = await table.userAgentInRoom.find(
+        { room: key },
+        { transacting }
+      );
+
+      const results = await Promise.all(
         _.map(userAgents, (userAgent) => add(key, userAgent, { transacting }))
       );
 
+      const responsesAdded = _.filter(results, { added: true });
+
+      // Informamos a los usuarios añadidos de que han sido añadidos
+      _.forEach(responsesAdded, ({ userAgent }) => {
+        leemons.socket.emit(userAgent, `COMUNICA:ROOM:ADDED`, {
+          room: key,
+        });
+      });
+
+      // Vamos a sacar los usuarios añadidos para enviarle a todas los usuarios de antes los nuevos usuarios
+      const userAgen = await leemons
+        .getPlugin('users')
+        .services.users.getUserAgentsInfo(_.map(responsesAdded, 'userAgent'), {
+          withProfile: true,
+        });
+      const userAgentsById = _.keyBy(userAgen, 'id');
+      const userAgentsAddedGood = _.map(responsesAdded, (a) => ({
+        userAgent: userAgentsById[a.userAgent],
+        adminMuted: a.result.adminMuted,
+        isAdmin: a.result.isAdmin,
+        deleted: a.result.deleted,
+      }));
+
+      _.forEach(currentUserAgentsInRoom, (userAgentInRoom) => {
+        _.forEach(userAgentsAddedGood, (data) => {
+          leemons.socket.emit(userAgentInRoom.userAgent, `COMUNICA:ROOM:USER_ADDED`, {
+            key,
+            userAgent: data,
+          });
+        });
+      });
+
+      const responses = _.map(results, 'result');
       _.forEach(responses, (response) => {
         delete response.encryptKey;
       });

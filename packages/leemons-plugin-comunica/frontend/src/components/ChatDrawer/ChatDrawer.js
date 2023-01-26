@@ -11,6 +11,7 @@ import {
   IconButton,
   Popover,
   Textarea,
+  useDebouncedCallback,
 } from '@bubbles-ui/components';
 import {
   ChevronLeftIcon,
@@ -27,12 +28,14 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
+import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
+import SocketIoService from '@socket-io/service';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
 function ChatDrawer({
   room,
   opened,
-  onReturn = () => {},
+  onReturn,
   onClose = () => {},
   onMessage = () => {},
   onRoomLoad = () => {},
@@ -43,6 +46,7 @@ function ChatDrawer({
   const [td] = useTranslateLoader(prefixPN('chatListDrawer'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
+  const debouncedFunction = useDebouncedCallback(300);
   const scrollRef = React.useRef();
   const [store, render] = useStore({
     showMembers: false,
@@ -93,6 +97,22 @@ function ChatDrawer({
       store.room.muted = muted;
       render();
     }
+  }
+
+  async function toggleAttached() {
+    store.room.attached = store.room.attached ? null : new Date();
+    render();
+    await store.service.toggleRoomAttached();
+  }
+
+  function toggleInfo() {
+    store.showInfo = !store.showInfo;
+    render();
+  }
+
+  function closeInfo() {
+    toggleInfo();
+    onClose();
   }
 
   async function sendMessage() {
@@ -160,231 +180,202 @@ function ChatDrawer({
     }
   });
 
+  SocketIoService.useOnAny((event, data) => {
+    if (event === 'COMUNICA:CONFIG:ROOM' && store.room?.key === data.room) {
+      store.room.muted = !!data.muted;
+      store.room.attached = data.attached;
+      store.room.adminMuted = data.adminMuted;
+      render();
+    }
+    if (event === 'COMUNICA:ROOM:REMOVE' && store.room?.key === data.key) {
+      store.room = null;
+      if (_.isFunction(onReturn)) {
+        onReturn();
+      } else {
+        onClose();
+      }
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:USER_ADDED' && store.room?.key === data.key) {
+      const index = _.findIndex(
+        store.room.userAgents,
+        (item) => item.userAgent.id === data.userAgent.userAgent.id
+      );
+      if (index >= 1) {
+        store.room.userAgents[index] = data.userAgent;
+      } else {
+        store.room.userAgents.push(data.userAgent);
+      }
+
+      debouncedFunction(render);
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:USERS_REMOVED' && store.room?.key === data.key) {
+      store.room.userAgents = _.map(store.room.userAgents, (item) => {
+        let { deleted } = item;
+        if (data.userAgents.includes(item.userAgent.id)) deleted = true;
+        return {
+          ...item,
+          deleted,
+        };
+      });
+      render();
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:UPDATE:NAME' && store.room?.key === data.key) {
+      store.room.name = data.name;
+      render();
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:ADMIN_MUTED' && store.room?.key === data.room) {
+      const index = _.findIndex(
+        store.room.userAgents,
+        (item) => item.userAgent.id === data.userAgent
+      );
+      if (index >= 0) {
+        store.room.userAgents[index].adminMuted = data.adminMuted;
+        store.room.userAgents = [...store.room.userAgents];
+        render();
+      }
+    }
+  });
+
   return (
-    <Drawer opened={opened} size={430} close={false} empty>
-      <Box className={classes.wrapper}>
-        <Box className={classes.header}>
-          <Button
-            variant="link"
-            color="secondary"
-            onClick={onReturn}
-            leftIcon={<ChevronLeftIcon width={12} height={12} />}
-          >
-            {td('return')}
-          </Button>
-          <Box className={classes.headerRight}>
-            <Popover
-              target={
-                <ActionButton
-                  onClick={onClose}
-                  icon={<PluginSettingsIcon width={16} height={16} />}
-                />
-              }
+    <>
+      <Drawer opened={opened} size={430} close={false} empty>
+        <Box className={classes.wrapper}>
+          <Box className={classes.header}>
+            <Button
+              variant="link"
+              color="secondary"
+              onClick={() => {
+                if (_.isFunction(onReturn)) onReturn();
+              }}
+              leftIcon={<ChevronLeftIcon width={12} height={12} />}
             >
-              <Box className={classes.config}>
-                <Button onClick={toggleMute} fullWidth variant="light" color="secondary">
-                  {store.room?.muted ? t('unmuteRoom') : t('muteRoom')}
-                </Button>
-                <Button fullWidth variant="light" color="secondary">
-                  {t('setRoom')}
-                </Button>
-                <Button fullWidth variant="light" color="secondary">
-                  {t('information')}
-                </Button>
-              </Box>
-            </Popover>
+              {td('return')}
+            </Button>
+            <Box className={classes.headerRight}>
+              <Popover
+                target={
+                  <ActionButton
+                    onClick={onClose}
+                    icon={<PluginSettingsIcon width={16} height={16} />}
+                  />
+                }
+              >
+                <Box className={classes.config}>
+                  <Button onClick={toggleMute} fullWidth variant="light" color="secondary">
+                    {store.room?.muted ? t('unmuteRoom') : t('muteRoom')}
+                  </Button>
+                  <Button onClick={toggleAttached} fullWidth variant="light" color="secondary">
+                    {store.room?.attached ? t('unsetRoom') : t('setRoom')}
+                  </Button>
+                  <Button onClick={toggleInfo} fullWidth variant="light" color="secondary">
+                    {t('information')}
+                  </Button>
+                </Box>
+              </Popover>
 
-            <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+              <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+            </Box>
           </Box>
-        </Box>
-        {store.room ? (
-          <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
-            <RoomHeader t={td} room={store.room} />
-          </Box>
-        ) : null}
-        <Box ref={scrollRef} className={classes.messages}>
-          {store.messages &&
-            store.messages.map((message, index) => {
-              const comp = [];
-              let forceUserImage = false;
-              const day = new Date(message.created_at).toLocaleDateString(locale, {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
-              if (index === 0 || store.lastDay !== day) {
-                store.lastDay = day;
-                forceUserImage = true;
+          {store.room ? (
+            <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
+              <RoomHeader t={td} room={store.room} />
+            </Box>
+          ) : null}
+          <Box ref={scrollRef} className={classes.messages}>
+            {store.messages &&
+              store.messages.map((message, index) => {
+                const comp = [];
+                let forceUserImage = false;
+                const day = new Date(message.created_at).toLocaleDateString(locale, {
+                  weekday: 'short',
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                });
+                if (index === 0 || store.lastDay !== day) {
+                  store.lastDay = day;
+                  forceUserImage = true;
+                  comp.push(
+                    <Box className={classes.date} key={`date-${index}`}>
+                      <Badge label={day} closable={false} size="md" />
+                    </Box>
+                  );
+                }
                 comp.push(
-                  <Box className={classes.date} key={`date-${index}`}>
-                    <Badge label={day} closable={false} size="md" />
+                  <Box
+                    key={message.id}
+                    sx={(theme) => ({
+                      marginTop:
+                        index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                          ? theme.spacing[4]
+                          : 0,
+                    })}
+                  >
+                    <ChatMessage
+                      showUser={
+                        forceUserImage || index === 0
+                          ? true
+                          : store.messages[index - 1].userAgent !== message.userAgent
+                      }
+                      isTeacher={
+                        store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'teacher'
+                      }
+                      isAdmin={
+                        store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
+                      }
+                      isOwn={message.userAgent === store.userAgent}
+                      user={store.userAgentsById?.[message.userAgent]?.user}
+                      message={{ ...message.message, date: message.created_at }}
+                    />
                   </Box>
                 );
-              }
-              comp.push(
-                <Box
-                  key={message.id}
-                  sx={(theme) => ({
-                    marginTop:
-                      index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
-                        ? theme.spacing[4]
-                        : 0,
-                  })}
-                >
-                  <ChatMessage
-                    showUser={
-                      forceUserImage || index === 0
-                        ? true
-                        : store.messages[index - 1].userAgent !== message.userAgent
-                    }
-                    isTeacher={
-                      store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'teacher'
-                    }
-                    isAdmin={
-                      store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
-                    }
-                    isOwn={message.userAgent === store.userAgent}
-                    user={store.userAgentsById?.[message.userAgent]?.user}
-                    message={{ ...message.message, date: message.created_at }}
-                  />
-                </Box>
-              );
-              return comp;
-            })}
+                return comp;
+              })}
+          </Box>
+          {!store.room?.adminMuted ? (
+            <Box className={classes.sendMessage}>
+              <Textarea
+                value={store.newMessage}
+                minRows={1}
+                name="message"
+                placeholder={t('writeNewMessage')}
+                className={classes.textarea}
+                onKeyPress={(e) => {
+                  if (e.code === 'Enter' || e.charCode === 13) {
+                    sendMessage();
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => {
+                  store.newMessage = e;
+                  render();
+                }}
+              />
+              <IconButton
+                onClick={sendMessage}
+                icon={<SendMessageIcon />}
+                color="primary"
+                rounded
+              />
+            </Box>
+          ) : null}
         </Box>
-        <Box className={classes.sendMessage}>
-          <Textarea
-            value={store.newMessage}
-            minRows={1}
-            name="message"
-            placeholder={t('writeNewMessage')}
-            className={classes.textarea}
-            onKeyPress={(e) => {
-              if (e.code === 'Enter' || e.charCode === 13) {
-                sendMessage();
-                e.stopPropagation();
-                e.preventDefault();
-              }
-            }}
-            onChange={(e) => {
-              store.newMessage = e;
-              render();
-            }}
-          />
-          <IconButton onClick={sendMessage} icon={<SendMessageIcon />} color="primary" rounded />
-        </Box>
-      </Box>
-    </Drawer>
+      </Drawer>
+      {store.room ? (
+        <ChatInfoDrawer
+          room={store.room}
+          opened={store.showInfo}
+          onReturn={toggleInfo}
+          onClose={closeInfo}
+        />
+      ) : null}
+    </>
   );
-
-  /*
-  return (
-    <Drawer opened={opened} size={430} close={false} empty>
-      <MembersList
-        t={t}
-        userAgents={store.userAgents}
-        profiles={store.profiles}
-        opened={store.showMembers}
-        onClose={() => {
-          store.showMembers = false;
-          render();
-        }}
-      />
-      <Box className={classes.wrapper}>
-        <Box className={classes.header}>
-          <UserDisplayItemList
-            limit={0}
-            notExpandable
-            expanded={store.showMembers}
-            onExpand={() => {
-              store.showMembers = !store.showMembers;
-              render();
-            }}
-            onShrink={() => {
-              store.showMembers = !store.showMembers;
-              render();
-            }}
-            data={store.userAgents}
-            labels={{
-              showMore: t('showMore'),
-              showLess: t('showLess'),
-            }}
-          />
-          <ActionButton onClick={onClose} icon={<MoveRightIcon width={16} height={16} />} />
-        </Box>
-        <Box ref={scrollRef} className={classes.messages}>
-          {store.messages &&
-            store.messages.map((message, index) => {
-              const comp = [];
-              let forceUserImage = false;
-              const day = new Date(message.created_at).toLocaleDateString(locale, {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
-              if (index === 0 || store.lastDay !== day) {
-                store.lastDay = day;
-                forceUserImage = true;
-                comp.push(
-                  <Box className={classes.date} key={`date-${index}`}>
-                    <Badge label={day} closable={false} size="md" />
-                  </Box>
-                );
-              }
-              comp.push(
-                <Box
-                  key={message.id}
-                  sx={(theme) => ({
-                    marginTop:
-                      index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
-                        ? theme.spacing[4]
-                        : 0,
-                  })}
-                >
-                  <ChatMessage
-                    showUser={
-                      forceUserImage || index === 0
-                        ? true
-                        : store.messages[index - 1].userAgent !== message.userAgent
-                    }
-                    isOwn={message.userAgent === store.userAgent}
-                    user={store.userAgentsById?.[message.userAgent]}
-                    message={{ ...message.message, date: message.created_at }}
-                  />
-                </Box>
-              );
-              return comp;
-            })}
-        </Box>
-        <Box className={classes.sendMessage}>
-
-          <Textarea
-            value={store.newMessage}
-            minRows={1}
-            name="message"
-            placeholder={t('writeNewMessage')}
-            className={classes.textarea}
-            onKeyPress={(e) => {
-              if (e.code === 'Enter' || e.charCode === 13) {
-                sendMessage();
-                e.stopPropagation();
-                e.preventDefault();
-              }
-            }}
-            onChange={(e) => {
-              store.newMessage = e;
-              render();
-            }}
-          />
-          <IconButton onClick={sendMessage} icon={<SendMessageIcon />} color="primary" rounded />
-        </Box>
-      </Box>
-    </Drawer>
-  );
-
-   */
 }
 
 ChatDrawer.propTypes = {

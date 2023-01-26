@@ -23,7 +23,7 @@ async function get(key, userAgent, { returnUserAgents = true, transacting: _tran
       }
       const [room, userAgents, nMessages, messagesUnread] = await Promise.all([
         table.room.findOne({ key }, { transacting }),
-        table.userAgentInRoom.find({ room: key }, { transacting }),
+        table.userAgentInRoom.find({ room: key, deleted_$null: false }, { transacting }),
         table.message.count({ room: key }, { transacting }),
         table.roomMessagesUnRead.findOne(
           {
@@ -45,6 +45,8 @@ async function get(key, userAgent, { returnUserAgents = true, transacting: _tran
         const userAgentsById = _.keyBy(userAgen, 'id');
         room.userAgents = _.map(userAgents, (a) => ({
           userAgent: userAgentsById[a.userAgent],
+          adminMuted: a.adminMuted,
+          isAdmin: a.isAdmin,
           deleted: a.deleted,
         }));
       }
@@ -56,6 +58,9 @@ async function get(key, userAgent, { returnUserAgents = true, transacting: _tran
         nameReplaces: JSON.parse(room.nameReplaces),
         metadata: JSON.parse(room.metadata),
         muted: uair?.muted || false,
+        isAdmin: uair?.isAdmin,
+        adminMuted: uair?.adminMuted,
+        attached: uair?.attached || null,
       };
     },
     table.room,

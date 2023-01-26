@@ -13,8 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import { FilterIcon, PluginKimIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
-import { useLocale, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import ChatListDrawerItem from '@comunica/components/ChatListDrawerItem/ChatListDrawerItem';
@@ -30,16 +29,10 @@ import ChatDrawer from '../ChatDrawer/ChatDrawer';
 
 function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} }) {
   const debouncedFunction = useDebouncedCallback(100);
+  const debouncedFunction2 = useDebouncedCallback(100);
   const { classes } = ChatListDrawerStyles({}, { name: 'ChatListDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
-  const [, , , getErrorMessage] = useRequestErrorMessage();
-  const locale = useLocale();
-  const scrollRef = React.useRef();
   const [store, render] = useStore({ rooms: [], intermediateRooms: [] });
-
-  function scrollToBottom() {
-    if (scrollRef.current) scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
-  }
 
   function onKim() {}
 
@@ -50,13 +43,14 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
   }
 
   function recalcule() {
-    store.rooms = getRoomsByParent(store.originalRooms);
+    store.rooms = _.orderBy(getRoomsByParent(store.originalRooms), ['attached'], ['asc']);
     store.roomTypes = _.uniq(_.map(store.rooms, 'type'));
     if (store.intermediateRooms?.length) {
       const interm = [];
       _.forEach(store.intermediateRooms, (room) => {
+        const r = _.find(store.rooms, { id: room.id });
         interm.push({
-          ...room,
+          ...r,
           childrens: getRoomChildrens(store.originalRooms, room),
           unreadMessages: getTotalUnreadMessages(room.childrens, store.originalRooms),
         });
@@ -188,11 +182,70 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       debouncedFunction(load);
       return;
     }
+    if (event === 'COMUNICA:ROOM:USER_ADDED') {
+      const index = _.findIndex(store.originalRooms, { key: data.key });
+      if (index >= 0) {
+        const i = _.findIndex(
+          store.originalRooms[index].userAgents,
+          (item) => item.userAgent.id === data.userAgent.userAgent.id
+        );
+        if (i >= 1) {
+          store.originalRooms[index].userAgents[i] = data.userAgent;
+        } else {
+          store.originalRooms[index].userAgents.push(data.userAgent);
+        }
+        debouncedFunction2(() => {
+          recalcule();
+          render();
+        });
+      }
+      return;
+    }
     if (event === 'COMUNICA:CONFIG:ROOM') {
       const index = _.findIndex(store.originalRooms, { key: data.room });
-      store.originalRooms[index].muted = !!data.muted;
-      recalcule();
-      render();
+      if (index >= 0) {
+        store.originalRooms[index].muted = !!data.muted;
+        store.originalRooms[index].attached = data.attached;
+        recalcule();
+        render();
+      }
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:REMOVE') {
+      const index = _.findIndex(store.originalRooms, { key: data.key });
+      if (index >= 0) {
+        store.originalRooms.splice(index, 1);
+        recalcule();
+        render();
+      }
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:USERS_REMOVED') {
+      const index = _.findIndex(store.originalRooms, { key: data.room });
+      if (index >= 0) {
+        store.originalRooms[index].userAgents = _.map(
+          store.originalRooms[index].userAgents,
+          (item) => {
+            let { deleted } = item;
+            if (data.userAgents.includes(item.userAgent.id)) deleted = true;
+            return {
+              ...item,
+              deleted,
+            };
+          }
+        );
+        recalcule();
+        render();
+      }
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:UPDATE:NAME') {
+      const index = _.findIndex(store.originalRooms, { key: data.key });
+      if (index >= 0) {
+        store.originalRooms[index].name = data.name;
+        recalcule();
+        render();
+      }
       return;
     }
     _.forEach(store.originalRooms, (room, index) => {
@@ -314,6 +367,7 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
 ChatListDrawer.propTypes = {
   opened: PropTypes.bool,
   onClose: PropTypes.func,
+  onRoomOpened: PropTypes.func,
 };
 
 export { ChatListDrawer };

@@ -69,9 +69,63 @@ async function toggleMutedRoom(ctx) {
   ctx.body = { status: 200, muted };
 }
 
+async function toggleAttachedRoom(ctx) {
+  const attached = await roomService.toggleAttachedRoom(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, attached };
+}
+
+async function toggleAdminMutedRoom(ctx) {
+  const attached = await roomService.toggleAdminMutedRoom(
+    ctx.request.params.key,
+    ctx.request.body.userAgent,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, attached };
+}
+
+async function adminRemoveUserAgent(ctx) {
+  await roomService.adminRemoveUserAgents(
+    ctx.request.params.key,
+    ctx.request.body.userAgent,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
+async function adminUpdateRoomName(ctx) {
+  const room = await roomService.adminUpdateRoomName(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id,
+    ctx.request.body.name
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, room };
+}
+
+async function adminAddUsersToRoom(ctx) {
+  const userAgents = await roomService.adminAddUserAgents(
+    ctx.request.params.key,
+    ctx.request.body.userAgents,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, userAgents };
+}
+
 module.exports = {
+  toggleAdminMutedRoom,
   getRoomsMessageCount,
+  adminRemoveUserAgent,
+  adminUpdateRoomName,
+  adminAddUsersToRoom,
   markMessagesAsRead,
+  toggleAttachedRoom,
   getUnreadMessages,
   toggleMutedRoom,
   getRoomList,

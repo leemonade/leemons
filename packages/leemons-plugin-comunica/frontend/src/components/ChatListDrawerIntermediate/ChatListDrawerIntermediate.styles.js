@@ -29,6 +29,13 @@ export const ChatListDrawerIntermediateStyles = createStyles((theme) => ({
     alignItems: 'center',
     gap: theme.spacing[2],
   },
+  config: {
+    padding: theme.spacing[2],
+    maxWidth: '250px',
+    '.mantine-Button-inner': {
+      justifyContent: 'start',
+    },
+  },
   title: {
     paddingLeft: theme.spacing[7],
     paddingRight: theme.spacing[7],

@@ -9,6 +9,8 @@ async function remove(key, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateNotExistRoomKey(key, { transacting });
 
+      const userAgents = await table.userAgentInRoom.find({ room: key }, { transacting });
+
       await Promise.all([
         table.room.delete({ key }, { transacting }),
         table.userAgentInRoom.deleteMany({ room: key }, { transacting }),
@@ -21,6 +23,10 @@ async function remove(key, { transacting: _transacting } = {}) {
           { transacting }
         ),
       ]);
+
+      _.forEach(userAgents, ({ userAgent }) => {
+        leemons.socket.emit(userAgent, `COMUNICA:CONFIG:ROOM:REMOVE`, { key });
+      });
 
       return true;
     },

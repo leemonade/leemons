@@ -11,61 +11,59 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import { RoomService } from '../RoomService';
 
-export const ContextButtonStyles = createStyles((theme) => {
-  console.log(theme);
-  return {
-    root: {
-      position: 'fixed',
-      zIndex: 5,
-      bottom: theme.spacing[7],
-      right: theme.spacing[7],
+export const ContextButtonStyles = createStyles((theme) => ({
+  root: {
+    position: 'fixed',
+    zIndex: 5,
+    bottom: theme.spacing[7],
+    right: theme.spacing[7],
+  },
+  chatBullet: {
+    width: 56,
+    height: 56,
+    backgroundColor: theme.other.global.background.color.primary.default,
+    borderRadius: '50%',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: theme.other.global.background.color.primary.emphasis,
     },
-    chatBullet: {
-      width: 56,
-      height: 56,
-      backgroundColor: theme.other.global.background.color.primary.default,
-      borderRadius: '50%',
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: theme.other.global.background.color.primary.emphasis,
-      },
-    },
-    chatIcon: {
+  },
+  chatIcon: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    width: 32,
+    height: 29,
+    color: 'white',
+    transform: 'translate(-50%, -50%)',
+  },
+  unreadMessages: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    textAlign: 'center',
+    display: 'inline-flex',
+    color: theme.other.global.background.color.primary.emphasis,
+    ...theme.other.global.content.typoMobile.body['lg--bold'],
+    '&:after': {
       position: 'absolute',
       left: '50%',
       top: '50%',
-      width: 32,
-      height: 29,
-      color: 'white',
       transform: 'translate(-50%, -50%)',
+      backgroundColor: 'white',
+      display: 'block',
+      content: '""',
+      width: 22,
+      height: 16,
+      zIndex: -1,
     },
-    unreadMessages: {
-      position: 'absolute',
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      textAlign: 'center',
-      display: 'inline-flex',
-      color: theme.other.global.background.color.primary.emphasis,
-      ...theme.other.global.content.typoMobile.body['lg--bold'],
-      '&:after': {
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: 'white',
-        display: 'block',
-        content: '""',
-        width: 22,
-        height: 16,
-        zIndex: -1,
-      },
-    },
-  };
-});
+  },
+}));
 
 function ContextButton({ onShowDrawerChange }) {
   const debouncedFunction = useDebouncedCallback(100);
+  const debouncedFunction2 = useDebouncedCallback(300);
   const [store, render] = useStore();
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
   const notifications = useNotifications('chat');
@@ -115,6 +113,10 @@ function ContextButton({ onShowDrawerChange }) {
     }
     if (event === 'COMUNICA:ROOM:ADDED') {
       debouncedFunction(load);
+      return;
+    }
+    if (event === 'COMUNICA:ROOM:USER_ADDED') {
+      debouncedFunction2(load);
       return;
     }
     _.forEach(store.rooms, (room, index) => {

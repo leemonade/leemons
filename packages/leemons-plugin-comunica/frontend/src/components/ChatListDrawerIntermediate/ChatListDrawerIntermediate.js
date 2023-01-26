@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
-import { ActionButton, Box, Button, Drawer } from '@bubbles-ui/components';
-import { ChevronLeftIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { ActionButton, Box, Button, Drawer, Popover } from '@bubbles-ui/components';
+import { ChevronLeftIcon, PluginSettingsIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
@@ -9,6 +9,7 @@ import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
 import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
 import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
 import ChatListDrawerItem from '@comunica/components/ChatListDrawerItem/ChatListDrawerItem';
+import RoomService from '@comunica/RoomService';
 import { ChatListDrawerIntermediateStyles } from './ChatListDrawerIntermediate.styles';
 
 function ChatListDrawerIntermediate({
@@ -20,6 +21,10 @@ function ChatListDrawerIntermediate({
   onClose = () => {},
 }) {
   const { classes } = ChatListDrawerIntermediateStyles({}, { name: 'ChatListDrawerIntermediate' });
+
+  async function toggleAttached() {
+    await RoomService.toggleRoomAttached(_room.key);
+  }
 
   const room = React.useMemo(() => getRoomParsed(_room), [_room]);
   const rooms = React.useMemo(() => {
@@ -50,7 +55,7 @@ function ChatListDrawerIntermediate({
         results.push(...subjectChildrens);
       }
     }
-    return results;
+    return _.orderBy(results, ['attached', 'type'], ['asc', 'asc']);
   }, [room]);
 
   return (
@@ -67,6 +72,20 @@ function ChatListDrawerIntermediate({
               {t('return')}
             </Button>
             <Box className={classes.headerRight}>
+              <Popover
+                target={
+                  <ActionButton
+                    onClick={onClose}
+                    icon={<PluginSettingsIcon width={16} height={16} />}
+                  />
+                }
+              >
+                <Box className={classes.config}>
+                  <Button onClick={toggleAttached} fullWidth variant="light" color="secondary">
+                    {room?.attached ? t('unsetRoom') : t('setRoom')}
+                  </Button>
+                </Box>
+              </Popover>
               <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
             </Box>
           </Box>

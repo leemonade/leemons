@@ -11,8 +11,13 @@ const { toggleMutedRoom } = require('./toggleMutedRoom');
 const { removeUserAgents } = require('./removeUserAgents');
 const { getUnreadMessages } = require('./getUnreadMessages');
 const { getUserAgentRooms } = require('./getUserAgentRooms');
+const { adminAddUserAgents } = require('./adminAddUserAgents');
+const { toggleAttachedRoom } = require('./toggleAttachedRoom');
+const { adminUpdateRoomName } = require('./adminUpdateRoomName');
+const { toggleAdminMutedRoom } = require('./toggleAdminMutedRoom');
 const { getRoomsMessageCount } = require('./getRoomsMessageCount');
 const { getUserAgentRoomsList } = require('./getUserAgentRoomsList');
+const { adminRemoveUserAgents } = require('./adminRemoveUserAgents');
 
 module.exports = {
   add,
@@ -28,6 +33,11 @@ module.exports = {
   removeUserAgents,
   getUnreadMessages,
   getUserAgentRooms,
+  adminAddUserAgents,
+  toggleAttachedRoom,
+  adminUpdateRoomName,
+  toggleAdminMutedRoom,
   getRoomsMessageCount,
   getUserAgentRoomsList,
+  adminRemoveUserAgents,
 };
