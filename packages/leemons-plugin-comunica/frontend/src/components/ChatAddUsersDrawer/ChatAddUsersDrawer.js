@@ -232,7 +232,7 @@ function ChatAddUsersDrawer({
                 <UserDisplayItem
                   {...userAgent.user}
                   noBreak={false}
-                  rol={userAgent.profile.name}
+                  rol={userAgent?.profile?.name}
                   variant="rol"
                   size="md"
                 />
