@@ -23,7 +23,7 @@ import AddCurriculumStep3 from '@curriculum/pages/private/AddCurriculumStep3';
 
 const useStyle = createStyles((theme) => ({
   title: {
-    paddingTop: theme.spacing[11],
+    paddingTop: theme.spacing[5],
     paddingLeft: theme.spacing[5],
     paddingBottom: theme.spacing[6],
   },

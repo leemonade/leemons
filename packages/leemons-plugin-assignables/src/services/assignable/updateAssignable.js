@@ -41,7 +41,7 @@ module.exports = async function updateAssignable(
   { published = false, userSession, transacting } = {}
 ) {
   try {
-    const { id, ...assignableObjectReceived } = assignable;
+    const { id, file, ...assignableObjectReceived } = assignable;
 
     const assignableObject = _.pick(assignableObjectReceived, updatableFields);
 
@@ -89,6 +89,7 @@ module.exports = async function updateAssignable(
     const asset = await updateAsset(
       {
         ..._.defaults(object.asset, currentAssignable.asset),
+        file: file?.id || file,
         id: currentAssignable.asset.id,
       },
       {

@@ -223,7 +223,7 @@ module.exports = {
     },
   },
   assignment_page: {
-    page_title: 'Assign tasks',
+    action: 'Assign task',
   },
   assignment_form: {
     labels: {

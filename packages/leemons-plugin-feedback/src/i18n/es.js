@@ -108,8 +108,7 @@ module.exports = {
     duplicated: 'Duplicado',
   },
   feedbackAssign: {
-    pageTitle: 'Asignar encuesta:',
-    assign: 'Asignar',
+    assign: 'Asignar encuesta',
     assignDone: 'Encuesta asignada',
   },
   studentInstance: {

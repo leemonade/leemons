@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "@tanstack/react-query": "^4.22.0",
     "country-region-data": "^1.11.0",
     "leemons-utils": "0.0.1",
     "lodash": "^4.17.21"

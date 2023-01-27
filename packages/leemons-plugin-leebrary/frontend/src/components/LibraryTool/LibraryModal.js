@@ -118,6 +118,7 @@ const LibraryModal = ({
   };
 
   const handleOnCloseAssetDrawer = () => {
+    onCancelHandler();
     setShowAssetDrawer(false);
   };
 

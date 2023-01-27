@@ -3,112 +3,119 @@ module.exports = {
     student: 'Estudiante',
     multiSubject: 'Multi-asignatura',
   },
-  assignment_form: {
-    labels: {
-      isAllDay: 'Mostrar como evento diario',
-      classroomToAssign: 'Seleccionar clase para asignar',
-      studentToAssign: 'Seleccionar estudiante para asignar',
-      mode: 'Modo',
-      startDate: 'Fecha de inicio',
-      deadline: 'Fecha límite',
-      visualizationDateToogle: 'Hacer visible con antelación',
-      visualizationDate: 'Fecha de visualización',
-      limitedExecutionToogle: 'Tiempo máximo de ejecución',
-      limitedExecution: 'Tiempo máximo de ejecución',
-      alwaysOpenToogle:
-        'Esta actividad está siempre disponible y puede realizarse en cualquier momento.',
-      closeDateToogle: 'Fecha límite para correcciones del profesor',
-      closeDate: 'Fecha límite para corregir',
-      messageToStudentsToogle: 'Notificar a los estudiantes',
-      messageToStudents: 'Mensaje para los estudiantes',
-      showCurriculumToogle: 'Mostrar curriculum',
-      content: 'Contenidos',
-      objectives: 'Objetivos personalizados',
-      assessmentCriteria: 'Criterios de evaluación',
-      submit: 'Asignar',
-      add: 'Añadir',
-      assignTo: {
-        class: 'Clase',
-        customGroups: 'Grupos personalizados',
-        session: 'Sesión',
+  assignmentForm: {
+    subjects: {
+      title: 'Asignaturas incluidas',
+      subjectInput: {
+        label: 'Asignaturas',
+        placeholder: 'Escribe las asignaturas',
+        error: 'Selecciona al menos una asignatura',
       },
-      relations: {
-        toggle: 'Establecer relación con otra actividad',
-        before: 'Actividad anterior',
-        required: 'Dependencia obligatoria',
-      },
-      selectStudentsTitle: '¿Quién realizará la actividad?',
-      excludeStudents: 'Excluir estudiantes',
-      showResults: 'Ocultar informe de resultados',
-      showCorrectAnswers: 'Ocultar soluciones a los estudiantes al terminar',
-      addNewClassStudents: 'Asignar automáticamente a nuevos estudiantes matriculados',
-      clearStudents: 'Borrar estudiantes',
-      subjects: {
-        nonCalificableTitle:
-          'Selecciona al menos una de tus asignaturas para ver los grupos disponibles',
-        calificableTitle: 'Asignaturas que se evaluarán en esta actividad',
-        subtitle: 'NOTA: Al menos una de ellas',
-      },
-      unableToAssignStudentsMessage:
-        'Los alumnos que no estén matriculados en todas las asignaturas seleccionadas no serán asignados',
-      matchingStudents: 'Estudiantes coincidentes',
-      groupName: 'Nombre del grupo',
-      students: 'Estudiantes',
-      noStudentsToAssign:
-        'No hay estudiantes matriculados en las asignaturas seleccionadas, por favor seleccione otra combinación',
-      showToStudents: 'Ocultar nombre del grupo a los estudiantes',
-      required: 'Campo requerido',
     },
-    placeholders: {
-      date: 'dd/mm/aaaa',
-      time: 'hh:mm',
-      units: 'unidad',
-    },
-    descriptions: {
-      messageToStudents:
-        'Enviar un mensaje de notificación para hacer la actividad. Puede añadirse un texto personalizado',
-      visualizationDate:
-        'NOTA: La actividad estará disponible para su consulta, pero no podrá ser completada hasta la fecha de inicio.',
-      closeDateToogle: 'NOTA: Después de esta fecha, no se pueden hacer correcciones',
-      limitedExecution:
-        'NOTA: Es el intervalo de tiempo que transcurre desde la visualización del resumen de la actividad hasta la presentación del entregable.',
-      isAllDay:
-        'NOTA: Los alumnos tendrán hasta las 23:59h para entregar, pero verán la fecha límite como un evento diario en su calendario.',
-    },
-    assignTo: {
-      student: 'Estudiante',
-      class: 'Clase',
-    },
-    modes: {
-      individual: 'Individual',
-      pairs: 'Por parejas',
-      groups: 'Equipos',
-    },
-    timeUnits: {
-      hours: 'Horas',
-      minutes: 'Minutos',
-      days: 'Días',
-    },
-    gradeVariations: {
-      title: 'Tipo de actividad',
-      calificable: {
-        label: 'Calificable',
-        description:
-          'La puntuación será tenida en cuenta para la nota final, se admiten comentarios',
+    groups: {
+      title: '¿Quién lo realizará?',
+      options: {
+        class: 'Clase existente',
+        customGroup: 'Grupo personalizado',
       },
-      punctuationEvaluable: {
-        label: 'Evaluable con puntuación',
-        description:
-          'Se pide una puntuación pero no será tenida en cuenta para la nota final, se admiten comentarios',
+      noStudentsError:
+        'No se encuentran estudiantes para las asignaturas seleccionadas. Añade o quita asignaturas para continuar.',
+      class: {
+        studentsCount: 'estudiantes coincidentes',
+        autoAssignStudents: 'Asignar automáticamente a nuevos estudiantes',
+        excludeStudents: 'Excluir estudiantes específicos',
+        error: 'Selecciona al menos un grupo',
+        notAllStudentsAssigned: 'Algunos estudiantes no se incluirán en la actividad.',
+        excludeStudentsInput: {
+          label: 'Estudiantes',
+          placeholder: 'Escribe los estudiantes excluidos',
+        },
       },
-      evaluable: {
-        label: 'Evaluable sin puntuación',
-        description: 'Solo se devuelven comentarios',
+      customGroup: {
+        studentsInput: {
+          label: 'Añadir participantes',
+          placeholder: 'Escribe los estudiantes del grupo',
+          error: 'Añade al menos un estudiante',
+        },
+        groupName: {
+          label: 'Nombre del grupo',
+          placeholder: 'Escribe el nombre',
+          error: 'El nombre es necesario',
+        },
+        hideCustomName: 'Ocultar el nombre del grupo a los estudiantes',
       },
-      notEvaluable: {
-        label: 'No evaluable',
-        description: 'El alumno no recibe ninguna retro-alimentación',
+    },
+    dates: {
+      title: '¿Cuándo se realizará?',
+      optionsInput: {
+        label: 'Plazo de tiempo',
+        options: {
+          alwaysAvailable: 'Cualquier momento',
+          fixed: 'Con plazo de tiempo',
+          session: 'Sesión en directo',
+        },
       },
+      hideFromCalendar: 'Ocultar del calendario hasta la fecha/hora de inicio',
+      maxTime: 'Establecer un tiempo límite de ejecución.',
+      maxTimeInput: {
+        label: 'Tiempo de ejecución',
+      },
+
+      fixedType: {
+        title: {
+          fixed: 'Configurar plazo de tiempo',
+          session: 'Configurar sesión en directo',
+        },
+        startDate: {
+          label: 'Fecha de inicio',
+          placeholder: 'Introduce la fecha',
+          error: 'Selecciona una fecha de inicio',
+        },
+        deadline: {
+          label: 'Fecha de fin',
+          placeholder: 'Introduce la fecha',
+          error: 'Selecciona una fecha de fin',
+        },
+        bothDatesError: 'Selecciona una fecha de inicio y fin',
+      },
+    },
+    instructions: {
+      title: 'Enunciado o instrucciones',
+      description: 'Indicaciones sobre cómo consumir el recurso (opcional)',
+      editor: {
+        placeholder: 'Escribe el enunciado',
+      },
+    },
+    evaluation: {
+      title: 'Evaluación',
+      description:
+        'Todos los tipos de evaluación tienen la posibilidad de incluir comentarios (menos el no evaluable)',
+      typeInput: {
+        label: 'Tipo',
+        options: {
+          nonEvaluable: 'No evaluable',
+          calificable: 'Calificable',
+          punctuable: 'Puntuable',
+          feedbackOnly: 'Solo comentarios',
+        },
+      },
+      showCurriculum: 'Mostrar curriculum',
+    },
+    others: {
+      title: 'Otras opciones',
+      teacherDeadline: 'Incluir una fecha límite de corrección para el docente',
+      teacherDeadlineInput: {
+        label: 'Fecha límite',
+        placeholder: 'Introduce la fecha',
+        error: 'Selecciona una fecha',
+      },
+      notifyStudents: 'Notificar a los estudiantes',
+      messageForStudents: 'Mensaje para los estudiantes',
+      hideResponses: 'Ocultar las respuestas de la actividad una vez finalizada.',
+      hideReport: 'Ocultar el informe de resultados.',
+    },
+    buttons: {
+      assign: 'Asignar',
     },
   },
   activity_deadline_header: {
