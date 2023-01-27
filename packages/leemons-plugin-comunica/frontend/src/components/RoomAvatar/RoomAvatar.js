@@ -16,7 +16,7 @@ function RoomAvatar({ room, onImageChange, size = 56 }) {
   );
 
   async function click() {
-    if (_.isFunction(onImageChange)) {
+    if (_.isFunction(onImageChange) && room.type === 'group') {
       const file = await selectFile();
       onImageChange(file[0]);
     }
@@ -46,7 +46,9 @@ function RoomAvatar({ room, onImageChange, size = 56 }) {
       );
     }
     if (!room.image && !room.icon) {
-      result.image = <Avatar color="#D3D5D9" fullName={room.name} size="lg" />;
+      result.image = (
+        <Avatar color="#D3D5D9" fullName={room.name} size={size === 56 ? 'lg' : 'md'} />
+      );
     }
     if (room.attached) {
       result.attached = (

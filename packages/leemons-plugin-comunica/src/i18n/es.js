@@ -24,6 +24,7 @@ module.exports = {
     return: 'Volver',
     plugins_assignables_assignation: 'Actividades',
     'plugins_academic-portfolio_class': 'Asignaturas',
+    group: 'Grupos',
     setRoom: 'Fijar sala',
     unsetRoom: 'Desfijar sala',
     muteRoom: 'Silenciar',
@@ -45,5 +46,6 @@ module.exports = {
     newGroup: 'Nuevo grupo',
     newGroupName: 'Grupo personalizado',
     newChatName: 'Chat privado',
+    newPrivateChat: 'Nuevo chat privado',
   },
 };

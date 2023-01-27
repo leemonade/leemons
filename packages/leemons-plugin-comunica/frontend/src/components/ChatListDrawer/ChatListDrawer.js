@@ -30,6 +30,9 @@ import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
 import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';
 import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
 import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
+import { getCentersWithToken } from '@users/session';
+import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
+import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
@@ -200,6 +203,14 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     render();
   }
 
+  async function onNewChat(e) {
+    await RoomService.createRoom({
+      type: 'chat',
+      userAgents: [e.id, getCentersWithToken()[0].userAgentId],
+    });
+    hideCreate();
+  }
+
   React.useEffect(() => {
     load();
   }, []);
@@ -301,6 +312,26 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       }
     });
   });
+
+  store.roomNewChat = React.useMemo(() => {
+    const agents = [];
+    _.forEach(store.originalRooms, (room) => {
+      if (room.type === 'chat') {
+        agents.push(getChatUserAgent(room.userAgents));
+      }
+    });
+    return {
+      userAgents: [
+        ...agents,
+        {
+          deleted: false,
+          userAgent: {
+            id: getCentersWithToken()[0].userAgentId,
+          },
+        },
+      ],
+    };
+  }, [store.originalRooms]);
 
   return (
     <>
@@ -417,6 +448,14 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       />
       <ChatInfoDrawer
         opened={store.createType === 'group'}
+        onReturn={hideCreate}
+        onClose={closeCreate}
+      />
+      <ChatAddUsersDrawer
+        newChatMode
+        room={store.roomNewChat}
+        opened={store.createType === 'chat'}
+        onSave={onNewChat}
         onReturn={hideCreate}
         onClose={closeCreate}
       />

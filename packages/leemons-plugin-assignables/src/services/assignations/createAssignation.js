@@ -28,7 +28,8 @@ async function createInstanceRoom(
   const roomKey = leemons.plugin.prefixPN(`instance:${assignableInstanceId}`);
   const roomAlreadyExists = await comunicaServices.room.exists(roomKey, { transacting });
 
-  const userAgents = _.compact(_.uniq(teachers).concat(users));
+  const userAgents = _.compact(_.uniq(users));
+  const teachersUserAgents = _.compact(_.uniq(teachers));
 
   // Creamos la sala que estara a primera altura
   if (!roomAlreadyExists) {
@@ -42,11 +43,18 @@ async function createInstanceRoom(
       bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       type: leemons.plugin.prefixPN('assignation'),
       userAgents,
+      adminUserAgents: teachersUserAgents,
       transacting,
     });
   }
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
   await comunicaServices.room.addUserAgents(roomKey, userAgents, { transacting });
+  if (teachersUserAgents.length) {
+    await comunicaServices.room.addUserAgents(roomKey, teachersUserAgents, {
+      isAdmin: true,
+      transacting,
+    });
+  }
   return comunicaServices.room.get(roomKey, { transacting });
 }
 
@@ -86,12 +94,12 @@ async function createSubjectsRooms(
         icon: classe.subject.icon?.id,
         bgColor: classe.color,
         type: leemons.plugin.prefixPN('assignation.subject'),
-        userAgents: teachers,
+        adminUserAgents: teachers,
         transacting,
       });
     }
     // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
-    await comunicaServices.room.addUserAgents(roomKey, teachers, { transacting });
+    await comunicaServices.room.addUserAgents(roomKey, teachers, { isAdmin: true, transacting });
     return comunicaServices.room.get(roomKey, { transacting });
   }
 
@@ -113,7 +121,8 @@ async function createGroupRoom(
   const roomKey = leemons.plugin.prefixPN(`instance:${assignableInstanceId}:group`);
   const roomAlreadyExists = await comunicaServices.room.exists(roomKey, { transacting });
 
-  const userAgents = _.compact(_.uniq(teachers).concat(users));
+  const userAgents = _.compact(_.uniq(users));
+  const teachersUserAgents = _.compact(_.uniq(users));
 
   // Creamos la sala que estara a primera altura
   if (!roomAlreadyExists) {
@@ -129,11 +138,18 @@ async function createGroupRoom(
         iconIsUrl: classes.length > 1,
       },
       userAgents,
+      adminUserAgents: teachersUserAgents,
       transacting,
     });
   }
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
-  await comunicaServices.room.addUserAgents(roomKey, teachers, { transacting });
+  await comunicaServices.room.addUserAgents(roomKey, userAgents, { transacting });
+  if (teachersUserAgents.length) {
+    await comunicaServices.room.addUserAgents(roomKey, teachersUserAgents, {
+      isAdmin: true,
+      transacting,
+    });
+  }
   return comunicaServices.room.get(roomKey, { transacting });
 }
 
@@ -155,7 +171,8 @@ async function addUserSubjectRoom(
       bgColor: classe.color,
       parentRoom: parentKey,
       type: leemons.plugin.prefixPN('assignation.user'),
-      userAgents: _.compact(_.uniq(teachers).concat(user)),
+      userAgents: _.compact(_.uniq(user)),
+      adminUserAgents: _.compact(_.uniq(teachers)),
       transacting,
     }
   );

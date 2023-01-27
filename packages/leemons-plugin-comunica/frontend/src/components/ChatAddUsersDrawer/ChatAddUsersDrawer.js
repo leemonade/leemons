@@ -21,7 +21,14 @@ import { getCentersWithToken } from '@users/session';
 import RoomService from '@comunica/RoomService';
 import { ChatAddUsersDrawerStyles } from './ChatAddUsersDrawer.styles';
 
-function ChatAddUsersDrawer({ room, opened, onSave, onReturn = () => {}, onClose = () => {} }) {
+function ChatAddUsersDrawer({
+  room,
+  opened,
+  newChatMode,
+  onSave,
+  onReturn = () => {},
+  onClose = () => {},
+}) {
   const { classes } = ChatAddUsersDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
 
@@ -84,6 +91,10 @@ function ChatAddUsersDrawer({ room, opened, onSave, onReturn = () => {}, onClose
   }
 
   function toggleUserAgent(userAgent) {
+    if (newChatMode) {
+      onSave(userAgent);
+      return;
+    }
     if (store.usersToAddIds.includes(userAgent.id)) {
       const index = _.findIndex(store.usersToAdd, { id: userAgent.id });
       if (index >= 0) {
@@ -155,7 +166,9 @@ function ChatAddUsersDrawer({ room, opened, onSave, onReturn = () => {}, onClose
           <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
         </Box>
         <Box className={classes.content}>
-          <Box className={classes.title}>{t('addNewUsers')}</Box>
+          <Box className={classes.title}>
+            {newChatMode ? t('newPrivateChat') : t('addNewUsers')}
+          </Box>
           {store.usersToAdd?.length ? (
             <Box>
               <Box className={classes.participants}>
@@ -192,20 +205,30 @@ function ChatAddUsersDrawer({ room, opened, onSave, onReturn = () => {}, onClose
           <Box className={classes.results}>
             {t('searchResults')}({store.userAgents.length})
           </Box>
-          <Box>
-            <Checkbox
-              checked={allAgentsSelected()}
-              onChange={selectAllAgents}
-              label={t('selectAll')}
-            />
-          </Box>
+          {!newChatMode ? (
+            <Box>
+              <Checkbox
+                checked={allAgentsSelected()}
+                onChange={selectAllAgents}
+                label={t('selectAll')}
+              />
+            </Box>
+          ) : null}
+
           <Box className={classes.userAgents}>
             {store.userAgents.map((userAgent) => (
-              <Box key={userAgent.id} className={classes.userAgentItem}>
-                <Checkbox
-                  checked={store.usersToAddIds.includes(userAgent.id)}
-                  onChange={() => toggleUserAgent(userAgent)}
-                />
+              <Box
+                key={userAgent.id}
+                onClick={() => toggleUserAgent(userAgent)}
+                className={classes.userAgentItem}
+              >
+                {!newChatMode ? (
+                  <Checkbox
+                    checked={store.usersToAddIds.includes(userAgent.id)}
+                    onChange={() => toggleUserAgent(userAgent)}
+                  />
+                ) : null}
+
                 <UserDisplayItem
                   {...userAgent.user}
                   noBreak={false}
@@ -217,9 +240,11 @@ function ChatAddUsersDrawer({ room, opened, onSave, onReturn = () => {}, onClose
             ))}
           </Box>
         </Box>
-        <Box className={classes.buttonActions}>
-          <Button onClick={save}>{t('add')}</Button>
-        </Box>
+        {!newChatMode ? (
+          <Box className={classes.buttonActions}>
+            <Button onClick={save}>{t('add')}</Button>
+          </Box>
+        ) : null}
       </Box>
     </Drawer>
   );
@@ -231,6 +256,7 @@ ChatAddUsersDrawer.propTypes = {
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onReturn: PropTypes.func,
+  newChatMode: PropTypes.bool,
 };
 
 export { ChatAddUsersDrawer };

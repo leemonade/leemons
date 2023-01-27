@@ -60,10 +60,18 @@ export const ChatAddUsersDrawerStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[3],
   },
   userAgentItem: {
+    cursor: 'pointer',
+    marginLeft: -theme.spacing[5],
+    marginRight: -theme.spacing[5],
+    paddingLeft: theme.spacing[5],
+    paddingRight: theme.spacing[5],
     display: 'flex',
     alignItems: 'center',
     '.mantine-UserDisplayItem-root': {
       flex: 1,
+    },
+    '&:hover': {
+      backgroundColor: theme.other.global.background.color.surface.subtle,
     },
   },
   userAgents: {

@@ -189,7 +189,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
   if (!room) {
     headerRoom = {
       name: store.name || t('newGroupName'),
-      type: 'plugins.comunica.room.group',
+      type: 'group',
       imageIsUrl: true,
       image: store.createFile,
       userAgents: _.map(store.createUserAgents, (item) => ({

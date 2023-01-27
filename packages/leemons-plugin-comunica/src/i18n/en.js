@@ -43,5 +43,9 @@ module.exports = {
     add: 'Add',
     newChat: 'New private chat',
     newGroup: 'New group',
+    newGroupName: 'Customized group',
+    newChatName: 'Private chat',
+    group: 'Groups',
+    newPrivateChat: 'New private chat',
   },
 };

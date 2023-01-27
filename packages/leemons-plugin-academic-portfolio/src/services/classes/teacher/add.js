@@ -20,6 +20,7 @@ async function add(_class, teacher, type, { transacting } = {}) {
     getClassProgram(_class),
     roomService.addUserAgents(leemons.plugin.prefixPN(`room.class.${_class}`), teacher, {
       transacting,
+      isAdmin: true,
     }),
   ]);
 

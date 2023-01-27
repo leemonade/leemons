@@ -9,6 +9,7 @@ import { useNotifications } from '@bubbles-ui/notifications';
 import { getCentersWithToken } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
+import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import { RoomService } from '../RoomService';
 
 export const ContextButtonStyles = createStyles((theme) => ({
@@ -131,7 +132,7 @@ function ContextButton({ onShowDrawerChange }) {
             notifications.showNotification({
               title: t(room.name, room.nameReplaces, false, room.name),
               message: data.message.content,
-              leftSide: <RoomAvatar room={room} size={32} />,
+              leftSide: <RoomAvatar room={getRoomParsed(room)} size={32} />,
             });
           }
         }
