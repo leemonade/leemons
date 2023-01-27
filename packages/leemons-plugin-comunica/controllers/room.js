@@ -135,7 +135,7 @@ async function createRoom(ctx) {
   }
   const room = await roomService.add(key, {
     ...ctx.request.body,
-    adminUserAgents: ctx.state.userSession.userAgents[0].id,
+    adminUserAgents: ctx.request.body.type === 'chat' ? [] : ctx.state.userSession.userAgents[0].id,
   });
   ctx.status = 200;
   ctx.body = { status: 200, room };

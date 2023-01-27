@@ -47,5 +47,6 @@ module.exports = {
     newGroupName: 'Grupo personalizado',
     newChatName: 'Chat privado',
     newPrivateChat: 'Nuevo chat privado',
+    chat: 'Chats',
   },
 };

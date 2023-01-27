@@ -206,7 +206,7 @@ function ChatDrawer({
       } else {
         store.room.userAgents.push(data.userAgent);
       }
-
+      store.room = getRoomParsed(store.room);
       debouncedFunction(render);
       return;
     }
@@ -219,6 +219,7 @@ function ChatDrawer({
           deleted,
         };
       });
+      store.room = getRoomParsed(store.room);
       render();
       return;
     }

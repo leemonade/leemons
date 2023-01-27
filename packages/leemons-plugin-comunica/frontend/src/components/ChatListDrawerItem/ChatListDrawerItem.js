@@ -7,7 +7,10 @@ import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import { ChatListDrawerItemStyles } from './ChatListDrawerItem.styles';
 
 function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
-  const { classes } = ChatListDrawerItemStyles({}, { name: 'ChatListDrawerItem' });
+  const { classes } = ChatListDrawerItemStyles(
+    { type: _room.type },
+    { name: 'ChatListDrawerItem' }
+  );
 
   const room = React.useMemo(() => getRoomParsed(_room), [_room]);
 
@@ -25,8 +28,13 @@ function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
           ) : null}
 
           {room.subName ? (
-            <Box style={{ lineHeight: '1.2rem' }}>
-              <Text role="productive" transform="capitalize" color="soft">
+            <Box className={classes.subName}>
+              <Text
+                truncated={_room.type === 'group'}
+                role="productive"
+                transform="capitalize"
+                color="soft"
+              >
                 {t(room.subName, {}, false, room.subName)}
               </Text>
             </Box>

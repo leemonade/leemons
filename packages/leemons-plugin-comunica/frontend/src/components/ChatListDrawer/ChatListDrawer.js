@@ -11,13 +11,7 @@ import {
   Title,
   useDebouncedCallback,
 } from '@bubbles-ui/components';
-import {
-  FilterIcon,
-  PluginKimIcon,
-  PluginSettingsIcon,
-  RemoveIcon,
-  SearchIcon,
-} from '@bubbles-ui/icons/outline';
+import { FilterIcon, PluginSettingsIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -350,7 +344,9 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       >
         <Box className={classes.wrapper}>
           <Box className={classes.header}>
-            <ActionButton onClick={onKim} icon={<PluginKimIcon width={16} height={16} />} />
+            {/* <ActionButton onClick={onKim} icon={<PluginKimIcon width={16} height={16} />} />
+             */}
+            <Box></Box>
             <Box className={classes.headerRight}>
               <Switch label={t('focus')} checked={store.config?.muted} onChange={onMutedChanged} />
               <Popover

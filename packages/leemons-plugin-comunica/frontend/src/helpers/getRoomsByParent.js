@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
 import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
+import getRoomParsed from '@comunica/helpers/getRoomParsed';
 
 export function getRoomsByParent(rooms, parent, types) {
   // eslint-disable-next-line no-nested-ternary
@@ -22,13 +23,13 @@ export function getRoomsByParent(rooms, parent, types) {
 
   return _.map(results, (room) => {
     const childrens = getRoomChildrens(rooms, room);
-    return {
+    return getRoomParsed({
       ...room,
       childrens,
       unreadMessages: childrens?.length
         ? getTotalUnreadMessages(childrens, rooms)
         : room.unreadMessages,
-    };
+    });
   });
 }
 

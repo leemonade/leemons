@@ -4,10 +4,19 @@ import { Box, ImageLoader } from '@bubbles-ui/components';
 import { RoomAvatar } from '@comunica/components';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
+import _ from 'lodash';
 import { RoomHeaderStyles } from './RoomHeader.styles';
 
+const noNUsersTypes = [
+  'plugins.assignables.assignation',
+  'plugins.assignables.assignation.subject',
+  'chat',
+];
+
 function RoomHeader({ room, t, onImageChange }) {
-  const { classes } = RoomHeaderStyles({}, { name: 'RoomHeader' });
+  const { classes } = RoomHeaderStyles({ type: room.type }, { name: 'RoomHeader' });
+
+  const nUsers = _.filter(room.userAgents, (e) => !e.deleted).length;
 
   const subNameIcon = React.useMemo(() => {
     if (room.type === 'plugins.assignables.assignation') {
@@ -36,7 +45,7 @@ function RoomHeader({ room, t, onImageChange }) {
     <Box className={classes.container}>
       <Box className={classes.leftSide}>
         <RoomAvatar onImageChange={onImageChange} room={room} />
-        <Box>
+        <Box className={classes.textsContainer}>
           {room.name ? (
             <Box className={classes.title}>{t(room.name, room.nameReplaces, false, room.name)}</Box>
           ) : null}
@@ -44,7 +53,15 @@ function RoomHeader({ room, t, onImageChange }) {
           {room.subName ? (
             <Box className={classes.subNameContainer}>
               {subNameIcon}
-              <Box className={classes.subName}>{t(room.subName, {}, false, room.subName)}</Box>
+              <Box className={classes.subName}>
+                {t(room.subName, {}, false, room.subName)}{' '}
+                {room.type !== 'group' ? ` (${nUsers})` : null}
+              </Box>
+              {room.type === 'group' ? (
+                <Box className={classes.nsubName}>
+                  {!noNUsersTypes.includes(room.type) ? `(${nUsers})` : null}
+                </Box>
+              ) : null}
             </Box>
           ) : null}
         </Box>
