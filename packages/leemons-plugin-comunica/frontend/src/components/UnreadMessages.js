@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text, createStyles, ImageLoader } from '@bubbles-ui/components';
+import { Box, createStyles, ImageLoader, Text } from '@bubbles-ui/components';
 import RoomService from '@comunica/RoomService';
-import CommentIcon from './icons/CommentIcon.svg';
+import CommentIcon from '../icons/CommentIcon.svg';
 
 export const UnreadMessagesStyles = createStyles((theme) => ({
   iconWrapper: {

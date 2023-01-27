@@ -1,5 +1,23 @@
 module.exports = [
   {
+    path: '/config',
+    method: 'GET',
+    handler: 'config.get',
+    authenticated: true,
+  },
+  {
+    path: '/config',
+    method: 'POST',
+    handler: 'config.save',
+    authenticated: true,
+  },
+  {
+    path: '/room/list',
+    method: 'GET',
+    handler: 'room.getRoomList',
+    authenticated: true,
+  },
+  {
     path: '/room/:key/messages',
     method: 'GET',
     handler: 'room.getMessages',
@@ -21,6 +39,60 @@ module.exports = [
     path: '/room/:key',
     method: 'GET',
     handler: 'room.getRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/mute',
+    method: 'POST',
+    handler: 'room.toggleMutedRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/mute',
+    method: 'POST',
+    handler: 'room.toggleAdminMutedRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/remove',
+    method: 'POST',
+    handler: 'room.adminRemoveUserAgent',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/name',
+    method: 'POST',
+    handler: 'room.adminUpdateRoomName',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/users',
+    method: 'POST',
+    handler: 'room.adminAddUsersToRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/remove',
+    method: 'POST',
+    handler: 'room.adminRemoveRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/create',
+    method: 'POST',
+    handler: 'room.createRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/image',
+    method: 'POST',
+    handler: 'room.adminChangeRoomImage',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/attach',
+    method: 'POST',
+    handler: 'room.toggleAttachedRoom',
     authenticated: true,
   },
   {

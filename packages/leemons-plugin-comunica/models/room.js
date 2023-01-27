@@ -15,8 +15,37 @@ module.exports = {
     name: {
       type: 'string',
     },
+    nameReplaces: {
+      type: 'text',
+      textType: 'mediumText',
+    },
+    subName: {
+      type: 'string',
+    },
+    parentRoom: {
+      type: 'text',
+    },
+    image: {
+      type: 'string',
+    },
+    icon: {
+      type: 'string',
+    },
+    bgColor: {
+      type: 'string',
+    },
+    type: {
+      type: 'string',
+    },
+    initDate: {
+      type: 'datetime',
+    },
     useEncrypt: {
       type: 'boolean',
+    },
+    metadata: {
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

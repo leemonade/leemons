@@ -6,7 +6,7 @@ const {
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 
-async function get(key, userAgent, { returnUserAgents, transacting: _transacting } = {}) {
+async function get(key, userAgent, { returnUserAgents = true, transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
@@ -23,7 +23,7 @@ async function get(key, userAgent, { returnUserAgents, transacting: _transacting
       }
       const [room, userAgents, nMessages, messagesUnread] = await Promise.all([
         table.room.findOne({ key }, { transacting }),
-        table.userAgentInRoom.find({ room: key }, { transacting }),
+        table.userAgentInRoom.find({ room: key, deleted_$null: false }, { transacting }),
         table.message.count({ room: key }, { transacting }),
         table.roomMessagesUnRead.findOne(
           {
@@ -45,11 +45,23 @@ async function get(key, userAgent, { returnUserAgents, transacting: _transacting
         const userAgentsById = _.keyBy(userAgen, 'id');
         room.userAgents = _.map(userAgents, (a) => ({
           userAgent: userAgentsById[a.userAgent],
+          adminMuted: a.adminMuted,
+          isAdmin: a.isAdmin,
           deleted: a.deleted,
         }));
       }
 
-      return room;
+      const uair = _.find(userAgents, { userAgent });
+
+      return {
+        ...room,
+        nameReplaces: JSON.parse(room.nameReplaces),
+        metadata: JSON.parse(room.metadata),
+        muted: uair?.muted || false,
+        isAdmin: uair?.isAdmin,
+        adminMuted: uair?.adminMuted,
+        attached: uair?.attached || null,
+      };
     },
     table.room,
     _transacting

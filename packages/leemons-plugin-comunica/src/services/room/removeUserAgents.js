@@ -2,8 +2,12 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
 
-async function removeUserAgents(key, _userAgents, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
+async function removeUserAgents(
+  key,
+  _userAgents,
+  { ignoreCalledFrom, transacting: _transacting } = {}
+) {
+  if (!ignoreCalledFrom) validateKeyPrefix(key, this.calledFrom);
 
   const userAgents = _.isArray(_userAgents) ? _userAgents : [_userAgents];
 
@@ -18,6 +22,24 @@ async function removeUserAgents(key, _userAgents, { transacting: _transacting } 
           transacting,
         }
       );
+
+      _.forEach(userAgents, (userAgent) => {
+        leemons.socket.emit(userAgent, `COMUNICA:ROOM:REMOVE`, { key });
+      });
+
+      const currentUserAgents = await table.userAgentInRoom.find(
+        { room: key },
+        {
+          transacting,
+        }
+      );
+
+      _.forEach(currentUserAgents, (item) => {
+        leemons.socket.emit(item.userAgent, `COMUNICA:ROOM:USERS_REMOVED`, {
+          key,
+          userAgents,
+        });
+      });
 
       return true;
     },

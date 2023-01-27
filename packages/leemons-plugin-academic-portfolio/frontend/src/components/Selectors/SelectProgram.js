@@ -52,7 +52,7 @@ const SelectProgram = forwardRef(
     }, [userValue]);
 
     useEffect(() => {
-      if (firstSelected && data.length > 0) {
+      if (firstSelected && data?.length > 0) {
         handleChange(data[0].value);
       }
     }, [data]);

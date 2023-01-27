@@ -1,4 +1,4 @@
-export default function selectFile({ multiple }) {
+export default function selectFile({ multiple } = {}) {
   return new Promise((resolve) => {
     const input = document.createElement('input');
     input.type = 'file';

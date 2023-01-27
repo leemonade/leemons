@@ -5,7 +5,23 @@ const { addUserAgents } = require('./addUserAgents');
 
 async function add(
   key,
-  { name, userAgents = [], useEncrypt = true, viewPermissions, transacting: _transacting } = {}
+  {
+    name,
+    type,
+    initDate,
+    subName,
+    bgColor,
+    nameReplaces = {},
+    icon,
+    image,
+    metadata = {},
+    userAgents = [],
+    adminUserAgents = [],
+    parentRoom,
+    useEncrypt = true,
+    viewPermissions,
+    transacting: _transacting,
+  } = {}
 ) {
   validateKeyPrefix(key, this.calledFrom);
 
@@ -17,7 +33,16 @@ async function add(
         {
           key,
           name,
+          type,
+          nameReplaces: JSON.stringify(nameReplaces),
+          initDate,
+          bgColor,
+          subName,
+          icon,
+          image,
+          parentRoom,
           useEncrypt,
+          metadata: JSON.stringify(metadata),
         },
         { transacting }
       );
@@ -34,6 +59,10 @@ async function add(
       if (userAgents.length > 0) {
         await addUserAgents.call(this, room.key, userAgents, { transacting });
       }
+      if (adminUserAgents.length > 0) {
+        await addUserAgents.call(this, room.key, adminUserAgents, { isAdmin: true, transacting });
+      }
+      return room;
     },
     table.room,
     _transacting
