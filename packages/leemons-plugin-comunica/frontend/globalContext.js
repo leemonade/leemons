@@ -31,7 +31,12 @@ export function Provider({ children }) {
   React.useEffect(() => {
     const old = store.showButton;
     store.showButton = false;
-    if (session && centers && location.pathname !== '/private/users/select-profile') {
+    if (
+      session &&
+      centers &&
+      centers.length &&
+      location.pathname !== '/private/users/select-profile'
+    ) {
       store.showButton = true;
     }
     if (old !== store.showButton) {
