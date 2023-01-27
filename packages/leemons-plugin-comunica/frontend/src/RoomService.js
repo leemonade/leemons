@@ -50,6 +50,42 @@ class RoomService {
     return RoomService.adminAddUsersToRoom(this.room, userAgents);
   }
 
+  adminRemoveRoom() {
+    return RoomService.adminRemoveRoom(this.room);
+  }
+
+  adminChangeRoomImage(file) {
+    return RoomService.adminRemoveRoom(this.room, file);
+  }
+
+  static adminChangeRoomImage(key, file) {
+    const form = new FormData();
+    form.append('image', file, file.name);
+    return leemons.api(`comunica/room/${key}/admin/image`, {
+      allAgents: true,
+      method: 'POST',
+      headers: {
+        'content-type': 'none',
+      },
+      body: form,
+    });
+  }
+
+  static createRoom(body) {
+    return leemons.api(`comunica/room/create`, {
+      allAgents: true,
+      method: 'POST',
+      body,
+    });
+  }
+
+  static adminRemoveRoom(key) {
+    return leemons.api(`comunica/room/${key}/admin/remove`, {
+      allAgents: true,
+      method: 'POST',
+    });
+  }
+
   static adminAddUsersToRoom(key, userAgents) {
     return leemons.api(`comunica/room/${key}/admin/users`, {
       allAgents: true,

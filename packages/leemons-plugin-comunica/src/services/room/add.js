@@ -16,6 +16,7 @@ async function add(
     image,
     metadata = {},
     userAgents = [],
+    adminUserAgents = [],
     parentRoom,
     useEncrypt = true,
     viewPermissions,
@@ -57,6 +58,9 @@ async function add(
 
       if (userAgents.length > 0) {
         await addUserAgents.call(this, room.key, userAgents, { transacting });
+      }
+      if (adminUserAgents.length > 0) {
+        await addUserAgents.call(this, room.key, adminUserAgents, { isAdmin: true, transacting });
       }
       return room;
     },

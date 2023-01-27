@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, ImageLoader } from '@bubbles-ui/components';
+import _ from 'lodash';
+import { Avatar, Box, ImageLoader } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
+import selectFile from '@leebrary/helpers/selectFile';
 import { RoomAvatarStyles } from './RoomAvatar.styles';
 
-function RoomAvatar({ room, size = 56 }) {
+function RoomAvatar({ room, onImageChange, size = 56 }) {
   const { classes } = RoomAvatarStyles(
     {
       imageSquare: room.type === 'plugins.assignables.assignation',
@@ -12,13 +14,21 @@ function RoomAvatar({ room, size = 56 }) {
     },
     { name: 'RoomAvatar' }
   );
+
+  async function click() {
+    if (_.isFunction(onImageChange)) {
+      const file = await selectFile();
+      onImageChange(file[0]);
+    }
+  }
+
   const avatar = React.useMemo(() => {
     const result = {};
     if (room.image) {
       result.image = (
         <ImageLoader
           className={classes.image}
-          src={room.imageIsUrl ? room.image : getAssetUrl(room.image)}
+          src={`${room.imageIsUrl ? room.image : getAssetUrl(room.image)}&seed=${room.imageSeed}`}
           forceImage
           width={size}
           height={size}
@@ -35,6 +45,9 @@ function RoomAvatar({ room, size = 56 }) {
         />
       );
     }
+    if (!room.image && !room.icon) {
+      result.image = <Avatar color="#D3D5D9" fullName={room.name} size="lg" />;
+    }
     if (room.attached) {
       result.attached = (
         <ImageLoader
@@ -49,11 +62,11 @@ function RoomAvatar({ room, size = 56 }) {
       result.color = room.bgColor;
     }
     return result;
-  }, [room.icon, room.attached, room.image, room.bgColor]);
+  }, [room.icon, room.attached, room.image, room.bgColor, room.imageSeed]);
 
   return (
     <Box className={classes.itemImage}>
-      <Box className={classes.itemContent}>
+      <Box className={classes.itemContent} onClick={click}>
         {/* eslint-disable-next-line no-nested-ternary */}
         {avatar.image ? (
           <>
@@ -76,6 +89,7 @@ function RoomAvatar({ room, size = 56 }) {
 RoomAvatar.propTypes = {
   room: PropTypes.any,
   size: PropTypes.number,
+  onImageChange: PropTypes.func,
 };
 
 export { RoomAvatar };

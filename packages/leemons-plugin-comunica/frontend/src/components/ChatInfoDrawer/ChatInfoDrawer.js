@@ -18,6 +18,9 @@ import prefixPN from '@comunica/helpers/prefixPN';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
 import RoomService from '@comunica/RoomService';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
+import getBase64 from '@leebrary/helpers/getBase64';
+import { getCentersWithToken } from '@users/session';
+import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
 import { ChatInfoDrawerStyles } from './ChatInfoDrawer.styles';
 
 const usersToShow = 7;
@@ -28,25 +31,39 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
 
   const [store, render] = useStore({
     showMembers: false,
-    name: t(room.name, room.nameReplaces, null, room.name),
-    muted: room.muted,
-    attached: room.attached,
+    name: room ? t(room.name, room.nameReplaces, null, room.name) : null,
+    muted: room?.muted || false,
+    attached: room?.attached || false,
+    createUserAgents: [],
   });
 
   async function toggleMute() {
     store.muted = !store.muted;
     render();
-    const { muted } = await RoomService.toggleRoomMute(room.key);
-    if (store.muted !== muted) {
-      store.muted = muted;
-      render();
+    if (room) {
+      const { muted } = await RoomService.toggleRoomMute(room.key);
+      if (store.muted !== muted) {
+        store.muted = muted;
+        render();
+      }
     }
+  }
+
+  function reset() {
+    store.attached = false;
+    store.muted = false;
+    store.showAllMembers = false;
+    store.name = null;
+    store.createUserAgents = [];
+    store.nameError = false;
+    store.createFile = null;
+    store.file = null;
   }
 
   async function toggleAttached() {
     store.attached = store.attached ? null : new Date();
     render();
-    await RoomService.toggleRoomAttached(room.key);
+    if (room) await RoomService.toggleRoomAttached(room.key);
   }
 
   function toggleShowAllMembers() {
@@ -55,7 +72,15 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
   }
 
   function deleteUserFromRoom(userAgent) {
-    RoomService.adminRemoveUserAgentFromRoom(room.key, userAgent.id);
+    if (room) {
+      RoomService.adminRemoveUserAgentFromRoom(room.key, userAgent.id);
+    } else {
+      const index = _.findIndex(store.createUserAgents, { id: userAgent.id });
+      if (index >= 0) {
+        store.createUserAgents.splice(index, 1);
+        render();
+      }
+    }
   }
 
   function muteAdminUserFromRoom(userAgent) {
@@ -78,6 +103,11 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
     onClose();
   }
 
+  function addUsers(e) {
+    store.createUserAgents = [...store.createUserAgents, ...e];
+    render();
+  }
+
   function returnAddUsers() {
     store.showAddUsers = false;
     render();
@@ -88,27 +118,104 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
     render();
   }
 
-  React.useEffect(() => {
-    if (store.muted !== room.muted) {
-      store.muted = room.muted;
+  function removeRoom() {
+    RoomService.adminRemoveRoom(room.key);
+  }
+
+  async function createGroup() {
+    const {
+      room: { key },
+    } = await RoomService.createRoom({
+      name: store.name,
+      type: 'group',
+      userAgents: _.map(store.createUserAgents, 'id'),
+    });
+    if (store.attached) RoomService.toggleRoomAttached(key);
+    if (store.muted) RoomService.toggleRoomMute(key);
+    if (store.file) RoomService.adminChangeRoomImage(key, store.file);
+    onReturn();
+    reset();
+    render();
+  }
+
+  async function onImageChange(file) {
+    if (!room) {
+      store.createFile = await getBase64(file);
+      store.file = file;
+    } else {
+      RoomService.adminChangeRoomImage(room.key, file);
+    }
+  }
+
+  async function load() {
+    const {
+      userAgents: [item],
+    } = await getUserAgentsInfo(getCentersWithToken()[0].userAgentId, { withProfile: true });
+    store.me = item;
+    render();
+  }
+
+  function beforeReturn() {
+    onReturn();
+    if (!room) {
+      reset();
       render();
     }
-  }, [room.muted]);
+  }
 
   React.useEffect(() => {
-    if (store.attached !== room.attached) {
-      store.attached = room.attached;
-      render();
-    }
-  }, [room.attached]);
+    load();
+  }, []);
 
-  if (room.userAgents) {
-    store.userAgents = _.filter(room.userAgents, (e) => !e.deleted);
+  React.useEffect(() => {
+    if (room) {
+      if (store.muted !== room.muted) {
+        store.muted = room.muted;
+        render();
+      }
+    }
+  }, [room?.muted]);
+
+  React.useEffect(() => {
+    if (room) {
+      if (store.attached !== room.attached) {
+        store.attached = room.attached;
+        render();
+      }
+    }
+  }, [room?.attached]);
+
+  let headerRoom = room;
+  if (!room) {
+    headerRoom = {
+      name: store.name || t('newGroupName'),
+      type: 'plugins.comunica.room.group',
+      imageIsUrl: true,
+      image: store.createFile,
+      userAgents: _.map(store.createUserAgents, (item) => ({
+        userAgent: item,
+        deleted: false,
+      })),
+    };
+    if (store.me) {
+      headerRoom.userAgents.unshift({
+        deleted: false,
+        isAdmin: true,
+        userAgent: store.me,
+      });
+    }
+  }
+
+  if (headerRoom?.userAgents) {
+    store.userAgents = _.filter(headerRoom?.userAgents, (e) => !e.deleted);
     store.nNoDeletedAgents = store.userAgents.length;
     if (!store.showAllMembers) {
       store.userAgents = store.userAgents.slice(0, usersToShow);
     }
   }
+
+  let saveDisabled = store.name === room?.name || store.nameError || !store.name;
+  if (!room && headerRoom.userAgents.length < 2) saveDisabled = true;
 
   return (
     <>
@@ -118,7 +225,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
             <Button
               variant="link"
               color="secondary"
-              onClick={onReturn}
+              onClick={beforeReturn}
               leftIcon={<ChevronLeftIcon width={12} height={12} />}
             >
               {t('return')}
@@ -126,10 +233,10 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
             <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
           </Box>
           <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
-            <RoomHeader t={t} room={room} />
+            <RoomHeader onImageChange={onImageChange} t={t} room={headerRoom} />
           </Box>
           <Box className={classes.content}>
-            {room.isAdmin ? (
+            {!room || room.isAdmin ? (
               <Box className={classes.name}>
                 <TextInput
                   required
@@ -152,18 +259,21 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
                 {/* eslint-disable-next-line no-nested-ternary */}
                 {item.isAdmin ? (
                   <Box className={classes.userAdmin}>{t('admin')}</Box>
-                ) : room.isAdmin ? (
+                ) : !room || room.isAdmin ? (
                   <Box className={classes.adminIcons}>
-                    <Box
-                      className={
-                        item.adminMuted ? classes.userMuteIconActive : classes.userMuteIcon
-                      }
-                    >
-                      <ActionButton
-                        onClick={() => muteAdminUserFromRoom(item.userAgent)}
-                        icon={<VolumeControlOffIcon width={16} height={16} />}
-                      />
-                    </Box>
+                    {room ? (
+                      <Box
+                        className={
+                          item.adminMuted ? classes.userMuteIconActive : classes.userMuteIcon
+                        }
+                      >
+                        <ActionButton
+                          onClick={() => muteAdminUserFromRoom(item.userAgent)}
+                          icon={<VolumeControlOffIcon width={16} height={16} />}
+                        />
+                      </Box>
+                    ) : null}
+
                     <Box className={classes.userRemove}>
                       <ActionButton
                         color="phatic"
@@ -175,7 +285,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
                 ) : null}
               </Box>
             ))}
-            {room.userAgents.length > usersToShow ? (
+            {headerRoom?.userAgents.length > usersToShow ? (
               <Box onClick={toggleShowAllMembers} className={classes.showAll}>
                 {store.showAllMembers ? (
                   <>
@@ -189,16 +299,21 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
               </Box>
             ) : null}
 
-            {room.isAdmin ? (
+            {!room || room?.isAdmin ? (
               <Box onClick={openAddUsers} className={classes.showAll}>
                 + {t('addNewUsers')}
               </Box>
             ) : null}
           </Box>
-          {room.isAdmin ? (
+          {!room || room.isAdmin ? (
             <Box className={classes.buttonActions}>
-              <Button variant="outline">{t('remove')}</Button>
-              <Button disabled={store.name === room.name || store.nameError} onClick={updateName}>
+              {room ? (
+                <Button onClick={removeRoom} variant="outline">
+                  {t('remove')}
+                </Button>
+              ) : null}
+
+              <Button disabled={saveDisabled} onClick={room ? updateName : createGroup}>
                 {t('save')}
               </Button>
             </Box>
@@ -206,7 +321,8 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
         </Box>
       </Drawer>
       <ChatAddUsersDrawer
-        room={room}
+        room={headerRoom}
+        onSave={room ? null : addUsers}
         opened={store.showAddUsers}
         onClose={closeAddUsers}
         onReturn={returnAddUsers}

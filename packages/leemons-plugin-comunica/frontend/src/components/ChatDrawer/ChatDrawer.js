@@ -222,6 +222,13 @@ function ChatDrawer({
       render();
       return;
     }
+    if (event === 'COMUNICA:ROOM:UPDATE:IMAGE' && store.room?.key === data.key) {
+      store.room.image = data.image;
+      if (!store.room.imageSeed) store.room.imageSeed = 0;
+      store.room.imageSeed++;
+      render();
+      return;
+    }
     if (event === 'COMUNICA:ROOM:UPDATE:NAME' && store.room?.key === data.key) {
       store.room.name = data.name;
       render();

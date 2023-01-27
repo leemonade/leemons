@@ -72,6 +72,24 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/room/:key/admin/remove',
+    method: 'POST',
+    handler: 'room.adminRemoveRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/create',
+    method: 'POST',
+    handler: 'room.createRoom',
+    authenticated: true,
+  },
+  {
+    path: '/room/:key/admin/image',
+    method: 'POST',
+    handler: 'room.adminChangeRoomImage',
+    authenticated: true,
+  },
+  {
     path: '/room/:key/attach',
     method: 'POST',
     handler: 'room.toggleAttachedRoom',

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
 
-async function add(room, userAgent, { transacting }) {
+async function add(room, userAgent, { isAdmin, transacting }) {
   const response = await table.userAgentInRoom.findOne(
     {
       deleted_$null: false,
@@ -21,6 +21,27 @@ async function add(room, userAgent, { transacting }) {
           userAgent,
         },
         {
+          isAdmin,
+          deleted: false,
+          deleted_at: null,
+        },
+        { transacting }
+      );
+      return {
+        added: true,
+        userAgent,
+        result,
+      };
+    }
+    // Si el usuario existe pero el isAdmin es distinto lo actualizamos
+    if (!!response.isAdmin !== !!isAdmin) {
+      const result = await table.userAgentInRoom.update(
+        {
+          room,
+          userAgent,
+        },
+        {
+          isAdmin,
           deleted: false,
           deleted_at: null,
         },
@@ -43,6 +64,7 @@ async function add(room, userAgent, { transacting }) {
     {
       room,
       userAgent,
+      isAdmin,
       encryptKey: global.utils.randomString(16),
     },
     { transacting }
@@ -57,7 +79,7 @@ async function add(room, userAgent, { transacting }) {
 async function addUserAgents(
   key,
   _userAgents,
-  { ignoreCalledFrom, transacting: _transacting } = {}
+  { isAdmin, ignoreCalledFrom, transacting: _transacting } = {}
 ) {
   if (!ignoreCalledFrom) validateKeyPrefix(key, this.calledFrom);
 
@@ -73,7 +95,7 @@ async function addUserAgents(
       );
 
       const results = await Promise.all(
-        _.map(userAgents, (userAgent) => add(key, userAgent, { transacting }))
+        _.map(userAgents, (userAgent) => add(key, userAgent, { isAdmin, transacting }))
       );
 
       const responsesAdded = _.filter(results, { added: true });

@@ -118,18 +118,54 @@ async function adminAddUsersToRoom(ctx) {
   ctx.body = { status: 200, userAgents };
 }
 
+async function adminRemoveRoom(ctx) {
+  await roomService.adminRemoveRoom(ctx.request.params.key, ctx.state.userSession.userAgents[0].id);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
+async function createRoom(ctx) {
+  let key = null;
+  if (ctx.request.body.type === 'group') {
+    key = `leemons.comunica.room.group.${global.utils.randomString()}`;
+  } else if (ctx.request.body.type === 'chat') {
+    key = `leemons.comunica.room.chat.${global.utils.randomString()}`;
+  } else {
+    throw new Error('Type not allowed');
+  }
+  const room = await roomService.add(key, {
+    ...ctx.request.body,
+    adminUserAgents: ctx.state.userSession.userAgents[0].id,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, room };
+}
+
+async function adminChangeRoomImage(ctx) {
+  const room = await roomService.adminChangeRoomImage(
+    ctx.request.params.key,
+    ctx.state.userSession,
+    ctx.request.files.image
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, room };
+}
+
 module.exports = {
   toggleAdminMutedRoom,
   getRoomsMessageCount,
   adminRemoveUserAgent,
+  adminChangeRoomImage,
   adminUpdateRoomName,
   adminAddUsersToRoom,
   markMessagesAsRead,
   toggleAttachedRoom,
   getUnreadMessages,
+  adminRemoveRoom,
   toggleMutedRoom,
   getRoomList,
   sendMessage,
   getMessages,
+  createRoom,
   getRoom,
 };

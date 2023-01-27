@@ -46,4 +46,11 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
     padding: theme.spacing[4],
     borderTop: `1px solid ${theme.other.global.border.color.line.muted}`,
   },
+  config: {
+    padding: theme.spacing[2],
+    maxWidth: '250px',
+    '.mantine-Button-inner': {
+      justifyContent: 'start',
+    },
+  },
 }));

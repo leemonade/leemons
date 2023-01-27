@@ -6,7 +6,7 @@ import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { RoomHeaderStyles } from './RoomHeader.styles';
 
-function RoomHeader({ room, t }) {
+function RoomHeader({ room, t, onImageChange }) {
   const { classes } = RoomHeaderStyles({}, { name: 'RoomHeader' });
 
   const subNameIcon = React.useMemo(() => {
@@ -35,7 +35,7 @@ function RoomHeader({ room, t }) {
   return (
     <Box className={classes.container}>
       <Box className={classes.leftSide}>
-        <RoomAvatar room={room} />
+        <RoomAvatar onImageChange={onImageChange} room={room} />
         <Box>
           {room.name ? (
             <Box className={classes.title}>{t(room.name, room.nameReplaces, false, room.name)}</Box>
@@ -63,6 +63,7 @@ function RoomHeader({ room, t }) {
 RoomHeader.propTypes = {
   t: PropTypes.func,
   room: PropTypes.any,
+  onImageChange: PropTypes.func,
 };
 
 export { RoomHeader };

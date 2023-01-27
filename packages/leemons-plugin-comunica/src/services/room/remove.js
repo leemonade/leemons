@@ -2,8 +2,8 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
 
-async function remove(key, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
+async function remove(key, { ignoreCalledFrom, transacting: _transacting } = {}) {
+  if (!ignoreCalledFrom) validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
     async (transacting) => {

@@ -41,5 +41,9 @@ module.exports = {
     searchResults: 'Resultados de búsqueda',
     selectAll: 'Seleccionar todos',
     add: 'Añadir',
+    newChat: 'Nuevo chat privado',
+    newGroup: 'Nuevo grupo',
+    newGroupName: 'Grupo personalizado',
+    newChatName: 'Chat privado',
   },
 };

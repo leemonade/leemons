@@ -21,7 +21,7 @@ import { getCentersWithToken } from '@users/session';
 import RoomService from '@comunica/RoomService';
 import { ChatAddUsersDrawerStyles } from './ChatAddUsersDrawer.styles';
 
-function ChatAddUsersDrawer({ room, opened, onReturn = () => {}, onClose = () => {} }) {
+function ChatAddUsersDrawer({ room, opened, onSave, onReturn = () => {}, onClose = () => {} }) {
   const { classes } = ChatAddUsersDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
 
@@ -69,7 +69,11 @@ function ChatAddUsersDrawer({ room, opened, onReturn = () => {}, onClose = () =>
   }
 
   async function save() {
-    await RoomService.adminAddUsersToRoom(room.key, store.usersToAddIds);
+    if (_.isFunction(onSave)) {
+      onSave(store.usersToAdd);
+    } else {
+      await RoomService.adminAddUsersToRoom(room.key, store.usersToAddIds);
+    }
     onReturn();
     resetAll();
   }
@@ -160,18 +164,15 @@ function ChatAddUsersDrawer({ room, opened, onReturn = () => {}, onClose = () =>
               {store.usersToAdd?.map((item, index) => (
                 <Box key={item.id} className={classes.userInfo}>
                   <UserDisplayItem {...item.user} size="xs" />
-                  {/* eslint-disable-next-line no-nested-ternary */}
-                  {room.isAdmin ? (
-                    <Box className={classes.adminIcons}>
-                      <Box className={classes.userRemove}>
-                        <ActionButton
-                          color="phatic"
-                          onClick={() => deleteUser(index)}
-                          icon={<DeleteBinIcon width={16} height={16} />}
-                        />
-                      </Box>
+                  <Box className={classes.adminIcons}>
+                    <Box className={classes.userRemove}>
+                      <ActionButton
+                        color="phatic"
+                        onClick={() => deleteUser(index)}
+                        icon={<DeleteBinIcon width={16} height={16} />}
+                      />
                     </Box>
-                  ) : null}
+                  </Box>
                 </Box>
               ))}
               <Box
@@ -216,11 +217,9 @@ function ChatAddUsersDrawer({ room, opened, onReturn = () => {}, onClose = () =>
             ))}
           </Box>
         </Box>
-        {room.isAdmin ? (
-          <Box className={classes.buttonActions}>
-            <Button onClick={save}>{t('add')}</Button>
-          </Box>
-        ) : null}
+        <Box className={classes.buttonActions}>
+          <Button onClick={save}>{t('add')}</Button>
+        </Box>
       </Box>
     </Drawer>
   );
@@ -228,6 +227,7 @@ function ChatAddUsersDrawer({ room, opened, onReturn = () => {}, onClose = () =>
 
 ChatAddUsersDrawer.propTypes = {
   room: PropTypes.string,
+  onSave: PropTypes.func,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onReturn: PropTypes.func,

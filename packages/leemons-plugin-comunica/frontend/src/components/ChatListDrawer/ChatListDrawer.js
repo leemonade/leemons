@@ -11,7 +11,13 @@ import {
   Title,
   useDebouncedCallback,
 } from '@bubbles-ui/components';
-import { FilterIcon, PluginKimIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
+import {
+  FilterIcon,
+  PluginKimIcon,
+  PluginSettingsIcon,
+  RemoveIcon,
+  SearchIcon,
+} from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -23,6 +29,7 @@ import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
 import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
 import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';
 import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
+import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
@@ -129,6 +136,7 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
   }
 
   function closeAll() {
+    store.createType = null;
     store.selectedRoom = null;
     store.canOpenIntermediateDrawer = false;
     onRoomOpened(null);
@@ -170,6 +178,25 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
   function cleanTypesFilter() {
     store.typeFilters = [];
     recalcule();
+    render();
+  }
+
+  function hideCreate() {
+    store.createType = null;
+    render();
+  }
+
+  function closeCreate() {
+    closeAll();
+  }
+
+  function newChat() {
+    store.createType = 'chat';
+    render();
+  }
+
+  function newGroup() {
+    store.createType = 'group';
     render();
   }
 
@@ -248,6 +275,17 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       }
       return;
     }
+    if (event === 'COMUNICA:ROOM:UPDATE:IMAGE') {
+      const index = _.findIndex(store.originalRooms, { key: data.key });
+      if (index >= 0) {
+        store.originalRooms[index].image = data.image;
+        if (!store.originalRooms[index].imageSeed) store.originalRooms[index].imageSeed = 0;
+        store.originalRooms[index].imageSeed++;
+        recalcule();
+        render();
+      }
+      return;
+    }
     _.forEach(store.originalRooms, (room, index) => {
       if (`COMUNICA:ROOM:${room.key}` === event) {
         store.originalRooms[index].unreadMessages += 1;
@@ -284,6 +322,23 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
             <ActionButton onClick={onKim} icon={<PluginKimIcon width={16} height={16} />} />
             <Box className={classes.headerRight}>
               <Switch label={t('focus')} checked={store.config?.muted} onChange={onMutedChanged} />
+              <Popover
+                target={
+                  <ActionButton
+                    onClick={onClose}
+                    icon={<PluginSettingsIcon width={16} height={16} />}
+                  />
+                }
+              >
+                <Box className={classes.config}>
+                  <Button onClick={newChat} fullWidth variant="light" color="secondary">
+                    {t('newChat')}
+                  </Button>
+                  <Button onClick={newGroup} fullWidth variant="light" color="secondary">
+                    {t('newGroup')}
+                  </Button>
+                </Box>
+              </Popover>
               <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
             </Box>
           </Box>
@@ -359,6 +414,11 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
         onReturn={closeSelectedRoom}
         room={store.selectedRoom?.key}
         opened={!!store.selectedRoom}
+      />
+      <ChatInfoDrawer
+        opened={store.createType === 'group'}
+        onReturn={hideCreate}
+        onClose={closeCreate}
       />
     </>
   );

@@ -41,5 +41,7 @@ module.exports = {
     searchResults: 'Search results',
     selectAll: 'Select all',
     add: 'Add',
+    newChat: 'New private chat',
+    newGroup: 'New group',
   },
 };
