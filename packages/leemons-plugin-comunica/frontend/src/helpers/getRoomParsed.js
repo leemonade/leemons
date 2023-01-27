@@ -16,7 +16,7 @@ export function getRoomParsed(room) {
   if (isTeacher && room.type === 'plugins.assignables.assignation.user') {
     const student = _.find(
       _.map(room.userAgents, 'userAgent'),
-      (userAgent) => userAgent.profile.sysName === 'student'
+      (userAgent) => userAgent?.profile?.sysName === 'student'
     );
     config.name = getName(student);
     config.image = student.user.avatar;
@@ -27,7 +27,7 @@ export function getRoomParsed(room) {
     config.name = getName(userAgentData.userAgent);
     config.image = userAgentData.userAgent.user.avatar;
     config.imageIsUrl = true;
-    config.subName = userAgentData.userAgent.profile.name;
+    config.subName = userAgentData.userAgent?.profile?.name;
   }
   if (room.type === 'group') {
     const agentId = getCentersWithToken()[0].userAgentId;
