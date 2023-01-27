@@ -177,7 +177,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           bgColor: classe.subject.color,
           transacting,
         };
-        if (assetImage.cover) roomData.image = assetImage.id;
+        roomData.image = assetImage.id;
         await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), roomData);
 
         [classe] = await getClassesProgramInfo(

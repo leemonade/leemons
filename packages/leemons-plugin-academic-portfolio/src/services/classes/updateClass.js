@@ -187,7 +187,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         subName,
         transacting,
       };
-      if (assetImage.cover) roomConfig.image = assetImage.id;
+      roomConfig.image = assetImage.id;
       if (roomExists) {
         await roomService.update(roomKey, roomConfig);
       } else {

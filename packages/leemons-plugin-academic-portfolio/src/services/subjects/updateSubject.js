@@ -77,8 +77,8 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
             bgColor: color,
             transacting,
           };
-          if (assetImage.cover) roomData.image = assetImage.id;
-          if (assetIcon.cover) roomData.icon = assetIcon.id;
+          roomData.image = assetImage.id;
+          roomData.icon = assetIcon.id;
           return roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), roomData);
         })
       );
