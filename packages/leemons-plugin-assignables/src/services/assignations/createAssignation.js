@@ -48,7 +48,8 @@ async function createInstanceRoom(
     });
   }
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
-  await comunicaServices.room.addUserAgents(roomKey, userAgents, { transacting });
+  if (userAgents.length)
+    await comunicaServices.room.addUserAgents(roomKey, userAgents, { transacting });
   if (teachersUserAgents.length) {
     await comunicaServices.room.addUserAgents(roomKey, teachersUserAgents, {
       isAdmin: true,
@@ -94,12 +95,16 @@ async function createSubjectsRooms(
         icon: classe.subject.icon?.id,
         bgColor: classe.color,
         type: leemons.plugin.prefixPN('assignation.subject'),
-        adminUserAgents: teachers,
+        adminUserAgents: _.compact(_.uniq(teachers)),
         transacting,
       });
     }
     // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
-    await comunicaServices.room.addUserAgents(roomKey, teachers, { isAdmin: true, transacting });
+    if (teachers.length)
+      await comunicaServices.room.addUserAgents(roomKey, _.compact(_.uniq(teachers)), {
+        isAdmin: true,
+        transacting,
+      });
     return comunicaServices.room.get(roomKey, { transacting });
   }
 
@@ -122,7 +127,7 @@ async function createGroupRoom(
   const roomAlreadyExists = await comunicaServices.room.exists(roomKey, { transacting });
 
   const userAgents = _.compact(_.uniq(users));
-  const teachersUserAgents = _.compact(_.uniq(users));
+  const teachersUserAgents = _.compact(_.uniq(teachers));
 
   // Creamos la sala que estara a primera altura
   if (!roomAlreadyExists) {
@@ -143,7 +148,7 @@ async function createGroupRoom(
     });
   }
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
-  await comunicaServices.room.addUserAgents(roomKey, userAgents, { transacting });
+  if (userAgents) await comunicaServices.room.addUserAgents(roomKey, userAgents, { transacting });
   if (teachersUserAgents.length) {
     await comunicaServices.room.addUserAgents(roomKey, teachersUserAgents, {
       isAdmin: true,
@@ -171,7 +176,7 @@ async function addUserSubjectRoom(
       bgColor: classe.color,
       parentRoom: parentKey,
       type: leemons.plugin.prefixPN('assignation.user'),
-      userAgents: _.compact(_.uniq(user)),
+      userAgents: user,
       adminUserAgents: _.compact(_.uniq(teachers)),
       transacting,
     }

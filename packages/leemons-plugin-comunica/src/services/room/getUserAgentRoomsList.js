@@ -45,6 +45,8 @@ async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
     });
   });
 
+  console.log(JSON.stringify(result));
+
   return result;
 }
 

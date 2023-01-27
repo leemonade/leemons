@@ -10,6 +10,8 @@ function getName(userAgent) {
 export function getRoomParsed(room) {
   const isTeacher = isTeacherByRoom(room);
 
+  console.log(room);
+
   const config = {
     ...room,
   };
