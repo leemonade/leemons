@@ -102,7 +102,7 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
 
       render();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       addErrorAlert(error);
     }
   }

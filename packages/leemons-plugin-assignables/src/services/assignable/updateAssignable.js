@@ -344,7 +344,7 @@ module.exports = async function updateAssignable(
       published,
     };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw new Error(`Error updating assignable: ${e.message}`);
   }
 };

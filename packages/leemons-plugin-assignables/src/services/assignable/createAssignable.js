@@ -69,7 +69,7 @@ module.exports = async function createAssignable(
       let asset;
       try {
         if (!_id) {
-          console.log(subjects);
+          // console.log(subjects);
           const assetProgram = subjects?.length ? subjects[0].program : null;
           const assetSubjects = subjects?.length
             ? subjects.map(({ subject, level }) => ({ subject, level }))

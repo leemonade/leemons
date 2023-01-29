@@ -41,7 +41,7 @@ module.exports = async function getAssignableInstance(
         assignableInstance.metadata.showGroupNameToStudents = undefined;
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw new Error("The assignable instance doesn't exist or you don't have access");
     }
 
@@ -118,7 +118,7 @@ module.exports = async function getAssignableInstance(
 
     return assignableInstance;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 };

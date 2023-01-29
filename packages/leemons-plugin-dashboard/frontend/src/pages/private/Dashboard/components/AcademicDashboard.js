@@ -142,6 +142,7 @@ export default function AcademicDashboard({ session }) {
               data={store.programsSelect}
               readOnly={store.programsSelect?.length <= 1}
               onChange={selectProgram}
+              showIcon={false}
             />
           </Box>
         </Box>

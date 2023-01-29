@@ -23,7 +23,7 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
 
   const { curriculum, subject: id } = subject;
 
-  console.log('Curriculum', subject);
+  // console.log('Curriculum', subject);
 
   const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
   return (
@@ -59,13 +59,13 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
                 {`
               <ul>
               ${curriculum?.objectives
-                    ?.map(
-                      (objective) =>
-                        `<li>
+                ?.map(
+                  (objective) =>
+                    `<li>
                     ${objective}
                   </li>`
-                    )
-                    ?.join('')}
+                )
+                ?.join('')}
               </ul>
             `}
               </HtmlText>

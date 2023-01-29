@@ -106,7 +106,7 @@ async function subjectByIds(ctx) {
     id = JSON.parse(ids);
   }
 
-  console.log(id);
+  // console.log(id);
 
   const data = await subjectService.subjectByIds(Array.isArray(id) ? id : [id], {
     userSession: ctx.state.userSession,

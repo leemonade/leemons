@@ -1,7 +1,7 @@
 const permissionsPrefix = 'plugins.content-creator';
 
 const permissionNames = {
-  creator: `${permissionsPrefix}.content-creator`,
+  creator: `${permissionsPrefix}.creator`,
 };
 
 const permissions = [

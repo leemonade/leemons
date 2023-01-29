@@ -8,7 +8,7 @@ const initProfiles = require('./src/profiles');
 const initFamilies = require('./src/families');
 const initGrades = require('./src/grades');
 const initAcademicPortfolio = require('./src/academicPortfolio');
-const { initLibrary } = require('./src/leebrary');
+const { initLibrary, updateLibrary } = require('./src/leebrary');
 const initWidgets = require('./src/widgets');
 const initTasks = require('./src/tasks');
 const initTests = require('./src/tests');
@@ -84,6 +84,7 @@ async function events(isInstalled) {
         'plugins.assignables:init-permissions',
         'plugins.scores:init-permissions',
         'plugins.academic-calendar:init-permissions',
+        'plugins.content-creator:init-permissions',
         'plugins.leebrary:pluginDidLoadServices',
         'plugins.admin:pluginDidLoadServices',
         'plugins.bulk-template:init-providers',
@@ -144,6 +145,15 @@ async function events(isInstalled) {
         config.assets = await initLibrary(docPath, config);
         leemons.events.emit('init-leebrary', config.assets);
         leemons.log.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
+      }
+    );
+
+    leemons.events.once(
+      ['plugins.bulk-template:init-academic-portfolio', 'plugins.bulk-template:init-leebrary'],
+      async () => {
+        leemons.log.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
+        await updateLibrary(docPath, config);
+        leemons.log.info(chalk`{cyan.bold BULK} UPDATED Leebrary plugin`);
       }
     );
 
@@ -281,6 +291,10 @@ async function events(isInstalled) {
           );
         }
       }
+    );
+  } else {
+    leemons.log.info(
+      chalk`{cyan.bold BULK} Bulk Template already installed or not file to import found`
     );
   }
 }
