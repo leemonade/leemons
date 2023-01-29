@@ -1,14 +1,14 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import {useStore} from '@common';
-import {useHistory, useParams} from 'react-router-dom';
-import {addErrorAlert, addSuccessAlert} from '@layout/alert';
-import {find, forEach, map, orderBy} from 'lodash';
-import {TextEditorInput} from '@bubbles-ui/editors';
+import { useStore } from '@common';
+import { useHistory, useParams } from 'react-router-dom';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { find, forEach, map, orderBy } from 'lodash';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
-import {getProgramEvaluationSystemRequest} from '@academic-portfolio/request';
+import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -25,15 +25,14 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import {ChevronRightIcon, SendMessageIcon} from '@bubbles-ui/icons/outline';
+import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 
-import {CutStarIcon, PluginComunicaIcon, StarIcon} from '@bubbles-ui/icons/solid';
-import useLevelsOfDifficulty
-  from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
+import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ChatButton from '@comunica/components/ChatButton';
-import {calculeInfoValues} from './StudentInstance/helpers/calculeInfoValues';
+import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import {
   getFeedbackRequest,
   getQuestionByIdsRequest,
@@ -41,15 +40,15 @@ import {
   setFeedbackRequest,
   setInstanceTimestampRequest,
 } from '../../../request';
-import {ResultStyles} from './Result.style';
-import {htmlToText} from './StudentInstance/helpers/htmlToText';
+import { ResultStyles } from './Result.style';
+import { htmlToText } from './StudentInstance/helpers/htmlToText';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
-import {getConfigByInstance} from './StudentInstance/helpers/getConfigByInstance';
+import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('testResult'));
 
-  const {classes: styles, cx} = ResultStyles({}, {name: 'Result'});
+  const { classes: styles, cx } = ResultStyles({}, { name: 'Result' });
   const [store, render] = useStore({
     loading: true,
     useQuestionMode: false,
@@ -76,7 +75,7 @@ export default function Result() {
 
   async function getIfTeacher() {
     try {
-      const {feedback} = await getFeedbackRequest(params.id, getUserId());
+      const { feedback } = await getFeedbackRequest(params.id, getUserId());
       store.isTeacher = feedback.isTeacher;
       render();
     } catch (error) {
@@ -89,14 +88,14 @@ export default function Result() {
       store.loading = true;
       render();
       [store.instance, store.assignation] = await Promise.all([
-        getAssignableInstance({id: params.id}),
-        getAssignation({id: params.id, user: getUserId()}),
+        getAssignableInstance({ id: params.id }),
+        getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [{evaluationSystem}, {questions}, {responses}, {timestamps}, {feedback}] =
+      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }, { feedback }] =
         await Promise.all([
           getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
-          getQuestionByIdsRequest(store.instance.metadata.questions, {categories: true}),
+          getQuestionByIdsRequest(store.instance.metadata.questions, { categories: true }),
           getUserQuestionResponsesRequest(params.id, getUserId()),
           setInstanceTimestampRequest(params.id, 'open', getUserId()),
           getFeedbackRequest(store.instance.id, getUserId()),
@@ -107,7 +106,7 @@ export default function Result() {
       store.questionResponses = responses;
       store.questionMax = Object.keys(responses).length - 1;
       if (store.questionMax < 0) store.questionMax = 0;
-      forEach(questions, ({id}) => {
+      forEach(questions, ({ id }) => {
         if (!store.questionResponses[id]) {
           store.questionResponses[id] = {
             clues: 0,
@@ -173,7 +172,7 @@ export default function Result() {
         if (levels) {
           if (question.level) {
             level = true;
-            d.level = find(levels, {value: question.level}).label;
+            d.level = find(levels, { value: question.level }).label;
           } else {
             d.level = t('undefined');
           }
@@ -193,7 +192,7 @@ export default function Result() {
         });
       }
     }
-    return {selectables, data, labels: {OK: t('ok'), KO: t('ko'), null: t('nsnc')}};
+    return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
   }, [store.questions, levels, t]);
 
   function toggleQuestionMode() {
@@ -231,52 +230,52 @@ export default function Result() {
     () =>
       store.questions
         ? map(store.questions, (question) => {
-          let result = '';
-          if (store.questionResponses[question.id].status === 'ok') {
-            result = (
-              <Box style={{minWidth: '100px'}} className={styles.tableCell}>
-                <Box style={{width: '20px', height: '20px', position: 'relative'}}>
-                  <ImageLoader src={'/public/tests/question-done.svg'}/>
+            let result = '';
+            if (store.questionResponses[question.id].status === 'ok') {
+              result = (
+                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                  <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+                    <ImageLoader src={'/public/tests/question-done.svg'} />
+                  </Box>
                 </Box>
-              </Box>
-            );
-          } else if (store.questionResponses[question.id].status === 'ko') {
-            result = (
-              <Box style={{minWidth: '100px'}} className={styles.tableCell}>
-                <Box style={{width: '20px', height: '20px', position: 'relative'}}>
-                  <ImageLoader src={'/public/tests/question-error.svg'}/>
+              );
+            } else if (store.questionResponses[question.id].status === 'ko') {
+              result = (
+                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                  <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+                    <ImageLoader src={'/public/tests/question-error.svg'} />
+                  </Box>
                 </Box>
-              </Box>
-            );
-          } else {
-            result = (
-              <Box style={{minWidth: '100px'}} className={styles.tableCell}>
-                <Box
-                  sx={(theme) => ({
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    backgroundColor: theme.colors.ui01,
-                  })}
-                />
-              </Box>
-            );
-          }
-          return {
-            question: <Box className={styles.tableCell}>{htmlToText(question.question)}</Box>,
-            category: (
-              <Box style={{minWidth: '130px'}} className={styles.tableCell}>
-                {question.category?.category || '-'}
-              </Box>
-            ),
-            level: (
-              <Box style={{minWidth: '130px'}} className={styles.tableCell}>
-                {question.level ? find(levels, {value: question.level}).label : '-'}
-              </Box>
-            ),
-            result,
-          };
-        })
+              );
+            } else {
+              result = (
+                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                  <Box
+                    sx={(theme) => ({
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: theme.colors.ui01,
+                    })}
+                  />
+                </Box>
+              );
+            }
+            return {
+              question: <Box className={styles.tableCell}>{htmlToText(question.question)}</Box>,
+              category: (
+                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+                  {question.category?.category || '-'}
+                </Box>
+              ),
+              level: (
+                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+                  {question.level ? find(levels, { value: question.level }).label : '-'}
+                </Box>
+              ),
+              result,
+            };
+          })
         : [],
     [store.questions, store.questionResponses, levels]
   );
@@ -303,8 +302,8 @@ export default function Result() {
         key={1}
         label={t('testResult')}
         icon={
-          <Box style={{position: 'relative', width: '23px', height: '23px'}}>
-            <ImageLoader className="stroke-current" src={'/public/tests/test-results-icon.svg'}/>
+          <Box style={{ position: 'relative', width: '23px', height: '23px' }}>
+            <ImageLoader className="stroke-current" src={'/public/tests/test-results-icon.svg'} />
           </Box>
         }
         color="solid"
@@ -323,26 +322,26 @@ export default function Result() {
         label={t('questions')}
         rightSection={
           <Box>
-            <Badge label={store.questions?.length} size="md" color="stroke" closable={false}/>
+            <Badge label={store.questions?.length} size="md" color="stroke" closable={false} />
           </Box>
         }
         icon={
-          <Box style={{position: 'relative', width: '22px', height: '24px'}}>
-            <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'}/>
+          <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+            <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
           </Box>
         }
       >
         <Box>
           {store.useQuestionMode ? (
-            <ViewModeQuestions store={store} onReturn={toggleQuestionMode}/>
+            <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
           ) : (
             <>
               <Box className={styles.showTestBar}>
-                <Button rounded rightIcon={<ChevronRightIcon/>} onClick={toggleQuestionMode}>
+                <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
                   {t('showInTests')}
                 </Button>
               </Box>
-              <Table columns={tableHeaders} data={tableData}/>
+              <Table columns={tableHeaders} data={tableData} />
             </>
           )}
         </Box>
@@ -357,13 +356,13 @@ export default function Result() {
           itemValue={'2'}
           label={t('feedbackForStudent')}
           icon={
-            <Box style={{position: 'relative', width: '24px', height: '24px'}}>
-              <ImageLoader src={'/public/tests/feedback-for-student.svg'}/>
+            <Box style={{ position: 'relative', width: '24px', height: '24px' }}>
+              <ImageLoader src={'/public/tests/feedback-for-student.svg'} />
             </Box>
           }
         >
           {store.isTeacher ? (
-            <Box sx={(theme) => ({padding: theme.spacing[6]})}>
+            <Box sx={(theme) => ({ padding: theme.spacing[6] })}>
               <TextEditorInput
                 value={store.feedback}
                 error={store.feedbackError ? t('feedbackRequired') : null}
@@ -375,7 +374,7 @@ export default function Result() {
               />
             </Box>
           ) : (
-            <Box sx={(theme) => ({padding: theme.spacing[4]})}>
+            <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
               <Box className={styles.feedbackUser}>
                 <HtmlText>{store.feedback}</HtmlText>
               </Box>
@@ -445,7 +444,7 @@ export default function Result() {
               <Box className={styles.header}>
                 <Text role="productive">
                   {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                  {store.instance.gradable ? <StarIcon/> : <CutStarIcon/>}
+                  {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
                 </Text>
               </Box>
               <Box className={styles.content}>
@@ -491,14 +490,14 @@ export default function Result() {
                           sendFeedback();
                         }
                       }}
-                      rightIcon={<SendMessageIcon/>}
+                      rightIcon={<SendMessageIcon />}
                     >
                       {t('sendFeedback')}
                     </Button>
                   </Box>
                 ) : null}
               </Box>
-              <Box sx={(theme) => ({marginTop: theme.spacing[10]})}>
+              <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
                 <ContextContainer alignItems="center">
                   <Text size="md" color="primary" strong>
                     {store.isTeacher ? t('chatTeacherDescription') : t('chatDescription')}
@@ -506,7 +505,7 @@ export default function Result() {
                   <Box>
                     <Button
                       rounded
-                      rightIcon={<PluginComunicaIcon/>}
+                      rightIcon={<PluginComunicaIcon />}
                       onClick={() => {
                         store.chatOpened = true;
                         render();

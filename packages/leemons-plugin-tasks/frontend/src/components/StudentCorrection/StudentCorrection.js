@@ -15,7 +15,7 @@ import { unflatten, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
+import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ChatButton from '@comunica/components/ChatButton';
 import SubjectTabs from '../Correction/components/SubjectTabs';
 import studentCorrectionStyles from './StudentCorrection.style';
