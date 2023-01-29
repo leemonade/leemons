@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { keys, isEmpty } = require('lodash');
+const { keys, isEmpty, isNil } = require('lodash');
 const importLibrary = require('./bulk/library');
 const _delay = require('./bulk/helpers/delay');
 
@@ -51,13 +51,20 @@ async function updateLibrary(file, { assets, programs, users }) {
         if (enabled !== false && enabled !== 'No') {
           // eslint-disable-next-line camelcase
           const { created_at, deleted_at, updated_at, deleted, cover, ...asset } = assets[key];
+
           asset.cover = cover?.id ?? cover;
           asset.file = asset.file?.id ?? asset.file;
-          asset.program = programs[programKey].id;
-          asset.subjects = [
-            { subject: programs[programKey].subjects[subjectKey].id, level: 'beginner' },
-          ];
-          return services.assets.update(asset, { userSession: creator });
+
+          const subjectId = programs[programKey]?.subjects[subjectKey]?.id;
+
+          if (subjectId) {
+            asset.subjects = [{ subject: subjectId, level: 'beginner' }];
+            asset.program = programs[programKey]?.id;
+
+            return services.assets.update(asset, { userSession: creator });
+          }
+
+          return null;
         }
 
         return null;

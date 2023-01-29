@@ -6,7 +6,7 @@ export function share(plugin, name, func) {
 }
 
 export function getShare(plugin, name) {
-  console.log(shared, plugin, name);
+  // console.log(shared, plugin, name);
   return shared?.[plugin.toLowerCase()]?.[name.toLowerCase()];
 }
 

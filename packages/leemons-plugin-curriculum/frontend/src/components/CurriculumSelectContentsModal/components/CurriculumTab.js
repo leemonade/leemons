@@ -12,7 +12,7 @@ import { CurriculumProp } from './CurriculumProp';
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 }) {
   function onSelect({ node }) {
-    console.log(node);
+    // console.log(node);
     store.selectedNode = {
       ...node,
       _nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),

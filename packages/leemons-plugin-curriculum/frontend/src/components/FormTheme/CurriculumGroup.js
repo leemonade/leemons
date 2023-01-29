@@ -38,7 +38,7 @@ function CurriculumGroup({
     if (!value) value = {};
     if (!value.value || !_.isPlainObject(value.value)) value.value = {};
     value.value[itemId] = newValues;
-    console.log(value);
+    // console.log(value);
     onChange({ ...value });
     setTimeout(() => {
       save(true);
