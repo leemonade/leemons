@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import { keyBy } from 'lodash';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { SessionContext } from '@users/context/session';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 import { useHistory } from 'react-router-dom';
 import hooks from 'leemons-hooks';
 import { updateSessionConfigRequest } from '@users/request';
+import { apiSessionMiddleware } from '../globalContext';
 
 /**
  * @private
@@ -118,9 +119,18 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
 
   const token = getCookieToken();
 
-  const { data, error } = useSWR(`users/user/${token}`, fetcher(), {
-    revalidateOnFocus: false,
-  });
+  const hasSessionMiddleware = useMemo(
+    () => leemons.api.hasReq(apiSessionMiddleware),
+    [apiSessionMiddleware]
+  );
+
+  const { data, error } = useSWR(
+    `users/user/${token}?hasSessionMiddleware=${hasSessionMiddleware}`,
+    fetcher(),
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
   const user = data && data.user ? data.user : null;
   finished = Boolean(data || error);

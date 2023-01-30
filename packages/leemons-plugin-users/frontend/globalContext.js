@@ -11,6 +11,32 @@ import prefixPN from '@users/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
 import { useUpdateUserProfile } from '@users/hooks';
 
+export function apiSessionMiddleware(ctx) {
+  if (!ctx.options) ctx.options = {};
+  if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
+  const token = getCookieToken(true);
+  if (ctx.options && token && !ctx.options.headers.Authorization) {
+    if (_.isString(token)) {
+      ctx.options.headers.Authorization = token;
+    } else {
+      ctx.options.headers.Authorization = token.userToken;
+      if (token.centers.length === 1) {
+        ctx.options.headers.Authorization = token.centers[0].token;
+      }
+      if (_.isObject(ctx.options)) {
+        if (ctx.options.allAgents) {
+          const allTokens = _.compact(token.centers.concat(token.profiles));
+          ctx.options.headers.Authorization = JSON.stringify(_.map(allTokens, 'token'));
+        } else if (ctx.options.centerToken) {
+          ctx.options.headers.Authorization = ctx.options.centerToken;
+        } else if (ctx.options.profileAgents) {
+          ctx.options.headers.Authorization = JSON.stringify(_.map(token.profiles, 'token'));
+        }
+      }
+    }
+  }
+}
+
 export function Provider({ children }) {
   const [t] = useTranslateLoader(prefixPN('needDatasetDataModal'));
   const [store, render] = useStore();
@@ -18,32 +44,6 @@ export function Provider({ children }) {
   const history = useHistory();
 
   useUpdateUserProfile();
-
-  const apiSessionMiddleware = useCallback((ctx) => {
-    if (!ctx.options) ctx.options = {};
-    if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
-    const token = getCookieToken(true);
-    if (ctx.options && token && !ctx.options.headers.Authorization) {
-      if (_.isString(token)) {
-        ctx.options.headers.Authorization = token;
-      } else {
-        ctx.options.headers.Authorization = token.userToken;
-        if (token.centers.length === 1) {
-          ctx.options.headers.Authorization = token.centers[0].token;
-        }
-        if (_.isObject(ctx.options)) {
-          if (ctx.options.allAgents) {
-            const allTokens = _.compact(token.centers.concat(token.profiles));
-            ctx.options.headers.Authorization = JSON.stringify(_.map(allTokens, 'token'));
-          } else if (ctx.options.centerToken) {
-            ctx.options.headers.Authorization = ctx.options.centerToken;
-          } else if (ctx.options.profileAgents) {
-            ctx.options.headers.Authorization = JSON.stringify(_.map(token.profiles, 'token'));
-          }
-        }
-      }
-    }
-  }, []);
 
   useEffect(() => {
     leemons.api.useReq(apiSessionMiddleware);
