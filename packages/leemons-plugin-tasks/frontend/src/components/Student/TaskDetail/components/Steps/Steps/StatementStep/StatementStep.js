@@ -13,6 +13,7 @@ import { useClassesSubjects } from '@academic-portfolio/hooks';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
+import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
 
 function CurriculumTab({ subjects, curriculumTab, labels }) {
   const subject = subjects[curriculumTab];
@@ -59,13 +60,13 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
                 {`
               <ul>
               ${curriculum?.objectives
-                ?.map(
-                  (objective) =>
-                    `<li>
+                    ?.map(
+                      (objective) =>
+                        `<li>
                     ${objective}
                   </li>`
-                )
-                ?.join('')}
+                    )
+                    ?.join('')}
               </ul>
             `}
               </HtmlText>
@@ -78,15 +79,16 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
 }
 
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
+  const curriculum = useCurriculumVisibleValues({ assignation });
   const subjects = useClassesSubjects(assignation.instance.classes);
 
   const subjectsWithCurriculum = React.useMemo(
     () =>
-      assignation?.instance?.assignable?.subjects?.map((subject) => ({
+      curriculum?.map((subject) => ({
         ...subject,
         name: subjects.find((s) => s.id === subject.subject)?.name,
       })),
-    [subjects, assignation?.instance?.assignable?.subjects]
+    [subjects, curriculum]
   );
 
   const [curriculumTab, setCurriculumTab] = React.useState(0);
