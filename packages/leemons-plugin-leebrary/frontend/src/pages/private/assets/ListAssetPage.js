@@ -32,7 +32,7 @@ const ListAssetPage = () => {
   const isTeacher = useIsTeacher();
   const isAdmin = profile === 'admin';
   const academicFilters = useAcademicFiltersForAssetList({
-    hideProgramSelect: isStudent,
+    // hideProgramSelect: isStudent,
     useLabels: true,
   });
 
