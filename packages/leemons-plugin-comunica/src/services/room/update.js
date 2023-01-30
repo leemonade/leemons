@@ -37,7 +37,24 @@ async function update(
       if (parentRoom) toUpdate.parentRoom = parentRoom;
       if (nameReplaces) toUpdate.nameReplaces = JSON.stringify(nameReplaces);
 
-      return table.room.update({ key }, toUpdate, { transacting });
+      const room = await table.room.update({ key }, toUpdate, { transacting });
+      let userAgents = [];
+      if (image || icon) {
+        userAgents = await table.userAgentInRoom.find({ room: key }, { transacting });
+      }
+      if (image) {
+        leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
+          key,
+          image,
+        });
+      }
+      if (icon) {
+        leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:ICON`, {
+          key,
+          image,
+        });
+      }
+      return room;
     },
     table.room,
     _transacting

@@ -23,9 +23,7 @@ async function removeUserAgents(
         }
       );
 
-      _.forEach(userAgents, (userAgent) => {
-        leemons.socket.emit(userAgent, `COMUNICA:ROOM:REMOVE`, { key });
-      });
+      leemons.socket.emit(userAgents, `COMUNICA:ROOM:REMOVE`, { key });
 
       const currentUserAgents = await table.userAgentInRoom.find(
         { room: key },
@@ -34,11 +32,9 @@ async function removeUserAgents(
         }
       );
 
-      _.forEach(currentUserAgents, (item) => {
-        leemons.socket.emit(item.userAgent, `COMUNICA:ROOM:USERS_REMOVED`, {
-          key,
-          userAgents,
-        });
+      leemons.socket.emit(_.map(currentUserAgents, 'userAgent'), `COMUNICA:ROOM:USERS_REMOVED`, {
+        key,
+        userAgents,
       });
 
       return true;

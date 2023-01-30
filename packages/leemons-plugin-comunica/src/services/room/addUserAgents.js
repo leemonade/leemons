@@ -101,10 +101,8 @@ async function addUserAgents(
       const responsesAdded = _.filter(results, { added: true });
 
       // Informamos a los usuarios añadidos de que han sido añadidos
-      _.forEach(responsesAdded, ({ userAgent }) => {
-        leemons.socket.emit(userAgent, `COMUNICA:ROOM:ADDED`, {
-          room: key,
-        });
+      leemons.socket.emit(_.map(responsesAdded, 'userAgent'), `COMUNICA:ROOM:ADDED`, {
+        room: key,
       });
 
       // Vamos a sacar los usuarios añadidos para enviarle a todas los usuarios de antes los nuevos usuarios
@@ -121,13 +119,15 @@ async function addUserAgents(
         deleted: a.result.deleted,
       }));
 
-      _.forEach(currentUserAgentsInRoom, (userAgentInRoom) => {
-        _.forEach(userAgentsAddedGood, (data) => {
-          leemons.socket.emit(userAgentInRoom.userAgent, `COMUNICA:ROOM:USER_ADDED`, {
+      _.forEach(userAgentsAddedGood, (data) => {
+        leemons.socket.emit(
+          _.map(currentUserAgentsInRoom, 'userAgent'),
+          `COMUNICA:ROOM:USER_ADDED`,
+          {
             key,
             userAgent: data,
-          });
-        });
+          }
+        );
       });
 
       const responses = _.map(results, 'result');

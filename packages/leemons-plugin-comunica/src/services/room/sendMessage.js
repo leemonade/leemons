@@ -75,11 +75,9 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
 
       await Promise.all(promises);
 
-      _.forEach(userAgentIds, (userAgentId) => {
-        leemons.socket.emit(userAgentId, `COMUNICA:ROOM:${key}`, {
-          ...response,
-          message,
-        });
+      leemons.socket.emit(userAgentIds, `COMUNICA:ROOM:${key}`, {
+        ...response,
+        message,
       });
 
       return response;

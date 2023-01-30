@@ -57,9 +57,11 @@ async function toggleAdminMutedRoom(
         { columns: ['userAgent'], transacting }
       );
 
-      _.forEach(adminUserAgents, (a) => {
-        leemons.socket.emit(a.userAgent, `COMUNICA:ROOM:ADMIN_MUTED`, userAgentRoom);
-      });
+      leemons.socket.emit(
+        _.map(adminUserAgents, 'userAgent'),
+        `COMUNICA:ROOM:ADMIN_MUTED`,
+        userAgentRoom
+      );
 
       leemons.socket.emit(userAgent, `COMUNICA:CONFIG:ROOM`, userAgentRoom);
 
