@@ -23,6 +23,8 @@ class LeemonsApi {
     this.api.useReq = this.#use('req');
     this.api.useRes = this.#use('res');
     this.api.useResError = this.#use('resError');
+    this.api.hasReq = this.#apiHasReqMiddleware;
+    this.api.hasRes = this.#apiHasResMiddleware;
   }
 
   api = async (url, options) => {
@@ -44,13 +46,17 @@ class LeemonsApi {
     }
   };
 
+  #apiHasReqMiddleware = (f) => this.#reqMiddlewares.includes(f);
+
+  #apiHasResMiddleware = (f) => this.#resMiddlewares.includes(f);
+
   #callMiddleware = async (middlewares, i, ctx) => {
     if (!ctx.middlewares[i]) {
       ctx.middlewares[i] = true;
       const next = middlewares[i + 1]
         ? () => this.#callMiddleware(middlewares, i + 1, ctx)
-        : () => {};
-      const middleware = middlewares[i] ? middlewares[i] : () => {};
+        : () => { };
+      const middleware = middlewares[i] ? middlewares[i] : () => { };
       await middleware(ctx, next);
       await next();
     }
