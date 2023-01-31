@@ -5,8 +5,8 @@ import {
   ContextContainer,
   HtmlText,
   ImageLoader,
-  Title,
   SegmentedControl,
+  Title,
 } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
@@ -76,6 +76,7 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
     </Box>
   );
 }
+
 function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
   const subjects = useClassesSubjects(assignation.instance.classes);
 
@@ -148,7 +149,6 @@ export default function StatementStep({ assignation, localizations: _labels }) {
   const { assignable } = instance;
 
   const { data: supportImage } = useSupportImage(assignable);
-
   const showCurriculum = instance.curriculum;
   const isGradable = assignable.gradable;
 
