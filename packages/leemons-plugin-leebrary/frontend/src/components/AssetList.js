@@ -282,7 +282,7 @@ const AssetList = ({
           if (forceLoad && item) {
             const index = serverData.items.findIndex((i) => i.id === id);
             serverData.items[index] = value;
-            setServerData(serverData);
+            setServerData({ ...serverData });
           }
         } else {
           setAsset(null);
