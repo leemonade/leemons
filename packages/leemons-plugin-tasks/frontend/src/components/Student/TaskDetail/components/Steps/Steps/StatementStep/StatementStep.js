@@ -60,13 +60,13 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
                 {`
               <ul>
               ${curriculum?.objectives
-                    ?.map(
-                      (objective) =>
-                        `<li>
+                ?.map(
+                  (objective) =>
+                    `<li>
                     ${objective}
                   </li>`
-                    )
-                    ?.join('')}
+                )
+                ?.join('')}
               </ul>
             `}
               </HtmlText>

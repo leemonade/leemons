@@ -5,6 +5,7 @@ import { Box, HtmlText, Title } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { isEmpty, map } from 'lodash';
+import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -20,32 +21,14 @@ export default function Resume(props) {
     }
   }
 
+  const [
+    {
+      curriculum: { curriculum },
+    },
+  ] = useCurriculumVisibleValues({ assignation: store.assignation });
   const subjects = useClassesSubjects(store.instance.classes);
 
   const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
-
-  let curriculum = null;
-
-  console.log(store.instance);
-
-  if (
-    store.instance.curriculum &&
-    store.instance.assignable.subjects[0].curriculum.curriculum?.length
-  ) {
-    const curriculumKeysToShow = Object.entries(store.instance.curriculum)
-      .filter(([, value]) => value)
-      .map(([key]) => key);
-    curriculum = store.instance.assignable.subjects[0].curriculum.curriculum;
-    console.log('curriculum', curriculum);
-    /*
-    curriculum = curriculum.filter((key) => {
-      const regex = new RegExp(curriculumKeysToShow.join('|'), 'i');
-      return regex.test(key);
-    });
-
-     */
-    console.log('curriculum - 2', curriculum);
-  }
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
