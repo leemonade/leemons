@@ -13,7 +13,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import _, { forEach, forIn, isArray, isNil, isObject, isPlainObject } from 'lodash';
+import _, { forEach, forIn, isArray, isNil, isObject, isPlainObject, isString } from 'lodash';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
@@ -138,7 +138,7 @@ function NewValue({
                 color="primary"
                 role="productive"
                 dangerouslySetInnerHTML={{
-                  __html: title || label || item.value,
+                  __html: title || label || item?.value || item,
                 }}
               />
             </Box>
@@ -155,7 +155,7 @@ function NewValue({
             <Text
               role="productive"
               dangerouslySetInnerHTML={{
-                __html: label || item.value,
+                __html: label || item?.value || item,
               }}
             />
           </Box>
@@ -194,13 +194,14 @@ function NewValue({
   if (isObject(value)) {
     if (value.id) {
       // Listado
+      const numbering = getNumbering(keyIndex, null, baseValue);
       return (
         <Box>
           {CheckBoxComponent(
             `${key}|value.${value.id}`,
             value,
             undefined,
-            `${getNumbering(keyIndex, null, baseValue)} ${htmlToText(value.value)}`
+            `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`
           )}
           <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>{tags}</Box>
         </Box>
@@ -296,7 +297,14 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
   const hide = React.useMemo(() => {
     if (hideNoSelecteds) {
       let hi = true;
-      if (isPlainObject(values?.value)) {
+      if (isString(values.value)) {
+        _.forEach(store.value, (sv) => {
+          if (sv.indexOf(values.id) >= 0) {
+            hi = false;
+            return false;
+          }
+        });
+      } else if (isPlainObject(values?.value)) {
         _.forIn(values?.value, ({ id }) => {
           _.forEach(store.value, (sv) => {
             if (sv.indexOf(id) >= 0) {
@@ -375,7 +383,14 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
   function newValues() {
     if (hideNoSelecteds) {
       let hi = true;
-      if (!isPlainObject(values.value)) {
+      if (isString(values.value)) {
+        _.forEach(store.value, (sv) => {
+          if (sv.indexOf(values.id) >= 0) {
+            hi = false;
+            return false;
+          }
+        });
+      } else if (!isPlainObject(values.value)) {
         _.forEach(store.value, (sv) => {
           if (sv.indexOf(values.value.id) >= 0) {
             hi = false;
