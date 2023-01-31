@@ -171,7 +171,13 @@ async function getByIds(
           if (!isEmpty(_permission?.permissions)) {
             const { permissions: userPermissions } = _permission;
             if (!userPermissions.edit) {
+              const owner = find(assets[i].canAccess, (item) =>
+                item.permissions?.includes('owner')
+              );
               assets[i].canAccess = null;
+              if (owner) {
+                assets[i].canAccess = [owner];
+              }
             }
           }
         }
