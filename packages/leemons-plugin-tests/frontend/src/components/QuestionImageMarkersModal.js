@@ -93,16 +93,12 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
   }
 
   function addMarker(event) {
-    store.list.push(getClick(event));
-    render();
-  }
-
-  function markerClicked(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    if (store.moveIndex >= 0) {
+    if (store.moveIndex >= 0 && store.moveIndex !== null) {
       store.list[store.moveIndex] = getClick(event);
       store.moveIndex = null;
+      render();
+    } else {
+      store.list.push(getClick(event));
       render();
     }
   }
@@ -163,14 +159,18 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
           />
         </ContextContainer>
 
-        <Box className={classes.imageContainer} onClick={addMarker} onMouseMove={getPosition}>
-          <LeebraryImage className={classes.image} src={src} />
+        <Box className={classes.imageContainer}>
+          <Box className={classes.imageContainer} onClick={addMarker} onMouseMove={getPosition}>
+            <LeebraryImage className={classes.image} src={src} />
+          </Box>
+
           {store.list.map((marker, index) => {
             if (store.moveIndex === index) {
               return (
                 <Box
-                  onClick={markerClicked}
+                  key={index}
                   style={{
+                    pointerEvents: 'none',
                     position: 'absolute',
                     top: store.position.top,
                     left: store.position.left,
@@ -185,7 +185,6 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
             return (
               <Menu
                 key={index}
-                onClick={markerClicked}
                 style={{
                   position: 'absolute',
                   top: marker.top,
@@ -202,11 +201,13 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
                   },
                 ]}
                 control={
-                  <Box
-                    className={classes.marker}
-                    style={{ backgroundColor: store.backgroundColor }}
-                  >
-                    {store.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+                  <Box>
+                    <Box
+                      className={classes.marker}
+                      style={{ backgroundColor: store.backgroundColor }}
+                    >
+                      {store.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+                    </Box>
                   </Box>
                 }
               />
