@@ -163,6 +163,7 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
           <Box className={classes.imageContainer} onClick={addMarker} onMouseMove={getPosition}>
             <LeebraryImage className={classes.image} src={src} />
           </Box>
+
           {store.list.map((marker, index) => {
             if (store.moveIndex === index) {
               return (

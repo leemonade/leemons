@@ -2,9 +2,10 @@ import React from 'react';
 import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
 import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
 import { cloneDeep, intersection, set, uniqBy } from 'lodash';
+import { useStore } from '@common';
 
 function parseCurriculumValue(id) {
-  return { ...Object.fromEntries(id.split('|').map((pair) => pair.split('.'))), original: id };
+  return { ...Object.fromEntries(id?.split('|').map((pair) => pair.split('.'))), original: id };
 }
 
 function flatCurriculumNodes(curriculumNodes) {
@@ -86,7 +87,7 @@ export function useSelectedCurriculumProperties({
       flattenSelectedValues.map((selectedValue) => {
         const nodeLevelProperty =
           curriculumNodes[selectedValue.node]?.nodeLevelPropertyByPropertyId?.[
-          selectedValue.property
+            selectedValue.property
           ];
 
         const nodeLevel = nodeLevels.find(
@@ -127,7 +128,9 @@ export function useCurriculumVisibleValues({ assignation }) {
   const curriculumNodes = useCurriculumNodes({ curriculum });
   const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
 
-  const flatValuesCopy = React.useRef(null);
+  const [store, render] = useStore({
+    flatValuesCopy: [],
+  });
 
   const flatValues = React.useMemo(
     () => selectedCurriculumValues.flatMap((value) => value.values) || [],
@@ -135,18 +138,19 @@ export function useCurriculumVisibleValues({ assignation }) {
   );
 
   React.useEffect(() => {
-    flatValuesCopy.current = cloneDeep(flatValues);
+    store.flatValuesCopy = cloneDeep(flatValues);
 
     flatValues.forEach((value, i) => {
       const { node, property } = value;
       const nodeLevel = curriculumNodes[node]?.nodeLevelPropertyByPropertyId[property];
 
-      set(flatValuesCopy.current, `${i}.visible`, !!visibleCategories[nodeLevel]);
+      set(store.flatValuesCopy, `${i}.visible`, !!visibleCategories[nodeLevel]);
     });
+    render();
   }, [flatValues, curriculumNodes, visibleCategories]);
 
   return React.useMemo(() => {
-    const includedIds = flatValuesCopy.current
+    const includedIds = store.flatValuesCopy
       ?.filter((value) => !!value.visible)
       .map((value) => value.original);
 
@@ -159,7 +163,7 @@ export function useCurriculumVisibleValues({ assignation }) {
           : [],
       },
     }));
-  }, [flatValuesCopy.current]);
+  }, [store.flatValuesCopy]);
 }
 
 export function useCurriculumFields({ assignable }) {
