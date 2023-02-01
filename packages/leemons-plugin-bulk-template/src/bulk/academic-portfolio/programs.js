@@ -45,6 +45,30 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
       }
 
       // ·····················································
+      // CYCLES
+
+      if (!isEmpty(program.cycles)) {
+        program.cycles = program.cycles
+          .split(',')
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val))
+          .map((val) => {
+            const [name, courses] = val.split('@');
+            return {
+              name,
+              courses: courses
+                .split('|')
+                .filter((course) => !isEmpty(course))
+                .map(Number),
+            };
+          });
+
+        program.haveCycles = true;
+      } else {
+        program.haveCycles = false;
+      }
+
+      // ·····················································
       // SUBJECTS
 
       if (program.subjectsFirstDigit) {
