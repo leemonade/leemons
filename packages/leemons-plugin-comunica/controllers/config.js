@@ -12,7 +12,14 @@ async function save(ctx) {
   ctx.body = { status: 200, config };
 }
 
+async function getAdminConfig(ctx) {
+  const config = await configService.getFullByCenter(ctx.request.params.center);
+  ctx.status = 200;
+  ctx.body = { status: 200, config };
+}
+
 module.exports = {
   get,
   save,
+  getAdminConfig,
 };

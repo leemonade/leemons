@@ -250,6 +250,12 @@ class RoomService {
 
     return config;
   }
+
+  static async getAdminConfig(center) {
+    const { config } = await leemons.api(`comunica/admin/config/${center}`);
+
+    return config;
+  }
 }
 
 export { RoomService };

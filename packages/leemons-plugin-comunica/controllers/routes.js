@@ -12,6 +12,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/admin/config/:center',
+    method: 'GET',
+    handler: 'config.getAdminConfig',
+    authenticated: true,
+  },
+  {
     path: '/room/list',
     method: 'GET',
     handler: 'room.getRoomList',
