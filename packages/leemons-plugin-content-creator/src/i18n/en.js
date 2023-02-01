@@ -16,8 +16,6 @@ module.exports = {
     pageTitleNew: 'New document: {name}',
     saveDraft: 'Save as draft',
     publish: 'Only publish',
-    publishAndAssign: 'Publish and assign',
-    config: 'Config',
     design: 'Design',
     nameLabel: 'Name',
     nameRequired: 'Field required',
@@ -59,6 +57,8 @@ module.exports = {
     open: 'Open',
     duplicate: 'Duplicate',
     duplicated: 'Duplicated',
+    share: 'Share',
+    shared: 'Shared',
   },
   contentCreatorDetail: {
     titlePlaceholder: 'Write the name of the document',
@@ -68,5 +68,15 @@ module.exports = {
     formatLabel: 'Format',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
+    publishOptions: 'Publish options',
+    onlyPublish: 'Only publish',
+    publishAndShare: 'Publish and share',
+    publishAndAssign: 'Publish and assign',
+    config: 'General configuration',
+  },
+  contentCreatorAssign: {
+    assign: 'Assign as task',
+    assignDone: 'Content successfully assigned',
+    assignNow: 'Assign now',
   },
 };

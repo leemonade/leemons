@@ -96,7 +96,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       if (asset.deleteable) {
         items.push({
           icon: <DeleteBinIcon />,
-          children: 'Delete',
+          children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
@@ -115,6 +115,13 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
+      // if (asset.shareable) {
+      //   items.push({
+      //     icon: null,
+      //     children: t('share'),
+      //     onClick: () => {},
+      //   });
+      // }
     }
 
     return items;

@@ -37,6 +37,9 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
     if (asset.duplicable) {
       toolbarItems.duplicate = t('duplicate');
     }
+    // if (asset.shareable) {
+    //   toolbarItems.share = t('share');
+    // }
   }
 
   const handleView = () => {

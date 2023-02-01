@@ -34,6 +34,12 @@ const saveDocumentSchema = {
       type: 'string',
       nullable: true,
     },
+    program: stringSchemaNullable,
+    subjects: {
+      type: 'array',
+      items: stringSchema,
+      nullable: true,
+    },
     published: booleanSchema,
   },
   required: ['name'],
@@ -42,10 +48,6 @@ const saveDocumentSchema = {
 
 function validateSaveDocument(data) {
   const schema = _.cloneDeep(saveDocumentSchema);
-  if (data.published) {
-    schema.properties.introductoryText = textSchema;
-    schema.required = ['name', 'introductoryText'];
-  }
   const validator = new LeemonsValidator(schema);
 
   if (!validator.validate(data)) {

@@ -37,9 +37,32 @@ async function duplicateDocument(ctx) {
   ctx.body = { status: 200, document };
 }
 
+async function assignDocument(ctx) {
+  const document = await documentService.assignDocument(ctx.request.body, {
+    userSession: ctx.state.userSession,
+    ctx,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, document };
+}
+
+async function shareDocument(ctx) {
+  const permissions = await documentService.shareDocument(
+    ctx.request.body.assignableId,
+    {
+      canAccess: ctx.request.body.canAccess,
+    },
+    { userSession: ctx.state.userSession }
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, permissions };
+}
+
 module.exports = {
-  saveDocument,
   getDocument,
+  saveDocument,
+  shareDocument,
   deleteDocument,
+  assignDocument,
   duplicateDocument,
 };
