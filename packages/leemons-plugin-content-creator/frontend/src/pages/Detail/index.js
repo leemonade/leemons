@@ -126,11 +126,14 @@ export default function Index() {
   //   return permissions;
   // };
 
-  const setTitleIfItsUndefined = (value, forceTitle) => {
+  const setTitleIfItsUndefined = (value) => {
+    if (store.titleValue) return;
     const parser = new DOMParser();
-    const htmlContent = parser.parseFromString(value, 'text/html').body.getElementsByTagName('*');
-    const firstElement = htmlContent[0]?.textContent;
-    if (!store.titleValue || forceTitle) form.setValue('name', firstElement);
+    const htmlContent = Array.from(
+      parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
+    );
+    const firstElementWithText = htmlContent.find((element) => element.textContent)?.textContent;
+    form.setValue('name', firstElementWithText);
   };
 
   const onTitleChangeHandler = (value) => {
