@@ -67,4 +67,33 @@ async function duplicateDocument(id, published) {
   });
 }
 
-export { saveDocument, getDocument, deleteDocument, duplicateDocument };
+async function assignDocument(id, data) {
+  return leemons.api(`content-creator/document/assign`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      id,
+      data,
+    },
+  });
+}
+
+async function shareDocument(id, { canAccess }) {
+  return leemons.api(`content-creator/document/share`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      assignableId: id,
+      canAccess,
+    },
+  });
+}
+
+export {
+  saveDocument,
+  getDocument,
+  deleteDocument,
+  duplicateDocument,
+  assignDocument,
+  shareDocument,
+};

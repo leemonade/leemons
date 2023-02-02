@@ -59,4 +59,17 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
   },
+  {
+    path: '/document/assign',
+    method: 'POST',
+    handler: 'document.assignDocument',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+  },
+  {
+    path: '/document/share',
+    method: 'POST',
+    handler: 'document.shareDocument',
+    authenticated: true,
+  },
 ];

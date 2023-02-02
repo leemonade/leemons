@@ -10,11 +10,11 @@ async function saveDocument(_data, { userSession, transacting: _transacting } = 
   return global.utils.withTransaction(
     async (transacting) => {
       const data = _.cloneDeep(_data);
-      delete data.asset;
       // Check is userSession is provided
       if (!userSession) throw new Error('User session is required (saveDocument)');
+      delete data.asset;
       validateSaveDocument(data);
-      const { questions, published } = data;
+      const { published } = data;
 
       const toSave = {
         asset: {
@@ -28,7 +28,7 @@ async function saveDocument(_data, { userSession, transacting: _transacting } = 
           public: true, // TODO Cambiar a false despues de la demo
         },
         role: 'content-creator',
-        statement: data.introductoryText,
+        statement: data.introductoryText || '',
         subjects: _.map(data.subjects, ({ level, subject }) => ({
           level,
           subject,
@@ -49,17 +49,11 @@ async function saveDocument(_data, { userSession, transacting: _transacting } = 
             transacting,
           }
         );
-
-        if (assignable.id !== data.id) {
-          _.forEach(questions, (question) => {
-            delete question.id;
-          });
-        }
       } else {
         assignable = await assignableService.createAssignable(toSave, {
           userSession,
           transacting,
-          published: data.published,
+          published,
         });
       }
 
@@ -112,7 +106,7 @@ async function saveDocument(_data, { userSession, transacting: _transacting } = 
         {
           userSession,
           transacting,
-          published: data.published,
+          published,
         }
       );
 

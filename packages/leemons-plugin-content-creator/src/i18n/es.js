@@ -16,8 +16,6 @@ module.exports = {
     pageTitleNew: 'Nuevo documento: {name}',
     saveDraft: 'Guardar borrador',
     publish: 'Solo publicar',
-    publishAndAssign: 'Publicar y asignar',
-    config: 'Configuración',
     design: 'Diseño',
     nameLabel: 'Nombre',
     nameRequired: 'Campo necesario',
@@ -61,6 +59,8 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+    share: 'Compartir',
+    shared: 'Compartido',
   },
   contentCreatorDetail: {
     titlePlaceholder: 'Escribe el nombre del documento...',
@@ -70,5 +70,15 @@ module.exports = {
     formatLabel: 'Formato',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
+    publishOptions: 'Opciones de publicación',
+    onlyPublish: 'Solo publicar',
+    publishAndShare: 'Publicar y compartir',
+    publishAndAssign: 'Publicar y asignar como tarea',
+    config: 'Configuración general',
+  },
+  contentCreatorAssign: {
+    assign: 'Asignar como tarea',
+    assignDone: 'Contenido asignado con éxito',
+    assignNow: 'Asignar ahora',
   },
 };
