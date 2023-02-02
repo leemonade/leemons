@@ -1,4 +1,45 @@
+const {
+  permissions: { names: permissions },
+} = require('../config/constants');
+
+const getPermissions = (permissionsArr, actions = null) => {
+  if (Array.isArray(permissionsArr)) {
+    return permissionsArr.reduce(
+      (obj, [permission, _actions]) => ({
+        ...obj,
+        [permission]: {
+          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+        },
+      }),
+      {}
+    );
+  }
+  return {
+    [permissionsArr]: {
+      actions: actions.includes('admin') ? actions : ['admin', ...actions],
+    },
+  };
+};
+
 module.exports = [
+  {
+    path: '/config/general',
+    method: 'GET',
+    handler: 'config.getGeneralConfig',
+    authenticated: true,
+  },
+  {
+    path: '/config/center/:center',
+    method: 'GET',
+    handler: 'config.getCenterConfig',
+    authenticated: true,
+  },
+  {
+    path: '/config/program/:program',
+    method: 'GET',
+    handler: 'config.getProgramConfig',
+    authenticated: true,
+  },
   {
     path: '/config',
     method: 'GET',
@@ -16,6 +57,14 @@ module.exports = [
     method: 'GET',
     handler: 'config.getAdminConfig',
     authenticated: true,
+    allowedPermissions: getPermissions(permissions.config, ['view']),
+  },
+  {
+    path: '/admin/config/:center',
+    method: 'POST',
+    handler: 'config.saveAdminConfig',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.config, ['create', 'update']),
   },
   {
     path: '/room/list',

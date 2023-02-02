@@ -15,9 +15,6 @@ module.exports = {
     // if general = null, other = center/program id
     typeId: {
       type: 'string',
-      options: {
-        notNull: true,
-      },
     },
     config: {
       type: 'text',

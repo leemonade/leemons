@@ -10,6 +10,8 @@ async function saveCenter(center, config, { transacting } = {}) {
     },
     { transacting }
   );
+  leemons.socket.emitToAll(`COMUNICA:CONFIG:CENTER`, { center, config });
+
   return config;
 }
 

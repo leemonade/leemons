@@ -11,6 +11,7 @@ import {
   Tabs,
   Textarea,
 } from '@bubbles-ui/components';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import { useStore } from '@common';
@@ -19,9 +20,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { SelectCenter } from '@users/components';
 import { listProgramsRequest } from '@academic-portfolio/request';
 import RoomService from '@comunica/RoomService';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 
 export default function ConfigPage() {
   const [t] = useTranslateLoader(prefixPN('config'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   const { classes } = ConfigPageStyles();
   const [store, render] = useStore({
     programs: [],
@@ -37,22 +40,36 @@ export default function ConfigPage() {
 
   async function load() {
     if (store.center) {
-      const config = await RoomService.getAdminConfig(store.center);
-      console.log(config);
-      const {
-        data: { items },
-      } = await listProgramsRequest({
-        page: 0,
-        size: 9999,
-        center: store.center,
-      });
+      const [
+        config,
+        {
+          data: { items },
+        },
+      ] = await Promise.all([
+        RoomService.getAdminConfig(store.center),
+        listProgramsRequest({
+          page: 0,
+          size: 9999,
+          center: store.center,
+        }),
+      ]);
       store.programs = items;
-      render();
+      form.reset(config);
     }
   }
 
   async function save() {
-    const data = form.getValues();
+    try {
+      store.saving = true;
+      render();
+      const data = form.getValues();
+      await RoomService.saveAdminConfig(store.center, data);
+      addSuccessAlert(t('saveDone'));
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+    store.saving = false;
+    render();
   }
 
   React.useEffect(() => {
@@ -123,6 +140,17 @@ export default function ConfigPage() {
                       <Switch {...field} label={t('enableStudentsCreateGroups')} checked={value} />
                     )}
                   />
+                  <Controller
+                    name={`disableChatsBetweenStudentsAndTeachers`}
+                    control={form.control}
+                    render={({ field: { value, ...field } }) => (
+                      <Switch
+                        {...field}
+                        label={t('disableChatsBetweenStudentsAndTeachers')}
+                        checked={value}
+                      />
+                    )}
+                  />
                 </Box>
               </ContextContainer>
               <ContextContainer subtitle={t('programs')}>
@@ -189,17 +217,6 @@ export default function ConfigPage() {
                                 />
                               )}
                             />
-                            <Controller
-                              name={`program[${program.id}].disableChatsBetweenStudentsAndTeachers`}
-                              control={form.control}
-                              render={({ field: { value, ...field } }) => (
-                                <Switch
-                                  {...field}
-                                  label={t('disableChatsBetweenStudentsAndTeachers')}
-                                  checked={value}
-                                />
-                              )}
-                            />
                           </Box>
                         </ContextContainer>
                       </ContextContainer>
@@ -209,7 +226,9 @@ export default function ConfigPage() {
               </ContextContainer>
             </ContextContainer>
             <Box className={classes.saveContainer}>
-              <Button onClick={save}>{t('save')}</Button>
+              <Button loading={store.saving} onClick={save}>
+                {t('save')}
+              </Button>
             </Box>
           </Paper>
         </PageContainer>

@@ -256,6 +256,31 @@ class RoomService {
 
     return config;
   }
+
+  static async saveAdminConfig(center, data) {
+    const { config } = await leemons.api(`comunica/admin/config/${center}`, {
+      allAgents: true,
+      method: 'POST',
+      body: data,
+    });
+
+    return config;
+  }
+
+  static async getGeneralConfig() {
+    const { config } = await leemons.api(`comunica/config/general`);
+    return config;
+  }
+
+  static async getCenterConfig(center) {
+    const { config } = await leemons.api(`comunica/config/center/${center}`);
+    return config;
+  }
+
+  static async getProgramConfig(program) {
+    const { config } = await leemons.api(`comunica/config/program/${program}`);
+    return config;
+  }
 }
 
 export { RoomService };

@@ -47,6 +47,12 @@ module.exports = {
       type: 'text',
       textType: 'mediumText',
     },
+    program: {
+      type: 'string',
+    },
+    center: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',

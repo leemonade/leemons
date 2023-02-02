@@ -20,6 +20,8 @@ async function add(
     parentRoom,
     useEncrypt = true,
     viewPermissions,
+    program,
+    center: _center,
     transacting: _transacting,
   } = {}
 ) {
@@ -28,6 +30,14 @@ async function add(
   return global.utils.withTransaction(
     async (transacting) => {
       await validateExistRoomKey(key, { transacting });
+
+      let center = _center;
+
+      if (program && !center) {
+        [center] = await leemons
+          .getPlugin('academic-portfolio')
+          .services.programs.getProgramCenters(program, { transacting });
+      }
 
       const room = await table.room.create(
         {
@@ -42,6 +52,8 @@ async function add(
           image,
           parentRoom,
           useEncrypt,
+          program,
+          center,
           metadata: JSON.stringify(metadata),
         },
         { transacting }

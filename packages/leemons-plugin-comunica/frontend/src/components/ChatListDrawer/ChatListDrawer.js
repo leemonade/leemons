@@ -27,6 +27,8 @@ import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import { getCentersWithToken } from '@users/session';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
 import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
+import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
+import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
@@ -48,6 +50,13 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
 
   function recalcule() {
     store.rooms = _.orderBy(getRoomsByParent(store.originalRooms), ['attached'], ['asc']);
+    if (!store.centerConfig?.enableStudentsChats) {
+      store.rooms = _.filter(store.rooms, (room) => !isStudentsChatRoom(room));
+    }
+    if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
+      store.rooms = _.filter(store.rooms, (room) => !isStudentTeacherChatRoom(room));
+    }
+
     store.roomTypes = _.uniq(_.map(store.rooms, 'type'));
     if (store.intermediateRooms?.length) {
       const interm = [];
@@ -90,8 +99,15 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
   }
 
   async function load() {
-    store.originalRooms = await RoomService.getRoomsList();
-    store.config = await RoomService.getConfig();
+    const [centerConfig, originalRooms, config] = await Promise.all([
+      RoomService.getCenterConfig(getCentersWithToken()[0].id),
+      RoomService.getRoomsList(),
+      RoomService.getConfig(),
+    ]);
+    console.log(centerConfig);
+    store.centerConfig = centerConfig;
+    store.originalRooms = originalRooms;
+    store.config = config;
     recalcule();
     render();
   }
@@ -209,7 +225,26 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     load();
   }, []);
 
+  const disabledProfilesForNewChat = React.useMemo(() => {
+    const profiles = [];
+    if (!store.centerConfig?.enableStudentsChats) {
+      profiles.push('student');
+    }
+    if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
+      profiles.push('teacher');
+    }
+    return profiles;
+  }, [store.centerConfig]);
+
   SocketIoService.useOnAny((event, data) => {
+    if (event === 'COMUNICA:CONFIG:CENTER') {
+      if (data.center === getCentersWithToken()[0].id) {
+        store.centerConfig = data.config;
+        recalcule();
+        render();
+      }
+      return;
+    }
     if (event === 'COMUNICA:ROOM:ADDED') {
       debouncedFunction(load);
       return;
@@ -449,6 +484,7 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       />
       <ChatAddUsersDrawer
         newChatMode
+        disabledProfiles={disabledProfilesForNewChat}
         room={store.roomNewChat}
         opened={store.createType === 'chat'}
         onSave={onNewChat}

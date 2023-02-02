@@ -187,6 +187,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         subName,
         image: null,
         icon: null,
+        program: program.id,
         transacting,
       };
       if (classe.subject.icon?.avatar) {

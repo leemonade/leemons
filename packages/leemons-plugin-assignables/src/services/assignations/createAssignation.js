@@ -38,6 +38,7 @@ async function createInstanceRoom(
       subName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
       parentRoom: null,
       image: instance.assignable.asset.id,
+      program: classes[0].program,
       icon:
         classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
       bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
@@ -94,6 +95,7 @@ async function createSubjectsRooms(
         image: classe.subject.image?.id,
         icon: classe.subject.icon?.id,
         bgColor: classe.color,
+        program: classes[0].program,
         type: leemons.plugin.prefixPN('assignation.subject'),
         adminUserAgents: _.compact(_.uniq(teachers)),
         transacting,
@@ -135,6 +137,7 @@ async function createGroupRoom(
       name: 'activityGroup',
       subName: _.map(classes, 'subject.name').join(','),
       parentRoom: parentKey,
+      program: classes[0].program,
       icon:
         classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
       bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
@@ -175,6 +178,7 @@ async function addUserSubjectRoom(
       icon: classe.subject.icon?.id,
       bgColor: classe.color,
       parentRoom: parentKey,
+      program: classe.program,
       type: leemons.plugin.prefixPN('assignation.user'),
       userAgents: user,
       adminUserAgents: _.compact(_.uniq(teachers)),

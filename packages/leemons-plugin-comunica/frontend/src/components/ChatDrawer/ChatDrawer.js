@@ -30,6 +30,8 @@ import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import SocketIoService from '@socket-io/service';
+import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
+import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
 function ChatDrawer({
@@ -181,6 +183,29 @@ function ChatDrawer({
   });
 
   SocketIoService.useOnAny((event, data) => {
+    if (event === 'COMUNICA:CONFIG:CENTER') {
+      if (data.center === getCentersWithToken()[0].id && store.room) {
+        if (!data.config.enableStudentsChats) {
+          if (isStudentsChatRoom(store.room)) {
+            if (_.isFunction(onReturn)) {
+              onReturn();
+            } else {
+              onClose();
+            }
+          }
+        }
+        if (data.config?.disableChatsBetweenStudentsAndTeachers) {
+          if (isStudentTeacherChatRoom(store.room)) {
+            if (_.isFunction(onReturn)) {
+              onReturn();
+            } else {
+              onClose();
+            }
+          }
+        }
+      }
+      return;
+    }
     if (event === 'COMUNICA:CONFIG:ROOM' && store.room?.key === data.room) {
       store.room.muted = !!data.muted;
       store.room.attached = data.attached;

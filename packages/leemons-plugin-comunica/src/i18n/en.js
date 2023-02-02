@@ -80,5 +80,6 @@ module.exports = {
     studentsCanAddTeachersToGroups: 'Allowing students to add teachers to groups',
     disableChatsBetweenStudentsAndTeachers:
       'Do not allow students to send private messages to teachers (except in activity/evaluation rooms).',
+    saveDone: 'Data updated',
   },
 };

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { table } = require('../tables');
 
 async function saveGeneral(config, { transacting } = {}) {
@@ -9,6 +10,8 @@ async function saveGeneral(config, { transacting } = {}) {
     },
     { transacting }
   );
+  leemons.socket.emitToAll(`COMUNICA:CONFIG:GENERAL`, config);
+
   return config;
 }
 

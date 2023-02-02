@@ -15,6 +15,8 @@ async function update(
     image,
     metadata,
     parentRoom,
+    program,
+    center: _center,
     transacting: _transacting,
   } = {}
 ) {
@@ -26,6 +28,16 @@ async function update(
 
       const toUpdate = {};
 
+      let center = _center;
+      if (program) {
+        toUpdate.program = program;
+        if (!center) {
+          [center] = await leemons
+            .getPlugin('academic-portfolio')
+            .services.programs.getProgramCenters(program, { transacting });
+        }
+      }
+      if (center) toUpdate.center = center;
       if (type) toUpdate.type = type;
       if (name) toUpdate.name = name;
       if (icon) toUpdate.icon = icon;

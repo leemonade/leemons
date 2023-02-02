@@ -9,7 +9,7 @@ async function getProgram(program, { transacting } = {}) {
     studentsCanAddTeachersToGroups: true,
   };
   if (item) {
-    config = JSON.parse(config);
+    config = JSON.parse(item.config);
   }
   return config;
 }

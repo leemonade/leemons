@@ -26,6 +26,7 @@ function ChatAddUsersDrawer({
   opened,
   newChatMode,
   onSave,
+  disabledProfiles = [],
   onReturn = () => {},
   onClose = () => {},
 }) {
@@ -61,7 +62,10 @@ function ChatAddUsersDrawer({
       onlyContacts: true,
     });
 
-    store.allUserAgents = userAgents;
+    store.allUserAgents = _.filter(userAgents, (userAgent) => {
+      if (disabledProfiles.includes(userAgent.profile.sysName)) return false;
+      return true;
+    });
 
     render();
   }
@@ -142,7 +146,7 @@ function ChatAddUsersDrawer({
 
   React.useEffect(() => {
     debouncedFunction(search);
-  }, [room]);
+  }, [room, JSON.stringify(disabledProfiles)]);
 
   const currentUserIds = _.map(
     _.filter(room.userAgents, (e) => !e.deleted),
@@ -223,10 +227,7 @@ function ChatAddUsersDrawer({
                 className={classes.userAgentItem}
               >
                 {!newChatMode ? (
-                  <Checkbox
-                    checked={store.usersToAddIds.includes(userAgent.id)}
-                    onChange={() => toggleUserAgent(userAgent)}
-                  />
+                  <Checkbox checked={store.usersToAddIds.includes(userAgent.id)} />
                 ) : null}
 
                 <UserDisplayItem
@@ -257,6 +258,7 @@ ChatAddUsersDrawer.propTypes = {
   onClose: PropTypes.func,
   onReturn: PropTypes.func,
   newChatMode: PropTypes.bool,
+  disabledProfiles: PropTypes.array,
 };
 
 export { ChatAddUsersDrawer };

@@ -6,7 +6,7 @@ async function getGeneral({ transacting } = {}) {
     enabled: true,
   };
   if (item) {
-    config = JSON.parse(config);
+    config = JSON.parse(item.config);
   }
   return config;
 }

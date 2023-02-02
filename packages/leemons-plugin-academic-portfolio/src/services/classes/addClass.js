@@ -177,6 +177,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           bgColor: classe.subject.color,
           image: null,
           icon: null,
+          program: data.program,
           transacting,
         };
         if (classe.subject.icon?.avatar) {
