@@ -10,6 +10,7 @@ const { existUserAgent } = require('./existUserAgent');
 const { toggleMutedRoom } = require('./toggleMutedRoom');
 const { adminRemoveRoom } = require('./adminRemoveRoom');
 const { removeUserAgents } = require('./removeUserAgents');
+const { toggleDisableRoom } = require('./toggleDisableRoom');
 const { getUnreadMessages } = require('./getUnreadMessages');
 const { getUserAgentRooms } = require('./getUserAgentRooms');
 const { adminAddUserAgents } = require('./adminAddUserAgents');
@@ -34,6 +35,7 @@ module.exports = {
   toggleMutedRoom,
   adminRemoveRoom,
   removeUserAgents,
+  toggleDisableRoom,
   getUnreadMessages,
   getUserAgentRooms,
   adminAddUserAgents,

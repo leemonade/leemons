@@ -10,6 +10,8 @@ async function saveProgram(program, config, { transacting } = {}) {
     },
     { transacting }
   );
+  leemons.socket.emitToAll(`COMUNICA:CONFIG:PROGRAM`, { program, config });
+
   return config;
 }
 

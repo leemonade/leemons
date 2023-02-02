@@ -11,6 +11,7 @@ module.exports = {
     information: 'Information',
   },
   chatListDrawer: {
+    adminDisableMessages: 'Temporarily disable messages',
     focus: 'Focus',
     search: 'Search',
     subjects: 'Subjects',

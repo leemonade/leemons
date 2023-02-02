@@ -109,6 +109,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/room/:key/admin/disable',
+    method: 'POST',
+    handler: 'room.toggleAdminDisableRoom',
+    authenticated: true,
+  },
+  {
     path: '/room/:key/admin/remove',
     method: 'POST',
     handler: 'room.adminRemoveUserAgent',

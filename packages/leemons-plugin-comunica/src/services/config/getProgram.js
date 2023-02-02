@@ -6,7 +6,7 @@ async function getProgram(program, { transacting } = {}) {
     enableSubjectsRoom: true,
     teachersCanDisableSubjectsRooms: true,
     teachersCanMuteStudents: true,
-    studentsCanAddTeachersToGroups: true,
+    onlyTeachersCanWriteInSubjectsRooms: false,
   };
   if (item) {
     config = JSON.parse(item.config);

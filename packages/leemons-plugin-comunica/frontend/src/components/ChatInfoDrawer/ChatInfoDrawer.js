@@ -21,11 +21,18 @@ import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddU
 import getBase64 from '@leebrary/helpers/getBase64';
 import { getCentersWithToken } from '@users/session';
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
+import SocketIoService from '@socket-io/service';
 import { ChatInfoDrawerStyles } from './ChatInfoDrawer.styles';
 
 const usersToShow = 7;
 
-function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} }) {
+function ChatInfoDrawer({
+  room,
+  opened,
+  disabledProfiles,
+  onReturn = () => {},
+  onClose = () => {},
+}) {
   const { classes } = ChatInfoDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
 
@@ -34,6 +41,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
     name: room ? t(room.name, room.nameReplaces, null, room.name) : null,
     muted: room?.muted || false,
     attached: room?.attached || false,
+    adminDisableMessages: room?.adminDisableMessages || false,
     createUserAgents: [],
   });
 
@@ -50,6 +58,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
   }
 
   function reset() {
+    store.adminDisableMessages = false;
     store.attached = false;
     store.muted = false;
     store.showAllMembers = false;
@@ -64,6 +73,12 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
     store.attached = store.attached ? null : new Date();
     render();
     if (room) await RoomService.toggleRoomAttached(room.key);
+  }
+
+  async function toggleAdminDisableMessages() {
+    store.adminDisableMessages = !store.adminDisableMessages;
+    render();
+    if (room) await RoomService.adminDisableMessages(room.key);
   }
 
   function toggleShowAllMembers() {
@@ -130,6 +145,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
       type: 'group',
       userAgents: _.map(store.createUserAgents, 'id'),
     });
+    if (store.adminDisableMessages) RoomService.adminDisableMessages(key);
     if (store.attached) RoomService.toggleRoomAttached(key);
     if (store.muted) RoomService.toggleRoomMute(key);
     if (store.file) RoomService.adminChangeRoomImage(key, store.file);
@@ -155,6 +171,14 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
     render();
   }
 
+  async function loadConfig() {
+    store.programConfig = null;
+    if (room?.program) {
+      store.programConfig = await RoomService.getProgramConfig(room?.program);
+    }
+    render();
+  }
+
   function beforeReturn() {
     onReturn();
     if (!room) {
@@ -168,6 +192,10 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
   }, []);
 
   React.useEffect(() => {
+    loadConfig();
+  }, [room?.id]);
+
+  React.useEffect(() => {
     if (room) {
       if (store.muted !== room.muted) {
         store.muted = room.muted;
@@ -175,6 +203,15 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
       }
     }
   }, [room?.muted]);
+
+  React.useEffect(() => {
+    if (room) {
+      if (store.adminDisableMessages !== room.adminDisableMessages) {
+        store.adminDisableMessages = room.adminDisableMessages;
+        render();
+      }
+    }
+  }, [room?.adminDisableMessages]);
 
   React.useEffect(() => {
     if (room) {
@@ -217,6 +254,15 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
   let saveDisabled = store.name === room?.name || store.nameError || !store.name;
   if (!room && headerRoom.userAgents.length < 2) saveDisabled = true;
 
+  SocketIoService.useOnAny((event, data) => {
+    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+      if (room?.program === data.program) {
+        store.programConfig = data.config;
+        render();
+      }
+    }
+  });
+
   return (
     <>
       <Drawer opened={opened} size={430} close={false} empty>
@@ -236,7 +282,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
             <RoomHeader onImageChange={onImageChange} t={t} room={headerRoom} />
           </Box>
           <Box className={classes.content}>
-            {!room || room.isAdmin ? (
+            {!room || (room.isAdmin && room.type === 'group') ? (
               <Box className={classes.name}>
                 <TextInput
                   required
@@ -250,6 +296,15 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
 
             <Switch checked={!!store.attached} onChange={toggleAttached} label={t('setRoom')} />
             <Switch checked={!!store.muted} onChange={toggleMute} label={t('muteRoom')} />
+            {store.programConfig?.teachersCanDisableSubjectsRooms &&
+            room?.type === 'plugins.academic-portfolio.class' ? (
+              <Switch
+                checked={!!store.adminDisableMessages}
+                onChange={toggleAdminDisableMessages}
+                label={t('adminDisableMessages')}
+              />
+            ) : null}
+
             <Box className={classes.participants}>
               {t('participants')} ({store.nNoDeletedAgents})
             </Box>
@@ -261,7 +316,10 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
                   <Box className={classes.userAdmin}>{t('admin')}</Box>
                 ) : !room || room.isAdmin ? (
                   <Box className={classes.adminIcons}>
-                    {room ? (
+                    {room &&
+                    (!store.programConfig ||
+                      item.adminMuted ||
+                      store.programConfig.teachersCanMuteStudents) ? (
                       <Box
                         className={
                           item.adminMuted ? classes.userMuteIconActive : classes.userMuteIcon
@@ -274,13 +332,15 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
                       </Box>
                     ) : null}
 
-                    <Box className={classes.userRemove}>
-                      <ActionButton
-                        color="phatic"
-                        onClick={() => deleteUserFromRoom(item.userAgent)}
-                        icon={<DeleteBinIcon width={16} height={16} />}
-                      />
-                    </Box>
+                    {room.type === 'group' ? (
+                      <Box className={classes.userRemove}>
+                        <ActionButton
+                          color="phatic"
+                          onClick={() => deleteUserFromRoom(item.userAgent)}
+                          icon={<DeleteBinIcon width={16} height={16} />}
+                        />
+                      </Box>
+                    ) : null}
                   </Box>
                 ) : null}
               </Box>
@@ -299,13 +359,13 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
               </Box>
             ) : null}
 
-            {!room || room?.isAdmin ? (
+            {!room || (room?.isAdmin && room.type === 'group') ? (
               <Box onClick={openAddUsers} className={classes.showAll}>
                 + {t('addNewUsers')}
               </Box>
             ) : null}
           </Box>
-          {!room || room.isAdmin ? (
+          {!room || (room.isAdmin && room.type === 'group') ? (
             <Box className={classes.buttonActions}>
               {room ? (
                 <Button onClick={removeRoom} variant="outline">
@@ -322,6 +382,7 @@ function ChatInfoDrawer({ room, opened, onReturn = () => {}, onClose = () => {} 
       </Drawer>
       <ChatAddUsersDrawer
         room={headerRoom}
+        disabledProfiles={disabledProfiles}
         onSave={room ? null : addUsers}
         opened={store.showAddUsers}
         onClose={closeAddUsers}
@@ -336,6 +397,7 @@ ChatInfoDrawer.propTypes = {
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onReturn: PropTypes.func,
+  disabledProfiles: PropTypes.array,
 };
 
 export { ChatInfoDrawer };

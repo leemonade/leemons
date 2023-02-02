@@ -11,6 +11,7 @@ module.exports = {
     information: 'Información',
   },
   chatListDrawer: {
+    adminDisableMessages: 'Deshabilitar mensajes temporalmente',
     focus: 'Focus',
     search: 'Buscar',
     subjects: 'Asignaturas',

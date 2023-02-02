@@ -124,34 +124,51 @@ export default function ConfigPage() {
                   />
                 </Box>
 
-                <Box>
-                  <Controller
-                    name="enableStudentsChats"
-                    control={form.control}
-                    render={({ field: { value, ...field } }) => (
-                      <Switch {...field} label={t('enableStudentsChats')} checked={value} />
-                    )}
-                  />
+                <ContextContainer subtitle={t('students')}>
+                  <Box>
+                    <Controller
+                      name="enableStudentsChats"
+                      control={form.control}
+                      render={({ field: { value, ...field } }) => (
+                        <Switch {...field} label={t('enableStudentsChats')} checked={value} />
+                      )}
+                    />
 
-                  <Controller
-                    name="enableStudentsCreateGroups"
-                    control={form.control}
-                    render={({ field: { value, ...field } }) => (
-                      <Switch {...field} label={t('enableStudentsCreateGroups')} checked={value} />
-                    )}
-                  />
-                  <Controller
-                    name={`disableChatsBetweenStudentsAndTeachers`}
-                    control={form.control}
-                    render={({ field: { value, ...field } }) => (
-                      <Switch
-                        {...field}
-                        label={t('disableChatsBetweenStudentsAndTeachers')}
-                        checked={value}
-                      />
-                    )}
-                  />
-                </Box>
+                    <Controller
+                      name="enableStudentsCreateGroups"
+                      control={form.control}
+                      render={({ field: { value, ...field } }) => (
+                        <Switch
+                          {...field}
+                          label={t('enableStudentsCreateGroups')}
+                          checked={value}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`disableChatsBetweenStudentsAndTeachers`}
+                      control={form.control}
+                      render={({ field: { value, ...field } }) => (
+                        <Switch
+                          {...field}
+                          label={t('disableChatsBetweenStudentsAndTeachers')}
+                          checked={value}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`studentsCanAddTeachersToGroups`}
+                      control={form.control}
+                      render={({ field: { value, ...field } }) => (
+                        <Switch
+                          {...field}
+                          label={t('studentsCanAddTeachersToGroups')}
+                          checked={value}
+                        />
+                      )}
+                    />
+                  </Box>
+                </ContextContainer>
               </ContextContainer>
               <ContextContainer subtitle={t('programs')}>
                 <Tabs usePageLayout={false}>
@@ -198,21 +215,6 @@ export default function ConfigPage() {
                                 <Switch
                                   {...field}
                                   label={t('onlyTeachersCanWriteInSubjectsRooms')}
-                                  checked={value}
-                                />
-                              )}
-                            />
-                          </Box>
-                        </ContextContainer>
-                        <ContextContainer subtitle={t('students')}>
-                          <Box>
-                            <Controller
-                              name={`program[${program.id}].studentsCanAddTeachersToGroups`}
-                              control={form.control}
-                              render={({ field: { value, ...field } }) => (
-                                <Switch
-                                  {...field}
-                                  label={t('studentsCanAddTeachersToGroups')}
                                   checked={value}
                                 />
                               )}

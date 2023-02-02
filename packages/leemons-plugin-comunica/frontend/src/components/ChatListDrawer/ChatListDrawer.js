@@ -29,6 +29,7 @@ import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddU
 import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
 import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
 import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
@@ -39,6 +40,8 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
   const { classes } = ChatListDrawerStyles({}, { name: 'ChatListDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
   const [store, render] = useStore({ rooms: [], intermediateRooms: [] });
+  const isStudent = useIsStudent();
+  const isTeacher = useIsTeacher();
 
   function onKim() {}
 
@@ -56,6 +59,27 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
       store.rooms = _.filter(store.rooms, (room) => !isStudentTeacherChatRoom(room));
     }
+    store.rooms = _.filter(store.rooms, (room) => {
+      if (
+        room.type === 'plugins.academic-portfolio.class' &&
+        !store.programConfig[room.program]?.enableSubjectsRoom
+      ) {
+        return false;
+      }
+      if (room.type === 'group') {
+        if (!store.centerConfig?.enableStudentsCreateGroups) {
+          let oneAdminIsStudent = false;
+          _.forEach(room.userAgents, (item) => {
+            if (item.isAdmin && item.userAgent.profile.sysName === 'student') {
+              oneAdminIsStudent = true;
+              return false;
+            }
+          });
+          if (oneAdminIsStudent) return false;
+        }
+      }
+      return true;
+    });
 
     store.roomTypes = _.uniq(_.map(store.rooms, 'type'));
     if (store.intermediateRooms?.length) {
@@ -104,7 +128,14 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       RoomService.getRoomsList(),
       RoomService.getConfig(),
     ]);
-    console.log(centerConfig);
+    const programIds = _.uniq(_.map(originalRooms, 'program'));
+    const programConfigs = await Promise.all(
+      _.map(programIds, (programId) => RoomService.getProgramConfig(programId))
+    );
+    store.programConfig = {};
+    _.forEach(programIds, (programId, index) => {
+      store.programConfig[programId] = programConfigs[index];
+    });
     store.centerConfig = centerConfig;
     store.originalRooms = originalRooms;
     store.config = config;
@@ -227,19 +258,35 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
 
   const disabledProfilesForNewChat = React.useMemo(() => {
     const profiles = [];
-    if (!store.centerConfig?.enableStudentsChats) {
+    if (!store.centerConfig?.enableStudentsChats && isStudent) {
       profiles.push('student');
     }
-    if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
+    if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers && (isStudent || isTeacher)) {
+      profiles.push(isStudent ? 'teacher' : 'student');
+    }
+    return profiles;
+  }, [store.centerConfig, isStudent, isTeacher]);
+
+  const disabledProfilesForNewGroup = React.useMemo(() => {
+    const profiles = [...disabledProfilesForNewChat];
+    if (isStudent && !store.centerConfig?.studentsCanAddTeachersToGroups) {
       profiles.push('teacher');
     }
     return profiles;
-  }, [store.centerConfig]);
+  }, [disabledProfilesForNewChat]);
 
   SocketIoService.useOnAny((event, data) => {
     if (event === 'COMUNICA:CONFIG:CENTER') {
       if (data.center === getCentersWithToken()[0].id) {
         store.centerConfig = data.config;
+        recalcule();
+        render();
+      }
+      return;
+    }
+    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+      if (store.programConfig?.[data.program]) {
+        store.programConfig[data.program] = data.config;
         recalcule();
         render();
       }
@@ -362,6 +409,12 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     };
   }, [store.originalRooms]);
 
+  let canAddGroup = true;
+  if (isStudent) {
+    canAddGroup = false;
+    if (store.centerConfig?.enableStudentsCreateGroups) canAddGroup = true;
+  }
+
   return (
     <>
       <Drawer
@@ -396,9 +449,11 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
                   <Button onClick={newChat} fullWidth variant="light" color="secondary">
                     {t('newChat')}
                   </Button>
-                  <Button onClick={newGroup} fullWidth variant="light" color="secondary">
-                    {t('newGroup')}
-                  </Button>
+                  {canAddGroup ? (
+                    <Button onClick={newGroup} fullWidth variant="light" color="secondary">
+                      {t('newGroup')}
+                    </Button>
+                  ) : null}
                 </Box>
               </Popover>
               <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
@@ -478,7 +533,8 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
         opened={!!store.selectedRoom}
       />
       <ChatInfoDrawer
-        opened={store.createType === 'group'}
+        opened={store.createType === 'group' && canAddGroup}
+        disabledProfiles={disabledProfilesForNewGroup}
         onReturn={hideCreate}
         onClose={closeCreate}
       />

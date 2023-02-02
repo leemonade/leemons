@@ -133,6 +133,13 @@ class RoomService {
     });
   }
 
+  static adminDisableMessages(key) {
+    return leemons.api(`comunica/room/${key}/admin/disable`, {
+      allAgents: true,
+      method: 'POST',
+    });
+  }
+
   static toggleRoomMute(key) {
     return leemons.api(`comunica/room/${key}/mute`, {
       allAgents: true,

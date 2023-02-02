@@ -69,6 +69,15 @@ async function toggleMutedRoom(ctx) {
   ctx.body = { status: 200, muted };
 }
 
+async function toggleAdminDisableRoom(ctx) {
+  const adminDisableMessages = await roomService.toggleDisableRoom(
+    ctx.request.params.key,
+    ctx.state.userSession.userAgents[0].id
+  );
+  ctx.status = 200;
+  ctx.body = { status: 200, adminDisableMessages };
+}
+
 async function toggleAttachedRoom(ctx) {
   const attached = await roomService.toggleAttachedRoom(
     ctx.request.params.key,
@@ -152,6 +161,7 @@ async function adminChangeRoomImage(ctx) {
 }
 
 module.exports = {
+  toggleAdminDisableRoom,
   toggleAdminMutedRoom,
   getRoomsMessageCount,
   adminRemoveUserAgent,

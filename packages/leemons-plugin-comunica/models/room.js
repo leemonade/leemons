@@ -53,6 +53,9 @@ module.exports = {
     center: {
       type: 'string',
     },
+    adminDisableMessages: {
+      type: 'boolean',
+    },
   },
   primaryKey: {
     type: 'uuid',

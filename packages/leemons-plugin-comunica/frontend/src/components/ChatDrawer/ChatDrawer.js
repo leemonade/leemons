@@ -32,6 +32,7 @@ import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import SocketIoService from '@socket-io/service';
 import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
 import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
+import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
 function ChatDrawer({
@@ -61,6 +62,10 @@ function ChatDrawer({
   async function load() {
     store.userAgent = getCentersWithToken()[0].userAgentId;
     store.room = getRoomParsed(await store.service.getRoom());
+    store.programConfig = null;
+    if (store.room?.program) {
+      store.programConfig = await RoomService.getProgramConfig(store.room.program);
+    }
     store.messages = await store.service.getRoomMessages();
     store.messages = orderBy(store.messages, 'created_at', 'asc');
     store.messages = map(store.messages, (message) => ({
@@ -182,26 +187,40 @@ function ChatDrawer({
     }
   });
 
+  function returnOrClose() {
+    if (_.isFunction(onReturn)) {
+      onReturn();
+    } else {
+      onClose();
+    }
+  }
+
   SocketIoService.useOnAny((event, data) => {
     if (event === 'COMUNICA:CONFIG:CENTER') {
       if (data.center === getCentersWithToken()[0].id && store.room) {
         if (!data.config.enableStudentsChats) {
           if (isStudentsChatRoom(store.room)) {
-            if (_.isFunction(onReturn)) {
-              onReturn();
-            } else {
-              onClose();
-            }
+            returnOrClose();
           }
         }
         if (data.config?.disableChatsBetweenStudentsAndTeachers) {
           if (isStudentTeacherChatRoom(store.room)) {
-            if (_.isFunction(onReturn)) {
-              onReturn();
-            } else {
-              onClose();
-            }
+            returnOrClose();
           }
+        }
+      }
+      return;
+    }
+    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+      if (store.room?.program === data.program) {
+        store.programConfig = data.config;
+      }
+      if (
+        store.room?.type === 'plugins.academic-portfolio.class' &&
+        store.room?.program === data.program
+      ) {
+        if (!data.config.enableSubjectsRoom) {
+          returnOrClose();
         }
       }
       return;
@@ -271,7 +290,23 @@ function ChatDrawer({
         render();
       }
     }
+    if (event === 'COMUNICA:ROOM:ADMIN_DISABLE_MESSAGES' && store.room?.key === data.room) {
+      store.room.adminDisableMessages = data.adminDisableMessages;
+      render();
+    }
   });
+
+  let canWrite = !store.room?.adminMuted;
+  if (
+    canWrite &&
+    store.room?.type === 'plugins.academic-portfolio.class' &&
+    store.programConfig?.onlyTeachersCanWriteInSubjectsRooms
+  ) {
+    canWrite = isTeacherByRoom(store.room);
+  }
+  if (canWrite && store.room?.adminDisableMessages && !store.room?.isAdmin) {
+    canWrite = false;
+  }
 
   return (
     <>
@@ -369,7 +404,7 @@ function ChatDrawer({
                 return comp;
               })}
           </Box>
-          {!store.room?.adminMuted ? (
+          {canWrite ? (
             <Box className={classes.sendMessage}>
               <Textarea
                 value={store.newMessage}

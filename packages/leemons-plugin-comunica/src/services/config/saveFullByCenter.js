@@ -18,6 +18,7 @@ async function saveFullByCenter(center, data, { transacting } = {}) {
         enableStudentsChats: data.enableStudentsChats,
         enableStudentsCreateGroups: data.enableStudentsCreateGroups,
         disableChatsBetweenStudentsAndTeachers: data.disableChatsBetweenStudentsAndTeachers,
+        studentsCanAddTeachersToGroups: data.studentsCanAddTeachersToGroups,
       },
       { transacting }
     ),

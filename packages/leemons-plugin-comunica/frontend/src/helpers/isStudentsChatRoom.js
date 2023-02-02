@@ -1,10 +1,9 @@
-
 export function isStudentsChatRoom(room) {
   if (room?.type === 'chat') {
-    const isStudentsChat =
+    return (
       room.userAgents[0].userAgent.profile.sysName === 'student' &&
-      room.userAgents[1].userAgent.profile.sysName === 'student';
-    return !isStudentsChat;
+      room.userAgents[1].userAgent.profile.sysName === 'student'
+    );
   }
   return false;
 }
