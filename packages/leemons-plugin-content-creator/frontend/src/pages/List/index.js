@@ -3,7 +3,7 @@ import { Box, PageHeader, createStyles, TabPanel, Tabs } from '@bubbles-ui/compo
 // import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import { useStore } from '@common';
+import { useStore, useQuery } from '@common';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
@@ -24,6 +24,7 @@ export default function List() {
   const [t] = useTranslateLoader(prefixPN('documentList'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const [currentAsset, setCurrentAsset] = React.useState(null);
+  const { fromDraft } = useQuery();
 
   const history = useHistory();
 
@@ -37,7 +38,7 @@ export default function List() {
 
   async function getPermissions() {
     const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      'plugins.content-creator.content-creator',
+      'plugins.content-creator.creator',
     ]);
     if (permissions[0]) {
       store.canAdd =
@@ -65,18 +66,17 @@ export default function List() {
 
   return (
     <Box style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box>
-        <PageHeader
-          values={{
-            title: t('pageTitle'),
-          }}
-          icon={<DocumentIcon />}
-          buttons={store.canAdd ? { new: tCommon('new') } : {}}
-          onNew={() => goCreatePage()}
-          fullWidth
-        />
-      </Box>
+      <PageHeader
+        values={{
+          title: t('pageTitle'),
+        }}
+        icon={<DocumentIcon />}
+        buttons={store.canAdd ? { new: tCommon('new') } : {}}
+        onNew={() => goCreatePage()}
+        fullWidth
+      />
       <Tabs
+        defaultActiveKey={fromDraft ? '1' : '0'}
         panelColor="solid"
         usePageLayout
         fullWidth

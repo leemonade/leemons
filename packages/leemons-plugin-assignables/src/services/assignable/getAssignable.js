@@ -8,7 +8,14 @@ const getAsset = require('../leebrary/assets/getAsset');
 
 module.exports = async function getAssignable(
   _id,
-  { userSession, columns = ['asset'], withFiles, transacting, deleted: showDeleted = true } = {}
+  {
+    userSession,
+    columns = ['asset'],
+    withFiles,
+    checkPermissions,
+    transacting,
+    deleted: showDeleted = true,
+  } = {}
 ) {
   let isPublished = false;
   let id = _id;
@@ -55,7 +62,7 @@ module.exports = async function getAssignable(
     // ES: Obtiene los datos del asset
     if (columns.includes('asset')) {
       assignable.asset = _.omit(
-        await getAsset(assignable.asset, { userSession, withFiles, transacting }),
+        await getAsset(assignable.asset, { userSession, withFiles, checkPermissions, transacting }),
         ['providerData']
       );
     }
