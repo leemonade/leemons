@@ -68,7 +68,7 @@ const menuItems = [
   {
     item: {
       key: 'tests',
-      order: 302,
+      order: 304,
       iconSvg: '/public/tests/menu-icon.svg',
       activeIconSvg: '/public/tests/menu-icon-active.svg',
       label: {

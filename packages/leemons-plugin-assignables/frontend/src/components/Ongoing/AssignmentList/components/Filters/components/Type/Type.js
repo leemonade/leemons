@@ -6,7 +6,7 @@ import { Select } from '@bubbles-ui/components';
 import prefixPN from '@assignables/helpers/prefixPN';
 
 function capitalize(str) {
-  return str[0].toUpperCase() + str.substring(1, str.length);
+  return str?.[0]?.toUpperCase() + str?.substring(1, str.length);
 }
 
 export function useRoles() {
