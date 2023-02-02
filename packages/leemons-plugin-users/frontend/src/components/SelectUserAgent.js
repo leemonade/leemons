@@ -14,7 +14,7 @@ import {
   map,
   uniq,
 } from 'lodash';
-import { ActionButton, Box, Select, Stack, UserDisplayItem } from '@bubbles-ui/components';
+import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -291,7 +291,7 @@ const SelectUserAgent = forwardRef(
     }
 
     return (
-      <Select
+      <MultiSelect
         {...props}
         ref={ref}
         searchable

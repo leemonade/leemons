@@ -15,6 +15,7 @@ export function SubjectItem({ subject, isValueComponent, ...props }) {
           flexDirection: 'row',
           gap: theme.spacing[2],
           alignItems: 'center',
+          height: '100%',
           width: isValueComponent && '22ch',
         })}
       >
