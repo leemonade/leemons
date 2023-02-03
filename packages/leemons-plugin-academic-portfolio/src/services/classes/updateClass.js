@@ -21,6 +21,7 @@ const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
+const { getProgramCourses } = require('../programs/getProgramCourses');
 
 async function updateClass(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -51,7 +52,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         goodGroup = group.id;
       }
 
-      const { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } =
+      let { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } =
         data;
 
       if (!goodGroup && group) {
@@ -105,6 +106,11 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
           throw new Error('substage not in program');
         }
         promises.push(addSubstage(nClass.id, substage, { transacting }));
+      }
+
+      if (!course) {
+        const programCourses = await getProgramCourses(nClass.program, { transacting });
+        course = programCourses[0].id;
       }
 
       if (_.isNull(course) || course) {

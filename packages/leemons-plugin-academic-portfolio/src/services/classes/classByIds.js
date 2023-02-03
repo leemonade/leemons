@@ -8,7 +8,7 @@ const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
 const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
-const { subjectByIds } = require('../subjects');
+const { subjectByIds } = require('../subjects/subjectByIds');
 
 async function classByIds(
   ids,
