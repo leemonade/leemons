@@ -83,13 +83,13 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
             icon: null,
             transacting,
           };
-          if (assetImage.avatar) {
+          if (assetImage.cover) {
             roomData.image = assetImage.id;
           }
-          if (classe.image?.avatar) {
+          if (classe.image?.cover) {
             roomData.image = classe.image.id;
           }
-          if (assetIcon.avatar) {
+          if (assetIcon.cover) {
             roomData.icon = assetIcon.id;
           }
           return roomService.update(leemons.plugin.prefixPN(`room.class.${classe.id}`), roomData);

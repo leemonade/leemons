@@ -180,13 +180,13 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           program: data.program,
           transacting,
         };
-        if (classe.subject.icon?.avatar) {
+        if (classe.subject.icon?.cover) {
           roomData.icon = classe.subject.icon.id;
         }
-        if (classe.subject.image?.avatar) {
+        if (classe.subject.image?.cover) {
           roomData.image = classe.subject.image.id;
         }
-        if (assetImage.avatar) {
+        if (assetImage.cover) {
           roomData.image = assetImage.id;
         }
         await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), roomData);

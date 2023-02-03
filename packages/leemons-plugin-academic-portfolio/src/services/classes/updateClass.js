@@ -196,13 +196,13 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         program: program.id,
         transacting,
       };
-      if (classe.subject.icon?.avatar) {
+      if (classe.subject.icon?.cover) {
         roomConfig.icon = classe.subject.icon.id;
       }
-      if (classe.subject.image?.avatar) {
+      if (classe.subject.image?.cover) {
         roomConfig.image = classe.subject.image.id;
       }
-      if (assetImage.avatar) {
+      if (assetImage.cover) {
         roomConfig.image = assetImage.id;
       }
       if (roomExists) {
