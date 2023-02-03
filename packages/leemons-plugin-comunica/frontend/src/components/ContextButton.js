@@ -10,6 +10,9 @@ import { getCentersWithToken } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
+import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
+import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
+import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
 import { RoomService } from '../RoomService';
 
 export const ContextButtonStyles = createStyles((theme) => ({
@@ -70,18 +73,64 @@ function ContextButton({ onShowDrawerChange }) {
   const notifications = useNotifications('chat');
   const { classes } = ContextButtonStyles({}, { name: 'ContextButton' });
 
+  function isOnParentRooms(parentKey) {
+    const room = _.find(store.originalRooms, { key: parentKey });
+    if (!room) return false;
+    if (room.parentRoom) {
+      return isOnParentRooms(room.parentRoom);
+    }
+    const inside = _.find(store.parentRooms, { key: room.key });
+    return !!inside;
+  }
+
   function calculeRoomsData() {
     store.unreadMessages = 0;
-    _.forEach(store.rooms, (room) => {
-      store.unreadMessages += room.unreadMessages;
+    _.forEach(store.originalRooms, (room) => {
+      if (isOnParentRooms(room.parentRoom || room.key)) {
+        store.unreadMessages += room.unreadMessages;
+      }
     });
+  }
+
+  function recalcule() {
+    store.parentRooms = _.orderBy(getRoomsByParent(store.originalRooms), ['attached'], ['asc']);
+    if (!store.centerConfig?.enableStudentsChats) {
+      store.parentRooms = _.filter(store.parentRooms, (room) => !isStudentsChatRoom(room));
+    }
+    if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
+      store.parentRooms = _.filter(store.parentRooms, (room) => !isStudentTeacherChatRoom(room));
+    }
+    store.parentRooms = _.filter(store.parentRooms, (room) => {
+      if (
+        room.type === 'plugins.academic-portfolio.class' &&
+        !store.programConfig[room.program]?.enableSubjectsRoom
+      ) {
+        return false;
+      }
+      return true;
+    });
+    calculeRoomsData();
   }
 
   async function load() {
     store.userAgent = getCentersWithToken()[0].userAgentId;
-    store.config = await RoomService.getConfig();
-    store.rooms = await RoomService.getRoomsList();
-    calculeRoomsData();
+    const [centerConfig, originalRooms, config] = await Promise.all([
+      RoomService.getCenterConfig(getCentersWithToken()[0].id),
+      RoomService.getRoomsList(),
+      RoomService.getConfig(),
+    ]);
+    const programIds = _.uniq(_.map(originalRooms, 'program'));
+    const programConfigs = await Promise.all(
+      _.map(programIds, (programId) => RoomService.getProgramConfig(programId))
+    );
+    store.programConfig = {};
+    _.forEach(programIds, (programId, index) => {
+      store.programConfig[programId] = programConfigs[index];
+    });
+    store.config = config;
+    store.centerConfig = centerConfig;
+    store.originalRooms = originalRooms;
+    recalcule();
     render();
   }
 
@@ -101,14 +150,30 @@ function ContextButton({ onShowDrawerChange }) {
 
   SocketIoService.useOnAny((event, data) => {
     console.log('SocketIoService', event, data);
+    if (event === 'COMUNICA:CONFIG:CENTER') {
+      if (data.center === getCentersWithToken()[0].id) {
+        store.centerConfig = data.config;
+        recalcule();
+        render();
+      }
+      return;
+    }
+    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+      if (store.programConfig[data.program]) {
+        store.programConfig[data.program] = data.config;
+        recalcule();
+        render();
+      }
+      return;
+    }
     if (event === 'COMUNICA:CONFIG') {
       store.config = data;
       render();
       return;
     }
     if (event === 'COMUNICA:CONFIG:ROOM') {
-      const index = _.findIndex(store.rooms, { key: data.room });
-      store.rooms[index].muted = !!data.muted;
+      const index = _.findIndex(store.originalRooms, { key: data.room });
+      store.originalRooms[index].muted = !!data.muted;
       render();
       return;
     }
@@ -120,7 +185,7 @@ function ContextButton({ onShowDrawerChange }) {
       debouncedFunction2(load);
       return;
     }
-    _.forEach(store.rooms, (room, index) => {
+    _.forEach(store.originalRooms, (room, index) => {
       if (`COMUNICA:ROOM:${room.key}` === event) {
         if (
           store.userAgent !== data.userAgent &&
@@ -136,14 +201,14 @@ function ContextButton({ onShowDrawerChange }) {
             });
           }
         }
-        store.rooms[index].unreadMessages += 1;
-        calculeRoomsData();
+        store.originalRooms[index].unreadMessages += 1;
+        recalcule();
         render();
         return false;
       }
       if (`COMUNICA:ROOM:READED:${room.key}` === event) {
-        store.rooms[index].unreadMessages = 0;
-        calculeRoomsData();
+        store.originalRooms[index].unreadMessages = 0;
+        recalcule();
         render();
         return false;
       }

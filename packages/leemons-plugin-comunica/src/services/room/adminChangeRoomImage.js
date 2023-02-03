@@ -58,8 +58,9 @@ async function adminChangeRoomImage(key, userSession, avatar, { transacting } = 
   );
 
   const userAgents = await table.userAgentInRoom.find({ room: key }, { transacting });
-  _.forEach(userAgents, (item) => {
-    leemons.socket.emit(item.userAgent, `COMUNICA:ROOM:UPDATE:IMAGE`, { key, image: asset.id });
+  leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
+    key,
+    image: asset.id,
   });
 
   return {

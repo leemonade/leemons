@@ -15,6 +15,8 @@ async function update(
     image,
     metadata,
     parentRoom,
+    program,
+    center: _center,
     transacting: _transacting,
   } = {}
 ) {
@@ -26,6 +28,16 @@ async function update(
 
       const toUpdate = {};
 
+      let center = _center;
+      if (program) {
+        toUpdate.program = program;
+        if (!center) {
+          [center] = await leemons
+            .getPlugin('academic-portfolio')
+            .services.programs.getProgramCenters(program, { transacting });
+        }
+      }
+      if (center) toUpdate.center = center;
       if (type) toUpdate.type = type;
       if (name) toUpdate.name = name;
       if (icon) toUpdate.icon = icon;
@@ -37,7 +49,24 @@ async function update(
       if (parentRoom) toUpdate.parentRoom = parentRoom;
       if (nameReplaces) toUpdate.nameReplaces = JSON.stringify(nameReplaces);
 
-      return table.room.update({ key }, toUpdate, { transacting });
+      const room = await table.room.update({ key }, toUpdate, { transacting });
+      let userAgents = [];
+      if (image || icon) {
+        userAgents = await table.userAgentInRoom.find({ room: key }, { transacting });
+      }
+      if (image) {
+        leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
+          key,
+          image,
+        });
+      }
+      if (icon) {
+        leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:ICON`, {
+          key,
+          image,
+        });
+      }
+      return room;
     },
     table.room,
     _transacting

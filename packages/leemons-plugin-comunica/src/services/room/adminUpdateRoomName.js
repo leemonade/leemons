@@ -34,9 +34,7 @@ async function adminUpdateRoomName(key, userAgent, name, { transacting: _transac
         { columns: ['userAgent'], transacting }
       );
 
-      _.forEach(userAgentsInRoom, (a) => {
-        leemons.socket.emit(a.userAgent, `COMUNICA:ROOM:UPDATE:NAME`, room);
-      });
+      leemons.socket.emit(_.map(userAgentsInRoom, 'userAgent'), `COMUNICA:ROOM:UPDATE:NAME`, room);
 
       return room;
     },

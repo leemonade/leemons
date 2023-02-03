@@ -6,6 +6,7 @@ const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
+const { classByIds } = require('../classes/classByIds');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
@@ -69,16 +70,26 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
         { subject: subject.id },
         { columns: ['id'], transacting }
       );
+      const classes = await classByIds(_.map(classesWithSubject, 'id'), { transacting });
       const roomService = leemons.getPlugin('comunica').services.room;
       await Promise.all(
-        _.map(classesWithSubject, (item) => {
+        _.map(classes, (classe) => {
           const roomData = {
             name: subject.name,
             bgColor: color,
+            image: null,
+            icon: null,
             transacting,
           };
-          roomData.image = assetImage.id;
-          roomData.icon = assetIcon.id;
+          if (assetImage.avatar) {
+            roomData.image = assetImage.id;
+          }
+          if (classe.image?.avatar) {
+            roomData.image = classe.image.id;
+          }
+          if (assetIcon.avatar) {
+            roomData.icon = assetIcon.id;
+          }
           return roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), roomData);
         })
       );

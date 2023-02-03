@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "bad-words": "^3.0.4",
     "leemons-utils": "0.0.1",
     "lodash": "^4.17.21"
   }

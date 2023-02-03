@@ -24,9 +24,7 @@ async function remove(key, { ignoreCalledFrom, transacting: _transacting } = {})
         ),
       ]);
 
-      _.forEach(userAgents, ({ userAgent }) => {
-        leemons.socket.emit(userAgent, `COMUNICA:CONFIG:ROOM:REMOVE`, { key });
-      });
+      leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:CONFIG:ROOM:REMOVE`, { key });
 
       return true;
     },

@@ -5,6 +5,8 @@ import { useStore } from '@common';
 import { useLocation } from 'react-router-dom';
 import { getCentersWithToken, useSession } from '@users/session';
 import { NotificationProvider } from '@bubbles-ui/notifications';
+import RoomService from '@comunica/RoomService';
+import SocketIoService from '@socket-io/service';
 
 const notificationProps = {
   autoClose: 8000,
@@ -23,6 +25,14 @@ export function Provider({ children }) {
   const centers = getCentersWithToken();
   const location = useLocation();
 
+  async function load() {
+    if (!store.config) {
+      const { enabled } = await RoomService.getGeneralConfig();
+      store.enabled = enabled;
+      render();
+    }
+  }
+
   function onShowDrawerChange(showDrawer) {
     store.showDrawer = showDrawer;
     render();
@@ -31,18 +41,31 @@ export function Provider({ children }) {
   React.useEffect(() => {
     const old = store.showButton;
     store.showButton = false;
+    if (session) {
+      load();
+    } else {
+      store.config = null;
+    }
     if (
       session &&
       centers &&
       centers.length &&
-      location.pathname !== '/private/users/select-profile'
+      location.pathname !== '/private/users/select-profile' &&
+      store.enabled
     ) {
       store.showButton = true;
     }
     if (old !== store.showButton) {
       render();
     }
-  }, [session, location]);
+  }, [session, location, store.enabled]);
+
+  SocketIoService.useOnAny((event, data) => {
+    if (event === 'COMUNICA:CONFIG:GENERAL') {
+      store.enabled = data.enabled;
+      render();
+    }
+  });
 
   return (
     <>

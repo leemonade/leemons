@@ -133,6 +133,13 @@ class RoomService {
     });
   }
 
+  static adminDisableMessages(key) {
+    return leemons.api(`comunica/room/${key}/admin/disable`, {
+      allAgents: true,
+      method: 'POST',
+    });
+  }
+
   static toggleRoomMute(key) {
     return leemons.api(`comunica/room/${key}/mute`, {
       allAgents: true,
@@ -248,6 +255,37 @@ class RoomService {
       body,
     });
 
+    return config;
+  }
+
+  static async getAdminConfig(center) {
+    const { config } = await leemons.api(`comunica/admin/config/${center}`);
+
+    return config;
+  }
+
+  static async saveAdminConfig(center, data) {
+    const { config } = await leemons.api(`comunica/admin/config/${center}`, {
+      allAgents: true,
+      method: 'POST',
+      body: data,
+    });
+
+    return config;
+  }
+
+  static async getGeneralConfig() {
+    const { config } = await leemons.api(`comunica/config/general`);
+    return config;
+  }
+
+  static async getCenterConfig(center) {
+    const { config } = await leemons.api(`comunica/config/center/${center}`);
+    return config;
+  }
+
+  static async getProgramConfig(program) {
+    const { config } = await leemons.api(`comunica/config/program/${program}`);
     return config;
   }
 }
