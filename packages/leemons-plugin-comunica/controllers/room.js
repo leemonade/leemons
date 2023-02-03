@@ -21,7 +21,7 @@ async function getRoom(ctx) {
 async function sendMessage(ctx) {
   await roomService.sendMessage(
     ctx.request.params.key,
-    ctx.state.userSession.userAgents[0].id,
+    ctx.state.userSession.userAgents[0],
     ctx.request.body.message
   );
   ctx.status = 200;
