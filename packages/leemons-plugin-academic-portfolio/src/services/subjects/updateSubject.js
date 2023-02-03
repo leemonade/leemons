@@ -69,34 +69,6 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
 
       await table.class.updateMany({ subject: subject.id }, { color }, { transacting });
 
-      const classesWithSubject = await table.class.find(
-        { subject: subject.id },
-        { columns: ['id'], transacting }
-      );
-      const classes = await classByIds(_.map(classesWithSubject, 'id'), { transacting });
-      const roomService = leemons.getPlugin('comunica').services.room;
-      await Promise.all(
-        _.map(classes, (classe) => {
-          const roomData = {
-            name: subject.name,
-            bgColor: color,
-            image: null,
-            icon: null,
-            transacting,
-          };
-          if (assetImage.avatar) {
-            roomData.image = assetImage.id;
-          }
-          if (classe.image?.avatar) {
-            roomData.image = classe.image.id;
-          }
-          if (assetIcon.avatar) {
-            roomData.icon = assetIcon.id;
-          }
-          return roomService.update(leemons.plugin.prefixPN(`room.class.${classe.id}`), roomData);
-        })
-      );
-
       if (!course) {
         const programCourses = await getProgramCourses(subject.program, { transacting });
         course = programCourses[0].id;
