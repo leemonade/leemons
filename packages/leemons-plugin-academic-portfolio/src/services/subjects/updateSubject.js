@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 const _ = require('lodash');
 const { isArray } = require('lodash');
 const { table } = require('../tables');
@@ -7,12 +8,13 @@ const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
 const { classByIds } = require('../classes/classByIds');
+const { getProgramCourses } = require('../programs/getProgramCourses');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateSubject(data, { transacting });
-      const {
+      let {
         id,
         course,
         credits,
@@ -90,10 +92,14 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
           if (assetIcon.avatar) {
             roomData.icon = assetIcon.id;
           }
-          return roomService.update(leemons.plugin.prefixPN(`room.class.${item.id}`), roomData);
+          return roomService.update(leemons.plugin.prefixPN(`room.class.${classe.id}`), roomData);
         })
       );
 
+      if (!course) {
+        const programCourses = await getProgramCourses(subject.program, { transacting });
+        course = programCourses[0].id;
+      }
       const courses = isArray(course) ? course : [course];
       await setToAllClassesWithSubject(subject.id, courses, { transacting });
 
