@@ -18,6 +18,7 @@ export const ContentEditorInputStyles = createStyles((theme, { editorStyles }) =
       flex: 1,
       overflowY: 'auto',
       display: 'flex',
+      scrollbarGutter: 'stable',
       justifyContent: 'center',
       '::-webkit-scrollbar': {
         width: '12px',
@@ -45,6 +46,7 @@ export const ContentEditorInputStyles = createStyles((theme, { editorStyles }) =
     toolbarRoot: {
       padding: '8px 16px 16px 24px',
       backgroundColor: '#FFF',
+      marginRight: 24,
     },
     textEditorContainer: {
       flex: 4,
