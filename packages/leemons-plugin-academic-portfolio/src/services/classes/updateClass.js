@@ -197,7 +197,7 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
         transacting,
       };
       if (classe.subject.icon?.avatar) {
-        roomConfig.image = classe.subject.icon.id;
+        roomConfig.icon = classe.subject.icon.id;
       }
       if (classe.subject.image?.avatar) {
         roomConfig.image = classe.subject.image.id;

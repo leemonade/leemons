@@ -181,7 +181,7 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           transacting,
         };
         if (classe.subject.icon?.avatar) {
-          roomData.image = classe.subject.icon.id;
+          roomData.icon = classe.subject.icon.id;
         }
         if (classe.subject.image?.avatar) {
           roomData.image = classe.subject.image.id;
