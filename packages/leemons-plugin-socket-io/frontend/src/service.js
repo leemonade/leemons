@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import hooks from 'leemons-hooks';
 
 let socket = null;
@@ -13,8 +13,14 @@ export const SocketIoService = {
   emit: (event, data, callback) => socket.emit(event, data, callback),
   on: (event, callback) => socket.on(event, callback),
   useOn: (_event, callback) => {
+    const ref = useRef({ callback, event: _event });
+    ref.current.callback = callback;
+    ref.current.event = _event;
+
     const onEvent = ({ args: [{ event, data }] }) => {
-      if (_event === event) return callback(event, data);
+      if (ref.current.event === event) {
+        return ref.current.callback(event, data);
+      }
       return null;
     };
     useEffect(() => {
@@ -22,17 +28,21 @@ export const SocketIoService = {
       return () => {
         hooks.removeAction('socket.io:onAny', onEvent);
       };
-    });
+    }, []);
   },
   onAny: (callback) => socket.onAny(callback),
   useOnAny: (callback) => {
-    const onEvent = ({ args: [{ event, data }] }) => callback(event, data);
+    const ref = useRef({ callback });
+    ref.current.callback = callback;
+    const onEvent = ({ args: [{ event, data }] }) => {
+      ref.current.callback(event, data);
+    };
     useEffect(() => {
       hooks.addAction('socket.io:onAny', onEvent);
       return () => {
         hooks.removeAction('socket.io:onAny', onEvent);
       };
-    });
+    }, []);
   },
   disconnect: () => {
     if (socket) {
