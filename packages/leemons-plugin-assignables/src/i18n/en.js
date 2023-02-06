@@ -131,6 +131,9 @@ module.exports = {
     startHour: 'Start hour',
     endDate: 'End date',
     endHour: 'End hour',
+    closedPeriod: 'Closed period',
+    liveSession: 'Live session',
+    liveSessionData: 'Date',
   },
   activity_dashboard: {
     closeAction: {
