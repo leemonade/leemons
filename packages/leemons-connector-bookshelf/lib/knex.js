@@ -95,6 +95,7 @@ async function initKnex(connector, connections) {
         // Test connection
         await dbConnection.schema.hasTable('core_store');
       } catch (e) {
+        console.error(e);
         throw new Error(
           `Can't connect to the database in ${connection.name} connection. Check if the database is running. (${e.code} - ${e.sqlMessage})`
         );
