@@ -11,6 +11,7 @@ const {
   find,
   set,
   map,
+  isObject,
 } = require('lodash');
 const semver = require('semver');
 const { byName: getByName } = require('./byName');
@@ -39,7 +40,7 @@ async function search(
     indexable = true,
     preferCurrent,
     searchInProvider,
-    providerQuery,
+    providerQuery = {},
     pinned,
     showPublic,
     roles,
@@ -51,6 +52,10 @@ async function search(
 ) {
   let programs = _programs;
   let subjects = _subjects;
+
+  if (!isObject(providerQuery)) {
+    providerQuery = {};
+  }
 
   if (!programs && providerQuery?.program) {
     programs = [providerQuery.program];
