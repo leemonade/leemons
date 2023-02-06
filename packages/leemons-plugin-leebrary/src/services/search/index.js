@@ -104,63 +104,65 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    if (!isEmpty(criteria)) {
-      const tagsService = leemons.getPlugin('common').services.tags;
+    // if (!isEmpty(criteria)) {
+    const tagsService = leemons.getPlugin('common').services.tags;
 
-      let providerAssets = null;
-      if (searchInProvider && categoryId) {
-        providerAssets = await getByProvider(categoryId, criteria, {
-          query: providerQuery,
-          assets,
-          published,
-          preferCurrent,
-          userSession,
-          transacting,
-        });
+    let providerAssets = null;
+    if (searchInProvider && categoryId && !isEmpty(criteria)) {
+      providerAssets = await getByProvider(categoryId, criteria, {
+        query: providerQuery,
+        assets,
+        published,
+        preferCurrent,
+        userSession,
+        transacting,
+      });
 
-        nothingFound = !providerAssets?.length;
-      }
-
-      if (!providerAssets || providerAssets.length) {
-        const query = {
-          indexable,
-          $or: [
-            { name_$contains: criteria },
-            { tagline_$contains: criteria },
-            { description_$contains: criteria },
-          ],
-        };
-
-        const assetIds = providerAssets || assets;
-        if (!isEmpty(assetIds)) {
-          query.id_$in = assetIds;
-        }
-
-        if (categoryId) {
-          query.category = categoryId;
-        }
-
-        const [assetsFound, byTags] = await Promise.all([
-          tables.assets.find(query, { columns: ['id'], transacting }),
-          tagsService.getTagsValues(criteria, {
-            type: leemons.plugin.prefixPN(''),
-            transacting,
-          }),
-        ]);
-
-        const matches = map(assetsFound, 'id');
-
-        // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
-        // EN: If there are resources, we must apply a previous filter as an intersection
-        if (!isEmpty(assets)) {
-          assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
-        } else {
-          assets = compact(uniq(matches.concat(flattenDeep(byTags))));
-        }
-
-        nothingFound = assets.length === 0;
-      }
+      nothingFound = !providerAssets?.length;
     }
+
+    if (!providerAssets || providerAssets.length) {
+      const query = {
+        indexable,
+      };
+      if (criteria) {
+        query.$or = [
+          { name_$contains: criteria },
+          { tagline_$contains: criteria },
+          { description_$contains: criteria },
+        ];
+      }
+
+      const assetIds = providerAssets || assets;
+      if (!isEmpty(assetIds)) {
+        query.id_$in = assetIds;
+      }
+
+      if (categoryId) {
+        query.category = categoryId;
+      }
+
+      const [assetsFound, byTags] = await Promise.all([
+        tables.assets.find(query, { columns: ['id'], transacting }),
+        tagsService.getTagsValues(criteria, {
+          type: leemons.plugin.prefixPN(''),
+          transacting,
+        }),
+      ]);
+
+      const matches = map(assetsFound, 'id');
+
+      // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
+      // EN: If there are resources, we must apply a previous filter as an intersection
+      if (!isEmpty(assets)) {
+        assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+      } else {
+        assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+      }
+
+      nothingFound = assets.length === 0;
+    }
+    // }
 
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
@@ -290,8 +292,6 @@ async function search(
 
       assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
     }
-
-    console.log('rsult', uniqBy(assets, 'asset') || []);
 
     return uniqBy(assets, 'asset') || [];
   } catch (e) {
