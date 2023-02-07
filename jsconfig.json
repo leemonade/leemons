@@ -21,6 +21,9 @@
       "@assignables/*": [
         "./packages/leemons-plugin-assignables/frontend/src/*"
       ],
+      "@board-messages/*": [
+        "./packages/leemons-plugin-board-messages/frontend/src/*"
+      ],
       "@calendar/*": [
         "./packages/leemons-plugin-calendar/frontend/src/*"
       ],
