@@ -30,6 +30,7 @@ function ChatInfoDrawer({
   room,
   opened,
   disabledProfiles,
+  onBeforeNewGroup = () => {},
   onReturn = () => {},
   onClose = () => {},
 }) {
@@ -138,6 +139,7 @@ function ChatInfoDrawer({
   }
 
   async function createGroup() {
+    onBeforeNewGroup();
     const {
       room: { key },
     } = await RoomService.createRoom({
@@ -282,7 +284,7 @@ function ChatInfoDrawer({
             <RoomHeader onImageChange={onImageChange} t={t} room={headerRoom} />
           </Box>
           <Box className={classes.content}>
-            {!room || (room.isAdmin && room.type === 'group') ? (
+            {!room || (room?.isAdmin && room?.type === 'group') ? (
               <Box className={classes.name}>
                 <TextInput
                   required
@@ -314,7 +316,7 @@ function ChatInfoDrawer({
                 {/* eslint-disable-next-line no-nested-ternary */}
                 {item.isAdmin ? (
                   <Box className={classes.userAdmin}>{t('admin')}</Box>
-                ) : !room || room.isAdmin ? (
+                ) : !room || room?.isAdmin ? (
                   <Box className={classes.adminIcons}>
                     {room &&
                     (!store.programConfig ||
@@ -332,7 +334,7 @@ function ChatInfoDrawer({
                       </Box>
                     ) : null}
 
-                    {room.type === 'group' ? (
+                    {room?.type === 'group' ? (
                       <Box className={classes.userRemove}>
                         <ActionButton
                           color="phatic"
@@ -359,13 +361,13 @@ function ChatInfoDrawer({
               </Box>
             ) : null}
 
-            {!room || (room?.isAdmin && room.type === 'group') ? (
+            {!room || (room?.isAdmin && room?.type === 'group') ? (
               <Box onClick={openAddUsers} className={classes.showAll}>
                 + {t('addNewUsers')}
               </Box>
             ) : null}
           </Box>
-          {!room || (room.isAdmin && room.type === 'group') ? (
+          {!room || (room?.isAdmin && room?.type === 'group') ? (
             <Box className={classes.buttonActions}>
               {room ? (
                 <Button onClick={removeRoom} variant="outline">
@@ -397,6 +399,7 @@ ChatInfoDrawer.propTypes = {
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onReturn: PropTypes.func,
+  onBeforeNewGroup: PropTypes.func,
   disabledProfiles: PropTypes.array,
 };
 

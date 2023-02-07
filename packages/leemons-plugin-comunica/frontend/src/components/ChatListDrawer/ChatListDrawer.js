@@ -122,27 +122,6 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     }
   }
 
-  async function load() {
-    const [centerConfig, originalRooms, config] = await Promise.all([
-      RoomService.getCenterConfig(getCentersWithToken()[0].id),
-      RoomService.getRoomsList(),
-      RoomService.getConfig(),
-    ]);
-    const programIds = _.uniq(_.map(originalRooms, 'program'));
-    const programConfigs = await Promise.all(
-      _.map(programIds, (programId) => RoomService.getProgramConfig(programId))
-    );
-    store.programConfig = {};
-    _.forEach(programIds, (programId, index) => {
-      store.programConfig[programId] = programConfigs[index];
-    });
-    store.centerConfig = centerConfig;
-    store.originalRooms = originalRooms;
-    store.config = config;
-    recalcule();
-    render();
-  }
-
   function onClickRoom(room) {
     const childrens = getRoomChildrens(store.originalRooms, room);
     if (childrens.length) {
@@ -163,6 +142,32 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       onRoomOpened(room);
       render();
     }
+  }
+
+  async function load() {
+    const [centerConfig, originalRooms, config] = await Promise.all([
+      RoomService.getCenterConfig(getCentersWithToken()[0].id),
+      RoomService.getRoomsList(),
+      RoomService.getConfig(),
+    ]);
+    const programIds = _.uniq(_.map(originalRooms, 'program'));
+    const programConfigs = await Promise.all(
+      _.map(programIds, (programId) => RoomService.getProgramConfig(programId))
+    );
+    store.programConfig = {};
+    _.forEach(programIds, (programId, index) => {
+      store.programConfig[programId] = programConfigs[index];
+    });
+    store.centerConfig = centerConfig;
+    store.originalRooms = originalRooms;
+    store.config = config;
+    recalcule();
+    if (store.openAfterLoad) {
+      const r = _.find(store.rooms, { key: store.openAfterLoad });
+      onClickRoom(r);
+      store.openAfterLoad = null;
+    }
+    render();
   }
 
   function goBackIntermediateRoom() {
@@ -225,6 +230,10 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     render();
   }
 
+  function onBeforeNewGroup() {
+    store.openNextAddedRoomType = 'group';
+  }
+
   function hideCreate() {
     store.createType = null;
     render();
@@ -245,6 +254,7 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
   }
 
   async function onNewChat(e) {
+    store.openNextAddedRoomType = 'chat';
     await RoomService.createRoom({
       type: 'chat',
       userAgents: [e.id, getCentersWithToken()[0].userAgentId],
@@ -293,6 +303,13 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       return;
     }
     if (event === 'COMUNICA:ROOM:ADDED') {
+      console.log(store.openNextAddedRoomType);
+      if (store.openNextAddedRoomType) {
+        if (data.room.includes(`leemons.comunica.room.${store.openNextAddedRoomType}`)) {
+          store.openAfterLoad = data.room;
+        }
+      }
+      store.openNextAddedRoomType = null;
       debouncedFunction(load);
       return;
     }
@@ -535,6 +552,7 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
       <ChatInfoDrawer
         opened={store.createType === 'group' && canAddGroup}
         disabledProfiles={disabledProfilesForNewGroup}
+        onBeforeNewGroup={onBeforeNewGroup}
         onReturn={hideCreate}
         onClose={closeCreate}
       />
