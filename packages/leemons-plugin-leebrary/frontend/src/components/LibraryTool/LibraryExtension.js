@@ -69,6 +69,9 @@ export const LibraryExtension = Node.create({
       align: {
         default: 'left',
       },
+      isFloating: {
+        default: false,
+      },
     };
   },
 
