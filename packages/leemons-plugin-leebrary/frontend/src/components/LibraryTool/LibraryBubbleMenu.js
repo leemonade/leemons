@@ -8,6 +8,7 @@ import {
   EditorLeftAlignIcon,
   EditorRightAlignIcon,
   EditorCenterAlignIcon,
+  StarIcon,
 } from '@bubbles-ui/icons/solid';
 import { LayoutAgendaIcon, LayoutTwoColumsIcon } from '@bubbles-ui/icons/outline';
 import { LibraryIcon } from './LibraryIcon';
@@ -73,6 +74,12 @@ export const LibraryBubbleMenu = ({
           tooltip={bubbleMenu.twoColumns}
           active={data.width === '50%'}
         />
+        <ActionButton
+          icon={<StarIcon height={20} width={20} />}
+          onClick={() => handleChangeData({ isFloating: !data.isFloating })}
+          tooltip={'Float image'}
+          active={data.isFloating}
+        />
       </Box>
       {/* Align */}
       <Box className={classes.iconGroup}>
@@ -87,6 +94,7 @@ export const LibraryBubbleMenu = ({
           onClick={() => handleChangeData({ align: 'center' })}
           tooltip={alignLabels.center}
           active={data.align === 'center'}
+          disabled={data.isFloating}
         />
         {/* <ActionButton icon={<EditorJustifiedAlignIcon height={20} width={20} />} /> */}
         <ActionButton
