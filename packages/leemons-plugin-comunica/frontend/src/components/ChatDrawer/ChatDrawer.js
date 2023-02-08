@@ -313,16 +313,21 @@ function ChatDrawer({
       <Drawer opened={opened} size={430} close={false} empty>
         <Box className={classes.wrapper}>
           <Box className={classes.header}>
-            <Button
-              variant="link"
-              color="secondary"
-              onClick={() => {
-                if (_.isFunction(onReturn)) onReturn();
-              }}
-              leftIcon={<ChevronLeftIcon width={12} height={12} />}
-            >
-              {td('return')}
-            </Button>
+            {_.isFunction(onReturn) ? (
+              <Button
+                variant="link"
+                color="secondary"
+                onClick={() => {
+                  if (_.isFunction(onReturn)) onReturn();
+                }}
+                leftIcon={<ChevronLeftIcon width={12} height={12} />}
+              >
+                {td('return')}
+              </Button>
+            ) : (
+              <Box></Box>
+            )}
+
             <Box className={classes.headerRight}>
               <Popover
                 target={

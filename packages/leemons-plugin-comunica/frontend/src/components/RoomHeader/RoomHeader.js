@@ -5,6 +5,7 @@ import { RoomAvatar } from '@comunica/components';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import _ from 'lodash';
+import RoomInstanceView from '@comunica/components/RoomInstanceView/RoomInstanceView';
 import { RoomHeaderStyles } from './RoomHeader.styles';
 
 const noNUsersTypes = [
@@ -12,6 +13,8 @@ const noNUsersTypes = [
   'plugins.assignables.assignation.subject',
   'chat',
 ];
+
+const showViewTypes = ['plugins.assignables.assignation', 'plugins.assignables.assignation.user'];
 
 function RoomHeader({ room, t, onImageChange }) {
   const { classes } = RoomHeaderStyles({ type: room.type }, { name: 'RoomHeader' });
@@ -72,6 +75,7 @@ function RoomHeader({ room, t, onImageChange }) {
             <VolumeControlOffIcon />
           </Box>
         ) : null}
+        {showViewTypes.includes(room.type) ? <RoomInstanceView room={room} t={t} /> : null}
       </Box>
     </Box>
   );

@@ -9,7 +9,7 @@ import useAssignations from '@assignables/requests/hooks/queries/useAssignations
  * @param {import('@tanstack/react-query').QueryOptions} param1
  * @returns
  */
-export default function useAssignationsByProfile(ids, { ...options }) {
+export default function useAssignationsByProfile(ids, { ...options } = {}) {
   const isTeacher = useIsTeacher();
 
   const token = getCookieToken(true);

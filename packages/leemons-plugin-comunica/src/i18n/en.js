@@ -49,6 +49,7 @@ module.exports = {
     group: 'Groups',
     newPrivateChat: 'New private chat',
     chat: 'Chats',
+    view: 'View',
   },
   config: {
     title: 'Configuration of Comunica',

@@ -49,6 +49,7 @@ module.exports = {
     newChatName: 'Chat privado',
     newPrivateChat: 'Nuevo chat privado',
     chat: 'Chats',
+    view: 'Ver',
   },
   config: {
     title: 'Configuración de Comunica',
