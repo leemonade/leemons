@@ -87,7 +87,7 @@ export function useSelectedCurriculumProperties({
       flattenSelectedValues.map((selectedValue) => {
         const nodeLevelProperty =
           curriculumNodes[selectedValue.node]?.nodeLevelPropertyByPropertyId?.[
-            selectedValue.property
+          selectedValue.property
           ];
 
         const nodeLevel = nodeLevels.find(

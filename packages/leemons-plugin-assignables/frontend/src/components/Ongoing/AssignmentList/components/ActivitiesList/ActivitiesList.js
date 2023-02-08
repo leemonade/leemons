@@ -203,20 +203,12 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
 
   const instances = paginatedInstances?.items;
 
-  const assignationsByProfile = useAssignationsByProfile(instances || []);
-
-  const instancesDataLoading = useMemo(
-    () => assignationsByProfile.some((q) => q.isLoading),
-    [assignationsByProfile]
-  );
-
-  const instancesData = useMemo(() => {
-    if (instancesDataLoading) {
-      return [];
+  const { isLoading: instancesDataLoading, data: instancesData } = useAssignationsByProfile(
+    instances || [],
+    {
+      placeholderData: [],
     }
-
-    return assignationsByProfile.map(({ data }) => data);
-  }, [assignationsByProfile, instancesDataLoading]);
+  );
 
   const { data: parsedInstances, isLoading: parsedInstancesLoading } = useParseAssignations(
     instancesData,
