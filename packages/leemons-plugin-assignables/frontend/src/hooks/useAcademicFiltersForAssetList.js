@@ -34,7 +34,7 @@ function usePrograms({ labels }) {
   const programsQueries = useCenterPrograms(centersIds, { enabled: !!centersIds?.length });
 
   const programsAreLoading = React.useMemo(
-    () => programsQueries.every((queryInfo) => queryInfo.isLoading),
+    () => programsQueries.some((queryInfo) => queryInfo.isLoading),
     [programsQueries]
   );
 
