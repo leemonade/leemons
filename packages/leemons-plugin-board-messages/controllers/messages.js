@@ -6,13 +6,18 @@ async function list(ctx) {
     properties: {
       page: { type: ['number', 'string'] },
       size: { type: ['number', 'string'] },
+      filters: {
+        type: 'object',
+        additionalProperties: true,
+      },
     },
     required: ['page', 'size'],
     additionalProperties: false,
   });
-  if (validator.validate(ctx.request.query)) {
-    const { page, size } = ctx.request.query;
+  if (validator.validate(ctx.request.body)) {
+    const { page, size } = ctx.request.body;
     const data = await messagesService.list(parseInt(page, 10), parseInt(size, 10), {
+      userSession: ctx.state.userSession,
       filters: ctx.request.body.filters,
     });
     ctx.status = 200;
@@ -22,6 +27,15 @@ async function list(ctx) {
   }
 }
 
+async function save(ctx) {
+  const message = await messagesService.save(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, message };
+}
+
 module.exports = {
   list,
+  save,
 };

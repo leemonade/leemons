@@ -7,6 +7,7 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const List = loadable(() => pMinDelay(import('./src/pages/private/list'), 1000));
+const Test = loadable(() => pMinDelay(import('./src/pages/private/test'), 1000));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -16,6 +17,9 @@ export default function Private() {
     <Switch>
       <Route path={`${path}/list`}>
         <List session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/test`}>
+        <Test session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );

@@ -1013,7 +1013,7 @@ async function validateAddInstanceClass(data, { transacting } = {}) {
     await validateProgramNotUsingInternalId(
       data.program,
       (data.internalIdCourse ? await getCourseIndex(data.internalIdCourse, { transacting }) : '') +
-        data.internalId,
+      data.internalId,
       { transacting }
     );
   }

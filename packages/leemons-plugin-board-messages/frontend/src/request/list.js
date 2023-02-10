@@ -1,10 +1,8 @@
-async function list(page, size, filters) {
-  return leemons.api(`board-messages/list?page=${page}&size=${size}`, {
+async function list(body) {
+  return leemons.api(`board-messages/list`, {
     allAgents: true,
     method: 'POST',
-    body: {
-      filters,
-    },
+    body,
   });
 }
 
