@@ -1,0 +1,10 @@
+{
+  "name": "leemons-plugin-scorm",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "mime-types": "^2.1.35",
+    "fast-xml-parser": "4.1.3"
+  }
+}

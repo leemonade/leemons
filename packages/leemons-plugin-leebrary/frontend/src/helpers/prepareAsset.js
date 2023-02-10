@@ -9,16 +9,27 @@ function getAssetUrl(assetID) {
   )}`;
 }
 
-function getFileUrl(fileID) {
-  const authTokens = getAuthorizationTokenForAllCenters();
+function getFileUrl(fileID, segment, isPublic = false) {
+  if (!isString(fileID)) {
+    return '';
+  }
 
-  if (fileID?.startsWith('http')) {
+  const authTokens = getAuthorizationTokenForAllCenters();
+  const urlSuffixSegment = segment ? `/${segment}` : '';
+
+  if (fileID.startsWith('http')) {
     return fileID;
   }
 
-  return `${leemons.apiUrl}/api/leebrary/file/${fileID}?authorization=${encodeURIComponent(
-    `${authTokens}`
-  )}`;
+  const authParam = !isPublic ? `?authorization=${encodeURIComponent(`${authTokens}`)}` : '';
+
+  return `${leemons.apiUrl}/api/leebrary/file/${
+    isPublic ? 'public/' : ''
+  }${fileID}${urlSuffixSegment}${authParam}`;
+}
+
+function getPublicFileUrl(fileID, segment) {
+  return getFileUrl(fileID, segment, true);
 }
 
 function prepareAsset(assetFromApi, isPublished = true) {
@@ -84,5 +95,5 @@ function prepareAsset(assetFromApi, isPublished = true) {
   return asset;
 }
 
-export { prepareAsset, getFileUrl, getAssetUrl };
+export { prepareAsset, getFileUrl, getAssetUrl, getPublicFileUrl };
 export default prepareAsset;

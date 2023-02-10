@@ -102,7 +102,7 @@ const AssetFormInput = ({
         <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[10] })}>
           {formComponent}
         </Box>
-        <Box sx={() => ({ minWidth: '288px', maxWidth: '288px' })}>
+        <Box sx={() => ({ minWidth: 288, maxWidth: 288 })}>
           <InputWrapper label={formLabels?.labels?.preview}>
             <CardWrapper
               item={{ original: form?.watch() }}

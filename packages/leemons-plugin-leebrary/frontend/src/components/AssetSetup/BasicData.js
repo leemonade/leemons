@@ -10,8 +10,9 @@ import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
+// eslint-disable-next-line import/no-cycle
 import { LibraryForm } from '../LibraryForm/LibraryForm';
-import UploadingFileModal from '../UploadingFileModal';
+import { UploadingFileModal } from '../UploadingFileModal';
 
 const BasicData = ({
   file,
@@ -19,8 +20,8 @@ const BasicData = ({
   asset: assetProp,
   categoryId,
   editing,
-  onSave = () => {},
-  onNext = () => {},
+  onSave = () => { },
+  onNext = () => { },
   ...props
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -79,7 +80,6 @@ const BasicData = ({
       try {
         const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'media-files');
         const response = await getAssetRequest(asset.id);
-        console.log(prepareAsset(response.asset));
         onSave(prepareAsset(response.asset));
         setLoading(false);
         addSuccessAlert(
@@ -131,6 +131,7 @@ BasicData.propTypes = {
   asset: PropTypes.instanceOf(Object),
   onSave: PropTypes.func,
   onNext: PropTypes.func,
+  advancedConfig: PropTypes.instanceOf(Object),
 };
 
 export { BasicData };

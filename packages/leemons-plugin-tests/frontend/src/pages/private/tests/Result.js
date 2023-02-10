@@ -235,52 +235,52 @@ export default function Result() {
     () =>
       store.questions
         ? map(store.questions, (question) => {
-            let result = '';
-            if (store.questionResponses[question.id].status === 'ok') {
-              result = (
-                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
-                  <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
-                    <ImageLoader src={'/public/tests/question-done.svg'} />
-                  </Box>
+          let result = '';
+          if (store.questionResponses[question.id].status === 'ok') {
+            result = (
+              <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+                  <ImageLoader src={'/public/tests/question-done.svg'} />
                 </Box>
-              );
-            } else if (store.questionResponses[question.id].status === 'ko') {
-              result = (
-                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
-                  <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
-                    <ImageLoader src={'/public/tests/question-error.svg'} />
-                  </Box>
+              </Box>
+            );
+          } else if (store.questionResponses[question.id].status === 'ko') {
+            result = (
+              <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+                  <ImageLoader src={'/public/tests/question-error.svg'} />
                 </Box>
-              );
-            } else {
-              result = (
-                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
-                  <Box
-                    sx={(theme) => ({
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      backgroundColor: theme.colors.ui01,
-                    })}
-                  />
-                </Box>
-              );
-            }
-            return {
-              question: <Box className={styles.tableCell}>{htmlToText(question.question)}</Box>,
-              category: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.category?.category || '-'}
-                </Box>
-              ),
-              level: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.level ? find(levels, { value: question.level }).label : '-'}
-                </Box>
-              ),
-              result,
-            };
-          })
+              </Box>
+            );
+          } else {
+            result = (
+              <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                <Box
+                  sx={(theme) => ({
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: theme.colors.ui01,
+                  })}
+                />
+              </Box>
+            );
+          }
+          return {
+            question: <Box className={styles.tableCell}>{htmlToText(question.question)}</Box>,
+            category: (
+              <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+                {question.category?.category || '-'}
+              </Box>
+            ),
+            level: (
+              <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+                {question.level ? find(levels, { value: question.level }).label : '-'}
+              </Box>
+            ),
+            result,
+          };
+        })
         : [],
     [store.questions, store.questionResponses, levels]
   );
@@ -549,9 +549,8 @@ export default function Result() {
               store.room.unreadMessages = 0;
               render();
             }}
-            room={`plugins.assignables.subject|${
-              store?.instance?.subjects?.[0]?.subject
-            }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
+            room={`plugins.assignables.subject|${store?.instance?.subjects?.[0]?.subject
+              }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
           />
           {store.room ? (
             <ChatButton

@@ -14,6 +14,9 @@ const { ImporterFactory } = require('xlsx-import/lib/ImporterFactory');
 const mediaInfo = require('mediainfo.js');
 const got = require('got');
 const sharp = require('sharp');
+const xml2json = require('xml2json');
+const uuid = require('uuid');
+const decompress = require('decompress');
 const documentInfo = require('./documentInfo');
 const { fetch, fetchJson, fetchText } = require('./fetch');
 const { env } = require('./env');
@@ -97,8 +100,11 @@ module.exports = {
   documentInfo,
   got,
   sharp,
+  decompress,
+  xml2json,
   getDiff,
   chalk,
+  uuid,
   cron: {
     ...cron,
     schedule: (cronReg, callback) => {

@@ -17,7 +17,9 @@ function UploadingFileModal({ opened, title, info }) {
   return (
     <Modal title={title || t('title')} opened={opened} onClose={() => {}} withCloseButton={false}>
       <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
-        <Text>{value?.state !== 'uploading' ? t(value?.state) : t('fileOf', value)}</Text>
+        <Text role="productive">
+          {value?.state !== 'uploading' ? t(value?.state) : t('fileOf', value)}
+        </Text>
       </Box>
       {value?.state === 'uploading' ? (
         <Progress

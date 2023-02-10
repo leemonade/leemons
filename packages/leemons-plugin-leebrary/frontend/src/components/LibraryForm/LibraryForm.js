@@ -114,7 +114,7 @@ const LibraryForm = ({
   hideTitle,
   advancedConfig,
   hideSubmit,
-  onChange = () => {},
+  onChange = () => { },
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -189,7 +189,7 @@ const LibraryForm = ({
         }
       }
       const { programs } = await getUserProgramsRequest();
-      store.programs = _.map(programs, (program) => ({ label: program.name, value: program.id }));
+      store.programs = _.map(programs, (item) => ({ label: item.name, value: item.id }));
     }
     render();
   }
@@ -221,7 +221,9 @@ const LibraryForm = ({
     if (!isEmpty(assetFile)) {
       const isImageType = isImageFile(assetFile);
       setIsImage(isImageType);
-      setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
+      if (isEmpty(formValues.name)) {
+        setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
+      }
     }
   }, [assetFile]);
 
@@ -463,7 +465,7 @@ const LibraryForm = ({
             ) : null}
 
             {(!advancedConfigMode && !advancedConfig?.colorToRight) ||
-            (advancedConfigMode && advancedConfig?.colorToRight) ? (
+              (advancedConfigMode && advancedConfig?.colorToRight) ? (
               <Controller
                 control={control}
                 name="color"
@@ -481,7 +483,7 @@ const LibraryForm = ({
             ) : null}
           </ContextContainer>
           {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-          (advancedConfigMode && advancedConfig?.fileToRight) ? (
+            (advancedConfigMode && advancedConfig?.fileToRight) ? (
             <>
               {!isImage && (
                 <>

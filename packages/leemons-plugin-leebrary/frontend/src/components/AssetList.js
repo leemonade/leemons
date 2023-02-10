@@ -86,10 +86,10 @@ function AssetList({
   roles,
   filters,
   filterComponents,
-  onSelectItem = () => {},
-  onEditItem = () => {},
-  onTypeChange = () => {},
-  onLoading = () => {},
+  onSelectItem = () => { },
+  onEditItem = () => { },
+  onTypeChange = () => { },
+  onLoading = () => { },
 }) {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
@@ -679,8 +679,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
+          ? t('cardToolbar.pin')
+          : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -760,14 +760,14 @@ function AssetList({
             isEmbedded
               ? { flex: 0, alignItems: 'end' }
               : {
-                  flex: 0,
-                  alignItems: 'end',
-                  width: containerRect.width,
-                  top: containerRect.top,
-                  position: 'fixed',
-                  zIndex: 101,
-                  backgroundColor: '#fff',
-                }
+                flex: 0,
+                alignItems: 'end',
+                width: containerRect.width,
+                top: containerRect.top,
+                position: 'fixed',
+                zIndex: 101,
+                backgroundColor: '#fff',
+              }
           }
         >
           <Stack fullWidth spacing={5}>
