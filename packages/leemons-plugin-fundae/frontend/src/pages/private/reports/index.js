@@ -1,5 +1,5 @@
-import React from 'react';
-import _ from 'lodash';
+import { SelectCourse, SelectProgram } from '@academic-portfolio/components/Selectors';
+import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/request';
 import {
   Box,
   Button,
@@ -16,21 +16,21 @@ import {
   Table,
   Title,
 } from '@bubbles-ui/components';
-import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { SocketIoService } from '@socket-io/service';
-import { LocaleDate, useStore } from '@common';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@fundae/helpers/prefixPN';
-import { SelectCourse, SelectProgram } from '@academic-portfolio/components/Selectors';
-import { addErrorAlert } from '@layout/alert';
-import { getCentersWithToken } from '@users/session';
-import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/request';
-import SelectUserAgent from '@users/components/SelectUserAgent';
-import { generateReportRequest, listReportsRequest, retryReportRequest } from '@fundae/request';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { useReactToPrint } from 'react-to-print';
+import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { LocaleDate, useStore } from '@common';
+import prefixPN from '@fundae/helpers/prefixPN';
 import { Pdf } from '@fundae/pages/private/reports/pdf';
+import { generateReportRequest, listReportsRequest, retryReportRequest } from '@fundae/request';
+import { addErrorAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SocketIoService } from '@socket-io/service';
+import SelectUserAgent from '@users/components/SelectUserAgent';
+import { getCentersWithToken } from '@users/session';
+import _ from 'lodash';
+import React from 'react';
+import { useReactToPrint } from 'react-to-print';
 
 function toDate(a) {
   if (a) {
@@ -153,7 +153,7 @@ export default function Index() {
             }}
           />
         ),
-        programName: item.program.name,
+        programName: item.program?.name || item.report?.programName,
         studentName: [
           item.userAgent.user.name,
           item.userAgent.user.surnames,
@@ -179,6 +179,7 @@ export default function Index() {
         filters.userAgent_$in = store.filterSelectedUserAgents;
       }
       const result = await listReportsRequest(store.page - 1, store.perPage, filters);
+
       store.totalPages = result.data.totalPages;
       store.data = result.data.items;
       updateStoreData();
