@@ -38,6 +38,22 @@ const menuItems = [
   },
 ];
 
+const widgets = {
+  items: [
+    // ---- Dashboard
+    {
+      zoneKey: 'plugins.dashboard.program.left',
+      key: `${permissionsPrefix}.dashboard`,
+      url: 'dashboard/index',
+    },
+    {
+      zoneKey: `plugins.academic-portfolio.class.detail`,
+      key: `${permissionsPrefix}.class-dashboard`,
+      url: 'class-dashboard/index',
+    },
+  ],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -45,4 +61,5 @@ module.exports = {
     names: permissionNames,
   },
   menuItems,
+  widgets,
 };

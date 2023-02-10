@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
+const _ = require('lodash');
 const { addLocales } = require('./src/services/locales/addLocales');
-const { permissions, menuItems } = require('./config/constants');
+const { permissions, menuItems, widgets } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 
 async function initMenuBuilder() {
@@ -21,6 +22,33 @@ async function events(isInstalled) {
   });
 
   if (!isInstalled) {
+    leemons.events.once(
+      ['plugins.dashboard:init-widget-zones', 'plugins.academic-portfolio:init-widget-zones'],
+      async () => {
+        await Promise.all(
+          _.map(widgets.zones, (config) =>
+            leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+              name: config.name,
+              description: config.description,
+            })
+          )
+        );
+        leemons.events.emit('init-widget-zones');
+        await Promise.all(
+          _.map(widgets.items, (config) =>
+            leemons
+              .getPlugin('widgets')
+              .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+                name: config.name,
+                description: config.description,
+                properties: config.properties,
+              })
+          )
+        );
+        leemons.events.emit('init-widget-items');
+      }
+    );
+
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);

@@ -58,8 +58,8 @@ export default function Index() {
       textUrl: 'Llevame a google',
       zone: 'modal', // modal | dashboard
       publicationType: 'programmed', // immediately | programmed
-      startDate: new Date('11/16/1995'),
-      endDate: new Date('11/18/1995'),
+      startDate: new Date('11/18/2024'),
+      endDate: new Date('11/22/2024'),
       ...data,
     };
     console.log(toSend);

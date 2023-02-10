@@ -57,29 +57,66 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
 
       const promises = [];
 
-      _.forEach(centers, (center) => {
+      // ----- Centers -----
+      if (centers?.length) {
+        _.forEach(centers, (center) => {
+          promises.push(
+            table.messageConfigCenters.create({ messageConfig: item.id, center }, { transacting })
+          );
+        });
+      } else {
         promises.push(
-          table.messageConfigCenters.create({ messageConfig: item.id, center }, { transacting })
-        );
-      });
-      _.forEach(profiles, (profile) => {
-        promises.push(
-          table.messageConfigProfiles.create({ messageConfig: item.id, profile }, { transacting })
-        );
-      });
-      _.forEach(classes, (classe) => {
-        promises.push(
-          table.messageConfigClasses.create(
-            { messageConfig: item.id, class: classe },
+          table.messageConfigCenters.create(
+            { messageConfig: item.id, center: '*' },
             { transacting }
           )
         );
-      });
-      _.forEach(programs, (program) => {
+      }
+      // ----- Profiles -----
+      if (profiles?.length) {
+        _.forEach(profiles, (profile) => {
+          promises.push(
+            table.messageConfigProfiles.create({ messageConfig: item.id, profile }, { transacting })
+          );
+        });
+      } else {
         promises.push(
-          table.messageConfigPrograms.create({ messageConfig: item.id, program }, { transacting })
+          table.messageConfigProfiles.create(
+            { messageConfig: item.id, profile: '*' },
+            { transacting }
+          )
         );
-      });
+      }
+      // ----- Classes -----
+      if (classes?.length) {
+        _.forEach(classes, (classe) => {
+          promises.push(
+            table.messageConfigClasses.create(
+              { messageConfig: item.id, class: classe },
+              { transacting }
+            )
+          );
+        });
+      } else {
+        promises.push(
+          table.messageConfigClasses.create({ messageConfig: item.id, class: '*' }, { transacting })
+        );
+      }
+      // ----- Program -----
+      if (programs?.length) {
+        _.forEach(programs, (program) => {
+          promises.push(
+            table.messageConfigPrograms.create({ messageConfig: item.id, program }, { transacting })
+          );
+        });
+      } else {
+        promises.push(
+          table.messageConfigPrograms.create(
+            { messageConfig: item.id, program: '*' },
+            { transacting }
+          )
+        );
+      }
 
       await Promise.all(promises);
 
