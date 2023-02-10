@@ -12,18 +12,24 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
       // eslint-disable-next-line prefer-const
       let { id, centers, profiles, classes, programs, startDate, endDate, ...data } = _data;
 
-      const overlaps = await getOverlapsWithOtherConfigurations(_data);
-      // TODO Hacer algo cuando haya solapamientos (lanzar error / desactivar las otras configuraciones)
-
-      if (overlaps.length) {
-        throw new Error('Has overlaps');
-      }
-
       if (!startDate || data.publicationType === 'immediately') {
         startDate = new Date();
       }
       if (!endDate || data.publicationType === 'immediately') {
         endDate = new Date('01/01/9999');
+      }
+
+      startDate = new Date(startDate);
+      endDate = new Date(endDate);
+
+      const overlaps = await getOverlapsWithOtherConfigurations(
+        { ..._data, startDate, endDate },
+        { transacting }
+      );
+      // TODO Hacer algo cuando haya solapamientos (lanzar error / desactivar las otras configuraciones)
+
+      if (overlaps.length) {
+        throw new Error('Has overlaps');
       }
 
       const status = calculeStatusFromDates(startDate, endDate);

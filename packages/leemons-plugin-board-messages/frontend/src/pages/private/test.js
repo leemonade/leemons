@@ -51,15 +51,19 @@ export default function Index() {
 
   async function createAdmin() {
     const data = await getTestData();
-    const result = await saveRequest({
+    const toSend = {
       internalName: 'Test 1',
       message: '<p>Gatitos powa</p>',
       url: 'https://google.es',
       textUrl: 'Llevame a google',
       zone: 'modal', // modal | dashboard
-      publicationType: 'immediately', // immediately | programmed
+      publicationType: 'programmed', // immediately | programmed
+      startDate: new Date('11/16/1995'),
+      endDate: new Date('11/18/1995'),
       ...data,
-    });
+    };
+    console.log(toSend);
+    const result = await saveRequest(toSend);
     console.log(result);
   }
 

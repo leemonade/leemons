@@ -7,35 +7,51 @@ async function list(page, size, { userSession, filters, transacting } = {}) {
   if (filters) {
     let ids = null;
     if (filters.centers) {
-      if (!ids) ids = [];
-      const items = await table.messageConfigCenters.find(
-        { center_$in: filters.centers },
-        { columns: ['messageConfig'], transacting }
-      );
+      const q = { center_$in: filters.centers };
+      if (ids !== null) {
+        q.messageConfig_$in = ids;
+      }
+      if (!_.isArray(ids)) ids = [];
+      const items = await table.messageConfigCenters.find(q, {
+        columns: ['messageConfig'],
+        transacting,
+      });
       ids.push(..._.map(items, 'messageConfig'));
     }
     if (filters.programs) {
-      if (!ids) ids = [];
-      const items = await table.messageConfigPrograms.find(
-        { program_$in: filters.programs },
-        { columns: ['messageConfig'], transacting }
-      );
+      const q = { program_$in: filters.programs };
+      if (ids !== null) {
+        q.messageConfig_$in = ids;
+      }
+      if (!_.isArray(ids)) ids = [];
+      const items = await table.messageConfigPrograms.find(q, {
+        columns: ['messageConfig'],
+        transacting,
+      });
       ids.push(..._.map(items, 'messageConfig'));
     }
     if (filters.profiles) {
-      if (!ids) ids = [];
-      const items = await table.messageConfigProfiles.find(
-        { profile_$in: filters.profiles },
-        { columns: ['messageConfig'], transacting }
-      );
+      const q = { profile_$in: filters.profiles };
+      if (ids !== null) {
+        q.messageConfig_$in = ids;
+      }
+      if (!_.isArray(ids)) ids = [];
+      const items = await table.messageConfigProfiles.find(q, {
+        columns: ['messageConfig'],
+        transacting,
+      });
       ids.push(..._.map(items, 'messageConfig'));
     }
     if (filters.classes) {
-      if (!ids) ids = [];
-      const items = await table.messageConfigClasses.find(
-        { class_$in: filters.classes },
-        { columns: ['messageConfig'], transacting }
-      );
+      const q = { class_$in: filters.classes };
+      if (ids !== null) {
+        q.messageConfig_$in = ids;
+      }
+      if (!_.isArray(ids)) ids = [];
+      const items = await table.messageConfigClasses.find(q, {
+        columns: ['messageConfig'],
+        transacting,
+      });
       ids.push(..._.map(items, 'messageConfig'));
     }
     if (ids !== null) {
