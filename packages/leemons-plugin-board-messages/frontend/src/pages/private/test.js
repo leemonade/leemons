@@ -38,10 +38,12 @@ export default function Index() {
       page: 0,
       size: 9999,
       filters: {
+        internalName: 'bla bla',
         centers: data.centers,
         programs: data.programs,
         profiles: data.profiles,
         zone: 'modal',
+        status: 'programmed',
       },
     });
     console.log(result);

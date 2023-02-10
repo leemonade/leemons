@@ -47,6 +47,9 @@ async function list(page, size, { userSession, filters, transacting } = {}) {
     if (filters.status) {
       query.status_$in = _.isArray(filters.status) ? filters.status : [filters.status];
     }
+    if (filters.internalName) {
+      query.internalName_$contains = filters.internalName;
+    }
   }
   const results = await global.utils.paginate(table.messageConfig, page, size, query, {
     transacting,
