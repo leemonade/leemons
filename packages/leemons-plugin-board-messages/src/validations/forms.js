@@ -3,6 +3,8 @@ const {
   stringSchema,
   arrayStringSchema,
   integerSchemaNullable,
+  stringSchemaNullable,
+  dateSchemaNullable,
   textSchema,
   dateSchema,
 } = require('./types');
@@ -13,8 +15,8 @@ const saveMessageSchema = {
     id: stringSchema,
     internalName: stringSchema,
     message: textSchema,
-    url: stringSchema,
-    textUrl: stringSchema,
+    url: stringSchemaNullable,
+    textUrl: stringSchemaNullable,
     zone: {
       type: 'string',
       enum: ['modal', 'dashboard', 'class-dashboard'],
@@ -23,8 +25,8 @@ const saveMessageSchema = {
       type: 'string',
       enum: ['immediately', 'programmed'],
     },
-    startDate: dateSchema,
-    endDate: dateSchema,
+    startDate: dateSchemaNullable,
+    endDate: dateSchemaNullable,
     centers: {
       type: 'array',
       items: stringSchema,

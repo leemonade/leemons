@@ -21,4 +21,10 @@ module.exports = [
       },
     },
   },
+  {
+    path: '/active',
+    method: 'POST',
+    handler: 'messages.getActive',
+    authenticated: true,
+  },
 ];

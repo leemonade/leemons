@@ -35,7 +35,16 @@ async function save(ctx) {
   ctx.body = { status: 200, message };
 }
 
+async function getActive(ctx) {
+  const message = await messagesService.getActive(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, message };
+}
+
 module.exports = {
   list,
   save,
+  getActive,
 };

@@ -63,6 +63,8 @@ async function events(isInstalled) {
     });
   } else {
     leemons.events.once('plugins.academic-portfolio:pluginDidInit', async () => {
+      leemons.events.emit('init-widget-zones');
+      leemons.events.emit('init-widget-items');
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
       leemons.events.emit('init-submenu');
