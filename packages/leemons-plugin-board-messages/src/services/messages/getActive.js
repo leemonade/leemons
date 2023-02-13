@@ -54,16 +54,20 @@ async function getActive(data, { userSession, transacting, _userAgent, _ids } = 
   }
   // Si no hay configuración activa, vamos a comprobar si alguna de las programadas tiene la fechas entre hoy
   const now = new Date();
-  const config = await table.messageConfig.findOne({
-    id_$in: ids,
-    zone: data.zone,
-    status: 'programmed',
-    startDate_$lte: now,
-    endDate_gt: now,
-  });
+  const config = await table.messageConfig.findOne(
+    {
+      id_$in: ids,
+      zone: data.zone,
+      status: 'programmed',
+      startDate_$lte: now,
+      endDate_$gt: now,
+    },
+    { transacting }
+  );
 
   // Si hemos encontrado alguna configuración la marcamos como activa para que la proxima vez se haga menos logica
   if (config) {
+    config.status = 'published';
     await table.messageConfig.update({ id: config.id }, { status: 'published' }, { transacting });
   }
 

@@ -43,8 +43,17 @@ async function getActive(ctx) {
   ctx.body = { status: 200, message };
 }
 
+async function getOverlaps(ctx) {
+  const messages = await messagesService.getOverlapsWithOtherConfigurations(ctx.request.body, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, messages };
+}
+
 module.exports = {
   list,
   save,
   getActive,
+  getOverlaps,
 };

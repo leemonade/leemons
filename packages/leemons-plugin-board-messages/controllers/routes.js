@@ -22,6 +22,17 @@ module.exports = [
     },
   },
   {
+    path: '/overlaps',
+    method: 'POST',
+    handler: 'messages.getOverlaps',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.board-messages.board-messages': {
+        actions: ['update', 'create', 'admin'],
+      },
+    },
+  },
+  {
     path: '/active',
     method: 'POST',
     handler: 'messages.getActive',

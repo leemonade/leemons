@@ -1,7 +1,9 @@
 import getActive from './getActive';
+import getOverlaps from './getOverlaps';
 import list from './list';
 import save from './save';
 
 export const listRequest = list;
 export const saveRequest = save;
 export const getActiveRequest = getActive;
+export const getOverlapsRequest = getOverlaps;

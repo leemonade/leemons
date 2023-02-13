@@ -1,5 +1,5 @@
 import { listProgramsRequest } from '@academic-portfolio/request';
-import { listRequest, saveRequest } from '@board-messages/request';
+import { getOverlapsRequest, listRequest, saveRequest } from '@board-messages/request';
 import { Box, Button } from '@bubbles-ui/components';
 import { listProfilesRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
@@ -67,10 +67,30 @@ export default function Index() {
     console.log(result);
   }
 
+  async function checkOverlaps() {
+    const data = await getTestData();
+    // Pasar lo mismo que se le pasaria al save id incluida si la hay
+    const toSend = {
+      internalName: 'Test 1',
+      message: '<p>Gatitos powa</p>',
+      url: 'https://google.es',
+      textUrl: 'Llevame a google',
+      zone: 'modal', // modal | dashboard
+      publicationType: 'programmed', // immediately | programmed
+      startDate: new Date('11/18/2024'),
+      endDate: new Date('11/22/2024'),
+      ...data,
+    };
+    console.log(toSend);
+    const result = await getOverlapsRequest(toSend);
+    console.log(result);
+  }
+
   return (
     <Box>
       <Button onClick={list}>Listar</Button>
       <Button onClick={createAdmin}>Crear admin</Button>
+      <Button onClick={checkOverlaps}>Coger solapamientos</Button>
     </Box>
   );
 }
