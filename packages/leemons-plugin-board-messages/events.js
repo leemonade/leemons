@@ -56,13 +56,13 @@ async function events(isInstalled) {
     });
 
     leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.fundae:init-permissions'],
+      ['plugins.menu-builder:init-main-menu', 'plugins.board-messages:init-permissions'],
       async () => {
         await initMenuBuilder();
       }
     );
   } else {
-    leemons.events.once('plugins.fundae:pluginDidInit', async () => {
+    leemons.events.once('plugins.board-messages:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
       leemons.events.emit('init-submenu');

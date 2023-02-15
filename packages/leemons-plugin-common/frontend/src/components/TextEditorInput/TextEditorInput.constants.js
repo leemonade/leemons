@@ -9,6 +9,7 @@ export const DEFAULT_TOOLBARS = {
   color: true,
   formulation: false,
   link: true,
+  library: true,
 };
 
 export const TEXT_EDITOR_INPUT_DEFAULT_PROPS = {

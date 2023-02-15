@@ -1,29 +1,38 @@
+import { BannerMessage, ModalMessage } from '@board-messages/components';
 import { getActiveRequest } from '@board-messages/request';
+import { useLayout } from '@layout/context';
 import { getCentersWithToken } from '@users/session';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 
 function Dashboard({ program }) {
+  const { openModal, closeModal } = useLayout();
+  const [activeMessage, setActiveMessage] = useState(null);
+
   async function load() {
-    const result = await getActiveRequest({
+    const { message } = await getActiveRequest({
       center: getCentersWithToken()[0].id,
       program: program.id,
       zone: 'dashboard',
     });
-    console.log(result);
+    setActiveMessage(message);
   }
 
   async function loadModal() {
     const { message } = await getActiveRequest({
       center: getCentersWithToken()[0].id,
       program: program.id,
-      zone: 'dashboard',
+      zone: 'modal',
     });
     if (message) {
       const boardMessagesModalId = window.sessionStorage.getItem('boardMessagesModalId');
       if (boardMessagesModalId !== message.id) {
         window.sessionStorage.setItem('boardMessagesModalId', message.id);
-        // TODO: Mostrar modal
+        const id = openModal({
+          children: <ModalMessage message={message} onClose={() => closeModal(id)} />,
+          size: 600,
+          trapFocus: false,
+        });
       }
     }
   }
@@ -35,7 +44,9 @@ function Dashboard({ program }) {
     }
   }, [program]);
 
-  return 'Gatitos';
+  if (!activeMessage) return null;
+
+  return <BannerMessage message={activeMessage} />;
 }
 
 Dashboard.propTypes = {

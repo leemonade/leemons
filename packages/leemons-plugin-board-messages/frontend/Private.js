@@ -6,7 +6,7 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const List = loadable(() => pMinDelay(import('./src/pages/private/list'), 1000));
+const List = loadable(() => pMinDelay(import('./src/pages/private/List'), 1000));
 const Test = loadable(() => pMinDelay(import('./src/pages/private/test'), 1000));
 
 export default function Private() {

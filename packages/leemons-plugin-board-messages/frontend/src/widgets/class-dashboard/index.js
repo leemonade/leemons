@@ -1,26 +1,33 @@
+import { BannerMessage } from '@board-messages/components';
 import { getActiveRequest } from '@board-messages/request';
 import { getCentersWithToken } from '@users/session';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 
 function ClassDashboard({ classe }) {
+  const [activeMessage, setActiveMessage] = useState(null);
+
   async function load() {
-    const result = await getActiveRequest({
+    const { message } = await getActiveRequest({
       center: getCentersWithToken()[0].id,
       classe: classe.id,
       program: classe.program,
       zone: 'class-dashboard',
     });
-    console.log(result);
+    console.log('message', message);
+    setActiveMessage(message);
   }
 
   React.useEffect(() => {
+    console.log('useEffect de classDashboard');
     if (classe) {
       load();
     }
   }, [classe]);
 
-  return 'Gatitos powa';
+  if (!activeMessage) return null;
+
+  return <BannerMessage message={activeMessage} />;
 }
 
 ClassDashboard.propTypes = {
