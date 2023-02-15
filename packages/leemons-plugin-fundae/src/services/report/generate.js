@@ -55,7 +55,9 @@ async function startGeneration(report, dataToSocket) {
     const academicCalendarServices = leemons.getPlugin('academic-calendar').services;
 
     const [program] = await academicPortfolioServices.programs.programsByIds(report.program);
-    const course = _.find(program.courses, { id: report.course });
+    const course = report.course
+      ? _.find(program.courses, { id: report.course })
+      : program.courses[0];
     const coursesLength = program.courses.length;
     const courseIsAlone = coursesLength === 1 ? program.courses[0].isAlone : false;
 
@@ -109,7 +111,7 @@ async function startGeneration(report, dataToSocket) {
 
     const [usersInProgram] = await Promise.all([
       academicPortfolioServices.programs.getUsersInProgram(program.id, {
-        course: report.course,
+        course: report.course || program.courses[0].id,
         onlyStudents: true,
       }),
       updateReportPer(report, 15, dataToSocket),

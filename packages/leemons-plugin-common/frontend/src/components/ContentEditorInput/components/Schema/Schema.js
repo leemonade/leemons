@@ -62,7 +62,7 @@ export const Schema = ({ schema, schemaLabel, isSchemaOpened, setIsSchemaOpened 
               >
                 {isLibrary ? (
                   <Box style={{ overflow: 'hidden', paddingLeft: 10 }}>
-                    <FileItemDisplay size={18} filename={schemaElementName} />
+                    <FileItemDisplay size={16} filename={schemaElementName} noBreak />
                   </Box>
                 ) : (
                   <TextClamp lines={1}>

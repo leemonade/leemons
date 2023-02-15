@@ -162,6 +162,7 @@ export default function Detail(p) {
               { label: t('config'), status: 'OK' },
               { label: t('questions'), status: 'OK' },
             ]}
+            onChangeActiveIndex={setStep}
           >
             {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
             {store.currentStep === 1 && (

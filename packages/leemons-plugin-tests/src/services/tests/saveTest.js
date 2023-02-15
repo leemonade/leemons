@@ -1,15 +1,15 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const {table} = require('../tables');
-const {validateSaveTest} = require('../../validations/forms');
+const { table } = require('../tables');
+const { validateSaveTest } = require('../../validations/forms');
 
-async function saveTest(data, {userSession, transacting: _transacting} = {}) {
+async function saveTest(data, { userSession, transacting: _transacting } = {}) {
   // const tagsService = leemons.getPlugin('common').services.tags;
   // const versionControlService = leemons.getPlugin('common').services.versionControl;
   return global.utils.withTransaction(
     async (transacting) => {
       validateSaveTest(data);
-      const {assignables: assignableService, assignableInstances: assignableInstancesService} =
+      const { assignables: assignableService, assignableInstances: assignableInstancesService } =
         leemons.getPlugin('assignables').services;
 
       const toSave = {
@@ -47,7 +47,7 @@ async function saveTest(data, {userSession, transacting: _transacting} = {}) {
       if (data.id) {
         delete toSave.role;
         assignable = await assignableService.updateAssignable(
-          {id: data.id, ...toSave},
+          { id: data.id, ...toSave },
           {
             userSession,
             transacting,
@@ -69,4 +69,4 @@ async function saveTest(data, {userSession, transacting: _transacting} = {}) {
   );
 }
 
-module.exports = {saveTest};
+module.exports = { saveTest };

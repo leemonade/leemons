@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 const _ = require('lodash');
 const { isArray } = require('lodash');
 const { table } = require('../tables');
@@ -6,12 +7,14 @@ const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
+const { classByIds } = require('../classes/classByIds');
+const { getProgramCourses } = require('../programs/getProgramCourses');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateSubject(data, { transacting });
-      const {
+      let {
         id,
         course,
         credits,
@@ -66,6 +69,10 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
 
       await table.class.updateMany({ subject: subject.id }, { color }, { transacting });
 
+      if (!course) {
+        const programCourses = await getProgramCourses(subject.program, { transacting });
+        course = programCourses[0].id;
+      }
       const courses = isArray(course) ? course : [course];
       await setToAllClassesWithSubject(subject.id, courses, { transacting });
 

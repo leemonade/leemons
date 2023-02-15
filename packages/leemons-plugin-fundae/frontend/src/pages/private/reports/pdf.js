@@ -1,5 +1,3 @@
-import React from 'react';
-import _ from 'lodash';
 import {
   Badge,
   Box,
@@ -12,6 +10,8 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
+import _ from 'lodash';
+import React from 'react';
 
 export const PdfStyles = createStyles((theme) => ({
   logoUrl: {
@@ -74,7 +74,7 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
   let course = null;
   if (report.item.course) {
     course = _.find(report.courses, { id: report.item.course });
-  } else {
+  } else if (report.courses) {
     [course] = report.courses;
   }
   let coursesDates = null;

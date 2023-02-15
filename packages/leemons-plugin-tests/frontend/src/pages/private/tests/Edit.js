@@ -221,6 +221,7 @@ export default function Edit() {
           stickyAt={store.headerHeight}
           currentStep={store.currentStep}
           data={steps}
+          onChangeActiveIndex={setStep}
         >
           {store.currentStep === 0 && (
             <DetailBasic

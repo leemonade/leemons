@@ -8,6 +8,8 @@ import { goLoginPage } from '@users/navigate';
 
 const DocumentList = loadable(() => pMinDelay(import('./src/pages/List'), 1000));
 const DocumentDetail = loadable(() => pMinDelay(import('./src/pages/Detail'), 1000));
+const DocumentAssign = loadable(() => pMinDelay(import('./src/pages/Assign'), 1000));
+const DocumentView = loadable(() => pMinDelay(import('./src/pages/View'), 1000));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -15,6 +17,12 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route path={`${path}/assign/:id`}>
+        <DocumentAssign session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/view/:id`}>
+        <DocumentView session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
       <Route path={`${path}/:id`}>
         <DocumentDetail session={session} fallback={<LoadingOverlay visible />} />
       </Route>
