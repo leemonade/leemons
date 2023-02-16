@@ -1,9 +1,9 @@
-import React from 'react';
-import _ from 'lodash';
 import { Avatar, Box, ImageLoader } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import selectFile from '@leebrary/helpers/selectFile';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { RoomAvatarStyles } from './RoomAvatar.styles';
 
 function RoomAvatar({ room, onImageChange, size = 56 }) {
@@ -25,15 +25,21 @@ function RoomAvatar({ room, onImageChange, size = 56 }) {
   const avatar = React.useMemo(() => {
     const result = {};
     if (room.image) {
-      result.image = (
-        <ImageLoader
-          className={classes.image}
-          src={`${room.imageIsUrl ? room.image : getAssetUrl(room.image)}&seed=${room.imageSeed}`}
-          forceImage
-          width={size}
-          height={size}
-        />
-      );
+      if (room.imageIsUser) {
+        result.image = (
+          <Avatar image={room.image} fullName={room.name} size={size === 56 ? 'lg' : 'md'} />
+        );
+      } else {
+        result.image = (
+          <ImageLoader
+            className={classes.image}
+            src={`${room.imageIsUrl ? room.image : getAssetUrl(room.image)}&seed=${room.imageSeed}`}
+            forceImage
+            width={size}
+            height={size}
+          />
+        );
+      }
     }
     if (!room.image && room.icon) {
       result.icon = (

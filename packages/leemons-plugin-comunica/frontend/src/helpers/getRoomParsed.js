@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
 import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
+import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
 import { getCentersWithToken } from '@users/session';
+import _ from 'lodash';
 
 function getName(userAgent) {
   return `${userAgent.user.name}${userAgent.user.surnames ? ` ${userAgent.user.surnames}` : ''}`;
@@ -27,6 +27,7 @@ export function getRoomParsed(room) {
     config.name = getName(userAgentData.userAgent);
     config.image = userAgentData.userAgent.user.avatar;
     config.imageIsUrl = true;
+    config.imageIsUser = true;
     config.subName = userAgentData.userAgent?.profile?.name;
   }
   if (room.type === 'group') {
