@@ -1,5 +1,4 @@
 const { table } = require('../tables');
-const { addView } = require('./addView');
 const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
 
 async function getActive(data, { userSession, transacting, _userAgent, _ids } = {}) {
@@ -51,7 +50,6 @@ async function getActive(data, { userSession, transacting, _userAgent, _ids } = 
       return getActive(data, { userSession, transacting, _userAgent: userAgent, _ids: ids });
     }
     // Si la fecha fin aun no ha pasado es el evento activo actual, lo devolvemos
-    await addView(activeConfig.id, { userSession, transacting });
     return activeConfig;
   }
   // Si no hay configuración activa, vamos a comprobar si alguna de las programadas tiene la fechas entre hoy
@@ -70,10 +68,7 @@ async function getActive(data, { userSession, transacting, _userAgent, _ids } = 
   // Si hemos encontrado alguna configuración la marcamos como activa para que la proxima vez se haga menos logica
   if (config) {
     config.status = 'published';
-    await Promise.all([
-      addView(config.id, { userSession, transacting }),
-      table.messageConfig.update({ id: config.id }, { status: 'published' }, { transacting }),
-    ]);
+    await table.messageConfig.update({ id: config.id }, { status: 'published' }, { transacting });
   }
 
   return config;

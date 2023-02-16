@@ -44,4 +44,10 @@ module.exports = [
     handler: 'messages.addClick',
     authenticated: true,
   },
+  {
+    path: '/view',
+    method: 'POST',
+    handler: 'messages.addView',
+    authenticated: true,
+  },
 ];

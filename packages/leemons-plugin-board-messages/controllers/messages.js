@@ -64,9 +64,18 @@ async function addClick(ctx) {
   ctx.body = { status: 200, messages };
 }
 
+async function addView(ctx) {
+  const messages = await messagesService.addView(ctx.request.body.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, messages };
+}
+
 module.exports = {
   list,
   save,
+  addView,
   addClick,
   getActive,
   getOverlaps,
