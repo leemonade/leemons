@@ -10,7 +10,18 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
     async (transacting) => {
       await validateSaveMessage(_data, { transacting });
       // eslint-disable-next-line prefer-const
-      let { id, asset, centers, profiles, classes, programs, startDate, endDate, ...data } = _data;
+      let {
+        id,
+        unpublishConflicts,
+        asset,
+        centers,
+        profiles,
+        classes,
+        programs,
+        startDate,
+        endDate,
+        ...data
+      } = _data;
 
       if (!startDate || data.publicationType === 'immediately') {
         startDate = new Date();
@@ -22,17 +33,30 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
       startDate = new Date(startDate);
       endDate = new Date(endDate);
 
-      const overlaps = await getOverlapsWithOtherConfigurations(
-        { ..._data, startDate, endDate },
-        { transacting }
-      );
-      // TODO Hacer algo cuando haya solapamientos (lanzar error / desactivar las otras configuraciones)
+      if (!['archived', 'unpublished'].includes(data.status)) {
+        const overlaps = await getOverlapsWithOtherConfigurations(
+          { ..._data, startDate, endDate },
+          { transacting }
+        );
 
-      if (overlaps.length) {
-        throw new Error('Has overlaps');
+        if (overlaps.length) {
+          if (_.isBoolean(unpublishConflicts)) {
+            if (unpublishConflicts) {
+              await table.messageConfig.updateMany(
+                { id_$in: _.map(overlaps, 'id') },
+                { status: 'unpublished' },
+                { transacting }
+              );
+            } else {
+              data.status = 'unpublished';
+            }
+          } else {
+            throw new Error('Has overlaps');
+          }
+        } else {
+          data.status = calculeStatusFromDates(startDate, endDate);
+        }
       }
-
-      const status = calculeStatusFromDates(startDate, endDate);
 
       let item = null;
       if (id) {
@@ -50,12 +74,12 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
         ]);
         item = await table.messageConfig.update(
           { id },
-          { ...data, startDate, endDate, status },
+          { ...data, startDate, endDate },
           { transacting }
         );
       } else {
         item = await table.messageConfig.create(
-          { ...data, startDate, endDate, status, owner: userSession.userAgents[0].id },
+          { ...data, startDate, endDate, owner: userSession.userAgents[0].id },
           { transacting }
         );
       }

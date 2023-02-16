@@ -7,6 +7,7 @@ const {
   dateSchemaNullable,
   textSchema,
   dateSchema,
+  booleanSchema,
 } = require('./types');
 
 const saveMessageSchema = {
@@ -48,6 +49,7 @@ const saveMessageSchema = {
       type: 'array',
       items: stringSchema,
     },
+    unpublishConflicts: booleanSchema,
   },
   required: ['internalName', 'message', 'zone', 'publicationType', 'centers'],
   additionalProperties: false,
