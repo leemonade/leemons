@@ -1,24 +1,23 @@
-import React, { useState, useMemo } from 'react';
-import { Box, PaginatedList } from '@bubbles-ui/components';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { addErrorAlert } from '@layout/alert';
-import { listRequest } from '@board-messages/request';
-import getUserCenters from '@users/request/getUserCenters';
 import { listProgramsRequest } from '@academic-portfolio/request';
+import { listRequest } from '@board-messages/request';
+import { Box, PaginatedList } from '@bubbles-ui/components';
+import { addErrorAlert } from '@layout/alert';
 import { listProfilesRequest } from '@users/request';
+import getUserCenters from '@users/request/getUserCenters';
 import { capitalize } from 'lodash';
-import { getUserPrograms } from '@academic-portfolio/request/programs';
-import {
-  MESSAGES_TABLES_PROP_TYPES,
-  MESSAGES_TABLES_DEFAULT_PROPS,
-} from './MessagesTable.constants';
-import { MessagesTableStyles } from './MessagesTable.styles';
+import React, { useMemo, useState } from 'react';
 import { Filters } from '../Filters';
-import { DateItem } from './components/DateItem';
-import { StatusItem } from './components/StatusItem';
 import { ActionItem } from './components/ActionItem';
+import { DateItem } from './components/DateItem';
 import { NameItem } from './components/NameItem';
 import { ObjectiveItem } from './components/ObjectiveItem';
+import { StatusItem } from './components/StatusItem';
+import {
+  MESSAGES_TABLES_DEFAULT_PROPS,
+  MESSAGES_TABLES_PROP_TYPES,
+} from './MessagesTable.constants';
+import { MessagesTableStyles } from './MessagesTable.styles';
 
 const useMessagesColumns = (labels) => {
   const isTeacher = useIsTeacher();

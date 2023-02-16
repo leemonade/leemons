@@ -10,7 +10,7 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
     async (transacting) => {
       await validateSaveMessage(_data, { transacting });
       // eslint-disable-next-line prefer-const
-      let { id, centers, profiles, classes, programs, startDate, endDate, ...data } = _data;
+      let { id, asset, centers, profiles, classes, programs, startDate, endDate, ...data } = _data;
 
       if (!startDate || data.publicationType === 'immediately') {
         startDate = new Date();
@@ -36,6 +36,11 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
 
       let item = null;
       if (id) {
+        item = await table.messageConfig.findOne({ id }, { transacting });
+        if (item.owner !== userSession.userAgents[0].id) {
+          throw new Error('Only the owner can update');
+        }
+
         // Si hay id borramos todas las relaciones de centros/perfiles/classes/programas por que las vamos a crear de nuevo.
         await Promise.all([
           table.messageConfigCenters.deleteMany({ messageConfig: id }, { transacting }),
@@ -50,10 +55,31 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
         );
       } else {
         item = await table.messageConfig.create(
-          { ...data, startDate, endDate, status },
+          { ...data, startDate, endDate, status, owner: userSession.userAgents[0].id },
           { transacting }
         );
       }
+
+      // ----- Asset -----
+      const imageData = {
+        indexable: false,
+        public: true, // TODO Cambiar a false despues de hacer la demo
+        name: item.id,
+      };
+      if (asset) imageData.cover = asset;
+      const assetService = leemons.getPlugin('leebrary').services.assets;
+      const assetImage = await assetService.add(imageData, {
+        published: true,
+        userSession,
+        transacting,
+      });
+      item = await table.messageConfig.update(
+        { id: item.id },
+        {
+          asset: assetImage.id,
+        },
+        { transacting }
+      );
 
       const promises = [];
 

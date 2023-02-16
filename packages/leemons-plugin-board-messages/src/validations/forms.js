@@ -17,6 +17,11 @@ const saveMessageSchema = {
     message: textSchema,
     url: stringSchemaNullable,
     textUrl: stringSchemaNullable,
+    status: {
+      type: 'string',
+      enum: ['published', 'programmed', 'completed', 'unpublished', 'archived'],
+      nullable: true,
+    },
     zone: {
       type: 'string',
       enum: ['modal', 'dashboard', 'class-dashboard'],

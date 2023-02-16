@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const messagesService = require('../src/services/messages');
 
 async function list(ctx) {
@@ -28,7 +29,11 @@ async function list(ctx) {
 }
 
 async function save(ctx) {
-  const message = await messagesService.save(ctx.request.body, {
+  const data = JSON.parse(ctx.request.body.data);
+  _.forIn(ctx.request.files, (value, key) => {
+    _.set(data, key, value);
+  });
+  const message = await messagesService.save(data, {
     userSession: ctx.state.userSession,
   });
   ctx.status = 200;

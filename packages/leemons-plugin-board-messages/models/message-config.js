@@ -48,6 +48,9 @@ module.exports = {
         notNull: true,
       },
     },
+    owner: {
+      type: 'string',
+    },
     startDate: {
       type: 'datetime',
     },
