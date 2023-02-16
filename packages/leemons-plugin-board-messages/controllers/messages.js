@@ -56,9 +56,18 @@ async function getOverlaps(ctx) {
   ctx.body = { status: 200, messages };
 }
 
+async function addClick(ctx) {
+  const messages = await messagesService.addClick(ctx.request.body.id, {
+    userSession: ctx.state.userSession,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, messages };
+}
+
 module.exports = {
   list,
   save,
+  addClick,
   getActive,
   getOverlaps,
 };

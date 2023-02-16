@@ -51,6 +51,12 @@ module.exports = {
     owner: {
       type: 'string',
     },
+    totalViews: {
+      type: 'integer',
+    },
+    totalClicks: {
+      type: 'integer',
+    },
     startDate: {
       type: 'datetime',
     },

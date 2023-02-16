@@ -38,4 +38,10 @@ module.exports = [
     handler: 'messages.getActive',
     authenticated: true,
   },
+  {
+    path: '/click',
+    method: 'POST',
+    handler: 'messages.addClick',
+    authenticated: true,
+  },
 ];
