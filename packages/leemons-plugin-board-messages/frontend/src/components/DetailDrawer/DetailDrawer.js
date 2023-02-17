@@ -27,6 +27,7 @@ import { DETAIL_DRAWER_DEFAULT_PROPS, DETAIL_DRAWER_PROP_TYPES } from './DetailD
 import { DetailDrawerStyles } from './DetailDrawer.styles';
 import modal from '../../../public/modal.svg';
 import dashboard from '../../../public/dashboard.svg';
+import { SelectItem } from './components/SelectItem';
 
 const DetailDrawer = ({
   open,
@@ -139,9 +140,13 @@ const DetailDrawer = ({
         programsValue.map((program) => listSessionClassesRequest({ program }))
       );
       const allClasses = results.reduce((prev, current) => [...prev, ...current.classes], []);
-      if (allClasses.length > 0) {
-        setClasses(allClasses.map((klass) => ({ label: klass.subject.name, value: klass.id })));
-      }
+      setClasses(
+        allClasses.map((klass) => ({
+          label: klass.subject.name,
+          value: klass.id,
+          subject: { ...klass.subject, color: klass.color },
+        }))
+      );
     } catch (error) {
       addErrorAlert(error);
     }
@@ -193,6 +198,9 @@ const DetailDrawer = ({
   useEffect(() => {
     if (isTeacher) {
       getAllClasses();
+    }
+    if (programsValue.length === 0) {
+      setValue('classes', []);
     }
   }, [programsValue, isTeacher]);
 
@@ -308,6 +316,10 @@ const DetailDrawer = ({
                     placeholder={labels.subjectsPlaceholder}
                     {...field}
                     style={{ width: 'calc(50% - 10px)' }}
+                    valueComponent={(item) => (
+                      <SelectItem {...item} isValueComponent subject={item.subject} />
+                    )}
+                    itemComponent={(item) => <SelectItem {...item} subject={item.subject} />}
                   />
                 )}
               />
