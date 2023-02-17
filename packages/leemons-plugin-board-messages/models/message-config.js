@@ -41,7 +41,7 @@ module.exports = {
         notNull: true,
       },
     },
-    // published | programmed | completed | unpublished
+    // published | programmed | completed | unpublished | archived
     status: {
       type: 'string',
       options: {
@@ -49,6 +49,9 @@ module.exports = {
       },
     },
     owner: {
+      type: 'string',
+    },
+    userOwner: {
       type: 'string',
     },
     totalViews: {

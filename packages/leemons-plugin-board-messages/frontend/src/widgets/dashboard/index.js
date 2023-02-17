@@ -1,5 +1,5 @@
 import { BannerMessage, ModalMessage } from '@board-messages/components';
-import { getActiveRequest } from '@board-messages/request';
+import { addViewRequest, getActiveRequest } from '@board-messages/request';
 import { useLayout } from '@layout/context';
 import { getCentersWithToken } from '@users/session';
 import PropTypes from 'prop-types';
@@ -15,6 +15,9 @@ function Dashboard({ program }) {
       program: program.id,
       zone: 'dashboard',
     });
+    if (message) {
+      addViewRequest(message.id);
+    }
     setActiveMessage(message);
   }
 
@@ -27,6 +30,7 @@ function Dashboard({ program }) {
     if (message) {
       const boardMessagesModalId = window.sessionStorage.getItem('boardMessagesModalId');
       if (boardMessagesModalId !== message.id) {
+        addViewRequest(message.id);
         window.sessionStorage.setItem('boardMessagesModalId', message.id);
         const id = openModal({
           children: <ModalMessage message={message} onClose={() => closeModal(id)} />,

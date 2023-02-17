@@ -4,6 +4,7 @@ import { Box, ImageLoader, Text, Button } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
 import prefixPN from '@board-messages/helpers/prefixPN';
+import { addClickRequest } from '@board-messages/request';
 import { BannerMessageStyles } from './BannerMessage.styles';
 
 const BannerMessage = ({ message }) => {
@@ -11,6 +12,7 @@ const BannerMessage = ({ message }) => {
   const preparedAsset = prepareAsset(message.asset || {});
 
   const openLink = () => {
+    addClickRequest(message.id);
     window.open(message.url, '_blank');
   };
 

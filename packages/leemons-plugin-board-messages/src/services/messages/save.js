@@ -59,9 +59,14 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
       }
 
       let item = null;
+
       if (id) {
         item = await table.messageConfig.findOne({ id }, { transacting });
-        if (item.owner !== userSession.userAgents[0].id) {
+        console.log('item recuperado', item);
+        // if (item.userOwner !== userSession.id || item.owner !== userSession.userAgents[0].id) {
+        //   throw new Error('Only the owner can update');
+        // }
+        if (item.userOwner !== userSession.id) {
           throw new Error('Only the owner can update');
         }
 
@@ -72,14 +77,17 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
           table.messageConfigProfiles.deleteMany({ messageConfig: id }, { transacting }),
           table.messageConfigPrograms.deleteMany({ messageConfig: id }, { transacting }),
         ]);
-        item = await table.messageConfig.update(
-          { id },
-          { ...data, startDate, endDate },
-          { transacting }
-        );
+        console.log('data', data);
+        await table.messageConfig.update({ id }, { ...data, startDate, endDate }, { transacting });
       } else {
         item = await table.messageConfig.create(
-          { ...data, startDate, endDate, owner: userSession.userAgents[0].id },
+          {
+            ...data,
+            startDate,
+            endDate,
+            owner: userSession.userAgents[0].id,
+            userOwner: userSession.id,
+          },
           { transacting }
         );
       }
@@ -97,7 +105,7 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
         userSession,
         transacting,
       });
-      item = await table.messageConfig.update(
+      await table.messageConfig.update(
         { id: item.id },
         {
           asset: assetImage.id,

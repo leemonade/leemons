@@ -20,7 +20,6 @@ async function list(page, size, { userSession, filters, transacting } = {}) {
       query.internalName_$contains = filters.internalName;
     }
   }
-  console.log('LIST QUERY', query);
   const results = await global.utils.paginate(table.messageConfig, page, size, query, {
     transacting,
     columns: ['id'],

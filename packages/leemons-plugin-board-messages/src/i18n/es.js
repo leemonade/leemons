@@ -43,7 +43,7 @@ module.exports = {
       archive: 'Archivar',
     },
     table: {
-      name: 'Nombre',
+      name: 'Descripción',
       objective: 'Público objetivo',
       format: 'Formato',
       publishDate: 'Fecha de publicación',

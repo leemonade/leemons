@@ -1,19 +1,70 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, TextClamp, Text } from '@bubbles-ui/components';
+import capitalize from 'lodash/capitalize';
 
-const ObjectiveItem = ({ objective }) => (
-  <Box>
-    <TextClamp lines={1}>
-      <Text color="primary" role="productive">
-        {objective}
-      </Text>
-    </TextClamp>
-  </Box>
-);
+const ObjectiveItem = ({
+  labels,
+  messageCenters,
+  messagePrograms,
+  messagesProfiles,
+  centers,
+  profiles,
+  programs,
+}) => {
+  const getObjectiveString = (value, type) => {
+    const arrays = {
+      centers,
+      profiles,
+      programs,
+    };
+
+    if (value[0] === '*') return labels.objectives[`all${capitalize(type)}`];
+    const string = arrays[type]
+      .reduce((prev, current) => {
+        if (value.includes(current.value)) return [...prev, current.label];
+        return prev;
+      }, [])
+      .join(', ');
+    return string;
+  };
+
+  const getObjective = () => {
+    const centersString = getObjectiveString(messageCenters, 'centers');
+    const programsString = getObjectiveString(messagePrograms, 'programs');
+    const profilesString = getObjectiveString(messagesProfiles, 'profiles');
+
+    const firstRow = `${centersString} - ${programsString}`;
+    const secondRow = `${profilesString}`;
+    return [firstRow, secondRow];
+  };
+
+  const [firstRow, secondRow] = getObjective();
+
+  return (
+    <Box>
+      <TextClamp lines={1}>
+        <Text color="primary" role="productive">
+          {firstRow || ''}
+        </Text>
+      </TextClamp>
+      <TextClamp lines={1}>
+        <Text color="primary" role="productive">
+          {secondRow || ''}
+        </Text>
+      </TextClamp>
+    </Box>
+  );
+};
 
 ObjectiveItem.propTypes = {
-  objective: PropTypes.string,
+  labels: PropTypes.object,
+  messageCenters: PropTypes.array,
+  messagePrograms: PropTypes.array,
+  messagesProfiles: PropTypes.array,
+  centers: PropTypes.array,
+  profiles: PropTypes.array,
+  programs: PropTypes.array,
 };
 
 // eslint-disable-next-line import/prefer-default-export

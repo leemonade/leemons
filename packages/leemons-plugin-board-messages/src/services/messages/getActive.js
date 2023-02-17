@@ -1,4 +1,6 @@
+// const { getByIds } = require('packages/leemons-plugin-leebrary/services/assets');
 const { table } = require('../tables');
+const { byIds } = require('./byIds');
 const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
 
 async function getActive(data, { userSession, transacting, _userAgent, _ids } = {}) {
@@ -50,11 +52,11 @@ async function getActive(data, { userSession, transacting, _userAgent, _ids } = 
       return getActive(data, { userSession, transacting, _userAgent: userAgent, _ids: ids });
     }
     // Si la fecha fin aun no ha pasado es el evento activo actual, lo devolvemos
-    return activeConfig;
+    return (await byIds(activeConfig.id))[0];
   }
   // Si no hay configuración activa, vamos a comprobar si alguna de las programadas tiene la fechas entre hoy
   const now = new Date();
-  const config = await table.messageConfig.findOne(
+  let config = await table.messageConfig.findOne(
     {
       id_$in: ids,
       zone: data.zone,
@@ -69,6 +71,7 @@ async function getActive(data, { userSession, transacting, _userAgent, _ids } = 
   if (config) {
     config.status = 'published';
     await table.messageConfig.update({ id: config.id }, { status: 'published' }, { transacting });
+    [config] = await byIds(config.id);
   }
 
   return config;

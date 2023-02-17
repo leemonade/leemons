@@ -70,6 +70,9 @@ export default function Index() {
         fullWidth
         fullHeight
         classNames={{ panelList: classes.panelList }}
+        onChange={() => {
+          reloadMessages();
+        }}
       >
         <TabPanel label={labels.created}>
           <MessagesTable

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, ImageLoader, Button } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { addClickRequest } from '@board-messages/request';
 import { ModalMessageStyles } from './ModalMessage.styles';
 
 const ModalMessage = ({ message, onClose }) => {
@@ -10,10 +11,13 @@ const ModalMessage = ({ message, onClose }) => {
   const { t: tCommon } = useCommonTranslate('page_header');
 
   const openLink = () => {
+    addClickRequest(message.id);
     window.open(message.url, '_blank');
   };
 
   const stringToHTML = (str) => ({ __html: str });
+
+  console.log(message);
 
   const { classes } = ModalMessageStyles({}, { name: 'ModalMessage' });
   return (

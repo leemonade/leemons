@@ -33,6 +33,12 @@ const saveMessageSchema = {
     },
     startDate: dateSchemaNullable,
     endDate: dateSchemaNullable,
+    asset: {
+      type: ['string', 'object'],
+      nullable: true,
+    },
+    owner: { type: 'object' },
+    userOwner: { type: 'string' },
     centers: {
       type: 'array',
       items: stringSchema,

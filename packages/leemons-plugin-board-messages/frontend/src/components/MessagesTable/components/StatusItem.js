@@ -11,7 +11,7 @@ const StatusItem = ({ status, labels }) => {
 
   const severity = getSeverity();
   return (
-    <Badge closable={false} severity={severity} size="sm">
+    <Badge closable={false} severity={severity} size="xs">
       {labels[status]}
     </Badge>
   );

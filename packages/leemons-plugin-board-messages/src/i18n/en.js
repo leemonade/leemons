@@ -43,7 +43,7 @@ module.exports = {
       archive: 'Archive',
     },
     table: {
-      name: 'Name',
+      name: 'Description',
       objective: 'Target audience',
       format: 'Format',
       publishDate: 'Publish date',

@@ -1,17 +1,19 @@
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listProgramsRequest } from '@academic-portfolio/request';
+import { getUserPrograms } from '@academic-portfolio/request/programs';
 import { listRequest } from '@board-messages/request';
 import { Box, PaginatedList } from '@bubbles-ui/components';
 import { addErrorAlert } from '@layout/alert';
 import { listProfilesRequest } from '@users/request';
 import getUserCenters from '@users/request/getUserCenters';
-import { capitalize } from 'lodash';
+import { getCentersWithToken } from '@users/session';
 import React, { useMemo, useState } from 'react';
 import { Filters } from '../Filters';
 import { ActionItem } from './components/ActionItem';
 import { DateItem } from './components/DateItem';
 import { NameItem } from './components/NameItem';
 import { ObjectiveItem } from './components/ObjectiveItem';
+import { StatisticsItem } from './components/StatisticsItem';
 import { StatusItem } from './components/StatusItem';
 import {
   MESSAGES_TABLES_DEFAULT_PROPS,
@@ -86,61 +88,60 @@ const MessagesTable = ({
   const [loading, setLoading] = useState(true);
   const [messagesData, setMessagesData] = useState([]);
 
+  const isTeacher = useIsTeacher();
+
   const columns = useMessagesColumns(labels?.table);
-
-  const getObjectiveString = (value, type) => {
-    const arrays = {
-      centers,
-      profiles,
-      programs,
-    };
-
-    if (value[0] === '*') return labels.objectives[`all${capitalize(type)}`];
-    const string = arrays[type]
-      .reduce((prev, current) => {
-        if (value.includes(current.value)) return [...prev, current.label];
-        return prev;
-      }, [])
-      .join(', ');
-    return string;
-  };
-
-  const getObjective = (messageCenters, messagePrograms, messagesProfiles) => {
-    const centersString = getObjectiveString(messageCenters, 'centers');
-    const programsString = getObjectiveString(messagePrograms, 'programs');
-    const profilesString = getObjectiveString(messagesProfiles, 'profiles');
-
-    const objective = (
-      <ObjectiveItem objective={`${centersString} - ${programsString} - ${profilesString}`} />
-    );
-    return objective;
-  };
 
   const parseMessagesData = (unparsedMessages) => {
     const parsedMessages = unparsedMessages.map((message) => {
-      const name = <NameItem name={message.internalName} asset={message.asset} />;
-      const objective = getObjective(message.centers, message.programs, message.profiles);
+      const name = (
+        <NameItem name={message.internalName} owner={message.owner.user} asset={message.asset} />
+      );
+      const objective = (
+        <ObjectiveItem
+          labels={labels}
+          messageCenters={message.centers}
+          messagePrograms={message.programs}
+          messagesProfiles={message.profiles}
+          centers={centers}
+          programs={programs}
+          profiles={profiles}
+        />
+      );
       const format = message.zone === 'modal' ? labels.formats.modal : labels.formats.banner;
       const publishDate = <DateItem startDate={message.startDate} endDate={message.endDate} />;
       const state = <StatusItem status={message.status} labels={labels.statuses} />;
-      // const statistics = '';
+      const statistics = (
+        <StatisticsItem
+          labels={labels.statistics}
+          totalClicks={message.totalClicks}
+          totalViews={message.totalViews}
+          status={message.status}
+        />
+      );
       const actions = (
         <ActionItem labels={labels.actions} onEdit={openEditDrawer} message={message} />
       );
-      return { name, objective, format, publishDate, state, actions };
+      return { name, objective, format, publishDate, state, actions, statistics };
     });
     return parsedMessages;
   };
 
   const getAllPrograms = async (centersResult) => {
     try {
-      const results = await Promise.all(
-        centersResult.map((center) =>
-          listProgramsRequest({ page: 0, size: 9999, center: center.id })
-        )
-      );
-      // console.log(await getUserPrograms());
-      const allPrograms = results.reduce((prev, current) => [...prev, ...current.data.items], []);
+      let allPrograms = [];
+      if (isTeacher) {
+        const { programs: results } = await getUserPrograms();
+        allPrograms = results;
+      } else {
+        allPrograms = (
+          await Promise.all(
+            centersResult.map((center) =>
+              listProgramsRequest({ page: 0, size: 9999, center: center.id })
+            )
+          )
+        ).reduce((prev, current) => [...prev, ...current.data.items], []);
+      }
       if (allPrograms.length > 0) {
         return allPrograms.map((program) => ({ label: program.name, value: program.id }));
       }
@@ -154,19 +155,26 @@ const MessagesTable = ({
   async function init() {
     try {
       setLoading(true);
-      const { centers: centersResult } = await getUserCenters();
+      let finalCenters = [];
+      if (isTeacher) {
+        finalCenters = [await getCentersWithToken()[0]];
+      } else {
+        const { centers: centersResult } = await getUserCenters();
+        finalCenters = centersResult;
+      }
       const {
         data: { items: profilesResult },
       } = await listProfilesRequest({
         page: 0,
         size: 9999,
       });
+      if (!filters.zone && isTeacher) filters.zone = 'class-dashboard';
       const {
         data: { items: messagesResult },
       } = await listRequest({ page, size, filters });
-      const allPrograms = await getAllPrograms(centersResult);
+      const allPrograms = await getAllPrograms(finalCenters);
       setProfiles(profilesResult.map((profile) => ({ label: profile.name, value: profile.id })));
-      setCenters(centersResult.map((center) => ({ label: center.name, value: center.id })));
+      setCenters(finalCenters.map((center) => ({ label: center.name, value: center.id })));
       setPrograms(allPrograms);
       setMessages(messagesResult);
     } catch (error) {
@@ -177,8 +185,9 @@ const MessagesTable = ({
   }
 
   React.useEffect(() => {
+    if (isTeacher === null) return;
     init();
-  }, [size, page, filters, shouldReload]);
+  }, [size, page, filters, isTeacher, shouldReload]);
 
   React.useEffect(() => {
     if (!labels) return;

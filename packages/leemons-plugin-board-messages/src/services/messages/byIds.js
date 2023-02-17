@@ -24,6 +24,8 @@ async function byIds(_ids, { userSession, transacting } = {}) {
     }),
   ]);
 
+  console.log('By ids ', configs);
+
   const ownerIds = _.uniq(_.map(configs, 'owner'));
   const assetIds = _.uniq(_.map(configs, 'asset'));
 

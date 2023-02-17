@@ -1,15 +1,16 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, SearchInput, Select, MultiSelect, Button } from '@bubbles-ui/components';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { isFunction } from 'lodash';
 import { SelectProgram } from '@academic-portfolio/components';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { FILTERS_PROP_TYPES, FILTERS_DEFAULT_PROPS } from './Filters.constants';
+import { getUserPrograms } from '@academic-portfolio/request/programs';
+import { listProgramsRequest } from '@academic-portfolio/request';
+import { addErrorAlert } from '@layout/alert';
 import { FilterStyles } from './Filters.styles';
+import { FILTERS_PROP_TYPES, FILTERS_DEFAULT_PROPS } from './Filters.constants';
 
-const useFormatAndStatusData = (labels) => {
-  const isTeacher = useIsTeacher();
-  return useMemo(() => {
+const useFormatAndStatusData = (labels, isTeacher) =>
+  useMemo(() => {
     if (!labels.formats || !labels.statuses) return [[], []];
     const formatLabels = { ...labels.formats };
     if (isTeacher) delete formatLabels.modal;
@@ -23,33 +24,53 @@ const useFormatAndStatusData = (labels) => {
       label: labels.statuses[label],
     }));
     return [formatData, statusData];
-  }, [labels]);
-};
+  }, [labels, isTeacher]);
 
 const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles }) => {
+  const isTeacher = useIsTeacher();
   const { control, reset, watch, setValue } = useForm({ defaultValues });
   const formValues = useWatch({ control });
+  const [programs, setPrograms] = useState([]);
 
   const centerValue = watch('centers');
 
-  const [formatData, statusData] = useFormatAndStatusData(labels);
+  const [formatData, statusData] = useFormatAndStatusData(labels, isTeacher);
 
   // const clearForm = () => {
   //   reset(defaultValues);
   // };
 
-  useEffect(() => {
-    if (isFunction(setFilters) && JSON.stringify(formValues) !== JSON.stringify(filters)) {
-      const finalValues = {
-        ...formValues,
-        centers: formValues.centers ? [formValues.centers] : null,
-      };
-      setFilters(finalValues);
+  const getAllPrograms = async () => {
+    try {
+      let allPrograms = [];
+      if (isTeacher) {
+        const { programs: results } = await getUserPrograms();
+        allPrograms = results;
+      } else {
+        const {
+          data: { items: listResult },
+        } = await listProgramsRequest({ page: 0, size: 9999, center: centerValue });
+        allPrograms = listResult;
+      }
+      if (allPrograms.length > 0) {
+        setPrograms(allPrograms.map((program) => ({ label: program.name, value: program.id })));
+      }
+    } catch (error) {
+      addErrorAlert(error);
     }
+  };
+
+  useEffect(() => {
+    const finalValues = {
+      ...formValues,
+      centers: formValues.centers ? [formValues.centers] : null,
+    };
+    setFilters(finalValues);
   }, [JSON.stringify(formValues)]);
 
   useEffect(() => {
     setValue('program', '');
+    getAllPrograms();
   }, [centerValue]);
 
   const { classes } = FilterStyles({}, { name: 'MessagesTable' });
@@ -58,7 +79,7 @@ const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles
       <Controller
         control={control}
         name="internalName"
-        render={({ field }) => (
+        render={({ field: { ref, ...field } }) => (
           <SearchInput
             wait={200}
             label={labels.search}
@@ -78,6 +99,7 @@ const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles
             {...field}
             clearable={labels.clear}
             autoSelectOneOption
+            style={{ visibility: isTeacher && 'hidden', position: isTeacher && 'absolute' }}
           />
         )}
       />
@@ -85,13 +107,13 @@ const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles
         control={control}
         name="programs"
         render={({ field }) => (
-          <SelectProgram
-            center={centerValue}
+          <MultiSelect
+            data={programs}
             label={labels.program}
             placeholder={labels.programPlaceholder}
             clearable={labels.clear}
             autoSelectOneOption={false}
-            multiple
+            disabled={isTeacher ? !programs.length : !centerValue || !programs.length}
             {...field}
           />
         )}
@@ -118,6 +140,7 @@ const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles
             placeholder={labels.formatPlaceholder}
             clearable={labels.clear}
             {...field}
+            autoSelectOneOption
           />
         )}
       />

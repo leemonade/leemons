@@ -11,7 +11,9 @@ import {
   TimeInput,
   RadioGroup,
   MultiSelect,
+  ActionButton,
 } from '@bubbles-ui/components';
+import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { useForm, Controller } from 'react-hook-form';
 import { DatePicker, TextEditorInput } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
@@ -19,7 +21,9 @@ import { listClassesRequest, listProgramsRequest } from '@academic-portfolio/req
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { saveRequest } from '@board-messages/request';
 import isArray from 'lodash/isArray';
-import { useTeacherClasses } from '@assignables/components/Assignment/AssignStudents/hooks';
+import { getUserPrograms } from '@academic-portfolio/request/programs';
+import { AssetListDrawer } from '@leebrary/components';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { DETAIL_DRAWER_DEFAULT_PROPS, DETAIL_DRAWER_PROP_TYPES } from './DetailDrawer.constants';
 import { DetailDrawerStyles } from './DetailDrawer.styles';
 import modal from '../../../public/modal.svg';
@@ -53,6 +57,7 @@ const DetailDrawer = ({
   };
   const [programs, setPrograms] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const {
     control,
     handleSubmit,
@@ -67,6 +72,7 @@ const DetailDrawer = ({
   const startDateValue = watch('startDate');
   const endDateValue = watch('endDate');
   const urlValue = watch('url');
+  const assetValue = watch('asset');
   const textUrlValue = watch('textUrl');
   const formatData = useMemo(() => {
     let data = [];
@@ -79,15 +85,15 @@ const DetailDrawer = ({
     return data;
   }, [isTeacher, labels]);
 
-  // const aaaa = useTeacherClasses();
-
-  // console.log(aaaa);
-
   const saveMessageConfig = async (values) => {
     const message = {
       ...values,
       centers: isArray(values.centers) ? values.centers : [values.centers],
+      status: values.isUnpublished && 'unpublished',
     };
+    delete message.isUnpublished;
+    delete message.totalClicks;
+    delete message.totalViews;
     if (!message.url) message.url = null;
     if (!message.textUrl) message.textUrl = null;
     if (!isNew) {
@@ -95,9 +101,8 @@ const DetailDrawer = ({
       delete message.created_at;
       delete message.deleted_at;
       delete message.deleted;
-      delete message.asset;
-      delete message.status;
     }
+    console.log(message);
     try {
       await saveRequest(message);
       addSuccessAlert(isNew ? labels.success : labels.updateSuccess);
@@ -110,13 +115,16 @@ const DetailDrawer = ({
 
   const getAllPrograms = async () => {
     try {
-      // const results = await Promise.all(
-      //   centersValue.map((center) => listProgramsRequest({ page: 0, size: 9999, center }))
-      // );
-      // const allPrograms = results.reduce((prev, current) => [...prev, ...current.data.items], []);
-      const {
-        data: { items: allPrograms },
-      } = await listProgramsRequest({ page: 0, size: 9999, center: centersValue });
+      let allPrograms = [];
+      if (isTeacher) {
+        const { programs: results } = await getUserPrograms();
+        allPrograms = results;
+      } else {
+        const {
+          data: { items: listResult },
+        } = await listProgramsRequest({ page: 0, size: 9999, center: centersValue });
+        allPrograms = listResult;
+      }
       if (allPrograms.length > 0) {
         setPrograms(allPrograms.map((program) => ({ label: program.name, value: program.id })));
       }
@@ -157,19 +165,21 @@ const DetailDrawer = ({
     return isValid ? true : labels?.form?.urlValidError;
   };
 
+  const handleOnCloseAssetDrawer = () => {
+    setShowAssetDrawer(false);
+  };
+
+  const handleOnSelectAsset = (item) => {
+    setValue('asset', item);
+    setShowAssetDrawer(false);
+  };
+
   useEffect(() => {
-    // if (centersValue.length < 1) {
-    //   setPrograms([]);
-    //   return;
-    // }
     if (!centersValue) {
       setPrograms([]);
       return;
     }
     if (isNew) setValue('programs', []);
-    // else if (!defaultValues.centers.every((center) => centersValue.includes(center))) {
-    //   setValue('programs', []);
-    // }
     else if (
       (isArray(centersValue) &&
         !defaultValues.centers.every((center) => centersValue.includes(center))) ||
@@ -203,7 +213,13 @@ const DetailDrawer = ({
         <Box className={styles.root}>
           <Box className={styles.header}>
             <Text className={styles.title}>{isNew ? labels.new : labels.edit}</Text>
-            {!isNew && <Switch label={labels.unpublish} />}
+            {!isNew && (
+              <Controller
+                control={control}
+                name="isUnpublished"
+                render={({ field }) => <Switch label={labels.unpublish} {...field} />}
+              />
+            )}
           </Box>
           <Box>
             <Controller
@@ -225,7 +241,7 @@ const DetailDrawer = ({
           <Box>
             <Text className={styles.subtitle}>{labels.toWho}</Text>
           </Box>
-          <Box className={styles.inputRow}>
+          <Box className={styles.inputRow} style={{ width: isTeacher && 'calc(50% - 10px)' }}>
             <Controller
               control={control}
               name="centers"
@@ -236,7 +252,11 @@ const DetailDrawer = ({
                   label={labels.center}
                   placeholder={labels.centerPlaceholder}
                   {...field}
-                  style={{ flex: 1 }}
+                  style={{
+                    flex: 1,
+                    visibility: isTeacher && 'hidden',
+                    position: isTeacher && 'absolute',
+                  }}
                   error={errors.centers}
                   clearable={labels.clear}
                   autoSelectOneOption
@@ -248,7 +268,7 @@ const DetailDrawer = ({
               name="programs"
               render={({ field }) => (
                 <MultiSelect
-                  disabled={!centersValue}
+                  disabled={!centersValue || !programs.length}
                   data={programs}
                   label={labels.program}
                   placeholder={labels.programPlaceholder}
@@ -322,20 +342,23 @@ const DetailDrawer = ({
               )}
             />
           </Box>
-          {/* <Box>
-            <Controller
-              control={control}
-              name="asset"
-              render={({ field }) => (
-                <TextInput
-                  label={labels.image}
-                  placeholder={labels.imagePlaceholder}
-                  {...field}
-                  style={{ flex: 1 }}
-                />
-              )}
-            />
-          </Box> */}
+          <Box>
+            <Box sx={(theme) => ({ display: 'flex', gap: theme.spacing[2] })}>
+              <TextInput
+                style={{ width: '100%' }}
+                value={assetValue?.name}
+                readonly
+                onClick={() => setShowAssetDrawer(true)}
+              />
+              <ActionButton
+                color="primary"
+                size="md"
+                icon={<CloudUploadIcon />}
+                onClick={() => setShowAssetDrawer(true)}
+                label={labels.uploadImage}
+              />
+            </Box>
+          </Box>
           <Box className={styles.inputRow}>
             <Controller
               control={control}
@@ -465,6 +488,15 @@ const DetailDrawer = ({
           </Box>
         </Box>
       </form>
+      <AssetListDrawer
+        opened={showAssetDrawer}
+        onClose={handleOnCloseAssetDrawer}
+        size={720}
+        shadow
+        onSelect={handleOnSelectAsset}
+        creatable
+        onlyCreateImages
+      />
     </Drawer>
   );
 };
