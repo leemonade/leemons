@@ -37,6 +37,7 @@ const numberToEncodedLetter = require('./numberToEncodedLetter');
 const sqlDatetime = require('./sqlDatetime');
 const metascraper = require('./metascraper');
 const getDiff = require('./getDiff');
+const getPermissionsForRoutes = require('./getPermissionsForRoutes');
 
 squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
   const it = params[0];
@@ -59,6 +60,7 @@ module.exports = {
   parseFilters,
   getStackTrace,
   getAvailablePort,
+  getPermissionsForRoutes,
   nodemailer,
   LeemonsValidator,
   HttpError,

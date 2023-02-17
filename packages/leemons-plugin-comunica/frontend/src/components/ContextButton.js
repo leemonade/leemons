@@ -1,18 +1,18 @@
-import React from 'react';
-import _ from 'lodash';
 import { Box, createStyles, useDebouncedCallback } from '@bubbles-ui/components';
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import SocketIoService from '@socket-io/service';
-import { ChatListDrawer, RoomAvatar } from '@comunica/components';
 import { useNotifications } from '@bubbles-ui/notifications';
-import { getCentersWithToken } from '@users/session';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@comunica/helpers/prefixPN';
+import { useStore } from '@common';
+import { ChatListDrawer, RoomAvatar } from '@comunica/components';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
 import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
 import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
+import prefixPN from '@comunica/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import SocketIoService from '@socket-io/service';
+import { getCentersWithToken } from '@users/session';
+import _ from 'lodash';
+import React from 'react';
 import { RoomService } from '../RoomService';
 
 export const ContextButtonStyles = createStyles((theme) => ({
@@ -134,6 +134,12 @@ function ContextButton({ onShowDrawerChange }) {
     render();
   }
 
+  function closeDrawer() {
+    store.showDrawer = false;
+    onShowDrawerChange(store.showDrawer);
+    render();
+  }
+
   function toggleDrawer() {
     store.showDrawer = !store.showDrawer;
     onShowDrawerChange(store.showDrawer);
@@ -142,6 +148,7 @@ function ContextButton({ onShowDrawerChange }) {
 
   function onRoomOpened(room) {
     store.roomOpened = room;
+    store.openRoom = null;
   }
 
   React.useEffect(() => {
@@ -195,6 +202,12 @@ function ContextButton({ onShowDrawerChange }) {
         ) {
           if (data.message?.type === 'text') {
             notifications.showNotification({
+              onClick: (e) => {
+                if (!e.target.className.includes('mantine-Notification_chat-closeButton')) {
+                  store.openRoom = room;
+                  render();
+                }
+              },
               title: t(room.name, room.nameReplaces, false, room.name),
               message: data.message.content,
               leftSide: <RoomAvatar room={getRoomParsed(room)} size={32} />,
@@ -234,8 +247,9 @@ function ContextButton({ onShowDrawerChange }) {
       </Box>
       <ChatListDrawer
         opened={store.showDrawer}
+        openRoom={store.openRoom}
         onRoomOpened={onRoomOpened}
-        onClose={toggleDrawer}
+        onClose={closeDrawer}
       />
     </>
   );

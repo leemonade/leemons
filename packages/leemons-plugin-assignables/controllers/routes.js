@@ -1,5 +1,14 @@
 module.exports = [
   /**
+   * Assignables
+   */
+  {
+    method: 'GET',
+    path: '/assignables/find',
+    handler: 'assignables.get',
+    authenticated: true,
+  },
+  /**
    * Assignable Instances
    */
   {

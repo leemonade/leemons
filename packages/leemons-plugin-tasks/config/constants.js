@@ -92,7 +92,7 @@ const menuItems = [
   {
     item: {
       key: 'tasks',
-      order: 301,
+      order: 303,
       iconSvg: '/public/tasks/tasks-menu-icon.svg',
       activeIconSvg: '/public/tasks/tasks-menu-icon.svg',
       label: {
