@@ -63,9 +63,7 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
       if (id) {
         item = await table.messageConfig.findOne({ id }, { transacting });
         console.log('item recuperado', item);
-        // if (item.userOwner !== userSession.id || item.owner !== userSession.userAgents[0].id) {
-        //   throw new Error('Only the owner can update');
-        // }
+
         if (item.userOwner !== userSession.id) {
           throw new Error('Only the owner can update');
         }

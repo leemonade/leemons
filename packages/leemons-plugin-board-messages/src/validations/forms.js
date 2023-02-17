@@ -37,8 +37,6 @@ const saveMessageSchema = {
       type: ['string', 'object'],
       nullable: true,
     },
-    owner: { type: 'object' },
-    userOwner: { type: 'string' },
     centers: {
       type: 'array',
       items: stringSchema,
