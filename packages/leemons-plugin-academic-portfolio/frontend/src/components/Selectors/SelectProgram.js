@@ -20,7 +20,16 @@ async function getData(center) {
 
 const SelectProgram = forwardRef(
   (
-    { firstSelected, center, value: userValue, onChange, ensureIntegrity, multiple, ...props },
+    {
+      firstSelected,
+      center,
+      value: userValue,
+      onChange,
+      ensureIntegrity,
+      multiple,
+      autoSelectOneOption = true,
+      ...props
+    },
     ref
   ) => {
     const [value, setValue] = useState(userValue);
@@ -81,7 +90,7 @@ const SelectProgram = forwardRef(
           disabled={!data?.length}
           onChange={handleChange}
           value={value}
-          autoSelectOneOption
+          autoSelectOneOption={autoSelectOneOption}
         />
       );
     }
@@ -94,7 +103,7 @@ const SelectProgram = forwardRef(
         disabled={!data?.length}
         onChange={handleChange}
         value={value}
-        autoSelectOneOption
+        autoSelectOneOption={autoSelectOneOption}
       />
     );
   }
@@ -107,6 +116,8 @@ SelectProgram.propTypes = {
   onChange: PropTypes.func,
   ensureIntegrity: PropTypes.bool,
   firstSelected: PropTypes.bool,
+  multiple: PropTypes.bool,
+  autoSelectOneOption: PropTypes.bool,
 };
 
 export { SelectProgram };

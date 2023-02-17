@@ -60,6 +60,11 @@ async function events(isInstalled) {
       );
       leemons.events.emit('init-widget-items');
     });
+  } else {
+    leemons.events.once('plugins.dashboard:pluginDidInit', async () => {
+      leemons.events.emit('init-widget-zones');
+      leemons.events.emit('init-widget-items');
+    });
   }
 }
 
