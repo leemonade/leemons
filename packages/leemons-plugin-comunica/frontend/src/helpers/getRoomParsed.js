@@ -3,7 +3,7 @@ import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
 import { getCentersWithToken } from '@users/session';
 import _ from 'lodash';
 
-function getName(userAgent) {
+export function getName(userAgent) {
   return `${userAgent.user.name}${userAgent.user.surnames ? ` ${userAgent.user.surnames}` : ''}`;
 }
 
@@ -19,8 +19,17 @@ export function getRoomParsed(room) {
       (userAgent) => userAgent?.profile?.sysName === 'student'
     );
     config.name = getName(student);
+    config.metadata.headerSubName = getName(student);
     config.image = student.user.avatar;
     config.imageIsUrl = true;
+    config.imageIsUser = true;
+    config.metadata.headerImageIsUrl = false;
+    config.metadata.headerImageIsUser = false;
+  }
+  if (!isTeacher && room.type === 'plugins.assignables.assignation.user') {
+    config.metadata.headerSubName = config.name;
+    config.metadata.headerIcon = config.icon;
+    config.metadata.headerSubNameReplaces = config.nameReplaces;
   }
   if (room.type === 'chat') {
     const userAgentData = getChatUserAgent(room.userAgents);
