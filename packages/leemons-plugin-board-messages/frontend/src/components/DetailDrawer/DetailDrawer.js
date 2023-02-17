@@ -17,13 +17,12 @@ import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { useForm, Controller } from 'react-hook-form';
 import { DatePicker, TextEditorInput } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { listClassesRequest, listProgramsRequest } from '@academic-portfolio/request';
+import { listSessionClassesRequest, listProgramsRequest } from '@academic-portfolio/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { saveRequest } from '@board-messages/request';
 import isArray from 'lodash/isArray';
 import { getUserPrograms } from '@academic-portfolio/request/programs';
 import { AssetListDrawer } from '@leebrary/components';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { DETAIL_DRAWER_DEFAULT_PROPS, DETAIL_DRAWER_PROP_TYPES } from './DetailDrawer.constants';
 import { DetailDrawerStyles } from './DetailDrawer.styles';
 import modal from '../../../public/modal.svg';
@@ -94,6 +93,8 @@ const DetailDrawer = ({
     delete message.isUnpublished;
     delete message.totalClicks;
     delete message.totalViews;
+    delete message.owner;
+    delete message.userOwner;
     if (!message.url) message.url = null;
     if (!message.textUrl) message.textUrl = null;
     if (!isNew) {
@@ -102,7 +103,6 @@ const DetailDrawer = ({
       delete message.deleted_at;
       delete message.deleted;
     }
-    console.log(message);
     try {
       await saveRequest(message);
       addSuccessAlert(isNew ? labels.success : labels.updateSuccess);
@@ -136,9 +136,9 @@ const DetailDrawer = ({
   const getAllClasses = async () => {
     try {
       const results = await Promise.all(
-        programsValue.map((program) => listClassesRequest({ page: 0, size: 9999, program }))
+        programsValue.map((program) => listSessionClassesRequest({ program }))
       );
-      const allClasses = results.reduce((prev, current) => [...prev, ...current.data.items], []);
+      const allClasses = results.reduce((prev, current) => [...prev, ...current.classes], []);
       if (allClasses.length > 0) {
         setClasses(allClasses.map((klass) => ({ label: klass.subject.name, value: klass.id })));
       }
@@ -191,8 +191,10 @@ const DetailDrawer = ({
   }, [centersValue]);
 
   useEffect(() => {
-    getAllClasses();
-  }, [programsValue]);
+    if (isTeacher) {
+      getAllClasses();
+    }
+  }, [programsValue, isTeacher]);
 
   useEffect(() => {
     if (isNew && publicationType === 'immediately') {
@@ -320,7 +322,7 @@ const DetailDrawer = ({
               control={control}
               name="message"
               rules={{ required: labels?.form?.messageError }}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <TextEditorInput
                   label={labels.message}
                   placeholder={labels.messagePlaceholder}

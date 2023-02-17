@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, SearchInput, Select, MultiSelect, Button } from '@bubbles-ui/components';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { SelectProgram } from '@academic-portfolio/components';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserPrograms } from '@academic-portfolio/request/programs';
 import { listProgramsRequest } from '@academic-portfolio/request';
@@ -13,20 +12,31 @@ const useFormatAndStatusData = (labels, isTeacher) =>
   useMemo(() => {
     if (!labels.formats || !labels.statuses) return [[], []];
     const formatLabels = { ...labels.formats };
+    const statusLabels = { ...labels.statuses };
+    delete statusLabels.archived;
     if (isTeacher) delete formatLabels.modal;
+
     const formatData = Object.keys(formatLabels).map((label) => ({
       // eslint-disable-next-line no-nested-ternary
       value: label === 'banner' ? (isTeacher ? 'class-dashboard' : 'dashboard') : label,
       label: labels.formats[label],
     }));
-    const statusData = Object.keys(labels.statuses).map((label) => ({
+    const statusData = Object.keys(statusLabels).map((label) => ({
       value: label,
       label: labels.statuses[label],
     }));
     return [formatData, statusData];
   }, [labels, isTeacher]);
 
-const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles }) => {
+const Filters = ({
+  labels,
+  defaultValues,
+  filters,
+  setFilters,
+  centers,
+  profiles,
+  onlyArchived,
+}) => {
   const isTeacher = useIsTeacher();
   const { control, reset, watch, setValue } = useForm({ defaultValues });
   const formValues = useWatch({ control });
@@ -64,6 +74,7 @@ const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles
     const finalValues = {
       ...formValues,
       centers: formValues.centers ? [formValues.centers] : null,
+      status: !formValues.status ? ['published', 'unpublished'] : formValues.status,
     };
     setFilters(finalValues);
   }, [JSON.stringify(formValues)]);
@@ -144,19 +155,21 @@ const Filters = ({ labels, defaultValues, filters, setFilters, centers, profiles
           />
         )}
       />
-      <Controller
-        control={control}
-        name="status"
-        render={({ field }) => (
-          <Select
-            data={statusData}
-            label={labels.state}
-            placeholder={labels.statePlaceholder}
-            clearable={labels.clear}
-            {...field}
-          />
-        )}
-      />
+      {!onlyArchived && (
+        <Controller
+          control={control}
+          name="status"
+          render={({ field }) => (
+            <Select
+              data={statusData}
+              label={labels.state}
+              placeholder={labels.statePlaceholder}
+              clearable={labels.clear}
+              {...field}
+            />
+          )}
+        />
+      )}
       {/* <Box>
         <Button onClick={clearForm}>{labels.clear}</Button>
       </Box> */}

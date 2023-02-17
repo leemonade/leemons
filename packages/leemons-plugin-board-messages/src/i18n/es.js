@@ -22,6 +22,7 @@ module.exports = {
       allCenters: 'Todos los centros',
       allPrograms: 'Todos los programas',
       allProfiles: 'Todos los perfiles',
+      allClasses: 'Todas las clases',
     },
     formats: {
       banner: 'Banner',
@@ -32,6 +33,7 @@ module.exports = {
       programmed: 'Programado',
       completed: 'Completado',
       unpublished: 'Despublicado',
+      archived: 'Archivado',
     },
     statistics: {
       impressions: 'Impresiones',
@@ -41,7 +43,10 @@ module.exports = {
     actions: {
       edit: 'Editar',
       archive: 'Archivar',
+      unarchive: 'Desarchivar',
     },
+    archivedSuccess: 'Mensaje archivado correctamente',
+    unarchivedSuccess: 'Mensaje desarchivado correctamente',
     table: {
       name: 'Descripción',
       objective: 'Público objetivo',

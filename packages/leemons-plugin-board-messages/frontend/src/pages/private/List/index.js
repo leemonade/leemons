@@ -94,6 +94,7 @@ export default function Index() {
             setCenters={setCenters}
             profiles={store.profiles}
             setProfiles={setProfiles}
+            onlyArchived
           />
         </TabPanel>
       </Tabs>

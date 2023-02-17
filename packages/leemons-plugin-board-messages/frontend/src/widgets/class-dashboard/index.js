@@ -14,12 +14,10 @@ function ClassDashboard({ classe }) {
       program: classe.program,
       zone: 'class-dashboard',
     });
-    console.log('message', message);
     setActiveMessage(message);
   }
 
   React.useEffect(() => {
-    console.log('useEffect de classDashboard');
     if (classe) {
       load();
     }

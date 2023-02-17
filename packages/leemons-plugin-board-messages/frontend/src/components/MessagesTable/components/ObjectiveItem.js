@@ -8,15 +8,19 @@ const ObjectiveItem = ({
   messageCenters,
   messagePrograms,
   messagesProfiles,
+  messageClasses,
   centers,
   profiles,
   programs,
+  classes,
+  isTeacher,
 }) => {
   const getObjectiveString = (value, type) => {
     const arrays = {
       centers,
       profiles,
       programs,
+      classes,
     };
 
     if (value[0] === '*') return labels.objectives[`all${capitalize(type)}`];
@@ -33,9 +37,10 @@ const ObjectiveItem = ({
     const centersString = getObjectiveString(messageCenters, 'centers');
     const programsString = getObjectiveString(messagePrograms, 'programs');
     const profilesString = getObjectiveString(messagesProfiles, 'profiles');
+    const classesString = isTeacher ? getObjectiveString(messageClasses, 'classes') : '';
 
     const firstRow = `${centersString} - ${programsString}`;
-    const secondRow = `${profilesString}`;
+    const secondRow = `${profilesString} ${isTeacher ? `- ${classesString}` : ''}`;
     return [firstRow, secondRow];
   };
 
@@ -62,9 +67,12 @@ ObjectiveItem.propTypes = {
   messageCenters: PropTypes.array,
   messagePrograms: PropTypes.array,
   messagesProfiles: PropTypes.array,
+  messageClasses: PropTypes.array,
   centers: PropTypes.array,
   profiles: PropTypes.array,
   programs: PropTypes.array,
+  classes: PropTypes.array,
+  isTeacher: PropTypes.array,
 };
 
 // eslint-disable-next-line import/prefer-default-export

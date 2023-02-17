@@ -47,7 +47,7 @@ const widgets = {
       url: 'dashboard/index',
     },
     {
-      zoneKey: `plugins.academic-portfolio.class.detail`,
+      zoneKey: `plugins.assignables.class.ongoing`,
       key: `${permissionsPrefix}.class-dashboard`,
       url: 'class-dashboard/index',
     },
