@@ -121,7 +121,7 @@ module.exports = async function getAssignables(
       ...assignable,
       published: publishState[assignable.id],
       roleDetails: roles[assignable.role],
-      subjects: subjects[assignable.id],
+      subjects: subjects[assignable.id] ?? [],
       asset: assetsData[assignable.asset] || assignable.asset,
 
       // EN: Parse database info
