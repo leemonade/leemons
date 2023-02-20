@@ -319,6 +319,7 @@ async function getPinnedAssets(ctx) {
   const _providerQuery = JSON.parse(providerQuery || null);
   const assetPublished = ['true', true, '1', 1].includes(published);
   const displayPublic = ['true', true, '1', 1].includes(showPublic);
+  const _preferCurrent = ['true', true, '1', 1].includes(preferCurrent);
 
   const assets = await getByCriteria(
     { criteria, type },
@@ -327,7 +328,7 @@ async function getPinnedAssets(ctx) {
       indexable: true,
       published: assetPublished,
       showPublic: displayPublic,
-      preferCurrent,
+      preferCurrent: _preferCurrent,
       providerQuery: _providerQuery,
       userSession,
     }
