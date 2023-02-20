@@ -133,6 +133,7 @@ module.exports = {
     endHour: 'End hour',
     closedPeriod: 'Closed period',
     liveSession: 'Live session',
+    openPeriod: 'Open period',
     liveSessionData: 'Date',
   },
   activity_dashboard: {
