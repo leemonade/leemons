@@ -59,6 +59,7 @@ async function getDocument(id, { userSession, transacting } = {}) {
       description: assignable.asset.description,
       introductoryText: assignable.statement,
       content: documentsById[assignable.id]?.content,
+      subjects: assignable.subjects,
     };
     return toReturn;
   });

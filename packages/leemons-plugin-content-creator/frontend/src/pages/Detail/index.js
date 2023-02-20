@@ -110,6 +110,7 @@ export default function Index() {
         } = await getDocumentRequest(params.id);
         // eslint-disable-next-line react/prop-types
         store.titleValue = props.name;
+        props.program = props.subjects?.[0].program;
         store.document = { ...props };
         form.reset(props);
       }
@@ -175,7 +176,7 @@ export default function Index() {
   if (store.loading || tLoading) return <LoadingOverlay visible />;
 
   const advancedConfig = {
-    alwaysOpen: false,
+    alwaysOpen: true,
     fileToRight: true,
     colorToRight: true,
     program: { show: true, required: true },
