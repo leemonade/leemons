@@ -37,7 +37,20 @@ const saveDocumentSchema = {
     program: stringSchemaNullable,
     subjects: {
       type: 'array',
-      items: stringSchema,
+      items: {
+        type: 'object',
+        properties: {
+          subject: {
+            type: 'string',
+            format: 'uuid',
+          },
+          level: {
+            type: 'string',
+            maxLength: 255,
+            nullable: true,
+          },
+        },
+      },
       nullable: true,
     },
     published: booleanSchema,
