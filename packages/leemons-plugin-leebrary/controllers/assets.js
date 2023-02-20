@@ -22,6 +22,12 @@ async function setAsset(ctx) {
   const filesData = ctx.request.files;
   const { userSession } = ctx.state;
 
+  Object.keys(assetData).forEach((key) => {
+    if (assetData[key] === 'null') {
+      assetData[key] = null;
+    }
+  });
+
   if (isEmpty(categoryId)) {
     throw new global.utils.HttpError(400, 'Category is required');
   }
