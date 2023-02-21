@@ -282,6 +282,7 @@ module.exports = {
     },
   },
   multiSubject: 'Multi-subject',
+  customObjectives: 'Custom objectives',
   activities_filters: {
     ongoing: 'Ongoing {{count}}',
     evaluated: 'Evaluated {{count}}',

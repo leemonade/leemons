@@ -292,6 +292,7 @@ module.exports = {
     },
   },
   multiSubject: 'Multi-asignatura',
+  customObjectives: 'Objetivos personalizados',
   activities_filters: {
     ongoing: 'En curso {{count}}',
     evaluated: 'Evaluadas {{count}}',
