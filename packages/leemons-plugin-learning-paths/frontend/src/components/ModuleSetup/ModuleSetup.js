@@ -88,7 +88,10 @@ async function handleOnSaveEvent() {
 
 function prepareAssignable(sharedData) {
   const assignable = {
-    asset: omit(get(sharedData, 'basicData'), 'subjects', 'program'),
+    asset: {
+      ...omit(get(sharedData, 'basicData'), 'subjects', 'program'),
+      cover: get(sharedData, 'basicData.cover.id') || get(sharedData, 'basicData.cover'),
+    },
     gradable: true,
     // TODO: Add center
     center: null,
@@ -115,7 +118,7 @@ function prepareSharedData(module) {
   const sharedData = {
     id: module.id,
     basicData: {
-      ...module.asset,
+      ...omit(module.asset, 'file'),
       subjects: module.subjects,
       program: module.subjects[0].program,
     },
@@ -175,13 +178,17 @@ function onSaveAndPublish({ sharedDataRef }) {
         const sharedData = sharedDataRef.current;
 
         if (!sharedData.id) {
-          await createModuleRequest(prepareAssignable(sharedData), {
+          const { id } = await createModuleRequest(prepareAssignable(sharedData), {
             published: true,
           });
+
+          sharedData.id = id;
         } else {
-          await updateModuleRequest(sharedData.id, prepareAssignable(sharedData), {
+          const { id } = await updateModuleRequest(sharedData.id, prepareAssignable(sharedData), {
             published: true,
           });
+
+          sharedData.id = id;
         }
 
         addSuccessAlert('Successfuly saved and published');
@@ -235,6 +242,7 @@ function useModuleInitialization() {
   const { data: module } = useAssignables({
     id,
     enabled: !!(id && isInitialFetch),
+    withFiles: true,
     refetchOnWindowFocus: false,
   });
 
