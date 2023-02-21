@@ -1,8 +1,9 @@
-import { createStyles, getBoxShadowFromToken } from '@bubbles-ui/components';
+import { createStyles, getBoxShadowFromToken, getHtmlStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
 export const BannerMessageStyles = createStyles((theme, {}) => {
   const globalTheme = theme.other.global;
+  const { root: htmlStyles } = getHtmlStyles(theme);
   return {
     root: {
       display: 'flex',
@@ -28,12 +29,12 @@ export const BannerMessageStyles = createStyles((theme, {}) => {
       paddingBlock: 16,
     },
     title: {
-      ...globalTheme.content.typo.heading.xlg,
+      ...globalTheme.content.typo.heading.lg,
       color: globalTheme.content.color.text.emphasis,
     },
     message: {
-      ...globalTheme.content.typo.body.lg,
-      color: globalTheme.content.color.text.default,
+      ...htmlStyles,
+      ...globalTheme.content.typo.body.md,
     },
     buttonRow: {
       display: 'flex',

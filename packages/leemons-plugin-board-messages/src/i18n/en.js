@@ -18,6 +18,7 @@ module.exports = {
     state: 'State',
     statePlaceholder: 'Select state',
     clear: 'Clear',
+    emptyState: 'No existing messages',
     objectives: {
       allCenters: 'All centers',
       allPrograms: 'All programs',
@@ -60,8 +61,8 @@ module.exports = {
       new: 'New message',
       edit: 'Edit message',
       unpublish: 'Unpublished',
-      internalName: 'Internal name',
-      internalNamePlaceholder: 'Write a name',
+      internalName: 'Title',
+      internalNamePlaceholder: 'Write a title',
       toWho: 'Who do you want to communicate with?',
       center: 'Center',
       centerPlaceholder: 'Select a center',
@@ -96,7 +97,7 @@ module.exports = {
       clear: 'Clear',
       form: {
         centerError: 'It is necessary to select a center',
-        internalNameError: 'Internal name is required',
+        internalNameError: 'A title is required',
         messageError: 'Message is required',
         textUrlError: 'A text to the link is required',
         urlError: 'An url to the link is required',

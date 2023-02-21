@@ -23,6 +23,7 @@ import { saveRequest } from '@board-messages/request';
 import isArray from 'lodash/isArray';
 import { getUserPrograms } from '@academic-portfolio/request/programs';
 import { AssetListDrawer } from '@leebrary/components';
+import isString from 'lodash/isString';
 import { DETAIL_DRAWER_DEFAULT_PROPS, DETAIL_DRAWER_PROP_TYPES } from './DetailDrawer.constants';
 import { DetailDrawerStyles } from './DetailDrawer.styles';
 import modal from '../../../public/modal.svg';
@@ -53,6 +54,7 @@ const DetailDrawer = ({
     publicationType: 'immediately',
     startDate: new Date(),
     endDate: null,
+    isUnpublished: currentMessage.status === 'unpublished',
     ...currentMessage,
   };
   const [programs, setPrograms] = useState([]);
@@ -89,7 +91,7 @@ const DetailDrawer = ({
     const message = {
       ...values,
       centers: isArray(values.centers) ? values.centers : [values.centers],
-      status: values.isUnpublished && 'unpublished',
+      status: values.isUnpublished ? 'unpublished' : 'published',
     };
     delete message.isUnpublished;
     delete message.totalClicks;
@@ -175,7 +177,7 @@ const DetailDrawer = ({
   };
 
   const handleOnSelectAsset = (item) => {
-    setValue('asset', item);
+    setValue('asset', isString(item.cover) ? item.original : item);
     setShowAssetDrawer(false);
   };
 
@@ -227,7 +229,9 @@ const DetailDrawer = ({
               <Controller
                 control={control}
                 name="isUnpublished"
-                render={({ field }) => <Switch label={labels.unpublish} {...field} />}
+                render={({ field: { value, ...field } }) => (
+                  <Switch label={labels.unpublish} checked={value} {...field} />
+                )}
               />
             )}
           </Box>
