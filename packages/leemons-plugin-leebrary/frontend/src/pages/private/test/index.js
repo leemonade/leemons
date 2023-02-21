@@ -95,7 +95,6 @@ export default function TestPage() {
               maxSelectedValues={3}
               value={users}
               onChange={(data) => {
-                console.log(data);
                 setUsers(data);
               }}
               returnItem

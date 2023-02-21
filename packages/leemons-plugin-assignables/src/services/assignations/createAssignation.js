@@ -263,39 +263,42 @@ module.exports = async function createAssignation(
         // instance.dates.start
 
         // TODO @MIGUEL
-        console.log(1);
-        const teachers = getAllTeachers(_classes, classesData);
-        const instanceRoom = await createInstanceRoom(
-          {
+        let subjectRooms = null;
+        let instanceRoom = null;
+        if (instance.assignable.role !== 'feedback') {
+          const teachers = getAllTeachers(_classes, classesData);
+          instanceRoom = await createInstanceRoom(
+            {
+              assignableInstanceId,
+              instance,
+              classes: _classes,
+              teachers,
+              users,
+            },
+            { transacting }
+          );
+
+          console.log(2);
+          // TODO @MIGUEL
+          await createGroupRoom({
             assignableInstanceId,
             instance,
             classes: _classes,
+            parentKey: instanceRoom.key,
             teachers,
             users,
-          },
-          { transacting }
-        );
+          });
 
-        console.log(2);
-        // TODO @MIGUEL
-        await createGroupRoom({
-          assignableInstanceId,
-          instance,
-          classes: _classes,
-          parentKey: instanceRoom.key,
-          teachers,
-          users,
-        });
-
-        console.log(3);
-        // TODO @MIGUEL
-        const subjectRooms = await createSubjectsRooms({
-          assignableInstanceId,
-          instance,
-          parentKey: instanceRoom.key,
-          classes: _classes,
-          teachers,
-        });
+          console.log(3);
+          // TODO @MIGUEL
+          subjectRooms = await createSubjectsRooms({
+            assignableInstanceId,
+            instance,
+            parentKey: instanceRoom.key,
+            classes: _classes,
+            teachers,
+          });
+        }
 
         // EN: Create the assignation
         // ES: Crea la asignación
@@ -341,19 +344,21 @@ module.exports = async function createAssignation(
 
               // TODO @MIGUEL
               console.log(4);
-              roomsPromises.push(
-                addUserSubjectRoom(
-                  {
-                    parentKey: `${subjectRooms[classe.subject.id].key}|${instanceRoom.key}`,
-                    classe,
-                    instance,
-                    assignation,
-                    user,
-                    teachers: _teachers,
-                  },
-                  { transacting }
-                )
-              );
+              if (instance.assignable.role !== 'feedback') {
+                roomsPromises.push(
+                  addUserSubjectRoom(
+                    {
+                      parentKey: `${subjectRooms[classe.subject.id].key}|${instanceRoom.key}`,
+                      classe,
+                      instance,
+                      assignation,
+                      user,
+                      teachers: _teachers,
+                    },
+                    { transacting }
+                  )
+                );
+              }
             });
 
             await Promise.all(roomsPromises);
