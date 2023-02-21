@@ -21,9 +21,6 @@
       "@assignables/*": [
         "./packages/leemons-plugin-assignables/frontend/src/*"
       ],
-      "@board-messages/*": [
-        "./packages/leemons-plugin-board-messages/frontend/src/*"
-      ],
       "@calendar/*": [
         "./packages/leemons-plugin-calendar/frontend/src/*"
       ],
@@ -71,9 +68,6 @@
       ],
       "@layout/*": [
         "./packages/leemons-plugin-layout/frontend/src/*"
-      ],
-      "@learning-paths/*": [
-        "./packages/leemons-plugin-learning-paths/frontend/src/*"
       ],
       "@leebrary/*": [
         "./packages/leemons-plugin-leebrary/frontend/src/*"
