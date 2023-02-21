@@ -11,6 +11,7 @@ import { saveRequest, listRequest } from '../../request';
 import { Filters } from '../Filters';
 import { ActionItem } from './components/ActionItem';
 import { DateItem } from './components/DateItem';
+import { EmptyState } from './components/EmptyState';
 import { NameItem } from './components/NameItem';
 import { ObjectiveItem } from './components/ObjectiveItem';
 import { StatisticsItem } from './components/StatisticsItem';
@@ -22,8 +23,7 @@ import {
 import { MessagesTableStyles } from './MessagesTable.styles';
 
 const useMessagesColumns = (labels) => {
-  const isTeacher = useIsTeacher();
-  let messagesColumns = useMemo(
+  const messagesColumns = useMemo(
     () => [
       {
         Header: labels?.name || '',
@@ -56,9 +56,6 @@ const useMessagesColumns = (labels) => {
     ],
     [labels]
   );
-  if (isTeacher) {
-    messagesColumns = messagesColumns.filter((column) => column.accessor !== 'statistics');
-  }
   return messagesColumns;
 };
 
@@ -89,6 +86,7 @@ const MessagesTable = ({
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [messagesData, setMessagesData] = useState([]);
+  const [messagesAreSet, setMessagesAreSet] = useState(false);
 
   const isTeacher = useIsTeacher();
 
@@ -153,10 +151,9 @@ const MessagesTable = ({
       });
       if (!filters.zone && isTeacher) filters.zone = 'class-dashboard';
       if (onlyArchived) filters.status = 'archived';
-      // console.log(filters);
-      // filters.status = filters.status
-      //   ? filters.status
-      //   : [('published', 'unpublished', 'completed', 'programmed')];
+      filters.status = filters.status
+        ? filters.status
+        : [('published', 'unpublished', 'completed', 'programmed')];
       const {
         data: { items: messagesResult },
       } = await listRequest({ page, size, filters });
@@ -166,9 +163,9 @@ const MessagesTable = ({
       setCenters(finalCenters.map((center) => ({ label: center.name, value: center.id })));
       setPrograms(allPrograms);
       setMessages(messagesResult);
+      setMessagesAreSet(true);
     } catch (error) {
       addErrorAlert(error);
-    } finally {
       setLoading(false);
     }
   }
@@ -248,9 +245,11 @@ const MessagesTable = ({
   }, [size, page, filters, isTeacher, shouldReload]);
 
   React.useEffect(() => {
-    if (!labels) return;
+    if (!labels || !centers.length || !profiles.length || !messagesAreSet) return;
+    setLoading(true);
     const parsedMessages = parseMessagesData(messages);
     setMessagesData(parsedMessages);
+    setLoading(false);
   }, [messages, labels, centers, profiles]);
 
   const headerStyles = {
@@ -272,17 +271,21 @@ const MessagesTable = ({
         setFilters={setFilters}
         onlyArchived={onlyArchived}
       />
-      <PaginatedList
-        columns={columns}
-        items={messagesData}
-        loading={loading}
-        page={page}
-        size={size}
-        onPageChange={setPage}
-        onSizeChange={setSize}
-        headerStyles={headerStyles}
-        selectable={false}
-      />
+      {messagesData.length < 1 && !loading ? (
+        <EmptyState label={labels.emptyState} />
+      ) : (
+        <PaginatedList
+          columns={columns}
+          items={messagesData}
+          loading={loading}
+          page={page}
+          size={size}
+          onPageChange={setPage}
+          onSizeChange={setSize}
+          headerStyles={headerStyles}
+          selectable={false}
+        />
+      )}
     </Box>
   );
 };

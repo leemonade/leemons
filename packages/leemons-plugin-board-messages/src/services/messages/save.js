@@ -62,7 +62,6 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
 
       if (id) {
         item = await table.messageConfig.findOne({ id }, { transacting });
-        console.log('item recuperado', item);
 
         if (item.userOwner !== userSession.id) {
           throw new Error('Only the owner can update');
@@ -75,7 +74,6 @@ async function save(_data, { userSession, transacting: _transacting } = {}) {
           table.messageConfigProfiles.deleteMany({ messageConfig: id }, { transacting }),
           table.messageConfigPrograms.deleteMany({ messageConfig: id }, { transacting }),
         ]);
-        console.log('data', data);
         await table.messageConfig.update({ id }, { ...data, startDate, endDate }, { transacting });
       } else {
         item = await table.messageConfig.create(

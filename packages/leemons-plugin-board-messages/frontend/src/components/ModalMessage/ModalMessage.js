@@ -17,12 +17,10 @@ const ModalMessage = ({ message, onClose }) => {
 
   const stringToHTML = (str) => ({ __html: str });
 
-  console.log(message);
-
   const { classes } = ModalMessageStyles({}, { name: 'ModalMessage' });
   return (
     <Box className={classes.root}>
-      {message.asset && (
+      {message.asset?.cover && (
         <Box>
           <ImageLoader src={preparedAsset?.cover} width={'100%'} height={200} />
         </Box>
