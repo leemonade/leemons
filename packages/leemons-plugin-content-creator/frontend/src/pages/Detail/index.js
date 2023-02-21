@@ -110,7 +110,7 @@ export default function Index() {
         } = await getDocumentRequest(params.id);
         // eslint-disable-next-line react/prop-types
         store.titleValue = props.name;
-        props.program = props.subjects?.[0].program;
+        props.program = props.subjects?.[0]?.program;
         store.document = { ...props };
         form.reset(props);
       }

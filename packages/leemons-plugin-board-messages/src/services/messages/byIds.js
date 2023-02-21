@@ -24,6 +24,21 @@ async function byIds(_ids, { userSession, transacting } = {}) {
     }),
   ]);
 
+  const updateToCompletePromises = [];
+  const now = new Date();
+  _.forEach(configs, (config, index) => {
+    if (config.status === 'published' && now > config.endDate) {
+      configs[index].status = 'completed';
+      updateToCompletePromises.push(
+        table.messageConfig.update({ id: config.id }, { status: 'completed' }, { transacting })
+      );
+    }
+  });
+
+  if (updateToCompletePromises.length) {
+    await Promise.all(updateToCompletePromises);
+  }
+
   const ownerIds = _.uniq(_.map(configs, 'owner'));
   const assetIds = _.uniq(_.map(configs, 'asset'));
 

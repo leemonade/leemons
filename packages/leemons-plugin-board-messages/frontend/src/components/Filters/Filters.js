@@ -74,7 +74,9 @@ const Filters = ({
     const finalValues = {
       ...formValues,
       centers: formValues.centers ? [formValues.centers] : null,
-      status: !formValues.status ? ['published', 'unpublished'] : formValues.status,
+      status: !formValues.status
+        ? ['published', 'unpublished', 'completed', 'programmed']
+        : formValues.status,
     };
     setFilters(finalValues);
   }, [JSON.stringify(formValues)]);

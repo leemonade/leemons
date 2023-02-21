@@ -1,13 +1,13 @@
-import React from 'react';
-import _ from 'lodash';
-import { Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import assignablesPrefixPN from '@assignables/helpers/prefixPN';
+import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
+import { Box } from '@bubbles-ui/components';
 import { useStore } from '@common';
-import { useHistory } from 'react-router-dom';
 import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { RoomInstanceViewStyles } from './RoomInstanceView.styles';
 
 function RoomInstanceView({ room, t }) {
