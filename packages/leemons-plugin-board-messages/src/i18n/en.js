@@ -92,6 +92,7 @@ module.exports = {
       endDate: 'End date',
       endHour: 'End hour',
       cancel: 'Cancel',
+      create: 'Create',
       save: 'Save',
       update: 'Update',
       clear: 'Clear',
@@ -107,6 +108,13 @@ module.exports = {
       },
       success: 'Message created succesfully',
       updateSuccess: 'Message updated succesfully',
+      overlapsCheck: 'Unpublish conflicting messages and publish new message',
+      checkboxHelp: 'The following messages will be unpublished:',
+      existingMessageTitle: 'Existing message',
+      existingMessageInfoSingular:
+        'There is 1 published message with the selected parameters. The message will be saved unpublished if you do not modify the parameters or select "Unpublish conflicting messages".',
+      existingMessageInfo:
+        'There are {nMessages} published messages with the selected parameters.The message will be saved unpublished if you do not modify the parameters or select "Unpublish conflicting messages".',
     },
   },
   modal: {
