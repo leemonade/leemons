@@ -2,11 +2,13 @@ import React, { useMemo, useState, useEffect } from 'react';
 import {
   Box,
   Text,
+  Alert,
   Drawer,
   Switch,
   Button,
   Select,
   Divider,
+  Checkbox,
   TextInput,
   TimeInput,
   RadioGroup,
@@ -14,6 +16,7 @@ import {
   ActionButton,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
+import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import { useForm, Controller } from 'react-hook-form';
 import { DatePicker, TextEditorInput } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
@@ -29,6 +32,7 @@ import { DetailDrawerStyles } from './DetailDrawer.styles';
 import modal from '../../../public/modal.svg';
 import dashboard from '../../../public/dashboard.svg';
 import { SelectItem } from './components/SelectItem';
+import { getOverlapsRequest } from '../../request';
 
 const DetailDrawer = ({
   open,
@@ -60,22 +64,28 @@ const DetailDrawer = ({
   const [programs, setPrograms] = useState([]);
   const [classes, setClasses] = useState([]);
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
+  const [overWriteMessages, setOverWriteMessages] = useState(false);
+  const [overlaps, setOverlaps] = useState([]);
   const {
     control,
     handleSubmit,
     watch,
     setValue,
     reset,
+    getValues,
     formState: { errors },
   } = useForm({ defaultValues });
   const publicationType = watch('publicationType');
   const centersValue = watch('centers');
   const programsValue = watch('programs');
+  const profilesValue = watch('profiles');
   const startDateValue = watch('startDate');
   const endDateValue = watch('endDate');
   const urlValue = watch('url');
   const assetValue = watch('asset');
   const textUrlValue = watch('textUrl');
+  const zoneValue = watch('zone');
+  const formValues = getValues();
   const formatData = useMemo(() => {
     let data = [];
     if (!isTeacher) {
@@ -91,7 +101,11 @@ const DetailDrawer = ({
     const message = {
       ...values,
       centers: isArray(values.centers) ? values.centers : [values.centers],
-      status: values.isUnpublished ? 'unpublished' : 'published',
+      status:
+        values.isUnpublished || (overlaps.length > 0 && !overWriteMessages)
+          ? 'unpublished'
+          : 'published',
+      unpublishConflicts: overWriteMessages,
     };
     delete message.isUnpublished;
     delete message.totalClicks;
@@ -181,6 +195,16 @@ const DetailDrawer = ({
     setShowAssetDrawer(false);
   };
 
+  const getOverlaps = async () => {
+    const message = {
+      ...formValues,
+      centers: isArray(formValues.centers) ? formValues.centers : [formValues.centers],
+      status: formValues.isUnpublished ? 'unpublished' : 'published',
+    };
+    const { messages } = await getOverlapsRequest(message);
+    setOverlaps(messages);
+  };
+
   useEffect(() => {
     if (!centersValue) {
       setPrograms([]);
@@ -217,6 +241,18 @@ const DetailDrawer = ({
   useEffect(() => {
     reset(defaultValues);
   }, [currentMessage]);
+
+  useEffect(() => {
+    getOverlaps();
+  }, [
+    startDateValue,
+    endDateValue,
+    centersValue,
+    programsValue,
+    profilesValue,
+    zoneValue,
+    publicationType,
+  ]);
 
   const { classes: styles } = DetailDrawerStyles({}, { name: 'DetailDrawer' });
   return (
@@ -498,11 +534,41 @@ const DetailDrawer = ({
               </React.Fragment>
             </Box>
           )}
+          {overlaps.length > 0 && !overWriteMessages && (
+            <Alert title={labels.existingMessageTitle}>
+              {overlaps.length === 1
+                ? labels.existingMessageInfoSingular
+                : labels.existingMessageInfo?.replace('{nMessages}', overlaps.length)}
+            </Alert>
+          )}
+          {overlaps.length > 0 && (
+            <Box className={styles.overlapsWrapper}>
+              <Checkbox
+                checked={overWriteMessages}
+                onChange={setOverWriteMessages}
+                label={labels.overlapsCheck}
+              />
+              <Box className={styles.checkboxHelp}>
+                <AlertInformationCircleIcon height={16} width={16} />
+                {labels.checkboxHelp}
+              </Box>
+              <Box className={styles.overlaps}>
+                {overlaps.map((overlap) => (
+                  <Box
+                    key={overlap.id}
+                    className={styles.overlap}
+                  >{`-${overlap.internalName}`}</Box>
+                ))}
+              </Box>
+            </Box>
+          )}
           <Box className={styles.buttonRow}>
             <Button variant="outline" onClick={onClose}>
               {labels.cancel}
             </Button>
-            <Button type="submit">{isNew ? labels.save : labels.update}</Button>
+            <Button type="submit">
+              {isNew ? (overlaps.length ? labels.save : labels.create) : labels.update}
+            </Button>
           </Box>
         </Box>
       </form>

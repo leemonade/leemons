@@ -94,6 +94,7 @@ module.exports = {
       endDate: 'Fecha de fin',
       endHour: 'Hora de fin',
       cancel: 'Cancelar',
+      create: 'Crear',
       save: 'Guardar',
       update: 'Actualizar',
       clear: 'Limpiar',
@@ -109,6 +110,13 @@ module.exports = {
       },
       success: 'Mensaje creado correctamente',
       updateSuccess: 'Mensaje actualizado correctamente',
+      overlapsCheck: 'Despublicar mensajes conflictivos y publicar nuevo mensaje',
+      checkboxHelp: 'Se despublicarán los siguientes mensajes:',
+      existingMessageTitle: 'Mensaje existente',
+      existingMessageInfoSingular:
+        'Existe 1 mensaje publicado con los parámetros seleccionados. El mensaje se guardará sin publicar si no modifica los parámetros o selecciona “Despublicar mensajes conflictivos”.',
+      existingMessageInfo:
+        'Existen {nMessages} mensajes publicados con los parámetros seleccionados. El mensaje se guardará sin publicar si no modifica los parámetros o selecciona “Despublicar mensajes conflictivos”.',
     },
   },
   modal: {
