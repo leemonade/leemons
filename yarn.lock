@@ -1786,7 +1786,45 @@
     react-big-calendar "^0.38.1"
     rrule "^2.6.8"
 
-"@bubbles-ui/components@1.1.4", "@bubbles-ui/components@^1.1.4":
+"@bubbles-ui/components@1.1.51":
+  version "1.1.51"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.1.51.tgz#be462b1a2eea16957aabb2aa21becb4523293b61"
+  integrity sha512-TnSbfEZIQmkg/nyxYVg/o345olGeb2kx70+0hkTCT7pUd1UmSS7R+6YLkSGfEYG6EOfz+AAOvMImv+gIgqvN3Q==
+  dependencies:
+    "@bubbles-ui/icons" "1.1.51"
+    "@emotion/react" "^11.10.0"
+    "@heroicons/react" "^1.0.5"
+    "@leemonade/react-dnd-treeview" "^1.5.44"
+    "@mantine/core" "5.5.5"
+    "@mantine/dates" "5.5.5"
+    "@mantine/dropzone" "5.5.5"
+    "@mantine/hooks" "5.5.5"
+    "@mantine/modals" "5.5.5"
+    "@nivo/bar" "^0.79.1"
+    "@nivo/core" "^0.79.0"
+    "@yaireo/tagify" "^4.9.4"
+    colord "^2.9.2"
+    dayjs "^1.10.7"
+    immutability-helper "^3.1.1"
+    lodash "^4.17.21"
+    macy "^2.5.1"
+    namor "^2.0.3"
+    prop-types "^15.7.2"
+    react-beautiful-dnd "^13.1.0"
+    react-countdown-hook "^1.1.1"
+    react-dnd "^14.0.5"
+    react-dnd-html5-backend "^14.1.0"
+    react-helmet "^6.1.0"
+    react-hook-form "^7.22.1"
+    react-multiline-clamp "^2.0.0"
+    react-router-dom "^5.3.0"
+    react-table "^7.7.0"
+    react-zoom-pan-pinch "^2.1.3"
+    simplebar-react "^2.3.6"
+    swiper "^8.1.4"
+    uuid "^8.3.2"
+
+"@bubbles-ui/components@^1.1.4":
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.1.4.tgz#b96d6b5a211fb7e74861d9431e9de4853393630c"
   integrity sha512-I0VMAebOUwaP1cji2ih85Eu8/JF5OeswPcauZHUy6XM1I3RT08fBUApwI99Pn46696Bf2M/QjBsEaJVm32t7Ng==
@@ -1824,10 +1862,10 @@
     swiper "^8.1.4"
     uuid "^8.3.2"
 
-"@bubbles-ui/editors@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.1.4.tgz#b9ad0eedc271f799f631c81514b0376dd888da29"
-  integrity sha512-N4d+68xkr9Zt8mzQdqYazR8EDi1xRa+sEGS/aiz6ZJX8dHN0N89ITftGXAJ/RXggF4YEQ+b6UKvv3dUZwjNQpg==
+"@bubbles-ui/editors@1.1.51":
+  version "1.1.51"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.1.51.tgz#c93e0c73896549f365fe771f4b86f5cd27ac9aca"
+  integrity sha512-b8XawSBwADQf1O0CTylCyebXJth3OUd2OcFw5gPSlU8+eWPShS8yLkesOFmeyCzIOAP1RHZthakrV/RQu2l5Ng==
   dependencies:
     "@tiptap/extension-character-count" "^2.0.0-beta.25"
     "@tiptap/extension-code-block-lowlight" "^2.0.0-beta.68"
@@ -1854,10 +1892,15 @@
   resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.1.4.tgz#6c1e02b92daa105232184178facb67d00beb11c5"
   integrity sha512-S6hZu/jMup10SG21PR72o1l0DR2HibFBxwKAUOMmJi8X87uOL5O5/Xn48HwF8KUR9cXQi2wujj5S/FEfx2IeZw==
 
-"@bubbles-ui/leemons@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.1.4.tgz#2e514ac680f074704afe7ccec9be8780c62c5815"
-  integrity sha512-LCNxN42GCHhx+Xk54ZQYuxA0SHe0nRYbxJ50K3g+ZwInNO8lJK93yeQML1TMLy0Gih/7ajFB5i96EbiGdgRFvA==
+"@bubbles-ui/icons@1.1.51":
+  version "1.1.51"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.1.51.tgz#084dc5776c940e12f6cc783a3c041236ae94a2e3"
+  integrity sha512-inspy/YgBofZZ3ZU+bAOTfkrSUWPMRoEjt0M3IvFix/iqgGM99Z5DfrbZAljokcKi7uEDZ5LBdT286TtaN99wA==
+
+"@bubbles-ui/leemons@1.1.51":
+  version "1.1.51"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.1.51.tgz#f855831037be3e0ff66fc146697dac63afb13bfd"
+  integrity sha512-osC5wqH0CgJWkgtQ1oHSCgFpZ9zdAUmuDkKM2WWlXqg2EbAa96t9IaBnWwPTwRiDoJgRQ5Bc8LQ2Lle3kbfVNg==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
@@ -1877,10 +1920,10 @@
     rrule "^2.6.8"
     uuid "^8.3.2"
 
-"@bubbles-ui/notifications@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.1.4.tgz#a751876bf53218fa55bb39ac4b53216698c01b93"
-  integrity sha512-o7GmvlVG9hMmc9NXBrlGy6SzAdw2mQotj55nO9+lZnidSI90dWWuGxTge2bQjMxd7uKT0LM8TUtSu676qM1XIw==
+"@bubbles-ui/notifications@1.1.51":
+  version "1.1.51"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.1.51.tgz#76b9d4b95364ff022652ccd9a0ba16f8dbc8707e"
+  integrity sha512-QMRskiwZxSIkplaE4tc+NsmhC7avv8zX+n8y7udnTiPk2uYRHZCcHBgZ1W666iX1Woan6igCizAwLemfa741Eg==
   dependencies:
     "@mantine/notifications" "5.5.5"
     lodash "^4.17.21"
