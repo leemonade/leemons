@@ -9,6 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const LoadablePlugin = require('@loadable/webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin'); 
 
 module.exports = function webpackConfig({
   app,
@@ -94,6 +95,14 @@ module.exports = function webpackConfig({
       },
     },
     resolve: {
+      /*
+      fallback: {
+        fs: false,
+        tsl: false,
+        path: require.resolve('path-browserify'),
+        crypto: require.resolve('crypto-browserify'),
+      },
+      */
       symlinks: false,
       alias: {
         ...alias,
@@ -211,6 +220,7 @@ module.exports = function webpackConfig({
       ],
     },
     plugins: [
+      new NodePolyfillPlugin(),
       new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
         filename: 'index.html',

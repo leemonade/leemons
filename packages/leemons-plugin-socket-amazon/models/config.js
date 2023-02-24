@@ -5,19 +5,13 @@ module.exports = {
     useTimestamps: true,
   },
   attributes: {
-    name: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
     region: {
       type: 'string',
       options: {
         notNull: true,
       },
     },
-    accessKey: {
+    accessKeyId: {
       type: 'string',
       options: {
         notNull: true,

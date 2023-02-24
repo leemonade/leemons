@@ -1,6 +1,6 @@
-import { io } from 'socket.io-client';
-import { useEffect, useRef } from 'react';
 import hooks from 'leemons-hooks';
+import { useEffect, useRef } from 'react';
+import { io } from 'socket.io-client';
 
 let socket = null;
 
@@ -10,8 +10,6 @@ export const SocketIoService = {
     console.log('Socket.io connected');
     return socket;
   },
-  emit: (event, data, callback) => socket.emit(event, data, callback),
-  on: (event, callback) => socket.on(event, callback),
   useOn: (_event, callback) => {
     const ref = useRef({ callback, event: _event });
     ref.current.callback = callback;

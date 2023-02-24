@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { getCookieToken } from '@users/session';
 import { useStore } from '@common';
 import { SocketIoService } from '@socket-io/service';
+import { getCookieToken } from '@users/session';
 import hooks from 'leemons-hooks';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 export function Provider({ children }) {
   const [store] = useStore();
 
-  function init() {
-    SocketIoService.disconnect();
+  async function init() {
+    await SocketIoService.disconnect();
     const token = getCookieToken(true);
     if (token && token !== store.token) {
-      // console.log(token);
-
       const config = {
         auth: {},
       };
@@ -25,7 +23,7 @@ export function Provider({ children }) {
       } else {
         config.auth.token = JSON.stringify(_.map(token.centers, 'token'));
       }
-      SocketIoService.connect(leemons.serverUrl, config);
+      await SocketIoService.connect(leemons.serverUrl, config);
       SocketIoService.onAny((event, data) =>
         hooks.fireEvent('socket.io:onAny', {
           event,

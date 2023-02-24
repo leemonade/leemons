@@ -1,5 +1,5 @@
 {
-  "name": "leemons-provider-socket-amazon",
+  "name": "leemons-plugin-socket-amazon",
   "version": "0.0.1",
   "main": "lib/index.js",
   "license": "MIT",

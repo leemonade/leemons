@@ -169,6 +169,30 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       _.set(plugin, 'status', { ...plugin.status, ...PLUGIN_STATUS.missingDeps });
     });
 
+  function socketEmit(ids, eventName, eventData) {
+    const isSocketIo = (leemons.config.get('config.socketPlugin') || 'socket-io') === 'socket-io';
+
+    if (isSocketIo) {
+      LeemonsSocket.worker.emit(ids, eventName, eventData);
+    } else {
+      leemons.plugins[
+        leemons.config.get('config.socketPlugin') || 'socket-io'
+      ].services.socket.worker.emit(ids, eventName, eventData);
+    }
+  }
+
+  function socketEmitToAll(eventName, eventData) {
+    const isSocketIo = (leemons.config.get('config.socketPlugin') || 'socket-io') === 'socket-io';
+
+    if (isSocketIo) {
+      LeemonsSocket.worker.emitToAll(eventName, eventData);
+    } else {
+      leemons.plugins[
+        leemons.config.get('config.socketPlugin') || 'socket-io'
+      ].services.socket.worker.emitToAll(eventName, eventData);
+    }
+  }
+
   // Get each loading function for the plugin
   const pluginsFunctions = plugins
     .filter((plugin) => plugin.status.code === PLUGIN_STATUS.enabled.code)
@@ -179,9 +203,8 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
       // leemons.query)
       const vmFilter = (filter) => {
         _.set(filter, 'leemons.socket', {
-          emit: LeemonsSocket.worker.emit,
-          emitToAll: LeemonsSocket.worker.emitToAll,
-          onConnection: LeemonsSocket.worker.onConnection,
+          emit: socketEmit,
+          emitToAll: socketEmitToAll,
         });
 
         _.set(filter, 'leemons.fs', {

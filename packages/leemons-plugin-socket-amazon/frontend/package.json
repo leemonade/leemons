@@ -1,11 +1,10 @@
 {
-  "name": "leemons-provider-socket-amazon-frontend",
+  "name": "socket-amazon-frontend",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "prop-types": "^15.7.2",
-    "react-hook-form": "^7.8.5"
+    "aws-iot-device-sdk-v2": "^1.9.5"
   },
   "devDependencies": {}
 }
