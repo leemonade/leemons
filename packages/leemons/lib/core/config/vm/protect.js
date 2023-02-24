@@ -43,7 +43,7 @@ module.exports = (allowedRelPath, plugin, type) => {
   // ES: Para aquellos plugins core que necesiten acceso total, dejar de proteger el fs
   if (
     type === 'plugin' &&
-    ['leebrary', 'admin'].includes(plugin.name)
+    ['bulk-template', 'leebrary', 'admin'].includes(plugin.name)
     // || type === 'provider' && [].includes(plugin.name)
   ) {
     return () => ({ fs, 'fs/promises': fsPromises });
