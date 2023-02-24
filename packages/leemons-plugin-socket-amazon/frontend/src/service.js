@@ -8,25 +8,22 @@ const decoder = new TextDecoder('utf8');
 let creating = false;
 let retryIfFail = false;
 
-let device = null;
-let credentials = null;
-
 let anyCallbacks = [];
 
 function endDevice() {
   anyCallbacks = [];
   console.log('Frontend - Remove all listeners and disconnect');
-  device.removeAllListeners('connect');
-  device.removeAllListeners('interrupt');
-  device.removeAllListeners('resume');
-  device.removeAllListeners('disconnect');
-  device.removeAllListeners('error');
-  device.removeAllListeners('message');
-  _.forEach(credentials.topics, (topic) => {
-    device.unsubscribe(topic);
+  window.device.removeAllListeners('connect');
+  window.device.removeAllListeners('interrupt');
+  window.device.removeAllListeners('resume');
+  window.device.removeAllListeners('disconnect');
+  window.device.removeAllListeners('error');
+  window.device.removeAllListeners('message');
+  _.forEach(window.credentials.topics, (topic) => {
+    window.device.unsubscribe(topic);
   });
-  device.disconnect();
-  device = null;
+  window.device.disconnect();
+  window.device = null;
 }
 
 async function connectWebsocket(data) {
@@ -44,29 +41,29 @@ async function connectWebsocket(data) {
       .with_keep_alive_seconds(30)
       .build();
 
-    device = new mqtt.MqttClient();
+    window.device = new mqtt.MqttClient();
 
-    device = device.new_connection(config);
-    device.on('connect', () => {
+    window.device = window.device.new_connection(config);
+    window.device.on('connect', () => {
       console.log('Frontend - Conectado a iot correctamente');
       resolve();
     });
-    device.on('interrupt', (error) => {
+    window.device.on('interrupt', (error) => {
       console.error('Frontend - Iot interrupt');
       console.error(error);
     });
-    device.on('resume', (returnCode) => {
+    window.device.on('resume', (returnCode) => {
       console.error(`Frontend - Iot resume (${returnCode})`);
     });
-    device.on('disconnect', () => {
+    window.device.on('disconnect', () => {
       console.error('Frontend - Iot disconnect');
     });
-    device.on('error', (error) => {
+    window.device.on('error', (error) => {
       console.error('Frontend - Ha ocurrido un error en iot');
       console.error(error);
       reject(error);
     });
-    device.connect();
+    window.device.connect();
   });
 }
 
@@ -83,16 +80,16 @@ async function tryConnect() {
     if (!creating) {
       creating = true;
 
-      credentials = await getCredentials();
+      window.credentials = await getCredentials();
 
-      if (device) endDevice();
-      await connectWebsocket(credentials);
+      if (window.device) endDevice();
+      await connectWebsocket(window.credentials);
 
-      _.forEach(credentials.topics, (topic) => {
-        device.subscribe(topic, mqtt.QoS.AtLeastOnce);
+      _.forEach(window.credentials.topics, (topic) => {
+        window.device.subscribe(topic, mqtt.QoS.AtLeastOnce);
       });
 
-      device.on('message', (t, payload) => {
+      window.device.on('message', (t, payload) => {
         const message = JSON.parse(decoder.decode(new Uint8Array(payload)));
         _.forEach(anyCallbacks, (callback) => {
           callback(message.eventName, message.eventData);
@@ -104,7 +101,6 @@ async function tryConnect() {
     } else {
       retryIfFail = true;
     }
-    return null;
   } catch (e) {
     if (retryIfFail) {
       retryIfFail = false;
@@ -112,6 +108,7 @@ async function tryConnect() {
     }
     creating = false;
   }
+  return null;
 }
 
 export const SocketIotService = {
@@ -151,7 +148,7 @@ export const SocketIotService = {
     }, []);
   },
   disconnect: () => {
-    if (device) endDevice();
+    if (window.device) endDevice();
   },
 };
 
