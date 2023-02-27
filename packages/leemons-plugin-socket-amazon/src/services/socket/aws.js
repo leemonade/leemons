@@ -7,6 +7,12 @@ let config = null;
 let account = null;
 let configDateEnd = null;
 
+function configChanged() {
+  config = null;
+  account = null;
+  configDateEnd = null;
+}
+
 async function getConfig({ transacting } = {}) {
   const now = new Date();
   if (configDateEnd && configDateEnd > now) {
@@ -99,4 +105,4 @@ async function getFederationToken(policy, { transacting } = {}) {
           ],
         } */
 
-module.exports = { getIot, getRegion, getFederationToken, getAccount };
+module.exports = { getIot, getRegion, getFederationToken, getAccount, configChanged };

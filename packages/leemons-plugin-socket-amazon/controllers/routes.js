@@ -5,4 +5,26 @@ module.exports = [
     handler: 'socket.getCredentials',
     authenticated: true,
   },
+  {
+    method: 'POST',
+    path: '/config',
+    handler: 'socket.setConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.socket-amazon.config': {
+        actions: ['admin'],
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/config',
+    handler: 'socket.getConfig',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.socket-amazon.config': {
+        actions: ['admin'],
+      },
+    },
+  },
 ];
