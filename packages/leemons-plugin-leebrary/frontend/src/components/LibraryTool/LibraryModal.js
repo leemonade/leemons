@@ -85,7 +85,7 @@ const LibraryModal = ({
 
   // SIZE ·····················································
   const { width: viewportWidth } = useViewportSize();
-  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 600), [viewportWidth]);
+  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
 
   const {
     control,
@@ -242,12 +242,12 @@ const LibraryModal = ({
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
         size={drawerSize}
-        shadow={drawerSize <= 600}
+        shadow
         assetType={assetType}
         onTypeChange={setAssetType}
         onlyThumbnails={false}
         allowChangeCategories={['bookmarks', 'media-files']}
-        itemMinWidth={200}
+        itemMinWidth={250}
       />
     </Box>
   );
