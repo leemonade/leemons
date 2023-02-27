@@ -6,7 +6,6 @@ const { getById: getCategory } = require('../categories/getById');
 const { duplicate: duplicateFile } = require('../files/duplicate');
 const { tables } = require('../tables');
 const { add: addFiles } = require('./files/add');
-const { getById } = require('./getById');
 
 async function duplicate(
   assetId,
@@ -175,8 +174,6 @@ async function duplicate(
       [newAsset.file] = newFiles;
     }
   }
-
-  console.dir(newAsset, { depth: null });
 
   return newAsset;
 }
