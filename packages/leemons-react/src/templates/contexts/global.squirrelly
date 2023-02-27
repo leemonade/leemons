@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import React, { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 const context = createContext();
 
@@ -33,6 +33,7 @@ class LeemonsApi {
     try {
       await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
 
+      console.log('Vamos a hacer fetch a: '+ `${global.leemons.serverUrl}/api/${ctx.url}`);
       const response = await fetch(`${global.leemons.serverUrl}/api/${ctx.url}`, ctx.options);
 
       const responseCtx = { middlewares: [], response };
@@ -55,8 +56,8 @@ class LeemonsApi {
       ctx.middlewares[i] = true;
       const next = middlewares[i + 1]
         ? () => this.#callMiddleware(middlewares, i + 1, ctx)
-        : () => { };
-      const middleware = middlewares[i] ? middlewares[i] : () => { };
+        : () => {};
+      const middleware = middlewares[i] ? middlewares[i] : () => {};
       await middleware(ctx, next);
       await next();
     }
@@ -125,12 +126,18 @@ export function Provider({ children }) {
       api,
       log: console,
       version: '1.0.0',
+      {{@if(it.apiUrl)}}
+      serverUrl: "{{it.apiUrl}}",
+      {{#else}}
       serverUrl: window.location.origin,
+      {{/if}}
     },
   });
 
   global.leemons = value.leemons;
-  return <context.Provider value={{ ...value, setValue }}>{children}</context.Provider>;
+
+  const providerValue = { ...value, setValue };
+  return <context.Provider value={providerValue}>{children}</context.Provider>;
 }
 
 Provider.propTypes = {
