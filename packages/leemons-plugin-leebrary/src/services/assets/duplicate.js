@@ -112,10 +112,11 @@ async function duplicate(
   // ·········································································
   // POST CREATION
 
+  let newCover = null;
   if (cover) {
-    const coverFile = await duplicateFile(cover, { transacting });
-    if (coverFile)
-      await tables.assets.update({ id: newAsset.id }, { cover: coverFile.id }, { transacting });
+    newCover = await duplicateFile(cover, { transacting });
+    if (newCover)
+      await tables.assets.update({ id: newAsset.id }, { cover: newCover.id }, { transacting });
   }
 
   if (bookmark) {
@@ -133,14 +134,16 @@ async function duplicate(
     );
   }
 
+  let newFiles = null;
+
   if (files.length) {
     const filesP = [];
     _.forEach(files, (file) => {
       filesP.push(duplicateFile(file, { transacting }));
     });
-    const filesR = await Promise.all(filesP);
+    newFiles = await Promise.all(filesP);
     const promises = [];
-    _.forEach(filesR, (f) => {
+    _.forEach(newFiles, (f) => {
       promises.push(
         addFiles(f.id, newAsset.id, {
           skipPermissions: true,
@@ -152,7 +155,13 @@ async function duplicate(
     await Promise.allSettled(promises);
   }
 
-  return newAsset;
+  const result = {
+    ...newAsset,
+    cover: newCover,
+    file: _.isArray(newFiles) ? newFiles[0] : undefined,
+  };
+
+  return result;
 }
 
 module.exports = { duplicate };
