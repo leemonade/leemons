@@ -112,11 +112,12 @@ async function duplicate(
   // ·········································································
   // POST CREATION
 
-  let newCover = null;
   if (cover) {
-    newCover = await duplicateFile(cover, { transacting });
-    if (newCover)
+    const newCover = await duplicateFile(cover, { transacting });
+    if (newCover) {
       await tables.assets.update({ id: newAsset.id }, { cover: newCover.id }, { transacting });
+      newAsset.cover = newCover;
+    }
   }
 
   if (bookmark) {
@@ -126,6 +127,11 @@ async function duplicate(
       const icon = _.find(files, { id: bookmark.icon });
       const newIcon = await duplicateFile(icon, { transacting });
       newIconId = newIcon?.id;
+
+      newAsset.url = bookmark.url;
+      newAsset.icon = newIcon;
+      newAsset.fileType = 'bookmark';
+      newAsset.metadata = [];
     }
 
     await tables.bookmarks.create(
@@ -139,7 +145,10 @@ async function duplicate(
   if (files.length) {
     const filesP = [];
     _.forEach(files, (file) => {
-      filesP.push(duplicateFile(file, { transacting }));
+      // Skip cover duplication again
+      if (file.id !== cover?.id) {
+        filesP.push(duplicateFile(file, { transacting }));
+      }
     });
     newFiles = await Promise.all(filesP);
     const promises = [];
@@ -155,13 +164,18 @@ async function duplicate(
     await Promise.allSettled(promises);
   }
 
-  const result = {
-    ...newAsset,
-    cover: newCover,
-    file: _.isArray(newFiles) ? newFiles[0] : undefined,
-  };
+  if (!_.isEmpty(newFiles)) {
+    if (newAsset.cover) {
+      newAsset.file =
+        newFiles.length > 1
+          ? newFiles.filter((item) => item.id !== newAsset.cover.id)
+          : newFiles[0];
+    } else {
+      [newAsset.file] = newFiles;
+    }
+  }
 
-  return result;
+  return newAsset;
 }
 
 module.exports = { duplicate };
