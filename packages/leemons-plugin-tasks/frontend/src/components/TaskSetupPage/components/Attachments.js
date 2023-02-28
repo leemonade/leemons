@@ -38,10 +38,7 @@ export default function Attachments({ labels }) {
   */
   const { width: viewportWidth } = useViewportSize();
   const [boxRef, rect] = useResizeObserver();
-  const drawerSize = useMemo(
-    () => Math.max(viewportWidth - rect.width - 370, 600),
-    [viewportWidth, rect]
-  );
+  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
 
   /*
     --- Form ---
@@ -148,7 +145,7 @@ export default function Attachments({ labels }) {
             opened={showAssetDrawer}
             creatable
             size={drawerSize}
-            shadow={drawerSize <= 600}
+            shadow={drawerSize <= 720}
             assetType={assetType}
             canChangeType
             onTypeChange={setAssetType}
@@ -156,7 +153,7 @@ export default function Attachments({ labels }) {
             onClose={onDrawerClose}
             onlyThumbnails={false}
             allowChangeCategories={['bookmarks', 'media-files']}
-            itemMinWidth={200}
+            itemMinWidth={250}
           />
         </form>
       </Box>
