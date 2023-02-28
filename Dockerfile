@@ -12,6 +12,8 @@ RUN rm -f ./.env
 # RUN rm -rf ./build
 RUN rm -rf ./logs
 # RUN yarn front:build
-RUN printf "cd /leemons/app \nyarn start & \nyarn front:preview & \nwait -n \nexit $?" >> /leemons/runner.sh
+# RUN printf "cd /leemons/app \n yarn start & \n yarn front:preview & \n wait -n \n exit $?" >> /leemons/runner.sh
+
+RUN printf "cd /leemons/app \n yarn start & \n wait -n \n exit $?" >> /leemons/runner.sh
 CMD [ "sh", "/leemons/runner.sh" ]
 EXPOSE 8080

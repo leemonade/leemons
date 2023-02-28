@@ -33,7 +33,6 @@ class LeemonsApi {
     try {
       await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
 
-      console.log('Vamos a hacer fetch a: '+ `${global.leemons.serverUrl}/api/${ctx.url}`);
       const response = await fetch(`${global.leemons.serverUrl}/api/${ctx.url}`, ctx.options);
 
       const responseCtx = { middlewares: [], response };
