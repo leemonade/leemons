@@ -23,7 +23,7 @@ export function Provider({ children }) {
       } else {
         config.auth.token = JSON.stringify(_.map(token.centers, 'token'));
       }
-      await SocketIoService.connect(leemons.serverUrl, config);
+      await SocketIoService.connect(leemons.apiUrl, config);
       SocketIoService.onAny((event, data) =>
         hooks.fireEvent('socket.io:onAny', {
           event,

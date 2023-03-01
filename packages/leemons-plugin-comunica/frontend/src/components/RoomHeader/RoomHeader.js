@@ -110,7 +110,9 @@ function RoomHeader({ room, t, onImageChange }) {
             <VolumeControlOffIcon />
           </Box>
         ) : null}
-        {showViewTypes.includes(room.type) ? <RoomInstanceView room={room} t={t} /> : null}
+        {showViewTypes.includes(room.type) ? (
+          <RoomInstanceView key={room?.id} room={room} t={t} />
+        ) : null}
       </Box>
     </Box>
   );

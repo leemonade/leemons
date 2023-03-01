@@ -18,6 +18,7 @@ module.exports = {
     state: 'Estado',
     statePlaceholder: 'Seleccionar estado',
     clear: 'Limpiar',
+    emptyState: 'No existen mensajes',
     objectives: {
       allCenters: 'Todos los centros',
       allPrograms: 'Todos los programas',
@@ -60,8 +61,8 @@ module.exports = {
       new: 'Nuevo mensaje',
       edit: 'Editar mensaje',
       unpublish: 'Despublicado',
-      internalName: 'Nombre interno',
-      internalNamePlaceholder: 'Escribe un nombre',
+      internalName: 'Título',
+      internalNamePlaceholder: 'Escribe un título',
       toWho: '¿A quién quieres comunicar?',
       center: 'Centro',
       centerPlaceholder: 'Selecciona un centro',
@@ -93,12 +94,13 @@ module.exports = {
       endDate: 'Fecha de fin',
       endHour: 'Hora de fin',
       cancel: 'Cancelar',
+      create: 'Crear',
       save: 'Guardar',
       update: 'Actualizar',
       clear: 'Limpiar',
       form: {
         centerError: 'Es necesario seleccionar un centro',
-        internalNameError: 'Es necesario un nombre',
+        internalNameError: 'Es necesario un título',
         messageError: 'Es necesario un mensaje',
         textUrlError: 'Es necesario un texto del enlace',
         urlError: 'Es necesaria una URL al enlace',
@@ -108,6 +110,13 @@ module.exports = {
       },
       success: 'Mensaje creado correctamente',
       updateSuccess: 'Mensaje actualizado correctamente',
+      overlapsCheck: 'Despublicar mensajes conflictivos y publicar nuevo mensaje',
+      checkboxHelp: 'Se despublicarán los siguientes mensajes:',
+      existingMessageTitle: 'Mensaje existente',
+      existingMessageInfoSingular:
+        'Existe 1 mensaje publicado con los parámetros seleccionados. El mensaje se guardará sin publicar si no modifica los parámetros o selecciona “Despublicar mensajes conflictivos”.',
+      existingMessageInfo:
+        'Existen {nMessages} mensajes publicados con los parámetros seleccionados. El mensaje se guardará sin publicar si no modifica los parámetros o selecciona “Despublicar mensajes conflictivos”.',
     },
   },
   modal: {

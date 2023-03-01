@@ -1,9 +1,9 @@
 /* eslint-disable import/prefer-default-export */
-import { Node, ReactNodeViewRenderer, mergeAttributes } from '@bubbles-ui/editors';
-import { keys, isEmpty } from 'lodash';
+import { mergeAttributes, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
-import { IMAGE_ASSET, VIDEO_ASSET, AUDIO_ASSET, URL_ASSET } from './mock/data';
+import { isEmpty, keys } from 'lodash';
 import { LibraryPlayer } from './LibraryPlayer';
+import { AUDIO_ASSET, IMAGE_ASSET, URL_ASSET, VIDEO_ASSET } from './mock/data';
 
 const ASSET_KEYS = keys({
   ...VIDEO_ASSET,
@@ -20,7 +20,7 @@ function appendAuthorizationToUrl(url) {
 
   const authTokens = getAuthorizationTokenForAllCenters();
 
-  const _url = new URL(url.startsWith('http') ? url : window.location.origin + url);
+  const _url = new URL(url.startsWith('http') ? url : leemons.apiUrl + url);
 
   _url.searchParams.set('authorization', authTokens);
 

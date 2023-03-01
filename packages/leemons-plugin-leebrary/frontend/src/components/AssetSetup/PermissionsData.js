@@ -123,9 +123,6 @@ const PermissionsData = ({
   const { data: programs } = usePrograms();
   const profileSysName = useGetProfileSysName();
 
-  console.log('asset 2', asset);
-  console.log('assetProp', assetProp);
-
   const programsData = useMemo(() => {
     let goodPrograms = programs;
     if (asset?.program) {

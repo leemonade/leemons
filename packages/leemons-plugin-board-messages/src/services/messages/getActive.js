@@ -42,7 +42,7 @@ async function getActive(data, { userSession, transacting, _userAgent, _ids } = 
   if (activeConfig) {
     const now = new Date();
     // Si ya ha pasado la fecha fin marcamos la configuración como finalizada
-    if (activeConfig.enDate > now) {
+    if (now > activeConfig.endDate) {
       await table.messageConfig.update(
         { id: activeConfig.id },
         { status: 'completed' },

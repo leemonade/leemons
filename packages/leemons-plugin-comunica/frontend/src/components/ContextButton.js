@@ -202,9 +202,10 @@ function ContextButton({ onShowDrawerChange }) {
         ) {
           if (data.message?.type === 'text') {
             notifications.showNotification({
-              onClick: (e) => {
+              onClick: (e, notification) => {
                 if (!e.target.className.includes('mantine-Notification_chat-closeButton')) {
                   store.openRoom = room;
+                  notifications.hideNotification(notification.id);
                   render();
                 }
               },

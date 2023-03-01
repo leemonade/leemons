@@ -35,5 +35,18 @@ export const DetailDrawerStyles = createStyles((theme, {}) => {
       justifyContent: 'flex-end',
       gap: 16,
     },
+    checkboxHelp: {
+      marginLeft: 36,
+      ...globalTheme.content.typo.body.sm,
+      color: globalTheme.content.color.text.muted,
+      display: 'flex',
+      gap: 8,
+      alignItems: 'center',
+    },
+    overlaps: {
+      marginLeft: 52,
+      ...globalTheme.content.typo.body.sm,
+      color: globalTheme.content.color.text.muted,
+    },
   };
 });

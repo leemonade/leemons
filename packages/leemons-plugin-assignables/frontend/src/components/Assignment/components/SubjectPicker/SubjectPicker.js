@@ -33,7 +33,7 @@ export function useSubjectsForSubjectPicker(subjects) {
         subjectDetails?.map((subject) => ({
           label: subject.name,
           value: subject.id,
-          icon: prepareAsset(subject.icon).cover,
+          //icon: prepareAsset(subject.icon).cover,
         })),
         'value'
       ) || [],

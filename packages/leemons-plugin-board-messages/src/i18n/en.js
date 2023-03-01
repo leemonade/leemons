@@ -18,6 +18,7 @@ module.exports = {
     state: 'State',
     statePlaceholder: 'Select state',
     clear: 'Clear',
+    emptyState: 'No existing messages',
     objectives: {
       allCenters: 'All centers',
       allPrograms: 'All programs',
@@ -60,8 +61,8 @@ module.exports = {
       new: 'New message',
       edit: 'Edit message',
       unpublish: 'Unpublished',
-      internalName: 'Internal name',
-      internalNamePlaceholder: 'Write a name',
+      internalName: 'Title',
+      internalNamePlaceholder: 'Write a title',
       toWho: 'Who do you want to communicate with?',
       center: 'Center',
       centerPlaceholder: 'Select a center',
@@ -91,12 +92,13 @@ module.exports = {
       endDate: 'End date',
       endHour: 'End hour',
       cancel: 'Cancel',
+      create: 'Create',
       save: 'Save',
       update: 'Update',
       clear: 'Clear',
       form: {
         centerError: 'It is necessary to select a center',
-        internalNameError: 'Internal name is required',
+        internalNameError: 'A title is required',
         messageError: 'Message is required',
         textUrlError: 'A text to the link is required',
         urlError: 'An url to the link is required',
@@ -106,6 +108,13 @@ module.exports = {
       },
       success: 'Message created succesfully',
       updateSuccess: 'Message updated succesfully',
+      overlapsCheck: 'Unpublish conflicting messages and publish new message',
+      checkboxHelp: 'The following messages will be unpublished:',
+      existingMessageTitle: 'Existing message',
+      existingMessageInfoSingular:
+        'There is 1 published message with the selected parameters. The message will be saved unpublished if you do not modify the parameters or select "Unpublish conflicting messages".',
+      existingMessageInfo:
+        'There are {nMessages} published messages with the selected parameters.The message will be saved unpublished if you do not modify the parameters or select "Unpublish conflicting messages".',
     },
   },
   modal: {

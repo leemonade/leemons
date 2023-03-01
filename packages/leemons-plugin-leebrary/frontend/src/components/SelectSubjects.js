@@ -87,7 +87,7 @@ export default function SelectSubjects({
         columns={mainTeacherSubjectsColumns}
         labels={tableInputLabels}
         unique
-        sortable
+        sortable={false}
         disabledAddButton={!!(maxOne && value?.length)}
         error={errors?.subjects}
       />

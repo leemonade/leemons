@@ -28,7 +28,7 @@ const BannerMessage = ({ message }) => {
       </Box>
       <Box className={classes.messageWrapper}>
         <Box className={classes.messageRoot}>
-          {message.asset && (
+          {message.asset?.cover && (
             <Box>
               <ImageLoader src={preparedAsset?.cover} width={275} height={'100%'} />
             </Box>
