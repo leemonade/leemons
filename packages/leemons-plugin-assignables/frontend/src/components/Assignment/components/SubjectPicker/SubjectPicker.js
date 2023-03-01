@@ -47,6 +47,7 @@ export function SubjectPicker({
   value: parentValue,
   onChange,
   error,
+  hideSectionHeaders,
   ...props
 }) {
   const subjects = useSubjectsForSubjectPicker(assignable?.subjects);
@@ -74,7 +75,7 @@ export function SubjectPicker({
   }, [value]);
 
   return (
-    <Container title={localizations?.title}>
+    <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
       <Box className={classes.subjectPicker}>
         <TagsInput
           {...props}
@@ -97,4 +98,5 @@ SubjectPicker.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.arrayOf(PropTypes.string),
   error: PropTypes.any,
+  hideSectionHeaders: PropTypes.bool,
 };

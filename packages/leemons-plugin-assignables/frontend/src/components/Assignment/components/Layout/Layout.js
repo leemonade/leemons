@@ -84,7 +84,7 @@ export function Layout({ assignable, action, children, buttonsComponent, onlyCon
         </Title>
       )}
       <Box className={classes.content}>{children}</Box>
-      <Box className={classes.buttons}>{buttonsComponent}</Box>
+      {!!buttonsComponent && <Box className={classes.buttons}>{buttonsComponent}</Box>}
     </Box>
   );
 }
