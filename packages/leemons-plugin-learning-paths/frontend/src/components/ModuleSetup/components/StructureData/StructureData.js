@@ -188,8 +188,8 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
                 {
                   label: _localizations?.buttons?.publishAndAssign,
                   onClick: () =>
-                    fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
-                      alert('Should redirect to assign page')
+                    fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', ({ id }) =>
+                      history.push(`/private/learning-paths/modules/${id}/assign`)
                     ),
                 },
               ]}

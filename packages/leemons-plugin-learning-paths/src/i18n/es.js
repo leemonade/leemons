@@ -66,6 +66,7 @@ module.exports = {
           columns: {
             resource: 'Actividad',
             type: 'Tipo',
+            time: 'Tiempo',
             actions: 'Acciones',
           },
           lastUpdate: 'Última actualización',
@@ -77,6 +78,12 @@ module.exports = {
           },
         },
       },
+    },
+    alert: {
+      saveSuccess: 'Guardado correctamente',
+      saveError: 'No ha sido posible guardar',
+      publishSuccess: 'Guardado y publicado correctamente',
+      publishError: 'No ha sido posible guardar y publicar',
     },
   },
   libraryCard: {
@@ -97,6 +104,21 @@ module.exports = {
       message: '¿Seguro que quiere eliminar el módulo {{name}}?',
       success: 'El módulo {{name}} ha sido eliminado',
       error: 'El módulo {{name}} no ha podido ser eliminado',
+    },
+  },
+  assignation: {
+    steps: {
+      assignmentForm: {
+        action: 'Asignar como módulo',
+      },
+      setup: {
+        action: 'Configuración',
+      },
+    },
+    buttons: {
+      previous: 'Anterior',
+      next: 'Siguiente',
+      assign: 'Asignar',
     },
   },
 };

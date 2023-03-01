@@ -66,6 +66,7 @@ module.exports = {
           columns: {
             resource: 'Activity',
             type: 'Type',
+            time: 'Tiempo',
             actions: 'Actions',
           },
           lastUpdate: 'Last update',
@@ -78,6 +79,12 @@ module.exports = {
         },
       },
     },
+    alert: {
+      saveSuccess: 'Saved successfuly',
+      saveError: 'An error occurred while saving',
+      publishSuccess: 'Saved and published successfuly',
+      publishError: 'An error occurred while saving and publishing',
+    },
   },
   libraryCard: {
     menuItems: {
@@ -87,16 +94,31 @@ module.exports = {
       delete: 'Delete',
     },
     duplicate: {
-      title: 'Duplicar módulo',
-      message: '¿Seguro que quiere duplicar el módulo {{name}}?',
+      title: 'Duplicate module',
+      message: 'Are you sure you want to delete the module {{name}}?',
       success: 'The module {{name}} has been duplicated',
       error: 'The module {{name}} could not be duplicated',
     },
     delete: {
-      title: 'Eliminar módulo',
-      message: '¿Seguro que quiere elminnar el módulo {{name}}?',
+      title: 'Delete module',
+      message: 'Are you sure you want to delete the module {{name}}?',
       success: 'The module {{name}} has been deleted',
       error: 'The module {{name}} could not be deleted',
+    },
+  },
+  assignation: {
+    steps: {
+      assignmentForm: {
+        action: 'Assign as module',
+      },
+      setup: {
+        action: 'Configuration',
+      },
+    },
+    buttons: {
+      previous: 'Previous',
+      next: 'Next',
+      assign: 'Assign',
     },
   },
 };
