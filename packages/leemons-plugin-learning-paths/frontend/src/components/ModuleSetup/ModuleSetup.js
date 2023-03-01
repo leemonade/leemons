@@ -135,7 +135,7 @@ function prepareSharedData(module) {
   return sharedData;
 }
 
-function onSaveDraft({ sharedDataRef, history }) {
+function onSaveDraft({ sharedDataRef, history, localizations }) {
   return addAction(`${eventBase}.onSaveDraft`, () => {
     handleOnSaveEvent()
       .then(async () => {
@@ -153,14 +153,14 @@ function onSaveDraft({ sharedDataRef, history }) {
         }
 
         // TRANSLATE
-        addSuccessAlert('Successfuly saved');
+        addSuccessAlert(localizations?.alert?.saveSuccess);
 
         history.replace(
           `/private/learning-paths/modules/${module.id}/edit${sharedData?.id ? '' : '?fromNew'}`
         );
       })
       .catch((e) => {
-        addErrorAlert('Failed to save', e.message ?? e);
+        addErrorAlert(localizations?.alert?.saveError, e.message ?? e);
       })
       .finally(() => fireEvent(`${eventBase}.onSave.finished`));
 
@@ -168,7 +168,7 @@ function onSaveDraft({ sharedDataRef, history }) {
   });
 }
 
-function onSaveAndPublish({ sharedDataRef }) {
+function onSaveAndPublish({ sharedDataRef, localizations }) {
   return addAction(`${eventBase}.onSave&Publish`, ({ args: [callback] }) => {
     handleOnSaveEvent()
       .then(async () => {
@@ -184,14 +184,14 @@ function onSaveAndPublish({ sharedDataRef }) {
           });
         }
 
-        addSuccessAlert('Successfuly saved and published');
+        addSuccessAlert(localizations?.alert?.publishSuccess);
 
         if (isFunction(callback)) {
           callback(sharedData);
         }
       })
       .catch((e) => {
-        addErrorAlert('Failed to save and publish', e.message ?? e);
+        addErrorAlert(localizations?.alert?.publishError, e.message ?? e);
       })
       .finally(() => fireEvent(`${eventBase}.onSave.finished`));
 
@@ -199,12 +199,18 @@ function onSaveAndPublish({ sharedDataRef }) {
   });
 }
 
-function useEventHandler() {
+function useEventHandler({ localizations }) {
   const [, , sharedDataRef] = useModuleSetupContext();
   const history = useHistory();
 
-  useEffect(() => onSaveDraft({ sharedDataRef, history }), [history, sharedDataRef]);
-  useEffect(() => onSaveAndPublish({ sharedDataRef }), [sharedDataRef]);
+  useEffect(
+    () => onSaveDraft({ sharedDataRef, history, localizations }),
+    [history, sharedDataRef, localizations]
+  );
+  useEffect(
+    () => onSaveAndPublish({ sharedDataRef, localizations }),
+    [sharedDataRef, localizations]
+  );
 }
 
 export function useStepRenderer({ step, tabs, props }) {
@@ -270,7 +276,7 @@ export function ModuleSetup() {
     props: { localizations, onNextStep, onPrevStep },
   });
 
-  useEventHandler();
+  useEventHandler({ localizations });
 
   return (
     <Box sx={{ position: 'relative' }}>
