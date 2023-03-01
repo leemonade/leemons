@@ -40,7 +40,7 @@ export function Provider({ children }) {
         const src = element.getAttribute('src');
         if (src.startsWith('/api')) {
           // eslint-disable-next-line no-param-reassign
-          element.src = leemons.serverUrl + src;
+          element.src = leemons.apiUrl + src;
         }
       });
     }, 1000);

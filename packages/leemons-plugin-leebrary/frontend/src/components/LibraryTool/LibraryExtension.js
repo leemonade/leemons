@@ -20,7 +20,7 @@ function appendAuthorizationToUrl(url) {
 
   const authTokens = getAuthorizationTokenForAllCenters();
 
-  const _url = new URL(url.startsWith('http') ? url : leemons.serverUrl + url);
+  const _url = new URL(url.startsWith('http') ? url : leemons.apiUrl + url);
 
   _url.searchParams.set('authorization', authTokens);
 

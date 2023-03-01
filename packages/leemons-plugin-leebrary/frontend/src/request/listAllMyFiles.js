@@ -7,7 +7,7 @@ async function listAllMyFiles() {
   });
   response.files = _.map(response.files, (file) => ({
     ...file,
-    localUrl: `${leemons.serverUrl}/api/leebrary/file/${
+    localUrl: `${leemons.apiUrl}/api/leebrary/file/${
       file.id
     }?authorization=${getAuthorizationTokenForAllCenters()}`,
   }));
