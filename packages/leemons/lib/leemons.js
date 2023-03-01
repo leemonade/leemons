@@ -339,13 +339,13 @@ class Leemons {
 
         if (!isGood) {
           const isSocketIo =
-            (this.config.get('config.socketPlugin') || 'socket-io') === 'socket-io';
+            (this.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
 
           if (isSocketIo) {
             LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
           } else {
             this.plugins[
-              this.config.get('config.socketPlugin') || 'socket-io'
+              this.config.get('config.socketPlugin') || 'mqtt-socket-io'
             ].services.socket.worker.emit(
               ctx.state.userSession.id,
               'USER_AGENT_NEED_UPDATE_DATASET'
@@ -723,7 +723,8 @@ class Leemons {
 
     await this.load();
 
-    const isSocketIo = (this.config.get('config.socketPlugin') || 'socket-io') === 'socket-io';
+    const isSocketIo =
+      (this.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
     if (isSocketIo) {
       LeemonsSocket.worker.init(this.server);
       LeemonsSocket.worker.onConnection((socket) => {
@@ -744,7 +745,7 @@ class Leemons {
       });
     } else {
       this.plugins[
-        this.config.get('config.socketPlugin') || 'socket-io'
+        this.config.get('config.socketPlugin') || 'mqtt-socket-io'
       ].services.socket.worker.init(this.server);
     }
 

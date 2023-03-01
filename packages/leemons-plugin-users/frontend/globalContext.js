@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { SessionContext, SessionProvider } from '@users/context/session';
 import { Box, Button, Modal } from '@bubbles-ui/components';
-import _, { isEmpty } from 'lodash';
 import { useStore } from '@common';
-import { getCookieToken } from '@users/session';
-import { SocketIoService } from '@socket-io/service';
+import { SocketIoService } from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SessionContext, SessionProvider } from '@users/context/session';
 import prefixPN from '@users/helpers/prefixPN';
-import { useHistory } from 'react-router-dom';
 import { useUpdateUserProfile } from '@users/hooks';
+import { getCookieToken } from '@users/session';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 export function apiSessionMiddleware(ctx) {
   if (!ctx.options) ctx.options = {};

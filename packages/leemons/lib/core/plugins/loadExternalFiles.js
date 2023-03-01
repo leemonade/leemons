@@ -170,25 +170,27 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
     });
 
   function socketEmit(ids, eventName, eventData) {
-    const isSocketIo = (leemons.config.get('config.socketPlugin') || 'socket-io') === 'socket-io';
+    const isSocketIo =
+      (leemons.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
 
     if (isSocketIo) {
       LeemonsSocket.worker.emit(ids, eventName, eventData);
     } else {
       leemons.plugins[
-        leemons.config.get('config.socketPlugin') || 'socket-io'
+        leemons.config.get('config.socketPlugin') || 'mqtt-socket-io'
       ].services.socket.worker.emit(ids, eventName, eventData);
     }
   }
 
   function socketEmitToAll(eventName, eventData) {
-    const isSocketIo = (leemons.config.get('config.socketPlugin') || 'socket-io') === 'socket-io';
+    const isSocketIo =
+      (leemons.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
 
     if (isSocketIo) {
       LeemonsSocket.worker.emitToAll(eventName, eventData);
     } else {
       leemons.plugins[
-        leemons.config.get('config.socketPlugin') || 'socket-io'
+        leemons.config.get('config.socketPlugin') || 'mqtt-socket-io'
       ].services.socket.worker.emitToAll(eventName, eventData);
     }
   }

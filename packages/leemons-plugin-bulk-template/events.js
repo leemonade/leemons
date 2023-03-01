@@ -56,7 +56,7 @@ async function events(isInstalled) {
       [
         'plugins.emails:pluginDidLoadServices',
         'plugins.leebrary:pluginDidLoadServices',
-        'providers.emails-amazon-ses:providerDidLoadServices',
+        'providers.emails-aws-ses:providerDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {

@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Button,
   ContextContainer,
@@ -10,12 +8,14 @@ import {
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
+import { addSuccessAlert } from '@layout/alert';
+import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { getPlatformLocalesRequest, updateUserRequest } from '@users/request';
 import { map } from 'lodash';
-import SocketIoService from '@socket-io/service';
-import { addSuccessAlert } from '@layout/alert';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default function ChangeLanguage({ session }) {
   const [t, translations] = useTranslateLoader(prefixPN('changeLanguage'));

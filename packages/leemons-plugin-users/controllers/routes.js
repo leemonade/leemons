@@ -8,7 +8,7 @@ module.exports = [
     },
   }),
   {
-    path: '/test-socket-io',
+    path: '/test-mqtt-socket-io',
     method: 'GET',
     handler: 'init.testSocketIo',
     authenticated: true,
