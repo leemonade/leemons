@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
 import { head } from 'lodash';
@@ -13,13 +14,17 @@ export default function useAssignables({ id, ids, withFiles, deleted, ...options
     deleted: !!deleted,
   });
 
-  const queryFn = id
-    ? () =>
-      getAssignablesRequest(idsToUse, {
-        withFiles,
-        deleted,
-      }).then(head)
-    : () => getAssignablesRequest(idsToUse, { withFiles, deleted });
+  const queryFn = useMemo(() => {
+    if (id) {
+      return () =>
+        getAssignablesRequest(idsToUse, {
+          withFiles,
+          deleted,
+        }).then(head);
+    }
+
+    return () => getAssignablesRequest(idsToUse, { withFiles, deleted });
+  }, [id, idsToUse]);
 
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
