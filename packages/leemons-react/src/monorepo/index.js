@@ -3,7 +3,6 @@ const {
   createFolderIfMissing,
   createMissingPackageJSON,
   copyFile,
-  copyFolder,
   copyFileWithSquirrelly,
   removeFiles,
 } = require('../fs');
@@ -16,8 +15,6 @@ const createEslint = require('./createEsLint');
 module.exports = async function generateMonorepo({ plugins, app, outputDir, basePath }) {
   // eslint-disable-next-line import/no-dynamic-require, global-require
   const { apiUrl } = require(`${app}/config/config`);
-
-  console.log('outputDir', outputDir);
 
   const templateDir = path.resolve(__dirname, '../templates');
   await createFolderIfMissing(outputDir);
@@ -39,8 +36,7 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
   await copyFile(path.resolve(templateDir, 'global.css'), path.resolve(outputDir, 'global.css'));
 
   // Generate App contexts folder
-  // await copyFolder(path.resolve(templateDir, 'contexts'), path.resolve(outputDir, 'contexts'));
-
+  await createFolderIfMissing(path.resolve(outputDir, 'contexts'));
   await copyFileWithSquirrelly(
     path.resolve(templateDir, 'contexts', 'global.squirrelly'),
     path.resolve(outputDir, 'contexts', 'global.js'),
