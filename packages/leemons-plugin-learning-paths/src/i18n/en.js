@@ -31,7 +31,7 @@ module.exports = {
       publishAndShare: 'Publish and share',
 
       tooltips: {
-        disabledNotResources: 'Add two or more resources to publish',
+        disabledNotResources: 'Add two or more activities to publish',
       },
     },
     steps: {
@@ -55,16 +55,16 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'New resource',
+          new: 'New activity',
         },
         emptyState: {
           title: "¡Let's start creating!",
           description:
-            'Add resources to the library and sort them as you want them to appear to the student.',
+            'Add activities to the library and sort them as you want them to appear to the student.',
         },
         moduleComposer: {
           columns: {
-            resource: 'Resource',
+            resource: 'Activity',
             type: 'Type',
             actions: 'Actions',
           },
