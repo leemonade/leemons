@@ -312,6 +312,8 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         const { query } = filter.leemons;
         _.set(filter, 'leemons.query', (modelName) => query(modelName, plugin.name));
 
+        _.set(filter, 'leemons.cache', leemons.cache);
+
         return filter;
       };
 

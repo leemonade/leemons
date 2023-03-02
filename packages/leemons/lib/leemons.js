@@ -17,6 +17,7 @@ const fetch = require('node-fetch');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
+const NodeCache = require('node-cache');
 
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadCoreModels } = require('./core/model/loadModel');
@@ -514,9 +515,46 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
+  // TODO: Move to leemons-cache and create leemons-cache-connector-redis
+  initCache() {
+    if (this.cache) {
+      return this.cache;
+    }
+
+    const cache = new NodeCache();
+
+    const leemonsCache = {
+      get: async (key) => cache.get(key),
+      has: async (key) => cache.has(key),
+      set: async (key, value, ttl) => cache.set(key, value, ttl),
+      delete: async (value) => {
+        if (Array.isArray(value)) {
+          throw new Error('Delete only supports single key deletions');
+        }
+        return cache.del(value);
+      },
+
+      getMany: async (keys) => cache.mget(keys),
+      hasMany: async (keys) => {
+        const hasKeys = {};
+        keys.forEach((key) => {
+          hasKeys[key] = cache.has(key);
+        });
+
+        return hasKeys;
+      },
+      setMany: async (values) => cache.mset(values),
+      deleteMany: async (keys) => cache.del(keys),
+    };
+
+    return leemonsCache;
+  }
+
   async loadBack(parent) {
     return withTelemetry('loadBack', parent, async (loadBackTelemetry) => {
       await withTelemetry('initDatabase', loadBackTelemetry, async (t) => {
+        this.cache = this.initCache();
+
         /*
          * Create a DatabaseManager for managing the database connections and models
          */
