@@ -545,6 +545,11 @@ class Leemons {
       },
       setMany: async (values) => cache.mset(values),
       deleteMany: async (keys) => cache.del(keys),
+      deleteByPrefix: async (prefix) =>
+        cache
+          .keys()
+          .filter((key) => key.startsWith(prefix))
+          .forEach((key) => cache.del(key)),
     };
 
     return leemonsCache;
