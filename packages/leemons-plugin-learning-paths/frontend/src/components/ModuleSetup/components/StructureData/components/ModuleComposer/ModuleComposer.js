@@ -11,7 +11,6 @@ import { useCache } from '@common';
 import { useQueries } from '@tanstack/react-query';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { assignablesGetKey } from '@assignables/requests/hooks/keys/assignables';
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useParseActivities } from './hooks';
 
 export function useColumns({ localizations }) {
@@ -20,10 +19,6 @@ export function useColumns({ localizations }) {
       {
         Header: localizations?.resource ?? '',
         accessor: 'resource',
-      },
-      {
-        Header: localizations?.type ?? '',
-        accessor: 'type',
       },
       {
         Header: localizations?.actions ?? '',

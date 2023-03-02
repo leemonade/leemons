@@ -100,7 +100,6 @@ function prepareAssignable(sharedData) {
       activities: get(sharedData, 'state.activities', []).map((activity) => ({
         activity: activity.activity,
         id: activity.id,
-        requirement: get(sharedData, `state.props.${activity.id}.type`),
       })),
     },
     // EN: It's required
@@ -121,14 +120,6 @@ function prepareSharedData(module) {
     },
     state: {
       activities: module.submission.activities,
-      props: Object.fromEntries(
-        module.submission.activities.map((activity) => [
-          activity.id,
-          {
-            type: activity.requirement,
-          },
-        ])
-      ),
     },
   };
 
