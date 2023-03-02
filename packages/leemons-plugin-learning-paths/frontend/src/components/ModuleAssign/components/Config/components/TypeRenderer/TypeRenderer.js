@@ -2,8 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Select } from '@bubbles-ui/components';
-import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { cloneDeep, get, set } from 'lodash';
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 
 export function useTypes({ localizations }) {
   return useMemo(
@@ -31,13 +30,10 @@ export function useTypes({ localizations }) {
 
 export function TypeRenderer({ id, localizations, defaultValue }) {
   const types = useTypes({ localizations });
-  const [sharedData, setSharedData] = useModuleSetupContext();
+  const { useWatch, setValue } = useModuleAssignContext();
+  const value = useWatch({ name: `state.type.${id}` });
 
-  const value = get(sharedData, `state.props.${id}.type`);
-  const onChange = useCallback(
-    (newValue) => setSharedData((data) => set(cloneDeep(data), `state.props.${id}.type`, newValue)),
-    [setSharedData]
-  );
+  const onChange = useCallback((newValue) => setValue(`state.type.${id}`, newValue), [setValue]);
 
   useEffect(() => {
     if (!value) {

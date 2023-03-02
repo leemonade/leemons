@@ -11,6 +11,7 @@ import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 import { PluginSettingsIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 import loadable from '@loadable/component';
+import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
 import { ResourceRenderer } from '../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer';
 import { ConfigModal } from '../ConfigModal';
 
@@ -97,6 +98,13 @@ function useParsedActivities({ activities, components, localizations, onConfig }
             localizations={localizations}
           />
         ),
+        type: (
+          <TypeRenderer
+            id={id}
+            localizations={localizations?.structureData?.types}
+            defaultValue={'mandatory'}
+          />
+        ),
         time: (
           <TimeInput
             icon={<TimeClockCircleIcon />}
@@ -123,6 +131,10 @@ function useColumns({ localizations }) {
       {
         Header: localizations?.resource || '',
         accessor: 'resource',
+      },
+      {
+        Header: localizations?.type || '',
+        accessor: 'type',
       },
       {
         Header: localizations?.time || '',
