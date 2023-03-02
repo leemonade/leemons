@@ -74,7 +74,6 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
   useEffect(
     () =>
       addAction(`${eventBase}.onSave`, () => {
-        console.log('Saving intercepted');
         setIsLoading(true);
       }),
     [setIsLoading]
@@ -143,6 +142,16 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
               setSharedData((data) => set(cloneDeep(data), 'state.activities', newActivities))
             }
             onSelectAsset={() => setShowAssetDrawer(1)}
+            onRemoveAsset={(id) =>
+              setSharedData((data) => {
+                const index = data.state.activities.findIndex((value) => value.id === id);
+                const newData = cloneDeep(data);
+
+                newData.state.activities.splice(index, 1);
+
+                return newData;
+              })
+            }
             localizations={localizations}
           />
         ) : (
@@ -169,13 +178,13 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
                       history.push('/private/learning-paths/modules/library')
                     ),
                 },
-                {
-                  label: _localizations?.buttons?.publishAndShare,
-                  onClick: () =>
-                    fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
-                      alert('Should redirect to share options')
-                    ),
-                },
+                // {
+                //   label: _localizations?.buttons?.publishAndShare,
+                //   onClick: () =>
+                //     fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
+                //       alert('Should redirect to share options')
+                //     ),
+                // },
                 {
                   label: _localizations?.buttons?.publishAndAssign,
                   onClick: () =>
