@@ -1,5 +1,5 @@
 {
-  "name": "leemons-app",
+  "name": "demo",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -42,6 +42,7 @@
     "leemons-plugin-multilanguage": "0.0.1",
     "leemons-plugin-package-manager": "0.0.1",
     "leemons-plugin-scores": "0.0.1",
+    "leemons-plugin-mqtt-aws-iot": "0.0.1",
     "leemons-plugin-mqtt-socket-io": "0.0.1",
     "leemons-plugin-tasks": "0.0.1",
     "leemons-plugin-tests": "0.0.1",
