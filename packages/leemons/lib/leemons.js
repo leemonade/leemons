@@ -414,6 +414,10 @@ class Leemons {
   setRoutes(plugins) {
     this.events.emit('willSetRoutes', 'leemons');
     // TODO: Remove server reload endpoint
+    this.backRouter.get('/api/status', (ctx) => {
+      ctx.body = { status: 200, message: 'ok' };
+      ctx.status = 200;
+    });
     this.backRouter.get('/api/reload', (ctx) => {
       ctx.body = { reloading: true };
       this.reload();
