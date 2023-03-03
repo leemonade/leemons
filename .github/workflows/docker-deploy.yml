@@ -3,7 +3,7 @@ name: Deploy Docker Frontend(s3,cloudfront) and Backend(ecr,ecs)
 on:
   push:
     tags:
-      - '*.*.*-dev2'
+      - '*.*.*-dev'
 
 jobs:
   build:
@@ -12,12 +12,12 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      S3_BUCKET: ${{ secrets.S3_BUCKET }}
-      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-      API_URL: ${{ secrets.API_URL }}
-      SOCKET_PLUGIN: ${{ secrets.SOCKET_PLUGIN }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      API_URL: ${{ vars.API_URL }}
+      SOCKET_PLUGIN: ${{ vars.SOCKET_PLUGIN }}
     steps:
       - name: Set env 🔧
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -41,7 +41,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
 
       - name: Build docker config 🔧
         working-directory: ./examples/docker
@@ -55,8 +55,8 @@ jobs:
         uses: lbertenasco/s3-deploy@v1
         with:
           folder: ./examples/docker/build
-          bucket: ${{ secrets.S3_BUCKET }}
-          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          bucket: ${{ vars.S3_BUCKET }}
+          dist-id: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
           invalidation: / *
 
       - name: Login to Amazon ECR 🔧
@@ -66,8 +66,8 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR 🚀
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ env.RELEASE_VERSION }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ vars.RELEASE_VERSION }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
