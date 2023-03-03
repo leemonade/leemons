@@ -31,7 +31,7 @@ jobs:
           node-version: 16
 
       - name: Print name
-        run: echo "Hello $NAME."
+        run: echo "Hello ${{ vars.AWS_DEFAULT_REGION }} aaa ${{ vars.NADA }}."
 
       - name: Install 🔧
         run: yarn install --frozen-lockfile
