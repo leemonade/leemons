@@ -22,4 +22,4 @@ jobs:
           node-version: 16
 
       - name: Print name
-        run: echo "Hello $NAME. Version: $RELEASE_VERSION"
+        run: echo "Hello $NAME. Version $RELEASE_VERSION"
