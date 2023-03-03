@@ -51,8 +51,8 @@
       "@emails/*": [
         "./packages/leemons-plugin-emails/frontend/src/*"
       ],
-      "@emails-amazon-ses/*": [
-        "./packages/leemons-provider-emails-amazon-ses/frontend/src/*"
+      "@emails-aws-ses/*": [
+        "./packages/leemons-provider-emails-aws-ses/frontend/src/*"
       ],
       "@emails-smtp/*": [
         "./packages/leemons-provider-emails-smtp/frontend/src/*"
@@ -87,6 +87,12 @@
       "@menu-builder/*": [
         "./packages/leemons-plugin-menu-builder/frontend/src/*"
       ],
+      "@mqtt-aws-iot/*": [
+        "./packages/leemons-plugin-mqtt-aws-iot/frontend/src/*"
+      ],
+      "@mqtt-socket-io/*": [
+        "./packages/leemons-plugin-mqtt-socket-io/frontend/src/*"
+      ],
       "@multilanguage/*": [
         "./packages/leemons-plugin-multilanguage/frontend/src/*"
       ],
@@ -95,9 +101,6 @@
       ],
       "@scores/*": [
         "./packages/leemons-plugin-scores/frontend/src/*"
-      ],
-      "@socket-io/*": [
-        "./packages/leemons-plugin-socket-io/frontend/src/*"
       ],
       "@tasks/*": [
         "./packages/leemons-plugin-tasks/frontend/src/*"

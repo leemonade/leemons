@@ -1,5 +1,5 @@
+import SocketIoService from '@mqtt-socket-io/service';
 import _ from 'lodash';
-import SocketIoService from '@socket-io/service';
 
 class RoomService {
   constructor(room) {

@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useStore } from '@common';
-import { SocketIoService } from '@socket-io/service';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { SocketIoService } from '@mqtt-socket-io/service';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export function Provider({ children }) {
   const [store] = useStore();

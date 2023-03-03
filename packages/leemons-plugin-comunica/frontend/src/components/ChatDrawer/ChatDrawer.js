@@ -1,6 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _, { map, orderBy } from 'lodash';
 import {
   ActionButton,
   Badge,
@@ -20,19 +17,22 @@ import {
   SendMessageIcon,
 } from '@bubbles-ui/icons/outline';
 import { useLocale, useStore } from '@common';
-import RoomService from '@comunica/RoomService';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import { getCentersWithToken } from '@users/session';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@comunica/helpers/prefixPN';
+import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
-import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
-import SocketIoService from '@socket-io/service';
 import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
 import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
 import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
+import prefixPN from '@comunica/helpers/prefixPN';
+import RoomService from '@comunica/RoomService';
+import { addErrorAlert } from '@layout/alert';
+import SocketIoService from '@mqtt-socket-io/service';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
+import _, { map, orderBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { ChatDrawerStyles } from './ChatDrawer.styles';
 
 function ChatDrawer({
