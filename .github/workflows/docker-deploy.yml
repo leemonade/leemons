@@ -46,7 +46,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Install tiptap 🔧
-        working-directory: ./examples/docker/frontend
+        working-directory: ./examples/docker
         run: yarn add prosemirror-commands prosemirror-keymap prosemirror-model prosemirror-schema-list prosemirror-state prosemirror-transform prosemirror-view prosemirror-dropcursor prosemirror-gapcursor prosemirror-history @tiptap/pm
 
       - name: Build Frontend 🔧
