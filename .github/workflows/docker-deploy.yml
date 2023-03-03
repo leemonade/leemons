@@ -31,12 +31,6 @@ jobs:
         with:
           node-version: 16
 
-      - name: Print name
-        run: echo "Hello ${{ vars.AWS_DEFAULT_REGION }} aaa ${{ vars.NADA }}."
-
-      - name: Install 🔧
-        run: yarn install --frozen-lockfile
-
       - name: Configure AWS credentials 🔧
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -47,6 +41,9 @@ jobs:
       - name: Build docker config 🔧
         working-directory: ./examples/docker
         run: API_URL=$API_URL SOCKET_PLUGIN=$SOCKET_PLUGIN node process.js
+
+      - name: Install 🔧
+        run: yarn install --frozen-lockfile
 
       - name: Build Frontend 🔧
         working-directory: ./examples/docker
