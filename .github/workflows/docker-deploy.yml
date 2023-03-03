@@ -50,12 +50,27 @@ jobs:
         run: yarn front:build
 
       - name: Deploy to Cloudfront 🚀
-        uses: lbertenasco/s3-deploy@v1
-        with:
-          folder: ./examples/docker/build
-          bucket: ${{ vars.S3_BUCKET }}
-          dist-id: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
-          invalidation: / *
+        script:
+          - pipe: atlassian/aws-s3-deploy:1.1.0
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+              S3_BUCKET: $S3_BUCKET
+              LOCAL_PATH: ./examples/docker/build
+
+          - pipe: atlassian/aws-cloudfront-invalidate:0.1.1
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+              DISTRIBUTION_ID: $CLOUDFRONT_DISTRIBUTION_ID
+        # uses: lbertenasco/s3-deploy@v1
+        # with:
+        # folder: ./examples/docker/build
+        # bucket: ${{ vars.S3_BUCKET }}
+        # dist-id: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+        # invalidation: / *
 
       - name: Login to Amazon ECR 🔧
         id: login-ecr
