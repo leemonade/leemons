@@ -3,7 +3,7 @@ name: Deploy Docker Frontend(s3,cloudfront) and Backend(ecr,ecs)
 on:
   push:
     tags:
-      - 'v*.*.*-dev'
+      - '*.*.*-dev'
       
 jobs:
   build:
