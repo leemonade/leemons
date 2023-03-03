@@ -10,9 +10,6 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     environment: dev
-    env:
-      NAME: ${{ secrets.NAME }}
-
     steps:
       - name: Set env 🔧
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -26,4 +23,4 @@ jobs:
           node-version: 16
 
       - name: Print name
-        run: echo "Hello $NAME. Version $RELEASE_VERSION"
+        run: echo "Name secret - ${{ secrets.NAME }} | Name vars - ${{ vars.NAME }}"
