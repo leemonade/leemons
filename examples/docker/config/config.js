@@ -1,6 +1,7 @@
 module.exports = {
   insecure: true,
-  socketPlugin: 'mqtt-aws-iot',
+  socketPlugin: {{socketPlugin}}, // 'mqtt-socket-io' | 'mqtt-aws-iot'
+  apiUrl: {{apiUrl}},
   dir: {
     plugins: 'plugins',
     frontend: 'frontend',
