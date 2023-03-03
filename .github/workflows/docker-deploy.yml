@@ -53,7 +53,7 @@ jobs:
         run: aws s3 sync ./examples/docker/build s3://${{ vars.S3_BUCKET }} --delete
 
       - name: Invalidating cloudfront
-        run: aws cloudfront create-invalidation \ --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \ --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
         # uses: lbertenasco/s3-deploy@v1
         # with:
         # folder: ./examples/docker/build
