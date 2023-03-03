@@ -2,7 +2,6 @@ const fs = require('fs');
 const file = __dirname + '/config/config.js';
 const path = require('path');
 
-/*
 function fromDir(startPath, filter, acc = []) {
   if (!fs.existsSync(startPath)) {
     return acc;
@@ -20,7 +19,6 @@ function fromDir(startPath, filter, acc = []) {
   }
   return acc;
 }
-*/
 
 fs.writeFileSync(
   file,
@@ -31,7 +29,6 @@ fs.writeFileSync(
     .replace('{{apiUrl}}', process.env.API_URL || null)
 );
 
-/*
 const files = fromDir('../../', 'package.json');
 
 files.forEach((file) => {
@@ -43,4 +40,3 @@ files.forEach((file) => {
       .replace(/("@bubbles-ui\/.+":) "(.+)"/g, '$1 "dev"')
   );
 });
-*/
