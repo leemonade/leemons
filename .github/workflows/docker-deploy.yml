@@ -49,22 +49,11 @@ jobs:
         working-directory: ./examples/docker
         run: yarn front:build
 
-      - name: Deploy to Cloudfront 🚀
-        script:
-          - pipe: atlassian/aws-s3-deploy:1.1.0
-            variables:
-              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-              S3_BUCKET: $S3_BUCKET
-              LOCAL_PATH: ./examples/docker/build
+      - name: Deploy to S3 🚀
+        run: aws s3 sync ./examples/docker/build s3://${{ vars.S3_BUCKET }} --delete
 
-          - pipe: atlassian/aws-cloudfront-invalidate:0.1.1
-            variables:
-              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-              DISTRIBUTION_ID: $CLOUDFRONT_DISTRIBUTION_ID
+      - name: Invalidating cloudfront
+        run: aws cloudfront create-invalidation \ --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \ --paths "/*"
         # uses: lbertenasco/s3-deploy@v1
         # with:
         # folder: ./examples/docker/build
