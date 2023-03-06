@@ -1,7 +1,10 @@
 import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Layout } from '@assignables/components/Assignment/components/Layout';
-import { EvaluationType } from '@assignables/components/Assignment/components/EvaluationType';
+import {
+  EvaluationType,
+  evaluationTypes,
+} from '@assignables/components/Assignment/components/EvaluationType';
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
@@ -62,7 +65,10 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
     form.handleSubmit((values) =>
       onSave({
         config: {
-          ...omit(values?.evaluation, 'raw'),
+          ...values?.evaluation?.evaluation,
+          curriculum: Object.fromEntries(
+            (values.evaluation.curriculum || []).map((category) => [category, true])
+          ),
           showCorrectAnswers: !values.others.hideResponses,
           metadata: values?.assignConfig,
         },
@@ -132,6 +138,11 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
     </Box>
   );
 }
+
+AssignmentDrawer.defaultValues = () => ({
+  showCorrectAnswers: true,
+  ...evaluationTypes.calificable,
+});
 
 AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,

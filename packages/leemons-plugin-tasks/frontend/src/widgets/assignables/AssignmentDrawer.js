@@ -8,7 +8,6 @@ import {
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { Box, Button, createStyles } from '@bubbles-ui/components';
-import { omit } from 'lodash';
 
 // useLocalizations
 
@@ -28,7 +27,12 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
   const onSubmit = useCallback(
     form.handleSubmit((values) =>
       onSave({
-        config: omit(values?.evaluation, 'raw'),
+        config: {
+          ...values?.evaluation?.evaluation,
+          curriculum: Object.fromEntries(
+            (values.evaluation.curriculum || []).map((category) => [category, true])
+          ),
+        },
         raw: values,
       })
     )

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { instanceOf } from 'prop-types';
 import Form from '@assignables/components/Assignment/Form';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 import {
@@ -19,6 +19,7 @@ import {
 } from '@assignables/components/Assignment/components/Layout';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import assignModuleRequest from '@learning-paths/requests/assignModule';
 import { Config } from './components/Config';
 
 export function useModuleAssignLocalizations() {
@@ -106,6 +107,33 @@ function AssignmentStep({ localizations, assignable, onNextStep }) {
   );
 }
 
+function onAssign(id, { assignationForm, state: { activities, time, type } }) {
+  const activitiesWithState = {};
+  Object.keys(activities).forEach((key) => {
+    const activity = activities[key];
+    let duration = null;
+
+    if (time?.[key] instanceof Date) {
+      const hours = time?.[key].getHours();
+      const minutes = time?.[key].getMinutes();
+
+      duration = `${hours * 60 + minutes} minutes`;
+    }
+
+    activitiesWithState[key] = {
+      config: activity.config || activity.defaultConfig,
+      state: { duration, requirement: type?.[key] },
+    };
+  });
+
+  const assignationObject = {
+    assignationForm: assignationForm?.value,
+    activities: activitiesWithState,
+  };
+
+  assignModuleRequest(id, assignationObject);
+}
+
 export function ModuleAssign({ id }) {
   const { isLoading, data: assignable } = useAssignables({ id });
   const localizations = useModuleAssignLocalizations();
@@ -113,6 +141,7 @@ export function ModuleAssign({ id }) {
   const [currentStep, setCurrentStep] = useState(0);
   const { classes, cx } = useModuleAssignStyles();
   const tabs = useTabs({ localizations });
+  const { getValues } = useModuleAssignContext();
 
   if (isLoading) {
     return <Loader />;
@@ -147,7 +176,9 @@ export function ModuleAssign({ id }) {
             >
               {localizations?.buttons?.previous}
             </Button>
-            <Button>{localizations?.buttons?.assign}</Button>
+            <Button onClick={() => onAssign(id, getValues())}>
+              {localizations?.buttons?.assign}
+            </Button>
           </Box>
         </>
       )}
