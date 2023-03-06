@@ -28,7 +28,14 @@ export const useContainerStyles = createStyles((theme, { hideDivider }) => ({
   },
 }));
 
-export function Container({ title, description, children, hidden, hideDivider }) {
+export function Container({
+  title,
+  description,
+  children,
+  hidden,
+  hideDivider,
+  hideSectionHeaders,
+}) {
   if (hidden) {
     return null;
   }
@@ -37,13 +44,14 @@ export function Container({ title, description, children, hidden, hideDivider })
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.titleSection}>
-        <Title order={3} className={classes.title}>
-          {title}
-        </Title>
-        {!!description?.length && <Text className={classes.description}>{description}</Text>}
-      </Box>
-
+      {!hideSectionHeaders && (
+        <Box className={classes.titleSection}>
+          <Title order={3} className={classes.title}>
+            {title}
+          </Title>
+          {!!description?.length && <Text className={classes.description}>{description}</Text>}
+        </Box>
+      )}
       <Box className={classes.content}>{children}</Box>
 
       {!hideDivider && <Divider />}
@@ -57,4 +65,5 @@ Container.propTypes = {
   children: PropTypes.node,
   hidden: PropTypes.bool,
   hideDivider: PropTypes.bool,
+  hideSectionHeaders: PropTypes.bool,
 };

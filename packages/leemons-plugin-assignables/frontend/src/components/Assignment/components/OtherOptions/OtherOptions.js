@@ -48,31 +48,39 @@ export const useOtherOptionsStyles = createStyles((theme) => ({
   },
 }));
 
-export function OtherOptions({ localizations, showReport, showResponses, onChange, value, error }) {
-  const { control: parentControl } = useFormContext();
+export function OtherOptions({
+  localizations,
+  showReport,
+  showResponses,
+  showMessageForStudents,
+  hideSectionHeaders,
+  onChange,
+  value,
+}) {
+  // const { control: parentControl } = useFormContext();
 
   const { control } = useForm({
     defaultValues: value,
   });
 
-  const alwaysAvailable = useWatch({
-    control: parentControl,
-    name: 'dates.alwaysAvailable',
-    defaultValue: false,
-  });
-  const deadline = useWatch({
-    control: parentControl,
-    name: 'dates.dates.deadline',
-  });
+  // const alwaysAvailable = useWatch({
+  //   control: parentControl,
+  //   name: 'dates.alwaysAvailable',
+  //   defaultValue: false,
+  // });
+  // const deadline = useWatch({
+  //   control: parentControl,
+  //   name: 'dates.dates.deadline',
+  // });
 
   useOnChange({ control, onChange });
 
   const { classes } = useOtherOptionsStyles();
   return (
-    <Container title={localizations?.title} hideDivider>
+    <Container title={localizations?.title} hideDivider hideSectionHeaders={hideSectionHeaders}>
       <Box className={classes.root}>
-        {/* <Controller name="" control={control} render={({field}) => ()} /> */}
-        {!alwaysAvailable && (
+        {/* TODO: Make teacher deadline work, and then include it on the assignation */}
+        {/* {!alwaysAvailable && (
           <Controller
             name="useTeacherDeadline"
             control={control}
@@ -105,35 +113,37 @@ export function OtherOptions({ localizations, showReport, showResponses, onChang
               />
             )}
           />
+        )} */}
+        {!!showMessageForStudents && (
+          <Controller
+            name="notifyStudents"
+            control={control}
+            render={({ field: notifyStudentsField }) => (
+              <ConditionalInput
+                {...notifyStudentsField}
+                label={localizations?.notifyStudents}
+                showOnTrue
+                render={() => (
+                  <Controller
+                    name="message"
+                    control={control}
+                    render={({ field }) => (
+                      <Box className={classes.textEditor}>
+                        <TextEditorInput
+                          {...field}
+                          toolLabels={{
+                            headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' },
+                          }}
+                          label={localizations?.messageForStudents}
+                        />
+                      </Box>
+                    )}
+                  />
+                )}
+              />
+            )}
+          />
         )}
-        <Controller
-          name="notifyStudents"
-          control={control}
-          render={({ field: notifyStudentsField }) => (
-            <ConditionalInput
-              {...notifyStudentsField}
-              label={localizations?.notifyStudents}
-              showOnTrue
-              render={() => (
-                <Controller
-                  name="message"
-                  control={control}
-                  render={({ field }) => (
-                    <Box className={classes.textEditor}>
-                      <TextEditorInput
-                        {...field}
-                        toolLabels={{
-                          headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' },
-                        }}
-                        label={localizations?.messageForStudents}
-                      />
-                    </Box>
-                  )}
-                />
-              )}
-            />
-          )}
-        />
 
         {!!showResponses && (
           <Controller
@@ -164,6 +174,8 @@ OtherOptions.propTypes = {
   localizations: PropTypes.object,
   showReport: PropTypes.bool,
   showResponses: PropTypes.bool,
+  showMessageForStudents: PropTypes.bool,
+  hideSectionHeaders: PropTypes.bool,
   value: PropTypes.object,
   onChange: PropTypes.func,
   error: PropTypes.any,

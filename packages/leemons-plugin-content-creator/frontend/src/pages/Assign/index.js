@@ -59,6 +59,7 @@ export default function Assign() {
       onSubmit={send}
       showReport
       showInstructions
+      showMessageForStudents
       assignable={store.document}
       evaluationType="none"
       buttonsComponent={

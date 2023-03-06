@@ -31,7 +31,7 @@ module.exports = {
       publishAndShare: 'Publicar y compartir',
 
       tooltips: {
-        disabledNotResources: 'Añade dos o más recursos para publicar',
+        disabledNotResources: 'Añade dos o más actividades para publicar',
       },
     },
     steps: {
@@ -55,17 +55,18 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'Nuevo recurso',
+          new: 'Nueva actividad',
         },
         emptyState: {
           title: '¡Empecemos a crear!',
           description:
-            'Añade recursos a la librería y ordénalos según desees que le aparezcan al estudiante.',
+            'Añade actvidades a la librería y ordénalas según desees que le aparezcan al estudiante.',
         },
         moduleComposer: {
           columns: {
-            resource: 'Recurso',
+            resource: 'Actividad',
             type: 'Tipo',
+            time: 'Tiempo',
             actions: 'Acciones',
           },
           lastUpdate: 'Última actualización',
@@ -77,6 +78,12 @@ module.exports = {
           },
         },
       },
+    },
+    alert: {
+      saveSuccess: 'Guardado correctamente',
+      saveError: 'No ha sido posible guardar',
+      publishSuccess: 'Guardado y publicado correctamente',
+      publishError: 'No ha sido posible guardar y publicar',
     },
   },
   libraryCard: {
@@ -97,6 +104,21 @@ module.exports = {
       message: '¿Seguro que quiere eliminar el módulo {{name}}?',
       success: 'El módulo {{name}} ha sido eliminado',
       error: 'El módulo {{name}} no ha podido ser eliminado',
+    },
+  },
+  assignation: {
+    steps: {
+      assignmentForm: {
+        action: 'Asignar como módulo',
+      },
+      setup: {
+        action: 'Configuración',
+      },
+    },
+    buttons: {
+      previous: 'Anterior',
+      next: 'Siguiente',
+      assign: 'Asignar',
     },
   },
 };

@@ -116,6 +116,7 @@ module.exports = {
     },
     buttons: {
       assign: 'Asignar',
+      save: 'Guardar', // Used on modules assignation drawer
     },
   },
   activity_deadline_header: {

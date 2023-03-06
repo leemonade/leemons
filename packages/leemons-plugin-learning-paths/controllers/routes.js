@@ -51,4 +51,11 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissionsForRoutes(permissionNames.modules, ['update']),
   },
+  {
+    method: 'POST',
+    path: '/modules/:id/assign',
+    handler: 'modules.assign',
+    authenticated: true,
+    allowedPermissions: getPermissionsForRoutes(permissionNames.modules, ['assign']),
+  },
 ];

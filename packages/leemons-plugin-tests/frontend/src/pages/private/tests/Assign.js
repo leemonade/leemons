@@ -118,6 +118,7 @@ export default function Assign() {
                 evaluationTypes={['calificable', 'punctuable']}
                 showEvaluation
                 showResponses
+                showMessageForStudents
                 buttonsComponent={
                   <Stack fullWidth justifyContent="end">
                     <Button type="submit">{t('next')}</Button>

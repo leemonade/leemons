@@ -47,9 +47,9 @@ function useListCardMenuItems({ asset, localizations, onRefresh }) {
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
-  const { editable, duplicable, deleteable, name } = asset;
+  const { editable, duplicable, deleteable, assignable, name } = asset;
 
-  const assignable = false; // Disabled until next implementation
+  // const assignable = false; // Disabled until next implementation
 
   const { id, published } = asset.providerData || {};
   const history = useHistory();

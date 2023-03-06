@@ -58,6 +58,7 @@ export default function Assign() {
       action={t('assign')}
       onSubmit={send}
       showReport
+      showMessageForStudents
       assignable={store.feedback}
       evaluationType="none"
       buttonsComponent={

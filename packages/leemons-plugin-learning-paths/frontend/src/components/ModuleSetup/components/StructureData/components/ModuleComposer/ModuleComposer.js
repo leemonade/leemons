@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Button, TableInput } from '@bubbles-ui/components';
+import { Box, Button, Table } from '@bubbles-ui/components';
 import { AddIcon } from '@bubbles-ui/icons/outline';
 
 import { get, head, map, uniq } from 'lodash';
@@ -11,7 +11,6 @@ import { useCache } from '@common';
 import { useQueries } from '@tanstack/react-query';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { assignablesGetKey } from '@assignables/requests/hooks/keys/assignables';
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useParseActivities } from './hooks';
 
 export function useColumns({ localizations }) {
@@ -20,10 +19,6 @@ export function useColumns({ localizations }) {
       {
         Header: localizations?.resource ?? '',
         accessor: 'resource',
-      },
-      {
-        Header: localizations?.type ?? '',
-        accessor: 'type',
       },
       {
         Header: localizations?.actions ?? '',
@@ -81,23 +76,24 @@ function useSelectedActivities() {
   );
 }
 
-export function ModuleComposer({ localizations, onSelectAsset, onActivityChange }) {
+export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, onActivityChange }) {
   const columns = useColumns({ localizations: localizations?.moduleComposer?.columns });
 
   const activities = useSelectedActivities();
   const parsedActivities = useParseActivities({
     activities,
     localizations: localizations?.moduleComposer,
+    onRemove: onRemoveAsset,
   });
 
   return (
     <Box>
-      <TableInput
+      <Table
         columns={columns}
         data={parsedActivities}
         sortable={parsedActivities?.length > 1}
         labels={{ add: '' }}
-        onChange={(value) => onActivityChange(map(value, 'original'))}
+        onChangeData={({ newData }) => onActivityChange(map(newData, 'original'))}
       />
       {/* TRANSLATE */}
       <Button variant="link" leftIcon={<AddIcon />} onClick={onSelectAsset}>
