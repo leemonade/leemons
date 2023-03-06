@@ -278,7 +278,6 @@ module.exports = async function createAssignation(
             { transacting }
           );
 
-          console.log(2);
           // TODO @MIGUEL
           await createGroupRoom({
             assignableInstanceId,
@@ -289,7 +288,6 @@ module.exports = async function createAssignation(
             users,
           });
 
-          console.log(3);
           // TODO @MIGUEL
           subjectRooms = await createSubjectsRooms({
             assignableInstanceId,
@@ -343,7 +341,6 @@ module.exports = async function createAssignation(
               });
 
               // TODO @MIGUEL
-              console.log(4);
               if (instance.assignable.role !== 'feedback') {
                 roomsPromises.push(
                   addUserSubjectRoom(
