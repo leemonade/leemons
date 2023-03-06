@@ -241,7 +241,6 @@ module.exports = async function createAssignation(
         // instance.dates.start
 
         // TODO @MIGUEL
-        console.log(1);
         const teachers = getAllTeachers(_classes, classesData);
         const instanceRoom = await createInstanceRoom(
           {
@@ -254,7 +253,6 @@ module.exports = async function createAssignation(
           { transacting }
         );
 
-        console.log(2);
         // TODO @MIGUEL
         await createGroupRoom({
           assignableInstanceId,
@@ -264,7 +262,6 @@ module.exports = async function createAssignation(
           users,
         });
 
-        console.log(3);
         // TODO @MIGUEL
         const subjectRooms = await createSubjectsRooms({
           assignableInstanceId,
@@ -316,7 +313,6 @@ module.exports = async function createAssignation(
               });
 
               // TODO @MIGUEL
-              console.log(4);
               roomsPromises.push(
                 addUserSubjectRoom(
                   {
