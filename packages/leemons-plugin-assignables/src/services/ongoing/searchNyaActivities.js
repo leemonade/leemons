@@ -12,6 +12,7 @@ const {
   filterAssignationsByInstance,
   filterInstancesByProgramAndSubjects,
   filterInstancesByEvaluable,
+  filterInstancesByNotModule,
 } = require('./helpers/filters');
 const {
   filterInstancesByStudentCompletionPercentage,
@@ -30,6 +31,8 @@ module.exports = async function searchNyaActivities(query, { userSession, transa
     let instances = await getTeacherInstances({ userSession, transacting });
 
     instances = filterInstancesByEvaluable({ instances, evaluable: true });
+
+    instances = filterInstancesByNotModule({ instances });
 
     const dates = await getActivitiesDates(
       {
@@ -96,6 +99,8 @@ module.exports = async function searchNyaActivities(query, { userSession, transa
   */
   let assignations = await getStudentAssignations({ userSession, transacting });
   let instances = map(assignations, 'instance');
+
+  instances = filterInstancesByNotModule({ instances });
 
   const dates = await getActivitiesDates(
     {
