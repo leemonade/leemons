@@ -57,7 +57,15 @@ jobs:
         run: aws s3 sync ./examples/docker/build s3://${{ vars.S3_BUCKET }} --delete
 
       - name: Invalidating cloudfront
-        run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+        uses: nick-fields/retry@v2
+          with:
+          max_attempts: 15
+          retry_on: error
+          timeout_seconds: 30
+          retry_wait_seconds: 30
+          warning_on_retry: true
+          command: |
+            aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 
       - name: Login to Amazon ECR 🔧
         id: login-ecr
