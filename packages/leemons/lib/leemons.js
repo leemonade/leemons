@@ -17,6 +17,7 @@ const fetch = require('node-fetch');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
+const NodeCache = require('node-cache');
 
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadCoreModels } = require('./core/model/loadModel');
@@ -338,7 +339,19 @@ class Leemons {
         );
 
         if (!isGood) {
-          LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
+          const isSocketIo =
+            (this.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
+
+          if (isSocketIo) {
+            LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
+          } else {
+            this.plugins[
+              this.config.get('config.socketPlugin') || 'mqtt-socket-io'
+            ].services.socket.worker.emit(
+              ctx.state.userSession.id,
+              'USER_AGENT_NEED_UPDATE_DATASET'
+            );
+          }
         }
         return next();
       } catch (err) {
@@ -402,6 +415,10 @@ class Leemons {
   setRoutes(plugins) {
     this.events.emit('willSetRoutes', 'leemons');
     // TODO: Remove server reload endpoint
+    this.backRouter.get('/api/status', (ctx) => {
+      ctx.body = { status: 200, message: 'ok' };
+      ctx.status = 200;
+    });
     this.backRouter.get('/api/reload', (ctx) => {
       ctx.body = { reloading: true };
       this.reload();
@@ -514,9 +531,51 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
+  // TODO: Move to leemons-cache and create leemons-cache-connector-redis
+  initCache() {
+    if (this.cache) {
+      return this.cache;
+    }
+
+    const cache = new NodeCache();
+
+    const leemonsCache = {
+      get: async (key) => cache.get(key),
+      has: async (key) => cache.has(key),
+      set: async (key, value, ttl) => cache.set(key, value, ttl),
+      delete: async (value) => {
+        if (Array.isArray(value)) {
+          throw new Error('Delete only supports single key deletions');
+        }
+        return cache.del(value);
+      },
+
+      getMany: async (keys) => cache.mget(keys),
+      hasMany: async (keys) => {
+        const hasKeys = {};
+        keys.forEach((key) => {
+          hasKeys[key] = cache.has(key);
+        });
+
+        return hasKeys;
+      },
+      setMany: async (values) => cache.mset(values),
+      deleteMany: async (keys) => cache.del(keys),
+      deleteByPrefix: async (prefix) =>
+        cache
+          .keys()
+          .filter((key) => key.startsWith(prefix))
+          .forEach((key) => cache.del(key)),
+    };
+
+    return leemonsCache;
+  }
+
   async loadBack(parent) {
     return withTelemetry('loadBack', parent, async (loadBackTelemetry) => {
       await withTelemetry('initDatabase', loadBackTelemetry, async (t) => {
+        this.cache = this.initCache();
+
         /*
          * Create a DatabaseManager for managing the database connections and models
          */
@@ -711,26 +770,31 @@ class Leemons {
 
     await this.load();
 
-    LeemonsSocket.worker.init(this.server);
-    LeemonsSocket.worker.onConnection((socket) => {
-      console.log('Connected to socket.io', socket.session.email);
-    });
-
-    LeemonsSocket.worker.use(async (socket, next) => {
-      const authenticate = this.authenticatedMiddleware(true);
-
-      const ctx = {
-        state: {},
-        headers: { authorization: socket.handshake.auth.token },
-      };
-
-      const response = await authenticate(ctx, () => true);
-
-      if (response) {
-        socket.session = ctx.state.userSession;
-        next();
-      }
-    });
+    const isSocketIo =
+      (this.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
+    if (isSocketIo) {
+      LeemonsSocket.worker.init(this.server);
+      LeemonsSocket.worker.onConnection((socket) => {
+        console.log('Connected to socket.io', socket.session.email);
+      });
+      LeemonsSocket.worker.use(async (socket, next) => {
+        const authenticate = this.authenticatedMiddleware(true);
+        const ctx = {
+          state: {},
+          headers: { authorization: socket.handshake.auth.token },
+        };
+        const response = await authenticate(ctx, () => true);
+        if (response) {
+          // eslint-disable-next-line no-param-reassign
+          socket.session = ctx.state.userSession;
+          next();
+        }
+      });
+    } else {
+      this.plugins[
+        this.config.get('config.socketPlugin') || 'mqtt-socket-io'
+      ].services.socket.worker.init(this.server);
+    }
 
     this.server.listen(process.env.PORT, () => {
       this.events.emit('appDidStart', 'leemons');

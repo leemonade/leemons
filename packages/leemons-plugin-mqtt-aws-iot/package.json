@@ -1,0 +1,10 @@
+{
+  "name": "leemons-plugin-mqtt-aws-iot",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-iot-device-sdk": "^2.2.12",
+    "aws-sdk": "^2.1319.0"
+  }
+}

@@ -7,7 +7,7 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore } from '@common';
+import { useStore, useProcessTextEditor } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -26,6 +26,7 @@ import { PageContent } from './components/PageContent/PageContent';
 
 export default function Index() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
+  const processTextEditor = useProcessTextEditor();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -51,7 +52,12 @@ export default function Index() {
     try {
       store.saving = 'duplicate';
       render();
-      await saveDocumentRequest({ ...formValues, published: false });
+
+      const content = await processTextEditor(formValues.content, store.document.content, {
+        force: !!store.published,
+      });
+
+      await saveDocumentRequest({ ...formValues, content, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/content-creator/?fromDraft=1');
     } catch (error) {
@@ -65,8 +71,14 @@ export default function Index() {
     try {
       store.saving = 'edit';
       render();
+
+      const content = await processTextEditor(formValues.content, store.document.content, {
+        force: !!store.published,
+      });
+
       const { document: documentRequest } = await saveDocumentRequest({
         ...formValues,
+        content,
         published: true,
       });
       store.document = documentRequest;
@@ -106,12 +118,15 @@ export default function Index() {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          document: { deleted, deleted_at, created_at, updated_at, ...props },
+          document: { deleted, deleted_at, created_at, updated_at, published, ...document },
         } = await getDocumentRequest(params.id);
+
         // eslint-disable-next-line react/prop-types
-        store.titleValue = props.name;
-        store.document = { ...props };
-        form.reset(props);
+        store.titleValue = document.name;
+        document.program = document.subjects?.[0]?.program;
+        store.published = published;
+        store.document = { ...document };
+        form.reset(document);
       }
       store.idLoaded = params.id;
       store.loading = false;
@@ -175,7 +190,7 @@ export default function Index() {
   if (store.loading || tLoading) return <LoadingOverlay visible />;
 
   const advancedConfig = {
-    alwaysOpen: false,
+    alwaysOpen: true,
     fileToRight: true,
     colorToRight: true,
     program: { show: true, required: true },

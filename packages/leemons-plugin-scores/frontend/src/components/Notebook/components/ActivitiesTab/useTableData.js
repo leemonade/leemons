@@ -98,9 +98,17 @@ function useFilteredAssignableInstances({ assignableInstances, filters }) {
 }
 
 function useGrades(assignableInstances) {
-  const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0], {
-    enabled: !!assignableInstances?.length,
+  const instanceWithProgram = React.useMemo(
+    () =>
+      assignableInstances?.find(
+        (instance) => !!instance.assignable.subjects?.find((subject) => !!subject.program)
+      ),
+    [assignableInstances]
+  );
+  const evaluationSystem = useProgramEvaluationSystem(instanceWithProgram, {
+    enabled: !!instanceWithProgram,
   });
+
   const cache = useCache();
   const grades = React.useMemo(
     () =>

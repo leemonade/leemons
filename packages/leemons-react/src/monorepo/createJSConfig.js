@@ -16,7 +16,7 @@ async function getJsConfig(basePath) {
         module: 'CommonJS',
         moduleResolution: 'Node',
         target: 'ES2020',
-        jsx: 'preserve',
+        jsx: 'react',
         baseUrl: '.',
       },
       exclude: ['node_modules', '**/node_modules/*'],

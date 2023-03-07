@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { isFunction, uniq } from 'lodash';
+import { isFunction, omit, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { Button, ContextContainer, Stack, useDebouncedCallback } from '@bubbles-ui/components';
@@ -24,7 +24,7 @@ function BasicData({
   // FORM
 
   const defaultValues = {
-    ...sharedData.asset,
+    ...omit(sharedData.asset, 'file'),
     program: sharedData.program,
     subjects: sharedData.subjects,
   };
@@ -56,7 +56,7 @@ function BasicData({
 
   useEffect(() => {
     reset({
-      ...sharedData.asset,
+      ...omit(sharedData.asset, 'file'),
       program: sharedData.program,
       subjects: sharedData.subjects,
     });

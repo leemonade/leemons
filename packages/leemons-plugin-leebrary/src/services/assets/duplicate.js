@@ -113,9 +113,11 @@ async function duplicate(
   // POST CREATION
 
   if (cover) {
-    const coverFile = await duplicateFile(cover, { transacting });
-    if (coverFile)
-      await tables.assets.update({ id: newAsset.id }, { cover: coverFile.id }, { transacting });
+    const newCover = await duplicateFile(cover, { transacting });
+    if (newCover) {
+      await tables.assets.update({ id: newAsset.id }, { cover: newCover.id }, { transacting });
+      newAsset.cover = newCover;
+    }
   }
 
   if (bookmark) {
@@ -125,6 +127,11 @@ async function duplicate(
       const icon = _.find(files, { id: bookmark.icon });
       const newIcon = await duplicateFile(icon, { transacting });
       newIconId = newIcon?.id;
+
+      newAsset.url = bookmark.url;
+      newAsset.icon = newIcon;
+      newAsset.fileType = 'bookmark';
+      newAsset.metadata = [];
     }
 
     await tables.bookmarks.create(
@@ -133,14 +140,19 @@ async function duplicate(
     );
   }
 
+  let newFiles = null;
+
   if (files.length) {
     const filesP = [];
     _.forEach(files, (file) => {
-      filesP.push(duplicateFile(file, { transacting }));
+      // Skip cover duplication again
+      if (file.id !== cover?.id) {
+        filesP.push(duplicateFile(file, { transacting }));
+      }
     });
-    const filesR = await Promise.all(filesP);
+    newFiles = await Promise.all(filesP);
     const promises = [];
-    _.forEach(filesR, (f) => {
+    _.forEach(newFiles, (f) => {
       promises.push(
         addFiles(f.id, newAsset.id, {
           skipPermissions: true,
@@ -150,6 +162,17 @@ async function duplicate(
       );
     });
     await Promise.allSettled(promises);
+  }
+
+  if (!_.isEmpty(newFiles)) {
+    if (newAsset.cover) {
+      newAsset.file =
+        newFiles.length > 1
+          ? newFiles.filter((item) => item.id !== newAsset.cover.id)
+          : newFiles[0];
+    } else {
+      [newAsset.file] = newFiles;
+    }
   }
 
   return newAsset;

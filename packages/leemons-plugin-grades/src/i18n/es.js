@@ -50,7 +50,7 @@ module.exports = {
       minScaleToPromotePlaceholder: 'Seleccionar valor...',
       otherTagsLabel: 'Otras etiquetas',
       otherTagsDescription: 'Etiquetas personalizadas para clasificar condiciones especiales.',
-      otherTagsRelationScaleLabel: 'Corelación con otro valor de escala',
+      otherTagsRelationScaleLabel: 'Correlación con otro valor de escala',
       tableAdd: 'Añadir',
       tableRemove: 'Borrar',
       tableEdit: 'Editar',

@@ -1,6 +1,3 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import {
   ActionButton,
   Box,
@@ -13,15 +10,18 @@ import {
 import { ChevDownIcon, ChevronLeftIcon, ChevUpIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@comunica/helpers/prefixPN';
-import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
-import RoomService from '@comunica/RoomService';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
+import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
+import prefixPN from '@comunica/helpers/prefixPN';
+import RoomService from '@comunica/RoomService';
 import getBase64 from '@leebrary/helpers/getBase64';
-import { getCentersWithToken } from '@users/session';
+import SocketIoService from '@mqtt-socket-io/service';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
-import SocketIoService from '@socket-io/service';
+import { getCentersWithToken } from '@users/session';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { ChatInfoDrawerStyles } from './ChatInfoDrawer.styles';
 
 const usersToShow = 7;
@@ -299,7 +299,8 @@ function ChatInfoDrawer({
             <Switch checked={!!store.attached} onChange={toggleAttached} label={t('setRoom')} />
             <Switch checked={!!store.muted} onChange={toggleMute} label={t('muteRoom')} />
             {store.programConfig?.teachersCanDisableSubjectsRooms &&
-            room?.type === 'plugins.academic-portfolio.class' ? (
+            room?.type === 'plugins.academic-portfolio.class' &&
+            room?.isAdmin ? (
               <Switch
                 checked={!!store.adminDisableMessages}
                 onChange={toggleAdminDisableMessages}

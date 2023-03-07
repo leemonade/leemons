@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
+import * as _ from 'lodash';
 
 async function listAllMyFiles() {
   const response = await leemons.api('leebrary/files/my', {
@@ -7,7 +7,7 @@ async function listAllMyFiles() {
   });
   response.files = _.map(response.files, (file) => ({
     ...file,
-    localUrl: `${window.location.origin}/api/leebrary/file/${
+    localUrl: `${leemons.apiUrl}/api/leebrary/file/${
       file.id
     }?authorization=${getAuthorizationTokenForAllCenters()}`,
   }));

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import {
   ActionButton,
   Box,
@@ -12,29 +12,29 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { FilterIcon, PluginSettingsIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
-import PropTypes from 'prop-types';
 import { useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@comunica/helpers/prefixPN';
-import ChatListDrawerItem from '@comunica/components/ChatListDrawerItem/ChatListDrawerItem';
-import SocketIoService from '@socket-io/service';
-import _ from 'lodash';
-import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
-import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
-import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';
-import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
-import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
-import { getCentersWithToken } from '@users/session';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
+import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
+import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';
+import ChatListDrawerItem from '@comunica/components/ChatListDrawerItem/ChatListDrawerItem';
 import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
+import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
+import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
+import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
 import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
 import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { ChatListDrawerStyles } from './ChatListDrawer.styles';
+import prefixPN from '@comunica/helpers/prefixPN';
+import SocketIoService from '@mqtt-socket-io/service';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
+import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 
-function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} }) {
+function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = () => {} }) {
   const debouncedFunction = useDebouncedCallback(100);
   const debouncedFunction2 = useDebouncedCallback(100);
   const { classes } = ChatListDrawerStyles({}, { name: 'ChatListDrawer' });
@@ -406,6 +406,12 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
     });
   });
 
+  React.useEffect(() => {
+    if (openRoom) {
+      onClickRoom(openRoom);
+    }
+  }, [openRoom]);
+
   store.roomNewChat = React.useMemo(() => {
     const agents = [];
     _.forEach(store.originalRooms, (room) => {
@@ -572,6 +578,7 @@ function ChatListDrawer({ opened, onRoomOpened = () => {}, onClose = () => {} })
 ChatListDrawer.propTypes = {
   opened: PropTypes.bool,
   onClose: PropTypes.func,
+  openRoom: PropTypes.any,
   onRoomOpened: PropTypes.func,
 };
 

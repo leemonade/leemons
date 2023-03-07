@@ -41,7 +41,7 @@ const menuItems = [
       key: 'comunica',
       iconSvg: '/public/comunica/menu-icon.svg',
       url: '/private/comunica/config',
-      activeIconSvg: '/public/comunica/menu-icon.svg',
+      activeIconSvg: '/public/comunica/menu-icon-active.svg',
       label: { es: 'Configuración comunica', en: 'Comunica config' },
     },
     permissions: [

@@ -26,6 +26,7 @@ export const useLayoutStyles = createStyles((theme, { onlyContent }) => {
         display: 'flex',
         flexDirection: 'column',
         gap: theme.other.global.spacing.gap.xlg,
+        maxWidth: theme.breakpoints.xl,
       },
       buttons: {
         padding: theme.other.global.spacing.padding.xlg,
@@ -58,12 +59,14 @@ export const useLayoutStyles = createStyles((theme, { onlyContent }) => {
       display: 'flex',
       flexDirection: 'column',
       gap: theme.other.global.spacing.gap.xlg,
+      maxWidth: theme.breakpoints.xl,
     },
     buttons: {
       ...sideMargins,
       padding: theme.other.global.spacing.padding.xlg,
       borderTop: `1px solid ${theme.other.global.border.color.line.muted}`,
       background: theme.other.global.background.color.surface.default,
+      maxWidth: theme.breakpoints.xl,
     },
   };
 });

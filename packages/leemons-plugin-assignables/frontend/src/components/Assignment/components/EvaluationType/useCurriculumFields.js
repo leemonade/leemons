@@ -1,8 +1,10 @@
 import React from 'react';
 import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
 import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
-import { cloneDeep, intersection, set, uniqBy } from 'lodash';
-import { useStore } from '@common';
+import { cloneDeep, get, intersection, set, uniqBy } from 'lodash';
+import { unflatten, useStore } from '@common';
+import prefixPN from '@assignables/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 function parseCurriculumValue(id) {
   return { ...Object.fromEntries(id?.split('|').map((pair) => pair.split('.'))), original: id };
@@ -67,12 +69,32 @@ export function useSelectedCurriculumValues({ assignable }) {
   return selectedCurriculumValues;
 }
 
+export function useCustomObjectivesLocalizations() {
+  const key = prefixPN('customObjectives');
+  const [, translations] = useTranslateLoader(key);
+
+  return React.useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+
+      return get(res, key, '');
+    }
+
+    return '';
+  });
+}
+
 export function useSelectedCurriculumProperties({
   curriculum,
   curriculumNodes,
   nodeLevels,
   selectedCurriculumValues,
 }) {
+  const customObjectiveLocalization = useCustomObjectivesLocalizations();
+  const customObjectives = React.useMemo(
+    () => !!selectedCurriculumValues?.some((value) => value.hasCustomObjectives),
+    [selectedCurriculumValues]
+  );
   const flattenSelectedValues = React.useMemo(
     () => selectedCurriculumValues?.flatMap((value) => value.values),
     [selectedCurriculumValues]
@@ -104,6 +126,19 @@ export function useSelectedCurriculumProperties({
       'id'
     );
   }, [curriculumNodes, flattenSelectedValues]);
+
+  React.useEffect(() => {
+    if (customObjectives) {
+      if (!usedProperties?.length || !usedProperties[usedProperties.length - 1]?.id === 'custom') {
+        usedProperties.push({
+          id: 'custom',
+          name: customObjectiveLocalization,
+        });
+      } else {
+        usedProperties[usedProperties.length - 1].name = customObjectiveLocalization;
+      }
+    }
+  }, [usedProperties, customObjectives, customObjectiveLocalization]);
 
   return usedProperties;
 }

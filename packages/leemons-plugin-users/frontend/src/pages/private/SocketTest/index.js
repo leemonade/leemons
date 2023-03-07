@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { withLayout } from '@layout/hoc';
-import { SocketIoService } from '@socket-io/service';
+import { SocketIoService } from '@mqtt-socket-io/service';
+import React, { useState } from 'react';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 function SocketTest() {
@@ -12,7 +12,7 @@ function SocketTest() {
   });
 
   const sendMessage = () => {
-    leemons.api('users/test-socket-io', {
+    leemons.api('users/test-mqtt-socket-io', {
       allAgents: true,
     });
   };

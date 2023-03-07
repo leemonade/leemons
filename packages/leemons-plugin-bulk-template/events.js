@@ -56,7 +56,7 @@ async function events(isInstalled) {
       [
         'plugins.emails:pluginDidLoadServices',
         'plugins.leebrary:pluginDidLoadServices',
-        'providers.emails-amazon-ses:providerDidLoadServices',
+        'providers.emails-aws-ses:providerDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {
@@ -230,6 +230,7 @@ async function events(isInstalled) {
         'plugins.assignables:init-plugin',
         'plugins.bulk-template:init-academic-portfolio',
         'plugins.bulk-template:init-leebrary',
+        'plugins.bulk-template:init-tests',
       ],
       async () => {
         try {

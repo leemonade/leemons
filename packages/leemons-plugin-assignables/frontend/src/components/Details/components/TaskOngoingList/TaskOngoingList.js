@@ -180,7 +180,6 @@ const TaskOngoingList = ({ instance }) => {
   };
 
   const isStarted = new Date(instance?.dates?.start) < new Date();
-  const isClosedPeriod = !dayjs(instance?.dates?.start).isSame(instance?.dates?.deadline, 'day');
 
   return (
     <Box ref={containerRef} className={classes.root}>
@@ -209,7 +208,6 @@ const TaskOngoingList = ({ instance }) => {
           hideArchive={Boolean(dayjs(instance.dates.deadline).isAfter(dayjs()))}
           archived={archived}
           isStarted={isStarted}
-          isClosedPeriod={isClosedPeriod}
           styles={{ position: 'absolute', bottom: 0, left: 48, right: '50%', zIndex: 5 }}
         />
         {instanceData.horizontalTimeline && (

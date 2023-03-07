@@ -1,22 +1,22 @@
 /* eslint-disable no-unreachable */
-import React, { useContext, useEffect, useMemo } from 'react';
-import { find, isArray, isEmpty } from 'lodash';
-import { useHistory, useParams } from 'react-router-dom';
 import { ActionButton, Box, Col, Grid, Stack } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useRequestErrorMessage } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import prefixPN from '../../../helpers/prefixPN';
-import LibraryContext from '../../../context/LibraryContext';
-import { VIEWS } from '../library/Library.constants';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { find, isArray, isEmpty } from 'lodash';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   BasicData as MediaBasicData,
   BookmarkBasicData,
   PermissionsData,
   Setup,
 } from '../../../components/AssetSetup';
-import { getAssetsByIdsRequest } from '../../../request';
+import LibraryContext from '../../../context/LibraryContext';
+import prefixPN from '../../../helpers/prefixPN';
+import { getAssetRequest } from '../../../request';
+import { VIEWS } from '../library/Library.constants';
 
 const EditAssetPage = () => {
   const { file, setView, category, setCategory, categories, setAsset, asset } =
@@ -31,10 +31,9 @@ const EditAssetPage = () => {
 
   const loadAsset = async (id) => {
     try {
-      const response = await getAssetsByIdsRequest([id]);
-      if (!isEmpty(response?.assets)) {
-        const value = response.assets[0];
-        setAsset(value);
+      const response = await getAssetRequest(id);
+      if (!isEmpty(response?.asset)) {
+        setAsset(response.asset);
       } else {
         setAsset(null);
       }
@@ -90,6 +89,11 @@ const EditAssetPage = () => {
               category.key === 'bookmarks' ? (
                 <BookmarkBasicData
                   editing
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
                   categoryId={asset.category}
                   asset={asset}
                   onSave={setAsset}

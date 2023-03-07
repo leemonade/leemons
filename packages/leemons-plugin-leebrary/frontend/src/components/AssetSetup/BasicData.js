@@ -8,7 +8,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { LibraryForm } from '../LibraryForm/LibraryForm';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
-import { newAssetRequest, updateAssetRequest } from '../../request';
+import { getAssetRequest, newAssetRequest, updateAssetRequest } from '../../request';
 
 const BasicData = ({
   file,
@@ -65,8 +65,8 @@ const BasicData = ({
 
     try {
       const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'media-files');
-
-      onSave(prepareAsset(asset));
+      const response = await getAssetRequest(asset.id);
+      onSave(prepareAsset(response.asset));
       setLoading(false);
       addSuccessAlert(
         editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')

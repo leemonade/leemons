@@ -134,6 +134,7 @@ module.exports = {
     endHour: 'Hora de fin',
     closedPeriod: 'Periodo cerrado',
     liveSession: 'Sesión en directo',
+    openPeriod: 'Periodo abierto',
     liveSessionData: 'Fecha',
   },
   activity_dashboard: {
@@ -292,6 +293,7 @@ module.exports = {
     },
   },
   multiSubject: 'Multi-asignatura',
+  customObjectives: 'Objetivos personalizados',
   activities_filters: {
     ongoing: 'En curso {{count}}',
     evaluated: 'Evaluadas {{count}}',

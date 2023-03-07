@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const aws = require('aws-sdk');
+const awsIotDeviceSdk = require('aws-iot-device-sdk');
 const cron = require('node-cron');
 const slugify = require('slugify');
 const squirrelly = require('squirrelly');
@@ -77,6 +78,7 @@ module.exports = {
   slugify,
   withTransaction,
   squirrelly,
+  awsIotDeviceSdk,
   getObjectArrayKeys,
   numberToEncodedLetter,
   timeoutPromise: (time) =>

@@ -134,6 +134,7 @@ module.exports = {
     endHour: 'End hour',
     closedPeriod: 'Closed period',
     liveSession: 'Live session',
+    openPeriod: 'Open period',
     liveSessionData: 'Date',
   },
   activity_dashboard: {
@@ -282,6 +283,7 @@ module.exports = {
     },
   },
   multiSubject: 'Multi-subject',
+  customObjectives: 'Custom objectives',
   activities_filters: {
     ongoing: 'Ongoing {{count}}',
     evaluated: 'Evaluated {{count}}',

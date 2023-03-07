@@ -6,7 +6,7 @@ async function initProviders(file) {
   try {
     const providers = await importProviders(file);
     const storageProvider = 'leebrary-aws-s3';
-    const emailProvider = 'emails-amazon-ses';
+    const emailProvider = 'emails-aws-ses';
     const smtpEmailProvider = 'emails-smtp';
 
     // ·····································

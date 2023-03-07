@@ -51,7 +51,7 @@ const ContentEditorInput = ({
 
     if (textEditorTools) {
       keys(textEditorTools).forEach((key) => {
-        if (textEditorTools[key].tool) {
+        if (textEditorTools[key].tool && toolbars[key]) {
           tools.push({ id: key, tool: textEditorTools[key].tool });
         }
       });

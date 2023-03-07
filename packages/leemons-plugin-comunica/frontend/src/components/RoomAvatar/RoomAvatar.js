@@ -1,15 +1,20 @@
-import React from 'react';
-import _ from 'lodash';
 import { Avatar, Box, ImageLoader } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import selectFile from '@leebrary/helpers/selectFile';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { RoomAvatarStyles } from './RoomAvatar.styles';
 
-function RoomAvatar({ room, onImageChange, size = 56 }) {
+function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
   const { classes } = RoomAvatarStyles(
     {
-      imageSquare: room.type === 'plugins.assignables.assignation',
+      imageSquare: [
+        isHeader ? 'plugins.assignables.assignation.user' : null,
+        isHeader ? 'plugins.assignables.assignation.group' : null,
+        isHeader ? 'plugins.assignables.assignation.subject' : null,
+        'plugins.assignables.assignation',
+      ].includes(room.type),
       size,
     },
     { name: 'RoomAvatar' }
@@ -24,28 +29,52 @@ function RoomAvatar({ room, onImageChange, size = 56 }) {
 
   const avatar = React.useMemo(() => {
     const result = {};
-    if (room.image) {
-      result.image = (
-        <ImageLoader
-          className={classes.image}
-          src={`${room.imageIsUrl ? room.image : getAssetUrl(room.image)}&seed=${room.imageSeed}`}
-          forceImage
-          width={size}
-          height={size}
-        />
-      );
+    let { image, icon, bgColor, imageIsUser, imageIsUrl } = room;
+    if (isHeader && room.metadata?.headerImage) {
+      image = room.metadata.headerImage;
     }
-    if (!room.image && room.icon) {
+    if (isHeader && room.metadata?.headerIcon) {
+      icon = room.metadata.headerIcon;
+    }
+    if (isHeader && room.metadata?.headerBgColor) {
+      bgColor = room.metadata.headerBgColor;
+    }
+    // eslint-disable-next-line no-prototype-builtins
+    if (isHeader && room.metadata?.hasOwnProperty('headerImageIsUser')) {
+      imageIsUser = room.metadata.headerImageIsUser;
+    }
+    // eslint-disable-next-line no-prototype-builtins
+    if (isHeader && room.metadata?.hasOwnProperty('headerImageIsUrl')) {
+      imageIsUrl = room.metadata.headerImageIsUrl;
+    }
+    if (image) {
+      if (imageIsUser) {
+        result.image = (
+          <Avatar image={image} fullName={room.name} size={size === 56 ? 'lg' : 'md'} />
+        );
+      } else {
+        result.image = (
+          <ImageLoader
+            className={classes.image}
+            src={`${imageIsUrl ? image : getAssetUrl(image)}&seed=${room.imageSeed}`}
+            forceImage
+            width={size}
+            height={size}
+          />
+        );
+      }
+    }
+    if (!image && icon) {
       result.icon = (
         <ImageLoader
-          src={room.metadata.iconIsUrl ? room.icon : getAssetUrl(room.icon)}
+          src={room.metadata.iconIsUrl ? icon : getAssetUrl(icon)}
           forceImage
           width={result.image ? size * 0.2142 : size * 0.4642}
           height={result.image ? size * 0.2142 : size * 0.4642}
         />
       );
     }
-    if (!room.image && !room.icon) {
+    if (!image && !icon) {
       result.image = (
         <Avatar color="#D3D5D9" fullName={room.name} size={size === 56 ? 'lg' : 'md'} />
       );
@@ -60,11 +89,11 @@ function RoomAvatar({ room, onImageChange, size = 56 }) {
         />
       );
     }
-    if (room.bgColor) {
-      result.color = room.bgColor;
+    if (bgColor) {
+      result.color = bgColor;
     }
     return result;
-  }, [room.icon, room.attached, room.image, room.bgColor, room.imageSeed]);
+  }, [room.icon, room.attached, room.image, room.metadata, room.bgColor, room.imageSeed]);
 
   return (
     <Box className={classes.itemImage}>
@@ -91,6 +120,7 @@ function RoomAvatar({ room, onImageChange, size = 56 }) {
 RoomAvatar.propTypes = {
   room: PropTypes.any,
   size: PropTypes.number,
+  isHeader: PropTypes.boolean,
   onImageChange: PropTypes.func,
 };
 

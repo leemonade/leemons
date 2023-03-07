@@ -1,17 +1,17 @@
-import React, { useContext, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { find, isArray } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import prefixPN from '@users/helpers/prefixPN';
-import HeroBgLayout from '@users/layout/heroBgLayout';
-import { useHistory } from 'react-router-dom';
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginProfileSelector } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import { LayoutContext } from '@layout/context/layout';
-import hooks from 'leemons-hooks';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@users/helpers/prefixPN';
+import HeroBgLayout from '@users/layout/heroBgLayout';
 import Cookies from 'js-cookie';
+import hooks from 'leemons-hooks';
+import { find, isArray } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useContext, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
