@@ -339,15 +339,12 @@ class Leemons {
         );
 
         if (!isGood) {
-          const isSocketIo =
-            (this.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
+          const isSocketIo = (this.env.MQTT_PLUGIN || 'mqtt-socket-io') === 'mqtt-socket-io';
 
           if (isSocketIo) {
             LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
           } else {
-            this.plugins[
-              this.config.get('config.socketPlugin') || 'mqtt-socket-io'
-            ].services.socket.worker.emit(
+            this.plugins[this.env.MQTT_PLUGIN || 'mqtt-socket-io'].services.socket.worker.emit(
               ctx.state.userSession.id,
               'USER_AGENT_NEED_UPDATE_DATASET'
             );
@@ -713,7 +710,9 @@ class Leemons {
   async loadAppConfig() {
     return withTelemetry('loadAppConfig', async () => {
       leemons.events.emit('appWillLoadConfig', 'leemons');
-      this.config = (await loadConfiguration(this, { useProcessEnv: true })).configProvider;
+      const config = await loadConfiguration(this, { useProcessEnv: true });
+      this.config = config.configProvider;
+      this.env = config.env;
       leemons.events.emit('appDidLoadConfig', 'leemons');
 
       if (this.config.get('config.insecure', false)) {
@@ -770,8 +769,7 @@ class Leemons {
 
     await this.load();
 
-    const isSocketIo =
-      (this.config.get('config.socketPlugin') || 'mqtt-socket-io') === 'mqtt-socket-io';
+    const isSocketIo = (this.env.MQTT_PLUGIN || 'mqtt-socket-io') === 'mqtt-socket-io';
     if (isSocketIo) {
       LeemonsSocket.worker.init(this.server);
       LeemonsSocket.worker.onConnection((socket) => {
@@ -791,9 +789,9 @@ class Leemons {
         }
       });
     } else {
-      this.plugins[
-        this.config.get('config.socketPlugin') || 'mqtt-socket-io'
-      ].services.socket.worker.init(this.server);
+      this.plugins[this.env.MQTT_PLUGIN || 'mqtt-socket-io'].services.socket.worker.init(
+        this.server
+      );
     }
 
     this.server.listen(process.env.PORT, () => {

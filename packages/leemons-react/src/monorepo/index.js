@@ -13,9 +13,6 @@ const createJSConfig = require('./createJSConfig');
 const createEslint = require('./createEsLint');
 
 module.exports = async function generateMonorepo({ plugins, app, outputDir, basePath }) {
-  // eslint-disable-next-line import/no-dynamic-require, global-require
-  const { apiUrl } = require(`${app}/config/config`);
-
   const templateDir = path.resolve(__dirname, '../templates');
   await createFolderIfMissing(outputDir);
   await createMissingPackageJSON(path.resolve(outputDir, 'package.json'), {
@@ -40,7 +37,7 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
   await copyFileWithSquirrelly(
     path.resolve(templateDir, 'contexts', 'global.squirrelly'),
     path.resolve(outputDir, 'contexts', 'global.js'),
-    { apiUrl }
+    { apiUrl: process.env.API_URL }
   );
 
   const modified = await saveLockFile(outputDir, plugins);

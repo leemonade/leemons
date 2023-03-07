@@ -7,9 +7,15 @@ const generatePublicFolders = require('../src/plugins/generatePublicFolders');
 const buildApp = require('../src/webpack/build');
 const getBuildDir = require('../src/paths/getBuildDir');
 const getBasePath = require('../src/paths/getBasePath');
+const { generateEnv } = require('../../leemons-utils/lib/env');
 
 module.exports = async function buildFront({ app, build, output, base }) {
   process.env.NODE_ENV = 'production';
+
+  const env = await generateEnv('.env', false);
+  Object.keys(env).forEach((key) => {
+    process.env[key] = env[key];
+  });
 
   const outputDir = getOutputDir(output);
   const appDir = getAppDir(app);
