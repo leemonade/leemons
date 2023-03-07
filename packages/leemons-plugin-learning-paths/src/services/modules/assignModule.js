@@ -51,24 +51,24 @@ module.exports = async function assignModule(
 
   for (let i = 0, { length } = activities; i < length; i++) {
     const { activity, id } = activities[i];
-    const previousActivity = activities[i - 1]?.id;
+    // const previousActivity = activities[i - 1]?.id;
     const activityConfig = config.activities[id];
 
     const instanceConfig = {
       ...activitiesCommonConfig,
-      ...activityConfig.config,
+      ...activityConfig?.config,
       metadata: {
-        ...activityConfig.config?.metadata,
+        ...activityConfig?.config?.metadata,
         module: {
           // The module id
           id: moduleInstance.id,
           // The internal module activity id
           activity: id,
-          requirement: activityConfig.state.requirement,
+          requirement: activityConfig?.state?.requirement,
           type: 'activity',
         },
       },
-      duration: activityConfig.state.duration ?? null,
+      duration: activityConfig?.state?.duration ?? null,
       assignable: activity,
     };
 
@@ -121,5 +121,11 @@ module.exports = async function assignModule(
     }
   );
 
-  console.log('All info for assigning module collected');
+  return {
+    module: moduleInstance.id,
+    activities: activities.map((activity, i) => ({
+      id: activitiesInstanceIds[i],
+      requirement: config.activities[activity.id]?.state?.requirement,
+    })),
+  };
 };

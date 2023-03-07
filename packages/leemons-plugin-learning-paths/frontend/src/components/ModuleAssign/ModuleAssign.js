@@ -109,7 +109,7 @@ function AssignmentStep({ localizations, assignable, onNextStep }) {
 
 function onAssign(id, { assignationForm, state: { activities, time, type } }) {
   const activitiesWithState = {};
-  Object.keys(activities).forEach((key) => {
+  Object.keys(type).forEach((key) => {
     const activity = activities[key];
     let duration = null;
 
@@ -121,7 +121,7 @@ function onAssign(id, { assignationForm, state: { activities, time, type } }) {
     }
 
     activitiesWithState[key] = {
-      config: activity.config || activity.defaultConfig,
+      config: activity?.config || activity?.defaultConfig || null,
       state: { duration, requirement: type?.[key] },
     };
   });
