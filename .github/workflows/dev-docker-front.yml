@@ -1,4 +1,4 @@
-name: Publish Frontend Docker image
+name: Dev - Publish Frontend Docker Image
 
 on:
   push:
@@ -42,8 +42,7 @@ jobs:
 
       - name: 🔧🚀 Build and push Docker
         uses: docker/build-push-action@v4
-        working-directory: ./examples/docker
         with:
-          context: .
+          context: ./examples/docker
           push: true
           tags: leemonade/leemons-front:dev

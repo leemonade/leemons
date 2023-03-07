@@ -1,4 +1,4 @@
-name: Deploy Docker Frontend(s3,cloudfront) and Backend(ecr,ecs)
+name: Dev - Deploy Docker Frontend(s3,cloudfront) and Backend(ecr,ecs)
 
 on:
   push:
