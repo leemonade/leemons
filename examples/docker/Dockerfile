@@ -7,5 +7,5 @@ WORKDIR /leemons
 COPY ./build .
 COPY ./runner.sh ./runner.sh
 RUN npm install -g serve
-CMD [ "sh", "/leemons/runner.sh ${API_URL}" ]
+CMD sh /leemons/runner.sh ${API_URL}
 EXPOSE 3000

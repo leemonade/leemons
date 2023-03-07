@@ -29,12 +29,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: ⚙ Install
-        run: yarn install --frozen-lockfile
-
       - name: ⚙ Install tiptap
         working-directory: ./examples/docker
-        run: yarn add prosemirror-commands prosemirror-keymap prosemirror-model prosemirror-schema-list prosemirror-state prosemirror-transform prosemirror-view prosemirror-dropcursor prosemirror-gapcursor prosemirror-history @tiptap/pm
+        run: yarn add @tiptap/pm prosemirror-commands prosemirror-keymap prosemirror-model prosemirror-schema-list prosemirror-state prosemirror-transform prosemirror-view prosemirror-dropcursor prosemirror-gapcursor prosemirror-history
+
+      - name: ⚙ Install
+        run: yarn install --frozen-lockfile
 
       - name: 🔧🚀 Build and push Docker
         uses: docker/build-push-action@v4
