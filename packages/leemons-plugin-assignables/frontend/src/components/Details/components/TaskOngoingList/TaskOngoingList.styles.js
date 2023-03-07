@@ -4,8 +4,13 @@ const TaskOngoingListStyles = createStyles((theme) => ({
   root: {},
   header: {
     position: 'fixed',
-    height: 224,
+    height: 220,
     zIndex: 9,
+  },
+  taskHeaderContainer: {
+    position: 'relative',
+    height: '100%',
+    zIndex: 1,
   },
   mainContent: {
     height: '370px',
