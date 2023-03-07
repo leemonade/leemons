@@ -120,16 +120,22 @@ export function Provider({ children }) {
     api.useRes(apiResponseParserMiddleware);
   }, []);
 
+  {{@if(it.apiUrl)}}
+    let apiUrl = "{{it.apiUrl}}";
+  {{#else}}
+    let apiUrl = window.location.origin;
+  {{/if}}
+
+  if (window.customEnv?.apiUrl) {
+    apiUrl = window.customEnv.apiUrl;
+  }
+
   const [value, setValue] = useState({
     leemons: {
       api,
       log: console,
       version: '1.0.0',
-      {{@if(it.apiUrl)}}
-      apiUrl: "{{it.apiUrl}}",
-      {{#else}}
-      apiUrl: window.location.origin,
-      {{/if}}
+      apiUrl,
     },
   });
 

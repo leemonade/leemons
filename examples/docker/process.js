@@ -20,6 +20,7 @@ function fromDir(startPath, filter, acc = []) {
   return acc;
 }
 
+/*
 fs.writeFileSync(
   file,
   fs
@@ -28,6 +29,7 @@ fs.writeFileSync(
     .replace('{{socketPlugin}}', process.env.SOCKET_PLUGIN || null)
     .replace('{{apiUrl}}', process.env.API_URL || null)
 );
+*/
 
 const files = fromDir('../../', 'package.json');
 
