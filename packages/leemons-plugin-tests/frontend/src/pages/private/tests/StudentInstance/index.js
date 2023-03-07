@@ -231,6 +231,7 @@ function StudentInstance() {
               : store.instance.assignable.asset.cover.id
           )
           : null,
+        /*
         styles: {
           position: 'absolute',
           bottom: 0,
@@ -239,6 +240,7 @@ function StudentInstance() {
           borderRadius: store.isFirstStep ? '16px 16px 0 0' : 0,
           backgroundColor: store.isFirstStep ? COLORS.uiBackground01 : COLORS.uiBackground02,
         },
+        */
       };
     }
     return {};

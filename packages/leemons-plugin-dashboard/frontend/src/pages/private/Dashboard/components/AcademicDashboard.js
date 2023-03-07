@@ -16,17 +16,18 @@ const rightZoneWidth = '320px';
 const Styles = createStyles((theme) => ({
   header: {
     position: 'relative',
-    height: 80 + 48,
+    height: 130 + 48,
   },
   programSelectorContainer: {
+    position: 'relative',
     display: 'flex',
-    height: '80px',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: '50%',
+    height: '100%',
     zIndex: 5,
     alignItems: 'center',
+    width: 'fit-content',
+    maxWidth: 700,
+    minWidth: 250,
+    marginLeft: 30,
   },
 }));
 
@@ -135,7 +136,12 @@ export default function AcademicDashboard({ session }) {
         })}
       >
         <Box className={styles.header}>
-          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
+          <HeaderBackground
+            {...headerProps}
+            withGradient
+            withOverlay={false}
+            styles={{ position: 'absolute', zIndex: 1 }}
+          />
           <Box className={styles.programSelectorContainer}>
             <HeaderDropdown
               value={store.selectedProgram}

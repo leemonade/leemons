@@ -258,6 +258,7 @@ async function events(isInstalled) {
         try {
           await initWidgets();
           leemons.events.emit('init-widgets');
+          leemons.log.info(chalk`{cyan.bold BULK} INITIALIZED Widgets plugin`);
         } catch (e) {
           // console.error(e);
         }
