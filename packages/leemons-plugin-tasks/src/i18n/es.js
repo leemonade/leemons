@@ -335,6 +335,7 @@ module.exports = {
       title: 'Tarea finalizada',
       description: 'Tu tarea ha sido enviada con éxito',
       action: 'Actividades pendientes',
+      goToModule: 'Dashboard del módulo',
       nextActivity: 'Siguiente actividad',
     },
     timeout_modal: {

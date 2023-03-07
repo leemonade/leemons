@@ -346,6 +346,7 @@ module.exports = {
       title: 'Tasks finished',
       description: 'Your task has been successfuly submitted',
       action: 'Ongoing activities',
+      goToModule: 'Module dashboard',
       nextActivity: 'Next activity',
     },
     timeout_modal: {

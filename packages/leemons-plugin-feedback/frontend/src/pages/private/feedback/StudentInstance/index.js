@@ -46,10 +46,10 @@ const StudentInstance = () => {
         title: store.instance.assignable.asset.name,
         image: store.instance.assignable.asset.cover
           ? getFileUrl(
-              isString(store.instance.assignable.asset.cover)
-                ? store.instance.assignable.asset.cover
-                : store.instance.assignable.asset.cover.id
-            )
+            isString(store.instance.assignable.asset.cover)
+              ? store.instance.assignable.asset.cover
+              : store.instance.assignable.asset.cover.id
+          )
           : null,
         styles: {
           position: 'absolute',
@@ -140,6 +140,7 @@ const StudentInstance = () => {
           ) : (
             <QuestionsCard
               feedback={store.feedback}
+              instance={store.instance}
               instanceId={store.idLoaded}
               defaultValues={store.responses}
               userId={getUserId()}

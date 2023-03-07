@@ -18,6 +18,10 @@ const ModuleAssignPage = loadable(() =>
   pMinDelay(import('./src/pages/private/ModuleAssignPage'), 1000)
 );
 
+const ModuleDashboardPage = loadable(() =>
+  pMinDelay(import('./src/pages/private/ModuleDashboardPage'), 1000)
+);
+
 function Fallback() {
   return <LoadingOverlay visible />;
 }
@@ -44,11 +48,10 @@ export default function Private() {
         />
       </Route>
       <Route path={`${path}/modules/:id/assign`}>
-        <ModuleAssignPage
-          session={session}
-          key={query.has('fromNew') ? 'new' : 'edit'}
-          fallback={<Fallback />}
-        />
+        <ModuleAssignPage session={session} fallback={<Fallback />} />
+      </Route>
+      <Route path={`${path}/modules/dashboard/:id`}>
+        <ModuleDashboardPage session={session} fallback={<Fallback />} />
       </Route>
     </Switch>
   );
