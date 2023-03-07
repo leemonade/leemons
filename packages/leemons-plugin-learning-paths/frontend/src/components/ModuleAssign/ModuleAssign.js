@@ -20,6 +20,8 @@ import {
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 import assignModuleRequest from '@learning-paths/requests/assignModule';
+import { useHistory } from 'react-router-dom';
+import { addErrorAlert } from '@layout/alert';
 import { Config } from './components/Config';
 
 export function useModuleAssignLocalizations() {
@@ -131,7 +133,7 @@ function onAssign(id, { assignationForm, state: { activities, time, type } }) {
     activities: activitiesWithState,
   };
 
-  assignModuleRequest(id, assignationObject);
+  return assignModuleRequest(id, assignationObject);
 }
 
 export function ModuleAssign({ id }) {
@@ -141,7 +143,10 @@ export function ModuleAssign({ id }) {
   const [currentStep, setCurrentStep] = useState(0);
   const { classes, cx } = useModuleAssignStyles();
   const tabs = useTabs({ localizations });
-  const { getValues } = useModuleAssignContext();
+  const { getValues, setValue, useWatch } = useModuleAssignContext();
+  const history = useHistory();
+
+  const assignButtonIsLoading = useWatch({ name: 'assignButtonIsLoading' });
 
   if (isLoading) {
     return <Loader />;
@@ -176,7 +181,20 @@ export function ModuleAssign({ id }) {
             >
               {localizations?.buttons?.previous}
             </Button>
-            <Button onClick={() => onAssign(id, getValues())}>
+            <Button
+              loading={assignButtonIsLoading}
+              onClick={() => {
+                setValue('assignButtonIsLoading', true);
+                onAssign(id, getValues())
+                  .then(({ assignation: { module } }) =>
+                    history.push(`/private/learning-paths/modules/dashboard/${module}`)
+                  )
+                  .catch((e) =>
+                    addErrorAlert(`${localizations?.alert?.failedToAssign}: ${e.message}`)
+                  )
+                  .finally(() => setValue('assignButtonIsLoading', false));
+              }}
+            >
               {localizations?.buttons?.assign}
             </Button>
           </Box>

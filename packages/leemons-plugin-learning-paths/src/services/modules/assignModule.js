@@ -39,6 +39,7 @@ module.exports = async function assignModule(
       ...config.assignationForm,
       metadata: {
         ...config.assignationForm.metadata,
+        statement: config.assignationForm.statement ?? null,
         module: {
           type: 'module',
           activities: [],

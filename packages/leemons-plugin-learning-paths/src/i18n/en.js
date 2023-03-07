@@ -120,5 +120,16 @@ module.exports = {
       next: 'Next',
       assign: 'Assign',
     },
+    alert: {
+      failedToAssign: 'An error occurred while assigning',
+    },
+  },
+  dashboard: {
+    activities: 'Activities',
+    buttons: {
+      review: 'Review',
+      start: 'Start',
+      continue: 'Continue',
+    },
   },
 };
