@@ -14,6 +14,7 @@
   },
   "leemons": {},
   "dependencies": {
+    "@tiptap/pm": "^2.0.0-beta.220",
     "leemons": "0.0.1",
     "leemons-connector-bookshelf": "0.0.1",
     "leemons-plugin-academic-calendar": "0.0.1",
@@ -39,11 +40,11 @@
     "leemons-plugin-learning-paths": "0.0.1",
     "leemons-plugin-leebrary": "0.0.1",
     "leemons-plugin-menu-builder": "0.0.1",
+    "leemons-plugin-mqtt-aws-iot": "0.0.1",
+    "leemons-plugin-mqtt-socket-io": "0.0.1",
     "leemons-plugin-multilanguage": "0.0.1",
     "leemons-plugin-package-manager": "0.0.1",
     "leemons-plugin-scores": "0.0.1",
-    "leemons-plugin-mqtt-aws-iot": "0.0.1",
-    "leemons-plugin-mqtt-socket-io": "0.0.1",
     "leemons-plugin-tasks": "0.0.1",
     "leemons-plugin-tests": "0.0.1",
     "leemons-plugin-timetable": "0.0.1",
@@ -57,6 +58,16 @@
     "leemons-provider-leebrary-tasks": "0.0.1",
     "leemons-provider-leebrary-tests": "0.0.1",
     "leemons-react": "0.0.1",
-    "mysql2": "^2.3.3"
+    "mysql2": "^2.3.3",
+    "prosemirror-commands": "^1.5.1",
+    "prosemirror-dropcursor": "^1.7.1",
+    "prosemirror-gapcursor": "^1.3.1",
+    "prosemirror-history": "^1.3.0",
+    "prosemirror-keymap": "^1.2.1",
+    "prosemirror-model": "^1.19.0",
+    "prosemirror-schema-list": "^1.2.2",
+    "prosemirror-state": "^1.4.2",
+    "prosemirror-transform": "^1.7.1",
+    "prosemirror-view": "^1.30.1"
   }
 }

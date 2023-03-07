@@ -5,6 +5,7 @@ RUN apk update && apk --no-cache --virtual build-dependencies add \
     g++
 WORKDIR /leemons
 COPY ./build .
+COPY ./runner.sh .
 RUN npm install -g serve
-CMD [ "sh", "-c", "sed -i 's/apiUrl = undefined/\apiUrl = \"${API_URL}\"/g' index.html > index2.html && rm index.html && mv index2.html index.html && serve -p 3000 -s /leemons" ]
+CMD [ "sh", "/leemons/runner.sh ${API_URL}" ]
 EXPOSE 3000
