@@ -51,13 +51,6 @@ const StudentInstance = () => {
                 : store.instance.assignable.asset.cover.id
             )
           : null,
-        styles: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          borderRadius: 0,
-          backgroundColor: COLORS.uiBackground02,
-        },
       };
     }
     return {};
