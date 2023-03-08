@@ -32,14 +32,26 @@ const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar
     backgroundColor: theme.colors.uiBackground02,
     padding: theme.spacing[4],
     transition: '300ms',
+    zIndex: 3,
   },
   rightSidewidgetsContainer: {
     paddingTop: theme.spacing[4],
   },
   header: {
     position: 'relative',
-    height: 224,
+    height: 224 - 56,
   },
+  dropdown: {
+    position: 'relative',
+    display: 'flex',
+    height: '100%',
+    zIndex: 5,
+    alignItems: 'center',
+    width: 'fit-content',
+    maxWidth: 700,
+    marginLeft: 30,
+  },
+  classBar: {},
   image: {
     position: 'relative',
     backgroundColor: theme.colors.uiBackground02,
@@ -97,7 +109,7 @@ export default function ClassDashboard({ session }) {
     const haveScrollBar =
       layoutState.contentRef.current.clientHeight < layoutState.contentRef.current.scrollHeight;
     if (haveScrollBar !== store.haveScrollBar) {
-      store.haveScrollBar = haveScrollBar;
+      // store.haveScrollBar = haveScrollBar;
       render();
     }
   }
@@ -254,21 +266,23 @@ export default function ClassDashboard({ session }) {
       {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
         <Box className={styles.header}>
-          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
-          <Box style={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}>
+          <HeaderBackground {...headerProps} withGradient styles={{ position: 'absolute' }} />
+          <Box className={styles.dropdown}>
             <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
-            <ClassroomHeaderBar
-              labels={{ virtualClassroom: t('virtualClassroom') }}
-              onVirtualClassroomOpen={onVirtualClassroomOpen}
-              classRoom={{
-                schedule: store.class?.schedule,
-                address: store.class?.address,
-                virtual_classroom: store.class?.virtualUrl,
-                teacher: mainTeacher?.user,
-              }}
-              locale={locale}
-            />
           </Box>
+        </Box>
+        <Box className={styles.classBar}>
+          <ClassroomHeaderBar
+            labels={{ virtualClassroom: t('virtualClassroom') }}
+            onVirtualClassroomOpen={onVirtualClassroomOpen}
+            classRoom={{
+              schedule: store.class?.schedule,
+              address: store.class?.address,
+              virtual_classroom: store.class?.virtualUrl,
+              teacher: mainTeacher?.user,
+            }}
+            locale={locale}
+          />
         </Box>
 
         {/*
