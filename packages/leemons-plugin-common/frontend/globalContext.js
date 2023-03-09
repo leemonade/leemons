@@ -34,16 +34,19 @@ export function Provider({ children }) {
   );
 
   React.useEffect(() => {
+    // TODO: Buscar todas las imagenes y poner bien la url
     const interval = setInterval(() => {
       const elements = document.querySelectorAll('[src]');
+
       _.forEach(elements, (element) => {
         const src = element.getAttribute('src');
         if (src.startsWith('/api')) {
+          // console.log('Element', element);
           // eslint-disable-next-line no-param-reassign
           element.src = leemons.apiUrl + src;
         }
       });
-    }, 1000);
+    }, 1000 / 20);
     return () => {
       clearInterval(interval);
     };
