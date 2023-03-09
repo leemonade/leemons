@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, HtmlText, Loader, Text, Title, createStyles } from '@bubbles-ui/components';
-import { get, map } from 'lodash';
+import { capitalize, get, map } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
@@ -11,6 +11,11 @@ import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { ActivityContainer } from '@bubbles-ui/leemons';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import useClassData from '@assignables/hooks/useClassDataQuery';
+import { getMultiClassData } from '@assignables/helpers/getClassData';
 import { DashboardCard } from './components/DashboardCard';
 
 export function useModuleDashboardLocalizations() {
@@ -35,11 +40,13 @@ export const useModuleDashboardStyles = createStyles((theme) => {
   return {
     root: {
       minHeight: '100vh',
+      background: globalTheme.background.color.surface.subtle,
+    },
+    rootContainer: {
       display: 'flex',
       flexDirection: 'column',
       gap: globalTheme.spacing.padding.xlg,
 
-      background: globalTheme.background.color.surface.subtle,
       paddingTop: globalTheme.spacing.padding.xlg,
       paddingBottom: globalTheme.spacing.padding.xlg,
       paddingLeft: globalTheme.spacing.padding['3xlg'],
@@ -140,9 +147,46 @@ export function useModuleData(id) {
   };
 }
 
+function useHeaderData(module) {
+  const { assignable, dates, alwaysAvailable } = module ?? {};
+  const { asset, roleDetails, role } = assignable ?? {};
+  const { name } = asset ?? {};
+
+  const preparedAsset = prepareAsset(asset ?? {});
+  const roleLocalizations = useRolesLocalizations([role]);
+
+  const { data: classesData } = useClassData(module, {}, { multiSubject: true });
+  const { icon, color } = getMultiClassData({});
+
+  return {
+    header: {
+      title: name,
+
+      icon: classesData?.length > 1 ? icon : classesData?.[0]?.icon,
+      color: classesData?.length > 1 ? color : classesData?.[0]?.color,
+      image: preparedAsset?.cover ?? null,
+      subjects: classesData,
+      activityType: {
+        icon: roleDetails?.icon,
+        type: capitalize(get(roleLocalizations, `${role}.singular`)),
+      },
+      activityDates: !alwaysAvailable
+        ? null
+        : {
+          startLabel: 'Desde',
+          endLabel: 'Hasta',
+          hourLabel: 'Hora',
+          startDate: dates?.startDate || new Date(),
+          endDate: dates?.deadline || new Date(),
+        },
+    },
+  };
+}
+
 export function ModuleDashboard({ id }) {
   const { module, activities, activitiesById, assignationsById, isLoading } = useModuleData(id);
   const localizations = useModuleDashboardLocalizations();
+  const headersData = useHeaderData(module);
 
   const { classes } = useModuleDashboardStyles();
 
@@ -152,19 +196,22 @@ export function ModuleDashboard({ id }) {
 
   return (
     <Box className={classes.root}>
-      <Title>{module?.assignable?.asset?.name}</Title>
-      <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
-      {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
-      <Box className={classes.activitiesList}>
-        {activities?.map((activity) => (
-          <DashboardCard
-            localizations={localizations}
-            activity={activitiesById[activity?.id]}
-            assignation={assignationsById[activity?.id]}
-            key={activity?.id}
-          />
-        ))}
-      </Box>
+      <ActivityContainer {...headersData} collapseOnScroll>
+        <Box className={classes.rootContainer}>
+          <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
+          {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
+          <Box className={classes.activitiesList}>
+            {activities?.map((activity) => (
+              <DashboardCard
+                localizations={localizations}
+                activity={activitiesById[activity?.id]}
+                assignation={assignationsById[activity?.id]}
+                key={activity?.id}
+              />
+            ))}
+          </Box>
+        </Box>
+      </ActivityContainer>
     </Box>
   );
 }
