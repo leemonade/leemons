@@ -150,14 +150,28 @@ function StudentActions({ activity, assignation, localizations }) {
 
   const { isFinished, isStartedByStudent } = useStudentState({ assignation });
 
-  if (isFinished) {
-    return <Button size="sm">{localizations?.buttons?.review}</Button>;
-  }
-  if (isStartedByStudent) {
-    return <Button size="sm">{localizations?.buttons?.continue}</Button>;
-  }
+  const activityUrl = roleDetails?.studentDetailUrl
+    ?.replace(':id', id)
+    ?.replace(':user', assignation?.user);
 
-  return <Button size="sm">{localizations?.buttons?.start}</Button>;
+  const evaluationUrl = roleDetails?.evaluationDetailUrl
+    ?.replace(':id', id)
+    ?.replace(':user', assignation?.user);
+
+  if (isFinished) {
+    return (
+      <Link to={evaluationUrl}>
+        <Button size="sm">{localizations?.buttons?.review}</Button>
+      </Link>
+    );
+  }
+  return (
+    <Link to={activityUrl}>
+      <Button size="sm">
+        {isStartedByStudent ? localizations?.buttons?.continue : localizations?.buttons?.start}
+      </Button>
+    </Link>
+  );
 }
 
 function Actions({ activity, assignation, localizations }) {
