@@ -58,6 +58,15 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
             className={classes.image}
             src={`${imageIsUrl ? image : getAssetUrl(image)}&seed=${room.imageSeed}`}
             forceImage
+            withPlaceholder
+            placeholder={
+              <Avatar
+                color="#D3D5D9"
+                radius={false}
+                fullName={room.name}
+                size={size === 56 ? 'lg' : 'md'}
+              />
+            }
             width={size}
             height={size}
           />
@@ -69,6 +78,15 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
         <ImageLoader
           src={room.metadata.iconIsUrl ? icon : getAssetUrl(icon)}
           forceImage
+          withPlaceholder
+          placeholder={
+            <Avatar
+              color="#D3D5D9"
+              radius={false}
+              fullName={room.name}
+              size={size === 56 ? 'lg' : 'md'}
+            />
+          }
           width={result.image ? size * 0.2142 : size * 0.4642}
           height={result.image ? size * 0.2142 : size * 0.4642}
         />
