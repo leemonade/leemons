@@ -29,6 +29,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: ⚙ Build docker config
+        working-directory: ./examples/docker
+        run: BUBBLES_VERSION=dev node process.js
+
       - name: ⚙ Install tiptap
         working-directory: ./examples/docker
         run: yarn add @tiptap/pm prosemirror-commands prosemirror-keymap prosemirror-model prosemirror-schema-list prosemirror-state prosemirror-transform prosemirror-view prosemirror-dropcursor prosemirror-gapcursor prosemirror-history

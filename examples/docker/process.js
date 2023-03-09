@@ -39,6 +39,6 @@ files.forEach((file) => {
     fs
       .readFileSync(file)
       .toString()
-      .replace(/("@bubbles-ui\/.+":) "(.+)"/g, '$1 "dev"')
+      .replace(/("@bubbles-ui\/.+":) "(.+)"/g, `$1 "${process.env.BUBBLES_VERSION}"`)
   );
 });

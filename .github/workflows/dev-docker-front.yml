@@ -8,6 +8,8 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    env:
+      BUBBLES_VERSION: 'dev'
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
@@ -28,6 +30,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: ⚙ Build docker config
+        working-directory: ./examples/docker
+        run: BUBBLES_VERSION=dev node process.js
 
       - name: ⚙ Install tiptap
         working-directory: ./examples/docker
