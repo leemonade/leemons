@@ -6,6 +6,7 @@ module.exports = {
     page_title: 'Librería de Curricula',
     published: 'Publicados',
     draft: 'Borradores',
+    empty: 'No hay ningún recurso disponible',
     page_description:
       'Estos son los planes de estudio de los programas que se imparten en el centro.',
   },

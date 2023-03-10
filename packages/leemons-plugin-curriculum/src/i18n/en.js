@@ -6,6 +6,7 @@ module.exports = {
     page_title: 'Curriculum Library',
     published: 'Published',
     draft: 'Draft',
+    empty: 'No resources available',
     page_description: 'These are the curricula of the programmes this center delivers.',
   },
   addCurriculumBase: {
