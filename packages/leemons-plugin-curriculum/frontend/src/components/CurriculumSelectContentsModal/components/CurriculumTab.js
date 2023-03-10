@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 
-import React from 'react';
-import PropTypes from 'prop-types';
 import { TabPanel, Tabs } from '@bubbles-ui/components';
-import { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
-import { getParentNodes } from '@curriculum/helpers/getParentNodes';
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import _, { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -72,6 +72,11 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
     forIn(group, (value, key) => {
       store.selectedNode.propertiesByType.push({ value, key });
     });
+
+    store.selectedNode.propertiesByType = _.filter(
+      store.selectedNode.propertiesByType,
+      ({ key }) => key !== 'non-qualifying-criteria'
+    );
 
     render();
   }
