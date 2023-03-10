@@ -1,9 +1,9 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { Badge, Box, createStyles, MultiSelect } from '@bubbles-ui/components';
 import { ellipsis, htmlToText, useStore } from '@common';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -59,6 +59,7 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
                 nodeValue,
                 index
               );
+
               selectData.push({
                 label: `${ellipsis(`${number ? `${number} ` : ''}${htmlToText(val.value)}`, 36)}`,
                 value: `${nodeValue.id}|${val.id}`,
@@ -68,16 +69,17 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
             _.forIn(nodeValue.value, (val, k) => {
               if (_.isArray(val.value)) {
                 _.forEach(val.value, (v, index) => {
+                  const item = _.find(_blockData.elements, { id: k });
                   const number = getItemTitleNumberedWithParents(
                     curriculum,
                     _blockData,
                     node.id,
                     {
-                      ...v,
-                      metadata: { ...v?.metadata, parentRelated: val?.metadata?.parentRelated },
+                      ...val,
+                      metadata: { ...val?.metadata, parentRelated: val?.metadata?.parentRelated },
                     },
                     index,
-                    getGroupItem(k)
+                    item
                   );
                   selectData.push({
                     label: ellipsis(`${number ? `${number} ` : ''}${htmlToText(v.value)}`, 36),

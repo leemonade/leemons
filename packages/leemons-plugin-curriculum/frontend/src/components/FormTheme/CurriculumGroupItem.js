@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   ActionButton,
   Box,
@@ -14,14 +12,16 @@ import {
   Text,
   TextInput,
 } from '@bubbles-ui/components';
-import _, { forEach, isArray, isNumber } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { htmlToText, numberToEncodedLetter, useStore } from '@common';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
+import { htmlToText, numberToEncodedLetter, useStore } from '@common';
 import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
+import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
+import _, { forEach, isArray, isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -198,6 +198,7 @@ function CurriculumGroupItem({
         )}
       />
     );
+
     return (
       <Box className={classes.card}>
         <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>
@@ -222,7 +223,10 @@ function CurriculumGroupItem({
           ) : null}
           {blockData.groupTypeOfContents === 'list' && defaultValues.value?.length ? (
             <Table
-              data={defaultValues.value}
+              data={_.map(defaultValues.value, (v, i) => ({
+                ...v,
+                order: getNumbering(i),
+              }))}
               columns={columns.map((col) => ({ ...col, Header: ' ' }))}
             />
           ) : null}
