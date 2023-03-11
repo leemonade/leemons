@@ -4,7 +4,7 @@ import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
-import _ from 'lodash';
+import _, { get } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';
 import { useIsTeacher } from '@academic-portfolio/hooks';
@@ -81,7 +81,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
   const avgGrade = gradeCount > 0 ? gradeSum / gradeCount : 0;
 
   const role = instance?.instance?.assignable?.role;
-  const roleName = labels?.roles?.[role]?.singular || role;
+  const roleName = get(labels?.roles, `${role}.singular`) || role;
 
   let submission;
   let total;
@@ -427,7 +427,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
           subject={preparedInstance?.subject}
           badge={preparedInstance?.isNew ? localizations?.new?.toUpperCase() : ''}
           variantTitle={
-            localizations?.roles?.[preparedInstance?.assignable?.role]?.singular ||
+            get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
             preparedInstance?.assignable?.role
           }
           variantIcon={

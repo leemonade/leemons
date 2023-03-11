@@ -2,6 +2,7 @@ const {
   pluginName,
   permissions: { permissions, permissionNames },
   menuItems,
+  widgets,
 } = require('./config/constants');
 const addMenuItems = require('./src/initialization/menu-builder/add');
 const { addLocales } = require('./src/initialization/multiLanguage/addLocales');
@@ -98,11 +99,39 @@ function setupAssignables(isInstalled) {
   });
 }
 
+function initWidgets(isInstalled) {
+  if (!isInstalled) {
+    leemons.events.once('plugins.dashboard:init-widget-zones', async () => {
+      const widgetsPlugin = leemons.getPlugin('widgets').services.widgets;
+      const { items } = widgets;
+
+      // EN: Register items
+      // ES: Registra los items
+      await Promise.all(
+        items.map((item) =>
+          widgetsPlugin.addItemToZone(item.zoneKey, item.key, item.url, {
+            name: item.name,
+            description: item.description,
+            properties: item.properties,
+          })
+        )
+      );
+
+      leemons.events.emit('init-widget-items');
+    });
+  } else {
+    leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
+      leemons.events.emit('init-widget-items');
+    });
+  }
+}
+
 async function events(isInstalled) {
   initPermissions(isInstalled);
   initMenuBuilder(isInstalled);
   initMultilanguage();
   setupAssignables(isInstalled);
+  initWidgets(isInstalled);
 }
 
 module.exports = events;

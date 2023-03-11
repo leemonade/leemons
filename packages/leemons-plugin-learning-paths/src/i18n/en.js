@@ -132,4 +132,7 @@ module.exports = {
       continue: 'Continue',
     },
   },
+  modulesTab: {
+    tabName: 'Modules',
+  },
 };

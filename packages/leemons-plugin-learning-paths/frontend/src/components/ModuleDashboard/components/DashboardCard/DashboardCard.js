@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Button, ImageLoader, Text, TextClamp, createStyles } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
 import { LocaleDate, LocaleDuration } from '@common';
@@ -104,7 +104,11 @@ function useDurationInSeconds({ duration }) {
   }, [duration]);
 }
 
-function useStudentState({ assignation }) {
+export function useStudentState({ assignation }) {
+  if (!assignation) {
+    return {};
+  }
+
   const {
     instance,
     timestamps: { start, end },
@@ -252,7 +256,9 @@ export function DashboardCard({ activity, assignation, localizations }) {
             <Box className={classes.icon}>
               <ImageLoader src={roleDetails?.icon} width={16} height={16} />
             </Box>
-            <Text className={classes.type}>{capitalize(rolesLocalizations[role]?.singular)}</Text>
+            <Text className={classes.type}>
+              {capitalize(get(rolesLocalizations, `${role}.singular`))}
+            </Text>
           </Box>
           {/* Actions */}
           <Box className={classes.actionsContainer}>

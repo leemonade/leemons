@@ -4,6 +4,7 @@ import { Alert, Drawer, Loader, Text, createStyles } from '@bubbles-ui/component
 import loadable from '@loadable/component';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { get } from 'lodash';
 
 // useLocalizations
 
@@ -92,7 +93,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
       trapFocus
       withOverlay
       header={
-        <Text className={classes.drawerHeader}>{`${localizations?.steps?.setup?.action}: ${roleLocalizations?.[role]?.singular || ''
+        <Text className={classes.drawerHeader}>{`${localizations?.steps?.setup?.action}: ${get(roleLocalizations, `${role}.singular`) || ''
           }`}</Text>
       }
     >
