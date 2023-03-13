@@ -60,8 +60,17 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
                 index
               );
 
+              const rel = _.find(blockData.contentRelations, ({ relatedTo }) =>
+                relatedTo.indexOf(_blockData.id)
+              );
+              let text = `${number ? `${number} ` : ''}${htmlToText(val.value)}`;
+              if (rel.showNumeration === 'numbering') {
+                text = number;
+              } else if (rel.showNumeration === 'content') {
+                text = htmlToText(val.value);
+              }
               selectData.push({
-                label: `${ellipsis(`${number ? `${number} ` : ''}${htmlToText(val.value)}`, 36)}`,
+                label: `${ellipsis(text, 36)}`,
                 value: `${nodeValue.id}|${val.id}`,
               });
             });
@@ -81,8 +90,17 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
                     index,
                     item
                   );
+                  const rel = _.find(blockData.contentRelations, ({ relatedTo }) =>
+                    relatedTo.indexOf(_blockData.id)
+                  );
+                  let text = `${number ? `${number} ` : ''}${htmlToText(v.value)}`;
+                  if (rel.showNumeration === 'numbering') {
+                    text = number;
+                  } else if (rel.showNumeration === 'content') {
+                    text = htmlToText(v.value);
+                  }
                   selectData.push({
-                    label: ellipsis(`${number ? `${number} ` : ''}${htmlToText(v.value)}`, 36),
+                    label: ellipsis(text, 36),
                     value: `${nodeValue.id}|${val.id}|${v.id}`,
                   });
                 });

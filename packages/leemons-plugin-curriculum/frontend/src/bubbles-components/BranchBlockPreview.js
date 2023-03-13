@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { find } from 'lodash';
 import { Box, Button, Collapse, createStyles, Text } from '@bubbles-ui/components';
-import { CutStarIcon, EditWriteIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { ChevUpIcon, PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { CutStarIcon, EditWriteIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const useStyle = createStyles((theme, { isOpen }) => ({
   container: {
@@ -57,7 +57,7 @@ const useStyle = createStyles((theme, { isOpen }) => ({
   },
 }));
 
-function BranchBlockPreview({ messages, item, selectData, onEdit = () => {} }) {
+function BranchBlockPreview({ messages, item, onlyCanAdd, selectData, onEdit = () => {} }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const { classes } = useStyle({ isOpen });
   const data = item.frontConfig.blockData;
@@ -112,11 +112,14 @@ function BranchBlockPreview({ messages, item, selectData, onEdit = () => {} }) {
             </Text>
           </Box>
         </Box>
-        <Box className={classes.edit}>
-          <Button variant="link" leftIcon={<EditWriteIcon />} onClick={onEdit}>
-            {messages.tableEdit}
-          </Button>
-        </Box>
+        {!onlyCanAdd ? (
+          <Box className={classes.edit}>
+            <Button variant="link" leftIcon={<EditWriteIcon />} onClick={onEdit}>
+              {messages.tableEdit}
+            </Button>
+          </Box>
+        ) : null}
+
         {data.type === 'group' ? (
           <Box
             className={classes.chev}
@@ -151,6 +154,7 @@ BranchBlockPreview.propTypes = {
   messages: PropTypes.object,
   item: PropTypes.object,
   selectData: PropTypes.any,
+  onlyCanAdd: PropTypes.bool,
   onEdit: PropTypes.func,
 };
 

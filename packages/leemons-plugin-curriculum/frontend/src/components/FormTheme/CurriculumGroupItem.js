@@ -143,6 +143,9 @@ function CurriculumGroupItem({
         input: {
           node: <Box />,
         },
+        cellStyle: {
+          width: '100px',
+        },
       });
     }
 
@@ -158,6 +161,7 @@ function CurriculumGroupItem({
           ),
         rules,
       },
+      valueRender: (e) => <HtmlText>{e}</HtmlText>,
     });
 
     return result;

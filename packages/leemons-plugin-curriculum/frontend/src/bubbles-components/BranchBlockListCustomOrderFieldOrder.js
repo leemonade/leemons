@@ -1,7 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { filter } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -13,8 +9,12 @@ import {
   Text,
   Transition,
 } from '@bubbles-ui/components';
-import { numberToEncodedLetter } from '@common';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { numberToEncodedLetter } from '@common';
+import { filter } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const scaleY = {
   in: { opacity: 1, transform: 'scaleY(1)' },

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import BranchBlockPreview from '@curriculum/bubbles-components/BranchBlockPreview';
 import { values } from 'lodash';
 import PropTypes from 'prop-types';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
-import BranchBlockPreview from '@curriculum/bubbles-components/BranchBlockPreview';
+import React, { useState } from 'react';
 import BranchBlock from './BranchBlock';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
@@ -18,6 +18,8 @@ function BranchContent({
   branch,
   isLoading,
   onSaveBlock,
+  onlyCanAdd,
+  newIds,
   onCloseBranch,
   onRemoveBlock,
   store,
@@ -78,6 +80,7 @@ function BranchContent({
                 key={JSON.stringify(item)}
                 selectData={selectData}
                 messages={messages}
+                onlyCanAdd={newIds.includes(item.id) ? false : onlyCanAdd}
                 item={item}
                 onEdit={() => {
                   setEditingBlock(item);
@@ -136,6 +139,7 @@ BranchContent.propTypes = {
   errorMessages: PropTypes.object,
   selectData: PropTypes.object,
   branch: PropTypes.object,
+  newIds: PropTypes.any,
   onSaveBlock: PropTypes.func,
   onCloseBranch: PropTypes.func,
   onRemoveBlock: PropTypes.func,

@@ -60,6 +60,9 @@ export const BRANCH_CONTENT_MESSAGES = {
   useContentRelations: 'Content relations',
   relatedTo: 'Related to',
   typeOfRelation: 'Type of relation',
+  showNumeration: 'Show numbering',
+  content: 'Content',
+  numbering: 'Numbering',
   father: 'Father',
   label: 'Label',
 };

@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { Box, Button } from '@bubbles-ui/components';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { useStore } from '@common';
 import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
+import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 function CurriculumGroup({
   onChange,
@@ -52,7 +52,7 @@ function CurriculumGroup({
 
   React.useEffect(() => {
     onCancel();
-  }, [blockData]);
+  }, [blockData?.id]);
 
   return (
     <Box>
@@ -92,7 +92,6 @@ function CurriculumGroup({
           onCancel={onCancel}
         />
       ))}
-
       {store.showSaveButton && isEditMode ? (
         <Box>
           <Button variant="outline" loading={store.loading} onClick={() => save()}>
