@@ -30,7 +30,7 @@ module.exports = async function searchOngoingActivities(query, { userSession, tr
   if (isTeacher) {
     let instances = await getTeacherInstances({ userSession, transacting });
 
-    instances = filterInstancesByNotModule({ instances });
+    instances = filterInstancesByNotModule({ instances, filters: query });
 
     instances = filterInstancesByRoleAndQuery(
       { instances, filters: query },
@@ -71,7 +71,7 @@ module.exports = async function searchOngoingActivities(query, { userSession, tr
     filters: query,
   });
 
-  instances = filterInstancesByNotModule({ instances });
+  instances = filterInstancesByNotModule({ instances, filters: query });
 
   const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses(
     instances,

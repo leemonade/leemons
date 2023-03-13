@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCache } from '@common/useCache';
 import { useQueryClient } from '@tanstack/react-query';
+import { isEqual } from 'lodash';
 import { cachingStrategy, modificationTrend, refetchFrequency } from './variants';
 
 /**
@@ -34,7 +35,11 @@ export function useVariantForQueryKey(queryKey, variants) {
       queryOptions = variants;
     }
 
-    queryClient.setQueryDefaults(queryKey, queryOptions);
+    const queryDefaults = queryClient.getQueryDefaults(queryKey);
+
+    if (!queryDefaults || !isEqual(queryDefaults, queryOptions)) {
+      queryClient.setQueryDefaults(queryKey, queryOptions);
+    }
   }, [queryClient, queryKey, cache('variants', variants)]);
 }
 

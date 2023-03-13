@@ -79,6 +79,23 @@ const menuItems = [
   },
 ];
 
+/*
+  === WIDGETS ===
+*/
+const widgets = {
+  items: [
+    // --- Class dashboard (module tab) ---
+    {
+      zoneKey: 'plugins.dashboard.class.tabs',
+      key: `${pluginName}.class.tab.modules`,
+      url: 'dashboard/tab-modules/index',
+      properties: {
+        label: `${pluginName}.modulesTab.tabName`,
+      },
+    },
+  ],
+};
+
 module.exports = {
   pluginName,
 
@@ -87,4 +104,6 @@ module.exports = {
     permissions,
     permissionNames,
   },
+
+  widgets,
 };

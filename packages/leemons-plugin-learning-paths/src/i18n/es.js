@@ -132,4 +132,7 @@ module.exports = {
       continue: 'Continuar',
     },
   },
+  modulesTab: {
+    tabName: 'Temario',
+  },
 };
