@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import React, { useMemo } from 'react';
 
-import prefixPN from '@curriculum/helpers/prefixPN';
+import { detailProgramRequest } from '@academic-portfolio/request';
 import {
   Box,
   createStyles,
@@ -11,15 +11,15 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
+import prefixPN from '@curriculum/helpers/prefixPN';
 import AddCurriculumStep0 from '@curriculum/pages/private/AddCurriculumStep0';
-import { useHistory, useParams } from 'react-router-dom';
-import { detailCurriculumRequest } from '@curriculum/request';
-import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
-import { detailProgramRequest } from '@academic-portfolio/request';
-import { find } from 'lodash';
 import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';
 import AddCurriculumStep2 from '@curriculum/pages/private/AddCurriculumStep2';
 import AddCurriculumStep3 from '@curriculum/pages/private/AddCurriculumStep3';
+import { detailCurriculumRequest } from '@curriculum/request';
+import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
+import { find } from 'lodash';
+import { useHistory, useParams } from 'react-router-dom';
 
 const useStyle = createStyles((theme) => ({
   title: {
@@ -59,7 +59,7 @@ function AddCurriculum() {
   }
 
   function onPrev3() {
-    store.curriculum.step = 2;
+    // store.curriculum.step = 2;
     store.currentStep = 2;
     render();
   }

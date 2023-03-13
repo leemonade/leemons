@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { forEach } from 'lodash';
 import {
   Box,
   Button,
   createStyles,
   Stack,
-  TAGIFY_TAG_REGEX,
   TagifyInput,
+  TAGIFY_TAG_REGEX,
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { forEach } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { Controller } from 'react-hook-form';
 import BranchBlockListCustomOrderFieldOrder, {
   getExampleTextForListOrderedConfig,
 } from './BranchBlockListCustomOrderFieldOrder';
