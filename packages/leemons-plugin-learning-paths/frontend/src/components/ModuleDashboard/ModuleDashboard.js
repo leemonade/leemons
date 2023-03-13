@@ -170,14 +170,14 @@ function useHeaderData(module) {
         icon: roleDetails?.icon,
         type: capitalize(get(roleLocalizations, `${role}.singular`)),
       },
-      activityDates: !alwaysAvailable
+      activityDates: alwaysAvailable
         ? null
         : {
           startLabel: 'Desde',
           endLabel: 'Hasta',
           hourLabel: 'Hora',
-          startDate: dates?.startDate || new Date(),
-          endDate: dates?.deadline || new Date(),
+          startDate: dates?.startDate,
+          endDate: dates?.deadline,
         },
     },
   };
