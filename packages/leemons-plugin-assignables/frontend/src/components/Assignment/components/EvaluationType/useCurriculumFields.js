@@ -1,7 +1,7 @@
 import React from 'react';
 import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
 import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
-import { cloneDeep, get, intersection, set, uniqBy } from 'lodash';
+import { cloneDeep, get, intersection, last, set, uniqBy } from 'lodash';
 import { unflatten, useStore } from '@common';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -129,7 +129,7 @@ export function useSelectedCurriculumProperties({
 
   React.useEffect(() => {
     if (customObjectives) {
-      if (!usedProperties?.length || !usedProperties[usedProperties.length - 1]?.id === 'custom') {
+      if (!usedProperties?.length || last(usedProperties)?.id !== 'custom') {
         usedProperties.push({
           id: 'custom',
           name: customObjectiveLocalization,
