@@ -114,7 +114,9 @@ export default function AcademicDashboard({ session }) {
   if (programImage) {
     headerProps.blur = 10;
     headerProps.withBlur = true;
-    headerProps.image = leemons.apiUrl + programImage;
+    headerProps.image = programImage.startsWith('http')
+      ? programImage
+      : leemons.apiUrl + programImage;
     headerProps.backgroundPosition = 'center';
   } else {
     headerProps.withBlur = false;
