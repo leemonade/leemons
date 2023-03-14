@@ -38,7 +38,7 @@ function useOnChange({ control, onChange }) {
       alwaysAvailable: isAlwaysAvailable,
       dates: isAlwaysAvailable
         ? null
-        : { ...dates, visibility: hideFromCalendar ? undefined : new Date() },
+        : { ...dates, visualization: hideFromCalendar ? undefined : new Date() },
       hideFromCalendar: !!hideFromCalendar,
       maxTime: maxTimeToggle ? maxTime : null,
       raw: { type, dates, hideFromCalendar, maxTimeToggle, maxTime },
