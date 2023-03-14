@@ -51,7 +51,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   const history = useHistory();
   const { id } = useParams();
 
-  const onlyCanAdd = curriculum.step > 2;
+  const onlyCanAdd = false; // curriculum.step > 2;
 
   const messagesConfig = useMemo(() => {
     const result = {};

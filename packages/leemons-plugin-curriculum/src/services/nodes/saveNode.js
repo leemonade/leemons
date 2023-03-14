@@ -13,20 +13,20 @@ const {
 async function saveNode(
   nodeId,
   userSession,
-  { datasetValues, ...rest },
+  { datasetValues: _datasetValues, ...rest },
   { transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
-      _.forIn(datasetValues, (value, key) => {
-        datasetValues[key].id = value.id || global.utils.randomString();
-        if (_.isArray(datasetValues[key].value)) {
-          _.forEach(datasetValues[key].value, (v) => {
+      function addIds(datasetValues, value) {
+        datasetValues.id = value.id || global.utils.randomString();
+        if (_.isArray(datasetValues.value)) {
+          _.forEach(datasetValues.value, (v) => {
             v.id = v.id || global.utils.randomString();
           });
         }
-        if (_.isPlainObject(datasetValues[key].value)) {
-          _.forIn(datasetValues[key].value, (v) => {
+        if (_.isPlainObject(datasetValues.value)) {
+          _.forIn(datasetValues.value, (v) => {
             v.id = v.id || global.utils.randomString();
             if (_.isArray(v.value)) {
               _.forEach(v.value, (vv) => {
@@ -35,13 +35,23 @@ async function saveNode(
             }
           });
         }
+      }
+
+      _.forIn(_datasetValues, (value, key) => {
+        if (_.isArray(_datasetValues[key])) {
+          _.forEach(_datasetValues[key], (_datasetValue) => {
+            addIds(_datasetValue, value);
+          });
+        } else {
+          addIds(_datasetValues[key], value);
+        }
       });
 
       await table.nodes.update(
         { id: nodeId },
         {
           ...rest,
-          data: JSON.stringify(datasetValues),
+          data: JSON.stringify(_datasetValues),
         },
         { transacting }
       );

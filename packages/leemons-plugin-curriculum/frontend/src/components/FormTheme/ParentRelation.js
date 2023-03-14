@@ -1,9 +1,9 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { Box, createStyles, InputWrapper, Select, TextInput } from '@bubbles-ui/components';
 import { htmlToText, useStore } from '@common';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -85,42 +85,48 @@ const ParentRelation = ({
 
   React.useEffect(() => {
     isShow(false);
-    const { node, nodeValue, nodeLevelId, formValueId } = getParentNodeIfHave(
-      blockData,
-      parentNodes
-    );
-    if (node && nodeValue) {
+    const {
+      node,
+      nodeValue: _nodeValue,
+      nodeLevelId,
+      formValueId,
+    } = getParentNodeIfHave(blockData, parentNodes);
+    if (node && _nodeValue) {
       const nodeLevel = _.find(curriculum.nodeLevels, { id: nodeLevelId });
-      store.parentNodeValue = nodeValue.value;
+
       store.selectParentName = `${nodeLevel.name} - ${node.name}`;
-      if (_.isArray(nodeValue.value)) {
-        store.type = 'select';
-        store.selectData = _.map(nodeValue.value, (v) => ({
-          label: htmlToText(v.value),
-          value: v.id,
-        }));
-      } else if (_.isPlainObject(nodeValue.value)) {
-        store.type = 'select';
-        store.selectData = [];
-        _.forIn(nodeValue.value, (item) => {
-          if (_.isArray(item.value)) {
-            _.forEach(item.value, (v) => {
-              store.selectData.push({
-                label: htmlToText(v.value),
-                value: `${nodeValue.id}|${item.id}|${v.id}`,
+      const nodeValues = _.isArray(_nodeValue) ? _nodeValue : [_nodeValue];
+      store.parentNodeValue = _.flatten(_.map(_nodeValue, 'value'));
+      _.forEach(nodeValues, (nodeValue) => {
+        if (_.isArray(nodeValue.value)) {
+          store.type = 'select';
+          store.selectData = _.map(nodeValue.value, (v) => ({
+            label: htmlToText(v.value),
+            value: v.id,
+          }));
+        } else if (_.isPlainObject(nodeValue.value)) {
+          store.type = 'select';
+          store.selectData = [];
+          _.forIn(nodeValue.value, (item) => {
+            if (_.isArray(item.value)) {
+              _.forEach(item.value, (v) => {
+                store.selectData.push({
+                  label: htmlToText(v.value),
+                  value: `${nodeValue.id}|${item.id}|${v.id}`,
+                });
               });
-            });
-          } else {
-            store.selectData.push({
-              label: htmlToText(item.value),
-              value: `${nodeValue.id}|${item.id}`,
-            });
-          }
-        });
-      } else {
-        store.type = 'input';
-        onChangeParent(nodeValue.id);
-      }
+            } else {
+              store.selectData.push({
+                label: htmlToText(item.value),
+                value: `${nodeValue.id}|${item.id}`,
+              });
+            }
+          });
+        } else {
+          store.type = 'input';
+          onChangeParent(nodeValue.id);
+        }
+      });
 
       isShow(true, {
         node,
@@ -130,6 +136,12 @@ const ParentRelation = ({
       render();
     }
   }, []);
+
+  React.useEffect(() => {
+    if (!props.value?.metadata?.parentRelated && store.selectData?.length) {
+      onChangeParent(store.selectData[0].value);
+    }
+  }, [store.selectData, props.value?.metadata?.parentRelated]);
 
   function print() {
     if (isEditMode) {

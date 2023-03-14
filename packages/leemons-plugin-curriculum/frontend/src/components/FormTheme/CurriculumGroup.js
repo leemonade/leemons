@@ -3,14 +3,15 @@ import { Box, Button } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
+import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 function CurriculumGroup({
-  onChange,
+  onChange: _onChange,
   isEditMode = true,
-  value,
+  value: _value,
   curriculum,
   schema,
   blockData,
@@ -18,7 +19,32 @@ function CurriculumGroup({
   id,
   t,
 }) {
-  const [store, render] = useStore();
+  const [store, render] = useStore({
+    parentValue: returnFirstMetadataParent(_value),
+  });
+
+  // eslint-disable-next-line no-nested-ternary
+  let value = _.isArray(_value)
+    ? store.parentValue
+      ? _.find(_value, { metadata: { parentRelated: store.parentValue } })
+      : _value[0]
+    : _value;
+
+  function onChange(e, fromParent) {
+    if (store.parentValue) {
+      if (fromParent === true) {
+        e = _.find(_value, { metadata: { parentRelated: store.parentValue } });
+      }
+      return _onChange({
+        ...(e || { value: {}, metadata: {} }),
+        metadata: {
+          ...(e?.metadata || {}),
+          parentRelated: store.parentValue,
+        },
+      });
+    }
+    return _onChange(e);
+  }
 
   async function save(e) {
     store.loading = true;
@@ -60,8 +86,15 @@ function CurriculumGroup({
         curriculum={curriculum}
         blockData={blockData}
         isEditMode={isEditMode}
-        value={value}
-        onChange={onChange}
+        value={{
+          ...(value || { value: {}, metadata: {} }),
+          metadata: { ...(value?.metadata || {}), parentRelated: store.parentValue },
+        }}
+        onChange={(e) => {
+          store.parentValue = e.metadata.parentRelated;
+          render();
+          onChange(e, true);
+        }}
         isShow={(e) => {
           store.showSaveButton = e;
           render();

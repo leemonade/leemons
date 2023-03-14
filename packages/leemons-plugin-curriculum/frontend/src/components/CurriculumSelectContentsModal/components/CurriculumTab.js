@@ -126,7 +126,13 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
         let count = 0;
         forEach(value, ({ id }) => {
           forEach(store.value, (str) => {
-            if (str.indexOf(`property.${store.selectedNode?.formValues[id]?.id}`) >= 0) count++;
+            if (_.isArray(store.selectedNode?.formValues[id])) {
+              forEach(store.selectedNode?.formValues[id], (v, i) => {
+                if (str.indexOf(`property.${store.selectedNode?.formValues[id][i]?.id}`) >= 0)
+                  count++;
+              });
+            } else if (str.indexOf(`property.${store.selectedNode?.formValues[id]?.id}`) >= 0)
+              count++;
           });
         });
         return (
