@@ -1,7 +1,7 @@
 import React from 'react';
 import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
 import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
-import { cloneDeep, get, intersection, last, set, uniqBy } from 'lodash';
+import { cloneDeep, get, intersection, isArray, last, set, uniqBy } from 'lodash';
 import { unflatten, useStore } from '@common';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -17,10 +17,10 @@ function flatCurriculumNodes(curriculumNodes) {
         id: node.id,
         nodeLevel: node.nodeLevel,
         nodeLevelPropertyByPropertyId: Object.fromEntries(
-          Object.entries(node.formValues || {}).map(([nodeLevelProperty, { id }]) => [
-            id,
-            nodeLevelProperty,
-          ])
+          Object.entries(node.formValues || {}).flatMap(([nodeLevelProperty, props]) => {
+            const properties = isArray(props) ? props : [props];
+            return properties.map((property) => [property.id, nodeLevelProperty]);
+          })
         ),
       };
 
