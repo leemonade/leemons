@@ -382,7 +382,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         toSave.schemaLocales,
         { useDefaultLocaleCallback: false }
       );
-      const oldDataset = _.find(store.curriculum.nodeLevels, (l) => l.schema.id === dataset.id);
+      const oldDataset = _.find(store.curriculum.nodeLevels, (l) => l?.schema?.id === dataset.id);
       if (!oldDataset) {
         store.newIds.push(Object.keys(dataset.jsonSchema.properties)[0]);
       } else {
@@ -397,6 +397,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
       store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: store.activeNodeLevel.id });
       store.saving = false;
     } catch (e) {
+      console.error(e);
       store.saving = false;
     }
     render();
