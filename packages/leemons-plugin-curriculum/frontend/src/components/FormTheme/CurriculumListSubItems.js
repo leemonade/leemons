@@ -1,6 +1,7 @@
 import { Box, HtmlText, TableInput, TextInput } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ellipsis } from '@common';
+import { htmlToText } from '@tests/pages/private/tests/StudentInstance/helpers/htmlToText';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -24,8 +25,13 @@ function CurriculumListSubItems({ row, selectedRow, t, values, inputType, onChan
   );
 
   subColumns[0].Header = t('newItemOf', {
-    name: ellipsis(`${row.values.order} ${row.values.value}`, 36),
+    name: ellipsis(
+      `${row.values.order ? row.values.order : ''} ${htmlToText(row.values.value)}`,
+      36
+    ),
   });
+
+  console.log(values, row.index, values?.[row.index].childrens);
 
   return (
     <Box

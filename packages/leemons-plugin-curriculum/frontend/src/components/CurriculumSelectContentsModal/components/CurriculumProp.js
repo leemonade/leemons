@@ -195,17 +195,57 @@ function NewValue({
     if (value.id) {
       // Listado
       const numbering = getNumbering(keyIndex, null, baseValue);
-      return (
-        <Box>
-          {CheckBoxComponent(
-            `${key}|value.${value.id}`,
-            value,
-            undefined,
-            `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`
-          )}
-          <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>{tags}</Box>
-        </Box>
-      );
+
+      if (value.childrens?.length) {
+        const ch = [];
+        _.forEach(value.childrens, (child) => {
+          let canAdd = true;
+          if (hideNoSelecteds) {
+            if (!isInValues(child.id)) {
+              canAdd = false;
+            }
+          }
+          if (canAdd)
+            ch.push(
+              <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                {CheckBoxComponent(
+                  `${key}|value.${value.id}|value1.${child.id}`,
+                  child,
+                  undefined,
+                  `${htmlToText(child.value)}`
+                )}
+              </Box>
+            );
+        });
+
+        if (ch.length) {
+          return (
+            <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+              <Text
+                strong
+                color="primary"
+                role="productive"
+                dangerouslySetInnerHTML={{
+                  __html: `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`,
+                }}
+              />
+              {ch}
+            </Box>
+          );
+        }
+      } else {
+        return (
+          <Box>
+            {CheckBoxComponent(
+              `${key}|value.${value.id}`,
+              value,
+              undefined,
+              `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`
+            )}
+            <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>{tags}</Box>
+          </Box>
+        );
+      }
     }
     // Grupo
     const toReturn = [];
