@@ -185,6 +185,12 @@ module.exports = {
     numbering: 'Numeración',
     father: 'Padre',
     label: 'Etiqueta',
+    nextStep: {
+      title: 'Atención',
+      description:
+        '¿Seguro que quieres continuar? No podras volver a editar los campos ahora creados (Si podras añadir nuevos)',
+      confirm: 'Continuar',
+    },
   },
   addCurriculumStep3: {
     pageTitle: 'Carga de contenido',

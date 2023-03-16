@@ -23,6 +23,11 @@ async function saveNode(
         if (_.isArray(datasetValues.value)) {
           _.forEach(datasetValues.value, (v) => {
             v.id = v.id || global.utils.randomString();
+            if (v.childrens) {
+              _.forEach(v.childrens, (vv) => {
+                vv.id = vv.id || global.utils.randomString();
+              });
+            }
           });
         }
         if (_.isPlainObject(datasetValues.value)) {
@@ -31,6 +36,11 @@ async function saveNode(
             if (_.isArray(v.value)) {
               _.forEach(v.value, (vv) => {
                 vv.id = vv.id || global.utils.randomString();
+                if (vv.childrens) {
+                  _.forEach(vv.childrens, (vvv) => {
+                    vvv.id = vvv.id || global.utils.randomString();
+                  });
+                }
               });
             }
           });

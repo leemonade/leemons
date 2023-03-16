@@ -184,6 +184,12 @@ module.exports = {
     numbering: 'Numbering',
     father: 'Father',
     label: 'Label',
+    nextStep: {
+      title: 'Attention',
+      description:
+        'Are you sure you want to continue? You will not be able to edit the fields now created (but you can add new ones).',
+      confirm: 'Continue to',
+    },
   },
   addCurriculumStep3: {
     pageTitle: 'Content loading',

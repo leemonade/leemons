@@ -59,8 +59,8 @@ function CurriculumGroup({
     render();
   }
 
-  function onUpdate(itemId, newValues) {
-    store.editingItem = null;
+  function onUpdate(itemId, newValues, close = true) {
+    if (close) store.editingItem = null;
     if (!value) value = {};
     if (!value.value || !_.isPlainObject(value.value)) value.value = {};
     value.value[itemId] = newValues;
@@ -105,7 +105,7 @@ function CurriculumGroup({
 
       {blockData?.elements.map((item, index) => (
         <CurriculumGroupItem
-          key={index}
+          key={item.id + index}
           isEditMode={isEditMode}
           preview={!isEditMode ? true : store.editingItem?.index !== index}
           defaultValues={value?.value?.[item.id] || {}}
@@ -119,8 +119,8 @@ function CurriculumGroup({
           onEdit={() => {
             onEdit(index);
           }}
-          onSave={(e) => {
-            onUpdate(item.id, e);
+          onSave={(e, close = true) => {
+            onUpdate(item.id, e, close);
           }}
           onCancel={onCancel}
         />

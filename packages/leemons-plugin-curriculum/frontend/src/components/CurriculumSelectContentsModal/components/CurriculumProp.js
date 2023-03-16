@@ -55,7 +55,6 @@ function NewValue({
 
   const tags = React.useMemo(() => {
     const results = [];
-    console.log(value);
     if (value.metadata?.tagRelated?.length) {
       const tagValues = getTagRelationSelectData(
         store.curriculum,
@@ -215,35 +214,79 @@ function NewValue({
       if (isArray(val.value)) {
         const che = [];
         forEach(val.value, (v, i) => {
-          let canAdd = true;
-          if (hideNoSelecteds) {
-            if (!isInValues(v.id)) {
-              canAdd = false;
+          if (v.childrens?.length) {
+            const ch = [];
+            _.forEach(v.childrens, (child) => {
+              let canAdd = true;
+              if (hideNoSelecteds) {
+                if (!isInValues(child.id)) {
+                  canAdd = false;
+                }
+              }
+              if (canAdd)
+                ch.push(
+                  <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                    {CheckBoxComponent(
+                      `${key}|value.${val.id}|value2.${v.id}|value3.${child.id}`,
+                      child,
+                      undefined,
+                      `${htmlToText(child.value)}`
+                    )}
+                  </Box>
+                );
+            });
+            if (ch.length) {
+              che.push(
+                <Box
+                  sx={(theme) => ({ paddingLeft: theme.spacing[4], marginTop: theme.spacing[2] })}
+                >
+                  <Text
+                    strong
+                    color="primary"
+                    role="productive"
+                    dangerouslySetInnerHTML={{
+                      __html: `${getNumbering(i, getGroupItem(k), val)} ${htmlToText(v.value)}`,
+                    }}
+                  />
+                  {ch}
+                </Box>
+              );
             }
+          } else {
+            let canAdd = true;
+            if (hideNoSelecteds) {
+              if (!isInValues(v.id)) {
+                canAdd = false;
+              }
+            }
+            if (canAdd)
+              che.push(
+                <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                  {CheckBoxComponent(
+                    `${key}|value.${val.id}|value2.${v.id}`,
+                    v,
+                    undefined,
+                    `${getNumbering(i, getGroupItem(k), val)} ${htmlToText(v.value)}`
+                  )}
+                </Box>
+              );
           }
-          if (canAdd)
-            che.push(
-              CheckBoxComponent(
-                `${key}|value.${val.id}|value2.${v.id}`,
-                v,
-                undefined,
-                `${getNumbering(i, getGroupItem(k), val)} ${htmlToText(v.value)}`
-              )
-            );
         });
-        checks.push(
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <Text
-              strong
-              color="primary"
-              role="productive"
-              dangerouslySetInnerHTML={{
-                __html: getGroupTitle(k),
-              }}
-            />
-            {che}
-          </Box>
-        );
+        if (che.length) {
+          checks.push(
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <Text
+                strong
+                color="primary"
+                role="productive"
+                dangerouslySetInnerHTML={{
+                  __html: getGroupTitle(k),
+                }}
+              />
+              {che}
+            </Box>
+          );
+        }
       } else {
         let canAdd = true;
         if (hideNoSelecteds) {
@@ -298,15 +341,20 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
   }
 
   const hide = React.useMemo(() => {
-    if (hideNoSelecteds) {
-      let hi = true;
-      const arrayValues = _.compact(_.isArray(values) ? values : [values]);
+    const arrayValues = _.compact(_.isArray(values) ? values : [values]);
 
-      _.forEach(arrayValues, (val) => {
+    if (hideNoSelecteds) {
+      const hi = [];
+
+      _.forEach(arrayValues, () => {
+        hi.push(true);
+      });
+
+      _.forEach(arrayValues, (val, i) => {
         if (isString(val.value)) {
           _.forEach(store.value, (sv) => {
             if (sv.indexOf(val.id) >= 0) {
-              hi = false;
+              hi[i] = false;
               return false;
             }
           });
@@ -314,7 +362,7 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
           _.forIn(val?.value, ({ id }) => {
             _.forEach(store.value, (sv) => {
               if (sv.indexOf(id) >= 0) {
-                hi = false;
+                hi[i] = false;
                 return false;
               }
             });
@@ -323,27 +371,38 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
           _.forEach(val?.value, ({ id }) => {
             _.forEach(store.value, (sv) => {
               if (sv.indexOf(id) >= 0) {
-                hi = false;
+                hi[i] = false;
                 return false;
               }
             });
-            if (!hi) return false;
+            if (!hi[i]) return false;
           });
         } else {
           _.forEach(store.value, (sv) => {
             if (sv.indexOf(val?.value.id) >= 0) {
-              hi = false;
+              hi[i] = false;
               return false;
             }
           });
         }
-        if (!hi) return false;
+        if (!hi[i]) return false;
       });
 
       return hi;
     }
-    return false;
+    return _.map(arrayValues, () => false);
   }, [store.value]);
+
+  const hideAll = React.useMemo(() => {
+    let r = true;
+    _.forEach(hide, (h) => {
+      if (!h) {
+        r = false;
+        return false;
+      }
+    });
+    return r;
+  }, [hide]);
 
   function onParentFound(show, { property } = {}) {
     if (show && property) setParentProperty(property);
@@ -429,7 +488,7 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
     );
   }
 
-  if (hide) return null;
+  if (hideAll) return null;
 
   const arrayValues = _.compact(_.isArray(values) ? values : [values]);
 
@@ -450,23 +509,28 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
           '-'
         ) : (
           <>
-            {arrayValues.map((val) => (
-              <ParentRelation
-                key={val.id}
-                curriculum={store.curriculum}
-                blockData={values.blockData || item.frontConfig.blockData}
-                value={val}
-                onChange={() => {}}
-                isShow={onParentFound}
-                isEditMode={false}
-                id={values._nodeId || store.selectedNode.id}
-                hideLabel
-                numbering={_store.parentNumber[val.id]}
-                t={t2}
-              >
-                {isArray(val.value) ? newArrayValues(val) : newValues(val)}
-              </ParentRelation>
-            ))}
+            {arrayValues.map((val, i) => {
+              if (hide[i]) {
+                return null;
+              }
+              return (
+                <ParentRelation
+                  key={val.id}
+                  curriculum={store.curriculum}
+                  blockData={values.blockData || item.frontConfig.blockData}
+                  value={val}
+                  onChange={() => {}}
+                  isShow={onParentFound}
+                  isEditMode={false}
+                  id={values._nodeId || store.selectedNode.id}
+                  hideLabel
+                  numbering={_store.parentNumber[val.id]}
+                  t={t2}
+                >
+                  {isArray(val.value) ? newArrayValues(val) : newValues(val)}
+                </ParentRelation>
+              );
+            })}
           </>
         )}
       </InputWrapper>

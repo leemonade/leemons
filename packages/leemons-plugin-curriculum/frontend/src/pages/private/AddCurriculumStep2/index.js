@@ -45,13 +45,14 @@ function AddCurriculumStep2({ onNext, curriculum }) {
     newIds: [],
   });
 
+  const { openConfirmationModal } = useLayout();
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep2'));
   const { openDeleteConfirmationModal } = useLayout();
   const tree = useTree();
   const history = useHistory();
   const { id } = useParams();
 
-  const onlyCanAdd = false; // curriculum.step > 2;
+  const onlyCanAdd = curriculum.step > 2;
 
   const messagesConfig = useMemo(() => {
     const result = {};
@@ -500,6 +501,19 @@ function AddCurriculumStep2({ onNext, curriculum }) {
     render();
   }
 
+  async function tryGoStep3() {
+    openConfirmationModal({
+      title: t('nextStep.title'),
+      description: t('nextStep.description'),
+      labels: {
+        confirm: t('nextStep.confirm'),
+      },
+      onConfirm: async () => {
+        goStep3();
+      },
+    })();
+  }
+
   if (store.loading) {
     return <LoadingOverlay visible />;
   }
@@ -550,7 +564,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         </Col>
       </Grid>
       <Stack justifyContent="end">
-        <Button loading={store.generating} onClick={goStep3}>
+        <Button loading={store.generating} onClick={tryGoStep3}>
           {t('continueButtonLabel')}
         </Button>
       </Stack>

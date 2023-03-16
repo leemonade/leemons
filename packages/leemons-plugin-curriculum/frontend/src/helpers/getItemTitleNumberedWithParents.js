@@ -1,7 +1,7 @@
-import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 import { getParentNodeIfHave } from '@curriculum/components/FormTheme/ParentRelation';
-import _ from 'lodash';
 import { getItemTitleNumbered } from '@curriculum/helpers/getItemTitleNumbered';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import _ from 'lodash';
 
 // eslint-disable-next-line import/prefer-default-export
 export function getItemTitleNumberedWithParents(
@@ -28,6 +28,7 @@ export function getItemTitleNumberedWithParents(
           });
           parentTitle = getItemTitleNumbered(parentBlockData, nodeValue, parentValueIndex);
         }
+
         if (parentBlockData.type === 'group') {
           const ids = values.metadata.parentRelated.split('|');
           const valIndex = _.findIndex(Object.values(nodeValue.value), {
