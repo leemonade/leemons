@@ -14,16 +14,16 @@ function filterInstancesByStatusAndArchived({ instances, filters, dates, hideNon
   // ES: Filtrar instancias por fecha de visibilidad para estudiantes
   if (hideNonVisible) {
     filteredInstances = filteredInstances.filter((instance) => {
-      const { visibility, start } = datesPerInstance[instance.id] || {};
+      const { visualization, start } = datesPerInstance[instance.id] || {};
       const { alwaysAvailable } = instance;
       const now = dayjs();
-      const visibilityDate = dayjs(visibility || null);
+      const visualizationDate = dayjs(visualization || null);
       const startDate = dayjs(start || null);
 
       return (
         alwaysAvailable ||
         (startDate.isValid() && !now.isBefore(startDate)) ||
-        (visibilityDate.isValid() && !now.isBefore(visibilityDate))
+        (visualizationDate.isValid() && !now.isBefore(visualizationDate))
       );
     });
   }
