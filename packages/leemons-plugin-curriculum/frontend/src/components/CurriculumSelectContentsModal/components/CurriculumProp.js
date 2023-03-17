@@ -105,6 +105,7 @@ function NewValue({
         true
       )
     );
+
     return getItemTitleNumberedWithParents(
       store.curriculum,
       blockData,
