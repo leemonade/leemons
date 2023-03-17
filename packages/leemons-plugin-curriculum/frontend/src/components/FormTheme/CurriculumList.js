@@ -80,7 +80,7 @@ function CurriculumList({
     render();
   }
 
-  function addNew(values) {
+  function addNew(values, silent) {
     store.isNewItem = false;
     onChange({ ...value, value: [...(value?.value || []), { ...values }] });
     setTimeout(() => {
@@ -96,8 +96,8 @@ function CurriculumList({
     }, 100);
   }
 
-  function onUpdate(index, newValues) {
-    store.editingItem = null;
+  function onUpdate(index, newValues, silent) {
+    if (!silent) store.editingItem = null;
     value.value[index] = newValues;
     onChange({ ...value });
     setTimeout(() => {
@@ -195,7 +195,7 @@ function CurriculumList({
           onRemove={() => {
             onRemove(index);
           }}
-          onSave={(e) => {
+          onSave={(e, silent) => {
             onUpdate(index, e);
           }}
           onCancel={onCancel}

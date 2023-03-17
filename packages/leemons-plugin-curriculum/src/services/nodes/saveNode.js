@@ -26,6 +26,11 @@ async function saveNode(
             if (v.childrens) {
               _.forEach(v.childrens, (vv) => {
                 vv.id = vv.id || global.utils.randomString();
+                if (vv.childrens) {
+                  _.forEach(vv.childrens, (vvv) => {
+                    vvv.id = vvv.id || global.utils.randomString();
+                  });
+                }
               });
             }
           });

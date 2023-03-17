@@ -199,23 +199,63 @@ function NewValue({
       if (value.childrens?.length) {
         const ch = [];
         _.forEach(value.childrens, (child) => {
-          let canAdd = true;
-          if (hideNoSelecteds) {
-            if (!isInValues(child.id)) {
-              canAdd = false;
+          if (child.childrens?.length) {
+            const c = [];
+            _.forEach(child.childrens, (child2) => {
+              let canAdd = true;
+              if (hideNoSelecteds) {
+                if (!isInValues(child2.id)) {
+                  canAdd = false;
+                }
+              }
+              if (canAdd)
+                c.push(
+                  <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                    {CheckBoxComponent(
+                      `${key}|value.${value.id}|value1.${child.id}|value2.${child2.id}`,
+                      child2,
+                      undefined,
+                      `${htmlToText(child2.value)}`
+                    )}
+                  </Box>
+                );
+            });
+            if (c.length) {
+              ch.push(
+                <Box
+                  sx={(theme) => ({ paddingLeft: theme.spacing[4], marginTop: theme.spacing[2] })}
+                >
+                  <Text
+                    strong
+                    color="primary"
+                    role="productive"
+                    dangerouslySetInnerHTML={{
+                      __html: `${htmlToText(child.value)}`,
+                    }}
+                  />
+                  {c}
+                </Box>
+              );
             }
+          } else {
+            let canAdd = true;
+            if (hideNoSelecteds) {
+              if (!isInValues(child.id)) {
+                canAdd = false;
+              }
+            }
+            if (canAdd)
+              ch.push(
+                <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                  {CheckBoxComponent(
+                    `${key}|value.${value.id}|value1.${child.id}`,
+                    child,
+                    undefined,
+                    `${htmlToText(child.value)}`
+                  )}
+                </Box>
+              );
           }
-          if (canAdd)
-            ch.push(
-              <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
-                {CheckBoxComponent(
-                  `${key}|value.${value.id}|value1.${child.id}`,
-                  child,
-                  undefined,
-                  `${htmlToText(child.value)}`
-                )}
-              </Box>
-            );
         });
 
         if (ch.length) {

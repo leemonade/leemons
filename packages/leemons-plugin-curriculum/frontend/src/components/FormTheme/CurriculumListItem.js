@@ -55,9 +55,9 @@ function CurriculumListItem({
   const form = useForm({ defaultValues });
   const values = form.watch();
 
-  function _onSave() {
+  function _onSave(silent) {
     form.handleSubmit((formValues) => {
-      onSave(formValues);
+      onSave(formValues, silent);
     })();
   }
 
@@ -158,6 +158,7 @@ function CurriculumListItem({
             inputType={blockData.groupListType}
             values={[values]}
             t={t}
+            disabled={true}
             row={{
               values,
               id: '1',
@@ -216,6 +217,7 @@ function CurriculumListItem({
           id: '1',
           index: 0,
         }}
+        addable={true}
         onChange={([e]) => {
           form.setValue('childrens', e.childrens);
         }}
