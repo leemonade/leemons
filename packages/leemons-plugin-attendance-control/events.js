@@ -2,15 +2,13 @@ const _ = require('lodash');
 const { permissions, menuItems, assignableRoles } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const { addLocales } = require('./src/services/locales/addLocales');
-
+const constants = require('./config/constants');
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
 async function initMenuBuilder() {
-  const [mainItem, ...items] = menuItems;
-  // await addMain();
-  await addMenuItems(mainItem);
-  leemons.events.emit('init-menu');
+  const [...items] = menuItems;
   await addMenuItems(items);
+  leemons.events.emit('init-menu');
   leemons.events.emit('init-submenu');
 }
 
@@ -30,30 +28,34 @@ async function events(isInstalled) {
       leemons.events.emit('init-permissions');
     });
 
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.academic-portfolio:init-permissions'],
-      async () => {
-        await initMenuBuilder();
-      }
-    );
-
-    leemons.events.once('plugins.assignables:init-plugin', async () => {
-      const assignablesPlugin = leemons.getPlugin('assignables');
+    leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
       await Promise.all(
-        _.map(assignableRoles, (role) =>
-          assignablesPlugin.services.assignables.registerRole(role.role, role.options)
+        _.map(constants.widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
         )
       );
+      leemons.events.emit('init-widget-zones');
+      await Promise.all(
+        _.map(constants.widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+              properties: config.properties,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
     });
 
     leemons.events.once(
-      [
-        'plugins.leebrary:init-categories',
-        `plugins.tests:init-permissions`,
-        `providers.leebrary-tests:pluginDidSetEvents`,
-      ],
+      ['plugins.menu-builder:init-main-menu', 'plugins.scores:init-permissions'],
       async () => {
-        leemons.events.emit('init-provider');
+        await initMenuBuilder();
       }
     );
   } else {

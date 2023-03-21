@@ -1,0 +1,77 @@
+/* eslint-disable no-nested-ternary */
+import AttendanceControlDrawer from '@attendance-control/components/attendance-control-drawer';
+import prefixPN from '@attendance-control/helpers/prefixPN';
+import { getTemporalSessionsRequest } from '@attendance-control/request';
+import { Button } from '@bubbles-ui/components';
+import { useStore } from '@common';
+import { getLocalizations } from '@multilanguage/useTranslate';
+import infoPlugin from '@package-manager/request/infoPlugin';
+import { getPermissionsWithActionsIfIHaveRequest, getProfileSysNameRequest } from '@users/request';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+let academicCalendar;
+let canAttendance;
+let userProfile;
+let text;
+
+function ClassHeaderBar({ classe }) {
+  const [store, render] = useStore();
+  async function load() {
+    if (academicCalendar === undefined) {
+      const [{ data }, { permissions }, { sysName }, { items }] = await Promise.all([
+        infoPlugin('academic-calendar'),
+        getPermissionsWithActionsIfIHaveRequest([prefixPN('attendance')]),
+        getProfileSysNameRequest(),
+        getLocalizations({ keysStartsWith: prefixPN('classButton') }),
+        getTemporalSessionsRequest(classe.id),
+      ]);
+
+      userProfile = sysName;
+      text = items[prefixPN('classButton.attendanceMonitoring')];
+
+      if (permissions[0]) {
+        canAttendance =
+          permissions[0].actionNames.includes('create') ||
+          permissions[0].actionNames.includes('admin');
+        render();
+      }
+      academicCalendar = data;
+      render();
+    }
+  }
+
+  function openAssistanceControl() {
+    store.opened = true;
+    render();
+  }
+
+  function closeAssistanceControl() {
+    store.opened = false;
+    render();
+  }
+
+  React.useEffect(() => {
+    load();
+  }, []);
+
+  if (!academicCalendar || !canAttendance || userProfile !== 'teacher') {
+    return null;
+  }
+
+  return (
+    <>
+      <Button variant="link" onClick={openAssistanceControl}>
+        {text}
+      </Button>
+      <AttendanceControlDrawer opened={store.opened} onClose={closeAssistanceControl} />
+    </>
+  );
+}
+
+ClassHeaderBar.propTypes = {
+  classe: PropTypes.object.isRequired,
+  key: PropTypes.string.isRequired,
+};
+
+export default ClassHeaderBar;

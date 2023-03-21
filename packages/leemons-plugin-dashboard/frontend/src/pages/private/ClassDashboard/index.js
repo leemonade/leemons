@@ -1,20 +1,20 @@
 /* eslint-disable no-nested-ternary */
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { find, isArray, map } from 'lodash';
-import { getShare, useLocale, useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@dashboard/helpers/prefixPN';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import { useIsStudent } from '@academic-portfolio/hooks';
+import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { useHistory, useParams } from 'react-router-dom';
-import { classDetailForDashboardRequest } from '@academic-portfolio/request';
-import { ZoneWidgets } from '@widgets';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getShare, useLocale, useStore } from '@common';
+import prefixPN from '@dashboard/helpers/prefixPN';
 import { LayoutContext } from '@layout/context/layout';
-import { useIsStudent } from '@academic-portfolio/hooks';
+import { getLocalizations } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { ZoneWidgets } from '@widgets';
+import { find, isArray, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
 const rightZoneWidth = '320px';
 
@@ -95,6 +95,7 @@ export default function ClassDashboard({ session }) {
     hideRightSide: false,
     haveScrollBar: false,
   });
+
   const { classes: styles } = Styles({
     hideRightSide: store.hideRightSide,
     haveScrollBar: store.haveScrollBar,
@@ -106,11 +107,12 @@ export default function ClassDashboard({ session }) {
   const history = useHistory();
 
   function onResize() {
+    // TODO Ver que pasa con el scroll en los distintos navegadores
     const haveScrollBar =
       layoutState.contentRef.current.clientHeight < layoutState.contentRef.current.scrollHeight;
     if (haveScrollBar !== store.haveScrollBar) {
       // store.haveScrollBar = haveScrollBar;
-      render();
+      // render();
     }
   }
 
@@ -229,6 +231,13 @@ export default function ClassDashboard({ session }) {
     [store.widgetLabels, store.class, session]
   );
 
+  const classHeader = React.useCallback(
+    ({ Component, key, properties }) => (
+      <Component {...properties} key={key} classe={store.class} session={session} />
+    ),
+    [store.selectedRightTab, store.class, session]
+  );
+
   const classRightTabs = React.useCallback(
     ({ Component, key, properties }) =>
       store.selectedRightTab === key ? (
@@ -282,6 +291,13 @@ export default function ClassDashboard({ session }) {
               teacher: mainTeacher?.user,
             }}
             locale={locale}
+            rightSide={
+              <>
+                {!store.loading ? (
+                  <ZoneWidgets zone="plugins.dashboard.class.header-bar">{classHeader}</ZoneWidgets>
+                ) : null}
+              </>
+            }
           />
         </Box>
 

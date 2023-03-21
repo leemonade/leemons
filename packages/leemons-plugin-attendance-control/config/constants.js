@@ -16,12 +16,11 @@ const permissions = [
 ];
 
 const menuItems = [
-  // Main
   {
     item: {
       key: 'attendance-control.attendance',
       order: 3,
-      parentKey: 'scores',
+      parentKey: 'plugins.scores.scores',
       url: '/private/attendance-control/attendance',
       label: {
         en: 'Attendance',
@@ -32,6 +31,17 @@ const menuItems = [
   },
 ];
 
+const widgets = {
+  zones: [],
+  items: [
+    {
+      zoneKey: 'plugins.dashboard.class.header-bar',
+      key: `plugins.attendance-control.class.header-bar`,
+      url: 'class-header-bar/index',
+    },
+  ],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -39,4 +49,5 @@ module.exports = {
     names: permissionNames,
   },
   menuItems,
+  widgets,
 };
