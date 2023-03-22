@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import AttendanceControlDrawer from '@attendance-control/components/attendance-control-drawer';
+import getSessionsBackFromToday from '@attendance-control/helpers/getSessionsBackFromToday';
 import prefixPN from '@attendance-control/helpers/prefixPN';
 import { getTemporalSessionsRequest } from '@attendance-control/request';
 import { Button } from '@bubbles-ui/components';
@@ -14,12 +15,13 @@ let academicCalendar;
 let canAttendance;
 let userProfile;
 let text;
+let backSessions;
 
 function ClassHeaderBar({ classe }) {
   const [store, render] = useStore();
   async function load() {
     if (academicCalendar === undefined) {
-      const [{ data }, { permissions }, { sysName }, { items }] = await Promise.all([
+      const [{ data }, { permissions }, { sysName }, { items }, { sessions }] = await Promise.all([
         infoPlugin('academic-calendar'),
         getPermissionsWithActionsIfIHaveRequest([prefixPN('attendance')]),
         getProfileSysNameRequest(),
@@ -27,6 +29,7 @@ function ClassHeaderBar({ classe }) {
         getTemporalSessionsRequest(classe.id),
       ]);
 
+      backSessions = getSessionsBackFromToday(sessions);
       userProfile = sysName;
       text = items[prefixPN('classButton.attendanceMonitoring')];
 
@@ -64,7 +67,11 @@ function ClassHeaderBar({ classe }) {
       <Button variant="link" onClick={openAssistanceControl}>
         {text}
       </Button>
-      <AttendanceControlDrawer opened={store.opened} onClose={closeAssistanceControl} />
+      <AttendanceControlDrawer
+        classe={classe}
+        opened={store.opened}
+        onClose={closeAssistanceControl}
+      />
     </>
   );
 }
