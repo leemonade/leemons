@@ -1,10 +1,26 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
-async function calculeSessionsBetweenDatesFromSchedule(start, end, schedule) {
+const getDay = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
+async function calculeSessionsBetweenDatesFromSchedule(
+  start,
+  end,
+  schedule,
+  { sessions = [] } = {}
+) {
   const scheduleByDayWeek = _.groupBy(schedule, 'dayWeek');
   const _start = new Date(start);
   const _end = new Date(end);
-  const sessions = [];
+  const results = [];
+  const sessionsByDay = {};
+  _.forEach(sessions, (session, index) => {
+    const day = getDay(new Date(session.start));
+    if (!sessionsByDay[day]) {
+      sessionsByDay[day] = [];
+    }
+    sessionsByDay[day].push({ ...session, index });
+  });
   while (_start < _end) {
     _start.setDate(_start.getDate() + 1);
     const schedules = scheduleByDayWeek[_start.getDay()];
@@ -18,14 +34,26 @@ async function calculeSessionsBetweenDatesFromSchedule(start, end, schedule) {
         scheduleStart.setUTCMinutes(startTime[1]);
         scheduleEnd.setUTCHours(endTime[0]);
         scheduleEnd.setUTCMinutes(endTime[1]);
-        sessions.push({
+        let item = {
           start: scheduleStart,
           end: scheduleEnd,
-        });
+        };
+        // Comprobamos si hay que remplazar el slot por una sesión ya existente en esa fecha
+        if (sessionsByDay[getDay(scheduleStart)]?.length) {
+          _.forEach(sessionsByDay[getDay(scheduleStart)], (session) => {
+            session.start = new Date(session.start);
+            session.end = new Date(session.end);
+            if (session.end > scheduleStart && session.start < scheduleEnd) {
+              item = session;
+              return false;
+            }
+          });
+        }
+        results.push(item);
       });
     }
   }
-  return sessions;
+  return results;
 }
 
 module.exports = { calculeSessionsBetweenDatesFromSchedule };

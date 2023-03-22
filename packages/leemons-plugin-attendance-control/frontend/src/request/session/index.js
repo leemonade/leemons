@@ -5,4 +5,19 @@ async function getTemporalSessionsRequest(classId) {
   });
 }
 
-export { getTemporalSessionsRequest };
+async function saveSessionRequest(body) {
+  return leemons.api(`attendance-control/session/save`, {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
+async function getSessionRequest(id) {
+  return leemons.api(`attendance-control/session/detail/${id}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+export { getTemporalSessionsRequest, saveSessionRequest, getSessionRequest };

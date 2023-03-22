@@ -7,5 +7,7 @@ module.exports = {
     session: 'Session',
     selectSession: 'Select session',
     allAttend: 'All attend',
+    save: 'Save',
+    sessionN: 'Session {index}',
   },
 };

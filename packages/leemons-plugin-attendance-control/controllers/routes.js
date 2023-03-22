@@ -36,4 +36,18 @@ module.exports = [
     authenticated: true,
     allowedPermissions: getPermissions(permissions.attendance, ['view', 'create', 'update']),
   },
+  {
+    path: '/session/detail/:id',
+    method: 'GET',
+    handler: 'session.detail',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.attendance, ['view']),
+  },
+  {
+    path: '/session/save',
+    method: 'POST',
+    handler: 'session.save',
+    authenticated: true,
+    allowedPermissions: getPermissions(permissions.attendance, ['create']),
+  },
 ];

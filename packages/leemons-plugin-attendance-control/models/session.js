@@ -8,7 +8,10 @@ module.exports = {
     name: {
       type: 'string',
     },
-    date: {
+    start: {
+      type: 'datetime',
+    },
+    end: {
       type: 'datetime',
     },
     class: {

@@ -4,7 +4,8 @@ import getSessionsBackFromToday from '@attendance-control/helpers/getSessionsBac
 import prefixPN from '@attendance-control/helpers/prefixPN';
 import { getTemporalSessionsRequest } from '@attendance-control/request';
 import { Button } from '@bubbles-ui/components';
-import { useStore } from '@common';
+import { useRequestErrorMessage, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import infoPlugin from '@package-manager/request/infoPlugin';
 import { getPermissionsWithActionsIfIHaveRequest, getProfileSysNameRequest } from '@users/request';
@@ -19,28 +20,35 @@ let backSessions;
 
 function ClassHeaderBar({ classe }) {
   const [store, render] = useStore();
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   async function load() {
-    if (academicCalendar === undefined) {
-      const [{ data }, { permissions }, { sysName }, { items }, { sessions }] = await Promise.all([
-        infoPlugin('academic-calendar'),
-        getPermissionsWithActionsIfIHaveRequest([prefixPN('attendance')]),
-        getProfileSysNameRequest(),
-        getLocalizations({ keysStartsWith: prefixPN('classButton') }),
-        getTemporalSessionsRequest(classe.id),
-      ]);
+    try {
+      if (academicCalendar === undefined) {
+        const [{ data }, { permissions }, { sysName }, { items }, { sessions }] = await Promise.all(
+          [
+            infoPlugin('academic-calendar'),
+            getPermissionsWithActionsIfIHaveRequest([prefixPN('attendance')]),
+            getProfileSysNameRequest(),
+            getLocalizations({ keysStartsWith: prefixPN('classButton') }),
+            getTemporalSessionsRequest(classe.id),
+          ]
+        );
 
-      backSessions = getSessionsBackFromToday(sessions);
-      userProfile = sysName;
-      text = items[prefixPN('classButton.attendanceMonitoring')];
+        backSessions = getSessionsBackFromToday(sessions);
+        userProfile = sysName;
+        text = items[prefixPN('classButton.attendanceMonitoring')];
 
-      if (permissions[0]) {
-        canAttendance =
-          permissions[0].actionNames.includes('create') ||
-          permissions[0].actionNames.includes('admin');
+        if (permissions[0]) {
+          canAttendance =
+            permissions[0].actionNames.includes('create') ||
+            permissions[0].actionNames.includes('admin');
+          render();
+        }
+        academicCalendar = data;
         render();
       }
-      academicCalendar = data;
-      render();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
     }
   }
 
@@ -58,7 +66,7 @@ function ClassHeaderBar({ classe }) {
     load();
   }, []);
 
-  if (!academicCalendar || !canAttendance || userProfile !== 'teacher') {
+  if (!academicCalendar || !canAttendance || userProfile !== 'teacher' || !backSessions) {
     return null;
   }
 
