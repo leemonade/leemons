@@ -73,13 +73,13 @@ async function get(ctx) {
     return;
   }
 
-  const cacheKey = `multilanguage:common:get:${JSON.stringify(keys, locale, keysStartsWith)}`;
-  const cache = null; // await leemons.cache.get(cacheKey);
+  const cacheKey = `multilanguage:common:get:${JSON.stringify({ keys, locale, keysStartsWith })}`;
+  const cache = await leemons.cache.get(cacheKey);
 
   if (cache) {
     // TODO: Ver por que peta lo cacheado en la pagina de http://localhost:8080/private/dashboard/class/2dd89ae1-a795-402c-808c-9951f130f51a?type=all&sort=assignation&query=&progress=all
     ctx.status = 200;
-    ctx.body = { items: JSON.parse(cache) };
+    ctx.body = { items: cache };
   } else {
     const localizationsService = leemons.plugin.services.common.getProvider();
 
@@ -111,7 +111,7 @@ async function get(ctx) {
           .map((localization) => localization.value)
       );
 
-      await leemons.cache.set(cacheKey, JSON.stringify(resolvedLocalizations), 60 * 30); // 30 minutos
+      await leemons.cache.set(cacheKey, resolvedLocalizations, 60 * 30); // 30 minutos
       ctx.status = 200;
       ctx.body = { items: resolvedLocalizations };
     } catch (e) {
