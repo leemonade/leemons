@@ -1,0 +1,10 @@
+{
+  "name": "leemons-cache-connector-redis",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "redis": "^4.6.5"
+  }
+}

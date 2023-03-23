@@ -8,7 +8,6 @@ const events = require('events-async');
 const execa = require('execa');
 const _ = require('lodash');
 const chalk = require('chalk');
-const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
 const uuid = require('uuid');
 const withTelemetry = require('leemons-telemetry/withTelemetry');
@@ -17,7 +16,7 @@ const fetch = require('node-fetch');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
-const NodeCache = require('node-cache');
+const CacheManager = require('leemons-cache/lib');
 
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadCoreModels } = require('./core/model/loadModel');
@@ -120,9 +119,8 @@ class Leemons {
         const minutes = time.getMinutes();
         const seconds = time.getSeconds();
         const milliseconds = time.getMilliseconds();
-        const timeString = `${
-          (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-        }${milliseconds}ms`;
+        const timeString = `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+          }${milliseconds}ms`;
 
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
@@ -164,7 +162,7 @@ class Leemons {
     // TODO: Handle Errors and connections
 
     // Function for server's clean exit
-    this.server.destroy = (cb = () => {}) => {
+    this.server.destroy = (cb = () => { }) => {
       this.server.close(cb);
       // TODO: Close all connections
     };
@@ -216,9 +214,8 @@ class Leemons {
         const start = ctx._startAt.getTime();
         const end = new Date().getTime();
         this.log.http(
-          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
-            ctx.ip
-          }} {gray ${end - start} ms}`,
+          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip
+            }} {gray ${end - start} ms}`,
           {
             id: ctx._id,
             ip: ctx.ip,
@@ -250,7 +247,7 @@ class Leemons {
 
         try {
           authorization = JSON.parse(authorization);
-        } catch (e) {}
+        } catch (e) { }
 
         ctx.state.authorization = authorization;
 
@@ -477,8 +474,7 @@ class Leemons {
               );
             } else {
               this.log.error(
-                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${
-                  plugin.name
+                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${plugin.name
                 }${route.path}`
               );
             }
@@ -529,49 +525,26 @@ class Leemons {
   }
 
   // TODO: Move to leemons-cache and create leemons-cache-connector-redis
-  initCache() {
-    if (this.cache) {
-      return this.cache;
+  async initCache() {
+    if (!this.cache) {
+      const cacheManager = new CacheManager({ leemons: this });
+      this.cache = await cacheManager.init();
+
+      // await this.cache.setMany([
+      //   { key: 'hola', val: 'Hello', ttl: 10 },
+      //   { key: 'mundo', val: 'World', ttl: 10 },
+      // ]);
+      await this.cache.getMany(['hola', 'mundo']);
+      await this.cache.hasMany(['hola', 'mundo']);
     }
 
-    const cache = new NodeCache();
-
-    const leemonsCache = {
-      get: async (key) => cache.get(key),
-      has: async (key) => cache.has(key),
-      set: async (key, value, ttl) => cache.set(key, value, ttl),
-      delete: async (value) => {
-        if (Array.isArray(value)) {
-          throw new Error('Delete only supports single key deletions');
-        }
-        return cache.del(value);
-      },
-
-      getMany: async (keys) => cache.mget(keys),
-      hasMany: async (keys) => {
-        const hasKeys = {};
-        keys.forEach((key) => {
-          hasKeys[key] = cache.has(key);
-        });
-
-        return hasKeys;
-      },
-      setMany: async (values) => cache.mset(values),
-      deleteMany: async (keys) => cache.del(keys),
-      deleteByPrefix: async (prefix) =>
-        cache
-          .keys()
-          .filter((key) => key.startsWith(prefix))
-          .forEach((key) => cache.del(key)),
-    };
-
-    return leemonsCache;
+    return this.cache;
   }
 
   async loadBack(parent) {
     return withTelemetry('loadBack', parent, async (loadBackTelemetry) => {
       await withTelemetry('initDatabase', loadBackTelemetry, async (t) => {
-        this.cache = this.initCache();
+        this.cache = await this.initCache();
 
         /*
          * Create a DatabaseManager for managing the database connections and models
@@ -675,8 +648,7 @@ class Leemons {
       const prepareFront = ora('Starting frontend server').start();
       // Start production frontend app
       const start = execa.command(
-        `yarn --cwd ${leemons.dir.frontend} ${
-          process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
+        `yarn --cwd ${leemons.dir.frontend} ${process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
         }`,
         {
           ...process.env,
