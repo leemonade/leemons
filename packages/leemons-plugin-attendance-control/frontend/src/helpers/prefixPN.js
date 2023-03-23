@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /**
  * ES:
  * Añade el prefijo del plugin
@@ -10,6 +11,6 @@
  * @param {string} str - A name to identify the Menu (just to admin it)
  * @return {string} str with plugin name prefix
  * */
-export default function prefixPN(str) {
+export function prefixPN(str) {
   return `plugins.attendance-control.${str}`;
 }

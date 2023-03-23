@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import getSessionsBackFromToday from '@attendance-control/helpers/getSessionsBackFromToday';
-import prefixPN from '@attendance-control/helpers/prefixPN';
+import { getSessionsBackFromToday } from '@attendance-control/helpers/getSessionsBackFromToday';
+import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import {
   getSessionRequest,
   getTemporalSessionsRequest,
@@ -171,6 +171,9 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
       const { session } = _.find(store.selectSessions, { value: store.selectedSession });
       if (session.id) {
         loadSession(session);
+      } else {
+        store.attendance = {};
+        render();
       }
     }
   }, [store.selectedSession]);

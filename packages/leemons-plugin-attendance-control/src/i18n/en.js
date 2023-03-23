@@ -10,4 +10,13 @@ module.exports = {
     save: 'Save',
     sessionN: 'Session {index}',
   },
+  assistancePage: {
+    header: {
+      teacher: {
+        title: 'Assistance',
+        description:
+          'Here you can consult the scores of all the evaluated activities, both gradable and non-gradable.',
+      },
+    },
+  },
 };

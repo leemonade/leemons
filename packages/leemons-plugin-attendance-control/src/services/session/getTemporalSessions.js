@@ -21,6 +21,9 @@ async function getTemporalSessions(classeId, { transacting } = {}) {
     return null;
   }
 
+  // TODO: Añadir las subestapas a los filtros de fechas
+  // sI LA CLASE TIENE SUBESTAPAS HAY QUE COMPROBAR QUE TODAS LAS SUBESTAPAS TENGAN FECHAS ASIGNADAS
+
   if (courseId && calendar.courseDates?.[courseId] && classe.schedule?.length) {
     // TODO: Filtrar para que no saque las sessiones en la fechas que hay fiestas
     return calculeSessionsBetweenDatesFromSchedule(

@@ -10,4 +10,13 @@ module.exports = {
     save: 'Guardar',
     sessionN: 'Sesión {index}',
   },
+  assistancePage: {
+    header: {
+      teacher: {
+        title: 'Asistencia',
+        description:
+          'Aquí puedes consultar las puntuaciones de todas las actividades evaluadas, tanto calificables como no calificables.',
+      },
+    },
+  },
 };

@@ -1,6 +1,7 @@
+/* eslint-disable import/prefer-default-export */
 import _ from 'lodash';
 
-export default function getSessionsBackFromToday(sessions, n = 5) {
+export function getSessionsBackFromToday(sessions, n = 5) {
   const now = new Date();
   const backSessions = [];
   _.forEach(sessions, (session) => {

@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import AttendanceControlDrawer from '@attendance-control/components/attendance-control-drawer';
-import getSessionsBackFromToday from '@attendance-control/helpers/getSessionsBackFromToday';
-import prefixPN from '@attendance-control/helpers/prefixPN';
+import { getSessionsBackFromToday } from '@attendance-control/helpers/getSessionsBackFromToday';
+import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import { getTemporalSessionsRequest } from '@attendance-control/request';
 import { Button } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
