@@ -20,4 +20,17 @@ async function getSessionRequest(id) {
   });
 }
 
-export { getTemporalSessionsRequest, saveSessionRequest, getSessionRequest };
+async function getClassSessionsRequest(body) {
+  return leemons.api(`attendance-control/class/sessions`, {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
+}
+
+export {
+  getTemporalSessionsRequest,
+  saveSessionRequest,
+  getSessionRequest,
+  getClassSessionsRequest,
+};

@@ -19,4 +19,9 @@ module.exports = {
       },
     },
   },
+  attendanceControlTable: {
+    students: 'Students',
+    sessionN: 'Session {index}',
+    studentAvg: 'Average per student',
+  },
 };

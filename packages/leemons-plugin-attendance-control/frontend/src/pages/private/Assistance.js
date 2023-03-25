@@ -1,3 +1,4 @@
+import Assistances from '@attendance-control/components/AssistancePage/Assistances';
 import { prefixPN } from '@attendance-control/helpers';
 import { Box, createStyles } from '@bubbles-ui/components';
 import Filters from '@scores/components/ScoresPage/Filters';
@@ -35,6 +36,7 @@ export default function AssistancePage() {
         <Header prefixPN={prefixPN} variant={'assistancePage'} />
         <Filters onChange={setFilters} />
       </Box>
+      <Assistances filters={filters} />
     </Box>
   );
 }

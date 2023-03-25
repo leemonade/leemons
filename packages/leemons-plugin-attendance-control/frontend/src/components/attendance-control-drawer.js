@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { getSessionDateString } from '@attendance-control/helpers/getSessionDateString';
 import { getSessionsBackFromToday } from '@attendance-control/helpers/getSessionsBackFromToday';
 import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import {
@@ -79,18 +80,6 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const datesAreOnSameDay = (first, second) =>
-  first.getFullYear() === second.getFullYear() &&
-  first.getMonth() === second.getMonth() &&
-  first.getDate() === second.getDate();
-
-const getOnlyHours = (date) => {
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-
-  return `${hour < 10 ? `0${hour}` : hour}:${minute < 10 ? `0${minute}` : minute}`;
-};
-
 export function AttendanceControlDrawer({ opened, onClose, classe }) {
   const [store, render] = useStore({
     loading: true,
@@ -107,25 +96,14 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
     const [{ sessions }] = await Promise.all([getTemporalSessionsRequest(classe.id)]);
 
     store.sessions = sessions;
-    const options = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    };
 
     store.selectSessions = _.map(getSessionsBackFromToday(sessions), (session) => {
       session.start = new Date(session.start);
       session.end = new Date(session.end);
       return {
         label: `${
-          session.id ? `${t('sessionN', { index: session.index + 1 })} - ` : ''
-        }${session.start.toLocaleDateString(locale, options)} - ${
-          datesAreOnSameDay(session.start, session.end)
-            ? getOnlyHours(session.end)
-            : session.end.toLocaleDateString(locale, options)
-        }`,
+          session.index >= 0 ? `${t('sessionN', { index: session.index + 1 })} - ` : ''
+        }${getSessionDateString(session, locale)}`,
         value: session.start.toString(),
         session,
       };

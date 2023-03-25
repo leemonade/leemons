@@ -3,23 +3,18 @@ const _ = require('lodash');
 
 const getDay = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
-async function calculeSessionsBetweenDatesFromSchedule(
-  start,
-  end,
-  schedule,
-  { sessions = [] } = {}
-) {
+function calculeSessionsBetweenDatesFromSchedule(start, end, schedule, { sessions = [] } = {}) {
   const scheduleByDayWeek = _.groupBy(schedule, 'dayWeek');
   const _start = new Date(start);
   const _end = new Date(end);
   const results = [];
   const sessionsByDay = {};
-  _.forEach(sessions, (session, index) => {
+  _.forEach(sessions, (session) => {
     const day = getDay(new Date(session.start));
     if (!sessionsByDay[day]) {
       sessionsByDay[day] = [];
     }
-    sessionsByDay[day].push({ ...session, index });
+    sessionsByDay[day].push({ ...session });
   });
   while (_start < _end) {
     _start.setDate(_start.getDate() + 1);

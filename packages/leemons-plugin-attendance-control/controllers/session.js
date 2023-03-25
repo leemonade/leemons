@@ -19,8 +19,19 @@ async function detail(ctx) {
   ctx.body = { status: 200, session };
 }
 
+async function getClassSessions(ctx) {
+  const sessions = await sessionService.getTemporalSessions(ctx.request.body.class, {
+    start: ctx.request.body.start,
+    end: ctx.request.body.end,
+    withAssistances: true,
+  });
+  ctx.status = 200;
+  ctx.body = { status: 200, sessions };
+}
+
 module.exports = {
   save,
   detail,
+  getClassSessions,
   getTemporalSessions,
 };
