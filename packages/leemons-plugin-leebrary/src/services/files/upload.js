@@ -237,9 +237,9 @@ async function upload(file, { name }, { transacting } = {}) {
         mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
       }
 
-      console.log('Antes');
+      // console.log('Antes');
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
-      console.log('Despues');
+      // console.log('Despues');
       const { track: tracks } = JSON.parse(metainfo)?.media || { track: [] };
       tracks.forEach((track) => {
         metadata = getMetaProps(track, metadata);
