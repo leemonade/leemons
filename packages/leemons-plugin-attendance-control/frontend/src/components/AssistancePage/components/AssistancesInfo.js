@@ -44,11 +44,13 @@ export default function AssistancesInfo({ filters }) {
     loading: true,
   });
 
-  async function load() {
+  async function load(silent = false) {
     try {
-      store.sessions = [];
-      store.loading = true;
-      render();
+      if (!silent) {
+        store.sessions = [];
+        store.loading = true;
+        render();
+      }
       const { sessions } = await getClassSessionsRequest({
         class: filters.class.id,
         start: filters.startDate,
@@ -71,7 +73,7 @@ export default function AssistancesInfo({ filters }) {
   }
 
   if (store.sessions?.length) {
-    return <Table sessions={store.sessions} />;
+    return <Table sessions={store.sessions} classe={filters.class} onSave={() => load(true)} />;
   }
 
   return <EmptyState />;

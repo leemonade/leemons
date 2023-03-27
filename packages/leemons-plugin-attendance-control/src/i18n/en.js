@@ -9,6 +9,7 @@ module.exports = {
     allAttend: 'All attend',
     save: 'Save',
     sessionN: 'Session {index}',
+    comment: 'Comment',
   },
   assistancePage: {
     header: {
@@ -23,5 +24,6 @@ module.exports = {
     students: 'Students',
     sessionN: 'Session {index}',
     studentAvg: 'Average per student',
+    search: 'Search',
   },
 };

@@ -22,6 +22,11 @@ const saveSessionSchema = {
       additionalProperties: true,
       nullable: true,
     },
+    comments: {
+      type: 'object',
+      additionalProperties: true,
+      nullable: true,
+    },
   },
   required: ['class', 'start', 'end'],
   additionalProperties: false,

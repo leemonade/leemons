@@ -1,4 +1,6 @@
 /* eslint-disable import/prefer-default-export */
+import { getSessionDateString } from '@attendance-control/helpers/getSessionDateString';
+import getUserFullName from '@users/helpers/getUserFullName';
 import _ from 'lodash';
 import {
   arrayToContent,
@@ -15,24 +17,44 @@ export function generateAssistancesWB({ headerShown, data, labels, sessions }) {
 
   let initialPosition = 'B2';
 
-  const contentArray = [['', '']];
+  const contentArray = [];
 
   if (headerShown) {
-    const _row = [labels.students];
+    contentArray.push(['', '']);
+    const _row = [''];
+    const _row2 = [labels.students];
 
     _.forEach(sessions, (session) => {
-      _row.push(labels.session.replace('{index}', session.index + 1));
+      _row.push(`${labels.session.replace('{index}', session.index + 1)}`);
+      _row.push(`${labels.session.replace('{index}', session.index + 1)} - Comment`);
+      _row2.push(`${getSessionDateString(session)}`);
+      _row2.push('');
     });
 
-    _row.push(labels.studentAvg);
+    _row2.push(labels.studentAvg);
 
     contentArray.push(_row);
+    contentArray.push(_row2);
 
     const { row, columnIndex } = cellToIndexes(initialPosition);
     initialPosition = indexesToCell(row, columnIndex + 1);
   }
 
-  contentArray.push(['', '']);
+  _.forEach(data, (item) => {
+    const row = [getUserFullName(item.student)];
+    _.forEach(sessions, (session) => {
+      const value = item[new Date(session.start).getTime().toString()];
+      const comment = item[`${new Date(session.start).getTime().toString()}-comment`];
+      row.push(value || '-');
+      row.push(comment || '-');
+    });
+    row.push(`${item.avg.avg}%`);
+    contentArray.push(row);
+  });
+
+  if (headerShown) {
+    contentArray.push(['', '']);
+  }
 
   arrayToContent({
     ws,

@@ -2,7 +2,7 @@
 export default function getStyle({ ws }) {
   return (cell, { relRow: row, row: absoluteRow, col: absoluteCol }) => {
     const border = {};
-    const isFirstRow = row === 2;
+    const isFirstRow = row === 2 || row === 3;
 
     if (isFirstRow) {
       border.top = {

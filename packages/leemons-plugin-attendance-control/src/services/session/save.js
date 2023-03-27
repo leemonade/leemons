@@ -39,7 +39,7 @@ async function save(body, { transacting: _transacting } = {}) {
           _.map(body.attendance, (value, key) =>
             tables.assistance.set(
               { session: session.id, student: key },
-              { session: session.id, student: key, assistance: value },
+              { session: session.id, student: key, assistance: value, comment: body.comments[key] },
               { transacting }
             )
           )

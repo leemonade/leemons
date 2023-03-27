@@ -6,12 +6,17 @@ import { getUserAgentIdsFromSessions } from '@attendance-control/helpers/getUser
 import {
   Box,
   createStyles,
+  InputLabel,
   Progress,
   Table as BubblesTable,
   Text,
+  TextInput,
+  Tooltip,
   UserDisplayItem,
 } from '@bubbles-ui/components';
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
+import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import getUserFullName from '@users/helpers/getUserFullName';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 
 import { generateAssistancesWB } from '@attendance-control/components/ExcelExport/assistencesWB';
@@ -22,6 +27,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getUserAgentsInfoRequest } from '@users/request';
 import _ from 'lodash';
 import React from 'react';
+import AttendanceControlDrawer from '../../attendance-control-drawer';
 
 const useTableStyles = createStyles((theme) => ({
   root: {
@@ -37,12 +43,42 @@ const useTableStyles = createStyles((theme) => ({
   },
 }));
 
-export default function Table({ sessions, filters }) {
+export default function Table({ sessions, classe, onSave }) {
   const [store, render] = useStore();
   const locale = useLocale();
   const [t, , , tLoading] = useTranslateLoader(prefixPN('attendanceControlTable'));
 
   const { classes } = CommonTableStyles({ overFlowRight: true }, { name: 'CommonTable' });
+
+  async function filter() {
+    store.filteredData = _.cloneDeep(store.data);
+    if (store.search) {
+      store.filteredData = _.filter(store.filteredData, ({ student }) =>
+        getUserFullName(student).toLowerCase().includes(store.search.toLowerCase())
+      );
+    }
+    render();
+  }
+
+  async function onSearch(search) {
+    store.search = search;
+    filter();
+  }
+
+  function editSession(session) {
+    store.editSession = session;
+    render();
+  }
+
+  function closeEditSession() {
+    store.editSession = null;
+    render();
+  }
+
+  async function onDrawerSave() {
+    await onSave();
+    closeEditSession();
+  }
 
   async function load() {
     const userAgentIds = getUserAgentIdsFromSessions(sessions);
@@ -95,11 +131,27 @@ export default function Table({ sessions, filters }) {
         Header: (
           <Box className={classes.students}>
             <Box>
-              {session.index >= 0 ? (
-                <Text color="primary" role="productive" size="xs" stronger>
-                  {t('sessionN', { index: session.index + 1 })}
-                </Text>
-              ) : null}
+              <Box
+                sx={(theme) => ({
+                  display: 'flex',
+                  gap: theme.spacing[3],
+                  alignItems: 'center',
+                })}
+              >
+                {session.index >= 0 ? (
+                  <Box style={{ whiteSpace: 'nowrap' }}>
+                    <Text color="primary" role="productive" size="xs" stronger>
+                      {t('sessionN', { index: session.index + 1 })}
+                    </Text>
+                  </Box>
+                ) : null}
+                <Box
+                  onClick={() => editSession(session)}
+                  sx={(theme) => ({ cursor: 'pointer', color: theme.colors.text06 })}
+                >
+                  <EditWriteIcon />
+                </Box>
+              </Box>
 
               <Box>
                 <Text
@@ -108,30 +160,58 @@ export default function Table({ sessions, filters }) {
                   role="productive"
                   size="xs"
                 >
-                  {getSessionDateString(session, locale)}
+                  {getSessionDateString(session, locale, { onlyDate: true })}
+                </Text>
+              </Box>
+              <Box>
+                <Text
+                  sx={() => ({ whiteSpace: 'nowrap' })}
+                  color="secondary"
+                  role="productive"
+                  size="xs"
+                >
+                  {getSessionDateString(session, locale, { onlyHours: true })}
                 </Text>
               </Box>
             </Box>
           </Box>
         ),
         Cell: ({ value }) => (
-          <Box sx={() => ({ fontSize: 18, textAlign: 'center', width: '100%' })}>
-            {value === 'on-time' ? (
+          <Box
+            sx={(theme) => ({
+              display: 'flex',
+              gap: theme.spacing[2],
+              fontSize: 18,
+              justifyContent: 'center',
+              textAlign: 'center',
+              width: '100%',
+            })}
+          >
+            {value.assistance === 'on-time' ? (
               <Box sx={(theme) => ({ color: theme.colors.fatic02 })}>
                 <CheckCircleIcon />
               </Box>
             ) : null}
-            {value === 'not' ? (
+            {value.assistance === 'not' ? (
               <Box sx={(theme) => ({ color: theme.colors.fatic01 })}>
                 <RemoveCircleIcon />
               </Box>
             ) : null}
-            {value === 'late' ? (
+            {value.assistance === 'late' ? (
               <Box sx={(theme) => ({ color: theme.colors.fatic03 })}>
                 <TimeClockCircleIcon />
               </Box>
             ) : null}
-            {_.isNil(value) ? <Box sx={(theme) => ({ color: theme.colors.text06 })}>-</Box> : null}
+            {_.isNil(value.assistance) ? (
+              <Box sx={(theme) => ({ color: theme.colors.text06 })}>-</Box>
+            ) : null}
+            {!_.isNil(value.comment) ? (
+              <Tooltip label={value.comment}>
+                <Box sx={(theme) => ({ color: theme.colors.text06 })}>
+                  <CommentIcon />
+                </Box>
+              </Tooltip>
+            ) : null}
           </Box>
         ),
       });
@@ -142,6 +222,10 @@ export default function Table({ sessions, filters }) {
       sticky: 'right',
       style: {
         backgroundColor: 'white',
+        boxShadow: '-6px 0px 6px 0px rgba(0,0,0,0.10)',
+      },
+      tdStyle: {
+        boxShadow: '-8px 0px 8px 0px rgba(0,0,0,0.10)',
       },
       cellStyle: {
         backgroundColor: 'white',
@@ -170,7 +254,11 @@ export default function Table({ sessions, filters }) {
       ),
       Cell: ({ value }) => (
         <Box
-          sx={() => ({ width: '100%', border: 'none', textAlign: 'right' })}
+          sx={() => ({
+            width: '100%',
+            border: 'none',
+            textAlign: 'right',
+          })}
           className={classes.studentsCells}
         >
           <Text color="secondary" role="productive" size="xs">
@@ -193,20 +281,26 @@ export default function Table({ sessions, filters }) {
         avg: store.userAgentAverage[userAgent.id],
       };
       _.forEach(_sessions, (session) => {
-        data[new Date(session.start).getTime().toString()] = null;
+        data[new Date(session.start).getTime().toString()] = {
+          assistance: null,
+          comment: null,
+        };
         if (session.attendanceByStudent?.[userAgent.id]) {
-          data[new Date(session.start).getTime().toString()] =
-            session.attendanceByStudent[userAgent.id].assistance;
+          data[new Date(session.start).getTime().toString()] = {
+            assistance: session.attendanceByStudent[userAgent.id].assistance,
+            comment: session.attendanceByStudent[userAgent.id].comment,
+          };
         }
       });
       store.data.push(data);
     });
+    filter();
     render();
   }
 
   React.useEffect(() => {
     if (!tLoading) load();
-  }, [sessions, filters, tLoading]);
+  }, [sessions, tLoading]);
 
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
@@ -226,7 +320,6 @@ export default function Table({ sessions, filters }) {
         getFile(wb, format);
         fireEvent('plugins.scores::downloaded');
       } catch (e) {
-        console.log(e);
         fireEvent('plugins.scores::download-scores-error', e);
       }
     };
@@ -236,11 +329,31 @@ export default function Table({ sessions, filters }) {
   }, [sessions, store.data]);
 
   return (
-    <BubblesTable
-      useSticky
-      styleTable={{ display: 'table-caption', overflowX: 'auto' }}
-      columns={store.columns}
-      data={store.data}
-    />
+    <>
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          gap: theme.spacing[4],
+          padding: theme.spacing[4],
+          alignItems: 'center',
+        })}
+      >
+        <InputLabel label={t('search')} />
+        <TextInput value={store.search} onChange={onSearch} />
+      </Box>
+      <BubblesTable
+        useSticky
+        styleTable={{ display: 'table-caption', overflowX: 'auto' }}
+        columns={store.columns}
+        data={store.filteredData}
+      />
+      <AttendanceControlDrawer
+        opened={!!store.editSession}
+        onClose={closeEditSession}
+        classe={classe}
+        session={store.editSession}
+        onSave={onDrawerSave}
+      />
+    </>
   );
 }

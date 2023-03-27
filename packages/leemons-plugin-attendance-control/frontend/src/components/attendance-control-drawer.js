@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { getSessionDateString } from '@attendance-control/helpers/getSessionDateString';
 import { getSessionsBackFromToday } from '@attendance-control/helpers/getSessionsBackFromToday';
 import { prefixPN } from '@attendance-control/helpers/prefixPN';
@@ -8,6 +9,7 @@ import {
   saveSessionRequest,
 } from '@attendance-control/request';
 import {
+  ActionButton,
   Box,
   Button,
   ContextContainer,
@@ -15,12 +17,17 @@ import {
   Drawer,
   InputLabel,
   Loader,
+  Popover,
   Radio,
   Select,
   Switch,
+  Textarea,
+  Title,
   UserDisplayItem,
 } from '@bubbles-ui/components';
+
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
+import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLocale, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -45,7 +52,7 @@ const useStyles = createStyles((theme) => ({
     paddingTop: 3,
     alignItems: 'center',
     display: 'flex',
-    gap: theme.spacing[4],
+    gap: theme.spacing[4] + 1,
     paddingRight: theme.spacing[3],
   },
   usersContainer: {
@@ -61,6 +68,7 @@ const useStyles = createStyles((theme) => ({
   userItemRadios: {
     display: 'flex',
     gap: theme.spacing[2],
+    alignItems: 'center',
     paddingRight: theme.spacing[1],
     '>div': {
       margin: -theme.spacing[3],
@@ -80,20 +88,51 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function AttendanceControlDrawer({ opened, onClose, classe }) {
+export function AttendanceControlDrawer({
+  opened,
+  onClose,
+  onSave = () => {},
+  classe,
+  session: _session,
+}) {
   const [store, render] = useStore({
     loading: true,
     attendance: {},
+    comments: {},
   });
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { classes } = useStyles({});
   const locale = useLocale();
   const [t, , , tLoading] = useTranslateLoader(prefixPN('attendanceControlDrawer'));
 
+  async function loadSession(session) {
+    store.attendance = {};
+    store.comments = {};
+    if (session?.id) {
+      const {
+        session: { attendance },
+      } = await getSessionRequest(session.id);
+      _.forEach(attendance, (att) => {
+        store.attendance[att.student] = att.assistance;
+        store.comments[att.student] = att.comment;
+      });
+    }
+    render();
+  }
+
   async function load() {
     store.loading = true;
     render();
-    const [{ sessions }] = await Promise.all([getTemporalSessionsRequest(classe.id)]);
+
+    store.classe = classe;
+
+    const promises = [getTemporalSessionsRequest(classe.id)];
+    if (!classe.students || _.isString(classe.students[0]))
+      promises.push(classDetailForDashboardRequest(classe.id));
+
+    const [{ sessions }, data] = await Promise.all(promises);
+
+    if (data?.classe) store.classe = data.classe;
 
     store.sessions = sessions;
 
@@ -108,6 +147,7 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
         session,
       };
     });
+    if (_session) loadSession(_session);
     store.loading = false;
     render();
   }
@@ -116,31 +156,26 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
     try {
       store.saving = true;
       render();
-      const { session } = _.find(store.selectSessions, { value: store.selectedSession });
+      let ses = _session;
+      if (!ses) {
+        const { session } = _.find(store.selectSessions, { value: store.selectedSession });
+        ses = session;
+      }
       const body = {
         class: classe.id,
-        start: session.start,
-        end: session.end,
+        start: ses.start,
+        end: ses.end,
         attendance: store.attendance,
+        comments: store.comments,
       };
-      if (session.id) body.id = session.id;
+      if (ses.id) body.id = ses.id;
       await saveSessionRequest(body);
+      await onSave();
       await load();
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
     store.saving = false;
-    render();
-  }
-
-  async function loadSession(session) {
-    const {
-      session: { attendance },
-    } = await getSessionRequest(session.id);
-    store.attendance = {};
-    _.forEach(attendance, (att) => {
-      store.attendance[att.student] = att.assistance;
-    });
     render();
   }
 
@@ -151,6 +186,7 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
         loadSession(session);
       } else {
         store.attendance = {};
+        store.comments = {};
         render();
       }
     }
@@ -158,15 +194,15 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
 
   React.useEffect(() => {
     if (locale && !tLoading) load();
-  }, [locale, tLoading]);
+  }, [locale, tLoading, classe, _session]);
 
   const allAttend = React.useMemo(() => {
     let count = 0;
     _.forEach(store.attendance, (e) => {
       if (e === 'on-time') count++;
     });
-    return count === classe?.students?.length;
-  }, [JSON.stringify(store.attendance), classe]);
+    return count === store.classe?.students?.length;
+  }, [JSON.stringify(store.attendance), store.classe]);
 
   return (
     <Drawer size={430} opened={opened} onClose={onClose}>
@@ -174,19 +210,24 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
         <Loader />
       ) : (
         <ContextContainer sx={(theme) => ({ marginBottom: theme.spacing[10] })} title={t('title')}>
-          <Box class={classes.selectContainer}>
-            <InputLabel label={t('session')} />
-            <Select
-              style={{ width: '100%' }}
-              placeholder={t('selectSession')}
-              data={store.selectSessions}
-              value={store.selectedSession}
-              onChange={(e) => {
-                store.selectedSession = e;
-                render();
-              }}
-            />
-          </Box>
+          {_session ? (
+            <Title order={5}>{t('sessionN', { index: _session.index + 1 })}</Title>
+          ) : (
+            <Box class={classes.selectContainer}>
+              <InputLabel label={t('session')} />
+              <Select
+                style={{ width: '100%' }}
+                placeholder={t('selectSession')}
+                data={store.selectSessions}
+                value={store.selectedSession}
+                onChange={(e) => {
+                  store.selectedSession = e;
+                  render();
+                }}
+              />
+            </Box>
+          )}
+
           <Box>
             <Box class={classes.header}>
               <Switch
@@ -210,10 +251,13 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
                 <Box sx={(theme) => ({ color: theme.colors.fatic03 })}>
                   <TimeClockCircleIcon />
                 </Box>
+                <Box sx={(theme) => ({ color: theme.colors.text06 })}>
+                  <CommentIcon />
+                </Box>
               </Box>
             </Box>
             <Box class={classes.usersContainer}>
-              {classe?.students.map((student) => (
+              {store.classe?.students.map((student) => (
                 <Box class={classes.userItem} key={student.id}>
                   <UserDisplayItem {...student.user} variant="inline" noBreak={true} />
                   <Box class={classes.userItemRadios}>
@@ -238,6 +282,35 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
                         render();
                       }}
                     />
+                    <Popover
+                      target={
+                        <Box
+                          sx={(theme) => ({
+                            paddingLeft: theme.spacing[2],
+                            paddingRight: theme.spacing[2],
+                          })}
+                        >
+                          <ActionButton
+                            icon={<EditWriteIcon />}
+                            onClick={() => {
+                              store.openedIndex = '';
+                              render();
+                            }}
+                          />
+                        </Box>
+                      }
+                    >
+                      <Box style={{ padding: 8 }}>
+                        <Textarea
+                          value={store.comments[student.id]}
+                          label={t('comment')}
+                          onChange={(e) => {
+                            if (e) store.comments[student.id] = e;
+                            render();
+                          }}
+                        />
+                      </Box>
+                    </Popover>
                   </Box>
                 </Box>
               ))}
@@ -247,7 +320,11 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
       )}
       {!store.loading ? (
         <Box class={classes.buttonActions}>
-          <Button disabled={!store.selectedSession} loading={store.saving} onClick={save}>
+          <Button
+            disabled={!store.selectedSession && !_session}
+            loading={store.saving}
+            onClick={save}
+          >
             {t('save')}
           </Button>
         </Box>
@@ -258,8 +335,10 @@ export function AttendanceControlDrawer({ opened, onClose, classe }) {
 
 AttendanceControlDrawer.propTypes = {
   opened: PropTypes.bool,
+  onSave: PropTypes.func,
   onClose: PropTypes.func,
   classe: PropTypes.object,
+  session: PropTypes.object,
 };
 
 export default AttendanceControlDrawer;

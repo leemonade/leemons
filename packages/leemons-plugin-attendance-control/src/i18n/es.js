@@ -9,6 +9,7 @@ module.exports = {
     allAttend: 'Asisten todos/as',
     save: 'Guardar',
     sessionN: 'Sesión {index}',
+    comment: 'Comentarios',
   },
   assistancePage: {
     header: {
@@ -23,5 +24,6 @@ module.exports = {
     students: 'Estudiantes',
     sessionN: 'Sesión {index}',
     studentAvg: 'Media por estudiante',
+    search: 'Buscar',
   },
 };

@@ -178,6 +178,7 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetRightZone(zone) {
+    store.rightZone = zone;
     if (zone.widgetItems && zone.widgetItems.length) {
       const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
       store.selectedRightTab = zone.widgetItems[0].id;
@@ -241,7 +242,13 @@ export default function ClassDashboard({ session }) {
   const classRightTabs = React.useCallback(
     ({ Component, key, properties }) =>
       store.selectedRightTab === key ? (
-        <Component {...properties} key={key} classe={store.class} session={session} />
+        <Component
+          {...properties}
+          widgetsLength={store.rightZone.widgetItems.length}
+          key={key}
+          classe={store.class}
+          session={session}
+        />
       ) : null,
     [store.selectedRightTab, store.class, session]
   );
@@ -345,18 +352,20 @@ export default function ClassDashboard({ session }) {
       </Box>
       {!store.hideStudents ? (
         <Box className={styles.rightSide}>
-          {!!store.rightWidgetSelect && (
-            <Tabs
-              onChange={(e) => {
-                store.selectedRightTab = store.rightWidgetSelect[e].value;
-                render();
-              }}
-            >
-              {store.rightWidgetSelect.map(({ label, id: tabId }) => (
-                <TabPanel label={label} id={tabId} key={tabId} />
-              ))}
-            </Tabs>
-          )}
+          {store.rightWidgetSelect ? (
+            store.rightWidgetSelect.length > 1 ? (
+              <Tabs
+                onChange={(e) => {
+                  store.selectedRightTab = store.rightWidgetSelect[e].value;
+                  render();
+                }}
+              >
+                {store.rightWidgetSelect.map(({ label, id: tabId }) => (
+                  <TabPanel label={label} id={tabId} key={tabId} />
+                ))}
+              </Tabs>
+            ) : null
+          ) : null}
           {/* {store.rightWidgetSelect ? (
           <RadioGroup
             variant="icon"

@@ -35,7 +35,7 @@ const widgets = {
   zones: [],
   items: [
     {
-      zoneKey: 'plugins.dashboard.class.header-bar',
+      zoneKey: 'plugins.academic-portfolio.class.students',
       key: `plugins.attendance-control.class.header-bar`,
       url: 'class-header-bar/index',
     },

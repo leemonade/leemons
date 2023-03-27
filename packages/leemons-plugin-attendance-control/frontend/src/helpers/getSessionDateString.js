@@ -12,9 +12,18 @@ const getOnlyHours = (date) => {
   return `${hour < 10 ? `0${hour}` : hour}:${minute < 10 ? `0${minute}` : minute}`;
 };
 
-export function getSessionDateString(session, locale) {
+export function getSessionDateString(
+  session,
+  locale,
+  { onlyHours = false, onlyDate = false } = {}
+) {
   const start = new Date(session.start);
   const end = new Date(session.end);
+
+  if (onlyHours) {
+    return `${getOnlyHours(start)} - ${getOnlyHours(end)}`;
+  }
+
   const options = {
     year: 'numeric',
     month: '2-digit',
@@ -22,6 +31,12 @@ export function getSessionDateString(session, locale) {
     hour: '2-digit',
     minute: '2-digit',
   };
+
+  if (onlyDate) {
+    delete options.hour;
+    delete options.minute;
+    return start.toLocaleDateString(locale, options);
+  }
   return `${start.toLocaleDateString(locale, options)} - ${
     datesAreOnSameDay(start, end) ? getOnlyHours(end) : end.toLocaleDateString(locale, options)
   }`;
