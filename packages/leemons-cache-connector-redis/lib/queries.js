@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map, isEmpty } = require('lodash');
 
 module.exports = function queries(client) {
   return {
@@ -14,6 +14,11 @@ module.exports = function queries(client) {
       if (Array.isArray(key)) {
         throw new Error('Delete only supports single key deletions');
       }
+
+      if (isEmpty(key)) {
+        return 0;
+      }
+
       return client.del(key);
     },
 
@@ -56,6 +61,11 @@ module.exports = function queries(client) {
     deleteMany: async (keys) => client.del(keys),
     deleteByPrefix: async (prefix) => {
       const keys = await client.keys(prefix.replaceAll('*', '\\*'));
+
+      if (isEmpty(keys)) {
+        return 0;
+      }
+
       return client.del(keys);
     },
   };
