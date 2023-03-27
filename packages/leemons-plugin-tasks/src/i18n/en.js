@@ -83,9 +83,6 @@ module.exports = {
           name: {
             required: 'Required field',
           },
-          tagline: {
-            required: 'Required field',
-          },
         },
       },
       configData: {

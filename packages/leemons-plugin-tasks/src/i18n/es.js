@@ -84,9 +84,6 @@ module.exports = {
           name: {
             required: 'Campo necesario',
           },
-          tagline: {
-            required: 'Campo necesario',
-          },
         },
       },
       configData: {
