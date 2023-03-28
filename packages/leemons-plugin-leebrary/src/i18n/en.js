@@ -250,6 +250,7 @@ module.exports = {
       unpin: 'Unpin',
       toggle: 'Toggle',
       open: 'Open',
+      covertToTask: 'Convert to task',
     },
   },
 };

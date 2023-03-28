@@ -327,6 +327,7 @@ module.exports = {
     duplicate: 'Duplicar',
   },
   variant: 'Tarea',
+  expressVariant: 'Tarea express',
   task_realization: {
     confirmation_modal: {
       title: 'Tarea finalizada',

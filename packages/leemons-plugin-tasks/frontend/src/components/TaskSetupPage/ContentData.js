@@ -51,7 +51,7 @@ function useSubjectsWrapper() {
 
   const subjects = useWatch({ name: 'sharedData.subjects' });
 
-  return useSubjects({ subjects });
+  return useSubjects({ subjects }, false);
 }
 
 function ContentData({
@@ -195,7 +195,7 @@ function ContentData({
               <Attachments labels={labels} />
             </ContextContainer>
 
-            {!isExpress && (
+            {!isExpress && !!subjects.length && (
               <ContextContainer title={labels.subjects}>
                 {subjects?.length > 1 && (
                   <SegmentedControl

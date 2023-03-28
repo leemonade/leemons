@@ -19,17 +19,22 @@ const ListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
+const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ...props }) => {
   const history = useHistory();
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
+  const isExpress = !!asset?.providerData?.metadata?.express;
 
-  const [, translations] = useTranslateLoader([prefixPN('cardMenu'), 'plugins.tasks.variant']);
+  const [, translations] = useTranslateLoader([
+    prefixPN('cardMenu'),
+    'plugins.tasks.variant',
+    'plugins.tasks.expressVariant',
+  ]);
 
-  const { menuLabels, taskLabel } = useMemo(() => {
+  const { menuLabels, taskLabel, expressTaskLabel } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
 
@@ -38,6 +43,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       return {
         menuLabels: _.get(res, prefixPN('cardMenu')),
         taskLabel: _.get(res, 'plugins.tasks.variant'),
+        expressTaskLabel: _.get(res, 'plugins.tasks.expressVariant'),
       };
     }
 
@@ -161,7 +167,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       variant="task"
       variantIcon={<PluginAssignmentsIcon />}
       // TRANSLATE
-      variantTitle={taskLabel}
+      variantTitle={isExpress ? expressTaskLabel : taskLabel}
       className={classes.root}
     />
   );

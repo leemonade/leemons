@@ -237,6 +237,7 @@ module.exports = {
       unpin: 'Despinear',
       toggle: 'Cerrar',
       open: 'Abrir',
+      covertToTask: 'Convertir a tarea',
     },
   },
 };

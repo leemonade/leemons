@@ -6,8 +6,10 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { unflatten, useProcessTextEditor, useSearchParams, useStore } from '@common';
+import { unflatten, useProcessTextEditor, useQuery, useSearchParams, useStore } from '@common';
 import { ObservableContextProvider, useObservableContext } from '@common/context/ObservableContext';
+import { getAssetsByIdsRequest } from '@leebrary/request';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { BasicData, ContentData, InstructionData, Setup } from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
@@ -274,15 +276,40 @@ function TaskSetup() {
     }
   };
 
+  const getAsset = async (id) => {
+    const response = await getAssetsByIdsRequest([id]);
+
+    const asset = response.assets[0];
+
+    if (!asset) {
+      return null;
+    }
+
+    return prepareAsset(asset);
+  };
+
   // ·········································································
   // LOAD INIT DATA
 
   const { id } = useParams();
+  const { asset } = useQuery();
 
   useEffect(() => {
     (async () => {
       if (!isEmpty(id)) {
         store.currentTask = await getTask(id);
+        render();
+      } else if (!isEmpty(asset)) {
+        const assetData = await getAsset(asset);
+
+        store.currentTask = {
+          asset: {
+            name: assetData.name,
+            color: assetData.color,
+            cover: assetData.cover,
+          },
+          resources: [asset],
+        };
         render();
       }
     })();

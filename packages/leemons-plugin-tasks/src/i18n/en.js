@@ -338,6 +338,7 @@ module.exports = {
     duplicate: 'Duplicate',
   },
   variant: 'Task',
+  expressVariant: 'Express Task',
   task_realization: {
     confirmation_modal: {
       title: 'Tasks finished',
