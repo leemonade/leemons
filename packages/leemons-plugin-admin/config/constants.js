@@ -104,6 +104,11 @@ const STATUS = {
   ADMIN_CREATED: 'ADMIN_CREATED',
 };
 
+const widgets = {
+  zones: [{ key: `${permissionsPrefix}.admin-page` }],
+  items: [],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -114,4 +119,5 @@ module.exports = {
   menuItems,
   profileSettings,
   STATUS,
+  widgets,
 };

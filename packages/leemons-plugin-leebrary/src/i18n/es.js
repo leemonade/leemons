@@ -239,4 +239,13 @@ module.exports = {
       open: 'Abrir',
     },
   },
+  admin: {
+    card: {
+      title: 'Proveedores de libreria',
+      description: 'Configura tus proveedores para la gestion de la libreria',
+    },
+    setup: {
+      chooseProvider: 'Selecciona un proveedor',
+    },
+  },
 };

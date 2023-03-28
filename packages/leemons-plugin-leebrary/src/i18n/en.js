@@ -252,4 +252,13 @@ module.exports = {
       open: 'Open',
     },
   },
+  admin: {
+    card: {
+      title: 'Bookstore Suppliers',
+      description: 'Configure your suppliers for library management',
+    },
+    setup: {
+      chooseProvider: 'Choose provider',
+    },
+  },
 };
