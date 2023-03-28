@@ -253,4 +253,13 @@ module.exports = {
       covertToTask: 'Convert to task',
     },
   },
+  admin: {
+    card: {
+      title: 'Bookstore Suppliers',
+      description: 'Configure your suppliers for library management',
+    },
+    setup: {
+      chooseProvider: 'Choose provider',
+    },
+  },
 };

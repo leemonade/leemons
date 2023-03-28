@@ -1,10 +1,12 @@
 const { find, isEmpty } = require('lodash');
+const _ = require('lodash');
 const {
   permissions,
   menuItems,
   pluginName,
   categories,
   categoriesMenu,
+  widgets,
 } = require('./config/constants');
 const { defaultCategory: defaultCategoryKey } = require('./config/config');
 const { addLocales } = require('./src/services/locales/addLocales');
@@ -19,6 +21,29 @@ async function events(isInstalled) {
   });
 
   if (!isInstalled) {
+    leemons.events.once('plugins.admin:init-widget-zones', async () => {
+      await Promise.all(
+        _.map(widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+      await Promise.all(
+        _.map(widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+              properties: config.properties,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
+    });
     // ·······························································
     // REGISTER PERMISSIONS
 

@@ -186,10 +186,23 @@ const rolesPermissions = {
 };
 
 const widgets = {
-  zones: [
-    { key: `${permissionsPrefix}.list.card` },
-    { key: `${permissionsPrefix}.list.item` },
-    { key: `${permissionsPrefix}.detail` },
+  zones: [{ key: `${permissionsPrefix}.admin.config-providers` }],
+  items: [
+    {
+      zoneKey: `plugins.admin.admin-page`,
+      key: `${permissionsPrefix}.admin.config`,
+      url: 'admin-config/index',
+      properties: {
+        card: {
+          headerColor: '#EEEAF7',
+          title: `${permissionsPrefix}.admin.card.title`,
+          image: '',
+          imageWidth: 0,
+          imageHeight: 0,
+          description: `${permissionsPrefix}.admin.card.description`,
+        },
+      },
+    },
   ],
 };
 

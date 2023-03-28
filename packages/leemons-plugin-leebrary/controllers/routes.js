@@ -139,4 +139,12 @@ module.exports = [
     handler: 'search.search',
     authenticated: true,
   },
+  // ························································
+  // Providers
+  {
+    path: '/providers',
+    method: 'GET',
+    handler: 'providers.list',
+    authenticated: true,
+  },
 ];
