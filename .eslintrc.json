@@ -49,6 +49,7 @@
           "@admin",
           "@assets",
           "@assignables",
+          "@attendance-control",
           "@board-messages",
           "@calendar",
           "@common",

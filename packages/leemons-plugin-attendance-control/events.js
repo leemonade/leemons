@@ -26,24 +26,25 @@ async function events(isInstalled) {
     async () => {
       await Promise.allSettled(
         _.map(constants.widgets.zones, (config) =>
-          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+          leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
             name: config.name,
             description: config.description,
           })
         )
       );
       leemons.events.emit('init-widget-zones');
-      await Promise.allSettled(
+      const a = await Promise.allSettled(
         _.map(constants.widgets.items, (config) =>
           leemons
             .getPlugin('widgets')
-            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+            .services.widgets.setItemToZone(config.zoneKey, config.key, config.url, {
               name: config.name,
               description: config.description,
               properties: config.properties,
             })
         )
       );
+      console.log(a);
       leemons.events.emit('init-widget-items');
     }
   );

@@ -121,6 +121,18 @@ async function events(isInstalled) {
     await initEmails();
   });
 
+  leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
+    await Promise.allSettled(
+      _.map(constants.widgets.zones, (config) =>
+        leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
+          name: config.name,
+          description: config.description,
+        })
+      )
+    );
+    leemons.events.emit('init-widget-zones');
+  });
+
   if (!isInstalled) {
     const initUsers = async () => {
       const actionsService = require('./src/services/actions');
@@ -147,18 +159,6 @@ async function events(isInstalled) {
         await initDataset();
       }
     );
-
-    leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
-      await Promise.all(
-        _.map(constants.widgets.zones, (config) =>
-          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
-            name: config.name,
-            description: config.description,
-          })
-        )
-      );
-      leemons.events.emit('init-widget-zones');
-    });
 
     leemons.events.once(
       ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],

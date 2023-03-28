@@ -16,7 +16,7 @@ async function events(isInstalled) {
   leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
     await Promise.allSettled(
       _.map(constants.widgets.zones, (config) =>
-        leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+        leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
           name: config.name,
           description: config.description,
         })
@@ -27,7 +27,7 @@ async function events(isInstalled) {
       _.map(constants.widgets.items, (config) =>
         leemons
           .getPlugin('widgets')
-          .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+          .services.widgets.setItemToZone(config.zoneKey, config.key, config.url, {
             name: config.name,
             description: config.description,
             properties: config.properties,
