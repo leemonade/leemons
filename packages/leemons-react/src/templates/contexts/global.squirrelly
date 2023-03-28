@@ -33,11 +33,41 @@ class LeemonsApi {
     try {
       await this.#callMiddleware(this.#reqMiddlewares, 0, ctx);
 
+      let cache = null;
+      let cacheKey = null;
+      if (ctx.options?.cache) {
+        cache = ctx.options.cache;
+        cacheKey = JSON.stringify({
+          url: `${global.leemons.apiUrl}/api/${ctx.url}`,
+          options: ctx.options,
+        });
+        delete ctx.options.cache;
+        if (this.apiCache[cacheKey]) {
+          const now = new Date();
+          if (now > this.apiCache[cacheKey].endDate) {
+            delete this.apiCache[cacheKey];
+          } else {
+            return this.apiCache[cacheKey].response;
+          }
+        }
+      }
+
       const response = await fetch(`${global.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
 
       const responseCtx = { middlewares: [], response };
       await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
 
+      if (cacheKey) {
+        const ms = Date.now();
+        let ttl = cache;
+        if (!_.isNumber(ttl)) {
+          ttl = cache.ttl;
+        }
+        this.apiCache[cacheKey] = {
+          endDate: new Date(ms + ttl),
+          response: responseCtx.response,
+        };
+      }
       return responseCtx.response;
     } catch (response) {
       const responseCtx = { middlewares: [], response };
