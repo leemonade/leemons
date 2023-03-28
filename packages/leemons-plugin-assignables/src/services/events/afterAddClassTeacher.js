@@ -39,7 +39,7 @@ async function afterAddClassTeacher({ class: classe, teacher, type, transacting 
       );
     });
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
   }
 }
 

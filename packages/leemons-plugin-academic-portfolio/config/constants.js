@@ -260,7 +260,10 @@ const menuItems = [
 ];
 
 const widgets = {
-  zones: [{ key: `${permissionsPrefix}.class.detail` }],
+  zones: [
+    { key: `${permissionsPrefix}.class.detail` },
+    { key: `${permissionsPrefix}.class.students` },
+  ],
   items: [
     {
       zoneKey: 'plugins.dashboard.program.left',
