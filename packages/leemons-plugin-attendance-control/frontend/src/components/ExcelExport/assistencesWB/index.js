@@ -43,9 +43,8 @@ export function generateAssistancesWB({ headerShown, data, labels, sessions }) {
   _.forEach(data, (item) => {
     const row = [getUserFullName(item.student)];
     _.forEach(sessions, (session) => {
-      const value = item[new Date(session.start).getTime().toString()];
-      const comment = item[`${new Date(session.start).getTime().toString()}-comment`];
-      row.push(value || '-');
+      const { comment, assistance } = item[new Date(session.start).getTime().toString()];
+      row.push(assistance || '-');
       row.push(comment || '-');
     });
     row.push(`${item.avg.avg}%`);

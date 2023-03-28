@@ -234,7 +234,7 @@ export function AttendanceControlDrawer({
                 checked={allAttend}
                 label={t('allAttend')}
                 onChange={(e) => {
-                  _.forEach(classe?.students, (student) => {
+                  _.forEach(store.classe?.students, (student) => {
                     store.attendance[student.id] = e ? 'on-time' : null;
                   });
                   render();
