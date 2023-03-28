@@ -24,7 +24,7 @@ async function get(key, { userSession, transacting } = {}) {
         { transacting }
       ),
     ]);
-    const profiles = _.uniq(_.map(userAgents, (userAgent) => userAgent.profile.id));
+    const profiles = _.uniq(_.map(userAgents, (userAgent) => userAgent.profile?.id));
     const profilesByItemKey = {};
     _.forEach(itemProfiles, (itemProfile) => {
       if (!_.isArray(profilesByItemKey[itemProfile.key])) {

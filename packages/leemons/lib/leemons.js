@@ -529,13 +529,6 @@ class Leemons {
     if (!this.cache) {
       const cacheManager = new CacheManager({ leemons: this });
       this.cache = await cacheManager.init();
-
-      // await this.cache.setMany([
-      //   { key: 'hola', val: 'Hello', ttl: 10 },
-      //   { key: 'mundo', val: 'World', ttl: 10 },
-      // ]);
-      await this.cache.getMany(['hola', 'mundo']);
-      await this.cache.hasMany(['hola', 'mundo']);
     }
 
     return this.cache;

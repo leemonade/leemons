@@ -338,7 +338,7 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
         const { query } = filter.leemons;
         _.set(filter, 'leemons.query', (modelName) => query(modelName, plugin.name));
 
-        _.set(filter, 'leemons.cache', leemons.cache);
+        _.set(filter, 'leemons.cache', leemons.cache(plugin.name));
 
         return filter;
       };
@@ -377,9 +377,8 @@ async function loadExternalFiles(leemons, target, singularTarget, VMProperties) 
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
     const milliseconds = time.getMilliseconds();
-    const timeString = `${
-      (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-    }${milliseconds}ms`;
+    const timeString = `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+      }${milliseconds}ms`;
 
     leemons.log.debug(`${target} loaded in ${timeString}`);
   });

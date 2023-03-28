@@ -21,6 +21,9 @@
       "@assignables/*": [
         "./packages/leemons-plugin-assignables/frontend/src/*"
       ],
+      "@attendance-control/*": [
+        "./packages/leemons-plugin-attendance-control/frontend/src/*"
+      ],
       "@board-messages/*": [
         "./packages/leemons-plugin-board-messages/frontend/src/*"
       ],
@@ -77,6 +80,9 @@
       ],
       "@leebrary/*": [
         "./packages/leemons-plugin-leebrary/frontend/src/*"
+      ],
+      "@leebrary-aws-s3/*": [
+        "./packages/leemons-provider-leebrary-aws-s3/frontend/src/*"
       ],
       "@leebrary-tasks/*": [
         "./packages/leemons-provider-leebrary-tasks/frontend/src/*"

@@ -1,15 +1,23 @@
-const { map, isEmpty } = require('lodash');
+const { isEmpty } = require('lodash');
+
+function generateKey(key, pluginName) {
+  return `${pluginName}.${key}`;
+}
+
+function cleanKey(key, pluginName) {
+  return key.replace(new RegExp(`^${pluginName}\\.`), '');
+}
 
 module.exports = function queries(client) {
-  return {
+  return (pluginName) => ({
     get: async (key) => {
-      const value = await client.get(key);
+      const value = await client.get(generateKey(key, pluginName));
 
       return !value ? null : JSON.parse(value);
     },
-    has: async (key) => client.exists(key),
+    has: async (key) => client.exists(generateKey(key, pluginName)),
     set: async (key, value, ttl) =>
-      client.set(key, JSON.stringify(value), { EX: ttl || undefined }),
+      client.set(generateKey(key, pluginName), JSON.stringify(value), { EX: ttl || undefined }),
     delete: async (key) => {
       if (Array.isArray(key)) {
         throw new Error('Delete only supports single key deletions');
@@ -19,16 +27,18 @@ module.exports = function queries(client) {
         return 0;
       }
 
-      return client.del(key);
+      return client.del(generateKey(key, pluginName));
     },
 
     getMany: async (keys) => {
-      const values = await client.mGet(keys);
+      const _keys = keys.map((key) => generateKey(key, pluginName));
+
+      const values = await client.mGet(_keys);
 
       const result = {};
       values.forEach((value, i) => {
         if (value) {
-          const key = keys[i];
+          const key = cleanKey(_keys[i], pluginName);
           result[key] = JSON.parse(value);
         }
       });
@@ -37,15 +47,16 @@ module.exports = function queries(client) {
     },
     hasMany: async (keys) => {
       const trx = client.multi();
+      const _keys = keys.map((key) => generateKey(key, pluginName));
 
-      keys.forEach((key) => trx.exists(key));
+      _keys.forEach((key) => trx.exists(key));
 
       const hasKeys = await trx.exec();
 
       const hasKeysObject = {};
 
       hasKeys.forEach((result, i) => {
-        const key = keys[i];
+        const key = cleanKey(keys[i], pluginName);
         hasKeysObject[key] = !!result;
       });
 
@@ -54,13 +65,16 @@ module.exports = function queries(client) {
     setMany: async (values) => {
       const trx = client.multi();
 
-      values.forEach(({ key, val, ttl }) => trx.set(key, JSON.stringify(val), { EX: ttl }));
+      values.forEach(({ key, val, ttl }) =>
+        trx.set(generateKey(key, pluginName), JSON.stringify(val), { EX: ttl })
+      );
 
       return trx.exec();
     },
-    deleteMany: async (keys) => client.del(keys),
+    deleteMany: async (keys) => client.del(keys.map((key) => generateKey(key, pluginName))),
     deleteByPrefix: async (prefix) => {
-      const keys = await client.keys(prefix.replaceAll('*', '\\*'));
+      const _prefix = generateKey(prefix.replaceAll('*', '\\*'), pluginName);
+      const keys = await client.keys(_prefix);
 
       if (isEmpty(keys)) {
         return 0;
@@ -68,5 +82,5 @@ module.exports = function queries(client) {
 
       return client.del(keys);
     },
-  };
+  });
 };

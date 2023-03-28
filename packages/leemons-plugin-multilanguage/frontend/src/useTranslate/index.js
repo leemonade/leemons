@@ -29,6 +29,9 @@ function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) 
   return () =>
     leemons.api(url, {
       method: 'POST',
+      cache: {
+        ttl: 1000 * 60 * 60, // 1h
+      },
       body: {
         keys: _keys,
         keysStartsWith: _keysStartsWith,

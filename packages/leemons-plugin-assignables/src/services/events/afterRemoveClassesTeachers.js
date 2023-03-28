@@ -83,7 +83,7 @@ async function afterRemoveClassesTeachers({ classTeachers, transacting }) {
       });
     });
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
   }
 }
 

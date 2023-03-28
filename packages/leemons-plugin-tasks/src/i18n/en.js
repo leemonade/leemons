@@ -83,9 +83,6 @@ module.exports = {
           name: {
             required: 'Required field',
           },
-          tagline: {
-            required: 'Required field',
-          },
         },
       },
       configData: {
@@ -341,6 +338,7 @@ module.exports = {
     duplicate: 'Duplicate',
   },
   variant: 'Task',
+  expressVariant: 'Express Task',
   task_realization: {
     confirmation_modal: {
       title: 'Tasks finished',

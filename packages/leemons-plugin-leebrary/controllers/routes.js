@@ -139,4 +139,24 @@ module.exports = [
     handler: 'search.search',
     authenticated: true,
   },
+  // ························································
+  // Providers
+  {
+    path: '/providers',
+    method: 'GET',
+    handler: 'providers.list',
+    authenticated: true,
+  },
+  {
+    path: '/providers/config/delete',
+    method: 'POST',
+    handler: 'providers.deleteConfig',
+    authenticated: true,
+  },
+  {
+    path: '/providers/config',
+    method: 'POST',
+    handler: 'providers.setConfig',
+    authenticated: true,
+  },
 ];

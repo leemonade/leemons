@@ -12,11 +12,9 @@ const getUserPermission = require('./permissions/assignable/users/getUserPermiss
 function validateDataForPublish(assignable) {
   const validationObject = _.cloneDeep(assignableValidationObject);
 
-  validationObject.properties.statement.nullable = false;
-
   validateAssignable(_.pick(assignable, validAssignableProperties), {
     validationObject,
-    useRequired: ['asset', 'role', 'subjects', 'statement'],
+    useRequired: ['asset', 'role', 'subjects'],
   });
 }
 
