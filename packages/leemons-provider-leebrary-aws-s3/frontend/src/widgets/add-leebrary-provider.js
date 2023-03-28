@@ -31,10 +31,13 @@ export default function AddLeebraryProvider() {
 
   async function onBeforeAdd(config) {
     try {
-      await leemons.api(`leebrary-aws-s3/config`, {
+      await leemons.api(`leebrary/providers/config`, {
         allAgents: true,
         method: 'POST',
-        body: config,
+        body: {
+          provider: 'leebrary-aws-s3',
+          config,
+        },
       });
       store.providers = [config];
       render();
@@ -47,10 +50,13 @@ export default function AddLeebraryProvider() {
 
   async function onUpdate({ newItem }) {
     try {
-      await leemons.api(`leebrary-aws-s3/config`, {
+      await leemons.api(`leebrary/providers/config`, {
         allAgents: true,
         method: 'POST',
-        body: newItem,
+        body: {
+          provider: 'leebrary-aws-s3',
+          config: newItem,
+        },
       });
       store.providers = [newItem];
       render();
@@ -61,9 +67,12 @@ export default function AddLeebraryProvider() {
 
   async function onBeforeRemove() {
     try {
-      await leemons.api(`leebrary-aws-s3/config`, {
+      await leemons.api(`leebrary/providers/config/delete`, {
         allAgents: true,
-        method: 'DELETE',
+        method: 'POST',
+        body: {
+          provider: 'leebrary-aws-s3',
+        },
       });
       store.providers = [];
       render();

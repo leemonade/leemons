@@ -147,4 +147,16 @@ module.exports = [
     handler: 'providers.list',
     authenticated: true,
   },
+  {
+    path: '/providers/config/delete',
+    method: 'POST',
+    handler: 'providers.deleteConfig',
+    authenticated: true,
+  },
+  {
+    path: '/providers/config',
+    method: 'POST',
+    handler: 'providers.setConfig',
+    authenticated: true,
+  },
 ];

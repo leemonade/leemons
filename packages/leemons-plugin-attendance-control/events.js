@@ -21,39 +21,39 @@ async function events(isInstalled) {
     await addLocales(locale.code);
   });
 
+  leemons.events.once(
+    ['plugins.widgets:pluginDidLoad', 'plugins.dashboard:init-widget-zones'],
+    async () => {
+      await Promise.allSettled(
+        _.map(constants.widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+      await Promise.allSettled(
+        _.map(constants.widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
+              name: config.name,
+              description: config.description,
+              properties: config.properties,
+            })
+        )
+      );
+      leemons.events.emit('init-widget-items');
+    }
+  );
+
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
     });
-
-    leemons.events.once(
-      ['plugins.widgets:pluginDidLoad', 'plugins.dashboard:init-widget-zones'],
-      async () => {
-        await Promise.all(
-          _.map(constants.widgets.zones, (config) =>
-            leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
-              name: config.name,
-              description: config.description,
-            })
-          )
-        );
-        leemons.events.emit('init-widget-zones');
-        await Promise.all(
-          _.map(constants.widgets.items, (config) =>
-            leemons
-              .getPlugin('widgets')
-              .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
-                name: config.name,
-                description: config.description,
-                properties: config.properties,
-              })
-          )
-        );
-        leemons.events.emit('init-widget-items');
-      }
-    );
 
     leemons.events.once(
       ['plugins.menu-builder:init-main-menu', 'plugins.scores:init-permissions'],
