@@ -21,6 +21,9 @@
       "@assignables/*": [
         "./packages/leemons-plugin-assignables/frontend/src/*"
       ],
+      "@attendance-control/*": [
+        "./packages/leemons-plugin-attendance-control/frontend/src/*"
+      ],
       "@board-messages/*": [
         "./packages/leemons-plugin-board-messages/frontend/src/*"
       ],

@@ -22,6 +22,7 @@
     "leemons-plugin-admin": "0.0.1",
     "leemons-plugin-assets": "0.0.1",
     "leemons-plugin-assignables": "0.0.1",
+    "leemons-plugin-attendance-control": "0.0.1",
     "leemons-plugin-board-messages": "0.0.1",
     "leemons-plugin-bulk-template": "0.0.1",
     "leemons-plugin-calendar": "0.0.1",

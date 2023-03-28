@@ -1,0 +1,12 @@
+{
+  "name": "attendance-control-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/icons": "dev",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {}
+}
