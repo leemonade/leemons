@@ -28,6 +28,11 @@ module.exports = {
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Perfiles', en: 'Profiles' },
     },
+    {
+      permissionName: 'plugins.users.import',
+      actions: ['view', 'update', 'admin'],
+      localizationName: { es: 'Importar', en: 'Import' },
+    },
   ],
   defaultActions: [
     { order: 1, actionName: 'view', localizationName: { es: 'Ver', en: 'View' } },
