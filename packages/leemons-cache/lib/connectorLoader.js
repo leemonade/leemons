@@ -6,6 +6,7 @@ module.exports = async function connectorLoader({ connection }) {
     return nodeCache;
   }
 
+  leemons.log.debug(`Cache connectorLoader > ${connection?.connector}`);
   const connector = await importConnector(connection?.connector);
 
   return connector;

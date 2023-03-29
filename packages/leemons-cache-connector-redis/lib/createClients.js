@@ -16,6 +16,7 @@ function clientConfig(client) {
 
 module.exports = function createClients(config) {
   if (config.client) {
+    leemons.log.debug(`Connecting to REDIS, using: ${JSON.stringify(config.client)}`);
     return createClient(clientConfig(config.client));
   }
   if (config.clients) {
