@@ -25,6 +25,7 @@ class LeemonsApi {
     this.api.useResError = this.#use('resError');
     this.api.hasReq = this.#apiHasReqMiddleware;
     this.api.hasRes = this.#apiHasResMiddleware;
+    this.apiCache = {};
   }
 
   api = async (url, options) => {
