@@ -64,7 +64,7 @@ function ClassHeaderBar({ classe }) {
 
   React.useEffect(() => {
     load();
-  }, []);
+  }, [classe?.id]);
 
   if (!academicCalendar || !canAttendance || userProfile !== 'teacher' || !backSessions?.length) {
     return null;
