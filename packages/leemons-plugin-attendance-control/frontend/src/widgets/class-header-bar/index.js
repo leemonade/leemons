@@ -66,7 +66,7 @@ function ClassHeaderBar({ classe }) {
     load();
   }, []);
 
-  if (!academicCalendar || !canAttendance || userProfile !== 'teacher' || !backSessions) {
+  if (!academicCalendar || !canAttendance || userProfile !== 'teacher' || !backSessions?.length) {
     return null;
   }
 
