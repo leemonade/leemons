@@ -1,10 +1,10 @@
+import { LoadingOverlay } from '@bubbles-ui/components';
+import loadable from '@loadable/component';
+import { goLoginPage } from '@users/navigate';
+import { useSession } from '@users/session';
+import pMinDelay from 'p-min-delay';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import loadable from '@loadable/component';
-import pMinDelay from 'p-min-delay';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import { useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
 
 const Logout = loadable(() => pMinDelay(import('./src/pages/public/Logout'), 1000));
 
@@ -27,6 +27,9 @@ const DetailProfile = loadable(() =>
 const ListUsers = loadable(() => pMinDelay(import('./src/pages/private/users/ListUsers'), 1000));
 const CreateUsers = loadable(() =>
   pMinDelay(import('./src/pages/private/users/CreateUsers'), 1000)
+);
+const ImportUsers = loadable(() =>
+  pMinDelay(import('./src/pages/private/users/ImportUsers'), 1000)
 );
 const DetailUser = loadable(() => pMinDelay(import('./src/pages/private/users/DetailUser'), 1000));
 
@@ -51,6 +54,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/create`}>
         <CreateUsers session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/import`}>
+        <ImportUsers session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/language`}>
         <ChangeLanguage session={session} fallback={<LoadingOverlay visible />} />

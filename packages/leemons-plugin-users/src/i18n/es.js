@@ -199,6 +199,7 @@ module.exports = {
     choose_center: 'Seleccionar un centro',
   },
   list_users: {
+    import: 'Importar usuarios',
     pageTitle: 'Listado de usuarios',
     centerLabel: 'Centro',
     profileLabel: 'Perfil',
@@ -302,5 +303,10 @@ module.exports = {
     selectLocale: 'Seleccione un idioma',
     save: 'Guardar',
     success: 'Idioma cambiado',
+  },
+  importUsers: {
+    title: 'Importar usuarios',
+    centerLabel: 'Centro',
+    profileLabel: 'Perfil',
   },
 };

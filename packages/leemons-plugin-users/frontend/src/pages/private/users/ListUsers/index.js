@@ -134,9 +134,11 @@ function ListUsers() {
   }
 
   async function getPermissions() {
-    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all(
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.users')
-    );
+    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
+      getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
+      getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
+    ]);
+    console.log(importPermission);
     if (addPermission) {
       store.canAdd =
         addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
@@ -191,16 +193,25 @@ function ListUsers() {
     history.push('/private/users/create');
   }
 
+  function goImportPage() {
+    history.push('/private/users/import');
+  }
+
   const headerButtons = React.useMemo(() => {
     const result = {};
     if (store.canAdd) result.new = tCommon('new');
-    if (store.canImport) result.edit = tCommon('new');
+    if (store.canImport) result.import = t('import');
     return result;
   }, [store.canImport, store.canAdd]);
 
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={headerValues} buttons={headerButtons} onNew={() => goCreatePage()} />
+      <AdminPageHeader
+        values={headerValues}
+        buttons={headerButtons}
+        onImport={goImportPage}
+        onNew={goCreatePage}
+      />
       <Paper color="solid" shadow="none" padding="none">
         <Box>
           <PageContainer noFlex>

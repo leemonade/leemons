@@ -199,6 +199,7 @@ module.exports = {
     choose_center: 'Choose center',
   },
   list_users: {
+    import: 'Import users',
     pageTitle: 'Users list',
     centerLabel: 'Center',
     profileLabel: 'Profile',
@@ -302,5 +303,10 @@ module.exports = {
     selectLocale: 'Select a language',
     save: 'Save',
     success: 'Language changed',
+  },
+  importUsers: {
+    title: 'Import users',
+    centerLabel: 'Center',
+    profileLabel: 'Profile',
   },
 };
