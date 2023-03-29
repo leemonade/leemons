@@ -369,7 +369,6 @@ function generateQueries(model /* connector */) {
         finishRollback(id);
         return result;
       } catch (e) {
-        console.error(e);
         if (!transactingHasError()) await rollback(id);
         throw e;
       }
