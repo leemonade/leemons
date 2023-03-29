@@ -9,7 +9,6 @@ export const ConfigPageStyles = createStyles((theme) => ({
     paddingBottom: theme.spacing[4],
   },
   saveContainer: {
-    borderTop: `1px solid ${theme.other.global.border.color.line.muted}`,
     marginLeft: -theme.spacing[5],
     marginRight: -theme.spacing[5],
     paddingLeft: theme.spacing[5],

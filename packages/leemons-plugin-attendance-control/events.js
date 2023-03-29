@@ -33,7 +33,7 @@ async function events(isInstalled) {
         )
       );
       leemons.events.emit('init-widget-zones');
-      const a = await Promise.allSettled(
+      await Promise.allSettled(
         _.map(constants.widgets.items, (config) =>
           leemons
             .getPlugin('widgets')
@@ -44,7 +44,7 @@ async function events(isInstalled) {
             })
         )
       );
-      console.log(a);
+
       leemons.events.emit('init-widget-items');
     }
   );

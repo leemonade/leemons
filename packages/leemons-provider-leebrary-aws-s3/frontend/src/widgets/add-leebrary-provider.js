@@ -1,4 +1,10 @@
-import { ContextContainer, Paper, TableInput, TextInput } from '@bubbles-ui/components';
+import {
+  ContextContainer,
+  Paper,
+  PasswordInput,
+  TableInput,
+  TextInput,
+} from '@bubbles-ui/components';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
@@ -112,9 +118,10 @@ export default function AddLeebraryProvider() {
       Header: t('secretAccessKey'),
       accessor: 'secretAccessKey',
       input: {
-        node: <TextInput required />,
+        node: <PasswordInput required />,
         rules: { required: t('fieldRequired') },
       },
+      valueRender: () => '***********',
     },
   ];
 

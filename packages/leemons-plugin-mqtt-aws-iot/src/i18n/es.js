@@ -13,4 +13,10 @@ module.exports = {
     secretAccessKey: 'Clave secreta de acceso',
     secretAccessKeyRequired: 'Clave secreta de acceso es necesario',
   },
+  admin: {
+    card: {
+      title: 'AWS Iot',
+      description: 'Configura las credenciales para AWS Iot',
+    },
+  },
 };

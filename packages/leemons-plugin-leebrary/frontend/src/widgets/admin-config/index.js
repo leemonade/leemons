@@ -159,7 +159,7 @@ const AdminConfig = ({ onNextLabel, onNext = () => {} }) => {
       </ContextContainer>
       <br />
       <br />
-      <Stack justifyContent="end">
+      <Stack style={{ width: '100%' }} justifyContent="end">
         <Button onClick={handleOnNext} loading={store.saving}>
           {onNextLabel}
         </Button>

@@ -22,6 +22,8 @@ async function add(_items, shouldWait = false) {
     items = [_items];
   }
 
+  console.log(items);
+
   const menuBuilder = getMenuBuilder();
   const { services } = menuBuilder;
 
