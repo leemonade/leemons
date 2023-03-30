@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, HtmlText, Loader, Text, Title, createStyles } from '@bubbles-ui/components';
+import { Box, HtmlText, Loader, Text, createStyles } from '@bubbles-ui/components';
 import { capitalize, get, map } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
@@ -16,6 +16,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
+import Sidebar from '@tasks/components/Student/TaskDetail/components/Sidebar/Sidebar';
 import { DashboardCard } from './components/DashboardCard';
 
 export function useModuleDashboardLocalizations() {
@@ -61,6 +62,9 @@ export const useModuleDashboardStyles = createStyles((theme) => {
       flexDirection: 'row',
       gap: globalTheme.spacing.gap.xlg,
       flexWrap: 'wrap',
+    },
+    body: {
+      display: 'flex',
     },
   };
 });
@@ -183,6 +187,65 @@ function useHeaderData(module) {
   };
 }
 
+export const useModuleDashboardBodyStyles = createStyles((theme, { marginTop }) => ({
+  sidebarContainer: {
+    minWidth: 280,
+    maxWidth: 280,
+  },
+  sidebar: {
+    width: 280,
+    position: 'absolute',
+    height: `calc(100% - ${marginTop})`,
+    right: 0,
+    top: marginTop,
+  },
+}));
+
+function ModuleDashboardBody({
+  classes,
+  localizations,
+  activities,
+  activitiesById,
+  assignationsById,
+  module,
+  marginTop,
+}) {
+  const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
+  return (
+    <Box className={classes.body}>
+      <Box className={classes.rootContainer}>
+        <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
+        {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
+        <Box className={classes.activitiesList}>
+          {activities?.map((activity) => (
+            <DashboardCard
+              localizations={localizations}
+              activity={activitiesById[activity?.id]}
+              assignation={assignationsById[activity?.id]}
+              key={activity?.id}
+            />
+          ))}
+        </Box>
+      </Box>
+      <Box className={sidebarClasses.sidebarContainer}>
+        <Box className={sidebarClasses.sidebar}>
+          <Sidebar assignation={{ instance: module }} labels={localizations} show />
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+ModuleDashboardBody.propTypes = {
+  classes: PropTypes.arrayOf(PropTypes.object),
+  localizations: PropTypes.object,
+  activities: PropTypes.arrayOf(PropTypes.object),
+  activitiesById: PropTypes.object,
+  assignationsById: PropTypes.object,
+  module: PropTypes.object,
+  marginTop: PropTypes.number,
+};
+
 export function ModuleDashboard({ id }) {
   const { module, activities, activitiesById, assignationsById, isLoading } = useModuleData(id);
   const localizations = useModuleDashboardLocalizations();
@@ -197,20 +260,14 @@ export function ModuleDashboard({ id }) {
   return (
     <Box className={classes.root}>
       <ActivityContainer {...headersData} collapseOnScroll>
-        <Box className={classes.rootContainer}>
-          <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
-          {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
-          <Box className={classes.activitiesList}>
-            {activities?.map((activity) => (
-              <DashboardCard
-                localizations={localizations}
-                activity={activitiesById[activity?.id]}
-                assignation={assignationsById[activity?.id]}
-                key={activity?.id}
-              />
-            ))}
-          </Box>
-        </Box>
+        <ModuleDashboardBody
+          activities={activities}
+          activitiesById={activitiesById}
+          assignationsById={assignationsById}
+          classes={classes}
+          localizations={localizations}
+          module={module}
+        />
       </ActivityContainer>
     </Box>
   );

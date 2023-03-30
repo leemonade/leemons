@@ -21,6 +21,7 @@ module.exports = {
     tabs: {
       basicData: 'Datos básicos',
       structure: 'Estructura',
+      resources: 'Recursos',
     },
     buttons: {
       next: 'Siguiente',
@@ -46,6 +47,23 @@ module.exports = {
           subject: {
             required: 'Al menos una asignatura es necesaria',
           },
+        },
+      },
+      resourcesData: {
+        buttons: {
+          new: 'Nuevo recurso',
+        },
+        emptyState: {
+          title: '¡Empecemos a crear!',
+          description:
+            'Añade recursos de la librería y ordénalos según desees que le aparezcan al estudiante.',
+        },
+        moduleComposer: {
+          columns: {
+            resource: 'Recurso',
+            actions: 'Acciones',
+          },
+          lastUpdate: 'Última actualización',
         },
       },
       structureData: {
@@ -131,6 +149,7 @@ module.exports = {
       start: 'Comenzar',
       continue: 'Continuar',
     },
+    resources: 'Recursos',
   },
   modulesTab: {
     tabName: 'Temario',

@@ -18,6 +18,7 @@ import { BasicData } from './components/BasicData/BasicData';
 import { Header } from './components/Header';
 import { StructureData } from './components/StructureData/StructureData';
 import addAction from './helpers/addAction';
+import { Resources } from './components/Resources';
 
 export function useTabs({ localizations }) {
   return useMemo(
@@ -25,6 +26,10 @@ export function useTabs({ localizations }) {
       {
         id: 'basicData',
         label: localizations?.basicData,
+      },
+      {
+        id: 'resources',
+        label: localizations?.resources,
       },
       {
         id: 'structure',
@@ -52,6 +57,7 @@ export function useModuleSetupLocalizations() {
 
 const stepsRenderers = {
   basicData: <BasicData />,
+  resources: <Resources />,
   structure: <StructureData />,
 };
 
@@ -105,6 +111,7 @@ function prepareAssignable(sharedData) {
         id: activity.id,
       })),
     },
+    resources: get(sharedData, 'state.resources', []),
     // EN: It's required
     // ES: Es requerido
     statement: 'Module',
@@ -123,6 +130,7 @@ function prepareSharedData(module) {
     },
     state: {
       activities: module.submission.activities,
+      resources: module.resources,
     },
   };
 

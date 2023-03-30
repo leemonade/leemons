@@ -21,6 +21,7 @@ module.exports = {
     tabs: {
       basicData: 'Basic data',
       structure: 'Structure',
+      resources: 'Resources',
     },
     buttons: {
       next: 'Next',
@@ -46,6 +47,23 @@ module.exports = {
           subject: {
             required: 'At least one subject is required',
           },
+        },
+      },
+      resourcesData: {
+        buttons: {
+          new: 'New resource',
+        },
+        emptyState: {
+          title: "¡Let's start creating!",
+          description:
+            'Add Resources to the library and sort them as you want them to appear to the student.',
+        },
+        moduleComposer: {
+          columns: {
+            resource: 'Resource',
+            actions: 'Actions',
+          },
+          lastUpdate: 'Last update',
         },
       },
       structureData: {
@@ -131,6 +149,7 @@ module.exports = {
       start: 'Start',
       continue: 'Continue',
     },
+    resources: 'Resources',
   },
   modulesTab: {
     tabName: 'Modules',

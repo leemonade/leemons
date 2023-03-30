@@ -5,12 +5,13 @@
   "license": "MIT",
   "dependencies": {
     "@bubbles-ui/components": "dev",
+    "@bubbles-ui/editors": "dev",
     "@bubbles-ui/icons": "dev",
     "@bubbles-ui/leemons": "dev",
-    "@bubbles-ui/editors": "dev",
+    "@tanstack/react-query": "^4.28.0",
     "lodash": "^4.17.21",
-    "react-hook-form": "^7.22.1",
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "react-hook-form": "^7.22.1"
   },
   "devDependencies": {
     "react-hook-form": "^7.22.1"

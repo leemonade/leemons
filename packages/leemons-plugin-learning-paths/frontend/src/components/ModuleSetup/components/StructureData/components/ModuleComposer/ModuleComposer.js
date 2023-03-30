@@ -77,7 +77,9 @@ function useSelectedActivities() {
 }
 
 export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, onActivityChange }) {
-  const columns = useColumns({ localizations: localizations?.moduleComposer?.columns });
+  const columns = useColumns({
+    localizations: localizations?.steps?.resources?.moduleComposer?.columns,
+  });
 
   const activities = useSelectedActivities();
   const parsedActivities = useParseActivities({
@@ -106,6 +108,7 @@ export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, on
 ModuleComposer.propTypes = {
   activities: PropTypes.array,
   localizations: PropTypes.object,
+  onRemoveAsset: PropTypes.func,
   onSelectAsset: PropTypes.func,
   onActivityChange: PropTypes.func,
 };
