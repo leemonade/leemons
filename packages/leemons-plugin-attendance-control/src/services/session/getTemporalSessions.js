@@ -37,12 +37,13 @@ async function getTemporalSessions(classeId, { start, end, withAssistances, tran
   let dates = [];
 
   // Comprobamos si tiene las fechas del curso y que la clase tiene horario
-  if (!(courseId && calendar.courseDates?.[courseId])) {
+  if (courseId && calendar.courseDates?.[courseId]) {
     dates.push({
       start: calendar.courseDates[courseId].startDate,
       end: calendar.courseDates[courseId].endDate,
     });
   }
+
   // Si la clase tiene subetapas comprobamos si el calendario tiene las fechas de todas las subetapas
   if (classe.substages?.length) {
     dates = [];

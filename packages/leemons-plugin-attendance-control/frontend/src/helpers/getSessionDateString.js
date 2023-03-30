@@ -17,8 +17,11 @@ export function getSessionDateString(
   locale,
   { onlyHours = false, onlyDate = false } = {}
 ) {
-  const start = new Date(session.start);
-  const end = new Date(session.end);
+  let start = new Date(session.start);
+  let end = new Date(session.end);
+  const timeDiff = start.getTimezoneOffset() * 60000;
+  start = new Date(start.valueOf() + timeDiff);
+  end = new Date(end.valueOf() + timeDiff);
 
   if (onlyHours) {
     return `${getOnlyHours(start)} - ${getOnlyHours(end)}`;
