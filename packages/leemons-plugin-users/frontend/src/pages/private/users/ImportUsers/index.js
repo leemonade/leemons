@@ -7,6 +7,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import React from 'react';
 import { SelectCenter } from '../../../../components/SelectCenter';
 import { SelectProfile } from '../../../../components/SelectProfile';
+import UploadFile from './components/uploadFile';
 
 function CreateUsers() {
   const [t] = useTranslateLoader(prefixPN('importUsers'));
@@ -25,26 +26,36 @@ function CreateUsers() {
 
   async function save() {}
 
+  const childrens = React.useMemo(() => {
+    const result = [
+      <ContextContainer key="1" direction="row">
+        <SelectCenter
+          label={t('centerLabel')}
+          value={store.center}
+          disabled={!!store.usersToCreate?.length}
+          onChange={centerChange}
+        />
+        <SelectProfile
+          label={t('profileLabel')}
+          value={store.profile}
+          disabled={!!store.usersToCreate?.length}
+          onChange={profileChange}
+        />
+      </ContextContainer>,
+    ];
+    if (store.center && store.profile) {
+      result.push(<UploadFile t={t} center={store.center} profile={store.profile} />);
+    }
+    return result;
+  }, [store.center, store.profile]);
+
   return (
     <Stack direction="column" fullWidth fullHeight>
-      <AdminPageHeader values={{ title: t('title') }} />
+      <AdminPageHeader values={{ title: t('title'), description: t('description') }} />
 
       <PageContainer noFlex>
-        <ContextContainer sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-          <ContextContainer direction="row">
-            <SelectCenter
-              label={t('centerLabel')}
-              value={store.center}
-              disabled={!!store.usersToCreate?.length}
-              onChange={centerChange}
-            />
-            <SelectProfile
-              label={t('profileLabel')}
-              value={store.profile}
-              disabled={!!store.usersToCreate?.length}
-              onChange={profileChange}
-            />
-          </ContextContainer>
+        <ContextContainer divided sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          {childrens}
         </ContextContainer>
       </PageContainer>
     </Stack>
