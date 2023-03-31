@@ -49,6 +49,8 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
   const [boxRef, rect] = useResizeObserver();
   const drawerSize = useMemo(() => Math.max(viewportWidth / 2, 500), [viewportWidth, rect]);
 
+  const [assetType, setAssetType] = useState('');
+
   const [sharedData, setSharedData] = useModuleSetupContext();
 
   const { classes } = useResourcesStyles();
@@ -56,9 +58,13 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
     <Box ref={boxRef}>
       <Box className={classes.content}>
         <AssetListDrawer
-          opened={showAssetDrawer}
-          size={drawerSize}
-          onClose={() => setShowAssetDrawer(0)}
+          allowChangeCategories={['media-files', 'assignables.content-creator']}
+          assetType={assetType}
+          canChangeType
+          creatable
+          itemMinWidth={250}
+          onClose={() => setShowAssetDrawer(false)}
+          onlyThumbnails={false}
           onSelect={(asset) => {
             setSharedData((data) =>
               set(
@@ -69,6 +75,10 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
             );
             setShowAssetDrawer(false);
           }}
+          onTypeChange={setAssetType}
+          opened={showAssetDrawer}
+          shadow={drawerSize <= 720}
+          size={drawerSize}
         />
         {get(sharedData, 'state.resources', [])?.length ? (
           <ResourcesTable
