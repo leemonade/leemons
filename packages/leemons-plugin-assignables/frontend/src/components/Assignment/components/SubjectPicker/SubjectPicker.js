@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Box, TagsInput, createStyles } from '@bubbles-ui/components';
 import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
 import { map, uniqBy } from 'lodash';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { Container } from '../Container';
 
 export const useSubjectPickerStyles = createStyles(() => ({
@@ -33,7 +32,7 @@ export function useSubjectsForSubjectPicker(subjects) {
         subjectDetails?.map((subject) => ({
           label: subject.name,
           value: subject.id,
-          //icon: prepareAsset(subject.icon).cover,
+          // icon: prepareAsset(subject.icon).cover,
         })),
         'value'
       ) || [],
@@ -63,7 +62,7 @@ export function SubjectPicker({
 
   React.useEffect(() => {
     if (isFirstSubjectsLoad.current && subjects?.length) {
-      if (assignable?.subjects) {
+      if (assignable?.subjects?.length) {
         setValue(map(subjects, 'value'));
       }
       isFirstSubjectsLoad.current = false;
