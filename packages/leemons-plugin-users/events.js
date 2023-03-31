@@ -133,16 +133,19 @@ async function events(isInstalled) {
     leemons.events.emit('init-widget-zones');
   });
 
-  if (!isInstalled) {
-    const initUsers = async () => {
+  leemons.events.once(
+    ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],
+    async () => {
       const actionsService = require('./src/services/actions');
       const permissionService = require('./src/services/permissions');
       await actionsService.init();
       leemons.events.emit('init-actions');
       await permissionService.init();
       leemons.events.emit('init-permissions');
-    };
+    }
+  );
 
+  if (!isInstalled) {
     const initDataset = async () => {
       await Promise.all(
         _.map(constants.defaultDatasetLocations, (config) =>
@@ -157,13 +160,6 @@ async function events(isInstalled) {
       ['plugins.multilanguage:pluginDidLoad', 'plugins.dataset:pluginDidLoadServices'],
       async () => {
         await initDataset();
-      }
-    );
-
-    leemons.events.once(
-      ['plugins.users:pluginDidLoad', 'plugins.multilanguage:pluginDidLoad'],
-      async () => {
-        await initUsers();
       }
     );
 
