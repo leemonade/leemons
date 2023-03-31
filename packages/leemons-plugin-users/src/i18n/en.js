@@ -332,5 +332,12 @@ module.exports = {
     birthdateInvalid: 'Invalid birthdate format',
     genderRequired: 'Gender is required',
     genderInvalid: 'Gender invalid use male or female',
+    save: 'Save',
+    colEmailRequired: 'The [Email] column is required.',
+    colNameRequired: 'The [Name] column is required.',
+    colBirthdateRequired: 'The [Birthdate] column is required.',
+    colGenderRequired: 'The [Gender] column is required.',
+    fieldsWithErrors: 'There are fields with errors, correct them before importing.',
+    usersAddedSuccessfully: 'Users added successfully',
   },
 };

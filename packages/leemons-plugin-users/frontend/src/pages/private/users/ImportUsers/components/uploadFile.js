@@ -49,6 +49,10 @@ export function UploadFile({ t, center, profile }) {
     render();
   }
 
+  async function onSave() {
+    removeFile();
+  }
+
   React.useEffect(() => {
     load();
   }, []);
@@ -99,6 +103,9 @@ export function UploadFile({ t, center, profile }) {
 
           <XlsxTable
             t={t}
+            onSave={onSave}
+            center={center}
+            profile={profile}
             file={store.file}
             initRow={store.initRow}
             headerSelects={store.headerSelects}

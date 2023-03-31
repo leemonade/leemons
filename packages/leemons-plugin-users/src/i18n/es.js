@@ -332,5 +332,12 @@ module.exports = {
     birthdateInvalid: 'El formato de la fecha de nacimiento no es valido',
     genderRequired: 'El genero es necesario',
     genderInvalid: 'Genero invalido use male(hombre) o female(mujer)',
+    save: 'Guardar',
+    colEmailRequired: 'La columna [Email] es obligatoria.',
+    colNameRequired: 'La columna [Nombre] es obligatoria.',
+    colBirthdateRequired: 'La columna [Fecha de nacimiento] es obligatoria.',
+    colGenderRequired: 'La columna [Genero] es obligatoria.',
+    fieldsWithErrors: 'Hay campos con errores corrijelos antes de importar',
+    usersAddedSuccessfully: 'Usuarios añadidos con éxito',
   },
 };
