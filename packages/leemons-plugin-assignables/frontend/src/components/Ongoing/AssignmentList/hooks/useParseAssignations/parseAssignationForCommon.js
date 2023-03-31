@@ -223,14 +223,10 @@ function parseDates(dates, keysToParse) {
 
 export async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
-  const classData = await getClassData(
-    instance.classes,
-    {
-      multiSubject: labels.multiSubject,
-      groupName: instance?.metadata?.groupName,
-    },
-    true
-  );
+  const classData = await getClassData(instance.classes, {
+    multiSubject: labels.multiSubject,
+    groupName: instance?.metadata?.groupName,
+  });
 
   return {
     id: instance.id,
