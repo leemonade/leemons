@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Box,
   Button,
@@ -11,27 +9,29 @@ import {
   Title,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@users/helpers/prefixPN';
-import { useHistory, useParams } from 'react-router-dom';
 import { useStore } from '@common';
-import { find, forEach, forIn } from 'lodash';
-import { useForm } from 'react-hook-form';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@users/helpers/prefixPN';
+import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { ZoneWidgets } from '@widgets';
+import { find, forEach, forIn } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
+import getUserFullName from '../../../../helpers/getUserFullName';
 import {
   getSystemDataFieldsConfigRequest,
   getUserDetailForPageRequest,
   updateUserAgentRequest,
   updateUserRequest,
 } from '../../../../request';
-import getUserFullName from '../../../../helpers/getUserFullName';
-import UserImageAndPreferredGender from './UserImageAndPreferredGender';
 import PersonalInformation from './PersonalInformation';
-import UserAgentDataset from './UserAgentDataset';
 import UserAgentTags from './UserAgentTags';
+import UserDataset from './UserDataset';
+import UserImageAndPreferredGender from './UserImageAndPreferredGender';
 
 function DetailUser({ session }) {
   const [t] = useTranslateLoader(prefixPN('detailUser'));
@@ -87,7 +87,6 @@ function DetailUser({ session }) {
       store.userAgents,
       (userAgent) => userAgent.center.id === store.center && userAgent.profile.id === store.profile
     );
-    store.hideDataset = false;
     render();
   }
 
@@ -111,6 +110,7 @@ function DetailUser({ session }) {
         avatar: config.avatar,
         secondSurname: config.secondSurname,
       };
+      store.dataset = data.dataset;
       store.user = data.user;
       store.isActived = !!store.user.active;
       store.userAgents = data.userAgents;
@@ -151,11 +151,6 @@ function DetailUser({ session }) {
     store.datasetFormActions = e;
   }
 
-  function hideDataset() {
-    store.hideDataset = true;
-    render();
-  }
-
   function setCanEdit() {
     store.isEditMode = true;
     render();
@@ -178,16 +173,21 @@ function DetailUser({ session }) {
             await store.datasetFormActions.submit();
             if (store.datasetFormActions.getErrors().length) return null;
             toSend.dataset = store.datasetFormActions.getValues();
+            store.dataset.value = toSend.dataset;
           }
         }
+
         const promises = [
-          updateUserRequest(store.user.id, { ...toSend.user, preferences: toSend.preferences }),
+          updateUserRequest(store.user.id, {
+            ...toSend.user,
+            preferences: toSend.preferences,
+            dataset: toSend.dataset,
+          }),
         ];
 
         if (store.userAgent) {
           promises.push(
             updateUserAgentRequest(store.userAgent.id, {
-              dataset: toSend.dataset,
               tags: toSend.tags,
             })
           );
@@ -293,12 +293,11 @@ function DetailUser({ session }) {
               store={store}
               render={render}
             />
-            {store.userAgent && !store.hideDataset ? (
-              <UserAgentDataset
+            {store.userAgent && store.dataset ? (
+              <UserDataset
                 t={t}
+                dataset={store.dataset}
                 user={store.user}
-                hide={hideDataset}
-                userAgent={store.userAgent}
                 isEditMode={store.isEditMode}
                 formActions={setDatasetFormActions}
               />

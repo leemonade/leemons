@@ -1,10 +1,8 @@
 const { table } = require('../tables');
-const { getUserAgentDatasetInfo } = require('./getUserAgentDatasetInfo');
 
-async function agentDetailForPage(userAgentId, { transacting } = {}) {
+async function agentDetailForPage(userAgentId, { userSession, transacting } = {}) {
   const tagsService = leemons.getPlugin('common').services.tags;
-  const [datasetInfo, [tags], userAgent] = await Promise.all([
-    getUserAgentDatasetInfo(userAgentId, { transacting }),
+  const [[tags], userAgent] = await Promise.all([
     tagsService.getValuesTags(userAgentId, {
       type: 'plugins.users.user-agent',
       transacting,
@@ -12,7 +10,7 @@ async function agentDetailForPage(userAgentId, { transacting } = {}) {
     table.userAgent.findOne({ id: userAgentId }, { transacting }),
   ]);
 
-  return { ...datasetInfo, tags, user: userAgent.user };
+  return { tags, user: userAgent.user };
 }
 
 module.exports = { agentDetailForPage };

@@ -1,11 +1,5 @@
-const _ = require('lodash');
-const { table } = require('../tables');
-
-async function getUserAgentDatasetInfo(userAgentId, { transacting } = {}) {
+async function getUserDatasetInfo(userId, { userSession, transacting } = {}) {
   const datasetService = leemons.getPlugin('dataset').services.dataset;
-  const userAgent = await table.userAgent.findOne({ id: userAgentId });
-  const userSession = await table.users.findOne({ id: userAgent.user });
-  userSession.userAgents = [userAgent];
   let jsonSchema = null;
   let jsonUI = null;
   try {
@@ -26,7 +20,7 @@ async function getUserAgentDatasetInfo(userAgentId, { transacting } = {}) {
     'plugins.users',
     userSession.userAgents,
     {
-      target: userSession.userAgents[0].id,
+      target: userId,
       transacting,
     }
   );
@@ -34,4 +28,4 @@ async function getUserAgentDatasetInfo(userAgentId, { transacting } = {}) {
   return { jsonSchema, jsonUI, value };
 }
 
-module.exports = { getUserAgentDatasetInfo };
+module.exports = { getUserDatasetInfo };
