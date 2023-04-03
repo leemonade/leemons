@@ -1,30 +1,30 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign */
 
+import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
+import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
+import { getCalendarsToFrontendRequest } from '@calendar/request';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import loadable from '@loadable/component';
+import tKeys from '@multilanguage/helpers/tKeys';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { goLoginPage } from '@users/navigate';
+import { getCentersWithToken, useSession } from '@users/session';
 import * as _ from 'lodash';
 import { find, forEach, isString, map, set } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
-import { getCentersWithToken, useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
-import { getCalendarsToFrontendRequest } from '@calendar/request';
-import loadable from '@loadable/component';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Box, LoadingOverlay, UserDisplayItemList, ImageLoader } from '@bubbles-ui/components';
-import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
-import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
+import { getLocale, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import hooks from 'leemons-hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { getLocale, useStore } from '@common';
-import getUTCString from '../helpers/getUTCString';
+import hooks from 'leemons-hooks';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
+import getUTCString from '../helpers/getUTCString';
 import {
   addEventRequest,
   getEventTypesRequest,

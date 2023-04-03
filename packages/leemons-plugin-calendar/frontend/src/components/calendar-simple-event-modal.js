@@ -1,17 +1,17 @@
+import { Button, Checkbox, Drawer, Radio, Select, TextInput } from '@bubbles-ui/components';
+import prefixPN from '@calendar/helpers/prefixPN';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import tKeys from '@multilanguage/helpers/tKeys';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import hooks from 'leemons-hooks';
 import * as _ from 'lodash';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Button, Checkbox, Drawer, Radio, Select, TextInput } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import prefixPN from '@calendar/helpers/prefixPN';
-import { useForm } from 'react-hook-form';
-import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import hooks from 'leemons-hooks';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import getUTCString from '../helpers/getUTCString';
 import {
   addConfigEventRequest,
