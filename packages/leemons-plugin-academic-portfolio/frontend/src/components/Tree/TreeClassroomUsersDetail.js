@@ -96,7 +96,7 @@ const TreeClassroomUsersDetail = ({
     if (classe) getClassStudents();
   }, [classe?.students]);
 
-  const tableHeaders = [
+  const tableColumns = [
     {
       Header: ' ',
       accessor: 'user.avatar',
@@ -116,6 +116,11 @@ const TreeClassroomUsersDetail = ({
       Header: messagesAddUsers.emailHeader,
       accessor: 'user.email',
       className: 'text-left',
+      valueRender: (value) => (
+            <Box style={{ wordWrap: 'break-word'}}>
+              {value}
+            </Box>
+          ),
     },
     {
       Header: messagesAddUsers.birthdayHeader,
@@ -209,7 +214,7 @@ const TreeClassroomUsersDetail = ({
               value={store.studentsFilter}
               onChange={studentsFilterChange}
             />
-            <Table columns={tableHeaders} data={store.studentsFiltered}/>
+            <Table columns={tableColumns} data={store.studentsFiltered}/>
             <Stack fullWidth justifyContent="center">
               <Pager
                 page={store.pagination?.page || 0}
