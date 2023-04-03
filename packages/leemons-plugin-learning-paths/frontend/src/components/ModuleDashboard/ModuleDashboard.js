@@ -180,8 +180,8 @@ function useHeaderData(module) {
           startLabel: 'Desde',
           endLabel: 'Hasta',
           hourLabel: 'Hora',
-          startDate: dates?.startDate,
-          endDate: dates?.deadline,
+          startDate: new Date(dates?.start),
+          endDate: new Date(dates?.deadline),
         },
     },
   };
