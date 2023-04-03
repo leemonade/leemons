@@ -20,6 +20,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { addUsersBulkRequest } from '../../../../../request';
 
+const datasetArraySplitKey = '|';
+
 const ajv = new Ajv({
   allErrors: true,
   multipleOfPrecision: 8,
@@ -71,7 +73,9 @@ function getValueErrorMessage({ value, t, tForm, headerValue, generalDataset }) 
         schema.properties[key] = property;
       }
       const validate = ajv.compile(schema);
-      const isValid = validate({ [key]: value ? (isArray ? value.split('|') : value) : value });
+      const isValid = validate({
+        [key]: value ? (isArray ? value.split(datasetArraySplitKey) : value) : value,
+      });
       if (!isValid) {
         return transformErrorsFromAjv(validate.errors, tForm)[0].message;
       }
@@ -241,7 +245,12 @@ export function XlsxTable({
         if (key && key !== '-') {
           if (key.startsWith('dataset-common')) {
             if (!_.isObject(user.dataset)) user.dataset = {};
-            user.dataset[key.split('.')[1]] = { value: data[index] };
+            const propKey = key.split('.')[1];
+            const isArray = generalDataset.jsonSchema.properties[propKey].type === 'array';
+
+            user.dataset[propKey] = {
+              value: isArray ? data[index].split(datasetArraySplitKey) : data[index],
+            };
           } else if (key === 'tags') {
             if (!_.isArray(user.tags)) user.tags = [];
             user.tags.push(...data[index].split(','));
