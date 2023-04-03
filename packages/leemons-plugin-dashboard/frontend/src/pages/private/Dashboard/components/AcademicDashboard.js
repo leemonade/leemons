@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { Box, ContextContainer, createStyles, PageContainer } from '@bubbles-ui/components';
+import { Box, ContextContainer, PageContainer, createStyles } from '@bubbles-ui/components';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
@@ -153,7 +153,6 @@ export default function AcademicDashboard({ session }) {
               data={store.programsSelect}
               readOnly={store.programsSelect?.length <= 1}
               onChange={selectProgram}
-              showIcon={false}
             />
           </Box>
         </Box>

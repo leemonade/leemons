@@ -166,7 +166,6 @@ function CurriculumList({
         id={id}
         t={t}
       />
-
       {useOrder && isEditMode ? (
         <StartNumbering
           t={t}
@@ -176,7 +175,6 @@ function CurriculumList({
           onChange={onChange}
         />
       ) : null}
-
       {value?.value.map((item, index) => (
         <CurriculumListItem
           key={index}
@@ -201,7 +199,6 @@ function CurriculumList({
           onCancel={onCancel}
         />
       ))}
-
       {store.isNewItem && isEditMode ? (
         <CurriculumListItem
           schema={schema}

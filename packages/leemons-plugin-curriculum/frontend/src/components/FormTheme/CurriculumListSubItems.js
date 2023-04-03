@@ -43,6 +43,7 @@ function CurriculumListSubItems({
       columns.push({
         Header: ' ',
         accessor: 'open',
+        editable: false,
         Cell: (e) => {
           if (!values[row.index].childrens[e.row.index]?.childrens?.length) {
             return null;
