@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign */
 
@@ -73,15 +74,15 @@ ClassIcon.propTypes = {
   dropdown: PropTypes.bool,
 };
 
-function UsersComponent(props) {
-  return (
+const UsersComponent = React.forwardRef(
+  ({ userAgents, showLess, showMore, disabled, labelDisabled, label, ...props }) => (
     <Box>
-      {props.disabled ? (
+      {disabled ? (
         <UserDisplayItemList
-          data={map(props.userAgents, 'user')}
+          data={map(userAgents, 'user')}
           labels={{
-            showMore: props.showMore,
-            showLess: props.showLess,
+            showMore,
+            showLess,
           }}
         />
       ) : (
@@ -89,12 +90,12 @@ function UsersComponent(props) {
           {...props}
           maxSelectedValues={99999}
           onlyContacts
-          label={props.disabled ? props.labelDisabled : props.label}
+          label={disabled ? labelDisabled : label}
         />
       )}
     </Box>
-  );
-}
+  )
+);
 
 UsersComponent.propTypes = {
   disabled: PropTypes.bool,

@@ -252,7 +252,7 @@ function ChatAddUsersDrawer({
 }
 
 ChatAddUsersDrawer.propTypes = {
-  room: PropTypes.string,
+  room: PropTypes.any,
   onSave: PropTypes.func,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
