@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-shadow */
 import {
   Alert,
@@ -9,14 +10,22 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { EMAIL_REGEX } from '@bubbles-ui/leemons';
+import { ajv as Ajv, EMAIL_REGEX, transformErrorsFromAjv } from '@bubbles-ui/leemons';
 import { useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { addUsersBulkRequest } from '../../../../../request';
+
+const ajv = new Ajv({
+  allErrors: true,
+  multipleOfPrecision: 8,
+  schemaId: 'auto',
+  unknownFormats: 'ignore',
+});
 
 const dateOptions = {
   year: 'numeric',
@@ -39,8 +48,35 @@ function getValue(locale, value) {
   return value;
 }
 
-function getValueErrorMessage({ value, t, headerValue }) {
-  if (headerValue === 'email') {
+function getValueErrorMessage({ value, t, tForm, headerValue, generalDataset }) {
+  if (headerValue?.startsWith('dataset-common')) {
+    const key = headerValue.split('.')[1];
+    const property = generalDataset.jsonSchema.properties[key];
+    if (property) {
+      const isRequired = generalDataset.jsonSchema.required.indexOf(key) !== -1;
+      const schema = {
+        type: 'object',
+        additionalProperties: false,
+        required: isRequired ? [key] : [],
+        properties: {},
+      };
+      let isArray = false;
+      if (property.type === 'array') {
+        isArray = true;
+        schema.properties[key] = {
+          type: 'array',
+          items: property.items,
+        };
+      } else {
+        schema.properties[key] = property;
+      }
+      const validate = ajv.compile(schema);
+      const isValid = validate({ [key]: value ? (isArray ? value.split('|') : value) : value });
+      if (!isValid) {
+        return transformErrorsFromAjv(validate.errors, tForm)[0].message;
+      }
+    }
+  } else if (headerValue === 'email') {
     if (value) {
       let val = value;
       if (_.isObject(value)) {
@@ -52,8 +88,7 @@ function getValueErrorMessage({ value, t, headerValue }) {
     } else {
       return t('emailRequired');
     }
-  }
-  if (headerValue === 'birthdate') {
+  } else if (headerValue === 'birthdate') {
     if (value) {
       if (!(Object.prototype.toString.call(value) === '[object Date]' || Number.isFinite(value))) {
         return t('birthdateInvalid');
@@ -61,8 +96,7 @@ function getValueErrorMessage({ value, t, headerValue }) {
     } else {
       return t('birthdateRequired');
     }
-  }
-  if (headerValue === 'gender') {
+  } else if (headerValue === 'gender') {
     if (value) {
       if (!['male', 'female'].includes(value)) {
         return t('genderInvalid');
@@ -81,10 +115,12 @@ export function XlsxTable({
   file,
   initRow,
   fileIsTemplate,
+  generalDataset,
   headerSelects,
   onSave = () => {},
 }) {
   const [store, render] = useStore();
+  const [tForm, tFormTrans] = useTranslateLoader('plugins.multilanguage.formWithTheme');
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
   const callback = useDebouncedCallback(100);
@@ -112,6 +148,15 @@ export function XlsxTable({
     }
     if (!store.headerValues.includes('gender')) {
       store.errors.push(t('colGenderRequired'));
+    }
+    if (generalDataset?.jsonSchema?.required) {
+      _.forEach(generalDataset.jsonSchema.required, (key) => {
+        if (!store.headerValues.includes(`dataset-common.${key}`)) {
+          store.errors.push(
+            t('colRequired', { name: generalDataset.jsonSchema.properties[key].title })
+          );
+        }
+      });
     }
     if (store.errors.length) callback(render);
   }
@@ -151,8 +196,10 @@ export function XlsxTable({
             valueRender: (value) => {
               const errorMessage = getValueErrorMessage({
                 t,
+                tForm,
                 value,
                 headerValue: store.headerValues[key],
+                generalDataset,
               });
               if (errorMessage) {
                 const oldHasError = !!store.hasErrors;
@@ -192,7 +239,10 @@ export function XlsxTable({
       const user = {};
       _.forEach(store.headerValues, (key, index) => {
         if (key && key !== '-') {
-          if (key === 'tags') {
+          if (key.startsWith('dataset-common')) {
+            if (!_.isObject(user.dataset)) user.dataset = {};
+            user.dataset[key.split('.')[1]] = { value: data[index] };
+          } else if (key === 'tags') {
             if (!_.isArray(user.tags)) user.tags = [];
             user.tags.push(...data[index].split(','));
           } else {
@@ -243,7 +293,7 @@ export function XlsxTable({
 
   React.useEffect(() => {
     if (file && locale) load();
-  }, [file, initRow, locale, JSON.stringify(store.headerValues)]);
+  }, [file, initRow, locale, tFormTrans, JSON.stringify(store.headerValues)]);
 
   return (
     <>
@@ -279,6 +329,7 @@ XlsxTable.propTypes = {
   center: PropTypes.string,
   profile: PropTypes.string,
   initRow: PropTypes.number,
+  generalDataset: PropTypes.any,
   fileIsTemplate: PropTypes.bool,
   headerSelects: PropTypes.any,
 };

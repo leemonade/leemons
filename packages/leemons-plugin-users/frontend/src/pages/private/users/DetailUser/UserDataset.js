@@ -1,28 +1,25 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { Col, Grid, InputWrapper } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import formWithTheme from '@common/formWithTheme';
 import * as _ from 'lodash';
-import { getUserAgentDetailForPageRequest } from '../../../../request';
+import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
-function UserAgentDataset({ t, userAgent, isEditMode, formActions, hide }) {
-  const [store, render] = useStore();
+function UserDataset({ t, dataset, isEditMode, formActions }) {
+  const [store, render] = useStore({
+    data: dataset,
+  });
+
+  React.useEffect(() => {
+    store.data = dataset;
+    render();
+  }, [dataset]);
 
   const datasetProps = useMemo(
     () => ({ formData: store.data?.value }),
     [JSON.stringify(store.data?.value)]
   );
-
-  async function init() {
-    const { data } = await getUserAgentDetailForPageRequest(userAgent.id);
-    store.data = data;
-    if (!data.jsonSchema || !data.jsonUI) {
-      hide();
-    }
-    render();
-  }
 
   const datasetConfig = useMemo(() => {
     const response = _.cloneDeep(store.data);
@@ -36,10 +33,6 @@ function UserAgentDataset({ t, userAgent, isEditMode, formActions, hide }) {
     }
     return response;
   }, [store.data, isEditMode]);
-
-  React.useEffect(() => {
-    init();
-  }, [JSON.stringify(userAgent)]);
 
   const [form, _formActions] = formWithTheme(
     datasetConfig?.jsonSchema,
@@ -60,12 +53,11 @@ function UserAgentDataset({ t, userAgent, isEditMode, formActions, hide }) {
   );
 }
 
-UserAgentDataset.propTypes = {
+UserDataset.propTypes = {
   t: PropTypes.func,
-  userAgent: PropTypes.object,
   formActions: PropTypes.func,
-  hide: PropTypes.func,
+  dataset: PropTypes.any,
   isEditMode: PropTypes.bool,
 };
 
-export default UserAgentDataset;
+export default UserDataset;

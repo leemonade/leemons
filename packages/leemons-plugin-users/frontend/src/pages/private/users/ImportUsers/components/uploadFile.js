@@ -20,6 +20,25 @@ export function UploadFile({ t, center, profile }) {
 
   async function load() {
     const { data } = await getDataForUserAgentDatasetsRequest();
+    if (data?.length) {
+      const schema = data[0].data.jsonSchema;
+      const ui = data[0].data.jsonUI;
+      store.generalDataset = data[0].data;
+      store.generalDatasetEdit = [];
+      _.forIn(schema.properties, (value, key) => {
+        let add = true;
+        if (ui[key]?.['ui:readonly']) {
+          add = false;
+        }
+        if (add) {
+          store.generalDatasetEdit.push({
+            value: `dataset-common.${key}`,
+            label: value.title,
+          });
+        }
+      });
+      render();
+    }
   }
 
   async function onSelectFile(e) {
@@ -27,8 +46,10 @@ export function UploadFile({ t, center, profile }) {
       store.file = await readExcel(e);
       store.fileIsTemplate = false;
       store.initRow = 1;
-      store.templateIndexs = getTemplateIndexs();
-      store.templateIndexsLabels = getTemplateIndexsLabels(t);
+      store.templateIndexs = getTemplateIndexs({ extraFields: store.generalDatasetEdit });
+      store.templateIndexsLabels = getTemplateIndexsLabels(t, {
+        extraFields: store.generalDatasetEdit,
+      });
       store.headerSelects = [];
       _.forEach(store.templateIndexs, (value, key) => {
         store.headerSelects.push({
@@ -65,7 +86,10 @@ export function UploadFile({ t, center, profile }) {
         >
           {t('uploadFile')}
           {!store.file ? (
-            <Button onClick={() => downloadTemplate({ t })} leftIcon={<DownloadIcon />}>
+            <Button
+              onClick={() => downloadTemplate({ t, extraFields: store.generalDatasetEdit })}
+              leftIcon={<DownloadIcon />}
+            >
               {t('downloadTemplate')}
             </Button>
           ) : (
@@ -104,6 +128,7 @@ export function UploadFile({ t, center, profile }) {
           <XlsxTable
             t={t}
             onSave={onSave}
+            generalDataset={store.generalDataset}
             center={center}
             profile={profile}
             file={store.file}
