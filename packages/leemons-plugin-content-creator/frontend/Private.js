@@ -23,6 +23,9 @@ export default function Private() {
       <Route path={`${path}/view/:id`}>
         <DocumentView session={session} fallback={<LoadingOverlay visible />} />
       </Route>
+      <Route path={`${path}/new`}>
+        <DocumentDetail session={session} fallback={<LoadingOverlay visible />} isNew key="new" />
+      </Route>
       <Route path={`${path}/:id/edit`}>
         <DocumentDetail session={session} fallback={<LoadingOverlay visible />} />
       </Route>

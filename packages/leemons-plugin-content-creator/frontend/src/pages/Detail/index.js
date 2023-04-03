@@ -25,7 +25,7 @@ import { AssetFormInput } from '@leebrary/components';
 // import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { PageContent } from './components/PageContent/PageContent';
 
-export default function Index({ readOnly }) {
+export default function Index({ readOnly, isNew }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
   const processTextEditor = useProcessTextEditor();
 
@@ -45,6 +45,10 @@ export default function Index({ readOnly }) {
 
   const history = useHistory();
   const params = useParams();
+
+  if (isNew) {
+    params.id = 'new';
+  }
 
   const form = useForm();
   const formValues = form.watch();
@@ -272,4 +276,5 @@ export default function Index({ readOnly }) {
 
 Index.propTypes = {
   readOnly: PropTypes.bool,
+  isNew: PropTypes.bool,
 };
