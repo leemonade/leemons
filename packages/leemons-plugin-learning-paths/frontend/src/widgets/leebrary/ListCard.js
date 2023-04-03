@@ -20,7 +20,7 @@ import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';
 import removeModuleRequest from '@learning-paths/requests/removeModule';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
-function useListCardLocalizations() {
+export function useListCardLocalizations() {
   const keys = [
     'plugins.assignables.roles.learningpaths.module.singular',
     'plugins.learning-paths.libraryCard',
