@@ -1,9 +1,7 @@
 import {
   Box,
   Button,
-  Col,
   ContextContainer,
-  Grid,
   LoadingOverlay,
   Stack,
   Tree,
@@ -363,46 +361,44 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
       description={isEditMode ? t('pageDescription') : null}
       divided
     >
-      <Grid grow>
-        <Col span={3}>
-          <Box
-            sx={(theme) => ({
-              paddingRight: theme.spacing[6],
-              borderRight: `1px solid ${theme.colors.ui01}`,
-            })}
-          >
-            <Tree
-              {...tree}
-              rootId={0}
-              onSelect={onSelect}
-              openOnSelect
-              initialOpen={tree.treeData ? [tree.treeData?.[0]?.id] : []}
-              selectedNode={store.activeNode}
-            />
-            {isEditMode ? (
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <Button
-                  fullWidth
-                  variant="light"
-                  onClick={sync}
-                  leftIcon={<RedoIcon height={20} width={20} />}
-                >
-                  {t('syncTree')}
-                </Button>
-              </Box>
-            ) : null}
-          </Box>
-        </Col>
-        <Col span={9}>
-          <Box
-            sx={(theme) => ({
-              paddingLeft: theme.spacing[6],
-            })}
-          >
-            {groupChilds || null}
-          </Box>
-        </Col>
-      </Grid>
+      <Box sx={() => ({ display: 'flex' })}>
+        <Box
+          sx={(theme) => ({
+            width: '25%',
+            paddingRight: theme.spacing[6],
+            borderRight: `1px solid ${theme.colors.ui01}`,
+          })}
+        >
+          <Tree
+            {...tree}
+            rootId={0}
+            onSelect={onSelect}
+            openOnSelect
+            initialOpen={tree.treeData ? [tree.treeData?.[0]?.id] : []}
+            selectedNode={store.activeNode}
+          />
+          {isEditMode ? (
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <Button
+                fullWidth
+                variant="light"
+                onClick={sync}
+                leftIcon={<RedoIcon height={20} width={20} />}
+              >
+                {t('syncTree')}
+              </Button>
+            </Box>
+          ) : null}
+        </Box>
+        <Box
+          sx={(theme) => ({
+            width: '75%',
+            paddingLeft: theme.spacing[6],
+          })}
+        >
+          {groupChilds || null}
+        </Box>
+      </Box>
 
       {isEditMode ? (
         <Stack justifyContent="space-between" fullWidth>
