@@ -64,7 +64,7 @@ function CurriculumGroupItem({
 
   React.useEffect(() => {
     form.reset(defaultValues);
-  }, [preview, blockData, defaultValues]);
+  }, [JSON.stringify(preview), JSON.stringify(blockData), JSON.stringify(defaultValues)]);
 
   function onExit() {
     if (store.subRow) {
