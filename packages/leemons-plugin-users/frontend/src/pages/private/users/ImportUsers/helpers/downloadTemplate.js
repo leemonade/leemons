@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { Workbook } from 'exceljs';
+import _ from 'lodash';
 
 function arrayToContent({ ws, array, getStyle }) {
   for (let i = 0; i < array.length; i++) {
@@ -19,11 +20,20 @@ function arrayToContent({ ws, array, getStyle }) {
   }
 }
 
-export function getTemplateIndexs() {
-  return ['email', 'name', 'surnames', 'secondSurname', 'birthdate', 'gender', 'tags'];
+export function getTemplateIndexs({ extraFields }) {
+  return [
+    'email',
+    'name',
+    'surnames',
+    'secondSurname',
+    'birthdate',
+    'gender',
+    'tags',
+    ..._.map(extraFields, 'value'),
+  ];
 }
 
-export function getTemplateIndexsLabels(t) {
+export function getTemplateIndexsLabels(t, { extraFields }) {
   return [
     t('workbook.email'),
     t('workbook.name'),
@@ -32,10 +42,11 @@ export function getTemplateIndexsLabels(t) {
     t('workbook.birthdate'),
     t('workbook.gender'),
     t('workbook.tags'),
+    ..._.map(extraFields, 'label'),
   ];
 }
 
-export async function downloadTemplate({ t }) {
+export async function downloadTemplate({ t, extraFields }) {
   const wb = new Workbook();
   const ws = wb.addWorksheet('template', { properties: { defaultColWidth: 18 } });
 
@@ -44,8 +55,8 @@ export async function downloadTemplate({ t }) {
 
   // --- Logic ---
   const array = [
-    getTemplateIndexs(),
-    getTemplateIndexsLabels(t),
+    getTemplateIndexs({ extraFields }),
+    getTemplateIndexsLabels(t, { extraFields }),
     [
       'email@leemons.io',
       'Leemons',

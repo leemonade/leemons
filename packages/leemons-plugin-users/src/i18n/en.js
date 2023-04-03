@@ -337,6 +337,7 @@ module.exports = {
     colNameRequired: 'The [Name] column is required.',
     colBirthdateRequired: 'The [Birthdate] column is required.',
     colGenderRequired: 'The [Gender] column is required.',
+    colRequired: 'The [{name}] column is required.',
     fieldsWithErrors: 'There are fields with errors, correct them before importing.',
     usersAddedSuccessfully: 'Users added successfully',
   },

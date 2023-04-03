@@ -337,6 +337,7 @@ module.exports = {
     colNameRequired: 'La columna [Nombre] es obligatoria.',
     colBirthdateRequired: 'La columna [Fecha de nacimiento] es obligatoria.',
     colGenderRequired: 'La columna [Genero] es obligatoria.',
+    colRequired: 'La columna [{name}] es obligatoria.',
     fieldsWithErrors: 'Hay campos con errores corrijelos antes de importar',
     usersAddedSuccessfully: 'Usuarios añadidos con éxito',
   },
