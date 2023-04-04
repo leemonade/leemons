@@ -253,6 +253,25 @@ module.exports = {
       covertToTask: 'Convert to task',
     },
   },
+  pickerDrawer: {
+    header: {
+      title: 'Library',
+    },
+    tabs: {
+      library: 'Library',
+      new: 'New resource',
+    },
+    filters: {
+      search: {
+        label: 'Search',
+        placeholder: 'Search resources',
+      },
+      resources: {
+        label: 'Categories',
+        placeholder: 'Select a category',
+      },
+    },
+  },
   admin: {
     card: {
       title: 'Bookstore Suppliers',
