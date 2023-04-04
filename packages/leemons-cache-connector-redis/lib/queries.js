@@ -74,7 +74,7 @@ module.exports = function queries(client) {
     deleteMany: async (keys) => client.del(keys.map((key) => generateKey(key, pluginName))),
     deleteByPrefix: async (prefix) => {
       const _prefix = generateKey(prefix.replaceAll('*', '\\*'), pluginName);
-      const keys = await client.keys(_prefix);
+      const keys = await client.keys(`${_prefix}*`);
 
       if (isEmpty(keys)) {
         return 0;
