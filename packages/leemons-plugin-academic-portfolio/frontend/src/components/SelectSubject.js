@@ -8,7 +8,7 @@ export function SubjectItem({ subject, isValueComponent, ...props }) {
   }
 
   return (
-    <Box className={props.className} styles={props.styles}>
+    <Box {...props}>
       <Box
         sx={(theme) => ({
           display: 'flex',
