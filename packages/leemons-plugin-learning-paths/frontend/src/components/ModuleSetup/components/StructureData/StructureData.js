@@ -20,8 +20,8 @@ import { useRoles } from '@assignables/components/Ongoing/AssignmentList/compone
 import { addErrorAlert } from '@layout/alert';
 import addAction from '@learning-paths/components/ModuleSetup/helpers/addAction';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { AssetListDrawer } from '@leebrary/components/';
 import { useHistory } from 'react-router-dom';
+import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
 import { EmptyState } from './components/EmptyState';
 import { ModuleComposer } from './components/ModuleComposer';
 
@@ -108,12 +108,12 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
   return (
     <Box>
       <Box className={classes.content} ref={boxRef}>
-        <AssetListDrawer
+        <AssetPickerDrawer
           opened={showAssetDrawer}
           size={drawerSize}
-          allowChangeCategories={selectableCategories}
+          shadow
+          categories={selectableCategories}
           onClose={() => setShowAssetDrawer(0)}
-          category={selectableCategories[0]}
           onSelect={(asset) => {
             if (!asset?.providerData) {
               addErrorAlert(localizations?.alerts?.error?.nonAssignableAsset);

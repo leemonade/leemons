@@ -63,7 +63,7 @@ export function Item({ asset, onSelect }) {
   const preparedAsset = prepareAsset(asset);
 
   return (
-    <Box className={classes.root} onClick={() => onSelect?.(asset.id)}>
+    <Box className={classes.root} onClick={() => onSelect?.(asset)}>
       <Box className={classes.image}>
         <Box className={classes.thumbnail}>
           {!!preparedAsset?.cover && (

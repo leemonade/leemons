@@ -8,9 +8,9 @@ import {
   useViewportSize,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { AssetListDrawer } from '@leebrary/components';
 import { cloneDeep, get, set, uniq } from 'lodash';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
+import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
 import { EmptyState } from '../StructureData/components/EmptyState';
 import { ResourcesTable } from './components/ResourcesTable';
 
@@ -49,22 +49,17 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
   const [boxRef, rect] = useResizeObserver();
   const drawerSize = useMemo(() => Math.max(viewportWidth / 2, 500), [viewportWidth, rect]);
 
-  const [assetType, setAssetType] = useState('');
-
   const [sharedData, setSharedData] = useModuleSetupContext();
 
   const { classes } = useResourcesStyles();
   return (
     <Box ref={boxRef}>
       <Box className={classes.content}>
-        <AssetListDrawer
-          allowChangeCategories={['media-files', 'assignables.content-creator']}
-          assetType={assetType}
-          canChangeType
+        <AssetPickerDrawer
+          categories={['media-files', 'assignables.content-creator']}
           creatable
           itemMinWidth={250}
           onClose={() => setShowAssetDrawer(false)}
-          onlyThumbnails={false}
           onSelect={(asset) => {
             setSharedData((data) =>
               set(
@@ -75,7 +70,6 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
             );
             setShowAssetDrawer(false);
           }}
-          onTypeChange={setAssetType}
           opened={showAssetDrawer}
           shadow={drawerSize <= 720}
           size={drawerSize}
@@ -100,7 +94,7 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
           />
         ) : (
           <EmptyState
-            localizations={localizations?.steps?.resources}
+            localizations={localizations?.steps?.resourcesData}
             onSelectAsset={() => setShowAssetDrawer(true)}
           />
         )}

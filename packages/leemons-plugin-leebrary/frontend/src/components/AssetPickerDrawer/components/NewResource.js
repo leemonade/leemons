@@ -31,7 +31,7 @@ export function NewResource({ onlyImages, onSelect }) {
   return (
     <Box className={classes.root}>
       <BasicData
-        onSave={(asset) => onSelect(asset.id)}
+        onSave={(asset) => onSelect(asset)}
         onlyImages={true}
         hideTitle={true}
         categoryId={categoriesByKey['media-files'].id}
