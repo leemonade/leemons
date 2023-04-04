@@ -1,6 +1,4 @@
-import React, { forwardRef, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { ScheduleInput } from '@timetable/components';
+/* eslint-disable no-param-reassign */
 import {
   Box,
   ColorInput,
@@ -12,7 +10,9 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import {
+import { useLocale, useStore } from '@common';
+import { ScheduleInput } from '@timetable/components';
+import _, {
   cloneDeep,
   filter,
   find,
@@ -24,9 +24,10 @@ import {
   map,
   set,
 } from 'lodash';
-import { useLocale, useStore } from '@common';
-import { useForm } from 'react-hook-form';
 import { forEachRight } from 'lodash/collection';
+import PropTypes from 'prop-types';
+import React, { forwardRef, useEffect, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
 
 function getGroups({ program, selectGroups, subject }) {
   const classes = filter(program.classes, (cl) => cl.subject.id === subject);
@@ -389,7 +390,7 @@ function SubjectsTable({
               'g'
             ),
           },
-          required: messages.groupRequired
+          required: messages.groupRequired,
         },
 
         node: (
@@ -413,11 +414,22 @@ function SubjectsTable({
       input: {
         node: (
           <EnableIfFormPropHasValue>
-            <Select data={selects.substages} />
+            <MultiSelect data={selects.substages} />
           </EnableIfFormPropHasValue>
         ),
       },
-      valueRender: (value) => <>{value?.name}</>,
+      valueRender: (value) => (
+        <>
+          {_.isArray(value)
+            ? _.map(value, ({ name }) => (
+                <>
+                  {name}
+                  <br />
+                </>
+              ))
+            : value?.name}
+        </>
+      ),
     });
   }
 
@@ -476,6 +488,17 @@ function SubjectsTable({
     const groups = isObject(newItem.groups) ? newItem.groups.id : newItem.groups;
     const isNewSubject = tempSubjectsValues.indexOf(subject) >= 0;
     const isNewGroup = tempGroupsValues.indexOf(groups) >= 0;
+    if (newItem.substages) {
+      const substages = _.isArray(newItem.substages) ? newItem.substages : [newItem.substages];
+      newItem.substages = [];
+      _.forEach(substages, (substage) => {
+        if (isObject(substage)) {
+          newItem.substages.push(substage.id);
+        } else {
+          newItem.substages.push(substage);
+        }
+      });
+    }
     await onUpdate(
       {
         id: oldItem.id,
@@ -485,7 +508,6 @@ function SubjectsTable({
         subject,
         subjectType: isObject(newItem.subjectType) ? newItem.subjectType.id : newItem.subjectType,
         groups,
-        substages: isObject(newItem.substages) ? newItem.substages.id : newItem.substages,
       },
       { isNewSubject, isNewGroup }
     );
