@@ -14,8 +14,6 @@ import {
   useTheme,
 } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
-import loadable from '@loadable/component';
-import useCategories from '@leebrary/request/hooks/queries/useCategories';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import { useLocale } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -135,9 +133,9 @@ function ActivityCard({ activity, assignation }) {
   const { roleDetails, role, id } = activity.assignable;
   const roles = useRolesLocalizations([role]);
   const asset = prepareAsset(activity.assignable.asset);
-  const roleIcon = roleDetails?.icon?.startsWith('http')
-    ? roleDetails?.icon
-    : `${leemons.apiUrl}${roleDetails.icon}`;
+  const roleIcon = roleDetails?.icon?.startsWith('/api')
+    ? `${leemons.apiUrl}${roleDetails.icon}`
+    : roleDetails?.icon;
 
   const isStudent = useIsStudent();
   const { isFinished } = useStudentState({ assignation });
