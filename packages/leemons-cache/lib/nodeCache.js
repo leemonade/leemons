@@ -9,9 +9,8 @@ function cleanKey(key, pluginName) {
 }
 
 module.exports = function nodeCache() {
+  const cache = new NodeCache();
   return (pluginName) => {
-    const cache = new NodeCache();
-
     const leemonsCache = {
       get: async (key) => cache.get(generateKey(key, pluginName)),
       has: async (key) => cache.has(generateKey(key, pluginName)),
