@@ -7,7 +7,7 @@ const newProfileAdded = require('./emails/newProfileAdded');
 const resetPassword = require('./emails/resetPassword');
 const {
   addMain,
-  addWelcome,
+  addRoles,
   addProfiles,
   addUserData,
   addUsers,
@@ -145,6 +145,17 @@ async function events(isInstalled) {
     }
   );
 
+  leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
+    try {
+      await addMain();
+      leemons.events.emit('init-menu');
+      await Promise.all([addRoles(), addProfiles(), addUserData(), addUsers()]);
+      leemons.events.emit('init-submenu');
+    } catch (e) {
+      console.error('Error users menu', e);
+    }
+  });
+
   if (!isInstalled) {
     const initDataset = async () => {
       await Promise.all(
@@ -162,22 +173,6 @@ async function events(isInstalled) {
         await initDataset();
       }
     );
-
-    leemons.events.once('plugins.menu-builder:init-main-menu', async () => {
-      try {
-        await addMain();
-        leemons.events.emit('init-menu');
-        await Promise.all([
-          // addWelcome(),
-          addProfiles(),
-          addUserData(),
-          addUsers(),
-        ]);
-        leemons.events.emit('init-submenu');
-      } catch (e) {
-        console.error('Error users menu', e);
-      }
-    });
   } else {
     leemons.events.once('plugins.users:pluginDidInit', async () => {
       leemons.events.emit('init-actions');
@@ -185,8 +180,6 @@ async function events(isInstalled) {
       leemons.events.emit('init-dataset-locations');
       leemons.events.emit('init-email-reset-password');
       leemons.events.emit('init-emails');
-      leemons.events.emit('init-menu');
-      leemons.events.emit('init-submenu');
     });
   }
 }

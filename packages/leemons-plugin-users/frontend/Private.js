@@ -24,6 +24,11 @@ const DetailProfile = loadable(() =>
   pMinDelay(import('./src/pages/private/profiles/DetailProfile'), 1000)
 );
 
+const ListRoles = loadable(() => pMinDelay(import('./src/pages/private/roles/ListRoles'), 1000));
+const DetailRoles = loadable(() =>
+  pMinDelay(import('./src/pages/private/roles/DetailRoles'), 1000)
+);
+
 const ListUsers = loadable(() => pMinDelay(import('./src/pages/private/users/ListUsers'), 1000));
 const CreateUsers = loadable(() =>
   pMinDelay(import('./src/pages/private/users/CreateUsers'), 1000)
@@ -81,6 +86,15 @@ export default function Private() {
       </Route>
       <Route path={`${path}/profiles/detail`}>
         <DetailProfile session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/roles/list`}>
+        <ListRoles session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/roles/detail/:uri`}>
+        <DetailRoles session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/roles/detail`}>
+        <DetailRoles session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/set-dataset-values`}>
         <UserDataDatasetValues session={session} fallback={<LoadingOverlay visible />} />

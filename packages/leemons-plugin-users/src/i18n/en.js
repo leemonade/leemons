@@ -341,4 +341,23 @@ module.exports = {
     fieldsWithErrors: 'There are fields with errors, correct them before importing.',
     usersAddedSuccessfully: 'Users added successfully',
   },
+  list_roles: {
+    page_title: 'Roles',
+    page_description: 'Use the user profiles to manage permissions.',
+    name: 'Name',
+    overview: 'Overview',
+    actions: 'Actions',
+    view: 'View',
+  },
+  detail_roles: {
+    role_name: 'Role name',
+    description: 'Role description',
+    leemon: 'Leemon',
+    permissions_all: 'All',
+    permissions: 'Permissions',
+    select_permissions: 'Select a Leemon to assign permissions',
+    save_done: 'Role created',
+    update_done: 'Role updated',
+    users: 'Users',
+  },
 };
