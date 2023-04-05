@@ -56,7 +56,7 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
     <Box ref={boxRef}>
       <Box className={classes.content}>
         <AssetPickerDrawer
-          categories={['media-files', 'assignables.content-creator']}
+          categories={['media-files', 'bookmarks', 'assignables.content-creator']}
           creatable
           itemMinWidth={250}
           onClose={() => setShowAssetDrawer(false)}
