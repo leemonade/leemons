@@ -11,6 +11,19 @@ module.exports = {
     type: {
       type: 'string',
     },
+    description: {
+      type: 'string',
+    },
+    uri: {
+      type: 'string',
+    },
+    indexable: {
+      type: 'boolean',
+      options: {
+        notNull: true,
+        defaultTo: true,
+      },
+    },
   },
   primaryKey: {
     type: 'uuid',

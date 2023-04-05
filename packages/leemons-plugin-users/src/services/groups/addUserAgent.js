@@ -1,42 +1,39 @@
 const { existUserAgent } = require('../user-agents/existUserAgent');
-const { table } = require('../tables');
 const { exist: groupExist } = require('./exist');
+const { table } = require('../tables');
 
 /**
- * Remove one user from group
+ * Add one user auth to group if not already in group
+ * If you are in, continue without errors
  * @public
  * @static
  * @param {string} groupId - Group id
  * @param {string} userAgentId - User auth id
  * @return {Promise<undefined>}
  * */
-async function removeUser(groupId, userAgentId, { transacting: _transacting } = {}) {
+async function addUserAgent(groupId, userAgentId, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await Promise.all([
         groupExist({ id: groupId }, true, { transacting }),
         existUserAgent({ id: userAgentId }, true, { transacting }),
       ]);
-
-      const groupUserAgent = await table.groupUserAgent.count(
-        {
-          group: groupId,
-          userAgent: userAgentId,
-        },
+      const groupUser = await table.groupUserAgent.count(
+        { group: groupId, userAgent: userAgentId },
         { transacting }
       );
-      if (groupUserAgent) {
+      if (!groupUser) {
         const values = await Promise.all([
-          table.groupUserAgent.delete({ group: groupId, userAgent: userAgentId }, { transacting }),
+          table.groupUserAgent.create({ group: groupId, userAgent: userAgentId }, { transacting }),
           table.userAgent.update({ id: userAgentId }, { reloadPermissions: true }, { transacting }),
         ]);
         return values[0];
       }
-      return undefined;
+      return groupUser;
     },
     table.userAgent,
     _transacting
   );
 }
 
-module.exports = { removeUser };
+module.exports = { addUserAgent };

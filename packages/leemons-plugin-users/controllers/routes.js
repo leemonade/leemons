@@ -373,6 +373,50 @@ module.exports = [
     method: 'PUT',
     handler: 'roles.create',
   },
+  {
+    path: '/roles/list',
+    method: 'POST',
+    handler: 'roles.list',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/roles/detail/:uri',
+    method: 'GET',
+    handler: 'roles.detail',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/roles/add',
+    method: 'POST',
+    handler: 'roles.add',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/roles/update',
+    method: 'POST',
+    handler: 'roles.update',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['update', 'admin'],
+      },
+    },
+  },
   /**
    * Centers
    * */
