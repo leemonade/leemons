@@ -9,7 +9,7 @@ import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { Box, Button, Divider, Loader, createStyles } from '@bubbles-ui/components';
-import { map, omit } from 'lodash';
+import { map } from 'lodash';
 import AssignConfig from '@tests/components/AssignConfig';
 import { useStore } from '@common';
 import { getAssignConfigsRequest, getTestRequest } from '@tests/request';
@@ -139,10 +139,20 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
   );
 }
 
-AssignmentDrawer.defaultValues = () => ({
-  showCorrectAnswers: true,
-  ...evaluationTypes.calificable,
-});
+AssignmentDrawer.defaultValues = async (activity) => {
+  const { test } = await getTestRequest(activity.id);
+
+  return {
+    showCorrectAnswers: true,
+    metadata: {
+      filters: {
+        useAllQuestions: true,
+      },
+      questions: test.questions,
+    },
+    ...evaluationTypes.calificable,
+  };
+};
 
 AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,
