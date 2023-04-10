@@ -275,7 +275,7 @@ function RoleDetail() {
                   <Box sx={() => ({ maxWidth: 600 })}>
                     <SelectUserAgent
                       disabled={!editMode}
-                      selectedUsers={_.map(users, 'id')}
+                      selectedUserAgents={_.map(users, 'value')}
                       returnItem
                       onChange={(e) => {
                         users.push(e);
