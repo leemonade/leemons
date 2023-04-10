@@ -1,4 +1,4 @@
-import { MainNav } from '@bubbles-ui/components';
+import { MainNav, Spotlight } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getMenu } from '@menu-builder/helpers';
 import prefixPN from '@menu-builder/helpers/prefixPN';
@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
+  const [ts] = useTranslateLoader(prefixPN('spotlight'));
   const [store, render] = useStore({
     onlyOneProfile: false,
     isLoading: false,
@@ -95,76 +96,86 @@ export default function MainMenu({ subNavWidth, ...props }) {
   if (!session) return null;
 
   return (
-    <MainNav
-      {...props}
-      menuData={menuData}
-      isLoading={store.isLoading}
-      subNavWidth={subNavWidth}
-      hideSubNavOnClose={false}
-      useRouter={true}
-      session={{
-        ...session,
-        ...(session.isSuperAdmin
-          ? { name: '', surnames: '' }
-          : { name: session.name, surnames: session.surnames }),
-        avatar: session.avatar,
-      }}
-      sessionMenu={{
-        id: 'menu-0',
-        label: t('label'),
-        children: [
+    <Spotlight
+      data={menuData}
+      useRouter
+      searchPlaceholder={ts('searchPlaceholder')}
+      nothingFoundMessage={ts('nothingFoundMessage')}
+      limit={10}
+    >
+      <MainNav
+        {...props}
+        menuData={menuData}
+        isLoading={store.isLoading}
+        subNavWidth={subNavWidth}
+        hideSubNavOnClose={false}
+        useRouter
+        useSpotlight
+        spotlightTooltip={ts('tooltip')}
+        session={{
+          ...session,
           ...(session.isSuperAdmin
-            ? []
-            : [
-                {
-                  id: 'menu-1',
-                  label: t('accountInfo'),
-                  order: 0,
-                  url: '/private/users/detail',
-                  window: 'SELF',
-                  disabled: null,
-                },
-              ].concat(
-                store.onlyOneProfile
-                  ? []
-                  : [
-                      {
-                        id: 'menu-2',
-                        label: t('switchProfile'),
-                        order: 1,
-                        url: '/private/users/select-profile',
-                        window: 'SELF',
-                        disabled: null,
-                      },
-                    ]
-              )),
-          {
-            id: 'menu-3',
-            label: t('changeLanguage'),
-            order: 2,
-            url: '/private/users/language',
-            window: 'SELF',
-            disabled: null,
-          },
-          {
-            id: 'menu-4',
-            label: t('emailPreference'),
-            order: 3,
-            url: '/private/emails/preference',
-            window: 'SELF',
-            disabled: null,
-          },
-          {
-            id: 'menu-5',
-            label: t('logout'),
-            order: 4,
-            url: '/private/users/logout',
-            window: 'SELF',
-            disabled: null,
-          },
-        ],
-      }}
-    />
+            ? { name: '', surnames: '' }
+            : { name: session.name, surnames: session.surnames }),
+          avatar: session.avatar,
+        }}
+        sessionMenu={{
+          id: 'menu-0',
+          label: t('label'),
+          children: [
+            ...(session.isSuperAdmin
+              ? []
+              : [
+                  {
+                    id: 'menu-1',
+                    label: t('accountInfo'),
+                    order: 0,
+                    url: '/private/users/detail',
+                    window: 'SELF',
+                    disabled: null,
+                  },
+                ].concat(
+                  store.onlyOneProfile
+                    ? []
+                    : [
+                        {
+                          id: 'menu-2',
+                          label: t('switchProfile'),
+                          order: 1,
+                          url: '/private/users/select-profile',
+                          window: 'SELF',
+                          disabled: null,
+                        },
+                      ]
+                )),
+            {
+              id: 'menu-3',
+              label: t('changeLanguage'),
+              order: 2,
+              url: '/private/users/language',
+              window: 'SELF',
+              disabled: null,
+            },
+            {
+              id: 'menu-4',
+              label: t('emailPreference'),
+              order: 3,
+              url: '/private/emails/preference',
+              window: 'SELF',
+              disabled: null,
+            },
+            {
+              id: 'menu-5',
+              label: t('logout'),
+              order: 4,
+              url: '/private/users/logout',
+              window: 'SELF',
+              disabled: null,
+            },
+          ],
+        }}
+      />
+    </Spotlight>
   );
 }
 

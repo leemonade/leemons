@@ -25,4 +25,9 @@ module.exports = {
       action: 'Eliminar',
     },
   },
+  spotlight: {
+    searchPlaceholder: 'Buscar...',
+    nothingFoundMessage: 'No hay coincidencias',
+    tooltip: 'Buscar en el menu',
+  },
 };
