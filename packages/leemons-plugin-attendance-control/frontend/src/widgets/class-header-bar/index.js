@@ -5,7 +5,6 @@ import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import { getTemporalSessionsRequest } from '@attendance-control/request';
 import { Button } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import infoPlugin from '@package-manager/request/infoPlugin';
 import { getPermissionsWithActionsIfIHaveRequest, getProfileSysNameRequest } from '@users/request';
@@ -48,7 +47,7 @@ function ClassHeaderBar({ classe }) {
         render();
       }
     } catch (e) {
-      addErrorAlert(getErrorMessage(e));
+      // addErrorAlert(getErrorMessage(e));
     }
   }
 
