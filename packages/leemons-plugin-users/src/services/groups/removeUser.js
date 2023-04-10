@@ -10,13 +10,19 @@ const { exist: groupExist } = require('./exist');
  * @param {string} userAgentId - User auth id
  * @return {Promise<undefined>}
  * */
-async function removeUser(groupId, userAgentId, { transacting: _transacting } = {}) {
+async function removeUser(
+  groupId,
+  userAgentId,
+  { checksDisabled, transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
-      await Promise.all([
-        groupExist({ id: groupId }, true, { transacting }),
-        existUserAgent({ id: userAgentId }, true, { transacting }),
-      ]);
+      if (!checksDisabled) {
+        await Promise.all([
+          groupExist({ id: groupId }, true, { transacting }),
+          existUserAgent({ id: userAgentId }, true, { transacting }),
+        ]);
+      }
 
       const groupUserAgent = await table.groupUserAgent.count(
         {
