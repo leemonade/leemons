@@ -1,5 +1,5 @@
-import React from 'react';
-import { map } from 'lodash';
+import prefixPN from '@admin/helpers/prefixPN';
+import { getLanguagesRequest } from '@admin/request/settings';
 import {
   Box,
   Button,
@@ -11,16 +11,16 @@ import {
   Stack,
   TextInput,
 } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
-import { getLanguagesRequest } from '@admin/request/settings';
 import { useStore } from '@common';
-import { Controller, useForm } from 'react-hook-form';
-import countryList from 'country-region-data';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
-import { addCenterRequest } from '@users/request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { addCenterRequest, listProfilesRequest, listRolesRequest } from '@users/request';
+import countryList from 'country-region-data';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const Styles = createStyles((theme) => ({
   inputContent: {
@@ -58,7 +58,25 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       {
         langs: { locales },
       },
-    ] = await Promise.all([getLanguagesRequest()]);
+      {
+        data: { items: profiles },
+      },
+      {
+        data: { items: roles },
+      },
+    ] = await Promise.all([
+      getLanguagesRequest(),
+      listProfilesRequest({
+        page: 0,
+        size: 99999,
+      }),
+      listRolesRequest({
+        page: 0,
+        size: 99999,
+      }),
+    ]);
+    store.roles = roles;
+    store.profiles = profiles;
     store.locales = map(locales, ({ code, name }) => ({ label: name, value: code }));
     store.timeZones = map(Intl.supportedValuesOf('timeZone'), (item) => ({
       label: item,
@@ -158,7 +176,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
               </Stack>
             </ContextContainer>
             <ContextContainer
-              title={t('emailForNotifications')}
+              subtitle={t('emailForNotifications')}
               description={t('emailForNotificationsDescription')}
             >
               {/* -- Email -- */}
@@ -178,7 +196,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                 />
               </Stack>
             </ContextContainer>
-            <ContextContainer title={t('extraData')} divided>
+            <ContextContainer subtitle={t('extraData')} divided>
               {/* -- Country -- */}
               <Stack fullWidth className={styles.inputContent} alignItems="center">
                 <InputWrapper label={`${t('country')}`} />
@@ -238,6 +256,28 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                     render={({ field }) => <TextInput error={errors.contactEmail} {...field} />}
                   />
                 </Stack>
+              </ContextContainer>
+              <ContextContainer subtitle={t('userLimits')}>
+                {/* -- Profiles -- */}
+                <InputWrapper label={`${t('profiles')}`} />
+
+                {store.profiles?.map((item) => (
+                  <Stack
+                    key={item.id}
+                    fullWidth
+                    className={styles.inputContent}
+                    alignItems="center"
+                  >
+                    <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                      <InputWrapper label={item.name} description={item.description} />
+                    </Box>
+                    <Controller
+                      name="phone"
+                      control={control}
+                      render={({ field }) => <TextInput error={errors.phone} {...field} />}
+                    />
+                  </Stack>
+                ))}
               </ContextContainer>
             </ContextContainer>
           </ContextContainer>
