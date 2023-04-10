@@ -125,6 +125,7 @@ async function update(ctx) {
       name: { type: 'string' },
       description: { type: 'string' },
       permissions: permissionsValidation,
+      userAgents: { type: 'array', items: { type: 'string' } },
     },
     required: ['id', 'name', 'description', 'permissions'],
     additionalProperties: false,
