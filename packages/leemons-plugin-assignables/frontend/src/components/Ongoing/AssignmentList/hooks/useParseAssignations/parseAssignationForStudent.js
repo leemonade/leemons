@@ -118,14 +118,6 @@ function Progress({ assignation }) {
     );
   }
 
-  if (!studentHasStarted) {
-    return (
-      <Badge closable={false} color="stroke" severity={severity}>
-        {labels?.notStarted}
-      </Badge>
-    );
-  }
-
   if (studentHasFinished) {
     if (isEvaluable) {
       return (
@@ -138,6 +130,14 @@ function Progress({ assignation }) {
     return (
       <Badge closable={false} color="stroke" severity="success">
         {labels?.ended}
+      </Badge>
+    );
+  }
+
+  if (!studentHasStarted) {
+    return (
+      <Badge closable={false} color="stroke" severity={severity}>
+        {labels?.notStarted}
       </Badge>
     );
   }
