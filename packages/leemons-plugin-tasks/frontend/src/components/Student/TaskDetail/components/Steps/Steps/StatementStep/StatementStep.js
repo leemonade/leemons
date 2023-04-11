@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
 import {
   Box,
+  Button,
   ContextContainer,
   HtmlText,
   ImageLoader,
@@ -14,6 +16,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 
 function CurriculumTab({ subjects, curriculumTab, labels }) {
   const subject = subjects[curriculumTab];
@@ -144,7 +147,14 @@ function useSupportImage(assignable) {
   return query;
 }
 
-export default function StatementStep({ assignation, localizations: _labels }) {
+export default function StatementStep({
+  assignation,
+  localizations: _labels,
+  setButtons,
+  hasNextStep,
+  hasNextActivity,
+  onNextStep,
+}) {
   const labels = _labels.statement_step;
 
   const { instance } = assignation;
@@ -153,6 +163,41 @@ export default function StatementStep({ assignation, localizations: _labels }) {
   const { data: supportImage } = useSupportImage(assignable);
   const showCurriculum = instance.curriculum;
   const isGradable = assignable.gradable;
+
+  const now = dayjs();
+  const startDate = dayjs(assignation?.instance?.dates?.start || null);
+  const canSubmit =
+    assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+
+  React.useEffect(() => {
+    setButtons(
+      <>
+        <Box></Box>
+        {(hasNextStep || !hasNextActivity) && (
+          <Button
+            onClick={onNextStep}
+            variant={hasNextStep ? 'outline' : 'filled'}
+            rightIcon={<ChevRightIcon />}
+            rounded
+            disabled={!canSubmit}
+          >
+            {hasNextStep ? _labels?.buttons?.next : _labels?.buttons?.finish}
+          </Button>
+        )}
+        {!hasNextStep && hasNextActivity && (
+          <Button
+            variant="filled"
+            rightIcon={<ChevRightIcon />}
+            disabled={!canSubmit}
+            rounded
+            onClick={onNextStep}
+          >
+            {_labels?.buttons?.nextActivity}
+          </Button>
+        )}
+      </>
+    );
+  }, [setButtons, onNextStep, hasNextStep, _labels?.buttons, hasNextActivity, canSubmit]);
 
   return (
     <ContextContainer>
@@ -190,7 +235,11 @@ StatementStep.propTypes = {
       }),
     }),
   }),
-  labels: PropTypes.shape({
+  localizations: PropTypes.shape({
     statement_step: PropTypes.object,
   }),
+  setButtons: PropTypes.func,
+  hasNextStep: PropTypes.bool,
+  hasNextActivity: PropTypes.bool,
+  onNextStep: PropTypes.func,
 };

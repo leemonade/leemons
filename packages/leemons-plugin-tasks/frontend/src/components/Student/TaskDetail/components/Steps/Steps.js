@@ -92,6 +92,7 @@ function useSteps({ assignation, localizations }) {
           ? localizations?.steps?.statement
           : localizations?.steps?.presentation,
         component: <StatementStep />,
+        customButtons: !hasDevelopment,
         status: 'OK',
       },
       hasDevelopment && {
@@ -324,7 +325,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
       React.cloneElement(currentStep?.component, {
         assignation,
         localizations,
-        setButtons: setButtonsf(setButtons),
+        setButtons: currentStep.customButtons ? setButtonsf(setButtons) : () => { },
         onNextStep: () => {
           hasNext ? onNextStep() : toggleModal.current();
         },
