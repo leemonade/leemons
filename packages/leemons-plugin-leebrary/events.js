@@ -90,6 +90,7 @@ async function events(isInstalled) {
   } else {
     leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
       leemons.events.emit('init-permissions');
+      leemons.events.emit('init-categories');
       leemons.events.emit('init-menu');
     });
   }
