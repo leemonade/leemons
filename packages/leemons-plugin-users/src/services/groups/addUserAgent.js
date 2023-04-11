@@ -11,13 +11,19 @@ const { table } = require('../tables');
  * @param {string} userAgentId - User auth id
  * @return {Promise<undefined>}
  * */
-async function addUserAgent(groupId, userAgentId, { transacting: _transacting } = {}) {
+async function addUserAgent(
+  groupId,
+  userAgentId,
+  { checksDisabled, transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
-      await Promise.all([
-        groupExist({ id: groupId }, true, { transacting }),
-        existUserAgent({ id: userAgentId }, true, { transacting }),
-      ]);
+      if (!checksDisabled) {
+        await Promise.all([
+          groupExist({ id: groupId }, true, { transacting }),
+          existUserAgent({ id: userAgentId }, true, { transacting }),
+        ]);
+      }
       const groupUser = await table.groupUserAgent.count(
         { group: groupId, userAgent: userAgentId },
         { transacting }

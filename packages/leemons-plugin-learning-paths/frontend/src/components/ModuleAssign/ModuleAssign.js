@@ -147,6 +147,12 @@ export function ModuleAssign({ id }) {
   const history = useHistory();
 
   const assignButtonIsLoading = useWatch({ name: 'assignButtonIsLoading' });
+  const activitiesLoaded = useWatch({ name: 'state.activities.loaded' });
+  const activitiesLoadedCount = useMemo(
+    () => Object.values(activitiesLoaded ?? {}).filter(Boolean).length,
+    [activitiesLoaded]
+  );
+  const activitiesLength = assignable?.submission?.activities?.length;
 
   if (isLoading) {
     return <Loader />;
@@ -182,6 +188,7 @@ export function ModuleAssign({ id }) {
               {localizations?.buttons?.previous}
             </Button>
             <Button
+              disabled={activitiesLength !== activitiesLoadedCount}
               loading={assignButtonIsLoading}
               onClick={() => {
                 setValue('assignButtonIsLoading', true);

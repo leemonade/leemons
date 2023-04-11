@@ -205,15 +205,17 @@ function useDefaultValues({ activities, components }) {
   const { getValues, setValue } = useModuleAssignContext();
 
   useEffect(() => {
-    activities.forEach(({ id, activity }) => {
+    activities.forEach(async ({ id, activity }) => {
       const valueKey = `state.activities.${id}.defaultConfig`;
       const value = getValues(valueKey);
 
       const component = components[activity.role];
 
       if (!value && isFunction(component?.defaultValues)) {
-        setValue(valueKey, component.defaultValues(activity));
+        const defaultValues = await component.defaultValues(activity);
+        setValue(`${valueKey}.defaultConfig`, defaultValues);
       }
+      setValue(`state.activities.loaded.${id}`, true);
     });
   }, [activities, components]);
 }

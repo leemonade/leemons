@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Box, Select, Stack, Table, createStyles, useDebouncedValue } from '@bubbles-ui/components';
+import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
+import { useAsync } from '@common/useAsync';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
+import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
+import { listActionsRequest, listPermissionsRequest } from '@users/request';
 import {
   filter,
   find,
@@ -11,14 +17,8 @@ import {
   orderBy,
   uniqBy,
 } from 'lodash';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
-import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
-import { listActionsRequest, listPermissionsRequest } from '@users/request';
-import { Box, createStyles, Select, Stack, Table, useDebouncedValue } from '@bubbles-ui/components';
-import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import { useAsync } from '@common/useAsync';
 import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const PermissionsTabStyles = createStyles((theme) => ({
   icon: {

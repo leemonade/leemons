@@ -22,11 +22,6 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
 
   if (reloadUserAgents.length) {
     await updateUserAgentPermissions(reloadUserAgents, { transacting });
-    await Promise.all(
-      _.map(reloadUserAgents, (_userAgent) =>
-        leemons.cache.deleteByPrefix(`users:permissions:${_userAgent}`)
-      )
-    );
   }
 
   const cacheKeys = _.map(

@@ -2,6 +2,7 @@ const {
   markAllUsersInGroupToReloadPermissions,
 } = require('./markAllUsersInGroupToReloadPermissions');
 const { detailByUri } = require('./detailByUri');
+const { updateWithRole } = require('./updateWithRole');
 const { addWithRole } = require('./addWithRole');
 const { removeUser } = require('./removeUser');
 const { addUserAgent } = require('./addUserAgent');
@@ -19,5 +20,6 @@ module.exports = {
   removeUser,
   detailByUri,
   addWithRole,
+  updateWithRole,
   markAllUsersInGroupToReloadPermissions,
 };

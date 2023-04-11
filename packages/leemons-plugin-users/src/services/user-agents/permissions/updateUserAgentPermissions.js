@@ -7,11 +7,6 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
     async (transacting) => {
       await existUserAgent({ id: userAgentId }, true, { transacting });
 
-      await table.groupUserAgent.find(
-        { userAgent: userAgentId },
-        { columns: ['id', 'group'], transacting }
-      );
-
       // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
       const [groupUserAgent, userAgent] = await Promise.all([
         table.groupUserAgent.find(
@@ -114,8 +109,14 @@ async function updateUserAgentPermissions(userAgentId, { transacting } = {}) {
     for (let i = 0, l = userAgentId.length; i < l; i++) {
       results.push(await _updateUserAgentPermissions(userAgentId[i], { transacting }));
     }
+    await Promise.all(
+      _.map(userAgentId, (_userAgent) =>
+        leemons.cache.deleteByPrefix(`users:permissions:${_userAgent}`)
+      )
+    );
     return results;
   }
+  await leemons.cache.deleteByPrefix(`users:permissions:${userAgentId}`);
   return _updateUserAgentPermissions(userAgentId, { transacting });
 }
 
