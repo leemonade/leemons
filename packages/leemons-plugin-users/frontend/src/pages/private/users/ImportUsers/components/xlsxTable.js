@@ -248,12 +248,20 @@ export function XlsxTable({
             const propKey = key.split('.')[1];
             const isArray = generalDataset.jsonSchema.properties[propKey].type === 'array';
 
-            user.dataset[propKey] = {
-              value: isArray ? data[index].split(datasetArraySplitKey) : data[index],
-            };
+            if (isArray) {
+              user.dataset[propKey] = {
+                value: data[index] ? data[index].split(datasetArraySplitKey) : [],
+              };
+            } else {
+              user.dataset[propKey] = {
+                value: data[index],
+              };
+            }
           } else if (key === 'tags') {
             if (!_.isArray(user.tags)) user.tags = [];
-            user.tags.push(...data[index].split(','));
+            if (_.isString(data[index])) {
+              user.tags.push(...data[index].split(','));
+            }
           } else {
             user[key] = data[index];
             if (key === 'birthdate') {
