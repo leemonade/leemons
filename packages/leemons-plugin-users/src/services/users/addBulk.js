@@ -14,6 +14,7 @@ const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
 const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
 const { addUserAvatar } = require('./addUserAvatar');
 const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
+const { checkIfCanCreateNUserAgentsInRoleProfiles } = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
 
 async function addUserBulk(
   role,
@@ -67,6 +68,7 @@ async function addUserBulk(
     { transacting }
   );
   if (!userAgent) {
+    await checkIfCanCreateNUserAgentsInRoleProfiles(1, role, { transacting });
     userAgent = await table.userAgent.create(
       {
         role,
