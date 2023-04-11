@@ -1,5 +1,6 @@
-const { table } = require('../tables');
+/* eslint-disable no-nested-ternary */
 const _ = require('lodash');
+const { table } = require('../tables');
 
 /**
  * List of all centers in platform
@@ -12,7 +13,7 @@ const _ = require('lodash');
  * @return {Promise<Center>} Created / Updated role
  * */
 
-async function list(page, size, { withRoles, transacting } = {}) {
+async function list(page, size, { withRoles, withLimits, transacting } = {}) {
   const results = await global.utils.paginate(table.centers, page, size, undefined, {
     transacting,
   });
@@ -36,6 +37,22 @@ async function list(page, size, { withRoles, transacting } = {}) {
       }
     });
   }
+
+  if (withLimits) {
+    let limits = await table.centerLimits.find(
+      { center_$in: _.map(results.items, 'id') },
+      { transacting }
+    );
+    limits = _.map(limits, (limit) => ({
+      ...limit,
+      unlimited: limit.unlimited === 0 ? false : limit.unlimited === 1 ? true : limit.unlimited,
+    }));
+    const limitsByCenter = _.groupBy(limits, 'center');
+    _.forEach(results.items, (center) => {
+      center.limits = limitsByCenter[center.id] || [];
+    });
+  }
+
   return results;
 }
 

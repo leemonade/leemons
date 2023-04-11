@@ -8,8 +8,12 @@ const { table } = require('../tables');
  * @param {any=} transacting -  DB Transaction
  * @return {Promise<boolean>}
  * */
-async function existName(name, { transacting } = {}) {
-  const exist = await table.centers.count({ name }, { transacting });
+async function existName(name, { id, transacting } = {}) {
+  const query = { name };
+  if (id) {
+    query.id_$ne = id;
+  }
+  const exist = await table.centers.count(query, { transacting });
   return !!exist;
 }
 

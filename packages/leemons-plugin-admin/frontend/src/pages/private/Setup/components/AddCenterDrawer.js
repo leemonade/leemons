@@ -4,12 +4,14 @@ import {
   Box,
   Button,
   ContextContainer,
-  createStyles,
   Drawer,
   InputWrapper,
+  NumberInput,
   Select,
   Stack,
+  Switch,
   TextInput,
+  createStyles,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -41,6 +43,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
   const { classes: styles } = Styles();
   const {
     reset,
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -52,6 +55,8 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
     dayWeeks: [],
     countries: [],
   });
+
+  const formValues = watch();
 
   async function load() {
     const [
@@ -98,12 +103,19 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
     render();
   }
 
-  async function onSubmit({ created_at, deleted_at, updated_at, deleted, ...data }) {
+  async function onSubmit({ created_at, deleted_at, updated_at, deleted, limits, ...data }) {
     try {
       store.saving = true;
       render();
-      const { center: c } = await addCenterRequest(data);
-      onSave(c);
+      const finalLimits = [];
+      if (Object.keys(limits.profiles).length) {
+        finalLimits.push(...Object.values(limits.profiles));
+      }
+      if (Object.keys(limits.roles).length) {
+        finalLimits.push(...Object.values(limits.roles));
+      }
+      const { center: c } = await addCenterRequest({ ...data, limits: finalLimits });
+      onSave({ ...c, limits });
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -261,7 +273,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                 {/* -- Profiles -- */}
                 <InputWrapper label={`${t('profiles')}`} />
 
-                {store.profiles?.map((item) => (
+                {store.profiles?.map((item, index) => (
                   <Stack
                     key={item.id}
                     fullWidth
@@ -271,11 +283,118 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                     <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
                       <InputWrapper label={item.name} description={item.description} />
                     </Box>
-                    <Controller
-                      name="phone"
-                      control={control}
-                      render={({ field }) => <TextInput error={errors.phone} {...field} />}
-                    />
+                    <Box>
+                      <Box sx={() => ({ display: 'flex', width: '100%' })}>
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                          <Controller
+                            name={`limits.profiles[${item.id}].item`}
+                            defaultValue={item.id}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.profiles[${item.id}].type`}
+                            defaultValue={'profile'}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.profiles[${item.id}].unlimited`}
+                            control={control}
+                            render={({ field }) => (
+                              <Switch
+                                label={t('unlimited')}
+                                onChange={(e) => {
+                                  if (!formValues?.limits?.profiles?.[item.id]?.limit) {
+                                    setValue(`limits.profiles[${item.id}].limit`, 1);
+                                  }
+                                  field.onChange(e);
+                                }}
+                                checked={field.value !== false}
+                              />
+                            )}
+                          />
+                        </Box>
+                        <Box sx={() => ({ width: '100%' })}>
+                          <Controller
+                            name={`limits.profiles[${item.id}].limit`}
+                            control={control}
+                            render={({ field }) => (
+                              <NumberInput
+                                min={1}
+                                {...field}
+                                disabled={
+                                  formValues?.limits?.profiles?.[item.id]?.unlimited !== false
+                                }
+                              />
+                            )}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Stack>
+                ))}
+
+                {/* -- Roles -- */}
+                <InputWrapper label={`${t('roles')}`} />
+
+                {store.roles?.map((item, index) => (
+                  <Stack
+                    key={item.id}
+                    fullWidth
+                    className={styles.inputContent}
+                    alignItems="center"
+                  >
+                    <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                      <InputWrapper label={item.name} description={item.description} />
+                    </Box>
+                    <Box>
+                      <Box sx={() => ({ display: 'flex', width: '100%' })}>
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                          <Controller
+                            name={`limits.roles[${item.id}].item`}
+                            defaultValue={item.id}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.roles[${item.id}].type`}
+                            defaultValue={'role'}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.roles[${item.id}].unlimited`}
+                            control={control}
+                            render={({ field }) => (
+                              <Switch
+                                label={t('unlimited')}
+                                onChange={(e) => {
+                                  if (!formValues?.limits?.roles?.[item.id]?.limit) {
+                                    setValue(`limits.roles[${item.id}].limit`, 1);
+                                  }
+                                  field.onChange(e);
+                                }}
+                                checked={field.value !== false}
+                              />
+                            )}
+                          />
+                        </Box>
+                        <Box sx={() => ({ width: '100%' })}>
+                          <Controller
+                            name={`limits.roles[${item.id}].limit`}
+                            control={control}
+                            render={({ field }) => (
+                              <NumberInput
+                                min={1}
+                                {...field}
+                                disabled={formValues?.limits?.roles?.[item.id]?.unlimited !== false}
+                              />
+                            )}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
                   </Stack>
                 ))}
               </ContextContainer>
