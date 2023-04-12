@@ -44,7 +44,7 @@ async function remove(classId, studentId, { soft, transacting: _transacting } = 
 
       const programs = await getUserPrograms({ userAgents: [{ id: studentId }] });
       if (programs.length) {
-        const programsIds = _.keyBy(programs, 'id');
+        const programsIds = _.map(programs, 'id');
         if (!programsIds.includes(program.id)) {
           await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
             classStudent.student,
