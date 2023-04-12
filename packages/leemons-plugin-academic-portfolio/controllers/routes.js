@@ -83,7 +83,6 @@ module.exports = [
     method: 'GET',
     handler: 'program.getProgramEvaluationSystem',
     authenticated: true,
-    allowedPermissions: getPermissions(permissions.programs, ['view']),
   },
   {
     path: '/program/:id/has/courses',
