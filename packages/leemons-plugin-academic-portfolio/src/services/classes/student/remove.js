@@ -3,6 +3,9 @@ const { table } = require('../../tables');
 const { getUserPrograms } = require('../../programs');
 const { getClassProgram } = require('../getClassProgram');
 
+const { getProfiles } = require('../../settings/getProfiles');
+const { removeCustomPermissions } = require('./removeCustomPermissions');
+
 async function remove(classId, studentId, { soft, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
 
@@ -42,19 +45,7 @@ async function remove(classId, studentId, { soft, transacting: _transacting } = 
         { transacting }
       );
 
-      const programs = await getUserPrograms({ userAgents: [{ id: studentId }] });
-      if (programs.length) {
-        const programsIds = _.keyBy(programs, 'id');
-        if (!programsIds.includes(program.id)) {
-          await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
-            classStudent.student,
-            {
-              permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
-            },
-            { transacting }
-          );
-        }
-      }
+      await removeCustomPermissions(studentId, program.id, { transacting });
 
       await leemons.events.emit('after-remove-students-from-class', {
         classStudent,

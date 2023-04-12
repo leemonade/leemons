@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
+const { getClassProgram } = require('../getClassProgram');
+const { removeCustomPermissions } = require('./removeCustomPermissions');
 
 async function removeByClass(classIds, { soft, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -7,6 +9,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
   return global.utils.withTransaction(
     async (transacting) => {
       const classeIds = _.isArray(classIds) ? classIds : [classIds];
+
+      const programs = await Promise.all(_.map(classeIds, (classId) => getClassProgram(classId)));
 
       const classTeachers = await table.classTeacher.find(
         { class_$in: classeIds },
@@ -23,6 +27,18 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
             { transacting }
           );
         })
+      );
+
+      const programIds = _.uniq(_.map(programs, 'id'));
+
+      await Promise.all(
+        _.map(programIds, (programId) =>
+          Promise.all(
+            _.map(classTeachers, (classStudent) =>
+              removeCustomPermissions(classStudent.teacher, programId, { transacting })
+            )
+          )
+        )
       );
 
       await leemons.events.emit('before-remove-classes-teachers', {
