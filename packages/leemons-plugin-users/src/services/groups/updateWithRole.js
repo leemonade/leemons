@@ -1,8 +1,10 @@
+/* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 const { table } = require('../tables');
 const {
   markAllUsersInGroupToReloadPermissions,
 } = require('./markAllUsersInGroupToReloadPermissions');
+const { checkIfCanCreateUserAgentInGroup } = require('./checkIfCanCreateNUserAgentsInGroup');
 
 /**
  * Create new group if name and type not in use
@@ -72,11 +74,14 @@ async function updateWithRole(data, { transacting: _transacting } = {}) {
         }
         if (userAgentIdsToAdd?.length) {
           userAgentsToReloadPermissions.push(...userAgentIdsToAdd);
-          await Promise.all(
-            _.map(userAgentIdsToAdd, (id) =>
-              table.groupUserAgent.create({ group: data.id, userAgent: id }, { transacting })
-            )
-          );
+
+          for (let i = 0, l = userAgentIdsToAdd.length; i < l; i++) {
+            await checkIfCanCreateUserAgentInGroup(userAgentIdsToAdd[i], data.id, { transacting });
+            await table.groupUserAgent.create(
+              { group: data.id, userAgent: userAgentIdsToAdd[i] },
+              { transacting }
+            );
+          }
         }
         if (userAgentsToReloadPermissions?.length) {
           await table.userAgent.updateMany(

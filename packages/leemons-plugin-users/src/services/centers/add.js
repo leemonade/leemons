@@ -1,8 +1,8 @@
+const _ = require('lodash');
 const existName = require('./existName');
 const { translations } = require('../translations');
 const { table } = require('../tables');
 const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/createNecessaryRolesForProfilesAccordingToCenters');
-
 /**
  * Create one center
  * @private
@@ -11,10 +11,13 @@ const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/c
  * @param {any=} _transacting -  DB Transaction
  * @return {Promise<Center>} Created / Updated role
  * */
-async function add({ id, name, locale, ...centerData }, { transacting: _transacting } = {}) {
+async function add(
+  { id, name, locale, limits, ...centerData },
+  { transacting: _transacting } = {}
+) {
   return global.utils.withTransaction(
     async (transacting) => {
-      if (await existName(name, { transacting }))
+      if (await existName(name, { id, transacting }))
         throw new Error(`Center with name '${name}' already exists`);
 
       if (translations()) {
@@ -52,6 +55,24 @@ async function add({ id, name, locale, ...centerData }, { transacting: _transact
           transacting,
         });
         leemons.events.emit('didCreateCenter');
+      }
+
+      if (limits) {
+        center.limits = await Promise.all(
+          _.map(limits, ({ id, created_at, updated_at, deleted_at, ...limit }) =>
+            table.centerLimits.set(
+              {
+                item: limit.item,
+                center: center.id,
+              },
+              {
+                ...limit,
+                center: center.id,
+              },
+              { transacting }
+            )
+          )
+        );
       }
 
       return center;

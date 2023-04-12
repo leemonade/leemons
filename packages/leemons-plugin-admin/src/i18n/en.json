@@ -191,6 +191,10 @@
     "postalCode": "Postal code",
     "street": "Street",
     "contactInfo": "Contact info",
+    "userLimits": "User limits",
+    "profiles": "Profiles",
+    "unlimited": "Unlimited",
+    "roles": "Roles",
     "phone": "Phone",
     "save": "Save"
   },
