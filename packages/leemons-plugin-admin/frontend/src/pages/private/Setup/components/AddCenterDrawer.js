@@ -1,26 +1,28 @@
-import React from 'react';
-import { map } from 'lodash';
+import prefixPN from '@admin/helpers/prefixPN';
+import { getLanguagesRequest } from '@admin/request/settings';
 import {
   Box,
   Button,
   ContextContainer,
-  createStyles,
   Drawer,
   InputWrapper,
+  NumberInput,
   Select,
   Stack,
+  Switch,
   TextInput,
+  createStyles,
 } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
-import { getLanguagesRequest } from '@admin/request/settings';
 import { useStore } from '@common';
-import { Controller, useForm } from 'react-hook-form';
-import countryList from 'country-region-data';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
-import { addCenterRequest } from '@users/request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { addCenterRequest, listProfilesRequest, listRolesRequest } from '@users/request';
+import countryList from 'country-region-data';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const Styles = createStyles((theme) => ({
   inputContent: {
@@ -41,6 +43,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
   const { classes: styles } = Styles();
   const {
     reset,
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -53,12 +56,32 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
     countries: [],
   });
 
+  const formValues = watch();
+
   async function load() {
     const [
       {
         langs: { locales },
       },
-    ] = await Promise.all([getLanguagesRequest()]);
+      {
+        data: { items: profiles },
+      },
+      {
+        data: { items: roles },
+      },
+    ] = await Promise.all([
+      getLanguagesRequest(),
+      listProfilesRequest({
+        page: 0,
+        size: 99999,
+      }),
+      listRolesRequest({
+        page: 0,
+        size: 99999,
+      }),
+    ]);
+    store.roles = roles;
+    store.profiles = profiles;
     store.locales = map(locales, ({ code, name }) => ({ label: name, value: code }));
     store.timeZones = map(Intl.supportedValuesOf('timeZone'), (item) => ({
       label: item,
@@ -80,12 +103,19 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
     render();
   }
 
-  async function onSubmit({ created_at, deleted_at, updated_at, deleted, ...data }) {
+  async function onSubmit({ created_at, deleted_at, updated_at, deleted, limits, ...data }) {
     try {
       store.saving = true;
       render();
-      const { center: c } = await addCenterRequest(data);
-      onSave(c);
+      const finalLimits = [];
+      if (Object.keys(limits.profiles).length) {
+        finalLimits.push(...Object.values(limits.profiles));
+      }
+      if (Object.keys(limits.roles).length) {
+        finalLimits.push(...Object.values(limits.roles));
+      }
+      const { center: c } = await addCenterRequest({ ...data, limits: finalLimits });
+      onSave({ ...c, limits });
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -158,7 +188,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
               </Stack>
             </ContextContainer>
             <ContextContainer
-              title={t('emailForNotifications')}
+              subtitle={t('emailForNotifications')}
               description={t('emailForNotificationsDescription')}
             >
               {/* -- Email -- */}
@@ -178,7 +208,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                 />
               </Stack>
             </ContextContainer>
-            <ContextContainer title={t('extraData')} divided>
+            <ContextContainer subtitle={t('extraData')} divided>
               {/* -- Country -- */}
               <Stack fullWidth className={styles.inputContent} alignItems="center">
                 <InputWrapper label={`${t('country')}`} />
@@ -238,6 +268,135 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                     render={({ field }) => <TextInput error={errors.contactEmail} {...field} />}
                   />
                 </Stack>
+              </ContextContainer>
+              <ContextContainer subtitle={t('userLimits')}>
+                {/* -- Profiles -- */}
+                <InputWrapper label={`${t('profiles')}`} />
+
+                {store.profiles?.map((item, index) => (
+                  <Stack
+                    key={item.id}
+                    fullWidth
+                    className={styles.inputContent}
+                    alignItems="center"
+                  >
+                    <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                      <InputWrapper label={item.name} description={item.description} />
+                    </Box>
+                    <Box>
+                      <Box sx={() => ({ display: 'flex', width: '100%' })}>
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                          <Controller
+                            name={`limits.profiles[${item.id}].item`}
+                            defaultValue={item.id}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.profiles[${item.id}].type`}
+                            defaultValue={'profile'}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.profiles[${item.id}].unlimited`}
+                            control={control}
+                            render={({ field }) => (
+                              <Switch
+                                label={t('unlimited')}
+                                onChange={(e) => {
+                                  if (!formValues?.limits?.profiles?.[item.id]?.limit) {
+                                    setValue(`limits.profiles[${item.id}].limit`, 1);
+                                  }
+                                  field.onChange(e);
+                                }}
+                                checked={field.value !== false}
+                              />
+                            )}
+                          />
+                        </Box>
+                        <Box sx={() => ({ width: '100%' })}>
+                          <Controller
+                            name={`limits.profiles[${item.id}].limit`}
+                            control={control}
+                            render={({ field }) => (
+                              <NumberInput
+                                min={1}
+                                {...field}
+                                disabled={
+                                  formValues?.limits?.profiles?.[item.id]?.unlimited !== false
+                                }
+                              />
+                            )}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Stack>
+                ))}
+
+                {/* -- Roles -- */}
+                <InputWrapper label={`${t('roles')}`} />
+
+                {store.roles?.map((item, index) => (
+                  <Stack
+                    key={item.id}
+                    fullWidth
+                    className={styles.inputContent}
+                    alignItems="center"
+                  >
+                    <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
+                      <InputWrapper label={item.name} description={item.description} />
+                    </Box>
+                    <Box>
+                      <Box sx={() => ({ display: 'flex', width: '100%' })}>
+                        <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                          <Controller
+                            name={`limits.roles[${item.id}].item`}
+                            defaultValue={item.id}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.roles[${item.id}].type`}
+                            defaultValue={'role'}
+                            control={control}
+                            render={() => null}
+                          />
+                          <Controller
+                            name={`limits.roles[${item.id}].unlimited`}
+                            control={control}
+                            render={({ field }) => (
+                              <Switch
+                                label={t('unlimited')}
+                                onChange={(e) => {
+                                  if (!formValues?.limits?.roles?.[item.id]?.limit) {
+                                    setValue(`limits.roles[${item.id}].limit`, 1);
+                                  }
+                                  field.onChange(e);
+                                }}
+                                checked={field.value !== false}
+                              />
+                            )}
+                          />
+                        </Box>
+                        <Box sx={() => ({ width: '100%' })}>
+                          <Controller
+                            name={`limits.roles[${item.id}].limit`}
+                            control={control}
+                            render={({ field }) => (
+                              <NumberInput
+                                min={1}
+                                {...field}
+                                disabled={formValues?.limits?.roles?.[item.id]?.unlimited !== false}
+                              />
+                            )}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Stack>
+                ))}
               </ContextContainer>
             </ContextContainer>
           </ContextContainer>

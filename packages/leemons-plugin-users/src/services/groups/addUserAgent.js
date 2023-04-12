@@ -1,6 +1,7 @@
 const { existUserAgent } = require('../user-agents/existUserAgent');
 const { exist: groupExist } = require('./exist');
 const { table } = require('../tables');
+const { checkIfCanCreateUserAgentInGroup } = require('./checkIfCanCreateNUserAgentsInGroup');
 
 /**
  * Add one user auth to group if not already in group
@@ -29,6 +30,8 @@ async function addUserAgent(
         { transacting }
       );
       if (!groupUser) {
+        await checkIfCanCreateUserAgentInGroup(userAgentId, groupId, { transacting });
+
         const values = await Promise.all([
           table.groupUserAgent.create({ group: groupId, userAgent: userAgentId }, { transacting }),
           table.userAgent.update({ id: userAgentId }, { reloadPermissions: true }, { transacting }),
