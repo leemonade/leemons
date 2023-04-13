@@ -56,6 +56,10 @@ For general help using Leemons, please refer to - the official Leemons documenta
 
 - [GitHub](https://github.com/leemonade/leemons) (Bug reports, Contributions)
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=leemonade/leemons&type=Date)](https://star-history.com/#leemonade/leemons&Date)
+
 ## License
 
 MIT
