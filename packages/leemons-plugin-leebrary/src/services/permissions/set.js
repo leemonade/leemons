@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 const { map, uniq, filter, forEach, isArray } = require('lodash');
+const _ = require('lodash');
 const { validateSetPermissions } = require('../../validations/forms');
 const { getByIds } = require('../assets/getByIds');
 const { getByAsset } = require('./getByAsset');
@@ -155,7 +156,15 @@ async function removeMissingClassesPermissions(
  * */
 async function set(
   assetId,
-  { isPublic, programsCanAccess, classesCanAccess, canAccess },
+  {
+    isPublic,
+    centersCanAccess,
+    centerProfilesCanAccess,
+    programsCanAccess,
+    programProfilesCanAccess,
+    classesCanAccess,
+    canAccess,
+  },
   { deleteMissing, userSession, transacting } = {}
 ) {
   try {
@@ -274,62 +283,114 @@ async function set(
       }
     }
 
-    if (isArray(programsCanAccess)) {
-      const currentPermissions = await userService.permissions.getItemPermissions(
+    let currentPermissions = [];
+    let currentPermissionNames = [];
+    const finalPermissionsToAdd = [];
+    const finalPermissionsToRemove = [];
+
+    if (_.isArray(centersCanAccess) || _.isArray(programsCanAccess)) {
+      currentPermissions = await userService.permissions.getItemPermissions(
         assetData.id,
         leemons.plugin.prefixPN('asset.can-view'),
         { transacting }
       );
-      const currentPermissionNames = map(currentPermissions, 'permissionName');
+      currentPermissionNames = map(currentPermissions, 'permissionName');
+    }
 
-      const toDelete = [];
+    // -- Centers --
+    if (isArray(centersCanAccess)) {
       const toNothing = [];
-      const toAdd = [];
+      const permissionsToAdd = [];
 
-      forEach(programsCanAccess, (program) => {
-        const perm = `plugins.academic-portfolio.program.inside.${program}`;
+      _.forEach(centersCanAccess, (center) => {
+        if (_.isArray(centerProfilesCanAccess) && centerProfilesCanAccess.length) {
+          _.forEach(centerProfilesCanAccess, (profile) => {
+            permissionsToAdd.push(`plugins.users.center-profile.inside.${center}-${profile}`);
+          });
+        } else {
+          permissionsToAdd.push(`plugins.users.center.inside.${center}`);
+        }
+      });
+
+      // Comprobamos si ya tenemos el permiso y si no lo tenemos lo creamos de nuevo
+      forEach(permissionsToAdd, (perm) => {
         if (currentPermissionNames.includes(perm)) {
           toNothing.push(perm);
         } else {
-          toAdd.push(perm);
+          finalPermissionsToAdd.push(perm);
         }
       });
 
-      forEach(currentPermissionNames, (programPermission) => {
+      // Recorremos los permisos actuales, comprobamos si son de academic portfolio y si lo sin y no nos los han pasado de nuevo es que los han borrado
+      forEach(currentPermissionNames, (currentPerm) => {
+        if (currentPerm.startsWith('plugins.users.center') && !toNothing.includes(currentPerm)) {
+          finalPermissionsToRemove.push(currentPerm);
+        }
+      });
+    }
+
+    // -- Programs --
+    if (isArray(programsCanAccess)) {
+      const toNothing = [];
+      const permissionsToAdd = [];
+
+      _.forEach(programsCanAccess, (program) => {
+        if (_.isArray(programProfilesCanAccess) && programProfilesCanAccess.length) {
+          _.forEach(programProfilesCanAccess, (profile) => {
+            permissionsToAdd.push(
+              `plugins.academic-portfolio.program-profile.inside.${program}-${profile}`
+            );
+          });
+        } else {
+          permissionsToAdd.push(`plugins.academic-portfolio.program.inside.${program}`);
+        }
+      });
+
+      // Comprobamos si ya tenemos el permiso y si no lo tenemos lo creamos de nuevo
+      forEach(permissionsToAdd, (perm) => {
+        if (currentPermissionNames.includes(perm)) {
+          toNothing.push(perm);
+        } else {
+          finalPermissionsToAdd.push(perm);
+        }
+      });
+
+      // Recorremos los permisos actuales, comprobamos si son de academic portfolio y si lo sin y no nos los han pasado de nuevo es que los han borrado
+      forEach(currentPermissionNames, (currentPerm) => {
         if (
-          programPermission.startsWith('plugins.academic-portfolio.program.inside.') &&
-          !toNothing.includes(programPermission)
+          currentPerm.startsWith('plugins.academic-portfolio.program') &&
+          !toNothing.includes(currentPerm)
         ) {
-          toDelete.push(programPermission);
+          finalPermissionsToRemove.push(currentPerm);
         }
       });
+    }
 
-      if (toDelete.length) {
-        await userService.permissions.removeItems(
-          {
-            item: assetData.id,
-            type: leemons.plugin.prefixPN('asset.can-view'),
-            permissionName_$in: toDelete,
-          },
-          { transacting }
-        );
-      }
+    if (finalPermissionsToRemove.length) {
+      await userService.permissions.removeItems(
+        {
+          item: assetData.id,
+          type: leemons.plugin.prefixPN('asset.can-view'),
+          permissionName_$in: finalPermissionsToRemove,
+        },
+        { transacting }
+      );
+    }
 
-      if (toAdd.length) {
-        await Promise.all(
-          map(toAdd, (pName) =>
-            userService.permissions.addItem(
-              assetData.id,
-              leemons.plugin.prefixPN('asset.can-view'),
-              {
-                permissionName: pName,
-                actionNames: ['view'],
-              },
-              { isCustomPermission: true, transacting }
-            )
+    if (finalPermissionsToAdd.length) {
+      await Promise.all(
+        map(finalPermissionsToAdd, (pName) =>
+          userService.permissions.addItem(
+            assetData.id,
+            leemons.plugin.prefixPN('asset.can-view'),
+            {
+              permissionName: pName,
+              actionNames: ['view'],
+            },
+            { isCustomPermission: true, transacting }
           )
-        );
-      }
+        )
+      );
     }
 
     if (classesCanAccess?.length) {
