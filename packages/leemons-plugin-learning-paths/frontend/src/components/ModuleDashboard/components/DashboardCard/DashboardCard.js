@@ -148,7 +148,7 @@ function TeacherActions({ activity, localizations }) {
   );
 }
 
-function StudentActions({ activity, assignation, localizations }) {
+function StudentActions({ isBlocked, activity, assignation, localizations }) {
   const { assignable, id } = activity;
   const { roleDetails } = assignable;
 
@@ -163,10 +163,25 @@ function StudentActions({ activity, assignation, localizations }) {
     ?.replace(':user', assignation?.user);
 
   if (isFinished) {
+    if (isBlocked) {
+      return (
+        <Button disabled size="sm">
+          {localizations?.buttons?.review}
+        </Button>
+      );
+    }
     return (
       <Link to={evaluationUrl}>
         <Button size="sm">{localizations?.buttons?.review}</Button>
       </Link>
+    );
+  }
+
+  if (isBlocked) {
+    return (
+      <Button disabled size="sm">
+        {isStartedByStudent ? localizations?.buttons?.continue : localizations?.buttons?.start}
+      </Button>
     );
   }
   return (
@@ -178,7 +193,7 @@ function StudentActions({ activity, assignation, localizations }) {
   );
 }
 
-function Actions({ activity, assignation, localizations }) {
+function Actions({ isBlocked, activity, assignation, localizations }) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
 
@@ -191,14 +206,19 @@ function Actions({ activity, assignation, localizations }) {
   }
   if (isStudent) {
     return (
-      <StudentActions activity={activity} assignation={assignation} localizations={localizations} />
+      <StudentActions
+        isBlocked={isBlocked}
+        activity={activity}
+        assignation={assignation}
+        localizations={localizations}
+      />
     );
   }
 
   return <></>;
 }
 
-export function DashboardCard({ activity, assignation, localizations }) {
+export function DashboardCard({ activity, assignation, isBlocked, localizations }) {
   const {
     assignable,
     dates: { deadline },
@@ -262,7 +282,12 @@ export function DashboardCard({ activity, assignation, localizations }) {
           </Box>
           {/* Actions */}
           <Box className={classes.actionsContainer}>
-            <Actions activity={activity} assignation={assignation} localizations={localizations} />
+            <Actions
+              isBlocked={isBlocked}
+              activity={activity}
+              assignation={assignation}
+              localizations={localizations}
+            />
           </Box>
         </Box>
       </Box>
@@ -273,5 +298,6 @@ export function DashboardCard({ activity, assignation, localizations }) {
 DashboardCard.propTypes = {
   activity: PropTypes.object,
   assignation: PropTypes.object,
+  isBlocked: PropTypes.bool,
   localizations: PropTypes.object,
 };

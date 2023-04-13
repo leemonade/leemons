@@ -18,6 +18,7 @@ async function getInstancesData(instances, { userSession, transacting }) {
         'requiresScoring',
         'allowFeedback',
         'metadata',
+        'created_at',
       ],
       transacting,
     }

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, HtmlText, Loader, Text, createStyles } from '@bubbles-ui/components';
-import { capitalize, get, map } from 'lodash';
+import { capitalize, get, map, sortBy } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
@@ -187,6 +187,31 @@ function useHeaderData(module) {
   };
 }
 
+function useBlockedActivities({ activities, assignationsById }) {
+  const isStudent = useIsStudent();
+
+  return useMemo(() => {
+    if (!isStudent) {
+      return [];
+    }
+
+    const blockedActivities = [];
+
+    for (let i = 0, { length } = activities, blocking = false; i < length; i++) {
+      const { id, requirement } = activities[i];
+      const assignation = assignationsById[id];
+
+      if (blocking) {
+        blockedActivities[id] = true;
+      } else if (requirement === 'blocking' && !assignation?.finished) {
+        blocking = true;
+      }
+    }
+
+    return blockedActivities;
+  }, [activities, assignationsById, isStudent]);
+}
+
 export const useModuleDashboardBodyStyles = createStyles((theme, { marginTop }) => ({
   sidebarContainer: {
     minWidth: 280,
@@ -211,20 +236,30 @@ function ModuleDashboardBody({
   marginTop,
 }) {
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
+
+  const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
+
   return (
     <Box className={classes.body}>
       <Box className={classes.rootContainer}>
         <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
         {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
         <Box className={classes.activitiesList}>
-          {activities?.map((activity) => (
-            <DashboardCard
-              localizations={localizations}
-              activity={activitiesById[activity?.id]}
-              assignation={assignationsById[activity?.id]}
-              key={activity?.id}
-            />
-          ))}
+          {sortBy(
+            activities?.map((activity) => ({
+              comp: (
+                <DashboardCard
+                  isBlocked={!!blockedActivities[activity?.id]}
+                  localizations={localizations}
+                  activity={activitiesById[activity?.id]}
+                  assignation={assignationsById[activity?.id]}
+                  key={activity?.id}
+                />
+              ),
+              created_at: activitiesById[activity?.id].created_at,
+            })),
+            'created_at'
+          ).map((a) => a.comp)}
         </Box>
       </Box>
       <Box className={sidebarClasses.sidebarContainer}>

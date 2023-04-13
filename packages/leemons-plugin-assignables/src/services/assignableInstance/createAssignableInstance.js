@@ -122,7 +122,11 @@ async function createAssignableInstance(
       // ES: Guarda las fechas
       await registerDates('assignableInstance', id, dates, { userSession, transacting });
 
-      if (relatedAssignableInstances?.before?.length || relatedAssignableInstances?.after?.length) {
+      if (
+        relatedAssignableInstances?.before?.length ||
+        relatedAssignableInstances?.after?.length ||
+        relatedAssignableInstances?.blocking?.length
+      ) {
         await updateAssignableInstance.call(
           this,
           {

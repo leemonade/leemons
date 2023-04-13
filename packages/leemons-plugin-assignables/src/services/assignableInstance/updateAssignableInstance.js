@@ -54,6 +54,7 @@ async function createRelatedInstance(
         {
           id: relation.id,
           relatedAssignableInstances: {
+            ...relatedInstance.relatedAssignableInstances,
             [type]: relatedInstance.relatedAssignableInstances?.[type] || [],
             [oppositeType]: _.uniq([
               ...(relatedInstance.relatedAssignableInstances?.[oppositeType] || []),
@@ -173,6 +174,7 @@ async function updateAssignableInstance(
         cleanObj.relatedAssignableInstances = JSON.stringify({
           before: _.uniq(before),
           after: _.uniq(after),
+          blocking: _.uniq(assignableInstance.relatedAssignableInstances?.blocking),
         });
       }
 
