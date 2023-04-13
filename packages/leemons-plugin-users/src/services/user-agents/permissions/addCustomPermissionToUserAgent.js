@@ -6,7 +6,11 @@ const { table } = require('../../tables');
 const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
 const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
 
-async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting } = {}) {
+async function _addCustomPermissionToUserAgent(
+  userAgentId,
+  data,
+  { throwIfExists = true, transacting } = {}
+) {
   await existUserAgent({ id: userAgentId }, false, { transacting });
 
   const hasPermissions = _.uniq(
@@ -15,7 +19,11 @@ async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting 
     )
   );
   if (hasPermissions.length > 1 || hasPermissions[0]) {
-    throw new Error(`You have already been assigned this custom permit`);
+    if (throwIfExists) {
+      throw new Error(`You have already been assigned this custom permit`);
+    } else {
+      return null;
+    }
   }
 
   const dataToCreate = [];
@@ -55,7 +63,11 @@ async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting 
  * });
  *
  * */
-async function addCustomPermissionToUserAgent(userAgentId, data, { transacting } = {}) {
+async function addCustomPermissionToUserAgent(
+  userAgentId,
+  data,
+  { throwIfExists = true, transacting } = {}
+) {
   const _data = _.isArray(data) ? data : [data];
   _.forEach(_data, (d) => {
     validatePermissionName(d.permissionName, this.calledFrom);
@@ -65,13 +77,18 @@ async function addCustomPermissionToUserAgent(userAgentId, data, { transacting }
   if (_.isArray(userAgentId)) {
     const response = await global.utils.settledResponseToManyResponse(
       await Promise.allSettled(
-        _.map(userAgentId, (id) => _addCustomPermissionToUserAgent(id, _data, { transacting }))
+        _.map(userAgentId, (id) =>
+          _addCustomPermissionToUserAgent(id, _data, { throwIfExists, transacting })
+        )
       )
     );
     await removeAllItemsCache();
     return response;
   }
-  const response = await _addCustomPermissionToUserAgent(userAgentId, _data, { transacting });
+  const response = await _addCustomPermissionToUserAgent(userAgentId, _data, {
+    throwIfExists,
+    transacting,
+  });
   await removeAllItemsCache();
   return response;
 }
