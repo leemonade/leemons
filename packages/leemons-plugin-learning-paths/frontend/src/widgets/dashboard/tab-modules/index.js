@@ -20,6 +20,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import { useStudentState } from '@learning-paths/components/ModuleDashboard/components';
+import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 
 // useLocalizations
 
@@ -129,15 +130,43 @@ function useSwiperProps() {
   );
 }
 
+function useIsBlocked({ activity, assignation }) {
+  const isStudent = useIsStudent();
+  const { user } = assignation;
+  const isFinished = !!assignation?.finished;
+  const { blocking } = activity.relatedAssignableInstances;
+
+  const { data: assignations } = useAssignations({
+    queries: blocking.map((instance) => ({ instance, user })),
+    enabled: !!isStudent && !isFinished && !!blocking?.length,
+    placeholderData: [],
+  });
+
+  const isBlocked = useMemo(
+    () => assignations.some((dependant) => !dependant.finished),
+    [assignations]
+  );
+
+  return isBlocked;
+}
+
+export const useActivityCardStyles = createStyles(() => ({
+  blocked: {
+    cursor: 'not-allowed',
+  },
+}));
+
 function ActivityCard({ activity, assignation }) {
   const { roleDetails, role, id } = activity.assignable;
-  const roles = useRolesLocalizations([role]);
+  const isStudent = useIsStudent();
+
   const asset = prepareAsset(activity.assignable.asset);
+  const roles = useRolesLocalizations([role]);
   const roleIcon = roleDetails?.icon?.startsWith('/api')
     ? `${leemons.apiUrl}${roleDetails.icon}`
     : roleDetails?.icon;
 
-  const isStudent = useIsStudent();
+  const isBlocked = useIsBlocked({ activity, assignation });
   const { isFinished } = useStudentState({ assignation });
 
   let url = (roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id);
@@ -153,6 +182,24 @@ function ActivityCard({ activity, assignation }) {
   }
 
   const locale = useLocale();
+  const { classes } = useActivityCardStyles();
+
+  if (isBlocked) {
+    return (
+      <LibraryCard
+        fullHeight
+        variantIcon={
+          <Box style={{ position: 'relative', width: 16, height: 16 }}>
+            <ImageLoader src={roleIcon} width={16} height={16} />
+          </Box>
+        }
+        variantTitle={get(roles, `${role}.singular`)}
+        locale={locale}
+        asset={asset}
+        className={classes.blocked}
+      />
+    );
+  }
 
   return (
     <Link to={url} style={{ textDecoration: 'none' }}>
@@ -210,8 +257,6 @@ function ModuleRow({ module }) {
   const { name } = assignable.asset;
   const { activities } = metadata.module;
 
-  // const moduleActivities = useMemo(() => map(activities, 'activity'), [activities]);
-
   const { classes } = useModuleRowStyles();
 
   return (
@@ -225,7 +270,6 @@ function ModuleRow({ module }) {
       <Box className={classes.carousel}>
         <ActivitiesCarousel activities={activities} />
       </Box>
-      {/* {activities.map(({ activity }) => activity.assignable.asset.name)} */}
     </Box>
   );
 }
@@ -259,6 +303,9 @@ export default function ModulesTab({ classe: { id: klass, program } }) {
   );
 }
 
-// Index.propTypes = {
-// ...props: PropTypes.any,
-// }
+ModulesTab.propTypes = {
+  classe: PropTypes.shape({
+    id: PropTypes.string,
+    program: PropTypes.string,
+  }),
+};
