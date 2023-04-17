@@ -56,7 +56,7 @@ async function events(isInstalled) {
       [
         'plugins.emails:pluginDidLoadServices',
         'plugins.leebrary:pluginDidLoadServices',
-        'providers.emails-amazon-ses:providerDidLoadServices',
+        'providers.emails-aws-ses:providerDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {
@@ -258,6 +258,7 @@ async function events(isInstalled) {
         try {
           await initWidgets();
           leemons.events.emit('init-widgets');
+          leemons.log.info(chalk`{cyan.bold BULK} INITIALIZED Widgets plugin`);
         } catch (e) {
           // console.error(e);
         }

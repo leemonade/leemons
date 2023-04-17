@@ -4,6 +4,7 @@ const { validatePermissionName } = require('../../../validations/exists');
 const { validateUserAddCustomPermission } = require('../../../validations/permissions');
 const { table } = require('../../tables');
 const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
+const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
 
 async function _addCustomPermissionToUserAgent(userAgentId, data, { transacting } = {}) {
   await existUserAgent({ id: userAgentId }, false, { transacting });
@@ -62,13 +63,17 @@ async function addCustomPermissionToUserAgent(userAgentId, data, { transacting }
   });
 
   if (_.isArray(userAgentId)) {
-    return global.utils.settledResponseToManyResponse(
+    const response = await global.utils.settledResponseToManyResponse(
       await Promise.allSettled(
         _.map(userAgentId, (id) => _addCustomPermissionToUserAgent(id, _data, { transacting }))
       )
     );
+    await removeAllItemsCache();
+    return response;
   }
-  return _addCustomPermissionToUserAgent(userAgentId, _data, { transacting });
+  const response = await _addCustomPermissionToUserAgent(userAgentId, _data, { transacting });
+  await removeAllItemsCache();
+  return response;
 }
 
 module.exports = { addCustomPermissionToUserAgent };

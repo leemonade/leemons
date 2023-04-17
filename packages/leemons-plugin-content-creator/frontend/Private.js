@@ -17,14 +17,20 @@ export default function Private() {
 
   return (
     <Switch>
-      <Route path={`${path}/assign/:id`}>
+      <Route path={`${path}/:id/assign`}>
         <DocumentAssign session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/view/:id`}>
         <DocumentView session={session} fallback={<LoadingOverlay visible />} />
       </Route>
-      <Route path={`${path}/:id`}>
+      <Route path={`${path}/new`}>
+        <DocumentDetail session={session} fallback={<LoadingOverlay visible />} isNew key="new" />
+      </Route>
+      <Route path={`${path}/:id/edit`}>
         <DocumentDetail session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/:id/view`}>
+        <DocumentDetail session={session} fallback={<LoadingOverlay visible />} readOnly />
       </Route>
       <Route path={`${path}`}>
         <DocumentList session={session} fallback={<LoadingOverlay visible />} />

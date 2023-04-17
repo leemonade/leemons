@@ -1,6 +1,7 @@
+/* eslint-disable prefer-template */
+const _ = require('lodash');
 const exist = require('./exist');
 
-const _ = require('lodash');
 const { validateRoleType } = require('../../validations/exists');
 const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
 const { addPermissionMany } = require('./addPermissionMany');
@@ -38,7 +39,7 @@ async function update(
             transacting,
           }
         );
-        let ids = _.map(rolesInCenter, 'role');
+        const ids = _.map(rolesInCenter, 'role');
         const index = ids.indexOf(id);
         if (index >= 0) ids.splice(index, 1);
         query.id_$in = ids;

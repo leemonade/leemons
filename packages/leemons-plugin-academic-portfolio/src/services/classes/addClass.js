@@ -101,7 +101,10 @@ async function addClass(data, { userSession, transacting: _transacting } = {}) {
           if (!(await existSubstageInProgram(substage, nClass.program, { transacting }))) {
             throw new Error('substage not in program');
           }
-          promises.push(addSubstage(nClass.id, substage, { transacting }));
+          const substages = _.isArray(substage) ? substage : [substage];
+          _.forEach(substages, (sub) => {
+            promises.push(addSubstage(nClass.id, sub, { transacting }));
+          });
         }
         if (!course) {
           const programCourses = await getProgramCourses(nClass.program, { transacting });

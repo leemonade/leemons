@@ -1,4 +1,5 @@
 const {
+  assignModule,
   createModule,
   updateModule,
   duplicateModule,
@@ -7,6 +8,29 @@ const {
 } = require('../src/services/modules');
 
 module.exports = {
+  assign: async (ctx) => {
+    const { id } = ctx.request.params;
+    const { activities, assignationForm } = ctx.request.body;
+
+    try {
+      const assignation = await assignModule(
+        {
+          moduleId: id,
+          config: { activities, assignationForm },
+        },
+        { userSession: ctx.state.userSession, ctx }
+      );
+
+      ctx.status = 201;
+      ctx.body = { status: 201, assignation };
+    } catch (e) {
+      ctx.status = 400;
+      ctx.body = {
+        status: 400,
+        message: e.message,
+      };
+    }
+  },
   create: async (ctx) => {
     const { published, ...module } = ctx.request.body;
 

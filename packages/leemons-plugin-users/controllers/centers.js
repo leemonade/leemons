@@ -15,6 +15,7 @@ async function list(ctx) {
           },
         ],
       },
+      withLimits: { type: 'boolean' },
     },
     required: ['page', 'size'],
     additionalProperties: false,

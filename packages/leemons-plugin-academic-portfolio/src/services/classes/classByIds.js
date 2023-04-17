@@ -154,7 +154,7 @@ async function classByIds(
       parentClass: parentClassesById[rest.class],
       image: imagesById[rest.image],
       knowledges: knowledgesByClass[id] ? knowledgesById[knowledgesByClass[id][0].knowledge] : null,
-      substages: substagesByClass[id] ? substagesById[substagesByClass[id][0].substage] : null,
+      substages: map(substagesByClass[id], ({ substage }) => substagesById[substage]),
       // eslint-disable-next-line no-nested-ternary
       courses: coursesByClass[id]
         ? haveMultiCoursesByProgram[rest.program]

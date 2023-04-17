@@ -36,7 +36,9 @@ function useOnChange({ control, onChange }) {
     const isAlwaysAvailable = type === 'alwaysAvailable';
     onChange({
       alwaysAvailable: isAlwaysAvailable,
-      dates: isAlwaysAvailable ? null : dates,
+      dates: isAlwaysAvailable
+        ? null
+        : { ...dates, visualization: hideFromCalendar ? undefined : new Date() },
       hideFromCalendar: !!hideFromCalendar,
       maxTime: maxTimeToggle ? maxTime : null,
       raw: { type, dates, hideFromCalendar, maxTimeToggle, maxTime },
@@ -44,7 +46,7 @@ function useOnChange({ control, onChange }) {
   }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime]);
 }
 
-export function ActivityDatesPicker({ localizations, onChange, value, error }) {
+export function ActivityDatesPicker({ localizations, onChange, value, error, hideSectionHeaders }) {
   const options = React.useMemo(
     () => [
       {
@@ -75,7 +77,7 @@ export function ActivityDatesPicker({ localizations, onChange, value, error }) {
 
   const { classes } = useActivityDatesPickerStyles();
   return (
-    <Container title={localizations?.title}>
+    <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
       <Box className={classes.root}>
         <Controller
           name="type"
@@ -152,4 +154,5 @@ ActivityDatesPicker.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.func,
   error: PropTypes.any,
+  hideSectionHeaders: PropTypes.bool,
 };

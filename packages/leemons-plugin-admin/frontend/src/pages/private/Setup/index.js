@@ -1,20 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, LoadingOverlay, Stack, VerticalStepperContainer } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
-import { useStore } from '@common';
-import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
-import Centers from '@admin/pages/private/Setup/components/Centers';
 import Admins from '@admin/pages/private/Setup/components/Admins';
-import Profiles from '@admin/pages/private/Setup/components/Profiles';
-import Organization from '@admin/pages/private/Setup/components/Organization';
+import Centers from '@admin/pages/private/Setup/components/Centers';
 import Finish from '@admin/pages/private/Setup/components/Finish';
+import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
+import Organization from '@admin/pages/private/Setup/components/Organization';
+import Profiles from '@admin/pages/private/Setup/components/Profiles';
 import { getSettingsRequest } from '@admin/request/settings';
-import { Start } from './components/Start';
+import { Box, LoadingOverlay, Stack, VerticalStepperContainer } from '@bubbles-ui/components';
+import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { useStore } from '@common';
+import loadable from '@loadable/component';
+import { getLocalizations } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getZoneRequest } from '@widgets';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import { Locales } from './components/Locales';
+import { Start } from './components/Start';
+
+function dynamicImport(pluginName, component) {
+  return loadable(() => import(`@leemons/plugins/${pluginName}/src/widgets/${component}.js`));
+}
 
 // Pagina a la que solo tendra acceso el super admin
 function Setup({ session }) {
@@ -37,10 +46,26 @@ function Setup({ session }) {
     try {
       store.loading = true;
       render();
-      const { settings } = await getSettingsRequest();
+      const [{ zone }, { settings }] = await Promise.all([
+        getZoneRequest('plugins.admin.admin-page'),
+        getSettingsRequest(),
+      ]);
+      const keys = [];
+      _.forEach(zone.widgetItems, (item) => {
+        if (item.properties?.card?.title) {
+          keys.push(item.properties.card.title);
+        }
+        if (item.properties?.card?.description) {
+          keys.push(item.properties.card.description);
+        }
+      });
+      const { items } = await getLocalizations({ keys });
+
+      store.zoneTranslations = items;
+      store.zone = zone;
       store.configured = settings.configured;
       if (store.configured) {
-        store.steps = 6;
+        store.steps = 6 + store.zone.widgetItems.length;
       }
       render();
     } catch (e) {
@@ -75,46 +100,78 @@ function Setup({ session }) {
     }
   };
 
+  const steppers = React.useMemo(() => {
+    const steps = [
+      { label: t('welcome.label'), status: 'OK' },
+      { label: t('organization.label'), status: 'OK' },
+      { label: t('mails.label'), status: 'OK' },
+      { label: t('languages.label'), status: 'OK' },
+      { label: t('centers.label'), status: 'OK' },
+      { label: t('profiles.label'), status: 'OK' },
+      { label: t('admins.label'), status: 'OK' },
+    ];
+    _.forEach(store.zone?.widgetItems, (item) => {
+      steps.push({ label: store.zoneTranslations[item.properties?.card?.title], status: 'OK' });
+    });
+    return steps;
+  }, [store.zone]);
+
+  const steppersDom = React.useMemo(() => {
+    const stepsDom = [
+      <Start
+        key="s1"
+        onNext={handleOnNext}
+        zone={store.zone}
+        zoneTranslations={store.zoneTranslations}
+        onNextLabel={t('common.labels.nextButton')}
+      />,
+      <Organization
+        key="s2"
+        onNext={handleOnNext}
+        onNextLabel={t('common.labels.saveAndNextButton')}
+      />,
+      <MailProviders
+        key="s3"
+        onNext={handleOnNext}
+        onNextLabel={t('common.labels.saveAndNextButton')}
+      />,
+      <Locales
+        key="s4"
+        configured={store.configured}
+        onNext={handleOnNext}
+        onNextLabel={t('common.labels.saveAndNextButton')}
+      />,
+      <Centers key="s5" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
+      <Profiles
+        key="s6"
+        onNext={handleOnNext}
+        onNextLabel={t('common.labels.saveAndNextButton')}
+      />,
+      <Admins key="s7" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
+    ];
+
+    _.forEach(store.zone?.widgetItems, (item) => {
+      const Component = dynamicImport(item.pluginName, item.url);
+      stepsDom.push(
+        <Component
+          key={item.id}
+          configured={store.configured}
+          onNext={handleOnNext}
+          onNextLabel={t('common.labels.saveAndNextButton')}
+        />
+      );
+    });
+
+    return stepsDom;
+  }, [store.zone]);
+
   if (store.loading) return <LoadingOverlay visible />;
-
-  const steppers = [
-    { label: t('welcome.label'), status: 'OK' },
-    { label: t('organization.label'), status: 'OK' },
-    { label: t('mails.label'), status: 'OK' },
-    { label: t('languages.label'), status: 'OK' },
-    { label: t('centers.label'), status: 'OK' },
-    { label: t('profiles.label'), status: 'OK' },
-    { label: t('admins.label'), status: 'OK' },
-  ];
-
-  const steppersDom = [
-    <Start key="s1" onNext={handleOnNext} onNextLabel={t('common.labels.nextButton')} />,
-    <Organization
-      key="s2"
-      onNext={handleOnNext}
-      onNextLabel={t('common.labels.saveAndNextButton')}
-    />,
-    <MailProviders
-      key="s3"
-      onNext={handleOnNext}
-      onNextLabel={t('common.labels.saveAndNextButton')}
-    />,
-    <Locales
-      key="s4"
-      configured={store.configured}
-      onNext={handleOnNext}
-      onNextLabel={t('common.labels.saveAndNextButton')}
-    />,
-    <Centers key="s5" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
-    <Profiles key="s6" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
-    <Admins key="s7" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
-  ];
 
   const stepperProps = {};
 
   if (!store.configured) {
     steppers.push({ label: t('finish.label'), status: 'OK' });
-    steppersDom.push(<Finish key="s8" />);
+    steppersDom.push(<Finish key={`s${steppersDom.length}${1}`} />);
   } else {
     stepperProps.completedSteps = [...Array(store.steps + 1).keys()];
     stepperProps.visitedSteps = [...Array(store.steps + 1).keys()];

@@ -2,7 +2,7 @@ import { NotificationProvider } from '@bubbles-ui/notifications';
 import { useStore } from '@common';
 import ContextButton from '@comunica/components/ContextButton';
 import RoomService from '@comunica/RoomService';
-import SocketIoService from '@socket-io/service';
+import SocketIoService from '@mqtt-socket-io/service';
 import { getCentersWithToken, useSession } from '@users/session';
 import PropTypes from 'prop-types';
 import React from 'react';

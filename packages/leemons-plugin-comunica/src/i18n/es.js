@@ -77,7 +77,7 @@ module.exports = {
     students: 'Estudiantes',
     studentsCanAddTeachersToGroups: 'Permitir a los estudiantes agregar a docentes a grupos',
     disableChatsBetweenStudentsAndTeachers:
-      'No permitir a los estudiantes mandar mensajes privados a los docentes (excepto en las salas de actividades/evaluación)',
+      'Impedir a los estudiantes mandar mensajes privados a los docentes (excepto en las salas de actividades/evaluación)',
     saveDone: 'Datos actualizados',
   },
 };

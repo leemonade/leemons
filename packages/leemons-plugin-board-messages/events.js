@@ -21,34 +21,34 @@ async function events(isInstalled) {
     await addLocales(locale.code);
   });
 
-  if (!isInstalled) {
-    leemons.events.once(
-      ['plugins.dashboard:init-widget-zones', 'plugins.academic-portfolio:init-widget-zones'],
-      async () => {
-        await Promise.all(
-          _.map(widgets.zones, (config) =>
-            leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
+  leemons.events.once(
+    ['plugins.dashboard:init-widget-zones', 'plugins.academic-portfolio:init-widget-zones'],
+    async () => {
+      await Promise.allSettled(
+        _.map(widgets.zones, (config) =>
+          leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
+            name: config.name,
+            description: config.description,
+          })
+        )
+      );
+      leemons.events.emit('init-widget-zones');
+      await Promise.allSettled(
+        _.map(widgets.items, (config) =>
+          leemons
+            .getPlugin('widgets')
+            .services.widgets.setItemToZone(config.zoneKey, config.key, config.url, {
               name: config.name,
               description: config.description,
+              properties: config.properties,
             })
-          )
-        );
-        leemons.events.emit('init-widget-zones');
-        await Promise.all(
-          _.map(widgets.items, (config) =>
-            leemons
-              .getPlugin('widgets')
-              .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
-                name: config.name,
-                description: config.description,
-                properties: config.properties,
-              })
-          )
-        );
-        leemons.events.emit('init-widget-items');
-      }
-    );
+        )
+      );
+      leemons.events.emit('init-widget-items');
+    }
+  );
 
+  if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);

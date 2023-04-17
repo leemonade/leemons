@@ -53,7 +53,7 @@ function useProgressLocalizations() {
   }, [translations]);
 }
 
-function Progress({ assignation }) {
+function Progress({ assignation, isBlocked }) {
   const { instance } = assignation;
   const { classes } = instance;
 
@@ -118,14 +118,6 @@ function Progress({ assignation }) {
     );
   }
 
-  if (!studentHasStarted) {
-    return (
-      <Badge closable={false} color="stroke" severity={severity}>
-        {labels?.notStarted}
-      </Badge>
-    );
-  }
-
   if (studentHasFinished) {
     if (isEvaluable) {
       return (
@@ -138,6 +130,22 @@ function Progress({ assignation }) {
     return (
       <Badge closable={false} color="stroke" severity="success">
         {labels?.ended}
+      </Badge>
+    );
+  }
+
+  if (isBlocked) {
+    return (
+      <Badge closable={false} color="stroke" severity={severity}>
+        {labels?.blocked}
+      </Badge>
+    );
+  }
+
+  if (!studentHasStarted) {
+    return (
+      <Badge closable={false} color="stroke" severity={severity}>
+        {labels?.notStarted}
       </Badge>
     );
   }
@@ -186,9 +194,16 @@ export async function parseAssignationForStudentView(assignation, labels, option
   const { instance } = assignation;
 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
+
+  const blockingActivitiesById = options.blockingActivities;
+  const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
+
+  const isBlocked = blockingActivities.some((id) => !blockingActivitiesById[id].finished);
+
   return {
     ...commonData,
-    progress: <Progress assignation={assignation} />,
+    isBlocked,
+    progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
     messages: <UnreadMessages rooms={assignation.chatKeys} />,
     dashboardURL: () => getDashboardURL(assignation),
   };

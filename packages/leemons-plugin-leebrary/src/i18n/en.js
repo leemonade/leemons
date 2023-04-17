@@ -250,6 +250,35 @@ module.exports = {
       unpin: 'Unpin',
       toggle: 'Toggle',
       open: 'Open',
+      covertToTask: 'Convert to task',
+    },
+  },
+  pickerDrawer: {
+    header: {
+      title: 'Library',
+    },
+    tabs: {
+      library: 'Library',
+      new: 'New resource',
+    },
+    filters: {
+      search: {
+        label: 'Search',
+        placeholder: 'Search resources',
+      },
+      resources: {
+        label: 'Categories',
+        placeholder: 'Select a category',
+      },
+    },
+  },
+  admin: {
+    card: {
+      title: 'Bookstore Suppliers',
+      description: 'Configure your suppliers for library management',
+    },
+    setup: {
+      chooseProvider: 'Choose provider',
     },
   },
 };

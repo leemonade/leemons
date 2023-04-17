@@ -1,19 +1,34 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, uniq } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { useObservableContext } from '@common/context/ObservableContext';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
+
+function useDefaultValues() {
+  const { getValues } = useObservableContext();
+
+  useMemo(() => {
+    const [instructionsForTeachers, instructionsForStudents] = getValues([
+      'sharedData.instructionsForTeachers',
+      'sharedData.instructionsForStudents',
+    ]);
+
+    return {
+      instructionsForTeachers,
+      instructionsForStudents,
+    };
+  }, []);
+}
 
 function InstructionData({
   labels,
   placeholders,
   helps,
   errorMessages,
-  sharedData,
-  setSharedData,
   editable,
   onNext,
   onPrevious,
@@ -22,18 +37,14 @@ function InstructionData({
 }) {
   // ·······························································
   // FORM
+  const { getValues, setValue } = useObservableContext();
   const [loading, setLoading] = React.useState(null);
 
-  const defaultValues = {
-    instructionsForTeachers: '',
-    instructionsForStudents: '',
-    ...sharedData,
-  };
+  const defaultValues = useDefaultValues();
 
   const {
     control,
     handleSubmit,
-    getValues,
     formState: { errors, isDirty },
   } = useForm({ defaultValues });
 
@@ -41,6 +52,8 @@ function InstructionData({
 
   const onSubmit = useCallback(
     (e) => {
+      const sharedData = getValues('sharedData');
+
       const data = {
         ...sharedData,
         ...e,
@@ -49,11 +62,12 @@ function InstructionData({
           visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'instructionData']),
         },
       };
-      setSharedData(data);
+
+      setValue('sharedData', data);
 
       return data;
     },
-    [setSharedData, sharedData]
+    [getValues, setValue]
   );
   useEffect(() => {
     const f = (event) => {
@@ -88,28 +102,27 @@ function InstructionData({
     subscribe(f);
 
     return () => unsubscribe(f);
-  }, [isDirty, setSharedData, emitEvent, handleSubmit, subscribe, unsubscribe, setLoading]);
+  }, [isDirty, onSubmit, emitEvent, handleSubmit, subscribe, unsubscribe, setLoading]);
 
   // ·······························································
   // HANDLERS
 
   const handleOnPrev = () => {
     if (!isDirty) {
-      onPrevious(sharedData);
+      onPrevious();
 
       return;
     }
 
     handleSubmit((values) => {
-      const data = { ...sharedData, ...values };
-      if (isFunction(setSharedData)) setSharedData(data);
-      if (isFunction(onPrevious)) onPrevious(data);
+      onSubmit(values);
+      if (isFunction(onPrevious)) onPrevious();
     })();
   };
 
   const handleOnNext = (e) => {
-    const data = onSubmit(e);
-    if (isFunction(onNext)) onNext(data);
+    onSubmit(e);
+    if (isFunction(onNext)) onNext();
   };
 
   // ---------------------------------------------------------------
@@ -128,9 +141,6 @@ function InstructionData({
             <Controller
               control={control}
               name="instructionsForTeachers"
-              // rules={{
-              //   required: errorMessages.forTeacher?.required,
-              // }}
               render={({ field }) => (
                 <TextEditorInput
                   {...field}
@@ -138,7 +148,6 @@ function InstructionData({
                   placeholder={placeholders.forTeacher}
                   help={helps.forTeacher}
                   error={errors.instructionsForTeachers}
-                  // required={!isEmpty(errorMessages.forTeacher?.required)}
                 />
               )}
             />
@@ -147,7 +156,6 @@ function InstructionData({
             <Controller
               control={control}
               name="instructionsForStudents"
-              // rules={{ required: errorMessages.forStudent?.required }}
               render={({ field }) => (
                 <TextEditorInput
                   {...field}
@@ -155,7 +163,6 @@ function InstructionData({
                   placeholder={placeholders.forStudent}
                   help={helps.forStudent}
                   error={errors.instructionsForStudents}
-                  // required={!isEmpty(errorMessages.forStudent?.required)}
                 />
               )}
             />

@@ -8,7 +8,6 @@ const events = require('events-async');
 const execa = require('execa');
 const _ = require('lodash');
 const chalk = require('chalk');
-const bodyParser = require('koa-bodyparser');
 const ora = require('ora');
 const uuid = require('uuid');
 const withTelemetry = require('leemons-telemetry/withTelemetry');
@@ -17,6 +16,7 @@ const fetch = require('node-fetch');
 
 const leemonsUtils = require('leemons-utils');
 const { createDatabaseManager } = require('leemons-database');
+const CacheManager = require('leemons-cache/lib');
 
 const { loadConfiguration } = require('./core/config/loadConfig');
 const { loadCoreModels } = require('./core/model/loadModel');
@@ -119,9 +119,8 @@ class Leemons {
         const minutes = time.getMinutes();
         const seconds = time.getSeconds();
         const milliseconds = time.getMilliseconds();
-        const timeString = `${
-          (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-        }${milliseconds}ms`;
+        const timeString = `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+          }${milliseconds}ms`;
 
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
@@ -163,7 +162,7 @@ class Leemons {
     // TODO: Handle Errors and connections
 
     // Function for server's clean exit
-    this.server.destroy = (cb = () => {}) => {
+    this.server.destroy = (cb = () => { }) => {
       this.server.close(cb);
       // TODO: Close all connections
     };
@@ -215,9 +214,8 @@ class Leemons {
         const start = ctx._startAt.getTime();
         const end = new Date().getTime();
         this.log.http(
-          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
-            ctx.ip
-          }} {gray ${end - start} ms}`,
+          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip
+            }} {gray ${end - start} ms}`,
           {
             id: ctx._id,
             ip: ctx.ip,
@@ -249,7 +247,7 @@ class Leemons {
 
         try {
           authorization = JSON.parse(authorization);
-        } catch (e) {}
+        } catch (e) { }
 
         ctx.state.authorization = authorization;
 
@@ -338,7 +336,16 @@ class Leemons {
         );
 
         if (!isGood) {
-          LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
+          const isSocketIo = (this.env.MQTT_PLUGIN || 'mqtt-socket-io') === 'mqtt-socket-io';
+
+          if (isSocketIo) {
+            LeemonsSocket.worker.emit(ctx.state.userSession.id, 'USER_AGENT_NEED_UPDATE_DATASET');
+          } else {
+            this.plugins[this.env.MQTT_PLUGIN || 'mqtt-socket-io'].services.socket.worker.emit(
+              ctx.state.userSession.id,
+              'USER_AGENT_NEED_UPDATE_DATASET'
+            );
+          }
         }
         return next();
       } catch (err) {
@@ -402,6 +409,10 @@ class Leemons {
   setRoutes(plugins) {
     this.events.emit('willSetRoutes', 'leemons');
     // TODO: Remove server reload endpoint
+    this.backRouter.get('/api/status', (ctx) => {
+      ctx.body = { status: 200, message: 'ok' };
+      ctx.status = 200;
+    });
     this.backRouter.get('/api/reload', (ctx) => {
       ctx.body = { reloading: true };
       this.reload();
@@ -463,8 +474,7 @@ class Leemons {
               );
             } else {
               this.log.error(
-                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${
-                  plugin.name
+                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${plugin.name
                 }${route.path}`
               );
             }
@@ -514,9 +524,21 @@ class Leemons {
     return this.db.query(model, plugin);
   }
 
+  // TODO: Move to leemons-cache and create leemons-cache-connector-redis
+  async initCache() {
+    if (!this.cache) {
+      const cacheManager = new CacheManager({ leemons: this });
+      this.cache = await cacheManager.init();
+    }
+
+    return this.cache;
+  }
+
   async loadBack(parent) {
     return withTelemetry('loadBack', parent, async (loadBackTelemetry) => {
       await withTelemetry('initDatabase', loadBackTelemetry, async (t) => {
+        this.cache = await this.initCache();
+
         /*
          * Create a DatabaseManager for managing the database connections and models
          */
@@ -619,8 +641,7 @@ class Leemons {
       const prepareFront = ora('Starting frontend server').start();
       // Start production frontend app
       const start = execa.command(
-        `yarn --cwd ${leemons.dir.frontend} ${
-          process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
+        `yarn --cwd ${leemons.dir.frontend} ${process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
         }`,
         {
           ...process.env,
@@ -654,7 +675,9 @@ class Leemons {
   async loadAppConfig() {
     return withTelemetry('loadAppConfig', async () => {
       leemons.events.emit('appWillLoadConfig', 'leemons');
-      this.config = (await loadConfiguration(this, { useProcessEnv: true })).configProvider;
+      const config = await loadConfiguration(this, { useProcessEnv: true });
+      this.config = config.configProvider;
+      this.env = config.env;
       leemons.events.emit('appDidLoadConfig', 'leemons');
 
       if (this.config.get('config.insecure', false)) {
@@ -711,26 +734,30 @@ class Leemons {
 
     await this.load();
 
-    LeemonsSocket.worker.init(this.server);
-    LeemonsSocket.worker.onConnection((socket) => {
-      console.log('Connected to socket.io', socket.session.email);
-    });
-
-    LeemonsSocket.worker.use(async (socket, next) => {
-      const authenticate = this.authenticatedMiddleware(true);
-
-      const ctx = {
-        state: {},
-        headers: { authorization: socket.handshake.auth.token },
-      };
-
-      const response = await authenticate(ctx, () => true);
-
-      if (response) {
-        socket.session = ctx.state.userSession;
-        next();
-      }
-    });
+    const isSocketIo = (this.env.MQTT_PLUGIN || 'mqtt-socket-io') === 'mqtt-socket-io';
+    if (isSocketIo) {
+      LeemonsSocket.worker.init(this.server);
+      LeemonsSocket.worker.onConnection((socket) => {
+        console.log('Connected to socket.io', socket.session.email);
+      });
+      LeemonsSocket.worker.use(async (socket, next) => {
+        const authenticate = this.authenticatedMiddleware(true);
+        const ctx = {
+          state: {},
+          headers: { authorization: socket.handshake.auth.token },
+        };
+        const response = await authenticate(ctx, () => true);
+        if (response) {
+          // eslint-disable-next-line no-param-reassign
+          socket.session = ctx.state.userSession;
+          next();
+        }
+      });
+    } else {
+      this.plugins[this.env.MQTT_PLUGIN || 'mqtt-socket-io'].services.socket.worker.init(
+        this.server
+      );
+    }
 
     this.server.listen(process.env.PORT, () => {
       this.events.emit('appDidStart', 'leemons');

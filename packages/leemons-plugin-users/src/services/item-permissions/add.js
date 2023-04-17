@@ -5,6 +5,7 @@ const { table } = require('../tables');
 const { validateExistItemPermissions } = require('../../validations/exists');
 const { validateItemPermission } = require('../../validations/item-permissions');
 const { existMany } = require('../permissions/existMany');
+const { removeAllItemsCache } = require('./removeAllItemsCache');
 
 /**
  * ES:
@@ -84,7 +85,9 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
       });
     });
   });
-  return table.itemPermissions.createMany(toSave, { transacting });
+  const response = await table.itemPermissions.createMany(toSave, { transacting });
+  await removeAllItemsCache();
+  return response;
 }
 
 module.exports = { add };

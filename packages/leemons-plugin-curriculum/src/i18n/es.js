@@ -6,6 +6,7 @@ module.exports = {
     page_title: 'Librería de Curricula',
     published: 'Publicados',
     draft: 'Borradores',
+    empty: 'No hay ningún recurso disponible',
     page_description:
       'Estos son los planes de estudio de los programas que se imparten en el centro.',
   },
@@ -179,8 +180,17 @@ module.exports = {
     useContentRelations: 'Relaciones de contenido',
     relatedTo: 'Relacionado con',
     typeOfRelation: 'Tipo de relación',
+    showNumeration: 'Mostrar numeración',
+    content: 'Contenido',
+    numbering: 'Numeración',
     father: 'Padre',
     label: 'Etiqueta',
+    nextStep: {
+      title: 'Atención',
+      description:
+        '¿Seguro que quieres continuar? No podras volver a editar los campos ahora creados (Si podras añadir nuevos)',
+      confirm: 'Continuar',
+    },
   },
   addCurriculumStep3: {
     pageTitle: 'Carga de contenido',

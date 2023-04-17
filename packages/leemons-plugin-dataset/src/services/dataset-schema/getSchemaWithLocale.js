@@ -114,6 +114,8 @@ async function getSchemaWithLocale(
       userSession.userAgents,
       'edit'
     );
+
+    // TODO Sacar los centros de los useragents y borrar todas las propiedades donde sus centro no esten entre los de los userAgents (El campo que tenga de entro el * siempre saldra)
     _.forInRight(schema.compileJsonSchema.properties, (value, key) => {
       if (goodKeys.indexOf(key) < 0) {
         delete schema.compileJsonSchema.properties[key];

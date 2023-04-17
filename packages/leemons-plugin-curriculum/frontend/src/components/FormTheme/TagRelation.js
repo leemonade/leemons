@@ -1,9 +1,9 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { Badge, Box, createStyles, MultiSelect } from '@bubbles-ui/components';
 import { ellipsis, htmlToText, useStore } from '@common';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -42,61 +42,86 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
     const nodeLevelId = ids[0];
     const formValueId = ids[1];
     const nodes = _.filter(flatNodes, { nodeLevel: nodeLevelId });
+
     _.forEach(nodes, (node) => {
       if (node.id !== nodeId) {
         const nodeLevel = nodeLevelsById[node.nodeLevel];
         const _blockData =
           nodeLevel.schema.compileJsonSchema.properties[formValueId].frontConfig.blockData;
-        const nodeValue = node?.formValues?.[formValueId];
+        const _nodeValue = node?.formValues?.[formValueId];
 
-        if (nodeValue) {
-          if (_.isArray(nodeValue.value)) {
-            _.forEach(nodeValue.value, (val, index) => {
-              const number = getItemTitleNumberedWithParents(
-                curriculum,
-                _blockData,
-                node.id,
-                nodeValue,
-                index
-              );
-              selectData.push({
-                label: `${ellipsis(`${number ? `${number} ` : ''}${htmlToText(val.value)}`, 36)}`,
-                value: `${nodeValue.id}|${val.id}`,
-              });
-            });
-          } else if (_.isObject(nodeValue.value)) {
-            _.forIn(nodeValue.value, (val, k) => {
-              if (_.isArray(val.value)) {
-                _.forEach(val.value, (v, index) => {
-                  const number = getItemTitleNumberedWithParents(
-                    curriculum,
-                    _blockData,
-                    node.id,
-                    {
-                      ...v,
-                      metadata: { ...v?.metadata, parentRelated: val?.metadata?.parentRelated },
-                    },
-                    index,
-                    getGroupItem(k)
-                  );
-                  selectData.push({
-                    label: ellipsis(`${number ? `${number} ` : ''}${htmlToText(v.value)}`, 36),
-                    value: `${nodeValue.id}|${val.id}|${v.id}`,
-                  });
-                });
-              } else if (val.value) {
+        if (_nodeValue) {
+          const nodeValues = _.isArray(_nodeValue) ? _nodeValue : [_nodeValue];
+
+          _.forEach(nodeValues, (nodeValue) => {
+            if (_.isArray(nodeValue.value)) {
+              _.forEach(nodeValue.value, (val, index) => {
+                const number = getItemTitleNumberedWithParents(
+                  curriculum,
+                  _blockData,
+                  node.id,
+                  nodeValue,
+                  index
+                );
+
+                const rel = _.find(blockData.contentRelations, ({ relatedTo }) =>
+                  relatedTo.indexOf(_blockData.id)
+                );
+                let text = `${number ? `${number} ` : ''}${htmlToText(val.value)}`;
+                if (rel.showNumeration === 'numbering') {
+                  text = number;
+                } else if (rel.showNumeration === 'content') {
+                  text = htmlToText(val.value);
+                }
                 selectData.push({
-                  label: ellipsis(`${htmlToText(val.value)}`, 36),
+                  label: `${ellipsis(text, 36)}`,
                   value: `${nodeValue.id}|${val.id}`,
                 });
-              }
-            });
-          } else if (nodeValue.value) {
-            selectData.push({
-              label: ellipsis(`${htmlToText(nodeValue.value)}`, 36),
-              value: nodeValue.id,
-            });
-          }
+              });
+            } else if (_.isObject(nodeValue.value)) {
+              _.forIn(nodeValue.value, (val, k) => {
+                if (_.isArray(val.value)) {
+                  _.forEach(val.value, (v, index) => {
+                    const item = _.find(_blockData.elements, { id: k });
+                    const number = getItemTitleNumberedWithParents(
+                      curriculum,
+                      _blockData,
+                      node.id,
+                      {
+                        ...val,
+                        metadata: { ...val?.metadata, parentRelated: val?.metadata?.parentRelated },
+                      },
+                      index,
+                      item
+                    );
+                    const rel = _.find(blockData.contentRelations, ({ relatedTo }) =>
+                      relatedTo.indexOf(_blockData.id)
+                    );
+                    let text = `${number ? `${number} ` : ''}${htmlToText(v.value)}`;
+                    if (rel.showNumeration === 'numbering') {
+                      text = number;
+                    } else if (rel.showNumeration === 'content') {
+                      text = htmlToText(v.value);
+                    }
+                    selectData.push({
+                      label: ellipsis(text, 36),
+                      value: `${nodeValue.id}|${val.id}|${v.id}`,
+                    });
+                  });
+                } else if (val.value) {
+                  selectData.push({
+                    label: ellipsis(`${htmlToText(val.value)}`, 36),
+                    value: `${nodeValue.id}|${val.id}`,
+                  });
+                }
+              });
+            } else if (nodeValue.value) {
+              selectData.push({
+                label: ellipsis(`${htmlToText(nodeValue.value)}`, 36),
+                value: nodeValue.id,
+              });
+            }
+          });
         }
       }
     });

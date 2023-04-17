@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, Select, ImageLoader, Text } from '@bubbles-ui/components';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { Box, ImageLoader, Select, Text } from '@bubbles-ui/components';
+import React from 'react';
 
 export function SubjectItem({ subject, isValueComponent, ...props }) {
   if (!subject) {

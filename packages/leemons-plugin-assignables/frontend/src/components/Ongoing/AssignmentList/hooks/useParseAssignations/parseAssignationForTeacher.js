@@ -12,7 +12,8 @@ import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 
 function Completion({ instance }) {
-  const { students, requiresScoring } = instance;
+  const { requiresScoring } = instance;
+  const students = React.useMemo(() => instance.students || [], [instance.students]);
 
   const studentsCount = React.useMemo(() => students.length, [students]);
   const studentsWhoCompleted = React.useMemo(
@@ -104,7 +105,8 @@ function useEvaluatedLocalizations() {
 }
 
 function Evaluated({ instance }) {
-  const { students, requiresScoring, classes } = instance;
+  const { requiresScoring, classes } = instance;
+  const students = React.useMemo(() => instance.students || [], [instance.students]);
 
   const classesSubjects = useClassesSubjects(classes);
   const subjectsCount = classesSubjects.length;

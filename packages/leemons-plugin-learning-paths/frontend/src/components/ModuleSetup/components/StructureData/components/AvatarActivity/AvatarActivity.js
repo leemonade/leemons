@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 
 import prepareAsset from '@leebrary/helpers/prepareAsset';
+import { isString } from 'lodash';
 import { useAvatarActivityStyles } from './AvatarActivity.styles';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -12,6 +13,8 @@ export function AvatarActivity({ activity }) {
   const activityTypeIcon = activity.roleDetails.icon;
 
   const preparedAsset = prepareAsset(activity?.asset);
+
+  const iconIsUrl = isString(activityTypeIcon);
 
   const { classes } = useAvatarActivityStyles({ activityColor });
 
@@ -24,7 +27,11 @@ export function AvatarActivity({ activity }) {
       )}
       <Box className={classes.activityType}>
         <Box className={classes.activityTypeIcon}>
-          <ImageLoader src={activityTypeIcon} width={12} height={12} />
+          {iconIsUrl ? (
+            <ImageLoader src={activityTypeIcon} width={12} height={12} />
+          ) : (
+            activityTypeIcon
+          )}
         </Box>
       </Box>
     </Box>

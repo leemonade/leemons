@@ -116,6 +116,7 @@ module.exports = {
     },
     buttons: {
       assign: 'Assign',
+      save: 'Save', // Used on modules assignation drawer
     },
   },
   activity_deadline_header: {
@@ -244,6 +245,7 @@ module.exports = {
     ended: 'Finished',
     notSubmitted: 'Not submitted',
     noLimit: 'No time limit',
+    blocked: 'Blocked',
   },
   teacher_actions: {
     sendReminder: 'Send reminder',
@@ -302,6 +304,7 @@ module.exports = {
   },
   activities_list: {
     emptyState: 'There are no activities yet',
+    blocked: 'The selected activity is blocked',
   },
   ongoing: {
     ongoing: 'Ongoing activities',

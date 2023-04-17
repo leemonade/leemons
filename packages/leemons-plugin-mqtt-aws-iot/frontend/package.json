@@ -1,0 +1,10 @@
+{
+  "name": "mqtt-aws-iot-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-iot-device-sdk-v2": "^1.9.5"
+  },
+  "devDependencies": {}
+}

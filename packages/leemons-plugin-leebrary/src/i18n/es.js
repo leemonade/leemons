@@ -237,6 +237,35 @@ module.exports = {
       unpin: 'Despinear',
       toggle: 'Cerrar',
       open: 'Abrir',
+      covertToTask: 'Convertir a tarea',
+    },
+  },
+  pickerDrawer: {
+    header: {
+      title: 'Librería',
+    },
+    tabs: {
+      library: 'Librería',
+      new: 'Nuevo recurso',
+    },
+    filters: {
+      search: {
+        label: 'Buscar',
+        placeholder: 'Buscar recursos',
+      },
+      resources: {
+        label: 'Categorías',
+        placeholder: 'Seleccionar categoría',
+      },
+    },
+  },
+  admin: {
+    card: {
+      title: 'Proveedores de libreria',
+      description: 'Configura tus proveedores para la gestion de la libreria',
+    },
+    setup: {
+      chooseProvider: 'Selecciona un proveedor',
     },
   },
 };

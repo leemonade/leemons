@@ -7,6 +7,7 @@ import {
   Grid,
   PageContainer,
   Paper,
+  useTree,
   Tree,
   useResizeObserver,
 } from '@bubbles-ui/components';
@@ -77,6 +78,13 @@ export default function TreePage() {
     firstLoading: true,
   });
   const { openDeleteConfirmationModal, setLoading, layoutState } = useLayout();
+  const treeProps = useTree();
+
+  const [containerRef, container] = useResizeObserver();
+  const [headerBaseRef, headerBase] = useResizeObserver();
+  const [headerDescriptionRef, headerDescription] = useResizeObserver();
+  
+  const params = useQuery();
 
   function onScroll() {
     store.scroll = layoutState.contentRef.current.scrollTop;
@@ -92,11 +100,11 @@ export default function TreePage() {
     };
   }, [layoutState.contentRef.current]);
 
-  const [containerRef, container] = useResizeObserver();
-  const [headerBaseRef, headerBase] = useResizeObserver();
-  const [headerDescriptionRef, headerDescription] = useResizeObserver();
-
-  const params = useQuery();
+  useEffect(() => {
+    if(store.tree) {
+      treeProps.setTreeData(store.tree);
+    }
+  }, [store.tree]);
 
   function getTreeItemByTreeId(treeId) {
     const item = find(store.tree, { id: treeId });
@@ -197,13 +205,13 @@ export default function TreePage() {
           const course = find(parents, { nodeType: 'courses' });
           const groups = find(parents, { nodeType: 'groups' });
           const courseName = course ? course.value.index : '';
-          const substageName = item.value.substages
+          const substageName = item.value.substages && item.value.substages.abbreviation
             ? ` - ${item.value.substages.abbreviation}`
             : '';
           let groupName = '';
           if (!groups) {
             groupName =
-              item.value.groups && !item.value.groups.isAlone
+              item.value.groups && !item.value.groups.isAlone && item.value.groups.abbreviation
                 ? ` - ${item.value.groups.abbreviation}`
                 : '';
           }
@@ -362,6 +370,10 @@ export default function TreePage() {
       store.editingItem = null;
       store.tree = await getProgramTree();
       render();
+      setTimeout(() => {
+        treeProps.setOpenAll(true);
+      }, 100);
+      
     }
   }
 
@@ -910,7 +922,7 @@ export default function TreePage() {
   let { scroll } = store;
   if (scroll > headerBase.height) scroll = headerBase.height;
   const correct = 48;
-  const correctBottom = 32;
+  const correctBottom = 24;
 
   let top = headerBase.height + correct - scroll;
   const minTop = headerBase.height - headerDescription.height + 24;
@@ -972,16 +984,16 @@ export default function TreePage() {
                               paddingRight: theme.spacing[5],
                             })}
                             style={{
-                              height: `calc(100vh - ${top + correctBottom + 136}px)`,
+                              height: `calc(100vh - ${top + correctBottom + 150}px)`,
                               overflowY: 'auto',
                             }}
                           >
                             <Tree
+                              {...treeProps}
                               rootId={0}
-                              treeData={store.tree}
                               selectedNode={store.editingItem ? store.editingItem.treeId : null}
                               allowDragParents={false}
-                              initialOpen={map(store.tree, 'id')}
+                              allowMultipleOpen
                               onAdd={(a) => {
                                 a.handler();
                               }}

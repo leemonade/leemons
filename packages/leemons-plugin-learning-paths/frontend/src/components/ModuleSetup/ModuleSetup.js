@@ -18,6 +18,7 @@ import { BasicData } from './components/BasicData/BasicData';
 import { Header } from './components/Header';
 import { StructureData } from './components/StructureData/StructureData';
 import addAction from './helpers/addAction';
+import { Resources } from './components/Resources';
 
 export function useTabs({ localizations }) {
   return useMemo(
@@ -25,6 +26,10 @@ export function useTabs({ localizations }) {
       {
         id: 'basicData',
         label: localizations?.basicData,
+      },
+      {
+        id: 'resources',
+        label: localizations?.resources,
       },
       {
         id: 'structure',
@@ -52,6 +57,7 @@ export function useModuleSetupLocalizations() {
 
 const stepsRenderers = {
   basicData: <BasicData />,
+  resources: <Resources />,
   structure: <StructureData />,
 };
 
@@ -103,9 +109,9 @@ function prepareAssignable(sharedData) {
       activities: get(sharedData, 'state.activities', []).map((activity) => ({
         activity: activity.activity,
         id: activity.id,
-        requirement: get(sharedData, `state.props.${activity.id}.type`),
       })),
     },
+    resources: get(sharedData, 'state.resources', []),
     // EN: It's required
     // ES: Es requerido
     statement: 'Module',
@@ -124,21 +130,14 @@ function prepareSharedData(module) {
     },
     state: {
       activities: module.submission.activities,
-      props: Object.fromEntries(
-        module.submission.activities.map((activity) => [
-          activity.id,
-          {
-            type: activity.requirement,
-          },
-        ])
-      ),
+      resources: module.resources,
     },
   };
 
   return sharedData;
 }
 
-function onSaveDraft({ sharedDataRef, history }) {
+function onSaveDraft({ sharedDataRef, history, localizations }) {
   return addAction(`${eventBase}.onSaveDraft`, () => {
     handleOnSaveEvent()
       .then(async () => {
@@ -156,14 +155,14 @@ function onSaveDraft({ sharedDataRef, history }) {
         }
 
         // TRANSLATE
-        addSuccessAlert('Successfuly saved');
+        addSuccessAlert(localizations?.alert?.saveSuccess);
 
         history.replace(
           `/private/learning-paths/modules/${module.id}/edit${sharedData?.id ? '' : '?fromNew'}`
         );
       })
       .catch((e) => {
-        addErrorAlert('Failed to save', e.message ?? e);
+        addErrorAlert(localizations?.alert?.saveError, e.message ?? e);
       })
       .finally(() => fireEvent(`${eventBase}.onSave.finished`));
 
@@ -171,7 +170,7 @@ function onSaveDraft({ sharedDataRef, history }) {
   });
 }
 
-function onSaveAndPublish({ sharedDataRef }) {
+function onSaveAndPublish({ sharedDataRef, localizations }) {
   return addAction(`${eventBase}.onSave&Publish`, ({ args: [callback] }) => {
     handleOnSaveEvent()
       .then(async () => {
@@ -191,14 +190,14 @@ function onSaveAndPublish({ sharedDataRef }) {
           sharedData.id = id;
         }
 
-        addSuccessAlert('Successfuly saved and published');
+        addSuccessAlert(localizations?.alert?.publishSuccess);
 
         if (isFunction(callback)) {
           callback(sharedData);
         }
       })
       .catch((e) => {
-        addErrorAlert('Failed to save and publish', e.message ?? e);
+        addErrorAlert(localizations?.alert?.publishError, e.message ?? e);
       })
       .finally(() => fireEvent(`${eventBase}.onSave.finished`));
 
@@ -206,12 +205,18 @@ function onSaveAndPublish({ sharedDataRef }) {
   });
 }
 
-function useEventHandler() {
+function useEventHandler({ localizations }) {
   const [, , sharedDataRef] = useModuleSetupContext();
   const history = useHistory();
 
-  useEffect(() => onSaveDraft({ sharedDataRef, history }), [history, sharedDataRef]);
-  useEffect(() => onSaveAndPublish({ sharedDataRef }), [sharedDataRef]);
+  useEffect(
+    () => onSaveDraft({ sharedDataRef, history, localizations }),
+    [history, sharedDataRef, localizations]
+  );
+  useEffect(
+    () => onSaveAndPublish({ sharedDataRef, localizations }),
+    [sharedDataRef, localizations]
+  );
 }
 
 export function useStepRenderer({ step, tabs, props }) {
@@ -278,7 +283,7 @@ export function ModuleSetup() {
     props: { localizations, onNextStep, onPrevStep },
   });
 
-  useEventHandler();
+  useEventHandler({ localizations });
 
   return (
     <Box sx={{ position: 'relative' }}>

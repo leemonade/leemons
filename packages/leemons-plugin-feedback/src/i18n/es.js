@@ -126,6 +126,7 @@ module.exports = {
     sendFeedback: 'Enviar encuesta',
     finishModal: 'Encuesta finalizada',
     pendingActivities: 'Actividades pendientes',
+    moduleDashboard: 'Dashboard del módulo',
     viewResults: 'Ver resultados',
     nextActivity: 'Siguiente actividad',
     needNResponsesSingular: 'Escoge 1 respuesta',

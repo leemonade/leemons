@@ -37,13 +37,17 @@ export default function FinalizationModal({
   toggleModal,
   assignation,
   localizations,
-  updateTimestamps = () => {},
+  updateTimestamps = () => { },
   actionUrl,
 }) {
   const [opened, setOpened] = React.useState(false);
   const history = useHistory();
 
   const nextActivityUrl = useNextActivityUrl(assignation);
+
+  const moduleId = assignation.instance.metadata?.module?.id;
+  const isModule = !!moduleId;
+  const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
 
   React.useEffect(() => {
     toggleModal.current = () => setOpened(true);
@@ -68,7 +72,7 @@ export default function FinalizationModal({
   return (
     <Modal
       opened={opened}
-      onClose={() => {}}
+      onClose={() => { }}
       withCloseButton={false}
       size={hasNextActivity ? 'lg' : undefined}
     >
@@ -78,8 +82,13 @@ export default function FinalizationModal({
           <Text>{localizations?.description}</Text>
         </Box>
         <Box className={cx(classes.buttons, { [classes.centerButtons]: !hasNextActivity })}>
-          <Link to={actionUrl} target={hasNextActivity ? '_blank' : undefined}>
-            <Button variant={hasNextActivity ? 'link' : 'filled'}>{localizations?.action}</Button>
+          <Link
+            to={isModule ? moduleDashboardUrl : actionUrl}
+            target={hasNextActivity ? '_blank' : undefined}
+          >
+            <Button variant={hasNextActivity ? 'link' : 'filled'}>
+              {isModule ? localizations?.goToModule : localizations?.action}
+            </Button>
           </Link>
           {hasNextActivity && (
             <Link to={nextActivityUrl}>

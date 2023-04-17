@@ -1,3 +1,5 @@
+const { orderBy } = require('lodash');
+
 /*
   === SORTING ===
 */
@@ -10,11 +12,12 @@ function sortInstancesByDates({ instances, dates, filters }) {
 
   const instanceDates = dates.instances;
 
+  const sortedInstances = orderBy(instances, 'created_at', 'desc');
   if (sort === 'assignation') {
-    return instances.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    return sortedInstances;
   }
   if (['start', 'deadline'].includes(sort)) {
-    return instances.sort((a, b) => {
+    return sortedInstances.sort((a, b) => {
       const aDate = instanceDates[a.id]?.[sort];
       const bDate = instanceDates[b.id]?.[sort];
 

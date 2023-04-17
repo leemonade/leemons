@@ -7,34 +7,31 @@ import { Container } from '../Container';
 import { useCurriculumFields } from './useCurriculumFields';
 import { CurriculumFieldsPicker } from './CurriculumFieldsPicker';
 
+export const evaluationTypes = {
+  calificable: {
+    gradable: true,
+    requiresScoring: true,
+    allowFeedback: true,
+  },
+  punctuable: {
+    gradable: false,
+    requiresScoring: true,
+    allowFeedback: true,
+  },
+  feedbackOnly: {
+    gradable: false,
+    requiresScoring: false,
+    allowFeedback: true,
+  },
+  nonEvaluable: {
+    gradable: false,
+    requiresScoring: false,
+    allowFeedback: false,
+  },
+};
+
 function useOnChange({ control, onChange }) {
   const { type, showCurriculum, curriculum } = useWatch({ control });
-
-  const types = React.useMemo(
-    () => ({
-      calificable: {
-        gradable: true,
-        requiresScoring: true,
-        allowFeedback: true,
-      },
-      punctuable: {
-        gradable: false,
-        requiresScoring: true,
-        allowFeedback: true,
-      },
-      feedbackOnly: {
-        gradable: false,
-        requiresScoring: false,
-        allowFeedback: true,
-      },
-      nonEvaluable: {
-        gradable: false,
-        requiresScoring: false,
-        allowFeedback: false,
-      },
-    }),
-    []
-  );
 
   React.useEffect(() => {
     if (typeof onChange !== 'function') {
@@ -42,7 +39,7 @@ function useOnChange({ control, onChange }) {
     }
 
     onChange({
-      evaluation: types[type],
+      evaluation: evaluationTypes[type],
       curriculum: showCurriculum ? curriculum ?? [] : [],
       raw: { type, showCurriculum, curriculum },
     });
@@ -64,6 +61,8 @@ export function EvaluationType({
   value,
   onChange,
   evaluationTypes: evaluationTypesToUse,
+  hideSectionHeaders,
+  hideDivider,
 }) {
   const types = React.useMemo(() => {
     const evaluationTypes = [
@@ -109,6 +108,8 @@ export function EvaluationType({
       title={localizations?.title}
       description={localizations?.description}
       hidden={hidden}
+      hideSectionHeaders={hideSectionHeaders}
+      hideDivider={hideDivider}
     >
       <Box className={classes.root}>
         <Controller
@@ -161,4 +162,6 @@ EvaluationType.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func,
   evaluationTypes: PropTypes.arrayOf('string'),
+  hideSectionHeaders: PropTypes.bool,
+  hideDivider: PropTypes.bool,
 };

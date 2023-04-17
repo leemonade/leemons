@@ -1,9 +1,8 @@
-const fs = require('fs');
+const { findOne: getTheme } = require('../theme');
 
-function getJsonTheme() {
-  if (!fs.existsSync('./config/tokens/tokens-compiled.json')) return {};
-  const jsonTheme = JSON.parse(fs.readFileSync('./config/tokens/tokens-compiled.json'));
-  return jsonTheme;
+async function getJsonTheme() {
+  const theme = await getTheme();
+  return theme?.tokens;
 }
 
 module.exports = getJsonTheme;

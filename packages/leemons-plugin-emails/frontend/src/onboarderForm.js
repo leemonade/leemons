@@ -1,18 +1,18 @@
-import React from 'react';
 import loadable from '@loadable/component';
+import React from 'react';
 
 function dynamicImport(component) {
   return loadable(() =>
-    import(/* webpackInclude: /(emails-amazon-ses.+)\.js/ */ `@leemons/plugins${component}.js`)
+    import(/* webpackInclude: /(emails-aws-ses.+)\.js/ */ `@leemons/plugins${component}.js`)
   );
 }
 
 export default function OnboarderForm() {
-  const providerName = 'emails-amazon-ses';
+  const providerName = 'emails-aws-ses';
 
   let Component = () => <></>;
 
-  Component = dynamicImport('/emails-amazon-ses/onboarder-form');
+  Component = dynamicImport('/emails-aws-ses/onboarder-form');
 
   async function onSubmit(config) {
     await leemons.api('emails/add-provider', {

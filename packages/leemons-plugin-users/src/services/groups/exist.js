@@ -8,8 +8,8 @@ const { table } = require('../tables');
  * @param {boolean} throwErrorIfNotExists
  * @return {Promise<boolean>}
  * */
-async function exist(query, throwErrorIfNotExists) {
-  const count = await table.groups.count(query);
+async function exist(query, throwErrorIfNotExists, { transacting } = {}) {
+  const count = await table.groups.count(query, { transacting });
   if (throwErrorIfNotExists && !count) throw new Error('Group not found');
   return true;
 }

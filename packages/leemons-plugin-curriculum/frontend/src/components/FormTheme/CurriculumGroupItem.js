@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   ActionButton,
   Box,
@@ -14,14 +12,17 @@ import {
   Text,
   TextInput,
 } from '@bubbles-ui/components';
-import _, { forEach, isArray, isNumber } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
+import { ArrowChevDownIcon, ArrowChevUpIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { htmlToText, numberToEncodedLetter, useStore } from '@common';
-import { EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
+import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
+import _, { forEach, isArray, isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import CurriculumListSubItems from './CurriculumListSubItems';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -47,25 +48,43 @@ function CurriculumGroupItem({
   isEditMode = true,
   blockData,
   onSave,
-  onCancel,
+  onCancel: _onCancel,
   onEdit,
   preview,
   item,
   t,
 }) {
   const { classes } = useStyle();
-  const [store, render] = useStore();
+  const [store, render] = useStore({
+    rowsExpanded: [],
+  });
   const form = useForm({ defaultValues });
   const values = form.watch();
   const initNumber = form.watch('metadata.initNumber');
 
   React.useEffect(() => {
     form.reset(defaultValues);
-  }, [preview, blockData, defaultValues]);
+  }, [JSON.stringify(preview), JSON.stringify(blockData), JSON.stringify(defaultValues)]);
 
-  function _onSave() {
+  function onExit() {
+    if (store.subRow) {
+      const index = store.rowsExpanded.indexOf(store.subRow.id);
+      if (index >= 0) {
+        store.rowsExpanded.splice(index, 1);
+      }
+    }
+    store.subRow = null;
+  }
+
+  function onCancel() {
+    onExit();
+    _onCancel();
+  }
+
+  function _onSave(close = true) {
     form.handleSubmit((formValues) => {
-      onSave(formValues);
+      onExit();
+      onSave(formValues, close);
     })();
   }
 
@@ -135,6 +154,50 @@ function CurriculumGroupItem({
       };
     }
     const result = [];
+    let hasChilds = false;
+    _.forEach(values.value, (val) => {
+      if (val.childrens?.length) {
+        hasChilds = true;
+        return false;
+      }
+    });
+
+    if (hasChilds && !store.subRow) {
+      result.push({
+        Header: ' ',
+        accessor: 'open',
+        Cell: (e) => {
+          const vals = form.getValues('value');
+          if (!vals[e.row.index]?.childrens?.length) {
+            return null;
+          }
+          return (
+            <Box
+              sx={(theme) => ({
+                color: theme.colors.text05,
+              })}
+              onClick={() => {
+                const index = store.rowsExpanded.indexOf(e.row.id);
+                if (index < 0) {
+                  store.rowsExpanded.push(e.row.id);
+                } else {
+                  store.rowsExpanded.splice(index, 1);
+                }
+                render();
+              }}
+            >
+              {store.rowsExpanded.includes(e.row.id) ? <ArrowChevUpIcon /> : <ArrowChevDownIcon />}
+            </Box>
+          );
+        },
+        cellStyle: {
+          width: '10px',
+        },
+        style: {
+          width: '10px',
+        },
+      });
+    }
 
     if (blockData.groupListOrdered && blockData.groupListOrdered !== 'not-ordered') {
       result.push({
@@ -142,6 +205,9 @@ function CurriculumGroupItem({
         accessor: 'order',
         input: {
           node: <Box />,
+        },
+        cellStyle: {
+          width: '100px',
         },
       });
     }
@@ -158,10 +224,41 @@ function CurriculumGroupItem({
           ),
         rules,
       },
+      valueRender: (v, element) => {
+        if (store.subRow) {
+          const vals = form.getValues('value');
+          const _item = vals[store.subRow.index];
+
+          if (_item.value === element.value) {
+            return (
+              <Box
+                sx={() => ({
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                })}
+              >
+                <HtmlText>{v}</HtmlText>
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => {
+                    _onSave(false);
+                  }}
+                >
+                  {t('save')}
+                </Button>
+              </Box>
+            );
+          }
+        }
+        return <HtmlText>{v}</HtmlText>;
+      },
     });
 
     return result;
-  }, []);
+  }, [values.value, store.subRow]);
 
   function getNumbering(index) {
     return getItemTitleNumberedWithParents(
@@ -198,6 +295,7 @@ function CurriculumGroupItem({
         )}
       />
     );
+
     return (
       <Box className={classes.card}>
         <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>
@@ -222,7 +320,20 @@ function CurriculumGroupItem({
           ) : null}
           {blockData.groupTypeOfContents === 'list' && defaultValues.value?.length ? (
             <Table
-              data={defaultValues.value}
+              data={_.map(defaultValues.value, (v, i) => ({
+                ...v,
+                order: getNumbering(i),
+              }))}
+              rowsExpanded={store.rowsExpanded}
+              renderRowSubComponent={({ row }) => (
+                <CurriculumListSubItems
+                  inputType={blockData.groupListType}
+                  values={values?.value}
+                  t={t}
+                  selectedRow={store.subRow}
+                  row={row}
+                />
+              )}
               columns={columns.map((col) => ({ ...col, Header: ' ' }))}
             />
           ) : null}
@@ -232,6 +343,12 @@ function CurriculumGroupItem({
     );
   }
 
+  if (store.subRow) {
+    if (!store.rowsExpanded.includes(store.subRow.id)) {
+      store.rowsExpanded.push(store.subRow.id);
+    }
+  }
+
   return (
     <ContextContainer className={classes.card}>
       <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>
@@ -239,7 +356,6 @@ function CurriculumGroupItem({
           {getTitle()}
         </Text>
       </Box>
-
       {useOrder && isEditMode ? (
         <Controller
           control={form.control}
@@ -257,7 +373,6 @@ function CurriculumGroupItem({
           )}
         />
       ) : null}
-
       <Controller
         control={form.control}
         name="value"
@@ -283,10 +398,27 @@ function CurriculumGroupItem({
                   field.onChange(e);
                 }}
                 columns={columns}
+                onItemAdd={(row) => {
+                  store.subRow = row;
+                  render();
+                }}
+                rowsExpanded={store.rowsExpanded}
+                addable
                 editable
                 resetOnAdd
                 sortable
                 removable
+                disabled={!!store.subRow}
+                renderRowSubComponent={({ row }) => (
+                  <CurriculumListSubItems
+                    inputType={blockData.groupListType}
+                    values={values?.value}
+                    t={t}
+                    selectedRow={store.subRow}
+                    row={row}
+                    onChange={(e) => field.onChange(e)}
+                  />
+                )}
                 labels={{
                   add: t('add'),
                   remove: t('remove'),
@@ -320,7 +452,13 @@ function CurriculumGroupItem({
         <Button variant="link" onClick={onCancel} loading={store.loading}>
           {t('cancel')}
         </Button>
-        <Button variant="outline" onClick={_onSave} loading={store.loading}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            _onSave(true);
+          }}
+          loading={store.loading}
+        >
           {defaultValues?.value ? t('update') : t('add')}
         </Button>
       </Stack>

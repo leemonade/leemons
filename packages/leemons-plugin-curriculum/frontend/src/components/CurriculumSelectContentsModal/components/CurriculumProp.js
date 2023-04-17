@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Badge,
   Box,
@@ -13,11 +11,13 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import _, { forEach, forIn, isArray, isNil, isObject, isPlainObject, isString } from 'lodash';
+import { htmlToText, useStore } from '@common';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
-import { htmlToText } from '@common';
+import _, { forEach, forIn, isArray, isNil, isObject, isPlainObject, isString } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 function NewValue({
   keyIndex,
@@ -105,6 +105,7 @@ function NewValue({
         true
       )
     );
+
     return getItemTitleNumberedWithParents(
       store.curriculum,
       blockData,
@@ -195,17 +196,97 @@ function NewValue({
     if (value.id) {
       // Listado
       const numbering = getNumbering(keyIndex, null, baseValue);
-      return (
-        <Box>
-          {CheckBoxComponent(
-            `${key}|value.${value.id}`,
-            value,
-            undefined,
-            `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`
-          )}
-          <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>{tags}</Box>
-        </Box>
-      );
+
+      if (value.childrens?.length) {
+        const ch = [];
+        _.forEach(value.childrens, (child) => {
+          if (child.childrens?.length) {
+            const c = [];
+            _.forEach(child.childrens, (child2) => {
+              let canAdd = true;
+              if (hideNoSelecteds) {
+                if (!isInValues(child2.id)) {
+                  canAdd = false;
+                }
+              }
+              if (canAdd)
+                c.push(
+                  <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                    {CheckBoxComponent(
+                      `${key}|value.${value.id}|value1.${child.id}|value2.${child2.id}`,
+                      child2,
+                      undefined,
+                      `${htmlToText(child2.value)}`
+                    )}
+                  </Box>
+                );
+            });
+            if (c.length) {
+              ch.push(
+                <Box
+                  sx={(theme) => ({ paddingLeft: theme.spacing[4], marginTop: theme.spacing[2] })}
+                >
+                  <Text
+                    strong
+                    color="primary"
+                    role="productive"
+                    dangerouslySetInnerHTML={{
+                      __html: `${htmlToText(child.value)}`,
+                    }}
+                  />
+                  {c}
+                </Box>
+              );
+            }
+          } else {
+            let canAdd = true;
+            if (hideNoSelecteds) {
+              if (!isInValues(child.id)) {
+                canAdd = false;
+              }
+            }
+            if (canAdd)
+              ch.push(
+                <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                  {CheckBoxComponent(
+                    `${key}|value.${value.id}|value1.${child.id}`,
+                    child,
+                    undefined,
+                    `${htmlToText(child.value)}`
+                  )}
+                </Box>
+              );
+          }
+        });
+
+        if (ch.length) {
+          return (
+            <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+              <Text
+                strong
+                color="primary"
+                role="productive"
+                dangerouslySetInnerHTML={{
+                  __html: `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`,
+                }}
+              />
+              {ch}
+            </Box>
+          );
+        }
+      } else {
+        return (
+          <Box>
+            {CheckBoxComponent(
+              `${key}|value.${value.id}`,
+              value,
+              undefined,
+              `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`
+            )}
+            <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>{tags}</Box>
+          </Box>
+        );
+      }
     }
     // Grupo
     const toReturn = [];
@@ -214,35 +295,79 @@ function NewValue({
       if (isArray(val.value)) {
         const che = [];
         forEach(val.value, (v, i) => {
-          let canAdd = true;
-          if (hideNoSelecteds) {
-            if (!isInValues(v.id)) {
-              canAdd = false;
+          if (v.childrens?.length) {
+            const ch = [];
+            _.forEach(v.childrens, (child) => {
+              let canAdd = true;
+              if (hideNoSelecteds) {
+                if (!isInValues(child.id)) {
+                  canAdd = false;
+                }
+              }
+              if (canAdd)
+                ch.push(
+                  <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                    {CheckBoxComponent(
+                      `${key}|value.${val.id}|value2.${v.id}|value3.${child.id}`,
+                      child,
+                      undefined,
+                      `${htmlToText(child.value)}`
+                    )}
+                  </Box>
+                );
+            });
+            if (ch.length) {
+              che.push(
+                <Box
+                  sx={(theme) => ({ paddingLeft: theme.spacing[4], marginTop: theme.spacing[2] })}
+                >
+                  <Text
+                    strong
+                    color="primary"
+                    role="productive"
+                    dangerouslySetInnerHTML={{
+                      __html: `${getNumbering(i, getGroupItem(k), val)} ${htmlToText(v.value)}`,
+                    }}
+                  />
+                  {ch}
+                </Box>
+              );
             }
+          } else {
+            let canAdd = true;
+            if (hideNoSelecteds) {
+              if (!isInValues(v.id)) {
+                canAdd = false;
+              }
+            }
+            if (canAdd)
+              che.push(
+                <Box sx={(theme) => ({ paddingLeft: theme.spacing[4] })}>
+                  {CheckBoxComponent(
+                    `${key}|value.${val.id}|value2.${v.id}`,
+                    v,
+                    undefined,
+                    `${getNumbering(i, getGroupItem(k), val)} ${htmlToText(v.value)}`
+                  )}
+                </Box>
+              );
           }
-          if (canAdd)
-            che.push(
-              CheckBoxComponent(
-                `${key}|value.${val.id}|value2.${v.id}`,
-                v,
-                undefined,
-                getNumbering(i, getGroupItem(k), val)
-              )
-            );
         });
-        checks.push(
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <Text
-              strong
-              color="primary"
-              role="productive"
-              dangerouslySetInnerHTML={{
-                __html: getGroupTitle(k),
-              }}
-            />
-            {che}
-          </Box>
-        );
+        if (che.length) {
+          checks.push(
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <Text
+                strong
+                color="primary"
+                role="productive"
+                dangerouslySetInnerHTML={{
+                  __html: getGroupTitle(k),
+                }}
+              />
+              {che}
+            </Box>
+          );
+        }
       } else {
         let canAdd = true;
         if (hideNoSelecteds) {
@@ -286,7 +411,9 @@ NewValue.propTypes = {
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showCheckboxs = true }) {
-  const [parentNumber, setParentNumber] = React.useState();
+  const [_store, _render] = useStore({
+    parentNumber: {},
+  });
   const [parentProperty, setParentProperty] = React.useState(null);
 
   let values;
@@ -295,59 +422,82 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
   }
 
   const hide = React.useMemo(() => {
+    const arrayValues = _.compact(_.isArray(values) ? values : [values]);
+
     if (hideNoSelecteds) {
-      let hi = true;
-      if (isString(values.value)) {
-        _.forEach(store.value, (sv) => {
-          if (sv.indexOf(values.id) >= 0) {
-            hi = false;
-            return false;
-          }
-        });
-      } else if (isPlainObject(values?.value)) {
-        _.forIn(values?.value, ({ id }) => {
+      const hi = [];
+
+      _.forEach(arrayValues, () => {
+        hi.push(true);
+      });
+
+      _.forEach(arrayValues, (val, i) => {
+        if (isString(val.value)) {
           _.forEach(store.value, (sv) => {
-            if (sv.indexOf(id) >= 0) {
-              hi = false;
+            if (sv.indexOf(val.id) >= 0) {
+              hi[i] = false;
               return false;
             }
           });
-        });
-      } else if (isArray(values?.value)) {
-        _.forEach(values?.value, ({ id }) => {
+        } else if (isPlainObject(val?.value)) {
+          _.forIn(val?.value, ({ id }) => {
+            _.forEach(store.value, (sv) => {
+              if (sv.indexOf(id) >= 0) {
+                hi[i] = false;
+                return false;
+              }
+            });
+          });
+        } else if (isArray(val?.value)) {
+          _.forEach(val?.value, ({ id }) => {
+            _.forEach(store.value, (sv) => {
+              if (sv.indexOf(id) >= 0) {
+                hi[i] = false;
+                return false;
+              }
+            });
+            if (!hi[i]) return false;
+          });
+        } else {
           _.forEach(store.value, (sv) => {
-            if (sv.indexOf(id) >= 0) {
-              hi = false;
+            if (sv.indexOf(val?.value.id) >= 0) {
+              hi[i] = false;
               return false;
             }
           });
-          if (!hi) return false;
-        });
-      } else {
-        _.forEach(store.value, (sv) => {
-          if (sv.indexOf(values?.value.id) >= 0) {
-            hi = false;
-            return false;
-          }
-        });
-      }
+        }
+        if (!hi[i]) return false;
+      });
+
       return hi;
     }
-    return false;
+    return _.map(arrayValues, () => false);
   }, [store.value]);
+
+  const hideAll = React.useMemo(() => {
+    let r = true;
+    _.forEach(hide, (h) => {
+      if (!h) {
+        r = false;
+        return false;
+      }
+    });
+    return r;
+  }, [hide]);
 
   function onParentFound(show, { property } = {}) {
     if (show && property) setParentProperty(property);
   }
 
-  function onParentNumbering(e) {
-    if (parentNumber !== e) {
-      setParentNumber(e);
+  function onParentNumbering(e, id) {
+    if (_store.parentNumber[id] !== e) {
+      _store.parentNumber[id] = e;
+      _render();
     }
   }
 
-  function newArrayValues() {
-    return values?.value.map((value, index) => {
+  function newArrayValues(val) {
+    return val?.value.map((value, index) => {
       if (hideNoSelecteds) {
         let hi = true;
         _.forEach(store.value, (sv) => {
@@ -364,15 +514,15 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
           keyIndex={index}
           render={render}
           store={store}
-          baseValueId={values.id}
+          baseValueId={val.id}
           value={value}
-          baseValue={values}
+          baseValue={val}
           hideNoSelecteds={hideNoSelecteds}
           nodeId={values._nodeId}
           nodeLevelId={values._nodeLevelId}
-          blockData={values.blockData || item.frontConfig.blockData}
+          blockData={values._blockData || item.frontConfig.blockData}
           onParentNumbering={(e) => {
-            if (index === 0) onParentNumbering(e);
+            if (index === 0) onParentNumbering(e, val.id);
           }}
           showCheckboxs={showCheckboxs}
         />
@@ -380,19 +530,19 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
     });
   }
 
-  function newValues() {
+  function newValues(val) {
     if (hideNoSelecteds) {
       let hi = true;
-      if (isString(values.value)) {
+      if (isString(val.value)) {
         _.forEach(store.value, (sv) => {
-          if (sv.indexOf(values.id) >= 0) {
+          if (sv.indexOf(val.id) >= 0) {
             hi = false;
             return false;
           }
         });
-      } else if (!isPlainObject(values.value)) {
+      } else if (!isPlainObject(val.value)) {
         _.forEach(store.value, (sv) => {
-          if (sv.indexOf(values.value.id) >= 0) {
+          if (sv.indexOf(val.value.id) >= 0) {
             hi = false;
             return false;
           }
@@ -406,20 +556,22 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
       <NewValue
         render={render}
         store={store}
-        baseValueId={values.id}
-        baseValue={values}
-        value={values.value}
+        baseValueId={val.id}
+        baseValue={val}
+        value={val.value}
         nodeId={values._nodeId}
         hideNoSelecteds={hideNoSelecteds}
         nodeLevelId={values._nodeLevelId}
-        blockData={values.blockData || item.frontConfig.blockData}
-        onParentNumbering={onParentNumbering}
+        blockData={values._blockData || item.frontConfig.blockData}
+        onParentNumbering={(e) => onParentNumbering(e, val.id)}
         showCheckboxs={showCheckboxs}
       />
     );
   }
 
-  if (hide) return null;
+  if (hideAll) return null;
+
+  const arrayValues = _.compact(_.isArray(values) ? values : [values]);
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
@@ -438,20 +590,28 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
           '-'
         ) : (
           <>
-            <ParentRelation
-              curriculum={store.curriculum}
-              blockData={values.blockData || item.frontConfig.blockData}
-              value={values}
-              onChange={() => {}}
-              isShow={onParentFound}
-              isEditMode={false}
-              id={values._nodeId || store.selectedNode.id}
-              hideLabel
-              numbering={parentNumber}
-              t={t2}
-            >
-              {isArray(values.value) ? newArrayValues() : newValues()}
-            </ParentRelation>
+            {arrayValues.map((val, i) => {
+              if (hide[i]) {
+                return null;
+              }
+              return (
+                <ParentRelation
+                  key={val.id}
+                  curriculum={store.curriculum}
+                  blockData={values.blockData || item.frontConfig.blockData}
+                  value={val}
+                  onChange={() => {}}
+                  isShow={onParentFound}
+                  isEditMode={false}
+                  id={values._nodeId || store.selectedNode.id}
+                  hideLabel
+                  numbering={_store.parentNumber[val.id]}
+                  t={t2}
+                >
+                  {isArray(val.value) ? newArrayValues(val) : newValues(val)}
+                </ParentRelation>
+              );
+            })}
           </>
         )}
       </InputWrapper>

@@ -14,7 +14,7 @@ import { EvaluationType } from './components/EvaluationType';
 import { OtherOptions } from './components/OtherOptions';
 import { Buttons } from './components/Buttons';
 
-function useFormLocalizations() {
+export function useFormLocalizations() {
   const key = prefixPN('assignmentForm');
   const [, translations] = useTranslateLoader(key);
 
@@ -112,7 +112,9 @@ export default function Form({
   showEvaluation,
   showReport,
   showResponses,
+  showMessageForStudents,
   withoutLayout,
+  hideSectionHeaders,
   buttonsComponent,
   evaluationTypes,
 
@@ -151,6 +153,7 @@ export default function Form({
                 error={error}
                 assignable={assignable}
                 localizations={localizations?.subjects}
+                hideSectionHeaders={hideSectionHeaders}
               />
             )}
           />
@@ -162,7 +165,12 @@ export default function Form({
               validate: (value) => value?.value?.length > 0,
             }}
             render={({ field, fieldState: { error } }) => (
-              <GroupPicker {...field} localizations={localizations?.groups} error={error} />
+              <GroupPicker
+                {...field}
+                localizations={localizations?.groups}
+                error={error}
+                hideSectionHeaders={hideSectionHeaders}
+              />
             )}
           />
           <Controller
@@ -174,7 +182,12 @@ export default function Form({
                 value.alwaysAvailable || !!(value.dates?.start && value.dates?.deadline),
             }}
             render={({ field, fieldState: { error } }) => (
-              <ActivityDatesPicker {...field} localizations={localizations?.dates} error={error} />
+              <ActivityDatesPicker
+                {...field}
+                localizations={localizations?.dates}
+                error={error}
+                hideSectionHeaders={hideSectionHeaders}
+              />
             )}
           />
           {!!showInstructions && (
@@ -182,7 +195,11 @@ export default function Form({
               name="instructions"
               control={control}
               render={({ field }) => (
-                <Instructions {...field} localizations={localizations?.instructions} />
+                <Instructions
+                  {...field}
+                  localizations={localizations?.instructions}
+                  hideSectionHeaders={hideSectionHeaders}
+                />
               )}
             />
           )}
@@ -196,6 +213,7 @@ export default function Form({
                 assignable={assignable}
                 hidden={!showEvaluation}
                 localizations={localizations?.evaluation}
+                hideSectionHeaders={hideSectionHeaders}
               />
             )}
           />
@@ -213,6 +231,8 @@ export default function Form({
                 localizations={localizations?.others}
                 showReport={showReport}
                 showResponses={showResponses}
+                showMessageForStudents={showMessageForStudents}
+                hideSectionHeaders={hideSectionHeaders}
               />
             )}
           />
@@ -231,6 +251,8 @@ Form.propTypes = {
   showEvaluation: PropTypes.bool,
   showReport: PropTypes.bool,
   showResponses: PropTypes.bool,
+  showMessageForStudents: PropTypes.bool,
+  hideSectionHeaders: PropTypes.bool,
   withoutLayout: PropTypes.bool,
   buttonsComponent: PropTypes.node,
   evaluationTypes: PropTypes.arrayOf('string'),

@@ -300,6 +300,7 @@ module.exports = {
     returnToTable: 'Return to table',
     clueN: '{number}ª Clue',
     pendingActivities: 'Pending activities',
+    modulesDashboard: 'Module dashboard',
     viewResults: 'Check results',
     nextActivity: 'Next activity',
   },

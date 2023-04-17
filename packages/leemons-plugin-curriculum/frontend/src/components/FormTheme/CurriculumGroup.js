@@ -1,16 +1,17 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { Box, Button } from '@bubbles-ui/components';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { useStore } from '@common';
 import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
+import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
+import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 function CurriculumGroup({
-  onChange,
+  onChange: _onChange,
   isEditMode = true,
-  value,
+  value: _value,
   curriculum,
   schema,
   blockData,
@@ -18,7 +19,32 @@ function CurriculumGroup({
   id,
   t,
 }) {
-  const [store, render] = useStore();
+  const [store, render] = useStore({
+    parentValue: returnFirstMetadataParent(_value),
+  });
+
+  // eslint-disable-next-line no-nested-ternary
+  let value = _.isArray(_value)
+    ? store.parentValue
+      ? _.find(_value, { metadata: { parentRelated: store.parentValue } })
+      : _value[0]
+    : _value;
+
+  function onChange(e, fromParent) {
+    if (store.parentValue) {
+      if (fromParent === true) {
+        e = _.find(_value, { metadata: { parentRelated: store.parentValue } });
+      }
+      return _onChange({
+        ...(e || { value: {}, metadata: {} }),
+        metadata: {
+          ...(e?.metadata || {}),
+          parentRelated: store.parentValue,
+        },
+      });
+    }
+    return _onChange(e);
+  }
 
   async function save(e) {
     store.loading = true;
@@ -33,8 +59,8 @@ function CurriculumGroup({
     render();
   }
 
-  function onUpdate(itemId, newValues) {
-    store.editingItem = null;
+  function onUpdate(itemId, newValues, close = true) {
+    if (close) store.editingItem = null;
     if (!value) value = {};
     if (!value.value || !_.isPlainObject(value.value)) value.value = {};
     value.value[itemId] = newValues;
@@ -52,7 +78,7 @@ function CurriculumGroup({
 
   React.useEffect(() => {
     onCancel();
-  }, [blockData]);
+  }, [blockData?.id]);
 
   return (
     <Box>
@@ -60,8 +86,15 @@ function CurriculumGroup({
         curriculum={curriculum}
         blockData={blockData}
         isEditMode={isEditMode}
-        value={value}
-        onChange={onChange}
+        value={{
+          ...(value || { value: {}, metadata: {} }),
+          metadata: { ...(value?.metadata || {}), parentRelated: store.parentValue },
+        }}
+        onChange={(e) => {
+          store.parentValue = e.metadata.parentRelated;
+          render();
+          onChange(e, true);
+        }}
         isShow={(e) => {
           store.showSaveButton = e;
           render();
@@ -72,7 +105,7 @@ function CurriculumGroup({
 
       {blockData?.elements.map((item, index) => (
         <CurriculumGroupItem
-          key={index}
+          key={item.id + index}
           isEditMode={isEditMode}
           preview={!isEditMode ? true : store.editingItem?.index !== index}
           defaultValues={value?.value?.[item.id] || {}}
@@ -86,13 +119,12 @@ function CurriculumGroup({
           onEdit={() => {
             onEdit(index);
           }}
-          onSave={(e) => {
-            onUpdate(item.id, e);
+          onSave={(e, close = true) => {
+            onUpdate(item.id, e, close);
           }}
           onCancel={onCancel}
         />
       ))}
-
       {store.showSaveButton && isEditMode ? (
         <Box>
           <Button variant="outline" loading={store.loading} onClick={() => save()}>

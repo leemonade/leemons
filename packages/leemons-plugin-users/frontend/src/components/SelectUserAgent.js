@@ -1,7 +1,11 @@
 /* eslint-disable no-unreachable */
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { useRequestErrorMessage, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import {
   cloneDeep,
   filter,
@@ -14,10 +18,6 @@ import {
   map,
   uniq,
 } from 'lodash';
-import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
-import { useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
@@ -43,6 +43,7 @@ const SelectUserAgent = forwardRef(
       programs,
       courses,
       selectedUsers,
+      selectedUserAgents,
       maxSelectedValues = 1,
       users,
       onlyContacts,
@@ -289,6 +290,9 @@ const SelectUserAgent = forwardRef(
     if (selectedUsers) {
       toData = filter(toData, ({ id }) => !selectedUsers.includes(id));
     }
+    if (selectedUserAgents) {
+      toData = filter(toData, ({ value }) => !selectedUserAgents.includes(value));
+    }
 
     return (
       <MultiSelect
@@ -326,6 +330,7 @@ SelectUserAgent.propTypes = {
   itemComponent: PropTypes.any,
   valueComponent: PropTypes.any,
   selectedUsers: PropTypes.any,
+  selectedUserAgents: PropTypes.any,
 };
 
 SelectUserAgentValueComponent.propTypes = {

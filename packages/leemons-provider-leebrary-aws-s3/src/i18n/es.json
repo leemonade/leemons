@@ -1,0 +1,14 @@
+{
+  "provider": {
+    "title": "Configuración Amazon S3",
+    "description": "Amazon Simple Storage Service (Amazon S3) es un servicio de almacenamiento de objetos que ofrece escalabilidad, disponibilidad de datos, seguridad y rendimiento líderes en el sector.",
+    "tableAdd": "Añadir",
+    "tableEdit": "Editar",
+    "tableRemove": "Eliminar",
+    "bucket": "Bucket (Ej: leemons-assets)",
+    "region": "Región (Ej: eu-central-1)",
+    "accessKey": "Clave de acceso",
+    "secretAccessKey": "Clave secreta de acceso",
+    "fieldRequired": "Este campo es obligatorio"
+  }
+}

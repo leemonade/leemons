@@ -16,7 +16,7 @@ const saveConfigSchema = {
   type: 'object',
   properties: {
     program: stringSchema,
-    regionalConfig: stringSchema,
+    regionalConfig: stringSchemaNullable,
     allCoursesHaveSameConfig: booleanSchemaNullable,
     allCoursesHaveSameDates: booleanSchemaNullable,
     courseDates: {

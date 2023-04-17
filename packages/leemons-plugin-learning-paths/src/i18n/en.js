@@ -21,6 +21,7 @@ module.exports = {
     tabs: {
       basicData: 'Basic data',
       structure: 'Structure',
+      resources: 'Resources',
     },
     buttons: {
       next: 'Next',
@@ -31,7 +32,7 @@ module.exports = {
       publishAndShare: 'Publish and share',
 
       tooltips: {
-        disabledNotResources: 'Add two or more resources to publish',
+        disabledNotResources: 'Add two or more activities to publish',
       },
     },
     steps: {
@@ -48,6 +49,23 @@ module.exports = {
           },
         },
       },
+      resourcesData: {
+        buttons: {
+          new: 'New resource',
+        },
+        emptyState: {
+          title: "¡Let's start creating!",
+          description:
+            'Add Resources to the library and sort them as you want them to appear to the student.',
+        },
+        moduleComposer: {
+          columns: {
+            resource: 'Resource',
+            actions: 'Actions',
+          },
+          lastUpdate: 'Last update',
+        },
+      },
       structureData: {
         alerts: {
           error: {
@@ -55,17 +73,18 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'New resource',
+          new: 'New activity',
         },
         emptyState: {
           title: "¡Let's start creating!",
           description:
-            'Add resources to the library and sort them as you want them to appear to the student.',
+            'Add activities to the library and sort them as you want them to appear to the student.',
         },
         moduleComposer: {
           columns: {
-            resource: 'Resource',
+            resource: 'Activity',
             type: 'Type',
+            time: 'Tiempo',
             actions: 'Actions',
           },
           lastUpdate: 'Last update',
@@ -78,6 +97,12 @@ module.exports = {
         },
       },
     },
+    alert: {
+      saveSuccess: 'Saved successfuly',
+      saveError: 'An error occurred while saving',
+      publishSuccess: 'Saved and published successfuly',
+      publishError: 'An error occurred while saving and publishing',
+    },
   },
   libraryCard: {
     menuItems: {
@@ -87,16 +112,46 @@ module.exports = {
       delete: 'Delete',
     },
     duplicate: {
-      title: 'Duplicar módulo',
-      message: '¿Seguro que quiere duplicar el módulo {{name}}?',
+      title: 'Duplicate module',
+      message: 'Are you sure you want to delete the module {{name}}?',
       success: 'The module {{name}} has been duplicated',
       error: 'The module {{name}} could not be duplicated',
     },
     delete: {
-      title: 'Eliminar módulo',
-      message: '¿Seguro que quiere elminnar el módulo {{name}}?',
+      title: 'Delete module',
+      message: 'Are you sure you want to delete the module {{name}}?',
       success: 'The module {{name}} has been deleted',
       error: 'The module {{name}} could not be deleted',
     },
+  },
+  assignation: {
+    steps: {
+      assignmentForm: {
+        action: 'Assign as module',
+      },
+      setup: {
+        action: 'Configuration',
+      },
+    },
+    buttons: {
+      previous: 'Previous',
+      next: 'Next',
+      assign: 'Assign',
+    },
+    alert: {
+      failedToAssign: 'An error occurred while assigning',
+    },
+  },
+  dashboard: {
+    activities: 'Activities',
+    buttons: {
+      review: 'Review',
+      start: 'Start',
+      continue: 'Continue',
+    },
+    resources: 'Resources',
+  },
+  modulesTab: {
+    tabName: 'Modules',
   },
 };

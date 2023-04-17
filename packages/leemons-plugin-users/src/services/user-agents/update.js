@@ -1,13 +1,11 @@
 const { table } = require('../tables');
-const { setUserAgentDatasetInfo } = require('./setUserAgentDatasetInfo');
+const { setUserDatasetInfo } = require('./setUserDatasetInfo');
 
-async function update(userAgentId, { tags, dataset }, { transacting: _transacting } = {}) {
+async function update(userAgentId, { tags }, { transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const tagsService = leemons.getPlugin('common').services.tags;
       const promises = [];
-      if (dataset) promises.push(setUserAgentDatasetInfo(userAgentId, dataset, { transacting }));
-
       if (tags)
         promises.push(
           tagsService.setTagsToValues('plugins.users.user-agent', tags, userAgentId, {

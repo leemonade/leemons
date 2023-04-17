@@ -567,12 +567,12 @@ const LibraryForm = ({
                         rules={store.programRequired}
                         render={({ field }) => (
                           <Select
+                            {...field}
                             autoSelectOneOption
                             error={errors.program}
                             required={!!store.programRequired}
                             label={labels.program}
                             data={store.programs}
-                            {...field}
                           />
                         )}
                       />
@@ -587,13 +587,13 @@ const LibraryForm = ({
                         rules={store.subjectRequired}
                         render={({ field }) => (
                           <SelectSubjects
+                            {...field}
                             {...labels.subjectSelects}
                             errors={errors}
                             required={!!store.subjectRequired}
                             showLevel={store.showLevel}
                             maxOne={store.maxOneSubject}
                             programId={program}
-                            {...field}
                           />
                         )}
                       />

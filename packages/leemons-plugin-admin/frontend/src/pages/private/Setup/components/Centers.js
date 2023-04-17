@@ -1,31 +1,31 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import { findIndex, forEach, map } from 'lodash';
-import PropTypes from 'prop-types';
+import prefixPN from '@admin/helpers/prefixPN';
+import AddCenterDrawer from '@admin/pages/private/Setup/components/AddCenterDrawer';
+import { getLanguagesRequest } from '@admin/request/settings';
 import {
   ActionButton,
   Box,
   Button,
   ContextContainer,
-  createStyles,
   ImageLoader,
   Loader,
   Paragraph,
   Stack,
   Table,
   Title,
+  createStyles,
 } from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { AddCircleIcon, EditIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { listCentersRequest, removeCenterRequest } from '@users/request';
-import AddCenterDrawer from '@admin/pages/private/Setup/components/AddCenterDrawer';
-import { getLanguagesRequest } from '@admin/request/settings';
+import { addErrorAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { listCentersRequest, removeCenterRequest } from '@users/request';
+import _, { findIndex, forEach, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Styles = createStyles((theme) => ({}));
 
@@ -56,6 +56,7 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
         listCentersRequest({
           page: 0,
           size: 999999,
+          withLimits: true,
         }),
         getLanguagesRequest(),
       ]);
@@ -63,7 +64,13 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
       forEach(locales, ({ code, name }) => {
         store.localesByCode[code] = name;
       });
-      store.centers = centers;
+      store.centers = _.map(centers, (center) => ({
+        ...center,
+        limits: {
+          roles: _.keyBy(_.filter(center.limits, { type: 'role' }), 'item'),
+          profiles: _.keyBy(_.filter(center.limits, { type: 'profile' }), 'item'),
+        },
+      }));
       store.loading = false;
       render();
     } catch (e) {

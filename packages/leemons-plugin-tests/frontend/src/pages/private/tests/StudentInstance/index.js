@@ -132,6 +132,11 @@ function StudentInstance() {
           };
         }
       });
+
+      const moduleId = store.instance.metadata?.module?.id;
+      store.isModule = !!moduleId;
+      store.moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
+
       store.nextActivityUrl = await getNextActivityUrl(store.assignation);
       store.hasNextActivity =
         store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
@@ -221,11 +226,12 @@ function StudentInstance() {
         color: store.class.color,
         image: store.instance.assignable.asset.cover
           ? getFileUrl(
-              isString(store.instance.assignable.asset.cover)
-                ? store.instance.assignable.asset.cover
-                : store.instance.assignable.asset.cover.id
-            )
+            isString(store.instance.assignable.asset.cover)
+              ? store.instance.assignable.asset.cover
+              : store.instance.assignable.asset.cover.id
+          )
           : null,
+        /*
         styles: {
           position: 'absolute',
           bottom: 0,
@@ -234,6 +240,7 @@ function StudentInstance() {
           borderRadius: store.isFirstStep ? '16px 16px 0 0' : 0,
           backgroundColor: store.isFirstStep ? COLORS.uiBackground01 : COLORS.uiBackground02,
         },
+        */
       };
     }
     return {};
@@ -304,6 +311,10 @@ function StudentInstance() {
     history.push('/private/assignables/ongoing');
   };
 
+  const goToModuleDashboard = () => {
+    history.push(store.moduleDashboardUrl);
+  };
+
   const goToResults = (e, openInNewTab = false) => {
     if (openInNewTab) window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank');
     else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
@@ -337,8 +348,8 @@ function StudentInstance() {
             <Box className={classes.pagesContent}>
               {verticalStepperProps.data[store.currentStep]
                 ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                    isFirstStep: !store.currentStep,
-                  })
+                  isFirstStep: !store.currentStep,
+                })
                 : null}
             </Box>
           </Box>
@@ -346,7 +357,7 @@ function StudentInstance() {
         <Modal
           title={t('finishTestModalTitle')}
           opened={store.showFinishModal}
-          onClose={() => {}}
+          onClose={() => { }}
           centerTitle
           centered
           withCloseButton={false}
@@ -364,9 +375,15 @@ function StudentInstance() {
           <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
             {store.modalMode === 1 ? (
               <Stack justifyContent="space-between">
-                <Button variant="light" compact onClick={goToOnGoing}>
-                  {t('pendingActivities')}
-                </Button>
+                {store.isModule ? (
+                  <Button variant="light" compact onClick={goToModuleDashboard}>
+                    {t('modulesDashboard')}
+                  </Button>
+                ) : (
+                  <Button variant="light" compact onClick={goToOnGoing}>
+                    {t('pendingActivities')}
+                  </Button>
+                )}
                 <Button compact onClick={goToResults}>
                   {t('viewResults')}
                 </Button>

@@ -209,6 +209,8 @@ async function addUserSubjectRoom(
   );
 }
 
+const rolesWithChat = ['tests', 'task'];
+
 module.exports = async function createAssignation(
   assignableInstanceId,
   users,
@@ -265,7 +267,7 @@ module.exports = async function createAssignation(
         // TODO @MIGUEL
         let subjectRooms = null;
         let instanceRoom = null;
-        if (instance.assignable.role !== 'feedback') {
+        if (rolesWithChat.includes(instance.assignable.role)) {
           const teachers = getAllTeachers(_classes, classesData);
           instanceRoom = await createInstanceRoom(
             {
@@ -278,7 +280,6 @@ module.exports = async function createAssignation(
             { transacting }
           );
 
-          console.log(2);
           // TODO @MIGUEL
           await createGroupRoom({
             assignableInstanceId,
@@ -289,7 +290,6 @@ module.exports = async function createAssignation(
             users,
           });
 
-          console.log(3);
           // TODO @MIGUEL
           subjectRooms = await createSubjectsRooms({
             assignableInstanceId,
@@ -343,8 +343,7 @@ module.exports = async function createAssignation(
               });
 
               // TODO @MIGUEL
-              console.log(4);
-              if (instance.assignable.role !== 'feedback') {
+              if (rolesWithChat.includes(instance.assignable.role)) {
                 roomsPromises.push(
                   addUserSubjectRoom(
                     {

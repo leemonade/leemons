@@ -1,15 +1,13 @@
-const fs = require('fs');
 const transformTokens = require('./transform').tokenTransformer.default;
+const { update: updateTheme } = require('../theme');
 
 /**
  * Utility functions
  */
-const writeFile = (_path, contents) => fs.writeFile(_path, contents, () => {});
 
-const transformTokensAndWriteFile = async (tokens, sets, excludes, options, output) => {
+const transformTokensAndSave = async (tokens, sets, excludes, options) => {
   const transformed = transformTokens(tokens, sets, excludes, options);
-  if (!fs.existsSync('./config/tokens')) fs.mkdir('./config/tokens', () => {});
-  writeFile(output, JSON.stringify(transformed, null, 2));
+  await updateTheme({ tokens: transformed });
 };
 
 /**
@@ -28,7 +26,7 @@ const compileTokens = async (jsonRaw) => {
     resolveReferences: true,
   };
 
-  transformTokensAndWriteFile(jsonRaw, ['core', 'global', 'component'], [], options, output);
+  transformTokensAndSave(jsonRaw, ['core', 'global', 'component'], [], options, output);
 };
 
 module.exports = compileTokens;

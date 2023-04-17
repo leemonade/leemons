@@ -1,32 +1,33 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useStore } from '@common';
-import { Box, ContextContainer, createStyles, PageContainer } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@dashboard/helpers/prefixPN';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { ZoneWidgets } from '@widgets';
+import { Box, ContextContainer, PageContainer, createStyles } from '@bubbles-ui/components';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { find, isNil, map } from 'lodash';
+import { useStore } from '@common';
+import prefixPN from '@dashboard/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
+import { ZoneWidgets } from '@widgets';
+import _, { find, isNil, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 const rightZoneWidth = '320px';
 const Styles = createStyles((theme) => ({
   header: {
     position: 'relative',
-    height: 80 + 48,
+    height: 130 + 48,
   },
   programSelectorContainer: {
+    position: 'relative',
     display: 'flex',
-    height: '80px',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: '50%',
+    height: '100%',
     zIndex: 5,
     alignItems: 'center',
+    width: 'fit-content',
+    maxWidth: 700,
+    minWidth: 250,
+    marginLeft: 30,
   },
 }));
 
@@ -59,7 +60,10 @@ export default function AcademicDashboard({ session }) {
 
   async function init() {
     const { programs } = await getUserProgramsRequest();
-    store.programs = programs;
+    store.programs = _.map(programs, (program) => ({
+      ...program,
+      imageUrl: leemons.apiUrl + program.imageUrl,
+    }));
 
     try {
       if (store.programs.length > 0) {
@@ -110,7 +114,9 @@ export default function AcademicDashboard({ session }) {
   if (programImage) {
     headerProps.blur = 10;
     headerProps.withBlur = true;
-    headerProps.image = programImage;
+    headerProps.image = programImage.startsWith('http')
+      ? programImage
+      : leemons.apiUrl + programImage;
     headerProps.backgroundPosition = 'center';
   } else {
     headerProps.withBlur = false;
@@ -135,14 +141,18 @@ export default function AcademicDashboard({ session }) {
         })}
       >
         <Box className={styles.header}>
-          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
+          <HeaderBackground
+            {...headerProps}
+            withGradient
+            withOverlay={false}
+            styles={{ position: 'absolute', zIndex: 1 }}
+          />
           <Box className={styles.programSelectorContainer}>
             <HeaderDropdown
               value={store.selectedProgram}
               data={store.programsSelect}
               readOnly={store.programsSelect?.length <= 1}
               onChange={selectProgram}
-              showIcon={false}
             />
           </Box>
         </Box>

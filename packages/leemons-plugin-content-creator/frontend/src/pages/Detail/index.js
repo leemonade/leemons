@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Box,
   PageHeader,
@@ -24,7 +25,7 @@ import { AssetFormInput } from '@leebrary/components';
 // import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { PageContent } from './components/PageContent/PageContent';
 
-export default function Index() {
+export default function Index({ readOnly, isNew }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
   const processTextEditor = useProcessTextEditor();
 
@@ -44,6 +45,10 @@ export default function Index() {
 
   const history = useHistory();
   const params = useParams();
+
+  if (isNew) {
+    params.id = 'new';
+  }
 
   const form = useForm();
   const formValues = form.watch();
@@ -205,11 +210,13 @@ export default function Index() {
           values={{
             title: formValues.name,
           }}
-          buttons={{
-            duplicate: t('saveDraft'),
-            edit: !store.isConfigPage && t('publish'),
-            dropdown: store.isConfigPage && t('publishOptions'),
-          }}
+          buttons={
+            !readOnly && {
+              duplicate: t('saveDraft'),
+              edit: !store.isConfigPage && t('publish'),
+              dropdown: store.isConfigPage && t('publishOptions'),
+            }
+          }
           buttonsIcons={{
             edit: <SetupContent size={16} />,
           }}
@@ -236,6 +243,7 @@ export default function Index() {
             onChange={onContentChangeHandler}
             value={formValues.content}
             openLibraryModal={false}
+            readOnly={readOnly}
           />
         ) : (
           <PageContent title={t('config')}>
@@ -265,3 +273,8 @@ export default function Index() {
     </Box>
   );
 }
+
+Index.propTypes = {
+  readOnly: PropTypes.bool,
+  isNew: PropTypes.bool,
+};

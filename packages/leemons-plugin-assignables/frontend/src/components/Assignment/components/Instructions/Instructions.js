@@ -10,10 +10,14 @@ export const useInstructionsStyles = createStyles(() => ({
   },
 }));
 
-export function Instructions({ localizations, value, onChange }) {
+export function Instructions({ localizations, value, onChange, hideSectionHeaders }) {
   const { classes } = useInstructionsStyles();
   return (
-    <Container title={localizations?.title} description={localizations?.description}>
+    <Container
+      title={localizations?.title}
+      description={localizations?.description}
+      hideSectionHeaders={hideSectionHeaders}
+    >
       <Box className={classes.root}>
         <TextEditorInput
           placeholder={localizations?.editor?.placeholder}
@@ -30,4 +34,5 @@ Instructions.propTypes = {
   localizations: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  hideSectionHeaders: PropTypes.bool,
 };

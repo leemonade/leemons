@@ -70,7 +70,10 @@ export default function useParseAssignations(assignations, options) {
         isTeacher,
         assignations: hashObject(assignations),
         labels: hashObject(labels),
-        options,
+        options: {
+          ...options,
+          blockingActivities: hashObject(options.blockingActivities),
+        },
       },
     ],
     () =>
