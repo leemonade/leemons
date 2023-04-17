@@ -1,6 +1,3 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import {
   Box,
   ImageLoader,
@@ -13,31 +10,34 @@ import {
   useDebouncedValue,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@bubbles-ui/leemons';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { LibraryItem } from '@bubbles-ui/leemons';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
+import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
+import { prepareAsset } from '../helpers/prepareAsset';
+import { prepareAssetType } from '../helpers/prepareAssetType';
 import {
   deleteAssetRequest,
   duplicateAssetRequest,
+  getAssetTypesRequest,
   getAssetsByIdsRequest,
   getAssetsRequest,
-  getAssetTypesRequest,
   listCategoriesRequest,
   pinAssetRequest,
   unpinAssetRequest,
 } from '../request';
-import { getPageItems } from '../helpers/getPageItems';
-import { CardWrapper } from './CardWrapper';
-import { CardDetailWrapper } from './CardDetailWrapper';
-import { AssetThumbnail } from './AssetThumbnail';
-import { prepareAsset } from '../helpers/prepareAsset';
-import { prepareAssetType } from '../helpers/prepareAssetType';
 import { PermissionsData } from './AssetSetup/PermissionsData';
+import { AssetThumbnail } from './AssetThumbnail';
+import { CardDetailWrapper } from './CardDetailWrapper';
+import { CardWrapper } from './CardWrapper';
 import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 

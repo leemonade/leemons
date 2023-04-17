@@ -1,37 +1,20 @@
 import { SelectProgram } from '@academic-portfolio/components';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import usePrograms from '@academic-portfolio/hooks/usePrograms';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import {
-  Alert,
-  Box,
-  Button,
-  ContextContainer,
-  ImageLoader,
-  Paper,
-  Paragraph,
-  Select,
-  Stack,
-  Switch,
-  TableInput,
-  Text,
-  Title,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
+import { Alert, Box, Button, ContextContainer, Paper, Stack, Switch } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import SelectUserAgent from '@users/components/SelectUserAgent';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
 import { getCentersWithToken } from '@users/session';
-import _, { find, isArray, isEmpty, isFunction, isNil } from 'lodash';
+import { isArray, isEmpty, isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
+import { PermissionsDataClasses } from './components/PermissionsDataClasses';
+import { PermissionsDataUsers } from './components/PermissionsDataUsers';
 
 const ROLES = [
   { label: 'Owner', value: 'owner' },
@@ -39,64 +22,6 @@ const ROLES = [
   { label: 'Editor', value: 'editor' },
   { label: 'Commentor', value: 'commentor' },
 ];
-
-function ClassItem({ class: klass, ...props }) {
-  if (!klass) {
-    return null;
-  }
-
-  return (
-    <Box {...props}>
-      <Box
-        sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: theme.spacing[2],
-          alignItems: 'center',
-        })}
-      >
-        <Box
-          sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 26,
-            minHeight: 26,
-            maxWidth: 26,
-            maxHeight: 26,
-            borderRadius: '50%',
-            backgroundColor: klass?.color,
-          })}
-        >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={getClassIcon(klass)}
-          />
-        </Box>
-        <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-        }`}</Text>
-      </Box>
-    </Box>
-  );
-}
-
-const SelectAgents = ({ usersData, ...props }) => (
-  <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
-);
-
-const RoleSelect = (props) => {
-  if (!props.value) {
-    props.onChange('viewer');
-  }
-  return <Select {...props} />;
-};
 
 const PermissionsData = ({
   asset: assetProp,
@@ -107,54 +32,18 @@ const PermissionsData = ({
   drawerTranslations,
 }) => {
   const [asset, setAsset] = useState(assetProp);
+  const [roles, setRoles] = useState([]);
   const [t, translations] = isDrawer
     ? drawerTranslations
     : useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [selectedClasses, setSelectedClasses] = useState([]);
-  const [selectedProgram, setSelectedProgram] = useState(null);
-  const [roles, setRoles] = useState([]);
   const [adminPrograms, setAdminPrograms] = useState(assetProp.adminPrograms || []);
   const [isPublic, setIsPublic] = useState(adminPrograms.length || asset?.public);
   const params = useParams();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const { data: classes } = useSessionClasses();
-  const { data: programs } = usePrograms();
   const profileSysName = useGetProfileSysName();
-
-  const programsData = useMemo(() => {
-    let goodPrograms = programs;
-    if (asset?.program) {
-      goodPrograms = _.filter(programs, { id: asset.program });
-    }
-    return (
-      goodPrograms?.map((program) => ({
-        value: program.id,
-        label: program.name,
-      })) ?? []
-    );
-  }, [programs, asset?.program]);
-
-  const classesData = useMemo(() => {
-    let goodClasses = classes;
-    if (selectedProgram) {
-      goodClasses = _.filter(goodClasses, { program: selectedProgram });
-    }
-    if (asset?.subjects?.length) {
-      const subjectsIds = _.map(asset.subjects, 'subject');
-      goodClasses = _.filter(goodClasses, ({ subject }) => subjectsIds.includes(subject.id));
-    }
-    return (
-      goodClasses?.map((klass) => ({
-        value: klass.id,
-        label: klass.groups.isAlone
-          ? klass.subject.name
-          : `${klass.subject.name} - ${klass.groups.name}`,
-        ...klass,
-      })) ?? []
-    );
-  }, [classes, selectedProgram, asset?.subjects]);
 
   // ··············································································
   // DATA PROCESS
@@ -213,45 +102,6 @@ const PermissionsData = ({
   // EFFECTS
 
   useEffect(() => {
-    if (
-      !isEmpty(params.asset) &&
-      (isNil(asset) || (!isEmpty(asset) && asset.id !== params.asset))
-    ) {
-      loadAsset(params.asset);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    if (asset?.public !== isPublic) {
-      // setIsPublic(asset?.public);
-    }
-
-    const { canAccess, classesCanAccess } = asset;
-
-    if (isArray(classesCanAccess) && classesCanAccess.length) {
-      const classe = find(classes, { id: classesCanAccess[0].class });
-      if (classe) {
-        setSelectedProgram(classe.program);
-      }
-      setSelectedClasses(
-        classesCanAccess.map((klass) => ({
-          class: [klass.class],
-          role: klass.role,
-        }))
-      );
-    }
-    if (isArray(canAccess)) {
-      setUsersData(
-        canAccess.map((user) => ({
-          user,
-          role: user.permissions[0],
-          editable: user.permissions[0] !== 'owner',
-        }))
-      );
-    }
-  }, [asset, classes]);
-
-  useEffect(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const { roleLabels } = items.plugins.leebrary.assetSetup;
@@ -262,110 +112,14 @@ const PermissionsData = ({
     }
   }, [translations]);
 
-  // ··············································································
-  // HANDLERS
-
-  const handleOnClick = () => {
-    savePermissions();
-  };
-
-  const checkIfUserIsAdded = (userData) => {
-    const found = find(usersData, (data) => data.user.id === userData.user.id);
-    return isNil(found);
-  };
-
-  const checkIfClassIsAdded = (newClass) => {
-    const found = find(
-      selectedClasses,
-      (selectedClass) => selectedClass.class[0] === newClass.class[0]
-    );
-    return isNil(found);
-  };
-
-  // ··············································································
-  // LABELS & STATICS
-
-  const USERS_COLUMNS = useMemo(
-    () => [
-      {
-        Header: 'User',
-        accessor: 'user',
-        input: {
-          node: <SelectAgents usersData={usersData} />,
-          rules: { required: 'Required field' },
-        },
-        editable: false,
-        valueRender: (value) => <UserDisplayItem {...value} variant="inline" size="xs" />,
-        style: { width: '50%' },
-      },
-      {
-        Header: 'Role',
-        accessor: 'role',
-        input: {
-          node: <RoleSelect />,
-          rules: { required: 'Required field' },
-          data: roles,
-        },
-        valueRender: (value) => find(roles, { value })?.label,
-      },
-    ],
-    [roles, usersData]
-  );
-
-  const USER_LABELS = useMemo(
-    () => ({
-      add: t('permissionsData.labels.addUserButton', 'Add'),
-      remove: t('permissionsData.labels.removeUserButton', 'Remove'),
-      edit: t('permissionsData.labels.editUserButton', 'Edit'),
-      accept: t('permissionsData.labels.acceptButton', 'Accept'),
-      cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
-    }),
-    [t]
-  );
-
-  const CLASSES_COLUMNS = useMemo(
-    () => [
-      {
-        Header: 'Class',
-        accessor: 'class',
-        input: {
-          node: (
-            <Select
-              itemComponent={(item) => (
-                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
-              )}
-              valueComponent={(item) => (
-                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
-              )}
-              data={classesData}
-            />
-          ),
-          rules: { required: 'Required field' },
-        },
-        editable: false,
-        valueRender: (values) =>
-          values.map((value) => (
-            <ClassItem
-              key={value}
-              class={classesData.find((klass) => klass.id === value)}
-              variant="inline"
-              size="xs"
-            />
-          )),
-      },
-      {
-        Header: 'Role',
-        accessor: 'role',
-        input: {
-          node: <Select />,
-          rules: { required: 'Required field' },
-          data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
-        },
-        valueRender: (value) => find(roles, { value })?.label,
-      },
-    ],
-    [roles, classesData]
-  );
+  useEffect(() => {
+    if (
+      !isEmpty(params.asset) &&
+      (isNil(asset) || (!isEmpty(asset) && asset.id !== params.asset))
+    ) {
+      loadAsset(params.asset);
+    }
+  }, [params]);
 
   // ··············································································
   // RENDER
@@ -384,6 +138,15 @@ const PermissionsData = ({
           {isArray(asset?.canAccess) ? (
             <ContextContainer divided>
               {profileSysName === 'admin' ? (
+                <PermissionsDataAdminCenterPrograms
+                  roles={roles}
+                  value={adminPrograms}
+                  onChange={setAdminPrograms}
+                  asset={asset}
+                  t={t}
+                  translations={translations}
+                  profileSysName={profileSysName}
+                />
                 <Box>
                   <Switch
                     checked={isPublic}
@@ -403,66 +166,29 @@ const PermissionsData = ({
               ) : null}
 
               {!isPublic && (profileSysName === 'teacher' || profileSysName === 'student') && (
-                <ContextContainer>
-                  {profileSysName === 'teacher' ? (
-                    <Box>
-                      <Select
-                        label={t('permissionsData.labels.programs')}
-                        value={selectedProgram}
-                        onChange={(e) => {
-                          setSelectedClasses([]);
-                          setSelectedProgram(e);
-                        }}
-                        data={programsData}
-                      />
-                    </Box>
-                  ) : null}
-
-                  <Box>
-                    <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
-                    <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
-                  </Box>
-                  {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                    <TableInput
-                      data={selectedClasses}
-                      onChange={setSelectedClasses}
-                      columns={CLASSES_COLUMNS}
-                      labels={USER_LABELS}
-                      disabled={profileSysName === 'student' ? false : !selectedProgram}
-                      showHeaders={false}
-                      forceShowInputs
-                      sortable={false}
-                      onBeforeAdd={checkIfClassIsAdded}
-                      resetOnAdd
-                      editable
-                      unique
-                    />
-                  )}
-                </ContextContainer>
+                <PermissionsDataClasses
+                  roles={roles}
+                  value={selectedClasses}
+                  onChange={setSelectedClasses}
+                  asset={asset}
+                  t={t}
+                  translations={translations}
+                  profileSysName={profileSysName}
+                />
               )}
-              <ContextContainer>
-                <Box>
-                  <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-                  <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
-                </Box>
-                {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                  <TableInput
-                    data={usersData}
-                    onChange={setUsersData}
-                    columns={USERS_COLUMNS}
-                    labels={USER_LABELS}
-                    showHeaders={false}
-                    forceShowInputs
-                    sortable={false}
-                    onBeforeAdd={checkIfUserIsAdded}
-                    resetOnAdd
-                    editable
-                    unique
-                  />
-                )}
-              </ContextContainer>
+
+              <PermissionsDataUsers
+                roles={roles}
+                value={usersData}
+                onChange={setUsersData}
+                asset={asset}
+                t={t}
+                translations={translations}
+                profileSysName={profileSysName}
+              />
+
               <Stack justifyContent={'end'} fullWidth>
-                <Button loading={loading} onClick={handleOnClick}>
+                <Button loading={loading} onClick={savePermissions}>
                   {sharing
                     ? t('permissionsData.labels.shareButton')
                     : t('permissionsData.labels.saveButton')}
