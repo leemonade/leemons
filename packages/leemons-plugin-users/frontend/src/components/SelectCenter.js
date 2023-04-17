@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, isFunction, map } from 'lodash';
-import { Select } from '@bubbles-ui/components';
+import { MultiSelect, Select } from '@bubbles-ui/components';
 import { getCentersWithToken } from '@users/session';
+import { isArray, isFunction, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 
-function SelectCenter({ firstSelected, onChange, value: userValue, ...props }) {
+function SelectCenter({ multiple = false, firstSelected, onChange, value: userValue, ...props }) {
   const [data, setData] = useState([]);
   const [value, setValue] = useState(null);
 
@@ -36,12 +36,24 @@ function SelectCenter({ firstSelected, onChange, value: userValue, ...props }) {
     }
   }, []);
 
+  if (multiple)
+    return (
+      <MultiSelect
+        {...props}
+        data={data}
+        value={value}
+        autoSelectOneOption
+        onChange={handleOnChange}
+      />
+    );
+
   return (
     <Select {...props} data={data} value={value} autoSelectOneOption onChange={handleOnChange} />
   );
 }
 
 SelectCenter.propTypes = {
+  multiple: PropTypes.bool,
   firstSelected: PropTypes.bool,
   onChange: PropTypes.func,
   value: PropTypes.string,

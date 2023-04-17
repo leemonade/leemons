@@ -169,6 +169,10 @@ module.exports = {
         cancelButton: 'Cancelar',
         permissionsSuccess: 'Permisos establecidos con éxito',
         shareSuccess: 'Recurso compartido con éxito',
+        shareCenters: 'Buscar centros',
+        scharePrograms: 'Programas',
+        shareProfiles: 'Perfiles',
+        sharePermissions: 'Permisos',
       },
       placeholders: {
         userInput: 'Escribir nombre',

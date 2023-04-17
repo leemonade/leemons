@@ -182,6 +182,10 @@ module.exports = {
         cancelButton: 'Cancel',
         permissionsSuccess: 'Permissions successfully established',
         shareSuccess: 'Resource successfully shared',
+        shareCenters: 'Search centers',
+        scharePrograms: 'Programs',
+        shareProfiles: 'Profiles',
+        sharePermissions: 'Permissions',
       },
       placeholders: {
         userInput: 'Start typing a name',

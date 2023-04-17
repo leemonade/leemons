@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
+import { PermissionsDataAdminCenterPrograms } from './components/PermissionsDataAdminCenterPrograms';
 import { PermissionsDataClasses } from './components/PermissionsDataClasses';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
 
@@ -39,6 +40,7 @@ const PermissionsData = ({
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [selectedClasses, setSelectedClasses] = useState([]);
+  const [permissions, setPermissions] = useState(assetProp.adminPrograms || []);
   const [adminPrograms, setAdminPrograms] = useState(assetProp.adminPrograms || []);
   const [isPublic, setIsPublic] = useState(adminPrograms.length || asset?.public);
   const params = useParams();
@@ -138,31 +140,33 @@ const PermissionsData = ({
           {isArray(asset?.canAccess) ? (
             <ContextContainer divided>
               {profileSysName === 'admin' ? (
-                <PermissionsDataAdminCenterPrograms
-                  roles={roles}
-                  value={adminPrograms}
-                  onChange={setAdminPrograms}
-                  asset={asset}
-                  t={t}
-                  translations={translations}
-                  profileSysName={profileSysName}
-                />
-                <Box>
-                  <Switch
-                    checked={isPublic}
-                    onChange={setIsPublic}
-                    label={t('permissionsData.labels.isPublic')}
+                <>
+                  <PermissionsDataAdminCenterPrograms
+                    roles={roles}
+                    value={permissions}
+                    onChange={setPermissions}
+                    asset={asset}
+                    t={t}
+                    translations={translations}
+                    profileSysName={profileSysName}
                   />
-                  {isPublic ? (
-                    <SelectProgram
-                      multiple
-                      label={t('permissionsData.labels.program')}
-                      center={getCentersWithToken()[0].id}
-                      value={adminPrograms}
-                      onChange={setAdminPrograms}
+                  <Box>
+                    <Switch
+                      checked={isPublic}
+                      onChange={setIsPublic}
+                      label={t('permissionsData.labels.isPublic')}
                     />
-                  ) : null}
-                </Box>
+                    {isPublic ? (
+                      <SelectProgram
+                        multiple
+                        label={t('permissionsData.labels.program')}
+                        center={getCentersWithToken()[0].id}
+                        value={adminPrograms}
+                        onChange={setAdminPrograms}
+                      />
+                    ) : null}
+                  </Box>
+                </>
               ) : null}
 
               {!isPublic && (profileSysName === 'teacher' || profileSysName === 'student') && (
