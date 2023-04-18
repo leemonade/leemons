@@ -172,7 +172,7 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
           } else {
             categoriesToCreate.push({ ...category, order });
           }
-        } else {
+        } else if (category.value) {
           categoriesToCreate.push({ ...category, order });
         }
       });

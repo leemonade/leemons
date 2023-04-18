@@ -2,21 +2,24 @@ const { table } = require('../tables');
 
 const havePermissions = async (s3, config) => {
   try {
-    await s3
-      .putObject({
-        Bucket: config.bucket.trim(),
-        Key: '__test.json',
-        Body: JSON.stringify({ test: true }),
-        ACL: 'private',
-        ContentType: 'application/json',
-      })
-      .promise();
+    const Key = `leemons/leebrary/t${global.utils.randomString(6)}.json`;
+    const uploadConf = {
+      Bucket: config.bucket.trim(),
+      Key,
+      Body: JSON.stringify({ test: true }),
+      ACL: 'private',
+      ContentType: 'application/json; charset=utf-8',
+    };
+
+    await s3.putObject(uploadConf).promise();
+
     await s3
       .deleteObject({
         Bucket: config.bucket.trim(),
-        Key: '__test.json',
+        Key,
       })
       .promise();
+
     return true;
   } catch (error) {
     return false;
@@ -26,15 +29,18 @@ const havePermissions = async (s3, config) => {
 async function setConfig(newConfig, { transacting } = {}) {
   const configs = await table.config.find({}, { transacting });
 
-  const s3 = new global.utils.aws.S3({
+  const options = {
     accessKeyId: newConfig.accessKey.trim(),
     secretAccessKey: newConfig.secretAccessKey.trim(),
     region: newConfig.region.trim(),
-  });
+  };
+
+  const s3 = new global.utils.aws.S3(options);
 
   try {
+    const hasPermission = await havePermissions(s3, newConfig);
     // Si el bucket no existe intentamos crearlo
-    if (!(await havePermissions(s3, newConfig))) {
+    if (!hasPermission) {
       await s3
         .createBucket({
           Bucket: newConfig.bucket.trim(),
