@@ -18,6 +18,7 @@ const {
   filterInstancesByStudentCompletionPercentage,
 } = require('./helpers/filters/filterInstancesByStudentCompletionPercentage');
 const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts');
+const filterByBlockedActivities = require('./helpers/filters/filterByBlockedActivities');
 
 module.exports = async function searchNyaActivities(query, { userSession, transacting } = {}) {
   // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.
@@ -97,7 +98,11 @@ module.exports = async function searchNyaActivities(query, { userSession, transa
   /*
     === STUDENT ===
   */
-  let assignations = await getStudentAssignations({ userSession, transacting });
+  let assignations = await getStudentAssignations({
+    relatedInstances: true,
+    userSession,
+    transacting,
+  });
   let instances = map(assignations, 'instance');
 
   instances = filterInstancesByNotModule({ instances });
@@ -115,6 +120,8 @@ module.exports = async function searchNyaActivities(query, { userSession, transa
     },
     { transacting }
   );
+
+  instances = filterByBlockedActivities({ instances, assignations, dates });
 
   instances = filterInstancesByStatusAndArchived({
     instances,

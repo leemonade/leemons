@@ -2,7 +2,7 @@ const { uniq, map } = require('lodash');
 const tables = require('../../../tables');
 const { getAssignablesData } = require('./getAssignablesData');
 
-async function getInstancesData(instances, { userSession, transacting }) {
+async function getInstancesData(instances, { relatedInstances = false, userSession, transacting }) {
   const uniqInstances = uniq(instances);
 
   const instancesObj = {};
@@ -19,7 +19,8 @@ async function getInstancesData(instances, { userSession, transacting }) {
         'allowFeedback',
         'metadata',
         'created_at',
-      ],
+        relatedInstances && 'relatedAssignableInstances',
+      ].filter(Boolean),
       transacting,
     }
   );
@@ -33,6 +34,12 @@ async function getInstancesData(instances, { userSession, transacting }) {
       assignable: assignablesData[instance.assignable],
       metadata: JSON.parse(instance.metadata),
     };
+
+    if (relatedInstances) {
+      instancesObj[instance.id].relatedAssignableInstances = JSON.parse(
+        instance.relatedAssignableInstances
+      );
+    }
   });
 
   return instancesObj;
