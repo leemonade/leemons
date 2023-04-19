@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAssetsRequest } from '@leebrary/request';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
 import { map } from 'lodash';
-import { Box, Pager, createStyles } from '@bubbles-ui/components';
+import { Box, Loader, Pager, createStyles } from '@bubbles-ui/components';
 import SearchEmpty from '@leebrary/components/SearchEmpty';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -35,7 +35,7 @@ export const useListStyles = createStyles((theme) => {
 });
 
 export function useAssetList(query, options) {
-  const { data: assets } = useQuery({
+  const { data: assets, isLoading } = useQuery({
     // TODO: Add a good queryKey
     queryKey: ['assetPickerDrawer.assets', query],
     queryFn: () =>
@@ -49,17 +49,22 @@ export function useAssetList(query, options) {
     select: (data) => data.assets,
   });
 
-  return assets;
+  return { assets, isLoading };
 }
 
 export function List({ query, filters, onSelect }) {
-  const assets = useAssetList(query, filters);
+  const { assets, isLoading: isLoadingList } = useAssetList(query, filters);
 
   if (assets?.length > 25) {
     assets.length = 25;
   }
 
-  const { data: assetsData } = useAssets({ ids: map(assets, 'asset') });
+  const { data: assetsData, isLoading: isLoadingData } = useAssets({
+    ids: map(assets, 'asset'),
+    enabled: !!assets?.length,
+  });
+
+  const isLoading = isLoadingList || isLoadingData;
 
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
@@ -70,6 +75,13 @@ export function List({ query, filters, onSelect }) {
   const [t] = useTranslateLoader(prefixPN('list'));
   const { classes } = useListStyles();
 
+  if (isLoading) {
+    return (
+      <Box className={classes.root}>
+        <Loader />
+      </Box>
+    );
+  }
   if (!assetsData?.length) {
     return (
       <Box className={classes.root}>
