@@ -1,18 +1,20 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Box, Button, Stack, TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { useStore } from '@common';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
 import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';
+import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
+import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 function CurriculumList({
-  onChange,
+  onChange: _onChange,
   isEditMode = true,
-  value,
+  value: _value,
   curriculum,
   schema,
   blockData,
@@ -20,7 +22,39 @@ function CurriculumList({
   id,
   t,
 }) {
-  const [store, render] = useStore();
+  const [store, render] = useStore({
+    parentValue: returnFirstMetadataParent(_value),
+  });
+
+  // eslint-disable-next-line no-nested-ternary
+  const value = _.isArray(_value)
+    ? store.parentValue
+      ? _.find(_value, { metadata: { parentRelated: store.parentValue } })
+      : _value[0]
+    : _value;
+
+  function onChange(e, fromParent) {
+    if (store.parentValue) {
+      if (fromParent === true) {
+        e = _.find(_value, { metadata: { parentRelated: store.parentValue } });
+      }
+      return _onChange({
+        ...(e || { value: [], metadata: {} }),
+        metadata: {
+          ...(e?.metadata || {}),
+          parentRelated: store.parentValue,
+        },
+      });
+    }
+    return _onChange(e);
+  }
+
+  React.useEffect(() => {
+    if (!_.isArray(_value) && store.parentValue) {
+      onChange(_value);
+      render();
+    }
+  }, [_value, store.parentValue]);
 
   function getTitle(values, index) {
     return getItemTitleNumberedWithParents(curriculum, blockData, id, values, index);
@@ -46,7 +80,7 @@ function CurriculumList({
     render();
   }
 
-  function addNew(values) {
+  function addNew(values, silent) {
     store.isNewItem = false;
     onChange({ ...value, value: [...(value?.value || []), { ...values }] });
     setTimeout(() => {
@@ -62,8 +96,8 @@ function CurriculumList({
     }, 100);
   }
 
-  function onUpdate(index, newValues) {
-    store.editingItem = null;
+  function onUpdate(index, newValues, silent) {
+    if (!silent) store.editingItem = null;
     value.value[index] = newValues;
     onChange({ ...value });
     setTimeout(() => {
@@ -115,9 +149,16 @@ function CurriculumList({
       <ParentRelation
         curriculum={curriculum}
         blockData={blockData}
-        value={value}
+        value={{
+          ...(value || { value: [], metadata: {} }),
+          metadata: { ...(value?.metadata || {}), parentRelated: store.parentValue },
+        }}
         isEditMode={isEditMode}
-        onChange={onChange}
+        onChange={(e) => {
+          store.parentValue = e.metadata.parentRelated;
+          render();
+          onChange(e, true);
+        }}
         isShow={(e) => {
           store.showSaveButton = e;
           render();
@@ -125,7 +166,6 @@ function CurriculumList({
         id={id}
         t={t}
       />
-
       {useOrder && isEditMode ? (
         <StartNumbering
           t={t}
@@ -135,7 +175,6 @@ function CurriculumList({
           onChange={onChange}
         />
       ) : null}
-
       {value?.value.map((item, index) => (
         <CurriculumListItem
           key={index}
@@ -154,13 +193,12 @@ function CurriculumList({
           onRemove={() => {
             onRemove(index);
           }}
-          onSave={(e) => {
+          onSave={(e, silent) => {
             onUpdate(index, e);
           }}
           onCancel={onCancel}
         />
       ))}
-
       {store.isNewItem && isEditMode ? (
         <CurriculumListItem
           schema={schema}

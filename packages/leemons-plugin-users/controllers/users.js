@@ -145,7 +145,9 @@ async function detailForPage(ctx) {
     hasPermission = await hasPermissionCTX(ctx.state.userSession, allowedPermissions);
   }
 
-  const data = await usersService.detailForPage(ctx.params.id);
+  const data = await usersService.detailForPage(ctx.params.id, {
+    userSession: ctx.state.userSession,
+  });
 
   // Comprobamos si se tienen como contactos
   if (!hasPermission) {
@@ -193,7 +195,9 @@ async function agentDetailForPage(ctx) {
   }
 
   if (hasPermission) {
-    const data = await userAgentsService.agentDetailForPage(ctx.params.id);
+    const data = await userAgentsService.agentDetailForPage(ctx.params.id, {
+      userSession: ctx.state.userSession,
+    });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {
@@ -309,7 +313,9 @@ async function getRememberLogin(ctx) {
 }
 
 async function createBulk(ctx) {
-  const users = await usersService.addBulk(ctx.request.body, ctx);
+  const users = await usersService.addBulk(ctx.request.body, ctx, {
+    userSession: ctx.state.userSession,
+  });
   ctx.status = 200;
   ctx.body = { status: 200, users };
 }
@@ -410,7 +416,9 @@ async function updateUser(ctx) {
   }
 
   if (hasPermission) {
-    const data = await usersService.update(ctx.params.id, ctx.request.body);
+    const data = await usersService.update(ctx.params.id, ctx.request.body, {
+      userSession: ctx.state.userSession,
+    });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {

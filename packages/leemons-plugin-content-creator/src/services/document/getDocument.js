@@ -16,7 +16,6 @@ async function getDocument(id, { userSession, transacting } = {}) {
       assignableService.getAssignable(_id, {
         userSession,
         withFiles: true,
-
         transacting,
       })
     )
@@ -59,7 +58,10 @@ async function getDocument(id, { userSession, transacting } = {}) {
       description: assignable.asset.description,
       introductoryText: assignable.statement,
       content: documentsById[assignable.id]?.content,
+      subjects: assignable.subjects,
+      published: assignable.published,
     };
+
     return toReturn;
   });
   return _.isArray(id) ? result : result[0];

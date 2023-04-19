@@ -4,11 +4,16 @@ const { getUserPrograms } = require('../../programs');
 const { getClassProgram } = require('../getClassProgram');
 
 async function remove(classId, studentId, { soft, transacting: _transacting } = {}) {
+  const roomService = leemons.getPlugin('comunica').services.room;
+
   return global.utils.withTransaction(
     async (transacting) => {
       const [classStudent, program] = await Promise.all([
         table.classStudent.findOne({ class: classId, student: studentId }, { soft, transacting }),
         getClassProgram(classId),
+        roomService.removeUserAgents(leemons.plugin.prefixPN(`room.class.${classId}`), studentId, {
+          transacting,
+        }),
       ]);
       if (!classStudent) {
         throw new Error(`Class student with class ${classId} and student ${studentId} not found`);
@@ -39,7 +44,7 @@ async function remove(classId, studentId, { soft, transacting: _transacting } = 
 
       const programs = await getUserPrograms({ userAgents: [{ id: studentId }] });
       if (programs.length) {
-        const programsIds = _.keyBy(programs, 'id');
+        const programsIds = _.map(programs, 'id');
         if (!programsIds.includes(program.id)) {
           await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
             classStudent.student,

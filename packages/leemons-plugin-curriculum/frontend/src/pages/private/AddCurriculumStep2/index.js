@@ -1,9 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
-import PropTypes from 'prop-types';
-import {cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take} from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import {listCentersRequest} from '@users/request';
+import { detailProgramRequest } from '@academic-portfolio/request';
 import {
   Box,
   Button,
@@ -15,39 +10,49 @@ import {
   Tree,
   useTree,
 } from '@bubbles-ui/components';
-import {useHistory, useParams} from 'react-router-dom';
-import {useStore} from '@common';
-import {detailProgramRequest} from '@academic-portfolio/request';
-import {removeDatasetFieldRequest, saveDatasetFieldRequest} from '@dataset/request';
-import {useLayout} from '@layout/context';
-import {
-  addNodeLevelsRequest,
-  detailCurriculumRequest,
-  generateNodesFromAcademicPortfolioRequest,
-  updateNodeLevelRequest,
-} from '../../../request';
-import NewBranchConfig, {
-  NEW_BRANCH_CONFIG_ERROR_MESSAGES,
-  NEW_BRANCH_CONFIG_MESSAGES,
-  NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
-} from '../../../bubbles-components/NewBranchConfig';
+import { useStore } from '@common';
+import prefixPN from '@curriculum/helpers/prefixPN';
+import { removeDatasetFieldRequest, saveDatasetFieldRequest } from '@dataset/request';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { listCentersRequest } from '@users/request';
+import _, { cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import BranchContent from '../../../bubbles-components/BranchContent';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
   BRANCH_CONTENT_MESSAGES,
   BRANCH_CONTENT_SELECT_DATA,
 } from '../../../bubbles-components/branchContentDefaultValues';
+import NewBranchConfig, {
+  NEW_BRANCH_CONFIG_ERROR_MESSAGES,
+  NEW_BRANCH_CONFIG_MESSAGES,
+  NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
+} from '../../../bubbles-components/NewBranchConfig';
+import {
+  addNodeLevelsRequest,
+  detailCurriculumRequest,
+  generateNodesFromAcademicPortfolioRequest,
+  updateNodeLevelRequest,
+} from '../../../request';
 
-function AddCurriculumStep2({onNext}) {
+function AddCurriculumStep2({ onNext, curriculum }) {
   const [store, render] = useStore({
     loading: true,
     curriculum: {},
+    newIds: [],
   });
+
+  const { openConfirmationModal } = useLayout();
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep2'));
-  const {openDeleteConfirmationModal} = useLayout();
+  const { openDeleteConfirmationModal } = useLayout();
   const tree = useTree();
   const history = useHistory();
-  const {id} = useParams();
+  const { id } = useParams();
+
+  const onlyCanAdd = curriculum.step > 2;
 
   const messagesConfig = useMemo(() => {
     const result = {};
@@ -83,7 +88,7 @@ function AddCurriculumStep2({onNext}) {
 
   const orderedData = useMemo(() => {
     const result = cloneDeep(NEW_BRANCH_CONFIG_ORDERED_OPTIONS);
-    forEach(result, ({value}, key) => {
+    forEach(result, ({ value }, key) => {
       result[key].label = t(`orderedOptions.${value}`);
     });
     return result;
@@ -91,7 +96,7 @@ function AddCurriculumStep2({onNext}) {
 
   const groupOrderedData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.groupOrdered);
-    forEach(result, ({value}, key) => {
+    forEach(result, ({ value }, key) => {
       result[key].label = t(`orderedOptions.${value}`);
     });
     return result;
@@ -99,7 +104,7 @@ function AddCurriculumStep2({onNext}) {
 
   const blockTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.blockType);
-    forEach(result, ({value}, key) => {
+    forEach(result, ({ value }, key) => {
       result[key].label = t(`blockTypeOptions.${value}`);
     });
     return result;
@@ -107,7 +112,7 @@ function AddCurriculumStep2({onNext}) {
 
   const codeTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.codeType);
-    forEach(result, ({value}, key) => {
+    forEach(result, ({ value }, key) => {
       result[key].label = t(`codeTypeOptions.${value}`);
     });
     return result;
@@ -115,21 +120,21 @@ function AddCurriculumStep2({onNext}) {
 
   const groupTypeOfContentsData = useMemo(() => {
     const result = cloneDeep(blockTypeData);
-    result.splice(findIndex(result, {value: 'group'}), 1);
+    result.splice(findIndex(result, { value: 'group' }), 1);
     return result;
   }, [blockTypeData]);
 
   const listTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listType);
-    forEach(result, ({value}, key) => {
-      result[key].label = blockTypeData[findIndex(blockTypeData, {value})].label;
+    forEach(result, ({ value }, key) => {
+      result[key].label = blockTypeData[findIndex(blockTypeData, { value })].label;
     });
     return result;
   }, [blockTypeData]);
 
   const listOrderedData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listOrdered);
-    forEach(result, ({value}, key) => {
+    forEach(result, ({ value }, key) => {
       result[key].label = t(`orderedOptions.${value}`);
     });
     return result;
@@ -176,21 +181,19 @@ function AddCurriculumStep2({onNext}) {
         render();
       }
       const [
-        {curriculum: c},
+        { curriculum: c },
         {
-          data: {items: centers},
+          data: { items: centers },
         },
       ] = await Promise.all([
         detailCurriculumRequest(id),
-        listCentersRequest({page: 0, size: 999999}),
+        listCentersRequest({ page: 0, size: 999999 }),
       ]);
 
-      console.log(c);
-
-      const {program} = await detailProgramRequest(c.program);
+      const { program } = await detailProgramRequest(c.program);
 
       c.program = program;
-      c.center = find(centers, {id: c.center});
+      c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
 
       store.curriculum = c;
@@ -221,8 +224,8 @@ function AddCurriculumStep2({onNext}) {
     tree.setTreeData(items);
   }, [store.curriculum]);
 
-  function onSelect({id: nodeLevelId}) {
-    store.activeNodeLevel = find(store.curriculum.nodeLevels, {id: nodeLevelId});
+  function onSelect({ id: nodeLevelId }) {
+    store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: nodeLevelId });
     store.activeRightSection = 'detail-branch';
     render();
   }
@@ -235,7 +238,7 @@ function AddCurriculumStep2({onNext}) {
 
   // CREATE NODE LEVEL
 
-  async function addNewBranch({id: nodeLevelId, ordered, ...rest}) {
+  async function addNewBranch({ id: nodeLevelId, ordered, ...rest }) {
     try {
       store.saving = true;
       render();
@@ -342,7 +345,7 @@ function AddCurriculumStep2({onNext}) {
               id: {
                 type: 'string',
               },
-              value: {type: 'string'},
+              value: { type: 'string' },
               metadata: {
                 type: 'object',
                 additionalProperties: true,
@@ -361,7 +364,7 @@ function AddCurriculumStep2({onNext}) {
         break;
       case 'group':
         toSave.schemaConfig.schema.type = 'array';
-        toSave.schemaConfig.schema.items = {type: 'string'};
+        toSave.schemaConfig.schema.items = { type: 'string' };
         toSave.schemaConfig.schema.frontConfig.type = 'group';
         break;
       default:
@@ -372,18 +375,29 @@ function AddCurriculumStep2({onNext}) {
       store.saving = true;
       render();
 
-      await saveDatasetFieldRequest(
+      const { dataset } = await saveDatasetFieldRequest(
         toSave.locationName,
         toSave.pluginName,
         toSave.schemaConfig,
         toSave.schemaLocales,
-        {useDefaultLocaleCallback: false}
+        { useDefaultLocaleCallback: false }
       );
+      const oldDataset = _.find(store.curriculum.nodeLevels, (l) => l?.schema?.id === dataset.id);
+      if (!oldDataset) {
+        store.newIds.push(Object.keys(dataset.jsonSchema.properties)[0]);
+      } else {
+        const oldIds = Object.keys(oldDataset.schema.jsonSchema.properties);
+        const newIds = Object.keys(dataset.jsonSchema.properties);
+
+        store.newIds.push(_.difference(newIds, oldIds)[0]);
+      }
+
       await load(true);
 
-      store.activeNodeLevel = find(store.curriculum.nodeLevels, {id: store.activeNodeLevel.id});
+      store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: store.activeNodeLevel.id });
       store.saving = false;
     } catch (e) {
+      console.error(e);
       store.saving = false;
     }
     render();
@@ -404,8 +418,7 @@ function AddCurriculumStep2({onNext}) {
             await load(true);
             onSelect(store.activeNodeLevel);
             resolve();
-          } catch (e) {
-          }
+          } catch (e) {}
 
           store.removing = false;
           render();
@@ -424,13 +437,14 @@ function AddCurriculumStep2({onNext}) {
           errorMessages={errorMessagesConfig}
           orderedData={orderedData}
           isLoading={store.saving}
+          onlyCanAdd={onlyCanAdd}
           defaultValues={
             store.activeRightSection === 'edit-branch'
               ? {
-                id: store.activeNodeLevel.id,
-                name: store.activeNodeLevel.name,
-                ordered: store.activeNodeLevel.listType,
-              }
+                  id: store.activeNodeLevel.id,
+                  name: store.activeNodeLevel.name,
+                  ordered: store.activeNodeLevel.listType,
+                }
               : null
           }
           onSubmit={addNewBranch}
@@ -459,6 +473,8 @@ function AddCurriculumStep2({onNext}) {
           }}
           isLoading={store.saving}
           store={store}
+          newIds={store.newIds}
+          onlyCanAdd={onlyCanAdd}
           branch={store.activeNodeLevel}
           onSaveBlock={onSaveBlock}
           onRemoveBlock={onRemoveBlock}
@@ -486,18 +502,31 @@ function AddCurriculumStep2({onNext}) {
     render();
   }
 
+  async function tryGoStep3() {
+    openConfirmationModal({
+      title: t('nextStep.title'),
+      description: t('nextStep.description'),
+      labels: {
+        confirm: t('nextStep.confirm'),
+      },
+      onConfirm: async () => {
+        goStep3();
+      },
+    })();
+  }
+
   if (store.loading) {
-    return <LoadingOverlay visible/>;
+    return <LoadingOverlay visible />;
   }
 
   return (
     <ContextContainer
-      sx={(theme) => ({marginBottom: theme.spacing[6]})}
+      sx={(theme) => ({ marginBottom: theme.spacing[6] })}
       title={t('pageTitle')}
       description={t('pageDescription')}
       divided
     >
-      {store.removing ? <LoadingOverlay visible/> : null}
+      {store.removing ? <LoadingOverlay visible /> : null}
       <Grid grow>
         <Col span={3}>
           <Box
@@ -536,7 +565,7 @@ function AddCurriculumStep2({onNext}) {
         </Col>
       </Grid>
       <Stack justifyContent="end">
-        <Button loading={store.generating} onClick={goStep3}>
+        <Button loading={store.generating} onClick={tryGoStep3}>
           {t('continueButtonLabel')}
         </Button>
       </Stack>
@@ -546,6 +575,7 @@ function AddCurriculumStep2({onNext}) {
 
 AddCurriculumStep2.propTypes = {
   onNext: PropTypes.func,
+  curriculum: PropTypes.any,
 };
 
 export default AddCurriculumStep2; // withLayout(AddCurriculumStep2);

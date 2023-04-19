@@ -6,6 +6,8 @@ const {
 const { getClassProgram } = require('../getClassProgram');
 
 async function add(_class, teacher, type, { transacting } = {}) {
+  const roomService = leemons.getPlugin('comunica').services.room;
+
   const [classTeacher, program] = await Promise.all([
     table.classTeacher.create(
       {
@@ -16,6 +18,10 @@ async function add(_class, teacher, type, { transacting } = {}) {
       { transacting }
     ),
     getClassProgram(_class),
+    roomService.addUserAgents(leemons.plugin.prefixPN(`room.class.${_class}`), teacher, {
+      transacting,
+      isAdmin: true,
+    }),
   ]);
 
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(

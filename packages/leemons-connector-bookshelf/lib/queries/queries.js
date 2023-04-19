@@ -67,7 +67,7 @@ function generateQueries(model /* connector */) {
   }
 
   // Updates one item matching the query
-  async function update(query, updatedItem, { transacting } = {}) {
+  async function update(query, updatedItem, { debug, transacting } = {}) {
     if (!transactingHasError(transacting)) {
       try {
         addPendingTransacting(transacting);
@@ -88,7 +88,12 @@ function generateQueries(model /* connector */) {
         const attributes = selectAttributes(updatedItem);
 
         if (Object.keys(attributes).length > 0) {
-          const res = await entry.save(attributes, { method: 'update', patch: true, transacting });
+          const res = await entry.save(attributes, {
+            debug,
+            method: 'update',
+            patch: true,
+            transacting,
+          });
           addToRollbacks(transacting, 'update', res._previousAttributes);
           lessPendingTransacting(transacting);
           return res.toJSON();
@@ -330,10 +335,9 @@ function generateQueries(model /* connector */) {
       });
 
       if (entry) {
-        return update(query, item, { transacting });
+        return await update(query, item, { transacting });
       }
-
-      return create({ ...query, ...item }, { transacting });
+      return await create({ ...query, ...item }, { transacting });
     } catch (err) {
       if (err.message !== 'EmptyResponse') {
         throw err;
@@ -369,7 +373,6 @@ function generateQueries(model /* connector */) {
         finishRollback(id);
         return result;
       } catch (e) {
-        console.error(e);
         if (!transactingHasError()) await rollback(id);
         throw e;
       }

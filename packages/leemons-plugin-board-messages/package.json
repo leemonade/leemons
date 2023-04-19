@@ -1,0 +1,10 @@
+{
+  "name": "leemons-plugin-board-messages",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "leemons-utils": "0.0.1",
+    "lodash": "^4.17.21"
+  }
+}

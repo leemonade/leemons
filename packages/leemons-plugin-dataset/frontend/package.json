@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/leemons": "1.1.4",
+    "@bubbles-ui/leemons": "dev",
     "@babel/runtime-corejs2": "^7.14.8",
     "@leemonade/rjsf-core": "^3.0.0",
     "@rjsf/core": "^3.2.1",

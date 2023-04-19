@@ -31,7 +31,7 @@ async function getTeachersOfGivenClasses(classes, { userSession, transacting } =
 
 async function createAssignableInstance(
   assignableInstance,
-  { userSession, transacting: t, ctx } = {}
+  { userSession, transacting: t, ctx, createEvent = true } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -75,13 +75,15 @@ async function createAssignableInstance(
         { transacting }
       );
 
-      const newEvent = await registerEvent(assignable, classes, {
-        id,
-        dates,
-        isAllDay,
-        transacting,
-      });
-      event = newEvent.id;
+      if (createEvent) {
+        const newEvent = await registerEvent(assignable, classes, {
+          id,
+          dates,
+          isAllDay,
+          transacting,
+        });
+        event = newEvent.id;
+      }
 
       await assignableInstances.update({ id }, { event });
 
@@ -120,7 +122,11 @@ async function createAssignableInstance(
       // ES: Guarda las fechas
       await registerDates('assignableInstance', id, dates, { userSession, transacting });
 
-      if (relatedAssignableInstances?.before?.length || relatedAssignableInstances?.after?.length) {
+      if (
+        relatedAssignableInstances?.before?.length ||
+        relatedAssignableInstances?.after?.length ||
+        relatedAssignableInstances?.blocking?.length
+      ) {
         await updateAssignableInstance.call(
           this,
           {

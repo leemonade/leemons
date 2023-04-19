@@ -6,6 +6,7 @@ module.exports = {
     page_title: 'Curriculum Library',
     published: 'Published',
     draft: 'Draft',
+    empty: 'No resources available',
     page_description: 'These are the curricula of the programmes this center delivers.',
   },
   addCurriculumBase: {
@@ -178,8 +179,17 @@ module.exports = {
     useContentRelations: 'Content relations',
     relatedTo: 'Related to',
     typeOfRelation: 'Type of relation',
+    showNumeration: 'Show numbering',
+    content: 'Content',
+    numbering: 'Numbering',
     father: 'Father',
     label: 'Label',
+    nextStep: {
+      title: 'Attention',
+      description:
+        'Are you sure you want to continue? You will not be able to edit the fields now created (but you can add new ones).',
+      confirm: 'Continue to',
+    },
   },
   addCurriculumStep3: {
     pageTitle: 'Content loading',

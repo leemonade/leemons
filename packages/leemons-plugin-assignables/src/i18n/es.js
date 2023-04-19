@@ -116,6 +116,7 @@ module.exports = {
     },
     buttons: {
       assign: 'Asignar',
+      save: 'Guardar', // Used on modules assignation drawer
     },
   },
   activity_deadline_header: {
@@ -133,6 +134,7 @@ module.exports = {
     endHour: 'Hora de fin',
     closedPeriod: 'Periodo cerrado',
     liveSession: 'Sesión en directo',
+    openPeriod: 'Periodo abierto',
     liveSessionData: 'Fecha',
   },
   activity_dashboard: {
@@ -241,6 +243,7 @@ module.exports = {
     ended: 'Finalizada',
     notSubmitted: 'No entregada',
     noLimit: 'Sin límite de tiempo',
+    blocked: 'Bloqueada',
   },
   teacher_actions: {
     sendReminder: 'Enviar recordatorio',
@@ -291,6 +294,7 @@ module.exports = {
     },
   },
   multiSubject: 'Multi-asignatura',
+  customObjectives: 'Objetivos personalizados',
   activities_filters: {
     ongoing: 'En curso {{count}}',
     evaluated: 'Evaluadas {{count}}',
@@ -310,6 +314,7 @@ module.exports = {
   },
   activities_list: {
     emptyState: 'No hay actividades aún',
+    blocked: 'La actividad seleccionada está bloqueada',
   },
   ongoing: {
     ongoing: 'Actividades en curso',

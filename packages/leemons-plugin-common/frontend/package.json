@@ -5,8 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime-corejs2": "^7.14.8",
-    "@bubbles-ui/editors": "1.1.4",
-    "@bubbles-ui/leemons": "1.1.4",
+    "@bubbles-ui/editors": "dev",
+    "@bubbles-ui/leemons": "dev",
     "@leemonade/rjsf-core": "^3.0.0",
     "json-rules-engine-simplified": "^0.1.17",
     "object-hash": "^3.0.0",

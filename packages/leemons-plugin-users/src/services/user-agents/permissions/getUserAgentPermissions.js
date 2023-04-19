@@ -20,7 +20,20 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
     if (_userAgent.reloadPermissions) reloadUserAgents.push(_userAgent.id);
   });
 
-  await updateUserAgentPermissions(reloadUserAgents, { transacting });
+  if (reloadUserAgents.length) {
+    await updateUserAgentPermissions(reloadUserAgents, { transacting });
+  }
+
+  const cacheKeys = _.map(
+    _userAgents,
+    (_userAgent) =>
+      `users:permissions:${_userAgent.id}:getUserAgentPermissions:${JSON.stringify(_query)}`
+  );
+  const cache = await leemons.cache.getMany(cacheKeys);
+
+  if (Object.keys(cache).length) {
+    return cache[Object.keys(cache)[0]];
+  }
 
   const query = { ..._query, userAgent_$in: _.map(_userAgents, 'id') };
 
@@ -57,6 +70,13 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
     delete response.created_at;
     delete response.updated_at;
   });
+
+  await Promise.all(
+    _.map(
+      cacheKeys,
+      (key) => leemons.cache.set(key, responses, 86400) // 1 dia
+    )
+  );
 
   return responses;
 }

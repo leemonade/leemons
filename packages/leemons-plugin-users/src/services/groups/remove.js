@@ -9,20 +9,30 @@ const { exist } = require('./exist');
  * @param {string} groupId - Group id
  * @return {Promise<undefined>}
  * */
-async function remove(groupId) {
-  await exist({ id: groupId }, true);
-  const groupUserAgents = await table.groupUserAgent.find(
-    { group: groupId },
-    { columns: ['id', 'user'] }
+async function remove(groupId, { transacting: _transacting } = {}) {
+  return global.utils.withTransaction(
+    async (transacting) => {
+      await exist({ id: groupId }, true, { transacting });
+      const groupUserAgents = await table.groupUserAgent.find(
+        { group: groupId },
+        { columns: ['id', 'user'] },
+        { transacting }
+      );
+      const userAgentIdsInGroup = _.map(groupUserAgents, 'userAgent');
+      const values = await Promise.all([
+        table.group.delete({ id: groupId }, { transacting }),
+        table.groupUserAgent.deleteMany({ group: groupId }, { transacting }),
+        table.userAgent.updateMany(
+          { id_$in: userAgentIdsInGroup },
+          { reloadPermissions: true },
+          { transacting }
+        ),
+      ]);
+      return values[0];
+    },
+    table.userAgent,
+    _transacting
   );
-  const userAgentIdsInGroup = _.map(groupUserAgents, 'userAgent');
-  return table.groupUserAgent.transaction(async () => {
-    const values = await Promise.all([
-      table.group.delete({ id: groupId }),
-      table.userAgent.updateMany({ id_$in: userAgentIdsInGroup }, { reloadPermissions: true }),
-    ]);
-    return values[0];
-  });
 }
 
 module.exports = { remove };

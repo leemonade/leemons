@@ -889,7 +889,9 @@ const addClassSchema = {
       type: ['string', 'object'],
       nullable: true,
     },
-    substage: stringSchema,
+    substage: {
+      oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
+    },
     seats: numberSchema,
     classroom: stringSchema,
     teachers: {
@@ -1134,7 +1136,9 @@ const updateClassSchema = {
       type: ['string', 'object'],
       nullable: true,
     },
-    substage: stringSchemaNullable,
+    substage: {
+      oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
+    },
     seats: integerSchemaNullable,
     classroom: stringSchemaNullable,
     address: stringSchemaNullable,

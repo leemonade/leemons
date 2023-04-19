@@ -1,11 +1,13 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+const Filter = require('bad-words');
 const { table } = require('../tables');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
+const { getCenter } = require('../config/getCenter');
 
 async function setMessageUnRead(key, userAgentId, message, { transacting } = {}) {
   const item = await table.roomMessagesUnRead.findOne(
@@ -30,17 +32,17 @@ async function setMessageUnRead(key, userAgentId, message, { transacting } = {})
   );
 }
 
-async function sendMessage(key, _userAgent, message, { transacting: _transacting } = {}) {
+async function sendMessage(key, _userAgent, _message, { transacting: _transacting } = {}) {
   validateKeyPrefix(key, this.calledFrom);
 
   return global.utils.withTransaction(
     async (transacting) => {
       await validateNotExistRoomKey(key, { transacting });
-      await validateNotExistUserAgentInRoomKey(key, _userAgent, { transacting });
+      await validateNotExistUserAgentInRoomKey(key, _userAgent.id, { transacting });
 
       const [room, userAgent, userAgentsInRoom] = await Promise.all([
         table.room.findOne({ key }, { transacting }),
-        table.userAgentInRoom.findOne({ room: key, userAgent: _userAgent }, { transacting }),
+        table.userAgentInRoom.findOne({ room: key, userAgent: _userAgent.id }, { transacting }),
         table.userAgentInRoom.find({ room: key }, { transacting }),
       ]);
 
@@ -57,10 +59,24 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
       );
       const promises = [];
 
+      const message = _message;
+      if (message.type === 'text') {
+        const center = await leemons
+          .getPlugin('users')
+          .services.users.getUserAgentCenter(_userAgent, { transacting });
+        const centerConfig = await getCenter(center.id, { transacting });
+
+        if (centerConfig.enableSecureWords) {
+          const words = _.map(centerConfig.secureWords.split(','), (word) => word.trim());
+          const filter = new Filter({ list: words });
+          message.content = filter.clean(message.content);
+        }
+      }
+
       const response = await table.message.create(
         {
           room: key,
-          userAgent: _userAgent,
+          userAgent: _userAgent.id,
           message: JSON.stringify(
             room.useEncrypt ? global.utils.encrypt(message, userAgent.encryptKey) : message
           ),
@@ -75,11 +91,9 @@ async function sendMessage(key, _userAgent, message, { transacting: _transacting
 
       await Promise.all(promises);
 
-      _.forEach(userAgentIds, (userAgentId) => {
-        leemons.socket.emit(userAgentId, `COMUNICA:ROOM:${key}`, {
-          ...response,
-          message,
-        });
+      leemons.socket.emit(userAgentIds, `COMUNICA:ROOM:${key}`, {
+        ...response,
+        message,
       });
 
       return response;

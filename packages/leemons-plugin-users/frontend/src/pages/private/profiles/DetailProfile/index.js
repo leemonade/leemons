@@ -70,7 +70,7 @@ function ProfileDetail() {
         response = await updateProfileRequest(body);
         addSuccessAlert(t('update_done'));
       } else {
-        response = await addProfileRequest({ ...profile, permissions });
+        response = await addProfileRequest({ ...profile, name, description, permissions });
         addSuccessAlert(t('save_done'));
       }
       await hooks.fireEvent('user:update:permissions', profile);

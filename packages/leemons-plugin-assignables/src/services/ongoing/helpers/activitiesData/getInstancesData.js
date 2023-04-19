@@ -11,7 +11,15 @@ async function getInstancesData(instances, { userSession, transacting }) {
       id_$in: uniqInstances,
     },
     {
-      columns: ['id', 'assignable', 'alwaysAvailable', 'requiresScoring', 'allowFeedback'],
+      columns: [
+        'id',
+        'assignable',
+        'alwaysAvailable',
+        'requiresScoring',
+        'allowFeedback',
+        'metadata',
+        'created_at',
+      ],
       transacting,
     }
   );
@@ -20,7 +28,11 @@ async function getInstancesData(instances, { userSession, transacting }) {
   const assignablesData = await getAssignablesData(assignablesIds, { userSession, transacting });
 
   instancesData.forEach((instance) => {
-    instancesObj[instance.id] = { ...instance, assignable: assignablesData[instance.assignable] };
+    instancesObj[instance.id] = {
+      ...instance,
+      assignable: assignablesData[instance.assignable],
+      metadata: JSON.parse(instance.metadata),
+    };
   });
 
   return instancesObj;

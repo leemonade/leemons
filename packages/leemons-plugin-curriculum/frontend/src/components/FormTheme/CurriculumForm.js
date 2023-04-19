@@ -1,14 +1,14 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { useStore } from '@common';
 import { Box, Loader, TabPanel, Tabs } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
+import { useStore } from '@common';
+import CurriculumGroup from '@curriculum/components/FormTheme/CurriculumGroup';
+import CurriculumList from '@curriculum/components/FormTheme/CurriculumList';
 import CurriculumTextInput from '@curriculum/components/FormTheme/CurriculumTextInput';
 import CurriculumWysiwyg from '@curriculum/components/FormTheme/CurriculumWysiwyg';
-import CurriculumList from '@curriculum/components/FormTheme/CurriculumList';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import CurriculumGroup from '@curriculum/components/FormTheme/CurriculumGroup';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, defaultValues }) {
   const [store, render] = useStore({ loading: true });
@@ -36,6 +36,27 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
       </Box>
     );
 
+  function onChangeItem(e, field) {
+    let curValue = field.value;
+    console.log('field.value', field.value);
+    if (!_.isArray(curValue)) {
+      curValue = [curValue];
+    }
+    if (e?.metadata?.parentRelated) {
+      const index = _.findIndex(curValue, {
+        metadata: { parentRelated: e.metadata.parentRelated },
+      });
+      if (index >= 0) {
+        curValue[index] = e;
+      } else {
+        curValue.push(e);
+      }
+    } else {
+      curValue[0] = e;
+    }
+    field.onChange(_.compact(curValue));
+  }
+
   return (
     <Tabs {...(schema.tabProps || {})}>
       {_.map(schema.properties, (value, key) => {
@@ -53,6 +74,12 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                     return (
                       <CurriculumTextInput
                         {...field}
+                        curriculum={curriculum}
+                        blockData={blockData}
+                        id={id}
+                        onChange={(e) => {
+                          onChangeItem(e, field);
+                        }}
                         isEditMode={isEditMode}
                         schema={value}
                         onSave={_onSave}
@@ -64,6 +91,12 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                     return (
                       <CurriculumWysiwyg
                         {...field}
+                        curriculum={curriculum}
+                        blockData={blockData}
+                        id={id}
+                        onChange={(e) => {
+                          onChangeItem(e, field);
+                        }}
                         isEditMode={isEditMode}
                         schema={value}
                         onSave={_onSave}
@@ -75,6 +108,9 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                     return (
                       <CurriculumList
                         {...field}
+                        onChange={(e) => {
+                          onChangeItem(e, field);
+                        }}
                         isEditMode={isEditMode}
                         curriculum={curriculum}
                         blockData={blockData}
@@ -89,6 +125,9 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                     return (
                       <CurriculumGroup
                         {...field}
+                        onChange={(e) => {
+                          onChangeItem(e, field);
+                        }}
                         isEditMode={isEditMode}
                         curriculum={curriculum}
                         blockData={blockData}

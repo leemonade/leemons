@@ -1,10 +1,10 @@
-import React from 'react';
-import { Select } from '@bubbles-ui/components';
-import { useIsTeacher, useIsStudent } from '@academic-portfolio/hooks';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
+/* eslint-disable react/display-name */
 import unflatten from '@academic-portfolio/helpers/unflatten';
+import prefixPN from '@assignables/helpers/prefixPN';
+import { Select } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';
+import React from 'react';
 
 export function useProgress(labels) {
   const [, translations] = useTranslateLoader(prefixPN('activity_status'));
@@ -53,7 +53,9 @@ export function useProgress(labels) {
   );
 }
 
-export default function Progress({ labels, value, onChange }) {
+const Progress = React.forwardRef(({ labels, value, onChange }, ref) => {
   const status = useProgress(labels);
   return <Select label={labels?.progress} data={status} value={value} onChange={onChange} />;
-}
+});
+
+export default Progress;

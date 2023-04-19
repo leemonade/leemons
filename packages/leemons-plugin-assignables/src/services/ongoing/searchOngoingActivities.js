@@ -12,6 +12,7 @@ const {
   filterInstancesByProgramAndSubjects,
   filterInstancesByRoleAndQuery,
   filterInstancesByStatusAndArchived,
+  filterInstancesByNotModule,
 } = require('./helpers/filters');
 const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
 
@@ -28,6 +29,8 @@ module.exports = async function searchOngoingActivities(query, { userSession, tr
   */
   if (isTeacher) {
     let instances = await getTeacherInstances({ userSession, transacting });
+
+    instances = filterInstancesByNotModule({ instances, filters: query });
 
     instances = filterInstancesByRoleAndQuery(
       { instances, filters: query },
@@ -67,6 +70,8 @@ module.exports = async function searchOngoingActivities(query, { userSession, tr
     instances: map(assignations, 'instance'),
     filters: query,
   });
+
+  instances = filterInstancesByNotModule({ instances, filters: query });
 
   const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses(
     instances,

@@ -3,9 +3,9 @@ import useAssignation from '@assignables/hooks/assignations/useAssignations';
 import { useParams, useHistory } from 'react-router-dom';
 import { Loader, Text, createStyles, Box } from '@bubbles-ui/components';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import useAssignableInstance from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import Correction from '../../../components/Correction';
 import StudentCorrection from '../../../components/StudentCorrection';
 
@@ -47,7 +47,7 @@ export default function CorrectionPage() {
     student = null;
   }
 
-  const { data: instance, error, isLoading: loading } = useAssignableInstance({ id: instanceId });
+  const { data: instance, error, isLoading: loading } = useInstances({ id: instanceId });
 
   const { data: assignation } = useAssignation(
     {

@@ -7,6 +7,9 @@ const {
   addCalendarToUserAgentsIfNeedByUser,
 } = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
 const { addUserAvatar } = require('./addUserAvatar');
+const {
+  checkIfCanCreateNUserAgentsInRoleProfiles,
+} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
 
 /**
  * Add a user to platform
@@ -54,6 +57,10 @@ async function add(
           active: active || false,
         },
         { transacting }
+      );
+
+      await Promise.all(
+        _.map(roles, (role) => checkIfCanCreateNUserAgentsInRoleProfiles(1, role, { transacting }))
       );
 
       user.userAgents = await table.userAgent.createMany(

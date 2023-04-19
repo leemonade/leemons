@@ -213,7 +213,11 @@ async function upload(file, { name }, { transacting } = {}) {
   const stats = await fileHandle.stat(path);
   const fileSize = stats.size;
 
-  let metadata = { size: getReadableFileSize(fileSize) };
+  let metadata = {};
+
+  if (fileSize) {
+    metadata.size = getReadableFileSize(fileSize);
+  }
 
   const [fileType] = type.split('/');
 
@@ -228,12 +232,14 @@ async function upload(file, { name }, { transacting } = {}) {
     };
 
     try {
+      if (!fileSize) throw new Error('No file size');
       if (!mediainfo) {
         mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
       }
 
+      // console.log('Antes');
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
-
+      // console.log('Despues');
       const { track: tracks } = JSON.parse(metainfo)?.media || { track: [] };
       tracks.forEach((track) => {
         metadata = getMetaProps(track, metadata);
@@ -362,7 +368,7 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   try {
     const { path, contentType } = await download(url, true);
 
-    return upload({ path, type: contentType }, { name }, { userSession, transacting });
+    return await upload({ path, type: contentType }, { name }, { userSession, transacting });
   } catch (err) {
     console.error('ERROR: downloading file:', url);
     console.dir(url, { depth: null });

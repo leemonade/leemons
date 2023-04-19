@@ -56,7 +56,7 @@ async function events(isInstalled) {
       [
         'plugins.emails:pluginDidLoadServices',
         'plugins.leebrary:pluginDidLoadServices',
-        'providers.emails-amazon-ses:providerDidLoadServices',
+        'providers.emails-aws-ses:providerDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
       async () => {
@@ -85,6 +85,7 @@ async function events(isInstalled) {
         'plugins.scores:init-permissions',
         'plugins.academic-calendar:init-permissions',
         'plugins.content-creator:init-permissions',
+        'plugins.comunica:init-permissions',
         'plugins.leebrary:pluginDidLoadServices',
         'plugins.admin:pluginDidLoadServices',
         'plugins.bulk-template:init-providers',
@@ -229,6 +230,7 @@ async function events(isInstalled) {
         'plugins.assignables:init-plugin',
         'plugins.bulk-template:init-academic-portfolio',
         'plugins.bulk-template:init-leebrary',
+        'plugins.bulk-template:init-tests',
       ],
       async () => {
         try {
@@ -256,6 +258,7 @@ async function events(isInstalled) {
         try {
           await initWidgets();
           leemons.events.emit('init-widgets');
+          leemons.log.info(chalk`{cyan.bold BULK} INITIALIZED Widgets plugin`);
         } catch (e) {
           // console.error(e);
         }

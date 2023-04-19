@@ -1,12 +1,12 @@
+import { SessionContext } from '@users/context/session';
+import { updateSessionConfigRequest } from '@users/request';
+import Cookies from 'js-cookie';
+import hooks from 'leemons-hooks';
 import * as _ from 'lodash';
 import { keyBy } from 'lodash';
 import { useContext, useEffect, useMemo } from 'react';
-import { SessionContext } from '@users/context/session';
-import Cookies from 'js-cookie';
-import useSWR from 'swr';
 import { useHistory } from 'react-router-dom';
-import hooks from 'leemons-hooks';
-import { updateSessionConfigRequest } from '@users/request';
+import useSWR from 'swr';
 import { apiSessionMiddleware } from '../globalContext';
 
 /**
@@ -46,7 +46,11 @@ export async function getSession({ req }) {
   }
 }
 
-const fetcher = () => () => leemons.api('users/user');
+const fetcher = () => async () => {
+  const result = await leemons.api('users/user');
+  result.user.avatar = leemons.apiUrl + result.user.avatar;
+  return result;
+};
 
 function getUserToken(data) {
   if (data) {
@@ -136,7 +140,9 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   finished = Boolean(data || error);
   hasUser = Boolean(user);
 
-  if (user) result = user;
+  if (user) {
+    result = user;
+  }
 
   if (!token) {
     effect = true;

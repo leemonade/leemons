@@ -13,27 +13,52 @@ const {
 async function saveNode(
   nodeId,
   userSession,
-  { datasetValues, ...rest },
+  { datasetValues: _datasetValues, ...rest },
   { transacting: _transacting } = {}
 ) {
   return global.utils.withTransaction(
     async (transacting) => {
-      _.forIn(datasetValues, (value, key) => {
-        datasetValues[key].id = value.id || global.utils.randomString();
-        if (_.isArray(datasetValues[key].value)) {
-          _.forEach(datasetValues[key].value, (v) => {
+      function addIds(datasetValues, value) {
+        datasetValues.id = value.id || global.utils.randomString();
+        if (_.isArray(datasetValues.value)) {
+          _.forEach(datasetValues.value, (v) => {
             v.id = v.id || global.utils.randomString();
+            if (v.childrens) {
+              _.forEach(v.childrens, (vv) => {
+                vv.id = vv.id || global.utils.randomString();
+                if (vv.childrens) {
+                  _.forEach(vv.childrens, (vvv) => {
+                    vvv.id = vvv.id || global.utils.randomString();
+                  });
+                }
+              });
+            }
           });
         }
-        if (_.isPlainObject(datasetValues[key].value)) {
-          _.forIn(datasetValues[key].value, (v) => {
+        if (_.isPlainObject(datasetValues.value)) {
+          _.forIn(datasetValues.value, (v) => {
             v.id = v.id || global.utils.randomString();
             if (_.isArray(v.value)) {
               _.forEach(v.value, (vv) => {
                 vv.id = vv.id || global.utils.randomString();
+                if (vv.childrens) {
+                  _.forEach(vv.childrens, (vvv) => {
+                    vvv.id = vvv.id || global.utils.randomString();
+                  });
+                }
               });
             }
           });
+        }
+      }
+
+      _.forIn(_datasetValues, (value, key) => {
+        if (_.isArray(_datasetValues[key])) {
+          _.forEach(_datasetValues[key], (_datasetValue) => {
+            addIds(_datasetValue, value);
+          });
+        } else {
+          addIds(_datasetValues[key], value);
         }
       });
 
@@ -41,7 +66,7 @@ async function saveNode(
         { id: nodeId },
         {
           ...rest,
-          data: JSON.stringify(datasetValues),
+          data: JSON.stringify(_datasetValues),
         },
         { transacting }
       );

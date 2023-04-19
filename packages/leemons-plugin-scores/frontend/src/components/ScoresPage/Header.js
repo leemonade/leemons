@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
 import { Box, createStyles, Text, Title } from '@bubbles-ui/components';
-import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
+import { prefixPN as _prefixPN } from '@scores/helpers';
+import _ from 'lodash';
+import React, { useMemo } from 'react';
 
 const useHeaderStyles = createStyles((theme) => ({
   root: {
@@ -16,8 +16,9 @@ const useHeaderStyles = createStyles((theme) => ({
   },
 }));
 
-function useHeaderLocalizations({ variant }) {
-  const key = prefixPN(`${variant}.header.teacher`);
+function useHeaderLocalizations({ prefixPN, variant }) {
+  const prefix = prefixPN || _prefixPN;
+  const key = prefix(`${variant}.header.teacher`);
   const [, translations] = useTranslateLoader(key);
 
   const localizations = useMemo(() => {
@@ -33,9 +34,9 @@ function useHeaderLocalizations({ variant }) {
   return localizations;
 }
 
-export function Header({ variant }) {
+export function Header({ prefixPN, variant }) {
   const { classes } = useHeaderStyles();
-  const localizations = useHeaderLocalizations({ variant });
+  const localizations = useHeaderLocalizations({ prefixPN, variant });
 
   return (
     <Box className={classes.root}>

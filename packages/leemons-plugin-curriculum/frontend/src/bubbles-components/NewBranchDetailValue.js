@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
 import { Box, ContextContainer, Title } from '@bubbles-ui/components';
-import * as _ from 'lodash';
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import CurriculumForm from '@curriculum/components/FormTheme/CurriculumForm';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import * as _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -113,7 +113,7 @@ function NewBranchDetailValue({
 
    */
 
-  async function save(datasetValues, noClose) {
+  async function save(datasetValues, noClose = true) {
     const toSend = { ...defaultValues, datasetValues };
     await onSubmit(toSend, noClose);
   }

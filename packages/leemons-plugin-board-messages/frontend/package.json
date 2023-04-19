@@ -1,0 +1,12 @@
+{
+  "name": "board-messages-front",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "prop-types": "^15.7.2",
+    "react-hook-form": "^7.8.5"
+  },
+  "devDependencies": {}
+}

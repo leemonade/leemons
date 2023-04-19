@@ -1,11 +1,26 @@
 module.exports = [
   /**
+   * Assignables
+   */
+  {
+    method: 'GET',
+    path: '/assignables/find',
+    handler: 'assignables.get',
+    authenticated: true,
+  },
+  /**
    * Assignable Instances
    */
   {
     method: 'GET',
-    path: '/assignableInstances',
+    path: '/assignableInstances/search',
     handler: 'assignableInstance.search',
+    authenticated: true,
+  },
+  {
+    method: 'GET',
+    path: '/assignableInstances/find',
+    handler: 'assignableInstance.get',
     authenticated: true,
   },
   {
@@ -29,6 +44,12 @@ module.exports = [
   /**
    * Assignations
    */
+  {
+    method: 'GET',
+    path: '/assignations/find',
+    handler: 'assignations.getMany',
+    authenticated: true,
+  },
   {
     method: 'GET',
     path: '/assignableInstances/:instance/assignations/:user',

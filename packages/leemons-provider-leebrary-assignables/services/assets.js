@@ -23,15 +23,11 @@ module.exports = {
       { transacting, userSession }
     );
 
-    const assignableObjs = await Promise.all(
-      assignablesIds.map((id) => assignables.getAssignable(id, { userSession, transacting }))
-    );
-
-    const assets = _.map(assignableObjs, 'asset.id');
+    const assets = await assignables.getAssignablesAssets(assignablesIds, { transacting });
 
     if (assetsIds?.length) {
-      return _.intersection(assets, assetsIds);
+      return _.intersection(Object.values(assets), assetsIds);
     }
-    return assets;
+    return Object.values(assets);
   },
 };

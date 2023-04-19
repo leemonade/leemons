@@ -22,7 +22,7 @@ const useGroupPickerStyles = createStyles((theme) => ({
   },
 }));
 
-export function GroupPicker({ onChange, value, localizations, error }) {
+export function GroupPicker({ onChange, value, localizations, error, hideSectionHeaders }) {
   const { control } = useForm({
     defaultValues: {
       type: value?.type || 'class',
@@ -70,7 +70,7 @@ export function GroupPicker({ onChange, value, localizations, error }) {
   }
 
   return (
-    <Container title={localizations?.title}>
+    <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
       <Box className={classes.root}>
         <Controller
           name="type"
@@ -110,6 +110,7 @@ GroupPicker.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.array,
   error: PropTypes.any,
+  hideSectionHeaders: PropTypes.bool,
 };
 
 export default GroupPicker;

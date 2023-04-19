@@ -4,9 +4,9 @@
   "main": "Public.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/leemons": "1.1.4",
-    "@bubbles-ui/components": "1.1.4",
-    "@bubbles-ui/editors": "1.1.4",
+    "@bubbles-ui/leemons": "dev",
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/editors": "dev",
     "js-cookie": "^2.2.1",
     "prop-types": "^15.7.2",
     "react-hook-form": "^7.8.5",

@@ -1,10 +1,12 @@
 const { find, isEmpty } = require('lodash');
+const _ = require('lodash');
 const {
   permissions,
   menuItems,
   pluginName,
   categories,
   categoriesMenu,
+  widgets,
 } = require('./config/constants');
 const { defaultCategory: defaultCategoryKey } = require('./config/config');
 const { addLocales } = require('./src/services/locales/addLocales');
@@ -16,6 +18,30 @@ async function events(isInstalled) {
 
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
+  });
+
+  leemons.events.once('plugins.admin:init-widget-zones', async () => {
+    await Promise.allSettled(
+      _.map(widgets.zones, (config) =>
+        leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
+          name: config.name,
+          description: config.description,
+        })
+      )
+    );
+    leemons.events.emit('init-widget-zones');
+    await Promise.allSettled(
+      _.map(widgets.items, (config) =>
+        leemons
+          .getPlugin('widgets')
+          .services.widgets.setItemToZone(config.zoneKey, config.key, config.url, {
+            name: config.name,
+            description: config.description,
+            properties: config.properties,
+          })
+      )
+    );
+    leemons.events.emit('init-widget-items');
   });
 
   if (!isInstalled) {
@@ -64,6 +90,7 @@ async function events(isInstalled) {
   } else {
     leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
       leemons.events.emit('init-permissions');
+      leemons.events.emit('init-categories');
       leemons.events.emit('init-menu');
     });
   }

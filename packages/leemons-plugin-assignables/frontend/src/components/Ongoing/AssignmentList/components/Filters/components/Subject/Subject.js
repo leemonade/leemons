@@ -1,14 +1,13 @@
-import { listSessionClassesRequest } from '@academic-portfolio/request';
-import React from 'react';
-import _ from 'lodash';
-import { unflatten, useApi } from '@common';
-import { Select } from '@bubbles-ui/components';
+/* eslint-disable react/display-name */
 import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import { useIsStudent, useSessionClasses } from '@academic-portfolio/hooks';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
-import { getSessionConfig } from '@users/session';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getSessionConfig } from '@users/session';
+import _ from 'lodash';
+import React from 'react';
 
 function useSubjectGroupsLocalizations() {
   const [, translations] = useTranslateLoader(prefixPN('assetListFilters.subjectGroups'));
@@ -84,10 +83,12 @@ function useSubjects({ labels }) {
   }, [classesData, selectedProgram, labels?.all, localizations, multiClassData]);
 }
 
-export default function Subject({ labels, value, onChange }) {
+const Subject = React.forwardRef(({ labels, value, onChange }, ref) => {
   const subjects = useSubjects({ labels: { all: labels?.seeAll } });
 
   return (
     <SelectSubject label={labels?.subject} data={subjects} value={value} onChange={onChange} />
   );
-}
+});
+
+export default Subject;

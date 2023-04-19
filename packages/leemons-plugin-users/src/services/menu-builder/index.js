@@ -1,6 +1,6 @@
 const addWelcome = require('./addWelcome');
 const addDashboard = require('./addDashboard');
-const addGroups = require('./addGroups');
+const addRoles = require('./addRoles');
 const addProfileDataset = require('./addProfileDataset');
 const addProfiles = require('./addProfiles');
 const addUsers = require('./addUsers');
@@ -11,7 +11,7 @@ const addUserData = require('./addUserData');
 module.exports = {
   addWelcome,
   addDashboard,
-  addGroups,
+  addRoles,
   addProfileDataset,
   addProfiles,
   addUsers,

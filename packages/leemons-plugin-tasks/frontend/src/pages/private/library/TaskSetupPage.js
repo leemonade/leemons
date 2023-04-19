@@ -6,7 +6,10 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { unflatten, useProcessTextEditor, useSearchParams, useStore } from '@common';
+import { unflatten, useProcessTextEditor, useQuery, useSearchParams, useStore } from '@common';
+import { ObservableContextProvider, useObservableContext } from '@common/context/ObservableContext';
+import { getAssetsByIdsRequest } from '@leebrary/request';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { BasicData, ContentData, InstructionData, Setup } from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
@@ -41,7 +44,116 @@ async function processDevelopment({ values, store, processTextEditor }) {
   }
 }
 
-export default function TaskSetupPage() {
+function useHeaderLabels(t) {
+  const { useWatch } = useObservableContext();
+  const taskName = useWatch({ name: 'taskName' });
+
+  const headerLabels = useMemo(
+    () => ({
+      title: isNil(taskName) || isEmpty(taskName) ? t('title') : taskName,
+    }),
+    [t, taskName]
+  );
+
+  return headerLabels;
+}
+
+function TaskSetupHeader({ t, emitEvent, loading, store, render }) {
+  const handleOnHeaderResize = (size) => {
+    store.headerHeight = size?.height - 1;
+    render();
+  };
+
+  const headerLabels = useHeaderLabels(t);
+
+  return (
+    <AdminPageHeader
+      variant="teacher"
+      icon={<PluginAssignmentsIcon />}
+      values={headerLabels}
+      buttons={{
+        duplicate: t('common.save'),
+        edit: t('common.publish'),
+      }}
+      onDuplicate={() => {
+        loading.current = 'duplicate';
+        render();
+        emitEvent('saveTask');
+      }}
+      onEdit={() => {
+        loading.current = 'edit';
+        render();
+        emitEvent('publishTaskAndLibrary');
+      }}
+      onResize={handleOnHeaderResize}
+      loading={loading.current}
+    />
+  );
+}
+
+function useSetupProps({ labels, store, useSaveObserver }) {
+  const { useWatch } = useObservableContext();
+  const isExpress = !!useWatch({ name: 'isExpress' });
+
+  const steps = useMemo(() => ['basicData', 'contentData', 'instructionData'], []);
+  const completedSteps = useMemo(
+    () => store.currentTask?.metadata?.visitedSteps?.map((step) => steps.indexOf(step)) || [],
+    []
+  );
+
+  const setupProps = useMemo(() => {
+    if (isNil(labels)) {
+      return null;
+    }
+
+    const { basicData, contentData, instructionData } = labels;
+
+    if (contentData) {
+      contentData.labels.buttonPublish = instructionData?.labels?.buttonPublish;
+      contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonNext;
+    }
+
+    return {
+      editable: isEmpty(store.currentTask),
+      values: store.currentTask || {},
+      completedSteps,
+      visitedSteps: completedSteps,
+      steps: [
+        {
+          label: basicData.step_label,
+          content: (
+            <BasicData
+              {...basicData}
+              advancedConfig={{
+                alwaysOpen: true,
+                fileToRight: true,
+                colorToRight: true,
+                program: { show: true, required: false },
+                subjects: { show: true, required: true, showLevel: true, maxOne: false },
+              }}
+              useObserver={useSaveObserver}
+            />
+          ),
+          status: 'OK',
+        },
+        {
+          label: contentData.step_label,
+          content: <ContentData useObserver={useSaveObserver} {...contentData} />,
+          status: 'OK',
+        },
+        !isExpress && {
+          label: instructionData.step_label,
+          content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
+          status: 'OK',
+        },
+      ].filter(Boolean),
+    };
+  }, [store.currentTask, completedSteps, store.currentTask, labels, useSaveObserver, isExpress]);
+
+  return setupProps;
+}
+
+function TaskSetup() {
   const searchParams = useSearchParams();
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
@@ -63,9 +175,7 @@ export default function TaskSetupPage() {
 
   const saveTask = async ({ program, curriculum, ...values }, redirectTo = 'library') => {
     try {
-      // console.log(values.metadata?.development);
       await processDevelopment({ values, store, processTextEditor });
-      // console.log(values.metadata.development);
 
       const body = {
         gradable: false,
@@ -166,15 +276,40 @@ export default function TaskSetupPage() {
     }
   };
 
+  const getAsset = async (id) => {
+    const response = await getAssetsByIdsRequest([id]);
+
+    const asset = response.assets[0];
+
+    if (!asset) {
+      return null;
+    }
+
+    return prepareAsset(asset);
+  };
+
   // ·········································································
   // LOAD INIT DATA
 
   const { id } = useParams();
+  const { asset } = useQuery();
 
   useEffect(() => {
     (async () => {
       if (!isEmpty(id)) {
         store.currentTask = await getTask(id);
+        render();
+      } else if (!isEmpty(asset)) {
+        const assetData = await getAsset(asset);
+
+        store.currentTask = {
+          asset: {
+            name: assetData.name,
+            color: assetData.color,
+            cover: assetData.cover,
+          },
+          resources: [asset],
+        };
         render();
       }
     })();
@@ -246,108 +381,23 @@ export default function TaskSetupPage() {
     return () => unsubscribe(f);
   }, [handleOnPublishTask]);
 
-  const handleOnHeaderResize = (size) => {
-    store.headerHeight = size?.height - 1;
-    render();
-  };
-
-  const handleOnNameChange = (name) => {
-    store.taskName = name;
-    render();
-  };
-
   // ·········································································
   // INIT VALUES
 
-  const headerLabels = useMemo(
-    () => ({
-      title: isNil(store.taskName) || isEmpty(store.taskName) ? t('title') : store.taskName,
-    }),
-    [t, store.taskName]
-  );
-
-  const setupProps = useMemo(() => {
-    if (!isNil(labels)) {
-      const { basicData, configData, contentData, instructionData } = labels;
-      const steps = ['basicData', 'configData', 'contentData', 'instructionData'];
-      const completedSteps =
-        store.currentTask?.metadata?.visitedSteps?.map((step) => steps.indexOf(step)) || [];
-
-      return {
-        editable: isEmpty(store.currentTask),
-        values: store.currentTask || {},
-        completedSteps,
-        visitedSteps: completedSteps,
-        steps: [
-          {
-            label: basicData.step_label,
-            content: (
-              <BasicData
-                {...basicData}
-                advancedConfig={{
-                  alwaysOpen: true,
-                  fileToRight: true,
-                  colorToRight: true,
-                  program: { show: true, required: true },
-                  subjects: { show: true, required: true, showLevel: true, maxOne: false },
-                }}
-                useObserver={useSaveObserver}
-                onNameChange={handleOnNameChange}
-              />
-            ),
-            status: 'OK',
-          },
-          /*
-          {
-            label: configData.step_label,
-            content: <ConfigData useObserver={useSaveObserver} {...configData} />,
-            status: 'OK',
-          },
-
-           */
-          {
-            label: contentData.step_label,
-            content: <ContentData useObserver={useSaveObserver} {...contentData} />,
-            status: 'OK',
-          },
-          {
-            label: instructionData.step_label,
-            content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
-            status: 'OK',
-          },
-        ],
-      };
-    }
-    return null;
-  }, [store.currentTask, labels]);
+  const setupProps = useSetupProps({ labels, store, useSaveObserver });
 
   // -------------------------------------------------------------------------
   // COMPONENT
 
   return (
     <Stack direction="column" fullHeight>
-      <AdminPageHeader
-        variant="teacher"
-        icon={<PluginAssignmentsIcon />}
-        values={headerLabels}
-        buttons={{
-          duplicate: t('common.save'),
-          edit: t('common.publish'),
-        }}
-        onDuplicate={() => {
-          loading.current = 'duplicate';
-          render();
-          emitEvent('saveTask');
-        }}
-        onEdit={() => {
-          loading.current = 'edit';
-          render();
-          emitEvent('publishTaskAndLibrary');
-        }}
-        onResize={handleOnHeaderResize}
-        loading={loading.current}
+      <TaskSetupHeader
+        t={t}
+        emitEvent={emitEvent}
+        loading={loading}
+        render={render}
+        store={store}
       />
-
       <Box>
         {!isEmpty(setupProps) && isArray(setupProps.steps) && (
           <Setup
@@ -361,3 +411,13 @@ export default function TaskSetupPage() {
     </Stack>
   );
 }
+
+const TaskSetupPage = React.forwardRef((props, ref) => (
+  <ObservableContextProvider value={{ sharedData: {} }}>
+    <TaskSetup {...props} ref={ref} />
+  </ObservableContextProvider>
+));
+
+TaskSetupPage.displayName = 'TaskSetupPage';
+
+export default TaskSetupPage;

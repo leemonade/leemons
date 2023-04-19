@@ -84,9 +84,6 @@ module.exports = {
           name: {
             required: 'Campo necesario',
           },
-          tagline: {
-            required: 'Campo necesario',
-          },
         },
       },
       configData: {
@@ -330,11 +327,13 @@ module.exports = {
     duplicate: 'Duplicar',
   },
   variant: 'Tarea',
+  expressVariant: 'Tarea express',
   task_realization: {
     confirmation_modal: {
       title: 'Tarea finalizada',
       description: 'Tu tarea ha sido enviada con éxito',
       action: 'Actividades pendientes',
+      goToModule: 'Dashboard del módulo',
       nextActivity: 'Siguiente actividad',
     },
     timeout_modal: {

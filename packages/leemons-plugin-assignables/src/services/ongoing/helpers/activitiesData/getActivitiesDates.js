@@ -4,7 +4,7 @@ const tables = require('../../../tables');
 async function getActivitiesDates({ instances, assignations, filters }, { transacting }) {
   const { status, progress, isArchived, sort, studentDidOpen, studentCanSee } = filters;
 
-  if (!(status || progress || isArchived !== undefined || studentDidOpen !== undefined)) {
+  if (!(status || progress || isArchived !== undefined || studentDidOpen !== undefined || sort)) {
     return {};
   }
 

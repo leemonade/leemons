@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 
-import React from 'react';
-import PropTypes from 'prop-types';
 import { TabPanel, Tabs } from '@bubbles-ui/components';
-import { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
-import { getParentNodes } from '@curriculum/helpers/getParentNodes';
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import _, { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { CurriculumProp } from './CurriculumProp';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -73,6 +73,11 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
       store.selectedNode.propertiesByType.push({ value, key });
     });
 
+    store.selectedNode.propertiesByType = _.filter(
+      store.selectedNode.propertiesByType,
+      ({ key }) => key !== 'non-qualifying-criteria'
+    );
+
     render();
   }
 
@@ -121,7 +126,13 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
         let count = 0;
         forEach(value, ({ id }) => {
           forEach(store.value, (str) => {
-            if (str.indexOf(`property.${store.selectedNode?.formValues[id]?.id}`) >= 0) count++;
+            if (_.isArray(store.selectedNode?.formValues[id])) {
+              forEach(store.selectedNode?.formValues[id], (v, i) => {
+                if (str.indexOf(`property.${store.selectedNode?.formValues[id][i]?.id}`) >= 0)
+                  count++;
+              });
+            } else if (str.indexOf(`property.${store.selectedNode?.formValues[id]?.id}`) >= 0)
+              count++;
           });
         });
         return (

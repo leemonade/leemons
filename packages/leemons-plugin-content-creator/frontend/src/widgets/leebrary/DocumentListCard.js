@@ -4,7 +4,12 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
+import {
+  AssignIcon,
+  DuplicateIcon,
+  PluginContentCreatorIcon,
+  ViewOnIcon,
+} from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
@@ -43,7 +48,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
           children: t('view'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/content-creator/${asset.providerData.id}`);
+            history.push(`/private/content-creator/${asset.providerData.id}/view`);
           },
         });
       }
@@ -53,7 +58,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
           children: t('edit'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/content-creator/${asset.providerData.id}`);
+            history.push(`/private/content-creator/${asset.providerData.id}/edit`);
           },
         });
       }
@@ -63,7 +68,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
           children: t('assign'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/content-creator/assign/${asset.providerData.id}`);
+            history.push(`/private/content-creator/${asset.providerData.id}/assign`);
           },
         });
       }
@@ -134,6 +139,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="document"
       variantTitle={t('document')}
+      variantIcon={<PluginContentCreatorIcon />}
       className={classes.root}
     />
   );

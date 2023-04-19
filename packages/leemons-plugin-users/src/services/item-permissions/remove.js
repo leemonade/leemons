@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { validateTypePrefix } = require('../../validations/exists');
 const { table } = require('../tables');
+const { removeAllItemsCache } = require('./removeAllItemsCache');
 
 /**
  * ES:
@@ -34,7 +35,9 @@ async function remove(query, { transacting } = {}) {
     validateTypePrefix(query[typeKey], this.calledFrom);
   }
 
-  return table.itemPermissions.deleteMany(query, { transacting });
+  const response = await table.itemPermissions.deleteMany(query, { transacting });
+  await removeAllItemsCache();
+  return response;
 }
 
 module.exports = { remove };

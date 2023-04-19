@@ -1,22 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
   ContextContainer,
   InputWrapper,
+  MultiSelect,
   NumberInput,
   Select,
   Stack,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import { ScheduleInput } from '@timetable/components';
 import { isValidHttpUrl, useStore } from '@common';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { ScheduleInput } from '@timetable/components';
 import { filter, find, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const TreeClassroomDetail = ({
   messagesAddUsers,
@@ -61,7 +62,7 @@ const TreeClassroomDetail = ({
       id: classe?.id,
       course: program.moreThanOneAcademicYear ? map(classe?.courses, 'id') : classe?.courses?.id,
       knowledge: classe?.knowledges?.id,
-      substage: classe?.substages?.id,
+      substage: map(classe?.substages, 'id'),
       group: classe?.groups?.id,
       color: classe?.color,
       seats: classe?.seats,
@@ -174,7 +175,11 @@ const TreeClassroomDetail = ({
                     control={control}
                     name="substage"
                     render={({ field }) => (
-                      <Select data={selects.substages} label={messages.substageLabel} {...field} />
+                      <MultiSelect
+                        data={selects.substages}
+                        label={messages.substageLabel}
+                        {...field}
+                      />
                     )}
                   />
                 </Box>

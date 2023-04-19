@@ -14,6 +14,8 @@ module.exports = {
     'scores',
 
     'curriculum',
+    'learning-paths',
+    'content-creator',
     'tasks',
     'tests',
     'feedback',

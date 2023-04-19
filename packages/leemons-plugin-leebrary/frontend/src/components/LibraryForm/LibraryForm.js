@@ -311,10 +311,7 @@ const LibraryForm = ({
     return {};
   }, [type, urlMetadata]);
 
-  const drawerSize = useMemo(
-    () => Math.max(viewportWidth - rect.width - 370, 500),
-    [viewportWidth, rect]
-  );
+  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
@@ -570,12 +567,12 @@ const LibraryForm = ({
                         rules={store.programRequired}
                         render={({ field }) => (
                           <Select
+                            {...field}
                             autoSelectOneOption
                             error={errors.program}
                             required={!!store.programRequired}
                             label={labels.program}
                             data={store.programs}
-                            {...field}
                           />
                         )}
                       />
@@ -583,20 +580,20 @@ const LibraryForm = ({
                   ) : null}
 
                   {program ? (
-                    <ContextContainer subtitle={labels.subjects}>
+                    <ContextContainer>
                       <Controller
                         control={control}
                         name="subjects"
                         rules={store.subjectRequired}
                         render={({ field }) => (
                           <SelectSubjects
+                            {...field}
                             {...labels.subjectSelects}
                             errors={errors}
                             required={!!store.subjectRequired}
                             showLevel={store.showLevel}
                             maxOne={store.maxOneSubject}
                             programId={program}
-                            {...field}
                           />
                         )}
                       />
@@ -620,7 +617,7 @@ const LibraryForm = ({
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
         size={drawerSize}
-        shadow={drawerSize <= 500}
+        shadow={drawerSize <= 720}
         onSelect={handleOnSelectAsset}
         creatable
         onlyCreateImages

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, Text, createStyles, ImageLoader } from '@bubbles-ui/components';
+import { Box, createStyles, ImageLoader, Text } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { RatingStarIcon } from '@bubbles-ui/icons/solid';
-import { useRoomsMessageCount } from '@comunica/UnreadMessages';
+import { useRoomsMessageCount } from '@comunica/components';
 import CommentIcon from './CommentIcon.svg';
 
 function findNearestFloorScore(score, scales) {

@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   ActionButton,
   Box,
@@ -11,12 +9,15 @@ import {
   Text,
   TextInput,
 } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { htmlToText, useStore } from '@common';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import _ from 'lodash';
+import { htmlToText, useStore } from '@common';
 import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import CurriculumListSubItems from './CurriculumListSubItems';
 
 const useStyle = createStyles((theme) => ({
   card: {
@@ -52,10 +53,11 @@ function CurriculumListItem({
   const { classes } = useStyle();
   const [store, render] = useStore();
   const form = useForm({ defaultValues });
+  const values = form.watch();
 
-  function _onSave() {
+  function _onSave(silent) {
     form.handleSubmit((formValues) => {
-      onSave(formValues);
+      onSave(formValues, silent);
     })();
   }
 
@@ -150,6 +152,23 @@ function CurriculumListItem({
           {blockData.listType === 'textarea' ? <HtmlText>{defaultValues.value}</HtmlText> : null}
         </Box>
         {isEditMode ? <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tags}</Box> : null}
+
+        {values.childrens?.length ? (
+          <CurriculumListSubItems
+            inputType={blockData.groupListType}
+            values={[values]}
+            t={t}
+            disabled={true}
+            row={{
+              values,
+              id: '1',
+              index: 0,
+            }}
+            onChange={([e]) => {
+              form.setValue('childrens', e.childrens);
+            }}
+          />
+        ) : null}
       </Box>
     );
   }
@@ -185,6 +204,23 @@ function CurriculumListItem({
             t={t}
           />
         )}
+      />
+      <CurriculumListSubItems
+        inputType={blockData.groupListType}
+        values={[values]}
+        t={t}
+        selectedRow={{
+          id: '1',
+        }}
+        row={{
+          values,
+          id: '1',
+          index: 0,
+        }}
+        addable={true}
+        onChange={([e]) => {
+          form.setValue('childrens', e.childrens);
+        }}
       />
       <Stack justifyContent="space-between" fullWidth>
         <Button variant="link" onClick={onCancel} loading={store.loading}>

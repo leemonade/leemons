@@ -1,10 +1,13 @@
 import React from 'react';
 import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
 import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
-import { uniqBy } from 'lodash';
+import { cloneDeep, get, intersection, isArray, last, set, uniqBy } from 'lodash';
+import { unflatten, useStore } from '@common';
+import prefixPN from '@assignables/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 function parseCurriculumValue(id) {
-  return Object.fromEntries(id.split('|').map((pair) => pair.split('.')));
+  return { ...Object.fromEntries(id?.split('|').map((pair) => pair.split('.'))), original: id };
 }
 
 function flatCurriculumNodes(curriculumNodes) {
@@ -14,10 +17,10 @@ function flatCurriculumNodes(curriculumNodes) {
         id: node.id,
         nodeLevel: node.nodeLevel,
         nodeLevelPropertyByPropertyId: Object.fromEntries(
-          Object.entries(node.formValues || {}).map(([nodeLevelProperty, { id }]) => [
-            id,
-            nodeLevelProperty,
-          ])
+          Object.entries(node.formValues || {}).flatMap(([nodeLevelProperty, props]) => {
+            const properties = isArray(props) ? props : [props];
+            return properties.map((property) => [property.id, nodeLevelProperty]);
+          })
         ),
       };
 
@@ -66,12 +69,32 @@ export function useSelectedCurriculumValues({ assignable }) {
   return selectedCurriculumValues;
 }
 
+export function useCustomObjectivesLocalizations() {
+  const key = prefixPN('customObjectives');
+  const [, translations] = useTranslateLoader(key);
+
+  return React.useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+
+      return get(res, key, '');
+    }
+
+    return '';
+  });
+}
+
 export function useSelectedCurriculumProperties({
   curriculum,
   curriculumNodes,
   nodeLevels,
   selectedCurriculumValues,
 }) {
+  const customObjectiveLocalization = useCustomObjectivesLocalizations();
+  const customObjectives = React.useMemo(
+    () => !!selectedCurriculumValues?.some((value) => value.hasCustomObjectives),
+    [selectedCurriculumValues]
+  );
   const flattenSelectedValues = React.useMemo(
     () => selectedCurriculumValues?.flatMap((value) => value.values),
     [selectedCurriculumValues]
@@ -86,7 +109,7 @@ export function useSelectedCurriculumProperties({
       flattenSelectedValues.map((selectedValue) => {
         const nodeLevelProperty =
           curriculumNodes[selectedValue.node]?.nodeLevelPropertyByPropertyId?.[
-            selectedValue.property
+          selectedValue.property
           ];
 
         const nodeLevel = nodeLevels.find(
@@ -104,10 +127,23 @@ export function useSelectedCurriculumProperties({
     );
   }, [curriculumNodes, flattenSelectedValues]);
 
+  React.useEffect(() => {
+    if (customObjectives) {
+      if (!usedProperties?.length || last(usedProperties)?.id !== 'custom') {
+        usedProperties.push({
+          id: 'custom',
+          name: customObjectiveLocalization,
+        });
+      } else {
+        usedProperties[usedProperties.length - 1].name = customObjectiveLocalization;
+      }
+    }
+  }, [usedProperties, customObjectives, customObjectiveLocalization]);
+
   return usedProperties;
 }
 
-export function useCurriculumFields({ assignable }) {
+export function useAssignableCurriculum({ assignable }) {
   const program = assignable?.program ?? assignable?.subjects?.[0]?.program;
 
   const { data: curriculumsList } = useListCurriculumsByProgram(program, { enabled: !!program });
@@ -116,6 +152,57 @@ export function useCurriculumFields({ assignable }) {
     enabled: curriculumsList?.count > 0,
   });
 
+  return curriculum;
+}
+
+export function useCurriculumVisibleValues({ assignation }) {
+  const { instance } = assignation;
+  const { assignable, curriculum: visibleCategories } = instance;
+
+  const curriculum = useAssignableCurriculum({ assignable });
+  const curriculumNodes = useCurriculumNodes({ curriculum });
+  const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
+
+  const [store, render] = useStore({
+    flatValuesCopy: [],
+  });
+
+  const flatValues = React.useMemo(
+    () => selectedCurriculumValues.flatMap((value) => value.values) || [],
+    [selectedCurriculumValues]
+  );
+
+  React.useEffect(() => {
+    store.flatValuesCopy = cloneDeep(flatValues);
+
+    flatValues.forEach((value, i) => {
+      const { node, property } = value;
+      const nodeLevel = curriculumNodes[node]?.nodeLevelPropertyByPropertyId[property];
+
+      set(store.flatValuesCopy, `${i}.visible`, !!visibleCategories[nodeLevel]);
+    });
+    render();
+  }, [flatValues, curriculumNodes, visibleCategories]);
+
+  return React.useMemo(() => {
+    const includedIds = store.flatValuesCopy
+      ?.filter((value) => !!value.visible)
+      .map((value) => value.original);
+
+    return assignable.subjects.map((subject, i) => ({
+      ...subject,
+      curriculum: {
+        curriculum: intersection(subject.curriculum.curriculum, includedIds),
+        objectives: selectedCurriculumValues[i].hasCustomObjectives
+          ? subject.curriculum.objectives
+          : [],
+      },
+    }));
+  }, [store.flatValuesCopy]);
+}
+
+export function useCurriculumFields({ assignable }) {
+  const curriculum = useAssignableCurriculum({ assignable });
   const curriculumNodes = useCurriculumNodes({ curriculum });
   const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
 

@@ -25,6 +25,16 @@ module.exports = [
     },
   },
   {
+    path: '/load-from-file',
+    method: 'POST',
+    handler: 'bulk.load',
+  },
+  {
+    path: '/load-from-file',
+    method: 'GET',
+    handler: 'bulk.status',
+  },
+  {
     path: '/init-super',
     method: 'GET',
     handler: 'users.initSuper',

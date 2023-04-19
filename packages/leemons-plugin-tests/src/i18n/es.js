@@ -298,6 +298,7 @@ module.exports = {
     returnToTable: 'Volver a la tabla',
     clueN: '{number}ª Pista',
     pendingActivities: 'Actividades pendientes',
+    modulesDashboard: 'Dashboard del módulo',
     viewResults: 'Consultar resultados',
     nextActivity: 'Siguiente actividad',
   },

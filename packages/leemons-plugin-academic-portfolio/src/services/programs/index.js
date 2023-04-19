@@ -8,6 +8,7 @@ const { removeProgramByIds } = require('./removeProgramByIds');
 const { getProgramCourses } = require('./getProgramCourses');
 const { programsByCenters } = require('./programsByCenters');
 const { getUsersInProgram } = require('./getUsersInProgram');
+const { getProgramCenters } = require('./getProgramCenters');
 const { getProgramGroups } = require('./getProgramGroups');
 const { getUserPrograms } = require('./getUserPrograms');
 const { getProgramTree } = require('./getProgramTree');
@@ -29,6 +30,7 @@ module.exports = {
   getUsersInProgram,
   programsByCenters,
   getProgramCourses,
+  getProgramCenters,
   removeProgramByIds,
   isUserInsideProgram,
   getProgramSubstages,

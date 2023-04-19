@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Alert,
@@ -20,11 +20,43 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { filter, forEach, includes, map } from 'lodash';
+import { filter, forEach, includes, isArray, isFunction, map, omit } from 'lodash';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
-export default function AssignConfig({ defaultValues: dv, test, t, configs = [], onBack, onSend }) {
+function useOnChange({ onChange, control }) {
+  const formValues = useWatch({
+    control,
+    disabled: !isFunction(onChange),
+  });
+
+  useEffect(() => {
+    if (isFunction(onChange)) {
+      const { questions, useAllQuestions, nQuestions } = formValues;
+      let usedQuestions = [];
+
+      if (isArray(questions)) {
+        usedQuestions = useAllQuestions ? questions : questions.slice(0, nQuestions);
+      }
+
+      onChange({
+        questions: map(usedQuestions, 'id'),
+        filters: omit(formValues, 'questions'),
+      });
+    }
+  }, [formValues]);
+}
+
+export default function AssignConfig({
+  defaultValues: dv,
+  test,
+  t,
+  configs = [],
+  onBack,
+  onSend,
+  onChange,
+  hideButtons,
+}) {
   let defaultValues = {
     clues: [
       { type: 'note', name: t('clueExtraInfo'), value: 0, canUse: true },
@@ -50,6 +82,8 @@ export default function AssignConfig({ defaultValues: dv, test, t, configs = [],
   const canOmitQuestions = form.watch('canOmitQuestions');
   const allowClues = form.watch('allowClues');
   const clues = form.watch('clues');
+
+  useOnChange({ onChange, control: form.control });
 
   const _levels = useLevelsOfDifficulty();
 
@@ -414,43 +448,45 @@ export default function AssignConfig({ defaultValues: dv, test, t, configs = [],
           </Paper>
         ) : null}
       </ContextContainer>
-      <Stack fullWidth justifyContent="space-between">
-        <Box>
-          <Button
-            compact
-            variant="light"
-            leftIcon={<ChevLeftIcon height={20} width={20} />}
-            onClick={() => {
-              const values = form.getValues();
-              const { questions: q, ...filters } = values;
-              onBack({
-                questions: map(q, 'id'),
-                filters,
-              });
-            }}
-          >
-            {t('prev')}
-          </Button>
-        </Box>
-        <Box>
-          <Button
-            onClick={() => {
-              form.handleSubmit(({ questions: q, ...filters }) => {
-                let qs = q;
-                if (!useAllQuestions) {
-                  qs = q.slice(0, nQuestions);
-                }
-                onSend({
-                  questions: map(qs, 'id'),
+      {!hideButtons && (
+        <Stack fullWidth justifyContent="space-between">
+          <Box>
+            <Button
+              compact
+              variant="light"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={() => {
+                const values = form.getValues();
+                const { questions: q, ...filters } = values;
+                onBack({
+                  questions: map(q, 'id'),
                   filters,
                 });
-              })();
-            }}
-          >
-            {t('assign')}
-          </Button>
-        </Box>
-      </Stack>
+              }}
+            >
+              {t('prev')}
+            </Button>
+          </Box>
+          <Box>
+            <Button
+              onClick={() => {
+                form.handleSubmit(({ questions: q, ...filters }) => {
+                  let qs = q;
+                  if (!useAllQuestions) {
+                    qs = q.slice(0, nQuestions);
+                  }
+                  onSend({
+                    questions: map(qs, 'id'),
+                    filters,
+                  });
+                })();
+              }}
+            >
+              {t('assign')}
+            </Button>
+          </Box>
+        </Stack>
+      )}
     </ContextContainer>
   );
 }
@@ -460,6 +496,8 @@ AssignConfig.propTypes = {
   t: PropTypes.func,
   onBack: PropTypes.func,
   onSend: PropTypes.func,
+  onChange: PropTypes.func,
   configs: PropTypes.any,
   defaultValues: PropTypes.any,
+  hideButtons: PropTypes.bool,
 };

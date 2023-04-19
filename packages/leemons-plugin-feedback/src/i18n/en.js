@@ -126,6 +126,7 @@ module.exports = {
     sendFeedback: 'Send feedback',
     finishModal: 'Feedback finished',
     pendingActivities: 'Pending activities',
+    moduleDashboard: 'Module dashboard',
     viewResults: 'View results',
     nextActivity: 'Next activity',
     needNResponsesSingular: 'Choose 1 response',

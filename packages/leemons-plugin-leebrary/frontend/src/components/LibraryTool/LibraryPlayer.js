@@ -59,7 +59,7 @@ const LibraryPlayer = ({
           asset={asset}
           width={isFloating ? '100%' : width}
           framed={!['image'].includes(asset.fileType)}
-          canPlay={!!readOnly}
+          canPlay={readOnly}
           useAudioCard
         />
       );

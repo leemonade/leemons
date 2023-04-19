@@ -23,6 +23,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
+    "leemons-cache": "0.0.1",
     "leemons-database": "0.0.1",
     "leemons-hooks": "0.0.1",
     "leemons-logger": "0.0.1",

@@ -70,6 +70,7 @@ export default function AssignmentPage() {
       assignable={task}
       evaluationType="manual"
       showEvaluation
+      showMessageForStudents
     />
   );
 }

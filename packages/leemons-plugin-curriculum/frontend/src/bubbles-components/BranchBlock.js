@@ -1,7 +1,3 @@
-import React, { useEffect } from 'react';
-import { cloneDeep, find, findIndex, forEach, keys, values } from 'lodash';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
 import {
   ActionButton,
   Box,
@@ -16,16 +12,20 @@ import {
   Text,
   TextInput,
 } from '@bubbles-ui/components';
-import { EditorListBulletsIcon } from '@bubbles-ui/icons/solid';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { EditorListBulletsIcon } from '@bubbles-ui/icons/solid';
 import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
+import _, { cloneDeep, find, findIndex, forEach, keys, values } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import BranchBlockCode from './BranchBlockCode';
+import BranchBlockGroup from './BranchBlockGroup';
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
   BRANCH_CONTENT_MESSAGES,
   BRANCH_CONTENT_SELECT_DATA,
 } from './branchContentDefaultValues';
-import BranchBlockCode from './BranchBlockCode';
-import BranchBlockGroup from './BranchBlockGroup';
 
 const useStyle = createStyles((theme) => ({
   container: {
@@ -66,6 +66,20 @@ function TypeOfRelation({ hasParent, messages, selectData, ...props }) {
       label: messages.label,
       value: 'label',
     });
+  }
+  return <Select disabled={!relatedToValue} {...props} data={data} />;
+}
+
+function ShowNumeration({ selectData, ...props }) {
+  const data = [];
+  // eslint-disable-next-line react/prop-types
+  const relatedToValue = props.form.getValues(props.name.replace('showNumeration', 'relatedTo'));
+  if (relatedToValue) {
+    data.push(...find(selectData, { value: relatedToValue }).numerationValues);
+  }
+  const values = _.map(data, 'value');
+  if (props.value && !values.includes(props.value)) {
+    props.form.setValue(props.name, null);
   }
   return <Select disabled={!relatedToValue} {...props} data={data} />;
 }
@@ -374,6 +388,26 @@ function BranchBlock({
     const data = [];
     const index = findIndex(store.curriculum.nodeLevels, { id: branch.id });
     const parents = store.curriculum.nodeLevels.slice(0, index);
+    function getNumerationValues(blockData) {
+      const result = [
+        {
+          label: messages.content,
+          value: 'content',
+        },
+      ];
+      const types = ['style-1', 'style-2', 'custom'];
+
+      if (
+        (blockData.type === 'list' && types.includes(blockData.listOrdered)) ||
+        (blockData.type === 'group' && types.includes(blockData.groupListOrdered))
+      ) {
+        result.push({
+          label: messages.numbering,
+          value: 'numbering',
+        });
+      }
+      return result;
+    }
     forEach(parents, (parent) => {
       const props = values(parent?.schema?.jsonSchema.properties) || [];
       const _keys = keys(parent?.schema?.jsonSchema.properties) || [];
@@ -384,6 +418,7 @@ function BranchBlock({
           isParent:
             formData.curricularContent &&
             formData.curricularContent === prop.frontConfig.blockData.curricularContent,
+          numerationValues: getNumerationValues(prop.frontConfig.blockData),
         });
       });
     });
@@ -394,6 +429,7 @@ function BranchBlock({
         label: `${branch.name} - ${prop.frontConfig.blockData.name}`,
         value: `${branch.id}|${branchPropsKeys[key]}`,
         isParent: false,
+        numerationValues: getNumerationValues(prop.frontConfig.blockData),
       });
     });
     const selectData = cloneDeep(data);
@@ -407,6 +443,7 @@ function BranchBlock({
       parent: messages.father,
       label: messages.label,
     };
+
     return {
       resetOnAdd: true,
       editable: true,
@@ -447,6 +484,23 @@ function BranchBlock({
             },
           },
           valueRender: (value) => typeMessages[value],
+        },
+        {
+          Header: `${messages.showNumeration} *`,
+          accessor: 'showNumeration',
+          input: {
+            node: (
+              <ShowNumeration
+                hasParent={!!find(formData.contentRelations, { typeOfRelation: 'parent' })}
+                messages={messages}
+                selectData={data}
+              />
+            ),
+            rules: {
+              required: messages.fieldRequired,
+            },
+          },
+          valueRender: (value) => messages[value],
         },
       ],
     };
@@ -516,10 +570,9 @@ function BranchBlock({
               key="contentRelations"
               name="contentRelations"
               control={control}
-              render={({ field }) => {
-                console.log(field.value, relationData);
-                return <TableInput {...field} data={field.value || []} {...relationData} />;
-              }}
+              render={({ field }) => (
+                <TableInput {...field} data={field.value || []} {...relationData} />
+              )}
             />
           ) : null}
 

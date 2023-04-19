@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
-import { unflatten } from '@common';
-import _ from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { Select } from '@bubbles-ui/components';
+/* eslint-disable react/display-name */
 import prefixPN from '@assignables/helpers/prefixPN';
+import { Select } from '@bubbles-ui/components';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _ from 'lodash';
+import React, { useMemo } from 'react';
 
 function capitalize(str) {
-  return str[0].toUpperCase() + str.substring(1, str.length);
+  return str?.[0]?.toUpperCase() + str?.substring(1, str.length);
 }
 
 export function useRoles() {
@@ -32,7 +33,7 @@ export function useRoles() {
   return roles;
 }
 
-export default function Type({ labels, value, onChange }) {
+const Type = React.forwardRef(({ labels, value, onChange }, ref) => {
   const roles = useRoles();
 
   return (
@@ -49,4 +50,6 @@ export default function Type({ labels, value, onChange }) {
       onChange={onChange}
     />
   );
-}
+});
+
+export default Type;

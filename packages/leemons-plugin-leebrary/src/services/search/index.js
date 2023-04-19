@@ -154,7 +154,9 @@ async function search(
 
       // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
       // EN: If there are resources, we must apply a previous filter as an intersection
-      if (!isEmpty(assets)) {
+      if (isEmpty(criteria)) {
+        assets = matches;
+      } else if (!isEmpty(assets)) {
         assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
       } else {
         assets = compact(uniq(matches.concat(flattenDeep(byTags))));

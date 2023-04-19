@@ -1,9 +1,10 @@
-import React from 'react';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import { Select } from '@bubbles-ui/components';
+/* eslint-disable react/display-name */
 import prefixPN from '@assignables/helpers/prefixPN';
+import { Select } from '@bubbles-ui/components';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _ from 'lodash';
+import React from 'react';
 
 export function useSortTypes() {
   const [, translations] = useTranslateLoader(prefixPN('sortTypes'));
@@ -34,8 +35,10 @@ export function useSortTypes() {
   return sortTypes;
 }
 
-export default function Sort({ labels, value, onChange }) {
+const Sort = React.forwardRef(({ labels, value, onChange }, ref) => {
   const sortTypes = useSortTypes();
 
   return <Select label={labels?.sort} data={sortTypes} value={value} onChange={onChange} />;
-}
+});
+
+export default Sort;

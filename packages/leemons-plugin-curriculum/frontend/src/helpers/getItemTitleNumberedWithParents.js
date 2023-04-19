@@ -1,7 +1,7 @@
-import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 import { getParentNodeIfHave } from '@curriculum/components/FormTheme/ParentRelation';
-import _ from 'lodash';
 import { getItemTitleNumbered } from '@curriculum/helpers/getItemTitleNumbered';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import _ from 'lodash';
 
 // eslint-disable-next-line import/prefer-default-export
 export function getItemTitleNumberedWithParents(
@@ -23,35 +23,60 @@ export function getItemTitleNumberedWithParents(
         nodeLevel.schema.compileJsonSchema.properties[formValueId].frontConfig.blockData;
       if (parentBlockData) {
         if (parentBlockData.type === 'list') {
-          const parentValueIndex = _.findIndex(nodeValue.value, {
-            id: values.metadata.parentRelated,
+          let parentValueIndex;
+          let nValue;
+          const nodeValues = _.isArray(nodeValue) ? nodeValue : [nodeValue];
+          _.forEach(nodeValues, (_nodeValue) => {
+            parentValueIndex = _.findIndex(_nodeValue.value, {
+              id: values.metadata.parentRelated,
+            });
+            if (parentValueIndex >= 0) {
+              nValue = _nodeValue;
+              return false;
+            }
           });
-          parentTitle = getItemTitleNumbered(parentBlockData, nodeValue, parentValueIndex);
+
+          if (parentValueIndex >= 0 && nValue) {
+            parentTitle = getItemTitleNumbered(parentBlockData, nValue, parentValueIndex);
+          }
         }
+
         if (parentBlockData.type === 'group') {
           const ids = values.metadata.parentRelated.split('|');
-          const valIndex = _.findIndex(Object.values(nodeValue.value), {
-            id: ids[1],
-          });
+          const nodeValues = _.isArray(nodeValue) ? nodeValue : [nodeValue];
 
-          const valItem = _.find(parentBlockData.elements, {
-            id: Object.keys(nodeValue.value)[valIndex],
-          });
-
-          if (ids.length > 2) {
-            const val = Object.values(nodeValue.value)[valIndex];
-            const parentValueIndex = _.findIndex(val.value, {
-              id: ids[2],
+          let valIndex;
+          let nValue;
+          _.forEach(nodeValues, (_nodeValue) => {
+            valIndex = _.findIndex(Object.values(_nodeValue.value), {
+              id: ids[1],
             });
-            parentTitle = getItemTitleNumbered(
-              parentBlockData,
-              val,
-              parentValueIndex,
-              true,
-              valItem
-            );
-          } else {
-            parentTitle = getItemTitleNumbered(parentBlockData, nodeValue, valIndex, true, valItem);
+            if (valIndex >= 0) {
+              nValue = _nodeValue;
+              return false;
+            }
+          });
+
+          if (valIndex >= 0 && nValue) {
+            const valItem = _.find(parentBlockData.elements, {
+              id: Object.keys(nValue.value)[valIndex],
+            });
+
+            if (ids.length > 2) {
+              const val = Object.values(nValue.value)[valIndex];
+              const parentValueIndex = _.findIndex(val.value, {
+                id: ids[2],
+              });
+              parentTitle = getItemTitleNumbered(
+                parentBlockData,
+                val,
+                parentValueIndex,
+                true,
+                valItem
+              );
+            } else {
+              parentTitle = getItemTitleNumbered(parentBlockData, nValue, valIndex, true, valItem);
+            }
           }
         }
       }

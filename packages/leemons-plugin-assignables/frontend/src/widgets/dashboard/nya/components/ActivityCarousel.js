@@ -52,7 +52,6 @@ export default function ActivityCarousel({
         <NYACard
           key={activity.id}
           instance={activity}
-          labels={localizations}
           showSubject={showSubjects}
           classData={classData}
         />
