@@ -132,13 +132,13 @@ function useSwiperProps() {
 
 function useIsBlocked({ activity, assignation }) {
   const isStudent = useIsStudent();
-  const { user } = assignation;
+  const user = assignation?.user;
   const isFinished = !!assignation?.finished;
   const { blocking } = activity.relatedAssignableInstances;
 
   const { data: assignations } = useAssignations({
     queries: blocking.map((instance) => ({ instance, user })),
-    enabled: !!isStudent && !isFinished && !!blocking?.length,
+    enabled: !!isStudent && !isFinished && !!blocking?.length && !!user,
     placeholderData: [],
   });
 
