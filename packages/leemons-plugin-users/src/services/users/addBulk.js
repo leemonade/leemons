@@ -88,7 +88,6 @@ async function addUserBulk(
       await sendNewProfileAddedEmailToUser(user, profile, ctx, { transacting });
     }
   } else if (userAgent.deleted) {
-    console.log('vamos a actualizar el user agent', role, user.id);
     userAgent = await table.userAgent.update(
       {
         deleted_$null: false,

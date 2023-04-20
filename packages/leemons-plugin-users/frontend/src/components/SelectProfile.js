@@ -1,8 +1,8 @@
-import React, { useEffect, forwardRef } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, isFunction, map } from 'lodash';
-import { useStore } from '@common';
 import { Select } from '@bubbles-ui/components';
+import { useStore } from '@common';
+import { isArray, isFunction, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { forwardRef, useEffect } from 'react';
 import { listProfilesRequest } from '../request';
 
 const SelectProfile = forwardRef(({ firstSelected, onChange, ...props }, ref) => {
@@ -25,6 +25,8 @@ const SelectProfile = forwardRef(({ firstSelected, onChange, ...props }, ref) =>
       page: 0,
       size: 9999,
     });
+
+    console.log('profiles', items);
 
     if (isArray(items)) {
       store.data = map(items, ({ name, id }) => ({

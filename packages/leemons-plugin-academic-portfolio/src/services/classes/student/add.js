@@ -44,7 +44,7 @@ async function add(_class, student, { transacting } = {}) {
     await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
       student,
       {
-        permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}-${studentProfileId}`,
+        permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
         actionNames: ['view'],
       },
       { transacting }

@@ -58,22 +58,31 @@ async function getByIds(
   // ·········································································
   // ADMIN PROGRAMS
   const { services: userService } = leemons.getPlugin('users');
-  const currentPermissions = await userService.permissions.getItemPermissions(
-    map(assets, 'id'),
-    leemons.plugin.prefixPN('asset.can-view'),
-    { transacting, returnRaw: true }
-  );
+  const [viewPerms, editPerms] = await Promise.all([
+    userService.permissions.getItemPermissions(
+      map(assets, 'id'),
+      leemons.plugin.prefixPN('asset.can-view'),
+      { transacting, returnRaw: true }
+    ),
+    userService.permissions.getItemPermissions(
+      map(assets, 'id'),
+      leemons.plugin.prefixPN('asset.can-edit'),
+      { transacting, returnRaw: true }
+    ),
+  ]);
 
-  const adminProgramsByItem = {};
+  const currentPermissions = [...viewPerms, ...editPerms];
+
+  const permissionsByItem = {};
   forEach(currentPermissions, (permission) => {
-    if (permission.permissionName.startsWith('plugins.academic-portfolio.program.inside.')) {
-      if (!adminProgramsByItem[permission.item]) {
-        adminProgramsByItem[permission.item] = [];
-      }
-      adminProgramsByItem[permission.item].push(
-        permission.permissionName.replace('plugins.academic-portfolio.program.inside.', '')
-      );
+    if (!permissionsByItem[permission.item]) {
+      permissionsByItem[permission.item] = {
+        viewer: [],
+        editor: [],
+      };
     }
+    const role = permission.type.includes('can-edit') ? 'editor' : 'viewer';
+    permissionsByItem[permission.item][role].push(permission.permissionName);
   });
 
   // ·········································································
@@ -328,7 +337,7 @@ async function getByIds(
       item.programName = programsById[item.program]?.name;
     }
 
-    item.adminPrograms = adminProgramsByItem[item.id] || [];
+    item.permissions = permissionsByItem[item.id] || { viewer: [], editor: [] };
 
     if (withCategory) {
       const { key, duplicable, assignable } = find(categories, { id: asset.category });

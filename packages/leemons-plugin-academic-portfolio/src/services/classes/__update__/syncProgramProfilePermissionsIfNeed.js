@@ -14,7 +14,7 @@ function process(
         {
           permissionName: `plugins.academic-portfolio.program-profile.inside.${
             classesById[item.class].program
-          }-${profiles[key]}`,
+          }.${profiles[key]}`,
           actionNames: ['view'],
         },
         { transacting }
@@ -28,7 +28,7 @@ async function syncProgramProfilePermissionsIfNeed({ transacting: _transacting }
     async (transacting) => {
       const hasKey = await table.configs.findOne(
         {
-          key: '__syncProgramProfilePermissionsIfNeed__',
+          key: '__syncProgramProfilePermissionsIfNeed2__',
         },
         { transacting }
       );
@@ -55,7 +55,7 @@ async function syncProgramProfilePermissionsIfNeed({ transacting: _transacting }
         });
 
         await table.configs.create(
-          { key: '__syncProgramProfilePermissionsIfNeed__', value: 'true' },
+          { key: '__syncProgramProfilePermissionsIfNeed2__', value: 'true' },
           { transacting }
         );
       }

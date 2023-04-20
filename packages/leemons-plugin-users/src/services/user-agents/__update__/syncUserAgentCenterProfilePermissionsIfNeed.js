@@ -9,7 +9,7 @@ async function syncUserAgentCenterProfilePermissionsIfNeed({ transacting: _trans
     async (transacting) => {
       const hasKey = await table.config.findOne(
         {
-          key: '__syncUserAgentCenterProfilePermissionsIfNeed__',
+          key: '__syncUserAgentCenterProfilePermissionsIfNeed2__',
         },
         { transacting }
       );
@@ -20,7 +20,7 @@ async function syncUserAgentCenterProfilePermissionsIfNeed({ transacting: _trans
         await addCenterProfilePermissionToUserAgents(_.map(userAgents, 'id'), { transacting });
 
         await table.config.create(
-          { key: '__syncUserAgentCenterProfilePermissionsIfNeed__', value: 'true' },
+          { key: '__syncUserAgentCenterProfilePermissionsIfNeed2__', value: 'true' },
           { transacting }
         );
       }

@@ -163,12 +163,30 @@ module.exports = {
         close: 'Close',
       },
       labels: {
+        allCenters: 'All centers',
+        shareTypePublic: 'Public',
+        shareTypeCenters: 'By centers',
+        shareTypePrograms: 'By programs',
+        shareTypeClasses: 'By classes',
+        shareTypeUsers: 'By users',
+        shareTab: 'Share',
+        sharedTab: 'Shared with',
         title: 'Resource permissions',
         addUsers: 'Add individual users',
         addUsersDescription:
           'Teachers will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
         programs: 'Educational programs',
         program: 'Program',
+        profilesPerCenter: 'Add profiles by center',
+        programsPerCenter: 'Add programs by center',
+        addCenterAsPublic:
+          'You have added the equivalent to public, if you save, all current viewer permissions will be deleted and it will be set to public.',
+        addCentersEdit: 'Centers',
+        addCenters: 'Add centers',
+        addCenterEditAll:
+          'For security reasons it is not possible to configure that all the centers have permission to edit',
+        addCentersDescription:
+          'All profiles of the selected center will see this resource in their corresponding subject folders.',
         addClasses: 'Add groups',
         addClassesDescription:
           'Students will see this resource in their corresponding subject folder.',
@@ -183,7 +201,7 @@ module.exports = {
         permissionsSuccess: 'Permissions successfully established',
         shareSuccess: 'Resource successfully shared',
         shareCenters: 'Search centers',
-        scharePrograms: 'Programs',
+        sharePrograms: 'Programs',
         shareProfiles: 'Profiles',
         sharePermissions: 'Permissions',
       },

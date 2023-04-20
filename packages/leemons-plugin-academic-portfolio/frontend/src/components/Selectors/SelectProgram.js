@@ -1,18 +1,27 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import { useApi } from '@common';
-import PropTypes from 'prop-types';
 import { MultiSelect, Select } from '@bubbles-ui/components';
+import { useApi } from '@common';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { listProgramsRequest } from '../../request';
 
 // EN: Parse data fetched from the server
 // ES: Procesar datos obtenidos del servidor
 async function getData(center) {
-  const {
-    data: { items },
-  } = await listProgramsRequest({
-    page: 0,
-    size: 9999,
-    center,
+  const centers = _.isArray(center) ? center : [center];
+  const responses = await Promise.all(
+    centers.map((_center) =>
+      listProgramsRequest({
+        page: 0,
+        size: 9999,
+        center: _center,
+      })
+    )
+  );
+
+  const items = [];
+  responses.forEach((response) => {
+    items.push(...response.data.items);
   });
 
   return items.map(({ id, name }) => ({ label: name, value: id }));

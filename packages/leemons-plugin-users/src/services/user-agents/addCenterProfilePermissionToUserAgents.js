@@ -73,7 +73,7 @@ async function addCenterProfilePermissionToUserAgents(
                 {
                   permissionName: `plugins.users.center-profile.inside.${
                     rolesCentersByRole[userAgent.role].center
-                  }-${rolesProfilesByRole[userAgent.role].profile}`,
+                  }.${rolesProfilesByRole[userAgent.role].profile}`,
                   actionNames: ['view'],
                 },
                 { throwIfExists: false, transacting }
