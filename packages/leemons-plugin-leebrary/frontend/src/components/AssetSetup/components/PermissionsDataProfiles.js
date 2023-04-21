@@ -24,13 +24,36 @@ const PermissionsDataProfiles = ({
 
   let value = [];
   if (editMode) {
-    value = _.filter(_value, (val) => val.center !== '*' && !val.program && !!val.profile);
+    const centerIds = _.map(centers, 'id');
+    value = _.filter(
+      _value,
+      (val) => centerIds.includes(val.center) && !val.program && !!val.profile
+    );
   } else {
     value = _value;
   }
 
-  function preOnChange(e) {
-    onChange(_.map(e, (v) => ({ ...v, center: v.center || centers[0].id })));
+  function preOnChange(e, { type }) {
+    let vals = _.map(e, (v) => ({ ...v, center: v.center || centers[0].id }));
+    if (editMode && ['remove', 'edit'].includes(type)) {
+      const stringifyValue = _.map(value, (v) => JSON.stringify(v));
+      const stringifyVals = _.map(vals, (v) => JSON.stringify(v));
+      const [item] = _.difference(stringifyValue, stringifyVals);
+      const [newItem] = _.difference(stringifyVals, stringifyValue);
+      if (item) {
+        let sValues = _.map(_value, (v) => JSON.stringify(v));
+        const index = sValues.indexOf(item);
+        if (index >= 0) {
+          if (type === 'remove') {
+            sValues = sValues.splice(index, 1);
+          } else {
+            sValues[index] = newItem;
+          }
+          vals = _.map(sValues, (v) => JSON.parse(v));
+        }
+      }
+    }
+    onChange(vals);
   }
 
   React.useEffect(() => {
