@@ -1,6 +1,5 @@
 import { SelectProgram } from '@academic-portfolio/components';
 import {
-  Alert,
   Box,
   ContextContainer,
   Paragraph,
@@ -11,8 +10,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import { SelectCenter, SelectProfile } from '@users/components';
+import { SelectProfile } from '@users/components';
 import _, { find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
@@ -22,52 +20,37 @@ function ProgramSelect(props) {
   return <SelectProgram {...props} ensureIntegrity autoSelectOneOption={false} center={center} />;
 }
 
-const PermissionsDataAdminCenterPrograms = ({
+const PermissionsDataPrograms = ({
   roles,
-  value,
+  value: _value,
   onChange,
   profiles,
   centers,
-  asset,
-  profileSysName,
   t,
-  translations,
   editMode = false,
 }) => {
   const [store, render] = useStore();
 
-  function haveEqualsToPublic() {
-    const item = _.find(
-      value,
-      (val) => val.center === '*' && !val.program && !val.profile && val.role === 'viewer'
-    );
-
-    return !!item;
+  let value = [];
+  if (editMode) {
+    value = _.filter(_value, (val) => val.center !== '*' && !!val.program);
+  } else {
+    value = _value;
   }
 
-  function isEqualsToAllEdit(val) {
-    return val.center === '*' && !val.program && !val.profile && val.role === 'editor';
-  }
-
-  function checkIfCanBeAdded(val) {
-    if (isEqualsToAllEdit(val)) {
-      addErrorAlert(t('permissionsData.labels.addCenterEditAll'));
-      return false;
-    }
-    return true;
+  function preOnChange(e) {
+    onChange(_.map(e, (v) => ({ ...v, center: v.center || centers[0].id })));
   }
 
   React.useEffect(() => {
     if (editMode) {
-      store.canAddPrograms = false;
       store.canAddProfiles = false;
       _.forEach(value, (val) => {
-        if (val.program) store.canAddPrograms = true;
         if (val.profile) store.canAddProfiles = true;
       });
       render();
     }
-  }, [editMode, value]);
+  }, [editMode, JSON.stringify(value)]);
 
   const USER_LABELS = useMemo(
     () => ({
@@ -82,39 +65,18 @@ const PermissionsDataAdminCenterPrograms = ({
 
   const COLUMNS = useMemo(() => {
     const result = [];
+
     result.push({
-      Header: t('permissionsData.labels.shareCenters'),
-      accessor: 'center',
+      Header: t('permissionsData.labels.sharePrograms'),
+      accessor: 'program',
       input: {
-        node: (
-          <SelectCenter
-            additionalData={[{ label: t('permissionsData.labels.allCenters'), value: '*' }]}
-            allCentersIfCan
-          />
-        ),
-        rules: { required: 'Required field' },
+        node: <ProgramSelect center={centers[0]?.id} />,
       },
       editable: false,
-      valueRender: (values) => {
-        if (values === '*') return t('permissionsData.labels.allCenters');
-        const center = _.find(centers, { id: values });
-        return center?.name;
-      },
+      valueRender: (values, formValues) => (
+        <ProgramSelect readOnly value={values} center={formValues.center || centers[0].id} />
+      ),
     });
-
-    if (store.canAddPrograms) {
-      result.push({
-        Header: t('permissionsData.labels.sharePrograms'),
-        accessor: 'program',
-        input: {
-          node: <ProgramSelect />,
-        },
-        editable: false,
-        valueRender: (values, formValues) => (
-          <ProgramSelect readOnly value={values} center={formValues.center} />
-        ),
-      });
-    }
 
     if (store.canAddProfiles) {
       result.push({
@@ -140,15 +102,17 @@ const PermissionsDataAdminCenterPrograms = ({
     });
 
     return result;
-  }, [roles, store.canAddProfiles, store.canAddPrograms]);
+  }, [roles, centers, store.canAddProfiles]);
+
+  if (editMode && !value?.length) return null;
 
   return (
     <ContextContainer spacing={editMode ? 0 : 5}>
       {!editMode ? (
         <>
           <Box>
-            <Title order={5}>{t('permissionsData.labels.addCenters')}</Title>
-            <Paragraph>{t('permissionsData.labels.addCentersDescription')}</Paragraph>
+            <Title order={5}>{t('permissionsData.labels.addPrograms')}</Title>
+            <Paragraph>{t('permissionsData.labels.addProgramsDescription')}</Paragraph>
           </Box>
           <Stack>
             {profiles?.length ? (
@@ -158,47 +122,32 @@ const PermissionsDataAdminCenterPrograms = ({
                   render();
                 }}
                 checked={store.canAddProfiles}
-                label={t('permissionsData.labels.profilesPerCenter')}
+                label={t('permissionsData.labels.profilesPerProgram')}
               />
             ) : null}
-
-            <Switch
-              onChange={() => {
-                store.canAddPrograms = !store.canAddPrograms;
-                render();
-              }}
-              checked={store.canAddPrograms}
-              label={t('permissionsData.labels.programsPerCenter')}
-            />
           </Stack>
         </>
       ) : (
-        <Title order={5}>{t('permissionsData.labels.addCentersEdit')}</Title>
+        <Title order={5}>{t('permissionsData.labels.addProgramsEdit')}</Title>
       )}
       {!isEmpty(COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
           data={value}
-          onChange={onChange}
+          onChange={preOnChange}
           columns={COLUMNS}
           labels={USER_LABELS}
           showHeaders={false}
           forceShowInputs={!editMode}
           sortable={false}
           editable={editMode}
-          onBeforeAdd={checkIfCanBeAdded}
           unique
         />
       )}
-      {haveEqualsToPublic() ? (
-        <Alert severity="warning" closeable={false}>
-          {t('permissionsData.labels.addCenterAsPublic')}
-        </Alert>
-      ) : null}
     </ContextContainer>
   );
 };
 
-PermissionsDataAdminCenterPrograms.propTypes = {
+PermissionsDataPrograms.propTypes = {
   roles: PropTypes.any,
   asset: PropTypes.object,
   t: PropTypes.func,
@@ -211,5 +160,5 @@ PermissionsDataAdminCenterPrograms.propTypes = {
   editMode: PropTypes.bool,
 };
 
-export default PermissionsDataAdminCenterPrograms;
-export { PermissionsDataAdminCenterPrograms };
+export default PermissionsDataPrograms;
+export { PermissionsDataPrograms };

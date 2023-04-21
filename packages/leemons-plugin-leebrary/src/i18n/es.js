@@ -153,12 +153,22 @@ module.exports = {
         allCenters: 'Todos los centros',
         shareTypePublic: 'Público',
         shareTypeCenters: 'Por centros',
+        shareTypeProfiles: 'Por perfiles',
         shareTypePrograms: 'Por programa',
         shareTypeClasses: 'Por clases',
         shareTypeUsers: 'Por usuarios',
         shareTab: 'Compartir',
         sharedTab: 'Compartido con...',
         title: 'Permisos del recurso',
+        addProfiles: 'Añadir perfiles',
+        addProfilesDescription:
+          'Los usuarios con los perfiles indicados verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada. ',
+        addProfilesEdit: 'Perfiles',
+        addPrograms: 'Añadir programas',
+        addProgramsDescription:
+          'Los usuarios de los programas verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada. ',
+        addProgramsEdit: 'Programas',
+        profilesPerProgram: 'Añadir perfiles por programa',
         addUsers: 'Añadir usuarios individuales',
         addUsersDescription:
           'Los docentes verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',

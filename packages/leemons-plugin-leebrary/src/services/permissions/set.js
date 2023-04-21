@@ -414,7 +414,10 @@ async function set(
       if (assetPromises.length) await Promise.all(assetPromises);
     }
 
+    console.log('deleteMissing', deleteMissing);
+
     if (deleteMissing) {
+      console.log('entra');
       const currentUserAgentIds = _.map(userSession.userAgents, 'id');
       const toUpdate = map(canAccess, 'userAgent');
 

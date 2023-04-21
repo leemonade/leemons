@@ -26,8 +26,6 @@ const SelectProfile = forwardRef(({ firstSelected, onChange, ...props }, ref) =>
       size: 9999,
     });
 
-    console.log('profiles', items);
-
     if (isArray(items)) {
       store.data = map(items, ({ name, id }) => ({
         label: name,

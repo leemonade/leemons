@@ -166,12 +166,22 @@ module.exports = {
         allCenters: 'All centers',
         shareTypePublic: 'Public',
         shareTypeCenters: 'By centers',
+        shareTypeProfiles: 'By profiles',
         shareTypePrograms: 'By programs',
         shareTypeClasses: 'By classes',
         shareTypeUsers: 'By users',
         shareTab: 'Share',
         sharedTab: 'Shared with',
         title: 'Resource permissions',
+        addProfiles: 'Add profiles',
+        addProfilesDescription:
+          'Users with the indicated profiles will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels. ',
+        addProfilesEdit: 'Profiles',
+        addPrograms: 'Add programs',
+        addProgramsDescription:
+          'Program users will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
+        addProgramsEdit: 'Programs',
+        profilesPerProgram: 'Add profiles by program',
         addUsers: 'Add individual users',
         addUsersDescription:
           'Teachers will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
