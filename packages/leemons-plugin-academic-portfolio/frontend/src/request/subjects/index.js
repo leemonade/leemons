@@ -4,6 +4,7 @@ async function listSubjects({ page, size, program, course }) {
   return leemons.api(
     `academic-portfolio/subject?page=${page}&size=${size}&program=${program}&course=${course}`,
     {
+      waitToFinish: true,
       allAgents: true,
       method: 'GET',
     }

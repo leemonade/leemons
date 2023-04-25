@@ -4,6 +4,7 @@ const {
   addPermissionsBetweenStudentsAndTeachers,
 } = require('../addPermissionsBetweenStudentsAndTeachers');
 const { getClassProgram } = require('../getClassProgram');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function add(_class, teacher, type, { transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -24,10 +25,21 @@ async function add(_class, teacher, type, { transacting } = {}) {
     }),
   ]);
 
+  const { teacher: teacherProfileId } = await getProfiles({ transacting });
+
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
     teacher,
     {
       permissionName: `plugins.academic-portfolio.class.${_class}`,
+      actionNames: ['view', 'edit'],
+    },
+    { transacting }
+  );
+
+  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+    teacher,
+    {
+      permissionName: `plugins.academic-portfolio.class-profile.${_class}.${teacherProfileId}`,
       actionNames: ['view', 'edit'],
     },
     { transacting }
@@ -38,6 +50,20 @@ async function add(_class, teacher, type, { transacting } = {}) {
       teacher,
       {
         permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+        actionNames: ['view'],
+      },
+      { transacting }
+    );
+  } catch (e) {
+    // Nothing
+  }
+
+  try {
+    const { teacher: teacherProfileId } = await getProfiles({ transacting });
+    await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+      teacher,
+      {
+        permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}-${teacherProfileId}`,
         actionNames: ['view'],
       },
       { transacting }

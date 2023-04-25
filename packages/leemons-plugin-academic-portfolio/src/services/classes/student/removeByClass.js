@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
+const { removeCustomPermissions } = require('./removeCustomPermissions');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeByClass(classIds, { soft, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -7,6 +9,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
   return global.utils.withTransaction(
     async (transacting) => {
       const classeIds = _.isArray(classIds) ? classIds : [classIds];
+
+      const programs = await Promise.all(_.map(classeIds, (classId) => getClassProgram(classId)));
 
       const classStudents = await table.classStudent.find(
         { class_$in: classeIds },
@@ -44,6 +48,7 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         promises.push(removeUserAgentContacts('*', studentIds, { target: classId, transacting }));
       });
       await Promise.all(promises);
+      const { student: studentProfileId } = await getProfiles({ transacting });
 
       await Promise.all(
         _.map(classStudents, (classStudent) =>
@@ -53,6 +58,30 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
               permissionName: `plugins.academic-portfolio.class.${classStudent.class}`,
             },
             { transacting }
+          )
+        )
+      );
+
+      await Promise.all(
+        _.map(classStudents, (classStudent) =>
+          leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
+            classStudent.student,
+            {
+              permissionName: `plugins.academic-portfolio.class-profile.${classStudent.class}.${studentProfileId}`,
+            },
+            { transacting }
+          )
+        )
+      );
+
+      const programIds = _.uniq(_.map(programs, 'id'));
+
+      await Promise.all(
+        _.map(programIds, (programId) =>
+          Promise.all(
+            _.map(classStudents, (classStudent) =>
+              removeCustomPermissions(classStudent.student, programId, { transacting })
+            )
           )
         )
       );

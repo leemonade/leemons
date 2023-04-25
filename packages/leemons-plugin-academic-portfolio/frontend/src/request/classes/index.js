@@ -9,6 +9,7 @@ async function haveClasses() {
 
 async function listClasses({ page, size, program }) {
   return leemons.api(`academic-portfolio/class?page=${page}&size=${size}&program=${program}`, {
+    waitToFinish: true,
     allAgents: true,
     method: 'GET',
   });

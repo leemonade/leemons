@@ -9,6 +9,7 @@ async function getProgramTree(programId) {
 
 async function listPrograms({ page, size, center }) {
   return leemons.api(`academic-portfolio/program?page=${page}&size=${size}&center=${center}`, {
+    waitToFinish: true,
     allAgents: true,
     method: 'GET',
   });

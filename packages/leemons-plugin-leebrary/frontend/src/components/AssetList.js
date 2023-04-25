@@ -1,6 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+/* eslint-disable no-nested-ternary */
 import {
   Box,
   ImageLoader,
@@ -13,31 +11,34 @@ import {
   useDebouncedValue,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@bubbles-ui/leemons';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
+import { LibraryItem } from '@bubbles-ui/leemons';
+import { LocaleDate, unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
+import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
+import { prepareAsset } from '../helpers/prepareAsset';
+import { prepareAssetType } from '../helpers/prepareAssetType';
 import {
   deleteAssetRequest,
   duplicateAssetRequest,
+  getAssetTypesRequest,
   getAssetsByIdsRequest,
   getAssetsRequest,
-  getAssetTypesRequest,
   listCategoriesRequest,
   pinAssetRequest,
   unpinAssetRequest,
 } from '../request';
-import { getPageItems } from '../helpers/getPageItems';
-import { CardWrapper } from './CardWrapper';
-import { CardDetailWrapper } from './CardDetailWrapper';
+import { PermissionsDataDrawer } from './AssetSetup';
 import { AssetThumbnail } from './AssetThumbnail';
-import { prepareAsset } from '../helpers/prepareAsset';
-import { prepareAssetType } from '../helpers/prepareAssetType';
-import { PermissionsData } from './AssetSetup/PermissionsData';
+import { CardDetailWrapper } from './CardDetailWrapper';
+import { CardWrapper } from './CardWrapper';
 import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 
@@ -54,7 +55,7 @@ function getOwner(asset) {
   return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
 }
 
-const AssetList = ({
+function AssetList({
   category: categoryProp,
   categories: categoriesProp,
   asset: assetProp,
@@ -89,46 +90,47 @@ const AssetList = ({
   onEditItem = () => {},
   onTypeChange = () => {},
   onLoading = () => {},
-}) => {
+}) {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
     subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
   }
 
+  const [store, render] = useStore({
+    loading: true,
+    category: categoryProp,
+    categories: categoriesProp,
+    layout: layoutProp,
+    asset: assetProp,
+    page: pageProp || 1,
+    size: pageSize,
+    editingAsset: null,
+    assets: [],
+    assetTypes: [],
+    assetType: assetTypeProp,
+    openDetail: false,
+    isDetailOpened: false,
+    serverData: {},
+    showPublic: showPublicProp,
+    searchCriteria: searchProp,
+  });
+
   const [t, translations] = useTranslateLoader(prefixPN('list'));
-  const [category, setCategory] = useState(categoryProp);
-  const [categories, setCategories] = useState(categoriesProp);
-  const [layout, setLayout] = useState(layoutProp);
-  const [asset, setAsset] = useState(assetProp);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(pageProp);
-  const [size, setSize] = useState(pageSize);
-  const [assets, setAssets] = useState([]);
-  const [assetTypes, setAssetTypes] = useState([]);
-  const [assetType, setAssetType] = useState(assetTypeProp);
-  const [openDetail, setOpenDetail] = useState(false);
-  const [isDetailOpened, setIsDetailOpened] = useState(false);
-  const [serverData, setServerData] = useState({});
-  const [showPublic, setShowPublic] = useState(showPublicProp);
-  const [searchCriteria, setSearhCriteria] = useState(searchProp);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
-  const [drawerRef, drawerRect] = useResizeObserver();
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
-    openModal,
-    closeModal,
   } = useLayout();
-  const [searchDebounced] = useDebouncedValue(searchCriteria, 300);
+  const [searchDebounced] = useDebouncedValue(store.searchCriteria, 300);
   const session = useSession();
   const locale = getLocale(session);
   const loadingRef = useRef({ firstTime: false, loading: false });
   const showThumbnails = useMemo(
-    () => onlyThumbnails && category?.key === 'media-files',
-    [onlyThumbnails, category]
+    () => onlyThumbnails && store.category?.key === 'media-files',
+    [onlyThumbnails, store.category]
   );
 
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
@@ -136,20 +138,19 @@ const AssetList = ({
   // ·········································································
   // DATA PROCESSING
 
-  const loadCategories = async (selectedCategoryKey) => {
+  async function loadCategories(selectedCategoryKey) {
     const result = await listCategoriesRequest();
     const items = result.map((data) => ({
       ...data,
       icon: data.menuItem.iconSvg,
       name: data.menuItem.label,
     }));
-    setCategories(items);
-    if (!isEmpty(selectedCategoryKey)) {
-      setCategory(find(items, { key: selectedCategoryKey }));
-    }
-  };
+    store.categories = items;
+    if (!isEmpty(selectedCategoryKey)) store.category = find(items, { key: selectedCategoryKey });
+    render();
+  }
 
-  const loadAssetTypes = async (categoryId) => {
+  async function loadAssetTypes(categoryId) {
     try {
       const response = await getAssetTypesRequest(categoryId);
       const types = uniqBy(
@@ -159,42 +160,49 @@ const AssetList = ({
         })),
         'value'
       );
-      setAssetTypes(types);
+      store.assetTypes = types;
+      render();
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
 
-  const clearAssetLoading = () => {
+  function clearAssetLoading() {
     setTimeout(() => {
-      setLoading(false);
+      store.loading = false;
       loadingRef.current.loading = false;
+      render();
       // console.log('Ahora está permitido cargar Assets!!');
     }, 500);
-  };
+  }
 
-  const loadAssets = async (categoryId, criteria = '', type = '', filters) => {
+  async function loadAssets(categoryId, criteria = '', type = '', _filters) {
     if (!loadingRef.current.loading || loadingRef.current.firstTime) {
       loadingRef.current.loading = true;
       loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
-      setLoading(true);
+      store.asset = null;
+      store.loading = true;
+      render();
       // console.log('Pasamos por aquí!!');
       try {
-        setAsset(null);
         const query = {
-          providerQuery: filters ? JSON.stringify(filters) : null,
+          providerQuery: _filters ? JSON.stringify(_filters) : null,
           category: categoryId,
           criteria,
           type,
           published,
-          showPublic: !pinned ? showPublic : true,
+          showPublic: !pinned ? store.showPublic : true,
           pinned,
           preferCurrent,
           searchInProvider,
-          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
-          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
+          subjects: JSON.stringify(
+            store.subjects ? (isArray(store.subjects) ? store.subjects : [store.subjects]) : null
+          ),
+          programs: JSON.stringify(
+            store.programs ? (isArray(store.programs) ? store.programs : [store.programs]) : null
+          ),
           roles: JSON.stringify(roles || []),
         };
 
@@ -217,12 +225,13 @@ const AssetList = ({
 
         const results = response?.assets || [];
         // console.log('results:', results);
-        setAssets(uniqBy(results, 'asset'));
+        store.assets = uniqBy(results, 'asset');
 
         if (isEmpty(results)) {
-          setServerData([]);
+          store.serverData = [];
           clearAssetLoading();
         }
+        render();
       } catch (err) {
         clearAssetLoading();
         addErrorAlert(getErrorMessage(err));
@@ -235,69 +244,77 @@ const AssetList = ({
         filters,
       };
     }
-  };
+    return null;
+  }
 
-  const loadAssetsData = async () => {
-    if (assets && !isEmpty(assets)) {
-      setLoading(true);
+  async function loadAssetsData() {
+    if (store.assets && !isEmpty(store.assets)) {
+      store.loading = true;
+      render();
 
       try {
-        if (!isEmpty(assets)) {
-          const paginated = getPageItems({ data: assets, page: page - 1, size });
+        if (!isEmpty(store.assets)) {
+          const paginated = getPageItems({
+            data: store.assets,
+            page: store.page - 1,
+            size: store.size,
+          });
           const assetIds = paginated.items.map((item) => item.asset);
           const response = await getAssetsByIdsRequest(assetIds, {
             published,
-            showPublic: !pinned ? showPublic : true,
+            showPublic: !pinned ? store.showPublic : true,
           });
           paginated.items = response.assets || [];
           paginated.page += 1;
           // console.log('paginated.items:', paginated.items);
-          setServerData(paginated);
+          store.serverData = paginated;
         } else {
-          setServerData([]);
+          store.serverData = [];
         }
-
         clearAssetLoading();
+        render();
       } catch (err) {
         clearAssetLoading();
         addErrorAlert(getErrorMessage(err));
       }
     }
-  };
+  }
 
-  const loadAsset = async (id, forceLoad) => {
+  async function loadAsset(id, forceLoad) {
     try {
-      const item = find(serverData.items, { id });
+      const item = find(store.serverData.items, { id });
 
       if (item && !forceLoad) {
-        setAsset(prepareAsset(item, published));
+        store.asset = prepareAsset(item, published);
       } else {
         // console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
           // console.log('asset:', value);
-          setAsset(prepareAsset(value, published));
+
+          if (store.asset) store.asset = prepareAsset(value, published);
 
           if (forceLoad && item) {
-            const index = serverData.items.findIndex((i) => i.id === id);
-            serverData.items[index] = value;
-            setServerData({ ...serverData });
+            const index = store.serverData.items.findIndex((i) => i.id === id);
+            store.serverData.items[index] = value;
+            store.serverData = { ...store.serverData };
           }
         } else {
-          setAsset(null);
+          store.asset = null;
         }
       }
+      render();
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
 
-  const reloadAssets = () => {
-    loadAssets(category?.id, searchDebounced, assetType, filters);
-  };
+  function reloadAssets() {
+    loadAssets(store.category?.id, searchDebounced, store.assetType, filters);
+  }
 
-  const duplicateAsset = async (id) => {
+  async function duplicateAsset(id) {
     setAppLoading(true);
     try {
       const response = await duplicateAssetRequest(id);
@@ -310,23 +327,23 @@ const AssetList = ({
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
 
-  const deleteAsset = async (id) => {
+  async function deleteAsset(id) {
     setAppLoading(true);
     try {
       await deleteAssetRequest(id);
       setAppLoading(false);
       addSuccessAlert(t('labels.removeSuccess'));
-      setAsset(null);
+      store.asset = null;
       reloadAssets();
     } catch (err) {
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
 
-  const pinAsset = async (item) => {
+  async function pinAsset(item) {
     setAppLoading(true);
     try {
       await pinAssetRequest(item.id);
@@ -337,9 +354,9 @@ const AssetList = ({
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
 
-  const unpinAsset = async (item) => {
+  async function unpinAsset(item) {
     setAppLoading(true);
     try {
       await unpinAssetRequest(item.id);
@@ -350,122 +367,139 @@ const AssetList = ({
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
 
   // ·········································································
   // EFFECTS
 
-  useEffect(() => setSize(pageSize), [pageSize]);
-  useEffect(() => setPage(pageProp), [pageProp]);
-  useEffect(() => setLayout(layoutProp), [layoutProp]);
-  useEffect(() => setCategories(categoriesProp), [categoriesProp]);
-  useEffect(() => setAssetType(assetTypeProp), [assetTypeProp]);
-  useEffect(() => setShowPublic(showPublicProp), [showPublicProp]);
   useEffect(() => {
-    onLoading(loading);
-  }, [loading]);
+    store.size = pageSize;
+    render();
+  }, [JSON.stringify(pageSize)]);
+  useEffect(() => {
+    store.page = pageProp || 1;
+    render();
+  }, [JSON.stringify(pageProp)]);
+  useEffect(() => {
+    store.layout = layoutProp;
+    render();
+  }, [JSON.stringify(layoutProp)]);
+  useEffect(() => {
+    store.categories = categoriesProp;
+    render();
+  }, [JSON.stringify(categoriesProp)]);
+  useEffect(() => {
+    store.assetType = assetTypeProp;
+    render();
+  }, [JSON.stringify(assetTypeProp)]);
+  useEffect(() => {
+    store.showPublic = showPublicProp;
+    render();
+  }, [JSON.stringify(showPublicProp)]);
+  useEffect(() => {
+    onLoading(store.loading);
+  }, [store.loading]);
 
   useEffect(() => {
-    if (!isEmpty(assetProp?.id) && assetProp.id !== asset?.id) {
-      setAsset(assetProp);
-    } else if (isString(assetProp) && assetProp !== asset?.id) {
+    if (!isEmpty(assetProp?.id) && assetProp.id !== store.asset?.id) {
+      store.asset = assetProp;
+      render();
+    } else if (isString(assetProp) && assetProp !== store.asset?.id) {
       loadAsset(assetProp);
     } else {
-      setAsset(null);
+      store.asset = null;
+      render();
     }
-  }, [assetProp]);
+  }, [JSON.stringify(assetProp)]);
 
   useEffect(() => {
     if (!isEmpty(categoryProp?.id)) {
-      setCategory(categoryProp);
-    } else if (isString(categoryProp) && isEmpty(categories)) {
+      store.category = categoryProp;
+      render();
+    } else if (isString(categoryProp) && isEmpty(store.categories)) {
       loadCategories(categoryProp);
-    } else if (isString(categoryProp) && !isEmpty(categories)) {
-      setCategory(find(categories, { key: categoryProp }));
+    } else if (isString(categoryProp) && !isEmpty(store.categories)) {
+      store.category = find(store.categories, { key: categoryProp });
+      render();
     }
-  }, [categoryProp, categories]);
+  }, [JSON.stringify(categoryProp), store.categories]);
 
   useEffect(() => {
-    if (!isEmpty(category?.id)) {
+    if (!isEmpty(store.category?.id)) {
       // loadAssets(category.id);
-      loadAssetTypes(category.id);
+      loadAssetTypes(store.category.id);
     } else if (categoryProp?.key === 'pins') {
-      const cat = find(categories, { key: 'media-files' });
+      const cat = find(store.categories, { key: 'media-files' });
       if (cat) loadAssetTypes(cat.id);
     } else {
-      setAssetTypes(null);
+      store.assetTypes = null;
+      render();
     }
-  }, [category, categoryProp]);
+  }, [store.category, JSON.stringify(categoryProp)]);
 
   useEffect(() => {
-    if (assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {
+    if (store.assetTypes && !isEmpty(store.assetTypes) && store.assetTypes[0].value !== '') {
       const label = t('labels.allResourceTypes');
 
       if (label !== 'labels.allResourceTypes') {
-        setAssetTypes([{ label, value: '' }, ...assetTypes]);
+        store.assetTypes = [{ label, value: '' }, ...store.assetTypes];
+        render();
       }
     }
-  }, [assetTypes, t]);
+  }, [store.assetTypes, t]);
 
   useEffect(() => {
+    // Good
     loadAssetsData();
-  }, [assets, page, size]);
+  }, [store.assets, store.page, store.size]);
 
   useEffect(() => {
+    // Good
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
-    } else if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchDebounced, assetType, filters);
+    } else if (!isEmpty(store.category?.id) || pinned) {
+      loadAssets(store.category?.id, searchDebounced, store.assetType, filters);
     }
-  }, [searchDebounced, category, pinned, assetType, filters]);
+  }, [searchDebounced, store.category, pinned, store.assetType, filters]);
 
   useEffect(() => {
-    if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchProp, assetType, filters);
+    // Good
+    if (!isEmpty(store.category?.id) || pinned) {
+      loadAssets(store.category?.id, searchProp, store.assetType, filters);
     }
-  }, [searchProp, category, assetType, showPublic, pinned, published, filters]);
+  }, [searchProp, store.category, store.assetType, store.showPublic, pinned, published, filters]);
 
   // ·········································································
   // HANDLERS
 
-  const handleOnSelect = (item) => {
-    setOpenDetail(true);
+  function handleOnSelect(item) {
+    store.openDetail = true;
     onSelectItem(item);
-  };
+    render();
+  }
 
-  const handleOnDelete = (item) => {
+  function handleOnDelete(item) {
     openDeleteConfirmationModal({
       onConfirm: () => deleteAsset(item.id),
     })();
-  };
+  }
 
-  const handleOnDuplicate = (item) => {
+  function handleOnDuplicate(item) {
     openConfirmationModal({
       onConfirm: () => duplicateAsset(item.id),
     })();
-  };
+  }
 
-  const handleOnEdit = (item) => {
-    setAsset(item);
+  function handleOnEdit(item) {
+    store.asset = item;
     onEditItem(item);
-  };
+    render();
+  }
 
-  const handleOnShare = (item) => {
-    const id = openModal({
-      children: (
-        <PermissionsData
-          asset={item}
-          sharing={true}
-          onNext={() => {
-            closeModal(id);
-            loadAsset(item.id, true);
-          }}
-        />
-      ),
-      size: 'lg',
-      withCloseButton: true,
-    });
-  };
+  function handleOnShare(item) {
+    store.sharingItem = item;
+    render();
+  }
 
   /*
   const handleOnShowPublic = (value) => {
@@ -474,32 +508,34 @@ const AssetList = ({
   };
   */
 
-  const handleOnPin = (item) => {
+  function handleOnPin(item) {
     pinAsset(item);
-  };
+  }
 
-  const handleOnUnpin = (item) => {
+  function handleOnUnpin(item) {
     openConfirmationModal({
       onConfirm: () => unpinAsset(item),
     })();
-  };
+  }
 
-  const handleOnDownload = (item) => {
+  function handleOnDownload(item) {
     window.open(item.url, '_blank');
-  };
+  }
 
-  const handleOnChangeCategory = (key) => {
-    setAssetType('');
-    setCategory(find(categories, { key }));
-  };
+  function handleOnChangeCategory(key) {
+    store.assetType = '';
+    store.category = find(store.categories, { key });
+    render();
+  }
 
-  const handleOnTypeChange = (type) => {
+  function handleOnTypeChange(type) {
     if (isEmbedded) {
-      setAssetType(type);
+      store.assetType = type;
+      render();
     }
 
     onTypeChange(type);
-  };
+  }
 
   // ·········································································
   // LABELS & STATIC
@@ -527,7 +563,7 @@ const AssetList = ({
 
   const cardVariant = useMemo(() => {
     let option = 'media';
-    switch (category?.key) {
+    switch (store.category?.key) {
       case 'bookmarks':
         option = 'bookmark';
         break;
@@ -535,41 +571,56 @@ const AssetList = ({
         break;
     }
     return option;
-  }, [category]);
+  }, [store.category]);
 
-  const showDrawer = useMemo(() => !loading && !isNil(asset) && !isEmpty(asset), [loading, asset]);
+  const showDrawer = useMemo(
+    () => !store.loading && !isNil(store.asset) && !isEmpty(store.asset),
+    [store.loading, store.asset]
+  );
 
-  const toggleDetail = (val) => {
+  function toggleDetail(val) {
     if (!val) {
-      setTimeout(() => setIsDetailOpened(val), 10);
-      setTimeout(() => setOpenDetail(val), 200); // 200
+      setTimeout(() => {
+        store.isDetailOpened = val;
+        render();
+      }, 10);
+      setTimeout(() => {
+        store.openDetail = val;
+        render();
+      }, 200); // 200
     } else {
-      setTimeout(() => setIsDetailOpened(val), 500); // 500
-      setTimeout(() => setOpenDetail(val), 10);
+      setTimeout(() => {
+        store.isDetailOpened = val;
+        render();
+      }, 500); // 500
+      setTimeout(() => {
+        store.openDetail = val;
+        render();
+      }, 10);
     }
-  };
+  }
 
   useEffect(() => {
     toggleDetail(showDrawer);
   }, [showDrawer]);
 
   useEffect(() => {
-    if (!isNil(asset) && !isEmpty(asset)) {
+    if (!isNil(store.asset) && !isEmpty(store.asset)) {
       toggleDetail(true);
     }
-  }, [asset]);
+  }, [store.asset]);
 
   const offsets = childRef.current?.getBoundingClientRect() || childRect;
   const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
 
   const listProps = useMemo(() => {
-    if (!showThumbnails && layout === 'grid') {
+    if (!showThumbnails && store.layout === 'grid') {
       return {
         itemRender: (p) => (
           <CardWrapper
             {...p}
             variant={cardVariant || 'media'}
-            category={category || { key: 'media-file' }}
+            category={store.category || { key: 'media-file' }}
             realCategory={categoryProp}
             published={published}
             isEmbedded={isEmbedded}
@@ -591,10 +642,10 @@ const AssetList = ({
       };
     }
 
-    if (showThumbnails && layout === 'grid') {
+    if (showThumbnails && store.layout === 'grid') {
       return {
         itemRender: (p) => <AssetThumbnail {...p} />,
-        itemMinWidth: category?.key === 'media-files' ? 200 : itemMinWidth,
+        itemMinWidth: store.category?.key === 'media-files' ? 200 : itemMinWidth,
         margin: 16,
         spacing: 4,
         paperProps: { shadow: 'none', padding: 4 },
@@ -602,7 +653,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout, category, categoryProp, isEmbedded, showThumbnails]);
+  }, [store.layout, store.category, categoryProp, isEmbedded, showThumbnails]);
 
   const listLayouts = useMemo(
     () => [
@@ -614,18 +665,22 @@ const AssetList = ({
 
   const toolbarItems = useMemo(
     () => ({
-      edit: asset?.editable ? t('cardToolbar.edit') : false,
-      duplicate: asset?.duplicable ? t('cardToolbar.duplicate') : false,
-      download: asset?.downloadable ? t('cardToolbar.download') : false,
-      delete: asset?.deleteable ? t('cardToolbar.delete') : false,
-      share: asset?.shareable ? t('cardToolbar.share') : false,
+      edit: store.asset?.editable ? t('cardToolbar.edit') : false,
+      duplicate: store.asset?.duplicable ? t('cardToolbar.duplicate') : false,
+      download: store.asset?.downloadable ? t('cardToolbar.download') : false,
+      delete: store.asset?.deleteable ? t('cardToolbar.delete') : false,
+      share: store.asset?.shareable ? t('cardToolbar.share') : false,
       // assign: asset?.assignable ? t('cardToolbar.assign') : false,
       // eslint-disable-next-line no-nested-ternary
-      pin: asset?.pinned ? false : asset?.pinneable && published ? t('cardToolbar.pin') : false,
-      unpin: asset?.pinned ? t('cardToolbar.unpin') : false,
+      pin: store.asset?.pinned
+        ? false
+        : store.asset?.pinneable && published
+        ? t('cardToolbar.pin')
+        : false,
+      unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
-    [asset, category, t]
+    [store.asset, store.category, JSON.stringify(translations)]
   );
 
   const detailLabels = useMemo(() => {
@@ -635,7 +690,7 @@ const AssetList = ({
       return data;
     }
     return {};
-  }, [translations]);
+  }, [JSON.stringify(translations)]);
 
   const getEmptyState = () => {
     if (searchDebounced && !isEmpty(searchDebounced)) {
@@ -646,7 +701,7 @@ const AssetList = ({
   };
 
   const listWidth = useMemo(() => {
-    if (openDetail && showDrawer) {
+    if (store.openDetail && showDrawer) {
       return `calc(100% - ${DRAWER_WIDTH}px)`;
     }
 
@@ -655,12 +710,12 @@ const AssetList = ({
     }
 
     return '100%';
-  }, [openDetail, showDrawer]);
+  }, [store.openDetail, showDrawer]);
 
   const categoriesRadioData = useMemo(
     () =>
-      categories
-        .filter((item) =>
+      store.categories
+        ?.filter((item) =>
           Array.isArray(allowChangeCategories) ? allowChangeCategories.includes(item.key) : true
         )
         .map((item) => ({
@@ -675,117 +730,124 @@ const AssetList = ({
             </Box>
           ),
         })),
-    [allowChangeCategories, categories]
+    [allowChangeCategories, store.categories]
   );
 
   // ·········································································
   // RENDER
 
   return (
-    <Stack
-      ref={containerRef}
-      direction="column"
-      fullWidth
-      fullHeight
-      style={{ position: 'relative' }}
-    >
-      {/* SEARCH BAR ············· */}
+    <>
       <Stack
-        ref={childRef}
+        ref={containerRef}
+        direction="column"
         fullWidth
-        skipFlex
-        spacing={5}
-        padding={isEmbedded ? 0 : 5}
-        style={
-          isEmbedded
-            ? { flex: 0, alignItems: 'end' }
-            : {
-                flex: 0,
-                alignItems: 'end',
-                width: containerRect.width,
-                top: containerRect.top,
-                position: 'fixed',
-                zIndex: 101,
-                backgroundColor: '#fff',
-              }
-        }
+        fullHeight
+        style={{ position: 'relative' }}
       >
-        <Stack fullWidth spacing={5}>
-          {canSearch && (
-            <SearchInput
-              variant={isEmbedded ? 'default' : 'filled'}
-              onChange={setSearhCriteria}
-              value={searchCriteria}
-              disabled={loading}
-              label={t('labels.search')}
-              placeholder={t('labels.searchPlaceholder')}
-            />
-          )}
-          {!!filterComponents && filterComponents({ loading })}
-          {!isEmpty(assetTypes) && canChangeType && (
-            <Select
-              skipFlex
-              data={assetTypes}
-              value={assetType}
-              onChange={handleOnTypeChange}
-              label={t('labels.type')}
-              placeholder={t('labels.resourceTypes')}
-              disabled={loading}
-            />
+        {/* SEARCH BAR ············· */}
+        <Stack
+          ref={childRef}
+          fullWidth
+          skipFlex
+          spacing={5}
+          padding={isEmbedded ? 0 : 5}
+          style={
+            isEmbedded
+              ? { flex: 0, alignItems: 'end' }
+              : {
+                  flex: 0,
+                  alignItems: 'end',
+                  width: containerRect.width,
+                  top: containerRect.top,
+                  position: 'fixed',
+                  zIndex: 101,
+                  backgroundColor: '#fff',
+                }
+          }
+        >
+          <Stack fullWidth spacing={5}>
+            {canSearch && (
+              <SearchInput
+                variant={isEmbedded ? 'default' : 'filled'}
+                onChange={(e) => {
+                  store.searchCriteria = e;
+                  render();
+                }}
+                value={store.searchCriteria}
+                disabled={store.loading}
+                label={t('labels.search')}
+                placeholder={t('labels.searchPlaceholder')}
+              />
+            )}
+            {!!filterComponents && filterComponents({ loading: store.loading })}
+            {!isEmpty(store.assetTypes) && canChangeType && (
+              <Select
+                skipFlex
+                data={store.assetTypes}
+                value={store.assetType}
+                onChange={handleOnTypeChange}
+                label={t('labels.type')}
+                placeholder={t('labels.resourceTypes')}
+                disabled={store.loading}
+              />
+            )}
+          </Stack>
+          {canChangeLayout && (
+            <Box skipFlex>
+              <RadioGroup
+                data={listLayouts}
+                variant="icon"
+                size="xs"
+                value={store.layout}
+                onChange={(e) => {
+                  store.layout = e;
+                  render();
+                }}
+              />
+            </Box>
           )}
         </Stack>
-        {canChangeLayout && (
-          <Box skipFlex>
-            <RadioGroup
-              data={listLayouts}
-              variant="icon"
-              size="xs"
-              value={layout}
-              onChange={setLayout}
-            />
+
+        {/* CATEGORY RADIO GROUP ···· */}
+        {allowChangeCategories !== false && !isNil(store.categories) && !isEmpty(store.categories) && (
+          <Box
+            skipFlex
+            sx={(theme) => ({ marginTop: theme.spacing[5] })}
+            style={{ cursor: store.loading ? 'wait' : 'default' }}
+          >
+            <Box style={{ pointerEvents: store.loading ? 'none' : 'auto' }}>
+              <RadioGroup
+                data={categoriesRadioData}
+                variant="icon"
+                onChange={handleOnChangeCategory}
+                value={store.category?.key}
+                fullWidth
+              />
+            </Box>
           </Box>
         )}
-      </Stack>
-
-      {/* CATEGORY RADIO GROUP ···· */}
-      {allowChangeCategories !== false && !isNil(categories) && !isEmpty(categories) && (
-        <Box
-          skipFlex
-          sx={(theme) => ({ marginTop: theme.spacing[5] })}
-          style={{ cursor: loading ? 'wait' : 'default' }}
+        {/* PAGINATED LIST ········· */}
+        <Stack
+          fullHeight
+          style={{
+            marginTop: !isEmbedded && headerOffset,
+            width: listWidth,
+            transition: 'width 0.3s ease',
+          }}
         >
-          <Box style={{ pointerEvents: loading ? 'none' : 'auto' }}>
-            <RadioGroup
-              data={categoriesRadioData}
-              variant="icon"
-              onChange={handleOnChangeCategory}
-              value={category.key}
-              fullWidth
-            />
-          </Box>
-        </Box>
-      )}
-      {/* PAGINATED LIST ········· */}
-      <Stack
-        fullHeight
-        style={{
-          marginTop: !isEmbedded && headerOffset,
-          width: listWidth,
-          transition: 'width 0.3s ease',
-        }}
-      >
-        <Box
-          sx={(theme) => ({
-            flex: 1,
-            position: 'relative',
-            marginTop: theme.spacing[5],
-            paddingRight: !isEmbedded && theme.spacing[5],
-            paddingLeft: !isEmbedded && theme.spacing[5],
-          })}
-        >
-          <LoadingOverlay visible={loading} overlayOpacity={0} />
+          <Box
+            sx={(theme) => ({
+              flex: 1,
+              position: 'relative',
+              marginTop: theme.spacing[5],
+              paddingRight: !isEmbedded && theme.spacing[5],
+              paddingLeft: !isEmbedded && theme.spacing[5],
+            })}
+          >
+            <LoadingOverlay visible={store.loading} overlayOpacity={0} />
 
-          {/* !loading && !pinned && canShowPublicToggle && (
+            {/* !loading && !pinned && canShowPublicToggle && (
             <Switch
               label={t('labels.showPublic')}
               checked={showPublic}
@@ -793,84 +855,105 @@ const AssetList = ({
             />
           ) */}
 
-          {!loading && !isEmpty(serverData?.items) && (
+            {!store.loading && !isEmpty(store.serverData?.items) && (
+              <Box
+                sx={(theme) => ({
+                  paddingBottom: theme.spacing[5],
+                })}
+              >
+                <PaginatedList
+                  {...store.serverData}
+                  {...listProps}
+                  paperProps={paperProps}
+                  selectable
+                  selected={store.asset}
+                  columns={columns}
+                  loading={store.loading}
+                  layout={store.layout}
+                  page={store.page}
+                  size={store.size}
+                  sizes={pageSizes}
+                  labels={{
+                    show: t('show'),
+                    goTo: t('goTo'),
+                  }}
+                  onSelect={handleOnSelect}
+                  onPageChange={(e) => {
+                    store.page = e;
+                    render();
+                  }}
+                  onSizeChange={(e) => {
+                    store.size = e;
+                    render();
+                  }}
+                />
+              </Box>
+            )}
+            {!store.loading && isEmpty(store.serverData?.items) && (
+              <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
+                {getEmptyState()}
+              </Stack>
+            )}
+          </Box>
+        </Stack>
+
+        {/* SIDE PANEL ········· */}
+        <Box
+          sx={(theme) => ({
+            position: 'fixed',
+            height: `calc(100% - ${headerOffset + theme.spacing[5]}px)`,
+            right: 0,
+            top: headerOffset + theme.spacing[5],
+            zIndex: 99,
+          })}
+        >
+          {showDrawer && (
             <Box
-              sx={(theme) => ({
-                paddingBottom: theme.spacing[5],
-              })}
+              style={{
+                width: store.isDetailOpened ? DRAWER_WIDTH : 0,
+                height: '100%',
+              }}
             >
-              <PaginatedList
-                {...serverData}
-                {...listProps}
-                paperProps={paperProps}
-                selectable
-                selected={asset}
-                columns={columns}
-                loading={loading}
-                layout={layout}
-                page={page}
-                size={size}
-                sizes={pageSizes}
-                labels={{
-                  show: t('show'),
-                  goTo: t('goTo'),
-                }}
-                onSelect={handleOnSelect}
-                onPageChange={setPage}
-                onSizeChange={setSize}
+              <CardDetailWrapper
+                category={store.category || {}}
+                asset={store.asset}
+                labels={detailLabels}
+                variant={cardVariant}
+                open={store.isDetailOpened}
+                toolbarItems={toolbarItems}
+                onToggle={() => toggleDetail(!store.isDetailOpened)}
+                onDuplicate={handleOnDuplicate}
+                onDelete={handleOnDelete}
+                onEdit={handleOnEdit}
+                onShare={handleOnShare}
+                onPin={handleOnPin}
+                onUnpin={handleOnUnpin}
+                onRefresh={reloadAssets}
+                onDownload={handleOnDownload}
+                locale={locale}
               />
             </Box>
           )}
-          {!loading && isEmpty(serverData?.items) && (
-            <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
-              {getEmptyState()}
-            </Stack>
-          )}
         </Box>
       </Stack>
-
-      {/* SIDE PANEL ········· */}
-      <Box
-        ref={drawerRef}
-        sx={(theme) => ({
-          position: 'fixed',
-          height: `calc(100% - ${headerOffset + theme.spacing[5]}px)`,
-          right: 0,
-          top: headerOffset + theme.spacing[5],
-          zIndex: 99,
-        })}
-      >
-        {showDrawer && (
-          <Box
-            style={{
-              width: isDetailOpened ? DRAWER_WIDTH : 0,
-              height: '100%',
-            }}
-          >
-            <CardDetailWrapper
-              category={category || {}}
-              asset={asset}
-              labels={detailLabels}
-              variant={cardVariant}
-              open={isDetailOpened}
-              toolbarItems={toolbarItems}
-              onToggle={() => toggleDetail(!isDetailOpened)}
-              onDuplicate={handleOnDuplicate}
-              onDelete={handleOnDelete}
-              onEdit={handleOnEdit}
-              onShare={handleOnShare}
-              onPin={handleOnPin}
-              onUnpin={handleOnUnpin}
-              onRefresh={reloadAssets}
-              onDownload={handleOnDownload}
-              locale={locale}
-            />
-          </Box>
-        )}
-      </Box>
-    </Stack>
+      <PermissionsDataDrawer
+        size={720}
+        hasBack={false}
+        opened={!!store.sharingItem}
+        asset={store.sharingItem}
+        sharing={true}
+        onNext={() => {
+          loadAsset(store.sharingItem.id, true);
+          store.sharingItem = null;
+        }}
+        onClose={() => {
+          store.sharingItem = null;
+          render();
+        }}
+      />
+    </>
   );
-};
+}
 
 AssetList.defaultProps = {
   layout: 'grid',

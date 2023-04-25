@@ -10,6 +10,9 @@ const { addUserAvatar } = require('./addUserAvatar');
 const {
   checkIfCanCreateNUserAgentsInRoleProfiles,
 } = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
+const {
+  addCenterProfilePermissionToUserAgents,
+} = require('../user-agents/addCenterProfilePermissionToUserAgents');
 
 /**
  * Add a user to platform
@@ -71,6 +74,8 @@ async function add(
         })),
         { transacting }
       );
+
+      await addCenterProfilePermissionToUserAgents(_.map(user.userAgents, 'id'), { transacting });
 
       // --- Asset
       await addUserAvatar(user, avatar, { transacting });

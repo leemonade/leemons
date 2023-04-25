@@ -96,6 +96,14 @@ async function initEmails() {
 }
 
 async function events(isInstalled) {
+  leemons.events.once('plugins.users:pluginDidLoad', async () => {
+    const {
+      syncUserAgentCenterProfilePermissionsIfNeed,
+    } = require('./src/services/user-agents/__update__/syncUserAgentCenterProfilePermissionsIfNeed');
+
+    await syncUserAgentCenterProfilePermissionsIfNeed();
+  });
+
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
