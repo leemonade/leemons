@@ -27,6 +27,7 @@ const { getByIds: getCategories } = require('../categories/getByIds');
 const { getByAssets: getPins } = require('../pins/getByAssets');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 const { getClassesPermissions } = require('../permissions/getClassesPermissions');
+const canUnassignRole = require('../permissions/helpers/canUnassignRole');
 
 async function getByIds(
   assetsIds,
@@ -58,6 +59,7 @@ async function getByIds(
   // ·········································································
   // ADMIN PROGRAMS
   const { services: userService } = leemons.getPlugin('users');
+  let canEditPerms = [];
   const [viewPerms, editPerms] = await Promise.all([
     userService.permissions.getItemPermissions(
       map(assets, 'id'),
@@ -70,6 +72,14 @@ async function getByIds(
       { transacting, returnRaw: true }
     ),
   ]);
+
+  if (userSession) {
+    canEditPerms = await userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+      userSession.userAgents,
+      leemons.plugin.prefixPN('asset.can-edit'),
+      { ignoreOriginalTarget: true, item: map(assets, 'id'), transacting }
+    );
+  }
 
   const currentPermissions = [...viewPerms, ...editPerms];
 
@@ -162,7 +172,7 @@ async function getByIds(
           });
           assetPermissions = assetPermissions.map((user) => {
             const item = { ...user };
-            item.editable = canAssignRole(userRole, item.permissions[0], item.permissions[0]);
+            item.editable = canUnassignRole(userRole, item.permissions[0]);
             return item;
           });
           assets[i].canAccess = assetPermissions;
@@ -380,6 +390,36 @@ async function getByIds(
           intersection(permission.permissions, assignRoles).length > 0 &&
           intersection(permission.userAgentIds, userAgents).length > 0
       );
+
+      item.role = 'viewer';
+      if (
+        item.canAccess.some(
+          (permission) =>
+            intersection(permission.permissions, 'editor').length > 0 &&
+            intersection(permission.userAgentIds, userAgents).length > 0
+        )
+      ) {
+        item.role = 'editor';
+      }
+      if (
+        item.canAccess.some(
+          (permission) =>
+            intersection(permission.permissions, 'owner').length > 0 &&
+            intersection(permission.userAgentIds, userAgents).length > 0
+        )
+      ) {
+        item.role = 'owner';
+      }
+    }
+
+    if (canEditPerms.includes(item.id)) {
+      if (item.role !== 'owner') {
+        item.role = 'editor';
+      }
+      item.editable = editRoles.includes('editor');
+      item.deleteable = deleteRoles.includes('editor');
+      item.shareable = shareRoles.includes('editor');
+      item.assignable = assignRoles.includes('editor');
     }
 
     return item;

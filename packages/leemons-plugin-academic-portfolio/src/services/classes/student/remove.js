@@ -36,11 +36,20 @@ async function remove(classId, studentId, { soft, transacting: _transacting } = 
       promises.push(removeUserAgentContacts(studentId, '*', { target: classId, transacting }));
       promises.push(removeUserAgentContacts('*', studentId, { target: classId, transacting }));
       await Promise.all(promises);
+      const { student: studentProfileId } = await getProfiles({ transacting });
 
       await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
         classStudent.student,
         {
           permissionName: `plugins.academic-portfolio.class.${classStudent.class}`,
+        },
+        { transacting }
+      );
+
+      await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
+        classStudent.student,
+        {
+          permissionName: `plugins.academic-portfolio.class-profile.${classStudent.class}.${studentProfileId}`,
         },
         { transacting }
       );

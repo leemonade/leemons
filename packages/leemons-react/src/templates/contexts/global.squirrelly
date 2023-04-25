@@ -78,7 +78,7 @@ class LeemonsApi {
       }
 
       
-      if (ctx.options?.waitToFinish) {
+      // if (ctx.options?.waitToFinish) {
         waitKey = JSON.stringify({
           url: `${global.leemons.apiUrl}/api/${ctx.url}`,
           options: ctx.options,
@@ -94,7 +94,7 @@ class LeemonsApi {
             waiting: 0
           };
         }
-      }
+      // }
 
       const response = await fetch(`${global.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
 

@@ -25,10 +25,21 @@ async function add(_class, teacher, type, { transacting } = {}) {
     }),
   ]);
 
+  const { teacher: teacherProfileId } = await getProfiles({ transacting });
+
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
     teacher,
     {
       permissionName: `plugins.academic-portfolio.class.${_class}`,
+      actionNames: ['view', 'edit'],
+    },
+    { transacting }
+  );
+
+  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+    teacher,
+    {
+      permissionName: `plugins.academic-portfolio.class-profile.${_class}.${teacherProfileId}`,
       actionNames: ['view', 'edit'],
     },
     { transacting }

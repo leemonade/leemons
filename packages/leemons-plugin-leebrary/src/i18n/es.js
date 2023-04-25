@@ -162,11 +162,14 @@ module.exports = {
         title: 'Permisos del recurso',
         addProfiles: 'Añadir perfiles',
         addProfilesDescription:
-          'Los usuarios con los perfiles indicados verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada. ',
+          'Los usuarios con los perfiles indicados verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
         addProfilesEdit: 'Perfiles',
+        addClasses: 'Añadir classes',
+        addClassesDescription:
+          'Los usuarios de las clases verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
         addPrograms: 'Añadir programas',
         addProgramsDescription:
-          'Los usuarios de los programas verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada. ',
+          'Los usuarios de los programas verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
         addProgramsEdit: 'Programas',
         profilesPerProgram: 'Añadir perfiles por programa',
         addUsers: 'Añadir usuarios individuales',
@@ -184,9 +187,6 @@ module.exports = {
           'Has añadido el equivalente a publico, si guardas si borraran todos los permisos de lectura actuales y se pondra publico para todos',
         addCentersDescription:
           'Todos los perfiles del centro seleccionado verán este recurso en sus carpetas de asignatura correspondiente.',
-        addClasses: 'Añadir grupos',
-        addClassesDescription:
-          'Los estudiantes verán este recurso en su carpeta de asignatura correspondiente.',
         isPublic: 'Este recurso es público',
         saveButton: 'Guardar permisos',
         shareButton: 'Compartir',
@@ -201,6 +201,8 @@ module.exports = {
         sharePrograms: 'Programas',
         shareProfiles: 'Perfiles',
         sharePermissions: 'Permisos',
+        shareClasses: 'Buscar clase',
+        editAddUsers: 'Usuarios individuales',
       },
       placeholders: {
         userInput: 'Escribir nombre',

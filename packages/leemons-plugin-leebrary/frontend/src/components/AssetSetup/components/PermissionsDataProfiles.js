@@ -45,7 +45,7 @@ const PermissionsDataProfiles = ({
         const index = sValues.indexOf(item);
         if (index >= 0) {
           if (type === 'remove') {
-            sValues = sValues.splice(index, 1);
+            sValues.splice(index, 1);
           } else {
             sValues[index] = newItem;
           }
@@ -123,7 +123,7 @@ const PermissionsDataProfiles = ({
           onChange={preOnChange}
           columns={COLUMNS}
           labels={USER_LABELS}
-          showHeaders={false}
+          showHeaders={!editMode}
           forceShowInputs={!editMode}
           sortable={false}
           editable={editMode}

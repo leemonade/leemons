@@ -292,7 +292,8 @@ function AssetList({
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
           // console.log('asset:', value);
-          store.asset = prepareAsset(value, published);
+
+          if (store.asset) store.asset = prepareAsset(value, published);
 
           if (forceLoad && item) {
             const index = store.serverData.items.findIndex((i) => i.id === id);

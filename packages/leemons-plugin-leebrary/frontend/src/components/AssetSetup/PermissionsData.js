@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { detailProgramRequest } from '@academic-portfolio/request';
+import { classByIdsRequest, detailProgramRequest } from '@academic-portfolio/request';
 import {
   Alert,
   Box,
@@ -32,12 +32,26 @@ import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
 import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
 
-const ROLES = [
-  { label: 'Owner', value: 'owner' },
-  { label: 'Viewer', value: 'viewer' },
-  { label: 'Editor', value: 'editor' },
-  { label: 'Commentor', value: 'commentor' },
-];
+const ROLESBYROLE = {
+  viewer: [
+    { label: 'Owner', value: 'owner', disabled: true },
+    { label: 'Viewer', value: 'viewer', disabled: true },
+    { label: 'Editor', value: 'editor', disabled: true },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+  editor: [
+    { label: 'Owner', value: 'owner', disabled: true },
+    { label: 'Viewer', value: 'viewer' },
+    { label: 'Editor', value: 'editor' },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+  owner: [
+    { label: 'Owner', value: 'owner' },
+    { label: 'Viewer', value: 'viewer' },
+    { label: 'Editor', value: 'editor' },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+};
 
 const PermissionsData = ({
   asset: assetProp,
@@ -82,6 +96,12 @@ const PermissionsData = ({
     if (permission.startsWith('plugins.academic-portfolio.program.inside.')) {
       return { center: null, program: split[split.length - 1] };
     }
+    if (permission.startsWith('plugins.academic-portfolio.class.')) {
+      return { center: null, class: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.academic-portfolio.class-profile.')) {
+      return { center: null, class: split[split.length - 2], profile: split[split.length - 1] };
+    }
     if (permission.startsWith('plugins.users.center-profile.inside.')) {
       return { center: split[split.length - 2], profile: split[split.length - 1] };
     }
@@ -97,24 +117,33 @@ const PermissionsData = ({
   async function loadAssetPermissions() {
     const assetPermissions = [];
     const programsNeedCenter = [];
+    const classesNeedCenter = [];
     _.forEach(Object.keys(asset.permissions), (role) => {
       _.forEach(asset.permissions[role], (permission) => {
         const obj = getObjectByPermission(permission);
         if (obj) {
+          if (obj.center === null && obj.class) classesNeedCenter.push(obj.class);
           if (obj.center === null && obj.program) programsNeedCenter.push(obj.program);
-          assetPermissions.push({ role, ...obj });
+          assetPermissions.push({ ...obj, role, editable: asset.role !== role });
         }
       });
     });
 
-    const responses = await Promise.all(
+    const { classes } = await classByIdsRequest(_.uniq(classesNeedCenter));
+    programsNeedCenter.push(..._.map(classes, 'program'));
+
+    const programResponses = await Promise.all(
       _.map(_.uniq(programsNeedCenter), (program) => detailProgramRequest(program))
     );
-    const programsById = _.keyBy(_.map(responses, 'program'), 'id');
+    const classesById = _.keyBy(classes, 'id');
+    const programsById = _.keyBy(_.map(programResponses, 'program'), 'id');
 
     _.forEach(assetPermissions, (assetPermission) => {
       if (assetPermission.center === null && assetPermission.program) {
         [assetPermission.center] = programsById[assetPermission.program].centers;
+      }
+      if (assetPermission.center === null && assetPermission.class) {
+        [assetPermission.center] = programsById[classesById[assetPermission.class].program].centers;
       }
     });
 
@@ -126,7 +155,10 @@ const PermissionsData = ({
         canAccess.map((user) => ({
           user,
           role: user.permissions[0],
-          editable: user.permissions[0] !== 'owner',
+          // eslint-disable-next-line no-prototype-builtins
+          editable: user.hasOwnProperty('editable')
+            ? user.editable
+            : user.permissions[0] !== 'owner',
         }))
       );
     }
@@ -135,6 +167,12 @@ const PermissionsData = ({
   function calculePermission(permission) {
     if (permission.center !== '*' && permission.program && permission.profile) {
       return `plugins.academic-portfolio.program-profile.inside.${permission.program}.${permission.profile}`;
+    }
+    if (permission.center !== '*' && permission.profile && permission.class) {
+      return `plugins.academic-portfolio.class-profile.${permission.class}.${permission.profile}`;
+    }
+    if (permission.center !== '*' && permission.class) {
+      return `plugins.academic-portfolio.class.${permission.class}`;
     }
     if (permission.center !== '*' && permission.program) {
       return `plugins.academic-portfolio.program.inside.${permission.program}`;
@@ -209,6 +247,7 @@ const PermissionsData = ({
       );
       onNext();
     } catch (err) {
+      console.error('Error saving permissions', err);
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
@@ -247,6 +286,7 @@ const PermissionsData = ({
       );
       onNext();
     } catch (err) {
+      console.error('Error editing permissions', err);
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
@@ -299,12 +339,13 @@ const PermissionsData = ({
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const { roleLabels } = items.plugins.leebrary.assetSetup;
+      const ROLES = ROLESBYROLE[asset?.role || 'owner'];
       ROLES.forEach((rol, index) => {
         ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;
       });
       setRoles(ROLES);
     }
-  }, [translations]);
+  }, [translations, asset?.role]);
 
   useEffect(() => {
     if (
@@ -319,7 +360,7 @@ const PermissionsData = ({
     const result = [];
     if (profileSysName === 'admin') {
       result.push({ label: t('permissionsData.labels.shareTypePublic'), value: 'public' });
-      if (store.centers.length > 10) {
+      if (store.centers.length > 1) {
         result.push({ label: t('permissionsData.labels.shareTypeCenters'), value: 'centers' });
       } else {
         result.push({ label: t('permissionsData.labels.shareTypePrograms'), value: 'programs' });
@@ -327,13 +368,11 @@ const PermissionsData = ({
       }
     }
     if (profileSysName === 'teacher') {
-      result.push({ label: t('permissionsData.labels.shareTypePrograms'), value: 'programs' });
       result.push({ label: t('permissionsData.labels.shareTypeClasses'), value: 'classes' });
       result.push({ label: t('permissionsData.labels.shareTypeUsers'), value: 'users' });
     }
 
     if (profileSysName === 'student') {
-      result.push({ label: t('permissionsData.labels.shareTypeClasses'), value: 'classes' });
       result.push({ label: t('permissionsData.labels.shareTypeUsers'), value: 'users' });
     }
 
@@ -418,6 +457,28 @@ const PermissionsData = ({
                       t={t}
                     />
                   ) : null}
+                  {store.shareType === 'classes' ? (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      asset={asset}
+                      t={t}
+                      profileSysName={profileSysName}
+                    />
+                  ) : null}
+                  {store.shareType === 'users' ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={usersData}
+                      alreadySelectedUsers={editUsersData}
+                      onChange={setUsersData}
+                      asset={asset}
+                      t={t}
+                    />
+                  ) : null}
                 </Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <Stack justifyContent={'end'} fullWidth>
@@ -474,13 +535,32 @@ const PermissionsData = ({
                       t={t}
                     />
                   ) : null}
+                  {shareTypesValues.includes('classes') ? (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('users') ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={editUsersData}
+                      alreadySelectedUsers={[]}
+                      onChange={setEditUsersData}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
                 </Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <Stack justifyContent={'end'} fullWidth>
                     <Button loading={loading} onClick={saveEditPermissions}>
-                      {sharing
-                        ? t('permissionsData.labels.shareButton')
-                        : t('permissionsData.labels.saveButton')}
+                      {t('permissionsData.labels.saveButton')}
                     </Button>
                   </Stack>
                 </Box>

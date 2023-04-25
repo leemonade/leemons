@@ -47,11 +47,11 @@ const PermissionsDataPrograms = ({
       const [item] = _.difference(stringifyValue, stringifyVals);
       const [newItem] = _.difference(stringifyVals, stringifyValue);
       if (item) {
-        let sValues = _.map(_value, (v) => JSON.stringify(v));
+        const sValues = _.map(_value, (v) => JSON.stringify(v));
         const index = sValues.indexOf(item);
         if (index >= 0) {
           if (type === 'remove') {
-            sValues = sValues.splice(index, 1);
+            sValues.splice(index, 1);
           } else {
             sValues[index] = newItem;
           }
@@ -134,8 +134,9 @@ const PermissionsDataPrograms = ({
             <Title order={5}>{t('permissionsData.labels.addPrograms')}</Title>
             <Paragraph>{t('permissionsData.labels.addProgramsDescription')}</Paragraph>
           </Box>
-          <Stack>
-            {profiles?.length ? (
+
+          {profiles?.length ? (
+            <Stack>
               <Switch
                 onChange={() => {
                   store.canAddProfiles = !store.canAddProfiles;
@@ -144,8 +145,8 @@ const PermissionsDataPrograms = ({
                 checked={store.canAddProfiles}
                 label={t('permissionsData.labels.profilesPerProgram')}
               />
-            ) : null}
-          </Stack>
+            </Stack>
+          ) : null}
         </>
       ) : (
         <Title order={5}>{t('permissionsData.labels.addProgramsEdit')}</Title>
@@ -156,7 +157,7 @@ const PermissionsDataPrograms = ({
           onChange={preOnChange}
           columns={COLUMNS}
           labels={USER_LABELS}
-          showHeaders={false}
+          showHeaders={!editMode}
           forceShowInputs={!editMode}
           sortable={false}
           editable={editMode}

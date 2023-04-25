@@ -177,6 +177,9 @@ module.exports = {
         addProfilesDescription:
           'Users with the indicated profiles will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels. ',
         addProfilesEdit: 'Profiles',
+        addClasses: 'Add classes',
+        addClassesDescription:
+          'Classroom users will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
         addPrograms: 'Add programs',
         addProgramsDescription:
           'Program users will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
@@ -197,9 +200,6 @@ module.exports = {
           'For security reasons it is not possible to configure that all the centers have permission to edit',
         addCentersDescription:
           'All profiles of the selected center will see this resource in their corresponding subject folders.',
-        addClasses: 'Add groups',
-        addClassesDescription:
-          'Students will see this resource in their corresponding subject folder.',
         isPublic: 'This resource is public',
         saveButton: 'Save permissions',
         shareButton: 'Share',
@@ -214,6 +214,8 @@ module.exports = {
         sharePrograms: 'Programs',
         shareProfiles: 'Profiles',
         sharePermissions: 'Permissions',
+        shareClasses: 'Search class',
+        editAddUsers: 'Individual users',
       },
       placeholders: {
         userInput: 'Start typing a name',

@@ -1,19 +1,22 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import usePrograms from '@academic-portfolio/hooks/usePrograms';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import { useSessionClasses } from '@academic-portfolio/hooks';
 import {
   Box,
   ContextContainer,
   ImageLoader,
   Paragraph,
   Select,
+  Stack,
+  Switch,
   TableInput,
   Text,
   Title,
 } from '@bubbles-ui/components';
-import _, { find, isArray, isEmpty, isNil } from 'lodash';
+import { useStore } from '@common';
+import { SelectProfile } from '@users/components';
+import _, { find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 function ClassItem({ class: klass, ...props }) {
   if (!klass) {
@@ -64,81 +67,57 @@ function ClassItem({ class: klass, ...props }) {
 
 const PermissionsDataClasses = ({
   roles,
-  value,
+  value: _value,
   onChange,
-  asset,
-  profileSysName,
+  profiles,
+  centers,
   t,
-  translations,
+  editMode = false,
 }) => {
-  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [store, render] = useStore();
 
   const { data: classes } = useSessionClasses();
-  const { data: programs } = usePrograms();
 
-  const programsData = useMemo(() => {
-    let goodPrograms = programs;
-    if (asset?.program) {
-      goodPrograms = _.filter(programs, { id: asset.program });
-    }
-    return (
-      goodPrograms?.map((program) => ({
-        value: program.id,
-        label: program.name,
-      })) ?? []
-    );
-  }, [programs, asset?.program]);
+  let value = [];
+  if (editMode) {
+    const centerIds = _.map(centers, 'id');
+    value = _.filter(_value, (val) => centerIds.includes(val.center) && !!val.class);
+  } else {
+    value = _value;
+  }
 
-  const classesData = useMemo(() => {
-    let goodClasses = classes;
-    if (selectedProgram) {
-      goodClasses = _.filter(goodClasses, { program: selectedProgram });
-    }
-    if (asset?.subjects?.length) {
-      const subjectsIds = _.map(asset.subjects, 'subject');
-      goodClasses = _.filter(goodClasses, ({ subject }) => subjectsIds.includes(subject.id));
-    }
-    return (
-      goodClasses?.map((klass) => ({
-        value: klass.id,
-        label: klass.groups.isAlone
-          ? klass.subject.name
-          : `${klass.subject.name} - ${klass.groups.name}`,
-        ...klass,
-      })) ?? []
-    );
-  }, [classes, selectedProgram, asset?.subjects]);
-
-  // ··············································································
-  // EFFECTS
-
-  useEffect(() => {
-    const { classesCanAccess } = asset;
-
-    if (isArray(classesCanAccess) && classesCanAccess.length) {
-      const classe = find(classes, { id: classesCanAccess[0].class });
-      if (classe) {
-        setSelectedProgram(classe.program);
+  function preOnChange(e, { type }) {
+    let vals = _.map(e, (v) => ({ ...v, center: v.center || centers[0].id }));
+    if (editMode && ['remove', 'edit'].includes(type)) {
+      const stringifyValue = _.map(value, (v) => JSON.stringify(v));
+      const stringifyVals = _.map(vals, (v) => JSON.stringify(v));
+      const [item] = _.difference(stringifyValue, stringifyVals);
+      const [newItem] = _.difference(stringifyVals, stringifyValue);
+      if (item) {
+        const sValues = _.map(_value, (v) => JSON.stringify(v));
+        const index = sValues.indexOf(item);
+        if (index >= 0) {
+          if (type === 'remove') {
+            sValues.splice(index, 1);
+          } else {
+            sValues[index] = newItem;
+          }
+          vals = _.map(sValues, (v) => JSON.parse(v));
+        }
       }
-      onChange(
-        classesCanAccess.map((klass) => ({
-          class: [klass.class],
-          role: klass.role,
-        }))
-      );
     }
-  }, [asset, classes]);
+    onChange(vals);
+  }
 
-  // ··············································································
-  // HANDLERS
-
-  const checkIfClassIsAdded = (newClass) => {
-    const found = find(value, (selectedClass) => selectedClass.class[0] === newClass.class[0]);
-    return isNil(found);
-  };
-
-  // ··············································································
-  // LABELS & STATICS
+  React.useEffect(() => {
+    if (editMode) {
+      store.canAddProfiles = false;
+      _.forEach(value, (val) => {
+        if (val.profile) store.canAddProfiles = true;
+      });
+      render();
+    }
+  }, [editMode, JSON.stringify(value)]);
 
   const USER_LABELS = useMemo(
     () => ({
@@ -151,86 +130,113 @@ const PermissionsDataClasses = ({
     [t]
   );
 
-  const CLASSES_COLUMNS = useMemo(
-    () => [
-      {
-        Header: 'Class',
-        accessor: 'class',
-        input: {
-          node: (
-            <Select
-              itemComponent={(item) => (
-                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
-              )}
-              valueComponent={(item) => (
-                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
-              )}
-              data={classesData}
-            />
-          ),
-          rules: { required: 'Required field' },
-        },
-        editable: false,
-        valueRender: (values) =>
-          values.map((value) => (
-            <ClassItem
-              key={value}
-              class={classesData.find((klass) => klass.id === value)}
-              variant="inline"
-              size="xs"
-            />
-          )),
-      },
-      {
-        Header: 'Role',
-        accessor: 'role',
-        input: {
-          node: <Select />,
-          rules: { required: 'Required field' },
-          data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
-        },
-        valueRender: (value) => find(roles, { value })?.label,
-      },
-    ],
-    [roles, classesData]
+  const classesData = useMemo(
+    () =>
+      classes?.map((klass) => ({
+        value: klass.id,
+        label: klass.groups.isAlone
+          ? klass.subject.name
+          : `${klass.subject.name} - ${klass.groups.name}`,
+        ...klass,
+      })) ?? [],
+    [classes]
   );
 
-  // ··············································································
-  // RENDER
+  const COLUMNS = useMemo(() => {
+    const result = [];
+
+    result.push({
+      Header: t('permissionsData.labels.shareClasses'),
+      accessor: 'class',
+      input: {
+        node: (
+          <Select
+            itemComponent={(item) => (
+              <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
+            )}
+            valueComponent={(item) => (
+              <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
+            )}
+            data={classesData}
+          />
+        ),
+      },
+      editable: false,
+      valueRender: (val) => {
+        const v = _.isString(val) ? val : val[0];
+        return (
+          <ClassItem
+            key={v}
+            class={classesData.find((klass) => klass.id === v)}
+            variant="inline"
+            size="xs"
+          />
+        );
+      },
+    });
+
+    if (store.canAddProfiles) {
+      result.push({
+        Header: t('permissionsData.labels.shareProfiles'),
+        accessor: 'profile',
+        input: {
+          node: <SelectProfile />,
+        },
+        editable: false,
+        valueRender: (values) => <SelectProfile readOnly value={values} />,
+      });
+    }
+
+    result.push({
+      Header: t('permissionsData.labels.sharePermissions'),
+      accessor: 'role',
+      input: {
+        node: <Select />,
+        rules: { required: 'Required field' },
+        data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
+      },
+      valueRender: (val) => find(roles, { value: val })?.label,
+    });
+
+    return result;
+  }, [roles, centers, store.canAddProfiles]);
+
+  if (editMode && !value?.length) return null;
 
   return (
-    <ContextContainer>
-      {profileSysName === 'teacher' ? (
-        <Box>
-          <Select
-            label={t('permissionsData.labels.programs')}
-            value={selectedProgram}
-            onChange={(e) => {
-              onChange([]);
-              setSelectedProgram(e);
-            }}
-            data={programsData}
-          />
-        </Box>
-      ) : null}
-
-      <Box>
+    <ContextContainer spacing={editMode ? 0 : 5}>
+      {!editMode ? (
+        <>
+          <Box>
+            <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
+            <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
+          </Box>
+          {profiles?.length ? (
+            <Stack>
+              <Switch
+                onChange={() => {
+                  store.canAddProfiles = !store.canAddProfiles;
+                  render();
+                }}
+                checked={store.canAddProfiles}
+                label={t('permissionsData.labels.profilesPerProgram')}
+              />
+            </Stack>
+          ) : null}
+        </>
+      ) : (
         <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
-        <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
-      </Box>
-      {!isEmpty(CLASSES_COLUMNS) && !isEmpty(USER_LABELS) && (
+      )}
+      {!isEmpty(COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
           data={value}
-          onChange={onChange}
-          columns={CLASSES_COLUMNS}
+          onChange={preOnChange}
+          columns={COLUMNS}
           labels={USER_LABELS}
-          disabled={profileSysName === 'student' ? false : !selectedProgram}
-          showHeaders={false}
-          forceShowInputs
+          showHeaders={!editMode}
+          forceShowInputs={!editMode}
           sortable={false}
-          onBeforeAdd={checkIfClassIsAdded}
-          resetOnAdd
-          editable
+          editable={editMode}
           unique
         />
       )}
@@ -246,6 +252,9 @@ PermissionsDataClasses.propTypes = {
   profileSysName: PropTypes.string,
   value: PropTypes.any,
   onChange: PropTypes.func,
+  profiles: PropTypes.array,
+  centers: PropTypes.array,
+  editMode: PropTypes.bool,
 };
 
 export default PermissionsDataClasses;

@@ -45,12 +45,14 @@ async function addPermissionsToUserAgent({
   permissionName,
 }) {
   const result = [];
-  const { role: assigneeRole } = await getByAsset(id, {
+  const { canAccessRole: assigneeRole } = await getByAsset(id, {
     userSession: {
       userAgents: [{ id: userAgent }],
     },
     transacting,
   });
+
+  if (assigneeRole === role) return [];
 
   // EN: Check if assigner can assign role to assignee
   // ES: Comprobar si el asignador puede asignar el rol al asignado
@@ -193,16 +195,16 @@ async function removeMissingUserAgent({
   assignerRole,
   permissionName,
 }) {
-  const { role: assigneeRole } = await getByAsset(id, {
+  const { canAccessRole: assigneeRole } = await getByAsset(id, {
     userSession: {
       userAgents: [{ id: userAgent }],
     },
     transacting,
   });
 
-  if (assignerRole !== 'owner' && assigneeRole !== 'owner') {
-    // EN: Check if assigner can assign role to assignee
-    // ES: Comprobar si el asignador puede asignar el rol al asignado
+  // EN: Check if assigner can assign role to assignee
+  // ES: Comprobar si el asignador puede asignar el rol al asignado
+  if (assigneeRole !== 'owner') {
     if (!canUnassignRole(assignerRole, assigneeRole)) {
       throw new global.utils.HttpError(401, "You don't have permission to unassign this role");
     }
@@ -234,7 +236,7 @@ async function removeMissingUserAgents({
 
   const removePromises = [];
   _.forEach(toRemove, (userAgent) => {
-    if (currentUserAgentIds.includes(userAgent)) {
+    if (!currentUserAgentIds.includes(userAgent)) {
       removePromises.push(
         removeMissingUserAgent({
           id,
@@ -247,6 +249,7 @@ async function removeMissingUserAgents({
       );
     }
   });
+  if (removePromises.length) await Promise.all(removePromises);
 }
 
 async function removeMissingPermissions({
@@ -367,6 +370,7 @@ async function set(
 
     if (canAccess?.length) {
       const currentUserAgentIds = _.map(userSession.userAgents, 'id');
+
       const userPromises = [];
       _.forEach(assetIds, (id) => {
         const categoryId = assetsDataById[id]?.category;
@@ -414,10 +418,7 @@ async function set(
       if (assetPromises.length) await Promise.all(assetPromises);
     }
 
-    console.log('deleteMissing', deleteMissing);
-
     if (deleteMissing) {
-      console.log('entra');
       const currentUserAgentIds = _.map(userSession.userAgents, 'id');
       const toUpdate = map(canAccess, 'userAgent');
 
@@ -440,12 +441,14 @@ async function set(
           removeMissingPermissions({ id, permissions, userService, assignerRole, transacting })
         );
       });
+      if (missingPromises.length) await Promise.all(missingPromises);
     }
 
     return true;
   } catch (e) {
     console.error(e);
-    throw new global.utils.HttpError(500, `Failed to set permissions: ${e.message}`);
+    throw e;
+    // throw new global.utils.HttpError(400, `Failed to set permissions: ${e.message}`);
   }
 }
 

@@ -43,6 +43,8 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
 
     role = role ?? permission?.actionNames[0];
 
+    const canAccessRole = role;
+
     if (canView.length && !role) {
       role = 'viewer';
     }
@@ -50,7 +52,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       role = 'editor';
     }
 
-    return { role, permissions: getRolePermissions(role) };
+    return { role, permissions: getRolePermissions(role), canAccessRole: canAccessRole || role };
   } catch (e) {
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }

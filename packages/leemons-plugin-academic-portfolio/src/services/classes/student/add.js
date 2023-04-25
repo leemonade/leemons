@@ -17,10 +17,21 @@ async function add(_class, student, { transacting } = {}) {
     }),
   ]);
 
+  const { student: studentProfileId } = await getProfiles({ transacting });
+
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
     student,
     {
       permissionName: `plugins.academic-portfolio.class.${_class}`,
+      actionNames: ['view'],
+    },
+    { transacting }
+  );
+
+  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+    student,
+    {
+      permissionName: `plugins.academic-portfolio.class-profile.${_class}.${studentProfileId}`,
       actionNames: ['view'],
     },
     { transacting }
@@ -40,7 +51,6 @@ async function add(_class, student, { transacting } = {}) {
   }
 
   try {
-    const { student: studentProfileId } = await getProfiles({ transacting });
     await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
       student,
       {

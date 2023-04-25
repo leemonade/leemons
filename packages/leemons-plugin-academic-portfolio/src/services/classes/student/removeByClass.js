@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 const { removeCustomPermissions } = require('./removeCustomPermissions');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeByClass(classIds, { soft, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -47,6 +48,7 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         promises.push(removeUserAgentContacts('*', studentIds, { target: classId, transacting }));
       });
       await Promise.all(promises);
+      const { student: studentProfileId } = await getProfiles({ transacting });
 
       await Promise.all(
         _.map(classStudents, (classStudent) =>
@@ -54,6 +56,18 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
             classStudent.student,
             {
               permissionName: `plugins.academic-portfolio.class.${classStudent.class}`,
+            },
+            { transacting }
+          )
+        )
+      );
+
+      await Promise.all(
+        _.map(classStudents, (classStudent) =>
+          leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
+            classStudent.student,
+            {
+              permissionName: `plugins.academic-portfolio.class-profile.${classStudent.class}.${studentProfileId}`,
             },
             { transacting }
           )

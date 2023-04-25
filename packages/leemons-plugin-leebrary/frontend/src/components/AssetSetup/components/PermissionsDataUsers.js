@@ -7,11 +7,10 @@ import {
   Title,
   UserDisplayItem,
 } from '@bubbles-ui/components';
-import { unflatten } from '@common';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import _, { find, isArray, isEmpty, isNil } from 'lodash';
+import _, { find, isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 const SelectAgents = ({ usersData, ...props }) => (
   <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
@@ -34,22 +33,9 @@ RoleSelect.propTypes = {
   onChange: PropTypes.func,
 };
 
-const PermissionsDataUsers = ({ roles, value, onChange, asset, t, translations }) => {
+const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelectedUsers, t }) => {
   // ··············································································
   // EFFECTS
-
-  useEffect(() => {
-    const { canAccess } = asset;
-    if (isArray(canAccess)) {
-      onChange(
-        canAccess.map((user) => ({
-          user,
-          role: user.permissions[0],
-          editable: user.permissions[0] !== 'owner',
-        }))
-      );
-    }
-  }, [asset]);
 
   // ··············································································
   // HANDLERS
@@ -68,7 +54,7 @@ const PermissionsDataUsers = ({ roles, value, onChange, asset, t, translations }
         Header: 'User',
         accessor: 'user',
         input: {
-          node: <SelectAgents usersData={value} />,
+          node: <SelectAgents usersData={[...alreadySelectedUsers, ...value]} />,
           rules: { required: 'Required field' },
         },
         editable: false,
@@ -83,7 +69,7 @@ const PermissionsDataUsers = ({ roles, value, onChange, asset, t, translations }
           rules: { required: 'Required field' },
           data: roles,
         },
-        valueRender: (val) => find(roles, { val })?.label,
+        valueRender: (val) => find(roles, { value: val })?.label,
       },
     ],
     [roles, value]
@@ -105,22 +91,29 @@ const PermissionsDataUsers = ({ roles, value, onChange, asset, t, translations }
 
   return (
     <ContextContainer>
-      <Box>
-        <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-        <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
-      </Box>
+      {!editMode ? (
+        <Box>
+          <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
+          <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
+        </Box>
+      ) : (
+        <Box>
+          <Title order={5}>{t('permissionsData.labels.editAddUsers')}</Title>
+        </Box>
+      )}
+
       {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
           data={value}
           onChange={onChange}
           columns={USERS_COLUMNS}
           labels={USER_LABELS}
-          showHeaders={false}
-          forceShowInputs
+          showHeaders={!editMode}
+          forceShowInputs={!editMode}
           sortable={false}
+          editable={editMode}
           onBeforeAdd={checkIfUserIsAdded}
           resetOnAdd
-          editable
           unique
         />
       )}
@@ -130,11 +123,14 @@ const PermissionsDataUsers = ({ roles, value, onChange, asset, t, translations }
 
 PermissionsDataUsers.propTypes = {
   roles: PropTypes.any,
+  userRole: PropTypes.string,
   asset: PropTypes.object,
   value: PropTypes.any,
   onChange: PropTypes.func,
   t: PropTypes.func,
   translations: PropTypes.object,
+  editMode: PropTypes.bool,
+  alreadySelectedUsers: PropTypes.any,
 };
 
 export default PermissionsDataUsers;
