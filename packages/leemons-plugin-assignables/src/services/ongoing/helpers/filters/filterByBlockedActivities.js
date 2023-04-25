@@ -1,8 +1,8 @@
-const { uniq, keyBy } = require('lodash');
+const { uniq, keyBy, compact } = require('lodash');
 
 module.exports = function filterByBlockedActivities({ instances, assignations, dates }) {
-  const blockingInstances = uniq(
-    instances.flatMap((instance) => instance.relatedAssignableInstances.blocking)
+  const blockingInstances = compact(
+    uniq(instances.flatMap((instance) => instance.relatedAssignableInstances.blocking))
   );
   const assignationsByInstance = keyBy(assignations, 'instance.id');
   const blockingActivityIsFinished = {};
@@ -15,7 +15,7 @@ module.exports = function filterByBlockedActivities({ instances, assignations, d
   });
 
   return instances.filter((instance) => {
-    const { blocking } = instance.relatedAssignableInstances;
+    const blocking = instance.relatedAssignableInstances.blocking || [];
 
     return blocking.every((blockingInstance) => blockingActivityIsFinished[blockingInstance]);
   });
