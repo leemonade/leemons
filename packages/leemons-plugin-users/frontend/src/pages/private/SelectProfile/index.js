@@ -55,6 +55,7 @@ export default function SelectProfile({ session }) {
       getUserCentersRequest(),
       getRememberLoginRequest(getCookieToken()),
     ]);
+    console.log(store.centers);
     store.centers = centers;
     if (profile && center) {
       store.defaultValues = {
@@ -104,7 +105,7 @@ export default function SelectProfile({ session }) {
       description:
         store.centers?.length > 1
           ? t('several_centers')
-          : t('number_of_profiles', { profiles: store.centers?.[0].profiles?.length }),
+          : t('number_of_profiles', { profiles: store.centers?.[0]?.profiles?.length }),
       remember: t('use_always_profile'),
       help: t('change_easy'),
       login: t('log_in'),

@@ -31,6 +31,7 @@ async function checkIfCanCreateUserAgentInGroup(userAgentId, group, { transactin
       {
         id_$in: _.map(userAgents, 'userAgent'),
         role_$in: _.map(roles, 'role'),
+        disabled_$ne: true,
       },
       { transacting }
     );

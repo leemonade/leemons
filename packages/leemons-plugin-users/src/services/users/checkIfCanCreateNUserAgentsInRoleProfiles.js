@@ -7,7 +7,10 @@ async function check(nUserAgents, limit, { rolesProfiles, transacting } = {}) {
   if (!limit.unlimited && limit.limit) {
     // Si no es ilimitado tenemos que sacar el numero de usuarios actuales
     const { role } = _.find(rolesProfiles, { profile: limit.item });
-    const totalUserAgentsForRole = await table.userAgent.count({ role }, { transacting });
+    const totalUserAgentsForRole = await table.userAgent.count(
+      { role, $or: [{ disabled_$null: true }, { disabled: false }] },
+      { transacting }
+    );
     if (totalUserAgentsForRole + nUserAgents > limit.limit) {
       throw new Error('Cannot add the user exceeds the maximum limit.');
     }

@@ -10,7 +10,10 @@ async function centerProfileToken(user, centerId, profileId, { transacting } = {
   const profile = _.find(center.profiles, { id: profileId });
   if (!profile) throw new Error('You dont have access to this profile');
 
-  const userAgents = await table.userAgent.find({ user }, { columns: ['id', 'role'], transacting });
+  const userAgents = await table.userAgent.find(
+    { user, $or: [{ disabled_$null: true }, { disabled: false }] },
+    { columns: ['id', 'role'], transacting }
+  );
 
   const classes = await leemons
     .getPlugin('academic-portfolio')
@@ -35,27 +38,30 @@ async function centerProfileToken(user, centerId, profileId, { transacting } = {
 
   const userAgent = _.find(userAgents, { role: roleCenter.role });
 
-  const promises = [
-    generateJWTToken({ sessionConfig, id: user }),
-    generateJWTToken({
+  if (userAgent) {
+    const promises = [
+      generateJWTToken({ sessionConfig, id: user }),
+      generateJWTToken({
+        sessionConfig,
+        userAgent: userAgent.id,
+      }),
+    ];
+
+    const [userToken, useAgentToken] = await Promise.all(promises);
+
+    return {
+      userToken,
       sessionConfig,
-      userAgent: userAgent.id,
-    }),
-  ];
-
-  const [userToken, useAgentToken] = await Promise.all(promises);
-
-  return {
-    userToken,
-    sessionConfig,
-    centers: [
-      {
-        ...center,
-        token: useAgentToken,
-        userAgentId: userAgent.id,
-      },
-    ],
-  };
+      centers: [
+        {
+          ...center,
+          token: useAgentToken,
+          userAgentId: userAgent.id,
+        },
+      ],
+    };
+  }
+  throw new Error('User agent not found, or disabled');
 }
 
 module.exports = { centerProfileToken };
