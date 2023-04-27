@@ -72,6 +72,20 @@ function welcome(title, t1, t2, t3, t4, t5, t6) {
 
                 <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#F7F8FA" style="background-color: #F7F8FA;">
                     <tr>
+                        <td align="center" style="text-align: center; padding: 15px 25px;">
+                            <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#fff" style="background-color: #fff;">
+                                <tr>
+                                    <td align="center" style="text-align: center; padding: 8px 25px 25px; font-family: 'Inter', Verdana, sans-serif; font-size: 13px; line-height: 16px; font-weight: 400; color: #636D7D;">
+                                        ${t5}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#F7F8FA" style="background-color: #F7F8FA;">
+                    <tr>
                         <td align="center" style="text-align: center; padding: 20px 25px;">
                             <a href="#" target="_blank" style="text-decoration: none; font-family: 'Inter', Verdana, sans-serif; font-size: 14px; line-height: 18px; font-weight: 400; color: #636D7D;">
                                 ${t6}
@@ -96,17 +110,17 @@ function welcome(title, t1, t2, t3, t4, t5, t6) {
 module.exports = {
   es: welcome(
     'Te damos la bienvenida a {{it.__platformName}}',
-    'Haga clic en el siguiente enlace para crear su contraseña y acceder a su cuenta',
-    'Configurar cuenta',
+    'Estás a un paso de completar tu registro. Para continuar con el proceso, haz click en el siguiente enlace:',
+    'Continuar',
     'Este enlace caducará en {{it.expDays}} días y sólo puede utilizarse una vez.',
     'Si el botón anterior no funciona, pegue este enlace en su navegador web',
-    'Si no ha hecho esta solicitud, puede ignorar este correo electrónico.',
+    'Si no haz realizado esta solicitud, puedes ignorar este correo electrónico.',
     '' // Política de privacidad
   ),
   en: welcome(
     'Welcome to {{it.__platformName}}',
-    'Click on the following link to create your password and access your account',
-    'Set up account',
+    'You are one step away from completing your signup. To continue with the process, click on the following link:',
+    'Continue',
     'This link will expire in {{it.expDays}} days and can only be used once.',
     'If the button above doesn’t work, paste this link into your web browser',
     'If you did not make this request, you can safely ignore this email.',
