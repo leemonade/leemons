@@ -94,20 +94,25 @@ function DetailUser({ session }) {
   }
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']);
-    if (permissions[0]) {
+    const [{ permissions: userPermissions }, { permissions: enadisPermissions }] =
+      await Promise.all([
+        getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']),
+        getPermissionsWithActionsIfIHaveRequest(['plugins.users.enabledisable']),
+      ]);
+    if (userPermissions[0]) {
       store.canUpdate =
-        permissions[0].actionNames.includes('update') ||
-        permissions[0].actionNames.includes('admin');
-      store.canDisable =
-        permissions[0].actionNames.includes('delete') ||
-        permissions[0].actionNames.includes('admin');
-      store.canActive =
-        permissions[0].actionNames.includes('update') ||
-        permissions[0].actionNames.includes('create') ||
-        permissions[0].actionNames.includes('admin');
-      render();
+        userPermissions[0].actionNames.includes('update') ||
+        userPermissions[0].actionNames.includes('admin');
     }
+    if (enadisPermissions[0]) {
+      store.canDisable =
+        enadisPermissions[0].actionNames.includes('delete') ||
+        enadisPermissions[0].actionNames.includes('admin');
+      store.canActive =
+        enadisPermissions[0].actionNames.includes('create') ||
+        enadisPermissions[0].actionNames.includes('admin');
+    }
+    render();
   }
 
   async function init() {

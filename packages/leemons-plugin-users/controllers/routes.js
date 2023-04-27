@@ -214,7 +214,7 @@ module.exports = [
     handler: 'users.disableUserAgent',
     authenticated: true,
     allowedPermissions: {
-      'plugins.users.users': {
+      'plugins.users.enabledisable': {
         actions: ['delete', 'admin'],
       },
     },
@@ -226,8 +226,8 @@ module.exports = [
     handler: 'users.activeUserAgent',
     authenticated: true,
     allowedPermissions: {
-      'plugins.users.users': {
-        actions: ['create', 'update', 'admin'],
+      'plugins.users.enabledisable': {
+        actions: ['create', 'admin'],
       },
     },
   },
