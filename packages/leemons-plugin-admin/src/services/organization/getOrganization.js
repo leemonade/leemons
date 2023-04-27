@@ -15,6 +15,7 @@ async function getOrganization({ userSession } = {}) {
       'platform-appearance-menu-main-color',
       'platform-appearance-menu-drawer-color',
       'platform-pictures-empty-states',
+      'platform-email-logo',
     ],
   });
   const v = _.keyBy(r, 'key');
@@ -23,6 +24,7 @@ async function getOrganization({ userSession } = {}) {
     hostname: v['platform-hostname']?.value,
     logoUrl: v['platform-landscape-logo']?.value,
     squareLogoUrl: v['platform-square-logo']?.value,
+    emailLogoUrl: v['platform-email-logo']?.value,
     mainColor: v['platform-appearance-main-color']?.value || '#3B76CC',
     email: userSession.email,
     contactPhone: v['platform-contact-phone']?.value,

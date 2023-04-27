@@ -17,6 +17,8 @@ const setContactPhone = require('./setContactPhone');
 const setDefaultLocale = require('./setDefaultLocale');
 const getDefaultLocale = require('./getDefaultLocale');
 const setSquareLogo = require('./setSquareLogo');
+const getEmailLogo = require('./getEmailLogo');
+const setEmailLogo = require('./setEmailLogo');
 const getSquareLogo = require('./getSquareLogo');
 const setLandscapeLogo = require('./setLandscapeLogo');
 const getLandscapeLogo = require('./getLandscapeLogo');
@@ -52,6 +54,8 @@ module.exports = {
   getDefaultLocale,
   setSquareLogo,
   getSquareLogo,
+  getEmailLogo,
+  setEmailLogo,
   setLandscapeLogo,
   getLandscapeLogo,
   getAppearanceMainColor,
