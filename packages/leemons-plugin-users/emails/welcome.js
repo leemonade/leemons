@@ -72,32 +72,6 @@ function welcome(title, t1, t2, t3, t4, t5, t6) {
 
                 <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#F7F8FA" style="background-color: #F7F8FA;">
                     <tr>
-                        <td align="center" style="text-align: center; padding: 15px 25px;">
-                            <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#fff" style="background-color: #fff;">
-                                <tr>
-                                    <td align="center" style="text-align: center; padding: 25px 25px 8px; font-family: 'Inter', Verdana, sans-serif; font-size: 14px; line-height: 22px; font-weight: 400; color: #5B6577;">
-                                        ${t4}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center" style="text-align: center; padding: 8px 25px; font-family: 'Inter', Verdana, sans-serif; font-size: 14px; line-height: 22px; font-weight: 400; color: #5B6577;">
-                                        <a href="{{it.url}}" target="_blank" style="font-size: 14px; line-height: 18px; font-weight: 400; color: #3B76CC; padding: 10px; font-family: 'Lexend', Century Gothic,CenturyGothic,AppleGothic,sans-serif;">
-                                            {{it.url}}
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center" style="text-align: center; padding: 8px 25px 25px; font-family: 'Inter', Verdana, sans-serif; font-size: 13px; line-height: 16px; font-weight: 400; color: #636D7D;">
-                                        ${t5}
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-
-                <table cellpadding="0" cellspacing="0" align="center" width="100%" bgcolor="#F7F8FA" style="background-color: #F7F8FA;">
-                    <tr>
                         <td align="center" style="text-align: center; padding: 20px 25px;">
                             <a href="#" target="_blank" style="text-decoration: none; font-family: 'Inter', Verdana, sans-serif; font-size: 14px; line-height: 18px; font-weight: 400; color: #636D7D;">
                                 ${t6}
