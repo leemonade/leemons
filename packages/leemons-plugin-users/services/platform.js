@@ -24,6 +24,8 @@ module.exports = {
   getDefaultLocale: platform.getDefaultLocale,
   setLandscapeLogo: platform.setLandscapeLogo,
   getLandscapeLogo: platform.getLandscapeLogo,
+  getEmailWidthLogo: platform.getEmailWidthLogo,
+  setEmailWidthLogo: platform.setEmailWidthLogo,
   setAppearanceDarkMode: platform.setAppearanceDarkMode,
   getAppearanceDarkMode: platform.getAppearanceDarkMode,
   setAppearanceMainColor: platform.setAppearanceMainColor,

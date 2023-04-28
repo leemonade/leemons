@@ -16,8 +16,10 @@ async function getOrganization({ userSession } = {}) {
       'platform-appearance-menu-drawer-color',
       'platform-pictures-empty-states',
       'platform-email-logo',
+      'platform-email-width-logo',
     ],
   });
+  console.log(r);
   const v = _.keyBy(r, 'key');
   const organization = {
     name: v['platform-name']?.value,
@@ -25,6 +27,9 @@ async function getOrganization({ userSession } = {}) {
     logoUrl: v['platform-landscape-logo']?.value,
     squareLogoUrl: v['platform-square-logo']?.value,
     emailLogoUrl: v['platform-email-logo']?.value,
+    emailWidthLogo: v['platform-email-width-logo']?.value
+      ? _.parseInt(v['platform-email-width-logo']?.value)
+      : v['platform-email-width-logo']?.value,
     mainColor: v['platform-appearance-main-color']?.value || '#3B76CC',
     email: userSession.email,
     contactPhone: v['platform-contact-phone']?.value,
