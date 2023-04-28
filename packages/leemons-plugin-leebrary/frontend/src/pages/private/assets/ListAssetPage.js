@@ -1,13 +1,13 @@
 /* eslint-disable no-unreachable */
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil } from 'lodash';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import { isEmpty, isNil } from 'lodash';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { AssetList } from '../../../components/AssetList';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
-import { AssetList } from '../../../components/AssetList';
 
 function useQuery() {
   const { search } = useLocation();
@@ -41,7 +41,7 @@ const ListAssetPage = () => {
 
   useEffect(() => {
     setCurrentAsset(asset);
-  }, [asset]);
+  }, [JSON.stringify(asset)]);
 
   useEffect(() => {
     if (view !== VIEWS.LIST) setView(VIEWS.LIST);
@@ -52,7 +52,7 @@ const ListAssetPage = () => {
         setCurrentAsset(null);
       }
     }
-  }, [params, category, view]);
+  }, [JSON.stringify(params), JSON.stringify(category), JSON.stringify(view)]);
 
   useEffect(() => {
     const assetId = query.get('open');

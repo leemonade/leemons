@@ -10,6 +10,8 @@ module.exports = {
   getLocales: platform.getLocales,
   setHostname: platform.setHostname,
   getHostname: platform.getHostname,
+  setEmailLogo: platform.setEmailLogo,
+  getEmailLogo: platform.getEmailLogo,
   setSquareLogo: platform.setSquareLogo,
   getSquareLogo: platform.getSquareLogo,
   getContactName: platform.getContactName,

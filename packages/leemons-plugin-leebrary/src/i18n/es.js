@@ -150,15 +150,43 @@ module.exports = {
         close: 'Cerrar',
       },
       labels: {
+        allCenters: 'Todos los centros',
+        shareTypePublic: 'Público',
+        shareTypeCenters: 'Por centros',
+        shareTypeProfiles: 'Por perfiles',
+        shareTypePrograms: 'Por programa',
+        shareTypeClasses: 'Por clases',
+        shareTypeUsers: 'Por usuarios',
+        shareTab: 'Compartir',
+        sharedTab: 'Compartido con...',
         title: 'Permisos del recurso',
+        addProfiles: 'Añadir perfiles',
+        addProfilesDescription:
+          'Los usuarios con los perfiles indicados verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
+        addProfilesEdit: 'Perfiles',
+        addClasses: 'Añadir classes',
+        addClassesDescription:
+          'Los usuarios de las clases verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
+        addPrograms: 'Añadir programas',
+        addProgramsDescription:
+          'Los usuarios de los programas verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
+        addProgramsEdit: 'Programas',
+        profilesPerProgram: 'Añadir perfiles por programa',
         addUsers: 'Añadir usuarios individuales',
         addUsersDescription:
           'Los docentes verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida si no tiene etiquetas de asignatura asignada.',
         programs: 'Programas educativos',
         program: 'Programa',
-        addClasses: 'Añadir grupos',
-        addClassesDescription:
-          'Los estudiantes verán este recurso en su carpeta de asignatura correspondiente.',
+        profilesPerCenter: 'Añadir perfiles por centro',
+        programsPerCenter: 'Añadir programas por centro',
+        addCentersEdit: 'Centros',
+        addCenters: 'Añadir centros',
+        addCenterEditAll:
+          'Por seguridad no se puede configurar que para todos los centros tengan permiso de editar',
+        addCenterAsPublic:
+          'Has añadido el equivalente a publico, si guardas si borraran todos los permisos de lectura actuales y se pondra publico para todos',
+        addCentersDescription:
+          'Todos los perfiles del centro seleccionado verán este recurso en sus carpetas de asignatura correspondiente.',
         isPublic: 'Este recurso es público',
         saveButton: 'Guardar permisos',
         shareButton: 'Compartir',
@@ -169,6 +197,12 @@ module.exports = {
         cancelButton: 'Cancelar',
         permissionsSuccess: 'Permisos establecidos con éxito',
         shareSuccess: 'Recurso compartido con éxito',
+        shareCenters: 'Buscar centros',
+        sharePrograms: 'Programas',
+        shareProfiles: 'Perfiles',
+        sharePermissions: 'Permisos',
+        shareClasses: 'Buscar clase',
+        editAddUsers: 'Usuarios individuales',
       },
       placeholders: {
         userInput: 'Escribir nombre',

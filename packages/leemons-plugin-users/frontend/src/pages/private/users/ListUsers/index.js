@@ -134,6 +134,7 @@ function ListUsers() {
   }
 
   async function getPermissions() {
+    console.log('enadisPermissions');
     const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
       getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
       getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
@@ -202,7 +203,7 @@ function ListUsers() {
     if (store.canAdd) result.new = tCommon('new');
     if (store.canImport) result.import = t('import');
     return result;
-  }, [store.canImport, store.canAdd]);
+  }, [store.canImport, store.canAdd, t, tCommon]);
 
   return (
     <ContextContainer fullHeight>

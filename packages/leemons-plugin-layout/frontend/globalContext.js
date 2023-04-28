@@ -228,7 +228,7 @@ export function Provider({ children }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <ModalsProvider>
+      <ModalsProvider modalProps={{ zIndex: 9999 }}>
         <LayoutProviderWrapper theme={platformTheme}>{children}</LayoutProviderWrapper>
       </ModalsProvider>
     </ThemeProvider>

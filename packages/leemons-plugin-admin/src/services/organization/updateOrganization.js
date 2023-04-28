@@ -24,6 +24,7 @@ async function updateOrganization(body, { userSession }) {
     platform.setAppearanceMenuDrawerColor(body.menuDrawerColor),
     platform.setLandscapeLogo(body.logoUrl),
     platform.setSquareLogo(body.squareLogoUrl),
+    platform.setEmailLogo(body.emailLogoUrl),
     users.updateEmail(userSession.id, body.email),
   ];
   if (body.password) {

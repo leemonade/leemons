@@ -13,7 +13,8 @@ module.exports = function canAssignRole(userRole, assignedUserCurrentRole, newRo
   // ES: Comprobar si el usuario puede asignar el rol al usuario asignado
   if (
     assignedUserCurrentRole !== undefined &&
-    !userPermissions.canAssign.includes(assignedUserCurrentRole)
+    assignedUserCurrentRole !== newRole &&
+    !userPermissions.canUnassign.includes(assignedUserCurrentRole)
   ) {
     return false;
   }

@@ -1,101 +1,56 @@
-import { SelectProgram } from '@academic-portfolio/components';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import usePrograms from '@academic-portfolio/hooks/usePrograms';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+/* eslint-disable no-param-reassign */
+import { classByIdsRequest, detailProgramRequest } from '@academic-portfolio/request';
 import {
   Alert,
   Box,
   Button,
   ContextContainer,
-  ImageLoader,
   Paper,
-  Paragraph,
   Select,
   Stack,
-  Switch,
-  TableInput,
-  Text,
-  Title,
-  UserDisplayItem,
+  TabPanel,
+  Tabs,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
-import { unflatten, useRequestErrorMessage } from '@common';
+import { unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import SelectUserAgent from '@users/components/SelectUserAgent';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
+import { listCentersRequest, listProfilesRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
-import _, { find, isArray, isEmpty, isFunction, isNil } from 'lodash';
+import _, { isArray, isEmpty, isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
+import { PermissionsDataCenterProgramsProfiles } from './components/PermissionsDataCenterProgramsProfiles';
+import { PermissionsDataClasses } from './components/PermissionsDataClasses';
+import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
+import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
+import { PermissionsDataUsers } from './components/PermissionsDataUsers';
 
-const ROLES = [
-  { label: 'Owner', value: 'owner' },
-  { label: 'Viewer', value: 'viewer' },
-  { label: 'Editor', value: 'editor' },
-  { label: 'Commentor', value: 'commentor' },
-];
-
-function ClassItem({ class: klass, ...props }) {
-  if (!klass) {
-    return null;
-  }
-
-  return (
-    <Box {...props}>
-      <Box
-        sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: theme.spacing[2],
-          alignItems: 'center',
-        })}
-      >
-        <Box
-          sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 26,
-            minHeight: 26,
-            maxWidth: 26,
-            maxHeight: 26,
-            borderRadius: '50%',
-            backgroundColor: klass?.color,
-          })}
-        >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={getClassIcon(klass)}
-          />
-        </Box>
-        <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-        }`}</Text>
-      </Box>
-    </Box>
-  );
-}
-
-const SelectAgents = ({ usersData, ...props }) => (
-  <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
-);
-
-const RoleSelect = (props) => {
-  if (!props.value) {
-    props.onChange('viewer');
-  }
-  return <Select {...props} />;
+const ROLESBYROLE = {
+  viewer: [
+    { label: 'Owner', value: 'owner', disabled: true },
+    { label: 'Viewer', value: 'viewer', disabled: true },
+    { label: 'Editor', value: 'editor', disabled: true },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+  editor: [
+    { label: 'Owner', value: 'owner', disabled: true },
+    { label: 'Viewer', value: 'viewer' },
+    { label: 'Editor', value: 'editor' },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+  owner: [
+    { label: 'Owner', value: 'owner' },
+    { label: 'Viewer', value: 'viewer' },
+    { label: 'Editor', value: 'editor' },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
 };
 
 const PermissionsData = ({
@@ -107,66 +62,160 @@ const PermissionsData = ({
   drawerTranslations,
 }) => {
   const [asset, setAsset] = useState(assetProp);
+  const [roles, setRoles] = useState([]);
+  const { openConfirmationModal } = useLayout();
   const [t, translations] = isDrawer
     ? drawerTranslations
     : useTranslateLoader(prefixPN('assetSetup'));
+  const [store, render] = useStore({ centers: [] });
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
+  const [editUsersData, setEditUsersData] = useState([]);
   const [selectedClasses, setSelectedClasses] = useState([]);
-  const [selectedProgram, setSelectedProgram] = useState(null);
-  const [roles, setRoles] = useState([]);
-  const [adminPrograms, setAdminPrograms] = useState(assetProp.adminPrograms || []);
-  const [isPublic, setIsPublic] = useState(adminPrograms.length || asset?.public);
+  const [permissions, setPermissions] = useState(assetProp?.adminPrograms || []);
+  const [editPermissions, setEditPermission] = useState([]);
   const params = useParams();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const { data: classes } = useSessionClasses();
-  const { data: programs } = usePrograms();
   const profileSysName = useGetProfileSysName();
-
-  const programsData = useMemo(() => {
-    let goodPrograms = programs;
-    if (asset?.program) {
-      goodPrograms = _.filter(programs, { id: asset.program });
-    }
-    return (
-      goodPrograms?.map((program) => ({
-        value: program.id,
-        label: program.name,
-      })) ?? []
-    );
-  }, [programs, asset?.program]);
-
-  const classesData = useMemo(() => {
-    let goodClasses = classes;
-    if (selectedProgram) {
-      goodClasses = _.filter(goodClasses, { program: selectedProgram });
-    }
-    if (asset?.subjects?.length) {
-      const subjectsIds = _.map(asset.subjects, 'subject');
-      goodClasses = _.filter(goodClasses, ({ subject }) => subjectsIds.includes(subject.id));
-    }
-    return (
-      goodClasses?.map((klass) => ({
-        value: klass.id,
-        label: klass.groups.isAlone
-          ? klass.subject.name
-          : `${klass.subject.name} - ${klass.groups.name}`,
-        ...klass,
-      })) ?? []
-    );
-  }, [classes, selectedProgram, asset?.subjects]);
 
   // ··············································································
   // DATA PROCESS
 
-  const loadAsset = async (id) => {
+  async function loadAsset(id) {
     const results = await getAssetRequest(id);
     if (results.asset && results.asset.id !== asset?.id) {
       setAsset(prepareAsset(results.asset));
     }
-  };
+  }
 
-  const savePermissions = async () => {
+  function getObjectByPermission(permission) {
+    const split = permission.split('.');
+    if (permission.startsWith('plugins.academic-portfolio.program-profile.inside.')) {
+      return { center: null, program: split[split.length - 2], profile: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.academic-portfolio.program.inside.')) {
+      return { center: null, program: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.academic-portfolio.class.')) {
+      return { center: null, class: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.academic-portfolio.class-profile.')) {
+      return { center: null, class: split[split.length - 2], profile: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.users.center-profile.inside.')) {
+      return { center: split[split.length - 2], profile: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.users.center.inside.')) {
+      return { center: split[split.length - 1] };
+    }
+    if (permission.startsWith('plugins.users.profile.inside.')) {
+      return { center: '*', profile: split[split.length - 1] };
+    }
+    return null;
+  }
+
+  async function loadAssetPermissions() {
+    const assetPermissions = [];
+    const programsNeedCenter = [];
+    const classesNeedCenter = [];
+    _.forEach(Object.keys(asset.permissions), (role) => {
+      _.forEach(asset.permissions[role], (permission) => {
+        const obj = getObjectByPermission(permission);
+        if (obj) {
+          if (obj.center === null && obj.class) classesNeedCenter.push(obj.class);
+          if (obj.center === null && obj.program) programsNeedCenter.push(obj.program);
+          assetPermissions.push({ ...obj, role, editable: asset.role !== role });
+        }
+      });
+    });
+
+    const { classes } = await classByIdsRequest(_.uniq(classesNeedCenter));
+    programsNeedCenter.push(..._.map(classes, 'program'));
+
+    const programResponses = await Promise.all(
+      _.map(_.uniq(programsNeedCenter), (program) => detailProgramRequest(program))
+    );
+    const classesById = _.keyBy(classes, 'id');
+    const programsById = _.keyBy(_.map(programResponses, 'program'), 'id');
+
+    _.forEach(assetPermissions, (assetPermission) => {
+      if (assetPermission.center === null && assetPermission.program) {
+        [assetPermission.center] = programsById[assetPermission.program].centers;
+      }
+      if (assetPermission.center === null && assetPermission.class) {
+        [assetPermission.center] = programsById[classesById[assetPermission.class].program].centers;
+      }
+    });
+
+    setEditPermission(assetPermissions);
+
+    const { canAccess } = asset;
+    if (isArray(canAccess)) {
+      setEditUsersData(
+        canAccess.map((user) => ({
+          user,
+          role: user.permissions[0],
+          // eslint-disable-next-line no-prototype-builtins
+          editable: user.hasOwnProperty('editable')
+            ? user.editable
+            : user.permissions[0] !== 'owner',
+        }))
+      );
+    }
+  }
+
+  function calculePermission(permission) {
+    if (permission.center !== '*' && permission.program && permission.profile) {
+      return `plugins.academic-portfolio.program-profile.inside.${permission.program}.${permission.profile}`;
+    }
+    if (permission.center !== '*' && permission.profile && permission.class) {
+      return `plugins.academic-portfolio.class-profile.${permission.class}.${permission.profile}`;
+    }
+    if (permission.center !== '*' && permission.class) {
+      return `plugins.academic-portfolio.class.${permission.class}`;
+    }
+    if (permission.center !== '*' && permission.program) {
+      return `plugins.academic-portfolio.program.inside.${permission.program}`;
+    }
+    if (permission.center !== '*' && permission.profile) {
+      return `plugins.users.center-profile.inside.${permission.center}.${permission.profile}`;
+    }
+    if (permission.center !== '*') {
+      return `plugins.users.center.inside.${permission.center}`;
+    }
+    if (permission.center === '*' && permission.profile) {
+      return `plugins.users.profile.inside.${permission.profile}`;
+    }
+    if (permission.center === '*') {
+      return '*';
+    }
+    return null;
+  }
+
+  function getPermissionsToSave(perms) {
+    const result = {
+      viewer: [],
+      editor: [],
+      isPublic: false,
+    };
+    _.forEach(perms, (permission) => {
+      const calculedPermission = calculePermission(permission);
+      if (calculedPermission !== '*') {
+        result[permission.role].push(calculedPermission);
+      } else {
+        result.isPublic = true;
+      }
+    });
+
+    // Si es publico borramos el resto de permisos de ver
+    if (result.isPublic) {
+      result.viewer = [];
+    }
+
+    return result;
+  }
+
+  async function savePermissions() {
     try {
       setLoading(true);
       const canAccess = usersData
@@ -175,25 +224,19 @@ const PermissionsData = ({
           userAgent: userData.user.value || userData.user.userAgentIds[0],
           role: userData.role,
         }));
-      const classesCanAccess = selectedClasses.map((klass) => ({
-        class: klass.class[0],
-        role: klass.role,
-      }));
+
+      const { isPublic, ..._permissions } = getPermissionsToSave(permissions);
+
+      const toSend = {
+        canAccess,
+        permissions: _permissions,
+        isPublic,
+      };
 
       if (isFunction(onSavePermissions)) {
-        await onSavePermissions(asset.id, {
-          canAccess,
-          programsCanAccess: isPublic ? adminPrograms : [],
-          classesCanAccess,
-          isPublic,
-        });
+        await onSavePermissions(asset.id, toSend);
       } else {
-        await setPermissionsRequest(asset.id, {
-          canAccess,
-          programsCanAccess: isPublic ? adminPrograms : [],
-          classesCanAccess,
-          isPublic,
-        });
+        await setPermissionsRequest(asset.id, toSend);
       }
 
       setLoading(false);
@@ -204,13 +247,105 @@ const PermissionsData = ({
       );
       onNext();
     } catch (err) {
+      console.error('Error saving permissions', err);
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
-  };
+  }
+
+  async function saveEditPermissions() {
+    try {
+      setLoading(true);
+      const canAccess = editUsersData
+        .filter((item) => item.editable !== false)
+        .map((userData) => ({
+          userAgent: userData.user.value || userData.user.userAgentIds[0],
+          role: userData.role,
+        }));
+
+      const { isPublic, ..._permissions } = getPermissionsToSave(editPermissions);
+
+      const toSend = {
+        canAccess,
+        permissions: _permissions,
+        isPublic,
+        deleteMissing: true,
+      };
+
+      if (isFunction(onSavePermissions)) {
+        await onSavePermissions(asset.id, toSend);
+      } else {
+        await setPermissionsRequest(asset.id, toSend);
+      }
+
+      setLoading(false);
+      addSuccessAlert(
+        sharing
+          ? t(`permissionsData.labels.shareSuccess`)
+          : t(`permissionsData.labels.permissionsSuccess`)
+      );
+      onNext();
+    } catch (err) {
+      console.error('Error editing permissions', err);
+      setLoading(false);
+      addErrorAlert(getErrorMessage(err));
+    }
+  }
+
+  async function load() {
+    if (profileSysName === 'admin') {
+      try {
+        const {
+          data: { items: centers },
+        } = await listCentersRequest({
+          page: 0,
+          size: 999999,
+        });
+        store.centers = centers;
+        render();
+      } catch (e) {
+        // Nothing to do
+        store.centers = getCentersWithToken();
+      }
+      try {
+        const {
+          data: { items: profiles },
+        } = await listProfilesRequest({
+          page: 0,
+          size: 9999,
+        });
+        store.profiles = profiles;
+        render();
+      } catch (e) {
+        // Nothing to do
+      }
+    } else {
+      store.centers = getCentersWithToken();
+    }
+  }
 
   // ··············································································
   // EFFECTS
+
+  useEffect(() => {
+    if (asset) loadAssetPermissions();
+  }, [asset]);
+
+  useEffect(() => {
+    if (profileSysName) load();
+  }, [profileSysName]);
+
+  useEffect(() => {
+    if (!isEmpty(translations)) {
+      const items = unflatten(translations.items);
+      const { roleLabels } = items.plugins.leebrary.assetSetup;
+      const ROLES = ROLESBYROLE[asset?.role || 'owner'];
+      ROLES.forEach((rol, index) => {
+        ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;
+      });
+      setRoles(ROLES);
+    }
+  }, [translations, asset?.role]);
 
   useEffect(() => {
     if (
@@ -221,154 +356,49 @@ const PermissionsData = ({
     }
   }, [params]);
 
-  useEffect(() => {
-    if (asset?.public !== isPublic) {
-      // setIsPublic(asset?.public);
-    }
-
-    const { canAccess, classesCanAccess } = asset;
-
-    if (isArray(classesCanAccess) && classesCanAccess.length) {
-      const classe = find(classes, { id: classesCanAccess[0].class });
-      if (classe) {
-        setSelectedProgram(classe.program);
+  const { shareTypes, shareTypesValues } = React.useMemo(() => {
+    const result = [];
+    if (profileSysName === 'admin') {
+      result.push({ label: t('permissionsData.labels.shareTypePublic'), value: 'public' });
+      if (store.centers.length > 1) {
+        result.push({ label: t('permissionsData.labels.shareTypeCenters'), value: 'centers' });
+      } else {
+        result.push({ label: t('permissionsData.labels.shareTypePrograms'), value: 'programs' });
+        result.push({ label: t('permissionsData.labels.shareTypeProfiles'), value: 'profiles' });
       }
-      setSelectedClasses(
-        classesCanAccess.map((klass) => ({
-          class: [klass.class],
-          role: klass.role,
-        }))
-      );
     }
-    if (isArray(canAccess)) {
-      setUsersData(
-        canAccess.map((user) => ({
-          user,
-          role: user.permissions[0],
-          editable: user.permissions[0] !== 'owner',
-        }))
-      );
+    if (profileSysName === 'teacher') {
+      result.push({ label: t('permissionsData.labels.shareTypeClasses'), value: 'classes' });
+      result.push({ label: t('permissionsData.labels.shareTypeUsers'), value: 'users' });
     }
-  }, [asset, classes]);
 
-  useEffect(() => {
-    if (!isEmpty(translations)) {
-      const items = unflatten(translations.items);
-      const { roleLabels } = items.plugins.leebrary.assetSetup;
-      ROLES.forEach((rol, index) => {
-        ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;
-      });
-      setRoles(ROLES);
+    if (profileSysName === 'student') {
+      result.push({ label: t('permissionsData.labels.shareTypeUsers'), value: 'users' });
     }
-  }, [translations]);
 
-  // ··············································································
-  // HANDLERS
+    return {
+      shareTypes: result,
+      shareTypesValues: _.map(result, 'value'),
+    };
+  }, [profileSysName, translations, store.centers]);
 
-  const handleOnClick = () => {
-    savePermissions();
-  };
-
-  const checkIfUserIsAdded = (userData) => {
-    const found = find(usersData, (data) => data.user.id === userData.user.id);
-    return isNil(found);
-  };
-
-  const checkIfClassIsAdded = (newClass) => {
-    const found = find(
-      selectedClasses,
-      (selectedClass) => selectedClass.class[0] === newClass.class[0]
-    );
-    return isNil(found);
-  };
-
-  // ··············································································
-  // LABELS & STATICS
-
-  const USERS_COLUMNS = useMemo(
-    () => [
-      {
-        Header: 'User',
-        accessor: 'user',
-        input: {
-          node: <SelectAgents usersData={usersData} />,
-          rules: { required: 'Required field' },
+  function onChangeShareType(shareType) {
+    if (permissions?.length) {
+      openConfirmationModal({
+        title: 'Atención',
+        description:
+          'Tienes permisos sin guardar, estas seguro de que quieres cambiar de modo de compartir? (Se perderan los permisos no guardado)',
+        onConfirm: () => {
+          setPermissions([]);
+          store.shareType = shareType;
+          render();
         },
-        editable: false,
-        valueRender: (value) => <UserDisplayItem {...value} variant="inline" size="xs" />,
-        style: { width: '50%' },
-      },
-      {
-        Header: 'Role',
-        accessor: 'role',
-        input: {
-          node: <RoleSelect />,
-          rules: { required: 'Required field' },
-          data: roles,
-        },
-        valueRender: (value) => find(roles, { value })?.label,
-      },
-    ],
-    [roles, usersData]
-  );
-
-  const USER_LABELS = useMemo(
-    () => ({
-      add: t('permissionsData.labels.addUserButton', 'Add'),
-      remove: t('permissionsData.labels.removeUserButton', 'Remove'),
-      edit: t('permissionsData.labels.editUserButton', 'Edit'),
-      accept: t('permissionsData.labels.acceptButton', 'Accept'),
-      cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
-    }),
-    [t]
-  );
-
-  const CLASSES_COLUMNS = useMemo(
-    () => [
-      {
-        Header: 'Class',
-        accessor: 'class',
-        input: {
-          node: (
-            <Select
-              itemComponent={(item) => (
-                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
-              )}
-              valueComponent={(item) => (
-                <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
-              )}
-              data={classesData}
-            />
-          ),
-          rules: { required: 'Required field' },
-        },
-        editable: false,
-        valueRender: (values) =>
-          values.map((value) => (
-            <ClassItem
-              key={value}
-              class={classesData.find((klass) => klass.id === value)}
-              variant="inline"
-              size="xs"
-            />
-          )),
-      },
-      {
-        Header: 'Role',
-        accessor: 'role',
-        input: {
-          node: <Select />,
-          rules: { required: 'Required field' },
-          data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
-        },
-        valueRender: (value) => find(roles, { value })?.label,
-      },
-    ],
-    [roles, classesData]
-  );
-
-  // ··············································································
-  // RENDER
+      })();
+    } else {
+      store.shareType = shareType;
+      render();
+    }
+  }
 
   return (
     <Box>
@@ -381,99 +411,208 @@ const PermissionsData = ({
           <Paper bordered padding={1} shadow="none">
             <LibraryItem asset={asset} />
           </Paper>
+
           {isArray(asset?.canAccess) ? (
-            <ContextContainer divided>
-              {profileSysName === 'admin' ? (
-                <Box>
-                  <Switch
-                    checked={isPublic}
-                    onChange={setIsPublic}
-                    label={t('permissionsData.labels.isPublic')}
-                  />
-                  {isPublic ? (
-                    <SelectProgram
-                      multiple
-                      label={t('permissionsData.labels.program')}
-                      center={getCentersWithToken()[0].id}
-                      value={adminPrograms}
-                      onChange={setAdminPrograms}
+            <Tabs forceRender>
+              <TabPanel label={t('permissionsData.labels.shareTab')}>
+                <Select
+                  sx={(theme) => ({ marginTop: theme.spacing[4], width: 270 })}
+                  label={t('permissionsData.labels.shareTab')}
+                  data={shareTypes || []}
+                  value={store.shareType}
+                  onChange={onChangeShareType}
+                />
+
+                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  {store.shareType === 'centers' ? (
+                    <PermissionsDataCenterProgramsProfiles
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      asset={asset}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      translations={translations}
+                      profileSysName={profileSysName}
+                    />
+                  ) : null}
+                  {store.shareType === 'programs' ? (
+                    <PermissionsDataPrograms
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                    />
+                  ) : null}
+                  {store.shareType === 'profiles' ? (
+                    <PermissionsDataProfiles
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                    />
+                  ) : null}
+                  {store.shareType === 'classes' ? (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      asset={asset}
+                      t={t}
+                      profileSysName={profileSysName}
+                    />
+                  ) : null}
+                  {store.shareType === 'users' ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={usersData}
+                      alreadySelectedUsers={editUsersData}
+                      onChange={setUsersData}
+                      asset={asset}
+                      t={t}
                     />
                   ) : null}
                 </Box>
-              ) : null}
-
-              {!isPublic && (profileSysName === 'teacher' || profileSysName === 'student') && (
-                <ContextContainer>
-                  {profileSysName === 'teacher' ? (
-                    <Box>
-                      <Select
-                        label={t('permissionsData.labels.programs')}
-                        value={selectedProgram}
-                        onChange={(e) => {
-                          setSelectedClasses([]);
-                          setSelectedProgram(e);
-                        }}
-                        data={programsData}
-                      />
-                    </Box>
-                  ) : null}
-
-                  <Box>
-                    <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
-                    <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
-                  </Box>
-                  {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                    <TableInput
-                      data={selectedClasses}
-                      onChange={setSelectedClasses}
-                      columns={CLASSES_COLUMNS}
-                      labels={USER_LABELS}
-                      disabled={profileSysName === 'student' ? false : !selectedProgram}
-                      showHeaders={false}
-                      forceShowInputs
-                      sortable={false}
-                      onBeforeAdd={checkIfClassIsAdded}
-                      resetOnAdd
-                      editable
-                      unique
-                    />
-                  )}
-                </ContextContainer>
-              )}
-              <ContextContainer>
-                <Box>
-                  <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-                  <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
+                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  <Stack justifyContent={'end'} fullWidth>
+                    <Button loading={loading} disabled={!store.shareType} onClick={savePermissions}>
+                      {sharing
+                        ? t('permissionsData.labels.shareButton')
+                        : t('permissionsData.labels.saveButton')}
+                    </Button>
+                  </Stack>
                 </Box>
-                {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
-                  <TableInput
-                    data={usersData}
-                    onChange={setUsersData}
-                    columns={USERS_COLUMNS}
-                    labels={USER_LABELS}
-                    showHeaders={false}
-                    forceShowInputs
-                    sortable={false}
-                    onBeforeAdd={checkIfUserIsAdded}
-                    resetOnAdd
-                    editable
-                    unique
-                  />
-                )}
-              </ContextContainer>
-              <Stack justifyContent={'end'} fullWidth>
-                <Button loading={loading} onClick={handleOnClick}>
-                  {sharing
-                    ? t('permissionsData.labels.shareButton')
-                    : t('permissionsData.labels.saveButton')}
-                </Button>
-              </Stack>
-            </ContextContainer>
+              </TabPanel>
+              <TabPanel label={t('permissionsData.labels.sharedTab')}>
+                <Box
+                  sx={(theme) => ({
+                    flexDirection: 'column',
+                    display: 'flex',
+                    gap: theme.spacing[4],
+                    marginTop: theme.spacing[4],
+                  })}
+                >
+                  {shareTypesValues.includes('centers') ? (
+                    <PermissionsDataCenterProgramsProfiles
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      asset={asset}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      translations={translations}
+                      profileSysName={profileSysName}
+                      editMode
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('programs') ? (
+                    <PermissionsDataPrograms
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      editMode
+                      t={t}
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('profiles') ? (
+                    <PermissionsDataProfiles
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      editMode
+                      t={t}
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('classes') ? (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('users') ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={editUsersData}
+                      alreadySelectedUsers={[]}
+                      onChange={setEditUsersData}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
+                </Box>
+                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  <Stack justifyContent={'end'} fullWidth>
+                    <Button loading={loading} onClick={saveEditPermissions}>
+                      {t('permissionsData.labels.saveButton')}
+                    </Button>
+                  </Stack>
+                </Box>
+              </TabPanel>
+            </Tabs>
           ) : (
             <Alert severity="error" closeable={false}>
               {t('permissionsData.errorMessages.share')}
             </Alert>
           )}
+
+          {false ? (
+            <>
+              {isArray(asset?.canAccess) ? (
+                <ContextContainer divided>
+                  {!(profileSysName === 'teacher' || profileSysName === 'student') && (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={selectedClasses}
+                      onChange={setSelectedClasses}
+                      asset={asset}
+                      t={t}
+                      translations={translations}
+                      profileSysName={profileSysName}
+                    />
+                  )}
+
+                  <PermissionsDataUsers
+                    roles={roles}
+                    value={usersData}
+                    onChange={setUsersData}
+                    asset={asset}
+                    t={t}
+                    translations={translations}
+                    profileSysName={profileSysName}
+                  />
+
+                  <Stack justifyContent={'end'} fullWidth>
+                    <Button loading={loading} onClick={savePermissions}>
+                      {sharing
+                        ? t('permissionsData.labels.shareButton')
+                        : t('permissionsData.labels.saveButton')}
+                    </Button>
+                  </Stack>
+                </ContextContainer>
+              ) : (
+                <Alert severity="error" closeable={false}>
+                  {t('permissionsData.errorMessages.share')}
+                </Alert>
+              )}
+            </>
+          ) : null}
         </ContextContainer>
       )}
     </Box>

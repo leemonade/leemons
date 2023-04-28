@@ -15,6 +15,11 @@ async function login(email, password) {
   const userP = await table.users.findOne({ email, active: true }, { columns: ['id', 'password'] });
   if (!userP) throw new global.utils.HttpError(401, 'Credentials do not match');
 
+  const userAgents = await table.userAgent.find(
+    { user: userP.id, $or: [{ disabled_$null: true }, { disabled: false }] },
+    { columns: ['id'] }
+  );
+
   const areEquals = await comparePassword(password, userP.password);
   if (!areEquals) throw new global.utils.HttpError(401, 'Credentials do not match');
 
@@ -25,6 +30,9 @@ async function login(email, password) {
 
   if (user && user.id) {
     user.isSuperAdmin = await isSuperAdmin(user.id);
+    if (!userAgents.length && user.isSuperAdmin) {
+      throw new global.utils.HttpError(401, 'No user agents to connect');
+    }
   }
 
   return { user, token };

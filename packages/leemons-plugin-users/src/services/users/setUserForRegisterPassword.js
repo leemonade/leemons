@@ -11,7 +11,7 @@ async function setUserForRegisterPassword(userId, { transacting } = {}) {
     if (now.diff(updatedAt, 'days') >= constants.daysForRegisterPassword) {
       recovery = await table.userRegisterPassword.update(
         { id: recovery.id },
-        { code: global.utils.randomString(12) },
+        { code: global.utils.randomString(6) },
         { transacting }
       );
     }
@@ -19,7 +19,7 @@ async function setUserForRegisterPassword(userId, { transacting } = {}) {
     recovery = await table.userRegisterPassword.create(
       {
         user: userId,
-        code: global.utils.randomString(12),
+        code: global.utils.randomString(6),
       },
       { transacting }
     );

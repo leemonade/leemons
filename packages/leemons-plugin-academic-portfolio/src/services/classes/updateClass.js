@@ -188,31 +188,35 @@ async function updateClass(data, { userSession, transacting: _transacting } = {}
       if (classe.groups?.abbreviation) {
         subName += ` - ${classe.groups?.abbreviation}`;
       }
-      const roomKey = leemons.plugin.prefixPN(`room.class.${nClass.id}`);
-      const roomExists = await roomService.exists(roomKey, { transacting });
-      const roomConfig = {
-        name: classe.subject.name,
-        type: leemons.plugin.prefixPN('class'),
-        bgColor: classe.subject.color,
-        subName,
-        image: null,
-        icon: null,
-        program: program.id,
-        transacting,
-      };
-      if (classe.subject.icon?.cover) {
-        roomConfig.icon = classe.subject.icon.id;
-      }
-      if (classe.subject.image?.cover) {
-        roomConfig.image = classe.subject.image.id;
-      }
-      if (assetImage.cover) {
-        roomConfig.image = assetImage.id;
-      }
-      if (roomExists) {
-        await roomService.update(roomKey, roomConfig);
-      } else {
-        await roomService.add(roomKey, roomConfig);
+      try {
+        const roomKey = leemons.plugin.prefixPN(`room.class.${nClass.id}`);
+        const roomExists = await roomService.exists(roomKey, { transacting });
+        const roomConfig = {
+          name: classe.subject.name,
+          type: leemons.plugin.prefixPN('class'),
+          bgColor: classe.subject.color,
+          subName,
+          image: null,
+          icon: null,
+          program: program.id,
+          transacting,
+        };
+        if (classe.subject.icon?.cover) {
+          roomConfig.icon = classe.subject.icon.id;
+        }
+        if (classe.subject.image?.cover) {
+          roomConfig.image = classe.subject.image.id;
+        }
+        if (assetImage.cover) {
+          roomConfig.image = assetImage.id;
+        }
+        if (roomExists) {
+          await roomService.update(roomKey, roomConfig);
+        } else {
+          await roomService.add(roomKey, roomConfig);
+        }
+      } catch (e) {
+        // Nothing
       }
 
       return classe;

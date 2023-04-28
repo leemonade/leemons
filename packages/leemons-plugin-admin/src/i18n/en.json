@@ -134,6 +134,7 @@
       "lookAndFeel": "Brand look & feel",
       "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud.",
       "logoUrl": "Logo URL",
+      "emailLogoUrl": "Logo URL for emails",
       "squareLogoUrl": "Logo URL for side menu",
       "logoUrlInvalid": "Logo URL is invalid",
       "mainColor": "Main color (accent color)",

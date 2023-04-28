@@ -12,7 +12,11 @@ const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
  * @return {Promise<array>}
  * */
 async function _centers(user, { transacting } = {}) {
-  const userAgentsIds = await table.userAgent.find({ user }, { columns: ['id'], transacting });
+  const userAgentsIds = await table.userAgent.find(
+    { user, $or: [{ disabled_$null: true }, { disabled: false }] },
+    { columns: ['id'], transacting }
+  );
+  console.log('userAgentsIds', userAgentsIds);
   const userAgents = await getUserAgentsInfo(_.map(userAgentsIds, 'id'), {
     withProfile: true,
     withCenter: true,

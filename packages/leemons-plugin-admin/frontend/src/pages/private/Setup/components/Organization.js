@@ -167,7 +167,30 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                         },
                       }}
                       render={({ field }) => (
-                        <TextInput error={errors.logoUrl} label={t('squareLogoUrl')} {...field} />
+                        <TextInput
+                          error={errors.squareLogoUrl}
+                          label={t('squareLogoUrl')}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Box>
+                  <Box mt={20}>
+                    <Controller
+                      name="emailLogoUrl"
+                      control={control}
+                      rules={{
+                        pattern: {
+                          value: /^(http|https):\/\//,
+                          message: t('logoUrlInvalid'),
+                        },
+                      }}
+                      render={({ field }) => (
+                        <TextInput
+                          error={errors.emailLogoUrl}
+                          label={t('emailLogoUrl')}
+                          {...field}
+                        />
                       )}
                     />
                   </Box>

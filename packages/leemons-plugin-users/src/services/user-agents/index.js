@@ -40,10 +40,14 @@ const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProf
 const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
 const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
 const { update } = require('./update');
+const { disable } = require('./disable');
+const { active } = require('./active');
 const { userAgentsAreContacts } = require('./contacts/userAgentsAreContacts');
 
 module.exports = {
   update,
+  active,
+  disable,
   deleteById,
   existUserAgent,
   searchUserAgents,

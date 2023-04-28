@@ -209,6 +209,30 @@ module.exports = [
   },
 
   {
+    path: '/user-agents/disable',
+    method: 'POST',
+    handler: 'users.disableUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.enabledisable': {
+        actions: ['delete', 'admin'],
+      },
+    },
+  },
+
+  {
+    path: '/user-agents/active',
+    method: 'POST',
+    handler: 'users.activeUserAgent',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.enabledisable': {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+
+  {
     path: '/user/create/bulk',
     method: 'POST',
     handler: 'users.createBulk',

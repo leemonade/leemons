@@ -20,6 +20,7 @@ async function detailForPage(userId, { userSession, transacting } = {}) {
     withCenter: true,
     transacting,
   });
+
   return {
     user: {
       ...user,

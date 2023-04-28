@@ -1,5 +1,8 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
+const { getClassProgram } = require('../getClassProgram');
+const { removeCustomPermissions } = require('./removeCustomPermissions');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeByClass(classIds, { soft, transacting: _transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -7,6 +10,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
   return global.utils.withTransaction(
     async (transacting) => {
       const classeIds = _.isArray(classIds) ? classIds : [classIds];
+
+      const programs = await Promise.all(_.map(classeIds, (classId) => getClassProgram(classId)));
 
       const classTeachers = await table.classTeacher.find(
         { class_$in: classeIds },
@@ -25,6 +30,18 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         })
       );
 
+      const programIds = _.uniq(_.map(programs, 'id'));
+
+      await Promise.all(
+        _.map(programIds, (programId) =>
+          Promise.all(
+            _.map(classTeachers, (classStudent) =>
+              removeCustomPermissions(classStudent.teacher, programId, { transacting })
+            )
+          )
+        )
+      );
+
       await leemons.events.emit('before-remove-classes-teachers', {
         classTeachers,
         soft,
@@ -35,6 +52,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         { soft, transacting }
       );
 
+      const { teacher: teacherProfileId } = await getProfiles({ transacting });
+
       // TODO Add remove `plugins.academic-portfolio.program.inside.${program.id}`
 
       await Promise.all(
@@ -43,6 +62,18 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
             classTeacher.teacher,
             {
               permissionName: `plugins.academic-portfolio.class.${classTeacher.class}`,
+            },
+            { transacting }
+          )
+        )
+      );
+
+      await Promise.all(
+        _.map(classTeachers, (classTeacher) =>
+          leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
+            classTeacher.teacher,
+            {
+              permissionName: `plugins.academic-portfolio.class-profile.${classTeacher.class}.${teacherProfileId}`,
             },
             { transacting }
           )

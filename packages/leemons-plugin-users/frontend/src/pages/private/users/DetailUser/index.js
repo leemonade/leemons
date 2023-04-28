@@ -12,11 +12,14 @@ import {
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
+import activeUserAgent from '@users/request/activeUserAgent';
+import disableUserAgent from '@users/request/disableUserAgent';
 import { ZoneWidgets } from '@widgets';
-import { find, forEach, forIn } from 'lodash';
+import _, { find, forEach, forIn } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -46,7 +49,7 @@ function DetailUser({ session }) {
   store.params.user = !userId || userId === 'me' ? session?.id : userId;
 
   const form = useForm();
-
+  const { openConfirmationModal } = useLayout();
   const [containerRef, containerRect] = useResizeObserver();
   const [childRef, childRect] = useResizeObserver();
 
@@ -91,13 +94,25 @@ function DetailUser({ session }) {
   }
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']);
-    if (permissions[0]) {
+    const [{ permissions: userPermissions }, { permissions: enadisPermissions }] =
+      await Promise.all([
+        getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']),
+        getPermissionsWithActionsIfIHaveRequest(['plugins.users.enabledisable']),
+      ]);
+    if (userPermissions[0]) {
       store.canUpdate =
-        permissions[0].actionNames.includes('update') ||
-        permissions[0].actionNames.includes('admin');
-      render();
+        userPermissions[0].actionNames.includes('update') ||
+        userPermissions[0].actionNames.includes('admin');
     }
+    if (enadisPermissions[0]) {
+      store.canDisable =
+        enadisPermissions[0].actionNames.includes('delete') ||
+        enadisPermissions[0].actionNames.includes('admin');
+      store.canActive =
+        enadisPermissions[0].actionNames.includes('create') ||
+        enadisPermissions[0].actionNames.includes('admin');
+    }
+    render();
   }
 
   async function init() {
@@ -154,6 +169,41 @@ function DetailUser({ session }) {
   function setCanEdit() {
     store.isEditMode = true;
     render();
+  }
+
+  function disable() {
+    openConfirmationModal({
+      title: t('disableTitle'),
+      description: t('disableDescription'),
+      labels: {
+        confirm: t('disable'),
+      },
+      onConfirm: async () => {
+        try {
+          await disableUserAgent(store.userAgent.id);
+          const index = _.findIndex(store.userAgents, { id: store.userAgent.id });
+          store.userAgents[index].disabled = true;
+          store.userAgent.disabled = true;
+          addSuccessAlert(t('disableSucess'));
+          render();
+        } catch (error) {
+          addErrorAlert(getErrorMessage(error));
+        }
+      },
+    })();
+  }
+
+  async function active() {
+    try {
+      await activeUserAgent(store.userAgent.id);
+      const index = _.findIndex(store.userAgents, { id: store.userAgent.id });
+      store.userAgents[index].disabled = false;
+      store.userAgent.disabled = false;
+      addSuccessAlert(t('activeSucess'));
+      render();
+    } catch (error) {
+      addErrorAlert(getErrorMessage(error));
+    }
   }
 
   function cancelEdit() {
@@ -215,6 +265,8 @@ function DetailUser({ session }) {
 
   if (!store.user) return null;
 
+  console.log('store.userAgent', store.userAgent);
+
   return (
     <Box ref={containerRef} sx={(theme) => ({ paddingBottom: theme.spacing[10] })}>
       <Box
@@ -251,22 +303,33 @@ function DetailUser({ session }) {
                 data={store.profiles}
               />
             </ContextContainer>
-            {store.canUpdate ? (
-              <>
-                {store.isEditMode ? (
-                  <Stack direction="row" spacing={5} skipFlex>
-                    <Button variant="light" onClick={cancelEdit}>
-                      {t('cancel')}
-                    </Button>
-                    <Button onClick={tryToSave}>{t('save')}</Button>
-                  </Stack>
-                ) : (
+
+            {store.isEditMode ? (
+              <Stack direction="row" spacing={5} skipFlex>
+                <Button variant="light" onClick={cancelEdit}>
+                  {t('cancel')}
+                </Button>
+                <Button onClick={tryToSave}>{t('save')}</Button>
+              </Stack>
+            ) : (
+              <Stack direction="row" spacing={5} skipFlex>
+                {store.canDisable && !store.userAgent?.disabled ? (
+                  <Button onClick={disable} sx={() => ({ justifySelf: 'end' })}>
+                    {t('disable')}
+                  </Button>
+                ) : null}
+                {store.canActive && store.userAgent?.disabled ? (
+                  <Button onClick={active} sx={() => ({ justifySelf: 'end' })}>
+                    {t('active')}
+                  </Button>
+                ) : null}
+                {store.canUpdate ? (
                   <Button onClick={setCanEdit} sx={() => ({ justifySelf: 'end' })}>
                     {t('edit')}
                   </Button>
-                )}
-              </>
-            ) : null}
+                ) : null}
+              </Stack>
+            )}
           </Stack>
           <Divider />
         </PageContainer>

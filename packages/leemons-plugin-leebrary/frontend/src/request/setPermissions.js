@@ -1,11 +1,8 @@
-async function setPermissions(
-  assetId,
-  { canAccess, programsCanAccess, classesCanAccess, isPublic } = {}
-) {
+async function setPermissions(assetId, body) {
   return leemons.api(`leebrary/asset/${assetId}/permissions`, {
     allAgents: true,
     method: 'POST',
-    body: { canAccess, programsCanAccess, classesCanAccess, isPublic },
+    body,
   });
 }
 

@@ -259,6 +259,13 @@ module.exports = {
     saveSuccess: 'Datos guardados con éxito',
   },
   detailUser: {
+    disableTitle: '¿Estas seguro?',
+    disableDescription:
+      'Estas apunto de desactivar el usuario, eso evitara que el usuario pueda entrar en la plataforma, pero no impedira que le sigas asignando tarea y seguira en todas las clases en las que estuviera.',
+    disable: 'Desactivar',
+    disableSucess: 'Usuario desactivado',
+    active: 'Activar',
+    activeSucess: 'Usuario activado',
     imageUpdated: 'Imagen actualizada',
     changeAvatar: 'Cambiar avatar',
     selectCenter: 'Seleccionar un centro',
