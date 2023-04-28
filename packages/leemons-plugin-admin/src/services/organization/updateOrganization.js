@@ -25,6 +25,7 @@ async function updateOrganization(body, { userSession }) {
     platform.setLandscapeLogo(body.logoUrl),
     platform.setSquareLogo(body.squareLogoUrl),
     platform.setEmailLogo(body.emailLogoUrl),
+    platform.setEmailWidthLogo(body.emailWidthLogo),
     users.updateEmail(userSession.id, body.email),
   ];
   if (body.password) {

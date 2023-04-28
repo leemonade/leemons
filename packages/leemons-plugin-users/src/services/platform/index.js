@@ -32,6 +32,8 @@ const getAppearanceMenuDrawerColor = require('./getAppearanceMenuDrawerColor');
 const setAppearanceMenuDrawerColor = require('./setAppearanceMenuDrawerColor');
 const getPicturesEmptyStates = require('./getPicturesEmptyStates');
 const setPicturesEmptyStates = require('./setPicturesEmptyStates');
+const getEmailWidthLogo = require('./getEmailWidthLogo');
+const setEmailWidthLogo = require('./setEmailWidthLogo');
 
 module.exports = {
   query,
@@ -56,6 +58,8 @@ module.exports = {
   getSquareLogo,
   getEmailLogo,
   setEmailLogo,
+  getEmailWidthLogo,
+  setEmailWidthLogo,
   setLandscapeLogo,
   getLandscapeLogo,
   getAppearanceMainColor,

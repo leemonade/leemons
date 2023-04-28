@@ -48,7 +48,10 @@ function welcome(title, t1, t2, t3, t4, t5, t6) {
                     
                     <tr>
                         <td align="center" style="text-align: center; padding: 10px 45px 25px; font-family: 'Lexend', Century Gothic,CenturyGothic,AppleGothic,sans-serif;">
-                            <img src="{{it.__logoUrl}}" />
+                            <img
+                            src="{{it.__logoUrl}}"
+                            width="{{it.__logoWidth}}"
+                            />
                         </td>
                     </tr>
 

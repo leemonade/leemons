@@ -190,8 +190,6 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         listCentersRequest({ page: 0, size: 999999 }),
       ]);
 
-      console.log(c);
-
       const { program } = await detailProgramRequest(c.program);
 
       c.program = program;

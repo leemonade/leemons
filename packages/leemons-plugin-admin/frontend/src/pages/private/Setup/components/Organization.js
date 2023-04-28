@@ -12,6 +12,7 @@ import {
   Stack,
   TextInput,
   Title,
+  NumberInput,
   Switch,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -189,6 +190,19 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                         <TextInput
                           error={errors.emailLogoUrl}
                           label={t('emailLogoUrl')}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Box>
+                  <Box mt={20}>
+                    <Controller
+                      name="emailWidthLogo"
+                      control={control}
+                      render={({ field }) => (
+                        <NumberInput
+                          error={errors.emailWidthLogo}
+                          label={t('emailWidthLogo')}
                           {...field}
                         />
                       )}

@@ -307,11 +307,15 @@ class Email {
     if (!transporters.length) throw new Error('No email providers configured yet');
 
     const { platform } = leemons.getPlugin('users').services;
-    const logo = await platform.getEmailLogo();
+    const [logo, width] = await Promise.all([
+      platform.getEmailLogo(),
+      platform.getEmailWidthLogo(),
+    ]);
 
     context.__from = from;
     context.__to = to;
     context.__platformName = 'Leemons';
+    context.__logoWidth = width ? `${width}px` : 'auto';
     context.__logoUrl =
       logo || 'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/email-logo.png';
 
