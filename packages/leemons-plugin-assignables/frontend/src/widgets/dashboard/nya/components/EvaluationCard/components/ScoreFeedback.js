@@ -3,22 +3,30 @@ import { Box, createStyles, ImageLoader, Text } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { RatingStarIcon } from '@bubbles-ui/icons/solid';
 import { useRoomsMessageCount } from '@comunica/components';
+import { cloneDeep, sortBy } from 'lodash';
 import CommentIcon from './CommentIcon.svg';
 
 function findNearestFloorScore(score, scales) {
-  let nearestScore = null;
-  const distance = Infinity;
+  const sortedScales = sortBy(cloneDeep(scales), 'number');
 
-  for (let i = 0, len = scales.length; i < len; i++) {
-    const scale = scales[i];
+  let nearestScore = null;
+  let distance = Infinity;
+  const { length } = sortedScales;
+
+  for (let i = 0; i < length; i++) {
+    const scale = sortedScales[i];
+
     if (score === scale.number) {
       return scale;
     }
 
-    const currentDistance = scales.number - score;
+    const currentDistance = Math.abs(scale.number - score);
 
-    if (currentDistance >= 0 && currentDistance < distance) {
+    if (currentDistance < distance) {
       nearestScore = scale;
+      distance = currentDistance;
+    } else {
+      break;
     }
   }
 
@@ -103,7 +111,7 @@ export default function ScoreFeedback({ score, program, rooms, isCalificable }) 
 
   const grade = React.useMemo(() => {
     if (type === 'letter') {
-      return findNearestFloorScore(score, scales).letter;
+      return findNearestFloorScore(Number(score), scales).letter;
     }
 
     return score;
