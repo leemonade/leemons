@@ -1,7 +1,7 @@
 import SocketIoService from '@mqtt-socket-io/service';
+import useLocalizations from '@multilanguage/requests/hooks/queries/useLocalizations';
 import _ from 'lodash';
-import React from 'react';
-import useSWR from 'swr';
+import React, { useMemo } from 'react';
 
 function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
   // Get deduplicated keys
@@ -44,16 +44,6 @@ export function getLocalizations(...data) {
   return _getLocalizations(...data)();
 }
 
-let retry = 0;
-
-function retryMutate(fn) {
-  if (retry > 0) {
-    clearTimeout(retry);
-  }
-
-  retry = setTimeout(() => fn(), 2000);
-}
-
 export function getLocalizationsByArrayOfItems(items, reducer, locale) {
   let keysToTranslate = [];
   if (_.isFunction(reducer)) {
@@ -69,33 +59,28 @@ export function getLocalizationsByArrayOfItems(items, reducer, locale) {
   });
 }
 
-export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
+function useUserLocale() {
   const [userLocale, setUserLocale] = React.useState(null);
 
   SocketIoService.useOn('USER_CHANGE_LOCALE', (e, event) => {
     setUserLocale(event.new);
   });
 
-  if (!locale && userLocale) {
-    // eslint-disable-next-line no-param-reassign
-    locale = userLocale;
-  }
+  return userLocale;
+}
 
-  const jsonKey = JSON.stringify({ keys, keysStartsWith, locale });
+export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
+  const userLocale = useUserLocale();
+  const localeToUse = useMemo(() => locale ?? userLocale, [userLocale, locale]);
 
-  // Let swr handle data fetching and caching
-  const { data, error, mutate, isValidating } = useSWR(
-    jsonKey,
-    _getLocalizations({ keys, keysStartsWith, locale })
-  );
-
-  if (mutate && data && _.isEmpty(data.items)) {
-    retryMutate(mutate);
-  }
-
-  // Add a loading property
-  const loading = !data && !error;
+  const { data, isLoading, error } = useLocalizations({
+    keys,
+    keysStartsWith,
+    locale: localeToUse,
+    enabled: !!localeToUse || !!keys?.length || !!keysStartsWith?.length,
+    placeholderData: {},
+  });
 
   // Return in array for letting the user decide the names
-  return [data, error, loading];
+  return [data, error, isLoading];
 };
