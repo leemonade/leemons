@@ -8,6 +8,8 @@ const addLocale = require('./addLocale');
 const getLocales = require('./getLocales');
 const setHostname = require('./setHostname');
 const getHostname = require('./getHostname');
+const setHostnameApi = require('./setHostnameApi');
+const getHostnameApi = require('./getHostnameApi');
 const getContactName = require('./getContactName');
 const getContactEmail = require('./getContactEmail');
 const getContactPhone = require('./getContactPhone');
@@ -58,6 +60,8 @@ module.exports = {
   getSquareLogo,
   getEmailLogo,
   setEmailLogo,
+  setHostnameApi,
+  getHostnameApi,
   getEmailWidthLogo,
   setEmailWidthLogo,
   setLandscapeLogo,

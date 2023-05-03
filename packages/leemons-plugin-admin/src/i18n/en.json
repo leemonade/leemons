@@ -128,6 +128,7 @@
       "domainUrlForInstallation": "Domain URL for installation",
       "domainUrlDescription": "You have to specify the web domain of your installation (we recommend https domain with update security certificate). To modify this domain in the future you must delete all data from the platform installation database (not recommended). Please use complete URL (with www).",
       "note": "Note:",
+      "hostnameApi": "Domain api URL",
       "hostname": "Domain URL",
       "hostnameRequired": "Domain URL is required",
       "hostnameInvalid": "Domain URL is invalid",

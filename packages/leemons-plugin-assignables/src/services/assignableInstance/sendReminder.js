@@ -10,13 +10,14 @@ module.exports = async function sendReminder(
   const userServices = leemons.getPlugin('users').services;
   const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
 
-  const [instance, hostname] = await Promise.all([
+  const [instance, hostname, hostnameApi] = await Promise.all([
     getAssignableInstance.call(this, assignableInstanceId, {
       userSession,
       details: true,
       transacting,
     }),
     userServices.platform.getHostname(),
+    userServices.platform.getHostnameApi(),
   ]);
 
   const userAgentIds = _.map(instance.students, 'user');
@@ -64,6 +65,7 @@ module.exports = async function sendReminder(
         userSession,
         ctx,
         hostname,
+        hostnameApi,
         ignoreUserConfig: true,
       })
     );

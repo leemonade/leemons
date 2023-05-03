@@ -253,6 +253,7 @@ module.exports = async function createAssignation(
       });
 
       const hostname = await leemons.getPlugin('users').services.platform.getHostname();
+      const hostnameApi = await leemons.getPlugin('users').services.platform.getHostnameApi();
 
       const _classes = _.uniqBy(classesData, 'subject.id');
       const userAgentByIds = _.keyBy(userAgents, 'id');
@@ -370,6 +371,7 @@ module.exports = async function createAssignation(
                 classes: _classes,
                 ctx,
                 hostname,
+                hostnameApi,
               });
             }
 

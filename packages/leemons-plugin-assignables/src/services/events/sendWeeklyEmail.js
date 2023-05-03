@@ -146,8 +146,9 @@ async function sendWeeklyEmails() {
 
   instanceIds = _.uniq(instanceIds);
 
-  const [hostname, instances, _classes, userAgents] = await Promise.all([
+  const [hostname, hostnameApi, instances, _classes, userAgents] = await Promise.all([
     userServices.platform.getHostname(),
+    userServices.platform.getHostnameApi(),
     table.assignableInstances.find({
       id_$in: instanceIds,
     }),
@@ -203,7 +204,8 @@ async function sendWeeklyEmails() {
           evaluatedInstances.push({
             asset: {
               ...assetById[assignable.asset],
-              url: hostname + leebraryServices.assets.getCoverUrl(assignable.asset),
+              url:
+                (hostnameApi || hostname) + leebraryServices.assets.getCoverUrl(assignable.asset),
             },
             classes: _.uniqBy(instanceClasses[instance.id], 'subject.id'),
             note: note.toFixed(2),
@@ -228,7 +230,8 @@ async function sendWeeklyEmails() {
           nextInstances.push({
             asset: {
               ...assetById[assignable.asset],
-              url: hostname + leebraryServices.assets.getCoverUrl(assignable.asset),
+              url:
+                (hostnameApi || hostname) + leebraryServices.assets.getCoverUrl(assignable.asset),
             },
             classes: _.uniqBy(instanceClasses[instance.id], 'subject.id'),
             time,

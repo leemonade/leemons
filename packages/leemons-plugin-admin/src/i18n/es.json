@@ -128,6 +128,7 @@
       "domainUrlForInstallation": "URL de la organización",
       "domainUrlDescription": "Debe especificar el dominio web de su instalación (recomendamos el dominio https con certificado de seguridad actualizado). Para modificar este dominio en el futuro deberá borrar todos los datos de la base de datos de la instalación de la plataforma (no se recomienda). Por favor, utilice la URL completa (con www).",
       "note": "Nota:",
+      "hostnameApi": "URL del dominio api",
       "hostname": "URL del dominio",
       "hostnameRequired": "El dominio es obligatorio",
       "hostnameInvalid": "El dominio no es válido",

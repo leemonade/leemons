@@ -5,6 +5,7 @@ async function getOrganization({ userSession } = {}) {
     key_$in: [
       'platform-name',
       'platform-hostname',
+      'platform-hostname-api',
       'platform-contact-phone',
       'platform-contact-name',
       'platform-contact-email',
@@ -19,11 +20,11 @@ async function getOrganization({ userSession } = {}) {
       'platform-email-width-logo',
     ],
   });
-  console.log(r);
   const v = _.keyBy(r, 'key');
   const organization = {
     name: v['platform-name']?.value,
     hostname: v['platform-hostname']?.value,
+    hostnameApi: v['platform-hostname-api']?.value,
     logoUrl: v['platform-landscape-logo']?.value,
     squareLogoUrl: v['platform-square-logo']?.value,
     emailLogoUrl: v['platform-email-logo']?.value,
