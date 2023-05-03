@@ -395,16 +395,17 @@ async function getByIds(
       if (
         item.canAccess.some(
           (permission) =>
-            intersection(permission.permissions, 'editor').length > 0 &&
+            intersection(permission.permissions, ['editor']).length > 0 &&
             intersection(permission.userAgentIds, userAgents).length > 0
         )
       ) {
         item.role = 'editor';
       }
+
       if (
         item.canAccess.some(
           (permission) =>
-            intersection(permission.permissions, 'owner').length > 0 &&
+            intersection(permission.permissions, ['owner']).length > 0 &&
             intersection(permission.userAgentIds, userAgents).length > 0
         )
       ) {
@@ -415,11 +416,11 @@ async function getByIds(
     if (canEditPerms.includes(item.id)) {
       if (item.role !== 'owner') {
         item.role = 'editor';
+        item.editable = editRoles.includes('editor');
+        item.deleteable = deleteRoles.includes('editor');
+        item.shareable = shareRoles.includes('editor');
+        item.assignable = assignRoles.includes('editor');
       }
-      item.editable = editRoles.includes('editor');
-      item.deleteable = deleteRoles.includes('editor');
-      item.shareable = shareRoles.includes('editor');
-      item.assignable = assignRoles.includes('editor');
     }
 
     return item;
