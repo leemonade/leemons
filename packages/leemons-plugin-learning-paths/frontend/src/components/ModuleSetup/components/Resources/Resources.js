@@ -1,5 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import { cloneDeep, get, set, uniq } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { useMemo, useState } from 'react';
+
 import {
   Box,
   Button,
@@ -8,7 +10,7 @@ import {
   useViewportSize,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { cloneDeep, get, set, uniq } from 'lodash';
+
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
 import { EmptyState } from '../StructureData/components/EmptyState';
@@ -56,9 +58,9 @@ export function Resources({ localizations, onNextStep, onPrevStep }) {
     <Box ref={boxRef}>
       <Box className={classes.content}>
         <AssetPickerDrawer
+          layout="cards"
           categories={['media-files', 'bookmarks', 'assignables.content-creator']}
           creatable
-          itemMinWidth={250}
           onClose={() => setShowAssetDrawer(false)}
           onSelect={(asset) => {
             setSharedData((data) =>

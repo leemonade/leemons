@@ -20,8 +20,8 @@ import { useRoles } from '@assignables/components/Ongoing/AssignmentList/compone
 import { addErrorAlert } from '@layout/alert';
 import addAction from '@learning-paths/components/ModuleSetup/helpers/addAction';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { useHistory } from 'react-router-dom';
 import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
+import { useHistory } from 'react-router-dom';
 import { EmptyState } from './components/EmptyState';
 import { ModuleComposer } from './components/ModuleComposer';
 
@@ -109,6 +109,7 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
     <Box>
       <Box className={classes.content} ref={boxRef}>
         <AssetPickerDrawer
+          layout="rows"
           opened={showAssetDrawer}
           size={drawerSize}
           shadow

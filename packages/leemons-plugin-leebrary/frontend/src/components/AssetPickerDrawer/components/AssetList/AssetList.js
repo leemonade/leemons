@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { List } from './components/List';
 
@@ -12,16 +12,17 @@ export const useAssetListStyles = createStyles((theme) => {
       display: 'flex',
       flexDirection: 'column',
       gap: globalTheme.spacing.gap.xlg,
-      height: '100%',
+      minHeight: '100%',
       zIndex: 0,
     },
     list: {
-      height: '100%',
+      zIndex: 0,
+      minHeight: '100%',
     },
   };
 });
 
-export function AssetList({ localizations, categories, filters, onSelect }) {
+export function AssetList({ variant, localizations, categories, filters, onSelect }) {
   const { classes } = useAssetListStyles();
 
   const [query, setQuery] = useState({});
@@ -30,13 +31,14 @@ export function AssetList({ localizations, categories, filters, onSelect }) {
     <Box className={classes.root}>
       <Header localizations={localizations?.filters} categories={categories} onChange={setQuery} />
       <Box className={classes.list}>
-        <List query={query} filters={filters} onSelect={onSelect} />
+        <List variant={variant} query={query} filters={filters} onSelect={onSelect} />
       </Box>
     </Box>
   );
 }
 
 AssetList.propTypes = {
+  variant: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
   localizations: PropTypes.object,
   categories: PropTypes.arrayOf(PropTypes.string),
   filters: PropTypes.object,
