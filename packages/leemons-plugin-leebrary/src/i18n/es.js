@@ -224,6 +224,7 @@ module.exports = {
       viewer: 'Lectura',
       commentor: 'Comentario',
       editor: 'Editor',
+      assigner: 'Asignador',
       owner: 'Propietario',
       public: 'Público',
     },

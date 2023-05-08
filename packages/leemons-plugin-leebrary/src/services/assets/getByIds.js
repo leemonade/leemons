@@ -60,7 +60,7 @@ async function getByIds(
   // ADMIN PROGRAMS
   const { services: userService } = leemons.getPlugin('users');
   let canEditPerms = [];
-  const [viewPerms, editPerms] = await Promise.all([
+  const [viewPerms, editPerms, assignPerms] = await Promise.all([
     userService.permissions.getItemPermissions(
       map(assets, 'id'),
       leemons.plugin.prefixPN('asset.can-view'),
@@ -69,6 +69,11 @@ async function getByIds(
     userService.permissions.getItemPermissions(
       map(assets, 'id'),
       leemons.plugin.prefixPN('asset.can-edit'),
+      { transacting, returnRaw: true }
+    ),
+    userService.permissions.getItemPermissions(
+      map(assets, 'id'),
+      leemons.plugin.prefixPN('asset.can-assign'),
       { transacting, returnRaw: true }
     ),
   ]);
@@ -81,7 +86,7 @@ async function getByIds(
     );
   }
 
-  const currentPermissions = [...viewPerms, ...editPerms];
+  const currentPermissions = [...viewPerms, ...editPerms, ...assignPerms];
 
   const permissionsByItem = {};
   forEach(currentPermissions, (permission) => {
@@ -89,9 +94,15 @@ async function getByIds(
       permissionsByItem[permission.item] = {
         viewer: [],
         editor: [],
+        assigner: [],
       };
     }
-    const role = permission.type.includes('can-edit') ? 'editor' : 'viewer';
+    let role = 'viewer';
+    if (permission.type.includes('can-edit')) {
+      role = 'editor';
+    } else if (permission.type.includes('can-assign')) {
+      role = 'assigner';
+    }
     permissionsByItem[permission.item][role].push(permission.permissionName);
   });
 

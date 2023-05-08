@@ -12,6 +12,7 @@ async function getByAssets(assetIds, { showPublic, userSession, transacting } = 
     let permissions = [];
     let viewItems = [];
     let editItems = [];
+    let assignItems = [];
     if (userSession && userSession?.userAgents) {
       const responses = await Promise.all([
         userService.permissions.getUserAgentPermissions(userSession.userAgents, {
@@ -30,15 +31,20 @@ async function getByAssets(assetIds, { showPublic, userSession, transacting } = 
           leemons.plugin.prefixPN('asset.can-edit'),
           { ignoreOriginalTarget: true, item: assetsIds, transacting }
         ),
+        userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+          userSession.userAgents,
+          leemons.plugin.prefixPN('asset.can-assign'),
+          { ignoreOriginalTarget: true, item: assetsIds, transacting }
+        ),
       ]);
-      [permissions, viewItems, editItems] = responses;
+      [permissions, viewItems, editItems, assignItems] = responses;
     }
 
     const publicAssets = showPublic
       ? await tables.assets.find(
-          { id_$in: assetsIds, public: true },
-          { columns: ['id', 'public'], transacting }
-        )
+        { id_$in: assetsIds, public: true },
+        { columns: ['id', 'public'], transacting }
+      )
       : [];
 
     const results = permissions.concat(publicAssets).map((item) => ({
@@ -54,6 +60,22 @@ async function getByAssets(assetIds, { showPublic, userSession, transacting } = 
           asset,
           role: 'viewer',
           permissions: getRolePermissions('viewer'),
+        });
+      }
+    });
+
+    forEach(assignItems, (asset) => {
+      const index = findIndex(results, { asset });
+      if (index >= 0) {
+        if (results[index].role === 'viewer') {
+          results[index].role = 'assigner';
+          results[index].permissions = getRolePermissions('assigner');
+        }
+      } else {
+        results.push({
+          asset,
+          role: 'assigner',
+          permissions: getRolePermissions('assigner'),
         });
       }
     });

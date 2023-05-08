@@ -238,6 +238,7 @@ module.exports = {
       commentor: 'Commentor',
       editor: 'Editor',
       owner: 'Owner',
+      assigner: 'Assigner',
       public: 'Public',
     },
   },

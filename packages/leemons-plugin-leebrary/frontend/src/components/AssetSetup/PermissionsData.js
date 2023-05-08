@@ -36,19 +36,29 @@ const ROLESBYROLE = {
   viewer: [
     { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer', disabled: true },
+    { label: 'Assigner', value: 'assigner', disabled: true },
     { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   editor: [
     { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer' },
+    { label: 'Assigner', value: 'assigner' },
     { label: 'Editor', value: 'editor' },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+  assigner: [
+    { label: 'Owner', value: 'owner', disabled: true },
+    { label: 'Viewer', value: 'viewer', disabled: true },
+    { label: 'Assigner', value: 'assigner', disabled: true },
+    { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   owner: [
     { label: 'Owner', value: 'owner' },
     { label: 'Viewer', value: 'viewer' },
     { label: 'Editor', value: 'editor' },
+    { label: 'Assigner', value: 'assigner' },
     // { label: 'Commentor', value: 'commentor' },
   ],
 };
@@ -56,7 +66,7 @@ const ROLESBYROLE = {
 const PermissionsData = ({
   asset: assetProp,
   sharing,
-  onNext = () => {},
+  onNext = () => { },
   onSavePermissions,
   isDrawer,
   drawerTranslations,
@@ -196,6 +206,7 @@ const PermissionsData = ({
     const result = {
       viewer: [],
       editor: [],
+      assigner: [],
       isPublic: false,
     };
     _.forEach(perms, (permission) => {

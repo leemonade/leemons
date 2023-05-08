@@ -267,7 +267,7 @@ async function search(
         assets = assets.map(({ fullId }) => fullId);
       }
 
-      assets = assetsWithPermissions.filter(({ asset, role }) => {
+      assets = assetsWithPermissions.filter(({ asset, role, ...others }) => {
         if (roles?.length && !roles.includes(role)) {
           return false;
         }

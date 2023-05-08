@@ -15,6 +15,7 @@ const canUnassignRole = require('./helpers/canUnassignRole');
 const rolePermissionType = {
   viewer: leemons.plugin.prefixPN(`asset.can-view`),
   editor: leemons.plugin.prefixPN(`asset.can-edit`),
+  assigner: leemons.plugin.prefixPN(`asset.can-assign`),
 };
 
 function checkIfRolesExists(canAccess, permissions) {
@@ -142,7 +143,12 @@ async function addPermissionsToAsset({
   _.forEach(roles, (role) => {
     _.forEach(permissions[role], (permission) => {
       const currPerm = currentPermissionsByPermissionName[permission];
-      const oldRole = currPerm?.type.includes('can-edit') ? 'editor' : 'viewer';
+      let oldRole = 'viewer';
+      if (currPerm?.type.includes('can-edit')) {
+        oldRole = 'editor';
+      } else if (currPerm?.type.includes('can-assign')) {
+        oldRole = 'assigner';
+      }
       if (!canAssignRole(assignerRole, oldRole, role)) {
         throw new global.utils.HttpError(
           401,
@@ -159,6 +165,7 @@ async function addPermissionsToAsset({
       type_$in: [
         leemons.plugin.prefixPN('asset.can-edit'),
         leemons.plugin.prefixPN('asset.can-view'),
+        leemons.plugin.prefixPN('asset.can-assign'),
       ],
       item: id,
       permissionName_$in: allPermissions,
@@ -280,9 +287,17 @@ async function removeMissingPermissions({
   // EN: Check that all permissions can be unassigned
   // ES: Comprobar que todos los permisos se pueden desasignar
   const roles = uniq(
-    oldPermissions.map((permission) =>
-      permission.type === leemons.plugin.prefixPN('asset.can-edit') ? 'editor' : 'viewer'
-    )
+    oldPermissions.map((permission) => {
+      let role = 'viewer';
+      if (permission.type === leemons.plugin.prefixPN('asset.can-edit')) {
+        role = 'editor';
+      }
+      if (permission.type === leemons.plugin.prefixPN('asset.can-assign')) {
+        role = 'assigner';
+      }
+
+      return role;
+    })
   );
   roles.forEach((role) => {
     if (!canUnassignRole(assignerRole, role)) {

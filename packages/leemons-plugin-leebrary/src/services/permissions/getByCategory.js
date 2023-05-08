@@ -61,7 +61,7 @@ async function getByCategory(
 
     const { services: userService } = leemons.getPlugin('users');
 
-    const [permissions, viewItems, editItems] = await Promise.all([
+    const [permissions, viewItems, editItems, assignItems] = await Promise.all([
       userService.permissions.getUserAgentPermissions(userSession.userAgents, {
         query: {
           permissionName_$startsWith: leemons.plugin.prefixPN(''),
@@ -79,9 +79,19 @@ async function getByCategory(
         leemons.plugin.prefixPN('asset.can-edit'),
         { ignoreOriginalTarget: true, target: categoryId, transacting }
       ),
+      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+        userSession.userAgents,
+        leemons.plugin.prefixPN('asset.can-assign'),
+        { ignoreOriginalTarget: true, target: categoryId, transacting }
+      ),
     ]);
 
-    const publicAssets = showPublic ? await getPublic(categoryId, { indexable, transacting }) : [];
+    // ES: Incluir assets públicos tan solo si no se expecifican roles, o está el rol de viewer (que es el rol de los públicos)
+    // EN: Include public assets only if no role is specified or the viewer role is included (which is the public assets role)
+    const publicAssets =
+      showPublic && (!roles?.length || roles.includes('view'))
+        ? await getPublic(categoryId, { indexable, transacting })
+        : [];
     // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
     // EN: Concatenate all IDs, and then get the intersection in accordance with their status
     let assetIds = uniq(
@@ -90,6 +100,7 @@ async function getByCategory(
         .concat(publicAssets.map((item) => item.asset))
         .concat(viewItems)
         .concat(editItems)
+        .concat(assignItems)
     );
 
     try {
@@ -184,6 +195,24 @@ async function getByCategory(
             asset,
             role: 'viewer',
             permissions: getRolePermissions('viewer'),
+          });
+        }
+      });
+    }
+
+    if (!roles?.length || roles.includes('assigner')) {
+      forEach(assignItems, (asset) => {
+        const index = findIndex(results, { asset });
+        if (index >= 0) {
+          if (results[index].role === 'viewer') {
+            results[index].role = 'assigner';
+            results[index].permissions = getRolePermissions('assigner');
+          }
+        } else if (assetIds.includes(asset)) {
+          results.push({
+            asset,
+            role: 'assigner',
+            permissions: getRolePermissions('assigner'),
           });
         }
       });
