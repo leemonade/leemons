@@ -5,7 +5,11 @@ async function newAsset(assetData, categoryId, categoryKey) {
   const formData = new FormData();
 
   if (categoryKey === 'media-files') {
-    formData.append('files', file, file.name);
+    if (isString(file)) {
+      formData.append('file', file);
+    } else {
+      formData.append('files', file, file.name);
+    }
 
     if (cover && isString(cover)) formData.append('cover', cover);
     if (cover && cover.name) formData.append('cover', cover, cover.name);

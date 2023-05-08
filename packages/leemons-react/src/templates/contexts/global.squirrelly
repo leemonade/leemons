@@ -89,9 +89,16 @@ class LeemonsApi {
 
       
       // if (ctx.options?.waitToFinish) {
+        const formDataValues = {};
+        if (ctx.options.body instanceof FormData) {
+          for (const [key, value] of ctx.options.body.entries()) {
+            formDataValues[key] = ctx.options.body.getAll(key);
+          }
+        }
         waitKey = JSON.stringify({
           url: `${global.leemons.apiUrl}/api/${ctx.url}`,
           options: ctx.options,
+          formDataValues
         });
         delete ctx.options.waitToFinish;
         if (this.apiWaitToFinish[waitKey]) {
@@ -104,7 +111,7 @@ class LeemonsApi {
             waiting: 0
           };
         }
-        this.removeWhenNoWaits(waitKey);
+        
       // }
 
       
@@ -129,6 +136,7 @@ class LeemonsApi {
       if (waitKey) {
         this.apiWaitToFinish[waitKey].finish = true;
         this.apiWaitToFinish[waitKey].response = responseCtx.response;
+        this.removeWhenNoWaits(waitKey);
       }
 
 
@@ -141,6 +149,7 @@ class LeemonsApi {
         this.apiWaitToFinish[waitKey].finish = true;
         this.apiWaitToFinish[waitKey].isError = true;
         this.apiWaitToFinish[waitKey].response = responseCtx.response;
+        this.removeWhenNoWaits(waitKey);
       }
       throw responseCtx.response;
     }

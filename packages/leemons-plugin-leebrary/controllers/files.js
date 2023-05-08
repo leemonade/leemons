@@ -3,6 +3,10 @@ const fs = require('fs/promises');
 const fileService = require('../src/services/files');
 const { getByFile } = require('../src/services/assets/files/getByFile');
 const { getByIds } = require('../src/services/assets/getByIds');
+const { newMultipart } = require('../src/services/files/newMultipart');
+const { abortMultipart } = require('../src/services/files/abortMultipart');
+const { finishMultipart } = require('../src/services/files/finishMultipart');
+const { uploadMultipartChunk } = require('../src/services/files/uploadMultipartChunk');
 
 /**
  * Get file content from ID
@@ -124,7 +128,34 @@ async function getCoverFileContent(ctx) {
   }
 }
 
+async function newMultipartFunc(ctx) {
+  ctx.status = 200;
+  ctx.body = await newMultipart(ctx.request.body);
+}
+
+async function uploadMultipartChunkFunc(ctx) {
+  ctx.status = 200;
+  ctx.body = await uploadMultipartChunk({
+    ...JSON.parse(ctx.request.body.body),
+    chunk: ctx.request.files.chunk,
+  });
+}
+
+async function abortMultipartFunc(ctx) {
+  ctx.status = 200;
+  ctx.body = await abortMultipart(ctx.request.body);
+}
+
+async function finishMultipartFunc(ctx) {
+  ctx.status = 200;
+  ctx.body = await finishMultipart(ctx.request.body);
+}
+
 module.exports = {
   file: getFileContent,
   cover: getCoverFileContent,
+  newMultipart: newMultipartFunc,
+  abortMultipart: abortMultipartFunc,
+  finishMultipart: finishMultipartFunc,
+  uploadMultipartChunk: uploadMultipartChunkFunc,
 };
