@@ -1,14 +1,17 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+/* eslint-disable no-param-reassign */
 import { ContextContainer } from '@bubbles-ui/components';
 import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { LibraryForm } from '../LibraryForm/LibraryForm';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useMemo, useState } from 'react';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
-import { getAssetRequest, newAssetRequest, updateAssetRequest } from '../../request';
+import { LibraryForm } from '../LibraryForm/LibraryForm';
+import UploadingFileModal from '../UploadingFileModal';
 
 const BasicData = ({
   file,
@@ -22,6 +25,7 @@ const BasicData = ({
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
+  const [uploadingFilePercentage, setUploadingFilePercentage] = useState(null);
   const [tags, setTags] = useState(assetProp?.tags || []);
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -54,27 +58,38 @@ const BasicData = ({
   };
 
   const handleOnSubmit = async (data) => {
-    let { cover } = data;
-    if (cover === preparedAsset.cover) {
-      cover = assetProp.cover;
-    }
-
-    const requestMethod = editing ? updateAssetRequest : newAssetRequest;
-
-    setLoading(true);
-
     try {
-      const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'media-files');
-      const response = await getAssetRequest(asset.id);
-      onSave(prepareAsset(response.asset));
-      setLoading(false);
-      addSuccessAlert(
-        editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
-      );
-      onNext();
-    } catch (err) {
-      setLoading(false);
-      addErrorAlert(getErrorMessage(err));
+      data.file = await uploadFileAsMultipart(data.file, {
+        onProgress: ({ percentageCompleted }) => {
+          setUploadingFilePercentage(percentageCompleted);
+        },
+      });
+      setUploadingFilePercentage(null);
+
+      let { cover } = data;
+      if (cover === preparedAsset.cover) {
+        cover = assetProp.cover;
+      }
+
+      const requestMethod = editing ? updateAssetRequest : newAssetRequest;
+
+      setLoading(true);
+
+      try {
+        const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'media-files');
+        const response = await getAssetRequest(asset.id);
+        onSave(prepareAsset(response.asset));
+        setLoading(false);
+        addSuccessAlert(
+          editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
+        );
+        onNext();
+      } catch (err) {
+        setLoading(false);
+        addErrorAlert(getErrorMessage(err));
+      }
+    } catch (e) {
+      setUploadingFilePercentage(null);
     }
   };
 
@@ -82,25 +97,31 @@ const BasicData = ({
   // RENDER
 
   return (
-    <LibraryForm
-      {...props}
-      {...formLabels}
-      advancedConfig={advancedConfig}
-      loading={loading}
-      asset={{ ...assetProp, file, cover: preparedAsset.cover }}
-      onSubmit={handleOnSubmit}
-    >
-      <ContextContainer subtitle="Tags" spacing={1}>
-        <TagsAutocomplete
-          pluginName="leebrary"
-          type={prefixPN('')}
-          labels={{ addButton: formLabels?.labels?.addTag }}
-          placeholder={formLabels?.placeholders?.tagsInput}
-          value={tags}
-          onChange={handleOnTagsChange}
-        />
-      </ContextContainer>
-    </LibraryForm>
+    <>
+      <LibraryForm
+        {...props}
+        {...formLabels}
+        advancedConfig={advancedConfig}
+        loading={loading}
+        asset={{ ...assetProp, file, cover: preparedAsset.cover }}
+        onSubmit={handleOnSubmit}
+      >
+        <ContextContainer subtitle="Tags" spacing={1}>
+          <TagsAutocomplete
+            pluginName="leebrary"
+            type={prefixPN('')}
+            labels={{ addButton: formLabels?.labels?.addTag }}
+            placeholder={formLabels?.placeholders?.tagsInput}
+            value={tags}
+            onChange={handleOnTagsChange}
+          />
+        </ContextContainer>
+      </LibraryForm>
+      <UploadingFileModal
+        opened={uploadingFilePercentage !== null}
+        percentage={uploadingFilePercentage}
+      />
+    </>
   );
 };
 

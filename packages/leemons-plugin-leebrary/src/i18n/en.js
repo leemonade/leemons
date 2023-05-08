@@ -315,4 +315,7 @@ module.exports = {
       chooseProvider: 'Choose provider',
     },
   },
+  uploadFileModal: {
+    title: 'Uploading file',
+  },
 };

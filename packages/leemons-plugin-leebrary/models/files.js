@@ -30,7 +30,7 @@ module.exports = {
       },
     },
     size: {
-      type: 'integer',
+      type: 'bigint',
       options: {
         defaultTo: 0,
       },

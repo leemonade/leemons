@@ -302,4 +302,7 @@ module.exports = {
       chooseProvider: 'Selecciona un proveedor',
     },
   },
+  uploadFileModal: {
+    title: 'Subiendo archivo',
+  },
 };
