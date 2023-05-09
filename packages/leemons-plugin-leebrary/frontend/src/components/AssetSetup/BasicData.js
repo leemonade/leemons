@@ -25,7 +25,7 @@ const BasicData = ({
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
-  const [uploadingFilePercentage, setUploadingFilePercentage] = useState(null);
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
   const [tags, setTags] = useState(assetProp?.tags || []);
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -60,11 +60,12 @@ const BasicData = ({
   const handleOnSubmit = async (data) => {
     try {
       data.file = await uploadFileAsMultipart(data.file, {
-        onProgress: ({ percentageCompleted }) => {
-          setUploadingFilePercentage(percentageCompleted);
+        onProgress: (info) => {
+          // console.log(info);
+          setUploadingFileInfo(info);
         },
       });
-      setUploadingFilePercentage(null);
+      setUploadingFileInfo(null);
 
       let { cover } = data;
       if (cover === preparedAsset.cover) {
@@ -78,6 +79,7 @@ const BasicData = ({
       try {
         const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'media-files');
         const response = await getAssetRequest(asset.id);
+        console.log(prepareAsset(response.asset));
         onSave(prepareAsset(response.asset));
         setLoading(false);
         addSuccessAlert(
@@ -89,7 +91,7 @@ const BasicData = ({
         addErrorAlert(getErrorMessage(err));
       }
     } catch (e) {
-      setUploadingFilePercentage(null);
+      setUploadingFileInfo(null);
     }
   };
 
@@ -117,10 +119,7 @@ const BasicData = ({
           />
         </ContextContainer>
       </LibraryForm>
-      <UploadingFileModal
-        opened={uploadingFilePercentage !== null}
-        percentage={uploadingFilePercentage}
-      />
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </>
   );
 };

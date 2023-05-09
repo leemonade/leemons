@@ -29,19 +29,20 @@ async function getFileContent(ctx) {
     throw new global.utils.HttpError(403, 'You do not have permissions to view this file');
   }
 
-  // let bytesStart = -1;
-  // let bytesEnd = -1;
+  let bytesStart = -1;
+  let bytesEnd = -1;
   const { range } = headers;
 
   if (!download && range?.indexOf('bytes=') > -1) {
-    // const parts = range.replace(/bytes=/, '').split('-');
-    // bytesStart = parseInt(parts[0], 10);
-    // bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
+    const parts = range.replace(/bytes=/, '').split('-');
+    bytesStart = parseInt(parts[0], 10);
+    bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
   }
 
   const { readStream, fileName, contentType, file } = await fileService.dataForReturnFile(id, {
-    // start: bytesStart,
-    // end: bytesEnd,
+    path: ctx.params[0],
+    start: bytesStart,
+    end: bytesEnd,
   });
 
   const mediaType = contentType.split('/')[0];

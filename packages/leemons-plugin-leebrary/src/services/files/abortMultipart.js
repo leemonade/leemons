@@ -18,6 +18,8 @@ async function abortMultipart({ fileId }, { transacting } = {}) {
     if (provider?.services?.provider?.abortMultipart) {
       await provider.services.provider.abortMultipart(dbfile, { transacting });
     }
+  } else if (dbfile.isFolder) {
+    await fs.rmdir(dbfile.uri, { recursive: true });
   } else {
     await fs.unlink(dbfile.uri);
   }

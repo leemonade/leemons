@@ -1,20 +1,32 @@
-import { Modal, Progress } from '@bubbles-ui/components';
+import { Box, Modal, Progress, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 import React from 'react';
 import prefixPN from '../helpers/prefixPN';
 
-function UploadingFileModal({ opened, title, percentage }) {
+function UploadingFileModal({ opened, title, info }) {
   const [t] = useTranslateLoader(prefixPN('uploadFileModal'));
+  const [value, setValue] = React.useState();
+
+  React.useEffect(() => {
+    if (info) {
+      setValue(info);
+    }
+  }, [info]);
 
   return (
     <Modal title={title || t('title')} opened={opened} onClose={() => {}} withCloseButton={false}>
-      <Progress
-        value={percentage}
-        label={`${percentage ? percentage.toFixed(2) : 100}%`}
-        size="xl"
-        radius="xl"
-      />
+      <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
+        <Text>{value?.state !== 'uploading' ? t(value?.state) : t('fileOf', value)}</Text>
+      </Box>
+      {value?.state === 'uploading' ? (
+        <Progress
+          value={value?.percentageCompleted}
+          label={`${value?.percentageCompleted.toFixed(2)}%`}
+          size="xl"
+          radius="xl"
+        />
+      ) : null}
     </Modal>
   );
 }
@@ -22,7 +34,7 @@ function UploadingFileModal({ opened, title, percentage }) {
 UploadingFileModal.propTypes = {
   title: PropTypes.string,
   opened: PropTypes.bool,
-  percentage: PropTypes.number,
+  info: PropTypes.any,
 };
 
 export { UploadingFileModal };

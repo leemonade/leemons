@@ -126,6 +126,12 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/file/:id/(.*)',
+    method: 'GET',
+    handler: 'files.file',
+    authenticated: true,
+  },
+  {
     path: '/img/:assetId',
     method: 'GET',
     handler: 'files.cover',

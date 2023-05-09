@@ -1,11 +1,18 @@
 const fs = require('fs');
+const mime = require('mime-types');
 const { getById } = require('./getById');
 
-async function dataForReturnFile(id, { transacting, start = -1, end = -1 } = {}) {
+async function dataForReturnFile(id, { path = '', transacting, start = -1, end = -1 } = {}) {
   const file = await getById(id, { transacting });
 
   if (!file) {
     throw new global.utils.HttpError(422, `File with id ${id} does not exists`);
+  }
+
+  if (file.metadata?.pathsInfo && path) {
+    if (file.metadata?.pathsInfo?.[path]) {
+      file.size = file.metadata.pathsInfo[path].size;
+    }
   }
 
   let bytesStart = start;
@@ -25,13 +32,17 @@ async function dataForReturnFile(id, { transacting, start = -1, end = -1 } = {})
     bytesEnd = -1;
   }
 
+  const common = {
+    file,
+    contentType: path ? mime.lookup(path.split('.').reverse()[0]) : file.type,
+    fileName: path ? path.split('/').reverse()[0] : `${file.name}.${file.extension}`,
+  };
+
   // Default provider
   if (file.provider === 'sys') {
     return {
-      file,
-      contentType: file.type,
-      fileName: `${file.name}.${file.extension}`,
-      readStream: fs.createReadStream(file.uri, readParams),
+      ...common,
+      readStream: fs.createReadStream(file.uri + (path ? `/${path}` : ''), readParams),
     };
   }
 
@@ -39,14 +50,15 @@ async function dataForReturnFile(id, { transacting, start = -1, end = -1 } = {})
   const provider = leemons.getProvider(file.provider);
   if (provider?.services?.provider?.getReadStream) {
     return {
-      file,
-      contentType: file.type,
-      fileName: `${file.name}.${file.extension}`,
-      readStream: await provider.services.provider.getReadStream(file.uri, {
-        transacting,
-        start: bytesStart,
-        end: bytesEnd,
-      }),
+      ...common,
+      readStream: await provider.services.provider.getReadStream(
+        file.uri + (path ? `/${path}` : ''),
+        {
+          transacting,
+          start: bytesStart,
+          end: bytesEnd,
+        }
+      ),
     };
   }
 

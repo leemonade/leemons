@@ -362,6 +362,9 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   const file = await getById(url);
 
   if (file?.id) {
+    if (file.isFolder) {
+      return file;
+    }
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
   }
