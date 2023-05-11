@@ -86,10 +86,10 @@ function AssetList({
   roles,
   filters,
   filterComponents,
-  onSelectItem = () => {},
-  onEditItem = () => {},
-  onTypeChange = () => {},
-  onLoading = () => {},
+  onSelectItem = () => { },
+  onEditItem = () => { },
+  onTypeChange = () => { },
+  onLoading = () => { },
 }) {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
@@ -172,7 +172,6 @@ function AssetList({
       store.loading = false;
       loadingRef.current.loading = false;
       render();
-      // console.log('Ahora está permitido cargar Assets!!');
     }, 500);
   }
 
@@ -185,7 +184,6 @@ function AssetList({
       store.asset = null;
       store.loading = true;
       render();
-      // console.log('Pasamos por aquí!!');
       try {
         const query = {
           providerQuery: _filters ? JSON.stringify(_filters) : null,
@@ -224,7 +222,6 @@ function AssetList({
         }
 
         const results = response?.assets || [];
-        // console.log('results:', results);
         store.assets = uniqBy(results, 'asset');
 
         if (isEmpty(results)) {
@@ -266,7 +263,6 @@ function AssetList({
           });
           paginated.items = response.assets || [];
           paginated.page += 1;
-          // console.log('paginated.items:', paginated.items);
           store.serverData = paginated;
         } else {
           store.serverData = [];
@@ -287,11 +283,9 @@ function AssetList({
       if (item && !forceLoad) {
         store.asset = prepareAsset(item, published);
       } else {
-        // console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
-          // console.log('asset:', value);
 
           if (store.asset) store.asset = prepareAsset(value, published);
 
@@ -675,8 +669,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
+          ? t('cardToolbar.pin')
+          : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -756,14 +750,14 @@ function AssetList({
             isEmbedded
               ? { flex: 0, alignItems: 'end' }
               : {
-                  flex: 0,
-                  alignItems: 'end',
-                  width: containerRect.width,
-                  top: containerRect.top,
-                  position: 'fixed',
-                  zIndex: 101,
-                  backgroundColor: '#fff',
-                }
+                flex: 0,
+                alignItems: 'end',
+                width: containerRect.width,
+                top: containerRect.top,
+                position: 'fixed',
+                zIndex: 101,
+                backgroundColor: '#fff',
+              }
           }
         >
           <Stack fullWidth spacing={5}>

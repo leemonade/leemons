@@ -69,6 +69,7 @@ function setupAssignables(isInstalled) {
       teacherDetailUrl: '/',
       studentDetailUrl: '/private/learning-paths/modules/assignation/:id/:user',
       evaluationDetailUrl: '/private/learning-paths/modules/assignation/:id/:user/correction',
+      previewUrl: '/private/learning-paths/modules/:id/view',
       creatable: true,
       createUrl: '/private/learning-paths/modules/new',
       canUse: [], // Usable by the plugin owner and assignables plugin

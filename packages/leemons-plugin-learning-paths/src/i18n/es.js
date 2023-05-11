@@ -106,10 +106,14 @@ module.exports = {
   },
   libraryCard: {
     menuItems: {
+      toggle: 'Cerrar',
+      open: 'Abrir',
+      view: 'Ver',
       edit: 'Editar',
       assign: 'Asignar',
       duplicate: 'Duplicar',
       delete: 'Eliminar',
+      share: 'Compartir',
     },
     duplicate: {
       title: 'Duplicar módulo',
@@ -148,6 +152,7 @@ module.exports = {
       review: 'Revisar',
       start: 'Comenzar',
       continue: 'Continuar',
+      preview: 'Visualizar',
     },
     resources: 'Recursos',
   },

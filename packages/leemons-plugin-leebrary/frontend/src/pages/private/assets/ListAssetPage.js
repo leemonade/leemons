@@ -181,9 +181,7 @@ const ListAssetPage = () => {
 
   let props = {};
   if (
-    (category?.key === 'pins' ||
-      category?.key === 'assignables.task' ||
-      category?.key === 'assignables.tests') &&
+    (category?.key === 'pins' || category?.key?.startsWith('assignables.')) &&
     (isTeacher || isStudent)
   ) {
     props = academicFilters;

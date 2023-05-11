@@ -97,7 +97,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.learningpaths.module"
               onSelectItem={handleOnSelectModule}
-              roles={['owner']}
+              roles={['owner', 'assigner']}
             />
           </Box>
         </TabPanel>
@@ -112,7 +112,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.learningpaths.module"
               onSelectItem={handleOnSelectModule}
-              roles={['owner']}
+              roles={['owner', 'assigner']}
             />
           </Box>
         </TabPanel>

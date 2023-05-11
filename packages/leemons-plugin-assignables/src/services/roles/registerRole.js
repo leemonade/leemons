@@ -10,6 +10,7 @@ module.exports = async function registerRole(
     studentDetailUrl,
     evaluationDetailUrl,
     dashboardUrl,
+    previewUrl,
     ...data
   } = {}
 ) {
@@ -46,6 +47,7 @@ module.exports = async function registerRole(
           studentDetailUrl,
           evaluationDetailUrl,
           dashboardUrl,
+          previewUrl,
           plugin: this.calledFrom,
           icon: data.menu.item.iconSvg,
         },

@@ -16,6 +16,9 @@ module.exports = {
     dashboardUrl: {
       type: 'string',
     },
+    previewUrl: {
+      type: 'string',
+    },
     plugin: {
       type: 'string',
     },

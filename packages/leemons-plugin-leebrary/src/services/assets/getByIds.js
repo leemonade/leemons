@@ -348,7 +348,7 @@ async function getByIds(
   const deleteRoles = ['owner'];
   const shareRoles = ['owner', 'editor'];
   const editRoles = ['owner', 'editor'];
-  const assignRoles = ['owner', 'editor'];
+  const assignRoles = ['owner', 'editor', 'assigner'];
   const userAgents = userSession?.userAgents.map(({ id }) => id) || [];
 
   const result = assets.map((asset, index) => {
