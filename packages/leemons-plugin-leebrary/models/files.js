@@ -42,7 +42,8 @@ module.exports = {
       },
     },
     metadata: {
-      type: 'string',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {
