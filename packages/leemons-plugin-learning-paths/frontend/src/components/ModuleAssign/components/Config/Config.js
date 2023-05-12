@@ -213,7 +213,7 @@ function useDefaultValues({ activities, components }) {
 
       if (!value && isFunction(component?.defaultValues)) {
         const defaultValues = await component.defaultValues(activity);
-        setValue(`${valueKey}.defaultConfig`, defaultValues);
+        setValue(`${valueKey}`, defaultValues);
       }
       setValue(`state.activities.loaded.${id}`, true);
     });
