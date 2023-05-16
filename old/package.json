@@ -1,0 +1,73 @@
+{
+  "name": "leemons-monorepo",
+  "description": "The powerful, flexible, friendly Learning Experience Platform you’re waiting for",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
+    "husky": "4",
+    "jest": "^26.6.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "rimraf": "^3.0.2",
+    "snyk": "^1.464.0",
+    "stylelint": "^13.12.0",
+    "stylelint-config-idiomatic-order": "^8.1.0",
+    "stylelint-config-standard": "^21.0.0",
+    "wait-on": "^5.2.1"
+  },
+  "workspaces": [
+    "packages/*",
+    "packages/*/frontend",
+    "examples/*",
+    "app"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leemonade/leemons.git"
+  },
+  "bugs": {
+    "url": "https://github.com/leemonade/leemons/issues"
+  },
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.10.0"
+  },
+  "scripts": {
+    "lint": "npm-run-all -s -p lint:code lint:css",
+    "lint:code": "eslint .",
+    "lint:css": "stylelint **/*.*css",
+    "lint:fix": "npm-run-all -s -p lint:code:fix lint:css:fix",
+    "lint:code:fix": "eslint . --fix",
+    "lint:css:fix": "stylelint **/*.*css --fix",
+    "format": "npm-run-all -p format:*",
+    "format:code": "npm run prettier:code -- --write",
+    "format:other": "npm run prettier:other -- --write",
+    "prettier:code": "prettier \"**/*.js\"",
+    "prettier:other": "prettier \"**/*.{md,css,scss,yaml,yml}\"",
+    "test": "jest"
+  },
+  "dependencies": {
+    "babel-eslint": "^10.1.0"
+  }
+}
