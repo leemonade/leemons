@@ -1,6 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
-    "dev": {}
+    "dev": {
+      "inputs": ["plugins/**/backend/**/*"]
+    }
   }
 }

@@ -23,8 +23,11 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "packageManager": "pnpm",
+  "packageManager": "pnpm@6.32.3",
   "scripts": {
-    "dev": "turbo run dev"
+    "turbo-dev": "turbo run dev"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }
