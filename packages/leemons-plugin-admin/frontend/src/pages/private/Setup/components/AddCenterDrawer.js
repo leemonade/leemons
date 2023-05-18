@@ -108,10 +108,10 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       store.saving = true;
       render();
       const finalLimits = [];
-      if (Object.keys(limits.profiles).length) {
+      if (limits.profiles && Object.keys(limits.profiles).length) {
         finalLimits.push(...Object.values(limits.profiles));
       }
-      if (Object.keys(limits.roles).length) {
+      if (limits.roles && Object.keys(limits.roles).length) {
         finalLimits.push(...Object.values(limits.roles));
       }
       const { center: c } = await addCenterRequest({ ...data, limits: finalLimits });
