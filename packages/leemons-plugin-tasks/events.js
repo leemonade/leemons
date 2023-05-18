@@ -44,6 +44,7 @@ async function events(isInstalled) {
         teacherDetailUrl: '/',
         studentDetailUrl: '/private/tasks/student-detail/:id/:user',
         evaluationDetailUrl: '/private/tasks/correction/:id/:user',
+        previewUrl: '/private/tasks/library/:id/view',
         creatable: true,
         createUrl: '/private/tasks/library/create',
         canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'

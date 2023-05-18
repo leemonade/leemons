@@ -62,7 +62,7 @@ export function useSelectedCurriculumValues({ assignable }) {
         }
 
         return { subject: subject.subject, hasCustomObjectives, values };
-      }),
+      }) ?? [],
     [assignable]
   );
 

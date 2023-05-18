@@ -321,6 +321,7 @@ module.exports = {
     label: 'Tareas y actividades',
   },
   cardMenu: {
+    view: 'Ver',
     edit: 'Editar',
     assign: 'Asignar',
     delete: 'Eliminar',

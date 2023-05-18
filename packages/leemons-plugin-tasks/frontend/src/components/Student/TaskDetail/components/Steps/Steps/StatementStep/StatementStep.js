@@ -154,6 +154,7 @@ export default function StatementStep({
   hasNextStep,
   hasNextActivity,
   onNextStep,
+  preview,
 }) {
   const labels = _labels.statement_step;
 
@@ -167,7 +168,8 @@ export default function StatementStep({
   const now = dayjs();
   const startDate = dayjs(assignation?.instance?.dates?.start || null);
   const canSubmit =
-    assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+    !preview &&
+    (assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate)));
 
   React.useEffect(() => {
     setButtons(
