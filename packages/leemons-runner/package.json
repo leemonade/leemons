@@ -1,0 +1,19 @@
+{
+  "name": "leemons-runner",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "bin": {
+    "leemons-runner": "bin/leemons-runner.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "args": "^5.0.3",
+    "glob": "^10.2.4",
+    "kleur": "^4.1.5",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.26"
+  }
+}

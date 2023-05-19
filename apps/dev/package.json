@@ -1,0 +1,18 @@
+{
+  "name": "leemons-dev",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "backend:dev": "leemons-runner --env --hot services/**/*.service.js",
+    "leemons-runner": "leemons-runner"
+  },
+  "leemons": {},
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "leemons-plugin-gateway": "workspace:^1.0.0",
+    "leemons-plugin-tests": "workspace:^1.0.0",
+    "leemons-plugin-transactions": "workspace:^1.0.0",
+    "leemons-plugin-users": "workspace:^1.0.0",
+    "leemons-runner": "workspace:^0.0.1"
+  }
+}

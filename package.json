@@ -24,10 +24,8 @@
     }
   ],
   "packageManager": "pnpm@6.32.3",
-  "scripts": {
-    "turbo-dev": "turbo run dev"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
+  "devDependencies": {
+    "prettier": "^2.5.1",
+    "turbo": "^1.9.3"
   }
 }

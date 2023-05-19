@@ -1,17 +1,13 @@
 {
-  "name": "moleculer-demo",
+  "name": "leemons-plugin-tests",
   "version": "1.0.0",
-  "description": "My Moleculer-based microservices project",
+  "description": "Leemons tests plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services/**/*.service.js",
     "start": "moleculer-runner",
-    "cli": "moleculer connect NATS",
     "ci": "jest --watch",
     "test": "jest --coverage",
-    "lint": "eslint services",
-    "dc:up": "docker-compose up --build -d",
-    "dc:logs": "docker-compose logs -f",
-    "dc:down": "docker-compose down"
+    "lint": "eslint services"
   },
   "keywords": [
     "microservices",
@@ -22,15 +18,11 @@
     "eslint": "^8.25.0",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1",
-    "moleculer-repl": "^0.7.3",
     "turbo": "^1.9.6"
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
-    "ioredis": "^5.3.2",
-    "moleculer": "^0.14.26",
-    "moleculer-web": "^0.10.4",
-    "nats": "^2.7.1"
+    "moleculer": "^0.14.26"
   },
   "engines": {
     "node": ">= 16.x.x"

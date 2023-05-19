@@ -1,0 +1,38 @@
+{
+  "name": "leemons-plugin-transactions",
+  "version": "1.0.0",
+  "description": "Leemons transactions plugins",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot services/**/*.service.js",
+    "start": "moleculer-runner",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1",
+    "turbo": "^1.9.6"
+  },
+  "dependencies": {
+    "moleculer": "^0.14.26",
+    "mongoose": "^7.1.1"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}
