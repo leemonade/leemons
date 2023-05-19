@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const { LeemonsDeploymentIDMixin } = require("leemons-deployment");
 const { create } = require("./queries/create");
 const { find } = require("./queries/find");
 const { findById } = require("./queries/findById");
@@ -13,46 +14,76 @@ const { deleteOne } = require("./queries/deleteOne");
 const { deleteMany } = require("./queries/deleteMany");
 const { save } = require("./queries/save");
 
-function getModelActions({ model, autoDeploymentID, autoRollback, ctx }) {
+function getModelActions({
+  model,
+  autoDeploymentID,
+  autoTransaction,
+  autoRollback,
+  ctx,
+}) {
   return {
-    save: save({ model, autoDeploymentID, autoRollback, ctx }),
-    create: create({ model, autoDeploymentID, autoRollback, ctx }),
-    find: find({ model, autoDeploymentID, autoRollback, ctx }),
-    findById: findById({ model, autoDeploymentID, autoRollback, ctx }),
-    findOne: findOne({ model, autoDeploymentID, autoRollback, ctx }),
+    save: save({ model, autoDeploymentID, autoTransaction, autoRollback, ctx }),
+    create: create({
+      model,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    }),
+    find: find({ model, autoDeploymentID, autoTransaction, autoRollback, ctx }),
+    findById: findById({
+      model,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    }),
+    findOne: findOne({
+      model,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    }),
     findByIdAndDelete: findByIdAndDelete({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     findByIdAndRemove: findByIdAndDelete({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     findOneAndDelete: findOneAndDelete({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     findOneAndRemove: findOneAndDelete({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     findByIdAndUpdate: findByIdAndUpdate({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     findOneAndUpdate: findOneAndUpdate({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
@@ -62,47 +93,70 @@ function getModelActions({ model, autoDeploymentID, autoRollback, ctx }) {
     updateOne: updateOne({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     updateMany: updateMany({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     deleteOne: deleteOne({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
     deleteMany: deleteMany({
       model,
       autoDeploymentID,
+      autoTransaction,
       autoRollback,
       ctx,
     }),
   };
 }
 
-function getDBModels({ models, autoDeploymentID, autoRollback, ctx }) {
+function getDBModels({
+  models,
+  autoDeploymentID,
+  autoTransaction,
+  autoRollback,
+  ctx,
+}) {
   const db = {};
   _.forIn(models, (model, key) => {
-    db[key] = getModelActions({ model, autoDeploymentID, autoRollback, ctx });
+    db[key] = getModelActions({
+      model,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    });
   });
   return db;
 }
 
-module.exports = ({ autoDeploymentID, autoRollback, models }) => {
+module.exports = ({
+  autoDeploymentID,
+  autoTransaction,
+  autoRollback,
+  models,
+}) => {
   return {
     name: "",
+    mixins: [LeemonsDeploymentIDMixin],
     hooks: {
       before: {
         "*": [
           async function (ctx) {
             ctx.db = getDBModels({
               models,
+              autoTransaction,
               autoDeploymentID,
               autoRollback,
               ctx,

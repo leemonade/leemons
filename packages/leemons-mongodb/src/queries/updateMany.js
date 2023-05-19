@@ -1,24 +1,53 @@
 const {
   addDeploymentIDToArrayOrObject,
 } = require("./helpers/addDeploymentIDToArrayOrObject");
+const {
+  createTransactionIDIfNeed,
+} = require("./helpers/createTransactionIDIfNeed");
+const {
+  increaseTransactionFinishedIfNeed,
+} = require("./helpers/increaseTransactionFinishedIfNeed");
+const {
+  increaseTransactionPendingIfNeed,
+} = require("./helpers/increaseTransactionPendingIfNeed");
 
-function updateMany({ model, autoDeploymentID, autoRollback, ctx }) {
+function updateMany({
+  model,
+  autoDeploymentID,
+  autoTransaction,
+  autoRollback,
+  ctx,
+}) {
   return async function () {
-    const [_conditions, _update, ...args] = arguments;
-    let conditions = _conditions;
-    let update = _update;
-    if (autoDeploymentID) {
-      conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
-      update = addDeploymentIDToArrayOrObject({ items: update, ctx });
-    }
-    let oldItems = await model.find(conditions).lean();
-    let items = await model.updateMany(conditions, update, ...args);
+    await createTransactionIDIfNeed({ autoTransaction, ctx });
+    await increaseTransactionPendingIfNeed({ ctx });
+    try {
+      const [_conditions, _update, ...args] = arguments;
+      let conditions = _conditions;
+      let update = _update;
+      if (autoDeploymentID) {
+        conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
+        update = addDeploymentIDToArrayOrObject({ items: update, ctx });
+      }
+      let oldItems = [];
+      if (ctx.meta.transactionID)
+        oldItems = await model.find(conditions).lean();
+      let items = await model.updateMany(conditions, update, ...args);
 
-    if (autoRollback) {
-      console.log("updateMany rollback", oldItems);
-    }
+      if (ctx.meta.transactionID && oldItems?.length) {
+        await addTransactionState(ctx, {
+          action: "rollback",
+          payload: {
+            action: "updateMany",
+            data: oldItems,
+          },
+        });
+      }
 
-    return items;
+      return items;
+    } finally {
+      await increaseTransactionFinishedIfNeed({ ctx });
+    }
   };
 }
 

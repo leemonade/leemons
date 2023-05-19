@@ -9,8 +9,21 @@ const transactionSchema = new mongoose.Schema(
     },
     active: {
       type: Boolean,
-      default: true,
       required: true,
+      default: true,
+    },
+    pending: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    finished: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    checkNumber: {
+      type: Number,
     },
     createdAt: {
       type: Date,
@@ -23,7 +36,11 @@ const transactionSchema = new mongoose.Schema(
 let Transaction = null;
 if (mongoose.connection.models.hasOwnProperty("transaction_Transaction")) {
   Transaction = mongoose.connection.models["transaction_Transaction"];
+} else {
+  Transaction = mongoose.connection.model(
+    "transaction_Transaction",
+    transactionSchema
+  );
 }
-Transaction = connection.model("transaction_Transaction", transactionSchema);
 
 module.exports = { Transaction };

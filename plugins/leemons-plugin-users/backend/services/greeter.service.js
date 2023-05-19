@@ -46,6 +46,11 @@ module.exports = (broker) => {
           path: "/hello",
         },
         async handler(ctx) {
+          ctx.meta.deploymentID = "miau";
+          ctx.meta.transactionID = "6466385cb3aa7003f515da32";
+          const r = await ctx.call("transactions.new");
+          console.log(r);
+          /*
           const test = await ctx.db.Test.create({ name: "Prueba" });
           console.log(
             "toma consulta",
@@ -54,6 +59,7 @@ module.exports = (broker) => {
           await ctx.db.Test.findByIdAndUpdate(test._id, { name: "toma ya" });
           // await ctx.db.Test.findByIdAndDelete(test._id);
           return "Hello Moleculer";
+          */
         },
       },
 

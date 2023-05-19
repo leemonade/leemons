@@ -1,14 +1,14 @@
 const _ = require("lodash");
-const { getDeploymentIDFromCTX } = require("./getDeploymentIDFromCTX");
+const { getDeploymentIDFromCTX } = require("leemons-deployment");
 
 function addDeploymentIDToArrayOrObject({ items, ctx }) {
   if (_.isArray(items)) {
     return _.map(items, (item) => {
-      item.deploymentID = getDeploymentIDFromCTX({ ctx });
+      item.deploymentID = getDeploymentIDFromCTX(ctx);
       return item;
     });
   } else {
-    items.deploymentID = getDeploymentIDFromCTX({ ctx });
+    items.deploymentID = getDeploymentIDFromCTX(ctx);
     return items;
   }
 }

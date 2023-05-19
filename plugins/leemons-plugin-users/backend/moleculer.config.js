@@ -195,10 +195,12 @@ module.exports = {
 
   // Register custom middlewares
   middlewares: [
+    /*
     ChannelsMiddleware({
       adapter:
-        "redis://default:T0RdSJ3U0swVOOamapdFldw1Coor55Vb@redis-11816.c55.eu-central-1-1.ec2.cloud.redislabs.com:11816",
+        "redis://",
     }),
+    */
   ],
 
   // Register custom REPL commands.

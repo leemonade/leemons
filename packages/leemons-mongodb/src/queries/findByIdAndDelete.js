@@ -1,12 +1,21 @@
 const { findOneAndDelete } = require("./findOneAndDelete");
 
-function findByIdAndDelete({ model, autoDeploymentID, autoRollback, ctx }) {
+function findByIdAndDelete({
+  model,
+  autoDeploymentID,
+  autoTransaction,
+  autoRollback,
+  ctx,
+}) {
   return async function () {
     const [id, ...args] = arguments;
-    return findOneAndDelete({ model, autoDeploymentID, autoRollback, ctx })(
-      { _id: id },
-      ...args
-    );
+    return findOneAndDelete({
+      model,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    })({ _id: id }, ...args);
   };
 }
 

@@ -4,21 +4,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const db = {
-  user: {
-    find: () => {},
-  },
-};
-
-function create({ clientId, name, email }) {
-  db.user.find({ clientId, email });
-  return null;
-}
-
-function create({ email }, { ctx }) {
-  ctx.db.user.create({ email });
-  return null;
-}
 
 /** @type {ServiceSchema} */
 module.exports = (broker) => {
@@ -50,8 +35,6 @@ module.exports = (broker) => {
           path: "/CREA_USURIA",
         },
         async handler(ctx) {
-          create({ name, email }, { ctx, userSession });
-
           broker.sendToChannel(
             "hello.call",
             { gatitos: "powa" },
