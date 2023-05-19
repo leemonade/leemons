@@ -49,13 +49,16 @@ class LeemonsApi {
       });
     }
     this.removeWhenNoWaits = (waitKey) => {
+      let times = 0;
       const check = () => {
         if (this.apiWaitToFinish[waitKey].finish) {
           if (!this.apiWaitToFinish[waitKey].waiting) {
             delete this.apiWaitToFinish[waitKey];
           }
-        } else {
+        } else if (times < 60) {
           window.requestAnimationFrame(check);
+        } else {
+          delete this.apiWaitToFinish[waitKey];
         }
       }
       window.requestAnimationFrame(check);
