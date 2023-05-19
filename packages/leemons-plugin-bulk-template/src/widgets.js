@@ -22,6 +22,7 @@ async function initWidgets() {
       'plugins.academic-portfolio.class.tab.detail',
     ],
     'plugins.assignables.class.ongoing': [
+      'plugins.board-messages.class-dashboard',
       'plugins.assignables.dashboard.subject.need-your-attention',
       'plugins.assignables.class.ongoing',
     ],
