@@ -144,7 +144,7 @@ async function search(
 
       const [assetsFound, byTags] = await Promise.all([
         tables.assets.find(query, { columns: ['id'], transacting }),
-        tagsService.getTagsValues(criteria, {
+        tagsService.getTagsValueByPartialTags(criteria, {
           type: leemons.plugin.prefixPN(''),
           transacting,
         }),
