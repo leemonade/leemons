@@ -13,7 +13,7 @@ const permissions = [
   },
   {
     permissionName: permissionNames.modules,
-    actions: ['admin', 'create', 'update', 'delete', 'view'],
+    actions: ['admin', 'create', 'update', 'delete', 'assign', 'view'],
     localizationName: { es: 'Módulos', en: 'Modules' },
   },
 ];
