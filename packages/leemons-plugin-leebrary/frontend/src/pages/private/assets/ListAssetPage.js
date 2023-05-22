@@ -1,7 +1,10 @@
 /* eslint-disable no-unreachable */
-import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
+import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
+import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import LibraryContext from '../../../context/LibraryContext';
 import { VIEWS } from '../library/Library.constants';
 import { AssetList } from '../../../components/AssetList';
@@ -14,6 +17,7 @@ function useQuery() {
 const ListAssetPage = () => {
   const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
+
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
   const [assetType, setAssetType] = useState('');
@@ -23,6 +27,14 @@ const ListAssetPage = () => {
   const params = useParams();
   const query = useQuery();
   const location = useLocation();
+  const profile = useGetProfileSysName();
+  const isStudent = useIsStudent();
+  const isTeacher = useIsTeacher();
+  const isAdmin = profile === 'admin';
+  const academicFilters = useAcademicFiltersForAssetList({
+    // hideProgramSelect: isStudent,
+    useLabels: true,
+  });
 
   // ·········································································
   // EFFECTS
@@ -167,8 +179,23 @@ const ListAssetPage = () => {
   // ·········································································
   // RENDER
 
+  let props = {};
+  if (
+    (category?.key === 'pins' ||
+      category?.key === 'assignables.task' ||
+      category?.key === 'assignables.tests') &&
+    (isTeacher || isStudent)
+  ) {
+    props = academicFilters;
+  }
+  if (category?.key === 'media-files' && isTeacher) {
+    props = academicFilters;
+    props.searchInProvider = false;
+  }
+
   return !isNil(categories) && !isEmpty(categories) ? (
     <AssetList
+      {...props}
       category={category}
       categories={categories}
       asset={currentAsset}

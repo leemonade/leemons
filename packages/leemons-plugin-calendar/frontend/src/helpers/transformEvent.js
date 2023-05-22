@@ -1,7 +1,11 @@
 import { cloneDeep, find, keyBy, uniq } from 'lodash';
 import { parseDeadline } from '@assignables/components/NYACard/NYACard';
 
-export default function transformEvent(_event, calendars, { columns, isTeacher, t, translate }) {
+export default function transformEvent(
+  _event,
+  calendars,
+  { forKanban, columns, isTeacher, t, translate }
+) {
   const event = cloneDeep(_event);
   // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');
@@ -13,7 +17,7 @@ export default function transformEvent(_event, calendars, { columns, isTeacher, 
   event.uniqClasses = classes;
   if (classes.length >= 2) {
     const calendar = calendarsByKey[event.calendar];
-    if (calendar.isUserCalendar) {
+    if (calendar.isUserCalendar && !event.data.instanceId) {
       event.image = calendar.image;
       event.calendarName = null;
     }
@@ -26,13 +30,23 @@ export default function transformEvent(_event, calendars, { columns, isTeacher, 
     if (!calendar) {
       calendar = calendarsByKey[event.calendar];
     }
+    const eventCalendar = calendarsByKey[event.calendar];
     event.icon = event.icon || calendar.icon;
     event.bgColor = event.bgColor || calendar.bgColor;
     event.borderColor = event.borderColor || calendar.borderColor;
     event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
-    if (calendar.isUserCalendar && !classes.length) {
-      event.image = calendar.image;
+    if (!forKanban) {
+      if (calendar.isUserCalendar && !classes.length) {
+        event.image = calendar.image;
+      }
+    } else {
       event.calendarName = null;
+      if (eventCalendar.isUserCalendar) {
+        event.image = eventCalendar.image;
+      }
+      if (classes.length) {
+        event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
+      }
     }
     if (!event.icon && !calendar.isClass && !calendar.isUserCalendar) {
       event.icon = '/public/assets/svgs/alarm-bell.svg';

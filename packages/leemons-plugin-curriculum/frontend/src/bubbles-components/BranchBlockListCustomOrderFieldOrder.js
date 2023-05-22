@@ -1,38 +1,44 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { filter } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
-  Checkbox,
-  Group,
+  ContextContainer,
   NumberInput,
   Paper,
   Select,
+  Stack,
+  Text,
   Transition,
 } from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { numberToEncodedLetter } from '@common';
+import { filter } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const scaleY = {
   in: { opacity: 1, transform: 'scaleY(1)' },
   out: { opacity: 0, transform: 'scaleY(0)' },
-  common: { transformOrigin: 'top' },
+  common: { transformOrigin: 'bottom' },
   transitionProperty: 'transform, opacity',
 };
 
-export function getExampleTextForListOrderedConfig(config) {
+export function getExampleTextForListOrderedConfig(config, init = 1) {
   if (config && config.numberingStyle) {
     if (config.numberingStyle === 'style-1') {
       if (config.numberingDigits) {
-        return `${'1'.padStart(config.numberingDigits, '0')},${'2'.padStart(
-          config.numberingDigits,
-          '0'
-        )}`;
+        return `${init.toString().padStart(config.numberingDigits, '0')},${(init + 1)
+          .toString()
+          .padStart(config.numberingDigits, '0')},${(init + 2)
+          .toString()
+          .padStart(config.numberingDigits, '0')}...`;
       }
-      return '1,2';
+      return '1,2,3...';
     }
-    if (config.numberingStyle === 'style-1') {
-      return 'A,B';
+    if (config.numberingStyle === 'style-2') {
+      return `${numberToEncodedLetter(init)},${numberToEncodedLetter(
+        init + 1
+      )},${numberToEncodedLetter(init + 2)}...`;
     }
   }
   return null;
@@ -44,6 +50,7 @@ function BranchBlockListCustomOrderFieldOrder({
   defaultValues,
   selectData,
   opened,
+  withPrevious = true,
   setOpened,
   onSave = () => {},
 }) {
@@ -65,84 +72,80 @@ function BranchBlockListCustomOrderFieldOrder({
             ...styles,
             zIndex: 10,
             position: 'absolute',
-            top: '100%',
+            bottom: '100%',
             left: 0,
             width: 300,
           }}
         >
-          <Box m={16}>
-            <Box>
-              aaaa
-              <Controller
-                name="numberingStyle"
-                control={control}
-                rules={{
-                  required: errorMessages.listNumberingStyleRequired,
-                }}
-                render={({ field }) => (
-                  <Select
-                    required
-                    error={errors.numberingStyle}
-                    data={
-                      selectData.listOrdered
-                        ? filter(
-                            selectData.listOrdered,
-                            ({ value }) => ['style-1', 'style-2'].indexOf(value) >= 0
-                          )
-                        : []
-                    }
-                    {...field}
-                  />
-                )}
-              />
-            </Box>
+          <Box>
+            <Stack
+              sx={(theme) => ({ marginBottom: theme.spacing[6] })}
+              fullWidth
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Text size="md" strong color="primary">
+                {messages.addNumeration}
+              </Text>
+              <RemoveIcon onClick={() => setOpened(false)} />
+            </Stack>
+            <ContextContainer>
+              <Box>
+                <Controller
+                  name="numberingStyle"
+                  control={control}
+                  rules={{
+                    required: errorMessages.listNumberingStyleRequired,
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      required
+                      label={messages.numerationLabel}
+                      error={errors.numberingStyle}
+                      data={
+                        selectData.listOrdered
+                          ? filter(
+                              selectData.listOrdered,
+                              ({ value }) => ['style-1', 'style-2'].indexOf(value) >= 0
+                            )
+                          : []
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+                {formData.numberingStyle === 'style-2' ? (
+                  <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                    <Text role="productive">{getExampleTextForListOrderedConfig(watch())}</Text>
+                  </Box>
+                ) : null}
+              </Box>
 
-            {formData.numberingStyle === 'style-1' ? (
-              <Group>
-                <Box mt={16}>
+              {formData.numberingStyle === 'style-1' ? (
+                <Box>
                   <Controller
                     name="numberingDigits"
                     control={control}
+                    defaultValue={1}
+                    shouldUnregister
                     render={({ field }) => (
                       <NumberInput
+                        min={1}
                         label={messages.listNumberingDigitsLabel}
                         error={errors.numberingDigits?.message}
                         {...field}
                       />
                     )}
                   />
+                  <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                    <Text role="productive">{getExampleTextForListOrderedConfig(watch())}</Text>
+                  </Box>
                 </Box>
-                <Box>
-                  <Controller
-                    name="numberingContinueFromPrevious"
-                    control={control}
-                    defaultValue={false}
-                    render={({ field }) => (
-                      <Checkbox label={messages.listNumberingContinueFromPrevious} {...field} />
-                    )}
-                  />
-                </Box>
-              </Group>
-            ) : null}
+              ) : null}
 
-            <Box mt={16}>{getExampleTextForListOrderedConfig(watch())}</Box>
-
-            <Box mt={16}>
-              <Group>
+              <Box>
                 <Button
-                  rounded
-                  size="xs"
-                  loaderPosition="right"
-                  type="button"
-                  onClick={() => setOpened(false)}
-                >
-                  {messages.cancelCodeAutoComposedField}
-                </Button>
-                <Button
-                  rounded
-                  size="xs"
-                  loaderPosition="right"
-                  type="button"
+                  fullWidth
                   onClick={handleSubmit((d) => {
                     onSave(d);
                     setOpened(false);
@@ -150,8 +153,8 @@ function BranchBlockListCustomOrderFieldOrder({
                 >
                   {messages.saveCodeAutoComposedField}
                 </Button>
-              </Group>
-            </Box>
+              </Box>
+            </ContextContainer>
           </Box>
         </Paper>
       )}
@@ -168,6 +171,7 @@ BranchBlockListCustomOrderFieldOrder.propTypes = {
   setOpened: PropTypes.func,
   onSubmit: PropTypes.func,
   onSave: PropTypes.func,
+  withPrevious: PropTypes.bool,
 };
 
 export default BranchBlockListCustomOrderFieldOrder;

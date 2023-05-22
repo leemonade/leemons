@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@bubbles-ui/calendars": "1.1.0",
-    "@bubbles-ui/leemons": "1.1.0",
+    "@bubbles-ui/leemons": "dev",
     "@asseinfo/react-kanban": "^2.2.0",
     "clsx": "^1.1.1",
     "country-region-data": "^1.11.0",

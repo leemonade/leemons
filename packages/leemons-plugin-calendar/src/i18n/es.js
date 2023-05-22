@@ -24,7 +24,11 @@ module.exports = {
     today: 'Hoy',
     previous: 'Anterior',
     next: 'Siguiente',
-    showWeekends: 'Mostrar fines de semana',
+    showWeekends: 'Fines de semana',
+    display: 'Mostrar',
+    entirePeriod: 'Periodo completo',
+    onlyInitAndEnd: 'Solo mostrar inicio y final',
+    onlyEnd: 'Solo mostrar fecha límite',
     calendar: 'Calendario',
     schedule: 'Horario',
     program: 'Programa',
@@ -173,6 +177,9 @@ module.exports = {
     archived: 'Ver tareas archivadas',
     selectCalendarsSubjects: 'Todas las asignaturas',
     onlyByMy: 'Solo las creadas por mi',
+  },
+  kanbanTaskCard: {
+    delivery: 'Entrega',
   },
   userProgramCalendar: {
     calendar: 'Calendario',

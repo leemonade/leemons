@@ -1,7 +1,4 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty } = require('lodash');
-const pathSys = require('path');
-const fsPromises = require('fs/promises');
 const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 const { uploadFromSource } = require('./helpers/uploadFromSource');
@@ -9,6 +6,7 @@ const { dataForReturnFile } = require('./dataForReturnFile');
 // -----------------------------------------------------------------------------
 // MAIN FUNCTIONS
 
+// eslint-disable-next-line camelcase
 async function duplicate({ id, created_at, updated_at, ...fileFrom }, { transacting } = {}) {
   // EN: Use active provider
   // ES: Usar el proveedor activo
@@ -34,7 +32,7 @@ async function duplicate({ id, created_at, updated_at, ...fileFrom }, { transact
   // ES: Si no hay proveedor activo, usar el por defecto
 
   const data = await dataForReturnFile(id, { transacting });
-  return uploadFromSource(data, { name: fileFrom.name }, { transacting: t });
+  return uploadFromSource(data, { name: fileFrom.name }, { transacting });
 }
 
 module.exports = { duplicate };

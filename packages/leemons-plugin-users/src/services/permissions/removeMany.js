@@ -9,7 +9,7 @@ const { remove } = require('./remove');
  * @return {Promise<ManyResponse>} Deleted permissions
  * */
 async function removeMany(permissionNames) {
-  const response = await Promise.allSettled(_.map(permissionNames, (d) => remove(d)));
+  const response = await Promise.allSettled(_.map(permissionNames, (d) => remove.call(this, d)));
   return global.utils.settledResponseToManyResponse(response);
 }
 

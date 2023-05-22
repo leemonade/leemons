@@ -1,20 +1,13 @@
-import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import formWithTheme from '@common/formWithTheme';
-import {
-  ActionButton,
-  Box,
-  Button,
-  ContextContainer,
-  Select,
-  Stack,
-  TextInput,
-} from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import * as _ from 'lodash';
-import { find } from 'lodash';
+import { Box, ContextContainer, Title } from '@bubbles-ui/components';
+import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
+import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
+import CurriculumForm from '@curriculum/components/FormTheme/CurriculumForm';
+import { getParentNodes } from '@curriculum/helpers/getParentNodes';
+import * as _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
   nameLabel: 'Name',
@@ -28,19 +21,17 @@ export const NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES = {
 };
 
 function NewBranchDetailValue({
-  isSubject,
-  subjectData,
-  messages,
-  errorMessages,
-  isLoading,
+  isEditMode = true,
   onSubmit,
   defaultValues,
   schema,
   schemaFormValues,
   readonly,
+  curriculum,
   onCloseBranch,
 }) {
   const [store, render] = useStore();
+
   const {
     reset,
     control,
@@ -50,119 +41,101 @@ function NewBranchDetailValue({
     formState: { errors },
   } = useForm();
 
-  useEffect(() => {
+  React.useEffect(() => {
     reset(defaultValues);
   }, [JSON.stringify(defaultValues)]);
 
-  const datasetProps = useMemo(
-    () => ({ formData: schemaFormValues }),
-    [JSON.stringify(schemaFormValues)]
-  );
+  function getIcon(curricularContent) {
+    switch (curricularContent) {
+      case 'knowledges':
+        return <PluginSubjectsIcon />;
+      case 'qualifying-criteria':
+        return <StarIcon />;
+      case 'non-qualifying-criteria':
+        return <CutStarIcon />;
+      default:
+        return null;
+    }
+  }
 
-  const goodDatasetConfig = useMemo(() => {
+  const goodDatasetConfig = React.useMemo(() => {
     const response = _.cloneDeep(schema);
-    if (readonly) {
-      if (response && response.jsonSchema) {
-        _.forIn(response.jsonSchema.properties, (value, key) => {
+    if (response && response.jsonSchema) {
+      _.forIn(response.jsonSchema.properties, (value, key) => {
+        response.jsonSchema.properties[key].tabTitle = (
+          <Box sx={(theme) => ({ display: 'flex', alignItem: 'center', gap: theme.spacing[2] })}>
+            {getIcon(value.frontConfig.blockData.curricularContent)} {value.title}
+          </Box>
+        );
+        response.jsonSchema.properties[key].frontConfig.required = false;
+        if (readonly) {
           if (!response.jsonUI[key]) response.jsonUI[key] = {};
           response.jsonUI[key]['ui:readonly'] = true;
-        });
-      }
+        }
+      });
     }
-    return response;
+
+    return {
+      ...response,
+      jsonSchema: {
+        ...response.jsonSchema,
+        required: [],
+        asTabs: true,
+        tabProps: {
+          onChange: (e) => {
+            store.hideSaveButton = false;
+            if (response.jsonSchema.properties[e].frontConfig.blockData.type === 'list') {
+              store.hideSaveButton = true;
+            }
+            render();
+          },
+        },
+      },
+    };
   }, [schema, readonly]);
 
-  const [formBad, formActions] = formWithTheme(
+  const parentNodes = React.useMemo(
+    () => getParentNodes(curriculum.nodes, defaultValues.id).reverse(),
+    [curriculum, defaultValues]
+  );
+
+  /*
+  const [form, formActions] = formWithTheme(
     goodDatasetConfig?.jsonSchema,
     goodDatasetConfig?.jsonUI,
     undefined,
-    datasetProps
+    datasetProps,
+    {
+      customValidateSchema: goodDatasetConfig?.jsonSchema,
+      widgets: { BaseInput, wysiwyg: WysiwygWidget, TextareaWidget: WysiwygWidget, ListField },
+    }
   );
 
-  React.useEffect(() => {
-    if ((!store.form && formBad) || store.id !== defaultValues.id) {
-      store.form = formBad;
-      store.id = defaultValues.id;
-      render();
-    }
-  }, [formBad]);
+   */
 
-  async function save() {
-    handleSubmit(async (data) => {
-      const toSend = { ...data, id: defaultValues?.id };
-      let fErrors = [];
-      if (formActions.isLoaded()) {
-        await formActions.submit();
-        fErrors = formActions.getErrors();
-
-        toSend.datasetValues = formActions.getValues();
-      }
-
-      if (!fErrors.length) {
-        onSubmit(toSend);
-      }
-    })();
+  async function save(datasetValues, noClose = true) {
+    const toSend = { ...defaultValues, datasetValues };
+    await onSubmit(toSend, noClose);
   }
 
   return (
     <ContextContainer>
-      <Stack fullWidth justifyContent="end">
-        <ActionButton icon={<RemoveIcon />} onClick={onCloseBranch} />
-      </Stack>
-      {!readonly ? (
-        <form autoComplete="off">
-          <ContextContainer>
-            {isSubject ? (
-              <Controller
-                name="academicItem"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    label={messages.subjectLabel}
-                    data={subjectData}
-                    readOnly
-                    {...field}
-                    onChange={(e) => {
-                      const { label } = find(subjectData, { value: e });
-                      setValue('name', label);
-                      field.onChange(e);
-                    }}
-                  />
-                )}
-              />
-            ) : (
-              <Controller
-                name="name"
-                control={control}
-                rules={{
-                  required: errorMessages.nameRequired,
-                }}
-                render={({ field }) => (
-                  <TextInput
-                    label={messages.nameLabel}
-                    placeholder={messages.namePlaceholder}
-                    error={errors.name}
-                    required
-                    {...field}
-                  />
-                )}
-              />
-            )}
-          </ContextContainer>
-        </form>
-      ) : (
-        <Box>{watch('name')}</Box>
-      )}
+      <Title order={3}>
+        {!isEditMode ? parentNodes.map(({ name }) => `${name} > `) : null}
+        {watch('name')}
+      </Title>
 
-      <Box>{store?.form}</Box>
-
-      {!readonly ? (
-        <Stack justifyContent="end">
-          <Button variant="outline" loading={isLoading} onClick={save}>
-            {messages.saveButtonLabel}
-          </Button>
-        </Stack>
-      ) : null}
+      <Box>
+        <CurriculumForm
+          id={defaultValues.id}
+          curriculum={curriculum}
+          isEditMode={isEditMode}
+          schema={goodDatasetConfig?.jsonSchema}
+          onSave={save}
+          defaultValues={schemaFormValues}
+          readonly={readonly}
+        />
+      </Box>
     </ContextContainer>
   );
 }
@@ -196,7 +169,9 @@ NewBranchDetailValue.propTypes = {
   onSubmit: PropTypes.func,
   isLoading: PropTypes.bool,
   readonly: PropTypes.bool,
+  curriculum: PropTypes.any,
   onCloseBranch: PropTypes.func,
+  isEditMode: PropTypes.bool,
 };
 
 export default NewBranchDetailValue;

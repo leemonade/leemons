@@ -86,7 +86,6 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
   async function onSubmit(data) {
     try {
       store.saving = true;
-      // console.log('data:', data);
       render();
       await updateOrganizationRequest(data);
       hooks.fireEvent('platform:theme:change');

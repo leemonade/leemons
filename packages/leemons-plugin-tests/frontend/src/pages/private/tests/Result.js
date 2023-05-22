@@ -30,8 +30,8 @@ import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import ChatDrawer from '@comunica/ChatDrawer/ChatDrawer';
-import ChatButton from '@comunica/ChatButton';
+import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
+import ChatButton from '@comunica/components/ChatButton';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import {
   getFeedbackRequest,

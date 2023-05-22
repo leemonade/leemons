@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useApi } from '@common';
 import PropTypes from 'prop-types';
-import { Select } from '@bubbles-ui/components';
+import { MultiSelect, Select } from '@bubbles-ui/components';
 import { listProgramsRequest } from '../../request';
 
 // EN: Parse data fetched from the server
@@ -19,7 +19,19 @@ async function getData(center) {
 }
 
 const SelectProgram = forwardRef(
-  ({ firstSelected, center, value: userValue, onChange, ensureIntegrity, ...props }, ref) => {
+  (
+    {
+      firstSelected,
+      center,
+      value: userValue,
+      onChange,
+      ensureIntegrity,
+      multiple,
+      autoSelectOneOption = true,
+      ...props
+    },
+    ref
+  ) => {
     const [value, setValue] = useState(userValue);
 
     // EN: Get programs from API on center change
@@ -49,7 +61,7 @@ const SelectProgram = forwardRef(
     }, [userValue]);
 
     useEffect(() => {
-      if (firstSelected && data.length > 0) {
+      if (firstSelected && data?.length > 0) {
         handleChange(data[0].value);
       }
     }, [data]);
@@ -69,6 +81,20 @@ const SelectProgram = forwardRef(
       }
     }, [data, loading, value]);
 
+    if (multiple) {
+      return (
+        <MultiSelect
+          {...props}
+          ref={ref}
+          data={data || []}
+          disabled={!data?.length}
+          onChange={handleChange}
+          value={value}
+          autoSelectOneOption={autoSelectOneOption}
+        />
+      );
+    }
+
     return (
       <Select
         {...props}
@@ -77,7 +103,7 @@ const SelectProgram = forwardRef(
         disabled={!data?.length}
         onChange={handleChange}
         value={value}
-        autoSelectOneOption
+        autoSelectOneOption={autoSelectOneOption}
       />
     );
   }
@@ -90,6 +116,8 @@ SelectProgram.propTypes = {
   onChange: PropTypes.func,
   ensureIntegrity: PropTypes.bool,
   firstSelected: PropTypes.bool,
+  multiple: PropTypes.bool,
+  autoSelectOneOption: PropTypes.bool,
 };
 
 export { SelectProgram };

@@ -132,6 +132,9 @@ module.exports = {
       // TODO: Add reference to plugins grade
       type: 'uuid',
     },
+    totalHours: {
+      type: 'integer',
+    },
   },
   primaryKey: {
     type: 'uuid',

@@ -31,7 +31,9 @@ async function saveFeedback(_body) {
   ) {
     const { cover, featuredImage, ...data } = body;
     if (_body.cover) {
-      if (_body.cover.cover) {
+      if (isString(_body.cover)) {
+        data.cover = _body.cover;
+      } else if (_body.cover.cover) {
         data.cover = _body.cover.cover?.id;
       } else if (_body.cover.id) {
         data.cover = _body.cover.id;
@@ -40,7 +42,9 @@ async function saveFeedback(_body) {
       }
     }
     if (_body.featuredImage) {
-      if (_body.featuredImage.cover) {
+      if (isString(_body.featuredImage)) {
+        data.featuredImage = _body.featuredImage;
+      } else if (_body.featuredImage.cover) {
         data.featuredImage = _body.featuredImage.cover?.id;
       } else if (_body.featuredImage.id) {
         data.featuredImage = _body.featuredImage.id;

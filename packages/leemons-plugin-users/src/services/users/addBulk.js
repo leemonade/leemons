@@ -13,12 +13,14 @@ const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
 const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
 const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
 const { addUserAvatar } = require('./addUserAvatar');
+const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
+const { checkIfCanCreateNUserAgentsInRoleProfiles } = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
 
 async function addUserBulk(
   role,
-  { id, tags, password, birthdate, avatar, created_at, ...userData },
+  { id, tags, password, birthdate, avatar, created_at, dataset, ...userData },
   ctx,
-  { profile, transacting } = {}
+  { profile, transacting, userSession } = {}
 ) {
   const tagsService = leemons.getPlugin('common').services.tags;
 
@@ -55,6 +57,8 @@ async function addUserBulk(
       }
     );
   }
+  if (dataset) await setUserDatasetInfo(user.id, dataset, { userSession, transacting });
+
   let userAgent = await table.userAgent.findOne(
     {
       deleted_$null: false,
@@ -64,6 +68,7 @@ async function addUserBulk(
     { transacting }
   );
   if (!userAgent) {
+    await checkIfCanCreateNUserAgentsInRoleProfiles(1, role, { transacting });
     userAgent = await table.userAgent.create(
       {
         role,
@@ -109,7 +114,7 @@ async function addUserBulk(
   return user;
 }
 
-async function addBulk(data, ctx, { transacting: _transacting } = {}) {
+async function addBulk(data, ctx, { userSession, transacting: _transacting } = {}) {
   const { center, profile, users } = data;
   return global.utils.withTransaction(
     async (transacting) => {
@@ -132,7 +137,7 @@ async function addBulk(data, ctx, { transacting: _transacting } = {}) {
               active: false,
             },
             ctx,
-            { profile: _profile, transacting }
+            { profile: _profile, userSession, transacting }
           )
         )
       );

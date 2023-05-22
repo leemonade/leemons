@@ -11,9 +11,15 @@ async function newAssetForTextEditor(props) {
 
   const preparedAsset = prepareAsset(duplicatedAsset);
 
+  let url = preparedAsset.url || preparedAsset.cover;
+
+  if (props.filetype === 'bookmark') {
+    url = props.url;
+  }
+
   return {
     ...props,
-    url: preparedAsset.url || preparedAsset.cover,
+    url,
     cover: preparedAsset.cover,
     id: preparedAsset.id,
     processed: true,

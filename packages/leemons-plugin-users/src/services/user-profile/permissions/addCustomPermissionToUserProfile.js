@@ -1,13 +1,14 @@
+const _ = require('lodash');
 const { table } = require('../../tables');
 const { exist } = require('../exist');
 const { add } = require('../add');
 const { getRole } = require('../getRole');
-const _ = require('lodash');
 const { validatePermissionName } = require('../../../validations/exists');
 const { addPermissionMany, removePermissionsByName } = require('../../roles');
 const {
   markAllUserAgentsForUserProfileToReloadPermissions,
 } = require('./markAllUserAgentsForUserProfileToReloadPermissions');
+const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
 
 /**
  *
@@ -56,7 +57,7 @@ async function addCustomPermissionToUserProfile(
         // EN: Update users to reload permissions
         markAllUserAgentsForUserProfileToReloadPermissions(user, profile, { transacting }),
       ]);
-
+      await removeAllItemsCache();
       return true;
     },
     table.userProfile,

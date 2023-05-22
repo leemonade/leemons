@@ -13,6 +13,7 @@ const {
   filter,
   keyBy,
   forEach,
+  groupBy,
 } = require('lodash');
 const {
   getUserAgentsInfo,
@@ -20,7 +21,6 @@ const {
 const { tables } = require('../tables');
 const { CATEGORIES } = require('../../../config/constants');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
-const { getUsersByAsset } = require('../permissions/getUsersByAsset');
 const { find: findBookmarks } = require('../bookmarks/find');
 const canAssignRole = require('../permissions/helpers/canAssignRole');
 const { getByIds: getCategories } = require('../categories/getByIds');
@@ -32,6 +32,7 @@ async function getByIds(
   assetsIds,
   {
     withFiles,
+    withSubjects = true,
     withTags = true,
     withCategory = true,
     checkPins = true,
@@ -55,9 +56,30 @@ async function getByIds(
   let assets = await tables.assets.find(query, { transacting });
 
   // ·········································································
+  // ADMIN PROGRAMS
+  const { services: userService } = leemons.getPlugin('users');
+  const currentPermissions = await userService.permissions.getItemPermissions(
+    map(assets, 'id'),
+    leemons.plugin.prefixPN('asset.can-view'),
+    { transacting, returnRaw: true }
+  );
+
+  const adminProgramsByItem = {};
+  forEach(currentPermissions, (permission) => {
+    if (permission.permissionName.startsWith('plugins.academic-portfolio.program.inside.')) {
+      if (!adminProgramsByItem[permission.item]) {
+        adminProgramsByItem[permission.item] = [];
+      }
+      adminProgramsByItem[permission.item].push(
+        permission.permissionName.replace('plugins.academic-portfolio.program.inside.', '')
+      );
+    }
+  });
+
+  // ·········································································
   // PERMISSIONS & PERSONS
   if (checkPermissions && userSession) {
-    const classesPermissionsPerAsset = await getClassesPermissions(assetsIds, {
+    const classesPermissionsPerAsset = await getClassesPermissions(map(assets, 'id'), {
       withInfo: true,
       transacting,
       userSession,
@@ -76,14 +98,17 @@ async function getByIds(
     for (let i = 0, l = assets.length; i < l; i++) {
       const asset = assets[i];
       const classesWithPermissions = classesPermissionsPerAsset[i];
-
+      asset.isPrivate = true;
+      if (classesWithPermissions.length) {
+        asset.isPrivate = false;
+      }
       asset.classesCanAccess = classesWithPermissions;
       const permission = permissions.find((item) => item.asset === asset.id);
       if (!isEmpty(permission?.permissions)) {
         const { permissions: userPermissions } = permission;
-        if (userPermissions.edit) {
-          getUsersAssetIds.push(asset.id);
-        }
+        // if (userPermissions.edit) {
+        getUsersAssetIds.push(asset.id);
+        // }
       }
     }
 
@@ -132,9 +157,45 @@ async function getByIds(
             return item;
           });
           assets[i].canAccess = assetPermissions;
+          if (assets[i].canAccess?.length) {
+            const noOwners = filter(
+              assets[i].canAccess,
+              (item) => !item.permissions?.includes('owner')
+            );
+            if (noOwners.length) {
+              assets[i].isPrivate = false;
+            }
+          }
+
+          const _permission = permissions.find((item) => item.asset === asset.id);
+          if (!isEmpty(_permission?.permissions)) {
+            const { permissions: userPermissions } = _permission;
+            if (!userPermissions.edit) {
+              const owner = find(assets[i].canAccess, (item) =>
+                item.permissions?.includes('owner')
+              );
+              assets[i].canAccess = null;
+              if (owner) {
+                assets[i].canAccess = [owner];
+              }
+            }
+          }
         }
       }
     }
+  }
+
+  // ·········································································
+  // SUBJECT
+  if (!isEmpty(assets) && withSubjects) {
+    const assetsSubjects = await tables.assetsSubjects.find({ asset_$in: ids }, { transacting });
+
+    const subjectsByAsset = groupBy(assetsSubjects, 'asset');
+
+    assets = assets.map((asset) => {
+      asset.subjects = subjectsByAsset[asset.id];
+      return asset;
+    });
   }
 
   // ·········································································
@@ -234,6 +295,23 @@ async function getByIds(
     pins = await getPins(assetsIds, { userSession, transacting });
   }
 
+  let programsById = {};
+  const programIds = [];
+  forEach(assets, (asset) => {
+    if (asset.program) {
+      programIds.push(asset.program);
+    }
+  });
+
+  if (programIds.length) {
+    const programs = await leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.programsByIds(uniq(programIds), {
+        onlyProgram: true,
+        transacting,
+      });
+    programsById = keyBy(programs, 'id');
+  }
   // ·········································································
   // FINALLY
 
@@ -245,6 +323,12 @@ async function getByIds(
 
   const result = assets.map((asset, index) => {
     const item = { ...asset };
+
+    if (item.program) {
+      item.programName = programsById[item.program]?.name;
+    }
+
+    item.adminPrograms = adminProgramsByItem[item.id] || [];
 
     if (withCategory) {
       const { key, duplicable, assignable } = find(categories, { id: asset.category });

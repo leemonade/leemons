@@ -2,11 +2,11 @@
 const { keys } = require('lodash');
 const importCenters = require('./bulk/centers');
 
-async function initCenters() {
+async function initCenters(file) {
   const { services } = leemons.getPlugin('users');
 
   try {
-    const centers = await importCenters();
+    const centers = await importCenters(file);
     const centersKeys = keys(centers);
 
     for (let i = 0, len = centersKeys.length; i < len; i++) {

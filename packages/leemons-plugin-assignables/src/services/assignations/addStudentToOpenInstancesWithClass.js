@@ -137,6 +137,7 @@ async function addStudentToInstances({ student, instances, userSession }) {
             `subject|${subjectId}.assignation|${assignation.id}.userAgent|${student}`
           ),
           {
+            userSession,
             transacting,
             userAgents: compact(uniq(teachers).concat(student)),
           }

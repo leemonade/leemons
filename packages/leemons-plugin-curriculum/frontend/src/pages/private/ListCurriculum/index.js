@@ -1,22 +1,30 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { filter, isEmpty, keyBy, map } from 'lodash';
-import { useHistory } from 'react-router-dom';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import {
+  Box,
+  ContextContainer,
+  LoadingOverlay,
+  PaginatedList,
+  TabPanel,
+  Tabs,
+  Title,
+} from '@bubbles-ui/components';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { AdminPageHeader, LibraryCard } from '@bubbles-ui/leemons';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import prefixPN from '@curriculum/helpers/prefixPN';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import {
   getPermissionsWithActionsIfIHaveRequest,
   getPlatformLocalesRequest,
   listCentersRequest,
 } from '@users/request';
-import { Box, LoadingOverlay, PaginatedList, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
-import { AdminPageHeader, LibraryCard } from '@bubbles-ui/leemons';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useStore } from '@common';
+import { filter, isEmpty, keyBy, map } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { deleteCurriculumRequest, listCurriculumRequest } from '../../../request';
 
 function getAsset(curriculum) {
@@ -100,13 +108,12 @@ function ListCurriculum() {
   }, []);
 
   const handleOnSelect = (curriculum) => {
-    history.push(`/private/curriculum/${curriculum.id}/step/${curriculum.step || 1}`);
+    history.push(`/private/curriculum/${curriculum.id}`);
   };
 
   const headerValues = useMemo(
     () => ({
       title: t('page_title'),
-      description: t('page_description'),
     }),
     [t]
   );
@@ -172,7 +179,7 @@ function ListCurriculum() {
 
   const serverData = useMemo(
     () => ({
-      items: curriculums?.map((curriculum) => getAsset(curriculum)),
+      items: curriculums?.map((curriculum) => getAsset(curriculum)) || [],
       page: 0,
       size: 10,
       totalCount: curriculums?.length,
@@ -181,22 +188,79 @@ function ListCurriculum() {
     [curriculums]
   );
 
+  const cy = filter(serverData.items, { published: true });
+  const cn = filter(serverData.items, { published: false });
+
   return (
-    <Stack direction="column" fullWidth fullHeight>
+    <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerValues}
         buttons={store.canAdd ? { new: tCommon('new') } : {}}
         onNew={() => history.push(`/private/curriculum/new`)}
       />
 
-      <Box style={{ flex: 1 }}>
-        <Tabs usePageLayout={true} fullHeight>
-          <TabPanel label={t('published')}>
+      <Tabs usePageLayout panelColor="solid" fullHeight fullWidth>
+        <TabPanel label={t('published')}>
+          <Box
+            style={{
+              height: '100%',
+              position: 'relative',
+              display: 'flex',
+              flex: 1,
+              flexDirection: 'column',
+            }}
+          >
+            <LoadingOverlay visible={loading} overlayOpacity={0} />
+            {!loading && !isEmpty(cy) && (
+              <Box
+                sx={(theme) => ({
+                  paddingBottom: theme.spacing[5],
+                  paddingTop: theme.spacing[5],
+                })}
+              >
+                <PaginatedList
+                  {...serverData}
+                  {...listProps}
+                  items={filter(serverData.items, { published: true })}
+                  selectable
+                  columns={columns}
+                  loading={loading}
+                  layout="grid"
+                  onSelect={handleOnSelect}
+                />
+              </Box>
+            )}
+            {!loading && isEmpty(cy) && (
+              <Box
+                sx={(theme) => ({
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                })}
+              >
+                <Title order={3}>{t('empty')}</Title>
+              </Box>
+            )}
+          </Box>
+        </TabPanel>
+        {store.canAdd ? (
+          <TabPanel label={t('draft')}>
             <Box
-              style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
+              style={{
+                height: '100%',
+                position: 'relative',
+                display: 'flex',
+                flex: 1,
+                flexDirection: 'column',
+              }}
             >
               <LoadingOverlay visible={loading} overlayOpacity={0} />
-              {!loading && !isEmpty(curriculums) && (
+              {!loading && !isEmpty(cn) && (
                 <Box
                   sx={(theme) => ({
                     paddingBottom: theme.spacing[5],
@@ -206,7 +270,7 @@ function ListCurriculum() {
                   <PaginatedList
                     {...serverData}
                     {...listProps}
-                    items={filter(serverData.items, { published: true })}
+                    items={filter(serverData.items, { published: false })}
                     selectable
                     columns={columns}
                     loading={loading}
@@ -215,39 +279,27 @@ function ListCurriculum() {
                   />
                 </Box>
               )}
+              {!loading && isEmpty(cn) && (
+                <Box
+                  sx={(theme) => ({
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  })}
+                >
+                  <Title order={3}>{t('empty')}</Title>
+                </Box>
+              )}
             </Box>
           </TabPanel>
-          {store.canAdd ? (
-            <TabPanel label={t('draft')}>
-              <Box
-                style={{ position: 'relative', display: 'flex', flex: 1, flexDirection: 'column' }}
-              >
-                <LoadingOverlay visible={loading} overlayOpacity={0} />
-                {!loading && !isEmpty(curriculums) && (
-                  <Box
-                    sx={(theme) => ({
-                      paddingBottom: theme.spacing[5],
-                      paddingTop: theme.spacing[5],
-                    })}
-                  >
-                    <PaginatedList
-                      {...serverData}
-                      {...listProps}
-                      items={filter(serverData.items, { published: false })}
-                      selectable
-                      columns={columns}
-                      loading={loading}
-                      layout="grid"
-                      onSelect={handleOnSelect}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </TabPanel>
-          ) : null}
-        </Tabs>
-      </Box>
-    </Stack>
+        ) : null}
+      </Tabs>
+    </ContextContainer>
   );
 }
 

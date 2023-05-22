@@ -209,4 +209,32 @@ async function addUser(ctx) {
   }
 }
 
-module.exports = { add: addUser };
+const initSuper = async (ctx) => {
+  if (process.env.NODE_ENV !== 'production') {
+    const { services } = leemons.getPlugin('admin');
+    try {
+      await services.settings.setLanguages({ code: 'es', name: 'Español' }, 'es');
+      await services.settings.registerAdmin({
+        name: 'Super',
+        surnames: 'Admin',
+        gender: 'male',
+        birthdate: new Date(),
+        email: 'super@leemons.io',
+        password: 'testing',
+        locale: 'es',
+      });
+      await services.settings.update({ status: 'INSTALLED', configured: true });
+
+      ctx.status = 200;
+      ctx.body = { status: 200 };
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { status: 500, error: e.message };
+    }
+  } else {
+    ctx.status = 401;
+    ctx.body = { status: 401, error: 'Endpoint disabled' };
+  }
+};
+
+module.exports = { add: addUser, initSuper };

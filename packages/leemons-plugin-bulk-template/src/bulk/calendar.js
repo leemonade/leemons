@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-const path = require('path');
 const { keys, isString, isEmpty, isNaN, trim, isNil, forEach } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
@@ -22,15 +21,14 @@ function getSubjectAndClassroom(programs, subjectString) {
   if (subject) {
     classroom = subject.classes.find((item) => item.groups.abbreviation === classroomKey);
   }
-  if (!classroomKey && !classroom && subject.classes.length) {
-    classroom = subject.classes[0];
+  if (!classroomKey && !classroom && subject?.classes?.length) {
+    [classroom] = subject.classes;
   }
 
   return { subject, classroom };
 }
 
-async function importEvents({ users, programs }) {
-  const filePath = path.resolve(__dirname, 'data.xlsx');
+async function importEvents(filePath, { users, programs }) {
   const items = await itemsImport(filePath, 'calendar', 40, true, true);
 
   const { services } = leemons.getPlugin('calendar');

@@ -5,25 +5,8 @@ import { Controller } from 'react-hook-form';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useTestsTypes } from '../../../../helpers/useTestsTypes';
 
-export default function DetailConfig({ store, form, t, onNext, onPrev }) {
-  const [isDirty, setIsDirty] = React.useState(false);
-  const testTypes = useTestsTypes();
-  const program = form.watch('program');
-  const type = form.watch('type');
-  const selectedType = testTypes.find(({ value }) => value === type);
-
-  async function next() {
-    setIsDirty(true);
-    const formGood = await form.trigger(['type']);
-    if (formGood) {
-      onNext();
-    }
-  }
-
-  return (
-    <ContextContainer divided>
-      <ContextContainer>
-        <Controller
+/*
+* <Controller
           control={form.control}
           name="program"
           rules={{ required: t('programRequired') }}
@@ -59,7 +42,26 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
             />
           )}
         />
+* */
 
+export default function DetailConfig({ store, form, t, onNext, onPrev }) {
+  const [isDirty, setIsDirty] = React.useState(false);
+  const testTypes = useTestsTypes();
+  const program = form.watch('program');
+  const type = form.watch('type');
+  const selectedType = testTypes.find(({ value }) => value === type);
+
+  async function next() {
+    setIsDirty(true);
+    const formGood = await form.trigger(['type']);
+    if (formGood) {
+      onNext();
+    }
+  }
+
+  return (
+    <ContextContainer divided>
+      <ContextContainer>
         <Controller
           control={form.control}
           name="type"

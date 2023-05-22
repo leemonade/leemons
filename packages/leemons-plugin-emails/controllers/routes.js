@@ -33,6 +33,11 @@ module.exports = [
     handler: 'email.sendTest',
   },
   {
+    path: '/send-custom-test',
+    method: 'POST',
+    handler: 'email.sendCustomTest',
+  },
+  {
     path: '/save-provider',
     method: 'POST',
     handler: 'email.saveProvider',

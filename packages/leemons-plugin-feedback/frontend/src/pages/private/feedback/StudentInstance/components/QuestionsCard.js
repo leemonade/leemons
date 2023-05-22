@@ -55,6 +55,7 @@ function QuestionsCard({
   viewMode,
   returnToTable,
   feedback,
+  instance,
   instanceId,
   defaultValues,
   userId,
@@ -68,6 +69,11 @@ function QuestionsCard({
     currentIndex: 0,
     values: defaultValues || {},
   });
+
+  const moduleId = instance.metadata?.module?.id;
+  const isModule = !!moduleId;
+  const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
+
   const question = feedback.questions[store.currentIndex];
 
   const history = useHistory();
@@ -80,6 +86,11 @@ function QuestionsCard({
   const goToOnGoing = (e, openInNewTab = false) => {
     if (openInNewTab) window.open('/private/assignables/ongoing');
     history.push('/private/assignables/ongoing');
+  };
+
+  const gotToModuleDashboard = (e, openInNewTab = false) => {
+    if (openInNewTab) window.open(moduleDashboardUrl);
+    history.push(moduleDashboardUrl);
   };
 
   const goToResults = (e, openInNewTab = false) => {
@@ -166,7 +177,7 @@ function QuestionsCard({
       <Modal
         title={t('finishModal')}
         opened={store.showFinishModal}
-        onClose={() => {}}
+        onClose={() => { }}
         centerTitle
         centered
         withCloseButton={false}
@@ -178,14 +189,24 @@ function QuestionsCard({
           <Paragraph align="center">{feedback.thanksMessage}</Paragraph>
           {modalMode === 0 ? (
             <Stack justifyContent="center">
-              <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
+              {isModule ? (
+                <Button onClick={gotToModuleDashboard}>{t('moduleDashboard')}</Button>
+              ) : (
+                <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
+              )}
             </Stack>
           ) : null}
           {modalMode === 1 ? (
             <Stack justifyContent="space-between">
-              <Button variant="light" onClick={goToOnGoing}>
-                {t('pendingActivities')}
-              </Button>
+              {isModule ? (
+                <Button variant="light" onClick={gotToModuleDashboard}>
+                  {t('moduleDashboard')}
+                </Button>
+              ) : (
+                <Button variant="light" onClick={goToOnGoing}>
+                  {t('pendingActivities')}
+                </Button>
+              )}
               <Button onClick={goToResults}>{t('viewResults')}</Button>
             </Stack>
           ) : null}
@@ -208,14 +229,25 @@ function QuestionsCard({
           ) : null}
           {modalMode === 3 ? (
             <Stack justifyContent="space-between">
-              <Button
-                variant="light"
-                rightIcon={<ExpandDiagonalIcon />}
-                compact
-                onClick={() => goToOnGoing(null, true)}
-              >
-                {t('pendingActivities')}
-              </Button>
+              {isModule ? (
+                <Button
+                  variant="light"
+                  rightIcon={<ExpandDiagonalIcon />}
+                  compact
+                  onClick={() => gotToModuleDashboard(null, true)}
+                >
+                  {t('moduleDashboard')}
+                </Button>
+              ) : (
+                <Button
+                  variant="light"
+                  rightIcon={<ExpandDiagonalIcon />}
+                  compact
+                  onClick={() => goToOnGoing(null, true)}
+                >
+                  {t('pendingActivities')}
+                </Button>
+              )}
               <Link to={nextActivityUrl}>
                 <Button rightIcon={<ChevronRightIcon />} compact>
                   {t('nextActivity')}

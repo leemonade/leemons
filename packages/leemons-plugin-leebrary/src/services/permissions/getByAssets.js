@@ -76,6 +76,7 @@ async function getByAssets(assetIds, { showPublic, userSession, transacting } = 
 
     return results;
   } catch (e) {
+    console.error(e);
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
   }
 }

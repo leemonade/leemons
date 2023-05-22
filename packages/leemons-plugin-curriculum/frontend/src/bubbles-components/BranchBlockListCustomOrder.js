@@ -1,18 +1,38 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
+import {
+  Box,
+  Button,
+  createStyles,
+  Stack,
+  TagifyInput,
+  TAGIFY_TAG_REGEX,
+} from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { forEach } from 'lodash';
-import { Box, TagifyInput, Button, TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { Controller } from 'react-hook-form';
 import BranchBlockListCustomOrderFieldOrder, {
   getExampleTextForListOrderedConfig,
 } from './BranchBlockListCustomOrderFieldOrder';
 
+const useStyle = createStyles((theme) => ({
+  label: {
+    width: '100%',
+    '> div:first-child': {
+      whiteSpace: 'nowrap',
+    },
+  },
+}));
+
 function BranchBlockListCustomOrder({ ...props }) {
+  const { classes } = useStyle();
   const [showAddOrder, setShowAddOrder] = useState(false);
   const {
     messages,
     errorMessages,
     selectData,
+    withPrevious = true,
+    tagifyProps,
     form: {
       control,
       setValue,
@@ -23,7 +43,9 @@ function BranchBlockListCustomOrder({ ...props }) {
     },
   } = props;
 
-  const whitelist = useMemo(() => {
+  const listOrderedText = watch('listOrderedText');
+
+  const whitelist = React.useMemo(() => {
     const result = [];
     if (selectData.parentNodeLevels) {
       forEach(selectData.parentNodeLevels, (item) => {
@@ -49,7 +71,6 @@ function BranchBlockListCustomOrder({ ...props }) {
     );
   }
 
-  const listOrderedText = watch('listOrderedText');
   let canAddOrder = true;
   if (listOrderedText) {
     let array;
@@ -62,35 +83,51 @@ function BranchBlockListCustomOrder({ ...props }) {
 
   return (
     <Box style={{ position: 'relative' }}>
-      <Controller
-        name="listOrderedText"
-        control={control}
-        rules={{
-          required: errorMessages.listOrderedTextRequired,
-        }}
-        render={({ field }) => (
-          <TagifyInput
-            value={field.value}
-            onChange={(e) => field.onChange(e.detail.value)}
-            settings={{
-              mode: 'mix',
-              pattern: /@/,
-              editTags: false,
-              dropdown: {
-                enabled: 1,
-                position: 'text',
-              },
-              whitelist,
-            }}
-            label={messages.codeComposerLabel}
-            required
-          />
-        )}
-      />
-      {canAddOrder ? (
-        <Button onClick={() => setShowAddOrder(true)}>(Test)Añadir numeración</Button>
-      ) : null}
-
+      <Stack fullWidth alignItems="start" spacing={2}>
+        <Controller
+          name="listOrderedText"
+          control={control}
+          rules={{
+            required: errorMessages.listOrderedTextRequired,
+          }}
+          render={({ field }) => (
+            <TagifyInput
+              className={classes.label}
+              value={field.value}
+              onRemove={(e) => {
+                if (e?.detail) field.onChange(e.detail.tagify.getInputValue());
+              }}
+              onChange={(e) => {
+                field.onChange(e.detail.value);
+              }}
+              settings={{
+                mode: 'mix',
+                pattern: /@/,
+                editTags: false,
+                dropdown: {
+                  enabled: 1,
+                  position: 'text',
+                },
+                whitelist,
+              }}
+              label={messages.codeComposerLabel}
+              required
+              {...tagifyProps}
+            />
+          )}
+        />
+        {canAddOrder ? (
+          <Box sx={(theme) => ({ marginTop: theme.spacing[5] })}>
+            <Button
+              variant="light"
+              leftIcon={<AddCircleIcon />}
+              onClick={() => setShowAddOrder(true)}
+            >
+              {messages.addNumeration}
+            </Button>
+          </Box>
+        ) : null}
+      </Stack>
       <BranchBlockListCustomOrderFieldOrder
         messages={messages}
         errorMessages={errorMessages}
@@ -98,6 +135,7 @@ function BranchBlockListCustomOrder({ ...props }) {
         opened={showAddOrder}
         setOpened={setShowAddOrder}
         onSave={addOrderField}
+        withPrevious={withPrevious}
       />
     </Box>
   );
@@ -110,6 +148,7 @@ BranchBlockListCustomOrder.propTypes = {
   onSubmit: PropTypes.func,
   selectData: PropTypes.object,
   form: PropTypes.object,
+  withPrevious: PropTypes.bool,
 };
 
 export default BranchBlockListCustomOrder;

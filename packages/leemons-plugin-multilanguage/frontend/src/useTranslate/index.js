@@ -1,7 +1,7 @@
+import SocketIoService from '@mqtt-socket-io/service';
+import _ from 'lodash';
 import React from 'react';
 import useSWR from 'swr';
-import _ from 'lodash';
-import SocketIoService from '@socket-io/service';
 
 function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
   // Get deduplicated keys
@@ -29,6 +29,9 @@ function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) 
   return () =>
     leemons.api(url, {
       method: 'POST',
+      cache: {
+        ttl: 1000 * 60 * 60, // 1h
+      },
       body: {
         keys: _keys,
         keysStartsWith: _keysStartsWith,

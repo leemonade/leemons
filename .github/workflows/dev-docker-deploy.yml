@@ -1,0 +1,85 @@
+name: Dev - Deploy Docker Frontend(s3,cloudfront) and Backend(ecr,ecs)
+
+on:
+  push:
+    tags:
+      - '*.*.*-dev'
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+
+      - name: ⚙ Set up env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: ⚙ Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: ⚙ Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
+
+      - name: ⚙ Set up AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: ⚙ Build docker config
+        working-directory: ./examples/docker
+        run: BUBBLES_VERSION=dev node process.js
+
+      - name: ⚙ Install tiptap
+        working-directory: ./examples/docker
+        run: yarn add @tiptap/pm prosemirror-commands prosemirror-keymap prosemirror-model prosemirror-schema-list prosemirror-state prosemirror-transform prosemirror-view prosemirror-dropcursor prosemirror-gapcursor prosemirror-history
+
+      - name: ⚙ Install
+        run: yarn install --frozen-lockfile
+
+      - name: 🔧 Build Frontend
+        working-directory: ./examples/docker
+        run: API_URL=${{ vars.API_URL }} yarn front:build
+
+      - name: 🚀 Deploy to S3
+        run: aws s3 sync ./examples/docker/build s3://${{ vars.S3_BUCKET }} --delete
+
+      - name: ⚙ Invalidating cloudfront
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 15
+          retry_on: error
+          timeout_seconds: 30
+          retry_wait_seconds: 30
+          warning_on_retry: true
+          command: |
+            aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+      - name: 🔧🚀 Build, tag, and push image to AWS ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ vars.RELEASE_VERSION }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: ⚙ Creating new ecs task revision
+        run: aws ecs register-task-definition --family ${{ vars.TASK_FAMILY }} --execution-role-arn ${{vars.TASK_EXECUTION_ROLE_ARN}} --network-mode awsvpc --cpu 1024 --memory 4096 --requires-compatibilities '["FARGATE"]' --runtime-platform '{"cpuArchitecture":"X86_64","operatingSystemFamily":"LINUX"}' --container-definitions '[{"name":"${{ vars.TASK_FAMILY }}","image":"${{vars.TASK_DOCKER_IMAGE}}","essential":true,"cpu":1024,"memory":4096,"memoryReservation":3584,"logConfiguration":{"logDriver":"awslogs","options":{"awslogs-create-group":"true","awslogs-group":"/ecs/${{ vars.TASK_FAMILY }}","awslogs-region":"${{vars.AWS_DEFAULT_REGION}}","awslogs-stream-prefix":"ecs"}},"portMappings":[{"containerPort":8080,"hostPort":8080,"protocol":"tcp","name":"${{ vars.TASK_FAMILY }}-8080-tcp","appProtocol":"http"}],"environment":[{"name":"DATABASE_DATABASE","value":"${{vars.DOCKER_ENV_DATABASE_DATABASE}}"},{"name":"MQTT_PLUGIN","value":"${{vars.DOCKER_ENV_MQTT_PLUGIN}}"},{"name":"NOSQL_AUTH_DATABASE","value":"${{secrets.DOCKER_ENV_NOSQL_AUTH_DATABASE}}"},{"name":"USE_CUSTOM_ROLLBACK","value":"true"},{"name":"DATABASE_HOST","value":"${{secrets.DOCKER_ENV_DATABASE_HOST}}"},{"name":"DATABASE_PORT","value":"${{vars.DOCKER_ENV_DATABASE_PORT}}"},{"name":"NOSQL_SRV","value":"true"},{"name":"NOSQL_USERNAME","value":"${{secrets.DOCKER_ENV_NOSQL_USERNAME}}"},{"name":"CORS","value":"true"},{"name":"NOSQL_DATABASE","value":"${{vars.DOCKER_ENV_NOSQL_DATABASE}}"},{"name":"NOSQL_PASSWORD","value":"${{secrets.DOCKER_ENV_NOSQL_PASSWORD}}"},{"name":"DATABASE_USERNAME","value":"${{secrets.DOCKER_ENV_DATABASE_USERNAME}}"},{"name":"NOSQL_PORT","value":"${{vars.DOCKER_ENV_NOSQL_PORT}}"},{"name":"DATABASE_PASSWORD","value":"${{secrets.DOCKER_ENV_DATABASE_PASSWORD}}"},{"name":"NOSQL_HOST","value":"${{secrets.DOCKER_ENV_NOSQL_HOST}}"}]}]'
+
+      - name: ⚙ Updating ecs cluster service
+        run: aws ecs update-service --cluster ${{vars.SERVICE_CLUSTER_ARN}} --service ${{vars.SERVICE_NAME}} --desired-count 1 --task-definition ${{vars.SERVICE_TASK_ARN_WITH_OUT_VERSION}} --capacity-provider-strategy '{"base":0,"capacityProvider":"FARGATE","weight":1}'  --deployment-configuration '{"alarms":{"alarmNames":[],"enable":false,"rollback":false},"deploymentCircuitBreaker":{"enable":true,"rollback":true},"maximumPercent":200,"minimumHealthyPercent":100}'

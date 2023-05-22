@@ -5,38 +5,20 @@ import { Controller, useFormContext, useForm, useWatch } from 'react-hook-form';
 import { Box, createStyles, ImageLoader, Select, Switch, Text } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
-import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import useClassData from '@assignables/hooks/useClassDataQuery';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
 function useActivities() {
-  const cache = useCache();
-
   const { data: assignableInstancesIds } = useSearchAssignableInstances(
     { closed: false, archived: false, evaluated: false },
     {}
   );
 
-  const assignableInstancesQuery = useAssignableInstances({
-    id: assignableInstancesIds,
+  const { data: assignableInstances } = useInstances({
+    ids: assignableInstancesIds,
     details: true,
+    placeholderData: [],
   });
-
-  const assignableInstancesAreLoading = React.useMemo(
-    () =>
-      assignableInstancesQuery?.length && assignableInstancesQuery.some((query) => query.isLoading),
-    [assignableInstancesQuery]
-  );
-
-  const assignableInstances = cache(
-    'assignableInstances',
-    React.useMemo(() => {
-      if (assignableInstancesAreLoading) {
-        return [];
-      }
-
-      return _.map(assignableInstancesQuery, 'data');
-    }, [assignableInstancesQuery])
-  );
 
   return assignableInstances;
 }

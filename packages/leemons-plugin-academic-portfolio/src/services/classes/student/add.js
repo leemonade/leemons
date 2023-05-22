@@ -6,9 +6,14 @@ const {
 const { getClassProgram } = require('../getClassProgram');
 
 async function add(_class, student, { transacting } = {}) {
+  const roomService = leemons.getPlugin('comunica').services.room;
+
   const [classStudent, program] = await Promise.all([
     table.classStudent.create({ class: _class, student }, { transacting }),
     getClassProgram(_class),
+    roomService.addUserAgents(leemons.plugin.prefixPN(`room.class.${_class}`), student, {
+      transacting,
+    }),
   ]);
 
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
@@ -19,6 +24,19 @@ async function add(_class, student, { transacting } = {}) {
     },
     { transacting }
   );
+
+  try {
+    await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+      student,
+      {
+        permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+        actionNames: ['view'],
+      },
+      { transacting }
+    );
+  } catch (e) {
+    // Nothing
+  }
 
   if (!program.hideStudentsToStudents) {
     addPermissionsBetweenStudentsAndTeachers(_class, { transacting });

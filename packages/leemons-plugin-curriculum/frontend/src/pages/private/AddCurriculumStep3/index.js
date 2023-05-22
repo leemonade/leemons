@@ -1,47 +1,42 @@
-import React, { useEffect, useMemo } from 'react';
-import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { RatingStarIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import {
-  ActionButton,
   Box,
   Button,
-  Col,
   ContextContainer,
-  Grid,
   LoadingOverlay,
-  PageContainer,
-  Paper,
   Stack,
-  Text,
   Tree,
   useTree,
 } from '@bubbles-ui/components';
+import { ChevLeftIcon, RatingStarIcon, RedoIcon } from '@bubbles-ui/icons/outline';
+import prefixPN from '@curriculum/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { listCentersRequest } from '@users/request';
+import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy } from 'lodash';
+import React, { useMemo } from 'react';
 
-import { useHistory, useParams } from 'react-router-dom';
 import { detailProgramRequest } from '@academic-portfolio/request';
 import { useStore } from '@common';
-import { CurriculumProp } from '@curriculum/components/CurriculumSelectContentsModal/components/CurriculumProp';
-import { addSuccessAlert } from '@layout/alert';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useHistory, useParams } from 'react-router-dom';
+import NewBranchDetailValue from '../../../bubbles-components/NewBranchDetailValue';
 import {
-  addNodeRequest,
-  detailCurriculumRequest,
-  publishCurriculumRequest,
-  saveNodeRequest,
-} from '../../../request';
-import NewBranchValue, {
   NEW_BRANCH_VALUE_ERROR_MESSAGES,
   NEW_BRANCH_VALUE_MESSAGES,
 } from '../../../bubbles-components/NewBranchValue';
-import NewBranchDetailValue from '../../../bubbles-components/NewBranchDetailValue';
+import {
+  addNodeRequest,
+  detailCurriculumRequest,
+  generateNodesFromAcademicPortfolioRequest,
+  publishCurriculumRequest,
+  saveNodeRequest,
+} from '../../../request';
 
-function AddCurriculumStep3() {
+function AddCurriculumStep3New({ onPrev, isEditMode }) {
   const [store, render] = useStore({
     loading: true,
   });
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('addCurriculumStep3'));
 
   const history = useHistory();
@@ -75,20 +70,13 @@ function AddCurriculumStep3() {
         {
           data: { items: centers },
         },
-        {
-          permissions: [{ actionNames }],
-        },
       ] = await Promise.all([
         detailCurriculumRequest(id),
         listCentersRequest({ page: 0, size: 999999 }),
-        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
       ]);
-
-      const isEditMode = actionNames.includes('admin') || actionNames.includes('edit');
 
       const { program } = await detailProgramRequest(c.program);
 
-      store.isEditMode = isEditMode;
       c.program = program;
       c.center = find(centers, { id: c.center });
       c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
@@ -101,11 +89,25 @@ function AddCurriculumStep3() {
     render();
   }
 
-  useEffect(() => {
+  async function sync() {
+    try {
+      store.loading = true;
+      render();
+      await generateNodesFromAcademicPortfolioRequest(store.curriculum.id);
+      await load();
+      addSuccessAlert(t('syncTreeDone'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.loading = false;
+    render();
+  }
+
+  React.useEffect(() => {
     load();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (store.curriculum) {
       const items = [];
 
@@ -116,42 +118,16 @@ function AddCurriculumStep3() {
               id: node.id,
               parent,
               draggable: false,
-              text: node.fullName,
+              text: node.fullName || node.name,
               node,
             });
 
             if (node.childrens) {
               addNodes(node.childrens, node.id, nextDeep + 1);
             }
-            if (store.curriculum.nodeLevels[nextDeep] && store.isEditMode) {
-              items.push({
-                id: `add-button-${node.id}`,
-                parent: node.id,
-                text: t('addNode', { name: store.curriculum.nodeLevels[nextDeep].name }),
-                type: 'button',
-                draggable: false,
-                node,
-                data: {
-                  action: 'add',
-                },
-              });
-            }
           });
         };
         addNodes(store.curriculum.nodes, 0, 1);
-      }
-      if (store.isEditMode) {
-        items.push({
-          id: 'add-button',
-          parent: 0,
-          text: t('addNode', { name: store.curriculum.nodeLevels[0].name }),
-          type: 'button',
-          draggable: false,
-          node: null,
-          data: {
-            action: 'add',
-          },
-        });
       }
 
       tree.setTreeData(items);
@@ -219,27 +195,8 @@ function AddCurriculumStep3() {
     render();
   }
 
-  async function onAdd({ node }) {
-    const { nodeLevelsById, unUsedSubjects } = getDataForNode();
-
-    const parentNodeLevelIndex = findIndex(store.curriculum.nodeLevels, {
-      id: node.nodeLevel,
-    });
-    const nodeLevelId = store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
-
-    store.activeNode = {
-      ...node,
-      nodeLevel: nodeLevelsById[nodeLevelId],
-      unUsedSubjects: map(unUsedSubjects, (sub) => ({ label: sub.name, value: sub.id })),
-    };
-    store.activeNode.isSubject = store.activeNode.nodeLevel.type === 'subject';
-
-    store.activeRightSection = 'add-branch-value';
-    render();
-  }
-
   function back() {
-    history.push(`/private/curriculum/${store.curriculum.id}/step/2`);
+    onPrev();
   }
 
   async function publish() {
@@ -258,7 +215,7 @@ function AddCurriculumStep3() {
     } catch (e) {}
   }
 
-  async function onAddBranchValue(data) {
+  async function onAddBranchValue(data, noClose) {
     try {
       store.saving = true;
       render();
@@ -283,14 +240,17 @@ function AddCurriculumStep3() {
         }
         await addNodeRequest(toSend);
       } else {
+        console.log('data', data);
         await saveNodeRequest(data);
       }
       await load(true);
-      store.activeRightSection = null;
-      store.activeNode = null;
+      if (!noClose) {
+        store.activeRightSection = null;
+        store.activeNode = null;
+      }
       store.saving = false;
     } catch (err) {
-      console.error(err);
+      addErrorAlert(getErrorMessage(err));
       store.saving = false;
     }
     render();
@@ -298,16 +258,34 @@ function AddCurriculumStep3() {
 
   let groupChilds = null;
 
-  if (store.activeRightSection === 'add-branch-value') {
+  if (
+    store.activeRightSection === 'detail-branch-value' &&
+    store.activeNode.nodeLevel?.schema?.compileJsonSchema
+  ) {
     groupChilds = (
-      <NewBranchValue
+      <NewBranchDetailValue
         isSubject={store.activeNode.isSubject}
         subjectData={store.activeNode.unUsedSubjects}
-        academicItem={store.activeNode.academicItem}
         messages={messagesBranchValues}
         errorMessages={errorMessagesBranchValues}
         onSubmit={onAddBranchValue}
         isLoading={store.saving}
+        curriculum={store.curriculum}
+        isEditMode={isEditMode}
+        defaultValues={{
+          academicItem: store.activeNode.academicItem,
+          name: store.activeNode.name,
+          id: store.activeNode.id,
+        }}
+        schema={
+          store.activeNode.nodeLevel.schema
+            ? {
+                jsonSchema: store.activeNode.nodeLevel.schema.compileJsonSchema,
+                jsonUI: store.activeNode.nodeLevel.schema.compileJsonUI,
+              }
+            : null
+        }
+        schemaFormValues={store.activeNode.formValues}
         onCloseBranch={() => {
           store.activeRightSection = null;
           store.activeNode = null;
@@ -315,38 +293,9 @@ function AddCurriculumStep3() {
         }}
       />
     );
-  }
-  if (store.activeRightSection === 'detail-branch-value') {
-    if (store.isEditMode) {
-      groupChilds = (
-        <NewBranchDetailValue
-          isSubject={store.activeNode.isSubject}
-          subjectData={store.activeNode.unUsedSubjects}
-          messages={messagesBranchValues}
-          errorMessages={errorMessagesBranchValues}
-          onSubmit={onAddBranchValue}
-          isLoading={store.saving}
-          defaultValues={{
-            academicItem: store.activeNode.academicItem,
-            name: store.activeNode.name,
-            id: store.activeNode.id,
-          }}
-          schema={
-            store.activeNode.nodeLevel.schema
-              ? {
-                  jsonSchema: store.activeNode.nodeLevel.schema.compileJsonSchema,
-                  jsonUI: store.activeNode.nodeLevel.schema.compileJsonUI,
-                }
-              : null
-          }
-          schemaFormValues={store.activeNode.formValues}
-          onCloseBranch={() => {
-            store.activeRightSection = null;
-            store.activeNode = null;
-            render();
-          }}
-        />
-      );
+    /*
+    if (isEditMode) {
+
     } else {
       store.selectedNode = store.activeNode;
       const items = [];
@@ -397,6 +346,8 @@ function AddCurriculumStep3() {
         </ContextContainer>
       );
     }
+
+     */
   }
 
   if (store.loading) {
@@ -404,77 +355,68 @@ function AddCurriculumStep3() {
   }
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        values={{
-          title: `${store.curriculum.name} (${store.curriculum.center.name}|${store.curriculum.program.name})`,
-          description: store.isEditMode ? t('description1') : null,
-        }}
-      />
+    <ContextContainer
+      sx={(theme) => ({ marginBottom: theme.spacing[6] })}
+      title={isEditMode ? t('pageTitle') : null}
+      description={isEditMode ? t('pageDescription') : null}
+      divided
+    >
+      <Box sx={() => ({ display: 'flex' })}>
+        <Box
+          sx={(theme) => ({
+            width: '25%',
+            paddingRight: theme.spacing[6],
+            borderRight: `1px solid ${theme.colors.ui01}`,
+          })}
+        >
+          <Tree
+            {...tree}
+            rootId={0}
+            onSelect={onSelect}
+            openOnSelect
+            initialOpen={tree.treeData ? [tree.treeData?.[0]?.id] : []}
+            selectedNode={store.activeNode}
+          />
+          {isEditMode ? (
+            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+              <Button
+                fullWidth
+                variant="light"
+                onClick={sync}
+                leftIcon={<RedoIcon height={20} width={20} />}
+              >
+                {t('syncTree')}
+              </Button>
+            </Box>
+          ) : null}
+        </Box>
+        <Box
+          sx={(theme) => ({
+            width: '75%',
+            paddingLeft: theme.spacing[6],
+          })}
+        >
+          {groupChilds || null}
+        </Box>
+      </Box>
 
-      <Paper fullHeight color="solid" shadow="none" padding={0}>
-        <PageContainer>
-          <ContextContainer divided>
-            <ContextContainer padded="vertical">
-              <Grid grow>
-                <Col span={5}>
-                  <Paper fullWidth padding={5}>
-                    <ContextContainer divided>
-                      <Tree
-                        {...tree}
-                        rootId={0}
-                        onAdd={onAdd}
-                        onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
-                        onEdit={(node) => alert(`Editing ${node.id}`)}
-                        onSelect={onSelect}
-                        initialOpen={tree.treeData ? [tree.treeData?.[0]?.id] : []}
-                        selectedNode={store.activeNode?.id}
-                      />
-                    </ContextContainer>
-                  </Paper>
-                  {!store.isEditMode ? (
-                    <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                      <Box
-                        sx={(theme) => ({
-                          display: 'inline',
-                          verticalAlign: 'middle',
-                          marginRight: theme.spacing[1],
-                        })}
-                      >
-                        <RatingStarIcon />
-                      </Box>
-                      <Text color="primary">{t('starDescription')}</Text>
-                    </Box>
-                  ) : null}
-                </Col>
-                <Col span={7}>
-                  {groupChilds ? (
-                    <>
-                      <Paper fullWidth padding={5}>
-                        {groupChilds}
-                      </Paper>
-                    </>
-                  ) : null}
-                </Col>
-              </Grid>
-            </ContextContainer>
-            {store.isEditMode ? (
-              <Box sx={(theme) => ({ marginBottom: theme.spacing[10] })}>
-                <Stack justifyContent="space-between" fullWidth>
-                  <Button variant="outline" onClick={back} loading={store.publishing}>
-                    {t('back')}
-                  </Button>
-                  <Button onClick={publish} loading={store.publishing}>
-                    {t('publish')}
-                  </Button>
-                </Stack>
-              </Box>
-            ) : null}
-          </ContextContainer>
-        </PageContainer>
-      </Paper>
+      {isEditMode ? (
+        <Stack justifyContent="space-between" fullWidth>
+          <Button
+            variant="outline"
+            onClick={back}
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+            loading={store.publishing}
+          >
+            {t('back')}
+          </Button>
+          <Button onClick={publish} loading={store.publishing}>
+            {t('publish')}
+          </Button>
+        </Stack>
+      ) : null}
     </ContextContainer>
   );
 }
 
-export default AddCurriculumStep3; // withLayout(AddCurriculumStep2);
+export default AddCurriculumStep3New; // withLayout(AddCurriculumStep2);

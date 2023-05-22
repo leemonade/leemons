@@ -15,6 +15,20 @@ module.exports = async function createAssignable(
   assignable,
   { published = false, id: _id = null, userSession, transacting: t } = {}
 ) {
+  /*
+    1. Validate (if published, apply publish validation)
+    2. Validate role
+    4. Create main asset
+    5. Save resources
+    6. Save metadata.leebrary resources
+
+    7. Create the assignable
+    8. Register assignable permissions
+    9. Add permission to user
+    10. Save subjects
+    11. Publish (Do not go to dedicated publish)
+  */
+
   // TODO: Add creation published/draft
   return global.utils.withTransaction(
     async (transacting) => {
@@ -69,8 +83,20 @@ module.exports = async function createAssignable(
       let asset;
       try {
         if (!_id) {
+          // console.log(subjects);
+          const assetProgram = subjects?.length ? subjects[0].program : null;
+          const assetSubjects = subjects?.length
+            ? subjects.map(({ subject, level }) => ({ subject, level }))
+            : null;
+
           const savedAsset = await saveAsset(
-            { ...assignableAsset, category: `assignables.${assignable.role}`, public: true },
+            {
+              ...assignableAsset,
+              program: assetProgram,
+              subjects: assetSubjects,
+              category: `assignables.${assignable.role}`,
+              public: true,
+            },
             { published: false, userSession, transacting }
           );
 

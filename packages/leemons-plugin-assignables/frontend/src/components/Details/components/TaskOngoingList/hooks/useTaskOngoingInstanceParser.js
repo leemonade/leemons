@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { useLocale, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useProgramEvaluationSystem from '../../../../../hooks/useProgramEvaluationSystem';
-import getStatus from '../../UsersList/helpers/getStatus';
 import useClassData from '../../../../../hooks/useClassData';
 import prefixPN from '../../../../../helpers/prefixPN';
 import getStatusAsNumber from '../../UsersList/helpers/getStatusAsNumber';
@@ -108,9 +108,12 @@ export default function useTaskOngoingInstanceParser(instance) {
     },
     taskDeadlineHeader: {
       title: instance?.assignable?.asset?.name,
-      subtitle: classData.name,
+      subtitle: classData.customGroup
+        ? `${classData.subjectName} - ${classData.subjectCompiledInternalId} - ${classData.name}`
+        : classData.name,
       icon: classData.icon,
       color: classData.color,
+      startDate: instance?.dates?.start ? new Date(instance?.dates?.start) : null,
       deadline: instance?.dates?.deadline ? new Date(instance?.dates?.deadline) : null,
       // TODO: UPDATE
       locale,
@@ -124,6 +127,12 @@ export default function useTaskOngoingInstanceParser(instance) {
   };
 
   if (!instance.alwaysAvailable) {
+    const start = dayjs(instance?.dates?.start);
+    const visualization = dayjs(instance?.dates?.visualization);
+
+    if (start.isBefore(visualization)) {
+      delete instance.dates.visualization;
+    }
     data.horizontalTimeline = {
       data: Object.entries(instance?.dates).map(([name, date]) => ({
         label: datesLabels?.[name] || name,

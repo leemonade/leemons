@@ -1,10 +1,11 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
-import { Box, HtmlText, TabPanel, Tabs, Title } from '@bubbles-ui/components';
+import { Box, HtmlText, Title } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { isEmpty } from 'lodash';
+import { isEmpty, map } from 'lodash';
+import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -20,22 +21,14 @@ export default function Resume(props) {
     }
   }
 
+  const [
+    {
+      curriculum: { curriculum },
+    },
+  ] = useCurriculumVisibleValues({ assignation: store.assignation });
   const subjects = useClassesSubjects(store.instance.classes);
 
   const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
-
-  let curriculum = null;
-
-  if (store.instance.assignable.subjects[0].curriculum.curriculum?.length) {
-    const curriculumKeysToShow = Object.entries(store.instance.curriculum)
-      .filter(([, value]) => value)
-      .map(([key]) => key);
-    curriculum = store.instance.assignable.subjects[0].curriculum.curriculum;
-    curriculum = curriculum.filter((key) => {
-      const regex = new RegExp(curriculumKeysToShow.join('|'), 'i');
-      return regex.test(key);
-    });
-  }
 
   return (
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
@@ -49,33 +42,35 @@ export default function Resume(props) {
       ) : null}
 
       {!isEmpty(store.instance?.assignable?.subjects?.[0].curriculum) ? (
-        <Tabs>
+        <>
+          {/* <Tabs>
           <TabPanel label={subjects?.[0]?.name}>
             <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
-            <Box
-              sx={(theme) => ({
-                display: 'flex',
-                flexDirection: 'column',
-                gap: theme.spacing[4],
-              })}
-            >
-              {curriculum ? (
-                <Box sx={tabPanelStyle}>
-                  <Box>
-                    <CurriculumListContents value={curriculum} />
-                  </Box>
+            */}
+          <Box
+            sx={(theme) => ({
+              display: 'flex',
+              flexDirection: 'column',
+              gap: theme.spacing[4],
+            })}
+          >
+            {curriculum ? (
+              <Box sx={tabPanelStyle}>
+                <Box>
+                  <CurriculumListContents value={curriculum} subjects={map(subjects, 'id')} />
                 </Box>
-              ) : null}
-              {!!store.instance.assignable.subjects[0].curriculum.objectives &&
-              !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
-                <Box sx={tabPanelStyle}>
-                  <Box>
-                    <Title color="primary" order={5}>
-                      {t('objectives')}
-                    </Title>
-                    {/* TODO: Use react lists */}
-                    <HtmlText>
-                      {`
+              </Box>
+            ) : null}
+            {!!store.instance.assignable.subjects[0].curriculum.objectives &&
+            !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
+              <Box sx={tabPanelStyle}>
+                <Box>
+                  <Title color="primary" order={5}>
+                    {t('objectives')}
+                  </Title>
+                  {/* TODO: Use react lists */}
+                  <HtmlText>
+                    {`
                       <ul>
                       ${store.instance.assignable.subjects[0].curriculum.objectives
                         ?.map(
@@ -87,13 +82,14 @@ export default function Resume(props) {
                         ?.join('')}
                       </ul>
                     `}
-                    </HtmlText>
-                  </Box>
+                  </HtmlText>
                 </Box>
-              ) : null}
-            </Box>
-          </TabPanel>
-        </Tabs>
+              </Box>
+            ) : null}
+          </Box>
+          {/* </TabPanel>
+        </Tabs> */}
+        </>
       ) : null}
 
       {canStart ? (

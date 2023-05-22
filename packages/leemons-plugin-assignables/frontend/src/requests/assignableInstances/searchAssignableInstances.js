@@ -1,6 +1,6 @@
 export default async function searchAssignableInstances(query) {
   const result = await leemons.api(
-    `assignables/assignableInstances?${Object.entries(query)
+    `assignables/assignableInstances/search?${Object.entries(query)
       .map(([key, value]) => `${key}=${value}`)
       .join('&')}`,
     {

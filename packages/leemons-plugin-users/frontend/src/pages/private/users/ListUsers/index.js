@@ -1,5 +1,3 @@
-import React, { useEffect, useMemo } from 'react';
-import _ from 'lodash';
 import {
   ActionButton,
   Box,
@@ -11,20 +9,22 @@ import {
   Stack,
   Table,
 } from '@bubbles-ui/components';
+import _ from 'lodash';
+import React, { useEffect, useMemo } from 'react';
 
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@users/helpers/prefixPN';
-import { Link, useHistory } from 'react-router-dom';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@users/helpers/prefixPN';
+import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
+import { Link, useHistory } from 'react-router-dom';
 
-import { listUsersRequest } from '../../../../request';
 import { SelectCenter } from '../../../../components/SelectCenter';
 import { SelectProfile } from '../../../../components/SelectProfile';
+import { listUsersRequest } from '../../../../request';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -134,13 +134,22 @@ function ListUsers() {
   }
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']);
-    if (permissions[0]) {
+    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
+      getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
+      getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
+    ]);
+    console.log(importPermission);
+    if (addPermission) {
       store.canAdd =
-        permissions[0].actionNames.includes('create') ||
-        permissions[0].actionNames.includes('admin');
-      render();
+        addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
     }
+    if (importPermission) {
+      store.canImport =
+        importPermission.actionNames.includes('view') ||
+        importPermission.actionNames.includes('update') ||
+        importPermission.actionNames.includes('admin');
+    }
+    render();
   }
 
   useEffect(() => {
@@ -184,12 +193,24 @@ function ListUsers() {
     history.push('/private/users/create');
   }
 
+  function goImportPage() {
+    history.push('/private/users/import');
+  }
+
+  const headerButtons = React.useMemo(() => {
+    const result = {};
+    if (store.canAdd) result.new = tCommon('new');
+    if (store.canImport) result.import = t('import');
+    return result;
+  }, [store.canImport, store.canAdd]);
+
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerValues}
-        buttons={store.canAdd ? { new: tCommon('new') } : {}}
-        onNew={() => goCreatePage()}
+        buttons={headerButtons}
+        onImport={goImportPage}
+        onNew={goCreatePage}
       />
       <Paper color="solid" shadow="none" padding="none">
         <Box>

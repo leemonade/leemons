@@ -1,15 +1,8 @@
-import PropTypes from 'prop-types';
-import * as _ from 'lodash';
-import { get, map } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
-import prefixPN from '@calendar/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { listKanbanColumnsRequest } from '@calendar/request';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import tKeys from '@multilanguage/helpers/tKeys';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { DeleteBinIcon, EditorListBulletsIcon, PluginKanbanIcon } from '@bubbles-ui/icons/solid';
-import { AddCircleIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
+import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
+import NYACard from '@assignables/components/NYACard';
+import getClassData from '@assignables/helpers/getClassData';
+import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import getAssignation from '@assignables/requests/assignations/getAssignation';
 import {
   ActionButton,
   Box,
@@ -25,16 +18,23 @@ import {
   MultiSelect,
   Select,
   Text,
-  Textarea,
   TextClamp,
   TextInput,
+  Textarea,
 } from '@bubbles-ui/components';
+import { AddCircleIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon, EditorListBulletsIcon, PluginKanbanIcon } from '@bubbles-ui/icons/solid';
+import prefixPN from '@calendar/helpers/prefixPN';
+import { listKanbanColumnsRequest } from '@calendar/request';
 import { useLocale, useStore } from '@common';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
-import NYACard from '@assignables/components/NYACard';
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
-import getClassData from '@assignables/helpers/getClassData';
+import tKeys from '@multilanguage/helpers/tKeys';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import * as _ from 'lodash';
+import { get, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from 'react';
 import { updateEventSubTasksRequest } from '../../request';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
@@ -72,11 +72,11 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   const getTranslationColumns = async () => {
     const keys = _.map(columns, 'nameKey');
-    if (!allProps.parent.store.columnsT) {
+    if (!allProps.parent.store.columnsT && keys.length) {
       const { items } = await getLocalizationsByArrayOfItems(keys);
       allProps.parent.store.columnsT = items;
+      setColumnsT(allProps.parent.store.columnsT);
     }
-    setColumnsT(allProps.parent.store.columnsT);
   };
 
   const getColumnName = (name) => tKeys(name, columnsT);

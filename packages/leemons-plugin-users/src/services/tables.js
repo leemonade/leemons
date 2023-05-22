@@ -25,6 +25,7 @@ const table = {
   profileRole: leemons.query('plugins_users::profile-role'),
 
   centers: leemons.query('plugins_users::centers'),
+  centerLimits: leemons.query('plugins_users::center-limits'),
   userRememberLogin: leemons.query('plugins_users::user-remember-login'),
 
   userProfile: leemons.query('plugins_users::user-profile'),

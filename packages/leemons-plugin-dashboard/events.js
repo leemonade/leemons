@@ -13,6 +13,30 @@ async function events(isInstalled) {
     await addLocales(locale.code);
   });
 
+  leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
+    await Promise.allSettled(
+      _.map(constants.widgets.zones, (config) =>
+        leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
+          name: config.name,
+          description: config.description,
+        })
+      )
+    );
+    leemons.events.emit('init-widget-zones');
+    await Promise.allSettled(
+      _.map(constants.widgets.items, (config) =>
+        leemons
+          .getPlugin('widgets')
+          .services.widgets.setItemToZone(config.zoneKey, config.key, config.url, {
+            name: config.name,
+            description: config.description,
+            properties: config.properties,
+          })
+      )
+    );
+    leemons.events.emit('init-widget-items');
+  });
+
   if (!isInstalled) {
     // Permissions
     leemons.events.once('plugins.users:init-permissions', async () => {
@@ -36,30 +60,8 @@ async function events(isInstalled) {
         leemons.events.emit('init-menu');
       }
     );
-
-    leemons.events.once('plugins.widgets:pluginDidLoad', async () => {
-      await Promise.all(
-        _.map(constants.widgets.zones, (config) =>
-          leemons.getPlugin('widgets').services.widgets.addZone(config.key, {
-            name: config.name,
-            description: config.description,
-          })
-        )
-      );
-      leemons.events.emit('init-widget-zones');
-      await Promise.all(
-        _.map(constants.widgets.items, (config) =>
-          leemons
-            .getPlugin('widgets')
-            .services.widgets.addItemToZone(config.zoneKey, config.key, config.url, {
-              name: config.name,
-              description: config.description,
-              properties: config.properties,
-            })
-        )
-      );
-      leemons.events.emit('init-widget-items');
-    });
+  } else {
+    leemons.events.once('plugins.dashboard:pluginDidInit', async () => {});
   }
 }
 

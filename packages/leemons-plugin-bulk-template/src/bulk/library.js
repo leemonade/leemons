@@ -1,9 +1,7 @@
-const path = require('path');
 const { keys, trim, isEmpty, isNil } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
-async function importLibrary({ users }) {
-  const filePath = path.resolve(__dirname, 'data.xlsx');
+async function importLibrary(filePath, { users }) {
   const items = await itemsImport(filePath, 'library', 30, true, true);
 
   keys(items)

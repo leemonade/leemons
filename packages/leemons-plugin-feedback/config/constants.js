@@ -20,7 +20,7 @@ const menuItems = [
   {
     item: {
       key: 'feedback',
-      order: 303,
+      order: 305,
       iconSvg: '/public/feedback/menu-icon-active.svg',
       activeIconSvg: '/public/feedback/menu-icon-active.svg',
       label: {
@@ -88,6 +88,7 @@ const assignableRoles = [
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'feedbacks', es: 'encuestas' },
       singularName: { en: 'feedback', es: 'encuesta' },
+      order: 7,
       menu: {
         item: {
           iconSvg: '/public/feedback/menu-icon.svg',

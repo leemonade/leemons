@@ -1,15 +1,16 @@
-import React, { useMemo } from 'react';
+/* eslint-disable react/display-name */
+import prefixPN from '@assignables/helpers/prefixPN';
+import { Select } from '@bubbles-ui/components';
 import { unflatten } from '@common';
-import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import CenterAlignedSelect from '../CenterAlignedSelect';
-import prefixPN from '../../../../../../../helpers/prefixPN';
+import _ from 'lodash';
+import React, { useMemo } from 'react';
 
 function capitalize(str) {
-  return str[0].toUpperCase() + str.substring(1, str.length);
+  return str?.[0]?.toUpperCase() + str?.substring(1, str.length);
 }
 
-function useRoles() {
+export function useRoles() {
   const [, translations] = useTranslateLoader(prefixPN('roles'));
 
   const roles = useMemo(() => {
@@ -32,12 +33,11 @@ function useRoles() {
   return roles;
 }
 
-export default function Type({ labels, value, onChange }) {
+const Type = React.forwardRef(({ labels, value, onChange }, ref) => {
   const roles = useRoles();
 
   return (
-    <CenterAlignedSelect
-      orientation="horizontal"
+    <Select
       label={labels?.type}
       data={[
         {
@@ -50,4 +50,6 @@ export default function Type({ labels, value, onChange }) {
       onChange={onChange}
     />
   );
-}
+});
+
+export default Type;

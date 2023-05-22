@@ -1,9 +1,9 @@
-import React from 'react';
-import { isFunction, map } from 'lodash';
-import loadable from '@loadable/component';
 import { Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
 import { useStore } from '@common';
+import loadable from '@loadable/component';
+import { isFunction, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { getZoneRequest } from './getZone';
 
 function dynamicImport(pluginName, component) {

@@ -7,6 +7,10 @@ const { table } = require('../tables');
  * @return {Promise<any>}
  * */
 async function find(params, { transacting } = {}) {
+  const cacheKey = `users:permissions:find:${JSON.stringify(params)}`;
+  const cache = await leemons.cache.get(cacheKey);
+  if (cache) return cache;
+
   const results = await table.itemPermissions.find(params, { transacting });
   const group = _.groupBy(
     results,
@@ -23,6 +27,8 @@ async function find(params, { transacting } = {}) {
       center: values[0].center,
     });
   });
+
+  await leemons.cache.set(cacheKey, responses, 60 * 30); // 30 minutos
 
   return responses;
 }

@@ -108,8 +108,7 @@ module.exports = {
     duplicated: 'Duplicado',
   },
   feedbackAssign: {
-    pageTitle: 'Asignar encuesta:',
-    assign: 'Asignar',
+    assign: 'Asignar encuesta',
     assignDone: 'Encuesta asignada',
   },
   studentInstance: {
@@ -127,6 +126,7 @@ module.exports = {
     sendFeedback: 'Enviar encuesta',
     finishModal: 'Encuesta finalizada',
     pendingActivities: 'Actividades pendientes',
+    moduleDashboard: 'Dashboard del módulo',
     viewResults: 'Ver resultados',
     nextActivity: 'Siguiente actividad',
     needNResponsesSingular: 'Escoge 1 respuesta',

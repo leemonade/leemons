@@ -2,12 +2,28 @@
 const { isEmpty, isNil } = require('lodash');
 const importProviders = require('./bulk/providers');
 
-async function initProviders() {
+async function initProviders(file) {
   try {
-    const providers = await importProviders();
+    const providers = await importProviders(file);
     const storageProvider = 'leebrary-aws-s3';
-    const emailProvider = 'emails-amazon-ses';
+    const emailProvider = 'emails-aws-ses';
     const smtpEmailProvider = 'emails-smtp';
+    const mqttAwsIot = 'mqtt-aws-iot';
+
+    // ·····································
+    // MQTT AWS IOT
+    if (
+      providers.iot &&
+      providers.iot.provider === mqttAwsIot &&
+      !isEmpty(providers.storage.accessKey) &&
+      !isEmpty(providers.storage.secretAccessKey)
+    ) {
+      await leemons.getPlugin('mqtt-aws-iot').services.socket.setConfig({
+        region: providers.iot.region || 'eu-central-1',
+        accessKeyId: providers.iot.accessKey,
+        secretAccessKey: providers.iot.secretAccessKey,
+      });
+    }
 
     // ·····································
     // STORAGE PROVIDER

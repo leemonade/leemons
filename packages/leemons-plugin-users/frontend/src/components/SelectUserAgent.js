@@ -1,9 +1,14 @@
 /* eslint-disable no-unreachable */
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
+import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { useRequestErrorMessage, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import {
   cloneDeep,
+  filter,
   find,
   findIndex,
   flattenDeep,
@@ -13,17 +18,6 @@ import {
   map,
   uniq,
 } from 'lodash';
-import {
-  ActionButton,
-  Box,
-  MultiSelect,
-  Select,
-  Stack,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
-import { useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
@@ -46,6 +40,10 @@ const SelectUserAgent = forwardRef(
     {
       profiles,
       centers,
+      programs,
+      courses,
+      selectedUsers,
+      selectedUserAgents,
       maxSelectedValues = 1,
       users,
       onlyContacts,
@@ -84,6 +82,14 @@ const SelectUserAgent = forwardRef(
 
         if (centers) {
           filters.center = centers;
+        }
+
+        if (programs) {
+          filters.program = programs;
+        }
+
+        if (courses) {
+          filters.course = courses;
         }
 
         const response = await searchUserAgentsRequest(filters, {
@@ -134,14 +140,6 @@ const SelectUserAgent = forwardRef(
       values = maxSelectedValues === 1 ? values[0] || null : values;
       const userAgent = maxSelectedValues === 1 ? find(store.data, { value: values }) : undefined;
       onChange(values, userAgent);
-    }
-
-    function onRemoveHandler(userId) {
-      const index = inputValue.indexOf(userId);
-      if (index > -1) {
-        inputValue.splice(index, 1);
-        handleChange(inputValue);
-      }
     }
 
     // EN: Handle controlled input value by adding the selected values to the data array
@@ -248,6 +246,10 @@ const SelectUserAgent = forwardRef(
       }
     }, [profiles]);
 
+    useEffect(() => {
+      search('');
+    }, [courses, programs]);
+
     // EN: Concat the selected values with the data array
     // ES: Concatenamos los valores seleccionados con el array de datos
     const data = cloneDeep(store.data);
@@ -284,24 +286,14 @@ const SelectUserAgent = forwardRef(
       return [value];
     }, [inputValue]);
 
-    if (maxSelectedValues === 1) {
-      return (
-        <Select
-          {...props}
-          ref={ref}
-          searchable
-          onSearchChange={usersData ? undefined : search}
-          itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
-          valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
-          maxSelectedValues={maxSelectedValues}
-          data={usersData || data}
-          // EN: The value can be an array or a single value (string), so convert it to an array
-          // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
-          value={uniq(flattenDeep(propValue))}
-          onChange={handleChange}
-        />
-      );
+    let toData = usersData || data;
+    if (selectedUsers) {
+      toData = filter(toData, ({ id }) => !selectedUsers.includes(id));
     }
+    if (selectedUserAgents) {
+      toData = filter(toData, ({ value }) => !selectedUserAgents.includes(value));
+    }
+
     return (
       <MultiSelect
         {...props}
@@ -309,11 +301,9 @@ const SelectUserAgent = forwardRef(
         searchable
         onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
-        valueComponent={(p) => (
-          <ValueComponent {...p} {...valueRenderProps} onRemove={onRemoveHandler} />
-        )}
-        maxSelectedValues={maxSelectedValues}
-        data={usersData || data}
+        valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
+        multiple={maxSelectedValues !== 1}
+        data={toData}
         // EN: The value can be an array or a single value (string), so convert it to an array
         // ES: El valor puede ser un array o un valor simple (string), por lo que lo convertimos a un array
         value={uniq(flattenDeep(propValue))}
@@ -330,6 +320,8 @@ SelectUserAgent.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  programs: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  courses: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   maxSelectedValues: PropTypes.number,
   onlyContacts: PropTypes.bool,
   returnItem: PropTypes.bool,
@@ -337,6 +329,8 @@ SelectUserAgent.propTypes = {
   valueRenderProps: PropTypes.object,
   itemComponent: PropTypes.any,
   valueComponent: PropTypes.any,
+  selectedUsers: PropTypes.any,
+  selectedUserAgents: PropTypes.any,
 };
 
 SelectUserAgentValueComponent.propTypes = {

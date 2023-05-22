@@ -30,6 +30,7 @@ class Email {
       if (!configs.length) return null;
       _transporters = _.map(configs, (config) => Email.getTransporterByConfig(config));
     }
+    console.log(`SMTP tiene ${_transporters.length} transporters`);
     return _transporters;
   }
 

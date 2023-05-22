@@ -166,19 +166,20 @@ const TaskOngoingList = ({ instance }) => {
     return archiveTask(archivedValue);
   };
 
-  const onDeadlineChange = async (deadline) => {
+  const onDateChange = async (type, date) => {
     const newDates = {
-      deadline,
+      [type]: date,
     };
 
     try {
       await mutateAsync({ id: instance.id, dates: newDates });
-
-      addSuccessAlert(dashboardLocalizations.deadline.messages.success);
+      addSuccessAlert(dashboardLocalizations[type].messages.success);
     } catch (e) {
-      addErrorAlert(dashboardLocalizations.deadline.messages.error.replace('{{error}}', e.message));
+      addErrorAlert(dashboardLocalizations[type].messages.error.replace('{{error}}', e.message));
     }
   };
+
+  const isStarted = new Date(instance?.dates?.start) < new Date();
 
   return (
     <Box ref={containerRef} className={classes.root}>
@@ -189,32 +190,33 @@ const TaskOngoingList = ({ instance }) => {
       >
         <HeaderBackground
           {...instanceData.headerBackground}
-          styles={{ position: 'absolute' }}
+          styles={{ position: 'absolute', zIndex: 1 }}
           backgroundPosition="center"
-          withOverlay
-          blur={10}
+          withGradient
         />
-
-        <TaskDeadlineHeader
-          {...instanceData.taskDeadlineHeader}
-          onDeadlineChange={onDeadlineChange}
-          onCloseTask={onCloseTask}
-          onArchiveTask={onArchiveTask}
-          closed={Boolean(instance.dates.closed || dayjs(instance.dates.close).isBefore(dayjs()))}
-          // TODO: Show close date if a deadline exists but is allowed to be submitted later.
-          disableClose={Boolean(instance.dates.archived)}
-          hideClose={Boolean(instance.dates.deadline)}
-          hideArchive={Boolean(dayjs(instance.dates.deadline).isAfter(dayjs()))}
-          archived={archived}
-          styles={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}
-        />
+        <Box className={classes.taskHeaderContainer}>
+          <TaskDeadlineHeader
+            {...instanceData.taskDeadlineHeader}
+            onStartDateChange={(value) => onDateChange('start', value)}
+            onDeadlineChange={(value) => onDateChange('deadline', value)}
+            onCloseTask={onCloseTask}
+            onArchiveTask={onArchiveTask}
+            closed={Boolean(instance.dates.closed || dayjs(instance.dates.close).isBefore(dayjs()))}
+            // TODO: Show close date if a deadline exists but is allowed to be submitted later.
+            disableClose={Boolean(instance.dates.archived)}
+            hideClose={Boolean(instance.dates.deadline)}
+            hideArchive={Boolean(dayjs(instance.dates.deadline).isAfter(dayjs()))}
+            archived={archived}
+            isStarted={isStarted}
+          />
+        </Box>
         {instanceData.horizontalTimeline && (
           <HorizontalTimeline
             {...instanceData.horizontalTimeline}
             rootStyles={{
               position: 'absolute',
-              bottom: 0,
               right: 0,
+              bottom: '50%',
               left: '50%',
               paddingInline: 48,
               paddingBottom: 10,

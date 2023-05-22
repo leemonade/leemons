@@ -1,11 +1,11 @@
 import React from 'react';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import { map, uniq } from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { useCache } from '@common';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { useParsedActivities } from './useParsedActivities';
 import useFinalData from './useFinalData';
 
@@ -36,25 +36,14 @@ function useSelectedClasses(filters) {
 function useActivities(activities) {
   const previousResult = React.useRef([]);
 
-  const assignableInstancesQueries = useAssignableInstances({
-    id: activities || [],
+  const {
+    data: assignableInstances,
+    isLoading,
+    isRefetching,
+  } = useInstances({
+    ids: activities || [],
     enabled: !!activities?.length,
   });
-
-  const assignableInstances = React.useMemo(
-    () => map(assignableInstancesQueries, 'data').filter(Boolean),
-    [assignableInstancesQueries]
-  );
-
-  const isLoading = React.useMemo(
-    () => assignableInstancesQueries.some((q) => q.isLoading),
-    [assignableInstancesQueries]
-  );
-
-  const isRefetching = React.useMemo(
-    () => assignableInstancesQueries.some((q) => q.isRefetching),
-    [assignableInstancesQueries]
-  );
 
   if (isRefetching || isLoading) {
     return {
@@ -109,9 +98,17 @@ function useFilteredAssignableInstances({ assignableInstances, filters }) {
 }
 
 function useGrades(assignableInstances) {
-  const evaluationSystem = useProgramEvaluationSystem(assignableInstances?.[0], {
-    enabled: !!assignableInstances?.length,
+  const instanceWithProgram = React.useMemo(
+    () =>
+      assignableInstances?.find(
+        (instance) => !!instance.assignable.subjects?.find((subject) => !!subject.program)
+      ),
+    [assignableInstances]
+  );
+  const evaluationSystem = useProgramEvaluationSystem(instanceWithProgram, {
+    enabled: !!instanceWithProgram,
   });
+
   const cache = useCache();
   const grades = React.useMemo(
     () =>
@@ -156,9 +153,9 @@ function usePeriodData({ filters, localFilters }) {
   const isLoading = !hasActivities
     ? false
     : isLoadingSearchAssignableInstances ||
-      isLoadingStudentsData ||
-      assignableInstancesAreLoading ||
-      !selectedClasses?.length;
+    isLoadingStudentsData ||
+    assignableInstancesAreLoading ||
+    !selectedClasses?.length;
 
   const activitiesData = useParsedActivities(
     isLoading,

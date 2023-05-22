@@ -54,6 +54,7 @@ async function createRelatedInstance(
         {
           id: relation.id,
           relatedAssignableInstances: {
+            ...relatedInstance.relatedAssignableInstances,
             [type]: relatedInstance.relatedAssignableInstances?.[type] || [],
             [oppositeType]: _.uniq([
               ...(relatedInstance.relatedAssignableInstances?.[oppositeType] || []),
@@ -146,7 +147,7 @@ async function updateAssignableInstance(
 
       // EN: Update the assignable instance
       // ES: Actualizar el asignable instance
-      const cleanObj = _.pick(object, _.omit(diff, ['assignable', 'classes', 'dates']));
+      const cleanObj = _.pick(object, _.without(diff, ['assignable', 'classes', 'dates']));
 
       if (diff.includes('relatedAssignableInstances')) {
         const before = await Promise.all(
@@ -173,6 +174,7 @@ async function updateAssignableInstance(
         cleanObj.relatedAssignableInstances = JSON.stringify({
           before: _.uniq(before),
           after: _.uniq(after),
+          blocking: _.uniq(assignableInstance.relatedAssignableInstances?.blocking),
         });
       }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
@@ -26,22 +26,25 @@ export const LIBRARY_PLAYER_PROP_TYPES = {
       width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       display: PropTypes.oneOf(LIBRARY_PLAYER_DISPLAYS),
       align: PropTypes.oneOf(LIBRARY_PLAYER_ALIGNS),
+      readOnly: PropTypes.bool,
+      isFloating: PropTypes.bool,
     }),
   }),
 };
 
 const LibraryPlayer = ({
   node: {
-    attrs: { asset, width, display, align },
+    attrs: { asset, width, display, align, isFloating, readOnly },
   },
 }) => {
+  const selfRef = useRef({});
   const isWidthNum = /^\d+$/.test(width);
   const widthProp = isWidthNum ? `${width}px` : width;
 
   const getDisplay = () => {
     if (display === 'embed') {
       return (
-        <Box style={{ width: widthProp }}>
+        <Box style={{ width: isFloating ? '100%' : widthProp }}>
           <LibraryCardEmbed
             asset={asset}
             variant={asset.fileType === 'bookmark' ? 'bookmark' : 'media'}
@@ -54,41 +57,40 @@ const LibraryPlayer = ({
       return (
         <AssetPlayer
           asset={asset}
-          width={width}
+          width={isFloating ? '100%' : width}
           framed={!['image'].includes(asset.fileType)}
-          controlBar
+          canPlay={readOnly}
+          useAudioCard
         />
       );
     }
 
     return (
-      <Box style={{ width: widthProp, userSelect: 'none' }}>
+      <Box style={{ width: isFloating ? '100%' : widthProp, userSelect: 'none' }}>
         <LibraryCard asset={asset} shadow={false} />
       </Box>
     );
   };
 
-  /*
-style={{
-            display: 'flex',
-            justifyContent: align,
-            marginTop: 20,
-            margiBottom: 20,
-            marginLeft: ['left'].includes(align) ? 0 : 20,
-            marginRight: ['right'].includes(align) ? 0 : 20,
-          }}
-  */
+  useEffect(() => {
+    if (!selfRef.current || !selfRef.current.parentNode) return;
+    const { parentNode } = selfRef.current;
+
+    parentNode.style.maxWidth = isFloating ? width : '100%';
+    parentNode.style.float = isFloating && (align === 'left' || 'right') ? align : 'none';
+  }, [width, align, isFloating]);
+
   return (
-    <NodeViewWrapper className="library-extension">
+    <NodeViewWrapper className="library-extension" data-drag-handle ref={selfRef}>
       {!asset || isEmpty(asset) ? (
         <div>No Asset found</div>
       ) : (
         <Box
           style={{
-            display: 'flex',
-            justifyContent: align,
-            marginTop: 20,
-            marginBottom: 20,
+            display: !isFloating && 'flex',
+            justifyContent: !isFloating && align,
+            marginTop: !isFloating && 20,
+            marginBottom: !isFloating && 20,
             marginLeft: ['left'].includes(align) ? 0 : 20,
             marginRight: ['right'].includes(align) ? 0 : 20,
           }}

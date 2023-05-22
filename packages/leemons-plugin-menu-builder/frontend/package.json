@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/components": "1.1.01",
+    "@bubbles-ui/components": "dev",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {}

@@ -32,14 +32,29 @@ export default function Substages({
           </Text>
         </Col>
       </Grid>
-      {program.substages.map((substage) => {
+      {program.substages.map((substage, index) => {
         let maxDate = value[substage.id]?.endDate;
         let minDate = value[substage.id]?.startDate;
+        let initMinDate = start;
+        let endMaxDate = end;
+        let _disabled = disabled;
         if (!maxDate || maxDate > end) {
           maxDate = end;
         }
         if (!minDate || minDate < start) {
           minDate = start;
+        }
+        if (index > 0) {
+          _disabled = !value[program.substages[index - 1].id]?.endDate;
+          if (!_disabled) {
+            initMinDate = value[program.substages[index - 1].id].endDate;
+          }
+        }
+        if (index + 1 < program.substages.length) {
+          const s = value[program.substages[index + 1].id]?.startDate;
+          if (s) {
+            endMaxDate = s;
+          }
         }
         return (
           <Grid key={substage.id} columns={100} align="center">
@@ -51,9 +66,9 @@ export default function Substages({
             <Col span={40}>
               <DatePicker
                 locale={locale}
-                disabled={disabled}
+                disabled={_disabled}
                 value={value[substage.id]?.startDate}
-                minDate={start}
+                minDate={initMinDate}
                 maxDate={maxDate}
                 onChange={(date) => {
                   if (!date) {
@@ -82,10 +97,10 @@ export default function Substages({
               <DatePicker
                 locale={locale}
                 clearable={false}
-                disabled={disabled || !value[substage.id]?.startDate}
+                disabled={_disabled || !value[substage.id]?.startDate}
                 value={value[substage.id]?.endDate || value[substage.id]?.startDate}
                 minDate={minDate}
-                maxDate={end}
+                maxDate={endMaxDate}
                 onChange={(date) => {
                   onChange({
                     ...value,

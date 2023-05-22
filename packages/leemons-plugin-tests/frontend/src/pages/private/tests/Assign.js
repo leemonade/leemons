@@ -41,33 +41,10 @@ export default function Assign() {
   const params = useParams();
 
   async function send() {
-    const { assignees, teachers, dates, curriculum, alwaysAvailable, ...instanceData } = store.data;
-
-    const students = uniq(assignees.flatMap((assignee) => assignee.students));
-    const classes = assignees.flatMap((assignee) => assignee.group);
-
-    forIn(dates, (value, key) => {
-      dates[key] = parseDates(value);
-    });
+    const instanceData = store.data;
 
     try {
-      const taskInstanceData = {
-        gradable: true,
-        ...instanceData,
-        students,
-        classes,
-        curriculum: curriculum ? omit(curriculum, 'toogle') : {},
-        alwaysAvailable: alwaysAvailable || false,
-        showCorrectAnswers: store.data.assignStudents.assignmentSetup.showCorrectAnswers,
-        dates: alwaysAvailable ? {} : dates,
-      };
-
-      if (assignees[0]?.type === 'custom') {
-        set(taskInstanceData, 'metadata.groupName', assignees[0].name);
-        set(taskInstanceData, 'metadata.showGroupNameToStudents', assignees[0].showToStudents);
-      }
-
-      await assignTestRequest(store.test.id, taskInstanceData);
+      await assignTestRequest(store.test.id, instanceData);
 
       addSuccessAlert(t('assignDone'));
       history.push('/private/assignables/ongoing');
@@ -100,7 +77,9 @@ export default function Assign() {
   }
 
   function handleAssignment(e) {
-    store.data = { ...store.data, ...e };
+    const { value, raw } = e;
+    store.data = { ...store.data, ...value };
+    store.rawData = raw;
     store.currentStep = 1;
     render();
   }
@@ -132,16 +111,20 @@ export default function Assign() {
           >
             {store.currentStep === 0 && (
               <Form
-                defaultValues={store.data}
-                showCorrectAnswersCheck
-                onSubmit={handleAssignment}
+                defaultValues={store.rawData}
                 assignable={store.assignable}
-                sendButton={
+                evaluationType="auto"
+                withoutLayout
+                evaluationTypes={['calificable', 'punctuable']}
+                showEvaluation
+                showResponses
+                showMessageForStudents
+                buttonsComponent={
                   <Stack fullWidth justifyContent="end">
                     <Button type="submit">{t('next')}</Button>
                   </Stack>
                 }
-                variations={['calificable', 'punctuation-evaluable']}
+                onSubmit={handleAssignment}
               />
             )}
             {store.currentStep === 1 && (

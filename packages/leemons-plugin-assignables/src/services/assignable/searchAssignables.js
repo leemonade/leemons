@@ -2,17 +2,11 @@ const _ = require('lodash');
 const semver = require('semver');
 const versionControl = require('../versionControl');
 const { assignables } = require('../tables');
-const getUserPermission = require('./permissions/assignable/users/getUserPermission');
 const leebrary = require('../leebrary/leebrary');
 const searchBySubject = require('../subjects/searchBySubject');
 const searchByProgram = require('../subjects/searchByProgram');
 const listRoles = require('../roles/listRoles');
-
-async function asyncFilter(array, f) {
-  const results = await Promise.all(array.map(f));
-
-  return array.filter((d, i) => results[i]);
-}
+const getUserPermissions = require('./permissions/assignable/users/getUserPermissions');
 
 // TODO: Refactor to be able to search deleted assignables
 
@@ -125,7 +119,7 @@ module.exports = async function searchAssignables(
     if (program) {
       const ids = await searchByProgram(program, { transacting });
 
-      query.id_$in = query.id_$in?.length ? _.intersection(query.id_$in, ids) : ids;
+      query.id_$in = Array.isArray(query.id_$in) ? _.intersection(query.id_$in, ids) : ids;
     }
 
     // EN: Get all the assignables matching the query
@@ -158,16 +152,13 @@ module.exports = async function searchAssignables(
 
     // EN: Filter the assignables based on user permissions
     // ES: Filtrar los asignables según los permisos del usuario
-    assignablesIds = await asyncFilter(assignablesIds, async (id) => {
-      const permissions = await getUserPermission({ id }, { userSession, transacting });
-      return permissions.actions.includes('view');
-    });
+    const permissions = await getUserPermissions(assignablesIds, { userSession, transacting });
+    assignablesIds = assignablesIds.filter((id) => permissions[id]?.actions?.includes('view'));
 
     // EN: Filter by published status
     // ES: Filtrar por estado publicado
-    assignablesIds = await Promise.all(
-      assignablesIds.map((id) => versionControl.getVersion(id, { transacting }))
-    );
+    assignablesIds = await versionControl.getVersion(assignablesIds, { transacting });
+
     if (published !== 'all') {
       assignablesIds = assignablesIds.filter(
         ({ published: isPublished }) => isPublished === published

@@ -5,7 +5,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
-import { find } from 'lodash';
+import _, { find } from 'lodash';
 import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
 
 export default function DetailContent({ store, form, t, onNext, onPrev }) {
@@ -23,7 +23,7 @@ export default function DetailContent({ store, form, t, onNext, onPrev }) {
   const subjectIds = form.getValues('subjects');
 
   const subjects = store.subjectsByProgram[programId];
-  const subject = find(subjects, { value: subjectIds[0] });
+  const subject = find(subjects, { value: subjectIds[0].subject });
 
   return (
     <ContextContainer divided>
@@ -46,7 +46,7 @@ export default function DetailContent({ store, form, t, onNext, onPrev }) {
 
         <Curriculum
           program={form.getValues('program')}
-          subjects={form.getValues('subjects')}
+          subjects={_.map(form.getValues('subjects'), 'subject')}
           name="curriculum.curriculum"
           control={form.control}
           addLabel={t('addFromCurriculum')}

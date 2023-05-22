@@ -1,23 +1,22 @@
 /* eslint-disable no-unreachable */
-import React, { useEffect, useMemo, useState, useContext } from 'react';
-import { isEmpty, isArray, find } from 'lodash';
-import { useHistory, useParams } from 'react-router-dom';
-import { Box, Stack, ActionButton, Grid, Col } from '@bubbles-ui/components';
+import { ActionButton, Box, Col, Grid, Stack } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
+import { useRequestErrorMessage } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useRequestErrorMessage, LocaleDate } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import prefixPN from '../../../helpers/prefixPN';
-import LibraryContext from '../../../context/LibraryContext';
-import { VIEWS } from '../library/Library.constants';
+import { find, isArray, isEmpty } from 'lodash';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import {
-  Setup,
   BasicData as MediaBasicData,
-  PermissionsData,
   BookmarkBasicData,
+  PermissionsData,
+  Setup,
 } from '../../../components/AssetSetup';
-import { getAssetsByIdsRequest } from '../../../request';
-import { prepareAsset } from '../../../helpers/prepareAsset';
+import LibraryContext from '../../../context/LibraryContext';
+import prefixPN from '../../../helpers/prefixPN';
+import { getAssetRequest } from '../../../request';
+import { VIEWS } from '../library/Library.constants';
 
 const EditAssetPage = () => {
   const { file, setView, category, setCategory, categories, setAsset, asset } =
@@ -32,10 +31,9 @@ const EditAssetPage = () => {
 
   const loadAsset = async (id) => {
     try {
-      const response = await getAssetsByIdsRequest([id]);
-      if (!isEmpty(response?.assets)) {
-        const value = response.assets[0];
-        setAsset(value);
+      const response = await getAssetRequest(id);
+      if (!isEmpty(response?.asset)) {
+        setAsset(response.asset);
       } else {
         setAsset(null);
       }
@@ -91,12 +89,22 @@ const EditAssetPage = () => {
               category.key === 'bookmarks' ? (
                 <BookmarkBasicData
                   editing
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
                   categoryId={asset.category}
                   asset={asset}
                   onSave={setAsset}
                 />
               ) : (
                 <MediaBasicData
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
                   file={asset.file}
                   categoryId={asset.category}
                   asset={asset}

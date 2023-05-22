@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
 import { VerticalStepperContainer } from '@bubbles-ui/components';
+import { useObservableContext } from '@common/context/ObservableContext';
 
 function getInitialProgram(sharedData) {
   if (sharedData?.subjects?.length > 0) {
@@ -12,10 +13,16 @@ function getInitialProgram(sharedData) {
 }
 
 function Setup({ labels, steps, values, editable, onSave, useObserver, ...props }) {
-  const [sharedData, setSharedData] = useState({
-    ...values,
-    program: getInitialProgram(values),
-  });
+  const { setValue, getValues } = useObservableContext();
+
+  useEffect(() => {
+    const task = getValues('task');
+    if (!isNil(values) && JSON.stringify(task) !== JSON.stringify(values)) {
+      setValue('task', values);
+      setValue('sharedData', { ...values, program: getInitialProgram(values) });
+    }
+  }, [values]);
+
   const [active, setActive] = useState(0);
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
@@ -38,16 +45,10 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
 
   useEffect(() => {
     if (callOnSave) {
-      if (isFunction(onSave)) onSave(sharedData, callOnSave);
+      if (isFunction(onSave)) onSave(getValues('sharedData'), callOnSave);
       setCallOnSave(false);
     }
   }, [callOnSave]);
-
-  useEffect(() => {
-    if (!isNil(values) && JSON.stringify(sharedData) !== JSON.stringify(values)) {
-      setSharedData({ ...values, program: getInitialProgram(values) });
-    }
-  }, [values]);
 
   useEffect(() => {
     const f = (event) => {
@@ -77,7 +78,6 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
       setActive(active - 1);
     }
   };
-
   // ----------------------------------------------------------------
   // COMPONENT
 
@@ -94,8 +94,6 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
             ...item.content.props,
             onNext: handleOnNext,
             onPrevious: handleOnPrev,
-            setSharedData,
-            sharedData,
             editable,
           })
         )[active]

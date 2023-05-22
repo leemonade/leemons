@@ -47,7 +47,7 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
         page: store.page,
         size: store.size,
         published: true,
-        subjects,
+        subjects: _.map(subjects, 'subject'),
       });
 
       if (questionBank) {
@@ -126,8 +126,8 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
             radio: (
               <Radio
                 checked={item.id === questionBank}
-                onChange={(e) => {
-                  if (e.target.checked) {
+                onChange={(checked) => {
+                  if (checked) {
                     form.setValue('questionBank', item.id);
                     form.setValue('filters', null);
                     form.setValue('questions', []);

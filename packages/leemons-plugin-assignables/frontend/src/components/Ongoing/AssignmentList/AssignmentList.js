@@ -1,10 +1,21 @@
 import React, { useState, useMemo } from 'react';
-import { Box, Title, InlineSvg } from '@bubbles-ui/components';
+
+import {
+  Box,
+  Title,
+  Text,
+  InlineSvg,
+  Tabs,
+  TabPanel,
+  Divider,
+  createStyles,
+} from '@bubbles-ui/components';
+
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import Filters from './components/Filters';
-import { useAssignmentListStyle } from './AssignmentList.style';
 import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
 
@@ -23,6 +34,59 @@ function parseTitleKey(title, archived) {
   return prefixPN('ongoing.ongoing');
 }
 
+const useAssignmentListHeaderStyles = createStyles((theme) => ({
+  fullWidth: {
+    marginLeft: theme.spacing[10],
+    marginRight: theme.spacing[10],
+    marginTop: theme.spacing[7],
+    marginBottom: theme.spacing[7],
+  },
+  title: {
+    position: 'relative',
+    marginTop: theme.spacing[6],
+    display: 'flex',
+    gap: theme.spacing[4],
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+}));
+
+function Header({ icon, title, fullWidth, separator, isTitle }) {
+  const { classes, cx } = useAssignmentListHeaderStyles();
+  return (
+    <>
+      <Box className={cx({ [classes?.fullWidth]: !fullWidth })}>
+        <Box className={classes?.title}>
+          {!!icon && icon}
+          {isTitle ? (
+            <Title order={1}>{title}</Title>
+          ) : (
+            <Text color="primary" size="lg">
+              {title}
+            </Text>
+          )}
+        </Box>
+      </Box>
+      {!!separator && <Divider />}
+    </>
+  );
+}
+
+const useAssignmentListStyles = createStyles((theme) => ({
+  fullWidth: {
+    marginLeft: theme.spacing[10],
+    marginRight: theme.spacing[10],
+  },
+  tabGaps: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: theme.spacing[5],
+    gap: theme.spacing[8],
+    marginBottom: theme.spacing[13],
+  },
+}));
+
 export default function AssignmentList({
   archived,
   title,
@@ -30,8 +94,12 @@ export default function AssignmentList({
   filters: filtersProps,
   defaultFilters = null,
   fullWidth,
+  header,
   ...props
 }) {
+  const isStudent = useIsStudent();
+  const isTeacher = useIsTeacher();
+
   const titleKey = parseTitleKey(title, archived);
   const keys = [prefixPN('activities_filters')];
   if (titleKey) {
@@ -50,60 +118,69 @@ export default function AssignmentList({
 
   const [filters, setFilters] = useState(null);
 
-  const tabs = useMemo(() => {
-    if (!archived) {
-      return [
-        {
-          label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
-          value: 'ongoing',
-        },
-        {
-          label: labels?.filters?.evaluated?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
-          value: 'evaluated',
-        },
-      ];
-    }
-
-    return [
+  const tabs = useMemo(
+    () => [
       {
-        label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${evaluatedCount})`),
-        value: 'history',
+        label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
+        value: 'ongoing',
       },
-    ];
-  }, [labels, archived]);
+      {
+        label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${historyCount})`),
+        value: 'evaluated',
+      },
+    ],
+    [labels]
+  );
 
-  const { classes, cx } = useAssignmentListStyle();
+  const icon = (
+    <InlineSvg
+      style={{
+        display: 'inline-block',
+        position: 'relative',
+        width: 24,
+        heiht: 24,
+      }}
+      width={24}
+      height={24}
+      src="/public/assignables/menu-icon.svg"
+    />
+  );
+  const headerProps = {
+    fullWidth,
+    icon: header?.icon || icon,
+    title: header?.title || labels.title,
+    separator: header?.separator || false,
+    isTitle: header?.isTitle || false,
+  };
+
+  const { classes, cx } = useAssignmentListStyles();
   return (
-    <Box className={cx({ [classes?.root]: !fullWidth })}>
-      {titleKey &&
-        (titleComponent ? (
-          React.cloneElement(titleComponent, { children: labels.title })
-        ) : (
-          <Box className={classes?.title}>
-            <InlineSvg
-              style={{
-                display: 'inline-block',
-                position: 'relative',
-                width: 24,
-                heiht: 24,
-              }}
-              width={24}
-              height={24}
-              src="/public/assignables/menu-icon.svg"
-            />
-            <Title order={1}>{labels.title}</Title>
-          </Box>
-        ))}
-      <Filters
-        labels={labels.filters}
-        tabs={tabs}
-        defaultFilters={defaultFilters}
-        value={filters}
-        onChange={setFilters}
-        {...filtersProps}
-        hideStatus
-      />
-      <ActivitiesList filters={filters} {...props} />
+    <Box>
+      <Header {...headerProps} />
+      <Box className={cx({ [classes.fullWidth]: !fullWidth })}>
+        <Tabs>
+          {tabs.map((tab) => (
+            <TabPanel key={tab.value} label={tab.label}>
+              <Box className={classes.tabGaps}>
+                <Filters
+                  labels={labels.filters}
+                  value={filters}
+                  onChange={setFilters}
+                  hideStatus={isStudent}
+                  hideProgress={isTeacher}
+                  defaultFilters={defaultFilters}
+                  useRouter
+                  {...filtersProps}
+                />
+                <ActivitiesList
+                  filters={{ ...filters, isArchived: tab.value === 'evaluated' }}
+                  {...props}
+                />
+              </Box>
+            </TabPanel>
+          ))}
+        </Tabs>
+      </Box>
     </Box>
   );
 }

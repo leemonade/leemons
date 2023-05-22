@@ -149,8 +149,8 @@ async function setupBack(leemons) {
      * When a change occurs, remove backend router endpoints, destroy DB
      * connection and load back again
      */
-    handler: async () => {
-      return new Promise(async (resolve) => {
+    handler: async () =>
+      new Promise(async (resolve) => {
         if (leemons.canReloadBackend) {
           if (leemons.events) {
             leemons.events.once('appWillReload', async () => {
@@ -164,8 +164,7 @@ async function setupBack(leemons) {
             resolve();
           }
         }
-      });
-    },
+      }),
     logger: leemons.log,
   });
 

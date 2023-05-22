@@ -102,7 +102,7 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
 
       render();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       addErrorAlert(error);
     }
   }
@@ -126,6 +126,7 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
         subtitle: store.class.name,
         icon: store.class.icon,
         color: store.class.color,
+        /*
         styles: {
           position: 'absolute',
           bottom: 0,
@@ -134,6 +135,7 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
           borderRadius: '16px 16px 0 0',
           backgroundColor: COLORS.uiBackground01,
         },
+        */
       };
     }
     return {};

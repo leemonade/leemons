@@ -33,6 +33,9 @@ export const LIBRARY_MODAL_DEFAULT_PROPS = {
     cancel: '',
     add: '',
     update: '',
+    card: '',
+    embed: '',
+    player: '',
   },
   placeholders: {
     width: '',
@@ -41,6 +44,7 @@ export const LIBRARY_MODAL_DEFAULT_PROPS = {
     add: '',
   },
   errorMessages: {},
+  openLibraryModal: true,
 };
 
 export const LIBRARY_MODAL_PROP_TYPES = {
@@ -51,22 +55,37 @@ export const LIBRARY_MODAL_PROP_TYPES = {
     cancel: PropTypes.string,
     add: PropTypes.string,
     update: PropTypes.string,
+    card: PropTypes.string,
+    embed: PropTypes.string,
+    player: PropTypes.string,
   }),
   placeholders: PropTypes.any,
   errorMessages: PropTypes.any,
+  openLibraryModal: PropTypes.bool,
   onCancel: PropTypes.func,
   onChange: PropTypes.func,
+  readOnly: PropTypes.bool,
 };
 
-const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange, ...props }) => {
+const LibraryModal = ({
+  labels,
+  placeholders,
+  errorMessages,
+  openLibraryModal,
+  onCancel,
+  onChange,
+  readOnly,
+  ...props
+}) => {
   const { currentTool } = useTextEditor();
-  const [showAssetDrawer, setShowAssetDrawer] = useState(false);
+  const openLibraryDrawer = !openLibraryModal;
+  const [showAssetDrawer, setShowAssetDrawer] = useState(false || openLibraryDrawer);
   const [asset, setAsset] = useState(currentTool.data.asset);
   const [assetType, setAssetType] = useState('');
 
   // SIZE ·····················································
   const { width: viewportWidth } = useViewportSize();
-  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 600), [viewportWidth]);
+  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
 
   const {
     control,
@@ -78,6 +97,7 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
       width: currentTool.data.width || '100%',
       display: currentTool.data.display || 'card',
       align: currentTool.data.align || 'left',
+      readOnly,
     },
   });
 
@@ -98,13 +118,25 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
   };
 
   const handleOnCloseAssetDrawer = () => {
+    onCancelHandler();
     setShowAssetDrawer(false);
   };
 
   const handleOnSelectAsset = (item) => {
     const preparedAsset = prepareAsset(item);
-    setAsset(preparedAsset);
-    setAssetType('');
+    if (openLibraryDrawer) {
+      if (isFunction(onChange))
+        onChange({
+          width: '100%',
+          align: 'left',
+          display: 'player',
+          asset: preparedAsset,
+          readOnly,
+        });
+    } else {
+      setAsset(preparedAsset);
+      setAssetType('');
+    }
     setShowAssetDrawer(false);
   };
 
@@ -113,89 +145,95 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
 
   return (
     <Box {...props}>
-      <Box style={{ padding: 16, paddingBottom: 18 }}>
-        <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
-          <ContextContainer>
-            <Paper bordered padding={1} shadow="none">
-              {!asset ? (
-                <Button
-                  variant="light"
-                  onClick={() => setShowAssetDrawer(true)}
-                  compact
-                  leftIcon={<AddCircleIcon height={16} width={16} />}
-                >
-                  Añadir
-                </Button>
-              ) : (
-                <Stack justifyContent="space-between" alignItems="center">
-                  <LibraryItem asset={asset} />
-                  <ActionButton
-                    icon={<RemoveIcon height={16} width={16} />}
-                    onClick={() => setAsset(null)}
+      {!openLibraryDrawer && (
+        <Box style={{ padding: 16, paddingBottom: 18 }}>
+          <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
+            <ContextContainer>
+              <Paper bordered padding={1} shadow="none">
+                {!asset ? (
+                  <Button
+                    variant="light"
+                    onClick={() => setShowAssetDrawer(true)}
+                    compact
+                    leftIcon={<AddCircleIcon height={16} width={16} />}
+                  >
+                    {labels.add}
+                  </Button>
+                ) : (
+                  <Stack justifyContent="space-between" alignItems="center">
+                    <LibraryItem asset={asset} />
+                    <ActionButton
+                      icon={<RemoveIcon height={16} width={16} />}
+                      onClick={() => setAsset(null)}
+                    />
+                  </Stack>
+                )}
+              </Paper>
+              <Controller
+                name="width"
+                control={control}
+                rules={{ required: errorMessages.width || 'Required field' }}
+                render={({ field }) => (
+                  <TextInput
+                    {...field}
+                    label={labels.width}
+                    placeholder={placeholders.width}
+                    error={errors.width}
                   />
-                </Stack>
-              )}
-            </Paper>
-            <Controller
-              name="width"
-              control={control}
-              rules={{ required: errorMessages.width || 'Required field' }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={labels.width}
-                  placeholder={placeholders.width}
-                  error={errors.width}
-                />
-              )}
-            />
-            <Controller
-              name="display"
-              control={control}
-              rules={{ required: errorMessages.display || 'Required field' }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  label={labels.display}
-                  placeholder={placeholders.display}
-                  error={errors.display}
-                  data={[
-                    { label: 'Card', value: 'card' },
-                    { label: 'Embed', value: 'embed' },
-                    { label: 'Player', value: 'player' },
-                  ]}
-                />
-              )}
-            />
-            <Controller
-              name="align"
-              control={control}
-              rules={{ required: errorMessages.align || 'Required field' }}
-              render={({ field }) => (
-                <RadioGroup
-                  {...field}
-                  variant="icon"
-                  size="xs"
-                  label={labels.align}
-                  data={[
-                    { value: 'left', icon: <EditorLeftAlignIcon height={16.5} width={16} /> },
-                    { value: 'center', icon: <EditorCenterAlignIcon height={16.5} width={16} /> },
-                    { value: 'right', icon: <EditorRightAlignIcon height={16.5} width={16} /> },
-                  ]}
-                />
-              )}
-            />
-            <Stack fullWidth justifyContent="space-between">
-              <Button size="xs" variant="light" onClick={onCancelHandler}>
-                {labels.cancel}
-              </Button>
-              <Button size="xs" onClick={handleSubmit(submitHandler)} disabled={disableCondition()}>
-                {currentTool.editing ? labels.update : labels.add}
-              </Button>
-            </Stack>
-          </ContextContainer>
-        </form>
-      </Box>
+                )}
+              />
+              <Controller
+                name="display"
+                control={control}
+                rules={{ required: errorMessages.display || 'Required field' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    label={labels.display}
+                    placeholder={placeholders.display}
+                    error={errors.display}
+                    data={[
+                      { label: labels.card, value: 'card' },
+                      { label: labels.embed, value: 'embed' },
+                      { label: labels.player, value: 'player' },
+                    ]}
+                  />
+                )}
+              />
+              <Controller
+                name="align"
+                control={control}
+                rules={{ required: errorMessages.align || 'Required field' }}
+                render={({ field }) => (
+                  <RadioGroup
+                    {...field}
+                    variant="icon"
+                    size="sm"
+                    label={labels.align}
+                    data={[
+                      { value: 'left', icon: <EditorLeftAlignIcon height={16.5} width={16} /> },
+                      { value: 'center', icon: <EditorCenterAlignIcon height={16.5} width={16} /> },
+                      { value: 'right', icon: <EditorRightAlignIcon height={16.5} width={16} /> },
+                    ]}
+                  />
+                )}
+              />
+              <Stack fullWidth justifyContent="space-between">
+                <Button size="sm" variant="light" onClick={onCancelHandler}>
+                  {labels.cancel}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSubmit(submitHandler)}
+                  disabled={disableCondition()}
+                >
+                  {currentTool.editing ? labels.update : labels.add}
+                </Button>
+              </Stack>
+            </ContextContainer>
+          </form>
+        </Box>
+      )}
 
       <AssetListDrawer
         creatable
@@ -204,12 +242,12 @@ const LibraryModal = ({ labels, placeholders, errorMessages, onCancel, onChange,
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
         size={drawerSize}
-        shadow={drawerSize <= 600}
+        shadow
         assetType={assetType}
         onTypeChange={setAssetType}
         onlyThumbnails={false}
         allowChangeCategories={['bookmarks', 'media-files']}
-        itemMinWidth={200}
+        itemMinWidth={250}
       />
     </Box>
   );

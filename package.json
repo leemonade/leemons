@@ -26,6 +26,7 @@
   },
   "workspaces": [
     "packages/*",
+    "packages/*/frontend",
     "examples/*",
     "app"
   ],

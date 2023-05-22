@@ -5,8 +5,14 @@ import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { DuplicateIcon, ShareSocialIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import {
+  DownloadIcon,
+  DuplicateIcon,
+  PluginAssignmentsIcon,
+  ShareSocialIcon,
+} from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import { useHistory } from 'react-router-dom';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
 
@@ -33,6 +39,7 @@ const CardWrapper = ({
   className,
   variant = 'media',
   category,
+  realCategory,
   isEmbedded,
   single,
   onRefresh,
@@ -48,6 +55,7 @@ const CardWrapper = ({
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
   const [t] = useTranslateLoader(prefixPN('list'));
+  const history = useHistory();
 
   const { classes } = CardWrapperStyles({ selected });
 
@@ -75,6 +83,15 @@ const CardWrapper = ({
           },
         });
       }
+
+      items.push({
+        icon: <PluginAssignmentsIcon />,
+        children: t('cardToolbar.covertToTask'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/tasks/library/create?from=leebrary&asset=${asset.id}`);
+        },
+      });
 
       if (asset.downloadable) {
         items.push({
@@ -123,11 +140,16 @@ const CardWrapper = ({
       //
     }
   }
+  const _asset = asset;
+  // console.log(category);
+  if (realCategory?.key !== 'pins') {
+    delete _asset.programName;
+  }
 
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props}>
       <Component
-        asset={asset}
+        asset={_asset}
         menuItems={menuItems}
         variant={variant}
         className={classes.root}

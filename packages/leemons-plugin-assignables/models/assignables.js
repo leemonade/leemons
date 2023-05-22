@@ -1,5 +1,8 @@
 module.exports = {
   modelName: 'assignables',
+  options: {
+    useTimestamps: true,
+  },
   attributes: {
     asset: {
       type: 'string',

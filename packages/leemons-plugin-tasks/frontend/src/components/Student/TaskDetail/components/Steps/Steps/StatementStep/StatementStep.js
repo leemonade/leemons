@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
 import {
   Box,
+  Button,
   ContextContainer,
   HtmlText,
   ImageLoader,
-  TabPanel,
-  Tabs,
+  SegmentedControl,
   Title,
 } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
@@ -14,102 +15,112 @@ import { useClassesSubjects } from '@academic-portfolio/hooks';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
+import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 
-function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
-  const curriculumKeysToShow = Object.entries(showCurriculumObj)
-    .filter(([, value]) => value)
-    .map(([key]) => key);
+function CurriculumTab({ subjects, curriculumTab, labels }) {
+  const subject = subjects[curriculumTab];
 
-  const showCurriculum = curriculumKeysToShow?.length > 0;
-
-  if (!showCurriculum) {
+  if (!subject) {
     return null;
   }
 
-  const { instance } = assignation;
-  const { assignable } = instance;
+  const { curriculum, subject: id } = subject;
 
-  const curriculumValuesToShow = assignable.subjects.map((subject) => {
-    const curriculum = {};
+  // console.log('Curriculum', subject);
 
-    if (curriculumKeysToShow.includes('objectives')) {
-      curriculum.objectives = subject.curriculum.objectives;
-    }
+  const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
+  return (
+    <Box key={id}>
+      {/*
+        EN: Box to add margin
+        ES: Box para agregar margen
+      */}
+      <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
 
-    if (subject.curriculum.curriculum) {
-      curriculum.curriculum = subject.curriculum.curriculum.filter((key) => {
-        const regex = new RegExp(`${curriculumKeysToShow.join('|')}`, 'i');
-        return regex.test(key);
-      });
-    }
-    return {
-      ...subject,
-      curriculum,
-    };
-  });
+      <Box
+        sx={(theme) => ({
+          display: 'flex',
+          flexDirection: 'column',
+          gap: theme.spacing[4],
+        })}
+      >
+        {!!curriculum?.curriculum?.length && (
+          <Box sx={tabPanelStyle}>
+            <Box>
+              <CurriculumListContents value={curriculum?.curriculum} subjects={id} />
+            </Box>
+          </Box>
+        )}
+        {!!['objectives'].includes('objectives') && !!curriculum?.objectives?.length && (
+          <Box sx={tabPanelStyle}>
+            <Box>
+              <Title color="primary" order={5}>
+                {labels?.objectives}
+              </Title>
+              {/* TODO: Use react lists */}
+              <HtmlText>
+                {`
+              <ul>
+              ${curriculum?.objectives
+                    ?.map(
+                      (objective) =>
+                        `<li>
+                    ${objective}
+                  </li>`
+                    )
+                    ?.join('')}
+              </ul>
+            `}
+              </HtmlText>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+}
 
-  const subjects = useClassesSubjects(instance.classes);
+function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
+  const curriculum = useCurriculumVisibleValues({ assignation });
+  const subjects = useClassesSubjects(assignation.instance.classes);
+
+  const subjectsWithCurriculum = React.useMemo(
+    () =>
+      curriculum?.map((subject) => ({
+        ...subject,
+        name: subjects.find((s) => s.id === subject.subject)?.name,
+      })),
+    [subjects, curriculum]
+  );
+
+  const [curriculumTab, setCurriculumTab] = React.useState(0);
+
+  if (Object.keys(showCurriculumObj).length === 0 || subjectsWithCurriculum?.length === 0) {
+    return null;
+  }
 
   return (
     <ContextContainer>
       <Title order={4} color="primary">
         {labels?.title}
       </Title>
-      <Tabs>
-        {subjects.map(({ id, name }) => {
-          const { curriculum } = curriculumValuesToShow.find((s) => s.subject === id);
-          const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
-          return (
-            <TabPanel key={id} label={name}>
-              {/*
-                EN: Box to add margin
-                ES: Box para agregar margen
-              */}
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} />
-
-              <Box
-                sx={(theme) => ({
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: theme.spacing[4],
-                })}
-              >
-                {curriculum?.curriculum?.length && (
-                  <Box sx={tabPanelStyle}>
-                    <Box>
-                      <CurriculumListContents value={curriculum?.curriculum} />
-                    </Box>
-                  </Box>
-                )}
-                {!!curriculumKeysToShow.includes('objectives') && !!curriculum?.objectives?.length && (
-                  <Box sx={tabPanelStyle}>
-                    <Box>
-                      <Title color="primary" order={5}>
-                        {labels?.objectives}
-                      </Title>
-                      {/* TODO: Use react lists */}
-                      <HtmlText>
-                        {`
-                      <ul>
-                      ${curriculum?.objectives
-                        ?.map(
-                          (objective) =>
-                            `<li>
-                            ${objective}
-                          </li>`
-                        )
-                        ?.join('')}
-                      </ul>
-                    `}
-                      </HtmlText>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
-            </TabPanel>
-          );
-        })}
-      </Tabs>
+      {subjectsWithCurriculum?.length > 1 && (
+        <SegmentedControl
+          data={subjectsWithCurriculum.map((subject, i) => ({
+            value: `${i}`,
+            label: subject.name,
+          }))}
+          value={`${curriculumTab}`}
+          onChange={(value) => setCurriculumTab(Number(value))}
+        />
+      )}
+      <CurriculumTab
+        curriculumTab={curriculumTab}
+        subjects={subjectsWithCurriculum}
+        assignation={assignation}
+        labels={labels}
+      />
     </ContextContainer>
   );
 }
@@ -136,16 +147,57 @@ function useSupportImage(assignable) {
   return query;
 }
 
-export default function StatementStep({ assignation, localizations: _labels }) {
+export default function StatementStep({
+  assignation,
+  localizations: _labels,
+  setButtons,
+  hasNextStep,
+  hasNextActivity,
+  onNextStep,
+}) {
   const labels = _labels.statement_step;
 
   const { instance } = assignation;
   const { assignable } = instance;
 
   const { data: supportImage } = useSupportImage(assignable);
-
   const showCurriculum = instance.curriculum;
   const isGradable = assignable.gradable;
+
+  const now = dayjs();
+  const startDate = dayjs(assignation?.instance?.dates?.start || null);
+  const canSubmit =
+    assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+
+  React.useEffect(() => {
+    setButtons(
+      <>
+        <Box></Box>
+        {(hasNextStep || !hasNextActivity) && (
+          <Button
+            onClick={onNextStep}
+            variant={hasNextStep ? 'outline' : 'filled'}
+            rightIcon={<ChevRightIcon />}
+            rounded
+            disabled={!canSubmit}
+          >
+            {hasNextStep ? _labels?.buttons?.next : _labels?.buttons?.finish}
+          </Button>
+        )}
+        {!hasNextStep && hasNextActivity && (
+          <Button
+            variant="filled"
+            rightIcon={<ChevRightIcon />}
+            disabled={!canSubmit}
+            rounded
+            onClick={onNextStep}
+          >
+            {_labels?.buttons?.nextActivity}
+          </Button>
+        )}
+      </>
+    );
+  }, [setButtons, onNextStep, hasNextStep, _labels?.buttons, hasNextActivity, canSubmit]);
 
   return (
     <ContextContainer>
@@ -183,7 +235,11 @@ StatementStep.propTypes = {
       }),
     }),
   }),
-  labels: PropTypes.shape({
+  localizations: PropTypes.shape({
     statement_step: PropTypes.object,
   }),
+  setButtons: PropTypes.func,
+  hasNextStep: PropTypes.bool,
+  hasNextActivity: PropTypes.bool,
+  onNextStep: PropTypes.func,
 };

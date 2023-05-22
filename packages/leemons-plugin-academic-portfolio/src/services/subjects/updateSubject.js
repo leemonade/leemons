@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 const _ = require('lodash');
 const { isArray } = require('lodash');
 const { table } = require('../tables');
@@ -6,12 +7,14 @@ const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
 const { changeBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
+const { classByIds } = require('../classes/classByIds');
+const { getProgramCourses } = require('../programs/getProgramCourses');
 
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       await validateUpdateSubject(data, { transacting });
-      const {
+      let {
         id,
         course,
         credits,
@@ -65,7 +68,38 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
       );
 
       await table.class.updateMany({ subject: subject.id }, { color }, { transacting });
+      const classesWithSubject = await table.class.find(
+        { subject: subject.id },
+        { columns: ['id'], transacting }
+      );
+      const classes = await classByIds(_.map(classesWithSubject, 'id'), { transacting });
+      const roomService = leemons.getPlugin('comunica').services.room;
+      await Promise.all(
+        _.map(classes, (classe) => {
+          const roomData = {
+            name: subject.name,
+            bgColor: color,
+            image: null,
+            icon: null,
+            transacting,
+          };
+          if (assetImage.cover) {
+            roomData.image = assetImage.id;
+          }
+          if (classe.image?.cover) {
+            roomData.image = classe.image.id;
+          }
+          if (assetIcon.cover) {
+            roomData.icon = assetIcon.id;
+          }
+          return roomService.update(leemons.plugin.prefixPN(`room.class.${classe.id}`), roomData);
+        })
+      );
 
+      if (!course) {
+        const programCourses = await getProgramCourses(subject.program, { transacting });
+        course = programCourses[0].id;
+      }
       const courses = isArray(course) ? course : [course];
       await setToAllClassesWithSubject(subject.id, courses, { transacting });
 

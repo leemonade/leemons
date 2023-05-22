@@ -24,6 +24,7 @@ const AssetFormInput = ({
   category: categoryKey,
   preview,
   previewVariant,
+  advancedConfig,
   labels,
   placeholders,
   errorMessages,
@@ -85,6 +86,7 @@ const AssetFormInput = ({
       type={null}
       form={form}
       pluginName="leebrary"
+      advancedConfig={advancedConfig}
       tagsType={prefixPN('')}
       useTags={!!tagsPluginName}
       hideTitle
@@ -109,6 +111,21 @@ const AssetFormInput = ({
               locale={locale}
               single
             />
+            {advancedConfig?.colorToRight || advancedConfig?.fileToRight ? (
+              <LibraryForm
+                {...formLabels}
+                asset={{ ...asset, file, cover: preparedAsset.cover }}
+                type={null}
+                form={form}
+                pluginName="leebrary"
+                advancedConfigMode
+                advancedConfig={advancedConfig}
+                tagsType={prefixPN('')}
+                useTags={!!tagsPluginName}
+                hideTitle
+                hideSubmit
+              />
+            ) : null}
           </InputWrapper>
         </Box>
       </Box>
@@ -137,6 +154,7 @@ AssetFormInput.propTypes = {
   placeholders: PropTypes.object,
   errorMessages: PropTypes.object,
   previewVariant: PropTypes.string,
+  advancedConfig: PropTypes.object,
 };
 
 export { AssetFormInput };

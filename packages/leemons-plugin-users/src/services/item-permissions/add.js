@@ -5,6 +5,7 @@ const { table } = require('../tables');
 const { validateExistItemPermissions } = require('../../validations/exists');
 const { validateItemPermission } = require('../../validations/item-permissions');
 const { existMany } = require('../permissions/existMany');
+const { removeAllItemsCache } = require('./removeAllItemsCache');
 
 /**
  * ES:
@@ -74,8 +75,8 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
   );
 
   const toSave = [];
-  _.forEach(_data, (d) => {
-    _.forEach(d.actionNames, (actionName) => {
+  _.forEach(_data, ({ actionNames, ...d }) => {
+    _.forEach(actionNames, (actionName) => {
       toSave.push({
         ...d,
         actionName,
@@ -84,8 +85,9 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
       });
     });
   });
-
-  return table.itemPermissions.createMany(toSave, { transacting });
+  const response = await table.itemPermissions.createMany(toSave, { transacting });
+  await removeAllItemsCache();
+  return response;
 }
 
 module.exports = { add };

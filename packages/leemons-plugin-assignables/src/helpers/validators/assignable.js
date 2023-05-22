@@ -156,7 +156,7 @@ const validAssignableProperties = [
   'metadata',
 ];
 
-const assignableRequiredProperties = ['asset', 'role', 'statement'];
+const assignableRequiredProperties = ['asset', 'role'];
 
 function validateAssignable(assignable, { validationObject, useRequired = false } = {}) {
   const obj = validationObject || _.clone(assignableValidationObject);

@@ -83,9 +83,6 @@ module.exports = {
           name: {
             required: 'Required field',
           },
-          tagline: {
-            required: 'Required field',
-          },
         },
       },
       configData: {
@@ -223,7 +220,7 @@ module.exports = {
     },
   },
   assignment_page: {
-    page_title: 'Assign tasks',
+    action: 'Assign task',
   },
   assignment_form: {
     labels: {
@@ -341,11 +338,13 @@ module.exports = {
     duplicate: 'Duplicate',
   },
   variant: 'Task',
+  expressVariant: 'Express Task',
   task_realization: {
     confirmation_modal: {
       title: 'Tasks finished',
       description: 'Your task has been successfuly submitted',
       action: 'Ongoing activities',
+      goToModule: 'Module dashboard',
       nextActivity: 'Next activity',
     },
     timeout_modal: {

@@ -6,4 +6,5 @@ module.exports = {
     frontend: 'frontend',
     env: '.env',
   },
+  unwatchedDirs: ['./config/tokens'],
 };

@@ -103,24 +103,6 @@ const menuItems = [
       },
     ],
   },
-  {
-    item: {
-      key: 'activities.history',
-      order: 2,
-      parentKey: 'activities',
-      url: '/private/assignables/history',
-      label: {
-        en: 'History',
-        es: 'Histórico',
-      },
-    },
-    permissions: [
-      {
-        permissionName: permissionNames.history,
-        actionNames: ['view'],
-      },
-    ],
-  },
 ];
 
 const widgets = {

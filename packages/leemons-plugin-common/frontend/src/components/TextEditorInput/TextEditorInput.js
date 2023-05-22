@@ -12,11 +12,12 @@ import {
   LinkTool,
 } from '@bubbles-ui/editors';
 import { useTextEditor } from '@common/context';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
+import { TextEditorInputStyles } from './TextEditorInput.styles';
 import {
   TEXT_EDITOR_INPUT_DEFAULT_PROPS,
   TEXT_EDITOR_INPUT_PROP_TYPES,
 } from './TextEditorInput.constants';
-import { TextEditorInputStyles } from './TextEditorInput.styles';
 
 export function useProcessTextEditor() {
   const { textEditorProcessors } = useTextEditor();
@@ -39,6 +40,7 @@ export function useProcessTextEditor() {
 export const TextEditorInput = ({
   label,
   description,
+  toolLabels,
   help,
   error,
   required,
@@ -51,6 +53,7 @@ export const TextEditorInput = ({
   editorClassname,
   ...props
 }) => {
+  const editorLabels = useEditorLabels();
   const uuid = useId();
   const { textEditorTools } = useTextEditor();
 
@@ -59,7 +62,7 @@ export const TextEditorInput = ({
 
     if (textEditorTools) {
       keys(textEditorTools).forEach((key) => {
-        if (textEditorTools[key].tool) {
+        if (textEditorTools[key].tool && toolbars[key]) {
           tools.push({ id: key, tool: textEditorTools[key].tool });
         }
       });
@@ -75,6 +78,8 @@ export const TextEditorInput = ({
     { hasError, editorStyles },
     { name: 'TextEditorInput' }
   );
+
+  if (isEmpty(editorLabels)) return null;
 
   return (
     <InputWrapper
@@ -93,18 +98,21 @@ export const TextEditorInput = ({
           onChange={onChange}
           editorClassname={cx(classes.editor, editorClassname)}
         >
-          {toolbars.color && <ColorTool />}
-          {toolbars.style && <TransformsTool />}
+          {toolbars.heading && <HeadingsTool labels={editorLabels.headingsTool} />}
+          {toolbars.color && <ColorTool label={editorLabels.colorTool} />}
+          {toolbars.style && <TransformsTool labels={editorLabels.transformsTool} />}
+          {toolbars.align && <TextAlignTool labels={editorLabels.textAlignTool} />}
+          {toolbars.list && <ListIndentTool labels={editorLabels.listIndentTool} />}
+          {toolbars.formulation && <ScriptsTool labels={editorLabels.scriptsTool} />}
+          {toolbars.link && <LinkTool {...editorLabels.linkTool} />}
 
-          {leemonsTools.map((item, i) => (
-            <React.Fragment key={item.tool.id || `t-${i}`}>{item.tool}</React.Fragment>
-          ))}
-
-          {toolbars.link && <LinkTool />}
-          {toolbars.heading && <HeadingsTool paragraph={false} />}
-          {toolbars.list && <ListIndentTool />}
-          {toolbars.align && <TextAlignTool />}
-          {toolbars.formulation && <ScriptsTool />}
+          {leemonsTools.map((item, i) =>
+            React.cloneElement(item.tool, {
+              key: item.tool.id || `t-${i}`,
+              ...editorLabels.libraryTool,
+              alignLabels: editorLabels.textAlignTool,
+            })
+          )}
 
           {children}
         </TextEditor>

@@ -13,15 +13,11 @@ async function getFeedback(id, { userSession, transacting } = {}, getAssets = tr
 
   const ids = _.isArray(id) ? id : [id];
 
-  const assignables = await Promise.all(
-    _.map(ids, (_id) =>
-      assignableService.getAssignable(_id, {
-        userSession,
-        withFiles: true,
-        transacting,
-      })
-    )
-  );
+  const assignables = await assignableService.getAssignables(ids, {
+    withFiles: true,
+    userSession,
+    transacting,
+  });
 
   const imagesIds = [];
   _.forEach(assignables, (assignable) => {

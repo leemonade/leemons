@@ -11,6 +11,7 @@ const {
   find,
   set,
   map,
+  isObject,
 } = require('lodash');
 const semver = require('semver');
 const { byName: getByName } = require('./byName');
@@ -26,6 +27,8 @@ const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { getByUser: getPinsByUser } = require('../pins/getByUser');
 const { byProvider: getByProvider } = require('./byProvider');
 const { tables } = require('../tables');
+const { getAssetsByProgram } = require('../assets/getAssetsByProgram');
+const { getAssetsBySubject } = require('../assets/getAssetsBySubject');
 
 async function search(
   { criteria = '', type, category },
@@ -37,14 +40,37 @@ async function search(
     indexable = true,
     preferCurrent,
     searchInProvider,
-    providerQuery,
+    providerQuery = {},
     pinned,
     showPublic,
     roles,
+    programs: _programs,
+    subjects: _subjects,
     userSession,
     transacting,
   } = {}
 ) {
+  let programs = _programs;
+  let subjects = _subjects;
+
+  if (!isObject(providerQuery)) {
+    providerQuery = {};
+  }
+
+  if (!programs && providerQuery?.program) {
+    programs = [providerQuery.program];
+  }
+  if (!subjects && providerQuery?.subjects) {
+    subjects = providerQuery.subjects;
+  }
+
+  if (!providerQuery?.program && programs) {
+    providerQuery.program = programs[0];
+  }
+  if (!providerQuery?.subjects && subjects) {
+    providerQuery.subjects = subjects;
+  }
+
   let assets = [];
   let nothingFound = false;
 
@@ -78,66 +104,90 @@ async function search(
       nothingFound = assets.length === 0;
     }
 
-    if (!isEmpty(criteria)) {
-      const tagsService = leemons.getPlugin('common').services.tags;
+    // if (!isEmpty(criteria)) {
+    const tagsService = leemons.getPlugin('common').services.tags;
 
-      let providerAssets = null;
-      if (searchInProvider) {
-        providerAssets = await getByProvider(categoryId, criteria, {
-          query: providerQuery,
-          assets,
-          published,
-          preferCurrent,
-          userSession,
-          transacting,
-        });
-      }
+    let providerAssets = null;
+    if (searchInProvider && categoryId && !isEmpty(criteria)) {
+      providerAssets = await getByProvider(categoryId, criteria, {
+        query: providerQuery,
+        assets,
+        published,
+        preferCurrent,
+        userSession,
+        transacting,
+      });
 
-      if (!providerAssets || providerAssets.length) {
-        const query = {
-          indexable,
-          $or: [
-            { name_$contains: criteria },
-            { tagline_$contains: criteria },
-            { description_$contains: criteria },
-          ],
-        };
-
-        const assetIds = providerAssets || assets;
-        if (!isEmpty(assetIds)) {
-          query.id_$in = assetIds;
-        }
-
-        if (categoryId) {
-          query.category = categoryId;
-        }
-
-        const [assetsFound, byTags] = await Promise.all([
-          tables.assets.find(query, { columns: ['id'], transacting }),
-          tagsService.getTagsValues(criteria, {
-            type: leemons.plugin.prefixPN(''),
-            transacting,
-          }),
-        ]);
-
-        const matches = map(assetsFound, 'id');
-
-        // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
-        // EN: If there are resources, we must apply a previous filter as an intersection
-        if (!isEmpty(assets)) {
-          assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
-        } else {
-          assets = compact(uniq(matches.concat(flattenDeep(byTags))));
-        }
-
-        nothingFound = assets.length === 0;
-      }
+      nothingFound = !providerAssets?.length;
     }
+
+    if (!providerAssets || providerAssets.length) {
+      const query = {
+        indexable,
+      };
+      if (criteria) {
+        query.$or = [
+          { name_$contains: criteria },
+          { tagline_$contains: criteria },
+          { description_$contains: criteria },
+        ];
+      }
+
+      const assetIds = providerAssets || assets;
+      if (!isEmpty(assetIds)) {
+        query.id_$in = assetIds;
+      }
+
+      if (categoryId) {
+        query.category = categoryId;
+      }
+
+      const [assetsFound, byTags] = await Promise.all([
+        tables.assets.find(query, { columns: ['id'], transacting }),
+        tagsService.getTagsValues(criteria, {
+          type: leemons.plugin.prefixPN(''),
+          transacting,
+        }),
+      ]);
+
+      const matches = map(assetsFound, 'id');
+
+      // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
+      // EN: If there are resources, we must apply a previous filter as an intersection
+      if (isEmpty(criteria)) {
+        assets = matches;
+      } else if (!isEmpty(assets)) {
+        assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+      } else {
+        assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+      }
+
+      nothingFound = assets.length === 0;
+    }
+    // }
 
     if (type) {
       assets = await getAssetsByType(type, { assets, transacting });
       nothingFound = assets.length === 0;
     }
+
+    if (programs) {
+      assets = await getAssetsByProgram(programs, { assets, transacting });
+      nothingFound = assets.length === 0;
+    }
+
+    if (subjects) {
+      assets = await getAssetsBySubject(subjects, { assets, transacting });
+      nothingFound = assets.length === 0;
+    }
+
+    if (indexable && assets && assets.length) {
+      assets = await getIndexables(assets, { columns: ['id'], transacting });
+      assets = map(assets, 'id');
+      nothingFound = assets.length === 0;
+    }
+
+    // Search by subject
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver

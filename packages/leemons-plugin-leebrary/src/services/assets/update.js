@@ -1,5 +1,14 @@
 /* eslint-disable no-param-reassign */
-const { defaults, cloneDeep, isEqual, differenceWith, isEmpty, pick } = require('lodash');
+const {
+  map,
+  isArray,
+  defaults,
+  cloneDeep,
+  isEqual,
+  differenceWith,
+  isEmpty,
+  pick,
+} = require('lodash');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
 const { tables } = require('../tables');
 const { validateAddAsset } = require('../../validations/forms');
@@ -37,8 +46,15 @@ async function update(
     throw new Error('No changes detected');
   }
   data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
+  if (isArray(data.subjects)) {
+    data.subjects = map(data.subjects, ({ subject, level }) => ({
+      subject,
+      level,
+    }));
+  }
   const { id, ...assetData } = data;
   let assetId = id;
+
   await validateAddAsset(assetData);
 
   // EN: Get user's permissions
@@ -69,6 +85,8 @@ async function update(
     'public',
     'indexable',
     'tags',
+    'program',
+    'subjects',
   ];
 
   const category = await getCategory(currentAsset.category, { transacting });
@@ -86,7 +104,9 @@ async function update(
 
   // EN: Diff the current values with the new ones
   // ES: Compara los valores actuales con los nuevos
-  const { object: updateObject, diff } = getDiff(newData, currentData);
+  const { object: _updateObject, diff } = getDiff(newData, currentData);
+
+  const { subjects, ...updateObject } = _updateObject;
 
   // ·········································································
   // DUPLICATE ASSET
@@ -130,6 +150,17 @@ async function update(
   } else if (!diff.length) {
     return currentAsset;
     // throw new Error('No changes detected');
+  }
+
+  if (diff.includes('subjects')) {
+    await tables.assetsSubjects.deleteMany({ asset: assetId }, { transacting });
+    if (subjects && subjects.length) {
+      await Promise.all(
+        map(subjects, (item) =>
+          tables.assetsSubjects.create({ asset: assetId, ...item }, { transacting })
+        )
+      );
+    }
   }
 
   // ·········································································
@@ -189,7 +220,7 @@ async function update(
   // ES: Actualizar el asset
   const asset = await tables.assets.update({ id: assetId }, updateObject, { transacting });
 
-  return { ...asset, file: newFile, cover: coverFile, tags: newData.tags };
+  return { ...asset, subjects, file: newFile, cover: coverFile, tags: newData.tags };
 }
 
 module.exports = { update };

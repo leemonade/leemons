@@ -19,9 +19,16 @@ export * from './LocaleDate';
 export * from './numberToEncodedLetter';
 export * from './linkify';
 export * from './isValidHttpUrl';
+export * from './randomString';
 export * from './useCache';
 export * from './stringMatch';
 export * from './components';
+export * from './ellipsis';
+export * from './useIdle';
+export * from './useBeforeUnload';
+export * from './context';
+export * from './share';
+export * from './hashObject';
 
 function htmlToText(html) {
   const el = document.createElement('div');

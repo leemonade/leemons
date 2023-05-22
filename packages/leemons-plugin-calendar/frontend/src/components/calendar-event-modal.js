@@ -1,30 +1,31 @@
+/* eslint-disable react/display-name */
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign */
 
+import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
+import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
+import { getCalendarsToFrontendRequest } from '@calendar/request';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import loadable from '@loadable/component';
+import tKeys from '@multilanguage/helpers/tKeys';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import { goLoginPage } from '@users/navigate';
+import { getCentersWithToken, useSession } from '@users/session';
 import * as _ from 'lodash';
 import { find, forEach, isString, map, set } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
-import { getCentersWithToken, useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
-import { getCalendarsToFrontendRequest } from '@calendar/request';
-import loadable from '@loadable/component';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Box, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
-import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
-import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import tKeys from '@multilanguage/helpers/tKeys';
 import PropTypes from 'prop-types';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@calendar/helpers/prefixPN';
+import { getLocale, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import hooks from 'leemons-hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { getLocale, useStore } from '@common';
-import getUTCString from '../helpers/getUTCString';
+import hooks from 'leemons-hooks';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
+import getUTCString from '../helpers/getUTCString';
 import {
   addEventRequest,
   getEventTypesRequest,
@@ -38,15 +39,50 @@ function dynamicImport(pluginName, component) {
   );
 }
 
-function UsersComponent(props) {
+function ClassIcon({ class: klass, dropdown = false }) {
   return (
+    <Box
+      sx={() => ({
+        position: dropdown ? 'static' : 'absolute',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 24,
+        minHeight: 24,
+        maxWidth: 24,
+        maxHeight: 24,
+        borderRadius: '50%',
+        backgroundColor: klass?.bgColor,
+      })}
+    >
+      <ImageLoader
+        sx={() => ({
+          borderRadius: 0,
+          filter: 'brightness(0) invert(1)',
+        })}
+        forceImage
+        width={14}
+        height={14}
+        src={klass.icon}
+      />
+    </Box>
+  );
+}
+
+ClassIcon.propTypes = {
+  class: PropTypes.object,
+  dropdown: PropTypes.bool,
+};
+
+const UsersComponent = React.forwardRef(
+  ({ userAgents, showLess, showMore, disabled, labelDisabled, label, ...props }) => (
     <Box>
-      {props.disabled ? (
+      {disabled ? (
         <UserDisplayItemList
-          data={map(props.userAgents, 'user')}
+          data={map(userAgents, 'user')}
           labels={{
-            showMore: props.showMore,
-            showLess: props.showLess,
+            showMore,
+            showLess,
           }}
         />
       ) : (
@@ -54,12 +90,12 @@ function UsersComponent(props) {
           {...props}
           maxSelectedValues={99999}
           onlyContacts
-          label={props.disabled ? props.labelDisabled : props.label}
+          label={disabled ? labelDisabled : label}
         />
       )}
     </Box>
-  );
-}
+  )
+);
 
 UsersComponent.propTypes = {
   disabled: PropTypes.bool,
@@ -411,7 +447,10 @@ function NewCalendarEventModal({
         selectData={{
           repeat: ref.current.repeat,
           eventTypes: ref.current.eventTypes,
-          calendars: ref.current.calendarData?.ownerCalendars,
+          calendars: ref.current.calendarData?.ownerCalendars.map((value) => {
+            if (!value.isClass) return value;
+            return { ...value, icon: <ClassIcon class={value} dropdown /> };
+          }),
         }}
         onSubmit={onSubmit}
         UsersComponent={
@@ -468,6 +507,7 @@ NewCalendarEventModal.propTypes = {
   reff: PropTypes.any,
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export const useCalendarEventModal = () => {
   const [store, render] = useStore({
     opened: false,

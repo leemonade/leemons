@@ -1,78 +1,118 @@
-import React, { useEffect, useRef, useCallback } from 'react';
-import { isFunction, uniq } from 'lodash';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { isFunction, omit, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
-import { Stack, Button, ContextContainer, useDebouncedCallback } from '@bubbles-ui/components';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Button, ContextContainer, Stack, Switch } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AssetFormInput } from '@leebrary/components/AssetFormInput';
+import { useObservableContext } from '@common/context/ObservableContext';
 
-function BasicData({
-  labels,
-  placeholders,
-  helps,
-  errorMessages,
-  onNext,
-  sharedData,
-  setSharedData,
-  editable,
-  useObserver,
-  onNameChange,
-  ...props
-}) {
-  // ·······························································
-  // FORM
+function useUpdateFormData(formData) {
+  const { useWatch: useContextWatch } = useObservableContext();
 
-  const defaultValues = {
-    ...sharedData.asset,
-  };
+  const [asset, program, subjects, express] = useContextWatch({
+    name: [
+      'sharedData.asset',
+      'sharedData.program',
+      'sharedData.subjects',
+      'sharedData.metadata.express',
+    ],
+  });
 
-  const coverFile = useRef(null);
-  const formData = useForm({ defaultValues });
-  const {
-    handleSubmit,
-    reset,
-    watch,
-    formState: { isDirty },
-  } = formData;
+  useEffect(() => {
+    formData.reset({
+      ...omit(asset, 'file'),
+      program,
+      subjects,
+      express: !!express,
+    });
+  }, [asset, program, subjects, express]);
+}
 
-  const { subscribe, unsubscribe, emitEvent } = useObserver();
+function useOnNameOrExpressChange(formData) {
+  const { setValue } = useObservableContext();
+  const isFirstNameCall = useRef(true);
+  const isFirstExpressCall = useRef(true);
 
-  const taskName = watch('name');
-  const cover = watch('cover');
+  const name = useWatch({ control: formData.control, name: 'name' });
+  const isExpress = useWatch({ control: formData.control, name: 'express' });
+
+  useEffect(() => {
+    if (isFirstNameCall.current) {
+      isFirstNameCall.current = false;
+    } else {
+      setValue('taskName', name);
+    }
+  }, [name]);
+
+  useEffect(() => {
+    if (isFirstExpressCall.current) {
+      isFirstExpressCall.current = false;
+    } else {
+      setValue('isExpress', !!isExpress);
+    }
+  }, [isExpress]);
+}
+
+function useCoverFileRef(formData) {
+  const coverFile = useRef();
+  const cover = useWatch({ control: formData.control, name: 'cover' });
+
   useEffect(() => {
     if (cover instanceof File || typeof cover === 'string') {
       coverFile.current = cover;
     }
   }, [cover]);
-  const debounced = useDebouncedCallback(500);
 
-  useEffect(() => {
-    debounced(() => onNameChange(taskName));
-    onNameChange(taskName);
-  }, [taskName]);
+  return coverFile;
+}
 
-  useEffect(() => {
-    reset(sharedData.asset);
-  }, [sharedData]);
+function BasicData({
+  labels,
+  placeholders,
+  helps,
+  advancedConfig,
+  errorMessages,
+  onNext,
+  useObserver,
+}) {
+  // ·······························································
+  // FORM
+  const { getValues, setValue, useWatch: useObservableWatch } = useObservableContext();
+  const formData = useForm();
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty },
+  } = formData;
+
+  const taskId = useObservableWatch({ name: 'task.id' });
+  const express = !!useWatch({ control, name: 'express' });
+
+  useUpdateFormData(formData);
+  useOnNameOrExpressChange(formData);
+
+  const coverFile = useCoverFileRef(formData);
+
+  const { subscribe, unsubscribe, emitEvent } = useObserver();
 
   const onSubmit = useCallback(
-    (e) => {
+    ({ program, subjects, ...e }) => {
       if (coverFile.current) {
         e.cover = coverFile.current;
       }
-      const data = {
-        ...sharedData,
-        asset: e,
-        metadata: {
-          ...sharedData.metadata,
-          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'basicData']),
-        },
-      };
-      setSharedData(data);
 
-      return data;
+      const visitedSteps = getValues('sharedData.metadata.visitedSteps');
+
+      setValue('sharedData.asset', e);
+      setValue('sharedData.program', program);
+      setValue('sharedData.subjects', subjects);
+      setValue('sharedData.metadata.express', !!e.express);
+      setValue('sharedData.metadata.visitedSteps', uniq([...(visitedSteps || []), 'basicData']));
+
+      setValue('isExpress', !!e.express);
     },
-    [setSharedData, sharedData]
+    [getValues, setValue]
   );
 
   useEffect(() => {
@@ -114,8 +154,8 @@ function BasicData({
   // HANDLERS
 
   const handleOnNext = (e) => {
-    const data = onSubmit(e);
-    if (isFunction(onNext)) onNext(data);
+    onSubmit(e);
+    if (isFunction(onNext)) onNext();
   };
 
   const handleOnSubmit = handleSubmit(handleOnNext);
@@ -125,11 +165,20 @@ function BasicData({
 
   return (
     <ContextContainer divided>
+      <Controller
+        name="express"
+        control={formData.control}
+        render={({ field }) => (
+          <Switch label="Tarea express" disabled={!!taskId} checked={!!field.value} {...field} />
+        )}
+      />
       <AssetFormInput
         form={formData}
         {...{ labels, placeholders, helps, errorMessages }}
+        advancedConfig={advancedConfig}
         category="assignables.task"
-        tagsPluginName="tasks"
+        useTags={!express}
+        tagsPluginName={!express ? 'tasks' : undefined}
         preview
         previewVariant="task"
       />
@@ -150,10 +199,10 @@ BasicData.propTypes = {
   errorMessages: PropTypes.object,
   sharedData: PropTypes.any,
   setSharedData: PropTypes.func,
-  editable: PropTypes.bool,
   onNext: PropTypes.func,
   useObserver: PropTypes.func,
   onNameChange: PropTypes.func,
+  advancedConfig: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

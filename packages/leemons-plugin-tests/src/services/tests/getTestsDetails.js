@@ -7,15 +7,11 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   const { assignables: assignableService } = leemons.getPlugin('assignables').services;
   const ids = _.isArray(id) ? id : [id];
 
-  const assignables = await Promise.all(
-    _.map(ids, (_id) =>
-      assignableService.getAssignable(_id, {
-        userSession,
-        withFiles: true,
-        transacting,
-      })
-    )
-  );
+  const assignables = await assignableService.getAssignables(ids, {
+    withFiles: true,
+    userSession,
+    transacting,
+  });
 
   const questionBankIds = [];
   let questionIds = [];
@@ -47,7 +43,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
     cover: assignable.asset.cover,
     tags: assignable.asset.tags,
     program: assignable.subjects[0]?.program,
-    subjects: _.map(assignable.subjects, 'subject'),
+    subjects: _.map(assignable.subjects, ({ subject }) => subject),
     statement: assignable.statement,
     instructionsForTeachers: assignable.instructionsForTeachers,
     instructionsForStudents: assignable.instructionsForStudents,

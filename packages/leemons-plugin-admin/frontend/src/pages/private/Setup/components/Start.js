@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import prefixPN from '@admin/helpers/prefixPN';
 import {
   Box,
   Button,
@@ -9,7 +8,8 @@ import {
   Stack,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Styles = createStyles((theme) => ({
   cardsContainer: {
@@ -94,7 +94,7 @@ Card.propTypes = {
   number: PropTypes.number,
 };
 
-const Start = ({ onNextLabel, onNext = () => {} }) => {
+const Start = ({ onNextLabel, zoneTranslations, zone, onNext = () => {} }) => {
   const [t] = useTranslateLoader(prefixPN('setup.welcome'));
 
   const { classes: styles, cx } = Styles();
@@ -169,6 +169,19 @@ const Start = ({ onNextLabel, onNext = () => {} }) => {
             imageHeight={107}
             description={t('adminUsersDescription')}
           />
+          {zone?.widgetItems.map((item, index) => (
+            <Card
+              key={item.id}
+              styles={styles}
+              headerColor={item.properties?.card?.headerColor}
+              number={6 + index + 1}
+              title={zoneTranslations[item.properties?.card?.title]}
+              image={item.properties?.card?.image}
+              imageWidth={item.properties?.card?.imageWidth}
+              imageHeight={item.properties?.card?.imageHeight}
+              description={zoneTranslations[item.properties?.card?.description]}
+            />
+          ))}
         </Box>
         <Stack justifyContent="end">
           <Button onClick={handleOnNext}>{onNextLabel}</Button>
@@ -184,6 +197,8 @@ Start.defaultProps = {
 Start.propTypes = {
   onNext: PropTypes.func,
   onNextLabel: PropTypes.string,
+  zone: PropTypes.any,
+  zoneTranslations: PropTypes.any,
 };
 
 export { Start };

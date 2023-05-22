@@ -1,21 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Avatar,
   Box,
   ContextContainer,
   createStyles,
   InputWrapper,
-  Select,
   ModalZoom,
+  Select,
 } from '@bubbles-ui/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore } from '@common';
-import { Controller } from 'react-hook-form';
-import { updateUserImageRequest } from '@users/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
-import SocketIoService from '@socket-io/service';
+import SocketIoService from '@mqtt-socket-io/service';
+import { updateUserImageRequest } from '@users/request';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller } from 'react-hook-form';
 import getUserFullName from '../../../../helpers/getUserFullName';
 
 const Styles = createStyles((theme) => ({

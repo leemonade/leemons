@@ -1,140 +1,154 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { filter, forIn, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import React, { useMemo } from 'react';
 
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { useHistory } from 'react-router-dom';
-import { Box, PageContainer, Stack } from '@bubbles-ui/components';
+import { detailProgramRequest } from '@academic-portfolio/request';
 import {
-  ADD_CURRICULUM_FORM_ERROR_MESSAGES,
-  ADD_CURRICULUM_FORM_MESSAGES,
-  AddCurriculumForm,
-  AdminPageHeader,
-} from '@bubbles-ui/leemons';
-import { listProgramsRequest } from '@academic-portfolio/request';
-import countryList from 'country-region-data';
-import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
-import { addCurriculumRequest, listCurriculumRequest } from '../../../request';
+  Box,
+  createStyles,
+  HorizontalStepper,
+  LoadingOverlay,
+  PageContainer,
+  Title,
+} from '@bubbles-ui/components';
+import { useStore } from '@common';
+import prefixPN from '@curriculum/helpers/prefixPN';
+import AddCurriculumStep0 from '@curriculum/pages/private/AddCurriculumStep0';
+import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';
+import AddCurriculumStep2 from '@curriculum/pages/private/AddCurriculumStep2';
+import AddCurriculumStep3 from '@curriculum/pages/private/AddCurriculumStep3';
+import { detailCurriculumRequest } from '@curriculum/request';
+import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
+import { find } from 'lodash';
+import { useHistory, useParams } from 'react-router-dom';
+
+const useStyle = createStyles((theme) => ({
+  title: {
+    paddingTop: theme.spacing[5],
+    paddingLeft: theme.spacing[5],
+    paddingBottom: theme.spacing[6],
+  },
+  container: {
+    paddingTop: theme.spacing[4],
+    paddingLeft: theme.spacing[5],
+  },
+}));
 
 function AddCurriculum() {
-  const [saving, setSaving] = useState(false);
-  const [selectData, setSelectData] = useState({});
-  const [t] = useTranslateLoader(prefixPN('addCurriculum'));
-
+  const { classes } = useStyle();
   const history = useHistory();
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('addCurriculumBase'));
+  const [store, render] = useStore({
+    currentStep: 0,
+  });
+  const { id } = useParams();
 
-  const messages = useMemo(() => {
-    const result = {};
-    forIn(ADD_CURRICULUM_FORM_MESSAGES, (value, key) => {
-      result[key] = t(key);
-    });
-    return result;
-  }, [t]);
+  function onStep0({ curriculum }) {
+    history.push(`/private/curriculum/${curriculum.id}`);
+  }
 
-  const errorMessages = useMemo(() => {
-    const result = {};
-    forIn(ADD_CURRICULUM_FORM_ERROR_MESSAGES, (value, key) => {
-      result[key] = t(key);
-    });
-    return result;
-  }, [t]);
+  function onStep1() {
+    store.curriculum.step = 2;
+    store.currentStep = 2;
+    render();
+  }
 
-  const load = async () => {
+  function onStep2() {
+    store.curriculum.step = 3;
+    store.currentStep = 3;
+    render();
+  }
+
+  function onPrev3() {
+    // store.curriculum.step = 2;
+    store.currentStep = 2;
+    render();
+  }
+
+  async function load() {
     try {
+      store.loading = true;
+      render();
       const [
-        { locales },
+        { curriculum: c },
         {
           data: { items: centers },
         },
-      ] = await Promise.all([
-        getPlatformLocalesRequest(),
-        listCentersRequest({ page: 0, size: 999999 }),
-      ]);
-
-      setSelectData({
-        country: map(countryList, (item) => ({
-          value: item.countryShortCode,
-          label: item.countryName,
-        })),
-        language: map(locales, (item) => ({ value: item.code, label: item.name })),
-        center: map(centers, (item) => ({ value: item.id, label: item.name })),
-      });
-    } catch (e) {
-      console.error('e', e);
-    }
-  };
-
-  const getProgramsListForCenter = async (center) => {
-    const {
-      data: { items: programs },
-    } = await listProgramsRequest({ page: 0, size: 999999, center });
-    return map(programs, (p) => ({ value: p.id, label: p.name }));
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  const onFormChange = async ({ value, name }) => {
-    if (name === 'center') {
-      const [
-        program,
         {
-          data: { items: curriculums },
+          permissions: [{ actionNames }],
         },
       ] = await Promise.all([
-        getProgramsListForCenter(value.center),
-        listCurriculumRequest({ page: 0, size: 999999 }),
+        detailCurriculumRequest(id),
+        listCentersRequest({ page: 0, size: 999999 }),
+        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
       ]);
-      const usedProgramIds = map(curriculums, 'program');
 
-      setSelectData({
-        ...selectData,
-        program: filter(program, (prog) => !usedProgramIds.includes(prog.value)),
-      });
-    }
-  };
+      const isEditMode = actionNames.includes('admin') || actionNames.includes('edit');
 
-  const onSubmit = async ({ language, ...data }) => {
-    try {
-      setSaving(true);
-      const { curriculum } = await addCurriculumRequest({ ...data, locale: language });
-      await history.push(`/private/curriculum/${curriculum.id}/step/1`);
-      setSaving(false);
+      const { program } = await detailProgramRequest(c.program);
+
+      c.program = program;
+      c.center = find(centers, { id: c.center });
+
+      store.isEditMode = isEditMode;
+      store.curriculum = c;
+      store.currentStep = store.curriculum.step || 1;
     } catch (e) {
-      setSaving(false);
+      // Nothing
     }
-  };
+    store.loading = false;
+    render();
+  }
 
-  const headerValues = useMemo(
+  const stepperConfig = useMemo(
     () => ({
-      title: t('newCurriculum'),
-      description: t('description2'),
+      currentStep: store.currentStep,
+      allowStepClick: false,
+      data: [
+        { label: t('basic'), status: 'OK' },
+        { label: t('config'), status: 'OK' },
+        { label: t('contentType'), status: 'OK' },
+        { label: t('loadOfContent'), status: 'OK' },
+      ],
     }),
-    [t]
+    [tLoading, store.currentStep]
   );
 
+  const title = React.useMemo(() => {
+    if (store.curriculum)
+      return `${store.curriculum.program.name} - ${store.curriculum.name} (${store.curriculum.center.name})`;
+    return t('newCurriculum');
+  }, [store.curriculum, tLoading]);
+
+  const page = React.useMemo(
+    () =>
+      [
+        <AddCurriculumStep0 key="0" onNext={onStep0} />,
+        <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
+        <AddCurriculumStep2 key="2" onNext={onStep2} curriculum={store.curriculum} />,
+        <AddCurriculumStep3
+          key="3"
+          onPrev={onPrev3}
+          curriculum={store.curriculum}
+          isEditMode={store.isEditMode}
+        />,
+      ][store.currentStep],
+    [store.currentStep]
+  );
+
+  React.useEffect(() => {
+    if (id) load();
+  }, [id]);
+
+  if (store.loading) return <LoadingOverlay visible />;
+
   return (
-    <Stack direction="column" fullWidth fullHeight>
-      <AdminPageHeader values={headerValues} />
-
-      <Box style={{ flex: 1 }}>
-        <PageContainer>
-          {/* <Box mb={16}>
-            <Text role={'productive'}>{t('description2')}</Text>
-          </Box> */}
-
-          <AddCurriculumForm
-            messages={messages}
-            errorMessages={errorMessages}
-            selectData={selectData}
-            isLoading={saving}
-            onSubmit={onSubmit}
-            onFormChange={onFormChange}
-          />
-        </PageContainer>
-      </Box>
-    </Stack>
+    <PageContainer>
+      <Title order={2} className={classes.title}>
+        {title}
+      </Title>
+      {store.isEditMode ? <HorizontalStepper {...stepperConfig} /> : null}
+      <Box className={classes.container}>{page}</Box>
+    </PageContainer>
   );
 }
 

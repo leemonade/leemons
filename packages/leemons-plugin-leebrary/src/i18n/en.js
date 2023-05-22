@@ -1,7 +1,16 @@
 module.exports = {
+  tableInput: {
+    add: 'Add',
+    remove: 'Remove',
+    edit: 'Edit',
+    accept: 'Accept',
+    cancel: 'Cancel',
+  },
   home: {
     navbar: {
       title: 'Library',
+      subjects: 'Subjects',
+      sharedWithMe: 'Shared with me',
       quickAccess: 'Quick access',
       uploadButton: 'Upload or Create',
       createNewTitle: 'Create new',
@@ -32,6 +41,9 @@ module.exports = {
         tags: 'Tags',
         addTag: 'Add tag',
         browseFile: 'Click to browse your files',
+        advancedConfig: 'Advanced config',
+        program: 'Program',
+        subjects: 'Subjects',
         dropFile: 'or drop a computer file here',
         changeImage: 'Change image',
         uploadButton: 'Upload image',
@@ -45,11 +57,70 @@ module.exports = {
         updatedSuccess: 'Asset successfully updated',
         url: 'URL (webpage link)',
         checkUrl: 'Check url',
+        color: 'Color',
         wordCounter: {
           single: 'Word',
           plural: 'Words',
         },
         preview: 'Thumbnail preview',
+        subjectSelects: {
+          labels: {
+            configTitle: 'Configure',
+            center: 'Center',
+            program: 'Program',
+            course: 'Course',
+            subjectsTitle: 'Subjects',
+            subject: 'Subject',
+            addSubject: 'Add subject',
+            level: 'Level',
+            levelValues: {
+              begginer: 'Beginner',
+              intermediate: 'Intermediate',
+            },
+            buttonNext: 'Next',
+            buttonPrev: 'Previous',
+            preTask: {
+              toggler: 'Add a pre-task activity',
+              mandatory: 'Mandatory to start the Task',
+              condition: 'Condition to start the Task',
+              conditions: {
+                take: 'Only take the test',
+                greater: 'Pass the test with a score higher than',
+              },
+            },
+            title: 'Configuration',
+            subjects: 'Subjects',
+            showOtherSubjects: 'Add subjects I collaborate in',
+          },
+          placeholders: {
+            center: 'Select...',
+            program: 'Select...',
+            course: 'Select...',
+            subject: 'Select...',
+            level: 'Select...',
+            addSubject: 'Add subject',
+          },
+          errorMessages: {
+            program: {
+              required: 'Required field',
+            },
+            course: {
+              required: 'Required field',
+            },
+            subjects: {
+              required: 'Required field',
+            },
+            level: {
+              required: 'Required field',
+            },
+            summary: {
+              required: 'Required field',
+            },
+            subject: {
+              required: 'Required field',
+            },
+          },
+        },
       },
       descriptions: {
         featuredImage: "Only to change the webpage's default featured image",
@@ -77,6 +148,12 @@ module.exports = {
         tags: {
           required: 'Write a tag to add it',
         },
+        program: {
+          required: 'Program is required',
+        },
+        subject: {
+          required: 'Subject is required',
+        },
       },
     },
     permissionsData: {
@@ -87,10 +164,14 @@ module.exports = {
       },
       labels: {
         title: 'Resource permissions',
-        addUsers: 'Add users',
-        addUsersDescription: 'To share resource and set permissions',
-        addClasses: 'Add classes',
-        addClassesDescription: 'To share resource and set permissions',
+        addUsers: 'Add individual users',
+        addUsersDescription:
+          'Teachers will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if they do not have assigned subject labels.',
+        programs: 'Educational programs',
+        program: 'Program',
+        addClasses: 'Add groups',
+        addClassesDescription:
+          'Students will see this resource in their corresponding subject folder.',
         isPublic: 'This resource is public',
         saveButton: 'Save permissions',
         shareButton: 'Share',
@@ -135,6 +216,9 @@ module.exports = {
       updated: 'Last change',
     },
     labels: {
+      search: 'Search',
+      searchPlaceholder: 'Search for resources',
+      type: 'Type',
       duplicateSuccess: 'Asset successfully duplicated',
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',
@@ -147,7 +231,8 @@ module.exports = {
         'Try searching by keywords (tags) or type in more general information and then use the filters to refine the search.',
       copy: 'Copy',
       copied: 'Copied',
-      sharedWith: 'Shared with',
+      privated: 'Privated',
+      sharedWith: 'Shared',
       sharedViewAll: 'View all',
       sharedWithEverybody: 'Shared with everyone',
       showPublic: 'Show public assets',
@@ -165,6 +250,35 @@ module.exports = {
       unpin: 'Unpin',
       toggle: 'Toggle',
       open: 'Open',
+      covertToTask: 'Convert to task',
+    },
+  },
+  pickerDrawer: {
+    header: {
+      title: 'Library',
+    },
+    tabs: {
+      library: 'Library',
+      new: 'New resource',
+    },
+    filters: {
+      search: {
+        label: 'Search',
+        placeholder: 'Search resources',
+      },
+      resources: {
+        label: 'Categories',
+        placeholder: 'Select a category',
+      },
+    },
+  },
+  admin: {
+    card: {
+      title: 'Bookstore Suppliers',
+      description: 'Configure your suppliers for library management',
+    },
+    setup: {
+      chooseProvider: 'Choose provider',
     },
   },
 };

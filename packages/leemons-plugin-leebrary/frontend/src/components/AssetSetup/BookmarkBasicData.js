@@ -1,18 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { ContextContainer } from '@bubbles-ui/components';
-import { unflatten, TagsAutocomplete, useRequestErrorMessage } from '@common';
+import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { LibraryForm } from '../LibraryForm/LibraryForm';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useMemo, useState } from 'react';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
-import { newAssetRequest, updateAssetRequest } from '../../request';
+import { getAssetRequest, newAssetRequest, updateAssetRequest } from '../../request';
+import { LibraryForm } from '../LibraryForm/LibraryForm';
 
 const BookmarkBasicData = ({
   asset: assetProp,
   editing,
+  advancedConfig,
   categoryId,
   onSave = () => {},
   onNext = () => {},
@@ -64,14 +65,15 @@ const BookmarkBasicData = ({
 
     try {
       const { asset } = await requestMethod({ ...data, cover, tags }, categoryId, 'bookmarks');
-
-      onSave(prepareAsset(asset));
+      const response = await getAssetRequest(asset.id);
+      onSave(prepareAsset(response.asset));
       setLoading(false);
       addSuccessAlert(
         editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
       );
       onNext();
     } catch (err) {
+      console.error(err);
       setLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
@@ -83,6 +85,7 @@ const BookmarkBasicData = ({
   return (
     <LibraryForm
       {...formLabels}
+      advancedConfig={advancedConfig}
       asset={{ ...assetProp, cover: preparedAsset.cover }}
       type="bookmarks"
       loading={loading}
@@ -105,6 +108,7 @@ BookmarkBasicData.propTypes = {
   categoryId: PropTypes.string.isRequired,
   editing: PropTypes.bool,
   asset: PropTypes.instanceOf(Object),
+  advancedConfig: PropTypes.any,
   onSave: PropTypes.func,
   onNext: PropTypes.func,
 };

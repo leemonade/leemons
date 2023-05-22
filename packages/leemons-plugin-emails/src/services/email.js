@@ -140,12 +140,17 @@ class Email {
       }
     });
     const transportersArray = await Promise.all(promises);
-    const transporters = _.flatten(transportersArray);
-    if (!sendMailTransporter)
+    const transporters = _.compact(_.flattenDeep(transportersArray));
+    if (!sendMailTransporter) {
       sendMailTransporter = global.utils.nodemailer.createTransport({
         sendmail: true,
       });
-    transporters.push(sendMailTransporter);
+      transporters.push(sendMailTransporter);
+    }
+
+    // console.log('-- EmailService > getTransporters:');
+    // console.dir(transporters, { depth: null });
+
     return transporters;
   }
 
@@ -311,6 +316,33 @@ class Email {
     email.subject = Sqrl.render(email.subject, context);
     email.html = Sqrl.render(email.html, context);
 
+    // console.log('--- EmailService > send:');
+
+    return Email.startToTrySendEmail(from, to, email, transporters, 0);
+  }
+
+  /**
+   * Send custom test email to check if the transporter is working
+   * @private
+   * @static
+   * @return {Promise<any>} nodemailer transporters
+   * */
+  static async sendCustomTest({ from, to, subject, body }) {
+    const transporters = await Email.getTransporters();
+    if (!transporters.length) throw new Error('No email providers configured yet');
+
+    const context = {};
+    context.__from = from;
+    context.__to = to;
+    context.__platformName = 'Leemons';
+    context.__logoUrl =
+      'data:image/png;base64,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';
+
+    // Compile email with data
+    const email = {};
+    email.subject = subject;
+    email.html = body;
+
     return Email.startToTrySendEmail(from, to, email, transporters, 0);
   }
 
@@ -369,17 +401,37 @@ class Email {
   static async startToTrySendEmail(from, to, email, transporters, index) {
     if (index < transporters.length) {
       try {
-        const info = await transporters[index].sendMail({
+        // console.log('--- EmailService > startToTrySendEmail:');
+        // console.log('--> transporters length:', transporters.length);
+        // console.log('--> index:', index);
+
+        const transporter = transporters[index];
+
+        if (!transporter) {
+          throw new Error(`No existe un transporter para el index: ${index}`);
+        }
+
+        // console.log('--> transporter:');
+        // console.dir(transporter, { depth: null });
+
+        const receipts = {
           from: from || 'dev@leemons.io',
           to,
+        };
+
+        // console.log('--> receipts:');
+        // console.dir(receipts, { depth: null });
+
+        const info = await transporter.sendMail({
+          ...receipts,
           subject: email.subject,
           html: email.html,
         });
-        console.log('Resultado email:', info);
+        // console.log('--> Resultado email:', info);
         info.error = false;
         return info;
       } catch (err) {
-        console.error('Error email:', err);
+        console.error('ERROR > Error email:', err);
         return Email.startToTrySendEmail(from, to, email, transporters, index + 1);
       }
     }

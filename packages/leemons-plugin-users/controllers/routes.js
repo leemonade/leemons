@@ -8,7 +8,7 @@ module.exports = [
     },
   }),
   {
-    path: '/test-socket-io',
+    path: '/test-mqtt-socket-io',
     method: 'GET',
     handler: 'init.testSocketIo',
     authenticated: true,
@@ -309,6 +309,12 @@ module.exports = [
     },
   },
   {
+    path: '/profile/sysName',
+    method: 'GET',
+    handler: 'profiles.getProfileSysName',
+    authenticated: true,
+  },
+  {
     path: '/profile/detail/:uri',
     method: 'GET',
     handler: 'profiles.detail',
@@ -366,6 +372,50 @@ module.exports = [
     path: '/role/:id',
     method: 'PUT',
     handler: 'roles.create',
+  },
+  {
+    path: '/roles/list',
+    method: 'POST',
+    handler: 'roles.list',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/roles/detail/:uri',
+    method: 'GET',
+    handler: 'roles.detail',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['view', 'update', 'create', 'delete', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/roles/add',
+    method: 'POST',
+    handler: 'roles.add',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['create', 'admin'],
+      },
+    },
+  },
+  {
+    path: '/roles/update',
+    method: 'POST',
+    handler: 'roles.update',
+    authenticated: true,
+    allowedPermissions: {
+      'plugins.users.roles': {
+        actions: ['update', 'admin'],
+      },
+    },
   },
   /**
    * Centers

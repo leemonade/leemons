@@ -1,20 +1,20 @@
 /* eslint-disable no-nested-ternary */
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { find, isArray, map } from 'lodash';
-import { useLocale, useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@dashboard/helpers/prefixPN';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import { useIsStudent } from '@academic-portfolio/hooks';
+import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { useHistory, useParams } from 'react-router-dom';
-import { classDetailForDashboardRequest } from '@academic-portfolio/request';
-import { ZoneWidgets } from '@widgets';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getShare, useLocale, useStore } from '@common';
+import prefixPN from '@dashboard/helpers/prefixPN';
 import { LayoutContext } from '@layout/context/layout';
-import { useIsStudent } from '@academic-portfolio/hooks';
+import { getLocalizations } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { ZoneWidgets } from '@widgets';
+import { find, isArray, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
 const rightZoneWidth = '320px';
 
@@ -32,14 +32,26 @@ const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar
     backgroundColor: theme.colors.uiBackground02,
     padding: theme.spacing[4],
     transition: '300ms',
+    zIndex: 3,
   },
   rightSidewidgetsContainer: {
     paddingTop: theme.spacing[4],
   },
   header: {
     position: 'relative',
-    height: 224,
+    height: 224 - 56,
   },
+  dropdown: {
+    position: 'relative',
+    display: 'flex',
+    height: '100%',
+    zIndex: 5,
+    alignItems: 'center',
+    width: 'fit-content',
+    maxWidth: 700,
+    marginLeft: 30,
+  },
+  classBar: {},
   image: {
     position: 'relative',
     backgroundColor: theme.colors.uiBackground02,
@@ -83,6 +95,7 @@ export default function ClassDashboard({ session }) {
     hideRightSide: false,
     haveScrollBar: false,
   });
+
   const { classes: styles } = Styles({
     hideRightSide: store.hideRightSide,
     haveScrollBar: store.haveScrollBar,
@@ -94,11 +107,12 @@ export default function ClassDashboard({ session }) {
   const history = useHistory();
 
   function onResize() {
+    // TODO Ver que pasa con el scroll en los distintos navegadores
     const haveScrollBar =
       layoutState.contentRef.current.clientHeight < layoutState.contentRef.current.scrollHeight;
     if (haveScrollBar !== store.haveScrollBar) {
-      store.haveScrollBar = haveScrollBar;
-      render();
+      // store.haveScrollBar = haveScrollBar;
+      // render();
     }
   }
 
@@ -164,6 +178,7 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetRightZone(zone) {
+    store.rightZone = zone;
     if (zone.widgetItems && zone.widgetItems.length) {
       const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
       store.selectedRightTab = zone.widgetItems[0].id;
@@ -217,33 +232,80 @@ export default function ClassDashboard({ session }) {
     [store.widgetLabels, store.class, session]
   );
 
+  const classHeader = React.useCallback(
+    ({ Component, key, properties }) => (
+      <Component {...properties} key={key} classe={store.class} session={session} />
+    ),
+    [store.selectedRightTab, store.class, session]
+  );
+
   const classRightTabs = React.useCallback(
     ({ Component, key, properties }) =>
       store.selectedRightTab === key ? (
-        <Component {...properties} key={key} classe={store.class} session={session} />
+        <Component
+          {...properties}
+          widgetsLength={store.rightZone.widgetItems.length}
+          key={key}
+          classe={store.class}
+          session={session}
+        />
       ) : null,
     [store.selectedRightTab, store.class, session]
   );
+
+  function onVirtualClassroomOpen() {
+    const addLogStatement = getShare('xapi', 'addLogStatement');
+    const verbs = getShare('xapi', 'verbs');
+    if (addLogStatement) {
+      addLogStatement({
+        verb: verbs.INITIALIZED,
+        object: {
+          objectType: 'Activity',
+          id: '{hostname}/api/open/virtual-classroom',
+          definition: {
+            extensions: {
+              id: store.class.id,
+              name: store.class.subject.name,
+              url: store.class.virtualUrl,
+            },
+            description: {
+              'en-US': 'Open virtual classroom',
+            },
+          },
+        },
+      });
+    }
+  }
 
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
         <Box className={styles.header}>
-          <HeaderBackground {...headerProps} styles={{ position: 'absolute' }} />
-          <Box style={{ position: 'absolute', bottom: 0, left: 0, right: '50%', zIndex: 5 }}>
+          <HeaderBackground {...headerProps} withGradient styles={{ position: 'absolute' }} />
+          <Box className={styles.dropdown}>
             <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
-            <ClassroomHeaderBar
-              labels={{ virtualClassroom: t('virtualClassroom') }}
-              classRoom={{
-                schedule: store.class?.schedule,
-                address: store.class?.address,
-                virtual_classroom: store.class?.virtualUrl,
-                teacher: mainTeacher?.user,
-              }}
-              locale={locale}
-            />
           </Box>
+        </Box>
+        <Box className={styles.classBar}>
+          <ClassroomHeaderBar
+            labels={{ virtualClassroom: t('virtualClassroom') }}
+            onVirtualClassroomOpen={onVirtualClassroomOpen}
+            classRoom={{
+              schedule: store.class?.schedule,
+              address: store.class?.address,
+              virtual_classroom: store.class?.virtualUrl,
+              teacher: mainTeacher?.user,
+            }}
+            locale={locale}
+            rightSide={
+              <>
+                {!store.loading ? (
+                  <ZoneWidgets zone="plugins.dashboard.class.header-bar">{classHeader}</ZoneWidgets>
+                ) : null}
+              </>
+            }
+          />
         </Box>
 
         {/*
@@ -290,18 +352,20 @@ export default function ClassDashboard({ session }) {
       </Box>
       {!store.hideStudents ? (
         <Box className={styles.rightSide}>
-          {!!store.rightWidgetSelect && (
-            <Tabs
-              onChange={(e) => {
-                store.selectedRightTab = store.rightWidgetSelect[e].value;
-                render();
-              }}
-            >
-              {store.rightWidgetSelect.map(({ label, id: tabId }) => (
-                <TabPanel label={label} id={tabId} key={tabId} />
-              ))}
-            </Tabs>
-          )}
+          {store.rightWidgetSelect ? (
+            store.rightWidgetSelect.length > 1 ? (
+              <Tabs
+                onChange={(e) => {
+                  store.selectedRightTab = store.rightWidgetSelect[e].value;
+                  render();
+                }}
+              >
+                {store.rightWidgetSelect.map(({ label, id: tabId }) => (
+                  <TabPanel label={label} id={tabId} key={tabId} />
+                ))}
+              </Tabs>
+            ) : null
+          ) : null}
           {/* {store.rightWidgetSelect ? (
           <RadioGroup
             variant="icon"

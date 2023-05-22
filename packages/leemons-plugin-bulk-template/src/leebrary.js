@@ -1,18 +1,18 @@
 /* eslint-disable no-await-in-loop */
-const { keys } = require('lodash');
+const { keys, isEmpty, isNil } = require('lodash');
 const importLibrary = require('./bulk/library');
 const _delay = require('./bulk/helpers/delay');
 
-async function initLibrary({ users }) {
+async function initLibrary(file, { users }) {
   const { services } = leemons.getPlugin('leebrary');
 
   try {
-    const assets = await importLibrary({ users });
+    const assets = await importLibrary(file, { users });
     const assetsKeys = keys(assets);
 
     for (let i = 0, len = assetsKeys.length; i < len; i++) {
       const key = assetsKeys[i];
-      const { creator, enabled, ...asset } = assets[key];
+      const { creator, enabled, program, subject, ...asset } = assets[key];
 
       if (enabled !== false && enabled !== 'No') {
         try {
@@ -40,4 +40,43 @@ async function initLibrary({ users }) {
   return null;
 }
 
-module.exports = { initLibrary };
+async function updateLibrary(file, { assets, programs, users }) {
+  const { services } = leemons.getPlugin('leebrary');
+
+  try {
+    const assetsRaw = await importLibrary(file, { users });
+    const updatePromises = keys(assets)
+      .map((key) => {
+        const { creator, enabled, program: programKey, subject: subjectKey } = assetsRaw[key];
+        if (enabled !== false && enabled !== 'No') {
+          // eslint-disable-next-line camelcase
+          const { created_at, deleted_at, updated_at, deleted, cover, ...asset } = assets[key];
+
+          asset.cover = cover?.id ?? cover;
+          asset.file = asset.file?.id ?? asset.file;
+
+          const subjectId = programs[programKey]?.subjects[subjectKey]?.id;
+
+          if (subjectId) {
+            asset.subjects = [{ subject: subjectId, level: 'beginner' }];
+            asset.program = programs[programKey]?.id;
+
+            return services.assets.update(asset, { userSession: creator });
+          }
+
+          return null;
+        }
+
+        return null;
+      })
+      .filter((val) => !isEmpty(val));
+
+    await Promise.all(updatePromises);
+  } catch (err) {
+    console.error(err);
+  }
+
+  return null;
+}
+
+module.exports = { initLibrary, updateLibrary };

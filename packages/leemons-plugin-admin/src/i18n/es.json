@@ -191,7 +191,11 @@
     "postalCode": "Código postal",
     "street": "Street",
     "contactInfo": "Información de contacto",
+    "userLimits": "Limite de usuarios",
+    "profiles": "Perfiles",
+    "roles": "Roles",
     "phone": "Teléfono",
+    "unlimited": "Ilimitado",
     "save": "Guardar"
   },
   "addProfileDrawer": {

@@ -3,121 +3,139 @@ module.exports = {
     student: 'Student',
     multiSubject: 'Multi-subject',
   },
-  assignment_form: {
-    labels: {
-      isAllDay: 'Show as daily event',
-      classroomToAssign: 'Classroom to assign',
-      studentToAssign: 'Student to assign',
-      mode: 'Mode',
-      startDate: 'Start date',
-      deadline: 'Deadline',
-      visualizationDateToogle: 'Make visible in advance',
-      visualizationDate: 'Visualization date',
-      limitedExecutionToogle: 'Limit execution time',
-      limitedExecution: 'Limited execution time',
-      alwaysOpenToogle: 'This activity is always available and can be performed at any time.',
-      closeDateToogle: 'Deadline for teacher corrections',
-      closeDate: 'Closing date',
-      messageToStudentsToogle: 'Notify students',
-      messageToStudents: 'Message to the students',
-      showCurriculumToogle: 'Show curriculum',
-      content: 'Content',
-      objectives: 'Custom Objectives',
-      assessmentCriteria: 'Assessment criteria',
-      submit: 'Assign',
-      add: 'Add',
-      assignTo: {
-        class: 'Class',
-        customGroups: 'Custom Groups',
-        session: 'Session',
+  assignmentForm: {
+    subjects: {
+      title: 'Included subjects',
+      subjectInput: {
+        label: 'Subjects',
+        placeholder: 'Type the subject names',
+        error: 'Pick at least one subject',
       },
-      relations: {
-        toggle: 'Establish relation with another activity',
-        before: 'Previous activity',
-        required: 'Required dependency',
-      },
-      selectStudentsTitle: 'Who will perform the activity?',
-      excludeStudents: 'Exclude students',
-      showResults: 'Hide results report',
-      showCorrectAnswers: 'Hide solutions for students',
-      addNewClassStudents: 'Automatically assign to newly enrolled students',
-      clearStudents: 'Clear students',
-      subjects: {
-        nonCalificableTitle:
-          'Select at least one of your subjects to see the different available groups',
-        calificableTitle: 'Subjects to be evaluated in this activity',
-        subtitle: 'NOTE: At least one of them',
-      },
-      unableToAssignStudentsMessage:
-        'The students which are not enrolled in all the selected subjects will not be assigned',
-      matchingStudents: 'Matching students',
-      groupName: 'Name of group',
-      students: 'Students',
-      noStudentsToAssign:
-        'There are no students enrolled in the selected subjects, please select other combination',
-      showToStudents: 'Hide group name from students',
-      required: 'Required field',
     },
-    placeholders: {
-      date: 'dd/mm/yyyy',
-      time: 'hh:mm',
-      units: 'units',
-    },
-    descriptions: {
-      messageToStudents:
-        'Send notification message to perform the activity. A custom message can be added.',
-      visualizationDate:
-        'NOTE: The activity will be available for review, but cannot be completed until the start date.',
-      closeDateToogle: 'NOTE: After this date, no corrections can be made',
-      limitedExecution:
-        'NOTE: This is the time interval that begins after the activity statement is reviewed and ends at the submission of the activity.',
-      isAllDay:
-        'NOTE: Students will have until 23:59h to submit, but will see the deadline as a daily event in their calendar.',
-    },
-    assignTo: {
-      student: 'Student',
-      class: 'Class',
-    },
-    modes: {
-      individual: 'Individual',
-      pairs: 'In pairs',
-      groups: 'Teams',
-    },
-    timeUnits: {
-      hours: 'hours',
-      minutes: 'minutes',
-      days: 'days',
-    },
-    gradeVariations: {
-      title: 'Type of activity',
-      calificable: {
-        label: 'Qualifying',
-        description:
-          'The score will be taken into account for the final grade, comments are welcome',
+    groups: {
+      title: '¿Who will perform?',
+      options: {
+        class: 'Existing class',
+        customGroup: 'Custom group',
       },
-      punctuationEvaluable: {
-        label: 'Assessable with score',
-        description:
-          'A score is requested but it will not be taken into account for the final grade, comments are welcome',
+      noStudentsError:
+        'No student was found for the selected subjects. Add or remove subjects to continue.',
+      class: {
+        studentsCount: 'matching students',
+        autoAssignStudents: 'Auto-assign new students',
+        excludeStudents: 'Esclude specific students',
+        error: 'Pick at least one group',
+        notAllStudentsAssigned: "Some students won't be included in the activity",
+        excludeStudentsInput: {
+          label: 'Students',
+          placeholder: 'Type the excluded students',
+        },
       },
-      evaluable: {
-        label: 'Assessable without score',
-        description: 'Only comments are returned',
+      customGroup: {
+        studentsInput: {
+          label: 'Add participants',
+          placeholder: 'Type the group students',
+          error: 'Add at least one student',
+        },
+        groupName: {
+          label: 'Group name',
+          placeholder: 'Type the name',
+          error: 'The name is required',
+        },
+        hideCustomName: 'Hide groupname to students',
       },
-      notEvaluable: {
-        label: 'No assessment',
-        description: 'The student does not receive any feedback',
+    },
+    dates: {
+      title: '¿When will occur?',
+      optionsInput: {
+        label: 'Timespan',
+        options: {
+          alwaysAvailable: 'Anytime',
+          fixed: 'Timespan',
+          session: 'Live session',
+        },
       },
+      hideFromCalendar: 'Hide from calendar until start/deadline',
+      maxTime: 'Set execution max time',
+      maxTimeInput: {
+        label: 'Execution time',
+      },
+
+      fixedType: {
+        title: {
+          fixed: 'Set up timespan',
+          session: 'Setup live session',
+        },
+        startDate: {
+          label: 'Start date',
+          placeholder: 'Type the date',
+          error: 'Pick a start date',
+        },
+        deadline: {
+          label: 'Deadline',
+          placeholder: 'Type the date',
+          error: 'Pick a deadline',
+        },
+        bothDatesError: 'Pick a start date and deadline',
+      },
+    },
+    instructions: {
+      title: 'Statement or instructions',
+      description: 'Indications on how to consume the resource (optional)',
+      editor: {
+        placeholder: 'Type the statement',
+      },
+    },
+    evaluation: {
+      title: 'Evaluation',
+      description:
+        'All types of evaluations have the possibility to include comments (except the non-evaluatable)',
+      typeInput: {
+        label: 'Type',
+        options: {
+          nonEvaluable: 'No evaluable',
+          calificable: 'Gradable',
+          punctuable: 'Punctuable',
+          feedbackOnly: 'Feedback only',
+        },
+      },
+      showCurriculum: 'Show curriculum',
+    },
+    others: {
+      title: 'Other options',
+      teacherDeadline: 'Add deadline for teacher correction',
+      teacherDeadlineInput: {
+        label: 'Deadline',
+        placeholder: 'Type the date',
+        error: 'Pick a date',
+      },
+      notifyStudents: 'Notify students',
+      messageForStudents: 'Message for students',
+      hideResponses: 'Hide the answers of the activity once it is finished.',
+      hideReport: 'Hide the results report.',
+    },
+    buttons: {
+      assign: 'Assign',
+      save: 'Save', // Used on modules assignation drawer
     },
   },
   activity_deadline_header: {
     noDeadline: 'No deadline',
     deadline: 'Deadline',
-    deadlineExtraTime: 'Add extra time',
-    closeTask: 'Close activity',
+    deadlineExtraTime: 'Add time',
+    closeTask: 'Close',
     save: 'Save',
     cancel: 'Cancel',
-    archiveTask: 'Archive activity',
+    archiveTask: 'Archive',
+    period: 'Period type',
+    startDate: 'Start date',
+    startHour: 'Start hour',
+    endDate: 'End date',
+    endHour: 'End hour',
+    closedPeriod: 'Closed period',
+    liveSession: 'Live session',
+    openPeriod: 'Open period',
+    liveSessionData: 'Date',
   },
   activity_dashboard: {
     closeAction: {
@@ -130,6 +148,12 @@ module.exports = {
       messages: {
         success: 'Activity {{verb}}',
         error: 'Error {{verb}} activity: {{error}}',
+      },
+    },
+    start: {
+      messages: {
+        success: 'Activity start date updated',
+        error: 'Error updating activity start date: {{error}}',
       },
     },
     deadline: {
@@ -213,12 +237,15 @@ module.exports = {
     opened: 'Opened',
     notOpened: 'Not opened',
     assigned: 'Scheduled',
+    notStarted: 'Not started',
     started: 'Started',
     closed: 'Closed',
     evaluated: 'Evaluated',
     submitted: 'Submitted',
+    ended: 'Finished',
     notSubmitted: 'Not submitted',
     noLimit: 'No time limit',
+    blocked: 'Blocked',
   },
   teacher_actions: {
     sendReminder: 'Send reminder',
@@ -236,30 +263,28 @@ module.exports = {
   },
   assignment_list: {
     teacher: {
-      task: 'Task',
-      group: 'Group',
-      start: 'Start date',
-      deadline: 'Due date',
+      activity: 'Activity/Module',
+      subject: 'Subject, group and students',
+      students: 'Students',
+      start: 'Start',
+      deadline: 'Deadline',
       status: 'Status',
-      students: 'students',
-      open: 'Open',
-      ongoing: 'Ongoing',
-      completed: 'Completed',
-      unreadMessages: 'Messages',
+      completions: 'Completions',
+      evaluated: 'Evaluated',
+      messages: 'Messages',
     },
     student: {
-      task: 'Task',
-      subject: 'Subject',
-      start: 'Start date',
-      deadline: 'Due date',
+      activity: 'Activity/Module',
+      subject: 'Subject and group',
+      start: 'Start',
+      deadline: 'Deadline',
       status: 'Status',
-      timeReference: 'Time reference',
-      submission: 'Submission',
-      grade: 'Grade',
-      unreadMessages: 'Messages',
+      progress: 'Progress',
+      messages: 'Messages',
     },
   },
   multiSubject: 'Multi-subject',
+  customObjectives: 'Custom objectives',
   activities_filters: {
     ongoing: 'Ongoing {{count}}',
     evaluated: 'Evaluated {{count}}',
@@ -267,11 +292,19 @@ module.exports = {
     search: 'Search activities in progress',
     subject: 'Subject',
     status: 'Status',
+    progress: 'Progress',
     type: 'Type',
+    sort: 'Orden',
     seeAll: 'See all',
+  },
+  sortTypes: {
+    assignation: 'Assignation',
+    start: 'Start date',
+    deadline: 'Deadline',
   },
   activities_list: {
     emptyState: 'There are no activities yet',
+    blocked: 'The selected activity is blocked',
   },
   ongoing: {
     ongoing: 'Ongoing activities',
@@ -286,9 +319,14 @@ module.exports = {
     closed: 'Closed',
   },
   need_your_attention: {
-    title: 'Needs attention',
+    activitiesTitle: 'Pending activities',
+    evaluationsTitle: 'Pending evaluations',
+    ownEvaluations: 'My evaluations',
     new: 'New',
-    emptyState: 'There are no scheduled activities',
+    activitiesEmptyState: 'There are no pending activities',
+    evaluationsEmptyState: 'There are no pending evaluations',
+    seeAllActivities: 'See all the activities',
+    seeAllEvaluations: 'See all the evaluations',
     assigment: {
       subject: 'Subject',
       submission: 'Submissions',
@@ -312,6 +350,18 @@ module.exports = {
     disabled: {
       results: 'The results have been hidden by your teacher',
       previous: 'The previous activity must be completed first',
+    },
+  },
+  assetListFilters: {
+    programLabel: 'Program',
+    subjectLabel: 'Subjects',
+    program: 'Program...',
+    subject: 'Subject...',
+    allPrograms: 'All the programs',
+    allSubjects: 'All the subjects',
+    subectGroups: {
+      mySubjects: 'My subjects',
+      collaborations: 'Collaborations',
     },
   },
 };

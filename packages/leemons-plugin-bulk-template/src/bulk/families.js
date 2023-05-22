@@ -1,9 +1,7 @@
-const path = require('path');
 const { keys, trim, isEmpty, isNil, toLower } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
-async function importFamilies(users) {
-  const filePath = path.resolve(__dirname, 'data.xlsx');
+async function importFamilies(filePath, users) {
   const items = await itemsImport(filePath, 'families', 20, false);
 
   keys(items)

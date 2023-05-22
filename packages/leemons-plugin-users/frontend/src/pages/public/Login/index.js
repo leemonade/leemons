@@ -1,9 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import _ from 'lodash';
-import Cookies from 'js-cookie';
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginForm } from '@bubbles-ui/leemons';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslate from '@multilanguage/useTranslate';
+import prefixPN from '@users/helpers/prefixPN';
+import HeroBgLayout from '@users/layout/heroBgLayout';
+import { goRecoverPage } from '@users/navigate';
 import {
   getRememberLoginRequest,
   getUserProfilesRequest,
@@ -11,13 +13,11 @@ import {
   loginRequest,
 } from '@users/request';
 import { getCookieToken, useSession } from '@users/session';
-import { goRecoverPage } from '@users/navigate';
-import HeroBgLayout from '@users/layout/heroBgLayout';
-import prefixPN from '@users/helpers/prefixPN';
-import useTranslate from '@multilanguage/useTranslate';
-import tLoader from '@multilanguage/helpers/tLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import Cookies from 'js-cookie';
 import hooks from 'leemons-hooks';
+import _ from 'lodash';
+import React, { useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { getUserCenterProfileTokenRequest, getUserCentersRequest } from '../../../request';
 
 const PageStyles = createStyles((theme) => ({
@@ -55,6 +55,7 @@ export default function Login() {
     try {
       setFormStatus('loading');
       setFormError(null);
+      window.sessionStorage.setItem('boardMessagesModalId', null);
       const response = await loginRequest(data);
 
       try {

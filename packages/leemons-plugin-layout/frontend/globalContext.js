@@ -1,7 +1,3 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { forEach, isNil, isString } from 'lodash';
-import { useLocation } from 'react-router-dom';
 import {
   BUBBLES_THEME,
   colord,
@@ -11,13 +7,17 @@ import {
   useModals,
 } from '@bubbles-ui/components';
 import { NotificationProvider } from '@bubbles-ui/notifications';
+import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPlatformThemeRequest } from '@users/request';
 import hooks from 'leemons-hooks';
-import SocketIoService from '@socket-io/service';
-import prefixPN from './src/helpers/prefixPN';
-import { LayoutContext, LayoutProvider } from './src/context/layout';
+import { forEach, isEmpty, isNil, isString } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import PrivateLayout from './src/components/PrivateLayout';
+import { LayoutContext, LayoutProvider } from './src/context/layout';
+import prefixPN from './src/helpers/prefixPN';
 
 function LayoutWrapper({ isPrivate, children }) {
   if (isPrivate) {
@@ -156,7 +156,7 @@ export function Provider({ children }) {
 
   async function load() {
     try {
-      const { theme: th } = await getPlatformThemeRequest();
+      const { theme: th, jsonTheme } = await getPlatformThemeRequest();
       const mainColor = colord(th.mainColor);
       const mainColorLight = 1 - mainColor.brightness();
       const mainColorHSL = colord(th.mainColor).toHsl();
@@ -171,6 +171,7 @@ export function Provider({ children }) {
 
       const newTheme = {
         ...BUBBLES_THEME,
+        other: isEmpty(jsonTheme) ? BUBBLES_THEME.other : jsonTheme,
       };
 
       if (!sameColor) {

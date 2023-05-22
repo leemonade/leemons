@@ -12,11 +12,10 @@ module.exports = {
         host: process.env['DATABASE_HOST'],
         pool: {
           min: 5,
-          max: 150,
+          max: 50,
         },
       },
     },
-    /*
     mongo: {
       connector: 'mongoose',
       settings: {
@@ -26,6 +25,7 @@ module.exports = {
         password: process.env['NOSQL_PASSWORD'],
         port: process.env['NOSQL_PORT'],
         host: process.env['NOSQL_HOST'],
+        srv: process.env['NOSQL_SRV'],
         // replicaSet: process.env['NOSQL_CLUSTER'],
         pool: {
           min: 5,
@@ -33,7 +33,6 @@ module.exports = {
         },
       },
     },
-    */
   },
   defaultConnection: 'mysql',
 };

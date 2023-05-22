@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Select } from '@bubbles-ui/components';
 import { listCoursesRequest } from '../../request';
@@ -26,7 +26,7 @@ const SelectCourse = forwardRef(({ program, value: userValue, onChange, ...props
   // EN: Update the value when controlled value changes
   // ES: Actualizar el valor cuando el valor controlado cambia
   useEffect(() => {
-    if (data.length && userValue) {
+    if (data.length && userValue !== value) {
       setValue(userValue);
     }
   }, [userValue]);

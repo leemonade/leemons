@@ -118,9 +118,8 @@ function ClassItem({ class: klass, ...props }) {
             src={getClassIcon(klass)}
           />
         </Box>
-        <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-        }`}</Text>
+        <Text>{`${klass.subject.name}${klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+          }`}</Text>
       </Box>
     </Box>
   );
@@ -255,10 +254,14 @@ export default function PeriodSelector({
       });
     }
 
+    // EN: MoreThanOneAcademicYear is when a subject can be teached on more than one academic year.
+    // ES: MoreThanOneAcademicYear es cuando una asignatura puede estudiarse en varios cursos.
     const courseIsRequired =
-      requiredFields.includes('course') && !programData?.moreThanOneAcademicYear;
+      programData?.maxNumberOfCourses > 1 &&
+      requiredFields.includes('course') &&
+      !programData?.moreThanOneAcademicYear;
 
-    if (fields.course && courseIsRequired) {
+    if (programData?.maxNumberOfCourses > 1 && (fields.course || courseIsRequired)) {
       fieldsToReturn.push({
         name: 'course',
         label: labels?.form?.course?.label,
@@ -388,7 +391,16 @@ export default function PeriodSelector({
                 });
               }
             }}
-            onSave={onPeriodSave}
+            onSave={(name, share, data) => {
+              onPeriodSave(name, !!share, {
+                ...data,
+                center,
+                program,
+                course,
+                subject,
+                group,
+              });
+            }}
             onChange={(v) => {
               if (fields.class) {
                 if (!v.class) {

@@ -22,6 +22,12 @@ async function setAsset(ctx) {
   const filesData = ctx.request.files;
   const { userSession } = ctx.state;
 
+  Object.keys(assetData).forEach((key) => {
+    if (assetData[key] === 'null') {
+      assetData[key] = null;
+    }
+  });
+
   if (isEmpty(categoryId)) {
     throw new global.utils.HttpError(400, 'Category is required');
   }
@@ -65,6 +71,10 @@ async function setAsset(ctx) {
   }
 
   let asset;
+
+  if (assetData.subjects) {
+    assetData.subjects = JSON.parse(assetData.subjects);
+  }
 
   if (id) {
     asset = await update.call(
@@ -169,12 +179,16 @@ async function getAssets(ctx) {
     searchInProvider,
     roles,
     providerQuery,
+    programs,
+    subjects,
   } = ctx.request.query;
   const { userSession } = ctx.state;
 
+  /*
   if (isEmpty(category)) {
     throw new global.utils.HttpError(400, 'Not category was specified');
   }
+  */
 
   const trueValues = ['true', true, '1', 1];
 
@@ -184,8 +198,10 @@ async function getAssets(ctx) {
   const searchProvider = trueValues.includes(searchInProvider);
   const parsedRoles = JSON.parse(roles || null) || [];
   const _providerQuery = JSON.parse(providerQuery || null);
+  const _programs = JSON.parse(programs || null);
+  const _subjects = JSON.parse(subjects || null);
 
-  if (!isEmpty(criteria) || !isEmpty(type)) {
+  if (!isEmpty(criteria) || !isEmpty(type) || isEmpty(category)) {
     assets = await getByCriteria(
       { category, criteria, type },
       {
@@ -197,6 +213,8 @@ async function getAssets(ctx) {
         roles: parsedRoles,
         searchInProvider: searchProvider,
         providerQuery: _providerQuery,
+        programs: _programs,
+        subjects: _subjects,
       }
     );
   } else {
@@ -209,6 +227,8 @@ async function getAssets(ctx) {
       roles: parsedRoles,
       searchInProvider: searchProvider,
       providerQuery: _providerQuery,
+      programs: _programs,
+      subjects: _subjects,
     });
   }
 
@@ -261,8 +281,13 @@ async function getUrlMetadata(ctx) {
   if (isEmpty(url)) {
     throw new global.utils.HttpError(400, 'url is required');
   }
-  const { body: html } = await global.utils.got(url);
-  const metas = await global.utils.metascraper({ html, url });
+  let metas = {};
+  try {
+    const { body: html } = await global.utils.got(url);
+    metas = await global.utils.metascraper({ html, url });
+  } catch (e) {
+    throw new Error(`Error getting URL metadata: ${url}`, { cause: e });
+  }
 
   ctx.status = 200;
   ctx.body = { status: 200, metas };
@@ -294,11 +319,13 @@ async function removeAssetPin(ctx) {
 }
 
 async function getPinnedAssets(ctx) {
-  const { criteria, type, published, preferCurrent, showPublic } = ctx.request.query;
+  const { criteria, type, published, preferCurrent, showPublic, providerQuery } = ctx.request.query;
   const { userSession } = ctx.state;
 
+  const _providerQuery = JSON.parse(providerQuery || null);
   const assetPublished = ['true', true, '1', 1].includes(published);
   const displayPublic = ['true', true, '1', 1].includes(showPublic);
+  const _preferCurrent = ['true', true, '1', 1].includes(preferCurrent);
 
   const assets = await getByCriteria(
     { criteria, type },
@@ -307,7 +334,8 @@ async function getPinnedAssets(ctx) {
       indexable: true,
       published: assetPublished,
       showPublic: displayPublic,
-      preferCurrent,
+      preferCurrent: _preferCurrent,
+      providerQuery: _providerQuery,
       userSession,
     }
   );

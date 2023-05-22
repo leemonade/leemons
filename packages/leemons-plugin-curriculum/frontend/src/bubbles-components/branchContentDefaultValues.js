@@ -1,5 +1,7 @@
 export const BRANCH_CONTENT_MESSAGES = {
   numerationLabel: 'Numeration',
+  useNumerationLabel: 'Numbering',
+  addNumeration: 'Add numeration',
   subTypeLabel: 'Sub-type',
   evaluationCriteriaLabel: 'This block contains evaluation criteria',
   addContent: 'Add Content',
@@ -36,10 +38,38 @@ export const BRANCH_CONTENT_MESSAGES = {
   groupSaveConfig: 'Save config',
   groupAddElement: 'Add element',
   blockCancelConfigButtonLabel: 'Cancel',
+  newBlock: 'New block',
+  curricularContentLabel: 'Curricular content',
+  curricularContentPlaceholder: 'Select...',
+  curricularKnowledges: 'Knowledges',
+  curricularQualifyingCriteria: 'Qualifying criteria',
+  curricularNonQualifyingCriteria: 'Non qualifying criteria',
+  tableAdd: 'Add',
+  tableRemove: 'Remove',
+  tableEdit: 'Edit',
+  tableAccept: 'Accept',
+  tableCancel: 'Cancel',
+  fieldName: 'Field name',
+  subBlockTitle: 'Title of the sub-blocks',
+  subBlockContent: 'Content of the sub-blocks',
+  removeBlock: 'Remove block',
+  continueButtonLabel: 'Continue',
+  subBlock: 'Sub-block',
+  fieldRequired: 'Field required',
+  maxLength: 'Maximum {max} characters',
+  useContentRelations: 'Content relations',
+  relatedTo: 'Related to',
+  typeOfRelation: 'Type of relation',
+  showNumeration: 'Show numbering',
+  content: 'Content',
+  numbering: 'Numbering',
+  father: 'Father',
+  label: 'Label',
 };
 
 export const BRANCH_CONTENT_ERROR_MESSAGES = {
   nameRequired: 'Field required',
+  fieldNameRequired: 'Field required',
   orderedRequired: 'Field required',
   blockNameRequired: 'Field required',
   blockTypeRequired: 'Field required',
@@ -57,6 +87,7 @@ export const BRANCH_CONTENT_ERROR_MESSAGES = {
   groupColumnNameRequired: 'Field required',
   groupColumnTypeRequired: 'Field required',
   groupShowAsRequired: 'Field required',
+  curricularContentRequired: 'Field required',
 };
 
 export const BRANCH_CONTENT_SELECT_DATA = {
@@ -65,10 +96,12 @@ export const BRANCH_CONTENT_SELECT_DATA = {
       label: 'Field',
       value: 'field',
     },
+    /*
     {
       label: 'Code',
       value: 'code',
     },
+     */
     {
       label: 'Text area',
       value: 'textarea',
@@ -155,10 +188,12 @@ export const BRANCH_CONTENT_SELECT_DATA = {
       label: 'Field',
       value: 'field',
     },
+    /*
     {
       label: 'Code',
       value: 'code',
     },
+     */
     {
       label: 'Text area',
       value: 'textarea',

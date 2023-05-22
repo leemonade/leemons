@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { find, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import {
   Box,
+  ImageLoader,
   LoadingOverlay,
   PaginatedList,
   RadioGroup,
@@ -11,7 +12,6 @@ import {
   Stack,
   useDebouncedValue,
   useResizeObserver,
-  ImageLoader,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
@@ -62,6 +62,8 @@ const AssetList = ({
   search: searchProp,
   layout: layoutProp,
   showPublic: showPublicProp,
+  programs,
+  subjects,
   itemMinWidth,
   canChangeLayout,
   canChangeType,
@@ -81,11 +83,18 @@ const AssetList = ({
   preferCurrent,
   searchInProvider,
   roles,
+  filters,
+  filterComponents,
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
   onLoading = () => {},
 }) => {
+  if (categoryProp?.key?.includes('leebrary-subject')) {
+    // eslint-disable-next-line no-param-reassign
+    subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
+  }
+
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [category, setCategory] = useState(categoryProp);
   const [categories, setCategories] = useState(categoriesProp);
@@ -164,9 +173,10 @@ const AssetList = ({
     }, 500);
   };
 
-  const loadAssets = async (categoryId, criteria = '', type = '') => {
+  const loadAssets = async (categoryId, criteria = '', type = '', filters) => {
     if (!loadingRef.current.loading || loadingRef.current.firstTime) {
       loadingRef.current.loading = true;
+      loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
       setLoading(true);
@@ -174,6 +184,7 @@ const AssetList = ({
       try {
         setAsset(null);
         const query = {
+          providerQuery: filters ? JSON.stringify(filters) : null,
           category: categoryId,
           criteria,
           type,
@@ -182,10 +193,28 @@ const AssetList = ({
           pinned,
           preferCurrent,
           searchInProvider,
+          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
+          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
           roles: JSON.stringify(roles || []),
         };
-        // console.log('query:', query);
+
+        if (categoryProp?.key?.includes('leebrary-subject')) {
+          delete query.category;
+        }
+
         const response = await getAssetsRequest(query);
+
+        if (loadingRef.current.waitQuery) {
+          loadingRef.current.loading = false;
+          loadAssets(
+            loadingRef.current.waitQuery.categoryId,
+            loadingRef.current.waitQuery.criteria,
+            loadingRef.current.waitQuery.type,
+            loadingRef.current.waitQuery.filters
+          );
+          return null;
+        }
+
         const results = response?.assets || [];
         // console.log('results:', results);
         setAssets(uniqBy(results, 'asset'));
@@ -198,6 +227,13 @@ const AssetList = ({
         clearAssetLoading();
         addErrorAlert(getErrorMessage(err));
       }
+    } else {
+      loadingRef.current.waitQuery = {
+        categoryId,
+        criteria,
+        type,
+        filters,
+      };
     }
   };
 
@@ -246,7 +282,7 @@ const AssetList = ({
           if (forceLoad && item) {
             const index = serverData.items.findIndex((i) => i.id === id);
             serverData.items[index] = value;
-            setServerData(serverData);
+            setServerData({ ...serverData });
           }
         } else {
           setAsset(null);
@@ -258,7 +294,7 @@ const AssetList = ({
   };
 
   const reloadAssets = () => {
-    loadAssets(category.id);
+    loadAssets(category?.id, searchDebounced, assetType, filters);
   };
 
   const duplicateAsset = async (id) => {
@@ -353,10 +389,13 @@ const AssetList = ({
     if (!isEmpty(category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(category.id);
+    } else if (categoryProp?.key === 'pins') {
+      const cat = find(categories, { key: 'media-files' });
+      if (cat) loadAssetTypes(cat.id);
     } else {
       setAssetTypes(null);
     }
-  }, [category]);
+  }, [category, categoryProp]);
 
   useEffect(() => {
     if (assetTypes && !isEmpty(assetTypes) && assetTypes[0].value !== '') {
@@ -376,15 +415,15 @@ const AssetList = ({
     if (isFunction(onSearch)) {
       onSearch(searchDebounced);
     } else if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchDebounced, assetType);
+      loadAssets(category?.id, searchDebounced, assetType, filters);
     }
-  }, [searchDebounced, category, pinned, assetType]);
+  }, [searchDebounced, category, pinned, assetType, filters]);
 
   useEffect(() => {
     if (!isEmpty(category?.id) || pinned) {
-      loadAssets(category?.id, searchProp, assetType);
+      loadAssets(category?.id, searchProp, assetType, filters);
     }
-  }, [searchProp, category, assetType, showPublic, pinned, published]);
+  }, [searchProp, category, assetType, showPublic, pinned, published, filters]);
 
   // ·········································································
   // HANDLERS
@@ -520,10 +559,8 @@ const AssetList = ({
     }
   }, [asset]);
 
-  const headerOffset = useMemo(() => {
-    const offsets = childRef.current?.getBoundingClientRect() || childRect;
-    return Math.round(offsets.top + childRect.height + childRect.top);
-  }, [childRect, isEmbedded]);
+  const offsets = childRef.current?.getBoundingClientRect() || childRect;
+  const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
 
   const listProps = useMemo(() => {
     if (!showThumbnails && layout === 'grid') {
@@ -533,6 +570,7 @@ const AssetList = ({
             {...p}
             variant={cardVariant || 'media'}
             category={category || { key: 'media-file' }}
+            realCategory={categoryProp}
             published={published}
             isEmbedded={isEmbedded}
             onRefresh={reloadAssets}
@@ -564,7 +602,7 @@ const AssetList = ({
     }
 
     return { paperProps };
-  }, [layout, category, isEmbedded, showThumbnails]);
+  }, [layout, category, categoryProp, isEmbedded, showThumbnails]);
 
   const listLayouts = useMemo(
     () => [
@@ -660,9 +698,10 @@ const AssetList = ({
         padding={isEmbedded ? 0 : 5}
         style={
           isEmbedded
-            ? { flex: 0 }
+            ? { flex: 0, alignItems: 'end' }
             : {
                 flex: 0,
+                alignItems: 'end',
                 width: containerRect.width,
                 top: containerRect.top,
                 position: 'fixed',
@@ -678,14 +717,18 @@ const AssetList = ({
               onChange={setSearhCriteria}
               value={searchCriteria}
               disabled={loading}
+              label={t('labels.search')}
+              placeholder={t('labels.searchPlaceholder')}
             />
           )}
+          {!!filterComponents && filterComponents({ loading })}
           {!isEmpty(assetTypes) && canChangeType && (
             <Select
               skipFlex
               data={assetTypes}
               value={assetType}
               onChange={handleOnTypeChange}
+              label={t('labels.type')}
               placeholder={t('labels.resourceTypes')}
               disabled={loading}
             />
@@ -722,7 +765,6 @@ const AssetList = ({
           </Box>
         </Box>
       )}
-
       {/* PAGINATED LIST ········· */}
       <Stack
         fullHeight
@@ -887,6 +929,10 @@ AssetList.propTypes = {
   allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
   searchInProvider: PropTypes.bool,
   roles: PropTypes.arrayOf(PropTypes.string),
+  programs: PropTypes.array,
+  subjects: PropTypes.array,
+  filters: PropTypes.any,
+  filterComponents: PropTypes.any,
 };
 
 export { AssetList };

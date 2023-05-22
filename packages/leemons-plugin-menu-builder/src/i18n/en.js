@@ -25,4 +25,9 @@ module.exports = {
       action: 'Delete',
     },
   },
+  spotlight: {
+    searchPlaceholder: 'Search...',
+    nothingFoundMessage: 'Nothing found',
+    tooltip: 'Find in menu',
+  },
 };

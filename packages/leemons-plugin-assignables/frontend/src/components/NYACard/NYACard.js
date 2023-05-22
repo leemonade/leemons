@@ -4,7 +4,7 @@ import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
-import _ from 'lodash';
+import _, { get } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';
 import { useIsTeacher } from '@academic-portfolio/hooks';
@@ -81,7 +81,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
   const avgGrade = gradeCount > 0 ? gradeSum / gradeCount : 0;
 
   const role = instance?.instance?.assignable?.role;
-  const roleName = labels?.roles?.[role]?.singular || role;
+  const roleName = get(labels?.roles, `${role}.singular`) || role;
 
   let submission;
   let total;
@@ -176,7 +176,7 @@ export function parseDeadline(isTeacher, obj) {
         if (daysUntilDeadline <= 2) {
           severity = 'high';
         }
-        main = <LocaleRelativeTime seconds={durationInSeconds} />;
+        main = <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />;
       } else {
         main = labels?.startActivity;
       }
@@ -221,7 +221,9 @@ export function parseDeadline(isTeacher, obj) {
           if (daysUntilClose < 0) {
             backgroundColor = 'error';
           }
-          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+          secondary = (
+            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+          );
         } else if (dateToShow) {
           secondary = labels?.evaluation;
         }
@@ -240,7 +242,9 @@ export function parseDeadline(isTeacher, obj) {
             backgroundColor = 'error';
           }
 
-          secondary = <LocaleRelativeTime seconds={durationInSeconds} />;
+          secondary = (
+            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+          );
         } else if (dateToShow) {
           secondary = labels?.submission;
         }
@@ -274,8 +278,6 @@ export function parseDeadline(isTeacher, obj) {
 }
 
 async function prepareInstance({ instance: object, isTeacher, query, labels }) {
-  // return Promise.all(
-  //   instances.map(async (object) => {
   let instance = object;
 
   if (!isTeacher) {
@@ -299,12 +301,6 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     labels,
   });
   const deadlineProps = parseDeadline(isTeacher, object);
-  // const subject = {
-  //   // Only if main dashboard or multi-language
-  //   name: 'Bases para el análisis y el tratamiento de',
-  //   color: '#FABADA',
-  //   icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
-  // };
 
   const showSubject = query.showSubject || subjectData.name === labels.multiSubject;
 
@@ -352,7 +348,7 @@ export function usePreparedInstance(instance, query, labels) {
     [isTeacher, instance, query, labels]
   );
 
-  const [results, error] = useApi(prepareInstance, options);
+  const [results] = useApi(prepareInstance, options);
 
   if (!results) {
     return null;
@@ -361,32 +357,37 @@ export function usePreparedInstance(instance, query, labels) {
   return results;
 }
 
-export default function NYACard({ instance, showSubject, labels: _labels, classData }) {
+function useNYACardLocalizations(labels) {
+  const useOwnLocalizations = labels !== undefined;
+
+  if (useOwnLocalizations) {
+    return labels;
+  }
+
+  const [, translations] = useTranslateLoader([
+    prefixPN('roles'),
+    prefixPN('need_your_attention'),
+    prefixPN('multiSubject'),
+  ]);
+
+  return useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return {
+        ..._.get(res, prefixPN('need_your_attention')),
+        roles: _.get(res, prefixPN('roles')),
+        multiSubject: _.get(res, prefixPN('multiSubject')),
+      };
+    }
+
+    return {};
+  }, [translations]);
+}
+
+export default function NYACard({ instance, showSubject, labels, classData }) {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
-  const useOwnLabels = useMemo(() => _labels === undefined, []);
-
-  let labels = _labels;
-  if (useOwnLabels) {
-    const [, translations] = useTranslateLoader([
-      prefixPN('roles'),
-      prefixPN('need_your_attention'),
-      prefixPN('multiSubject'),
-    ]);
-
-    labels = useMemo(() => {
-      if (translations && translations.items) {
-        const res = unflatten(translations.items);
-        return {
-          ..._.get(res, prefixPN('need_your_attention')),
-          roles: _.get(res, prefixPN('roles')),
-          multiSubject: _.get(res, prefixPN('multiSubject')),
-        };
-      }
-
-      return {};
-    }, [translations]);
-  }
+  const localizations = useNYACardLocalizations(labels);
 
   const query = useMemo(
     () => ({
@@ -396,7 +397,7 @@ export default function NYACard({ instance, showSubject, labels: _labels, classD
     [showSubject]
   );
 
-  const preparedInstance = usePreparedInstance(instance, query, labels);
+  const preparedInstance = usePreparedInstance(instance, query, localizations);
 
   if (!preparedInstance) {
     return null;
@@ -424,9 +425,9 @@ export default function NYACard({ instance, showSubject, labels: _labels, classD
           assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
           deadlineProps={preparedInstance?.deadlineProps}
           subject={preparedInstance?.subject}
-          badge={preparedInstance?.isNew && labels?.new?.toUpperCase()}
+          badge={preparedInstance?.isNew ? localizations?.new?.toUpperCase() : ''}
           variantTitle={
-            labels?.roles?.[preparedInstance?.assignable?.role]?.singular ||
+            get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
             preparedInstance?.assignable?.role
           }
           variantIcon={

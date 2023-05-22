@@ -1,19 +1,22 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
-import _ from 'lodash';
+import _, { keyBy, uniq, without } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import useSearchAssignableInstances from '../../../../../hooks/assignableInstance/useSearchAssignableInstancesQuery';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import { getSessionConfig } from '@users/session';
+import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
+import { addErrorAlert } from '@layout/alert';
 import useParseAssignations from '../../hooks/useParseAssignations';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import prefixPN from '../../../../../helpers/prefixPN';
 import EmptyState from '../../../../../assets/EmptyState.png';
 
-function useAssignmentsColumns({ variant } = {}) {
+function useAssignmentsColumns() {
   const isTeacher = useIsTeacher();
+  const isStudent = useIsStudent();
 
   const [, translations] = useTranslateLoader(
     prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`)
@@ -32,10 +35,10 @@ function useAssignmentsColumns({ variant } = {}) {
     return {};
   }, [translations]);
 
-  const commonColumns = useMemo(
+  const teacherColumns = useMemo(
     () => [
       {
-        Header: labels?.task || '',
+        Header: labels?.activity || '',
         accessor: 'activity',
       },
       {
@@ -50,113 +53,125 @@ function useAssignmentsColumns({ variant } = {}) {
         Header: labels?.deadline || '',
         accessor: 'parsedDates.deadline',
       },
+      {
+        Header: labels?.status || '',
+        accessor: 'status',
+      },
+      {
+        Header: labels?.completions || '',
+        accessor: 'completion',
+      },
+      {
+        Header: labels?.evaluated || '',
+        accessor: 'evaluated',
+      },
+      {
+        Header: labels.messages || '',
+        accessor: 'messages',
+      },
     ],
     [labels]
   );
 
-  const columns = useMemo(() => {
-    if (isTeacher) {
-      return [
-        ...commonColumns,
-        {
-          Header: labels.students || '',
-          accessor: 'students',
-        },
-        /*
-        {
-          Header: labels.open || '',
-          accessor: 'open',
-        },
-
-         */
-        {
-          Header: labels.ongoing || '',
-          accessor: 'ongoing',
-        },
-        {
-          Header: labels.completed || '',
-          accessor: 'completed',
-        },
-        {
-          Header: labels.unreadMessages || '',
-          accessor: 'unreadMessages',
-        },
-        {
-          Header: '',
-          accessor: 'actions',
-        },
-      ];
-    }
-
-    // student
-    return [
-      ...commonColumns,
+  const studentColumns = useMemo(
+    () => [
       {
-        Header: labels.status || '',
+        Header: labels?.activity || '',
+        accessor: 'activity',
+      },
+      {
+        Header: labels?.subject || '',
+        accessor: 'subject',
+      },
+      {
+        Header: labels?.start || '',
+        accessor: 'parsedDates.start',
+      },
+      {
+        Header: labels?.deadline || '',
+        accessor: 'parsedDates.deadline',
+      },
+      {
+        Header: labels?.status || '',
         accessor: 'status',
       },
-      variant !== 'evaluated' && {
-        Header: labels.submission || '',
-        accessor: 'submission',
-      },
-      variant === 'evaluated' && {
-        Header: labels.grade || '',
-        accessor: 'grade',
+      {
+        Header: labels?.progress || '',
+        accessor: 'progress',
       },
       {
-        Header: labels.unreadMessages || '',
-        accessor: 'unreadMessages',
+        Header: labels.messages || '',
+        accessor: 'messages',
       },
-      {
-        Header: '',
-        accessor: 'actions',
-      },
-    ].filter(Boolean);
-  }, [isTeacher, labels, variant]);
+    ],
+    [labels]
+  );
 
-  return columns;
+  if (isTeacher) {
+    return teacherColumns;
+  }
+
+  if (isStudent) {
+    return studentColumns;
+  }
+
+  return [];
 }
 
-export default function ActivitiesList({ filters, subjectFullLength = true }) {
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
-  const { theme: themeLayout } = useLayout();
+function useOngoingQuery(filters) {
+  const sessionConfig = getSessionConfig();
+  const isStudent = useIsStudent();
 
   const query = useMemo(() => {
     const q = {};
 
     if (filters?.query) {
-      q.search = filters?.query;
+      q.query = filters?.query;
+    }
+
+    if (filters?.type && filters?.type !== 'all') {
+      q.role = filters?.type;
     }
 
     if (filters?.subject && filters?.subject !== 'all') {
       q.subjects = JSON.stringify([filters?.subject]);
     }
 
+    if (filters?.program && filters?.program !== 'all') {
+      q.programs = JSON.stringify([filters?.program]);
+    } else if (isStudent && sessionConfig?.program) {
+      q.programs = JSON.stringify([sessionConfig.program]);
+    }
+
     if (filters?.class && filters?.class !== 'all') {
       q.classes = JSON.stringify([filters?.class]);
     }
 
-    if (filters?.type && filters?.type !== 'all') {
-      q.role = filters?.type;
+    if (filters?.isArchived) {
+      q.isArchived = true;
+    } else {
+      q.isArchived = false;
     }
+
     if (filters?.status && filters?.status !== 'all') {
       q.status = filters?.status;
     }
 
-    if (filters?.tab === 'ongoing') {
-      q.archived = false;
-      q.evaluated = false;
-    } else if (filters?.tab === 'history') {
-      q.archived = true;
-    } else if (filters?.tab === 'evaluated') {
-      q.archived = false;
-      q.evaluated = true;
+    if (filters?.progress && filters?.progress !== 'all') {
+      q.progress = filters?.progress;
+    }
+
+    if (filters?.sort) {
+      q.sort = filters?.sort;
     }
 
     return q;
-  }, [filters]);
+  }, [filters, sessionConfig?.program, isStudent]);
 
+  return query;
+}
+
+function useOngoingLocalizations() {
   const [, translations] = useTranslateLoader([
     prefixPN('pagination'),
     prefixPN('activities_list'),
@@ -174,40 +189,136 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     return {};
   }, [translations]);
 
-  const { data: instances, isLoading: instancesLoading } = useSearchAssignableInstances(query);
+  return labels;
+}
 
-  const instancesInPage = useMemo(() => {
-    if (instancesLoading || !instances?.length) {
+function useBlockingActivitiesStatus(assignations) {
+  const isStudent = useIsStudent();
+
+  const assignationsById = {};
+
+  const blockingIds = useMemo(() => {
+    if (!isStudent) {
       return [];
     }
 
-    return instances.slice((page - 1) * size, page * size);
-  }, [instances, instancesLoading, page, size]);
+    const blocking = [];
 
-  const assignationsByProfile = useAssignationsByProfile(instancesInPage);
+    assignations.forEach((assignation) => {
+      assignationsById[assignation.id] = {
+        id: assignation.id,
+        finished: !!assignation.timestamps.end,
+      };
 
-  const instancesDataLoading = useMemo(
-    () => assignationsByProfile.some((q) => q.isLoading),
-    [assignationsByProfile]
+      const instanceBlocking = assignation.instance.relatedAssignableInstances?.blocking;
+      if (instanceBlocking?.length) {
+        blocking.push(...instanceBlocking);
+      }
+    });
+
+    return uniq(blocking);
+  }, [assignations]);
+
+  const blockingIdsMissing = useMemo(
+    () => without(blockingIds, ...Object.keys(assignationsById)),
+    [blockingIds, assignationsById]
   );
-  const instancesData = useMemo(() => {
-    if (instancesDataLoading) {
-      return [];
-    }
 
-    return assignationsByProfile.map(({ data }) => data);
-  }, [assignationsByProfile, instancesDataLoading]);
+  const { data, isLoading } = useAssignationsByProfile(blockingIdsMissing, {
+    enabled: !!blockingIdsMissing.length,
+    placeholderData: {},
+    select: (instancesData) =>
+      keyBy(
+        instancesData.map((assignation) => ({
+          id: assignation.instance.id,
+          finished: !!assignation.timestamps.end,
+        })),
+        'id'
+      ),
+  });
+
+  const dataToReturn = useMemo(() => ({ ...data, ...assignationsById }), [data, assignationsById]);
+
+  return { data: dataToReturn, isLoading: blockingIdsMissing?.length ? isLoading : false };
+}
+
+function useOngoingData({ query, page, size, subjectFullLength }) {
+  const { data: paginatedInstances, isLoading: instancesLoading } = useSearchOngoingActivities({
+    ...query,
+    offset: (page - 1) * size,
+    limit: size,
+  });
+
+  const instances = paginatedInstances?.items ?? [];
+
+  const originalOrder = useMemo(() => {
+    const order = {};
+
+    instances.forEach((instance, i) => {
+      order[instance] = i;
+    });
+
+    return order;
+  }, [instances]);
+
+  const { isLoading: instancesDataLoading, data: instancesData } = useAssignationsByProfile(
+    instances || [],
+    {
+      placeholderData: [],
+    }
+  );
+
+  const orderedInstancesData = useMemo(() => {
+    const sortedData = [];
+
+    instancesData.forEach((instance) => {
+      sortedData[originalOrder[instance.instance?.id || instance.id]] = instance;
+    });
+
+    return sortedData;
+  }, [originalOrder, instancesData]);
+
+  const { data: blockingActivities, isLoading: blockingActivitiesAreLoading } =
+    useBlockingActivitiesStatus(orderedInstancesData);
 
   const { data: parsedInstances, isLoading: parsedInstancesLoading } = useParseAssignations(
-    instancesData,
+    orderedInstancesData,
     {
+      blockingActivities,
       subjectFullLength,
     }
   );
 
-  const columns = useAssignmentsColumns({ variant: filters?.tab });
+  const isLoading =
+    instancesLoading ||
+    instancesDataLoading ||
+    parsedInstancesLoading ||
+    blockingActivitiesAreLoading;
 
-  const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
+  return {
+    parsedInstances,
+    isLoading,
+    totalCount: paginatedInstances?.totalCount,
+    totalPages: Math.ceil(paginatedInstances?.totalCount / size),
+  };
+}
+
+export default function ActivitiesList({ filters, subjectFullLength = true }) {
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const { theme: themeLayout } = useLayout();
+
+  const query = useOngoingQuery(filters);
+  const labels = useOngoingLocalizations();
+
+  const { parsedInstances, isLoading, totalCount, totalPages } = useOngoingData({
+    query,
+    page,
+    size,
+    subjectFullLength,
+  });
+
+  const columns = useAssignmentsColumns();
 
   if (isLoading) {
     return <Loader />;
@@ -250,11 +361,20 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         page={page}
         size={size}
         loading={isLoading}
-        totalCount={instances?.length}
-        totalPages={Math.ceil(instances?.length / size)}
+        totalCount={totalCount}
+        totalPages={totalPages}
         onSizeChange={setSize}
         onPageChange={setPage}
-        selectable={false}
+        selectable
+        onSelect={({ isBlocked, dashboardURL }) => {
+          if (isBlocked) {
+            addErrorAlert(labels?.activitiesList?.blocked);
+          } else if (typeof dashboardURL === 'function') {
+            window.open(dashboardURL());
+          } else {
+            window.open(dashboardURL);
+          }
+        }}
         labels={labels.pagination}
         headerStyles={headerStyles}
       />

@@ -2,12 +2,29 @@ const _ = require('lodash');
 const { table } = require('../../tables');
 
 async function removeByClass(classIds, { soft, transacting: _transacting } = {}) {
+  const roomService = leemons.getPlugin('comunica').services.room;
+
   return global.utils.withTransaction(
     async (transacting) => {
+      const classeIds = _.isArray(classIds) ? classIds : [classIds];
+
       const classTeachers = await table.classTeacher.find(
-        { class_$in: _.isArray(classIds) ? classIds : [classIds] },
+        { class_$in: classeIds },
         { transacting }
       );
+
+      // Remove users from class room
+      await Promise.all(
+        _.map(classeIds, (classId) => {
+          const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
+          return roomService.removeUserAgents(
+            leemons.plugin.prefixPN(`room.class.${classId}`),
+            userIds,
+            { transacting }
+          );
+        })
+      );
+
       await leemons.events.emit('before-remove-classes-teachers', {
         classTeachers,
         soft,
@@ -17,6 +34,8 @@ async function removeByClass(classIds, { soft, transacting: _transacting } = {})
         { id_$in: _.map(classTeachers, 'id') },
         { soft, transacting }
       );
+
+      // TODO Add remove `plugins.academic-portfolio.program.inside.${program.id}`
 
       await Promise.all(
         _.map(classTeachers, (classTeacher) =>

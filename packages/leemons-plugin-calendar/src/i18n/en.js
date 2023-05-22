@@ -25,6 +25,10 @@ module.exports = {
     previous: 'Previous',
     next: 'Next',
     showWeekends: 'Show weekends',
+    entirePeriod: 'Entire period',
+    onlyInitAndEnd: 'Only show start and end',
+    onlyEnd: 'Show deadline only',
+    display: 'Show',
     calendar: 'Calendar',
     schedule: 'Schedule',
     centers: 'Centers',
@@ -173,6 +177,9 @@ module.exports = {
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
     onlyByMy: 'Only those created by me',
+  },
+  kanbanTaskCard: {
+    delivery: 'Delivery',
   },
   userProgramCalendar: {
     calendar: 'Calendar',

@@ -8,7 +8,7 @@ const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
 const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
-const { subjectByIds } = require('../subjects');
+const { subjectByIds } = require('../subjects/subjectByIds');
 
 async function classByIds(
   ids,
@@ -154,7 +154,7 @@ async function classByIds(
       parentClass: parentClassesById[rest.class],
       image: imagesById[rest.image],
       knowledges: knowledgesByClass[id] ? knowledgesById[knowledgesByClass[id][0].knowledge] : null,
-      substages: substagesByClass[id] ? substagesById[substagesByClass[id][0].substage] : null,
+      substages: map(substagesByClass[id], ({ substage }) => substagesById[substage]),
       // eslint-disable-next-line no-nested-ternary
       courses: coursesByClass[id]
         ? haveMultiCoursesByProgram[rest.program]
