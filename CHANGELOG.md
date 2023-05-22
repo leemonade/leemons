@@ -368,9 +368,9 @@
 
 ### Miscellaneous Chores
 
-* Release 0.0.1 ([78b9823](https://github.com/leemonade/leemons/commit/78b98238ea1a4915673a155e2e38282ba20511dd))
+* Release 0.0.0 ([78b9823](https://github.com/leemonade/leemons/commit/78b98238ea1a4915673a155e2e38282ba20511dd))
 
-## 0.0.1 (2023-05-19)
+## 0.0.0 (2023-05-19)
 
 
 ### ⚠ BREAKING CHANGES
