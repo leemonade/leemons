@@ -8,7 +8,6 @@
   },
   "leemons": {},
   "dependencies": {
-    "dotenv": "^16.0.3",
     "leemons-plugin-gateway": "workspace:^1.0.0",
     "leemons-plugin-tests": "workspace:^1.0.0",
     "leemons-plugin-transactions": "workspace:^1.0.0",
