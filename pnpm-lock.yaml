@@ -107,6 +107,25 @@ importers:
       jest-cli: 27.5.1
       turbo: 1.9.6
 
+  plugins/leemons-plugin-transactions/backend:
+    specifiers:
+      eslint: ^8.25.0
+      jest: ^27.5.1
+      jest-cli: ^27.5.1
+      lodash: ^4.17.21
+      moleculer: ^0.14.26
+      mongoose: ^7.1.1
+      turbo: ^1.9.6
+    dependencies:
+      lodash: 4.17.21
+      moleculer: 0.14.29
+      mongoose: 7.1.1
+    devDependencies:
+      eslint: 8.40.0
+      jest: 27.5.1
+      jest-cli: 27.5.1
+      turbo: 1.9.6
+
   plugins/leemons-plugin-users/backend:
     specifiers:
       '@moleculer/channels': ^0.1.6

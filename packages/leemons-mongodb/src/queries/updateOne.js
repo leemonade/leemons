@@ -1,3 +1,4 @@
+const { addTransactionState } = require("leemons-transactions");
 const {
   addDeploymentIDToArrayOrObject,
 } = require("./helpers/addDeploymentIDToArrayOrObject");
@@ -13,14 +14,20 @@ const {
 
 function updateOne({
   model,
+  modelKey,
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  ignoreTransaction,
   ctx,
 }) {
   return async function () {
-    await createTransactionIDIfNeed({ autoTransaction, ctx });
-    await increaseTransactionPendingIfNeed({ ctx });
+    await createTransactionIDIfNeed({
+      ignoreTransaction,
+      autoTransaction,
+      ctx,
+    });
+    await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
       const [_conditions, _update, ...args] = arguments;
       let conditions = _conditions;
@@ -30,23 +37,24 @@ function updateOne({
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }
       let oldItem = null;
-      if (ctx.meta.transactionID)
+      if (!ignoreTransaction && ctx.meta.transactionID)
         oldItem = await model.findOne(conditions).lean();
       let item = await model.updateOne(conditions, update, ...args);
 
-      if (ctx.meta.transactionID && oldItem) {
+      if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx, {
-          action: "rollback",
+          action: "leemonsMongoDBRollback",
           payload: {
-            action: "updateOne",
-            data: oldItem,
+            modelKey,
+            action: "updateMany",
+            data: [oldItem],
           },
         });
       }
 
       return item;
     } finally {
-      await increaseTransactionFinishedIfNeed({ ctx });
+      await increaseTransactionFinishedIfNeed({ ignoreTransaction, ctx });
     }
   };
 }

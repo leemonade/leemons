@@ -15,24 +15,31 @@ const { addTransactionState } = require("leemons-transactions");
 
 function create({
   model,
+  modelKey,
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  ignoreTransaction,
   ctx,
 }) {
   return async function () {
-    await createTransactionIDIfNeed({ autoTransaction, ctx });
-    await increaseTransactionPendingIfNeed({ ctx });
+    await createTransactionIDIfNeed({
+      ignoreTransaction,
+      autoTransaction,
+      ctx,
+    });
+    await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
       const [toAdd, ...args] = arguments;
       let toCreate = toAdd;
       if (autoDeploymentID)
         toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
       const items = await model.create(toCreate, ...args);
-      if (ctx.meta.transactionID) {
+      if (!ignoreTransaction && ctx.meta.transactionID) {
         await addTransactionState(ctx, {
-          action: "rollback",
+          action: "leemonsMongoDBRollback",
           payload: {
+            modelKey,
             action: "removeMany",
             data: _.isArray(items) ? _.map(items, "_id") : [items._id],
           },
@@ -40,7 +47,7 @@ function create({
       }
       return items;
     } finally {
-      await increaseTransactionFinishedIfNeed({ ctx });
+      await increaseTransactionFinishedIfNeed({ ignoreTransaction, ctx });
     }
   };
 }

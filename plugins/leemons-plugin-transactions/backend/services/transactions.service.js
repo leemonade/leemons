@@ -4,7 +4,7 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-
+const _ = require("lodash");
 const mongoose = require("mongoose");
 const { Transaction } = require("../models/transaction");
 const { TransactionState } = require("../models/transaction-state");
@@ -184,7 +184,7 @@ module.exports = (broker) => {
           if (!ctx.meta.transactionID) {
             throw new Error("Need ctx.meta.transactionID");
           }
-          let transaction = await Transaction.find({
+          let transaction = await Transaction.findOne({
             _id: ctx.meta.transactionID,
             deploymentID: ctx.meta.deploymentID,
           })
@@ -215,7 +215,7 @@ module.exports = (broker) => {
           // Esperamos un poco a que todos los posibles update que hayan llegado hasta aqui se ejecuten si o si
           await timeoutPromise(100);
           // Volvemos a consultar la transaccion y la que tenga el checkNumber sera la que ejecute el rollback y asi nos evitamos duplicados
-          transaction = await Transaction.find({
+          transaction = await Transaction.findOne({
             _id: ctx.meta.transactionID,
             deploymentID: ctx.meta.deploymentID,
           })

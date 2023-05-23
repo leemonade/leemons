@@ -1,10 +1,16 @@
 const _ = require("lodash");
 const { newTransaction } = require("leemons-transactions");
 
-async function createTransactionIDIfNeed({ autoTransaction, ctx }) {
-  if (!ctx.meta.transactionID) {
-    if (autoTransaction) {
-      ctx.meta.transactionID = await newTransaction(ctx);
+async function createTransactionIDIfNeed({
+  ignoreTransaction,
+  autoTransaction,
+  ctx,
+}) {
+  if (!ignoreTransaction) {
+    if (!ctx.meta.transactionID) {
+      if (autoTransaction) {
+        ctx.meta.transactionID = await newTransaction(ctx);
+      }
     }
   }
 }

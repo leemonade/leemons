@@ -15,8 +15,10 @@ module.exports = (broker) => {
     name: "greeter",
     mixins: [
       LeemonsMongoDBMixin({
+        waitToRollbackFinishOnError: true,
         autoRollback: true,
         autoDeploymentID: true,
+        debugTransaction: true,
         models: { User: usersModel, Test: testModel },
       }),
     ],
@@ -46,20 +48,14 @@ module.exports = (broker) => {
           path: "/hello",
         },
         async handler(ctx) {
-          ctx.meta.deploymentID = "miau";
-          ctx.meta.transactionID = "6466385cb3aa7003f515da32";
-          const r = await ctx.call("transactions.new");
-          console.log(r);
-          /*
-          const test = await ctx.db.Test.create({ name: "Prueba" });
-          console.log(
-            "toma consulta",
-            await ctx.db.Test.findOne({ _id: test._id }).select("name").lean()
+          // const test = await ctx.tx.db.Test.create({ name: "miau" });
+
+          const test = await ctx.tx.db.Test.findByIdAndUpdate(
+            "646b5caf489258370109cae1",
+            { name: "pepito mola" }
           );
-          await ctx.db.Test.findByIdAndUpdate(test._id, { name: "toma ya" });
-          // await ctx.db.Test.findByIdAndDelete(test._id);
-          return "Hello Moleculer";
-          */
+
+          // throw new Error("miau");
         },
       },
 
