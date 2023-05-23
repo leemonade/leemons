@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-gateway",
+  "name": "leemons-plugin-transactions",
   "version": "1.0.0",
-  "description": "Leemons gateway plugin",
+  "description": "Leemons transactions plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services/**/*.service.js",
     "start": "moleculer-runner",
@@ -21,10 +21,10 @@
     "turbo": "^1.9.6"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.6",
     "leemons-mongodb": "workspace:^1.0.0",
+    "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
-    "moleculer-web": "^0.10.5"
+    "mongoose": "^7.1.1"
   },
   "engines": {
     "node": ">= 16.x.x"

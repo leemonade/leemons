@@ -1,13 +1,22 @@
 "use strict";
 
 module.exports = {
-  newTransaction: function (ctx) {
-    if (ctx.tx?.call) {
-      return ctx.tx.call("transactions.new", undefined, {
-        meta: { __isInternalCall: true },
-      });
+  newTransaction: async function (ctx) {
+    if (ctx.meta.transactionID) {
+      return ctx.meta.transactionID;
     }
-    return ctx.call("transactions.new");
+    if (ctx.tx?.call) {
+      ctx.meta.transactionID = await ctx.tx.call(
+        "transactions.new",
+        undefined,
+        {
+          meta: { __isInternalCall: true },
+        }
+      );
+      return ctx.meta.transactionID;
+    }
+    ctx.meta.transactionID = await ctx.call("transactions.new");
+    return ctx.meta.transactionID;
   },
   increaseTransactionPending: function (ctx) {
     if (ctx.tx?.call) {

@@ -12,13 +12,9 @@ const { testModel } = require("../models/test");
 /** @type {ServiceSchema} */
 module.exports = (broker) => {
   return {
-    name: "greeter",
+    name: "users.greeter",
     mixins: [
       LeemonsMongoDBMixin({
-        waitToRollbackFinishOnError: true,
-        autoRollback: true,
-        autoDeploymentID: true,
-        debugTransaction: true,
         models: { User: usersModel, Test: testModel },
       }),
     ],
@@ -48,12 +44,16 @@ module.exports = (broker) => {
           path: "/hello",
         },
         async handler(ctx) {
+          ctx.caller;
+          ctx.call("users.greeter", { name: "miau" });
           // const test = await ctx.tx.db.Test.create({ name: "miau" });
 
+          /*
           const test = await ctx.tx.db.Test.findByIdAndUpdate(
             "646b5caf489258370109cae1",
             { name: "pepito mola" }
           );
+          */
 
           // throw new Error("miau");
         },
@@ -71,6 +71,7 @@ module.exports = (broker) => {
         },
         /** @param {Context} ctx  */
         async handler(ctx) {
+          console.log(ctx.params);
           return `Welcome, ${ctx.params.name}`;
         },
       },
@@ -96,7 +97,9 @@ module.exports = (broker) => {
     /**
      * Service started lifecycle event handler
      */
-    async started() {},
+    async started() {
+      // console.log(this.broker.services);
+    },
 
     /**
      * Service stopped lifecycle event handler

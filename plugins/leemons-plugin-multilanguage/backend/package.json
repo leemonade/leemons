@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-gateway",
+  "name": "leemons-plugin-users",
   "version": "1.0.0",
-  "description": "Leemons gateway plugin",
+  "description": "Leemons users plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services/**/*.service.js",
     "start": "moleculer-runner",
@@ -22,9 +22,8 @@
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
-    "leemons-mongodb": "workspace:^1.0.0",
     "moleculer": "^0.14.26",
-    "moleculer-web": "^0.10.5"
+    "leemons-mongodb": "workspace:^1.0.0"
   },
   "engines": {
     "node": ">= 16.x.x"

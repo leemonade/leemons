@@ -12,6 +12,7 @@ const { updateOne } = require("./queries/updateOne");
 const { updateMany } = require("./queries/updateMany");
 const { deleteOne } = require("./queries/deleteOne");
 const { deleteMany } = require("./queries/deleteMany");
+const { countDocuments } = require("./queries/countDocuments");
 const { save } = require("./queries/save");
 const {
   createTransactionIDIfNeed,
@@ -166,6 +167,15 @@ function getModelActions({
       autoRollback,
       ctx,
     }),
+    countDocuments: countDocuments({
+      model,
+      modelKey,
+      ignoreTransaction,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    }),
   };
 }
 
@@ -218,7 +228,6 @@ module.exports = ({
               ctx.params.data
             );
           }
-          console.log(ctx.params);
           switch (ctx.params.action) {
             case "removeMany":
               await model.deleteMany({ _id: ctx.params.data });
@@ -259,7 +268,7 @@ module.exports = ({
       before: {
         "*": [
           async function (ctx) {
-            ctx.__call = ctx.call;
+            ctx.__leemonsMongoDBCall = ctx.call;
             ctx.db = getDBModels({
               models,
               autoTransaction,
@@ -274,7 +283,7 @@ module.exports = ({
               if (!opts.meta.transactionID) {
                 opts.meta.transactionID = null;
               }
-              return ctx.__call(actionName, params, opts);
+              return ctx.__leemonsMongoDBCall(actionName, params, opts);
             };
             ctx.tx = {
               call: async (actionName, params, opts) => {
@@ -291,7 +300,7 @@ module.exports = ({
                     opts
                   );
                 }
-                return ctx.__call(actionName, params, opts);
+                return ctx.__leemonsMongoDBCall(actionName, params, opts);
               },
               db: getDBModels({
                 models,
