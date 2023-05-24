@@ -29,6 +29,42 @@ async function getTeachersOfGivenClasses(classes, { userSession, transacting } =
   return teachers;
 }
 
+async function createEventAndAddToUsers(
+  { assignable, classes, id, dates, isAllDay, teachers, students },
+  { transacting }
+) {
+  const { id: event } = await registerEvent(assignable, classes, {
+    id,
+    dates,
+    isAllDay,
+    transacting,
+  });
+
+  // EN: Grant users to access event
+  // ES: Da permiso a los usuarios para ver el evento
+  if (event && teachers && teachers.length) {
+    await leemons
+      .getPlugin('calendar')
+      .services.calendar.grantAccessUserAgentToEvent(event, _.map(teachers, 'teacher'), 'view', {
+        transacting,
+      });
+  }
+
+  if (students.length) {
+    // EN: Grant users to access event
+    // ES: Da permiso a los usuarios para ver el evento
+    if (event) {
+      await leemons
+        .getPlugin('calendar')
+        .services.calendar.grantAccessUserAgentToEvent(event, students, 'view', {
+          transacting,
+        });
+    }
+  }
+
+  return event;
+}
+
 async function createAssignableInstance(
   assignableInstance,
   { userSession, transacting: t, ctx, createEvent = true } = {}
@@ -59,14 +95,12 @@ async function createAssignableInstance(
         transacting,
       });
 
-      let event = null;
-
       // EN: Create the assignable instance
       // ES: Crea el asignable instance
       const { id } = await assignableInstances.create(
         {
           ...assignableInstanceObj,
-          event,
+          event: null, // Not created yet due to instance.id dependency
           sendMail: !!sendMail,
           metadata: JSON.stringify(metadata),
           curriculum: JSON.stringify(curriculum),
@@ -74,18 +108,6 @@ async function createAssignableInstance(
         },
         { transacting }
       );
-
-      if (createEvent) {
-        const newEvent = await registerEvent(assignable, classes, {
-          id,
-          dates,
-          isAllDay,
-          transacting,
-        });
-        event = newEvent.id;
-      }
-
-      await assignableInstances.update({ id }, { event });
 
       // EN: Create the item permission
       // ES: Crea el permiso del item
@@ -103,19 +125,22 @@ async function createAssignableInstance(
         { id, assignable: assignableInstance.assignable },
         { transacting }
       );
-      // EN: Grant users to access event
-      // ES: Da permiso a los usuarios para ver el evento
-      if (event && teachers && teachers.length) {
-        await leemons
-          .getPlugin('calendar')
-          .services.calendar.grantAccessUserAgentToEvent(
-            event,
-            _.map(teachers, 'teacher'),
-            'view',
-            {
-              transacting,
-            }
-          );
+
+      if (createEvent) {
+        const event = await createEventAndAddToUsers(
+          {
+            assignable,
+            classes,
+            dates,
+            id,
+            isAllDay,
+            teachers,
+            students,
+          },
+          { transacting }
+        );
+
+        await assignableInstances.update({ id }, { event });
       }
 
       // EN: Save the dates
@@ -138,16 +163,6 @@ async function createAssignableInstance(
       }
 
       if (students.length) {
-        // EN: Grant users to access event
-        // ES: Da permiso a los usuarios para ver el evento
-        if (event) {
-          await leemons
-            .getPlugin('calendar')
-            .services.calendar.grantAccessUserAgentToEvent(event, students, 'view', {
-              transacting,
-            });
-        }
-
         // EN: Register the students permissions
         // ES: Registra los permisos de los estudiantes
         await addPermissionToUser(id, assignable.id, students, 'student', { transacting });
