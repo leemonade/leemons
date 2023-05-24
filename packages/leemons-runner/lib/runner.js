@@ -1,30 +1,29 @@
-"use strict";
+const { ServiceBroker, Utils } = require('moleculer');
 
-const { ServiceBroker, Utils } = require("moleculer");
 const utils = Utils;
-const fs = require("fs");
-const path = require("path");
-const glob = require("glob").sync;
-const _ = require("lodash");
-const Args = require("args");
-const os = require("os");
-const cluster = require("cluster");
-const kleur = require("kleur");
-const { execSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob').sync;
+const _ = require('lodash');
+const Args = require('args');
+const os = require('os');
+const cluster = require('cluster');
+const kleur = require('kleur');
+const { execSync } = require('child_process');
 
 const stopSignals = [
-  "SIGHUP",
-  "SIGINT",
-  "SIGQUIT",
-  "SIGILL",
-  "SIGTRAP",
-  "SIGABRT",
-  "SIGBUS",
-  "SIGFPE",
-  "SIGUSR1",
-  "SIGSEGV",
-  "SIGUSR2",
-  "SIGTERM",
+  'SIGHUP',
+  'SIGINT',
+  'SIGQUIT',
+  'SIGILL',
+  'SIGTRAP',
+  'SIGABRT',
+  'SIGBUS',
+  'SIGFPE',
+  'SIGUSR1',
+  'SIGSEGV',
+  'SIGUSR2',
+  'SIGTERM',
 ];
 
 /* eslint-disable no-console */
@@ -35,12 +34,12 @@ const stopSignals = [
  */
 const logger = {
   info(message) {
-    console.log(kleur.grey("[Runner]"), kleur.green().bold(message));
+    console.log(kleur.grey('[Runner]'), kleur.green().bold(message));
   },
   error(err) {
     if (err instanceof Error)
-      console.error(kleur.grey("[Runner]"), kleur.red().bold(err.message), err);
-    else console.error(kleur.grey("[Runner]"), kleur.red().bold(err));
+      console.error(kleur.grey('[Runner]'), kleur.red().bold(err.message), err);
+    else console.error(kleur.grey('[Runner]'), kleur.red().bold(err));
   },
 };
 
@@ -72,29 +71,29 @@ class LeemonsRunner {
 		-v, --version    Output the version number
 	*/
   processFlags(procArgs) {
-    Args.option("config", "Load the configuration from a file")
-      .option("repl", "Start REPL mode", false)
-      .option(["H", "hot"], "Hot reload services if changed", false)
-      .option("silent", "Silent mode. No logger", false)
-      .option("env", "Load .env file from the current directory")
-      .option("envfile", "Load a specified .env file")
-      .option("instances", "Launch [number] instances node (load balanced)")
-      .option("mask", "Filemask for service loading");
+    Args.option('config', 'Load the configuration from a file')
+      .option('repl', 'Start REPL mode', false)
+      .option(['H', 'hot'], 'Hot reload services if changed', false)
+      .option('silent', 'Silent mode. No logger', false)
+      .option('env', 'Load .env file from the current directory')
+      .option('envfile', 'Load a specified .env file')
+      .option('instances', 'Launch [number] instances node (load balanced)')
+      .option('mask', 'Filemask for service loading');
 
     this.flags = Args.parse(procArgs, {
       mri: {
         alias: {
-          c: "config",
-          r: "repl",
-          H: "hot",
-          s: "silent",
-          e: "env",
-          E: "envfile",
-          i: "instances",
-          m: "mask",
+          c: 'config',
+          r: 'repl',
+          H: 'hot',
+          s: 'silent',
+          e: 'env',
+          E: 'envfile',
+          i: 'instances',
+          m: 'mask',
         },
-        boolean: ["repl", "silent", "hot", "env"],
-        string: ["config", "envfile", "mask"],
+        boolean: ['repl', 'silent', 'hot', 'env'],
+        string: ['config', 'envfile', 'mask'],
       },
     });
 
@@ -107,7 +106,7 @@ class LeemonsRunner {
   loadEnvFile() {
     if (this.flags.env || this.flags.envfile) {
       try {
-        const dotenv = require("dotenv");
+        const dotenv = require('dotenv');
 
         if (this.flags.envfile) dotenv.config({ path: this.flags.envfile });
         else dotenv.config();
@@ -128,7 +127,7 @@ class LeemonsRunner {
    * @returns {String}
    */
   fixDriveLetterCase(s) {
-    if (s && process.platform === "win32" && s.match(/^[A-Z]:/g)) {
+    if (s && process.platform === 'win32' && s.match(/^[A-Z]:/g)) {
       return s.charAt(0).toLowerCase() + s.slice(1);
     }
     return s;
@@ -147,7 +146,7 @@ class LeemonsRunner {
   loadConfigFile() {
     let filePath;
     // Env vars have priority over the flags
-    const configPath = process.env["MOLECULER_CONFIG"] || this.flags.config;
+    const configPath = process.env.MOLECULER_CONFIG || this.flags.config;
 
     if (configPath != null) {
       if (path.isAbsolute(configPath)) {
@@ -161,45 +160,35 @@ class LeemonsRunner {
       }
 
       if (filePath == null) {
-        return Promise.reject(
-          new Error(`Config file not found: ${configPath}`)
-        );
+        return Promise.reject(new Error(`Config file not found: ${configPath}`));
       }
     }
 
     if (filePath == null) {
-      filePath = this.tryConfigPath(
-        path.resolve(process.cwd(), "moleculer.config.js")
-      );
+      filePath = this.tryConfigPath(path.resolve(process.cwd(), 'moleculer.config.js'));
     }
     if (filePath == null) {
-      filePath = this.tryConfigPath(
-        path.resolve(process.cwd(), "moleculer.config.json")
-      );
+      filePath = this.tryConfigPath(path.resolve(process.cwd(), 'moleculer.config.json'));
     }
 
     if (filePath != null) {
       const ext = path.extname(filePath);
       switch (ext) {
-        case ".json":
-        case ".js":
-        case ".ts": {
+        case '.json':
+        case '.js':
+        case '.ts': {
           const content = require(filePath);
           return Promise.resolve()
             .then(() => {
               if (utils.isFunction(content)) return content.call(this);
-              else return content;
+              return content;
             })
             .then(
-              (res) =>
-                (this.configFile =
-                  res.default != null && res.__esModule ? res.default : res)
+              (res) => (this.configFile = res.default != null && res.__esModule ? res.default : res)
             );
         }
         default:
-          return Promise.reject(
-            new Error(`Not supported file extension: ${ext}`)
-          );
+          return Promise.reject(new Error(`Not supported file extension: ${ext}`));
       }
     }
   }
@@ -224,9 +213,9 @@ class LeemonsRunner {
   }
 
   normalizeEnvValue(value) {
-    if (value.toLowerCase() === "true" || value.toLowerCase() === "false") {
+    if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
       // Convert to boolean
-      value = value === "true";
+      value = value === 'true';
     } else if (!isNaN(value)) {
       // Convert to number
       value = Number(value);
@@ -236,22 +225,19 @@ class LeemonsRunner {
 
   overwriteFromEnv(obj, prefix) {
     Object.keys(obj).forEach((key) => {
-      const envName = ((prefix ? prefix + "_" : "") + key).toUpperCase();
+      const envName = ((prefix ? `${prefix}_` : '') + key).toUpperCase();
 
       if (process.env[envName]) {
         obj[key] = this.normalizeEnvValue(process.env[envName]);
       }
 
       if (utils.isPlainObject(obj[key]))
-        obj[key] = this.overwriteFromEnv(
-          obj[key],
-          (prefix ? prefix + "_" : "") + key
-        );
+        obj[key] = this.overwriteFromEnv(obj[key], (prefix ? `${prefix}_` : '') + key);
     });
 
     // Process MOL_ env vars only the root level
     if (prefix == null) {
-      const moleculerPrefix = "MOL_";
+      const moleculerPrefix = 'MOL_';
       Object.keys(process.env)
         .filter((key) => key.startsWith(moleculerPrefix))
         .map((key) => ({
@@ -260,26 +246,21 @@ class LeemonsRunner {
         }))
         .forEach((variable) => {
           const dotted = variable.withoutPrefix
-            .split("__")
+            .split('__')
             .map((level) => level.toLocaleLowerCase())
             .map((level) =>
               level
-                .split("_")
+                .split('_')
                 .map((value, index) => {
                   if (index == 0) {
                     return value;
-                  } else {
-                    return value[0].toUpperCase() + value.substring(1);
                   }
+                  return value[0].toUpperCase() + value.substring(1);
                 })
-                .join("")
+                .join('')
             )
-            .join(".");
-          obj = utils.dotSet(
-            obj,
-            dotted,
-            this.normalizeEnvValue(process.env[variable.key])
-          );
+            .join('.');
+          obj = utils.dotSet(obj, dotted, this.normalizeEnvValue(process.env[variable.key]));
         });
     }
 
@@ -347,31 +328,27 @@ class LeemonsRunner {
   }
 
   getDependenciesFromPNPM() {
-    const serviceDir = process.env.SERVICEDIR || "";
+    const serviceDir = process.env.SERVICEDIR || '';
     const svcDir = path.isAbsolute(serviceDir)
       ? serviceDir
       : path.resolve(process.cwd(), serviceDir);
 
-    const packageJsonPath = path.join(svcDir, "package.json");
-    const packageJsonContent = fs.readFileSync(packageJsonPath, "utf8");
+    const packageJsonPath = path.join(svcDir, 'package.json');
+    const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
     const packageJson = JSON.parse(packageJsonContent);
     const dependencies = Object.keys(packageJson.dependencies);
 
     const result = [];
     _.forEach(dependencies, (dependency) => {
       try {
-        if (dependency.startsWith("leemons-plugin-")) {
+        if (dependency.startsWith('leemons-plugin-')) {
           result.push({
             name: dependency,
-            path: require
-              .resolve(dependency + "/package.json")
-              .replace("/package.json", ""),
+            path: require.resolve(`${dependency}/package.json`).replace('/package.json', ''),
           });
         }
       } catch (error) {
-        console.error(
-          `No se pudo resolver la dependencia "${dependency}": ${error}`
-        );
+        console.error(`No se pudo resolver la dependencia "${dependency}": ${error}`);
       }
     });
 
@@ -397,12 +374,10 @@ class LeemonsRunner {
    */
   loadServices() {
     this.watchFolders.length = 0;
-    const fileMask = this.flags.mask || "**/*.service.js";
+    const fileMask = this.flags.mask || '**/*.service.js';
     const dependencies = this.getDependenciesFromPNPM();
     _.forEach(dependencies, (dependency) => {
-      console.debug(
-        `Loading service (${dependency.name}) from path ${dependency.path}`
-      );
+      console.debug(`Loading service (${dependency.name}) from path ${dependency.path}`);
       this.broker.loadServices(dependency.path, fileMask);
 
       if (this.config.hotReload) {
@@ -501,10 +476,10 @@ class LeemonsRunner {
   startWorkers(instances) {
     let stopping = false;
 
-    cluster.on("exit", function (worker, code) {
+    cluster.on('exit', (worker, code) => {
       if (!stopping) {
         // only restart the worker if the exit was by an error
-        if (process.env.NODE_ENV === "production" && code !== 0) {
+        if (process.env.NODE_ENV === 'production' && code !== 0) {
           logger.info(`The worker #${worker.id} has disconnected`);
           logger.info(`Worker #${worker.id} restarting...`);
           cluster.fork();
@@ -515,10 +490,7 @@ class LeemonsRunner {
       }
     });
 
-    const workerCount =
-      Number.isInteger(instances) && instances > 0
-        ? instances
-        : os.cpus().length;
+    const workerCount = Number.isInteger(instances) && instances > 0 ? instances : os.cpus().length;
 
     logger.info(`Starting ${workerCount} workers...`);
 
@@ -526,12 +498,12 @@ class LeemonsRunner {
       cluster.fork();
     }
 
-    stopSignals.forEach(function (signal) {
+    stopSignals.forEach((signal) => {
       process.on(signal, () => {
         logger.info(`Got ${signal}, stopping workers...`);
         stopping = true;
-        cluster.disconnect(function () {
-          logger.info("All workers stopped, exiting.");
+        cluster.disconnect(() => {
+          logger.info('All workers stopped, exiting.');
           process.exit(0);
         });
       });
@@ -545,7 +517,7 @@ class LeemonsRunner {
    * @returns {Service}
    */
   loadNpmModule(name) {
-    let svc = require(name);
+    const svc = require(name);
     return this.broker.createService(svc);
   }
 
@@ -557,23 +529,20 @@ class LeemonsRunner {
 
     if (this.worker) {
       Object.assign(this.config, {
-        nodeID:
-          (this.config.nodeID || utils.getNodeID()) + "-" + this.worker.id,
+        nodeID: `${this.config.nodeID || utils.getNodeID()}-${this.worker.id}`,
       });
     }
 
     // Create service broker
-    this.broker = new ServiceBroker(Object.assign({}, this.config));
+    this.broker = new ServiceBroker({ ...this.config });
     this.broker.runner = this;
 
     this.loadServices();
 
-    if (this.watchFolders.length > 0)
-      this.broker.runner.folders = this.watchFolders;
+    if (this.watchFolders.length > 0) this.broker.runner.folders = this.watchFolders;
 
     return this.broker.start().then(() => {
-      if (this.flags.repl && (!this.worker || this.worker.id === 1))
-        this.broker.repl();
+      if (this.flags.repl && (!this.worker || this.worker.id === 1)) this.broker.repl();
 
       return this.broker;
     });
@@ -599,12 +568,11 @@ class LeemonsRunner {
       return this.broker
         .stop()
         .catch((err) => {
-          logger.error("Error while stopping ServiceBroker", err);
+          logger.error('Error while stopping ServiceBroker', err);
         })
         .then(() => this._run());
-    } else {
-      return this._run();
     }
+    return this._run();
   }
 
   start(args) {

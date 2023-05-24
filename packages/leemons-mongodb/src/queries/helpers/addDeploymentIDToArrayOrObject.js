@@ -1,5 +1,5 @@
-const _ = require("lodash");
-const { getDeploymentIDFromCTX } = require("leemons-deployment");
+const _ = require('lodash');
+const { getDeploymentIDFromCTX } = require('leemons-deployment-manager');
 
 function addDeploymentIDToArrayOrObject({ items, ctx }) {
   if (_.isArray(items)) {

@@ -1,53 +1,59 @@
-"use strict";
-
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require("lodash");
-const mongoose = require("mongoose");
-const { deploymentPluginsModel } = require("../models/deployment-plugins");
+const _ = require('lodash');
+const mongoose = require('mongoose');
+const { LeemonsMongoDBMixin } = require('leemons-mongodb');
+const { deploymentPluginsModel } = require('../models/deployment-plugins');
+const { deploymentPluginsRelationshipModel } = require('../models/deployment-plugins-relationship');
+const { savePluginsToDeployment } = require('../core/deployment-plugins/savePluginsToDeployment');
+const { autoInit } = require('../core/auto-init/auto-init');
 const {
-  deploymentPluginsRelationshipModel,
-} = require("../models/deployment-plugins-relationship");
-const {
-  savePluginsToDeployment,
-} = require("../core/deployment-plugins/savePluginsToDeployment");
-const { autoInit } = require("../core/auto-init/auto-init");
+  savePluginsRelationshipsToDeployment,
+} = require('../core/deployment-plugins-relationship/savePluginsRelationshipsToDeployment');
 
 /** @type {ServiceSchema} */
-module.exports = () => {
-  return {
-    name: "deployment-manager",
+module.exports = () => ({
+  name: 'deployment-manager',
 
-    mixins: [
-      LeemonsMongoDBMixin({
-        models: {
-          DeploymentPlugins: deploymentPluginsModel,
-          DeploymentPluginsRelationship: deploymentPluginsRelationshipModel,
-        },
-      }),
-    ],
+  mixins: [
+    LeemonsMongoDBMixin({
+      models: {
+        DeploymentPlugins: deploymentPluginsModel,
+        DeploymentPluginsRelationship: deploymentPluginsRelationshipModel,
+      },
+    }),
+  ],
 
-    actions: {
-      addPlugins: {
-        async handler(ctx) {
-          if (!ctx.meta.deploymentID) {
-            throw new Error("Need ctx.meta.deploymentID");
-          }
-          return savePluginsToDeployment(ctx, ctx.params);
-        },
+  actions: {
+    savePlugins: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new Error('Need ctx.meta.deploymentID');
+        }
+        return savePluginsToDeployment(ctx, ctx.params);
       },
     },
-
-    created() {
-      mongoose.connect(process.env.MONGO_URI);
+    savePluginsRelationships: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new Error('Need ctx.meta.deploymentID');
+        }
+        return savePluginsRelationshipsToDeployment(ctx, ctx.params);
+      },
     },
+  },
 
-    async started() {
-      if (process.env.DISABLE_AUTO_INIT !== "true") {
+  created() {
+    mongoose.connect(process.env.MONGO_URI);
+  },
+
+  events: {
+    '$broker.started': function () {
+      if (process.env.DISABLE_AUTO_INIT !== 'true') {
         autoInit(this.broker);
       }
     },
-  };
-};
+  },
+});

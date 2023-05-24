@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-transactions",
+  "name": "leemons-plugin-deployment-manager",
   "version": "1.0.0",
-  "description": "Leemons transactions plugins",
+  "description": "Leemons deployment manager plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services/**/*.service.js",
     "start": "moleculer-runner",
@@ -21,7 +21,10 @@
     "turbo": "^1.9.6"
   },
   "dependencies": {
+    "leemons-deployment-manager": "workspace:^1.0.0",
+    "leemons-error": "workspace:^1.0.0",
     "leemons-mongodb": "workspace:^1.0.0",
+    "leemons-service-name-parser": "workspace:^1.0.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
     "mongoose": "^7.1.1"

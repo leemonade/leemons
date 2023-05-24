@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require("leemons-mongodb");
+const { mongoose, newModel } = require('leemons-mongodb');
 
 const deploymentPluginsSchema = new mongoose.Schema(
   {
@@ -19,9 +19,11 @@ const deploymentPluginsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-let deploymentPluginsModel = newModel(
+deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1 }, { unique: true });
+
+const deploymentPluginsModel = newModel(
   mongoose.connection,
-  "package-manager_DeploymentPlugins",
+  'package-manager_DeploymentPlugins',
   deploymentPluginsSchema
 );
 

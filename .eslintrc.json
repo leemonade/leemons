@@ -9,11 +9,11 @@
     "leemons": true
   },
   "extends": [
-    "plugin:react/recommended",
+    // "plugin:react/recommended",
     "airbnb-base",
     "prettier"
   ],
-  "parser": "babel-eslint",
+  // "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true

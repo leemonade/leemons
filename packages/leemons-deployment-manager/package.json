@@ -1,5 +1,5 @@
 {
-  "name": "leemons-deployment",
+  "name": "leemons-deployment-manager",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",

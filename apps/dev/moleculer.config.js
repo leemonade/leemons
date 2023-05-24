@@ -1,6 +1,5 @@
 'use strict';
 
-const ChannelsMiddleware = require('@moleculer/channels').Middleware;
 const { LeemonsDeploymentManagerMiddleware } = require('leemons-deployment-manager');
 
 /**
@@ -197,9 +196,12 @@ module.exports = {
   // Register custom middlewares
   middlewares: [
     LeemonsDeploymentManagerMiddleware,
+    /*
     ChannelsMiddleware({
-      adapter: process.env.REDIS_URI,
+      adapter:
+        "redis://",
     }),
+    */
   ],
 
   // Register custom REPL commands.

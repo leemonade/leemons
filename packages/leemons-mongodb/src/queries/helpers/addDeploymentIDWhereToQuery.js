@@ -1,4 +1,4 @@
-const { getDeploymentIDFromCTX } = require("leemons-deployment");
+const { getDeploymentIDFromCTX } = require('leemons-deployment-manager');
 
 function addDeploymentIDWhereToQuery({ query, ctx }) {
   return query.where({ deploymentID: getDeploymentIDFromCTX(ctx) });

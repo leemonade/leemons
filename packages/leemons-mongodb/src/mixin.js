@@ -1,23 +1,22 @@
-const _ = require("lodash");
-const { LeemonsDeploymentIDMixin } = require("leemons-deployment");
-const { create } = require("./queries/create");
-const { find } = require("./queries/find");
-const { findById } = require("./queries/findById");
-const { findOne } = require("./queries/findOne");
-const { findOneAndDelete } = require("./queries/findOneAndDelete");
-const { findByIdAndDelete } = require("./queries/findByIdAndDelete");
-const { findOneAndUpdate } = require("./queries/findOneAndUpdate");
-const { findByIdAndUpdate } = require("./queries/findByIdAndUpdate");
-const { updateOne } = require("./queries/updateOne");
-const { updateMany } = require("./queries/updateMany");
-const { deleteOne } = require("./queries/deleteOne");
-const { deleteMany } = require("./queries/deleteMany");
-const { countDocuments } = require("./queries/countDocuments");
-const { save } = require("./queries/save");
-const {
-  createTransactionIDIfNeed,
-} = require("./queries/helpers/createTransactionIDIfNeed");
-const { rollbackTransaction } = require("leemons-transactions");
+const _ = require('lodash');
+const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { rollbackTransaction } = require('leemons-transactions');
+const { create } = require('./queries/create');
+const { find } = require('./queries/find');
+const { findById } = require('./queries/findById');
+const { findOne } = require('./queries/findOne');
+const { findOneAndDelete } = require('./queries/findOneAndDelete');
+const { findByIdAndDelete } = require('./queries/findByIdAndDelete');
+const { findOneAndUpdate } = require('./queries/findOneAndUpdate');
+const { findByIdAndUpdate } = require('./queries/findByIdAndUpdate');
+const { updateOne } = require('./queries/updateOne');
+const { updateMany } = require('./queries/updateMany');
+const { deleteOne } = require('./queries/deleteOne');
+const { deleteMany } = require('./queries/deleteMany');
+const { countDocuments } = require('./queries/countDocuments');
+const { save } = require('./queries/save');
+const { createTransactionIDIfNeed } = require('./queries/helpers/createTransactionIDIfNeed');
+const { insertMany } = require('./queries/insertMany');
 
 function getModelActions({
   model,
@@ -129,7 +128,7 @@ function getModelActions({
       ctx,
     }),
     findOneAndReplace: () => {
-      throw new Error("findOneAndReplace not implemented");
+      throw new Error('findOneAndReplace not implemented');
     },
     updateOne: updateOne({
       model,
@@ -176,6 +175,15 @@ function getModelActions({
       autoRollback,
       ctx,
     }),
+    insertMany: insertMany({
+      model,
+      modelKey,
+      ignoreTransaction,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      ctx,
+    }),
   };
 }
 
@@ -209,111 +217,101 @@ module.exports = ({
   autoRollback = true,
   debugTransaction = false,
   models,
-}) => {
-  return {
-    name: "",
-    mixins: [LeemonsDeploymentIDMixin],
-    actions: {
-      leemonsMongoDBRollback: {
-        async handler(ctx) {
-          const model = ctx.db[ctx.params.modelKey];
-          if (!model) {
-            throw new Error(
-              `Error on MongoDB rollback: The model "${ctx.params.modelKey}" not found in ctx.db`
+}) => ({
+  name: '',
+  mixins: [LeemonsDeploymentManagerMixin],
+  actions: {
+    leemonsMongoDBRollback: {
+      async handler(ctx) {
+        const model = ctx.db[ctx.params.modelKey];
+        if (!model) {
+          throw new Error(
+            `Error on MongoDB rollback: The model "${ctx.params.modelKey}" not found in ctx.db`
+          );
+        }
+        if (debugTransaction) {
+          console.debug(
+            `[MongoDB Transactions] (Rollback) - ${ctx.params.action}`,
+            ctx.params.data
+          );
+        }
+        switch (ctx.params.action) {
+          case 'removeMany':
+            await model.deleteMany({ _id: ctx.params.data });
+            break;
+          case 'createMany':
+            await model.create(ctx.params.data);
+            break;
+          case 'updateMany':
+            await Promise.all(
+              _.map(ctx.params.data, (data) => model.findOneAndUpdate({ _id: data._id }, data))
             );
-          }
-          if (debugTransaction) {
-            console.debug(
-              "[MongoDB Transactions] (Rollback) - " + ctx.params.action,
-              ctx.params.data
-            );
-          }
-          switch (ctx.params.action) {
-            case "removeMany":
-              await model.deleteMany({ _id: ctx.params.data });
-              break;
-            case "createMany":
-              await model.create(ctx.params.data);
-              break;
-            case "updateMany":
-              await Promise.all(
-                _.map(ctx.params.data, (data) => {
-                  return model.findOneAndUpdate({ _id: data._id }, data);
-                })
-              );
-            default:
-              throw new Error(
-                `Error on MongoDB rollback: The action ${ctx.params.action} not found`
-              );
-          }
-          return true;
-        },
+          default:
+            throw new Error(`Error on MongoDB rollback: The action ${ctx.params.action} not found`);
+        }
+        return true;
       },
     },
-    hooks: {
-      error: {
-        "*": [
-          async function (ctx, err) {
-            if (autoRollback) {
-              if (waitToRollbackFinishOnError) {
-                await rollbackTransaction(ctx);
-              } else {
-                rollbackTransaction(ctx);
-              }
+  },
+  hooks: {
+    error: {
+      '*': [
+        async function (ctx, err) {
+          if (autoRollback && ctx.meta.transactionID) {
+            if (waitToRollbackFinishOnError) {
+              await rollbackTransaction(ctx);
+            } else {
+              rollbackTransaction(ctx);
             }
-            throw err;
-          },
-        ],
-      },
-      before: {
-        "*": [
-          async function (ctx) {
-            ctx.__leemonsMongoDBCall = ctx.call;
-            ctx.db = getDBModels({
+          }
+          throw err;
+        },
+      ],
+    },
+    before: {
+      '*': [
+        async function (ctx) {
+          ctx.__leemonsMongoDBCall = ctx.call;
+          ctx.db = getDBModels({
+            models,
+            autoTransaction,
+            autoDeploymentID,
+            autoRollback,
+            ignoreTransaction: true,
+            ctx,
+          });
+          ctx.call = (actionName, params, opts) => {
+            if (!_.isObject(opts)) opts = {};
+            if (!_.isObject(opts.meta)) opts.meta = {};
+            if (!opts.meta.transactionID) {
+              opts.meta.transactionID = null;
+            }
+            return ctx.__leemonsMongoDBCall(actionName, params, opts);
+          };
+          ctx.tx = {
+            call: async (actionName, params, opts) => {
+              if (!opts?.meta?.__isInternalCall) {
+                await createTransactionIDIfNeed({ autoTransaction, ctx });
+              } else if (debugTransaction && actionName.startsWith('transactions.')) {
+                console.debug(
+                  `[MongoDB Transactions] (Call) - ${actionName.replace('transactions.', '')}`,
+                  params,
+                  opts
+                );
+              }
+              return ctx.__leemonsMongoDBCall(actionName, params, opts);
+            },
+            db: getDBModels({
               models,
               autoTransaction,
               autoDeploymentID,
               autoRollback,
-              ignoreTransaction: true,
+              ignoreTransaction: false,
               ctx,
-            });
-            ctx.call = (actionName, params, opts) => {
-              if (!_.isObject(opts)) opts = {};
-              if (!_.isObject(opts.meta)) opts.meta = {};
-              if (!opts.meta.transactionID) {
-                opts.meta.transactionID = null;
-              }
-              return ctx.__leemonsMongoDBCall(actionName, params, opts);
-            };
-            ctx.tx = {
-              call: async (actionName, params, opts) => {
-                if (!opts?.meta?.__isInternalCall) {
-                  await createTransactionIDIfNeed({ autoTransaction, ctx });
-                } else if (
-                  debugTransaction &&
-                  actionName.startsWith("transactions.")
-                ) {
-                  console.debug(
-                    "[MongoDB Transactions] (Call) - " +
-                      actionName.replace("transactions.", ""),
-                    params,
-                    opts
-                  );
-                }
-                return ctx.__leemonsMongoDBCall(actionName, params, opts);
-              },
-              db: getDBModels({
-                models,
-                autoTransaction,
-                autoDeploymentID,
-                autoRollback,
-                ignoreTransaction: false,
-                ctx,
-              }),
-            };
-          },
-        ],
-      },
+            }),
+          };
+        },
+      ],
     },
-  };
-};
+  },
+});

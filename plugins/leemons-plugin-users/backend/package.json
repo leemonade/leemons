@@ -22,8 +22,9 @@
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
-    "moleculer": "^0.14.26",
-    "leemons-mongodb": "workspace:^1.0.0"
+    "leemons-deployment-manager": "workspace:^",
+    "leemons-mongodb": "workspace:^1.0.0",
+    "moleculer": "^0.14.26"
   },
   "engines": {
     "node": ">= 16.x.x"

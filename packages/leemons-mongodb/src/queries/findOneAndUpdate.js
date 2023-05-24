@@ -1,16 +1,10 @@
-const { addTransactionState } = require("leemons-transactions");
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
-const {
-  createTransactionIDIfNeed,
-} = require("./helpers/createTransactionIDIfNeed");
+const { addTransactionState } = require('leemons-transactions');
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
+const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
-} = require("./helpers/increaseTransactionFinishedIfNeed");
-const {
-  increaseTransactionPendingIfNeed,
-} = require("./helpers/increaseTransactionPendingIfNeed");
+} = require('./helpers/increaseTransactionFinishedIfNeed');
+const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 
 function findOneAndUpdate({
   model,
@@ -21,7 +15,7 @@ function findOneAndUpdate({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
+  return async function (_conditions, _update, ...args) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -29,7 +23,6 @@ function findOneAndUpdate({
     });
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
-      const [_conditions, _update, ...args] = arguments;
       let conditions = _conditions;
       let update = _update;
       if (autoDeploymentID) {
@@ -40,17 +33,17 @@ function findOneAndUpdate({
       if (!ignoreTransaction && ctx.meta.transactionID && args[0]?.new) {
         oldItem = await model.findOne(conditions).lean();
       }
-      let item = await model.findOneAndUpdate(conditions, update, ...args);
+      const item = await model.findOneAndUpdate(conditions, update, ...args);
       if (!args[0]?.new) {
         oldItem = item;
       }
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx, {
-          action: "leemonsMongoDBRollback",
+          action: 'leemonsMongoDBRollback',
           payload: {
             modelKey,
-            action: "updateMany",
+            action: 'updateMany',
             data: [oldItem],
           },
         });
