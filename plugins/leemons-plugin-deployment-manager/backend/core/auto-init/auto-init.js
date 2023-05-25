@@ -1,25 +1,26 @@
 const _ = require('lodash');
-const { getAutoDeploymentIDIfCanIFNotThrowError } = require('leemons-deployment-manager');
+const {
+  getAutoDeploymentIDIfCanIFNotThrowError,
+  isCoreService,
+} = require('leemons-deployment-manager');
 const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
-
-const ignoreNames = ['$node', 'deployment-manager', 'gateway'];
 
 async function autoInit(broker) {
   const deploymentID = getAutoDeploymentIDIfCanIFNotThrowError();
   const plugins = [];
   const relationship = [];
   _.forEach(broker.services, (fromService) => {
-    if (!ignoreNames.includes(fromService.name)) {
+    if (!isCoreService(fromService.name)) {
       const fromPluginName = getPluginNameFromServiceName(fromService.name);
       plugins.push({
         pluginName: fromPluginName,
         pluginVersion: 1,
       });
       _.forEach(broker.services, (toService) => {
-        if (!ignoreNames.includes(toService.name) && toService.name !== fromService.name) {
+        if (!isCoreService(toService.name)) {
           const actions = [];
           _.forIn(toService.actions, (value, key) => {
-            actions.push(`${toService.name}.${key}`);
+            actions.push(`${toService.fullName}.${key}`);
           });
           relationship.push({
             fromPluginName,

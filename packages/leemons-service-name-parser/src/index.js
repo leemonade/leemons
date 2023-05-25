@@ -1,5 +1,18 @@
+function getActionWithOutVersion(actionName) {
+  const sp = actionName.split('.');
+  if (/^v\d+$/.test(sp[0])) {
+    sp.shift();
+    return sp.join('.');
+  }
+  return actionName;
+}
+
 function getPluginNameFromServiceName(serviceName) {
-  return serviceName.split('.')[0];
+  const sp = serviceName.split('.');
+  if (/^v\d+$/.test(sp[0])) {
+    return sp[1];
+  }
+  return sp[0];
 }
 
 function getPluginNameFromCTX(ctx) {
@@ -11,6 +24,7 @@ function getPluginNameFromCTX(ctx) {
 }
 
 module.exports = {
+  getActionWithOutVersion,
   getPluginNameFromServiceName,
   getPluginNameFromCTX,
 };

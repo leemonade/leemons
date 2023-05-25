@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { rollbackTransaction } = require('leemons-transactions');
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');
@@ -219,7 +218,6 @@ module.exports = ({
   models,
 }) => ({
   name: '',
-  mixins: [LeemonsDeploymentManagerMixin],
   actions: {
     leemonsMongoDBRollback: {
       async handler(ctx) {

@@ -1,10 +1,8 @@
-const {
-  addDeploymentIDWhereToQuery,
-} = require("./helpers/addDeploymentIdWhereToQuery");
+const { addDeploymentIDWhereToQuery } = require('./helpers/addDeploymentIdWhereToQuery');
 
 function findById({ model, autoDeploymentID, ctx }) {
-  return function () {
-    const query = model.findById(...arguments);
+  return function (...args) {
+    const query = model.findById(...args);
     if (autoDeploymentID) return addDeploymentIDWhereToQuery({ query, ctx });
     return query;
   };

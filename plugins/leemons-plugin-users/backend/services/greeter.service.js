@@ -4,16 +4,19 @@
  */
 
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
+const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { usersModel } = require('../models');
 const { testModel } = require('../models/test');
 
 /** @type {ServiceSchema} */
 module.exports = (broker) => ({
   name: 'users.greeter',
+  version: 2,
   mixins: [
     LeemonsMongoDBMixin({
       models: { User: usersModel, Test: testModel },
     }),
+    LeemonsDeploymentManagerMixin,
   ],
 
   /**
@@ -41,7 +44,7 @@ module.exports = (broker) => ({
         path: '/hello',
       },
       async handler(ctx) {
-        return await ctx.call('users.greeter.welcome', { name: 'miau' });
+        return ctx.call('users.greeter.welcome', { n: new Date(), name: 'miau' });
         // const test = await ctx.tx.db.Test.create({ name: "miau" });
         /*
           const test = await ctx.tx.db.Test.findByIdAndUpdate(
@@ -65,8 +68,7 @@ module.exports = (broker) => ({
       },
       /** @param {Context} ctx  */
       async handler(ctx) {
-        console.log(ctx.params);
-        return `Welcome, ${ctx.params.name}`;
+        return `Welcome, ${new Date() - ctx.params.n}`;
       },
     },
   },
@@ -86,7 +88,6 @@ module.exports = (broker) => ({
    */
   created() {
     mongoose.connect(process.env.MONGO_URI);
-    console.log(this);
     // this.use(myMiddleware);
   },
 

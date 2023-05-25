@@ -1,7 +1,6 @@
 'use strict';
 
 const ChannelsMiddleware = require('@moleculer/channels').Middleware;
-const { LeemonsDeploymentManagerMiddleware } = require('leemons-deployment-manager');
 
 /**
  * Moleculer ServiceBroker configuration file
@@ -196,7 +195,6 @@ module.exports = {
 
   // Register custom middlewares
   middlewares: [
-    LeemonsDeploymentManagerMiddleware,
     /*
     ChannelsMiddleware({
       adapter:

@@ -12,6 +12,10 @@ const { autoInit } = require('../core/auto-init/auto-init');
 const {
   savePluginsRelationshipsToDeployment,
 } = require('../core/deployment-plugins-relationship/savePluginsRelationshipsToDeployment');
+const {
+  getGoodServiceActionToCall,
+} = require('../core/deployment-plugins-relationship/getGoodServiceActionToCall');
+const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -41,6 +45,22 @@ module.exports = () => ({
           throw new Error('Need ctx.meta.deploymentID');
         }
         return savePluginsRelationshipsToDeployment(ctx, ctx.params);
+      },
+    },
+    getGoodActionToCall: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new Error('Need ctx.meta.deploymentID');
+        }
+        return getGoodServiceActionToCall(ctx);
+      },
+    },
+    canCallMe: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new Error('Need ctx.meta.deploymentID');
+        }
+        return canCallMe(ctx);
       },
     },
   },

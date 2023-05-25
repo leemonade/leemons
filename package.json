@@ -23,6 +23,12 @@
       "url": "https://www.leemons.io"
     }
   ],
+  "workspaces": [
+    "packages/*",
+    "plugins/*/backend",
+    "plugins/*/frontend",
+    "apps/*"
+  ],
   "packageManager": "pnpm@6.32.3",
   "devDependencies": {
     "eslint": "^8.25.0",

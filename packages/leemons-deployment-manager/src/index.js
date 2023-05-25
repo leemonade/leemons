@@ -1,11 +1,13 @@
-const middleware = require('./middleware');
+const mixin = require('./mixin');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const {
   getAutoDeploymentIDIfCanIFNotThrowError,
 } = require('./getAutoDeploymentIDIfCanIFNotThrowError');
+const { isCoreService } = require('./isCoreService');
 
 module.exports = {
-  LeemonsDeploymentManagerMiddleware: middleware,
+  LeemonsDeploymentManagerMixin: mixin,
+  isCoreService,
   getDeploymentIDFromCTX,
   getAutoDeploymentIDIfCanIFNotThrowError,
 };

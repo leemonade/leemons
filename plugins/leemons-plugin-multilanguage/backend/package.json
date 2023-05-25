@@ -1,5 +1,5 @@
 {
-  "name": "leemons-plugin-users",
+  "name": "leemons-plugin-multilanguage",
   "version": "1.0.0",
   "description": "Leemons users plugins",
   "scripts": {
@@ -23,7 +23,7 @@
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
     "moleculer": "^0.14.26",
-    "leemons-mongodb": "workspace:^1.0.0"
+    "leemons-mongodb": "1.0.0"
   },
   "engines": {
     "node": ">= 16.x.x"

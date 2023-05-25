@@ -9,11 +9,10 @@
   "leemons": {},
   "dependencies": {
     "dotenv": "^16.0.3",
-    "leemons-deployment-manager": "workspace:^",
-    "leemons-plugin-deployment-manager": "workspace:^1.0.0",
-    "leemons-plugin-gateway": "workspace:^1.0.0",
-    "leemons-plugin-transactions": "workspace:^1.0.0",
-    "leemons-plugin-users": "workspace:^1.0.0",
-    "leemons-runner": "workspace:^0.0.1"
+    "leemons-plugin-deployment-manager": "1.0.0",
+    "leemons-plugin-gateway": "1.0.0",
+    "leemons-plugin-transactions": "1.0.0",
+    "leemons-plugin-users": "1.0.0",
+    "leemons-runner": "0.0.1"
   }
 }
