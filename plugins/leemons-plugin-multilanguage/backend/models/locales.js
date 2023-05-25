@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require("leemons-mongodb");
+const { mongoose, newModel } = require('leemons-mongodb');
 
 const localesSchema = new mongoose.Schema(
   {
@@ -15,10 +15,6 @@ const localesSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-let localesModel = newModel(
-  mongoose.connection,
-  "multilanguage_Locales",
-  localesSchema
-);
+const localesModel = newModel(mongoose.connection, 'multilanguage_Locales', localesSchema);
 
 module.exports = { localesModel };

@@ -1,4 +1,4 @@
-const { LeemonsValidator } = global.utils;
+const { LeemonsValidator } = require('leemons-validator');
 
 // According to MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang#language_tag_syntax
 // REQUIRED 2-3 letters defines the basic language

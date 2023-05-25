@@ -1,15 +1,15 @@
-const _ = require("lodash");
-const { codeSchema } = require("./locale");
+const _ = require('lodash');
+const { codeSchema } = require('./locale');
 
 const { LeemonsValidator } = global.utils;
 
-LeemonsValidator.ajv.addFormat("localizationKey", {
+LeemonsValidator.ajv.addFormat('localizationKey', {
   validate: (x) => /^([a-zA-Z0-9_-]+\.){0,}[a-zA-Z0-9_-]{0,}$/.test(x),
 });
 
 class Validator {
   constructor(_prefix) {
-    const prefix = (_prefix || "").replace(/\./g, "\\.");
+    const prefix = (_prefix || '').replace(/\./g, '\\.');
     /**
      * String with format localizationKey (xx.yy.bb1_-)
      * If the prefix is required, the key must be the prefix of start with the '${prefix}.'
@@ -17,12 +17,8 @@ class Validator {
     this.keySchema = (usePrefix) => {
       const pattern = `([a-zA-Z0-9_-]+\\.){0,}[a-zA-Z0-9_-]{0,}`;
       return {
-        type: "string",
-        pattern: `^(${
-          usePrefix && prefix
-            ? `((${prefix})|(${prefix}\\.${pattern}))`
-            : pattern
-        })$`,
+        type: 'string',
+        pattern: `^(${usePrefix && prefix ? `((${prefix})|(${prefix}\\.${pattern}))` : pattern})$`,
         minLength: 1,
         maxLength: 255,
       };
@@ -32,7 +28,7 @@ class Validator {
      * String with 1 <= length <= 65535
      */
     this.valueSchema = {
-      type: "string",
+      type: 'string',
       minLength: 1,
       maxLength: 65535,
     };
@@ -44,20 +40,20 @@ class Validator {
      * @property value: String with 1 <= length <= 65535
      */
     this.localizationSchema = (usePrefix) => ({
-      type: "object",
+      type: 'object',
       properties: {
         locale: codeSchema,
         key: this.keySchema(usePrefix),
         value: this.valueSchema,
       },
-      required: ["locale", "key", "value"],
+      required: ['locale', 'key', 'value'],
     });
 
     /**
      * Array of keys
      */
     this.keyArraySchema = (usePrefix) => ({
-      type: "array",
+      type: 'array',
       items: this.keySchema(usePrefix),
     });
 
@@ -71,10 +67,10 @@ class Validator {
      * }
      */
     this.localizationsBulkSchema = {
-      type: "object",
+      type: 'object',
       properties: {
         oneOf: {
-          type: "object",
+          type: 'object',
           properties: {
             oneOf: this.valueSchema,
           },
@@ -92,24 +88,24 @@ class Validator {
      * }
      */
     this.localizationArrayNoFormatSchema = {
-      type: "array",
+      type: 'array',
       items: {
         anyOf: [
           {
-            type: "object",
+            type: 'object',
             properties: {
               key: {
-                type: "string",
+                type: 'string',
                 minLength: 1,
                 maxLength: 255,
               },
               locale: {
-                type: "string",
+                type: 'string',
                 minLength: 2,
                 maxLength: 12,
               },
               value: {
-                type: "string",
+                type: 'string',
                 minLength: 1,
                 maxLength: 65535,
               },
@@ -123,7 +119,7 @@ class Validator {
      * An array of localizations
      */
     this.localizationArraySchema = (usePrefix) => ({
-      type: "array",
+      type: 'array',
       items: this.localizationSchema(usePrefix),
     });
 
@@ -131,19 +127,19 @@ class Validator {
      * An object with the tuple [locale, key]
      */
     this.localizationTupleSchema = (usePrefix) => ({
-      type: "object",
+      type: 'object',
       properties: {
         locale: codeSchema,
         key: this.keySchema(usePrefix),
       },
-      required: ["locale", "key"],
+      required: ['locale', 'key'],
     });
 
     /**
      * An array of tuples [locale, key]
      */
     this.localizationTupleArraySchema = (usePrefix) => ({
-      type: "array",
+      type: 'array',
       items: this.localizationTupleSchema(usePrefix),
     });
 
@@ -152,15 +148,15 @@ class Validator {
      * and an array of values in the second item
      */
     this.localeValueSchema = {
-      type: "array",
+      type: 'array',
       items: [
         {
-          type: "array",
+          type: 'array',
           items: codeSchema,
           minItems: 1,
         },
         {
-          type: "array",
+          type: 'array',
           items: this.valueSchema,
           minItems: 1,
         },
@@ -191,12 +187,10 @@ class Validator {
   validateLocalizationTuple({ key, locale, locales }, usePrefix = false) {
     if (!locales) {
       // Always save locale in lowercase
-      const _locale = typeof locale === "string" ? locale.toLowerCase() : null;
-      const _key = typeof key === "string" ? key : null;
+      const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+      const _key = typeof key === 'string' ? key : null;
 
-      const validator = new LeemonsValidator(
-        this.localizationTupleSchema(usePrefix)
-      );
+      const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
 
       // Throw validation error
       if (!validator.validate({ key: _key, locale: _locale })) {
@@ -206,12 +200,10 @@ class Validator {
       return { key: _key, locale: _locale };
     }
     const _locales = [];
-    const _key = typeof key === "string" ? key : null;
+    const _key = typeof key === 'string' ? key : null;
     _.forEach(locales, (locale) => {
-      const _locale = typeof locale === "string" ? locale.toLowerCase() : null;
-      const validator = new LeemonsValidator(
-        this.localizationTupleSchema(usePrefix)
-      );
+      const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+      const validator = new LeemonsValidator(this.localizationTupleSchema(usePrefix));
 
       // Throw validation error
       if (!validator.validate({ key: _key, locale: _locale })) {
@@ -233,17 +225,14 @@ class Validator {
     const _tuples =
       Array.isArray(tuples) && tuples.every(Array.isArray)
         ? tuples.map(([key, locale]) => {
-            const _locale =
-              typeof locale === "string" ? locale.toLowerCase() : null;
-            const _key = typeof key === "string" ? key : null;
+            const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+            const _key = typeof key === 'string' ? key : null;
 
             return { key: _key, locale: _locale };
           })
         : null;
 
-    const validator = new LeemonsValidator(
-      this.localizationTupleArraySchema(usePrefix)
-    );
+    const validator = new LeemonsValidator(this.localizationTupleArraySchema(usePrefix));
 
     // Throw validation error
     if (!validator.validate(_tuples)) {
@@ -261,8 +250,8 @@ class Validator {
    */
   validateLocalization({ key, locale, value }, usePrefix = false) {
     // Always save locale in lowercase
-    const _locale = typeof locale === "string" ? locale.toLowerCase() : null;
-    const _key = typeof key === "string" ? key : null;
+    const _locale = typeof locale === 'string' ? locale.toLowerCase() : null;
+    const _key = typeof key === 'string' ? key : null;
 
     const validator = new LeemonsValidator(this.localizationSchema(usePrefix));
 
@@ -281,7 +270,7 @@ class Validator {
    * @returns {LocalizationKey}
    */
   validateLocalizationKey(key, usePrefix = false) {
-    const _key = typeof key === "string" ? key : null;
+    const _key = typeof key === 'string' ? key : null;
 
     const validator = new LeemonsValidator(this.keySchema(usePrefix));
 
@@ -302,7 +291,7 @@ class Validator {
   validateLocalizationKeyArray(keys, usePrefix = false) {
     // Get the keys lowercased
     const _keys =
-      Array.isArray(keys) && keys.every((key) => typeof key === "string")
+      Array.isArray(keys) && keys.every((key) => typeof key === 'string')
         ? keys.map((key) => key)
         : null;
 
@@ -323,9 +312,7 @@ class Validator {
    * @returns {Localization[]} The Localization with key and locale lowercased
    */
   validateLocalizationsArray(localizations, usePrefix = false) {
-    const paramValidator = new LeemonsValidator(
-      this.localizationArrayNoFormatSchema
-    );
+    const paramValidator = new LeemonsValidator(this.localizationArrayNoFormatSchema);
 
     if (!paramValidator.validate(localizations)) {
       throw paramValidator.error;
@@ -337,9 +324,7 @@ class Validator {
       value,
     }));
 
-    const formattedValidator = new LeemonsValidator(
-      this.localizationArraySchema(usePrefix)
-    );
+    const formattedValidator = new LeemonsValidator(this.localizationArraySchema(usePrefix));
 
     // Throw validation error
     if (!formattedValidator.validate(_localizations)) {

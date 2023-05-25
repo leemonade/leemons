@@ -133,6 +133,7 @@
     "**/node_modules/*"
   ],
   "include": [
-    "./packages/**/*"
+    "./packages/**/*",
+    "./plugins/**/*"
   ]
 }

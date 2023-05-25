@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
+const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
@@ -9,6 +10,7 @@ module.exports = {
     before: {
       '*': [
         async function (ctx) {
+          ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
           ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
           ctx.__leemonsDeploymentManagerCall = ctx.call;
           if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
