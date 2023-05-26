@@ -57,7 +57,7 @@ async function events(isInstalled) {
     });
 
     leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.scores.init-menu'],
+      ['plugins.menu-builder:init-main-menu', 'plugins.scores:init-menu'],
       async () => {
         await initMenuBuilder();
       }
