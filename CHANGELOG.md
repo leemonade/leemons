@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/leemonade/leemons/compare/0.0.1...0.0.2) (2023-05-26)
+
+
+### Bug Fixes
+
+* Initialization order for attendance-control menu ([#45](https://github.com/leemonade/leemons/issues/45)) ([ecd9b24](https://github.com/leemonade/leemons/commit/ecd9b24ecc72c1b4e35a899f7f8c8b6bbc91dcb0))
+
 ## [0.0.1](https://github.com/leemonade/leemons/compare/0.0.1...0.0.1) (2023-05-22)
 
 
