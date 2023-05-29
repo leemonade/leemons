@@ -22,7 +22,7 @@ async function events(isInstalled) {
       syncProgramProfilePermissionsIfNeed,
     } = require('./src/services/classes/__update__/syncProgramProfilePermissionsIfNeed');
 
-    await syncProgramProfilePermissionsIfNeed();
+    await syncProgramProfilePermissionsIfNeed(isInstalled);
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
