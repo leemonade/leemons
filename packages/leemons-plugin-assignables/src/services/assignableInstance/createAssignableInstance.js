@@ -65,6 +65,18 @@ async function createEventAndAddToUsers(
   return event;
 }
 
+function emitLeemonsEvent({ assignable, instance }) {
+  const { role, id } = assignable;
+
+  const payload = {
+    role,
+    assignable: id,
+    instance,
+  };
+  leemons.events.emit(`instance.created`, payload);
+  leemons.events.emit(`role.${role}.instance.created`, payload);
+}
+
 async function createAssignableInstance(
   assignableInstance,
   { userSession, transacting: t, ctx, createEvent = true } = {}
@@ -177,6 +189,11 @@ async function createAssignableInstance(
           { userSession, transacting, ctx }
         );
       }
+
+      emitLeemonsEvent({
+        assignable,
+        instance: id,
+      });
 
       return {
         id,
