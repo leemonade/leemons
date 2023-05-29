@@ -1,16 +1,10 @@
-const { addTransactionState } = require("leemons-transactions");
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
-const {
-  createTransactionIDIfNeed,
-} = require("./helpers/createTransactionIDIfNeed");
+const { addTransactionState } = require('leemons-transactions');
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
+const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
-} = require("./helpers/increaseTransactionFinishedIfNeed");
-const {
-  increaseTransactionPendingIfNeed,
-} = require("./helpers/increaseTransactionPendingIfNeed");
+} = require('./helpers/increaseTransactionFinishedIfNeed');
+const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 
 function updateMany({
   model,
@@ -39,14 +33,14 @@ function updateMany({
       let oldItems = [];
       if (!ignoreTransaction && ctx.meta.transactionID)
         oldItems = await model.find(conditions).lean();
-      let items = await model.updateMany(conditions, update, ...args);
+      const items = await model.updateMany(conditions, update, ...args);
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItems?.length) {
         await addTransactionState(ctx, {
-          action: "leemonsMongoDBRollback",
+          action: 'leemonsMongoDBRollback',
           payload: {
             modelKey,
-            action: "updateMany",
+            action: 'updateMany',
             data: oldItems,
           },
         });

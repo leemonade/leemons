@@ -1,17 +1,32 @@
 const { validateLocaleCode } = require('../../validations/locale');
+const { Validator } = require('../../validations/localization');
+const {
+  getLocalizationModelFromCTXAndIsPrivate,
+} = require('./getLocalizationModelFromCTXAndIsPrivate');
 
 /**
  * Deletes the localization that matches the tuple [key, locale]
- * @param {LocalizationKey} key the entry key
- * @param {LocaleCode} locale the locale code
+ * @param {Object} params
+ * @param {Boolean} params.isPrivate Define if translation is private
+ * @param {LocalizationKey} params.key the entry key
+ * @param {LocaleCode} params.locale the locale code
+ * @param {MoleculerContext} params.ctx Moleculer context
  * @returns {Promise<boolean>} if the locale was deleted or not
  */
-async function _delete(key, locale, { transacting } = {}) {
-  const tuple = this.validator.validateLocalizationTuple({ key, locale }, true);
+async function _delete({ key, locale, isPrivate, ctx }) {
+  const validator = new Validator(ctx.callerPlugin);
+  const tuple = validator.validateLocalizationTuple({ key, locale }, true);
 
   try {
     // Delete the given tuple
-    return (await this.model.deleteMany(tuple, { transacting })).count === 1;
+    return (
+      (
+        await getLocalizationModelFromCTXAndIsPrivate({
+          isPrivate,
+          ctx,
+        }).deleteMany(tuple)
+      ).deletedCount === 1
+    );
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while deleting the localization');
@@ -23,14 +38,18 @@ async function _delete(key, locale, { transacting } = {}) {
  *
  * If not locale provided, remove all the keys matching the prefix in any locale
  *
- * @param {LocalizationKey} key The key prefix
- * @param {LocaleCode} [locale] the locale code
+ * @param {Object} params
+ * @param {LocalizationKey} params.key The key prefix
+ * @param {MoleculerContext} params.ctx Moleculer context
+ * @param {Boolean} params.isPrivate Define if translation is private
+ * @param {LocaleCode} params.locale the locale code
  * @returns {Promise<number>} how many localizations where deleted
  */
-async function deleteKeyStartsWith(key, { locale = null, transacting } = {}) {
+async function deleteKeyStartsWith({ key, locale = null, isPrivate, ctx }) {
+  const validator = new Validator(ctx.callerPlugin);
   const query = {
     // Validate key and get it lowercased
-    key_$startsWith: this.validator.validateLocalizationKey(key, true),
+    key: { $regex: `^${validator.validateLocalizationKey(key, true)}`, $options: 'i' },
   };
 
   if (locale) {
@@ -39,7 +58,12 @@ async function deleteKeyStartsWith(key, { locale = null, transacting } = {}) {
   }
 
   try {
-    return (await this.model.deleteMany(query, { transacting })).count;
+    return (
+      await getLocalizationModelFromCTXAndIsPrivate({
+        isPrivate,
+        ctx,
+      }).deleteMany(query)
+    ).deletedCount;
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while deleting the localizations');
@@ -48,15 +72,24 @@ async function deleteKeyStartsWith(key, { locale = null, transacting } = {}) {
 
 /**
  * Deletes the localizations that matches the tuple [key, locale]
- * @param {Array<LocalizationKey, LocaleCode>[]} localizations An array of [key, locale]
+ * @param {Object} params
+ * @param {MoleculerContext} params.ctx Moleculer context
+ * @param {Boolean} params.isPrivate Define if translation is private
+ * @param {Array<LocalizationKey, LocaleCode>[]} params.localizations An array of [key, locale]
  * @returns {Promise<Number>} The number of localizations deleted
  */
-async function deleteMany(localizations, { transacting } = {}) {
+async function deleteMany({ localizations, isPrivate, ctx }) {
   // Validates the input and returns an array of LocalizationTuples ([{key, locale}])
-  const _localizations = this.validator.validateLocalizationTupleArray(localizations, true);
+  const validator = new Validator(ctx.callerPlugin);
+  const _localizations = validator.validateLocalizationTupleArray(localizations, true);
 
   try {
-    return (await this.model.deleteMany({ $or: _localizations }, { transacting })).count;
+    return (
+      await getLocalizationModelFromCTXAndIsPrivate({
+        isPrivate,
+        ctx,
+      }).deleteMany({ $or: _localizations })
+    ).deletedCount;
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while deleting the localizations');
@@ -65,19 +98,22 @@ async function deleteMany(localizations, { transacting } = {}) {
 
 /**
  * Deletes all the entries mathching a key or locale
- * @param {object} params
- * @param {LocalizationKey} [params.key] The key to delete
- * @param {LocaleCode} [params.locale] The locale to delete
+ * @param {Object} params
+ * @param {MoleculerContext} params.ctx Moleculer context
+ * @param {Boolean} params.isPrivate Define if translation is private
+ * @param {LocalizationKey} params.key The key to delete
+ * @param {LocaleCode} params.locale The locale to delete
  * @returns {number} the number of items deleted
  */
-async function deleteAll({ key = null, locale = null }, { transacting } = {}) {
+async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
   const query = {};
 
   if (key) {
-    query.key = this.validator.validateLocalizationKey(key, true);
+    const validator = new Validator(ctx.callerPlugin);
+    query.key = validator.validateLocalizationKey(key, true);
   }
   if (locale) {
-    query.key_$startsWith = this.caller;
+    query.key = { $regex: `^${ctx.callerPlugin}`, $options: 'i' };
     query.locale = validateLocaleCode(locale);
   }
 
@@ -86,7 +122,12 @@ async function deleteAll({ key = null, locale = null }, { transacting } = {}) {
   }
 
   try {
-    return (await this.model.deleteMany(query, { transacting })).count;
+    return (
+      await getLocalizationModelFromCTXAndIsPrivate({
+        isPrivate,
+        ctx,
+      }).deleteMany(query)
+    ).deletedCount;
   } catch (e) {
     leemons.log.debug(e.message);
     throw new Error('An error occurred while deleting the localizations');
