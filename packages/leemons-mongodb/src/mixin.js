@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { rollbackTransaction } = require('leemons-transactions');
+const { LeemonsError } = require('leemons-error');
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');
 const { findById } = require('./queries/findById');
@@ -215,6 +216,7 @@ module.exports = ({
   autoTransaction = true,
   autoRollback = true,
   debugTransaction = false,
+  forceLeemonsDeploymentManagerMixinNeedToBeImported = true,
   models,
 }) => ({
   name: '',
@@ -269,6 +271,17 @@ module.exports = ({
     before: {
       '*': [
         async function (ctx) {
+          if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
+            if (
+              !ctx.meta.deploymentID ||
+              !ctx.callerPlugin ||
+              !ctx.__leemonsDeploymentManagerCall
+            ) {
+              throw new LeemonsError(ctx, {
+                message: 'LeemonsDeploymentManagerMixin need to be used',
+              });
+            }
+          }
           ctx.__leemonsMongoDBCall = ctx.call;
           ctx.db = getDBModels({
             models,

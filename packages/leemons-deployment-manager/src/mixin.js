@@ -6,6 +6,23 @@ const { isCoreService } = require('./isCoreService');
 
 module.exports = {
   name: '',
+  actions: {
+    leemonsDeploymentManagerEvent: {
+      async handler(ctx) {
+        if (!ctx.params?.event) throw new LeemonsError(ctx, { message: 'event param required' });
+        if (this.events && this.events[ctx.params.event]) {
+          // Comprobamos si el caller inicial tenia permiso a llamarnos
+          await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
+            fromService: ctx.params.caller || ctx.caller,
+            toEvent: ctx.params.event,
+            relationshipID: ctx.meta.relationshipID,
+          });
+          this.events[ctx.params.event](ctx.params.params, { parentCtx: ctx });
+        }
+        return null;
+      },
+    },
+  },
   hooks: {
     before: {
       '*': [
@@ -13,6 +30,7 @@ module.exports = {
           ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
           ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
           ctx.__leemonsDeploymentManagerCall = ctx.call;
+          ctx.__leemonsDeploymentManagerEmit = ctx.emit;
           if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
             if (!ctx.meta.relationshipID)
               throw new LeemonsError(ctx, { message: 'relationshipID is required' });
@@ -22,6 +40,10 @@ module.exports = {
               relationshipID: ctx.meta.relationshipID,
             });
           }
+
+          ctx.emit = function (event, params) {
+            return ctx.__leemonsDeploymentManagerCall('deployment-manager.emit', { event, params });
+          };
 
           ctx.call = async function (actionName, params, opts) {
             if (isCoreService(actionName)) {

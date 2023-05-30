@@ -4,13 +4,12 @@ const {
   getPluginNameFromServiceName,
   getActionWithOutVersion,
 } = require('leemons-service-name-parser');
-/**
- * ES: Los plugins que ya existan los actualiza los que no los añade
- */
+
 async function getGoodServiceActionToCall(ctx) {
   if (!ctx.params || !ctx.params?.actionName) {
     throw new LeemonsError(ctx, { message: 'actionName is required' });
   }
+  // TODO [!!!] Asegurar que el caller es quien dice ser
   const fromPluginName = getPluginNameFromServiceName(ctx.caller);
   const toPluginName = getPluginNameFromServiceName(ctx.params.actionName);
 

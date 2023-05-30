@@ -10,7 +10,7 @@ const localization = require('../core/localization');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'multilanguage.common',
+  name: 'multilanguage.contents',
   version: 1,
   mixins: [
     LeemonsMongoDBMixin({
@@ -26,137 +26,137 @@ module.exports = () => ({
   actions: {
     countKeyStartsWith: {
       handler(ctx) {
-        return localization.countKeyStartsWith({ ...ctx.params, isPrivate: false, ctx });
+        return localization.countKeyStartsWith({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     countLocalesWithKey: {
       handler(ctx) {
-        return localization.countLocalesWithKey({ ...ctx.params, isPrivate: false, ctx });
+        return localization.countLocalesWithKey({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     add: {
       handler(ctx) {
-        return localization.add({ ...ctx.params, isPrivate: false, ctx });
+        return localization.add({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     addMany: {
       handler(ctx) {
-        return localization.addMany({ ...ctx.params, isPrivate: false, ctx });
+        return localization.addMany({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     addManyByJSON: {
       handler(ctx) {
-        return localization.addManyByJSON({ ...ctx.params, isPrivate: false, ctx });
+        return localization.addManyByJSON({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     addManyByKey: {
       handler(ctx) {
-        return localization.addManyByKey({ ...ctx.params, isPrivate: false, ctx });
+        return localization.addManyByKey({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     delete: {
       handler(ctx) {
-        return localization.delete({ ...ctx.params, isPrivate: false, ctx });
+        return localization.delete({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     deleteKeyStartsWith: {
       handler(ctx) {
-        return localization.deleteKeyStartsWith({ ...ctx.params, isPrivate: false, ctx });
+        return localization.deleteKeyStartsWith({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     deleteMany: {
       handler(ctx) {
-        return localization.deleteMany({ ...ctx.params, isPrivate: false, ctx });
+        return localization.deleteMany({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     deleteAll: {
       handler(ctx) {
-        return localization.deleteAll({ ...ctx.params, isPrivate: false, ctx });
+        return localization.deleteAll({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     has: {
       handler(ctx) {
-        return localization.has({ ...ctx.params, isPrivate: false, ctx });
+        return localization.has({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     hasMany: {
       handler(ctx) {
-        return localization.hasMany({ ...ctx.params, isPrivate: false, ctx });
+        return localization.hasMany({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     get: {
       handler(ctx) {
-        return localization.get({ ...ctx.params, isPrivate: false, ctx });
+        return localization.get({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getValue: {
       handler(ctx) {
-        return localization.getValue({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getValue({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getManyWithKeys: {
       handler(ctx) {
-        return localization.getManyWithKeys({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getManyWithKeys({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getManyWithLocale: {
       handler(ctx) {
-        return localization.getManyWithLocale({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getManyWithLocale({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getWithKey: {
       handler(ctx) {
-        return localization.getWithKey({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getWithKey({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getLocaleValueWithKey: {
       handler(ctx) {
-        return localization.getLocaleValueWithKey({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getLocaleValueWithKey({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getWithLocale: {
       handler(ctx) {
-        return localization.getWithLocale({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getWithLocale({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getKeyValueWithLocale: {
       handler(ctx) {
-        return localization.getKeyValueWithLocale({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getKeyValueWithLocale({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getKeyStartsWith: {
       handler(ctx) {
-        return localization.getKeyStartsWith({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getKeyStartsWith({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     getKeyValueStartsWith: {
       handler(ctx) {
-        return localization.getKeyValueStartsWith({ ...ctx.params, isPrivate: false, ctx });
+        return localization.getKeyValueStartsWith({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     setValue: {
       handler(ctx) {
-        return localization.setValue({ ...ctx.params, isPrivate: false, ctx });
+        return localization.setValue({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     setKey: {
       handler(ctx) {
-        return localization.setKey({ ...ctx.params, isPrivate: false, ctx });
+        return localization.setKey({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     setMany: {
       handler(ctx) {
-        return localization.setMany({ ...ctx.params, isPrivate: false, ctx });
+        return localization.setMany({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     setManyByKey: {
       handler(ctx) {
-        return localization.setManyByKey({ ...ctx.params, isPrivate: false, ctx });
+        return localization.setManyByKey({ ...ctx.params, isPrivate: true, ctx });
       },
     },
     setManyByJSON: {
       handler(ctx) {
-        return localization.setManyByJSON({ ...ctx.params, isPrivate: false, ctx });
+        return localization.setManyByJSON({ ...ctx.params, isPrivate: true, ctx });
       },
     },
   },

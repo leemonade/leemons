@@ -16,6 +16,7 @@ const deploymentPluginsRelationshipSchema = new mongoose.Schema(
       required: true,
     },
     actions: [String],
+    events: [String],
   },
   { timestamps: true }
 );

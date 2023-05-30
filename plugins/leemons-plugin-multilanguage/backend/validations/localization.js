@@ -1,7 +1,6 @@
 const _ = require('lodash');
+const { LeemonsValidator } = require('leemons-validator');
 const { codeSchema } = require('./locale');
-
-const { LeemonsValidator } = global.utils;
 
 LeemonsValidator.ajv.addFormat('localizationKey', {
   validate: (x) => /^([a-zA-Z0-9_-]+\.){0,}[a-zA-Z0-9_-]{0,}$/.test(x),

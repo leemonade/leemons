@@ -348,7 +348,7 @@ class LeemonsRunner {
           });
         }
       } catch (error) {
-        console.error(`No se pudo resolver la dependencia "${dependency}": ${error}`);
+        logger.error(`No se pudo resolver la dependencia "${dependency}": ${error}`);
       }
     });
 
@@ -377,7 +377,8 @@ class LeemonsRunner {
     const fileMask = this.flags.mask || '**/*.service.js';
     const dependencies = this.getDependenciesFromPNPM();
     _.forEach(dependencies, (dependency) => {
-      console.debug(`Loading service (${dependency.name}) from path ${dependency.path}`);
+      if (this.config.logger)
+        logger.info(`Loading service (${dependency.name}) from path ${dependency.path}`);
       this.broker.loadServices(dependency.path, fileMask);
 
       if (this.config.hotReload) {

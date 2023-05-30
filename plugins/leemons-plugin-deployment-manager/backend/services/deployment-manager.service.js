@@ -16,6 +16,7 @@ const {
   getGoodServiceActionToCall,
 } = require('../core/deployment-plugins-relationship/getGoodServiceActionToCall');
 const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe');
+const { emit } = require('../core/events/emit');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -23,6 +24,8 @@ module.exports = () => ({
 
   mixins: [
     LeemonsMongoDBMixin({
+      // Como deployment-manager ya se gestiona el mismo y no hace falta comprobar si el resto de plugins tienen acceso a llamarle no usamos el mixin
+      forceLeemonsDeploymentManagerMixinNeedToBeImported: false,
       models: {
         DeploymentPlugins: deploymentPluginsModel,
         DeploymentPluginsRelationship: deploymentPluginsRelationshipModel,
@@ -32,6 +35,7 @@ module.exports = () => ({
 
   actions: {
     savePlugins: {
+      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
           throw new Error('Need ctx.meta.deploymentID');
@@ -39,7 +43,19 @@ module.exports = () => ({
         return savePluginsToDeployment(ctx, ctx.params);
       },
     },
+    initDeployment: {
+      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new Error('Need ctx.meta.deploymentID');
+        }
+        return ctx.call('deployment-manager.emit', {
+          event: 'deployment-manager.install',
+        });
+      },
+    },
     savePluginsRelationships: {
+      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
           throw new Error('Need ctx.meta.deploymentID');
@@ -61,6 +77,15 @@ module.exports = () => ({
           throw new Error('Need ctx.meta.deploymentID');
         }
         return canCallMe(ctx);
+      },
+    },
+    emit: {
+      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new Error('Need ctx.meta.deploymentID');
+        }
+        return emit(ctx);
       },
     },
   },
