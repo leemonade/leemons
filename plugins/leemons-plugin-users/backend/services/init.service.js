@@ -20,8 +20,7 @@ module.exports = {
   ],
   events: {
     'deployment-manager.install': function (ctx) {
-      // TODO Añadir los idiomas
-      console.log('User event:', ctx.meta);
+      console.log(ctx.db);
     },
   },
   created() {

@@ -210,6 +210,66 @@ function getDBModels({
   return db;
 }
 
+function modifyCTX(
+  ctx,
+  {
+    waitToRollbackFinishOnError,
+    autoDeploymentID,
+    autoTransaction,
+    autoRollback,
+    debugTransaction,
+    forceLeemonsDeploymentManagerMixinNeedToBeImported,
+    models,
+  }
+) {
+  if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
+    if (!ctx.meta.deploymentID || !ctx.callerPlugin || !ctx.__leemonsDeploymentManagerCall) {
+      throw new LeemonsError(ctx, {
+        message: 'LeemonsDeploymentManagerMixin need to be used',
+      });
+    }
+  }
+  ctx.__leemonsMongoDBCall = ctx.call;
+  ctx.db = getDBModels({
+    models,
+    autoTransaction,
+    autoDeploymentID,
+    autoRollback,
+    ignoreTransaction: true,
+    ctx,
+  });
+  ctx.call = (actionName, params, opts) => {
+    if (!_.isObject(opts)) opts = {};
+    if (!_.isObject(opts.meta)) opts.meta = {};
+    if (!opts.meta.transactionID) {
+      opts.meta.transactionID = null;
+    }
+    return ctx.__leemonsMongoDBCall(actionName, params, opts);
+  };
+  ctx.tx = {
+    call: async (actionName, params, opts) => {
+      if (!opts?.meta?.__isInternalCall) {
+        await createTransactionIDIfNeed({ autoTransaction, ctx });
+      } else if (debugTransaction && actionName.startsWith('transactions.')) {
+        console.debug(
+          `[MongoDB Transactions] (Call) - ${actionName.replace('transactions.', '')}`,
+          params,
+          opts
+        );
+      }
+      return ctx.__leemonsMongoDBCall(actionName, params, opts);
+    },
+    db: getDBModels({
+      models,
+      autoTransaction,
+      autoDeploymentID,
+      autoRollback,
+      ignoreTransaction: false,
+      ctx,
+    }),
+  };
+}
+
 module.exports = ({
   waitToRollbackFinishOnError = true,
   autoDeploymentID = true,
@@ -271,58 +331,38 @@ module.exports = ({
     before: {
       '*': [
         async function (ctx) {
-          if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
-            if (
-              !ctx.meta.deploymentID ||
-              !ctx.callerPlugin ||
-              !ctx.__leemonsDeploymentManagerCall
-            ) {
-              throw new LeemonsError(ctx, {
-                message: 'LeemonsDeploymentManagerMixin need to be used',
-              });
-            }
-          }
-          ctx.__leemonsMongoDBCall = ctx.call;
-          ctx.db = getDBModels({
-            models,
-            autoTransaction,
+          modifyCTX(ctx, {
+            waitToRollbackFinishOnError,
             autoDeploymentID,
+            autoTransaction,
             autoRollback,
-            ignoreTransaction: true,
-            ctx,
+            debugTransaction,
+            forceLeemonsDeploymentManagerMixinNeedToBeImported,
+            models,
           });
-          ctx.call = (actionName, params, opts) => {
-            if (!_.isObject(opts)) opts = {};
-            if (!_.isObject(opts.meta)) opts.meta = {};
-            if (!opts.meta.transactionID) {
-              opts.meta.transactionID = null;
-            }
-            return ctx.__leemonsMongoDBCall(actionName, params, opts);
-          };
-          ctx.tx = {
-            call: async (actionName, params, opts) => {
-              if (!opts?.meta?.__isInternalCall) {
-                await createTransactionIDIfNeed({ autoTransaction, ctx });
-              } else if (debugTransaction && actionName.startsWith('transactions.')) {
-                console.debug(
-                  `[MongoDB Transactions] (Call) - ${actionName.replace('transactions.', '')}`,
-                  params,
-                  opts
-                );
-              }
-              return ctx.__leemonsMongoDBCall(actionName, params, opts);
-            },
-            db: getDBModels({
-              models,
-              autoTransaction,
-              autoDeploymentID,
-              autoRollback,
-              ignoreTransaction: false,
-              ctx,
-            }),
-          };
         },
       ],
     },
+  },
+  created() {
+    _.forIn(this.events, (value, key) => {
+      this.events[key] = async (params, opts) =>
+        // Si forceLeemonsDeploymentManagerMixinNeedToBeImported es true estaremos llamando al evento de deployment-manager
+        // y este una vez el configura el ctx llama a afterModifyCTX para que podamos configurar nuestro contexto de mongodb
+        // En caso de que no sea un evento de deployment-manager no podremos acceder a ctx.db y ctx.tx en el evento
+        value(params, opts, {
+          afterModifyCTX: (ctx) => {
+            modifyCTX(ctx, {
+              waitToRollbackFinishOnError,
+              autoDeploymentID,
+              autoTransaction,
+              autoRollback,
+              debugTransaction,
+              forceLeemonsDeploymentManagerMixinNeedToBeImported,
+              models,
+            });
+          },
+        });
+    });
   },
 });

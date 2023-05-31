@@ -23,9 +23,7 @@ module.exports = () => ({
     LeemonsDeploymentManagerMixin,
   ],
   events: {
-    'deployment-manager.install': function (ctx) {
-      console.log('User event:', ctx.meta);
-    },
+    'deployment-manager.install': function (ctx) {},
   },
   created() {
     mongoose.connect(process.env.MONGO_URI);
