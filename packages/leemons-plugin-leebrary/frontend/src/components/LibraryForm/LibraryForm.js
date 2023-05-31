@@ -114,7 +114,7 @@ const LibraryForm = ({
   hideTitle,
   advancedConfig,
   hideSubmit,
-  onChange = () => {},
+  onChange = () => { },
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -171,8 +171,8 @@ const LibraryForm = ({
   async function loadAdvancedConfig() {
     store.programs = null;
     store.alwaysOpen = false;
-    store.programRequired = null;
-    store.subjectRequired = null;
+    store.programRequired = undefined;
+    store.subjectRequired = undefined;
     if (advancedConfig?.program?.show) {
       if (advancedConfig.program.required) {
         store.programRequired = { required: errorMessages.program?.required || 'Field required' };
@@ -463,7 +463,7 @@ const LibraryForm = ({
             ) : null}
 
             {(!advancedConfigMode && !advancedConfig?.colorToRight) ||
-            (advancedConfigMode && advancedConfig?.colorToRight) ? (
+              (advancedConfigMode && advancedConfig?.colorToRight) ? (
               <Controller
                 control={control}
                 name="color"
@@ -481,7 +481,7 @@ const LibraryForm = ({
             ) : null}
           </ContextContainer>
           {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-          (advancedConfigMode && advancedConfig?.fileToRight) ? (
+            (advancedConfigMode && advancedConfig?.fileToRight) ? (
             <>
               {!isImage && (
                 <>
