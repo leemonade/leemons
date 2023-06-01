@@ -30,7 +30,7 @@ async function calculeUserAgentInstanceNote(
   });
 
   const [evaluationSystem, questionResponses, questions] = await Promise.all([
-    programsService.getProgramEvaluationSystem(instance.assignable.subjects[0].program, {
+    programsService.getProgramEvaluationSystem(instance.subjects[0].program, {
       userSession,
       transacting,
     }),

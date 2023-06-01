@@ -93,12 +93,16 @@ async function setQuestionResponse(data, { userSession, transacting: _transactin
         { transacting }
       );
 
+      const classes = await leemons
+        .getPlugin('academic-portfolio')
+        .services.classes.classByIds(instance.classes);
+
       await assignationsService.updateAssignation(
         {
           assignableInstance: data.instance,
           user: userSession.userAgents[0].id,
-          grades: _.map(instance.assignable.subjects, ({ subject }) => ({
-            subject,
+          grades: _.map(_.map(classes, 'subject.id'), (subjectId) => ({
+            subject: subjectId,
             type: 'main',
             grade: note,
             gradedBy: 'auto-graded',
