@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require("leemons-mongodb");
+const { mongoose, newModel } = require('leemons-mongodb');
 
 const usersSchema = new mongoose.Schema({
   deploymentID: {
@@ -53,10 +53,10 @@ const usersSchema = new mongoose.Schema({
   gender: {
     type: String,
     required: true,
-    enum: ["male", "female"],
+    enum: ['male', 'female'],
   },
 });
 
-let usersModel = newModel(mongoose.connection, "users_User", usersSchema);
+const usersModel = newModel(mongoose.connection, 'users_User', usersSchema);
 
 module.exports = { usersModel };

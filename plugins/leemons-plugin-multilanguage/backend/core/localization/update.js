@@ -262,12 +262,12 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
   }
 }
 
-async function setManyByJSON({ data, prefix, isPrivate, ctx }) {
+async function setManyByJSON({ data, isPrivate, ctx }) {
   const toAdd = {};
   _.forIn(data, (json, lang) => {
     toAdd[lang] = {};
     _.forEach(getObjectArrayKeys(json), (key) => {
-      toAdd[lang][`${prefix}${key}`] = _.get(data[lang], key);
+      toAdd[lang][`${ctx.callerPlugin}${key}`] = _.get(data[lang], key);
     });
   });
 
