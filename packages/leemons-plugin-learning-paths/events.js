@@ -66,6 +66,7 @@ function setupAssignables(isInstalled) {
     // ES: Registrar el rol asignable
     await assignableServices.registerRole('learningpaths.module', {
       // Not used yet
+      dashboardUrl: '/private/learning-paths/modules/dashboard/:id',
       teacherDetailUrl: '/',
       studentDetailUrl: '/private/learning-paths/modules/assignation/:id/:user',
       evaluationDetailUrl: '/private/learning-paths/modules/assignation/:id/:user/correction',
