@@ -17,7 +17,7 @@ async function has({ code, ctx }) {
     return (await ctx.tx.db.Locales.countDocuments({ code: _code })) > 0;
     // Get if there is at least 1 locale with the given code
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the locale');
   }
 }
@@ -46,7 +46,7 @@ async function hasMany({ codes, ctx }) {
 
     return { ...result };
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the locales');
   }
 }

@@ -1,50 +1,47 @@
-module.exports = {
-  modelName: 'user-agent-permission',
-  collectionName: 'user-agent-permission',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     userAgent: {
-      references: {
-        collection: 'plugins_users::user-agent',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_UserAgent',
+      required: true,
     },
     permissionName: {
-      type: 'text',
-      options: {
-        notNull: true,
-        index: true,
-        indexOptions: {
-          indexType: 'FULLTEXT',
-        },
-      },
+      type: String,
+      required: true,
+      index: true,
     },
     actionName: {
-      type: 'string',
-      options: {
-        notNull: true,
-        index: true,
-      },
+      type: String,
+      required: true,
+      index: true,
     },
     target: {
-      type: 'string',
-      options: {
-        index: true,
-      },
+      type: String,
+      index: true,
     },
     role: {
-      references: {
-        collection: 'plugins_users::roles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Roles',
+      required: true,
     },
     center: {
-      references: {
-        collection: 'plugins_users::centers',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Centers',
+      required: true,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userAgentPermissionModel = newModel(mongoose.connection, 'users_UserAgentPermission', schema);
+
+module.exports = { userAgentPermissionModel };

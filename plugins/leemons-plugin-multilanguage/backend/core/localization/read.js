@@ -54,7 +54,7 @@ async function get({ key, locale, ctx, isPrivate }) {
     });
     return result;
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the localization');
   }
 }
@@ -108,7 +108,7 @@ async function getManyWithKeys({ keys, isPrivate, ctx }) {
       return acc;
     }, {});
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error ocurred while getting the localizations');
   }
 }
@@ -148,7 +148,7 @@ async function getManyWithLocale({ keys, locale, isPrivate, ctx }) {
       foundLocalizations.map((localization) => [localization.key, localization.value])
     );
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error ocurred while getting the localizations');
   }
 }
@@ -174,7 +174,7 @@ async function getWithKey({ key, isPrivate, ctx }) {
       .find({ key: _key })
       .lean();
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the localizations');
   }
 }
@@ -228,7 +228,7 @@ async function getWithLocale({ locale, isPrivate, ctx }) {
       .find(query)
       .lean();
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the localizations');
   }
 }
@@ -254,7 +254,7 @@ async function getKeyValueWithLocale({ locale, isPrivate, ctx }) {
       return _result;
     }, null);
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the localizations');
   }
 }
@@ -285,7 +285,7 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
     );
     return mergeTranslations(responses);
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the localization');
   }
 }
@@ -312,7 +312,7 @@ async function getKeyValueStartsWith({ key, locale, isPrivate, ctx }) {
       return _result;
     }, null);
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the localization');
   }
 }

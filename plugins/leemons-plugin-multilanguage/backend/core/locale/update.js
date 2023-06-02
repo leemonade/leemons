@@ -20,7 +20,7 @@ async function setName({ code, name, ctx }) {
       { upsert: true, new: true }
     );
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while setting the locale');
   }
 }

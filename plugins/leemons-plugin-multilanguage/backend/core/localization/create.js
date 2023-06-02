@@ -54,7 +54,7 @@ async function add({ key, locale, value, isPrivate, ctx } = {}) {
     if (e.message === 'Invalid locale') {
       throw e;
     }
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the localization');
   }
 }
@@ -153,7 +153,7 @@ async function addMany({ data, isPrivate, ctx }) {
       warnings,
     };
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the localizations');
   }
 }
@@ -265,7 +265,7 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
       warnings,
     };
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the localizations');
   }
 }

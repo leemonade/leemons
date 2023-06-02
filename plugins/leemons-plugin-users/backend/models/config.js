@@ -1,19 +1,24 @@
 const { mongoose, newModel } = require('leemons-mongodb');
 
-const schema = new mongoose.Schema({
-  deploymentID: {
-    type: String,
-    required: true,
-    index: true,
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    key: {
+      type: String,
+      required: true,
+    },
+    value: {
+      type: String,
+    },
   },
-  key: {
-    type: String,
-    required: true,
-  },
-  value: {
-    type: String,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 

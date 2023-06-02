@@ -1,27 +1,33 @@
-module.exports = {
-  modelName: 'user-profile',
-  collectionName: 'user-profile',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     user: {
-      references: {
-        collection: 'plugins_users::users',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Users',
+      required: true,
     },
     profile: {
-      references: {
-        collection: 'plugins_users::profiles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Profiles',
+      required: true,
     },
     role: {
-      references: {
-        collection: 'plugins_users::roles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Roles',
+      required: true,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userProfileModel = newModel(mongoose.connection, 'users_UserProfile', schema);
+
+module.exports = { userProfileModel };

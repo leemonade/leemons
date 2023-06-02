@@ -15,7 +15,7 @@ async function get({ code, ctx }) {
   try {
     return await ctx.tx.db.Locales.findOne({ code: _code }).lean();
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the locale');
   }
 }
@@ -34,7 +34,7 @@ async function getMany({ codes, ctx }) {
   try {
     return await ctx.tx.db.Locales.find({ code: _codes }).lean();
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting the locales');
   }
 }
@@ -49,7 +49,7 @@ async function getAll({ ctx } = {}) {
   try {
     return await ctx.tx.db.Locales.find({ code: { $ne: null } }).lean();
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while getting all the locales');
   }
 }

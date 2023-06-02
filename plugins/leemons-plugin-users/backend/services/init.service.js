@@ -7,8 +7,8 @@ const path = require('path');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { addLocales } = require('leemons-multilanguage');
-const { getKeyValueModel, hasKey } = require('leemons-mongodb-helpers');
-const { usersModel } = require('../models');
+const { hasKey } = require('leemons-mongodb-helpers');
+const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
   version: 1,
   mixins: [
     LeemonsMongoDBMixin({
-      models: { User: usersModel, KeyValue: getKeyValueModel({ modelName: 'users_KeyValue' }) },
+      models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin,
   ],
@@ -35,7 +35,7 @@ module.exports = {
       return null;
     },
   },
-  created() {
+  async created() {
     mongoose.connect(process.env.MONGO_URI);
   },
 };

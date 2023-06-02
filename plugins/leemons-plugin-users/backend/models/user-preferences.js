@@ -1,26 +1,32 @@
-module.exports = {
-  modelName: 'user-preferences',
-  collectionName: 'user-preferences',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     user: {
-      references: {
-        collection: 'plugins_users::users',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Users',
+      required: true,
     },
     gender: {
-      type: 'string',
+      type: String,
     },
     pronoun: {
-      type: 'string',
+      type: String,
     },
     pluralPronoun: {
-      type: 'string',
+      type: String,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userPreferencesModel = newModel(mongoose.connection, 'users_UserPreferences', schema);
+
+module.exports = { userPreferencesModel };

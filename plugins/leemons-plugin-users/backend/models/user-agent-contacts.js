@@ -1,51 +1,55 @@
-module.exports = {
-  modelName: 'user-agent-contacts',
-  collectionName: 'user-agent-contacts',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     fromUserAgent: {
-      references: {
-        collection: 'plugins_users::user-agent',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_UserAgent',
+      required: true,
     },
     fromCenter: {
-      references: {
-        collection: 'plugins_users::centers',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Centers',
+      required: true,
     },
     fromProfile: {
-      references: {
-        collection: 'plugins_users::profiles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Profiles',
+      required: true,
     },
     toUserAgent: {
-      references: {
-        collection: 'plugins_users::user-agent',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_UserAgent',
+      required: true,
     },
     toCenter: {
-      references: {
-        collection: 'plugins_users::centers',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Centers',
+      required: true,
     },
     toProfile: {
-      references: {
-        collection: 'plugins_users::profiles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Profiles',
+      required: true,
     },
     pluginName: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
+      type: String,
+      required: true,
     },
     target: {
-      type: 'string',
+      type: String,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userAgentContactsModel = newModel(mongoose.connection, 'users_UserAgentContacts', schema);
+
+module.exports = { userAgentContactsModel };

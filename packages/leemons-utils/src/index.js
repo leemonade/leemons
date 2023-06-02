@@ -1,5 +1,6 @@
-const { getObjectArrayKeys } = require('./getObjectArrayKeys');
+/* eslint-disable global-require */
 
 module.exports = {
-  getObjectArrayKeys,
+  ...require('./getObjectArrayKeys'),
+  ...require('./settledResponseToManyResponse'),
 };

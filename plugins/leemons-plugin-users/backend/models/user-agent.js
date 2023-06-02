@@ -1,34 +1,38 @@
-module.exports = {
-  modelName: 'user-agent',
-  collectionName: 'user-agent',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     user: {
-      references: {
-        collection: 'plugins_users::users',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Users',
+      required: true,
     },
     role: {
-      references: {
-        collection: 'plugins_users::roles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Roles',
+      required: true,
     },
     reloadPermissions: {
-      type: 'boolean',
-      options: {
-        defaultTo: false,
-      },
+      type: Boolean,
+      default: false,
     },
     datasetIsGood: {
-      type: 'boolean',
+      type: Boolean,
     },
     disabled: {
-      type: 'boolean',
+      type: Boolean,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userAgentModel = newModel(mongoose.connection, 'users_UserAgent', schema);
+
+module.exports = { userAgentModel };

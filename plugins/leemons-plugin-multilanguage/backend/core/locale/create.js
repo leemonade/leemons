@@ -19,16 +19,13 @@ async function add({ code, name, ctx }) {
     // If the locale does not exist, create it
     if (!(await has({ code: locale.code, ctx }))) {
       const dbLocale = await ctx.tx.db.Locales.create(locale);
-
-      leemons.log.info(`New locale added: ${dbLocale.code} | ${dbLocale.name}`);
-      leemons.events.emit('newLocale', dbLocale);
-
+      await ctx.tx.emit('newLocale', dbLocale);
       return dbLocale;
     }
     // If already exists, return null
     return null;
   } catch (e) {
-    leemons.log.error(e.message);
+    ctx.logger.error(e.message);
     throw new Error('An error occurred while creating the locale');
   }
 }

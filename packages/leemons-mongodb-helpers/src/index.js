@@ -1,7 +1,7 @@
-const { getKeyValueModel } = require('./key-value/getKeyValueModel');
-const { hasKey } = require('./key-value/hasKey');
+/* eslint-disable global-require */
 
 module.exports = {
-  getKeyValueModel,
-  hasKey,
+  ...require('./mongoDBPaginate'),
+  ...require('./key-value/getKeyValueModel'),
+  ...require('./key-value/hasKey'),
 };

@@ -1,20 +1,30 @@
-module.exports = {
-  modelName: 'user-register-password',
-  collectionName: 'user-register-password',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     user: {
-      references: {
-        collection: 'plugins_users::users',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Users',
+      required: true,
     },
     code: {
-      type: 'string',
+      type: String,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userRegisterPasswordModel = newModel(
+  mongoose.connection,
+  'users_UserRegisterPassword',
+  schema
+);
+
+module.exports = { userRegisterPasswordModel };

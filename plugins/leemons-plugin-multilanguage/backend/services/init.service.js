@@ -21,7 +21,7 @@ module.exports = () => ({
         Common: commonModel,
         Locales: localesModel,
         Contents: contentsModel,
-        KeyValue: getKeyValueModel({ modelName: 'multilanguage_KeyValue' }),
+        KeyValue: getKeyValueModel({ modelName: 'users_KeyValue' }),
       },
     }),
     LeemonsDeploymentManagerMixin,

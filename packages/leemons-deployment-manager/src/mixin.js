@@ -10,8 +10,19 @@ function modifyCTX(ctx) {
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
 
-  ctx.emit = function (event, params) {
-    return ctx.__leemonsDeploymentManagerCall('deployment-manager.emit', { event, params });
+  ctx.prefixPN = function (string) {
+    return `${ctx.callerPlugin}.${string}`;
+  };
+
+  ctx.emit = function (event, params, opts) {
+    return ctx.__leemonsDeploymentManagerCall(
+      'deployment-manager.emit',
+      {
+        event: ctx.prefixPN(event),
+        params,
+      },
+      opts
+    );
   };
 
   ctx.call = async function (actionName, params, opts) {

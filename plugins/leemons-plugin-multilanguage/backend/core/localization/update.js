@@ -39,7 +39,7 @@ async function setValue({ key, locale, value, isPrivate, ctx }) {
       throw e;
     }
 
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while updating the localization');
   }
 }
@@ -108,7 +108,7 @@ async function setKey({ key, data, isPrivate, ctx }) {
       warnings,
     };
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the localizations');
   }
 }
@@ -182,7 +182,7 @@ async function setMany({ data, isPrivate, ctx }) {
       warnings,
     };
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the localizations');
   }
 }
@@ -257,7 +257,7 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
       warnings,
     };
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the localizations');
   }
 }

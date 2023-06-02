@@ -6,15 +6,14 @@
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { usersModel } = require('../models');
-const { testModel } = require('../models/test');
 
 /** @type {ServiceSchema} */
-module.exports = (broker) => ({
+module.exports = {
   name: 'users.greeter',
   version: 2,
   mixins: [
     LeemonsMongoDBMixin({
-      models: { User: usersModel, Test: testModel },
+      models: { User: usersModel },
     }),
     LeemonsDeploymentManagerMixin,
   ],
@@ -102,4 +101,4 @@ module.exports = (broker) => ({
    * Service stopped lifecycle event handler
    */
   async stopped() {},
-});
+};

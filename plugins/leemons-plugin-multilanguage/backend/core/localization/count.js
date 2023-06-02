@@ -24,7 +24,7 @@ async function countKeyStartsWith({ ctx, key, locale, isPrivate }) {
       locale: tuple.locale,
     });
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while counting the localizations');
   }
 }
@@ -47,7 +47,7 @@ async function countLocalesWithKey({ ctx, key, isPrivate } = {}) {
       key: _key,
     });
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while counting the localizations');
   }
 }

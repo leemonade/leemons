@@ -22,7 +22,7 @@ async function has({ key, locale, isPrivate, ctx }) {
       1
     );
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while checking if the localization exists');
   }
 }
@@ -68,7 +68,7 @@ async function hasMany({ localizations, isPrivate, ctx }) {
 
     return result;
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the locales');
   }
 }

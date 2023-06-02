@@ -1,4 +1,66 @@
-const { usersModel } = require("./users");
+/* eslint-disable global-require */
+
+const { getKeyValueModel } = require('leemons-mongodb-helpers');
+
+const models = {
+  ...require('./actions'),
+  ...require('./center-limits'),
+  ...require('./centers'),
+  ...require('./config'),
+  ...require('./group-role'),
+  ...require('./group-user-agent'),
+  ...require('./groups'),
+  ...require('./item-permissions'),
+  ...require('./permission-action'),
+  ...require('./permissions'),
+  ...require('./profile-contacts'),
+  ...require('./profile-role'),
+  ...require('./profiles'),
+  ...require('./role-center'),
+  ...require('./role-permission'),
+  ...require('./roles'),
+  ...require('./super-admin-user'),
+  ...require('./user-agent-contacts'),
+  ...require('./user-agent-permission'),
+  ...require('./user-agent'),
+  ...require('./user-preferences'),
+  ...require('./user-profile'),
+  ...require('./user-recover-password'),
+  ...require('./user-remember-login'),
+  ...require('./users'),
+};
+
 module.exports = {
-  usersModel,
+  ...models,
+  getServiceModels() {
+    return {
+      Actions: models.actionsModel,
+      CenterLimits: models.centerLimitsModel,
+      Centers: models.centersModel,
+      Config: models.configModel,
+      GroupRole: models.groupRoleModel,
+      GroupUserAgent: models.groupUserAgentModel,
+      Groups: models.groupsModel,
+      ItemPermissions: models.itemPermissionsModel,
+      PermissionAction: models.permissionActionModel,
+      Permissions: models.permissionsModel,
+      ProfileContacts: models.profileContactsModel,
+      ProfileRole: models.profileRoleModel,
+      Profiles: models.profilesModel,
+      RoleCenter: models.roleCenterModel,
+      RolePermission: models.rolePermissionModel,
+      Roles: models.rolesModel,
+      SuperAdminUser: models.superAdminUserModel,
+      UserAgentContacts: models.userAgentContactsModel,
+      UserAgentPermission: models.userAgentPermissionModel,
+      UserAgent: models.userAgentModel,
+      UserPreferences: models.userPreferencesModel,
+      UserProfile: models.userProfileModel,
+      UserRecoverPassword: models.userRecoverPasswordModel,
+      UserRegisterPassword: models.userRegisterPasswordModel,
+      UserRememberLogin: models.userRememberLoginModel,
+      User: models.usersModel,
+      KeyValue: getKeyValueModel({ modelName: 'users_KeyValue' }),
+    };
+  },
 };

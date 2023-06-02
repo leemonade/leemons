@@ -14,7 +14,7 @@ async function _delete({ code, ctx }) {
   try {
     return !!(await ctx.tx.db.Locales.deleteOne({ code: _code })).deletedCount;
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the locale');
   }
 }
@@ -35,7 +35,7 @@ async function deleteMany({ codes, ctx }) {
 
     // Delete the given codes an return the deleted count
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the locales');
   }
 }

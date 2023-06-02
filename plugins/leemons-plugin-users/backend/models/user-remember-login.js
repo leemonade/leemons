@@ -1,27 +1,33 @@
-module.exports = {
-  modelName: 'user-remember-login',
-  collectionName: 'user-remember-login',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     user: {
-      references: {
-        collection: 'plugins_users::users',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Users',
+      required: true,
     },
     profile: {
-      references: {
-        collection: 'plugins_users::profiles',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Profiles',
+      required: true,
     },
     center: {
-      references: {
-        collection: 'plugins_users::centers',
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users_Centers',
+      required: true,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const userRememberLoginModel = newModel(mongoose.connection, 'users_UserRememberLogin', schema);
+
+module.exports = { userRememberLoginModel };

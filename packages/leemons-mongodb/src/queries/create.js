@@ -1,17 +1,11 @@
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
-const _ = require("lodash");
-const {
-  createTransactionIDIfNeed,
-} = require("./helpers/createTransactionIDIfNeed");
-const {
-  increaseTransactionPendingIfNeed,
-} = require("./helpers/increaseTransactionPendingIfNeed");
+const _ = require('lodash');
+const { addTransactionState } = require('leemons-transactions');
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
+const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
+const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
-} = require("./helpers/increaseTransactionFinishedIfNeed");
-const { addTransactionState } = require("leemons-transactions");
+} = require('./helpers/increaseTransactionFinishedIfNeed');
 
 function create({
   model,
@@ -32,16 +26,15 @@ function create({
     try {
       const [toAdd, ...args] = arguments;
       let toCreate = toAdd;
-      if (autoDeploymentID)
-        toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
+      if (autoDeploymentID) toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
       const items = await model.create(toCreate, ...args);
       if (!ignoreTransaction && ctx.meta.transactionID) {
         await addTransactionState(ctx, {
-          action: "leemonsMongoDBRollback",
+          action: 'leemonsMongoDBRollback',
           payload: {
             modelKey,
-            action: "removeMany",
-            data: _.isArray(items) ? _.map(items, "_id") : [items._id],
+            action: 'removeMany',
+            data: _.isArray(items) ? _.map(items, '_id') : [items._id],
           },
         });
       }

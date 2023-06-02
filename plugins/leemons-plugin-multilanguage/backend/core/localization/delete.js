@@ -28,7 +28,7 @@ async function _delete({ key, locale, isPrivate, ctx }) {
       ).deletedCount === 1
     );
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the localization');
   }
 }
@@ -65,7 +65,7 @@ async function deleteKeyStartsWith({ key, locale = null, isPrivate, ctx }) {
       }).deleteMany(query)
     ).deletedCount;
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the localizations');
   }
 }
@@ -91,7 +91,7 @@ async function deleteMany({ localizations, isPrivate, ctx }) {
       }).deleteMany({ $or: _localizations })
     ).deletedCount;
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the localizations');
   }
 }
@@ -129,7 +129,7 @@ async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
       }).deleteMany(query)
     ).deletedCount;
   } catch (e) {
-    leemons.log.debug(e.message);
+    ctx.logger.debug(e.message);
     throw new Error('An error occurred while deleting the localizations');
   }
 }

@@ -230,6 +230,7 @@ function modifyCTX(
     }
   }
   ctx.__leemonsMongoDBCall = ctx.call;
+  ctx.__leemonsMongoDBEmit = ctx.emit;
   ctx.db = getDBModels({
     models,
     autoTransaction,
@@ -246,7 +247,14 @@ function modifyCTX(
     }
     return ctx.__leemonsMongoDBCall(actionName, params, opts);
   };
+  ctx.emit = (event, params) =>
+    ctx.__leemonsMongoDBEmit(event, params, { meta: { transactionID: null } });
+
   ctx.tx = {
+    emit: async (event, params) => {
+      await createTransactionIDIfNeed({ autoTransaction, ctx });
+      return ctx.__leemonsMongoDBEmit(event, params);
+    },
     call: async (actionName, params, opts) => {
       if (!opts?.meta?.__isInternalCall) {
         await createTransactionIDIfNeed({ autoTransaction, ctx });

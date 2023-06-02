@@ -1,29 +1,34 @@
 const { mongoose, newModel } = require('leemons-mongodb');
 
-const schema = new mongoose.Schema({
-  deploymentID: {
-    type: String,
-    required: true,
-    index: true,
+const schema = new mongoose.Schema(
+  {
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    name: {
+      type: String,
+    },
+    type: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    uri: {
+      type: String,
+    },
+    indexable: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
   },
-  name: {
-    type: String,
-  },
-  type: {
-    type: String,
-  },
-  description: {
-    type: String,
-  },
-  uri: {
-    type: String,
-  },
-  indexable: {
-    type: Boolean,
-    required: true,
-    default: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const groupsModel = newModel(mongoose.connection, 'users_Groups', schema);
 
