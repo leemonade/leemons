@@ -104,7 +104,7 @@ function useTaskPreviewData({ id, localizations }) {
     [instance, user]
   );
 
-  const subjectsData = useSubjectsData(task);
+  const subjectsData = useSubjectsData(instance);
   const multiClassData = getMultiClassData(localizations);
 
   const classData = subjectsData?.length > 1 ? multiClassData : subjectsData?.[0];

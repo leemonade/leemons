@@ -117,6 +117,7 @@ export default function Form({
   hideSectionHeaders,
   buttonsComponent,
   evaluationTypes,
+  onlyOneSubject,
 
   defaultValues,
 }) {
@@ -154,6 +155,7 @@ export default function Form({
                 assignable={assignable}
                 localizations={localizations?.subjects}
                 hideSectionHeaders={hideSectionHeaders}
+                onlyOneSubject={onlyOneSubject}
               />
             )}
           />
@@ -253,6 +255,7 @@ Form.propTypes = {
   showResponses: PropTypes.bool,
   showMessageForStudents: PropTypes.bool,
   hideSectionHeaders: PropTypes.bool,
+  onlyOneSubject: PropTypes.bool,
   withoutLayout: PropTypes.bool,
   buttonsComponent: PropTypes.node,
   evaluationTypes: PropTypes.arrayOf('string'),
