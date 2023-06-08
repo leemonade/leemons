@@ -15,7 +15,7 @@ const advancedConfig = {
   alwaysOpen: true,
   fileToRight: true,
   colorToRight: true,
-  program: { show: true, required: true },
+  program: { show: true, required: false },
   subjects: { show: true, required: true, showLevel: true, maxOne: false },
 };
 
