@@ -69,7 +69,7 @@ function setupAssignables(isInstalled) {
       dashboardUrl: '/private/learning-paths/modules/dashboard/:id',
       teacherDetailUrl: '/',
       studentDetailUrl: '/private/learning-paths/modules/assignation/:id/:user',
-      evaluationDetailUrl: '/private/learning-paths/modules/assignation/:id/:user/correction',
+      evaluationDetailUrl: '/private/learning-paths/modules/dashboard/:id',
       previewUrl: '/private/learning-paths/modules/:id/view',
       creatable: true,
       createUrl: '/private/learning-paths/modules/new',
