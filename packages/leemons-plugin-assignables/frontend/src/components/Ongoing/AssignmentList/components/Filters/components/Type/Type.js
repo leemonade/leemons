@@ -1,9 +1,8 @@
 /* eslint-disable react/display-name */
 import prefixPN from '@assignables/helpers/prefixPN';
 import { Select } from '@bubbles-ui/components';
-import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
+import { mapKeys } from 'lodash';
 import React, { useMemo } from 'react';
 
 function capitalize(str) {
@@ -15,8 +14,20 @@ export function useRoles() {
 
   const roles = useMemo(() => {
     if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('roles'));
+      const data = {};
+      mapKeys(translations.items, (value, key) => {
+        const [keyResult, singularOrPlural] = new RegExp(
+          `(?<=${prefixPN('roles')}\\.).*(?=\\.(singular|plural))`
+        ).exec(key);
+
+        const keyResultExists = !!data[keyResult];
+
+        if (!keyResultExists) {
+          data[keyResult] = {};
+        }
+
+        data[keyResult][singularOrPlural] = value;
+      });
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
