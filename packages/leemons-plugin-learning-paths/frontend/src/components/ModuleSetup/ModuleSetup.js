@@ -125,8 +125,8 @@ function prepareSharedData(module) {
     id: module.id,
     basicData: {
       ...omit(module.asset, 'file'),
-      subjects: module.subjects,
-      program: module.subjects[0].program,
+      subjects: module?.subjects,
+      program: module?.subjects?.[0]?.program,
     },
     state: {
       activities: module.submission.activities,

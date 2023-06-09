@@ -568,7 +568,6 @@ const LibraryForm = ({
                         render={({ field }) => (
                           <Select
                             {...field}
-                            autoSelectOneOption
                             error={errors.program}
                             required={!!store.programRequired}
                             label={labels.program}
