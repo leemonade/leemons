@@ -19,7 +19,7 @@ async function getParentAssignables(ids, { transacting }) {
   return groupBy(
     parentAssignables
       .flatMap((parent) => {
-        const submission = JSON.parse(parent.submission);
+        const submission = JSON.parse(parent.submission) ?? {};
         const activities = uniq(map(submission.activities, 'activity'));
 
         if (!activities.length) {
