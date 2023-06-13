@@ -112,7 +112,7 @@ export default function Index({ readOnly, isNew }) {
 
   async function publishAndAssign() {
     await saveAsPublish();
-    history.push(`/private/content-creator/assign/${store.document.assignable}`);
+    history.push(`/private/content-creator/${store.document.assignable}/assign`);
   }
 
   async function init() {

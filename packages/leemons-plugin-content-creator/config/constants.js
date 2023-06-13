@@ -81,8 +81,8 @@ const assignableRoles = [
     options: {
       teacherDetailUrl: '/private/content-creator/detail/:id',
       studentDetailUrl: '/private/content-creator/view/:id',
-      evaluationDetailUrl: '/private/content-creator/result/:id/:user',
-      dashboardUrl: '/private/content-creator/result/:id',
+      evaluationDetailUrl: '/private/content-creator/view/:id',
+      dashboardUrl: '/private/content-creator/view/:id',
       creatable: true,
       createUrl: '/private/content-creator/new',
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
