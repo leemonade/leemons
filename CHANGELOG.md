@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/leemonade/leemons/compare/0.0.2...0.0.3) (2023-06-13)
+
+
+### Bug Fixes
+
+* **examples/docker:** Do not force user to use redis ([c1a1232](https://github.com/leemonade/leemons/commit/c1a123221b5a1572359f48c33dbb501898b170b1))
+
 ## [0.0.2](https://github.com/leemonade/leemons/compare/0.0.1...0.0.2) (2023-05-26)
 
 
