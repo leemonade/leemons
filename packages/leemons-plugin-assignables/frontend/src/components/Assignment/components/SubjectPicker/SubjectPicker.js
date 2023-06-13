@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, TagsInput, createStyles, Select } from '@bubbles-ui/components';
+import { Box, MultiSelect, createStyles, Select } from '@bubbles-ui/components';
 import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
 import { map, uniqBy } from 'lodash';
 import { Container } from '../Container';
@@ -63,7 +63,7 @@ export function SubjectPicker({
     if (isFirstSubjectsLoad.current && subjects?.length) {
       if (assignable?.subjects?.length) {
         const values = map(subjects, 'value');
-        onChange(onlyOneSubject ? [values[0]] : values);
+        onChange(onlyOneSubject ? [values?.[0]] : values);
       }
       isFirstSubjectsLoad.current = false;
     }
@@ -80,16 +80,16 @@ export function SubjectPicker({
             data={subjects}
             onChange={(data) => onChange([data])}
             error={error && localizations?.subjectInput?.error}
-            value={value[0]}
+            value={value?.[0]}
             searchable
           />
         ) : (
-          <TagsInput
+          <MultiSelect
             {...props}
             label={localizations?.subjectInput?.label}
             placeholder={localizations?.subjectInput?.placeholder}
             canAddNewSuggestions={false}
-            suggestions={subjects}
+            data={subjects}
             onChange={onChange}
             error={error && localizations?.subjectInput?.error}
             value={value}
