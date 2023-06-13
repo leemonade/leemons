@@ -278,7 +278,7 @@ module.exports = {
       cancel: 'Cancelar',
     },
     programTreeType: {
-      title: 'Configuración del árbol de portafolio',
+      title: 'Configurar vista del árbol de {name}',
       description1:
         'Permite definir la vista del árbol para adaptarlo a las características del programa formativo. Esta configuración se puede editar siemrpe que sea necesario.',
       note: 'NOTA:',
@@ -324,6 +324,7 @@ module.exports = {
     studentRequired: 'Campo necesario',
   },
   tree_page: {
+    configTreeView: 'Configurar vista del árbol',
     page_title: 'Arbol de portafolio',
     page_description:
       'En el arbol de Portafolio es posible This is your Portfolio Tree, you can edit, duplicate or create new elements for your program. You also can assign students at any level (all subjects under it will inherit this task).',

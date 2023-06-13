@@ -279,7 +279,7 @@ module.exports = {
       cancel: 'Cancel',
     },
     programTreeType: {
-      title: 'Portfolio tree schema',
+      title: 'Configure {name} tree view',
       description1:
         'Configure portfolio tree view in order to adapt it to your specific program characteristics. This setting can be changed whenever needed.',
       note: 'NOTE:',
@@ -321,6 +321,7 @@ module.exports = {
     studentRequired: 'Field required',
   },
   tree_page: {
+    configTreeView: 'Configure tree view',
     page_title: 'Academic Portofolio Tree',
     page_description:
       'This is the Portfolio Tree, it can be edited, duplicated or used to create new elements for your program. Students can also be assigned at any level (all subjects under it will inherit this task).',
