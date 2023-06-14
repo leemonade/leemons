@@ -80,8 +80,8 @@ const assignableRoles = [
     role: 'content-creator',
     options: {
       teacherDetailUrl: '/private/content-creator/detail/:id',
-      studentDetailUrl: '/private/content-creator/view/:id',
-      evaluationDetailUrl: '/private/content-creator/view/:id',
+      studentDetailUrl: '/private/content-creator/view/:id/:user',
+      evaluationDetailUrl: '/private/content-creator/view/:id/:user',
       dashboardUrl: '/private/content-creator/view/:id',
       creatable: true,
       createUrl: '/private/content-creator/new',

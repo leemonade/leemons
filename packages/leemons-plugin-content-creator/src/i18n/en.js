@@ -73,6 +73,8 @@ module.exports = {
     publishAndShare: 'Publish and share',
     publishAndAssign: 'Publish and assign',
     config: 'General configuration',
+    markRead: 'Mark as read',
+    nextActivity: 'Next activity',
   },
   contentCreatorAssign: {
     assign: 'Assign as task',
