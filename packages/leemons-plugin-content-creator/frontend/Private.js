@@ -20,6 +20,9 @@ export default function Private() {
       <Route path={`${path}/:id/assign`}>
         <DocumentAssign session={session} fallback={<LoadingOverlay visible />} />
       </Route>
+      <Route path={`${path}/view/:id/:user`}>
+        <DocumentView session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
       <Route path={`${path}/view/:id`}>
         <DocumentView session={session} fallback={<LoadingOverlay visible />} />
       </Route>

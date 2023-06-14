@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { keys, isEmpty } from 'lodash';
-import { Box } from '@bubbles-ui/components';
+import { Box, IconButton } from '@bubbles-ui/components';
 import {
   TextEditor,
   ColorTool,
@@ -14,6 +14,7 @@ import {
 } from '@bubbles-ui/editors';
 import { useTextEditor } from '@common/context';
 import { useEditorLabels } from '@common/hooks/useEditorLabels';
+import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
 import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
@@ -43,6 +44,7 @@ const ContentEditorInput = ({
   const editorLabels = useEditorLabels();
   const [schema, setSchema] = useState([]);
   const [isSchemaOpened, setIsSchemaOpened] = useState(openSchema);
+  const [fullWidth, setFullWidth] = useState(false);
 
   const { textEditorTools } = useTextEditor();
 
@@ -63,7 +65,7 @@ const ContentEditorInput = ({
   // ··································································
   // STYLES
   const { classes, cx } = ContentEditorInputStyles(
-    { editorStyles },
+    { editorStyles, fullWidth },
     { name: 'ContentEditorInput' }
   );
 
@@ -84,6 +86,11 @@ const ContentEditorInput = ({
         />
       )}
       <Box className={classes.textEditorContainer}>
+        <Box className={classes.widthButton}>
+          <IconButton onClick={() => setFullWidth((fw) => !fw)}>
+            {fullWidth ? <ShrinkIcon /> : <ExpandDiagonalIcon />}
+          </IconButton>
+        </Box>
         <TextEditor
           {...props}
           placeholder={placeholder}

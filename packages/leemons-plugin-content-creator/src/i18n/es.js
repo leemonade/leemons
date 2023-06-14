@@ -75,6 +75,8 @@ module.exports = {
     publishAndShare: 'Publicar y compartir',
     publishAndAssign: 'Publicar y asignar como tarea',
     config: 'Configuración general',
+    markRead: 'Marcar como leído',
+    nextActivity: 'Siguiente actividad',
   },
   contentCreatorAssign: {
     assign: 'Asignar como tarea',

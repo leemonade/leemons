@@ -218,7 +218,7 @@ function setButtonsf(setButtons) {
   };
 }
 
-function useUpdateTimestamps(mutateAsync, assignation) {
+export function useUpdateTimestamps(mutateAsync, assignation) {
   return React.useCallback(
     async (timestamps) => {
       if (timestamps && !assignation?.timestamps?.[timestamps]) {
@@ -226,7 +226,7 @@ function useUpdateTimestamps(mutateAsync, assignation) {
           const time = Date.now();
           await mutateAsync({
             instance: assignation?.instance?.id,
-            student: assignation.user,
+            student: assignation?.user,
             timestamps: {
               [timestamps]: time,
             },
