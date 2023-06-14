@@ -1,30 +1,55 @@
-import React, { useEffect, useMemo } from 'react';
+import ProgramTreeType from '@academic-portfolio/components/ProgramTreeType';
+import { TreeCycleDetail } from '@academic-portfolio/components/Tree/TreeCycleDetail';
+import { getCycleTreeTypeTranslation } from '@academic-portfolio/helpers/getCycleTreeTypeTranslation';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import {
   ActionButton,
   Box,
+  Button,
   Col,
   ContextContainer,
   Grid,
   PageContainer,
   Paper,
-  useTree,
   Tree,
   useResizeObserver,
+  useTree,
 } from '@bubbles-ui/components';
-import { useLayout } from '@layout/context';
-import { AddCircleIcon, DuplicateIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import {
+  AddCircleIcon,
+  DuplicateIcon,
+  PluginSettingsIcon,
+  RemoveIcon,
+} from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { SelectCenter } from '@users/components/SelectCenter';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useQuery, useStore } from '@common';
-import { cloneDeep, find, forEach, isArray, isNil, isUndefined, map, omitBy } from 'lodash';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components/SelectCenter';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { getCycleTreeTypeTranslation } from '@academic-portfolio/helpers/getCycleTreeTypeTranslation';
-import { TreeCycleDetail } from '@academic-portfolio/components/Tree/TreeCycleDetail';
+import { cloneDeep, find, forEach, isArray, isNil, isUndefined, map, omitBy } from 'lodash';
+import React, { useEffect, useMemo } from 'react';
 import SelectProgram from '../../components/Selectors/SelectProgram';
+import SelectSubjectsByTable from '../../components/Selectors/SelectSubjectsByTable';
+import { TreeClassDetail } from '../../components/Tree/TreeClassDetail';
+import { TreeCourseDetail } from '../../components/Tree/TreeCourseDetail';
+import { TreeGroupDetail } from '../../components/Tree/TreeGroupDetail';
+import { TreeKnowledgeDetail } from '../../components/Tree/TreeKnowledgeDetail';
+import { TreeNewSubjectDetail } from '../../components/Tree/TreeNewSubjectDetail';
+import { TreeProgramDetail } from '../../components/Tree/TreeProgramDetail';
+import { TreeSubjectTypeDetail } from '../../components/Tree/TreeSubjectTypeDetail';
+import getCourseName from '../../helpers/getCourseName';
+import { getSubjectsTranslation } from '../../helpers/getSubjectsTranslation';
+import { getTableActionsTranslation } from '../../helpers/getTableActionsTranslation';
+import { getTreeAddUsersComponentTranslation } from '../../helpers/getTreeAddUsersComponentTranslation';
+import { getTreeClassDetailTranslation } from '../../helpers/getTreeClassDetailTranslation';
+import { getTreeCourseDetailTranslation } from '../../helpers/getTreeCourseDetailTranslation';
+import { getTreeGroupDetailTranslation } from '../../helpers/getTreeGroupDetailTranslation';
+import { getTreeKnowledgeDetailTranslation } from '../../helpers/getTreeKnowledgeDetailTranslation';
+import { getTreeProgramDetailTranslation } from '../../helpers/getTreeProgramDetailTranslation';
+import { getTreeSubjectTypeDetailTranslation } from '../../helpers/getTreeSubjectTypeDetailTranslation';
 import {
   addStudentsToClassesUnderNodeTreeRequest,
   createClassRequest,
@@ -50,24 +75,6 @@ import {
   updateSubjectRequest,
   updateSubjectTypeRequest,
 } from '../../request';
-import { TreeProgramDetail } from '../../components/Tree/TreeProgramDetail';
-import { getTreeProgramDetailTranslation } from '../../helpers/getTreeProgramDetailTranslation';
-import { getTreeCourseDetailTranslation } from '../../helpers/getTreeCourseDetailTranslation';
-import { TreeCourseDetail } from '../../components/Tree/TreeCourseDetail';
-import { TreeGroupDetail } from '../../components/Tree/TreeGroupDetail';
-import { getTreeGroupDetailTranslation } from '../../helpers/getTreeGroupDetailTranslation';
-import { TreeSubjectTypeDetail } from '../../components/Tree/TreeSubjectTypeDetail';
-import { getTreeSubjectTypeDetailTranslation } from '../../helpers/getTreeSubjectTypeDetailTranslation';
-import { getTreeKnowledgeDetailTranslation } from '../../helpers/getTreeKnowledgeDetailTranslation';
-import { TreeKnowledgeDetail } from '../../components/Tree/TreeKnowledgeDetail';
-import { TreeClassDetail } from '../../components/Tree/TreeClassDetail';
-import { getTreeClassDetailTranslation } from '../../helpers/getTreeClassDetailTranslation';
-import SelectSubjectsByTable from '../../components/Selectors/SelectSubjectsByTable';
-import { getSubjectsTranslation } from '../../helpers/getSubjectsTranslation';
-import { getTableActionsTranslation } from '../../helpers/getTableActionsTranslation';
-import { TreeNewSubjectDetail } from '../../components/Tree/TreeNewSubjectDetail';
-import { getTreeAddUsersComponentTranslation } from '../../helpers/getTreeAddUsersComponentTranslation';
-import getCourseName from '../../helpers/getCourseName';
 
 export default function TreePage() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
@@ -83,7 +90,7 @@ export default function TreePage() {
   const [containerRef, container] = useResizeObserver();
   const [headerBaseRef, headerBase] = useResizeObserver();
   const [headerDescriptionRef, headerDescription] = useResizeObserver();
-  
+
   const params = useQuery();
 
   function onScroll() {
@@ -101,7 +108,7 @@ export default function TreePage() {
   }, [layoutState.contentRef.current]);
 
   useEffect(() => {
-    if(store.tree) {
+    if (store.tree) {
       treeProps.setTreeData(store.tree);
     }
   }, [store.tree]);
@@ -126,6 +133,7 @@ export default function TreePage() {
   async function onEdit(item) {
     store.newItem = null;
     store.duplicateItem = null;
+    store.showTreeType = null;
     store.editingItem = item;
     render();
   }
@@ -133,6 +141,7 @@ export default function TreePage() {
   async function onDuplicate(item) {
     store.newItem = null;
     store.editingItem = null;
+    store.showTreeType = null;
     store.duplicateItem = item;
     render();
   }
@@ -163,6 +172,7 @@ export default function TreePage() {
   async function onNew(item) {
     store.editingItem = null;
     store.duplicateItem = null;
+    store.showTreeType = null;
     store.newItem = item;
     render();
   }
@@ -170,6 +180,7 @@ export default function TreePage() {
   async function onNewSubject(item) {
     store.editingItem = null;
     store.duplicateItem = null;
+    store.showTreeType = null;
     store.newItem = { ...item, nodeType: 'subject' };
     render();
   }
@@ -205,9 +216,10 @@ export default function TreePage() {
           const course = find(parents, { nodeType: 'courses' });
           const groups = find(parents, { nodeType: 'groups' });
           const courseName = course ? course.value.index : '';
-          const substageName = item.value.substages && item.value.substages.abbreviation
-            ? ` - ${item.value.substages.abbreviation}`
-            : '';
+          const substageName =
+            item.value.substages && item.value.substages.abbreviation
+              ? ` - ${item.value.substages.abbreviation}`
+              : '';
           let groupName = '';
           if (!groups) {
             groupName =
@@ -368,12 +380,12 @@ export default function TreePage() {
     if (!(!!params?.program && store.firstLoading)) {
       store.programId = programId;
       store.editingItem = null;
+      store.showTreeType = null;
       store.tree = await getProgramTree();
       render();
       setTimeout(() => {
         treeProps.setOpenAll(true);
       }, 100);
-      
     }
   }
 
@@ -572,6 +584,7 @@ export default function TreePage() {
           await removeSubjectRequest(id);
           store.editingItem = null;
           store.duplicateItem = null;
+          store.showTreeType = null;
           store.newItem = null;
           store.tree = await getProgramTree();
           setAgainActiveTree();
@@ -599,6 +612,7 @@ export default function TreePage() {
           await removeClassRequest(id);
           store.editingItem = null;
           store.duplicateItem = null;
+          store.showTreeType = null;
           store.newItem = null;
           store.tree = await getProgramTree();
           setAgainActiveTree();
@@ -698,6 +712,7 @@ export default function TreePage() {
         data.id = id;
         store.editingItem = { ...store.newItem };
         store.newItem = null;
+        store.showTreeType = null;
         alert = ts('classCreated');
       }
       store.tree = await getProgramTree();
@@ -919,6 +934,23 @@ export default function TreePage() {
     });
   }
 
+  async function onProgramTreeTypeChange(event) {
+    try {
+      await updateProgramRequest({
+        id: store.program.id,
+        treeType: event,
+      });
+      store.tree = await getProgramTree();
+      render();
+      setTimeout(() => {
+        treeProps.setOpenAll(true);
+      }, 100);
+      render();
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+  }
+
   let { scroll } = store;
   if (scroll > headerBase.height) scroll = headerBase.height;
   const correct = 48;
@@ -955,25 +987,47 @@ export default function TreePage() {
                   >
                     <Paper fullWidth fullHeight padding={5}>
                       <ContextContainer divided>
-                        <Grid grow>
-                          <Col span={6}>
-                            <SelectCenter
-                              firstSelected
-                              label={t('centerLabel')}
-                              onChange={onSelectCenter}
-                              value={store.centerId}
-                            />
-                          </Col>
-                          <Col span={6}>
-                            <SelectProgram
-                              firstSelected
-                              label={t('programLabel')}
-                              onChange={onSelectProgram}
-                              center={store.centerId}
-                              value={store.programId}
-                            />
-                          </Col>
-                        </Grid>
+                        <Box>
+                          <Grid grow>
+                            <Col span={6}>
+                              <SelectCenter
+                                firstSelected
+                                label={t('centerLabel')}
+                                onChange={onSelectCenter}
+                                value={store.centerId}
+                              />
+                            </Col>
+                            <Col span={6}>
+                              <SelectProgram
+                                firstSelected
+                                label={t('programLabel')}
+                                onChange={onSelectProgram}
+                                center={store.centerId}
+                                value={store.programId}
+                              />
+                            </Col>
+                          </Grid>
+                          <Box
+                            sx={(theme) => ({
+                              marginBottom: -theme.spacing[3],
+                              marginTop: theme.spacing[4],
+                            })}
+                          >
+                            <Button
+                              onClick={() => {
+                                store.editingItem = null;
+                                store.newItem = null;
+                                store.duplicateItem = null;
+                                store.showTreeType = true;
+                                render();
+                              }}
+                              leftIcon={<PluginSettingsIcon />}
+                              variant="link"
+                            >
+                              {t('configTreeView')}
+                            </Button>
+                          </Box>
+                        </Box>
                         {store.tree ? (
                           <Box
                             sx={(theme) => ({
@@ -1010,7 +1064,7 @@ export default function TreePage() {
               </Col>
               {/* CONTENT ----------------------------------------- */}
               <Col span={7}>
-                {store.editingItem ? (
+                {store.showTreeType ? (
                   <Paper style={{ position: 'relative' }} fullWidth padding={5}>
                     <Box
                       sx={(theme) => ({
@@ -1022,257 +1076,316 @@ export default function TreePage() {
                       <ActionButton
                         icon={<RemoveIcon />}
                         onClick={() => {
-                          store.editingItem = null;
+                          store.showTreeType = null;
                           render();
                         }}
                       />
                     </Box>
-                    {store.editingItem.nodeType === 'program' ? (
-                      <TreeProgramDetail
-                        onSave={onSaveProgram}
-                        program={store.editingItem.value}
-                        center={store.centerId}
-                        item={store.editingItem}
-                        messages={messages.treeProgram}
-                        messagesAddUsers={messages.addUsers}
-                        saving={store.saving}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.editingItem.nodeType === 'cycles' ? (
-                      <TreeCycleDetail
-                        onSave={onSaveCycle}
-                        item={store.editingItem}
-                        messages={messages.treeCycle}
-                        messagesAddUsers={messages.addUsers}
-                        saving={store.saving}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.editingItem.nodeType === 'courses' ? (
-                      <TreeCourseDetail
-                        onSave={onSaveCourse}
-                        course={store.editingItem.value}
-                        center={store.centerId}
-                        item={store.editingItem}
-                        messages={messages.treeCourse}
-                        messagesAddUsers={messages.addUsers}
-                        saving={store.saving}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.editingItem.nodeType === 'groups' ? (
-                      <TreeGroupDetail
-                        onSave={onSaveGroup}
-                        program={store.program}
-                        group={store.editingItem.value}
-                        center={store.centerId}
-                        item={store.editingItem}
-                        messages={messages.treeGroup}
-                        messagesAddUsers={messages.addUsers}
-                        saving={store.saving}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.editingItem.nodeType === 'subjectType' ? (
-                      <TreeSubjectTypeDetail
-                        onSave={onSaveSubjectType}
-                        subjectType={store.editingItem.value}
-                        center={store.centerId}
-                        item={store.editingItem}
-                        messages={messages.treeSubjectType}
-                        messagesAddUsers={messages.addUsers}
-                        saving={store.saving}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.editingItem.nodeType === 'knowledges' ? (
-                      <TreeKnowledgeDetail
-                        onSave={onSaveKnowledge}
-                        program={store.program}
-                        center={store.centerId}
-                        knowledge={store.editingItem.value}
-                        item={store.editingItem}
-                        messages={messages.treeKnowledge}
-                        messagesAddUsers={messages.addUsers}
-                        saving={store.saving}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.editingItem.nodeType === 'class' ? (
-                      <TreeClassDetail
-                        onNew={onNew}
-                        onSaveSubject={onSaveSubject}
-                        onSaveClass={onSaveClass}
-                        selectClass={selectClass}
-                        onRemoveClass={removeClass}
-                        addClassUsers={addClassUsers}
-                        removeUserFromClass={removeUserFromClass}
-                        removeSubject={removeSubject}
-                        removing={store.removing}
-                        program={store.program}
-                        center={store.centerId}
-                        messagesAddUsers={messages.addUsers}
-                        classe={store.editingItem.value}
-                        item={store.editingItem}
-                        classes={store.classesBySubject[store.editingItem.value.subject?.id]}
-                        messages={messages.treeClass}
-                        saving={store.saving}
-                        teacherSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
+                    <ProgramTreeType program={store.program} onChange={onProgramTreeTypeChange} />
                   </Paper>
-                ) : null}
-                {store.newItem ? (
-                  <Paper style={{ position: 'relative' }} fullWidth padding={5}>
-                    <Box
-                      sx={(theme) => ({
-                        position: 'absolute',
-                        right: theme.spacing[3],
-                        top: theme.spacing[3],
-                      })}
-                    >
-                      <ActionButton
-                        icon={<RemoveIcon />}
-                        onClick={() => {
-                          store.newItem = null;
-                          render();
-                        }}
-                      />
-                    </Box>
-                    {store.newItem.nodeType === 'groups' ? (
-                      <TreeGroupDetail
-                        onSave={onNewGroup}
-                        program={store.program}
-                        item={store.newItem}
-                        messages={messages.treeGroup}
-                        saving={store.saving}
-                        messagesAddUsers={messages.addUsers}
-                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.newItem.nodeType === 'subjectType' ? (
-                      <TreeSubjectTypeDetail
-                        onSave={onNewSubjectType}
-                        item={store.newItem}
-                        messagesAddUsers={messages.addUsers}
-                        messages={messages.treeSubjectType}
-                        saving={store.saving}
-                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.newItem.nodeType === 'knowledges' ? (
-                      <TreeKnowledgeDetail
-                        onSave={onNewKnowledge}
-                        program={store.program}
-                        item={store.newItem}
-                        messagesAddUsers={messages.addUsers}
-                        messages={messages.treeKnowledge}
-                        saving={store.saving}
-                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
-                    ) : null}
-                    {store.newItem.nodeType === 'subject' ? (
-                      <TreeNewSubjectDetail
-                        onSave={onNewSubjectSave}
-                        item={store.newItem}
-                        program={store.program}
-                        messagesAddUsers={messages.addUsers}
-                        messages={{
-                          subjects: messages.subjects,
-                          tableLabels: messages.tableLabels,
-                        }}
-                        saving={store.saving}
-                        selectUserAgent={
-                          <SelectUserAgent
-                            profiles={store.profiles.teacher}
-                            centers={store.centerId}
+                ) : (
+                  <>
+                    {store.editingItem ? (
+                      <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                        <Box
+                          sx={(theme) => ({
+                            position: 'absolute',
+                            right: theme.spacing[3],
+                            top: theme.spacing[3],
+                          })}
+                        >
+                          <ActionButton
+                            icon={<RemoveIcon />}
+                            onClick={() => {
+                              store.editingItem = null;
+                              render();
+                            }}
                           />
-                        }
-                        managersSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
+                        </Box>
+                        {store.editingItem.nodeType === 'program' ? (
+                          <TreeProgramDetail
+                            onSave={onSaveProgram}
+                            program={store.editingItem.value}
+                            center={store.centerId}
+                            item={store.editingItem}
+                            messages={messages.treeProgram}
+                            messagesAddUsers={messages.addUsers}
+                            saving={store.saving}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.editingItem.nodeType === 'cycles' ? (
+                          <TreeCycleDetail
+                            onSave={onSaveCycle}
+                            item={store.editingItem}
+                            messages={messages.treeCycle}
+                            messagesAddUsers={messages.addUsers}
+                            saving={store.saving}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.editingItem.nodeType === 'courses' ? (
+                          <TreeCourseDetail
+                            onSave={onSaveCourse}
+                            course={store.editingItem.value}
+                            center={store.centerId}
+                            item={store.editingItem}
+                            messages={messages.treeCourse}
+                            messagesAddUsers={messages.addUsers}
+                            saving={store.saving}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.editingItem.nodeType === 'groups' ? (
+                          <TreeGroupDetail
+                            onSave={onSaveGroup}
+                            program={store.program}
+                            group={store.editingItem.value}
+                            center={store.centerId}
+                            item={store.editingItem}
+                            messages={messages.treeGroup}
+                            messagesAddUsers={messages.addUsers}
+                            saving={store.saving}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.editingItem.nodeType === 'subjectType' ? (
+                          <TreeSubjectTypeDetail
+                            onSave={onSaveSubjectType}
+                            subjectType={store.editingItem.value}
+                            center={store.centerId}
+                            item={store.editingItem}
+                            messages={messages.treeSubjectType}
+                            messagesAddUsers={messages.addUsers}
+                            saving={store.saving}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.editingItem.nodeType === 'knowledges' ? (
+                          <TreeKnowledgeDetail
+                            onSave={onSaveKnowledge}
+                            program={store.program}
+                            center={store.centerId}
+                            knowledge={store.editingItem.value}
+                            item={store.editingItem}
+                            messages={messages.treeKnowledge}
+                            messagesAddUsers={messages.addUsers}
+                            saving={store.saving}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.editingItem.nodeType === 'class' ? (
+                          <TreeClassDetail
+                            onNew={onNew}
+                            onSaveSubject={onSaveSubject}
+                            onSaveClass={onSaveClass}
+                            selectClass={selectClass}
+                            onRemoveClass={removeClass}
+                            addClassUsers={addClassUsers}
+                            removeUserFromClass={removeUserFromClass}
+                            removeSubject={removeSubject}
+                            removing={store.removing}
+                            program={store.program}
+                            center={store.centerId}
+                            messagesAddUsers={messages.addUsers}
+                            classe={store.editingItem.value}
+                            item={store.editingItem}
+                            classes={store.classesBySubject[store.editingItem.value.subject?.id]}
+                            messages={messages.treeClass}
+                            saving={store.saving}
+                            teacherSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                      </Paper>
                     ) : null}
-                    {store.newItem.nodeType === 'class' ? (
-                      <TreeClassDetail
-                        onNew={onNew}
-                        onSaveSubject={onSaveSubject}
-                        onSaveClass={onSaveClass}
-                        onRemoveClass={removeClass}
-                        selectClass={selectClass}
-                        messagesAddUsers={messages.addUsers}
-                        item={store.newItem}
-                        program={store.program}
-                        removeSubject={removeSubject}
-                        removing={store.removing}
-                        classe={store.newItem.value}
-                        classes={store.classesBySubject[store.newItem.value.subject?.id]}
-                        messages={messages.treeClass}
-                        saving={store.saving}
-                        createMode={true}
-                        teacherSelect={
-                          <SelectAgent profiles={store.profiles.teacher} centers={store.centerId} />
-                        }
-                      />
+                    {store.newItem ? (
+                      <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                        <Box
+                          sx={(theme) => ({
+                            position: 'absolute',
+                            right: theme.spacing[3],
+                            top: theme.spacing[3],
+                          })}
+                        >
+                          <ActionButton
+                            icon={<RemoveIcon />}
+                            onClick={() => {
+                              store.newItem = null;
+                              render();
+                            }}
+                          />
+                        </Box>
+                        {store.newItem.nodeType === 'groups' ? (
+                          <TreeGroupDetail
+                            onSave={onNewGroup}
+                            program={store.program}
+                            item={store.newItem}
+                            messages={messages.treeGroup}
+                            saving={store.saving}
+                            messagesAddUsers={messages.addUsers}
+                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.newItem.nodeType === 'subjectType' ? (
+                          <TreeSubjectTypeDetail
+                            onSave={onNewSubjectType}
+                            item={store.newItem}
+                            messagesAddUsers={messages.addUsers}
+                            messages={messages.treeSubjectType}
+                            saving={store.saving}
+                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.newItem.nodeType === 'knowledges' ? (
+                          <TreeKnowledgeDetail
+                            onSave={onNewKnowledge}
+                            program={store.program}
+                            item={store.newItem}
+                            messagesAddUsers={messages.addUsers}
+                            messages={messages.treeKnowledge}
+                            saving={store.saving}
+                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.newItem.nodeType === 'subject' ? (
+                          <TreeNewSubjectDetail
+                            onSave={onNewSubjectSave}
+                            item={store.newItem}
+                            program={store.program}
+                            messagesAddUsers={messages.addUsers}
+                            messages={{
+                              subjects: messages.subjects,
+                              tableLabels: messages.tableLabels,
+                            }}
+                            saving={store.saving}
+                            selectUserAgent={
+                              <SelectUserAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                            managersSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                        {store.newItem.nodeType === 'class' ? (
+                          <TreeClassDetail
+                            onNew={onNew}
+                            onSaveSubject={onSaveSubject}
+                            onSaveClass={onSaveClass}
+                            onRemoveClass={removeClass}
+                            selectClass={selectClass}
+                            messagesAddUsers={messages.addUsers}
+                            item={store.newItem}
+                            program={store.program}
+                            removeSubject={removeSubject}
+                            removing={store.removing}
+                            classe={store.newItem.value}
+                            classes={store.classesBySubject[store.newItem.value.subject?.id]}
+                            messages={messages.treeClass}
+                            saving={store.saving}
+                            createMode={true}
+                            teacherSelect={
+                              <SelectAgent
+                                profiles={store.profiles.teacher}
+                                centers={store.centerId}
+                              />
+                            }
+                          />
+                        ) : null}
+                      </Paper>
                     ) : null}
-                  </Paper>
-                ) : null}
-                {store.duplicateItem ? (
-                  <Paper style={{ position: 'relative' }} fullWidth padding={5}>
-                    <Box
-                      sx={(theme) => ({
-                        position: 'absolute',
-                        right: theme.spacing[3],
-                        top: theme.spacing[3],
-                      })}
-                    >
-                      <ActionButton
-                        icon={<RemoveIcon />}
-                        onClick={() => {
-                          store.duplicateItem = null;
-                          render();
-                        }}
-                      />
-                    </Box>
-                    {store.duplicateItem.nodeType === 'groups' ? (
-                      <TreeGroupDetail
-                        onSave={onDuplicateGroup}
-                        group={store.duplicateItem.value}
-                        item={store.duplicateItem}
-                        program={store.program}
-                        messages={messages.treeGroup}
-                        saving={store.saving}
-                        duplicateMode={true}
-                        messagesAddUsers={messages.addUsers}
-                        selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
-                      />
+                    {store.duplicateItem ? (
+                      <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                        <Box
+                          sx={(theme) => ({
+                            position: 'absolute',
+                            right: theme.spacing[3],
+                            top: theme.spacing[3],
+                          })}
+                        >
+                          <ActionButton
+                            icon={<RemoveIcon />}
+                            onClick={() => {
+                              store.duplicateItem = null;
+                              render();
+                            }}
+                          />
+                        </Box>
+                        {store.duplicateItem.nodeType === 'groups' ? (
+                          <TreeGroupDetail
+                            onSave={onDuplicateGroup}
+                            group={store.duplicateItem.value}
+                            item={store.duplicateItem}
+                            program={store.program}
+                            messages={messages.treeGroup}
+                            saving={store.saving}
+                            duplicateMode={true}
+                            messagesAddUsers={messages.addUsers}
+                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                          />
+                        ) : null}
+                      </Paper>
                     ) : null}
-                  </Paper>
-                ) : null}
+                  </>
+                )}
               </Col>
             </Grid>
           </ContextContainer>

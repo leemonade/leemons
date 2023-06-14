@@ -49,13 +49,12 @@ class LeemonsApi {
         window.requestAnimationFrame(check);
       });
     this.removeWhenNoWaits = (waitKey) => {
-      const times = 0;
+      let times = 0;
       const check = () => {
-        if (this.apiWaitToFinish[waitKey].finish) {
-          if (!this.apiWaitToFinish[waitKey].waiting) {
-            delete this.apiWaitToFinish[waitKey];
-          }
+        if (this.apiWaitToFinish[waitKey].finish && !this.apiWaitToFinish[waitKey].waiting) {
+          delete this.apiWaitToFinish[waitKey];
         } else if (times < 60) {
+          times++;
           window.requestAnimationFrame(check);
         } else {
           delete this.apiWaitToFinish[waitKey];
@@ -161,8 +160,8 @@ class LeemonsApi {
       ctx.middlewares[i] = true;
       const next = middlewares[i + 1]
         ? () => this.#callMiddleware(middlewares, i + 1, ctx)
-        : () => { };
-      const middleware = middlewares[i] ? middlewares[i] : () => { };
+        : () => {};
+      const middleware = middlewares[i] ? middlewares[i] : () => {};
       await middleware(ctx, next);
       await next();
     }

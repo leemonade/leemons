@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import {
+  ActionButton,
   Box,
+  Button,
   ColorInput,
   ContextContainer,
   MultiSelect,
@@ -10,6 +12,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { AddIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { useLocale, useStore } from '@common';
 import { ScheduleInput } from '@timetable/components';
 import _, {
@@ -28,6 +31,7 @@ import { forEachRight } from 'lodash/collection';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { SubjectsDrawer } from './SubjectsDrawer';
 
 function getGroups({ program, selectGroups, subject }) {
   const classes = filter(program.classes, (cl) => cl.subject.id === subject);
@@ -236,6 +240,7 @@ function SubjectsTable({
 
   columns.push({
     Header: messages.subject,
+    showOnTable: true,
     accessor: 'subject',
     input: {
       node: (
@@ -252,12 +257,32 @@ function SubjectsTable({
       ),
       rules: { required: messages.subjectRequired },
     },
-    valueRender: (value) => <>{value?.name}</>,
+    valueRender: (value, formValues) => (
+      <Box style={{ display: 'flex', gap: '3px' }}>
+        <Box
+          sx={(theme) => ({ marginRight: theme.spacing[2] })}
+          style={{
+            background: formValues.color,
+            width: '18px',
+            height: '18px',
+            borderRadius: '50%',
+          }}
+        />
+        <Box>{value?.name}</Box>{' '}
+        {formValues.courses || formValues.internalId ? (
+          <>
+            - {formValues.courses && !_.isArray(formValues.courses) ? formValues.courses.index : ''}
+            {formValues.internalId ? formValues.internalId : ''}
+          </>
+        ) : null}
+      </Box>
+    ),
   });
 
   if (program.maxNumberOfCourses > 1) {
     columns.push({
       Header: messages.course,
+      showOnTable: true,
       accessor: 'courses',
       input: {
         node: (
@@ -326,6 +351,7 @@ function SubjectsTable({
   columns.push({
     Header: messages.subjectType,
     accessor: 'subjectType',
+    showOnTable: true,
     input: {
       node: (
         <EnableIfFormPropHasValue>
@@ -375,6 +401,7 @@ function SubjectsTable({
   if (!program.useOneStudentGroup) {
     columns.push({
       Header: messages.group,
+      showOnTable: true,
       accessor: 'groups',
       input: {
         rules: {
@@ -403,13 +430,19 @@ function SubjectsTable({
           />
         ),
       },
-      valueRender: (value) => <>{value?.name}</>,
+      valueRender: (value, formValues) => (
+        <>
+          {value?.name}
+          {formValues.seats ? `(${formValues.seats} ${messages.seats})` : null}
+        </>
+      ),
     });
   }
 
   if (program.haveSubstagesPerCourse) {
     columns.push({
       Header: messages.substage,
+      showOnTable: true,
       accessor: 'substages',
       input: {
         node: (
@@ -444,6 +477,7 @@ function SubjectsTable({
   columns.push({
     Header: messages.teacher,
     accessor: 'teacher',
+    showOnTable: true,
     input: {
       node: <EnableIfFormPropHasValue>{teacherSelect}</EnableIfFormPropHasValue>,
     },
@@ -451,7 +485,7 @@ function SubjectsTable({
       <EnableIfFormPropHasValue value={value}>
         {React.cloneElement(teacherSelect, {
           readOnly: true,
-          disabled: true,
+          disabled: false,
         })}
       </EnableIfFormPropHasValue>
     ),
@@ -469,6 +503,8 @@ function SubjectsTable({
   });
 
   async function _onAdd({ tableInputRowId, ...formData }) {
+    store.subjectSaving = true;
+    render();
     const tempSubjectsValues = map(store.tempSubjects, 'value');
     const tempGroupsValues = map(store.tempGroups, 'value');
     const isNewSubject = tempSubjectsValues.indexOf(formData.subject) >= 0;
@@ -479,9 +515,14 @@ function SubjectsTable({
       store.tempGroups = [];
       render();
     }
+    store.selectedSubject = null;
+    store.subjectSaving = false;
+    render();
   }
 
   async function _onUpdate({ oldItem, newItem }) {
+    store.subjectSaving = true;
+    render();
     const tempSubjectsValues = map(store.tempSubjects, 'value');
     const tempGroupsValues = map(store.tempGroups, 'value');
     const subject = isObject(newItem.subject) ? newItem.subject.id : newItem.subject;
@@ -513,6 +554,18 @@ function SubjectsTable({
     );
     store.tempSubjects = [];
     store.tempGroups = [];
+    store.selectedSubject = null;
+    store.subjectSaving = false;
+    render();
+  }
+
+  function newSubject() {
+    store.selectedSubject = {};
+    render();
+  }
+
+  function edit(data) {
+    store.selectedSubject = data;
     render();
   }
 
@@ -520,13 +573,31 @@ function SubjectsTable({
     <ContextContainer direction="column" fullWidth>
       <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
       <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
-        <Box style={{ width: '2000px' }}>
+        <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+          <Button onClick={newSubject} variant="link" leftIcon={<AddIcon />}>
+            {messages.addSubject}
+          </Button>
+        </Box>
+        <Box>
           <TableInput
             data={program.classes}
             onAdd={_onAdd}
             onUpdate={_onUpdate}
             form={form}
-            columns={columns}
+            columns={[
+              ..._.filter(columns, { showOnTable: true }),
+              {
+                Header: '',
+                accessor: 'actions',
+                valueRender: (value, formValues) => (
+                  <Box>
+                    <ActionButton onClick={() => edit(formValues)} icon={<EditIcon />} />
+                  </Box>
+                ),
+              },
+            ]}
+            showHeaders={true}
+            disabled={true}
             editable
             sortable={false}
             removable={false}
@@ -535,6 +606,23 @@ function SubjectsTable({
           />
         </Box>
       </Box>
+      <SubjectsDrawer
+        opened={!!store.selectedSubject}
+        value={store.selectedSubject}
+        onSave={(data) => {
+          if (store.selectedSubject.id) {
+            _onUpdate({ oldItem: store.selectedSubject, newItem: data });
+          } else {
+            _onAdd(data);
+          }
+        }}
+        saving={store.subjectSaving}
+        columns={columns}
+        onClose={() => {
+          store.selectedSubject = null;
+          render();
+        }}
+      />
     </ContextContainer>
   );
 }
