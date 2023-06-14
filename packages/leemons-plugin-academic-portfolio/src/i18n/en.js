@@ -131,6 +131,8 @@ module.exports = {
           substagesFrequency: 'Select frequency',
         },
         errorMessages: {
+          abbrevationOnlyNumbers: 'Only numbers allowed',
+          maximunSubstageAbbreviation: 'Maximum {n} characters',
           useDefaultSubstagesName: {
             required: 'Required field',
           },
