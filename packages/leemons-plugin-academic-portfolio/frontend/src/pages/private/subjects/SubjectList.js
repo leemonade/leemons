@@ -1,13 +1,6 @@
 /* eslint-disable no-param-reassign */
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import {
-  Box,
-  Button,
-  ContextContainer,
-  PageContainer,
-  Paper,
-  Select,
-} from '@bubbles-ui/components';
+import { Box, ContextContainer, PageContainer, Paper, Select } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useStore } from '@common/useStore';
@@ -317,12 +310,6 @@ export default function SubjectList() {
     return null;
   }
 
-  async function goTree() {
-    await history.push(
-      `/private/academic-portfolio/tree?center=${store.center}&program=${store.program.id}`
-    );
-  }
-
   return (
     <ContextContainer fullHeight>
       <AdminPageHeader values={messages.header} />
@@ -393,11 +380,6 @@ export default function SubjectList() {
                 </Paper>
               ) : null}
             </ContextContainer>
-            {store.program ? (
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <Button onClick={goTree}>{t('goTree')}</Button>
-              </Box>
-            ) : null}
           </Box>
         </PageContainer>
       </Paper>

@@ -207,7 +207,7 @@ module.exports = {
   subject_page: {
     page_title: 'Subjects configuration',
     page_description:
-      'Configure knowledge areas/topics and type (core, electives…), then it is possible to upload the subject database or add them manually. After this, it will be possible to create your tree portfolio schema.',
+      'Define first the types of subjects (core, elective...) and the areas of knowledge (if applicable to your program).',
     centerLabel: 'Center',
     centerPlaceholder: 'Select a center',
     programLabel: 'Program',
@@ -243,6 +243,7 @@ module.exports = {
       groupVisibilityLabel: 'Avoid nested groups',
     },
     subjects: {
+      addSubject: 'Add subject',
       newTitle: 'New subject',
       title: 'Subjects',
       course: 'Course/s',
@@ -551,5 +552,10 @@ module.exports = {
   },
   classStudents: {
     label: 'Students',
+  },
+  subjectsDrawer: {
+    add: 'Add subject',
+    edit: 'Edit subject',
+    save: 'Save subject',
   },
 };

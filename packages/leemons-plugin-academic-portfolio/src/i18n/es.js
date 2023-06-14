@@ -206,7 +206,7 @@ module.exports = {
   subject_page: {
     page_title: 'Configuración de asignaturas',
     page_description:
-      'Es necesario configurar las áreas de conocimiento y tipo de asignatura (troncal, optativa…), para cargar (manualmente o en bloque) las asignaturas y definir el arbol de portafolio.',
+      'Define primero los tipos de asignaturas (troncal, optativa...) y las áreas de conocimiento (si aplican a tu programa).',
     centerLabel: 'Centro formativo',
     centerPlaceholder: 'Seleccionar centro',
     programLabel: 'Programa',
@@ -242,6 +242,7 @@ module.exports = {
       groupVisibilityLabel: 'No mostrar grupos',
     },
     subjects: {
+      addSubject: 'Añadir asignatura',
       newTitle: 'Nueva asignatura',
       title: 'Asignaturas',
       course: 'Curso/s',
@@ -552,5 +553,10 @@ module.exports = {
   },
   classStudents: {
     label: 'Estudiantes',
+  },
+  subjectsDrawer: {
+    add: 'Añadir asignatura',
+    edit: 'Editar asignatura',
+    save: 'Guardar asignatura',
   },
 };
