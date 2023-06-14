@@ -1,5 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from 'lodash';
+import { ProgramItem } from '@academic-portfolio/components';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import {
+  createProgramRequest,
+  listProgramsRequest,
+  updateProgramRequest,
+} from '@academic-portfolio/request';
 import {
   Alert,
   Anchor,
@@ -19,25 +24,20 @@ import {
   AcademicProgramSetupSubjects,
   AdminPageHeader,
 } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { LayoutContext } from '@layout/context/layout';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import {
-  createProgramRequest,
-  listProgramsRequest,
-  updateProgramRequest,
-} from '@academic-portfolio/request';
-import { ProgramItem } from '@academic-portfolio/components';
 import { unflatten, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
 import { listGradesRequest } from '@grades/request';
-import { Link, useHistory } from 'react-router-dom';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { LayoutContext } from '@layout/context/layout';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { detailProgramRequest } from '../../../request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from 'lodash';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
+import { detailProgramRequest } from '../../../request';
 
 export default function ProgramList() {
   const [t, translations, , loading] = useTranslateLoader(prefixPN('programs_page'));
