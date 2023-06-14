@@ -132,6 +132,9 @@ const addGradeScaleSchema = {
       type: 'number',
       minimum: 0,
     },
+    order: {
+      type: 'number',
+    },
     description: stringSchema,
     grade: stringSchema,
   },
@@ -164,6 +167,9 @@ const updateGradeScaleSchema = {
     number: {
       type: 'number',
       minimum: 0,
+    },
+    order: {
+      type: 'number',
     },
     description: stringSchema,
   },

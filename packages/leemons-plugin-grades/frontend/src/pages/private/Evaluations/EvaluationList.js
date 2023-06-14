@@ -151,10 +151,11 @@ export default function EvaluationList() {
         const newTagIds = map(e.tags, 'id');
         const newScaleIds = map(e.scales, 'id');
 
-        e.scales = map(e.scales, (scale) => {
+        e.scales = map(e.scales, (scale, index) => {
           const item = {
             description: scale.description,
             number: scale.number,
+            order: index,
           };
           if (scale.id) item.id = scale.id;
           if (scale.letter) item.letter = scale.letter;
