@@ -13,11 +13,15 @@ async function gradeByIds(ids, { transacting } = {}) {
   const gradeScalesByGrade = _.groupBy(gradeScales, 'grade');
   const gradeTagsByGrade = _.groupBy(gradeTags, 'grade');
 
-  return _.map(grades, (grade) => ({
-    ...grade,
-    scales: gradeScalesByGrade[grade.id] || [],
-    tags: gradeTagsByGrade[grade.id] || [],
-  }));
+  return _.map(grades, (grade) => {
+    let scales = gradeScalesByGrade[grade.id] || [];
+    scales = _.orderBy(scales, 'order', 'asc');
+    return {
+      ...grade,
+      scales,
+      tags: gradeTagsByGrade[grade.id] || [],
+    };
+  });
 }
 
 module.exports = { gradeByIds };

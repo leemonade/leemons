@@ -130,6 +130,8 @@ module.exports = {
           substagesFrequency: 'Seleccionar frecuencia',
         },
         errorMessages: {
+          abbrevationOnlyNumbers: 'Sólo se admiten números',
+          maximunSubstageAbbreviation: 'Maximo {n} caracteres',
           useDefaultSubstagesName: {
             required: 'Campo necesario',
           },

@@ -337,6 +337,9 @@ export default function ProgramList() {
                           <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                             <Anchor
                               component={Link}
+                              onClick={() =>
+                                history.push(`/private/grades/evaluations?center=${centerId}`)
+                              }
                               to={`/private/grades/evaluations?center=${centerId}`}
                             >
                               {t('errorNoEvaluationSystemsGoTo')}

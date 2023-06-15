@@ -1,9 +1,16 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function adminDashboard(config, { transacting } = {}) {
+async function adminDashboard(config, { userSession, transacting } = {}) {
+  const centers = await leemons
+    .getPlugin('users')
+    .services.users.getUserCenters(userSession.id, { transacting });
+  const programCenter = await table.programCenter.find(
+    { center_$in: _.map(centers, 'id') },
+    { transacting }
+  );
   const [programs, classStudents, classTeachers, classes, subjects, groups] = await Promise.all([
-    table.programs.find({}, { transacting }),
+    table.programs.find({ id_$in: _.map(programCenter, 'program') }, { transacting }),
     table.classStudent.find({}, { transacting }),
     table.classTeacher.find({}, { transacting }),
     table.class.find({}, { columns: ['id', 'program'], transacting }),

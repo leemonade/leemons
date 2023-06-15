@@ -23,6 +23,9 @@ module.exports = {
         collection: 'plugins_grades::grades',
       },
     },
+    order: {
+      type: 'integer',
+    },
   },
   primaryKey: {
     type: 'uuid',
