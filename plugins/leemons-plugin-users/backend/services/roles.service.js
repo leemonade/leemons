@@ -6,7 +6,7 @@
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
-const { add } = require('../core/roles');
+const { add, update } = require('../core/roles');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -23,6 +23,11 @@ module.exports = {
     add: {
       handler(ctx) {
         return add({ ...ctx.params, ctx });
+      },
+    },
+    update: {
+      handler(ctx) {
+        return update({ ...ctx.params, ctx });
       },
     },
   },

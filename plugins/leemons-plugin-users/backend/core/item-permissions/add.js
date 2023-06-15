@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { validateTypePrefix } = require('../../validations/exists');
 const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
-const { table } = require('../tables');
 const { validateExistItemPermissions } = require('../../validations/exists');
 const { validateItemPermission } = require('../../validations/item-permissions');
 const { existMany } = require('../permissions/existMany');
@@ -37,40 +36,38 @@ const { removeAllItemsCache } = require('./removeAllItemsCache');
  * });
  *
  * */
-async function add(item, type, data, { isCustomPermission, transacting } = {}) {
+async function add({ item, type, data, isCustomPermission, ctx }) {
   const _data = _.isArray(data) ? data : [data];
   _.forEach(_data, (d) => {
     validateItemPermission({ ...d, type, item });
   });
 
-  validateTypePrefix(type, this.calledFrom);
+  validateTypePrefix(type, ctx.callerPlugin);
 
   if (!isCustomPermission) {
-    if (!(await existMany(_.map(_data, 'permissionName'), { transacting }))) {
-      console.error('The specified permit does not exist', _data);
+    if (!(await existMany({ permissionNames: _.map(_data, 'permissionName'), ctx }))) {
       throw new Error('The specified permit does not exist');
     }
     if (
-      !(await manyPermissionsHasManyActions(
-        _.map(_data, ({ permissionName, actionNames }) => [permissionName, actionNames]),
-        { transacting }
-      ))
+      !(await manyPermissionsHasManyActions({
+        data: _.map(_data, ({ permissionName, actionNames }) => [permissionName, actionNames]),
+        ctx,
+      }))
     ) {
-      console.log(_data);
       throw new Error('Some of the actions do not exist for the specified permit');
     }
   }
 
   await Promise.all(
     _.map(_data, ({ actionNames, ...d }) =>
-      validateExistItemPermissions(
-        {
+      validateExistItemPermissions({
+        query: {
           ...d,
           actionName_$in: actionNames,
           item,
         },
-        { transacting }
-      )
+        ctx,
+      })
     )
   );
 
@@ -85,8 +82,8 @@ async function add(item, type, data, { isCustomPermission, transacting } = {}) {
       });
     });
   });
-  const response = await table.itemPermissions.createMany(toSave, { transacting });
-  await removeAllItemsCache();
+  const response = await ctx.tx.db.ItemPermissions.createMany(toSave);
+  await removeAllItemsCache({ ctx });
   return response;
 }
 

@@ -23,7 +23,11 @@ async function searchUsersWithRoleAndMarkAsReloadPermissions({ roleId, ctx }) {
 
   const userIds = _.uniq(_.map(userAgents, '_id').concat(_.map(groupUser, 'userAgent')));
 
-  return ctx.tx.db.UserAgent.updateMany({ _id: userIds }, { reloadPermissions: true });
+  return ctx.tx.db.UserAgent.updateMany(
+    { _id: userIds },
+    { reloadPermissions: true },
+    { new: true }
+  );
 }
 
 module.exports = { searchUsersWithRoleAndMarkAsReloadPermissions };

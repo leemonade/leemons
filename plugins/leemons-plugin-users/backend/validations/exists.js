@@ -1,23 +1,23 @@
 const { exist: existItemPermission } = require('../core/item-permissions/exist');
 const { exist: existPermission } = require('../core/permissions/exist');
 
-async function validateExistPermission(permissionName, { transacting } = {}) {
-  if (await existPermission(permissionName, { transacting }))
+async function validateExistPermission({ permissionName, ctx }) {
+  if (await existPermission({ permissionName, ctx }))
     throw new Error(`Permission '${permissionName}' already exists`);
 }
 
-async function validateNotExistPermission(permissionName, { transacting } = {}) {
-  if (!(await existPermission(permissionName, { transacting })))
+async function validateNotExistPermission({ permissionName, ctx }) {
+  if (!(await existPermission({ permissionName, ctx })))
     throw new Error(`Permission '${permissionName}' not exists`);
 }
 
-async function validateExistItemPermissions(data, { transacting } = {}) {
-  if (await existItemPermission(data, { transacting }))
+async function validateExistItemPermissions({ query, ctx }) {
+  if (await existItemPermission({ query, ctx }))
     throw new Error(`An item with these permissions already exists`);
 }
 
-async function validateNotExistItemPermissions(data, { transacting } = {}) {
-  if (!(await existItemPermission(data, { transacting })))
+async function validateNotExistItemPermissions({ query, ctx }) {
+  if (!(await existItemPermission({ query, ctx })))
     throw new Error(`There is no item with these permissions`);
 }
 

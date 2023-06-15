@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * ES:
  * Comprueba para los parametros especificados si exista ya o no algún registro
@@ -13,8 +11,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function exist(query, { transacting } = {}) {
-  const response = await table.itemPermissions.count(query, { transacting });
+async function exist({ query, ctx }) {
+  const response = await ctx.tx.db.ItemPermissions.countDocuments(query);
   return !!response;
 }
 

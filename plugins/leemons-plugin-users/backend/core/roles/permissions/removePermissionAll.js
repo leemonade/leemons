@@ -12,13 +12,15 @@ const {
  * @param {any} transacting - DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function removePermissionAll(roleId, { removeCustomPermissions, transacting } = {}) {
+async function removePermissionAll({ roleId, removeCustomPermissions, ctx }) {
   const query = { role: roleId };
   if (!removeCustomPermissions) {
-    query.isCustom_$ne = true;
+    query.isCustom = {
+      $ne: true,
+    };
   }
-  await searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting });
-  return table.rolePermission.deleteMany(query, { transacting });
+  await searchUsersWithRoleAndMarkAsReloadPermissions({ roleId, ctx });
+  return ctx.tx.db.RolePermission.deleteMany(query);
 }
 
 module.exports = { removePermissionAll };
