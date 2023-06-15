@@ -98,7 +98,7 @@ const EnableIfFormPropHasValue = forwardRef(
     function _onCreate(val) {
       const toSend = { ...formValues };
       set(toSend, props.name, val);
-      onCreate({ formValues, onCreateFieldName: props.name, value: val });
+      onCreate({ formValues, onCreateFieldName: props.name, value: val }, props);
     }
 
     return React.cloneElement(children, {
@@ -135,6 +135,16 @@ function SubjectsTable({
     tempSubjects: [],
     tempGroups: [],
   });
+
+  const groupErrorMessage = (
+    program.maxGroupAbbreviationIsOnlyNumbers ? messages.groupNumbers : messages.groupAny
+  ).replace('{max}', program.maxGroupAbbreviation);
+  const groupRegex = new RegExp(
+    `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+      program.maxGroupAbbreviation
+    }}|.{36})$`,
+    'g'
+  );
 
   const form = useForm();
 
@@ -214,7 +224,7 @@ function SubjectsTable({
     [program, store.tempSubjects, store.tempGroups]
   );
 
-  function onCreateSubject(event) {
+  function onCreateSubject(event, props) {
     store.tempSubjects = [
       ...store.tempSubjects,
       {
@@ -222,18 +232,26 @@ function SubjectsTable({
         value: event.value,
       },
     ];
+    props.form.clearErrors(props.name);
+    props.form.setValue(props.name, event.value);
     render();
   }
 
-  function onCreateGroup(event) {
-    store.tempGroups = [
-      ...store.tempGroups,
-      {
-        label: event.value,
-        value: event.value,
-      },
-    ];
-    render();
+  function onCreateGroup(event, props) {
+    if (groupRegex.test(event.value)) {
+      store.tempGroups = [
+        ...store.tempGroups,
+        {
+          label: event.value,
+          value: event.value,
+        },
+      ];
+      props.form.clearErrors(props.name);
+      props.form.setValue(props.name, event.value);
+      render();
+    } else {
+      props.form.setError(props.name, { message: groupErrorMessage });
+    }
   }
 
   const columns = [];
@@ -246,7 +264,8 @@ function SubjectsTable({
       node: (
         <EnableIfFormPropHasValue onCreate={onCreateSubject}>
           <Select
-            data={onlyNewSubject ? store.tempSubjects : selects.subjects}
+            // data={onlyNewSubject ? store.tempSubjects : selects.subjects}
+            data={selects.subjects.concat(store.tempSubjects)}
             required
             searchable
             creatable
@@ -406,20 +425,15 @@ function SubjectsTable({
       input: {
         rules: {
           pattern: {
-            message: (program.maxGroupAbbreviationIsOnlyNumbers
-              ? messages.groupNumbers
-              : messages.groupAny
-            ).replace('{max}', program.maxGroupAbbreviation),
-            value: new RegExp(
-              `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
-                program.maxGroupAbbreviation
-              }}|.{36})$`,
-              'g'
-            ),
+            message: groupErrorMessage,
+            value: groupRegex,
           },
           required: messages.groupRequired,
         },
-
+        onChange: (e, props) => {
+          props.form.clearErrors(props.field.name);
+          props.form.setValue(props.field.name, e);
+        },
         node: (
           <Group
             selectGroups={selects.groups}

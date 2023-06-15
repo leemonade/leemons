@@ -31,7 +31,7 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
 
   function getColumnInput(column) {
     if (column && column.input) {
-      const { node, rules, ...inputProps } = column.input;
+      const { node, rules, onChange, ...inputProps } = column.input;
       return (
         <Controller
           control={control}
@@ -46,6 +46,16 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
               formValues,
               error: errors[column.accessor],
               form,
+              onChange: (e) => {
+                if (_.isFunction(onChange)) {
+                  onChange(e, {
+                    form,
+                    field,
+                  });
+                } else {
+                  field.onChange(e);
+                }
+              },
             })
           }
         />
