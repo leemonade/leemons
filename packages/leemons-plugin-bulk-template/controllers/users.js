@@ -27,8 +27,12 @@ async function addUser(ctx) {
     const { services: userService } = leemons.getPlugin('users');
     const { services: academicService } = leemons.getPlugin('academic-portfolio');
 
+    console.log('-- VAMOS A AÑADIR AL USUARIO ---');
+    console.dir(ctx.request.body, { depth: null });
+
     // const { email, name, surnames, program, profile } = ctx.request.body;
-    const { program, ...userData } = ctx.request.body;
+    const { program, onlyStudent, enrollGroup, teachGroup, skipDefaults, ...userData } =
+      ctx.request.body;
 
     const profiles = await academicService.settings.getProfiles();
     // const programs = await academicService.programs.listPrograms();
@@ -42,54 +46,14 @@ async function addUser(ctx) {
       .reduce((acc, cur) => acc.concat(cur.items), [])
       .filter((item) => program.toLowerCase().indexOf(item.abbreviation.toLowerCase()) > -1);
 
-    // ··················
-    // Program
+    // ···················································
+    // PROGRAM
 
-    const userToAdd = {
-      users: [
-        {
-          ...userData,
-          tags: ['Student', 'Teacher', 'Test'],
-          gender: 'Male',
-          birthdate: new Date(1980, 1, 1),
-        },
-      ],
-      center: programs[0].centers[0],
-    };
+    const userProgram = programs[0]?.id;
 
-    // -----------------------------------------------------
-    // USER REGISTRATION
-
-    // First register as a teacher
-    const [user] = await userService.users.addBulk(
-      { ...userToAdd, profile: profiles.student },
-      ctx
-    );
-
-    // Now add student profile
-    await userService.users.addBulk({ ...userToAdd, profile: profiles.teacher }, ctx);
-
-    // Get profile roles for the center
-    const [studentRole, teacherRole, userAgents] = await Promise.all([
-      userService.profiles.getRoleForRelationshipProfileCenter(
-        profiles.student,
-        programs[0].centers[0]
-      ),
-      userService.profiles.getRoleForRelationshipProfileCenter(
-        profiles.teacher,
-        programs[0].centers[0]
-      ),
-      userService.users.searchUserAgents({ user: { email: user.email } }),
-    ]);
-
-    // Search user agent for the user and profiles
-    const studentUserAgent = _.find(userAgents, { role: studentRole.id }).id;
-    const teacherUserAgent = _.find(userAgents, { role: teacherRole.id }).id;
-
-    // -----------------------------------------------------
-    // CLASS CREATION
-
-    const userProgram = programs[0].id;
+    if (!userProgram) {
+      throw new Error('El programa no existe');
+    }
 
     // List all groups for the program
     const [{ items: groups }, { items: classes }] = await Promise.all([
@@ -97,62 +61,144 @@ async function addUser(ctx) {
       academicService.classes.listClasses(0, 99999, userProgram),
     ]);
 
-    const willyClassIds = _.map(
-      _.filter(
-        classes,
-        (c) =>
-          c.groups?.name.trim() === willyGroup.trim() ||
-          c.groups?.abbreviation.trim() === willyGroup.trim()
-      ),
-      'id'
+    const registerAsTeacher = !onlyStudent;
+    const tags = ['Student', 'Test'];
+
+    // -----------------------------------------------------
+    // USER REGISTRATION
+
+    console.log('registerAsTeacher:', registerAsTeacher);
+
+    if (registerAsTeacher) {
+      tags.push('Teacher');
+    }
+
+    const userToAdd = {
+      users: [
+        {
+          ...userData,
+          tags,
+          gender: 'Male',
+          birthdate: new Date(1980, 1, 1),
+        },
+      ],
+      center: programs[0].centers[0],
+    };
+
+    // First register as a Student
+    const [user] = await userService.users.addBulk(
+      { ...userToAdd, profile: profiles.student },
+      ctx
     );
 
-    // eslint-disable-next-line no-inner-declarations
-    function getByName(name) {
-      return _.find(
-        groups,
-        (g) => g.name.trim() === name.trim() || g.abbreviation.trim() === name.trim()
+    const rolesRequests = [
+      userService.profiles.getRoleForRelationshipProfileCenter(
+        profiles.student,
+        programs[0].centers[0]
+      ),
+      userService.users.searchUserAgents({ user: { email: user.email } }),
+    ];
+
+    // Now add teacher profile and Role
+    if (registerAsTeacher) {
+      await userService.users.addBulk({ ...userToAdd, profile: profiles.teacher }, ctx);
+
+      rolesRequests.push(
+        userService.profiles.getRoleForRelationshipProfileCenter(
+          profiles.teacher,
+          programs[0].centers[0]
+        )
       );
     }
 
-    // eslint-disable-next-line no-inner-declarations
-    function getName(name) {
-      const g = getByName(name);
-      if (g) {
-        return getName(getNextGroupName(name));
-      }
-      return name;
-    }
+    // Get profile roles for the center
+    const [studentRole, userAgents, teacherRole] = await Promise.all(rolesRequests);
 
-    // Search the group to clone
-    const group = getByName(groupToDuplicate);
-    const finalName = getName(groupToDuplicate);
+    // Search user agent for the user and profiles
+    const studentUserAgent = _.find(userAgents, { role: studentRole.id }).id;
 
-    // Clone the group
-    const duplications = await academicService.groups.duplicateGroup(
-      {
-        id: group.id,
-        name: finalName,
-        abbreviation: finalName,
-        students: true,
-        teachers: false,
-      },
-      { userSession: ctx.state.userSession }
-    );
+    // -----------------------------------------------------
+    // CLASS CREATION
 
     const promises = [];
-    const classeIds = [...willyClassIds];
-    _.forIn(duplications.classes, (value) => {
-      classeIds.push(value.id);
-      promises.push(academicService.classes.addTeacher(value.id, teacherUserAgent, 'main-teacher'));
-    });
+    const classeIds = [];
 
-    promises.push(
-      academicService.classes.addStudentsToClasses({
-        class: classeIds,
-        students: [studentUserAgent],
-      })
-    );
+    if (registerAsTeacher) {
+      const teacherUserAgent = _.find(userAgents, { role: teacherRole.id }).id;
+      const groupToClone = teachGroup ?? (!skipDefaults ? groupToDuplicate : null);
+
+      if (groupToClone) {
+        // eslint-disable-next-line no-inner-declarations
+        function getByName(name) {
+          return _.find(
+            groups,
+            (g) => g.name.trim() === name.trim() || g.abbreviation.trim() === name.trim()
+          );
+        }
+
+        // eslint-disable-next-line no-inner-declarations
+        function getName(name) {
+          const g = getByName(name);
+          if (g) {
+            return getName(getNextGroupName(name));
+          }
+          return name;
+        }
+
+        // Search the group to clone
+        const group = getByName(groupToClone);
+        const finalName = getName(groupToClone);
+
+        // Clone the group
+        const duplications = await academicService.groups.duplicateGroup(
+          {
+            id: group.id,
+            name: finalName,
+            abbreviation: finalName,
+            students: true,
+            teachers: false,
+          },
+          { userSession: ctx.state.userSession }
+        );
+
+        _.forIn(duplications.classes, (value) => {
+          classeIds.push(value.id);
+          promises.push(
+            academicService.classes.addTeacher(value.id, teacherUserAgent, 'main-teacher')
+          );
+        });
+      }
+    }
+
+    // -----------------------------------------------------
+    // CLASS ENROLLMENT
+
+    const addToGroup = enrollGroup ?? (!skipDefaults ? willyGroup : null);
+
+    console.log('addToGroup:', addToGroup);
+
+    if (addToGroup) {
+      const addToClassIds = _.map(
+        _.filter(
+          classes,
+          (c) =>
+            c.groups?.name.trim() === addToGroup.trim() ||
+            c.groups?.abbreviation.trim() === addToGroup.trim()
+        ),
+        'id'
+      );
+
+      classeIds.push(...addToClassIds);
+      promises.push(
+        academicService.classes.addStudentsToClasses({
+          class: classeIds,
+          students: [studentUserAgent],
+        })
+      );
+    }
+
+    // -----------------------------------------------------
+    // FINISH
 
     await Promise.all(promises);
 

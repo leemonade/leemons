@@ -45,7 +45,7 @@ module.exports = {
     classes: 'Clases',
     weekSchedule: 'Horario semanal',
     course: 'Curso',
-    attendanceControl: 'Ir al dashboard de la asignatura',
+    attendanceControl: 'Ir al panel de control de la asignatura',
     mainTeacher: '(profesor principal)',
     everyWeekInWorkdays: 'Cada semana en días laborables',
     group: 'Grupo',
