@@ -1,7 +1,4 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { forIn } from 'lodash';
 import {
   Box,
   Button,
@@ -12,9 +9,12 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { SelectResponse } from '@feedback/pages/private/feedback/Detail/components/SelectResponse';
+import { forIn } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { LikertScale } from './LikertScale';
 import { NetPromoterScore } from './NetPromoterScore';
 import { OpenResponse } from './OpenResponse';
@@ -88,7 +88,12 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
                 defaultValue={false}
                 name="required"
                 render={({ field }) => (
-                  <Switch orientation="horizontal" label={t('requiredQuestionLabel')} {...field} />
+                  <Switch
+                    checked={field.value}
+                    orientation="horizontal"
+                    label={t('requiredQuestionLabel')}
+                    {...field}
+                  />
                 )}
               />
             </Stack>

@@ -78,7 +78,7 @@ export default ({ keys = null, keysStartsWith = null, locale } = {}) => {
     keysStartsWith,
     locale: localeToUse,
     enabled: !!localeToUse || !!keys?.length || !!keysStartsWith?.length,
-    placeholderData: {},
+    // placeholderData: {},
   });
 
   // Return in array for letting the user decide the names
