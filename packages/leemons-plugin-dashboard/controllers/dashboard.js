@@ -14,7 +14,7 @@ async function admin(ctx) {
     additionalProperties: false,
   });
   if (validator.validate(ctx.request.query)) {
-    const data = await getAdminDashboard(ctx.request.query);
+    const data = await getAdminDashboard(ctx.request.query, { userSession: ctx.state.userSession });
     ctx.status = 200;
     ctx.body = { status: 200, data };
   } else {

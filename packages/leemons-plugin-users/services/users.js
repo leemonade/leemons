@@ -20,6 +20,7 @@ module.exports = {
 
   hasPermissionCTX: usersService.hasPermissionCTX,
   userSessionCheckUserAgentDatasets: usersService.userSessionCheckUserAgentDatasets,
+  getUserCenters: usersService.centers,
 
   // TODO Solo deberian de tener acceso los plugins que tengan permiso a ejecutar dichas funciones o los usuarios con permiso
   add: usersService.add,
