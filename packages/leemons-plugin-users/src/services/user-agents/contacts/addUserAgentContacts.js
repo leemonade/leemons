@@ -1,16 +1,7 @@
 const _ = require('lodash');
 const { table } = require('../../tables');
 
-/**
- * ES: Dice que los user agents en _fromUserAgent tienen acceso a ver a todos los user agents en _toUserAgent
- * @public
- * @static
- * @param {string|string[]} _fromUserAgent - User agent id/s
- * @param {string|string[]} _toUserAgent - User agent id/s
- * @param {any=} transacting - DB Transaction
- * @return {Promise<boolean>}
- * */
-async function addUserAgentContacts(
+/** * ES: Dice que los user agents en _fromUserAgent tienen acceso a ver a todos los user agents en _toUserAgent * @public * @static * @param {string|string[]} _fromUserAgent - User agent id/s * @param {string|string[]} _toUserAgent - User agent id/s * @param {any=} transacting - DB Transaction * @return {Promise<boolean>} * */ async function addUserAgentContacts(
   _fromUserAgent,
   _toUserAgent,
   { target = null, transacting: _transacting } = {}
@@ -21,7 +12,6 @@ async function addUserAgentContacts(
     async (transacting) => {
       const pluginName = this.calledFrom;
       const allUserAgentIds = fromUserAgents.concat(toUserAgents);
-
       const userAgents = await table.userAgent.find(
         { id_$in: allUserAgentIds },
         {
@@ -46,11 +36,9 @@ async function addUserAgentContacts(
           }
         ),
       ]);
-
       const roleCenterByRole = _.keyBy(roleCenter, 'role');
       const roleProfileByRole = _.keyBy(roleProfile, 'role');
       const userAgentsById = _.keyBy(userAgents, 'id');
-
       for (let i = 0, l = fromUserAgents.length; i < l; i++) {
         const fromUserAgent = fromUserAgents[i];
         const fromCenter = roleCenterByRole[userAgentsById[fromUserAgent].role].center;

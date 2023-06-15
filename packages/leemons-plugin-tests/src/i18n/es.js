@@ -366,7 +366,7 @@ module.exports = {
     undefined: 'No definido',
     question: 'Pregunta',
     result: 'Resultado',
-    showInTests: 'Ver en el test',
+    showInTests: 'Ver en el tests',
     feedbackForStudent: 'Comentario para el estudiante',
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',

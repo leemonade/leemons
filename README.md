@@ -2,7 +2,6 @@
 
 [![GitHub contributors](https://img.shields.io/github/contributors/leemonade/leemons)](https://github.com/leemonade/leemons/graphs/contributors)
 [![CircleCI build](https://img.shields.io/circleci/build/github/leemonade/leemons/main)](https://app.circleci.com/pipelines/github/leemonade/leemons)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fleemonade%2Fleemons.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fleemonade%2Fleemons?ref=badge_shield)
 
 The powerful flexible friendly Learning Experience Platform you’re waiting for.
 
@@ -56,13 +55,6 @@ For general help using Leemons, please refer to - the official Leemons documenta
 
 - [GitHub](https://github.com/leemonade/leemons) (Bug reports, Contributions)
 
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=leemonade/leemons&type=Date)](https://star-history.com/#leemonade/leemons&Date)
-
 ## License
 
 MIT
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fleemonade%2Fleemons.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fleemonade%2Fleemons?ref=badge_large)
