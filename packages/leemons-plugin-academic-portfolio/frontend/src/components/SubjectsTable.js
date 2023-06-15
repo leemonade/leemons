@@ -290,7 +290,12 @@ function SubjectsTable({
         <Box>{value?.name}</Box>{' '}
         {formValues.courses || formValues.internalId ? (
           <>
-            - {formValues.courses && !_.isArray(formValues.courses) ? formValues.courses.index : ''}
+            -{' '}
+            {program.subjectsFirstDigit === 'course' &&
+            formValues.courses &&
+            !_.isArray(formValues.courses)
+              ? formValues.courses.index
+              : ''}
             {formValues.internalId ? formValues.internalId : ''}
           </>
         ) : null}
