@@ -13,7 +13,12 @@ import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 
 const SelectAgents = ({ usersData, ...props }) => (
-  <SelectUserAgent {...props} selectedUsers={_.map(usersData, 'user.id')} returnItem />
+  <SelectUserAgent
+    {...props}
+    onlyContacts={true}
+    selectedUsers={_.map(usersData, 'user.id')}
+    returnItem
+  />
 );
 
 SelectAgents.propTypes = {
