@@ -76,8 +76,9 @@ async function sendEmail({
             taskDate: date,
             userSession: {
               ...userSession,
-              avatarUrl:
-                (hostnameApi || hostname || ctx.request.header.origin) + userSession.avatar,
+              avatarUrl: userSession.avatar
+                ? (hostnameApi || hostname || ctx.request.header.origin) + userSession.avatar
+                : null,
             },
           },
           userAgent.center.id
