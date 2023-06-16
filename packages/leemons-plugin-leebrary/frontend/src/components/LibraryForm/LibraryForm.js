@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import { getUserProgramsRequest } from '@academic-portfolio/request';
 import {
   ActionButton,
   Box,
@@ -14,25 +13,26 @@ import {
   Select,
   Stack,
   Switch,
-  Textarea,
   TextInput,
+  Textarea,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
-import { addErrorAlert } from '@layout/alert';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
-import { getUserProgramsRequest } from '@academic-portfolio/request';
+import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
+import { getUrlMetadataRequest } from '../../request';
+import { AssetListDrawer } from '../AssetListDrawer';
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
 } from './LibraryForm.constants';
-import { getUrlMetadataRequest } from '../../request';
-import { AssetListDrawer } from '../AssetListDrawer';
-import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
 
 // -----------------------------------------------------------------------------
 // HELPERS
@@ -114,7 +114,7 @@ const LibraryForm = ({
   hideTitle,
   advancedConfig,
   hideSubmit,
-  onChange = () => { },
+  onChange = () => {},
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -317,7 +317,7 @@ const LibraryForm = ({
 
   return (
     <Box ref={boxRef}>
-      <form autoComplete="off" onSubmit={handleSubmit(handleOnSubmit)}>
+      <form autoComplete="off">
         <ContextContainer
           title={!hideTitle ? labels.title : undefined}
           divided={!advancedConfigMode}
@@ -463,7 +463,7 @@ const LibraryForm = ({
             ) : null}
 
             {(!advancedConfigMode && !advancedConfig?.colorToRight) ||
-              (advancedConfigMode && advancedConfig?.colorToRight) ? (
+            (advancedConfigMode && advancedConfig?.colorToRight) ? (
               <Controller
                 control={control}
                 name="color"
@@ -481,7 +481,7 @@ const LibraryForm = ({
             ) : null}
           </ContextContainer>
           {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-            (advancedConfigMode && advancedConfig?.fileToRight) ? (
+          (advancedConfigMode && advancedConfig?.fileToRight) ? (
             <>
               {!isImage && (
                 <>
@@ -603,7 +603,7 @@ const LibraryForm = ({
 
               {!hideSubmit && (
                 <Stack justifyContent={'end'} fullWidth>
-                  <Button type="submit" loading={loading}>
+                  <Button onClick={handleSubmit(handleOnSubmit)} loading={loading}>
                     {labels.submitForm}
                   </Button>
                 </Stack>

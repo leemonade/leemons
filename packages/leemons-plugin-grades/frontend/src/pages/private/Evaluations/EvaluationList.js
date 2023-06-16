@@ -318,6 +318,12 @@ export default function EvaluationList() {
                 {store.selectedGrade && (
                   <Paper fullWidth padding={5}>
                     <EvaluationDetail
+                      selectData={{
+                        type: [
+                          { label: t('detail.numeric'), value: 'numeric' },
+                          { label: t('detail.letter'), value: 'letter' },
+                        ],
+                      }}
                       messages={messages}
                       errorMessages={errorMessages}
                       defaultValues={store.selectedGrade}

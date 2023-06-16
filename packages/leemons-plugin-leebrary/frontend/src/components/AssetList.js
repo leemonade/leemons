@@ -86,10 +86,10 @@ function AssetList({
   roles,
   filters,
   filterComponents,
-  onSelectItem = () => { },
-  onEditItem = () => { },
-  onTypeChange = () => { },
-  onLoading = () => { },
+  onSelectItem = () => {},
+  onEditItem = () => {},
+  onTypeChange = () => {},
+  onLoading = () => {},
 }) {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
@@ -195,12 +195,8 @@ function AssetList({
           pinned,
           preferCurrent,
           searchInProvider,
-          subjects: JSON.stringify(
-            store.subjects ? (isArray(store.subjects) ? store.subjects : [store.subjects]) : null
-          ),
-          programs: JSON.stringify(
-            store.programs ? (isArray(store.programs) ? store.programs : [store.programs]) : null
-          ),
+          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
+          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
           roles: JSON.stringify(roles || []),
         };
 
@@ -669,8 +665,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-          ? t('cardToolbar.pin')
-          : false,
+        ? t('cardToolbar.pin')
+        : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -750,14 +746,14 @@ function AssetList({
             isEmbedded
               ? { flex: 0, alignItems: 'end' }
               : {
-                flex: 0,
-                alignItems: 'end',
-                width: containerRect.width,
-                top: containerRect.top,
-                position: 'fixed',
-                zIndex: 101,
-                backgroundColor: '#fff',
-              }
+                  flex: 0,
+                  alignItems: 'end',
+                  width: containerRect.width,
+                  top: containerRect.top,
+                  position: 'fixed',
+                  zIndex: 101,
+                  backgroundColor: '#fff',
+                }
           }
         >
           <Stack fullWidth spacing={5}>
