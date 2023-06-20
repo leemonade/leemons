@@ -7,6 +7,7 @@ const {
   sortBy,
   intersection,
   groupBy,
+  isArray,
   forEach,
   find,
   set,
@@ -14,10 +15,6 @@ const {
   isObject,
 } = require('lodash');
 const semver = require('semver');
-const { byName: getByName } = require('./byName');
-const { byTagline: getByTagline } = require('./byTagline');
-const { byDescription: getByDescription } = require('./byDescription');
-const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
 const { getIndexables } = require('../assets/getIndexables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
@@ -100,8 +97,12 @@ async function search(
 
     if (pinned) {
       const pins = await getPinsByUser({ userSession, transacting });
-      assets = pins.map((pin) => pin.asset);
-      nothingFound = assets.length === 0;
+      nothingFound = false;
+      if (isArray(pins)) {
+        assets = pins.map((pin) => pin.asset);
+      } else {
+        nothingFound = assets.length === 0;
+      }
     }
 
     // if (!isEmpty(criteria)) {
@@ -134,7 +135,7 @@ async function search(
       }
 
       const assetIds = providerAssets || assets;
-      if (!isEmpty(assetIds)) {
+      if (!isEmpty(assetIds) || pinned) {
         query.id_$in = assetIds;
       }
 
