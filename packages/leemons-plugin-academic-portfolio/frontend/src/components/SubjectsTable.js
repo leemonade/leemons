@@ -276,6 +276,9 @@ function SubjectsTable({
       ),
       rules: { required: messages.subjectRequired },
     },
+    cellStyle: {
+      paddingLeft: 0,
+    },
     valueRender: (value, formValues) => (
       <Box style={{ display: 'flex', gap: '3px' }}>
         <Box
@@ -319,6 +322,9 @@ function SubjectsTable({
           </EnableIfFormPropHasValue>
         ),
         rules: { required: messages.courseRequired },
+      },
+      cellStyle: {
+        paddingLeft: 0,
       },
       valueRender: (v) => {
         // eslint-disable-next-line no-nested-ternary
@@ -367,6 +373,9 @@ function SubjectsTable({
         ),
         rules: { required: messages.knowledgeRequired },
       },
+      cellStyle: {
+        paddingLeft: 0,
+      },
       valueRender: (value) => <>{value?.name}</>,
     });
   }
@@ -384,6 +393,9 @@ function SubjectsTable({
       ),
       rules: { required: messages.subjectTypeRequired },
     },
+    cellStyle: {
+      paddingLeft: 0,
+    },
     valueRender: (value) => <>{value?.name}</>,
   });
 
@@ -400,6 +412,9 @@ function SubjectsTable({
         ),
         rules: { required: messages.subjectTypeRequired },
       },
+      cellStyle: {
+        paddingLeft: 0,
+      },
     });
   }
 
@@ -410,6 +425,9 @@ function SubjectsTable({
     input: {
       node: <ColorInput required />,
       rules: { required: messages.colorRequired },
+    },
+    cellStyle: {
+      paddingLeft: 0,
     },
     valueRender: (val) => (
       <>
@@ -448,6 +466,9 @@ function SubjectsTable({
             messages={messages}
           />
         ),
+      },
+      cellStyle: {
+        paddingLeft: 0,
       },
       valueRender: (value, formValues) => (
         <>

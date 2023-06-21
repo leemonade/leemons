@@ -79,6 +79,7 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
     <Drawer
       opened={opened}
       onClose={onClose}
+      size={360}
       header={
         <Title
           sx={(theme) => ({ paddingLeft: theme.spacing[4], width: '100%', alignSelf: 'center' })}
