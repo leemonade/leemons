@@ -1,6 +1,6 @@
-import React, { forwardRef } from 'react';
-import PropTypes from 'prop-types';
 import { Box, NumberInput, Switch, TableInput, TextInput, Title } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import React, { forwardRef } from 'react';
 
 const SwitchInput = forwardRef(({ label, value, ...props }, ref) => (
   <Switch {...props} ref={ref} checked={!!value} label={label} />
@@ -13,40 +13,40 @@ SwitchInput.propTypes = {
 };
 
 function SubjectTypesTable({ messages, program, tableLabels, onAdd = () => {} }) {
-  const columns = [
-    {
-      Header: messages.name,
-      accessor: 'name',
-      input: {
-        node: <TextInput required />,
-        rules: { required: messages.nameRequired },
-      },
+  const columns = [];
+  columns.push({
+    Header: messages.name,
+    accessor: 'name',
+    input: {
+      node: <TextInput required />,
+      rules: { required: messages.nameRequired },
     },
-    {
+  });
+  if (program.credits) {
+    columns.push({
       Header: messages.creditsCourse,
       accessor: 'credits_course',
       input: {
         node: <NumberInput />,
       },
-    },
-    {
+    });
+    columns.push({
       Header: messages.creditsProgram,
       accessor: 'credits_program',
       input: {
         node: <NumberInput />,
       },
+    });
+  }
+
+  columns.push({
+    Header: messages.groupVisibility,
+    accessor: 'groupVisibility',
+    input: {
+      node: <SwitchInput label={messages.groupVisibilityLabel} />,
     },
-    {
-      Header: messages.groupVisibility,
-      accessor: 'groupVisibility',
-      input: {
-        node: <SwitchInput label={messages.groupVisibilityLabel} />,
-      },
-      valueRender: (value) => (
-        <SwitchInput label={messages.groupVisibilityLabel} checked={!!value} />
-      ),
-    },
-  ];
+    valueRender: (value) => <SwitchInput label={messages.groupVisibilityLabel} checked={!!value} />,
+  });
 
   function onChange(items) {
     const item = items[items.length - 1];
