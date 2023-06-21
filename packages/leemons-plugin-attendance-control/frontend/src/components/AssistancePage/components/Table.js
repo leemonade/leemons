@@ -5,14 +5,14 @@ import { getSessionsAssistenceAverageOfUserAgents } from '@attendance-control/he
 import { getUserAgentIdsFromSessions } from '@attendance-control/helpers/getUserAgentIdsFromSessions';
 import {
   Box,
-  createStyles,
+  Table as BubblesTable,
   InputLabel,
   Progress,
-  Table as BubblesTable,
   Text,
   TextInput,
   Tooltip,
   UserDisplayItem,
+  createStyles,
 } from '@bubbles-ui/components';
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
 import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
@@ -309,7 +309,10 @@ export default function Table({ sessions, classe, onSave }) {
       try {
         const wb = generateAssistancesWB({
           headerShown: format === 'xlsx',
-          data: store.data,
+          data: _.map(store.data, (item) => ({
+            ...item,
+            assistance: t(item.assistance),
+          })),
           sessions,
           labels: {
             students: t('students'),

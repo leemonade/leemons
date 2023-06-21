@@ -7,6 +7,7 @@ async function sendEmail({
   hostname,
   hostnameApi,
   ignoreUserConfig,
+  isReminder,
 }) {
   try {
     const emailServices = leemons.getPlugin('emails').services;
@@ -51,7 +52,7 @@ async function sendEmail({
       emailServices.email
         .sendAsEducationalCenter(
           userAgent.user.email,
-          'user-create-assignation',
+          isReminder ? 'user-assignation-remember' : 'user-create-assignation',
           userAgent.user.locale,
           {
             instance: {

@@ -1,5 +1,6 @@
 const userWeekly = require('./emails/userWeekly');
 const newActivity = require('./emails/userCreateAssignation');
+const rememberActivity = require('./emails/userAssignationRemember');
 const rememberActivityTimeout = require('./emails/userRememberAssignationTimeout');
 const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
@@ -29,6 +30,25 @@ async function initEmails() {
       leemons.getPlugin('emails').services.email.types.active
     );
   leemons.events.emit('init-email-recover-password');
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-assignation-remember',
+      'es',
+      'Recordatorio de actividad',
+      rememberActivity.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-assignation-remember',
+      'en',
+      'Activity reminder',
+      rememberActivity.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
 
   await leemons
     .getPlugin('emails')
