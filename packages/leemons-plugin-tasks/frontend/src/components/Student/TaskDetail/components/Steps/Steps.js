@@ -225,7 +225,7 @@ export function useUpdateTimestamps(mutateAsync, assignation) {
         try {
           const time = Date.now();
           await mutateAsync({
-            instance: assignation?.instance?.id,
+            instance: assignation?.instance?.id ?? assignation?.instance,
             student: assignation?.user,
             timestamps: {
               [timestamps]: time,
