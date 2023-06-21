@@ -3,7 +3,7 @@ module.exports = {
     view: 'Ver',
     delete: 'Borrar',
     deleted: 'Curriculum borrado',
-    page_title: 'Librería de Curricula',
+    page_title: 'Biblioteca de Curricula',
     published: 'Publicados',
     draft: 'Borradores',
     empty: 'No hay ningún recurso disponible',

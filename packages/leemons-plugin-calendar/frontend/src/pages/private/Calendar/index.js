@@ -1,7 +1,7 @@
-import * as _ from 'lodash';
-import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import CalendarKey from '@academic-calendar/components/CalendarKey';
+import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
+import { BigCalendar } from '@bubbles-ui/calendars';
 import {
   Box,
   IconButton,
@@ -13,29 +13,29 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { BigCalendar } from '@bubbles-ui/calendars';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
-import { getCentersWithToken } from '@users/session';
-import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import tKeys from '@multilanguage/helpers/tKeys';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-import hooks from 'leemons-hooks';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@calendar/helpers/prefixPN';
-import { useLocale, useStore } from '@common';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
-import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
-import { useHistory } from 'react-router-dom';
-import { PackageManagerService } from '@package-manager/services';
-import loadable from '@loadable/component';
-import tLoader from '@multilanguage/helpers/tLoader';
-import CalendarKey from '@academic-calendar/components/CalendarKey';
-import ReactToPrint from 'react-to-print';
-import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import prefixPN from '@calendar/helpers/prefixPN';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
+import { useLocale, useStore } from '@common';
 import { useLayout } from '@layout/context';
+import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
+import loadable from '@loadable/component';
+import tKeys from '@multilanguage/helpers/tKeys';
+import tLoader from '@multilanguage/helpers/tLoader';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { PackageManagerService } from '@package-manager/services';
+import { getCentersWithToken } from '@users/session';
+import hooks from 'leemons-hooks';
+import * as _ from 'lodash';
+import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import ReactToPrint from 'react-to-print';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -133,7 +133,7 @@ function Calendar({ session }) {
       }
 
       if (canShowInCalendar) {
-        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
+        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes?.length) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {

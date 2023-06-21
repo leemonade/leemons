@@ -66,7 +66,7 @@ const menuItems = [
       parentKey: 'learningPaths',
       url: '/private/learning-paths/modules/library',
       label: {
-        es: 'Librería de módulos',
+        es: 'Biblioteca de módulos',
         en: 'Modules library',
       },
     },

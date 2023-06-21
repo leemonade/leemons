@@ -44,7 +44,7 @@ const menuItems = [
       url: '/private/feedback',
       label: {
         en: 'Feedback library',
-        es: 'Librería de encuestas',
+        es: 'Biblioteca de encuestas',
       },
     },
     permissions: [

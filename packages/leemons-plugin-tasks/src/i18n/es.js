@@ -50,7 +50,7 @@ module.exports = {
     },
   },
   library_page: {
-    page_title: 'Librería de tareas',
+    page_title: 'Biblioteca de tareas',
     published: 'Publicado',
     draft: 'Borrador',
   },
@@ -143,7 +143,7 @@ module.exports = {
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           attachmentsTitle: 'Recursos',
           supportImage: 'Imagen de apoyo',
-          searchFromLibrary: 'Buscar en la librería',
+          searchFromLibrary: 'Buscar en la biblioteca',
           searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia',
           content: 'Contenidos',
           assessmentCriteria: 'Criterios de evaluación',

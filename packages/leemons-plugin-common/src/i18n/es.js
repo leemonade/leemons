@@ -72,7 +72,7 @@ module.exports = {
       },
       bubbleMenu: {
         remove: 'Eliminar',
-        library: 'Libreria',
+        library: 'Biblioteca',
         twoColumns: 'Mitad del ancho',
         fullWidth: 'Ancho completo',
       },

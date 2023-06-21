@@ -44,7 +44,7 @@ const menuItems = [
       url: '/private/content-creator',
       label: {
         en: 'Documents library',
-        es: 'Librería de documentos',
+        es: 'Biblioteca de documentos',
       },
     },
     permissions: [

@@ -24,7 +24,7 @@ const permissions = [
     permissionName: permissionNames.library,
     actions: ['view', 'admin'],
     localizationName: {
-      es: 'Tareas - Librería',
+      es: 'Tareas - Biblioteca',
       en: 'Tasks - Library',
     },
   },
@@ -153,7 +153,7 @@ const menuItems = [
       url: '/private/tasks/library',
       label: {
         en: 'Library',
-        es: 'Librería',
+        es: 'Biblioteca',
       },
     },
     permissions: [

@@ -96,7 +96,7 @@ const menuItems = [
       url: '/private/tests',
       label: {
         en: 'Tests library',
-        es: 'Librería de tests',
+        es: 'Biblioteca de tests',
       },
     },
     permissions: [
