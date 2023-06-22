@@ -203,6 +203,10 @@ function AssetList({
         if (categoryProp?.key?.includes('leebrary-subject')) {
           delete query.category;
         }
+        if (categoryProp?.key === 'leebrary-shared') {
+          delete query.category;
+          query.onlyShared = true;
+        }
 
         const response = await getAssetsRequest(query);
 
@@ -418,7 +422,7 @@ function AssetList({
     if (!isEmpty(store.category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(store.category.id);
-    } else if (categoryProp?.key === 'pins') {
+    } else if (categoryProp?.key === 'pins' || categoryProp?.key === 'leebrary-shared') {
       const cat = find(store.categories, { key: 'media-files' });
       if (cat) loadAssetTypes(cat.id);
     } else {
@@ -454,10 +458,19 @@ function AssetList({
 
   useEffect(() => {
     // Good
-    if (!isEmpty(store.category?.id) || pinned) {
+    if (!isEmpty(store.category?.id) || pinned || categoryProp?.key === 'leebrary-shared') {
       loadAssets(store.category?.id, searchProp, store.assetType, filters);
     }
-  }, [searchProp, store.category, store.assetType, store.showPublic, pinned, published, filters]);
+  }, [
+    JSON.stringify(categoryProp),
+    searchProp,
+    store.category,
+    store.assetType,
+    store.showPublic,
+    pinned,
+    published,
+    filters,
+  ]);
 
   // ·········································································
   // HANDLERS

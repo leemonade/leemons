@@ -344,6 +344,9 @@ function SubjectsTable({
   columns.push({
     Header: messages.id,
     accessor: 'internalId',
+    cellStyle: {
+      paddingLeft: 0,
+    },
     input: {
       node: (
         <EnableIfFormPropHasValue property="subject">
@@ -491,6 +494,9 @@ function SubjectsTable({
           </EnableIfFormPropHasValue>
         ),
       },
+      cellStyle: {
+        paddingLeft: 0,
+      },
       valueRender: (value) => (
         <>
           {_.isArray(value)
@@ -512,6 +518,9 @@ function SubjectsTable({
     input: {
       node: <NumberInput />,
     },
+    cellStyle: {
+      paddingLeft: 0,
+    },
   });
 
   columns.push({
@@ -520,6 +529,9 @@ function SubjectsTable({
     showOnTable: true,
     input: {
       node: <EnableIfFormPropHasValue>{teacherSelect}</EnableIfFormPropHasValue>,
+    },
+    cellStyle: {
+      paddingLeft: 0,
     },
     valueRender: (value) => (
       <EnableIfFormPropHasValue value={value}>
@@ -536,6 +548,9 @@ function SubjectsTable({
     accessor: 'schedule',
     input: {
       node: <ScheduleInput locale={locale} label={false} />,
+    },
+    cellStyle: {
+      paddingLeft: 0,
     },
     valueRender: (value) => (
       <ScheduleInput locale={locale} label={false} value={value} readOnly={true} />

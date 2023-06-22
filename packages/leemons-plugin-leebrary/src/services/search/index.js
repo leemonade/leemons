@@ -13,6 +13,7 @@ const {
   set,
   map,
   isObject,
+  difference,
 } = require('lodash');
 const semver = require('semver');
 const { getByIds } = require('../assets/getByIds');
@@ -41,6 +42,7 @@ async function search(
     pinned,
     showPublic,
     roles,
+    onlyShared,
     programs: _programs,
     subjects: _subjects,
     userSession,
@@ -166,28 +168,36 @@ async function search(
       nothingFound = assets.length === 0;
     }
     // }
+    if (!onlyShared) {
+      if (type) {
+        assets = await getAssetsByType(type, { assets, transacting });
+        nothingFound = assets.length === 0;
+      }
 
-    if (type) {
-      assets = await getAssetsByType(type, { assets, transacting });
-      nothingFound = assets.length === 0;
+      if (programs) {
+        assets = await getAssetsByProgram(programs, { assets, transacting });
+        nothingFound = assets.length === 0;
+      }
+
+      if (subjects) {
+        assets = await getAssetsBySubject(subjects, { assets, transacting });
+        nothingFound = assets.length === 0;
+      }
+
+      if (indexable && assets && assets.length) {
+        assets = await getIndexables(assets, { columns: ['id'], transacting });
+        assets = map(assets, 'id');
+        nothingFound = assets.length === 0;
+      }
+    } else {
+      const sysName = await leemons
+        .getPlugin('users')
+        .services.profiles.getProfileSysName(userSession, { transacting });
+      if (sysName === 'student') {
+        const assetsToRemove = await getAssetsBySubject([], { assets, transacting });
+        assets = difference(assets, assetsToRemove);
+      }
     }
-
-    if (programs) {
-      assets = await getAssetsByProgram(programs, { assets, transacting });
-      nothingFound = assets.length === 0;
-    }
-
-    if (subjects) {
-      assets = await getAssetsBySubject(subjects, { assets, transacting });
-      nothingFound = assets.length === 0;
-    }
-
-    if (indexable && assets && assets.length) {
-      assets = await getIndexables(assets, { columns: ['id'], transacting });
-      assets = map(assets, 'id');
-      nothingFound = assets.length === 0;
-    }
-
     // Search by subject
 
     // EN: Only return assets that the user has permission to view
@@ -197,6 +207,7 @@ async function search(
       assetsWithPermissions = await getPermissions(uniq(assets), {
         showPublic,
         userSession,
+        onlyShared,
         transacting,
       });
       assets = assetsWithPermissions;
