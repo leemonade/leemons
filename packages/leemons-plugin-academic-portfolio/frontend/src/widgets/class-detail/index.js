@@ -1,13 +1,13 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Avatar, Box, ContextContainer, Table, Title } from '@bubbles-ui/components';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { forEach } from 'lodash';
-import getUserFullName from '@users/helpers/getUserFullName';
+import { Avatar, Box, ContextContainer, Table, Title } from '@bubbles-ui/components';
 import { LocaleDate } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import UserDetailModal from '@users/components/UserDetailModal';
+import getUserFullName from '@users/helpers/getUserFullName';
+import { forEach } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 function ClassDetailWidget({ classe }) {
   const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
@@ -19,8 +19,8 @@ function ClassDetailWidget({ classe }) {
       className: 'text-left',
     },
     {
-      Header: t('emailHeader'),
-      accessor: 'email',
+      Header: t('surnameHeader'),
+      accessor: 'surnames',
       className: 'text-left',
     },
     {
@@ -29,13 +29,13 @@ function ClassDetailWidget({ classe }) {
       className: 'text-left',
     },
     {
-      Header: t('surnameHeader'),
-      accessor: 'surnames',
+      Header: t('birthdayHeader'),
+      accessor: 'birthdate',
       className: 'text-left',
     },
     {
-      Header: t('birthdayHeader'),
-      accessor: 'birthdate',
+      Header: t('emailHeader'),
+      accessor: 'email',
       className: 'text-left',
     },
   ];
