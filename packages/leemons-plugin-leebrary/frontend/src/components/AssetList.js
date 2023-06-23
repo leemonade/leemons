@@ -181,6 +181,7 @@ function AssetList({
       loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
+      store.page = 1;
       store.asset = null;
       store.loading = true;
       render();
