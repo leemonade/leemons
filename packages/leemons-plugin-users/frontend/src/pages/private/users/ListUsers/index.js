@@ -14,7 +14,7 @@ import React, { useEffect, useMemo } from 'react';
 
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common';
+import { LocaleDate, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -78,6 +78,7 @@ function ListUsers() {
       store.pagination
         ? _.map(store.pagination.items, (item) => ({
             ...item,
+            birthdate: <LocaleDate date={item.birthdate} />,
             actions: (
               <Box style={{ textAlign: 'right', width: '100%' }}>
                 <ActionButton
@@ -134,12 +135,10 @@ function ListUsers() {
   }
 
   async function getPermissions() {
-    console.log('enadisPermissions');
     const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
       getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
       getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
     ]);
-    console.log(importPermission);
     if (addPermission) {
       store.canAdd =
         addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
