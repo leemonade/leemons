@@ -19,7 +19,7 @@ import { RoomService } from '../RoomService';
 export const ContextButtonStyles = createStyles((theme) => ({
   root: {
     position: 'fixed',
-    zIndex: 5,
+    zIndex: 55,
     bottom: theme.spacing[7],
     right: theme.spacing[7],
   },
