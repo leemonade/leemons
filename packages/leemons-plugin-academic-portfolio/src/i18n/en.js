@@ -514,7 +514,7 @@ module.exports = {
       attention: 'Attention',
       groupAny: 'Must be {max} characters',
       groupNumbers: 'Must be {max} numbers',
-      enrollStudents: 'Currently enrolled',
+      enrollStudents: 'Enroll students',
       currentlyEnrolled: 'Currently enrolled',
       subjectChangeCourse:
         'Your tree model indicates that your courses are structuring, i.e. subjects are nested within course levels. When making a course change, the subject will disappear from the current course level and will be moved to the newly selected course.',
