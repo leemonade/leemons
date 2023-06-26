@@ -327,6 +327,7 @@ module.exports = {
     deadline: 'Entrega',
     close: 'Cierre',
     closed: 'Cerrada',
+    teacherDeadline: 'Límite de corrección',
   },
   need_your_attention: {
     activitiesTitle: 'Actividades pendientes',
