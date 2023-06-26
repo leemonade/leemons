@@ -1,10 +1,14 @@
+const _ = require('lodash');
 const { addTransactionState } = require('leemons-transactions');
+const { ObjectId } = require('mongodb');
+const { generateLRN } = require('leemons-lrn');
 const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
 const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
+const { getLRNConfig } = require('./helpers/getLRNConfig');
 
 function findOneAndUpdate({
   model,
@@ -12,6 +16,7 @@ function findOneAndUpdate({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -29,12 +34,22 @@ function findOneAndUpdate({
         conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }
+
       let oldItem = null;
       let rollbackAction = 'updateMany';
       // Si es upsert forzamos new a true para que siempre devuelva el elemento/creado actualizado
       // por que si no existe y se crea necesitamos saber que id es la que se a creado
       if (args[0]?.upsert) {
         args[0].new = true;
+        if (autoLRN) {
+          if (!_.isObject(update.$setOnInsert)) {
+            update.$setOnInsert = {};
+          }
+          update.$setOnInsert._id = generateLRN({
+            ...getLRNConfig({ modelKey, ctx }),
+            resourceID: new ObjectId(),
+          });
+        }
       }
       if (!ignoreTransaction && ctx.meta.transactionID && (args[0]?.new || args[0]?.upsert)) {
         oldItem = await model.findOne(conditions).lean();

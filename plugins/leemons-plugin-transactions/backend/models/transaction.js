@@ -1,7 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
+    },
     deploymentID: {
       type: String,
       required: true,
@@ -34,13 +40,10 @@ const transactionSchema = new mongoose.Schema(
 );
 
 let Transaction = null;
-if (mongoose.connection.models.hasOwnProperty("transaction_Transaction")) {
-  Transaction = mongoose.connection.models["transaction_Transaction"];
+if (mongoose.connection.models.hasOwnProperty('transaction_Transaction')) {
+  Transaction = mongoose.connection.models.transaction_Transaction;
 } else {
-  Transaction = mongoose.connection.model(
-    "transaction_Transaction",
-    transactionSchema
-  );
+  Transaction = mongoose.connection.model('transaction_Transaction', transactionSchema);
 }
 
 module.exports = { Transaction };

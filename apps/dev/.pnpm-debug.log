@@ -1,7 +1,6 @@
 {
   "0 debug pnpm:scope": {
-    "selected": 1,
-    "workspacePrefix": "/Users/cerberupo/Sites/Leemons/leemons"
+    "selected": 1
   },
   "1 error pnpm": {
     "code": "ELIFECYCLE",
@@ -9,14 +8,14 @@
     "syscall": "spawn",
     "file": "sh",
     "pkgid": "leemons-dev@0.0.1",
-    "stage": "leemons-runner",
-    "script": "leemons-runner",
+    "stage": "backend:dev",
+    "script": "leemons-runner --env --hot services/**/*.service.js",
     "pkgname": "leemons-dev",
     "err": {
       "name": "pnpm",
-      "message": "leemons-dev@0.0.1 leemons-runner: `leemons-runner`\nspawn ENOENT",
+      "message": "leemons-dev@0.0.1 backend:dev: `leemons-runner --env --hot services/**/*.service.js`\nspawn ENOENT",
       "code": "ELIFECYCLE",
-      "stack": "pnpm: leemons-dev@0.0.1 leemons-runner: `leemons-runner`\nspawn ENOENT\n    at ChildProcess.<anonymous> (/Users/cerberupo/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:92278:22)\n    at ChildProcess.emit (node:events:520:28)\n    at maybeClose (node:internal/child_process:1092:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:302:5)"
+      "stack": "pnpm: leemons-dev@0.0.1 backend:dev: `leemons-runner --env --hot services/**/*.service.js`\nspawn ENOENT\n    at ChildProcess.<anonymous> (/Users/cerberupo/.cache/node/corepack/pnpm/6.32.3/dist/pnpm.cjs:92278:22)\n    at ChildProcess.emit (node:events:513:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:304:5)"
     }
   },
   "2 warn pnpm:global": " Local package.json exists, but node_modules missing, did you mean to install?"

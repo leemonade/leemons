@@ -1,7 +1,18 @@
-const { mongoose, newModel } = require("leemons-mongodb");
+const { mongoose, newModel } = require('leemons-mongodb');
 
 const contentsSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     key: {
       type: String,
       required: true,
@@ -20,10 +31,6 @@ const contentsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-let contentsModel = newModel(
-  mongoose.connection,
-  "multilanguage_Contents",
-  contentsSchema
-);
+const contentsModel = newModel(mongoose.connection, 'multilanguage_Contents', contentsSchema);
 
 module.exports = { contentsModel };

@@ -2,6 +2,17 @@ const { mongoose, newModel } = require('leemons-mongodb');
 
 const localesSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     code: {
       type: String,
       required: true,

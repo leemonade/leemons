@@ -20,7 +20,7 @@ module.exports = () => ({
         Contents: contentsModel,
       },
     }),
-    LeemonsDeploymentManagerMixin,
+    LeemonsDeploymentManagerMixin(),
   ],
 
   actions: {

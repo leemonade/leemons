@@ -1,5 +1,5 @@
 {
-  "name": "leemons-mongodb",
+  "name": "leemons-lrn",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -17,12 +17,5 @@
     }
   ],
   "license": "MIT",
-  "dependencies": {
-    "leemons-error": "1.0.0",
-    "leemons-lrn": "1.0.0",
-    "leemons-service-name-parser": "1.0.0",
-    "leemons-transactions": "1.0.0",
-    "lodash": "^4.17.21",
-    "mongoose": "^7.1.1"
-  }
+  "dependencies": {}
 }

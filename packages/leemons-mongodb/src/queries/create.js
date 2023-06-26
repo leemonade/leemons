@@ -6,6 +6,7 @@ const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransact
 const {
   increaseTransactionFinishedIfNeed,
 } = require('./helpers/increaseTransactionFinishedIfNeed');
+const { addLRNToIdToArrayOrObject } = require('./helpers/addLRNToIdToArrayOrObject');
 
 function create({
   model,
@@ -13,6 +14,7 @@ function create({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -27,6 +29,7 @@ function create({
       const [toAdd, ...args] = arguments;
       let toCreate = toAdd;
       if (autoDeploymentID) toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
+      if (autoLRN) toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx });
       const items = await model.create(toCreate, ...args);
       if (!ignoreTransaction && ctx.meta.transactionID) {
         await addTransactionState(ctx, {

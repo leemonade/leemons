@@ -1,4 +1,4 @@
-const { findOneAndUpdate } = require("./findOneAndUpdate");
+const { findOneAndUpdate } = require('./findOneAndUpdate');
 
 function findByIdAndUpdate({
   model,
@@ -6,6 +6,7 @@ function findByIdAndUpdate({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -17,6 +18,7 @@ function findByIdAndUpdate({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ignoreTransaction,
       ctx,
     })({ _id: id }, ...args);

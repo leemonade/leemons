@@ -1,6 +1,5 @@
-'use strict';
-
 const ApiGateway = require('moleculer-web');
+const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
@@ -12,7 +11,7 @@ const ApiGateway = require('moleculer-web');
 
 module.exports = {
   name: 'gateway',
-  mixins: [ApiGateway],
+  mixins: [ApiGateway, LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false })],
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
@@ -127,7 +126,7 @@ module.exports = {
      */
     async authenticate(ctx, route, req) {
       // Read the token from header
-      const auth = req.headers['authorization'];
+      const auth = req.headers.authorization;
 
       if (auth && auth.startsWith('Bearer')) {
         const token = auth.slice(7);
@@ -136,10 +135,9 @@ module.exports = {
         if (token == '123456') {
           // Returns the resolved user. It will be set to the `ctx.meta.user`
           return { id: 1, name: 'John Doe' };
-        } else {
-          // Invalid token
-          throw new ApiGateway.Errors.UnAuthorizedError(ApiGateway.Errors.ERR_INVALID_TOKEN);
         }
+        // Invalid token
+        throw new ApiGateway.Errors.UnAuthorizedError(ApiGateway.Errors.ERR_INVALID_TOKEN);
       } else {
         // No token. Throw an error or do nothing if anonymous access is allowed.
         // throw new E.UnAuthorizedError(E.ERR_NO_TOKEN);
@@ -159,7 +157,7 @@ module.exports = {
      */
     async authorize(ctx, route, req) {
       // Get the authenticated user.
-      const user = ctx.meta.user;
+      const { user } = ctx.meta;
 
       // It check the `auth` property in action schema.
       if (req.$action.auth == 'required' && !user) {

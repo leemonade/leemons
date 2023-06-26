@@ -24,6 +24,7 @@ function getModelActions({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -35,6 +36,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     create: create({
@@ -44,6 +46,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     find: find({
@@ -53,6 +56,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findById: findById({
@@ -62,6 +66,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findOne: findOne({
@@ -71,6 +76,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findByIdAndDelete: findByIdAndDelete({
@@ -80,6 +86,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findByIdAndRemove: findByIdAndDelete({
@@ -89,6 +96,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findOneAndDelete: findOneAndDelete({
@@ -98,6 +106,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findOneAndRemove: findOneAndDelete({
@@ -107,6 +116,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findByIdAndUpdate: findByIdAndUpdate({
@@ -116,6 +126,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findOneAndUpdate: findOneAndUpdate({
@@ -125,6 +136,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     findOneAndReplace: () => {
@@ -137,6 +149,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     updateMany: updateMany({
@@ -146,6 +159,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     deleteOne: deleteOne({
@@ -155,6 +169,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     deleteMany: deleteMany({
@@ -164,6 +179,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     countDocuments: countDocuments({
@@ -173,6 +189,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
     insertMany: insertMany({
@@ -182,6 +199,7 @@ function getModelActions({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ctx,
     }),
   };
@@ -192,6 +210,7 @@ function getDBModels({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -203,6 +222,7 @@ function getDBModels({
       autoDeploymentID,
       autoTransaction,
       autoRollback,
+      autoLRN,
       ignoreTransaction,
       ctx,
     });
@@ -217,6 +237,7 @@ function modifyCTX(
     autoDeploymentID,
     autoTransaction,
     autoRollback,
+    autoLRN,
     debugTransaction,
     forceLeemonsDeploymentManagerMixinNeedToBeImported,
     models,
@@ -236,6 +257,7 @@ function modifyCTX(
     autoTransaction,
     autoDeploymentID,
     autoRollback,
+    autoLRN,
     ignoreTransaction: true,
     ctx,
   });
@@ -272,6 +294,7 @@ function modifyCTX(
       autoTransaction,
       autoDeploymentID,
       autoRollback,
+      autoLRN,
       ignoreTransaction: false,
       ctx,
     }),
@@ -283,6 +306,7 @@ module.exports = ({
   autoDeploymentID = true,
   autoTransaction = true,
   autoRollback = true,
+  autoLRN = true,
   debugTransaction = false,
   forceLeemonsDeploymentManagerMixinNeedToBeImported = true,
   models,
@@ -344,6 +368,7 @@ module.exports = ({
             autoDeploymentID,
             autoTransaction,
             autoRollback,
+            autoLRN,
             debugTransaction,
             forceLeemonsDeploymentManagerMixinNeedToBeImported,
             models,
@@ -365,6 +390,7 @@ module.exports = ({
               autoDeploymentID,
               autoTransaction,
               autoRollback,
+              autoLRN,
               debugTransaction,
               forceLeemonsDeploymentManagerMixinNeedToBeImported,
               models,

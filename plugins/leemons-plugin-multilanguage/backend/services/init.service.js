@@ -24,7 +24,7 @@ module.exports = () => ({
         KeyValue: getKeyValueModel({ modelName: 'users_KeyValue' }),
       },
     }),
-    LeemonsDeploymentManagerMixin,
+    LeemonsDeploymentManagerMixin(),
   ],
   events: {
     'deployment-manager.install': function (ctx) {},

@@ -1,16 +1,14 @@
-const { addTransactionState } = require("leemons-transactions");
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
-const {
-  createTransactionIDIfNeed,
-} = require("./helpers/createTransactionIDIfNeed");
+const { addTransactionState } = require('leemons-transactions');
+const { generateLRN } = require('leemons-lrn');
+const { ObjectId } = require('mongodb');
+const _ = require('lodash');
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
+const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
-} = require("./helpers/increaseTransactionFinishedIfNeed");
-const {
-  increaseTransactionPendingIfNeed,
-} = require("./helpers/increaseTransactionPendingIfNeed");
+} = require('./helpers/increaseTransactionFinishedIfNeed');
+const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
+const { getLRNConfig } = require('./helpers/getLRNConfig');
 
 function updateOne({
   model,
@@ -18,6 +16,7 @@ function updateOne({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -37,16 +36,29 @@ function updateOne({
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }
       let oldItem = null;
+
+      if (args[0]?.upsert) {
+        if (autoLRN) {
+          if (!_.isObject(update.$setOnInsert)) {
+            update.$setOnInsert = {};
+          }
+          update.$setOnInsert._id = generateLRN({
+            ...getLRNConfig({ modelKey, ctx }),
+            resourceID: new ObjectId(),
+          });
+        }
+      }
+
       if (!ignoreTransaction && ctx.meta.transactionID)
         oldItem = await model.findOne(conditions).lean();
-      let item = await model.updateOne(conditions, update, ...args);
+      const item = await model.updateOne(conditions, update, ...args);
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx, {
-          action: "leemonsMongoDBRollback",
+          action: 'leemonsMongoDBRollback',
           payload: {
             modelKey,
-            action: "updateMany",
+            action: 'updateMany',
             data: [oldItem],
           },
         });

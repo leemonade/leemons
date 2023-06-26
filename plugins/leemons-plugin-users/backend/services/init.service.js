@@ -18,7 +18,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
-    LeemonsDeploymentManagerMixin,
+    LeemonsDeploymentManagerMixin(),
   ],
   events: {
     'multilanguage:newLocale': function (ctx) {

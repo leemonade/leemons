@@ -1,7 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const transactionStateSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
+    },
     deploymentID: {
       type: String,
       required: true,
@@ -9,7 +15,7 @@ const transactionStateSchema = new mongoose.Schema(
     },
     transaction: {
       type: mongoose.ObjectId,
-      ref: "transaction_Transaction",
+      ref: 'transaction_Transaction',
     },
     payload: {
       type: mongoose.Schema.Types.Mixed,
@@ -29,11 +35,11 @@ const transactionStateSchema = new mongoose.Schema(
 );
 
 let TransactionState = null;
-if (mongoose.connection.models.hasOwnProperty("transaction_TransactionState")) {
-  TransactionState = mongoose.connection.models["transaction_TransactionState"];
+if (mongoose.connection.models.hasOwnProperty('transaction_TransactionState')) {
+  TransactionState = mongoose.connection.models['transaction_TransactionState'];
 } else {
   TransactionState = mongoose.connection.model(
-    "transaction_TransactionState",
+    'transaction_TransactionState',
     transactionStateSchema
   );
 }

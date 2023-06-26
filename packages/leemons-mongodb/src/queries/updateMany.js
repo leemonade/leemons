@@ -1,10 +1,14 @@
 const { addTransactionState } = require('leemons-transactions');
+const { generateLRN } = require('leemons-lrn');
+const { ObjectId } = require('mongodb');
+const _ = require('lodash');
 const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
 const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
+const { getLRNConfig } = require('./helpers/getLRNConfig');
 
 function updateMany({
   model,
@@ -12,6 +16,7 @@ function updateMany({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -31,6 +36,19 @@ function updateMany({
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }
       let oldItems = [];
+
+      if (args[0]?.upsert) {
+        if (autoLRN) {
+          if (!_.isObject(update.$setOnInsert)) {
+            update.$setOnInsert = {};
+          }
+          update.$setOnInsert._id = generateLRN({
+            ...getLRNConfig({ modelKey, ctx }),
+            resourceID: new ObjectId(),
+          });
+        }
+      }
+
       if (!ignoreTransaction && ctx.meta.transactionID)
         oldItems = await model.find(conditions).lean();
       const items = await model.updateMany(conditions, update, ...args);

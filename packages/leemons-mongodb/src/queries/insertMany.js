@@ -6,6 +6,7 @@ const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransact
 const {
   increaseTransactionFinishedIfNeed,
 } = require('./helpers/increaseTransactionFinishedIfNeed');
+const { addLRNToIdToArrayOrObject } = require('./helpers/addLRNToIdToArrayOrObject');
 
 function insertMany({
   model,
@@ -13,6 +14,7 @@ function insertMany({
   autoDeploymentID,
   autoTransaction,
   autoRollback,
+  autoLRN,
   ignoreTransaction,
   ctx,
 }) {
@@ -26,6 +28,7 @@ function insertMany({
     try {
       let toCreate = toAdd;
       if (autoDeploymentID) toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
+      if (autoLRN) toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx });
       let items = [];
       try {
         items = await model.insertMany(toCreate, ...args);

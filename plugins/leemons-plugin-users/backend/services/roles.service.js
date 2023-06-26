@@ -17,7 +17,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
-    LeemonsDeploymentManagerMixin,
+    LeemonsDeploymentManagerMixin(),
   ],
   actions: {
     add: {

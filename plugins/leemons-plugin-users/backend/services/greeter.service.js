@@ -2,10 +2,10 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-
+const { ObjectId } = require('mongodb');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { usersModel } = require('../models');
+const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -13,9 +13,9 @@ module.exports = {
   version: 2,
   mixins: [
     LeemonsMongoDBMixin({
-      models: { User: usersModel },
+      models: getServiceModels(),
     }),
-    LeemonsDeploymentManagerMixin,
+    LeemonsDeploymentManagerMixin(),
   ],
 
   /**
@@ -43,8 +43,15 @@ module.exports = {
         path: '/hello',
       },
       async handler(ctx) {
-        return ctx.call('users.greeter.welcome', { n: new Date(), name: 'miau' });
-        // const test = await ctx.tx.db.Test.create({ name: "miau" });
+        /*
+        const test = await ctx.tx.db.Actions.findOneAndUpdate(
+          {
+            actionName: 'FLIPAS66',
+          },
+          { order: 66 },
+          { upsert: true }
+        );
+        console.log(test);
         /*
           const test = await ctx.tx.db.Test.findByIdAndUpdate(
             "646b5caf489258370109cae1",
