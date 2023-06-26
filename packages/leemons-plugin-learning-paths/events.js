@@ -67,8 +67,8 @@ function setupAssignables(isInstalled) {
     await assignableServices.registerRole('learningpaths.module', {
       // Not used yet
       dashboardUrl: '/private/learning-paths/modules/dashboard/:id',
-      teacherDetailUrl: '/',
-      studentDetailUrl: '/private/learning-paths/modules/assignation/:id/:user',
+      teacherDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      studentDetailUrl: '/private/learning-paths/modules/dashboard/:id',
       evaluationDetailUrl: '/private/learning-paths/modules/dashboard/:id',
       previewUrl: '/private/learning-paths/modules/:id/view',
       creatable: true,
