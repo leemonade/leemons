@@ -38,9 +38,6 @@ module.exports = {
     steps: {
       basicData: {
         errors: {
-          tagline: {
-            required: 'Tagline is required',
-          },
           program: {
             required: 'Program is required',
           },
