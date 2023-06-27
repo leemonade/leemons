@@ -21,7 +21,7 @@ export function useParsedData({ classes, periods, students, scores, courseScores
         classes?.map((klass) => ({
           id: klass.id,
           name: klass.subject.name,
-          group: klass.groups.name,
+          group: klass.groups?.name,
           icon: getClassIcon(klass),
           color: klass.color,
           periods: periods.map((period) => ({
