@@ -2,7 +2,8 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { ObjectId } = require('mongodb');
+
+const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getServiceModels } = require('../models');
@@ -12,6 +13,7 @@ module.exports = {
   name: 'users.greeter',
   version: 2,
   mixins: [
+    LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

@@ -4,6 +4,7 @@
  */
 
 const path = require('path');
+const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { addLocales } = require('leemons-multilanguage');
@@ -15,6 +16,7 @@ module.exports = {
   name: 'users.init',
   version: 1,
   mixins: [
+    LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

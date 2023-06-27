@@ -63,7 +63,7 @@ async function add({ item, type, data, isCustomPermission, ctx }) {
       validateExistItemPermissions({
         query: {
           ...d,
-          actionName_$in: actionNames,
+          actionName: actionNames,
           item,
         },
         ctx,

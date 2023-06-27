@@ -115,7 +115,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
           modifyCTX(ctx);
 
           if (_.isFunction(afterModifyCTX)) {
-            afterModifyCTX(ctx);
+            await afterModifyCTX(ctx);
           }
 
           await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {

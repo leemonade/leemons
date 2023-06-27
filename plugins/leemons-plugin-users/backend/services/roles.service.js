@@ -3,6 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -14,6 +15,7 @@ module.exports = {
   name: 'users.roles',
   version: 1,
   mixins: [
+    LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

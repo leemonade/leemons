@@ -1,6 +1,5 @@
-const _ = require('lodash');
 const { validateTypePrefix } = require('../../validations/exists');
-const { basicPermission } = require('../../../config/constants');
+const { basicPermission } = require('../../config/constants');
 const { add } = require('./add');
 const { exist } = require('./exist');
 
@@ -18,22 +17,22 @@ const { exist } = require('./exist');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addBasicIfNeed(item, type, { transacting } = {}) {
-  validateTypePrefix(type, this.calledFrom);
+async function addBasicIfNeed({ item, type, ctx }) {
+  validateTypePrefix(type, ctx.callerPlugin);
 
-  const hasPermissions = await exist({ item }, { transacting });
+  const hasPermissions = await exist({ query: { item }, ctx });
 
   if (!hasPermissions) {
-    return add.call(
-      this,
+    return add({
       item,
       type,
-      {
+      data: {
         permissionName: basicPermission.permissionName,
         actionNames: [basicPermission.actionName],
       },
-      { isCustomPermission: true, transacting }
-    );
+      isCustomPermission: true,
+      ctx,
+    });
   }
 
   return null;

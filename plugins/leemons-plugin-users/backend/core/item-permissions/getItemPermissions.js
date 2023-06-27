@@ -1,20 +1,19 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getItemPermissions(item, type, { returnRaw, transacting } = {}) {
+async function getItemPermissions({ item, type, returnRaw, ctx }) {
   const items = _.isArray(item) ? item : [item];
 
   let results = [];
-  const query = { item_$in: items, type };
+  const query = { item: items, type };
 
   const cacheKey = `users:permissions:getItemPermissions:${JSON.stringify(query)}`;
-  const cache = await leemons.cache.get(cacheKey);
+  const cache = await ctx.cache.get(cacheKey);
 
   if (cache) {
     results = cache;
   } else {
-    results = await table.itemPermissions.find(query, { transacting });
-    await leemons.cache.set(cacheKey, results, 60 * 30); // 30 minutos
+    results = await ctx.tx.db.ItemPermissions.find(query).lean();
+    await ctx.cache.set(cacheKey, results, 60 * 30); // 30 minutos
   }
 
   if (returnRaw) {

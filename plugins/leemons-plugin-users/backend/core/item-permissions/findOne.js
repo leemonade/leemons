@@ -1,13 +1,10 @@
-const { table } = require('../tables');
-
 /**
  * @public
  * @static
  * @return {Promise<any>}
  * */
-async function findOne(id, { transacting } = {}) {
-  const result = await table.itemPermissions.findOne({ id }, { transacting });
-  return result;
+async function findOne({ _id, ctx }) {
+  return ctx.tx.db.ItemPermissions.findOne({ _id }).lean();
 }
 
 module.exports = { findOne };
