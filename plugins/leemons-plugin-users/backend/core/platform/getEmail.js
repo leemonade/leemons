@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Return default email por platform
  * @public
@@ -7,8 +5,8 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<string | null>} locale
  * */
-async function getEmail({ transacting } = {}) {
-  const config = await table.config.findOne({ key: 'platform-email' }, { transacting });
+async function getEmail({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-email' }).lean();
   return config ? config.value : null;
 }
 

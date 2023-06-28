@@ -1,13 +1,13 @@
-const { table } = require('../tables');
-
-async function setContactPhone(phone, { transacting } = {}) {
-  return table.config.set(
+async function setContactPhone({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-contact-phone' },
     {
       key: 'platform-contact-phone',
-      value: phone,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

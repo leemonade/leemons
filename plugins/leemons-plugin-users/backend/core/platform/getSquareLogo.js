@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getSquareLogo({ transacting } = {}) {
-  const config = await table.config.findOne({ key: 'platform-square-logo' }, { transacting });
+async function getSquareLogo({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-square-logo' }).lean();
   return config ? config.value : null;
 }
 

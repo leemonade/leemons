@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function query(q, { transacting } = {}) {
-  return table.config.find(q, { transacting });
+async function query({ query: q, ctx }) {
+  return ctx.t.db.Config.find(q).lean();
 }
 
 module.exports = query;

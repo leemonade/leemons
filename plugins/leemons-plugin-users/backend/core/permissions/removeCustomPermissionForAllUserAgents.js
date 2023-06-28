@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { validatePermissionName } = require('../../validations/exists');
 const { validateUserRemoveCustomPermission } = require('../../validations/permissions');
-const { table } = require('../tables');
 
 /**
  *
@@ -11,10 +10,10 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function removeCustomPermissionForAllUserAgents(_data, { transacting } = {}) {
+async function removeCustomPermissionForAllUserAgents({ data: _data, ctx }) {
   const data = _.isArray(_data) ? _data : [_data];
   _.forEach(data, (d) => {
-    validatePermissionName(d.permissionName, this.calledFrom);
+    validatePermissionName(d.permissionName, ctx.callerPlugin);
     validateUserRemoveCustomPermission(d);
   });
 
@@ -24,12 +23,12 @@ async function removeCustomPermissionForAllUserAgents(_data, { transacting } = {
   _.forEach(data, ({ actionNames, ...d }) => {
     const newQuery = { ...d };
     if (_.isArray(actionNames)) {
-      newQuery.actionName_$in = actionNames;
+      newQuery.actionName = actionNames;
     }
     query.$or.push(newQuery);
   });
 
-  return table.userAgentPermission.deleteMany(query, { transacting });
+  return ctx.tx.db.UserAgentPermission.deleteMany(query);
 }
 
 module.exports = { removeCustomPermissionForAllUserAgents };

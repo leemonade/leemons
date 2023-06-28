@@ -1,5 +1,3 @@
-const { translations } = require('../translations');
-
 /**
  * Add locale to platform
  * @public
@@ -9,14 +7,19 @@ const { translations } = require('../translations');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addLocale(locale, name, { transacting } = {}) {
-  const trans = translations();
-
-  if (await trans.locales.has(locale, { transacting })) {
-    return trans.locales.get(locale, { transacting });
+async function addLocale({ locale, name, ctx }) {
+  const exists = await ctx.tx.call('multilanguage.locales.has', {
+    code: locale,
+  });
+  if (exists) {
+    return ctx.tx.call('multilanguage.locales.get', {
+      code: locale,
+    });
   }
-  // console.log('añadimos el locale', locale);
-  return trans.locales.add(locale, name, { transacting });
+  return ctx.tx.call('multilanguage.locales.add', {
+    code: locale,
+    name,
+  });
 }
 
 module.exports = addLocale;

@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getName({ transacting } = {}) {
-  const config = await table.config.findOne({ key: 'platform-name' }, { transacting });
+async function getName({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-name' }).lean();
   return config ? config.value : null;
 }
 

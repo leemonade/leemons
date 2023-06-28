@@ -1,7 +1,6 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { addActionMany } = require('./addActionMany');
-const { translations } = require('../translations');
-const { table } = require('../tables');
 
 /**
  * Update the permit only if the permissionName is already exist
@@ -10,38 +9,30 @@ const { table } = require('../tables');
  * @param {PermissionAdd} data - Array of permissions
  * @return {Promise<Permission>} Updated permission
  * */
-async function update(data) {
-  const permission = await table.permissions.count({
+async function update({ ctx, ...data }) {
+  const permission = await ctx.tx.db.Permissions.countDocuments({
     permissionName: data.permissionName,
-    pluginName: this.calledFrom,
+    pluginName: ctx.callerPlugin,
   });
   if (!permission)
-    throw new Error(
-      `Permission '${data.permissionName}' for plugin '${this.calledFrom}' not exists`
-    );
-
-  leemons.log.info(`Updating permission '${data.permissionName}' for plugin '${this.calledFrom}'`);
-  return table.permissions.transaction(async (transacting) => {
-    await table.permissionAction.deleteMany(
-      { permissionName: data.permissionName },
-      { transacting }
-    );
-
-    await addActionMany(data.permissionName, data.actions, { transacting });
-
-    if (translations()) {
-      translations().common.setKey(
-        `plugins.users.${data.permissionName}.name`,
-        data.localizationName,
-        { transacting }
-      );
-    }
-
-    return table.permissions.findOne({
-      permissionName: data.permissionName,
-      pluginName: this.calledFrom,
+    throw new LeemonsError(ctx, {
+      message: `Permission '${data.permissionName}' for plugin '${this.calledFrom}' not exists`,
     });
+
+  ctx.logger.info(`Updating permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
+  await ctx.tx.db.PermissionAction.deleteMany({ permissionName: data.permissionName });
+
+  await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });
+
+  await ctx.tx.call('multilanguage.common.setKey', {
+    key: `plugins.users.${data.permissionName}.name`,
+    data: data.localizationName,
   });
+
+  return ctx.tx.db.Permissions.findOne({
+    permissionName: data.permissionName,
+    pluginName: ctx.callerPlugin,
+  }).lean();
 }
 
 module.exports = { update };

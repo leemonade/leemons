@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Set default email por platform
  * @public
@@ -8,14 +6,16 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setEmail(email, { transacting } = {}) {
-  return table.config.set(
+async function setEmail({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-email' },
     {
       key: 'platform-email',
-      value: email,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

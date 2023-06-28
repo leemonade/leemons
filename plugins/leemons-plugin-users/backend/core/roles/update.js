@@ -50,7 +50,7 @@ async function update({ _id, name, type, description, center, permissions, ctx }
   if (!(await manyPermissionsHasManyActions({ data: dataToCheckPermissions, ctx })))
     throw new Error(`One or more permissions or his actions not exist`);
 
-  leemons.log.info(`Updating role '${name}'`);
+  ctx.logger.info(`Updating role '${name}'`);
   const [role, roleCenter] = await Promise.all([
     ctx.tx.db.Roles.findByIdAndUpdate(_id, { name, type, description }, { new: true }),
     ctx.tx.db.RoleCenter.findOne({ role: _id }).lean(),

@@ -1,5 +1,4 @@
-const { translations } = require('../translations');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 
 /**
  * Set default locale por platform
@@ -9,19 +8,23 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setDefaultLocale(locale, { transacting } = {}) {
-  if (!(await translations().locales.has(locale, { transacting })))
-    throw new Error(`The locale '${locale}' not exists`);
-  const a = await table.config.set(
+async function setDefaultLocale({ value, ctx }) {
+  const exists = await ctx.tx.call('multilanguage.locales.has', {
+    code: value,
+  });
+  if (!exists) throw new LeemonsError(ctx, { message: `The locale '${value}' not exists` });
+  const response = await ctx.tx.db.Config.updateOne(
     { key: 'platform-locale' },
     {
       key: 'platform-locale',
-      value: locale,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
-  await leemons.events.emit('change-platform-locale', { locale, transacting });
-  return a;
+  await ctx.emit('change-platform-locale', { locale: value });
+  return response;
 }
 
 module.exports = setDefaultLocale;

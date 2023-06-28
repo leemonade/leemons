@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Return default hostname por platform
  * @public
@@ -7,8 +5,8 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<string | null>} locale
  * */
-async function getHostnameApi({ transacting } = {}) {
-  const config = await table.config.findOne({ key: 'platform-hostname-api' }, { transacting });
+async function getHostnameApi({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-hostname-api' }).lean();
   return config ? config.value : null;
 }
 

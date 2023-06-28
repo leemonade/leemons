@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const query = require('./query');
 
-async function getTheme({ transacting } = {}) {
-  const r = await query(
-    {
+async function getTheme({ ctx }) {
+  const r = await query({
+    ctx,
+    query: {
       key_$in: [
         'platform-appearance-main-color',
         'platform-appearance-menu-main-color',
@@ -14,8 +15,7 @@ async function getTheme({ transacting } = {}) {
         'platform-pictures-empty-states',
       ],
     },
-    { transacting }
-  );
+  });
   const v = _.keyBy(r, 'key');
   return {
     logoUrl: v['platform-landscape-logo']?.value,

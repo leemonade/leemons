@@ -1,5 +1,6 @@
+const { LeemonsError } = require('leemons-error');
+const slugify = require('slugify');
 const { existName } = require('./existName');
-const { table } = require('../tables');
 const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
 const { getDefaultLocale } = require('../platform');
 const { updateProfileTranslations } = require('./updateProfileTranslations');
@@ -13,61 +14,51 @@ const { updateProfileTranslations } = require('./updateProfileTranslations');
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function add(
-  { name, description, permissions, translations, indexable },
-  { transacting: _transacting, sysName = null } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const exist = await existName(name, undefined, { transacting });
-      if (exist) throw new Error(`Already exists one profile with the name '${name}'`);
+async function add({ name, description, permissions, translations, indexable, sysName, ctx }) {
+  const exist = await existName({ name, ctx });
+  if (exist)
+    throw new LeemonsError(ctx, { message: `Already exists one profile with the name '${name}'` });
 
-      let profile = await table.profiles.create(
-        {
-          name,
-          description,
-          uri: global.utils.slugify(name, { lower: true }),
-          indexable,
-          sysName,
-        },
-        { transacting }
-      );
+  let profile = await ctx.tx.db.Profiles.create({
+    name,
+    description,
+    uri: slugify(name, { lower: true }),
+    indexable,
+    sysName,
+  });
 
-      const role = await leemons.plugin.services.roles.add(
-        {
-          name: `profile:${profile.id}:role`,
-          type: leemons.plugin.prefixPN('profile-role'),
-          permissions,
-        },
-        { transacting }
-      );
+  const role = await ctx.tx.call('users.roles.add', {
+    name: `profile:${profile.id}:role`,
+    type: ctx.prefixPN('profile-role'),
+    permissions,
+  });
 
-      profile = await table.profiles.update({ id: profile.id }, { role: role.id }, { transacting });
-
-      if (translations) await updateProfileTranslations(profile, translations, { transacting });
-
-      // ES: Creamos el dataset para este perfil para poder añadir campos extras
-      // EN: We create the dataset for this profile to be able to add extra fields
-      const platformLocale = await getDefaultLocale();
-      await leemons.getPlugin('dataset').services.dataset.addLocation({
-        name: {
-          [platformLocale]: `profile:${profile.id}`,
-        },
-        locationName: `profile.${profile.id}`,
-        pluginName: 'plugins.users',
-      });
-
-      await createNecessaryRolesForProfilesAccordingToCenters(profile.id, undefined, {
-        transacting,
-      });
-
-      leemons.events.emit('profile-permissions-change', { profile, permissions });
-
-      return profile;
-    },
-    table.profiles,
-    _transacting
+  profile = await ctx.tx.db.Profiles.findByIdAndUpdate(
+    profile._id,
+    { role: role._id },
+    { new: true }
   );
+
+  if (translations) await updateProfileTranslations({ profile, translations, ctx });
+
+  // ES: Creamos el dataset para este perfil para poder añadir campos extras
+  // EN: We create the dataset for this profile to be able to add extra fields
+  const platformLocale = await getDefaultLocale({ ctx });
+
+  // TODO MIGRAR DATASET
+  await leemons.getPlugin('dataset').services.dataset.addLocation({
+    name: {
+      [platformLocale]: `profile:${profile.id}`,
+    },
+    locationName: `profile.${profile.id}`,
+    pluginName: 'plugins.users',
+  });
+
+  await createNecessaryRolesForProfilesAccordingToCenters({ profileIds: profile._id, ctx });
+
+  ctx.emit('profile-permissions-change', { profile, permissions });
+
+  return profile;
 }
 
 module.exports = { add };

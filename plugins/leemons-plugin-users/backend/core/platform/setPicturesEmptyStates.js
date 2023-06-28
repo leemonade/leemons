@@ -1,12 +1,14 @@
-const { table } = require('../tables');
-
-async function setPicturesEmptyStates(usePictures, { transacting } = {}) {
-  const value = {
-    key: 'platform-pictures-empty-states',
-    value: usePictures,
-  };
-
-  return table.config.set({ key: 'platform-pictures-empty-states' }, value, { transacting });
+async function setPicturesEmptyStates({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
+    { key: 'platform-pictures-empty-states' },
+    {
+      key: 'platform-pictures-empty-states',
+      value,
+    },
+    {
+      upsert: true,
+    }
+  );
 }
 
 module.exports = setPicturesEmptyStates;

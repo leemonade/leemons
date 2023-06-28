@@ -21,7 +21,7 @@ function getClientConfig(config) {
 module.exports = async function redisCache(config) {
   const client = createClient(getClientConfig(config));
 
-  client.on('error', (error) => leemons.log.error(`Redis Error: ${error.message}`));
+  client.on('error', (error) => console.error(`Redis Error: ${error.message}`));
 
   await client.connect();
 

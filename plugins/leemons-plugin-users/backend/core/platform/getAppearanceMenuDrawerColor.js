@@ -1,10 +1,7 @@
-const { table } = require('../tables');
-
-async function getAppearanceMenuDrawerColor({ transacting } = {}) {
-  const config = await table.config.findOne(
-    { key: 'platform-appearance-menu-drawer-color' },
-    { transacting }
-  );
+async function getAppearanceMenuDrawerColor({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({
+    key: 'platform-appearance-menu-drawer-color',
+  }).lean();
   return config ? config.value : '#333F56';
 }
 

@@ -1,13 +1,13 @@
-const { table } = require('../tables');
-
-async function setEmailLogo(logo, { transacting } = {}) {
-  return table.config.set(
+async function setEmailLogo({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-email-logo' },
     {
       key: 'platform-email-logo',
-      value: logo,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

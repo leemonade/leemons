@@ -1,13 +1,13 @@
-const { table } = require('../tables');
-
-async function setAppearanceMenuDrawerColor(color, { transacting } = {}) {
-  return table.config.set(
+async function setAppearanceMenuDrawerColor({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-appearance-menu-drawer-color' },
     {
       key: 'platform-appearance-menu-drawer-color',
-      value: color,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

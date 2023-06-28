@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { settledResponseToManyResponse } = require('leemons-utils');
 const { add } = require('./add');
 
 /**
@@ -8,9 +9,11 @@ const { add } = require('./add');
  * @param {PermissionAdd[]} data - Array of permissions to add
  * @return {Promise<ManyResponse>} Created permissions
  * */
-async function addMany(data) {
-  const response = await Promise.allSettled(_.map(data, (d) => add.call(this, d)));
-  return global.utils.settledResponseToManyResponse(response);
+async function addMany({ ctx, ...data }) {
+  const response = await Promise.allSettled(
+    _.map(data, (d) => ctx.call('users.permissions.add', { ...d, ctx }))
+  );
+  return settledResponseToManyResponse(response);
 }
 
 module.exports = { addMany };

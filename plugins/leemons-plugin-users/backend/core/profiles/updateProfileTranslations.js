@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const { translations: trans } = require('../translations');
 const getDefaultLocale = require('../platform/getDefaultLocale');
 
 /**
@@ -12,39 +10,24 @@ const getDefaultLocale = require('../platform/getDefaultLocale');
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function updateProfileTranslations(
-  profile,
-  translations,
-  { transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const t = trans();
+async function updateProfileTranslations({ profile, translations: _translations, ctx }) {
+  const translations = { ..._translations };
+  const defaultLocale = await getDefaultLocale({ ctx });
+  if (!translations.name) translations.name = {};
+  if (!translations.description) translations.description = {};
+  translations.name[defaultLocale] = profile.name;
+  translations.description[defaultLocale] = profile.description;
 
-      const defaultLocale = await getDefaultLocale();
-      if (!translations.name) translations.name = {};
-      if (!translations.description) translations.description = {};
-      translations.name[defaultLocale] = profile.name;
-      translations.description[defaultLocale] = profile.description;
-
-      return Promise.all([
-        t.common.setKey(
-          leemons.plugin.prefixPN(`profile.${profile.id}.name`),
-          _.pickBy(translations.name, _.identity),
-          {
-            transacting,
-          }
-        ),
-        t.common.setKey(
-          leemons.plugin.prefixPN(`profile.${profile.id}.description`),
-          _.pickBy(translations.description, _.identity),
-          { transacting }
-        ),
-      ]);
-    },
-    table.profiles,
-    _transacting
-  );
+  return Promise.all([
+    ctx.call('multilanguage.common.setKey', {
+      key: ctx.prefixPN(`profile.${profile._id}.name`),
+      data: _.pickBy(translations.name, _.identity),
+    }),
+    ctx.call('multilanguage.common.setKey', {
+      key: ctx.prefixPN(`profile.${profile._id}.description`),
+      data: _.pickBy(translations.description, _.identity),
+    }),
+  ]);
 }
 
 module.exports = { updateProfileTranslations };

@@ -1,8 +1,6 @@
 const { validateExistPermission } = require('../../validations/exists');
 const { validatePermissionName } = require('../../validations/exists');
-const { translations } = require('../translations');
 const { addActionMany } = require('./addActionMany');
-const { table } = require('../tables');
 
 /**
  * Create the permit only if the permissionName does not already exist.

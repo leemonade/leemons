@@ -1,13 +1,13 @@
-const { table } = require('../tables');
-
-async function setLandscapeLogo(logo, { transacting } = {}) {
-  return table.config.set(
+async function setLandscapeLogo({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-landscape-logo' },
     {
       key: 'platform-landscape-logo',
-      value: logo,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

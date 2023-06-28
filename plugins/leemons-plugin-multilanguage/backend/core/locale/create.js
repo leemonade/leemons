@@ -70,14 +70,14 @@ async function addMany({ ctx, locales }) {
 
     // Return the new locales
     const addedLocales = await ctx.tx.db.Locales.create(newLocales);
-    leemons.log.info(
+    ctx.logger.info(
       `New locales added: ${newLocales
         .map((locale) => `${locale.code} | ${locale.name}`)
         .join(', ')}`
     );
     return addedLocales;
   } catch (e) {
-    leemons.log.error(e.message);
+    ctx.logger.error(e.message);
     throw new Error('An error occurred while creating the locales');
   }
 }

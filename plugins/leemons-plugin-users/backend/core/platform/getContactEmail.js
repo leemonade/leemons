@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getContactEmail({ transacting } = {}) {
-  const config = await table.config.findOne({ key: 'platform-contact-email' }, { transacting });
+async function getContactEmail({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-contact-email' }).lean();
   return config ? config.value : null;
 }
 

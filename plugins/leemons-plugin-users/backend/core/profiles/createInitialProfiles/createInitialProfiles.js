@@ -1,24 +1,18 @@
+/* eslint-disable global-require */
 const admin = require('./admin.json');
 const teacher = require('./teacher.json');
 const student = require('./student.json');
+const { add } = require('../add');
 
-async function createInitialProfiles({ transacting: _transacting } = {}) {
-  const { table } = require('../../tables');
-  const { add } = require('../add');
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const n = await table.profiles.count({}, { transacting });
-      if (n < 3) {
-        await Promise.all([
-          add(admin, { transacting, sysName: 'admin' }),
-          add(teacher, { transacting, sysName: 'teacher' }),
-          add(student, { transacting, sysName: 'student' }),
-        ]);
-      }
-    },
-    table.profiles,
-    _transacting
-  );
+async function createInitialProfiles({ ctx }) {
+  const n = await ctx.tx.db.Profiles.countDocuments({});
+  if (n < 3) {
+    await Promise.all([
+      add({ ...admin, sysName: 'admin', ctx }),
+      add({ ...teacher, sysName: 'teacher', ctx }),
+      add({ ...student, sysName: 'student', ctx }),
+    ]);
+  }
 }
 
 module.exports = { createInitialProfiles };

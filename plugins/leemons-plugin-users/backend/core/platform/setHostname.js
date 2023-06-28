@@ -1,6 +1,4 @@
 const URL = require('url');
-const { table } = require('../tables');
-
 /**
  * Set default hostname por platform
  * @public
@@ -9,15 +7,17 @@ const { table } = require('../tables');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setHostname(hostname, { transacting } = {}) {
-  const url = URL.parse(hostname, true);
-  return table.config.set(
+async function setHostname({ value, ctx }) {
+  const url = URL.parse(value, true);
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-hostname' },
     {
       key: 'platform-hostname',
       value: `${url.protocol}//${url.host}`,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

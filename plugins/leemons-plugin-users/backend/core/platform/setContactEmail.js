@@ -1,13 +1,13 @@
-const { table } = require('../tables');
-
-async function setContactEmail(email, { transacting } = {}) {
-  return table.config.set(
+async function setContactEmail({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-contact-email' },
     {
       key: 'platform-contact-email',
-      value: email,
+      value,
     },
-    { transacting }
+    {
+      upsert: true,
+    }
   );
 }
 

@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getLandscapeLogo({ transacting } = {}) {
-  const config = await table.config.findOne({ key: 'platform-landscape-logo' }, { transacting });
+async function getLandscapeLogo({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-landscape-logo' }).lean();
   return config ? config.value : null;
 }
 

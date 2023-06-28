@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 
 /**
  * ES: Devuelve los perfiles a los que tiene acceso el perfil especificado
@@ -10,41 +9,37 @@ const { table } = require('../../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function getProfileContacts(_fromProfile, { returnProfile, transacting } = {}) {
+async function getProfileContacts({ fromProfile: _fromProfile, returnProfile, ctx }) {
   const isArray = _.isArray(_fromProfile);
   const fromProfiles = isArray ? _fromProfile : [_fromProfile];
 
   const query = {
-    fromProfile_$in: fromProfiles,
+    fromProfile: fromProfiles,
   };
 
-  let response = await table.profileContacts.find(query, { transacting });
+  let response = await ctx.tx.db.ProfileContacts.find(query).lean();
 
   response = _.uniqBy(response, 'toProfile');
 
   let profilesById = null;
   if (returnProfile) {
-    const profiles = await table.profiles.find(
-      { id_$in: _.map(response, 'toProfile') },
-      { transacting }
-    );
+    const profiles = await ctx.tx.db.Profiles.find({ _id: _.map(response, 'toProfile') }).lean();
     profilesById = _.keyBy(profiles, 'id');
   }
 
   if (isArray) {
     const responseByFromProfile = _.groupBy(response, 'fromProfile');
-    return _.map(fromProfiles, (fromProfile) => {
-      return _.map(responseByFromProfile[fromProfile], ({ toProfile }) => {
+    return _.map(fromProfiles, (fromProfile) =>
+      _.map(responseByFromProfile[fromProfile], ({ toProfile }) => {
         if (profilesById) return profilesById[toProfile];
         return toProfile;
-      });
-    });
-  } else {
-    return _.map(response, ({ toProfile }) => {
-      if (profilesById) return profilesById[toProfile];
-      return toProfile;
-    });
+      })
+    );
   }
+  return _.map(response, ({ toProfile }) => {
+    if (profilesById) return profilesById[toProfile];
+    return toProfile;
+  });
 }
 
 module.exports = { getProfileContacts };

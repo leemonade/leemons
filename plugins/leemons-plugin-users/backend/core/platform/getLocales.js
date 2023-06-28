@@ -1,5 +1,3 @@
-const { translations } = require('../translations');
-
 /**
  * Return all platform locales
  * @public
@@ -7,9 +5,8 @@ const { translations } = require('../translations');
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getLocales({ transacting } = {}) {
-  const transl = translations();
-  return transl.locales.getAll({ transacting });
+async function getLocales({ ctx }) {
+  return ctx.tx.call('multilanguage.locales.getAll');
 }
 
 module.exports = getLocales;

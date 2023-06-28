@@ -31,7 +31,7 @@ async function add({ name, type, description, center, profile, permissions, ctx 
   if (!(await manyPermissionsHasManyActions({ data: dataToCheckPermissions, ctx })))
     throw new Error(`One or more permissions or his actions not exist`);
 
-  leemons.log.info(`Creating role '${name}'`);
+  ctx.logger.info(`Creating role '${name}'`);
 
   const role = await ctx.tx.db.Roles.create({
     name,

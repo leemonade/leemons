@@ -1,10 +1,5 @@
-const { table } = require('../tables');
-
-async function getAppearanceDarkMode({ transacting } = {}) {
-  const config = await table.config.findOne(
-    { key: 'platform-appearance-dark-mode' },
-    { transacting }
-  );
+async function getAppearanceDarkMode({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'platform-appearance-dark-mode' }).lean();
   return Boolean(config?.value);
 }
 

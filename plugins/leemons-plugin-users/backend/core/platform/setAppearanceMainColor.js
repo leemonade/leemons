@@ -1,13 +1,11 @@
-const { table } = require('../tables');
-
-async function setAppearanceMainColor(color, { transacting } = {}) {
-  return table.config.set(
+async function setAppearanceMainColor({ value, ctx }) {
+  return ctx.tx.db.Config.updateOne(
     { key: 'platform-appearance-main-color' },
     {
       key: 'platform-appearance-main-color',
-      value: color,
+      value,
     },
-    { transacting }
+    { upsert: true }
   );
 }
 

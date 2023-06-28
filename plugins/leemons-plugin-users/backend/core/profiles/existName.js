@@ -1,11 +1,15 @@
-const { table } = require('../tables');
+const slugify = require('slugify');
 
-async function existName(name, id, { transacting } = {}) {
+async function existName({ name, _id, ctx }) {
   const query = {
-    $or: [{ name }, { uri: global.utils.slugify(name, { lower: true }) }],
+    $or: [{ name }, { uri: slugify(name, { lower: true }) }],
   };
-  if (id) query.id_$ne = id;
-  const response = await table.profiles.count(query, { transacting });
+  if (_id) {
+    query._id = {
+      $ne: _id,
+    };
+  }
+  const response = await ctx.tx.db.Profiles.countDocuments(query);
   return !!response;
 }
 
