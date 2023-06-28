@@ -11,39 +11,27 @@ const { table } = require('../tables');
  * @param {PermissionAdd} data - Array of permissions
  * @return {Promise<Permission>} Created permission
  * */
-async function add(data) {
-  validatePermissionName(data.permissionName, this.calledFrom);
+async function add({ ctx, ...data }) {
+  validatePermissionName(data.permissionName, ctx.callerPlugin);
 
   await validateExistPermission(data.permissionName);
 
-  leemons.log.info(`Adding permission '${data.permissionName}' for plugin '${this.calledFrom}'`);
-  return table.permissions.transaction(async (transacting) => {
-    const promises = [
-      table.permissions.create(
-        {
-          permissionName: data.permissionName,
-          pluginName: this.calledFrom,
-        },
-        { transacting }
-      ),
-    ];
+  ctx.logger.info(`Adding permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
 
-    if (translations()) {
-      promises.push(
-        translations().common.addManyByKey(
-          `plugins.users.${data.permissionName}.name`,
-          data.localizationName,
-          { transacting }
-        )
-      );
-    }
+  const values = await Promise.all([
+    ctx.tx.db.Permissions.create({
+      permissionName: data.permissionName,
+      pluginName: ctx.callerPlugin,
+    }),
+    ctx.tx.call('multilanguage.common.addManyByKey', {
+      key: `plugins.users.${data.permissionName}.name`,
+      data: data.localizationName,
+    }),
+  ]);
 
-    const values = await Promise.all(promises);
+  await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });
 
-    await addActionMany(data.permissionName, data.actions, { transacting });
-
-    return values[0];
-  });
+  return values[0];
 }
 
 module.exports = { add };

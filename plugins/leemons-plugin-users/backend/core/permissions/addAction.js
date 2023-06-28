@@ -1,5 +1,7 @@
-const { table } = require('../tables');
-
+const { LeemonsError } = require('leemons-error');
+const { exist: actionExist } = require('../actions');
+const { exist: permissionExist } = require('./exist');
+const { hasAction: permissionHasAction } = require('./hasAction');
 /**
  * Create multiple permissions
  * @public
@@ -9,23 +11,22 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addAction(permissionName, actionName, { transacting }) {
+async function addAction({ permissionName, actionName, ctx }) {
   const values = await Promise.all([
-    leemons.plugin.services.actions.exist(actionName, { transacting }),
-    leemons.plugin.services.permissions.exist(permissionName, { transacting }),
-    leemons.plugin.services.permissions.hasAction(permissionName, actionName, {
-      transacting,
-    }),
+    actionExist({ actionName, ctx }),
+    permissionExist({ permissionName, ctx }),
+    permissionHasAction({ permissionName, actionName, ctx }),
   ]);
-  if (!values[0]) throw new Error(`There is no '${actionName}' action`);
-  if (!values[1]) throw new Error(`There is no '${permissionName}' permission`);
+  if (!values[0]) throw new LeemonsError(ctx, { message: `There is no '${actionName}' action` });
+  if (!values[1])
+    throw new LeemonsError(ctx, { message: `There is no '${permissionName}' permission` });
   if (values[2])
-    throw new Error(
-      `Already exist the permission '${permissionName}' with the action '${actionName}'`
-    );
+    throw new LeemonsError(ctx, {
+      message: `Already exist the permission '${permissionName}' with the action '${actionName}'`,
+    });
 
-  leemons.log.info(`Adding action '${actionName}' for permission '${permissionName}'`);
-  return table.permissionAction.create({ permissionName, actionName }, { transacting });
+  ctx.logger.info(`Adding action '${actionName}' for permission '${permissionName}'`);
+  return ctx.tx.db.PermissionAction.create({ permissionName, actionName });
 }
 
 module.exports = { addAction };

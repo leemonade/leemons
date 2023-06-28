@@ -1,15 +1,14 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Return all permits with his actions in bbdd
  * @public
  * @static
  * */
-async function list() {
+async function list({ ctx }) {
   const [permissions, permissionActions] = await Promise.all([
-    table.permissions.find(),
-    table.permissionAction.find(),
+    ctx.tx.db.Permissions.find().lean(),
+    ctx.tx.db.PermissionAction.find().lean(),
   ]);
 
   let permission;

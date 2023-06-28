@@ -1,3 +1,4 @@
+// TODO ESPERANDO A MIGRAR MENU BUILDER
 function getMenuBuilder() {
   const menu = leemons.getPlugin('menu-builder');
   if (menu) return menu;

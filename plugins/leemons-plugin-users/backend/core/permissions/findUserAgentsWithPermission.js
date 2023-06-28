@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Find the user agents with the provided permissions
@@ -9,10 +8,7 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<string[]>}
  * */
-async function findUserAgentsWithPermission(
-  permissions,
-  { returnUserAgents = true, transacting } = {}
-) {
+async function findUserAgentsWithPermission({ permissions, returnUserAgents, ctx }) {
   const _permissions = _.isArray(permissions) ? permissions : [permissions];
   const query = {
     $or: [],
@@ -20,12 +16,12 @@ async function findUserAgentsWithPermission(
   _.forEach(_permissions, ({ actionNames, ...d }) => {
     const q = { ...d };
     if (actionNames) {
-      q.actionName_$in = actionNames;
+      q.actionName = actionNames;
     }
     query.$or.push(q);
   });
 
-  const response = await table.userAgentPermission.find(query, { transacting });
+  const response = await ctx.tx.db.UserAgentPermission.find(query).lean();
   return returnUserAgents ? _.uniq(_.map(response, 'userAgent')) : response;
 }
 

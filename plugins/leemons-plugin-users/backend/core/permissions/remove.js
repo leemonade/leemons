@@ -1,5 +1,4 @@
-const { translations } = require('../translations');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 
 /**
  * Delete the permit only if the permissionName is already exist
@@ -8,40 +7,31 @@ const { table } = require('../tables');
  * @param {string} permissionName - permissionName
  * @return {Promise<Permission>} Deleted permission
  * */
-async function remove(permissionName) {
-  const permission = await table.permissions.count({
+async function remove({ permissionName, ctx }) {
+  const permission = await ctx.tx.db.Permissions.countDocuments({
     permissionName,
-    pluginName: this.calledFrom,
+    pluginName: ctx.callerPlugin,
   });
   if (!permission)
-    throw new Error(`Permission '${permissionName}' for plugin '${this.calledFrom}' not exists`);
+    throw new LeemonsError(ctx, {
+      message: `Permission '${permissionName}' for plugin '${ctx.callerPlugin}' not exists`,
+    });
 
-  leemons.log.info(`Deleting permission '${permissionName}' for plugin '${this.calledFrom}'`);
-  return table.permissions.transaction(async (transacting) => {
-    const promises = [
-      table.permissions.delete(
-        {
-          permissionName,
-          pluginName: this.calledFrom,
-        },
-        { transacting }
-      ),
-      table.permissionAction.deleteMany({ permissionName }, { transacting }),
-    ];
+  ctx.logger.info(`Deleting permission '${permissionName}' for plugin '${ctx.callerPlugin}'`);
+  const promises = [
+    ctx.tx.db.Permissions.deleteOne({
+      permissionName,
+      pluginName: ctx.callerPlugin,
+    }),
+    ctx.tx.db.PermissionAction.deleteMany({ permissionName }),
+    ctx.tx.call('multilanguage.common.deleteAll', {
+      key: `plugins.users.${permissionName}.name`,
+    }),
+  ];
 
-    if (translations()) {
-      promises.push(
-        translations().common.deleteAll(
-          { key: `plugins.users.${permissionName}.name` },
-          { transacting }
-        )
-      );
-    }
+  const response = await Promise.all(promises);
 
-    const response = await Promise.all(promises);
-
-    return response[0];
-  });
+  return response[0];
 }
 
 module.exports = { remove };

@@ -11,7 +11,7 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<string[]>}
  * */
-async function findUsersWithPermissions(permissions, { returnRaw, transacting } = {}) {
+async function findUsersWithPermissions({ permissions, returnRaw, ctx }) {
   const _permissions = isArray(permissions) ? permissions : [permissions];
   const query = {
     $or: [],
@@ -19,23 +19,23 @@ async function findUsersWithPermissions(permissions, { returnRaw, transacting } 
   forEach(_permissions, ({ actionNames, ...d }) => {
     const q = { ...d };
     if (actionNames) {
-      q.actionName_$in = actionNames;
+      q.actionName = actionNames;
     }
     query.$or.push(q);
   });
 
-  const response = await table.userAgentPermission.find(query, { transacting });
+  const response = await ctx.tx.db.UserAgentPermission.find(query).lean();
 
   if (returnRaw) return response;
 
   const userAgentIds = uniq(map(response, 'userAgent'));
-  const userAgents = await getUserAgentsInfo(userAgentIds, { transacting });
+  const userAgents = await getUserAgentsInfo({ userAgentIds, ctx });
   const users = uniqBy(
     map(userAgents, (userAgent) => userAgent.user),
-    'id'
+    '_id'
   );
   return map(users, (user) => {
-    user.userAgentIds = userAgents.filter((ua) => ua.user.id === user.id).map((ua) => ua.id);
+    user.userAgentIds = userAgents.filter((ua) => ua.user._id === user._id).map((ua) => ua._id);
     user.permissions = uniq(
       response.filter((p) => user.userAgentIds.includes(p.userAgent)).map((p) => p.actionName)
     );

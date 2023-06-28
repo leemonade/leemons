@@ -23,8 +23,8 @@ async function hasActionMany({ permissionName, actionNames, ctx }) {
   const result = count === actionNames.length;
 
   if (!result) {
-    console.log(`Permission '${permissionName}' doesn't have one of these actions:`);
-    console.dir(actionNames, { depth: null });
+    ctx.logger.log(`Permission '${permissionName}' doesn't have one of these actions:`);
+    ctx.logger.dir(actionNames, { depth: null });
   }
 
   return result;

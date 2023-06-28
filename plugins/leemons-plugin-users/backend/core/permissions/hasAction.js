@@ -1,5 +1,4 @@
-const { table } = require('../tables');
-const constants = require('../../../config/constants');
+const constants = require('../../config/constants');
 
 /**
  * Check if the permission has action
@@ -10,19 +9,16 @@ const constants = require('../../../config/constants');
  *  @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function hasAction(permissionName, actionName, { transacting }) {
+async function hasAction({ permissionName, actionName, ctx }) {
   if (
     constants.basicPermission.permissionName === permissionName &&
     constants.basicPermission.actionName === actionName
   )
     return true;
-  const response = await table.permissionAction.count(
-    {
-      permissionName,
-      actionName,
-    },
-    { transacting }
-  );
+  const response = await ctx.tx.db.PermissionAction.countDocuments({
+    permissionName,
+    actionName,
+  });
   return !!response;
 }
 

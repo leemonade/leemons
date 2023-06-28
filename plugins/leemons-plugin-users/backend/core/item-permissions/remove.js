@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { validateTypePrefix } = require('../../validations/exists');
-const { table } = require('../tables');
 const { removeAllItemsCache } = require('./removeAllItemsCache');
 
 /**
@@ -16,15 +15,15 @@ const { removeAllItemsCache } = require('./removeAllItemsCache');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(query, { transacting } = {}) {
+async function remove({ query, ctx }) {
   let typeKey = null;
   let typeArray = false;
-  if (query.type) typeKey = 'type';
-  if (query.type_$in) {
-    typeKey = 'type_$in';
+  if (_.isString(query.type)) typeKey = 'type';
+  if (_.isArray(query.type)) {
+    typeKey = 'type';
     typeArray = true;
   }
-  if (query.type_$startsWith) typeKey = 'type_$startsWith';
+  if (_.isRegExp(query.type)) typeKey = 'type';
   if (!typeKey) throw new Error('type param is required');
 
   if (typeArray) {
@@ -35,7 +34,7 @@ async function remove(query, { transacting } = {}) {
     validateTypePrefix(query[typeKey], this.calledFrom);
   }
 
-  const response = await table.itemPermissions.deleteMany(query, { transacting });
+  const response = await ctx.tx.db.ItemPermissions.deleteMany(query);
   await removeAllItemsCache();
   return response;
 }

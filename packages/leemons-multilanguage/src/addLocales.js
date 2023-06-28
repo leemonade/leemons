@@ -10,11 +10,11 @@ async function addLocales({ locales: _locales, i18nPath, ctx }) {
       // eslint-disable-next-line import/no-dynamic-require, global-require
       localesData[locale] = require(`${i18nPath}/${locale}.js`);
     } catch (err) {
-      console.error(`Unable to load locale: ${i18nPath}`);
+      ctx.logger.error(`Unable to load locale: ${i18nPath}`);
     }
   }
 
-  return ctx.call('multilanguage.common.setManyByJSON', {
+  return ctx.tx.call('multilanguage.common.setManyByJSON', {
     data: localesData,
   });
 }

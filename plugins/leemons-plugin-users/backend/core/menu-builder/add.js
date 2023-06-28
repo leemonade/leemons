@@ -1,5 +1,6 @@
 const getMenuBuilder = require('./getMenuBuilder');
 
+// TODO ESPERANDO A MIGRAR MENU BUILDER
 async function add(item, permissions) {
   const menuBuilder = getMenuBuilder();
   const { menuItem, config } = menuBuilder.services;

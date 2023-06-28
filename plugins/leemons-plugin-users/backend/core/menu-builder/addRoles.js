@@ -1,5 +1,6 @@
 const add = require('./add');
 
+// TODO ESPERANDO A MIGRAR MENU BUILDER
 async function addRoles() {
   return add(
     {
