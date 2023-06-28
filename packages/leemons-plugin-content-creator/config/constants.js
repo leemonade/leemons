@@ -84,7 +84,7 @@ const assignableRoles = [
       evaluationDetailUrl: '/private/content-creator/view/:id/:user',
       dashboardUrl: '/private/content-creator/view/:id',
       creatable: true,
-      order: 3,
+      order: 1,
       createUrl: '/private/content-creator/new',
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'contents', es: 'contenidos' },

@@ -76,7 +76,7 @@ function setupAssignables(isInstalled) {
       canUse: [], // Usable by the plugin owner and assignables plugin
       pluralName: { en: 'modules', es: 'módulos' },
       singularName: { en: 'module', es: 'módulo' },
-      order: 8,
+      order: 6,
       menu: {
         item: {
           iconSvg: '/public/learning-paths/modules-leebrary-icon.svg',
