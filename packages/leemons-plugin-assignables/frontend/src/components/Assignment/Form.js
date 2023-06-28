@@ -75,7 +75,7 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
   };
 
   if (values.instructions) {
-    submissionValues.statement = values.instructions;
+    set(submissionValues, 'metadata.statement', values.instructions);
   }
 
   if (values.students.value[0]?.name) {
