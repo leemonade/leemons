@@ -35,7 +35,7 @@ async function add(data, { transacting } = {}) {
     // Add Menu item
     const { services } = leemons.getPlugin('menu-builder');
     const menuItem = {
-      item: { ...menu.item, key: categoryData.key },
+      item: { ...menu.item, key: categoryData.key, order: menu.order ?? categoryData.order },
       permissions: menu.permissions,
     };
     await services.menuItem.addItemsFromPlugin(menuItem, false, categoriesMenu.key, {

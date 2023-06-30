@@ -120,19 +120,23 @@ function useFiltersData({ control }) {
 function useParsedData({ programs, courses, groups, periods, localizations }) {
   const _programs = React.useMemo(
     () =>
-      programs?.map((program) => ({
-        value: program.id,
-        label: program.name,
-      })) || [],
+      programs
+        ?.map((program) => ({
+          value: program.id,
+          label: program.name,
+        }))
+        ?.filter((program) => program.value && program.label) || [],
     [programs]
   );
 
   const _courses = React.useMemo(
     () =>
-      courses?.map((course) => ({
-        value: course.id,
-        label: course.name,
-      })) || [],
+      courses
+        ?.map((course) => ({
+          value: course.id,
+          label: course.name,
+        }))
+        ?.filter((course) => course.value && course.label) || [],
     [courses]
   );
 
@@ -146,10 +150,12 @@ function useParsedData({ programs, courses, groups, periods, localizations }) {
         value: 'all',
         label: localizations?.group?.all,
       },
-      ...groups?.map((group) => ({
-        value: group.id,
-        label: group.name || group.abbreviation,
-      })),
+      ...groups
+        ?.map((group) => ({
+          value: group.id,
+          label: group.name || group.abbreviation,
+        }))
+        ?.filter((group) => group.value && group.label),
     ];
   }, [groups]);
 
@@ -163,10 +169,12 @@ function useParsedData({ programs, courses, groups, periods, localizations }) {
         label: localizations?.period?.all,
         value: 'all',
       },
-      ...periods.map((period) => ({
-        label: period.name,
-        value: period.id,
-      })),
+      ...periods
+        .map((period) => ({
+          label: period.name,
+          value: period.id,
+        }))
+        .filter((period) => period.value && period.label),
       { label: localizations?.finalPeriod, value: 'final' },
     ];
   });

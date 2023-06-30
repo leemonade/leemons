@@ -43,7 +43,7 @@ export function useMatchingClasses({ filters }) {
       return courseClasses;
     }
 
-    return courseClasses?.filter((klass) => klass.groups.id === filters?.group);
+    return courseClasses?.filter((klass) => klass.groups?.id === filters?.group);
   }, [courseClasses, filters?.group]);
 
   const classesManagers = useClassesManagers({ filters, classes: groupClasses });

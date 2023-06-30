@@ -88,7 +88,7 @@ const assignableRoles = [
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'feedbacks', es: 'encuestas' },
       singularName: { en: 'feedback', es: 'encuesta' },
-      order: 7,
+      order: 5,
       menu: {
         item: {
           iconSvg: '/public/feedback/menu-icon.svg',

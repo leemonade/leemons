@@ -1,5 +1,13 @@
 import React, { useEffect } from 'react';
-import { Box, LoadingOverlay, Button, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  LoadingOverlay,
+  Button,
+  createStyles,
+  ActivityAccordion,
+  ActivityAccordionPanel,
+  HtmlText,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLocale } from '@common';
 import prefixPN from '@content-creator/helpers/prefixPN';
@@ -15,6 +23,7 @@ import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/compon
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 
 function useDocumentData({ id, user }) {
   const { data: assignation, isLoading: assignationIsLoading } = useAssignations(
@@ -74,7 +83,7 @@ export default function DocumentView() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
   const locale = useLocale();
   const history = useHistory();
-  const { classes } = useDocumentViewStyles();
+  const { classes, theme } = useDocumentViewStyles();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -120,6 +129,25 @@ export default function DocumentView() {
       collapsed
     >
       <>
+        {!!instance?.metadata?.statement && (
+          <ActivityAccordion>
+            <ActivityAccordionPanel
+              label="Instrucciones"
+              icon={
+                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
+              }
+            >
+              <Box
+                sx={(th) => ({
+                  padding: th.other.global.spacing.padding.sm,
+                  paddingLeft: 25,
+                })}
+              >
+                <HtmlText>{instance?.metadata?.statement}</HtmlText>
+              </Box>
+            </ActivityAccordionPanel>
+          </ActivityAccordion>
+        )}
         <ContentEditorInput
           useSchema
           schemaLabel={t('schemaLabel')}

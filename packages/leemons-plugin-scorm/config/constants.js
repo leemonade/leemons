@@ -28,6 +28,7 @@ const assignableRoles = [
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'SCORM contents', es: 'contenidos SCORM' },
       singularName: { en: 'SCORM content', es: 'contenido SCORM' },
+      order: 7,
       menu: {
         item: {
           iconSvg: '/public/scorm/menu-icon.svg',

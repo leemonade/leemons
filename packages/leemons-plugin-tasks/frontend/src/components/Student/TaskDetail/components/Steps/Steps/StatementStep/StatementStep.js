@@ -87,10 +87,12 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
 
   const subjectsWithCurriculum = React.useMemo(
     () =>
-      curriculum?.map((subject) => ({
-        ...subject,
-        name: subjects.find((s) => s.id === subject.subject)?.name,
-      })),
+      curriculum
+        ?.map((subject) => ({
+          ...subject,
+          name: subjects.find((s) => s.id === subject.subject)?.name,
+        }))
+        ?.filter((subject) => subject.name),
     [subjects, curriculum]
   );
 
