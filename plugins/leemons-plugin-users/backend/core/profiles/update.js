@@ -1,55 +1,51 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
+const slugify = require('slugify');
 const getProfileRole = require('./getProfileRole');
-const { update: updateRole } = require('../roles');
 const { existName } = require('./existName');
-const { table } = require('../tables');
 const {
   markAllUsersWithProfileToReloadPermissions,
 } = require('./permissions/markAllUsersWithProfileToReloadPermissions');
 const { updateProfileTranslations } = require('./updateProfileTranslations');
 
-async function update(data, { transacting: _transacting } = {}) {
-  const exist = await existName(data.name, data.id);
-  if (exist) throw new Error(`Already exists one profile with the name '${data.name}'`);
+async function update({ ctx, ...data }) {
+  const exist = await existName({
+    name: data.name,
+    _id: data._id,
+    ctx,
+  });
+  if (exist)
+    throw new LeemonsError(ctx, {
+      message: `Already exists one profile with the name '${data.name}'`,
+    });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const [profile] = await Promise.all([
-        table.profiles.update(
-          { id: data.id },
-          {
-            name: data.name,
-            description: data.description,
-            uri: global.utils.slugify(data.name, { lower: true }),
-          },
-          { transacting }
-        ),
-        markAllUsersWithProfileToReloadPermissions(data.id, { transacting }),
-      ]);
+  const [profile] = await Promise.all([
+    ctx.tx.db.Profiles.findByIdAndUpdate(data._id, {
+      name: data.name,
+      description: data.description,
+      uri: slugify(data.name, { lower: true }),
+    }),
+    markAllUsersWithProfileToReloadPermissions({ profileId: data._id, ctx }),
+  ]);
 
-      if (data.translations)
-        await updateProfileTranslations(profile, data.translations, { transacting });
-      const profileRole = await getProfileRole(profile.id, { transacting });
+  if (data.translations) {
+    await updateProfileTranslations({ profile, translations: data.translations, ctx });
+  }
 
-      // Formato: data.permissions
-      // [{ permissionName, actionNames }]
-      await leemons.plugin.services.roles.update(
-        {
-          id: profileRole,
-          name: `profile:${profile.id}:role`,
-          type: leemons.plugin.prefixPN('profile-role'),
-          permissions: data.permissions,
-        },
-        { transacting }
-      );
+  const profileRole = await getProfileRole({ profileId: profile._id, ctx });
 
-      leemons.events.emit('profile-permissions-change', { profile, permissions: data.permissions });
+  // Formato: data.permissions
+  // [{ permissionName, actionNames }]
+  await ctx.call('users.roles.update', {
+    _id: profileRole,
+    name: `profile:${profile._id}:role`,
+    type: ctx.prefixPN('profile-role'),
+    permissions: data.permissions,
+  });
 
-      return profile;
-    },
-    table.profiles,
-    _transacting
-  );
+  ctx.emit('profile-permissions-change', { profile, permissions: data.permissions });
+
+  return profile;
 }
 
 module.exports = { update };

@@ -1,11 +1,16 @@
+const { LeemonsError } = require('leemons-error');
 const { transformArrayToObject } = require('../permissions/transformArrayToObject');
 const { detail: roleDetail } = require('../roles/detail');
-const { table } = require('../tables');
 
-async function detailBySysName(sysName) {
-  const profile = await table.profiles.findOne({ sysName });
-  if (!profile) throw new global.utils.HttpError(404, `No profile found for sysName '${sysName}'`);
-  const role = await roleDetail(profile.role);
+async function detailBySysName({ sysName, ctx }) {
+  const profile = await ctx.tx.db.Profiles.findOne({ sysName }).lean();
+  if (!profile) {
+    throw new LeemonsError(ctx, {
+      httpStatusCode: 404,
+      message: `No profile found for sysName '${sysName}'`,
+    });
+  }
+  const role = await roleDetail({ _id: profile.role, ctx });
   const permissions = transformArrayToObject(role.permissions);
   profile.permissions = permissions.normal;
   profile.targetPermissions = permissions.target;

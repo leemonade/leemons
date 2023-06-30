@@ -1,11 +1,10 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { update } = require('./update');
 
-async function addAllPermissionsToAllProfiles() {
+async function addAllPermissionsToAllProfiles({ ctx }) {
   const [profiles, permissionActions] = await Promise.all([
-    table.profiles.find(),
-    table.permissionAction.find(),
+    ctx.tx.db.Profiles.find().lean(),
+    ctx.tx.db.PermissionAction.find().lean(),
   ]);
   const permissionByName = _.groupBy(permissionActions, 'permissionName');
   const permissions = [];
@@ -16,10 +15,11 @@ async function addAllPermissionsToAllProfiles() {
   return Promise.all(
     _.map(profiles, (profile) =>
       update({
-        id: profile.id,
+        _id: profile._id,
         name: profile.name,
         description: profile.description,
         permissions,
+        ctx,
       })
     )
   );

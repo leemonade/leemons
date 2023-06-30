@@ -1,8 +1,6 @@
-const { table } = require('../tables');
-
-async function existMany(ids, { transacting } = {}) {
-  const response = await table.profiles.count({ id_$in: ids }, { transacting });
-  return response === ids.length;
+async function existMany({ _ids, ctx }) {
+  const response = await ctx.tx.db.Profiles.countDocuments({ _id: _ids });
+  return response === _ids.length;
 }
 
 module.exports = { existMany };

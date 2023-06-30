@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function hasRole(profile, role, { transacting } = {}) {
-  const response = await table.profileRole.count({ profile, role }, { transacting });
+async function hasRole({ profileId, roleId, ctx }) {
+  const response = await ctx.tx.db.ProfileRole.countDocuments({ profile: profileId, role: roleId });
   return !!response;
 }
 

@@ -1,7 +1,7 @@
 const { getUserAgentProfile } = require('../user-agents/getUserAgentProfile');
 
-async function getProfileSysName(userSession, { transacting } = {}) {
-  const profile = await getUserAgentProfile(userSession.userAgents[0], { transacting });
+async function getProfileSysName({ ctx }) {
+  const profile = await getUserAgentProfile({ userAgent: ctx.userSession.userAgents[0], ctx });
   return profile.sysName;
 }
 

@@ -23,6 +23,7 @@ module.exports = {
   ],
   actions: {
     add: {
+      middleare: [LoggerMiddlera, PermissionsMiddlea],
       handler(ctx) {
         return add({ ...ctx.params, ctx });
       },

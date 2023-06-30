@@ -10,7 +10,10 @@ async function mongoDBPaginate({ model, page, size, query, columns, sort }) {
   if (columns) {
     queryItems.select(columns);
   }
-  const [count, items] = await Promise.all([model.countDocuments(query || {}), queryItems.exec()]);
+  const [count, items] = await Promise.all([
+    model.countDocuments(query || {}),
+    queryItems.lean().exec(),
+  ]);
 
   const canGoNextPage = (page || 1) * size < count;
 

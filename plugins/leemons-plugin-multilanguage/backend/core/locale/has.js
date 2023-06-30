@@ -37,7 +37,7 @@ async function hasMany({ codes, ctx }) {
   try {
     // Find the locales that exists in the database
     let existingLocales = await ctx.tx.db.Locales.find({ code: _codes })
-      .select(['id', 'code'])
+      .select(['_id', 'code'])
       .lean();
     existingLocales = existingLocales.map((locale) => locale.code);
 

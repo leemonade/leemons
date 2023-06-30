@@ -43,7 +43,7 @@ async function hasMany({ localizations, isPrivate, ctx }) {
   try {
     const existingLocalizations = await getLocalizationModelFromCTXAndIsPrivate({ isPrivate, ctx })
       .find({ $or: _localizations })
-      .select(['id', 'key', 'locale'])
+      .select(['_id', 'key', 'locale'])
       .lean();
 
     const result = {};

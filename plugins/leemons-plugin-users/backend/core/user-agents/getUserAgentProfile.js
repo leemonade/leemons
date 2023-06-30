@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-
 /**
  * Return the user agent/s center/s
  * @public
@@ -9,20 +7,13 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function getUserAgentProfile(userAgent, { transacting } = {}) {
+async function getUserAgentProfile({ userAgent, ctx }) {
   const isArray = _.isArray(userAgent);
   const userAgents = isArray ? userAgent : [userAgent];
-  const roleProfiles = await table.profileRole.find(
-    { role_$in: _.map(userAgents, 'role') },
-    {
-      columns: ['profile'],
-      transacting,
-    }
-  );
-  const profiles = await table.profiles.find(
-    { id_$in: _.map(roleProfiles, 'profile') },
-    { transacting }
-  );
+  const roleProfiles = await ctx.tx.db.ProfileRole.find({ role: _.map(userAgents, 'role') })
+    .select(['profile'])
+    .lean();
+  const profiles = await ctx.tx.db.Profiles.find({ _id: _.map(roleProfiles, 'profile') }).lean();
   return isArray ? profiles : profiles[0];
 }
 

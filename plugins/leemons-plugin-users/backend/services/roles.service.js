@@ -24,6 +24,14 @@ module.exports = {
   actions: {
     add: {
       handler(ctx) {
+        const a = { id: 'wefwefwef' };
+        ctx.call(
+          'users.permissions.add',
+          {
+            name: 'wefwef',
+          },
+          { meta: { userSession: { _id: 'wefwfewefwefwfe' } } }
+        );
         return add({ ...ctx.params, ctx });
       },
     },

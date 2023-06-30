@@ -1,28 +1,25 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
-async function list(page, size, { withRoles, transacting, indexable = true } = {}) {
+async function list({ page, size, withRoles, indexable = true, ctx }) {
   const query = { indexable };
   if (indexable === 'all') delete query.indexable;
 
-  const results = await global.utils.paginate(table.profiles, page, size, query, {
-    transacting,
-  });
+  const results = await mongoDBPaginate({ model: ctx.tx.db.Profiles, page, size, query });
 
   if (withRoles) {
-    const profileRoles = await table.profileRole.find(
-      { profile_$in: _.map(results.items, 'id') },
-      { transacting }
-    );
-    const options = { transacting };
-    if (_.isObject(withRoles)) options.columns = withRoles.columns;
-    const roles = await table.roles.find({ id_$in: _.map(profileRoles, 'role') }, options);
+    const profileRoles = await ctx.tx.db.ProfileRole.find({
+      profile: _.map(results.items, '_id'),
+    }).lean();
+    const rquery = ctx.tx.db.Roles.find({ _id: _.map(profileRoles, 'role') });
+    if (_.isObject(withRoles)) rquery.select(withRoles.columns);
+    const roles = await rquery.lean().exec();
     const profileRoleByProfile = _.groupBy(profileRoles, 'profile');
-    const rolesById = _.keyBy(roles, 'id');
+    const rolesById = _.keyBy(roles, '_id');
     _.forEach(results.items, (profile) => {
       profile.roles = [];
       if (profileRoleByProfile[profile.id]) {
-        _.forEach(profileRoleByProfile[profile.id], ({ role }) => {
+        _.forEach(profileRoleByProfile[profile._id], ({ role }) => {
           profile.roles.push(rolesById[role]);
         });
       }
