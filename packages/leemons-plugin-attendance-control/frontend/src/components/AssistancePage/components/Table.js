@@ -309,10 +309,16 @@ export default function Table({ sessions, classe, onSave }) {
       try {
         const wb = generateAssistancesWB({
           headerShown: format === 'xlsx',
-          data: _.map(store.data, (item) => ({
-            ...item,
-            assistance: t(item.assistance),
-          })),
+          data: _.map(store.data, (item) => {
+            const result = {};
+            _.forIn(item, (value, key) => {
+              result[key] = {
+                ...value,
+                assistance: t(value.assistance),
+              };
+            });
+            return result;
+          }),
           sessions,
           labels: {
             students: t('students'),
@@ -329,7 +335,7 @@ export default function Table({ sessions, classe, onSave }) {
 
     addAction('plugins.scores::download-scores', onDownload);
     return () => removeAction('plugins.scores::download-scores', onDownload);
-  }, [sessions, store.data]);
+  }, [sessions, store.data, tLoading]);
 
   return (
     <>
