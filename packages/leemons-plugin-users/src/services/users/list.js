@@ -1,7 +1,12 @@
 const _ = require('lodash');
 const { table } = require('../tables');
 
-async function list(page, size, { profiles, centers, ...queries } = {}, { transacting } = {}) {
+async function list(
+  page,
+  size,
+  { profiles, centers, disabled, ...queries } = {},
+  { transacting } = {}
+) {
   const query = { ...queries };
   let roles = null;
 
@@ -24,15 +29,47 @@ async function list(page, size, { profiles, centers, ...queries } = {}, { transa
     }
   }
 
-  if (_.isArray(roles)) {
-    const userAgents = await table.userAgent.find(
-      { role_$in: roles },
-      { columns: ['id', 'user'], transacting }
-    );
+  let userAgents = null;
+  if (_.isArray(roles) || _.isBoolean(disabled)) {
+    const q = {};
+    if (_.isArray(roles)) {
+      q.role_$in = roles;
+    }
+    if (_.isBoolean(disabled)) {
+      if (disabled) {
+        q.disabled = true;
+      } else {
+        q.$or = [{ disabled_$null: true }, { disabled: false }];
+      }
+    }
+    userAgents = await table.userAgent.find(q, {
+      columns: ['id', 'user', 'disabled'],
+      transacting,
+    });
     query.id_$in = _.map(userAgents, 'user');
   }
 
-  return global.utils.paginate(table.users, page, size, query, { transacting });
+  const result = await global.utils.paginate(table.users, page, size, query, { transacting });
+  result.userAgents = userAgents;
+
+  if (userAgents) {
+    const userAgentsByUser = _.keyBy(userAgents, 'user');
+    const userAgentIds = _.map(result.items, (user) => userAgentsByUser[user.id].id);
+    const tagsService = leemons.getPlugin('common').services.tags;
+    const tags = await tagsService.getValuesTags(userAgentIds, {
+      type: 'plugins.users.user-agent',
+      transacting,
+    });
+    result.items = _.map(result.items, (user) => {
+      const index = userAgentIds.indexOf(userAgentsByUser[user.id].id);
+      return {
+        ...user,
+        tags: tags[index],
+      };
+    });
+  }
+
+  return result;
 }
 
 module.exports = { list };

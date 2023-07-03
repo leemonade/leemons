@@ -1,18 +1,24 @@
 import {
   ActionButton,
+  Badge,
   Box,
+  Button,
+  Checkbox,
   ContextContainer,
+  LoadingOverlay,
+  Modal,
   PageContainer,
   Pager,
   Paper,
   SearchInput,
+  Select,
   Stack,
   Table,
 } from '@bubbles-ui/components';
+import { DeleteBinIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { LocaleDate, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -22,6 +28,8 @@ import prefixPN from '@users/helpers/prefixPN';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { Link, useHistory } from 'react-router-dom';
 
+import DisableUsersModal from '@users/components/DisableUsersModal';
+import disableUserAgent from '@users/request/disableUserAgent';
 import { SelectCenter } from '../../../../components/SelectCenter';
 import { SelectProfile } from '../../../../components/SelectProfile';
 import { listUsersRequest } from '../../../../request';
@@ -31,22 +39,50 @@ function ListUsers() {
   const [store, render] = useStore({
     page: 0,
     size: 10,
+    checkeds: [],
   });
   const { t: tCommon } = useCommonTranslate('page_header');
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
 
   const history = useHistory();
 
+  function getUserAgentId(user) {
+    return _.find(store.pagination?.userAgents, { user }).id;
+  }
+
+  function getUserAgentDisabled(user) {
+    return _.find(store.pagination?.userAgents, { user }).disabled;
+  }
+
   const tableHeaders = useMemo(
     () => [
       {
-        Header: t('nameHeader'),
-        accessor: 'name',
+        Header: () => (
+          <Box style={{ width: '30px' }}>
+            <Checkbox
+              checked={store.checkeds.length === store.pagination?.userAgents.length}
+              onChange={() => {
+                if (store.checkeds.length === store.pagination?.userAgents.length) {
+                  store.checkeds = [];
+                } else {
+                  store.checkeds = _.map(store.pagination?.userAgents, 'id');
+                }
+                render();
+              }}
+            />
+          </Box>
+        ),
+        accessor: 'checked',
         className: 'text-left',
       },
       {
         Header: t('surnameHeader'),
         accessor: 'surnames',
+        className: 'text-left',
+      },
+      {
+        Header: t('nameHeader'),
+        accessor: 'name',
         className: 'text-left',
       },
       {
@@ -60,17 +96,22 @@ function ListUsers() {
         className: 'text-left',
       },
       {
-        Header: t('phoneHeader'),
-        accessor: 'phone',
+        Header: t('stateHeader'),
+        accessor: 'state',
         className: 'text-left',
       },
       {
-        Header: t('actionsHeader'),
+        Header: t('tagsHeader'),
+        accessor: 'tags',
+        className: 'text-left',
+      },
+      {
+        Header: '',
         accessor: 'actions',
         className: 'text-right',
       },
     ],
-    [t]
+    [t, store.pagination, JSON.stringify(store.checkeds)]
   );
 
   const tableItems = useMemo(
@@ -78,7 +119,31 @@ function ListUsers() {
       store.pagination
         ? _.map(store.pagination.items, (item) => ({
             ...item,
+            checked: (
+              <Box style={{ width: '30px' }}>
+                <Checkbox
+                  checked={store.checkeds.includes(getUserAgentId(item.id))}
+                  onChange={() => {
+                    const index = store.checkeds.indexOf(getUserAgentId(item.id));
+                    if (index >= 0) {
+                      store.checkeds.splice(index, 1);
+                    } else {
+                      store.checkeds.push(getUserAgentId(item.id));
+                    }
+                    render();
+                  }}
+                />
+              </Box>
+            ),
+            tags: (
+              <Box>
+                {item.tags.map((tag) => (
+                  <Badge key={tag} label={tag} closable={false} />
+                ))}
+              </Box>
+            ),
             birthdate: <LocaleDate date={item.birthdate} />,
+            state: t(getUserAgentDisabled(item.id) ? 'disable' : 'active'),
             actions: (
               <Box style={{ textAlign: 'right', width: '100%' }}>
                 <ActionButton
@@ -91,7 +156,7 @@ function ListUsers() {
             ),
           }))
         : [],
-    [t, store.pagination]
+    [t, store.pagination, JSON.stringify(store.checkeds)]
   );
 
   async function listUsers() {
@@ -111,6 +176,12 @@ function ListUsers() {
     }
     if (store.center) {
       query.centers = store.center;
+    }
+    if (store.state) {
+      query.disabled = true;
+      if (store.state === 'active') {
+        query.disabled = false;
+      }
     }
 
     const { data } = await listUsersRequest({
@@ -132,6 +203,8 @@ function ListUsers() {
     } catch (err) {
       setLoadingError(err);
     }
+    store.loading = false;
+    render();
   }
 
   async function getPermissions() {
@@ -153,7 +226,7 @@ function ListUsers() {
   }
 
   useEffect(() => {
-    load();
+    // load();
     getPermissions();
   }, []);
 
@@ -166,17 +239,26 @@ function ListUsers() {
 
   async function centerChange(center) {
     store.center = center;
-    await load();
+    render();
+    // await load();
   }
 
   async function profileChange(profile) {
     store.profile = profile;
-    await load();
+    render();
+    // await load();
+  }
+
+  async function stateChange(state) {
+    store.state = state;
+    render();
+    // await load();
   }
 
   async function searchChange(value) {
     store.search = value;
-    await load();
+    render();
+    // await load();
   }
 
   async function onPageChange(page) {
@@ -197,6 +279,26 @@ function ListUsers() {
     history.push('/private/users/import');
   }
 
+  function makeAction(action) {
+    store.actionModal = action;
+    render();
+  }
+
+  async function disableSelectedUsers() {
+    console.log(store.checkeds);
+    try {
+      store.loading = true;
+      store.actionModal = null;
+      render();
+      await disableUserAgent(store.checkeds);
+      await load();
+    } catch (e) {
+      setLoadingError(e);
+    }
+    store.loading = false;
+    render();
+  }
+
   const headerButtons = React.useMemo(() => {
     const result = {};
     if (store.canAdd) result.new = tCommon('new');
@@ -205,64 +307,125 @@ function ListUsers() {
   }, [store.canImport, store.canAdd, t, tCommon]);
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        values={headerValues}
-        buttons={headerButtons}
-        onImport={goImportPage}
-        onNew={goCreatePage}
-      />
-      <Paper color="solid" shadow="none" padding="none">
-        <Box>
-          <PageContainer noFlex>
-            <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-              <ContextContainer direction="row">
-                <SelectCenter
-                  clearable={t('clearFilter')}
-                  label={t('centerLabel')}
-                  value={store.center}
-                  onChange={centerChange}
-                />
-                <SelectProfile
-                  clearable={t('clearFilter')}
-                  label={t('profileLabel')}
-                  value={store.profile}
-                  onChange={profileChange}
-                />
-                <SearchInput
-                  label={t('searchLabel')}
-                  value={store.search}
-                  onChange={searchChange}
-                />
-              </ContextContainer>
-            </Box>
+    <>
+      {store.loading ? <LoadingOverlay visible /> : null}
+      <ContextContainer fullHeight>
+        <AdminPageHeader
+          values={headerValues}
+          buttons={headerButtons}
+          onImport={goImportPage}
+          onNew={goCreatePage}
+        />
+        <Paper color="solid" shadow="none" padding="none">
+          <Box>
+            <PageContainer noFlex>
+              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <ContextContainer direction="row">
+                  <SelectCenter
+                    clearable={t('clearFilter')}
+                    label={t('centerLabel')}
+                    autoSelectOneOption={false}
+                    value={store.center}
+                    onChange={centerChange}
+                  />
+                  <SelectProfile
+                    clearable={t('clearFilter')}
+                    firstSelected={false}
+                    label={t('profileLabel')}
+                    value={store.profile}
+                    onChange={profileChange}
+                  />
+                  <Select
+                    clearable={t('clearFilter')}
+                    label={t('stateLabel')}
+                    data={[
+                      { label: t('stateActive'), value: 'active' },
+                      { label: t('stateDisabled'), value: 'disabled' },
+                    ]}
+                    value={store.state}
+                    onChange={stateChange}
+                  />
+                  <SearchInput
+                    label={t('searchLabel')}
+                    value={store.search}
+                    onChange={searchChange}
+                  />
+                  <Box
+                    sx={(theme) => ({ alignSelf: 'end', gap: theme.spacing[2], display: 'flex' })}
+                  >
+                    <Button disabled={!store.center || !store.profile} onClick={load}>
+                      {t('searchLabel')}
+                    </Button>
+                    <ActionButton
+                      icon={<DeleteBinIcon />}
+                      onClick={() => {
+                        store.search = null;
+                        store.profile = null;
+                        store.state = null;
+                        store.center = null;
+                        store.pagination = null;
+                        render();
+                      }}
+                    />
+                  </Box>
+                </ContextContainer>
+              </Box>
 
-            <Paper padding={2} mt={20} mb={20} fullWidth>
-              <LoadingErrorAlert />
-              {!store.loading && !loadingError ? (
-                <Box>
-                  <Table columns={tableHeaders} data={tableItems} />
-                </Box>
-              ) : null}
-              <Stack fullWidth justifyContent="center">
-                <Pager
-                  page={store.pagination?.page || 0}
-                  totalPages={store.pagination?.totalPages || 0}
-                  size={store.size}
-                  withSize={true}
-                  onChange={(val) => onPageChange(val - 1)}
-                  onSizeChange={onPageSizeChange}
-                  labels={{
-                    show: t('show'),
-                    goTo: t('goTo'),
-                  }}
-                />
-              </Stack>
-            </Paper>
-          </PageContainer>
-        </Box>
-      </Paper>
-    </ContextContainer>
+              <Paper padding={2} mt={20} mb={20} fullWidth>
+                <LoadingErrorAlert />
+                {!store.loading && !loadingError ? (
+                  <Box>
+                    <Box style={{ width: 200 }}>
+                      <Select
+                        disabled={!store.checkeds.length}
+                        placeholder={t('bulkActions')}
+                        data={[
+                          { label: t('activateUsers'), value: 'active' },
+                          { label: t('disableUsers'), value: 'disable' },
+                        ]}
+                        value={null}
+                        onChange={makeAction}
+                      />
+                    </Box>
+                    {store.checkeds.length ? (
+                      <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                        {t('selectedUsers', { n: store.checkeds.length })}
+                      </Box>
+                    ) : null}
+
+                    <Table columns={tableHeaders} data={tableItems} />
+                  </Box>
+                ) : null}
+                <Stack fullWidth justifyContent="center">
+                  <Pager
+                    page={store.pagination?.page || 0}
+                    totalPages={store.pagination?.totalPages || 0}
+                    size={store.size}
+                    withSize={true}
+                    onChange={(val) => onPageChange(val - 1)}
+                    onSizeChange={onPageSizeChange}
+                    labels={{
+                      show: t('show'),
+                      goTo: t('goTo'),
+                    }}
+                  />
+                </Stack>
+              </Paper>
+            </PageContainer>
+          </Box>
+        </Paper>
+      </ContextContainer>
+      <DisableUsersModal
+        userAgents={store.checkeds}
+        opened={store.actionModal === 'disable'}
+        onClose={() => {
+          store.actionModal = null;
+          render();
+        }}
+        onConfirm={disableSelectedUsers}
+      />
+      <Modal opened={store.actionModal === 'active'}>Hola active</Modal>
+    </>
   );
 }
 
