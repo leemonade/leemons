@@ -13,6 +13,10 @@ async function disable(id, { transacting } = {}) {
     transacting,
   });
   // return table.userAgent.update({ id_$in: ids }, { disabled: true }, { transacting });
+  await leemons.events.emit('after-disable-user-agents', {
+    ids,
+    transacting,
+  });
 }
 
 module.exports = {
