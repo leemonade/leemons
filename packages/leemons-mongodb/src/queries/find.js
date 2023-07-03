@@ -1,6 +1,4 @@
-const {
-  addDeploymentIDWhereToQuery,
-} = require("./helpers/addDeploymentIdWhereToQuery");
+const { addDeploymentIDWhereToQuery } = require('./helpers/addDeploymentIdWhereToQuery');
 
 function find({ model, autoDeploymentID, ctx }) {
   return function () {

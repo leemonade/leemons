@@ -1,10 +1,8 @@
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
 
 function save({ model, autoDeploymentID, autoRollback, ctx }) {
   return async function (item) {
-    throw new Error("Not implemented yet");
+    throw new Error('Not implemented yet');
   };
 }
 

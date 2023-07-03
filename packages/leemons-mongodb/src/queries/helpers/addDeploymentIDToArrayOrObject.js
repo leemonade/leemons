@@ -7,10 +7,9 @@ function addDeploymentIDToArrayOrObject({ items, ctx }) {
       item.deploymentID = getDeploymentIDFromCTX(ctx);
       return item;
     });
-  } else {
-    items.deploymentID = getDeploymentIDFromCTX(ctx);
-    return items;
   }
+  items.deploymentID = getDeploymentIDFromCTX(ctx);
+  return items;
 }
 
 module.exports = { addDeploymentIDToArrayOrObject };

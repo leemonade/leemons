@@ -4,9 +4,6 @@ const schema = new mongoose.Schema(
   {
     _id: {
       type: String,
-      required: true,
-      index: true,
-      unique: true,
     },
     deploymentID: {
       type: String,

@@ -22,7 +22,7 @@ async function modifyCTX(ctx, { redis }) {
   }
 }
 
-module.exports = ({ redis }) => ({
+module.exports = ({ redis } = {}) => ({
   name: '',
   hooks: {
     before: {

@@ -31,6 +31,7 @@ function create({
       if (autoDeploymentID) toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
       if (autoLRN) toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx });
       const items = await model.create(toCreate, ...args);
+
       if (!ignoreTransaction && ctx.meta.transactionID) {
         await addTransactionState(ctx, {
           action: 'leemonsMongoDBRollback',

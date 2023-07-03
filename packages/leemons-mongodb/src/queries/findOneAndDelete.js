@@ -1,16 +1,10 @@
-const { addTransactionState } = require("leemons-transactions");
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
-const {
-  createTransactionIDIfNeed,
-} = require("./helpers/createTransactionIDIfNeed");
+const { addTransactionState } = require('leemons-transactions');
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
+const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
   increaseTransactionFinishedIfNeed,
-} = require("./helpers/increaseTransactionFinishedIfNeed");
-const {
-  increaseTransactionPendingIfNeed,
-} = require("./helpers/increaseTransactionPendingIfNeed");
+} = require('./helpers/increaseTransactionFinishedIfNeed');
+const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 
 function findOneAndDelete({
   model,
@@ -31,17 +25,16 @@ function findOneAndDelete({
     try {
       const [_conditions, ...args] = arguments;
       let conditions = _conditions;
-      if (autoDeploymentID)
-        conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
+      if (autoDeploymentID) conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
 
-      let item = await model.findOneAndDelete(conditions, ...args);
+      const item = await model.findOneAndDelete(conditions, ...args);
 
       if (!ignoreTransaction && ctx.meta.transactionID && item) {
         await addTransactionState(ctx, {
-          action: "leemonsMongoDBRollback",
+          action: 'leemonsMongoDBRollback',
           payload: {
             modelKey,
-            action: "createMany",
+            action: 'createMany',
             data: [item],
           },
         });

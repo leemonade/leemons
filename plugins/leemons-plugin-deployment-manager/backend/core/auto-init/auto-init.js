@@ -51,6 +51,7 @@ async function autoInit(broker) {
     relationship[index].events = _.uniq(rel.events);
   });
   // We simulate that the store adds the plugins that are installed for this deploymentID
+  console.log('- Auto init - Pre SavePlugins');
   await broker.call(
     'deployment-manager.savePlugins',
     _.map(_.uniq(pluginNames), (pluginName) => ({
@@ -59,14 +60,19 @@ async function autoInit(broker) {
     })),
     { meta: { deploymentID } }
   );
+  console.log('- Auto init - Post SavePlugins');
+  console.log('- Auto init - Pre SavePluginsRelationships');
   // We simulate that the store adds the permissions between the actions of the plugins.
   await broker.call('deployment-manager.savePluginsRelationships', relationship, {
     meta: { deploymentID },
   });
+  console.log('- Auto init - Post SavePluginsRelationships');
+  console.log('- Auto init - Pre InitDeployment');
   // We simulate that the store tells us to start this deploymentID.
   await broker.call('deployment-manager.initDeployment', relationship, {
     meta: { deploymentID },
   });
+  console.log('- Auto init - Post InitDeployment');
 }
 
 module.exports = { autoInit };

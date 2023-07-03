@@ -96,9 +96,14 @@ module.exports = () => ({
 
   events: {
     '$broker.started': async function () {
-      if (process.env.DISABLE_AUTO_INIT !== 'true') {
-        await autoInit(this.broker);
-        console.info('- Auto init finished -');
+      try {
+        if (process.env.DISABLE_AUTO_INIT !== 'true') {
+          console.info('- Auto init -');
+          await autoInit(this.broker);
+          console.info('- Auto init finished -');
+        }
+      } catch (e) {
+        console.error('- Auto init error -', e);
       }
     },
   },
