@@ -6,7 +6,6 @@ import {
   Checkbox,
   ContextContainer,
   LoadingOverlay,
-  Modal,
   PageContainer,
   Pager,
   Paper,
@@ -29,6 +28,8 @@ import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { Link, useHistory } from 'react-router-dom';
 
 import DisableUsersModal from '@users/components/DisableUsersModal';
+import EnableUsersModal from '@users/components/EnableUsersModal';
+import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
 import { SelectCenter } from '../../../../components/SelectCenter';
 import { SelectProfile } from '../../../../components/SelectProfile';
@@ -285,12 +286,27 @@ function ListUsers() {
   }
 
   async function disableSelectedUsers() {
-    console.log(store.checkeds);
     try {
       store.loading = true;
       store.actionModal = null;
       render();
       await disableUserAgent(store.checkeds);
+      store.checkeds = [];
+      await load();
+    } catch (e) {
+      setLoadingError(e);
+    }
+    store.loading = false;
+    render();
+  }
+
+  async function enableSelectedUsers() {
+    try {
+      store.loading = true;
+      store.actionModal = null;
+      render();
+      await activeUserAgent(store.checkeds);
+      store.checkeds = [];
       await load();
     } catch (e) {
       setLoadingError(e);
@@ -424,7 +440,15 @@ function ListUsers() {
         }}
         onConfirm={disableSelectedUsers}
       />
-      <Modal opened={store.actionModal === 'active'}>Hola active</Modal>
+      <EnableUsersModal
+        userAgents={store.checkeds}
+        opened={store.actionModal === 'active'}
+        onClose={() => {
+          store.actionModal = null;
+          render();
+        }}
+        onConfirm={enableSelectedUsers}
+      />
     </>
   );
 }

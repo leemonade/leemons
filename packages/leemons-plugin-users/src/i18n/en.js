@@ -387,4 +387,11 @@ module.exports = {
     cancel: 'Cancel',
     confirm: 'Confirm',
   },
+  enableUserModal: {
+    title: 'Activate users',
+    description:
+      'The {n} users of the {centerName} center ({profileName}), who did not have access to the platform, will become visible again.<br/><br/>You can deactivate these users at any time.',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+  },
 };

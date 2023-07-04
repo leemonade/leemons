@@ -4,7 +4,6 @@ const { permissions, menuItems } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
 const constants = require('./config/constants');
 const { addLocales } = require('./src/services/locales/addLocales');
-const { onDisableUserAgents } = require('./src/services/events/onDisableUserAgents');
 
 // TODO: el proceso de gestionar los elementos que se añaden al MenuBuilder debería estar abstraido
 // tal y como se está haciendo ahora pero, en lugar de en cada Plugin, hacerlo a nivel del propio MenuBuilder
@@ -34,6 +33,7 @@ async function events(isInstalled) {
     await addLocales(locale.code);
   });
   leemons.events.on('plugins.users:before-disable-user-agents', async (event, data) => {
+    const { onDisableUserAgents } = require('./src/services/events/onDisableUserAgents');
     await onDisableUserAgents(data);
   });
 
