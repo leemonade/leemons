@@ -409,7 +409,17 @@ function ListUsers() {
                       </Box>
                     ) : null}
 
-                    <Table columns={tableHeaders} data={tableItems} />
+                    <Table
+                      columns={tableHeaders}
+                      data={tableItems}
+                      onStyleRow={({ row, theme }) => {
+                        if (getUserAgentDisabled(row.original.id)) {
+                          return {
+                            backgroundColor: theme.other.core.color.neutral['100'],
+                          };
+                        }
+                      }}
+                    />
                   </Box>
                 ) : null}
                 <Stack fullWidth justifyContent="center">
