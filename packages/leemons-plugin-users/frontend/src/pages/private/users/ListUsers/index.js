@@ -25,10 +25,11 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
+import UserDetailDrawer from '@users/components/UserDetailDrawer';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
 import { SelectCenter } from '../../../../components/SelectCenter';
@@ -148,8 +149,13 @@ function ListUsers() {
             actions: (
               <Box style={{ textAlign: 'right', width: '100%' }}>
                 <ActionButton
-                  as={Link}
-                  to={`/private/users/detail/${item.id}`}
+                  // as={Link}
+                  // to={`/private/users/detail/${item.id}`}
+                  onClick={() => {
+                    store.openUser = item.id;
+                    store.openedUserDrawer = true;
+                    render();
+                  }}
                   tooltip={t('view')}
                   icon={<ExpandDiagonalIcon />}
                 />
@@ -458,6 +464,17 @@ function ListUsers() {
           render();
         }}
         onConfirm={enableSelectedUsers}
+      />
+      <UserDetailDrawer
+        opened={store.openedUserDrawer}
+        userId={store.openUser}
+        centerId={store.center}
+        profileId={store.profile}
+        onChange={load}
+        onClose={() => {
+          store.openedUserDrawer = false;
+          render();
+        }}
       />
     </>
   );
