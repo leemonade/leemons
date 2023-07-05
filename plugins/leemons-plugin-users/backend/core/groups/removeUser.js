@@ -12,8 +12,8 @@ const { exist: groupExist } = require('./exist');
 async function removeUser({ groupId, userAgentId, checksDisabled, ctx } = {}) {
   if (!checksDisabled) {
     await Promise.all([
-      groupExist({ query: { _id: groupId }, throwErrorIfNotExists: true, ctx }),
-      existUserAgent({ query: { _id: userAgentId }, throwErrorIfNotExists: true, ctx }),
+      groupExist({ query: { id: groupId }, throwErrorIfNotExists: true, ctx }),
+      existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: true, ctx }),
     ]);
   }
 

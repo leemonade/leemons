@@ -1,12 +1,12 @@
 const slugify = require('slugify');
 
-async function existName({ name, _id, ctx }) {
+async function existName({ name, id, ctx }) {
   const query = {
     $or: [{ name }, { uri: slugify(name, { lower: true }) }],
   };
-  if (_id) {
-    query._id = {
-      $ne: _id,
+  if (id) {
+    query.id = {
+      $ne: id,
     };
   }
   const response = await ctx.tx.db.Profiles.countDocuments(query);

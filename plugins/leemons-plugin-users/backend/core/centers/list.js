@@ -18,17 +18,17 @@ async function list({ page, size, withRoles, withLimits, ctx }) {
 
   if (withRoles) {
     const centerRoles = await ctx.tx.db.RoleCenter.find({
-      center: _.map(results.items, '_id'),
+      center: _.map(results.items, 'id'),
     }).lean();
     const rolesQuery = ctx.tx.db.Roles.find({ id: _.map(centerRoles, 'role') }).lean();
     if (_.isObject(withRoles) && withRoles.columns) rolesQuery.select(withRoles.columns);
     const roles = await rolesQuery.exec();
     const centerRoleByCenter = _.groupBy(centerRoles, 'center');
-    const rolesById = _.keyBy(roles, '_id');
+    const rolesById = _.keyBy(roles, 'id');
     _.forEach(results.items, (center) => {
       center.roles = [];
-      if (centerRoleByCenter[center._id]) {
-        _.forEach(centerRoleByCenter[center._id], ({ role }) => {
+      if (centerRoleByCenter[center.id]) {
+        _.forEach(centerRoleByCenter[center.id], ({ role }) => {
           center.roles.push(rolesById[role]);
         });
       }
@@ -36,14 +36,14 @@ async function list({ page, size, withRoles, withLimits, ctx }) {
   }
 
   if (withLimits) {
-    let limits = await ctx.tx.db.CenterLimits.find({ center: _.map(results.items, '_id') }).lean();
+    let limits = await ctx.tx.db.CenterLimits.find({ center: _.map(results.items, 'id') }).lean();
     limits = _.map(limits, (limit) => ({
       ...limit,
       unlimited: limit.unlimited === 0 ? false : limit.unlimited === 1 ? true : limit.unlimited,
     }));
     const limitsByCenter = _.groupBy(limits, 'center');
     _.forEach(results.items, (center) => {
-      center.limits = limitsByCenter[center._id] || [];
+      center.limits = limitsByCenter[center.id] || [];
     });
   }
 

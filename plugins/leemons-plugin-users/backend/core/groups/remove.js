@@ -9,9 +9,9 @@ const { exist } = require('./exist');
  * @return {Promise<undefined>}
  * */
 async function remove({ groupId, ctx }) {
-  await exist({ query: { _id: groupId }, throwErrorIfNotExists: true, ctx });
+  await exist({ query: { id: groupId }, throwErrorIfNotExists: true, ctx });
   const groupUserAgents = await ctx.tx.db.GroupUserAgent.find({ group: groupId })
-    .select(['_id', 'user'])
+    .select(['id', 'user'])
     .lean();
   const userAgentIdsInGroup = _.map(groupUserAgents, 'userAgent');
   const values = await Promise.all([

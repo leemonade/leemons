@@ -6,10 +6,10 @@
  * @param {any=} _transacting -  DB Transaction
  * @return {Promise<Center>} Created / Updated role
  * */
-async function remove({ _id, soft, ctx }) {
+async function remove({ id, soft, ctx }) {
   await ctx.tx.db.Centers.findByIdAndDelete(
     {
-      _id,
+      id,
     },
     { soft }
   );

@@ -10,7 +10,7 @@ async function detailByUri({ uri, ctx }) {
       message: `No profile found for uri '${uri}'`,
     });
   }
-  const role = await roleDetail({ _id: profile.role, ctx });
+  const role = await roleDetail({ id: profile.role, ctx });
   const permissions = transformArrayToObject(role.permissions);
   profile.permissions = permissions.normal;
   profile.targetPermissions = permissions.target;

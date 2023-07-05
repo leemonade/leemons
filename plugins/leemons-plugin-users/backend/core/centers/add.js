@@ -11,8 +11,8 @@ const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/c
  * @param {CenterAdd} params.data
  * @return {Promise<Center>} Created / Updated role
  * */
-async function add({ _id, name, locale, limits, ctx, ...centerData }) {
-  if (await existName({ name, _id, ctx }))
+async function add({ id, name, locale, limits, ctx, ...centerData }) {
+  if (await existName({ name, id, ctx }))
     throw new Error(`Center with name '${name}' already exists`);
 
   if (!(await ctx.tx.call('multilanguage.locales.has', { code: locale }))) {
@@ -20,9 +20,9 @@ async function add({ _id, name, locale, limits, ctx, ...centerData }) {
   }
 
   let center = null;
-  if (_id) {
+  if (id) {
     center = await ctx.tx.db.Centers.findByIdAndUpdate(
-      _id,
+      id,
       {
         ...centerData,
         name,
@@ -41,7 +41,7 @@ async function add({ _id, name, locale, limits, ctx, ...centerData }) {
     });
     await createNecessaryRolesForProfilesAccordingToCenters({
       profileIds: undefined,
-      centerIds: center._id,
+      centerIds: center.id,
       ctx,
     });
     await ctx.tx.emit('didCreateCenter');
@@ -49,15 +49,15 @@ async function add({ _id, name, locale, limits, ctx, ...centerData }) {
 
   if (limits) {
     center.limits = await Promise.all(
-      _.map(limits, ({ _id, createdAt, updatedAt, deletedAt, ...limit }) =>
+      _.map(limits, ({ id, createdAt, updatedAt, deletedAt, ...limit }) =>
         ctx.tx.db.CenterLimits.findOneAndUpdate(
           {
             item: limit.item,
-            center: center._id,
+            center: center.id,
           },
           {
             ...limit,
-            center: center._id,
+            center: center.id,
           },
           { upsert: true, new: true }
         )

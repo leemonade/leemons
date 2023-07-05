@@ -15,7 +15,7 @@ async function getUserAgentsInfo({
   withProfile,
   withCenter,
   userColumns = [
-    '_id',
+    'id',
     'email',
     'name',
     'surnames',
@@ -27,17 +27,17 @@ async function getUserAgentsInfo({
   ],
   ctx,
 }) {
-  const userAgents = await ctx.tx.db.UserAgent.find({ _id: userAgentIds })
-    .select(['_id', 'user', 'role', 'disabled'])
+  const userAgents = await ctx.tx.db.UserAgent.find({ id: userAgentIds })
+    .select(['id', 'user', 'role', 'disabled'])
     .lean();
 
-  const users = await ctx.tx.db.Users.find({ _id: _.map(userAgents, 'user') })
+  const users = await ctx.tx.db.Users.find({ id: _.map(userAgents, 'user') })
     .select(userColumns)
     .lean();
 
   const roles = _.uniq(_.map(userAgents, 'role'));
 
-  const usersById = _.keyBy(users, '_id');
+  const usersById = _.keyBy(users, 'id');
   let profileRoleByRole = null;
   let profilesById = null;
   let roleCentersByRole = null;
@@ -46,16 +46,16 @@ async function getUserAgentsInfo({
   if (withProfile) {
     const profileRole = await ctx.tx.db.ProfileRole.find({ role: roles }).lean();
     const profiles = await ctx.tx.db.Profiles.find({
-      $or: [{ _id: _.map(profileRole, 'profile') }, { role: roles }],
+      $or: [{ id: _.map(profileRole, 'profile') }, { role: roles }],
     }).lean();
     profileRoleByRole = _.keyBy(profileRole, 'role');
-    profilesById = _.keyBy(profiles, '_id');
+    profilesById = _.keyBy(profiles, 'id');
   }
   if (withCenter) {
     const centerRole = await ctx.tx.db.RoleCenter.find({ role: roles }).lean();
-    const centers = await ctx.tx.db.Centers.find({ _id: _.map(centerRole, 'center') }).lean();
+    const centers = await ctx.tx.db.Centers.find({ id: _.map(centerRole, 'center') }).lean();
     roleCentersByRole = _.keyBy(centerRole, 'role');
-    centerById = _.keyBy(centers, '_id');
+    centerById = _.keyBy(centers, 'id');
   }
 
   return _.map(userAgents, (userAgent) => {

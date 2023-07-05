@@ -39,10 +39,10 @@ async function add({ name, type, description, center, profile, permissions, ctx 
     description,
     uri: slugify(name, { lower: true }),
   });
-  if (center) await ctx.tx.db.RoleCenter.create({ role: role._id, center });
-  if (profile) await ctx.tx.db.ProfileRole.create({ role: role._id, profile });
+  if (center) await ctx.tx.db.RoleCenter.create({ role: role.id, center });
+  if (profile) await ctx.tx.db.ProfileRole.create({ role: role.id, profile });
 
-  await addPermissionMany({ roleId: role._id, permissions, ctx });
+  await addPermissionMany({ roleId: role.id, permissions, ctx });
   return role;
 }
 

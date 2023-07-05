@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { getRolesCenters } = require('../roles/getRolesCenters');
 
 async function checkIfCanCreateUserAgentInGroup({ userAgentId, groupId, ctx }) {
-  const userAgent = await ctx.tx.db.UserAgent.findOne({ _id: userAgentId }).select(['role']).lean();
+  const userAgent = await ctx.tx.db.UserAgent.findOne({ id: userAgentId }).select(['role']).lean();
   const [center] = await getRolesCenters({ roleIds: userAgent.role, ctx });
 
   const limit = await ctx.tx.db.CenterLimits.findOne({
@@ -17,7 +17,7 @@ async function checkIfCanCreateUserAgentInGroup({ userAgentId, groupId, ctx }) {
       ctx.tx.db.GroupUserAgent.find({ group: groupId }).select(['userAgent']).lean(),
     ]);
     const count = await ctx.tx.db.UserAgent.countDocuments({
-      _id: _.map(userAgents, 'userAgent'),
+      id: _.map(userAgents, 'userAgent'),
       role: _.map(roles, 'role'),
       disabled: { $ne: true },
     });

@@ -7,11 +7,11 @@ function addLRNToIdToArrayOrObject({ items, modelKey, ctx }) {
   const config = getLRNConfig({ modelKey, ctx });
   if (_.isArray(items)) {
     return _.map(items, (item) => {
-      item._id = generateLRN({ ...config, resourceID: new ObjectId() });
+      item.id = generateLRN({ ...config, resourceID: new ObjectId() });
       return item;
     });
   }
-  items._id = generateLRN({ ...config, resourceID: new ObjectId() });
+  items.id = generateLRN({ ...config, resourceID: new ObjectId() });
   return items;
 }
 

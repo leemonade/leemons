@@ -1,6 +1,6 @@
-async function existMany({ _ids, ctx }) {
-  const response = await ctx.tx.db.Profiles.countDocuments({ _id: _ids });
-  return response === _ids.length;
+async function existMany({ ids, ctx }) {
+  const response = await ctx.tx.db.Profiles.countDocuments({ id: ids });
+  return response === ids.length;
 }
 
 module.exports = { existMany };

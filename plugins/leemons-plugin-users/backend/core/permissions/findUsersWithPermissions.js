@@ -32,10 +32,10 @@ async function findUsersWithPermissions({ permissions, returnRaw, ctx }) {
   const userAgents = await getUserAgentsInfo({ userAgentIds, ctx });
   const users = uniqBy(
     map(userAgents, (userAgent) => userAgent.user),
-    '_id'
+    'id'
   );
   return map(users, (user) => {
-    user.userAgentIds = userAgents.filter((ua) => ua.user._id === user._id).map((ua) => ua._id);
+    user.userAgentIds = userAgents.filter((ua) => ua.user.id === user.id).map((ua) => ua.id);
     user.permissions = uniq(
       response.filter((p) => user.userAgentIds.includes(p.userAgent)).map((p) => p.actionName)
     );

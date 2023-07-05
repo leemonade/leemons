@@ -23,8 +23,8 @@ async function getProfileContacts({ fromProfile: _fromProfile, returnProfile, ct
 
   let profilesById = null;
   if (returnProfile) {
-    const profiles = await ctx.tx.db.Profiles.find({ _id: _.map(response, 'toProfile') }).lean();
-    profilesById = _.keyBy(profiles, '_id');
+    const profiles = await ctx.tx.db.Profiles.find({ id: _.map(response, 'toProfile') }).lean();
+    profilesById = _.keyBy(profiles, 'id');
   }
 
   if (isArray) {

@@ -1,5 +1,5 @@
-async function exist({ _id, ctx }) {
-  const response = await ctx.tx.db.Roles.countDocuments({ _id });
+async function exist({ id, ctx }) {
+  const response = await ctx.tx.db.Roles.countDocuments({ id });
   return !!response;
 }
 

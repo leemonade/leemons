@@ -8,7 +8,7 @@ async function emitToRelationship({ ctx, relationship, event, params }) {
       ctx.call(
         action,
         { caller: relationship.fromPluginName, event, params },
-        { meta: { relationshipID: relationship._id } }
+        { meta: { relationshipID: relationship.id } }
       )
     )
   );

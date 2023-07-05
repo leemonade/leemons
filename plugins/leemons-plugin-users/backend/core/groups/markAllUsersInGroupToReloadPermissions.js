@@ -6,7 +6,7 @@ async function markAllUsersInGroupToReloadPermissions({ groupId, ctx }) {
     .lean();
 
   return ctx.tx.db.UserAgent.updateMany(
-    { _id: _.map(groupUsers, 'userAgent') },
+    { id: _.map(groupUsers, 'userAgent') },
     { reloadPermissions: true }
   );
 }

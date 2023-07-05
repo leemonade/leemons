@@ -8,10 +8,10 @@
  * @param {string} params.id
  * @return {Promise<boolean>}
  * */
-async function existName({ name, _id, ctx }) {
+async function existName({ name, id, ctx }) {
   const query = { name };
-  if (_id) {
-    query._id = { $ne: _id };
+  if (id) {
+    query.id = { $ne: id };
   }
   const exist = await ctx.tx.db.Centers.countDocuments(query);
   return !!exist;

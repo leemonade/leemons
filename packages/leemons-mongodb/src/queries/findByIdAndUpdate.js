@@ -21,7 +21,7 @@ function findByIdAndUpdate({
       autoLRN,
       ignoreTransaction,
       ctx,
-    })({ _id: id }, ...args);
+    })({ id: }, ...args);
   };
 }
 

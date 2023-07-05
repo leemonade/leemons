@@ -30,7 +30,7 @@ async function canCallMe(ctx) {
   }
 
   const query = {
-    _id: ctx.params.relationshipID,
+    id: ctx.params.relationshipID,
     fromPluginName,
     toPluginName,
   };

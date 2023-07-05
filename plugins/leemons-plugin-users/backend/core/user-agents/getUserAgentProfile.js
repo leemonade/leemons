@@ -13,7 +13,7 @@ async function getUserAgentProfile({ userAgent, ctx }) {
   const roleProfiles = await ctx.tx.db.ProfileRole.find({ role: _.map(userAgents, 'role') })
     .select(['profile'])
     .lean();
-  const profiles = await ctx.tx.db.Profiles.find({ _id: _.map(roleProfiles, 'profile') }).lean();
+  const profiles = await ctx.tx.db.Profiles.find({ id: _.map(roleProfiles, 'profile') }).lean();
   return isArray ? profiles : profiles[0];
 }
 

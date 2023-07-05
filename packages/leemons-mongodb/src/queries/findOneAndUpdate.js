@@ -45,7 +45,7 @@ function findOneAndUpdate({
           if (!_.isObject(update.$setOnInsert)) {
             update.$setOnInsert = {};
           }
-          update.$setOnInsert._id = generateLRN({
+          update.$setOnInsert.id = generateLRN({
             ...getLRNConfig({ modelKey, ctx }),
             resourceID: new ObjectId(),
           });
@@ -71,7 +71,7 @@ function findOneAndUpdate({
           payload: {
             modelKey,
             action: rollbackAction,
-            data: rollbackAction === 'removeMany' ? [oldItem._id] : [oldItem],
+            data: rollbackAction === 'removeMany' ? [oldItem.id] : [oldItem],
           },
         });
       }

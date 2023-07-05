@@ -7,11 +7,11 @@ async function detailByUri({ uri, ctx }) {
   const group = await ctx.tx.db.Groups.findOne({ uri }).lean();
   if (!group) throw new global.utils.HttpError(404, `No role found for uri '${uri}'`);
   const [groupRoles, groupUserAgents] = await Promise.all([
-    ctx.tx.db.GroupRole.find({ group: group._id }).lean(),
-    ctx.tx.db.GroupUserAgent.find({ group: group._id }).lean(),
+    ctx.tx.db.GroupRole.find({ group: group.id }).lean(),
+    ctx.tx.db.GroupUserAgent.find({ group: group.id }).lean(),
   ]);
   const [role, userAgents] = await Promise.all([
-    roleDetail({ _id: groupRoles[0]?.role, ctx }),
+    roleDetail({ id: groupRoles[0]?.role, ctx }),
     getUserAgentsInfo({
       userAgentIds: _.map(groupUserAgents, 'userAgent'),
       withProfile: true,

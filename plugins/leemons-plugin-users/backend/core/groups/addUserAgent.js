@@ -14,8 +14,8 @@ const { checkIfCanCreateUserAgentInGroup } = require('./checkIfCanCreateNUserAge
 async function addUserAgent({ groupId, userAgentId, checksDisabled, ctx }) {
   if (!checksDisabled) {
     await Promise.all([
-      groupExist({ ctx, query: { _id: groupId }, throwErrorIfNotExists: true }),
-      existUserAgent({ ctx, query: { _id: userAgentId }, throwErrorIfNotExists: true }),
+      groupExist({ ctx, query: { id: groupId }, throwErrorIfNotExists: true }),
+      existUserAgent({ ctx, query: { id: userAgentId }, throwErrorIfNotExists: true }),
     ]);
   }
   const groupUser = await ctx.tx.db.GroupUserAgent.countDocuments({
@@ -27,7 +27,7 @@ async function addUserAgent({ groupId, userAgentId, checksDisabled, ctx }) {
 
     const values = await Promise.all([
       ctx.tx.db.GroupUserAgent.create({ group: groupId, userAgent: userAgentId }),
-      ctx.tx.db.UserAgent.update({ _id: userAgentId }, { reloadPermissions: true }),
+      ctx.tx.db.UserAgent.update({ id: userAgentId }, { reloadPermissions: true }),
     ]);
     return values[0];
   }

@@ -17,13 +17,13 @@ async function updateWithRole({ ctx, ...data }) {
   let group = await ctx.tx.db.Groups.findOne({
     $or: [{ name: data.name }, { uri: slugify(data.name, { lower: true }) }],
     type: 'role',
-    _id: { $ne: data._id },
+    id: { $ne: data.id },
   }).lean();
   if (group) throw new Error('There is already a group with this name and type');
 
   const [_group, groupUserAgents] = await Promise.all([
     ctx.tx.db.Groups.findByIdAndUpdate(
-      data._id,
+      data.id,
       {
         name: data.name,
         description: data.description,
@@ -31,18 +31,18 @@ async function updateWithRole({ ctx, ...data }) {
       },
       { new: true }
     ),
-    ctx.tx.db.GroupUserAgent.find({ group: data._id }).select(['userAgent']).lean(),
-    markAllUsersInGroupToReloadPermissions({ groupId: data._id, ctx }),
+    ctx.tx.db.GroupUserAgent.find({ group: data.id }).select(['userAgent']).lean(),
+    markAllUsersInGroupToReloadPermissions({ groupId: data.id, ctx }),
   ]);
   group = _group;
 
-  const groupRole = (await ctx.tx.db.GroupRole.find({ group: group._id }).lean())[0];
+  const groupRole = (await ctx.tx.db.GroupRole.find({ group: group.id }).lean())[0];
 
   // Formato: data.permissions
   // [{ permissionName, actionNames }]
   await ctx.tx.call('users.roles.update', {
-    _id: groupRole.role,
-    name: `group:${group._id.toString()}:role`,
+    id: groupRole.role,
+    name: `group:${group.id.toString()}:role`,
     type: ctx.prefixPN('group-role'),
     permissions: data.permissions,
   });
@@ -56,7 +56,7 @@ async function updateWithRole({ ctx, ...data }) {
     if (userAgentIdsToRemove?.length) {
       userAgentsToReloadPermissions.push(...userAgentIdsToRemove);
       await ctx.tx.db.GroupUserAgent.deleteMany({
-        group: data._id,
+        group: data.id,
         userAgent: userAgentIdsToRemove,
       });
     }
@@ -66,15 +66,15 @@ async function updateWithRole({ ctx, ...data }) {
       for (let i = 0, l = userAgentIdsToAdd.length; i < l; i++) {
         await checkIfCanCreateUserAgentInGroup({
           userAgentId: userAgentIdsToAdd[i],
-          groupId: data._id,
+          groupId: data.id,
           ctx,
         });
-        await ctx.tx.db.GroupUserAgent.create({ group: data._id, userAgent: userAgentIdsToAdd[i] });
+        await ctx.tx.db.GroupUserAgent.create({ group: data.id, userAgent: userAgentIdsToAdd[i] });
       }
     }
     if (userAgentsToReloadPermissions?.length) {
       await ctx.tx.db.UserAgent.updateMany(
-        { _id: userAgentsToReloadPermissions },
+        { id: userAgentsToReloadPermissions },
         { reloadPermissions: true }
       );
     }

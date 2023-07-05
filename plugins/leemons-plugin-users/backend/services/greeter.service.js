@@ -45,7 +45,7 @@ module.exports = {
         path: '/hello',
       },
       async handler(ctx) {
-        // const action = await ctx.tx.db.Actions.find({ name: 'Ppepe' }).select(['_id', 'name']);
+        // const action = await ctx.tx.db.Actions.find({ name: 'Ppepe' }).select(['id', 'name']);
         // await ctx.call('v1.multilaguage.add', { datos: 'wewefwef' });
         /*
         const test = await ctx.tx.db.Actions.findOneAndUpdate(

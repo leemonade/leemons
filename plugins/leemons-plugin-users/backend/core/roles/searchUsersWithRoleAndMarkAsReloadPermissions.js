@@ -11,20 +11,20 @@ const _ = require('lodash');
  * */
 async function searchUsersWithRoleAndMarkAsReloadPermissions({ roleId, ctx }) {
   const [userAgents, groupRoles] = await Promise.all([
-    ctx.tx.db.UserAgent.find({ role: roleId }).select(['_id']).lean(),
-    ctx.tx.db.GroupRole.find({ role: roleId }).select(['_id', 'group']).lean(),
+    ctx.tx.db.UserAgent.find({ role: roleId }).select(['id']).lean(),
+    ctx.tx.db.GroupRole.find({ role: roleId }).select(['id', 'group']).lean(),
   ]);
 
   const groupUser = await ctx.tx.db.GroupUserAgent.find({
     group: _.map(groupRoles, 'group'),
   })
-    .select(['_id', 'userAgent'])
+    .select(['id', 'userAgent'])
     .lean();
 
-  const userIds = _.uniq(_.map(userAgents, '_id').concat(_.map(groupUser, 'userAgent')));
+  const userIds = _.uniq(_.map(userAgents, 'id').concat(_.map(groupUser, 'userAgent')));
 
   return ctx.tx.db.UserAgent.updateMany(
-    { _id: userIds },
+    { id: userIds },
     { reloadPermissions: true },
     { new: true }
   );

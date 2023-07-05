@@ -15,7 +15,7 @@ async function addAllPermissionsToAllProfiles({ ctx }) {
   return Promise.all(
     _.map(profiles, (profile) =>
       update({
-        _id: profile._id,
+        id: profile.id,
         name: profile.name,
         description: profile.description,
         permissions,

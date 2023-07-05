@@ -6,8 +6,8 @@
  * @param {any=} transacting -  DB Transaction
  * @return {Promise<boolean>}
  * */
-async function exist({ _id, ctx }) {
-  const exist = await ctx.tx.db.Centers.countDocuments({ _id });
+async function exist({ id, ctx }) {
+  const exist = await ctx.tx.db.Centers.countDocuments({ id });
   return !!exist;
 }
 

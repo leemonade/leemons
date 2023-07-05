@@ -6,13 +6,12 @@
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-
-const { add, update } = require('../core/roles');
 const { getServiceModels } = require('../models');
+const { detailForJWT } = require('../core/users/jwt/detailForJWT');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.roles',
+  name: 'users.auth',
   version: 1,
   mixins: [
     LeemonsCacheMixin(),
@@ -22,22 +21,9 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
-    add: {
+    detailForJWT: {
       handler(ctx) {
-        const a = { id: 'wefwefwef' };
-        ctx.call(
-          'users.permissions.add',
-          {
-            name: 'wefwef',
-          },
-          { meta: { userSession: { id: 'wefwfewefwefwfe' } } }
-        );
-        return add({ ...ctx.params, ctx });
-      },
-    },
-    update: {
-      handler(ctx) {
-        return update({ ...ctx.params, ctx });
+        return detailForJWT({ ...ctx.params, ctx });
       },
     },
   },

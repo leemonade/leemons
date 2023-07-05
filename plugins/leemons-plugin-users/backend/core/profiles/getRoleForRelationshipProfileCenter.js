@@ -11,7 +11,7 @@ async function getRoleForRelationshipProfileCenter({ profileId, centerId, ctx })
     throw new LeemonsError(ctx, {
       message: 'Consistency error, a Role must always be associsted to a center given a Profile',
     });
-  return ctx.tx.db.Roles.findOne({ _id: centerRole.role }).lean();
+  return ctx.tx.db.Roles.findOne({ id: centerRole.role }).lean();
 }
 
 module.exports = { getRoleForRelationshipProfileCenter };

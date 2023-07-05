@@ -15,10 +15,9 @@ const { removePermissionAll } = require('./permissions/removePermissionAll');
  * @param {any=} _transacting - DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function update({ _id, name, type, description, center, permissions, ctx }) {
+async function update({ id, name, type, description, center, permissions, ctx }) {
   validateRoleType(type, ctx.callerPlugin);
-  if (!(await exist({ _id, ctx })))
-    throw new Error(`The role with the specified id does not exist`);
+  if (!(await exist({ id, ctx }))) throw new Error(`The role with the specified id does not exist`);
 
   const query = {
     name,
@@ -28,11 +27,11 @@ async function update({ _id, name, type, description, center, permissions, ctx }
   if (center) {
     const rolesInCenter = await ctx.tx.db.RoleCenter.find({ center }).select(['role']).lean();
     const ids = _.map(rolesInCenter, 'role');
-    const index = ids.indexOf(_id);
+    const index = ids.indexOf(id);
     if (index >= 0) ids.splice(index, 1);
-    query._id = ids;
+    query.id = ids;
   } else {
-    query._id = { $ne: _id };
+    query.id = { $ne: id };
   }
 
   const existRole = await ctx.tx.db.Roles.countDocuments(query);
@@ -52,16 +51,16 @@ async function update({ _id, name, type, description, center, permissions, ctx }
 
   ctx.logger.info(`Updating role '${name}'`);
   const [role, roleCenter] = await Promise.all([
-    ctx.tx.db.Roles.findByIdAndUpdate(_id, { name, type, description }, { new: true }),
-    ctx.tx.db.RoleCenter.findOne({ role: _id }).lean(),
-    removePermissionAll({ roleId: _id, ctx }),
+    ctx.tx.db.Roles.findByIdAndUpdate(id, { name, type, description }, { new: true }),
+    ctx.tx.db.RoleCenter.findOne({ role: id }).lean(),
+    removePermissionAll({ roleId: id, ctx }),
   ]);
 
   // ES: Si nos pasan que center es explicitamente null significa que quieren quitarle el centro al rol y si viene centro es que quieres actualizarlo
-  if (_.isNull(center) || center) await ctx.tx.db.RoleCenter.deleteOne({ _id: roleCenter._id });
-  if (center) await ctx.tx.db.RoleCenter.create({ role: role._id, center });
+  if (_.isNull(center) || center) await ctx.tx.db.RoleCenter.deleteOne({ id: roleCenter.id });
+  if (center) await ctx.tx.db.RoleCenter.create({ role: role.id, center });
 
-  await addPermissionMany({ roleId: _id, permissions });
+  await addPermissionMany({ roleId: id, permissions });
   return role;
 }
 

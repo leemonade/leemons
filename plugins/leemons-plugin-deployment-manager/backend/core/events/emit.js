@@ -22,7 +22,7 @@ async function emit(ctx) {
     fromPluginName,
     events: ctx.params.event,
   })
-    .select(['_id', 'fromPluginName', 'toPluginName', 'actions'])
+    .select(['id', 'fromPluginName', 'toPluginName', 'actions'])
     .lean();
 
   return Promise.all(

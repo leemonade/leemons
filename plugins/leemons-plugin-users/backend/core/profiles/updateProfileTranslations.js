@@ -20,11 +20,11 @@ async function updateProfileTranslations({ profile, translations: _translations,
 
   return Promise.all([
     ctx.call('multilanguage.common.setKey', {
-      key: ctx.prefixPN(`profile.${profile._id}.name`),
+      key: ctx.prefixPN(`profile.${profile.id}.name`),
       data: _.pickBy(translations.name, _.identity),
     }),
     ctx.call('multilanguage.common.setKey', {
-      key: ctx.prefixPN(`profile.${profile._id}.description`),
+      key: ctx.prefixPN(`profile.${profile.id}.description`),
       data: _.pickBy(translations.description, _.identity),
     }),
   ]);

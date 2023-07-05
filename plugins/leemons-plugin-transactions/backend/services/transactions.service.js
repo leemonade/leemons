@@ -15,7 +15,7 @@ function timeoutPromise(time) {
 
 async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber = 0) {
   const transaction = await Transaction.findOne({
-    _id: ctx.meta.transactionID,
+    id: ctx.meta.transactionID,
     deploymentID: ctx.meta.deploymentID,
   })
     .select(['pending', 'finished'])
@@ -49,7 +49,7 @@ async function tryToRollbackState(ctx, state, tryNumber = 0) {
 async function safeTransactionStateDelete() {
   try {
     // Tiene TTL no pasa nada por no borrarlo
-    await TransactionState.findOneAndDelete({ _id: states._id });
+    await TransactionState.findOneAndDelete({ id: states.id });
   } catch (e) {
     // Nothing
   }
@@ -71,7 +71,7 @@ module.exports = (broker) => ({
           finished: 0,
           active: true,
         });
-        return transaction._id;
+        return transaction.id;
       },
     },
     addPendingState: {
@@ -84,7 +84,7 @@ module.exports = (broker) => ({
         }
         const transaction = await Transaction.findOneAndUpdate(
           {
-            _id: ctx.meta.transactionID,
+            id: ctx.meta.transactionID,
             deploymentID: ctx.meta.deploymentID,
           },
           { $inc: { pending: 1 } },
@@ -105,7 +105,7 @@ module.exports = (broker) => ({
         }
         const transaction = await Transaction.findOneAndUpdate(
           {
-            _id: ctx.meta.transactionID,
+            id: ctx.meta.transactionID,
             deploymentID: ctx.meta.deploymentID,
           },
           { $inc: { finished: 1 } },
@@ -128,7 +128,7 @@ module.exports = (broker) => ({
           throw new Error('Field "action" is required and must be string');
         }
         const transaction = await Transaction.findOne({
-          _id: ctx.meta.transactionID,
+          id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
           .select(['active'])
@@ -167,7 +167,7 @@ module.exports = (broker) => ({
           throw new Error('Need ctx.meta.transactionID');
         }
         let transaction = await Transaction.findOne({
-          _id: ctx.meta.transactionID,
+          id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
           .select(['active'])
@@ -185,7 +185,7 @@ module.exports = (broker) => ({
         const checkNumber = Math.floor(Math.random() * 500000);
         await Transaction.findOneAndUpdate(
           {
-            _id: ctx.meta.transactionID,
+            id: ctx.meta.transactionID,
             deploymentID: ctx.meta.deploymentID,
           },
           { active: false, checkNumber },
@@ -196,7 +196,7 @@ module.exports = (broker) => ({
         await timeoutPromise(100);
         // Volvemos a consultar la transaccion y la que tenga el checkNumber sera la que ejecute el rollback y asi nos evitamos duplicados
         transaction = await Transaction.findOne({
-          _id: ctx.meta.transactionID,
+          id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
           .select(['checkNumber'])
@@ -221,7 +221,7 @@ module.exports = (broker) => ({
         // Empezamos a hacer rollback en orden
         for (let i = 0, l = states.length; i < l; i++) {
           await tryToRollbackState(ctx, states[i]);
-          safeTransactionStateDelete(states[i]._id);
+          safeTransactionStateDelete(states[i].id);
         }
 
         return true;

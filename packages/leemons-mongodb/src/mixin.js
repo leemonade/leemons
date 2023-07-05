@@ -329,14 +329,14 @@ module.exports = ({
         }
         switch (ctx.params.action) {
           case 'removeMany':
-            await model.deleteMany({ _id: ctx.params.data });
+            await model.deleteMany({ id: ctx.params.data });
             break;
           case 'createMany':
             await model.create(ctx.params.data);
             break;
           case 'updateMany':
             await Promise.all(
-              _.map(ctx.params.data, (data) => model.findOneAndUpdate({ _id: data._id }, data))
+              _.map(ctx.params.data, (data) => model.findOneAndUpdate({ id: data.id }, data))
             );
           default:
             throw new Error(`Error on MongoDB rollback: The action ${ctx.params.action} not found`);

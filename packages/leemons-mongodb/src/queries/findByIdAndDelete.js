@@ -1,4 +1,4 @@
-const { findOneAndDelete } = require("./findOneAndDelete");
+const { findOneAndDelete } = require('./findOneAndDelete');
 
 function findByIdAndDelete({
   model,
@@ -19,7 +19,7 @@ function findByIdAndDelete({
       autoRollback,
       ignoreTransaction,
       ctx,
-    })({ _id: id }, ...args);
+    })({ id }, ...args);
   };
 }
 

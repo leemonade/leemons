@@ -1,5 +1,5 @@
-async function detail({ _id, ctx }) {
-  return ctx.tx.db.Centers.findOne({ _id }).lean();
+async function detail({ id, ctx }) {
+  return ctx.tx.db.Centers.findOne({ id }).lean();
 }
 
 module.exports = detail;

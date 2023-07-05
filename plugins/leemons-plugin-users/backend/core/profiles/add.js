@@ -28,14 +28,14 @@ async function add({ name, description, permissions, translations, indexable, sy
   });
 
   const role = await ctx.tx.call('users.roles.add', {
-    name: `profile:${profile._id}:role`,
+    name: `profile:${profile.id}:role`,
     type: ctx.prefixPN('profile-role'),
     permissions,
   });
 
   profile = await ctx.tx.db.Profiles.findByIdAndUpdate(
-    profile._id,
-    { role: role._id },
+    profile.id,
+    { role: role.id },
     { new: true }
   );
 
@@ -48,13 +48,13 @@ async function add({ name, description, permissions, translations, indexable, sy
   // TODO MIGRAR DATASET
   await leemons.getPlugin('dataset').services.dataset.addLocation({
     name: {
-      [platformLocale]: `profile:${profile._id}`,
+      [platformLocale]: `profile:${profile.id}`,
     },
-    locationName: `profile.${profile._id}`,
+    locationName: `profile.${profile.id}`,
     pluginName: 'plugins.users',
   });
 
-  await createNecessaryRolesForProfilesAccordingToCenters({ profileIds: profile._id, ctx });
+  await createNecessaryRolesForProfilesAccordingToCenters({ profileIds: profile.id, ctx });
 
   ctx.emit('profile-permissions-change', { profile, permissions });
 

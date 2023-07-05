@@ -42,7 +42,7 @@ function updateMany({
           if (!_.isObject(update.$setOnInsert)) {
             update.$setOnInsert = {};
           }
-          update.$setOnInsert._id = generateLRN({
+          update.$setOnInsert.id = generateLRN({
             ...getLRNConfig({ modelKey, ctx }),
             resourceID: new ObjectId(),
           });

@@ -2,7 +2,7 @@ const { mongoose, newModel } = require('leemons-mongodb');
 
 const deploymentPluginsRelationshipSchema = new mongoose.Schema(
   {
-    _id: {
+    id: {
       type: String,
     },
     deploymentID: {

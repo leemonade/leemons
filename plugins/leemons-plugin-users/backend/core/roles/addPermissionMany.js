@@ -14,7 +14,7 @@ const {
  * @return {Promise<any>} Created permissions-roles
  * */
 async function addPermissionMany({ roleId, permissions, isCustom, ctx }) {
-  const roleExist = await ctx.tx.db.Roles.countDocuments({ _id: roleId });
+  const roleExist = await ctx.tx.db.Roles.countDocuments({ id: roleId });
   if (!roleExist) throw new Error('The role with the specified id does not exist');
   const items = [];
   _.forEach(permissions, (permission) => {

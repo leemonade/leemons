@@ -40,7 +40,7 @@ async function getGoodServiceActionToCall(ctx) {
   }
   return {
     actionToCall: goodAction,
-    relationshipID: relationship._id,
+    relationshipID: relationship.id,
   };
 }
 
