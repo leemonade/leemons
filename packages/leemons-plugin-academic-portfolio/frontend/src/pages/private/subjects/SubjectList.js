@@ -8,7 +8,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { find, isArray, map } from 'lodash';
+import _, { find, isArray, map } from 'lodash';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { KnowledgeTable } from '../../../components/KnowledgeTable';
@@ -33,6 +33,7 @@ import {
   listSubjectCreditsForProgramRequest,
   updateClassRequest,
   updateSubjectRequest,
+  updateSubjectTypeRequest,
 } from '../../../request';
 
 export default function SubjectList() {
@@ -130,6 +131,24 @@ export default function SubjectList() {
       });
       store.program.subjectTypes.push(response.subjectType);
       addSuccessAlert(t('addSubjectTypeDone'));
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.program.subjectTypes = [...store.program.subjectTypes];
+    store.program = { ...store.program };
+    render();
+  }
+
+  async function updateVisibility({ id, groupVisibility }) {
+    try {
+      await updateSubjectTypeRequest({
+        id,
+        groupVisibility: !!groupVisibility,
+      });
+      const index = _.findIndex(store.program.subjectTypes, { id });
+      if (index >= 0) {
+        store.program.subjectTypes[index].groupVisibility = !!groupVisibility;
+      }
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -358,6 +377,7 @@ export default function SubjectList() {
                             tableLabels={messages.tableLabels}
                             program={store.program}
                             onAdd={addSubjectType}
+                            updateVisibility={updateVisibility}
                           />,
                           <SubjectsTable
                             key="2"

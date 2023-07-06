@@ -241,7 +241,7 @@ module.exports = {
       creditsCourse: 'Créditos por curso',
       creditsProgram: 'Créditos por programa',
       groupVisibility: 'Visibilidad del grupo',
-      groupVisibilityLabel: 'No mostrar grupos',
+      groupVisibilityLabel: 'No anidar grupos',
     },
     subjects: {
       addSubject: 'Añadir asignatura',

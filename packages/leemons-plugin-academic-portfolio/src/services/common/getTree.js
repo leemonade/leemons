@@ -96,6 +96,17 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
       return undefined;
     })
   );
+
+  // ES: Comprobamos si subjectType.groupVisibility es true si lo es, borramos el grupo de la clase para que cuando se monte el arbol no salga el grupo
+  _.forEach(classes, (classe) => {
+    if (classe.subjectType.groupVisibility) {
+      // eslint-disable-next-line no-param-reassign
+      classe._groups = classe.groups;
+      // eslint-disable-next-line no-param-reassign
+      classe.groups = null;
+    }
+  });
+
   const classGroupsIds = _.map(classes, 'groups.id');
   const classSubstagesIds = _.map(classes, 'substages.id');
   const classKnowledgesIds = _.map(classes, 'knowledges.id');
@@ -218,7 +229,12 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     let nodes = [];
     _.forIn(node, (value, key) => {
       if (key === 'classrooms') {
-        if (value.length > 0) nodes = _.map(value, (v) => ({ nodeType: 'class', value: v }));
+        if (value.length > 0) {
+          nodes = _.map(value, ({ _groups, ...v }) => ({
+            nodeType: 'class',
+            value: { ...v, groups: _groups },
+          }));
+        }
       } else {
         const keyParse = key.split('|');
         const nodeType = keyParse[0];

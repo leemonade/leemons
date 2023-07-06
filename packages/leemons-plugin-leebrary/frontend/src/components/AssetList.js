@@ -86,10 +86,10 @@ function AssetList({
   roles,
   filters,
   filterComponents,
-  onSelectItem = () => { },
-  onEditItem = () => { },
-  onTypeChange = () => { },
-  onLoading = () => { },
+  onSelectItem = () => {},
+  onEditItem = () => {},
+  onTypeChange = () => {},
+  onLoading = () => {},
 }) {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
@@ -293,6 +293,7 @@ function AssetList({
           if (forceLoad && item) {
             const index = store.serverData.items.findIndex((i) => i.id === id);
             store.serverData.items[index] = value;
+            store.serverData.items = [...store.serverData.items];
             store.serverData = { ...store.serverData };
           }
         } else {
@@ -679,8 +680,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-          ? t('cardToolbar.pin')
-          : false,
+        ? t('cardToolbar.pin')
+        : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -740,6 +741,8 @@ function AssetList({
   // ·········································································
   // RENDER
 
+  console.log(store.serverData);
+
   return (
     <>
       <Stack
@@ -760,14 +763,14 @@ function AssetList({
             isEmbedded
               ? { flex: 0, alignItems: 'end' }
               : {
-                flex: 0,
-                alignItems: 'end',
-                width: containerRect.width,
-                top: containerRect.top,
-                position: 'fixed',
-                zIndex: 101,
-                backgroundColor: '#fff',
-              }
+                  flex: 0,
+                  alignItems: 'end',
+                  width: containerRect.width,
+                  top: containerRect.top,
+                  position: 'fixed',
+                  zIndex: 101,
+                  backgroundColor: '#fff',
+                }
           }
         >
           <Stack fullWidth spacing={5}>
@@ -949,6 +952,7 @@ function AssetList({
         onNext={() => {
           loadAsset(store.sharingItem.id, true);
           store.sharingItem = null;
+          render();
         }}
         onClose={() => {
           store.sharingItem = null;

@@ -12,7 +12,13 @@ SwitchInput.propTypes = {
   label: PropTypes.string,
 };
 
-function SubjectTypesTable({ messages, program, tableLabels, onAdd = () => {} }) {
+function SubjectTypesTable({
+  messages,
+  program,
+  tableLabels,
+  updateVisibility = () => {},
+  onAdd = () => {},
+}) {
   const columns = [];
   columns.push({
     Header: messages.name,
@@ -45,7 +51,13 @@ function SubjectTypesTable({ messages, program, tableLabels, onAdd = () => {} })
     input: {
       node: <SwitchInput label={messages.groupVisibilityLabel} />,
     },
-    valueRender: (value) => <SwitchInput label={messages.groupVisibilityLabel} checked={!!value} />,
+    valueRender: (value, form) => (
+      <SwitchInput
+        label={messages.groupVisibilityLabel}
+        value={!!value}
+        onChange={(e) => updateVisibility({ id: form.id, groupVisibility: e })}
+      />
+    ),
   });
 
   function onChange(items) {
@@ -74,6 +86,7 @@ function SubjectTypesTable({ messages, program, tableLabels, onAdd = () => {} })
 SubjectTypesTable.propTypes = {
   messages: PropTypes.object,
   onAdd: PropTypes.func,
+  updateVisibility: PropTypes.func,
   program: PropTypes.any,
   tableLabels: PropTypes.object,
 };
