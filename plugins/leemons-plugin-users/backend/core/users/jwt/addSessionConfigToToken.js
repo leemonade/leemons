@@ -3,9 +3,11 @@ const _ = require('lodash');
 const { verifyJWTToken } = require('./verifyJWTToken');
 const { generateJWTToken } = require('./generateJWTToken');
 
-async function addSessionConfigToToken(token, sessionConfig = {}) {
+async function addSessionConfigToToken({ token, sessionConfig = {}, ctx }) {
   const tokens = _.isArray(token) ? token : [token];
-  const tokenValues = await Promise.all(_.map(tokens, (tok) => verifyJWTToken(tok)));
+  const tokenValues = await Promise.all(
+    _.map(tokens, (tok) => verifyJWTToken({ token: tok, ctx }))
+  );
 
   const promises = [];
   _.forEach(tokenValues, (tokenValue) => {
@@ -13,7 +15,7 @@ async function addSessionConfigToToken(token, sessionConfig = {}) {
     tokenValue.sessionConfig = { ...tokenValue.sessionConfig, ...sessionConfig };
     delete tokenValue.iat;
     delete tokenValue.exp;
-    promises.push(generateJWTToken(tokenValue));
+    promises.push(generateJWTToken({ payload: tokenValue, ctx }));
   });
 
   const result = await Promise.all(promises);

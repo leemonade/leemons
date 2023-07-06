@@ -37,7 +37,7 @@ module.exports = {
         mergeParams: true,
 
         // Enable authentication. Implement the logic into `authenticate` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authentication
-        authentication: false,
+        authentication: true,
 
         // Enable authorization. Implement the logic into `authorize` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authorization
         authorization: false,
@@ -125,24 +125,14 @@ module.exports = {
      * @returns {Promise}
      */
     async authenticate(ctx, route, req) {
-      // Read the token from header
-      const auth = req.headers.authorization;
-
-      if (auth && auth.startsWith('Bearer')) {
-        const token = auth.slice(7);
-
-        // Check the token. Tip: call a service which verify the token. E.g. `accounts.resolveToken`
-        if (token == '123456') {
-          // Returns the resolved user. It will be set to the `ctx.meta.user`
-          return { id: 1, name: 'John Doe' };
-        }
-        // Invalid token
-        throw new ApiGateway.Errors.UnAuthorizedError(ApiGateway.Errors.ERR_INVALID_TOKEN);
-      } else {
-        // No token. Throw an error or do nothing if anonymous access is allowed.
-        // throw new E.UnAuthorizedError(E.ERR_NO_TOKEN);
-        return null;
+      let { authorization } = req.headers;
+      if (!authorization) authorization = req.query.authorization;
+      try {
+        authorization = JSON.parse(authorization);
+      } catch (e) {
+        // Nothing
       }
+      ctx.meta.authorization = authorization;
     },
 
     /**

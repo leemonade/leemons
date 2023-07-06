@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { getJWTPrivateKey } = require('./getJWTPrivateKey');
 
 /**
@@ -7,8 +8,8 @@ const { getJWTPrivateKey } = require('./getJWTPrivateKey');
  * @param {object} payload
  * @return {string} JWT Token
  * */
-async function generateJWTToken(payload) {
-  return global.utils.jwt.sign(payload, await getJWTPrivateKey(), {
+async function generateJWTToken({ payload, ctx }) {
+  return jwt.sign(payload, await getJWTPrivateKey({ ctx }), {
     expiresIn: 60 * 60 * 24,
   }); // 1 day
 }

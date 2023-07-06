@@ -8,6 +8,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getServiceModels } = require('../models');
 const { detailForJWT } = require('../core/users/jwt/detailForJWT');
+const { hasPermissionCTX } = require('../core/users/hasPermissionCTX');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -24,6 +25,11 @@ module.exports = {
     detailForJWT: {
       handler(ctx) {
         return detailForJWT({ ...ctx.params, ctx });
+      },
+    },
+    hasPermissionCTX: {
+      handler(ctx) {
+        return hasPermissionCTX({ ...ctx.params, ctx });
       },
     },
   },

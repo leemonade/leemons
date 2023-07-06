@@ -1,6 +1,6 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { verifyJWTToken } = require('./verifyJWTToken');
-const { table } = require('../../tables');
 
 /**
  * Return the user for the id provided
@@ -13,22 +13,23 @@ const { table } = require('../../tables');
  * @param {boolean} forceOnlyUserAgent
  * @return {Promise<User>}
  * */
-async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAgent) {
-  const payload = await verifyJWTToken(jwtToken);
+async function detailForJWT({ jwtToken, forceOnlyUser, forceOnlyUserAgent, ctx }) {
+  const payload = await verifyJWTToken({ token: jwtToken, ctx });
   let result;
   if (payload.userAgent) {
-    const userAgent = await table.userAgent.findOne({ id: payload.userAgent });
-    if (userAgent.disabled) throw new Error('User agent is disabled');
-    if (!userAgent) throw new Error('No user auth found for the id provided');
+    const userAgent = await ctx.tx.db.UserAgent.findOne({ id: payload.userAgent }).lean();
+    if (userAgent.disabled) throw new LeemonsError(ctx, { message: 'User agent is disabled' });
+    if (!userAgent)
+      throw new LeemonsError(ctx, { message: 'No user auth found for the id provided' });
     if (forceOnlyUserAgent) return userAgent;
-    const user = await table.users.findOne({ id: userAgent.user });
-    if (!user) throw new Error('No user found for the id provided');
+    const user = await ctx.tx.db.Users.findOne({ id: userAgent.user }).lean();
+    if (!user) throw new LeemonsError(ctx, { message: 'No user found for the id provided' });
     if (forceOnlyUser) return { ...user, sessionConfig: payload.sessionConfig || {} };
     result = user;
     result.userAgents = [userAgent];
   } else {
-    const user = await table.users.findOne({ id: payload.id });
-    if (!user) throw new Error('No user found for the id provided');
+    const user = await ctx.tx.db.Users.findOne({ id: payload.id }).lean();
+    if (!user) throw new LeemonsError(ctx, { message: 'No user found for the id provided' });
     result = user;
     result.userAgents = [];
   }

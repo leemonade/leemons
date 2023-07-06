@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Return super admin user ids
@@ -7,18 +6,12 @@ const { table } = require('../tables');
  * @static
  * @return {Promise<string[]>} Super admin ids
  * */
-async function getSuperAdminUserIds({ transacting } = {}) {
-  const profile = await table.profiles.findOne(
-    { uri: 'superadmin' },
-    { columns: ['role'], transacting }
-  );
+async function getSuperAdminUserIds({ ctx }) {
+  const profile = await ctx.tx.db.Profiles.findOne({ uri: 'superadmin' }).select(['role']).lean();
 
   let userAgents = [];
   if (profile) {
-    userAgents = await table.userAgent.find(
-      { role: profile.role },
-      { columns: ['user'], transacting }
-    );
+    userAgents = await ctx.tx.db.UserAgent.find({ role: profile.role }).select(['user']).lean();
   }
 
   return _.map(userAgents, 'user');

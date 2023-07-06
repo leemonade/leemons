@@ -119,8 +119,9 @@ class Leemons {
         const minutes = time.getMinutes();
         const seconds = time.getSeconds();
         const milliseconds = time.getMilliseconds();
-        const timeString = `${(minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
-          }${milliseconds}ms`;
+        const timeString = `${
+          (minutes ? `${minutes}min ` : '') + (seconds ? `${seconds}s ` : '')
+        }${milliseconds}ms`;
 
         timers.delete(eventName);
         this.log.debug(chalk`{green ${target}} emitted {magenta ${event}} {gray ${timeString}}`);
@@ -162,7 +163,7 @@ class Leemons {
     // TODO: Handle Errors and connections
 
     // Function for server's clean exit
-    this.server.destroy = (cb = () => { }) => {
+    this.server.destroy = (cb = () => {}) => {
       this.server.close(cb);
       // TODO: Close all connections
     };
@@ -214,8 +215,9 @@ class Leemons {
         const start = ctx._startAt.getTime();
         const end = new Date().getTime();
         this.log.http(
-          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${ctx.ip
-            }} {gray ${end - start} ms}`,
+          chalk`  End connection to {magenta ${ctx.method}} {green ${ctx.path}} from {yellow ${
+            ctx.ip
+          }} {gray ${end - start} ms}`,
           {
             id: ctx._id,
             ip: ctx.ip,
@@ -242,12 +244,11 @@ class Leemons {
     return async (ctx, next) => {
       try {
         let { authorization } = ctx.headers;
-
         if (!authorization) authorization = ctx.request.query.authorization;
 
         try {
           authorization = JSON.parse(authorization);
-        } catch (e) { }
+        } catch (e) {}
 
         ctx.state.authorization = authorization;
 
@@ -474,7 +475,8 @@ class Leemons {
               );
             } else {
               this.log.error(
-                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${plugin.name
+                `Not found handler function for the API url: ${route.method.toLocaleLowerCase()} - /api/${
+                  plugin.name
                 }${route.path}`
               );
             }
@@ -641,7 +643,8 @@ class Leemons {
       const prepareFront = ora('Starting frontend server').start();
       // Start production frontend app
       const start = execa.command(
-        `yarn --cwd ${leemons.dir.frontend} ${process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
+        `yarn --cwd ${leemons.dir.frontend} ${
+          process.env.NODE_ENV !== 'development' ? 'start' : 'dev'
         }`,
         {
           ...process.env,

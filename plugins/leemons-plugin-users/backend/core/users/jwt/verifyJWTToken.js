@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { getJWTPrivateKey } = require('./getJWTPrivateKey');
 
 /**
@@ -7,8 +8,8 @@ const { getJWTPrivateKey } = require('./getJWTPrivateKey');
  * @param {string} token
  * @return {any} Payload
  * */
-async function verifyJWTToken(token) {
-  return global.utils.jwt.verify(token, await getJWTPrivateKey());
+async function verifyJWTToken({ token, ctx }) {
+  return jwt.verify(token, await getJWTPrivateKey({ ctx }));
 }
 
 module.exports = { verifyJWTToken };

@@ -10,8 +10,7 @@ function findByIdAndUpdate({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
-    const [id, ...args] = arguments;
+  return async function (id, ...args) {
     return findOneAndUpdate({
       model,
       modelKey,
@@ -21,7 +20,7 @@ function findByIdAndUpdate({
       autoLRN,
       ignoreTransaction,
       ctx,
-    })({ id: }, ...args);
+    })({ id }, ...args);
   };
 }
 

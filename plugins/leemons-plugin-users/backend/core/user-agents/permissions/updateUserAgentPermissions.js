@@ -1,90 +1,60 @@
 const _ = require('lodash');
 const { existUserAgent } = require('../existUserAgent');
-const { table } = require('../../tables');
 
-async function _updateUserAgentPermissions(userAgentId, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await existUserAgent({ id: userAgentId }, true, { transacting });
+async function _updateUserAgentPermissions({ userAgentId, ctx }) {
+  await existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: true, ctx });
 
-      // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
-      const [groupUserAgent, userAgent] = await Promise.all([
-        table.groupUserAgent.find(
-          { userAgent: userAgentId },
-          {
-            columns: ['id', 'group'],
-            transacting,
-          }
-        ),
-        table.userAgent.update({ id: userAgentId }, { reloadPermissions: false }, { transacting }),
+  // ES: Borramos los permisos que salieran desde roles y sacamos todos los roles actuales del usuario, ya sea por que vienen desde grupos/perfiles/o el mismo rol que tiene
+  const [groupUserAgent, userAgent] = await Promise.all([
+    ctx.tx.db.GroupUserAgent.find({ userAgent: userAgentId }).select(['id', 'group']).lean(),
+    ctx.tx.db.UserAgent.findByIdAndUpdate(userAgentId, { reloadPermissions: false }),
+    ctx.tx.db.UserAgentPermission.deleteMany({
+      userAgent: userAgentId,
+      role: {
+        $ne: null,
+      },
+    }),
+  ]);
 
-        table.userAgentPermission.deleteMany(
-          {
-            userAgent: userAgentId,
-            role_$null: false,
-          },
-          { transacting }
-        ),
-      ]);
+  // ES: Sacamos los roles de los grupos y los perfiles a los que pertenezca el usuario
+  const [groupRoles, profileRoles] = await Promise.all([
+    ctx.tx.db.GroupRole.find({ group: _.map(groupUserAgent, 'group') })
+      .select(['id', 'role'])
+      .lean(),
+    ctx.tx.db.ProfileRole.find({ role: userAgent.role }).select(['id', 'profile']).lean(),
+  ]);
+  const profileIds = _.map(profileRoles, 'profile');
+  const [profiles, userProfiles] = await Promise.all([
+    ctx.tx.db.Profiles.find({ id: profileIds }).select(['id', 'role']).lean(),
+    ctx.tx.db.UserProfile.find({ profile: profileIds, user: userAgent.user })
+      .select(['id', 'role'])
+      .lean(),
+  ]);
 
-      // ES: Sacamos los roles de los grupos y los perfiles a los que pertenezca el usuario
-      const [groupRoles, profileRoles] = await Promise.all([
-        table.groupRole.find(
-          { group_$in: _.map(groupUserAgent, 'group') },
-          { columns: ['id', 'role'], transacting }
-        ),
-        table.profileRole.find(
-          { role: userAgent.role },
-          { columns: ['id', 'profile'], transacting }
-        ),
-      ]);
-      const profileIds = _.map(profileRoles, 'profile');
-      const [profiles, userProfiles] = await Promise.all([
-        table.profiles.find(
-          { id_$in: profileIds },
-          {
-            columns: ['id', 'role'],
-            transacting,
-          }
-        ),
-        table.userProfile.find(
-          { profile_$in: profileIds, user: userAgent.user },
-          {
-            columns: ['id', 'role'],
-            transacting,
-          }
-        ),
-      ]);
+  const roleIds = _.uniq(
+    [userAgent.role]
+      .concat(_.map(groupRoles, 'role'))
+      .concat(_.map(profiles, 'role'))
+      .concat(_.map(userProfiles, 'role'))
+  );
 
-      const roleIds = _.uniq(
-        [userAgent.role]
-          .concat(_.map(groupRoles, 'role'))
-          .concat(_.map(profiles, 'role'))
-          .concat(_.map(userProfiles, 'role'))
-      );
+  const [rolePermissions, roleCenter] = await Promise.all([
+    ctx.tx.db.RolePermission.find({ role: roleIds }).lean(),
+    ctx.tx.db.RoleCenter.find({ role: roleIds }).lean(),
+  ]);
 
-      const [rolePermissions, roleCenter] = await Promise.all([
-        table.rolePermission.find({ role_$in: roleIds }, { transacting }),
-        table.roleCenter.find({ role_$in: roleIds }, { transacting }),
-      ]);
-
-      const roleCenterByRole = _.keyBy(roleCenter, 'role');
-      return table.userAgentPermission.createMany(
-        _.map(rolePermissions, (rolePermission) => ({
-          userAgent: userAgentId,
-          role: rolePermission.role,
-          permissionName: rolePermission.permissionName,
-          actionName: rolePermission.actionName,
-          target: rolePermission.target,
-          center: roleCenterByRole[rolePermission.role]
-            ? roleCenterByRole[rolePermission.role].center
-            : null,
-        })),
-        { transacting }
-      );
-    },
-    table.userAgent,
-    _transacting
+  const roleCenterByRole = _.keyBy(roleCenter, 'role');
+  return ctx.tx.db.UserAgentPermission.insertMany(
+    _.map(rolePermissions, (rolePermission) => ({
+      userAgent: userAgentId,
+      role: rolePermission.role,
+      permissionName: rolePermission.permissionName,
+      actionName: rolePermission.actionName,
+      target: rolePermission.target,
+      center: roleCenterByRole[rolePermission.role]
+        ? roleCenterByRole[rolePermission.role].center
+        : null,
+    }))
   );
 }
 
@@ -103,21 +73,23 @@ async function _updateUserAgentPermissions(userAgentId, { transacting: _transact
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function updateUserAgentPermissions(userAgentId, { transacting } = {}) {
-  if (_.isArray(userAgentId)) {
+async function updateUserAgentPermissions({ userAgentIds, ctx }) {
+  if (_.isArray(userAgentIds)) {
     const results = [];
-    for (let i = 0, l = userAgentId.length; i < l; i++) {
-      results.push(await _updateUserAgentPermissions(userAgentId[i], { transacting }));
+    for (let i = 0, l = userAgentIds.length; i < l; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      results.push(await _updateUserAgentPermissions({ userAgentId: userAgentIds[i], ctx }));
     }
     await Promise.all(
-      _.map(userAgentId, (_userAgent) =>
-        leemons.cache.deleteByPrefix(`users:permissions:${_userAgent}`)
+      _.map(userAgentIds, (_userAgent) =>
+        ctx.cache.deleteByPrefix(`users:permissions:${_userAgent}`)
       )
     );
     return results;
   }
-  await leemons.cache.deleteByPrefix(`users:permissions:${userAgentId}`);
-  return _updateUserAgentPermissions(userAgentId, { transacting });
+
+  await ctx.cache.deleteByPrefix(`users:permissions:${userAgentIds}`);
+  return _updateUserAgentPermissions({ userAgentId: userAgentIds, ctx });
 }
 
 module.exports = { updateUserAgentPermissions };

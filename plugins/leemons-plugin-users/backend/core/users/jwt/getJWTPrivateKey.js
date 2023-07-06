@@ -1,11 +1,8 @@
 const { generateJWTPrivateKey } = require('./generateJWTPrivateKey');
-const { table } = require('../../tables');
 
-let jwtPrivateKey = null;
-
-async function getJWTPrivateKey() {
-  if (!jwtPrivateKey) jwtPrivateKey = await table.config.findOne({ key: 'jwt-private-key' });
-  if (!jwtPrivateKey) jwtPrivateKey = await generateJWTPrivateKey();
+async function getJWTPrivateKey({ ctx }) {
+  let jwtPrivateKey = await ctx.tx.db.Config.findOne({ key: 'jwt-private-key' }).lean();
+  if (!jwtPrivateKey) jwtPrivateKey = await generateJWTPrivateKey({ ctx });
   return jwtPrivateKey.value;
 }
 

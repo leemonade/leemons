@@ -6,6 +6,11 @@
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const {
+  LeemonsMiddlewaresMixin,
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -13,6 +18,7 @@ module.exports = {
   name: 'users.greeter',
   version: 2,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
@@ -44,6 +50,14 @@ module.exports = {
         method: 'GET',
         path: '/hello',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         // const action = await ctx.tx.db.Actions.find({ name: 'Ppepe' }).select(['id', 'name']);
         // await ctx.call('v1.multilaguage.add', { datos: 'wewefwef' });

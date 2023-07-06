@@ -9,8 +9,8 @@ const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>} If is super admin return true if not false
  * */
-async function isSuperAdmin(userId, { transacting } = {}) {
-  const superAdminUsersIds = await getSuperAdminUserIds({ transacting });
+async function isSuperAdmin({ userId, ctx }) {
+  const superAdminUsersIds = await getSuperAdminUserIds({ ctx });
   return _.includes(superAdminUsersIds, userId);
 }
 

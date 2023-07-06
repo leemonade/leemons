@@ -1,11 +1,11 @@
-const { table } = require('../../tables');
+const { randomString } = require('leemons-utils');
 
-async function generateJWTPrivateKey() {
-  const config = await table.config.findOne({ key: 'jwt-private-key' });
+async function generateJWTPrivateKey({ ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ key: 'jwt-private-key' }).lean();
   if (!config)
-    return table.config.create({
+    return ctx.tx.db.Config.create({
       key: 'jwt-private-key',
-      value: global.utils.randomString(),
+      value: randomString(),
     });
   return config;
 }

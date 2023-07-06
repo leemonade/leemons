@@ -23,8 +23,17 @@ function getPluginNameFromCTX(ctx) {
   return getPluginNameFromServiceName(ctx.service.name);
 }
 
+function getActionNameFromCTX(ctx) {
+  if (!ctx || !ctx.service || !ctx.service.fullName || !ctx.action || !ctx.action.name)
+    throw new Error(
+      '[leemons-service-name-parser - getActionNameFromCTX] - ctx not a valid moleculer context'
+    );
+  return ctx.action.name.replace(`${ctx.service.fullName}.`, '');
+}
+
 module.exports = {
   getActionWithOutVersion,
   getPluginNameFromServiceName,
   getPluginNameFromCTX,
+  getActionNameFromCTX,
 };
