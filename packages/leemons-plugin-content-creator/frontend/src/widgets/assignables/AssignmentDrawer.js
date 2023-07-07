@@ -48,7 +48,7 @@ export default function AssignmentDrawer({ value, onSave }) {
       >
         <Controller
           control={form.control}
-          name="evaluation"
+          name="instructions"
           render={({ field }) => (
             <Instructions {...field} localizations={localizations?.instructions} hideDivider />
           )}
