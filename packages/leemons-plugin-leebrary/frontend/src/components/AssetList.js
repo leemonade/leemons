@@ -741,8 +741,6 @@ function AssetList({
   // ·········································································
   // RENDER
 
-  console.log(store.serverData);
-
   return (
     <>
       <Stack

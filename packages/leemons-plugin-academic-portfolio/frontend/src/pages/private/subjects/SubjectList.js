@@ -1,6 +1,13 @@
 /* eslint-disable no-param-reassign */
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { Box, ContextContainer, PageContainer, Paper, Select } from '@bubbles-ui/components';
+import {
+  Box,
+  ContextContainer,
+  LoadingOverlay,
+  PageContainer,
+  Paper,
+  Select,
+} from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useStore } from '@common/useStore';
@@ -42,6 +49,7 @@ export default function SubjectList() {
   const history = useHistory();
 
   const [store, render] = useStore({
+    loading: false,
     mounted: true,
     programs: [],
     currentProgram: null,
@@ -141,6 +149,8 @@ export default function SubjectList() {
 
   async function updateVisibility({ id, groupVisibility }) {
     try {
+      store.loading = true;
+      render();
       await updateSubjectTypeRequest({
         id,
         groupVisibility: !!groupVisibility,
@@ -152,6 +162,7 @@ export default function SubjectList() {
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
+    store.loading = false;
     store.program.subjectTypes = [...store.program.subjectTypes];
     store.program = { ...store.program };
     render();
@@ -330,79 +341,96 @@ export default function SubjectList() {
   }
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader values={messages.header} />
-      <Paper color="solid" shadow="none">
-        <PageContainer>
-          <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
-            <ContextContainer>
-              <ContextContainer direction="row">
-                <Box skipFlex>
-                  <SelectCenter
-                    label={t('centerLabel')}
-                    placeholder={t('centerPlaceholder')}
-                    onChange={onCenterChange}
-                    firstSelected
-                  />
-                </Box>
-                <Box skipFlex>
-                  <Select
-                    data={store.programs || []}
-                    disabled={!store.programs}
-                    label={t('programLabel')}
-                    placeholder={t('programPlaceholder')}
-                    onChange={onProgramChange}
-                    value={store.selectProgram}
-                    autoSelectOneOption
-                  />
-                </Box>
-              </ContextContainer>
+    <>
+      {store.loading ? (
+        <Box
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 5,
+          }}
+        >
+          <LoadingOverlay visible />
+        </Box>
+      ) : null}
 
-              {store.program ? (
-                <Paper>
-                  <ContextContainer divided>
-                    {store.program && store.program.haveKnowledge ? (
-                      <KnowledgeTable
-                        messages={messages.knowledge}
-                        tableLabels={messages.tableLabels}
-                        program={store.program}
-                        onAdd={addKnowledge}
-                      />
-                    ) : null}
-                    {store.program
-                      ? [
-                          <SubjectTypesTable
-                            key="1"
-                            messages={messages.subjectTypes}
-                            tableLabels={messages.tableLabels}
-                            program={store.program}
-                            onAdd={addSubjectType}
-                            updateVisibility={updateVisibility}
-                          />,
-                          <SubjectsTable
-                            key="2"
-                            messages={messages.subjects}
-                            tableLabels={messages.tableLabels}
-                            program={store.program}
-                            onAdd={(d, e) => addUpdateClass(d, e, false)}
-                            onUpdate={(d, e) => addUpdateClass(d, e, true)}
-                            teacherSelect={
-                              <SelectUserAgent
-                                profiles={store.profiles.teacher}
-                                centers={store.center}
-                              />
-                            }
-                            onlyNewSubject={!!store.program?.useOneStudentGroup}
-                          />,
-                        ]
-                      : null}
-                  </ContextContainer>
-                </Paper>
-              ) : null}
-            </ContextContainer>
-          </Box>
-        </PageContainer>
-      </Paper>
-    </ContextContainer>
+      <ContextContainer fullHeight>
+        <AdminPageHeader values={messages.header} />
+        <Paper color="solid" shadow="none">
+          <PageContainer>
+            <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
+              <ContextContainer>
+                <ContextContainer direction="row">
+                  <Box skipFlex>
+                    <SelectCenter
+                      label={t('centerLabel')}
+                      placeholder={t('centerPlaceholder')}
+                      onChange={onCenterChange}
+                      firstSelected
+                    />
+                  </Box>
+                  <Box skipFlex>
+                    <Select
+                      data={store.programs || []}
+                      disabled={!store.programs}
+                      label={t('programLabel')}
+                      placeholder={t('programPlaceholder')}
+                      onChange={onProgramChange}
+                      value={store.selectProgram}
+                      autoSelectOneOption
+                    />
+                  </Box>
+                </ContextContainer>
+
+                {store.program ? (
+                  <Paper>
+                    <ContextContainer divided>
+                      {store.program && store.program.haveKnowledge ? (
+                        <KnowledgeTable
+                          messages={messages.knowledge}
+                          tableLabels={messages.tableLabels}
+                          program={store.program}
+                          onAdd={addKnowledge}
+                        />
+                      ) : null}
+                      {store.program
+                        ? [
+                            <SubjectTypesTable
+                              key="1"
+                              messages={messages.subjectTypes}
+                              tableLabels={messages.tableLabels}
+                              program={store.program}
+                              onAdd={addSubjectType}
+                              updateVisibility={updateVisibility}
+                            />,
+                            <SubjectsTable
+                              key="2"
+                              messages={messages.subjects}
+                              tableLabels={messages.tableLabels}
+                              program={store.program}
+                              onAdd={(d, e) => addUpdateClass(d, e, false)}
+                              onUpdate={(d, e) => addUpdateClass(d, e, true)}
+                              teacherSelect={
+                                <SelectUserAgent
+                                  profiles={store.profiles.teacher}
+                                  centers={store.center}
+                                />
+                              }
+                              onlyNewSubject={!!store.program?.useOneStudentGroup}
+                            />,
+                          ]
+                        : null}
+                    </ContextContainer>
+                  </Paper>
+                ) : null}
+              </ContextContainer>
+            </Box>
+          </PageContainer>
+        </Paper>
+      </ContextContainer>
+    </>
   );
 }
