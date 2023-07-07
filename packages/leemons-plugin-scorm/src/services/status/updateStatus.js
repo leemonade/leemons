@@ -1,11 +1,11 @@
-const { map, toArray } = require('lodash');
+const { map, toArray, uniqBy } = require('lodash');
 const { scormProgress } = require('../../tables');
 
 function getScormGrade({ state, numberOfQuestions }) {
   if (state?.cmi?.score?.raw && state?.cmi?.score?.min && state?.cmi?.score?.max) {
-    const raw = state?.cmi?.score?.raw;
-    const min = state?.cmi?.score?.min;
-    const max = state?.cmi?.score?.max;
+    const raw = parseInt(state?.cmi?.score?.raw, 10);
+    const min = parseInt(state?.cmi?.score?.min, 10);
+    const max = parseInt(state?.cmi?.score?.max, 10);
 
     return { raw, min, max };
   }
@@ -18,12 +18,11 @@ function getScormGrade({ state, numberOfQuestions }) {
   }
   if (Object.keys(state?.cmi?.interactions)?.length) {
     const interactions = toArray(state?.cmi?.interactions);
-    const attemptsUsed = numberOfQuestions
-      ? Math.floor(interactions.length / numberOfQuestions)
-      : 1;
+    const questionsLength = numberOfQuestions ?? uniqBy(interactions, 'id')?.length;
+    const attemptsUsed = Math.floor(interactions.length / questionsLength);
 
-    const firstQuestion = (attemptsUsed - 1) * numberOfQuestions;
-    const lastQuestion = firstQuestion + numberOfQuestions;
+    const firstQuestion = (attemptsUsed - 1) * questionsLength;
+    const lastQuestion = firstQuestion + questionsLength;
 
     const interactionsToCheck = interactions.slice(firstQuestion, lastQuestion);
 
@@ -37,7 +36,7 @@ function getScormGrade({ state, numberOfQuestions }) {
     return {
       raw: correctAnswers,
       min: 0,
-      max: Math.max(interactionsToCheck.length, numberOfQuestions),
+      max: Math.max(interactionsToCheck.length, questionsLength),
     };
   }
 
@@ -92,6 +91,27 @@ function getScaledGrade({ grade, evaluationSystem }) {
   return ((sRaw - sMin) * (lMax - lMin)) / (sMax - sMin) + lMin;
 }
 
+function getLeemonsScormObject({ assignable, state }) {
+  if (assignable?.metadata?.version === 'scorm2004') {
+    return {
+      cmi: {
+        interactions: state?.cmi?.interaction,
+        score: state?.cmi?.score,
+      },
+    };
+  }
+  if (assignable?.metadata?.version === 'scorm12') {
+    return {
+      cmi: {
+        interactions: state?.cmi?.interactions,
+        score: state?.cmi?.core?.score,
+      },
+    };
+  }
+
+  return {};
+}
+
 module.exports = async function updateStatus(
   { instance: instanceId, user, state },
   { userSession, transacting }
@@ -111,6 +131,8 @@ module.exports = async function updateStatus(
     transacting,
   });
 
+  const leemonsScormState = getLeemonsScormObject({ assignable: instance?.assignable, state });
+
   if (instance.assignable.role !== 'scorm') {
     throw new Error('This service can only update scorm grades');
   }
@@ -122,8 +144,8 @@ module.exports = async function updateStatus(
     .services.programs.getProgramEvaluationSystem(program);
 
   const grade = getScormGrade({
-    state,
-    numberOfQuestions: instance.assignable.metadata.numberOfAttempts ?? 0,
+    state: leemonsScormState,
+    numberOfQuestions: instance.assignable.metadata.numberOfAttempts ?? null,
   });
 
   const scaledGrade = getScaledGrade({ grade, evaluationSystem });

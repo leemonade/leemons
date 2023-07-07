@@ -304,35 +304,37 @@ export default function Result() {
                     </Box>
                   </Stack>
                 </ScoreFeedback>
-                <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
-                  <ActivityAccordionPanel
-                    key={1}
-                    itemValue="questions"
-                    label={t('questions')}
-                    rightSection={
+                {!!questions.questions.length && (
+                  <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
+                    <ActivityAccordionPanel
+                      key={1}
+                      itemValue="questions"
+                      label={t('questions')}
+                      rightSection={
+                        <Box>
+                          <Badge
+                            label={questions?.questions?.length}
+                            size="md"
+                            color="stroke"
+                            closable={false}
+                          />
+                        </Box>
+                      }
+                      icon={
+                        <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+                          <ImageLoader
+                            className="stroke-current"
+                            src={'/public/tests/questions-icon.svg'}
+                          />
+                        </Box>
+                      }
+                    >
                       <Box>
-                        <Badge
-                          label={questions?.questions?.length}
-                          size="md"
-                          color="stroke"
-                          closable={false}
-                        />
+                        <Table columns={tableHeaders} data={tableData} />
                       </Box>
-                    }
-                    icon={
-                      <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-                        <ImageLoader
-                          className="stroke-current"
-                          src={'/public/tests/questions-icon.svg'}
-                        />
-                      </Box>
-                    }
-                  >
-                    <Box>
-                      <Table columns={tableHeaders} data={tableData} />
-                    </Box>
-                  </ActivityAccordionPanel>
-                </ActivityAccordion>
+                    </ActivityAccordionPanel>
+                  </ActivityAccordion>
+                )}
               </Box>
               <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
                 <ContextContainer alignItems="center">
