@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { table } = require('../tables');
 const { getProgramCourses } = require('../programs/getProgramCourses');
@@ -96,6 +97,18 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
       return undefined;
     })
   );
+
+  // ES: Comprobamos si subjectType.groupVisibility es true si lo es, borramos el grupo de la clase para que cuando se monte el arbol no salga el grupo
+  _.forEach(classes, (classe) => {
+    if (classe.subjectType.groupVisibility) {
+      classe._groups = classe.groups;
+      classe.groups = null;
+    } else if (nodeTypes.includes('groups')) {
+      classe._knowledges = classe.knowledges;
+      classe.knowledges = null;
+    }
+  });
+
   const classGroupsIds = _.map(classes, 'groups.id');
   const classSubstagesIds = _.map(classes, 'substages.id');
   const classKnowledgesIds = _.map(classes, 'knowledges.id');
@@ -218,7 +231,21 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     let nodes = [];
     _.forIn(node, (value, key) => {
       if (key === 'classrooms') {
-        if (value.length > 0) nodes = _.map(value, (v) => ({ nodeType: 'class', value: v }));
+        if (value.length > 0) {
+          nodes = _.map(value, ({ _groups, _knowledges, ...v }) => {
+            const r = {
+              nodeType: 'class',
+              value: { ...v },
+            };
+            if (_groups) {
+              r.value.groups = _groups;
+            }
+            if (_knowledges) {
+              r.value.knowledges = _knowledges;
+            }
+            return r;
+          });
+        }
       } else {
         const keyParse = key.split('|');
         const nodeType = keyParse[0];
