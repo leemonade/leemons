@@ -1,4 +1,4 @@
-const { find, isEmpty } = require('lodash');
+const { find, isEmpty, sortBy } = require('lodash');
 const { categoriesMenu } = require('../../../config/constants');
 const { list } = require('./list');
 
@@ -25,12 +25,15 @@ async function listWithMenuItem(page, size, { transacting, userSession } = {}) {
 
    */
 
-  const result = categories.items
-    .map((category) => ({
-      ...category,
-      menuItem: find(menuItems, { key: leemons.plugin.prefixPN(category.key) }),
-    }))
-    .filter((item) => !isEmpty(item.menuItem));
+  const result = sortBy(
+    categories.items
+      .map((category) => ({
+        ...category,
+        menuItem: find(menuItems, { key: leemons.plugin.prefixPN(category.key) }),
+      }))
+      .filter((item) => !isEmpty(item.menuItem)),
+    'menuItem.order'
+  );
 
   return result;
 }
