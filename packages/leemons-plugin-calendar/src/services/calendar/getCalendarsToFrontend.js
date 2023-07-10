@@ -84,10 +84,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       }
     ),
   ];
-  if (center) promises.push(getByCenterId(center.id, { transacting }));
-  const [items, ownerItems, calendarConfig] = await Promise.all(promises);
+  promises.push(
+    leemons.getPlugin('users').services.users.getUserAgentsInfo([userSession.userAgents[0].id], {
+      withProfile: true,
+      withCenter: true,
+      transacting,
+    })
+  );
 
-  console.log('items', items);
+  if (center) promises.push(getByCenterId(center.id, { transacting }));
+  const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
   // ES: Separamos los calendarios de los eventos
   // EN: We separate the calendars from the events
@@ -116,6 +122,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       }
     ),
     table.classCalendar.find({ calendar_$in: calendarIds }, { transacting }),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.listPrograms(0, 9999, userAgent.center.id, { userSession, transacting }),
   ];
 
   if (calendarConfig)
@@ -125,9 +134,36 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       })
     );
-  const [calendars, eventsCalendars, events, classCalendars, configCalendars] = await Promise.all(
-    promises
-  );
+  const [
+    _calendars,
+    eventsCalendars,
+    events,
+    classCalendars,
+    { items: programs },
+    configCalendars,
+  ] = await Promise.all(promises);
+
+  let calendars = [];
+  if (userAgent.profile.sysName === 'admin') {
+    const programIds = _.map(programs, (program) => `plugins.calendar.program.${program.id}`);
+    _.forEach(_calendars, (calendar) => {
+      if (calendar.section === 'plugins.calendar.programs') {
+        if (programIds.includes(calendar.key)) {
+          calendars.push(calendar);
+        }
+      } else if (calendar.key.startsWith('plugins.users.calendar.agent.')) {
+        if (calendar.key.includes(userAgent.id)) {
+          calendars.push(calendar);
+        }
+      } else {
+        calendars.push(calendar);
+      }
+    });
+  } else {
+    calendars = _calendars;
+  }
+
+  console.log('calendars', calendars);
 
   const eventsFromCalendars = _.flatten(eventsCalendars);
 
