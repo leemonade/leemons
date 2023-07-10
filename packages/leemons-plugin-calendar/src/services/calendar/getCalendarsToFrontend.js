@@ -87,6 +87,8 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   if (center) promises.push(getByCenterId(center.id, { transacting }));
   const [items, ownerItems, calendarConfig] = await Promise.all(promises);
 
+  console.log('items', items);
+
   // ES: Separamos los calendarios de los eventos
   // EN: We separate the calendars from the events
   const calendarIds = [];

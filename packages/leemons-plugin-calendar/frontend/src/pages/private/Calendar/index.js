@@ -179,6 +179,8 @@ function Calendar({ session }) {
         map(store.centers, (center) => getCalendarsForCenter(center))
       );
 
+      console.log('centersData', centersData);
+
       store.academicCalendarInstalled = await PackageManagerService.isPluginInstalled(
         'leemons-plugin-academic-calendar'
       );
@@ -241,16 +243,16 @@ function Calendar({ session }) {
     const schedule = store.scheduleCenter[store.center.id];
     store.schedule = {};
     if (!schedule.selectedCourseId) {
-      store.schedule.selectedCourse = schedule.config.allCoursesHaveSameConfig
+      store.schedule.selectedCourse = schedule.config?.allCoursesHaveSameConfig
         ? null
-        : schedule.courses[0];
+        : schedule.courses?.[0];
     } else {
       store.schedule.selectedCourse = _.find(schedule.courses, {
         id: schedule.selectedCourseId,
       });
     }
     store.schedule.showCourseSelect = true;
-    if (schedule.courses.length === 1 || schedule.config.allCoursesHaveSameConfig) {
+    if (schedule.courses?.length === 1 || schedule.config?.allCoursesHaveSameConfig) {
       store.schedule.showCourseSelect = false;
     }
     store.schedule.courseData = _.map(schedule.courses, (course) => ({
@@ -268,7 +270,7 @@ function Calendar({ session }) {
       return true;
     });
 
-    store.schedule.breaks = _.filter(schedule.config.breaks, (bbreak) => {
+    store.schedule.breaks = _.filter(schedule.config?.breaks, (bbreak) => {
       if (!store.schedule.selectedCourse) {
         return true;
       }
