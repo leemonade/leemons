@@ -7,11 +7,14 @@ async function listCurriculums(
   size,
   { canListUnpublished, userSession, query = {}, transacting } = {}
 ) {
-  const [{ actionNames }] = await leemons
-    .getPlugin('users')
-    .services.permissions.getUserAgentPermissions(userSession.userAgents, {
+  console.log('_.map(userSession.userAgents, )', _.map(userSession.userAgents, 'id'));
+  const userServices = leemons.getPlugin('users').services;
+  const [[{ actionNames }], centers] = await Promise.all([
+    userServices.permissions.getUserAgentPermissions(userSession.userAgents, {
       query: { permissionName: 'plugins.curriculum.curriculum' },
-    });
+    }),
+    userServices.users.getUserAgentCenter(userSession.userAgents),
+  ]);
 
   query.published = true;
 
@@ -19,6 +22,8 @@ async function listCurriculums(
     // eslint-disable-next-line no-param-reassign
     delete query.published;
   }
+
+  query.center_$in = _.map(centers, 'id');
 
   return global.utils.paginate(table.curriculums, page, size, query, {
     transacting,

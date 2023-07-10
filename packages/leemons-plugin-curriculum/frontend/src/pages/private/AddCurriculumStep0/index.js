@@ -1,19 +1,20 @@
-import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { filter, forIn, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { filter, forIn, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo } from 'react';
 
-import prefixPN from '@curriculum/helpers/prefixPN';
+import { listProgramsRequest } from '@academic-portfolio/request';
 import { Box, createStyles, Title } from '@bubbles-ui/components';
 import {
   ADD_CURRICULUM_FORM_ERROR_MESSAGES,
   ADD_CURRICULUM_FORM_MESSAGES,
   AddCurriculumForm,
 } from '@bubbles-ui/leemons';
-import { listProgramsRequest } from '@academic-portfolio/request';
-import countryList from 'country-region-data';
-import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import { useStore } from '@common';
+import prefixPN from '@curriculum/helpers/prefixPN';
+import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
+import { getCentersWithToken } from '@users/session';
+import countryList from 'country-region-data';
 import { addCurriculumRequest, listCurriculumRequest } from '../../../request';
 
 const useStyle = createStyles((theme) => ({
@@ -48,12 +49,7 @@ function AddCurriculumStep0({ onNext }) {
 
   async function load() {
     try {
-      const [
-        { locales },
-        {
-          data: { items: centers },
-        },
-      ] = await Promise.all([
+      const [{ locales }] = await Promise.all([
         getPlatformLocalesRequest(),
         listCentersRequest({ page: 0, size: 999999 }),
       ]);
@@ -64,7 +60,7 @@ function AddCurriculumStep0({ onNext }) {
           label: item.countryName,
         })),
         language: map(locales, (item) => ({ value: item.code, label: item.name })),
-        center: map(centers, (item) => ({ value: item.id, label: item.name })),
+        center: map(getCentersWithToken(), (item) => ({ value: item.id, label: item.name })),
       };
       render();
     } catch (e) {
