@@ -1,6 +1,13 @@
 const _ = require('lodash');
 
 async function getAdminDashboard(config, { userSession, transacting } = {}) {
+  if (config.center && config.center !== 'undefined') {
+    return {
+      academicPortfolio: await leemons
+        .getPlugin('academic-portfolio')
+        .services.common.adminDashboard(config, { userSession, transacting }),
+    };
+  }
   const [
     academicPortfolio,
     instances,

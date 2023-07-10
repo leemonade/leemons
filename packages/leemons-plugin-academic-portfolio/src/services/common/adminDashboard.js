@@ -2,9 +2,15 @@ const _ = require('lodash');
 const { table } = require('../tables');
 
 async function adminDashboard(config, { userSession, transacting } = {}) {
-  const centers = await leemons
-    .getPlugin('users')
-    .services.users.getUserCenters(userSession.id, { transacting });
+  let centers = [];
+  if (config.center && config.center !== 'undefined') {
+    centers.push({ id: config.center });
+  }
+  if (!centers.length) {
+    centers = await leemons
+      .getPlugin('users')
+      .services.users.getUserCenters(userSession.id, { transacting });
+  }
   const programCenter = await table.programCenter.find(
     { center_$in: _.map(centers, 'id') },
     { transacting }

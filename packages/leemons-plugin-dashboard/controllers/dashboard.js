@@ -10,6 +10,7 @@ async function admin(ctx) {
       start: { type: 'string' },
       end: { type: 'string' },
       program: { type: 'string' },
+      center: { type: 'string' },
     },
     additionalProperties: false,
   });
