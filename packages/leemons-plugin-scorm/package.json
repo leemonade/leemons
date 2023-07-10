@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "mime-types": "^2.1.35",
-    "fast-xml-parser": "4.1.3"
+    "fast-xml-parser": "4.1.3",
+    "koa-sendfile": "^3.0.0",
+    "mime-types": "^2.1.35"
   }
 }

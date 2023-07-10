@@ -1,10 +1,11 @@
 import React from 'react';
-import { toArray } from 'lodash';
+import { toArray, uniqBy } from 'lodash';
 
 export function useScormQuestions({ state, assignable }) {
   const interactions = toArray(state?.cmi?.interactions ?? {});
   const interactionsLength = interactions.length;
-  const numberOfQuestions = assignable?.metadata?.numberOfAttempts ?? 0;
+  const numberOfQuestions =
+    assignable?.metadata?.numberOfAttempts ?? uniqBy(interactions, 'id')?.length ?? 0;
 
   return React.useMemo(() => {
     if (interactionsLength) {
@@ -15,11 +16,13 @@ export function useScormQuestions({ state, assignable }) {
       const firstQuestion = (attemptsUsed - 1) * numberOfQuestions;
       const lastQuestion = firstQuestion + numberOfQuestions;
 
-      const existingQuestions = interactions.slice(0, numberOfQuestions);
+      const existingQuestions = uniqBy(interactions, 'id').slice(0, numberOfQuestions);
       const questionsAnswered = interactions.slice(firstQuestion, lastQuestion);
 
       return {
-        questions: existingQuestions.map((question) => question?.title ?? question?.description),
+        questions: existingQuestions.map(
+          (question) => question?.title ?? question?.description ?? question?.id
+        ),
         answers: questionsAnswered.map((question) => question.result === 'correct'),
       };
     }
@@ -30,3 +33,5 @@ export function useScormQuestions({ state, assignable }) {
     };
   }, [interactions, numberOfQuestions]);
 }
+
+export default useScormQuestions;

@@ -92,4 +92,10 @@ module.exports = [
     handler: 'status.getScormAssignation',
     authenticated: true,
   },
+  {
+    path: '/public/:filePath(.*)',
+    method: 'GET',
+    handler: 'public.serveFile',
+    authenticated: false,
+  },
 ];

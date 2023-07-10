@@ -159,7 +159,7 @@ function Progress({ assignation, isBlocked }) {
   }
 }
 
-function getDashboardURL(assignation) {
+function isFinished(assignation) {
   const {
     instance,
     timestamps: { end },
@@ -167,7 +167,6 @@ function getDashboardURL(assignation) {
   const {
     alwaysAvailable,
     dates: { deadline: _deadline, closed },
-    assignable: { roleDetails },
   } = instance;
 
   const now = dayjs();
@@ -175,12 +174,23 @@ function getDashboardURL(assignation) {
   const closeDate = dayjs(closed || null);
   const endTimestamp = dayjs(end || null);
 
-  const isFinished =
+  const finished =
     (alwaysAvailable && closeDate.isValid()) ||
     endTimestamp.isValid() ||
     (deadline.isValid() && !deadline.isAfter(now));
 
-  if (!isFinished) {
+  return finished;
+}
+
+function getDashboardURL(assignation) {
+  const { instance } = assignation;
+  const {
+    assignable: { roleDetails },
+  } = instance;
+
+  const finished = isFinished(assignation);
+
+  if (!finished) {
     return roleDetails.studentDetailUrl
       .replace(':id', instance.id)
       .replace(':user', assignation.user);
@@ -199,10 +209,12 @@ export async function parseAssignationForStudentView(assignation, labels, option
   const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
 
   const isBlocked = blockingActivities.some((id) => !blockingActivitiesById[id].finished);
+  const finished = isFinished(assignation);
 
   return {
     ...commonData,
     isBlocked,
+    isEvaluable: !finished || instance.requiresScoring || instance.allowFeedback,
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
     messages: <UnreadMessages rooms={assignation.chatKeys} />,
     dashboardURL: () => getDashboardURL(assignation),

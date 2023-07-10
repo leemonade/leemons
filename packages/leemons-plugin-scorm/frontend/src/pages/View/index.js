@@ -5,7 +5,7 @@ import { ActivityContainer } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@scorm/helpers';
-import { getFileUrl, getPublicFileUrl } from '@leebrary/helpers/prepareAsset';
+import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import usePackage from '@scorm/request/hooks/queries/usePackage';
 import useAssignation from '@scorm/request/hooks/queries/useAssignation';
@@ -18,30 +18,15 @@ import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import { useLayout } from '@layout/context';
 import { isEmpty } from 'lodash';
 import dayjs from 'dayjs';
-import { useScorm, useScormUnloadHandler } from '../../hooks/useScorm';
+import { ScormRender } from '@scorm/components/ScormRender';
+import { useScorm } from '../../hooks/useScorm';
 
-function ScromRender({ marginTop, scormPackage }) {
-  const buttonBarHeight = 61;
-
-  return (
-    <Box sx={{ height: `calc(100vh - ${marginTop}px - ${buttonBarHeight}px)` }}>
-      <iframe
-        title="scorm"
-        src={getPublicFileUrl(scormPackage.file.id, scormPackage.launchUrl)}
-        style={{ width: '100%', height: '100%' }}
-      />
-    </Box>
-  );
-}
-
-function onSetValue({ scormInstance, instance, user, LatestCommit }) {
-  const commitState = scormInstance.renderCommitCMI(true);
-  if (!isEmpty(commitState)) {
-    commitState.leemonsCommitDate = new Date();
-    LatestCommit.current = commitState;
+function onSetValue({ instance, user, commit, LatestCommit }) {
+  if (!isEmpty(commit)) {
+    LatestCommit.current = { ...commit, leemonsCommitDate: new Date() };
   }
 
-  updateStatus({ instance, user, state: commitState }).catch((e) => addErrorAlert(e.message));
+  updateStatus({ instance, user, state: commit }).catch((e) => addErrorAlert(e.message));
 }
 
 function useData({ id, user }) {
@@ -163,7 +148,10 @@ function useOnScormComplete({
   };
 
   const onComplete = () => {
-    if (LatestCommit?.current?.cmi?.completion_status === 'completed') {
+    if (
+      LatestCommit?.current?.cmi?.completion_status === 'completed' ||
+      ['completed', 'failed', 'passed'].includes(LatestCommit?.current?.cmi?.core?.lesson_status)
+    ) {
       onCompletedAttempt();
     } else {
       onIncompletedAttempt();
@@ -193,16 +181,17 @@ export default function View() {
     isLoading: dataIsLoading,
   } = useData({ id, user });
 
-  const { scormInstance, isLoading: scormInstanceIsLoading } = useScorm({
-    state,
-    scormPackage,
-    onSetValue: (CMIElement, value) =>
-      onSetValue({ scormInstance, instance: id, user, CMIElement, value, LatestCommit }),
-  });
-
   const nextActivityUrl = useNextActivityUrl(assignation);
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
+
+  useScorm({
+    onInitialize: () => {
+      updateTimestamps('open');
+      updateTimestamps('start');
+    },
+    onSetValue: (commit) => onSetValue({ instance: id, user, commit, LatestCommit }),
+  });
 
   useEffect(() => {
     if (dayjs(state?.leemonsCommitDate).isAfter(dayjs(LatestCommit.current?.leemonsCommitDate))) {
@@ -211,15 +200,6 @@ export default function View() {
   }, [state]);
   // ----------------------------------------------------------------------
   // Handlers
-
-  useEffect(() => {
-    if (scormInstance) {
-      updateTimestamps('open');
-      updateTimestamps('start');
-    }
-  }, [updateTimestamps, scormInstance]);
-
-  useScormUnloadHandler({ scormPackage });
 
   const { onComplete } = useOnScormComplete({
     id,
@@ -233,7 +213,7 @@ export default function View() {
   // ----------------------------------------------------------------------
   // COMPONENT
 
-  if (dataIsLoading || scormInstanceIsLoading || tLoading) return <LoadingOverlay visible />;
+  if (dataIsLoading || tLoading) return <LoadingOverlay visible />;
 
   return (
     <Box
@@ -263,7 +243,7 @@ export default function View() {
         }
         collapsed
       >
-        <ScromRender scormPackage={scormPackage} />
+        <ScormRender scormPackage={scormPackage} state={state} onSetValue={onSetValue} />
       </ActivityContainer>
       <Box className={classes.buttonContainer}>
         {!scormPackage.gradable && !!nextActivityUrl ? (

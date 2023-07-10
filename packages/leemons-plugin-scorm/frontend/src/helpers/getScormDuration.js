@@ -1,28 +1,40 @@
 import dayjs from 'dayjs';
 
 export function getScormDuration({ state, assignation }) {
-  const cmiTotalTime = state?.cmi?.total_time;
-  if (cmiTotalTime) {
-    const hours = new RegExp(/(?<hours>\d*)H/).exec(cmiTotalTime)?.groups?.hours ?? 0;
-    const minutes = new RegExp(/(?<minutes>\d*)M/).exec(cmiTotalTime)?.groups?.minutes ?? 0;
-    const seconds = new RegExp(/(?<seconds>\d*)S/).exec(cmiTotalTime)?.groups?.seconds ?? 0;
+  const cmi2004TotalTime = state?.cmi?.total_time;
+  const cmi12TotalTime = state?.cmi?.core?.total_time;
 
-    const secondsInAMinute = 60;
-    const secondsInAnHour = secondsInAMinute * 60;
+  let hours;
+  let minutes;
+  let seconds;
 
-    return (
-      parseFloat(seconds) +
-      parseFloat(minutes) * secondsInAMinute +
-      parseFloat(hours) * secondsInAnHour
+  if (cmi2004TotalTime) {
+    hours = new RegExp(/(?<hours>\d*)H/).exec(cmi2004TotalTime)?.groups?.hours ?? '0';
+    minutes = new RegExp(/(?<minutes>\d*)M/).exec(cmi2004TotalTime)?.groups?.minutes ?? '0';
+    seconds = new RegExp(/(?<seconds>\d*)S/).exec(cmi2004TotalTime)?.groups?.seconds ?? '0';
+  } else if (cmi12TotalTime) {
+    const { groups } = new RegExp(/(?<hours>\d*):(?<minutes>\d*):(?<seconds>\d*)/).exec(
+      cmi12TotalTime
     );
+
+    hours = groups.hours ?? '0';
+    minutes = groups.minutes ?? '0';
+    seconds = groups.seconds ?? '0';
+  } else {
+    const { start, end } = assignation?.timestamps ?? {};
+    if (start && end) {
+      return dayjs(end) - dayjs(start);
+    }
   }
 
-  const { start, end } = assignation?.timestamps ?? {};
-  if (start && end) {
-    return dayjs(end) - dayjs(start);
-  }
+  const secondsInAMinute = 60;
+  const secondsInAnHour = secondsInAMinute * 60;
 
-  return null;
+  return (
+    parseFloat(seconds) +
+    parseFloat(minutes) * secondsInAMinute +
+    parseFloat(hours) * secondsInAnHour
+  );
 }
 
 export default getScormDuration;

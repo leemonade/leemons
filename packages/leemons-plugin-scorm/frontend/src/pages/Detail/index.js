@@ -12,6 +12,7 @@ import {
   Select,
   Switch,
   NumberInput,
+  DropdownButton,
 } from '@bubbles-ui/components';
 import JSZip from 'jszip';
 import { useHistory, useParams } from 'react-router-dom';
@@ -30,7 +31,7 @@ import {
   getLaunchURL,
   getDefaultOrganization,
 } from '@scorm/lib/utilities';
-import { SetupContent, DocumentIcon } from '@scorm/components/icons';
+import { DocumentIcon } from '@scorm/components/icons';
 import { PageContent } from './components/PageContent/PageContent';
 
 export default function Detail() {
@@ -262,143 +263,148 @@ export default function Detail() {
 
   return (
     <Box style={{ height: '100vh' }}>
-      <Stack direction="column" fullHeight>
-        <PageHeader
-          values={{
-            title: t('title'),
-          }}
-          buttons={{
-            edit: false,
-            dropdown: form.formState.isValid && t('publishOptions'),
-          }}
-          buttonsIcons={{
-            edit: <SetupContent size={16} />,
-          }}
-          isEditMode={true}
-          icon={<DocumentIcon />}
-          onDropdown={[
-            { label: t('onlyPublish'), onClick: () => onlyPublish() },
-            // { label: t('publishAndShare'), onClick: () => publishAndShare() },
-            { label: t('publishAndAssign'), onClick: () => publishAndAssign() },
-          ]}
-          loading={store.saving}
-          fullWidth
-        />
+      <ContextContainer divided>
+        <Stack direction="column" fullHeight>
+          <PageHeader
+            values={{
+              title: t('title'),
+            }}
+            isEditMode={true}
+            icon={<DocumentIcon />}
+            fullWidth
+          />
 
-        <PageContent title={t('pageTitle')}>
-          <ContextContainer divided>
-            <Box>
-              <Paragraph dangerouslySetInnerHTML={{ __html: t('description') }} />
-            </Box>
-            <ContextContainer>
+          <PageContent title={t('pageTitle')}>
+            <ContextContainer divided>
               <Box>
-                <Controller
-                  control={form.control}
-                  name="file"
-                  shouldUnregister
-                  rules={{ required: formLabels?.errorMessages.file?.required || 'Field required' }}
-                  render={({ field: { ref, value, ...field } }) => (
-                    <FileUpload
-                      icon={<CloudUploadIcon height={32} width={32} />}
-                      title={t('addFile')}
-                      subtitle={t('dropFile')}
-                      errorMessage={{
-                        title: 'Error',
-                        message: formLabels?.errorMessages.file?.rejected || 'File was rejected',
-                      }}
-                      hideUploadButton
-                      single
-                      initialFiles={value ? [value] : []}
-                      inputWrapperProps={{ error: form.formState.errors.file }}
-                      accept={[
-                        'application/octet-stream',
-                        'application/zip',
-                        'application/x-zip',
-                        'application/x-zip-compressed',
-                      ]}
-                      {...field}
-                    />
-                  )}
-                />
+                <Paragraph dangerouslySetInnerHTML={{ __html: t('description') }} />
               </Box>
-              <AssetFormInput
-                preview
-                form={form}
-                category="assignables.scorm"
-                previewVariant="document"
-                advancedConfig={advancedConfig}
-                showAdvancedConfig
-                tagsPluginName="scorm"
-              >
-                <ContextContainer>
-                  <Box>
-                    <Paragraph dangerouslySetInnerHTML={{ __html: t('configHelp') }} />
-                  </Box>
-                  <Box style={{ maxWidth: 288 }}>
-                    <Controller
-                      control={form.control}
-                      name="version"
-                      shouldUnregister
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          label={t('schemaVersion')}
-                          data={store.supportedVersions}
-                        />
-                      )}
-                    />
-                  </Box>
-                  <Box>
-                    <Controller
-                      control={form.control}
-                      name="gradable"
-                      shouldUnregister
-                      render={({ field }) => (
-                        <>
-                          <Switch {...field} checked={field.value} label={t('gradable')} />
-                          {!!field.value && (
-                            <Box sx={{ paddingLeft: 20 }}>
-                              <Controller
-                                control={form.control}
-                                name="metadata.multipleAttempts"
-                                shouldUnregister
-                                render={({ field: multipleAttemptsField }) => (
-                                  <>
-                                    <Switch
-                                      {...multipleAttemptsField}
-                                      checked={multipleAttemptsField.value}
-                                      label={t('multipleAttempts')}
-                                    />
-                                    {!!multipleAttemptsField.value && (
-                                      <Controller
-                                        control={form.control}
-                                        name="metadata.numberOfAttempts"
-                                        shouldUnregister
-                                        render={({ field: numberOfAttemptsField }) => (
-                                          <Box sx={{ paddingLeft: 10 }}>
-                                            <NumberInput
-                                              {...numberOfAttemptsField}
-                                              label={t('numberOfAttempts')}
-                                            />
-                                          </Box>
-                                        )}
+              <ContextContainer>
+                <Box>
+                  <Controller
+                    control={form.control}
+                    name="file"
+                    shouldUnregister
+                    rules={{
+                      required: formLabels?.errorMessages.file?.required || 'Field required',
+                    }}
+                    render={({ field: { ref, value, ...field } }) => (
+                      <FileUpload
+                        icon={<CloudUploadIcon height={32} width={32} />}
+                        title={t('addFile')}
+                        subtitle={t('dropFile')}
+                        errorMessage={{
+                          title: 'Error',
+                          message: formLabels?.errorMessages.file?.rejected || 'File was rejected',
+                        }}
+                        hideUploadButton
+                        single
+                        initialFiles={value ? [value] : []}
+                        inputWrapperProps={{ error: form.formState.errors.file }}
+                        accept={[
+                          'application/octet-stream',
+                          'application/zip',
+                          'application/x-zip',
+                          'application/x-zip-compressed',
+                        ]}
+                        {...field}
+                      />
+                    )}
+                  />
+                </Box>
+                <AssetFormInput
+                  preview
+                  form={form}
+                  category="assignables.scorm"
+                  previewVariant="document"
+                  advancedConfig={advancedConfig}
+                  showAdvancedConfig
+                  tagsPluginName="scorm"
+                >
+                  <ContextContainer>
+                    <Box>
+                      <Paragraph dangerouslySetInnerHTML={{ __html: t('configHelp') }} />
+                    </Box>
+                    <Box style={{ maxWidth: 288 }}>
+                      <Controller
+                        control={form.control}
+                        name="version"
+                        shouldUnregister
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+                            label={t('schemaVersion')}
+                            data={store.supportedVersions}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box>
+                      <Controller
+                        control={form.control}
+                        name="gradable"
+                        shouldUnregister
+                        render={({ field }) => (
+                          <>
+                            <Switch {...field} checked={field.value} label={t('gradable')} />
+                            {!!field.value && (
+                              <Box sx={{ paddingLeft: 20 }}>
+                                <Controller
+                                  control={form.control}
+                                  name="metadata.multipleAttempts"
+                                  shouldUnregister
+                                  render={({ field: multipleAttemptsField }) => (
+                                    <>
+                                      <Switch
+                                        {...multipleAttemptsField}
+                                        checked={multipleAttemptsField.value}
+                                        label={t('multipleAttempts')}
                                       />
-                                    )}
-                                  </>
-                                )}
-                              />
-                            </Box>
-                          )}
-                        </>
-                      )}
-                    />
-                  </Box>
-                </ContextContainer>
-              </AssetFormInput>
+                                      {!!multipleAttemptsField.value && (
+                                        <Controller
+                                          control={form.control}
+                                          name="metadata.numberOfAttempts"
+                                          shouldUnregister
+                                          render={({ field: numberOfAttemptsField }) => (
+                                            <Box sx={{ paddingLeft: 10 }}>
+                                              <NumberInput
+                                                {...numberOfAttemptsField}
+                                                label={t('numberOfAttempts')}
+                                              />
+                                            </Box>
+                                          )}
+                                        />
+                                      )}
+                                    </>
+                                  )}
+                                />
+                              </Box>
+                            )}
+                          </>
+                        )}
+                      />
+                    </Box>
+                  </ContextContainer>
+                </AssetFormInput>
+              </ContextContainer>
+              <Stack justifyContent="flex-end">
+                <DropdownButton
+                  disabled={!form.formState.isValid}
+                  loading={store.saving}
+                  data={[
+                    { label: t('onlyPublish'), onClick: () => onlyPublish() },
+                    // { label: t('publishAndShare'), onClick: () => publishAndShare() },
+                    { label: t('publishAndAssign'), onClick: () => publishAndAssign() },
+                  ]}
+                >
+                  {t('publishOptions')}
+                </DropdownButton>
+              </Stack>
             </ContextContainer>
-          </ContextContainer>
-        </PageContent>
-      </Stack>
+          </PageContent>
+        </Stack>
+      </ContextContainer>
+
       <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </Box>
   );

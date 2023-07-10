@@ -315,6 +315,7 @@ module.exports = {
   activities_list: {
     emptyState: 'No hay actividades aún',
     blocked: 'La actividad seleccionada está bloqueada',
+    nonEvaluable: 'La actividad seleccionada no es evaluable y ya ha sido finalizada',
   },
   ongoing: {
     ongoing: 'Actividades en curso',

@@ -69,7 +69,6 @@ export default function Assign() {
       hideMaxTime
       onSubmit={send}
       showEvaluation={isGradable}
-      showInstructions
       showMessageForStudents
       buttonsComponent={
         <Stack fullWidth justifyContent="end">
