@@ -326,7 +326,7 @@ export default function Index() {
               <Grid>
                 <Col span={3}>
                   <SelectCenter
-                    firstSelected
+                    clearable={true}
                     label={t('centerLabel')}
                     onChange={onSelectCenter}
                     value={store.centerId}
