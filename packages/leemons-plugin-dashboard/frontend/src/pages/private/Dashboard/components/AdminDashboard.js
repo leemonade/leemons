@@ -26,6 +26,7 @@ import { SelectCenter } from '@users/components';
 import { cloneDeep, forEach, map, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
 import SkeletonDashboardLoader from './SkeletonDashboardLoader';
 
@@ -96,6 +97,7 @@ export default function AdminDashboard({ session }) {
     loading: true,
     isAcademicMode: false,
   });
+  const history = useHistory();
   const { classes: styles } = Styles();
   const [t, tl] = useTranslateLoader(prefixPN('adminDashboard'));
 
@@ -166,10 +168,18 @@ export default function AdminDashboard({ session }) {
   }
 
   async function handleOnSelectCenter(center) {
-    const {
-      data: { academicPortfolio },
-    } = await getAdminDashboardRequest({ center });
-    store.academicPortfolio = academicPortfolio;
+    store.center = center;
+    store.loadingCenter = true;
+    render();
+    try {
+      const {
+        data: { academicPortfolio },
+      } = await getAdminDashboardRequest({ center });
+      store.academicPortfolio = academicPortfolio;
+    } catch (e) {
+      // Nothing
+    }
+    store.loadingCenter = false;
     render();
   }
 
@@ -206,7 +216,9 @@ export default function AdminDashboard({ session }) {
   }
   // if (store.loading) return <LoadingOverlay visible />;
 
-  console.log(store.academicPortfolio);
+  function goProgram(program) {
+    history.push(`/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`);
+  }
 
   return (
     <ContextContainer
@@ -252,7 +264,14 @@ export default function AdminDashboard({ session }) {
                   firstSelected
                 />
               </Box>
-              {store.academicPortfolio?.programs.length ? (
+              {store.loadingCenter ? (
+                <SkeletonDashboardLoader height="350">
+                  <rect x="0" y="0" width="350" height="350" rx="3" />
+                  <rect x="366" y="0" width="350" height="350" rx="3" />
+                  <rect x="732" y="0" width="350" height="350" rx="3" />
+                </SkeletonDashboardLoader>
+              ) : null}
+              {!store.loadingCenter && store.academicPortfolio?.programs.length ? (
                 <Swiper
                   className={styles.cardContainer}
                   breakAt={{
@@ -266,8 +285,10 @@ export default function AdminDashboard({ session }) {
                 >
                   {store.academicPortfolio?.programs.map((program) => (
                     <LibraryCardBasic
-                      key={program.id}
+                      key={program.program.id}
                       blur={20}
+                      onClick={() => goProgram(program.program)}
+                      style={{ cursor: 'pointer' }}
                       asset={{
                         name: program.program.name,
                         color: program.program.color,

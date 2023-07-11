@@ -163,8 +163,6 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     calendars = _calendars;
   }
 
-  console.log('calendars', calendars);
-
   const eventsFromCalendars = _.flatten(eventsCalendars);
 
   // ES: Buscamos si el user agent tiene calendario

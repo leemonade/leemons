@@ -294,6 +294,7 @@ export default function EvaluationList() {
                     {!tLoading && (
                       <Box>
                         <SelectCenter
+                          firstSelected
                           value={store.center}
                           label={t('selectCenter')}
                           onChange={onSelectCenter}
