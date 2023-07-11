@@ -15,6 +15,7 @@ import {
   PageContainer,
   Paper,
   Tree,
+  useResizeObserver,
   useTree,
 } from '@bubbles-ui/components';
 import {
@@ -29,6 +30,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
 import { listGradesRequest } from '@grades/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
 import { LayoutContext } from '@layout/context/layout';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -49,10 +51,16 @@ export default function ProgramList() {
   const [showDetail, setShowDetail] = useState(false);
   const { setLoading, scrollTo } = useContext(LayoutContext);
   const [store, render] = useStore({
+    scroll: 0,
     mounted: true,
     programs: [],
     currentProgram: null,
   });
+
+  const { layoutState } = useLayout();
+  const [containerRef, container] = useResizeObserver();
+  const [headerBaseRef, headerBase] = useResizeObserver();
+  const [headerDescriptionRef, headerDescription] = useResizeObserver();
 
   const history = useHistory();
 
@@ -312,55 +320,95 @@ export default function ProgramList() {
     return null;
   }, [setupLabels, centerId, store.currentProgram]);
 
+  function onScroll() {
+    store.scroll = layoutState.contentRef.current.scrollTop;
+    render();
+  }
+
+  React.useEffect(() => {
+    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
+
+    // cleanup this component
+    return () => {
+      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
+    };
+  }, [layoutState.contentRef.current]);
+
+  let { scroll } = store;
+  if (scroll > headerBase.height) scroll = headerBase.height;
+  const correct = 48;
+  const correctBottom = 24;
+
+  let top = headerBase.height + correct - scroll;
+  const minTop = headerBase.height - headerDescription.height + 24;
+  if (top < minTop) {
+    top = minTop;
+  }
+
   return (
     <ContextContainer fullHeight>
-      <AdminPageHeader values={headerValues} />
+      <AdminPageHeader
+        baseRef={headerBaseRef}
+        descriptionRef={headerDescriptionRef}
+        values={headerValues}
+      />
 
       <Paper color="solid" shadow="none" padding={0}>
         <PageContainer>
           <ContextContainer padded="vertical">
             <Grid grow>
               <Col span={5}>
-                <Paper fullWidth padding={5}>
-                  <ContextContainer divided>
-                    <Box>
-                      <SelectCenter
-                        label={t('common.select_center')}
-                        onChange={handleOnSelectCenter}
-                        firstSelected
-                      />
-                    </Box>
-                    {errorNoEvaluation ? (
-                      <Box>
-                        <Alert severity="error" closeable={false}>
-                          {t('errorNoEvaluationSystems')}
-                          <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                            <Anchor
-                              component={Link}
-                              onClick={() =>
-                                history.push(`/private/grades/evaluations?center=${centerId}`)
-                              }
-                              to={`/private/grades/evaluations?center=${centerId}`}
-                            >
-                              {t('errorNoEvaluationSystemsGoTo')}
-                            </Anchor>
+                <Box ref={containerRef}>
+                  <Box
+                    style={{
+                      width: `${container.width}px`,
+                      position: 'fixed',
+                      top: `${top}px`,
+                      height: `calc(100vh - ${top + correctBottom}px)`,
+                    }}
+                  >
+                    <Paper fullWidth padding={5}>
+                      <ContextContainer divided>
+                        <Box>
+                          <SelectCenter
+                            label={t('common.select_center')}
+                            onChange={handleOnSelectCenter}
+                            firstSelected
+                          />
+                        </Box>
+                        {errorNoEvaluation ? (
+                          <Box>
+                            <Alert severity="error" closeable={false}>
+                              {t('errorNoEvaluationSystems')}
+                              <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                                <Anchor
+                                  component={Link}
+                                  onClick={() =>
+                                    history.push(`/private/grades/evaluations?center=${centerId}`)
+                                  }
+                                  to={`/private/grades/evaluations?center=${centerId}`}
+                                >
+                                  {t('errorNoEvaluationSystemsGoTo')}
+                                </Anchor>
+                              </Box>
+                            </Alert>
                           </Box>
-                        </Alert>
-                      </Box>
-                    ) : null}
+                        ) : null}
 
-                    {centerId && !errorNoEvaluation && (
-                      <Box>
-                        <Tree
-                          {...treeProps}
-                          allowDragParents={false}
-                          onSelect={handleOnEditProgram}
-                          onAdd={handleOnAddProgram}
-                        />
-                      </Box>
-                    )}
-                  </ContextContainer>
-                </Paper>
+                        {centerId && !errorNoEvaluation && (
+                          <Box>
+                            <Tree
+                              {...treeProps}
+                              allowDragParents={false}
+                              onSelect={handleOnEditProgram}
+                              onAdd={handleOnAddProgram}
+                            />
+                          </Box>
+                        )}
+                      </ContextContainer>
+                    </Paper>
+                  </Box>
+                </Box>
               </Col>
               <Col span={7}>
                 {!isNil(setupProps) && showDetail && (

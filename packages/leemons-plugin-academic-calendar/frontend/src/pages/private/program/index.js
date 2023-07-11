@@ -14,6 +14,7 @@ import { FolderIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useLayout } from '@layout/context';
 import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
@@ -88,9 +89,11 @@ export default function ProgramCalendars() {
   const [headerBaseRef, headerBase] = useResizeObserver();
   const [headerDescriptionRef, headerDescription] = useResizeObserver();
   const { classes, cx } = useStyle();
+  const { layoutState } = useLayout();
 
   const { setLoading, scrollTo } = useContext(LayoutContext);
   const [store, render] = useStore({
+    scroll: 0,
     showDetail: false,
     center: null,
     mounted: true,
@@ -108,6 +111,20 @@ export default function ProgramCalendars() {
     store.center = center;
     loadProgramConfigs();
   }
+
+  function onScroll() {
+    store.scroll = layoutState.contentRef.current.scrollTop;
+    render();
+  }
+
+  React.useEffect(() => {
+    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
+
+    // cleanup this component
+    return () => {
+      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
+    };
+  }, [layoutState.contentRef.current]);
 
   let { scroll } = store;
   if (scroll > headerBase.height) scroll = headerBase.height;
@@ -146,7 +163,7 @@ export default function ProgramCalendars() {
                       height: `calc(100vh - ${top + correctBottom}px)`,
                     }}
                   >
-                    <Paper fullWidth fullHeight padding={5}>
+                    <Paper fullWidth padding={5}>
                       <ContextContainer divided>
                         <Box>
                           <SelectCenter
