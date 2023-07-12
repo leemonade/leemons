@@ -18,6 +18,7 @@ const permissions = [
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'content-creator',
       order: 302,
@@ -37,6 +38,7 @@ const menuItems = [
   },
   // List
   {
+    removed: true,
     item: {
       key: 'content-creator-library',
       order: 2,
@@ -56,6 +58,7 @@ const menuItems = [
   },
   // New
   {
+    removed: true,
     item: {
       key: 'content-creator-new',
       order: 3,
@@ -90,6 +93,7 @@ const assignableRoles = [
       pluralName: { en: 'contents', es: 'contenidos' },
       singularName: { en: 'content', es: 'contenido' },
       menu: {
+        removed: true,
         item: {
           iconSvg: '/public/content-creator/menu-icon-active.svg',
           activeIconSvg: '/public/content-creator/menu-icon-active.svg',

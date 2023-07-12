@@ -322,4 +322,8 @@ module.exports = {
     init: 'Starting file upload',
     unzip: 'Preparing zip for upload',
   },
+  assetsList: {
+    published: 'Published',
+    draft: 'Drafts',
+  },
 };

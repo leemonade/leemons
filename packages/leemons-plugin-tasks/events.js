@@ -21,19 +21,19 @@ async function events(isInstalled) {
     await addLocales(locale.code);
   });
 
+  leemons.events.once(
+    ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
+    async () => {
+      await initMenuBuilder();
+    }
+  );
+
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
     });
-
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
-      async () => {
-        await initMenuBuilder();
-      }
-    );
 
     // EN: Register the assignable role
     // ES: Registrar el rol de asignable

@@ -30,6 +30,7 @@ const assignableRoles = [
       singularName: { en: 'SCORM content', es: 'contenido SCORM' },
       order: 7,
       menu: {
+        removed: true,
         item: {
           iconSvg: '/public/scorm/menu-icon.svg',
           activeIconSvg: '/public/scorm/menu-icon.svg',

@@ -14,27 +14,24 @@ async function add(data, { transacting } = {}) {
     throw new global.utils.HttpError(400, 'Category `menu` is required');
   }
 
-  if (await exists(categoryData, { transacting })) {
-    throw new global.utils.HttpError(
-      409,
-      'Previous category with this `key` was already registered'
-    );
-  }
-
   try {
-    const newCategory = await tables.categories.create(
-      {
-        ...categoryData,
-        canUse: JSON.stringify(categoryData.canUse),
-        pluginOwner: this.calledFrom,
-        componentOwner: categoryData.componentOwner || this.calledFrom,
-      },
-      { transacting }
-    );
+    let newCategory = null;
+    if (!(await exists(categoryData, { transacting }))) {
+      newCategory = await tables.categories.create(
+        {
+          ...categoryData,
+          canUse: JSON.stringify(categoryData.canUse),
+          pluginOwner: this.calledFrom,
+          componentOwner: categoryData.componentOwner || this.calledFrom,
+        },
+        { transacting }
+      );
+    }
 
     // Add Menu item
     const { services } = leemons.getPlugin('menu-builder');
     const menuItem = {
+      removed: menu.removed,
       item: { ...menu.item, key: categoryData.key, order: menu.order ?? categoryData.order },
       permissions: menu.permissions,
     };

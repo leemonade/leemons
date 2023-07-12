@@ -1,12 +1,15 @@
 /* eslint-disable no-unreachable */
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
+import { Box, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
 import { isEmpty, isNil } from 'lodash';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AssetList } from '../../../components/AssetList';
 import LibraryContext from '../../../context/LibraryContext';
+import prefixPN from '../../../helpers/prefixPN';
 import { VIEWS } from '../library/Library.constants';
 
 function useQuery() {
@@ -14,10 +17,21 @@ function useQuery() {
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
+const ListPageStyles = createStyles((theme) => ({
+  tabPane: {
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    paddingTop: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+  },
+}));
+
 const ListAssetPage = () => {
   const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
-
+  const [t] = useTranslateLoader(prefixPN('assetsList'));
+  const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
   const [assetType, setAssetType] = useState('');
@@ -189,6 +203,65 @@ const ListAssetPage = () => {
   if (category?.key === 'media-files' && isTeacher) {
     props = academicFilters;
     props.searchInProvider = false;
+  }
+
+  if (category?.key?.startsWith('assignables.')) {
+    return (
+      <Tabs
+        panelColor="solid"
+        usePageLayout
+        fullHeight
+        fullWidth
+        onTabClick={() => setCurrentAsset(null)}
+      >
+        <TabPanel label={t('published')}>
+          <Box className={classes.tabPane}>
+            <AssetList
+              {...props}
+              category={category}
+              categories={categories}
+              asset={currentAsset}
+              search={searchCriteria}
+              layout="grid"
+              showPublic={showPublic}
+              onSelectItem={handleOnSelectItem}
+              onEditItem={handleOnEditItem}
+              onSearch={handleOnSearch}
+              onTypeChange={handleOnTypeChange}
+              onShowPublic={handleOnShowPublic}
+              assetType={assetType}
+              pinned={category?.key === 'pins'}
+              onLoading={setLoading}
+              published={true}
+              variant="embedded"
+            />
+          </Box>
+        </TabPanel>
+        <TabPanel label={t('draft')}>
+          <Box className={classes.tabPane}>
+            <AssetList
+              {...props}
+              category={category}
+              categories={categories}
+              asset={currentAsset}
+              search={searchCriteria}
+              layout="grid"
+              showPublic={showPublic}
+              onSelectItem={handleOnSelectItem}
+              onEditItem={handleOnEditItem}
+              onSearch={handleOnSearch}
+              onTypeChange={handleOnTypeChange}
+              onShowPublic={handleOnShowPublic}
+              assetType={assetType}
+              pinned={category?.key === 'pins'}
+              onLoading={setLoading}
+              published={false}
+              variant="embedded"
+            />
+          </Box>
+        </TabPanel>
+      </Tabs>
+    );
   }
 
   return !isNil(categories) && !isEmpty(categories) ? (

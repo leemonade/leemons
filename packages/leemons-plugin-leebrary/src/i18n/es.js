@@ -309,4 +309,8 @@ module.exports = {
     init: 'Iniciando subida',
     unzip: 'Preparando zip para la subida',
   },
+  assetsList: {
+    published: 'Publicados',
+    draft: 'Borradores',
+  },
 };

@@ -90,6 +90,7 @@ const permissionsBundles = {
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'tasks',
       order: 303,
@@ -109,6 +110,7 @@ const menuItems = [
   },
   // Welcome
   {
+    removed: true,
     item: {
       key: 'welcome',
       order: 1,
@@ -127,6 +129,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'profiles',
       order: 2,
@@ -146,6 +149,7 @@ const menuItems = [
   },
   // Library
   {
+    removed: true,
     item: {
       key: 'library',
       order: 3,
@@ -164,6 +168,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'new-task',
       order: 4,

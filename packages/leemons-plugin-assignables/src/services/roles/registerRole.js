@@ -30,7 +30,14 @@ module.exports = async function registerRole(
         const existingRole = await getRole.call(this, role, { transacting });
 
         if (existingRole) {
-          throw new Error('Role already exists');
+          await addCategory(
+            {
+              ...data,
+              role: `assignables.${role}`,
+            },
+            { transacting }
+          );
+          throw new Error(`Role "${role}" already exists`);
         }
       } catch (e) {
         if (e.message !== 'Role not found') {

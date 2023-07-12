@@ -18,6 +18,7 @@ const permissions = [
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'feedback',
       order: 305,
@@ -37,6 +38,7 @@ const menuItems = [
   },
   // List
   {
+    removed: true,
     item: {
       key: 'feedback-list',
       order: 2,
@@ -56,6 +58,7 @@ const menuItems = [
   },
   // New
   {
+    removed: true,
     item: {
       key: 'feedback-new',
       order: 3,

@@ -66,6 +66,7 @@ const permissionsBundles = {
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'tests',
       order: 304,
@@ -89,6 +90,7 @@ const menuItems = [
   },
   // Tests
   {
+    removed: true,
     item: {
       key: 'test',
       order: 2,
@@ -107,6 +109,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'new-test',
       order: 3,
@@ -126,6 +129,7 @@ const menuItems = [
   },
   // Question banks
   {
+    removed: true,
     item: {
       key: 'questionBanks',
       order: 4,
@@ -144,6 +148,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'new-questionBanks',
       order: 5,

@@ -20,7 +20,7 @@ async function events(isInstalled) {
 
     leemons.events.once('plugins.assignables:init-plugin', async () => {
       const assignablesPlugin = leemons.getPlugin('assignables');
-      await Promise.all(
+      await Promise.allSettled(
         map(assignableRoles, (role) =>
           assignablesPlugin.services.assignables.registerRole(role.role, role.options)
         )
