@@ -12,6 +12,7 @@ import {
 import tKeys from '@multilanguage/helpers/tKeys';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components';
 import { getCentersWithToken } from '@users/session';
 import hooks from 'leemons-hooks';
 import * as _ from 'lodash';
@@ -143,7 +144,7 @@ function Kanban({ session }) {
         }
 
         if (ref.current.filters.onlyByMy) {
-          const { userAgentId } = getCentersWithToken(true)[0];
+          const { userAgentId } = _.find(getCentersWithToken(true), { id: ref.current.center.id });
           cards = _.filter(cards, (c) => c.owners.includes(userAgentId));
         }
 
@@ -277,6 +278,16 @@ function Kanban({ session }) {
     }
   }
 
+  async function centerChange(centerId) {
+    ref.current.loading = true;
+    render();
+    ref.current.center = _.find(getCentersWithToken(), { id: centerId });
+    await onCenterChange();
+    ref.current.board = getKanbanBoard();
+    ref.current.loading = false;
+    render();
+  }
+
   return (
     <Box
       sx={(theme) => ({
@@ -299,7 +310,19 @@ function Kanban({ session }) {
           data={ref.current.filtersData}
           value={{ ...ref.current.filters }}
           onChange={onFiltersChange}
-          messages={filterMessages}
+          messages={{
+            ...filterMessages,
+            filter:
+              ref.current?.centers?.length > 1 ? (
+                <SelectCenter
+                  firstSelected
+                  value={ref.current?.center?.id}
+                  onChange={centerChange}
+                />
+              ) : (
+                filterMessages.filter
+              ),
+          }}
           addEventClick={addEventClick}
         />
       </Box>

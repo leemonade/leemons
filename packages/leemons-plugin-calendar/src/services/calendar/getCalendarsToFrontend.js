@@ -137,12 +137,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   const [
     _calendars,
     eventsCalendars,
-    events,
+    _events,
     classCalendars,
     { items: programs },
     configCalendars,
   ] = await Promise.all(promises);
 
+  const _eventsFromCalendars = _.flatten(eventsCalendars);
+
+  let eventsFromCalendars = [];
+  let events = [];
   let calendars = [];
   if (userAgent.profile.sysName === 'admin') {
     const programIds = _.map(programs, (program) => `plugins.calendar.program.${program.id}`);
@@ -159,11 +163,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         calendars.push(calendar);
       }
     });
+    const _calendarIds = _.map(calendars, 'id');
+    events = _.filter(_events, (ev) => _calendarIds.includes(ev.calendar));
+    eventsFromCalendars = _.filter(_eventsFromCalendars, (ev) =>
+      _calendarIds.includes(ev.calendar)
+    );
   } else {
+    eventsFromCalendars = _eventsFromCalendars;
     calendars = _calendars;
+    events = _events;
   }
-
-  const eventsFromCalendars = _.flatten(eventsCalendars);
 
   // ES: Buscamos si el user agent tiene calendario
   // EN: We check if the user agent has a calendar
