@@ -14,6 +14,7 @@ const {
   map,
   isObject,
   difference,
+  keyBy,
 } = require('lodash');
 const semver = require('semver');
 const { getByIds } = require('../assets/getByIds');
@@ -288,12 +289,21 @@ async function search(
       });
     }
 
+    let result = uniqBy(results, 'asset') || [];
+
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic
-    if (!nothingFound && sortingBy && !isEmpty(sortingBy)) {
-      const assetIds = assets.map((item) => item.asset);
+
+    if (sortingBy && !isEmpty(sortingBy)) {
       const [items] = await Promise.all([
-        getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
+        getByIds(map(result, 'asset'), {
+          withCategory: false,
+          withTags: false,
+          indexable,
+          showPublic,
+          userSession,
+          transacting,
+        }),
       ]);
 
       let sortedAssets = sortBy(items, sortingBy);
@@ -302,12 +312,18 @@ async function search(
         sortedAssets = sortedAssets.reverse();
       }
 
-      const sortedIds = sortedAssets.map((item) => item.id);
-
-      assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
+      const assetIds = sortedAssets.map((item) => item.id);
+      const _result = [];
+      const resultByAsset = keyBy(result, 'asset');
+      forEach(assetIds, (assetId) => {
+        if (resultByAsset[assetId]) {
+          _result.push(resultByAsset[assetId]);
+        }
+      });
+      result = _result;
     }
 
-    return uniqBy(assets, 'asset') || [];
+    return result;
   } catch (e) {
     console.log(e);
     throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);

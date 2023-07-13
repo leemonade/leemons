@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const {
+  keyBy,
   isEmpty,
   flatten,
   map,
@@ -11,7 +12,6 @@ const {
   isArray,
   uniqBy,
   filter,
-  keyBy,
   forEach,
   groupBy,
 } = require('lodash');
@@ -437,7 +437,16 @@ async function getByIds(
     return item;
   });
 
-  return result;
+  const resultsById = keyBy(result, 'id');
+
+  const _result = [];
+  forEach(assetsIds, (assetId) => {
+    if (resultsById[assetId]) {
+      _result.push(resultsById[assetId]);
+    }
+  });
+
+  return _result;
 }
 
 module.exports = { getByIds };

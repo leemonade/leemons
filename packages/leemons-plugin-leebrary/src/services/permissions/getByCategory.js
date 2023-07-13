@@ -10,6 +10,7 @@ const {
   groupBy,
   find,
   omit,
+  keyBy,
 } = require('lodash');
 const semver = require('semver');
 const getRolePermissions = require('./helpers/getRolePermissions');
@@ -146,34 +147,6 @@ async function getByCategory(
       assetIds = await getAssetsBySubject(subjects, { assets: assetIds, transacting });
     }
 
-    // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
-    // EN: For the case that you need sorting, we need a different logic
-    if (sortingBy && !isEmpty(sortingBy)) {
-      const [assets, assetsAccessibles] = await Promise.all([
-        getByIds(assetIds, {
-          withCategory: false,
-          withTags: false,
-          indexable,
-          showPublic,
-          userSession,
-          transacting,
-        }),
-        getByAssets(assetIds, { showPublic, userSession, transacting }),
-      ]);
-
-      let sortedAssets = sortBy(assets, sortingBy);
-
-      if (sortDirection === 'desc') {
-        sortedAssets = sortedAssets.reverse();
-      }
-
-      const sortedIds = sortedAssets.map((item) => item.id);
-
-      return assetsAccessibles.sort(
-        (a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset)
-      );
-    }
-
     let results = permissions
       .map((item) => ({
         asset: getAssetIdFromPermissionName(item.permissionName),
@@ -287,7 +260,40 @@ async function getByCategory(
       });
     }
 
-    return uniqBy(results, 'asset');
+    let result = uniqBy(results, 'asset');
+
+    // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
+    // EN: For the case that you need sorting, we need a different logic
+    if (sortingBy && !isEmpty(sortingBy)) {
+      const [assets] = await Promise.all([
+        getByIds(map(result, 'asset'), {
+          withCategory: false,
+          withTags: false,
+          indexable,
+          showPublic,
+          userSession,
+          transacting,
+        }),
+      ]);
+
+      let sortedAssets = sortBy(assets, sortingBy);
+
+      if (sortDirection === 'desc') {
+        sortedAssets = sortedAssets.reverse();
+      }
+
+      assetIds = sortedAssets.map((item) => item.id);
+      const _result = [];
+      const resultByAsset = keyBy(result, 'asset');
+      forEach(assetIds, (assetId) => {
+        if (resultByAsset[assetId]) {
+          _result.push(resultByAsset[assetId]);
+        }
+      });
+      result = _result;
+    }
+
+    return result;
   } catch (e) {
     console.error(e);
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);

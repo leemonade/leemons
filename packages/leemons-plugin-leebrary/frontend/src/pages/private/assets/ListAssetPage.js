@@ -25,6 +25,15 @@ const ListPageStyles = createStyles((theme) => ({
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
   },
+  original: {
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    paddingTop: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+    paddingLeft: theme.spacing[8],
+    paddingRight: theme.spacing[8],
+  },
 }));
 
 const ListAssetPage = () => {
@@ -205,7 +214,7 @@ const ListAssetPage = () => {
     props.searchInProvider = false;
   }
 
-  if (category?.key?.startsWith('assignables.')) {
+  if (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') {
     return (
       <Tabs
         panelColor="solid"
@@ -265,24 +274,30 @@ const ListAssetPage = () => {
   }
 
   return !isNil(categories) && !isEmpty(categories) ? (
-    <AssetList
-      {...props}
-      category={category}
-      categories={categories}
-      asset={currentAsset}
-      search={searchCriteria}
-      layout="grid"
-      published={showPublished}
-      showPublic={showPublic}
-      onSelectItem={handleOnSelectItem}
-      onEditItem={handleOnEditItem}
-      onSearch={handleOnSearch}
-      onTypeChange={handleOnTypeChange}
-      onShowPublic={handleOnShowPublic}
-      assetType={assetType}
-      pinned={category?.key === 'pins'}
-      onLoading={setLoading}
-    />
+    <Box
+      className={classes.original}
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}
+    >
+      <AssetList
+        {...props}
+        category={category}
+        categories={categories}
+        asset={currentAsset}
+        search={searchCriteria}
+        layout="grid"
+        published={showPublished}
+        showPublic={showPublic}
+        onSelectItem={handleOnSelectItem}
+        onEditItem={handleOnEditItem}
+        onSearch={handleOnSearch}
+        onTypeChange={handleOnTypeChange}
+        onShowPublic={handleOnShowPublic}
+        assetType={assetType}
+        pinned={category?.key === 'pins'}
+        onLoading={setLoading}
+        variant="embedded"
+      />
+    </Box>
   ) : null;
 };
 

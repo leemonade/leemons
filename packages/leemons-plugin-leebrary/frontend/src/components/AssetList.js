@@ -55,44 +55,42 @@ function getOwner(asset) {
   return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
 }
 
-function AssetList({ ...p }) {
-  const {
-    category: categoryProp,
-    categories: categoriesProp,
-    asset: assetProp,
-    assetType: assetTypeProp,
-    search: searchProp,
-    layout: layoutProp,
-    showPublic: showPublicProp,
-    programs,
-    subjects,
-    itemMinWidth,
-    canChangeLayout,
-    canChangeType,
-    canSearch,
-    variant,
-    onlyThumbnails,
-    page: pageProp,
-    pageSize,
-    pageSizes,
-    published,
-    onSearch,
-    pinned,
-    paperProps,
-    emptyComponent,
-    searchEmptyComponent,
-    allowChangeCategories,
-    preferCurrent,
-    searchInProvider,
-    roles,
-    filters,
-    filterComponents,
-    onSelectItem = () => {},
-    onEditItem = () => {},
-    onTypeChange = () => {},
-    onLoading = () => {},
-  } = p;
-  console.log(p);
+function AssetList({
+  category: categoryProp,
+  categories: categoriesProp,
+  asset: assetProp,
+  assetType: assetTypeProp,
+  search: searchProp,
+  layout: layoutProp,
+  showPublic: showPublicProp,
+  programs,
+  subjects,
+  itemMinWidth,
+  canChangeLayout,
+  canChangeType,
+  canSearch,
+  variant,
+  onlyThumbnails,
+  page: pageProp,
+  pageSize,
+  pageSizes,
+  published,
+  onSearch,
+  pinned,
+  paperProps,
+  emptyComponent,
+  searchEmptyComponent,
+  allowChangeCategories,
+  preferCurrent,
+  searchInProvider,
+  roles,
+  filters,
+  filterComponents,
+  onSelectItem = () => {},
+  onEditItem = () => {},
+  onTypeChange = () => {},
+  onLoading = () => {},
+}) {
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
     subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
@@ -264,6 +262,7 @@ function AssetList({ ...p }) {
             published,
             showPublic: !pinned ? store.showPublic : true,
           });
+
           paginated.items = response.assets || [];
           paginated.page += 1;
           store.serverData = paginated;

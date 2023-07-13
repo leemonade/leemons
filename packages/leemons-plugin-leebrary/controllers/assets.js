@@ -218,6 +218,8 @@ async function getAssets(ctx) {
         programs: _programs,
         subjects: _subjects,
         onlyShared: _onlyShared,
+        sortBy: 'updated_at',
+        sortDirection: 'desc',
       }
     );
   } else {
@@ -233,6 +235,8 @@ async function getAssets(ctx) {
       programs: _programs,
       subjects: _subjects,
       onlyShared: _onlyShared,
+      sortBy: 'updated_at',
+      sortDirection: 'desc',
     });
   }
 
