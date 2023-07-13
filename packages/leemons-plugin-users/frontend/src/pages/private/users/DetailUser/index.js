@@ -295,12 +295,12 @@ function DetailUser({
       ) : (
         <Stack direction="row" spacing={5} skipFlex>
           {store.canDisable && !store.userAgent?.disabled ? (
-            <Button onClick={disable} sx={() => ({ justifySelf: 'end' })}>
+            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
               {t('disable')}
             </Button>
           ) : null}
           {store.canActive && store.userAgent?.disabled ? (
-            <Button onClick={active} sx={() => ({ justifySelf: 'end' })}>
+            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: 'end' })}>
               {t('active')}
             </Button>
           ) : null}

@@ -223,6 +223,7 @@ module.exports = {
     activateUsers: 'Activate users',
     bulkActions: 'Bulk actions',
     selectedUsers: '({n} selected users)',
+    nUsers: '({n} users found)',
     active: 'Active',
     disable: 'Disable',
     tagsHeader: 'Tags',
@@ -270,6 +271,13 @@ module.exports = {
     saveSuccess: 'Data saved successfully',
   },
   detailUser: {
+    disableTitle: 'Disable user',
+    disableDescription:
+      'This user will no longer have access to the platform and will not be visible to classmates or teachers <br/><br/>You can reactivate this user at any time.',
+    disable: 'Confirm',
+    disableSucess: 'User disabled',
+    active: 'Active',
+    activeSucess: 'Usuario activado',
     imageUpdated: 'Image updated',
     changeAvatar: 'Change avatar',
     selectCenter: 'Select center',

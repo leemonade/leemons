@@ -375,7 +375,11 @@ function ListUsers() {
                   <Box
                     sx={(theme) => ({ alignSelf: 'end', gap: theme.spacing[2], display: 'flex' })}
                   >
-                    <Button disabled={!store.center || !store.profile} onClick={load}>
+                    <Button
+                      variant="outline"
+                      disabled={!store.center || !store.profile}
+                      onClick={load}
+                    >
                       {t('searchLabel')}
                     </Button>
                     <ActionButton
@@ -397,23 +401,33 @@ function ListUsers() {
                 <LoadingErrorAlert />
                 {!store.loading && !loadingError ? (
                   <Box>
-                    <Box style={{ width: 200 }}>
-                      <Select
-                        disabled={!store.checkeds.length}
-                        placeholder={t('bulkActions')}
-                        data={[
-                          { label: t('activateUsers'), value: 'active' },
-                          { label: t('disableUsers'), value: 'disable' },
-                        ]}
-                        value={null}
-                        onChange={makeAction}
-                      />
-                    </Box>
                     {store.checkeds.length ? (
+                      <>
+                        <Box style={{ width: 200 }}>
+                          <Select
+                            disabled={!store.checkeds.length}
+                            placeholder={t('bulkActions')}
+                            data={[
+                              { label: t('activateUsers'), value: 'active' },
+                              { label: t('disableUsers'), value: 'disable' },
+                            ]}
+                            value={null}
+                            onChange={makeAction}
+                          />
+                        </Box>
+                        <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                          {t('selectedUsers', { n: store.checkeds.length })}
+                        </Box>
+                      </>
+                    ) : (
                       <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                        {t('selectedUsers', { n: store.checkeds.length })}
+                        {store.pagination?.userAgents.length
+                          ? t('nUsers', {
+                              n: store.pagination?.userAgents.length,
+                            })
+                          : ''}
                       </Box>
-                    ) : null}
+                    )}
 
                     <Table
                       columns={tableHeaders}

@@ -223,6 +223,7 @@ module.exports = {
     activateUsers: 'Activar usuarios',
     bulkActions: 'Acciones masivas',
     selectedUsers: '({n} usuarios seleccionados)',
+    nUsers: '({n} usuarios encontrados)',
     active: 'Activo',
     disable: 'Inactivo',
     tagsHeader: 'Etiquetas',
@@ -270,10 +271,10 @@ module.exports = {
     saveSuccess: 'Datos guardados con éxito',
   },
   detailUser: {
-    disableTitle: '¿Estas seguro?',
+    disableTitle: 'Desactivar usuario',
     disableDescription:
-      'Estas apunto de desactivar el usuario, eso evitara que el usuario pueda entrar en la plataforma, pero no impedira que le sigas asignando tarea y seguira en todas las clases en las que estuviera.',
-    disable: 'Desactivar',
+      'Este usuario ya no tendra acceso a la plataforma y no sera visible por sus compañeros ni profesores <br/><br/> Puedes volver a activar dicho usuario en cualquier momento.',
+    disable: 'Confirmar',
     disableSucess: 'Usuario desactivado',
     active: 'Activar',
     activeSucess: 'Usuario activado',
