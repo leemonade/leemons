@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   LoadingOverlay,
@@ -6,18 +5,19 @@ import {
   useDebouncedCallback,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useHistory, useParams } from 'react-router-dom';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
-import DetailQuestions from './components/DetailQuestions';
 import DetailBasic from './components/DetailBasic';
 import DetailConfig from './components/DetailConfig';
+import DetailQuestions from './components/DetailQuestions';
 
 export default function Detail(p) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -44,7 +44,7 @@ export default function Detail(p) {
       render();
       await saveQuestionBankRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests/questions-banks');
+      history.push('/private/tests/questions-banks/draft');
     } catch (error) {
       addErrorAlert(error);
     }

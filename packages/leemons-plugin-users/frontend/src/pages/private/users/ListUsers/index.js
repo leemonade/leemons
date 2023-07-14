@@ -371,6 +371,11 @@ function ListUsers() {
                     label={t('searchLabel')}
                     value={store.search}
                     onChange={searchChange}
+                    onKeyPress={(e) => {
+                      if (e.charCode === 13 && store.center && store.profile) {
+                        load();
+                      }
+                    }}
                   />
                   <Box
                     sx={(theme) => ({ alignSelf: 'end', gap: theme.spacing[2], display: 'flex' })}

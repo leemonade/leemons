@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import {
   Box,
@@ -18,7 +19,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { getPageItems } from '../helpers/getPageItems';
@@ -264,6 +265,13 @@ function AssetList({
           });
 
           paginated.items = response.assets || [];
+          forEach(paginated.items, (item) => {
+            if (item.file?.metadata?.indexOf('pathsInfo')) {
+              item.file.metadata = JSON.parse(item.file.metadata);
+              delete item.file.metadata.pathsInfo;
+              item.file.metadata = JSON.stringify(item.file.metadata);
+            }
+          });
           paginated.page += 1;
           store.serverData = paginated;
         } else {

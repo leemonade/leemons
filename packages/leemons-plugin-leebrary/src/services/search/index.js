@@ -289,7 +289,7 @@ async function search(
       });
     }
 
-    let result = uniqBy(results, 'asset') || [];
+    let result = uniqBy(assets, 'asset') || [];
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic

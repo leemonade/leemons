@@ -43,12 +43,14 @@ const ListAssetPage = () => {
   const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
+
   const [assetType, setAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
   const [showPublished, setShowPublished] = useState(true);
   const history = useHistory();
   const params = useParams();
   const query = useQuery();
+  const [activeTab, setActiveTab] = useState(query.get('activeTab') || 'published');
   const location = useLocation();
   const profile = useGetProfileSysName();
   const isStudent = useIsStudent();
@@ -81,6 +83,7 @@ const ListAssetPage = () => {
     const assetId = query.get('open');
     const criteria = query.get('search');
     const type = query.get('type');
+    const _activeTab = query.get('activeTab');
     const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
 
     if (displayPublic !== showPublic) {
@@ -105,16 +108,33 @@ const ListAssetPage = () => {
     } else if (type !== assetType) {
       setAssetType(type);
     }
+
+    if (isEmpty(_activeTab)) {
+      setActiveTab('published');
+    } else if (_activeTab !== activeTab) {
+      setActiveTab(_activeTab);
+    }
   }, [query, asset]);
 
   // ·········································································
   // LABELS & STATIC
 
   const getQueryParams = useCallback(
-    ({ includeSearch, includeOpen, includeType, includePublic, includePublished }, suffix) => {
+    (
+      {
+        includeSearch,
+        includeOpen,
+        includeType,
+        includePublic,
+        includePublished,
+        includeActiveTab,
+      },
+      suffix
+    ) => {
       const open = query.get('open');
       const search = query.get('search');
       const type = query.get('type');
+      const _activeTab = query.get('activeTab');
       const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
       const result = [];
 
@@ -123,6 +143,9 @@ const ListAssetPage = () => {
       }
       if (!isEmpty(search) && includeSearch) {
         result.push(`search=${search}`);
+      }
+      if (!isEmpty(_activeTab) && includeActiveTab) {
+        result.push(`activeTab=${_activeTab}`);
       }
 
       if (!isEmpty(type) && includeType) {
@@ -152,7 +175,13 @@ const ListAssetPage = () => {
   const handleOnSelectItem = (item) => {
     history.push(
       `${location.pathname}?${getQueryParams(
-        { includeSearch: true, includeType: true, includePublic: true, includePublished: true },
+        {
+          includeSearch: true,
+          includeType: true,
+          includePublic: true,
+          includePublished: true,
+          includeActiveTab: true,
+        },
         `open=${item.id}`
       )}`
     );
@@ -166,7 +195,12 @@ const ListAssetPage = () => {
     if (!isEmpty(criteria)) {
       history.push(
         `${location.pathname}?${getQueryParams(
-          { includeType: true, includePublic: true, includePublished: true },
+          {
+            includeType: true,
+            includePublic: true,
+            includePublished: true,
+            includeActiveTab: true,
+          },
           `search=${criteria}`
         )}`
       );
@@ -176,6 +210,7 @@ const ListAssetPage = () => {
           includeType: true,
           includePublic: true,
           includePublished: true,
+          includeActiveTab: true,
         })}`
       );
     }
@@ -184,7 +219,7 @@ const ListAssetPage = () => {
   const handleOnShowPublic = (value) => {
     history.push(
       `${location.pathname}?${getQueryParams(
-        { includeType: true, includePublished: true, includeSearch: true },
+        { includeType: true, includePublished: true, includeSearch: true, includeActiveTab: true },
         `showPublic=${value}`
       )}`
     );
@@ -193,8 +228,26 @@ const ListAssetPage = () => {
   const handleOnTypeChange = (type) => {
     history.push(
       `${location.pathname}?${getQueryParams(
-        { includeSearch: true, includePublic: true, includePublished: true },
+        {
+          includeSearch: true,
+          includePublic: true,
+          includePublished: true,
+          includeActiveTab: true,
+        },
         `type=${type}`
+      )}`
+    );
+  };
+
+  const handleOnTabChange = (tab) => {
+    history.push(
+      `${location.pathname}?${getQueryParams(
+        {
+          includeSearch: true,
+          includePublic: true,
+          includePublished: true,
+        },
+        `activeTab=${tab}`
       )}`
     );
   };
@@ -221,9 +274,13 @@ const ListAssetPage = () => {
         usePageLayout
         fullHeight
         fullWidth
-        onTabClick={() => setCurrentAsset(null)}
+        activeKey={activeTab}
+        onTabClick={(e) => {
+          handleOnTabChange(e);
+          setCurrentAsset(null);
+        }}
       >
-        <TabPanel label={t('published')}>
+        <TabPanel key="published" label={t('published')}>
           <Box className={classes.tabPane}>
             <AssetList
               {...props}
@@ -246,7 +303,7 @@ const ListAssetPage = () => {
             />
           </Box>
         </TabPanel>
-        <TabPanel label={t('draft')}>
+        <TabPanel key="draft" label={t('draft')}>
           <Box className={classes.tabPane}>
             <AssetList
               {...props}

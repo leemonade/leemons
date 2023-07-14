@@ -440,7 +440,7 @@ async function getByIds(
   const resultsById = keyBy(result, 'id');
 
   const _result = [];
-  forEach(assetsIds, (assetId) => {
+  forEach(ids, (assetId) => {
     if (resultsById[assetId]) {
       _result.push(resultsById[assetId]);
     }

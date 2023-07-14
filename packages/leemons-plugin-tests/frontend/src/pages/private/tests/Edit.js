@@ -48,12 +48,11 @@ export default function Edit() {
     try {
       store.saving = 'duplicate';
       render();
-      console.log(formValues);
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects.map(({ subject }) => subject);
       await saveTestRequest({ ...toSend, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests');
+      history.push('/private/tests/draft');
     } catch (error) {
       addErrorAlert(error);
     }
