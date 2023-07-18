@@ -1,0 +1,25 @@
+service: deployment-manager
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-west-1
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+functions:
+  deployment-manager:
+    handler: lambda.handler
+    memorySize: 128
+    events:
+      - http: ANY /
+        cors:
+          origins:
+            - '*'
+      - http: 'ANY {proxy+}'
+        cors:
+          origins:
+            - '*'

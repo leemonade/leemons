@@ -1,17 +1,39 @@
 const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+const {
+  getPluginNameFromServiceName,
+  getActionWithOutVersion,
+} = require('leemons-service-name-parser');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
 function modifyCTX(ctx) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
-  if (ctx.service.name !== 'gateway' || ctx.caller)
+  if (process.env.AWS_LAMBDA_FUNCTION_NAME && ctx.params?.__isRestApiCall) {
+    ctx.callerPlugin = getPluginNameFromServiceName(ctx.service.name);
+  } else if (ctx.service.name !== 'gateway' || ctx.caller) {
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
+  }
   ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
+
+  if (process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    ctx.__leemonsDeploymentManagerCall = async function (actionName, params, opts) {
+      // eslint-disable-next-line global-require
+      const AWS = require('aws-sdk');
+      const lambda = new AWS.Lambda();
+
+      return lambda
+        .invoke({
+          FunctionName: getPluginNameFromServiceName(getActionWithOutVersion(actionName)),
+          Payload: JSON.stringify({ ...params, meta: { ...ctx.meta, ...(opts?.meta || {}) } }),
+          InvocationType: 'RequestResponse',
+        })
+        .promise();
+    };
+  }
 
   ctx.prefixPN = function (string) {
     return `${ctx.callerPlugin}.${string}`;
@@ -74,17 +96,26 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent lo dejamos pasar
               // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
-              if (!ctx.action.name.includes('leemonsDeploymentManagerEvent')) {
-                if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
-                  if (!ctx.meta.relationshipID)
-                    throw new LeemonsError(ctx, { message: 'relationshipID is required' });
-                  await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-                    fromService: ctx.caller,
-                    toAction: ctx.action.name,
-                    relationshipID: ctx.meta.relationshipID,
-                  });
+              let __isRestApiCall = ctx.params?.__isRestApiCall;
+              if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+                __isRestApiCall = false;
+              }
+              if (!__isRestApiCall) {
+                if (!ctx.action.name.includes('leemonsDeploymentManagerEvent')) {
+                  if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
+                    if (!ctx.meta.relationshipID)
+                      throw new LeemonsError(ctx, { message: 'relationshipID is required' });
+                    await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
+                      fromService: ctx.caller,
+                      toAction: ctx.action.name,
+                      relationshipID: ctx.meta.relationshipID,
+                    });
+                  }
                 }
               }
+            }
+            if (ctx.params) {
+              delete ctx.params.__isRestApiCall;
             }
           },
         ],
