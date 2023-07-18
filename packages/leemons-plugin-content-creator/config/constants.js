@@ -93,7 +93,6 @@ const assignableRoles = [
       pluralName: { en: 'contents', es: 'contenidos' },
       singularName: { en: 'content', es: 'contenido' },
       menu: {
-        removed: true,
         item: {
           iconSvg: '/public/content-creator/menu-icon-active.svg',
           activeIconSvg: '/public/content-creator/menu-icon-active.svg',
