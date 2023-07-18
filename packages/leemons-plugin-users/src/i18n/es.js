@@ -275,6 +275,7 @@ module.exports = {
     disableDescription:
       'Este usuario ya no tendra acceso a la plataforma y no sera visible por sus compañeros ni profesores <br/><br/> Puedes volver a activar dicho usuario en cualquier momento.',
     disable: 'Confirmar',
+    disableBtn: 'Desactivar',
     disableSucess: 'Usuario desactivado',
     active: 'Activar',
     activeSucess: 'Usuario activado',

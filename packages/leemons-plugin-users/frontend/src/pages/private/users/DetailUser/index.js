@@ -287,6 +287,16 @@ function DetailUser({
     <>
       {store.isEditMode ? (
         <Stack direction="row" spacing={5} skipFlex>
+          {store.canDisable && !store.userAgent?.disabled ? (
+            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
+              {t('disableBtn')}
+            </Button>
+          ) : null}
+          {store.canActive && store.userAgent?.disabled ? (
+            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: 'end' })}>
+              {t('active')}
+            </Button>
+          ) : null}
           <Button variant="light" onClick={cancelEdit}>
             {t('cancel')}
           </Button>
@@ -296,7 +306,7 @@ function DetailUser({
         <Stack direction="row" spacing={5} skipFlex>
           {store.canDisable && !store.userAgent?.disabled ? (
             <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
-              {t('disable')}
+              {t('disableBtn')}
             </Button>
           ) : null}
           {store.canActive && store.userAgent?.disabled ? (

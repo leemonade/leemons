@@ -275,6 +275,7 @@ module.exports = {
     disableDescription:
       'This user will no longer have access to the platform and will not be visible to classmates or teachers <br/><br/>You can reactivate this user at any time.',
     disable: 'Confirm',
+    disableBtn: 'Disable',
     disableSucess: 'User disabled',
     active: 'Active',
     activeSucess: 'Usuario activado',
