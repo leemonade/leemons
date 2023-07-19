@@ -6,6 +6,8 @@ provider:
   runtime: nodejs18.x
   stage: dev
   region: us-west-1
+  httpApi:
+    cors: true
 
 plugins:
   - serverless-dotenv-plugin
@@ -16,11 +18,4 @@ functions:
     handler: lambda.handler
     memorySize: 128
     events:
-      - http: ANY /
-        cors:
-          origins:
-            - '*'
-      - http: 'ANY {proxy+}'
-        cors:
-          origins:
-            - '*'
+      - httpApi: '*'

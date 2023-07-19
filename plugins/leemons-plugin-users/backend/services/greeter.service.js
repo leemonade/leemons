@@ -48,8 +48,9 @@ module.exports = {
     hello: {
       rest: {
         method: 'GET',
-        path: '/hellooooo',
+        path: '/hello',
       },
+
       middlewares: [
         /*
         LeemonsMiddlewareAuthenticated(),

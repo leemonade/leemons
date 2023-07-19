@@ -15,7 +15,7 @@ const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.greeter',
+  name: 'users.rest-greeter',
   version: 2,
   mixins: [
     LeemonsMiddlewaresMixin(),
