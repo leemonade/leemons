@@ -1,0 +1,218 @@
+{
+  "welcome": {
+    "title": "Leemons installation",
+    "description": "Please select a language for the installation process.",
+    "selectLanguage": "Select language",
+    "disclaimer": "The default languages for the platform can be configured during the installation process.",
+    "next": "Start installation",
+    "quote": {
+      "title": "Welcome to Leemons",
+      "description": "The powerful, flexible, and free Learning Experience Platform."
+    }
+  },
+  "signup": {
+    "title": "Admin Sign up",
+    "description": "Please enter your details to register as an administrator.",
+    "labels": {
+      "nextButton": "Next",
+      "email": "Email",
+      "password": "Password",
+      "repeatPassword": "Repeat password",
+      "lang": "Select your language"
+    },
+    "placeholders": {
+      "email": "Your email",
+      "password": "Your password",
+      "repeatPassword": "Repeat your password",
+      "lang": "Select language"
+    },
+    "errorMessages": {
+      "email": {
+        "invalidFormat": "Please enter a valid email address",
+        "required": "Please enter your email address"
+      },
+      "password": {
+        "notMatch": "Passwords do not match",
+        "required": "Please enter your password"
+      }
+    }
+  },
+  "setup": {
+    "title": "Leemons installation",
+    "common": {
+      "labels": {
+        "selectLanguage": "Select language",
+        "saveAndNextButton": "Save and continue",
+        "nextButton": "Continue"
+      }
+    },
+    "welcome": {
+      "label": "Welcome",
+      "title": "Platform setup",
+      "description": "This brief guide explain the main points of each mandatory step in order to setup the platform for a super-admin user like you.",
+      "organization": "Organization",
+      "organizationDescription": "Complete the basic information about your organization and create super-admin user. If you have more than one center/school you can indicate this later.",
+      "mailProviders": "Mail providers",
+      "mailProvidersDescription": "Configure your providers and email accounts for the management of platform notifications, you can setup as many accounts as you want and later assign them to your different centers.",
+      "languages": "Languages",
+      "languagesDescription": "Choose the main language of interface platform and for content. You can customize it by centers later.",
+      "centers": "Centers",
+      "centersDescription": "You can configure the type of information you want to include in each center. There is some basic system fields, but you can add as many fields as you need.",
+      "profiles": "Profiles",
+      "profilesDescription": "Define the profiles for your platform, choose the default profiles (admin, teacher, parent), customize them or create new ones.",
+      "adminUsers": "Admin users",
+      "adminUsersDescription": "Create new Admin Users in order to finish the setup of Leemons: <br/> - Create programs<br/>- Curriculums<br/>- Academic Rules<br/>- Subjects<br/>- Enroll students…"
+    },
+    "mails": {
+      "label": "Mail providers",
+      "title": "Mail providers and accounts",
+      "description": "Configure your providers and email accounts for the management of platform notifications, you can setup as many accounts as you want and later assign them to your different centers.",
+      "chooseProvider": "Choose a provider",
+      "noProviders": "No providers found, please install one.",
+      "github": "Do you want to create a new provider’s addon?, visit our Github",
+      "defaultOrganizationEmail": "Default organization email",
+      "defaultOrganizationEmailDescription": "Select the default email to be used by the platform for generic notifications that are not directly related to a specific center.",
+      "defaultOrganizationEmailRequired": "It is mandatory to create at least one mail account in order to use Leemons Platform",
+      "error": "Error",
+      "organizationEmail": "Organization email",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid"
+    },
+    "languages": {
+      "label": "Languages",
+      "title": "Languages",
+      "required": "Language is required",
+      "add": "Add",
+      "remove": "Remove",
+      "description": "Which languages will be used in your center(s)?",
+      "intro": "Please choose the languages to display on the platform. Currently the user interface supports English and Spanish.",
+      "collaborate": "If help is required to translate the UI into more languages, please follow our guidelines on",
+      "defaultLang": {
+        "title": "Default language",
+        "description": "Select the default language that will be used by the platform."
+      }
+    },
+    "centers": {
+      "label": "Centers",
+      "title": "Centers",
+      "description": "You can configure the type of information you want to include in each center. There is some basic system fields, But you can add as many fields as you need.",
+      "noCentersYet": "Don't have a center yet?",
+      "noCentersYetDescription": "Create a new center to which you will later add students and teachers.",
+      "noCentersYetButton": "Add new center",
+      "edit": "Edit",
+      "remove": "Remove",
+      "actions": "Actions"
+    },
+    "admins": {
+      "label": "Admin users",
+      "title": "Admins",
+      "description": "Now you can create some standard admins with permissions to collaborate in the Learning Experience setup process."
+    },
+    "profiles": {
+      "label": "Profiles",
+      "title": "User profiles",
+      "description": "Use the user profiles to manage permissions for applications. Each time you install a new Leemon (plugin) we will ask you to define permissions for each existing profile.<br/><br/>There are four default profiles included in the platform, if you want to create custom profiles, you could use one of them as template and add extra permissions or create a new one from scratch.",
+      "profileList": "Profile list",
+      "name": "Name",
+      "overview": "Overview",
+      "actions": "Actions",
+      "view": "View",
+      "addProfile": "Add profile"
+    },
+    "organization": {
+      "label": "Organization",
+      "title": "Organization",
+      "description": "Please complete the basic information about your organization for administrative purposes. If you have more than one school you can indicate this later.",
+      "organizationName": "Organization name",
+      "organizationNameRequired": "Organization name is required",
+      "domainUrlForInstallation": "Domain URL for installation",
+      "domainUrlDescription": "You have to specify the web domain of your installation (we recommend https domain with update security certificate). To modify this domain in the future you must delete all data from the platform installation database (not recommended). Please use complete URL (with www).",
+      "note": "Note:",
+      "hostnameApi": "Domain api URL",
+      "hostname": "Domain URL",
+      "hostnameRequired": "Domain URL is required",
+      "hostnameInvalid": "Domain URL is invalid",
+      "lookAndFeel": "Brand look & feel",
+      "lookAndFeelDescription": "You can change the logo URL later when your Leemons Media Library will be ready and correctly setup in the cloud.",
+      "logoUrl": "Logo URL",
+      "emailWidthLogo": "Email logo width",
+      "emailLogoUrl": "Logo URL for emails",
+      "squareLogoUrl": "Logo URL for side menu",
+      "logoUrlInvalid": "Logo URL is invalid",
+      "mainColor": "Main color (accent color)",
+      "superAdminCredentials": "Super-admin credentials",
+      "superAdminCredentialsDescription": "This super administrator user has access to the advanced settings of the system. In the last step of this setup, you will be able to create standard administrators who will have access to the plugins related to the training experience and will have their own setup path.",
+      "email": "Email",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "password": "Password",
+      "phone": "Phone",
+      "contactName": "Contact name",
+      "administrativeContactInfo": "Administrative contact info (optional)",
+      "administrativeContactInfoDescription": "This information will be use only as notification signature in order to complain GDPR and other privacy international laws.Please check if this information is mandatory in your country.",
+      "useDarkMode": "Enable Dark mode in the side menu",
+      "menuMainColor": "Main menu color",
+      "menuDrawerColor": "Side submenu color",
+      "usePicturesEmptyStates": "Use illustrations when no results are found in the listings"
+    },
+    "finish": {
+      "label": "Finish",
+      "title": "Congratulations!",
+      "readyToGo": "Ready to go!!",
+      "info": "Info",
+      "infoDescription": "You always could login with your super-admin credentials in order to modify the system configuration, but some changes could crash de platform, please, if you have any doubts, review our FAQ in Leemons website. URL de super-admin",
+      "description": "Now you can login in to the platform with your standard admin credentials in order to create programs, signup users (teachers or students), create your curriculum, etc…",
+      "nextButton": "Go to login with your admin credentials"
+    }
+  },
+  "addCenterDrawer": {
+    "newCenter": "New center",
+    "editCenter": "Edit center",
+    "name": "Name",
+    "nameRequired": "Name is required",
+    "preferredLanguage": "Preferred language",
+    "preferredLanguageRequired": "Preferred language is required",
+    "timeZone": "Time zone",
+    "firstDayOfWeek": "First day of week",
+    "firstDayOfWeekRequired": "First day of week is required",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "emailForNotifications": "Email for notifications",
+    "emailForNotificationsDescription": "We will use this email as sender in order to send notifications to users related with this center.",
+    "emailForNotificationsRequired": "Email is required",
+    "emailForNotificationsInvalid": "Email is invalid",
+    "email": "Email",
+    "extraData": "Extra data",
+    "country": "Country",
+    "address": "Address",
+    "city": "City",
+    "postalCode": "Postal code",
+    "street": "Street",
+    "contactInfo": "Contact info",
+    "userLimits": "User limits",
+    "profiles": "Profiles",
+    "unlimited": "Unlimited",
+    "roles": "Roles",
+    "phone": "Phone",
+    "save": "Save"
+  },
+  "addProfileDrawer": {
+    "newProfile": "New profile",
+    "editProfile": "Edit profile",
+    "name": "Name",
+    "nameRequired": "Name is required",
+    "description": "Description",
+    "descriptionRequired": "Description is required",
+    "save": "Save",
+    "permissions": "Permissions",
+    "dataset": "Dataset",
+    "save_done": "Profile created",
+    "update_done": "Profile updated",
+    "translations_warning": "Must save the profile to keep translations stored"
+  }
+}

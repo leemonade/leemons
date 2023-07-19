@@ -1,0 +1,218 @@
+{
+  "welcome": {
+    "title": "Instalación de Leemons",
+    "description": "Por favor, selecciona un idioma para el proceso de instalación.",
+    "disclaimer": "Podrás configurar los idiomas predeterminados para la plataforma durante el proceso de instalación.",
+    "selectLanguage": "Selecciona idioma",
+    "next": "Empezar instalación",
+    "quote": {
+      "title": "Bienvenid@ a Leemons",
+      "description": "La plataforma de aprendizaje potente, flexible, sencilla y gratuita."
+    }
+  },
+  "signup": {
+    "title": "Registro del Administrador",
+    "description": "Vamos a configurar la cuenta del administrador de la plataforma.",
+    "labels": {
+      "nextButton": "Siguiente",
+      "email": "Email",
+      "password": "Contraseña",
+      "repeatPassword": "Repetir contraseña",
+      "lang": "Selecciona tu idioma"
+    },
+    "placeholders": {
+      "email": "Tu email",
+      "password": "Tu contraseña",
+      "repeatPassword": "Repite tu contraseña",
+      "lang": "Seleecionar idioma"
+    },
+    "errorMessages": {
+      "email": {
+        "invalidFormat": "Por favor, introduce un email válido",
+        "required": "Por favor, introduce un email"
+      },
+      "password": {
+        "notMatch": "Las contraseñas no coinciden",
+        "required": "Por favor, introduce tu contraseña"
+      }
+    }
+  },
+  "setup": {
+    "title": "Instalación de Leemons",
+    "common": {
+      "labels": {
+        "selectLanguage": "Seleccionar idioma",
+        "saveAndNextButton": "Guardar y continuar",
+        "nextButton": "Continuar"
+      }
+    },
+    "welcome": {
+      "label": "Inicio",
+      "title": "Configuración de la plataforma",
+      "description": "Esta breve guía explica los puntos principales de cada paso obligatorio para configurar la plataforma para un usuario super-admin como tú.",
+      "organization": "Organización",
+      "organizationDescription": "Completa la información básica de tu organización y crea el usuario superadministrador. Si tiene más de un centro/escuela puede indicarlo después",
+      "mailProviders": "Proveedores de correo",
+      "mailProvidersDescription": "Configura tus proveedores y cuentas de correo electrónico para la gestión de las notificaciones de la plataforma, puedes configurar tantas cuentas como quieras y asignarlas posteriormente a tus diferentes centros.",
+      "languages": "Idiomas",
+      "languagesDescription": "Elija el idioma principal de la plataforma de la interfaz y para el contenido. Puedes personalizarlo por centros más adelante.",
+      "centers": "Centros",
+      "centersDescription": "Puede configurar el tipo de información que desea incluir en cada centro. Hay algunos campos básicos del sistema, pero puede añadir tantos campos como necesite.",
+      "profiles": "Perfiles",
+      "profilesDescription": "Defina los perfiles para su plataforma, elija los perfiles por defecto (administrador, profesor, padre), personalícelos o cree otros nuevos.",
+      "adminUsers": "Usuarios administradores",
+      "adminUsersDescription": "Crear nuevos usuarios administradores para finalizar la configuración de Leemons:<br/>- Crear programas<br/>- Planes de estudio<br/>- Reglas académicas<br/>- Asignaturas<br/>- Inscribir estudiantes..."
+    },
+    "mails": {
+      "label": "Proveedores de correo",
+      "title": "Proveedores y cuentas de correo",
+      "description": "Configura tus proveedores y cuentas de correo para la gestión de las notificaciones de la plataforma, puedes configurar tantas cuentas como quieras y posteriormente asignarlas a tus diferentes centros.",
+      "chooseProvider": "Selecciona un proveedor",
+      "noProviders": "No hay proveedores disponibles, por favor, instala uno.",
+      "github": "Si quieres crear un nuevo complemento de proveedor, visita nuestro Github",
+      "defaultOrganizationEmail": "Email de la organización",
+      "defaultOrganizationEmailDescription": "Seleccione el correo electrónico por defecto que utilizará la plataforma para las notificaciones genéricas que no estén directamente relacionadas con un centro específico.",
+      "defaultOrganizationEmailRequired": "Es obligatorio crear al menos una cuenta de correo para poder utilizar la Plataforma Leemons",
+      "error": "Error",
+      "organizationEmail": "Email de la organización",
+      "emailRequired": "El email es obligatorio",
+      "emailInvalid": "El email no es válido"
+    },
+    "languages": {
+      "label": "Idiomas",
+      "title": "Idiomas",
+      "required": "Es obligatorio seleccionar un idioma",
+      "add": "Añadir",
+      "remove": "Borrar",
+      "description": "¿Qué idiomas se usarán en tu centro(s)?",
+      "intro": "Por favor, selecciona los idiomas que se usarán en tu centro(s). Actualmente la interfaz de usuario soporta inglés y español.",
+      "collaborate": "Si quieres ayudarnos a traducir la interfaz de usuario a más idiomas, por favor sigue nuestra guía de colaboración en ",
+      "defaultLang": {
+        "title": "Idioma predeterminado",
+        "description": "Selecciona el idioma predeterminado que se usará en la interfaz de usuario y en el sistema."
+      }
+    },
+    "centers": {
+      "label": "Centros",
+      "title": "Centros",
+      "description": "Puede configurar el tipo de información que desea incluir en cada centro. Hay algunos campos básicos del sistema, pero puede añadir tantos campos como necesite.",
+      "noCentersYet": "Aún no tienes centros?",
+      "noCentersYetDescription": "Crea un nuevo centro al que mas adelante añadiras alumnos y profesores.",
+      "noCentersYetButton": "Añadir centro",
+      "edit": "Editar",
+      "remove": "Eliminar",
+      "actions": "Acciones"
+    },
+    "admins": {
+      "label": "Usuarios administradores",
+      "title": "Administradores",
+      "description": "Ahora puede crear algunos administradores estándar con permisos para colaborar en el proceso de configuración de la Experiencia de Aprendizaje."
+    },
+    "profiles": {
+      "label": "Perfiles",
+      "title": "Perfiles de usuarios",
+      "description": "Utilice los perfiles de usuario para gestionar los permisos de las aplicaciones. Cada vez que instales un nuevo Leemon (plugin) te pediremos que definas los permisos para cada perfil existente. <br/><br/> Hay cuatro perfiles por defecto incluidos en la plataforma, si quieres crear perfiles personalizados, puedes usar uno de ellos como plantilla y añadir permisos extra o crear uno nuevo desde cero.",
+      "profileList": "Listado de perfiles",
+      "name": "Nombre",
+      "overview": "Vista general",
+      "actions": "Acciones",
+      "view": "Ver",
+      "addProfile": "Añadir perfil"
+    },
+    "organization": {
+      "label": "Organización",
+      "title": "Organización",
+      "description": "Por favor, complete la información básica sobre su organización para fines administrativos. Si tiene más de una escuela, puede indicarlo más adelante.",
+      "organizationName": "Nombre de la organización",
+      "organizationNameRequired": "El nombre de la organización es obligatorio",
+      "domainUrlForInstallation": "URL de la organización",
+      "domainUrlDescription": "Debe especificar el dominio web de su instalación (recomendamos el dominio https con certificado de seguridad actualizado). Para modificar este dominio en el futuro deberá borrar todos los datos de la base de datos de la instalación de la plataforma (no se recomienda). Por favor, utilice la URL completa (con www).",
+      "note": "Nota:",
+      "hostnameApi": "URL del dominio api",
+      "hostname": "URL del dominio",
+      "hostnameRequired": "El dominio es obligatorio",
+      "hostnameInvalid": "El dominio no es válido",
+      "lookAndFeel": "Apariencia",
+      "lookAndFeelDescription": "Puedes cambiar la URL del logo más tarde, cuando tu Mediateca Leemons esté lista y correctamente configurada en la nube.",
+      "logoUrl": "URL del logo",
+      "emailWidthLogo": "Ancho del logo de los email",
+      "emailLogoUrl": "URL del logo para los emails",
+      "squareLogoUrl": "URL del logo para el menu lateral",
+      "logoUrlInvalid": "La URL del logo no es válida",
+      "mainColor": "Color principal",
+      "superAdminCredentials": "Credenciales del super-admin",
+      "superAdminCredentialsDescription": "Este usuario superadministrador tiene acceso a la configuración avanzada del sistema. En el último paso de esta configuración, podrás crear administradores estándar que tendrán acceso a los plugins relacionados con la experiencia de formación y tendrán su propia ruta de configuración.",
+      "email": "Email",
+      "emailRequired": "El email es obligatorio",
+      "emailInvalid": "El email no es válido",
+      "password": "Contraseña",
+      "phone": "Teléfono",
+      "contactName": "Nombre de contacto",
+      "administrativeContactInfo": "Información de contacto administrativa (opcional)",
+      "administrativeContactInfoDescription": "Esta información se utilizará únicamente como firma de notificación para cumplir con el GDPR y otras leyes internacionales de privacidad.",
+      "useDarkMode": "Activar modo Dark en el menú lateral",
+      "menuMainColor": "Color del menú principal",
+      "menuDrawerColor": "Color del submenú lateral",
+      "usePicturesEmptyStates": "Usar ilustraciones cuando no se encuentren resultados en los listados"
+    },
+    "finish": {
+      "label": "Fin",
+      "title": "¡Felicidades!",
+      "readyToGo": "Listo para salir!!",
+      "info": "Información",
+      "infoDescription": "Siempre puedes entrar con tus credenciales de super-administrador para modificar la configuración del sistema, pero algunos cambios pueden colapsar la plataforma, por favor, si tienes alguna duda, revisa nuestro FAQ en la web de Leemons. URL de super-admin",
+      "description": "Ahora puedes entrar en la plataforma con tus credenciales de administrador estándar para crear programas, dar de alta usuarios (profesores o alumnos), crear tu plan de estudios, etc...",
+      "nextButton": "Ir al inicio de sesión con sus credenciales de administrador"
+    }
+  },
+  "addCenterDrawer": {
+    "newCenter": "Nuevo centro",
+    "editCenter": "Editar centro",
+    "name": "Nombre",
+    "nameRequired": "El nombre es obligatorio",
+    "preferredLanguage": "Idioma preferido",
+    "preferredLanguageRequired": "El idioma preferido es obligatorio",
+    "timeZone": "Zona horaria",
+    "firstDayOfWeek": "Primer día de la semana",
+    "firstDayOfWeekRequired": "El primer día de la semana es obligatorio",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "emailForNotifications": "Email para notificaciones",
+    "emailForNotificationsDescription": "Utilizaremos este email como remitente para enviar notificaciones a los usuarios relacionados con este centro",
+    "emailForNotificationsRequired": "El correo electrónico es obligatorio",
+    "emailForNotificationsInvalid": "El correo electrónico no es válido",
+    "email": "Email",
+    "extraData": "Datos extra",
+    "country": "País",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postalCode": "Código postal",
+    "street": "Street",
+    "contactInfo": "Información de contacto",
+    "userLimits": "Limite de usuarios",
+    "profiles": "Perfiles",
+    "roles": "Roles",
+    "phone": "Teléfono",
+    "unlimited": "Ilimitado",
+    "save": "Guardar"
+  },
+  "addProfileDrawer": {
+    "newProfile": "Nuevo perfil",
+    "editProfile": "Editar perfil",
+    "name": "Nombre",
+    "nameRequired": "El nombre es obligatorio",
+    "description": "Descripción",
+    "descriptionRequired": "La descripción es obligatoria",
+    "save": "Guardar",
+    "permissions": "Permisos",
+    "dataset": "Dataset",
+    "save_done": "Perfil creado",
+    "update_done": "Perfil actualizado",
+    "translations_warning": "Debe guardar el perfil para mantener las traducciones almacenadas"
+  }
+}

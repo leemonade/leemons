@@ -13,8 +13,7 @@ async function update(settings, { transacting: _transacting } = {}) {
 
   if (
     this.calledFrom &&
-    (this.calledFrom.startsWith('plugins.bulk-template') ||
-      this.calledFrom.startsWith('plugins.admin'))
+    (this.calledFrom.startsWith('bulk-template') || this.calledFrom.startsWith('admin'))
   ) {
     allowed = true;
   }

@@ -10,6 +10,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "leemons-plugin-deployment-manager": "1.0.0",
+    "leemons-plugin-admin": "1.0.0",
     "leemons-plugin-gateway": "1.0.0",
     "leemons-plugin-multilanguage": "1.0.0",
     "leemons-plugin-transactions": "1.0.0",
