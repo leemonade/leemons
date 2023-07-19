@@ -176,7 +176,9 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
                   label: _localizations?.buttons?.publish,
                   onClick: () =>
                     fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
-                      history.push('/private/learning-paths/modules/library')
+                      history.push(
+                        '/private/leebrary/assignables.learningpaths.module/list?activeTab=published'
+                      )
                     ),
                 },
                 // {

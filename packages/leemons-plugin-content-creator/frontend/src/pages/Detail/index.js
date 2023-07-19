@@ -64,7 +64,7 @@ export default function Index({ readOnly, isNew }) {
 
       await saveDocumentRequest({ ...formValues, content, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/content-creator/?fromDraft=1');
+      history.push('/private/leebrary/assignables.content-creator/list?activeTab=draft');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -98,7 +98,7 @@ export default function Index({ readOnly, isNew }) {
 
   async function onlyPublish() {
     await saveAsPublish();
-    history.push('/private/content-creator');
+    history.push('/private/leebrary/assignables.content-creator/list?activeTab=published');
   }
 
   // async function publishAndShare() {

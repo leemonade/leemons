@@ -157,7 +157,7 @@ export default function Detail() {
 
   async function onlyPublish() {
     await saveAsPublish();
-    history.push('/private/scorm');
+    history.push('/private/leebrary/assignables.scorm/list?activeTab=published');
   }
 
   async function publishAndAssign() {
