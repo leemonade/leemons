@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Leemons deployment manager plugin",
   "scripts": {
-    "dev": "moleculer-runner --repl --hot services/**/*.service.js",
-    "start": "moleculer-runner",
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
     "ci": "jest --watch",
     "test": "jest --coverage",
     "lint": "eslint services"

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
 
 module.exports =
-  ({ continueEvenThoughYouAreNotLoggedIn }) =>
+  ({ continueEvenThoughYouAreNotLoggedIn } = {}) =>
   async (ctx) => {
     if (!ctx.meta.authorization)
       throw new LeemonsError(ctx, {
