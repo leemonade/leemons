@@ -77,6 +77,7 @@ module.exports = {
     config: 'Configuración general',
     markRead: 'Marcar como leído',
     nextActivity: 'Siguiente actividad',
+    instructions: 'Instrucciones',
   },
   contentCreatorAssign: {
     assign: 'Asignar como tarea',

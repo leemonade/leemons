@@ -75,6 +75,7 @@ module.exports = {
     config: 'General configuration',
     markRead: 'Mark as read',
     nextActivity: 'Next activity',
+    instructions: 'Instructions',
   },
   contentCreatorAssign: {
     assign: 'Assign as task',

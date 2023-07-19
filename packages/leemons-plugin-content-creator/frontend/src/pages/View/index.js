@@ -130,9 +130,10 @@ export default function DocumentView() {
     >
       <>
         {!!instance?.metadata?.statement && (
-          <ActivityAccordion>
+          <ActivityAccordion defaultValue="instructions">
             <ActivityAccordionPanel
-              label="Instrucciones"
+              itemValue="instructions"
+              label={t('instructions')}
               icon={
                 <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
               }
