@@ -11,8 +11,10 @@ function filterInstancesByRoleAndQuery({ instances, filters = {} }) {
   return instances.filter(
     (instance) =>
       (query &&
-        instance.assignable.asset.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())) ||
-      (role && instance.assignable.role === role)
+        instance?.assignable?.asset?.name
+          .toLocaleLowerCase()
+          .includes(query.toLocaleLowerCase())) ||
+      (role && instance?.assignable?.role === role)
   );
 }
 module.exports = { filterInstancesByRoleAndQuery };
