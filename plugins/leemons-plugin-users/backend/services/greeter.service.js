@@ -16,7 +16,7 @@ const { getServiceModels } = require('../models');
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.greeter',
-  version: 1,
+  version: 2,
   mixins: [
     LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
@@ -48,20 +48,17 @@ module.exports = {
     hello: {
       rest: {
         method: 'GET',
-        path: '/hellooooo',
+        path: '/hello',
       },
       middlewares: [
-        /*
         LeemonsMiddlewareAuthenticated(),
         LeemonsMiddlewareNecessaryPermits({
           'plugins.users.users': {
             actions: ['view', 'update', 'create', 'delete', 'admin'],
           },
         }),
-        */
       ],
       async handler(ctx) {
-        return ctx.call('v2.users.greeter.welcome', { datos: 'wewefwef' });
         // const action = await ctx.tx.db.Actions.find({ name: 'Ppepe' }).select(['id', 'name']);
         // await ctx.call('v1.multilaguage.add', { datos: 'wewefwef' });
         /*
@@ -95,7 +92,7 @@ module.exports = {
       },
       /** @param {Context} ctx  */
       async handler(ctx) {
-        return { message: `Welcome, ${new Date() - ctx.params.n}` };
+        return `Welcome, ${new Date() - ctx.params.n}`;
       },
     },
   },

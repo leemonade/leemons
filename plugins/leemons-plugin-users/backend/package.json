@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Leemons users plugins",
   "scripts": {
-    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
-    "start": "moleculer-runner --env services/**/*.service.js",
+    "dev": "moleculer-runner --repl --hot services/**/*.service.js",
+    "start": "moleculer-runner",
     "ci": "jest --watch",
     "test": "jest --coverage",
     "lint": "eslint services"
@@ -15,13 +15,9 @@
   ],
   "author": "",
   "devDependencies": {
-    "@jimdo/serverless-dotenv": "^1.0.0",
     "eslint": "^8.25.0",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1",
-    "serverless-domain-manager": "^7.0.4",
-    "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-offline": "^12.0.4",
     "turbo": "^1.9.6"
   },
   "dependencies": {
@@ -29,7 +25,6 @@
     "jsonwebtoken": "^9.0.0",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
-    "leemons-lambda-runner": "0.0.1",
     "leemons-middlewares": "1.0.0",
     "leemons-mongodb": "1.0.0",
     "leemons-mongodb-helpers": "1.0.0",

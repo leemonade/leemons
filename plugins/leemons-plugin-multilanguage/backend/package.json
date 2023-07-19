@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Leemons users plugins",
   "scripts": {
-    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
-    "start": "moleculer-runner --env services/**/*.service.js",
+    "dev": "moleculer-runner --repl --hot services/**/*.service.js",
+    "start": "moleculer-runner",
     "ci": "jest --watch",
     "test": "jest --coverage",
     "lint": "eslint services"
@@ -23,7 +23,6 @@
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
     "leemons-deployment-manager": "1.0.0",
-    "leemons-lambda-runner": "0.0.1",
     "leemons-mongodb": "1.0.0",
     "leemons-mongodb-helpers": "1.0.0",
     "leemons-multilanguage": "1.0.0",
