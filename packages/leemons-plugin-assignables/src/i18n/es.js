@@ -347,6 +347,18 @@ module.exports = {
       score: 'Respuestas correctas',
       activityType: 'Tipo de actividad',
     },
+    status: {
+      evaluated: 'Ver evaluación',
+      submission: 'Entrega',
+      evaluate: 'Para evaluar',
+      evaluation: 'Evaluación',
+      opened: 'Actividad abierta',
+      start: 'Fecha inicio',
+      assigned: 'Programada',
+      late: 'Tarde',
+      submitted: 'Entregada',
+      startActivity: 'Empezar actividad',
+    },
   },
   pagination: {
     show: 'Mostrar',

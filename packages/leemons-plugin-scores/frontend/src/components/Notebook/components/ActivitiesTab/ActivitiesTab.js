@@ -33,7 +33,6 @@ function handleOpen({ rowId, columnId, activitiesData, labels }) {
   const activity = activityObj?.activity;
 
   if (!activityObj) {
-    // TRANSLATE: This is a placeholder for the activity name
     addErrorAlert(labels?.unableToOpen);
 
     return;

@@ -337,6 +337,18 @@ module.exports = {
       score: 'Correct answers',
       activityType: 'Activity type',
     },
+    status: {
+      evaluated: 'See evaluation',
+      submission: 'Submission',
+      evaluate: 'To evaluate',
+      evaluation: 'Evaluation',
+      opened: 'Activity opened',
+      start: 'Start date',
+      assigned: 'Scheduled',
+      late: 'Late',
+      submitted: 'Submitted',
+      startActivity: 'Start activity',
+    },
   },
   pagination: {
     show: 'Show',

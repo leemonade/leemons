@@ -106,26 +106,12 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
   };
 }
 
-export function parseDeadline(isTeacher, obj) {
+export function parseDeadline(isTeacher, obj, labels) {
   let instance = obj;
 
   if (!isTeacher) {
     instance = obj.instance;
   }
-
-  // TRANSLATE: Deadline
-  const labels = {
-    evaluated: 'Ver evaluación',
-    submission: 'Entrega',
-    evaluate: 'Para evaluar',
-    evaluation: 'Evaluación',
-    opened: 'Actividad abierta',
-    start: 'Fecha inicio',
-    assigned: 'Programada',
-    late: 'Tarde',
-    submitted: 'Entregada',
-    startActivity: 'Empezar actividad',
-  };
 
   let main = null;
   let severity = 'low';
@@ -142,19 +128,19 @@ export function parseDeadline(isTeacher, obj) {
     const submission = dayjs(obj?.timestamps?.end || instance?.timestamps?.end || null);
     const status = instance.status || getStatus(obj, instance);
     if (status === 'evaluated') {
-      main = labels.evaluated;
+      main = labels?.evaluated;
       if (deadline.isValid()) {
         secondary = labels?.submitted;
         dateToShow = submission.toDate();
       }
     } else if (status === 'late') {
-      main = labels.late;
+      main = labels?.late;
       if (deadline.isValid()) {
         secondary = labels?.submission;
         dateToShow = deadline.toDate();
       }
     } else if (status === 'submitted') {
-      main = labels.submitted;
+      main = labels?.submitted;
       if (submission.isValid()) {
         secondary = labels?.submitted;
         dateToShow = submission.toDate();
@@ -169,7 +155,7 @@ export function parseDeadline(isTeacher, obj) {
       }
 
       if (isDeadline) {
-        main = labels.late;
+        main = labels?.late;
         severity = 'high';
       } else if (daysUntilDeadline <= 5) {
         severity = 'medium';
@@ -300,7 +286,7 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     subject: subjectData,
     labels,
   });
-  const deadlineProps = parseDeadline(isTeacher, object);
+  const deadlineProps = parseDeadline(isTeacher, object, labels?.status);
 
   const showSubject = query.showSubject || subjectData.name === labels.multiSubject;
 
