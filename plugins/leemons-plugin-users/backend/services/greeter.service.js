@@ -86,10 +86,6 @@ module.exports = {
      * @param {String} name - User name
      */
     welcome: {
-      rest: '/welcome',
-      params: {
-        name: 'string',
-      },
       /** @param {Context} ctx  */
       async handler(ctx) {
         return `Welcome, ${new Date() - ctx.params.n}`;

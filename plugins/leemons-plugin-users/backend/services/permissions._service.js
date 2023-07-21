@@ -9,6 +9,9 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const { add, update, remove } = require('../core/permissions');
 const { getServiceModels } = require('../models');
+const {
+  removePermissionsByNameAndTarget,
+} = require('../core/roles/permissions/removePermissionsByNameAndTarget');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -23,7 +26,6 @@ module.exports = {
   ],
   actions: {
     add: {
-      middleare: [LoggerMiddlera, PermissionsMiddlea],
       handler(ctx) {
         return add({ ...ctx.params, ctx });
       },
@@ -36,6 +38,11 @@ module.exports = {
     remove: {
       handler(ctx) {
         return remove({ ...ctx.params, ctx });
+      },
+    },
+    removePermissionsByNameAndTarget: {
+      handler(ctx) {
+        return removePermissionsByNameAndTarget({ ...ctx.params, ctx });
       },
     },
   },

@@ -1,14 +1,9 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getRolesProfiles(roleIds, { raw, transacting } = {}) {
-  const profilesRoles = await table.profileRole.find(
-    { role_$in: roleIds },
-    {
-      columns: ['id', 'profile', 'role'],
-      transacting,
-    }
-  );
+async function getRolesProfiles({ roleIds, raw, ctx } = {}) {
+  const profilesRoles = await ctx.tx.db.ProfileRole.find({ role: roleIds })
+    .select(['id', 'profile', 'role'])
+    .lean();
   if (raw) return profilesRoles;
   return _.map(profilesRoles, 'profile');
 }
