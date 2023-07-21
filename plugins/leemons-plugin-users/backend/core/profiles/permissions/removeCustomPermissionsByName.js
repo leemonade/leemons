@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const getProfileRole = require('../getProfileRole');
 const { removePermissionsByName } = require('../../roles/permissions/removePermissionsByName');
-const { table } = require('../../tables');
+
 const { validatePermissionName } = require('../../../validations/exists');
 const {
   markAllUsersWithProfileToReloadPermissions,
@@ -16,33 +16,24 @@ const {
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function removeCustomPermissionsByName(
-  profileId,
-  _permissions,
-  { transacting: _transacting }
-) {
+async function removeCustomPermissionsByName({ profileId, permissions: _permissions, ctx }) {
   let permissions = _permissions;
   if (!_.isArray(permissions)) permissions = [permissions];
   _.forEach(permissions, (permission) => {
-    validatePermissionName(permission, this.calledFrom);
+    validatePermissionName(permission, ctx.callerPlugin);
   });
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const role = await getProfileRole(profileId, { transacting });
+  const role = await getProfileRole({ profileId, ctx });
 
-      await Promise.all([
-        removePermissionsByName.call(this, role, permissions, {
-          removeCustomPermissions: true,
-          transacting,
-        }),
-        markAllUsersWithProfileToReloadPermissions(profileId, { transacting }),
-      ]);
+  await Promise.all([
+    ctx.tx.call('users.roles.removePermissionsByName', {
+      roleId: role,
+      permissions,
+      removeCustomPermissions: true,
+    }),
+    markAllUsersWithProfileToReloadPermissions({ profileId, ctx }),
+  ]);
 
-      return true;
-    },
-    table.profileRole,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { removeCustomPermissionsByName };

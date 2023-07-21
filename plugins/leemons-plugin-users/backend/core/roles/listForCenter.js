@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-
 /**
  * List of roles for one center
  * @private
@@ -9,12 +7,9 @@ const { table } = require('../tables');
  * @param {any=} transacting -  DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function listForCenter(center, { transacting } = {}) {
-  const centerRoles = await table.roleCenter.find(
-    { center },
-    { columns: ['id', 'role'], transacting }
-  );
-  return table.role.find({ id_$in: _.map(centerRoles, 'role') }, { transacting });
+async function listForCenter({ center, ctx }) {
+  const centerRoles = await ctx.tx.db.RoleCenter.find({ center }).select(['id', 'role']).lean();
+  return ctx.tx.db.Role.find({ id: _.map(centerRoles, 'role') }).lean();
 }
 
 module.exports = { listForCenter };

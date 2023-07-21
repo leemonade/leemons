@@ -2,12 +2,11 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
-const { add, update } = require('../core/roles');
+const { add, update, addPermissionMany, removePermissionsByName } = require('../core/roles');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -24,20 +23,22 @@ module.exports = {
   actions: {
     add: {
       handler(ctx) {
-        const a = { id: 'wefwefwef' };
-        ctx.call(
-          'users.permissions.add',
-          {
-            name: 'wefwef',
-          },
-          { meta: { userSession: { id: 'wefwfewefwefwfe' } } }
-        );
         return add({ ...ctx.params, ctx });
       },
     },
     update: {
       handler(ctx) {
         return update({ ...ctx.params, ctx });
+      },
+    },
+    addPermissionMany: {
+      handler(ctx) {
+        return addPermissionMany({ ...ctx.params, ctx });
+      },
+    },
+    removePermissionsByName: {
+      handler(ctx) {
+        return removePermissionsByName({ ...ctx.params, ctx });
       },
     },
   },

@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 const { validatePermissionName } = require('../../../validations/exists');
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
@@ -15,13 +14,14 @@ const {
  * @param {any} transacting - DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function removePermissionsByNameAndTarget(
+async function removePermissionsByNameAndTarget({
   roleId,
   permissions,
-  { removeCustomPermissions, transacting } = {}
-) {
+  removeCustomPermissions,
+  ctx,
+}) {
   _.forEach(permissions, ({ permissionName }) => {
-    validatePermissionName(permissionName, this.calledFrom);
+    validatePermissionName(permissionName, ctx.callerPlugin);
   });
   const query = {
     role: roleId,
@@ -31,10 +31,12 @@ async function removePermissionsByNameAndTarget(
     })),
   };
   if (!removeCustomPermissions) {
-    query.isCustom_$ne = true;
+    query.isCustom = {
+      $ne: true,
+    };
   }
-  await searchUsersWithRoleAndMarkAsReloadPermissions(roleId, { transacting });
-  return table.rolePermission.deleteMany(query, { transacting });
+  await searchUsersWithRoleAndMarkAsReloadPermissions({ roleId, ctx });
+  return ctx.tx.db.RolePermission.deleteMany(query);
 }
 
 module.exports = { removePermissionsByNameAndTarget };
