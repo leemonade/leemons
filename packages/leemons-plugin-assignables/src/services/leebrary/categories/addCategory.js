@@ -24,7 +24,7 @@ module.exports = async function addCategory(
     menu,
     provider = 'leebrary-assignables',
   },
-  { transacting }
+  { transacting } = {}
 ) {
   return leebrary().categories.add(
     {
