@@ -15,7 +15,7 @@ async function checkIfCanCreateUserAgentInGroup(userAgentId, group, { transactin
     type: 'role',
   });
 
-  if (!limit.unlimited && limit.limit) {
+  if (!limit?.unlimited && limit?.limit) {
     const roles = await table.roleCenter.find(
       { center },
       {
@@ -57,7 +57,7 @@ async function checkIfCanCreateNUserAgentInGroupByRole(
     type: 'role',
   });
 
-  if (!limit.unlimited && limit.limit) {
+  if (!limit?.unlimited && limit?.limit) {
     const roles = await table.roleCenter.find(
       { center },
       {

@@ -4,7 +4,7 @@ const { table } = require('../tables');
 const { getRolesCenters } = require('../roles/getRolesCenters');
 
 async function check(nUserAgents, limit, { rolesProfiles, transacting } = {}) {
-  if (!limit.unlimited && limit.limit) {
+  if (!limit?.unlimited && limit?.limit) {
     // Si no es ilimitado tenemos que sacar el numero de usuarios actuales
     const { role } = _.find(rolesProfiles, { profile: limit.item });
     const totalUserAgentsForRole = await table.userAgent.count(
