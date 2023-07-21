@@ -89,7 +89,6 @@ const PermissionsDataCenterProgramsProfiles = ({
         node: (
           <SelectCenter
             additionalData={[{ label: t('permissionsData.labels.allCenters'), value: '*' }]}
-            allCentersIfCan
           />
         ),
         rules: { required: 'Required field' },
