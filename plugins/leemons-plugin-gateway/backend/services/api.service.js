@@ -57,6 +57,8 @@ module.exports = {
           'GET users/user': 'v1.users.users.detailRest',
 
           'GET admin/organization/jsonTheme': 'v1.admin.organization.getJsonThemeRest',
+          'GET admin/i18n/:page/:lang': 'v1.admin.i18n.getLangRest',
+          'GET admin/settings': 'v1.admin.settings.updateRest',
         },
 
         /**

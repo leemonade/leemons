@@ -9,7 +9,7 @@ const fs = require('fs/promises');
 
 module.exports = {
   actions: {
-    getLang: {
+    getLangRest: {
       rest: {
         method: 'GET',
         path: '/:page/:lang',

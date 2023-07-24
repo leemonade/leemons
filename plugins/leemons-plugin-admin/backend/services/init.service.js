@@ -60,7 +60,7 @@ module.exports = () => ({
         await setKey(ctx.db.KeyValue, `widgets-items-zones`);
       }
 
-      leemons.events.emit('init-widget-items');
+      ctx.tx.emit('init-widget-items');
     },
     'multilanguage:newLocale': async function (ctx) {
       if (
