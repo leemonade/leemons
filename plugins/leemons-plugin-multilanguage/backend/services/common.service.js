@@ -5,22 +5,24 @@
 
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { commonModel, localesModel, contentsModel } = require('../models');
+const { LeemonsCacheMixin } = require('leemons-cache');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { getServiceModels } = require('../models');
 const localization = require('../core/localization');
+const Rest = require('./common.rest');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
   name: 'multilanguage.common',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
+    LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
-      models: {
-        Common: commonModel,
-        Locales: localesModel,
-        Contents: contentsModel,
-      },
+      models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
+    Rest,
   ],
 
   actions: {

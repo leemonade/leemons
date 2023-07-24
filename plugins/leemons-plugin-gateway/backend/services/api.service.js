@@ -15,6 +15,9 @@ module.exports = {
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
+    cors: {
+      origin: '*',
+    },
     // Exposed port
     port: process.env.PORT || 3000,
 
@@ -46,7 +49,15 @@ module.exports = {
         // The gateway will dynamically build the full routes from service schema.
         autoAliases: true,
 
-        aliases: {},
+        aliases: {
+          'POST multilanguage/common': 'v1.multilanguage.common.getRest',
+          'POST multilanguage/common/logged': 'v1.multilanguage.common.getLoggedRest',
+
+          'GET users/platform/theme': 'v1.users.platform.getThemeRest',
+          'GET users/user': 'v1.users.users.detailRest',
+
+          'GET admin/organization/jsonTheme': 'v1.admin.organization.getJsonThemeRest',
+        },
 
         /**
 				 * Before call hook. You can check the request.
@@ -72,6 +83,13 @@ module.exports = {
 					// Async function which return with Promise
 					return doSomething(ctx, res, data);
 				}, */
+
+        onError(req, res, err) {
+          const response = { ...err, message: err.message };
+          res.setHeader('Content-Type', 'application/json');
+          res.writeHead(err.httpStatusCode || 500);
+          res.end(JSON.stringify(response));
+        },
 
         // Calling options. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Calling-options
         callingOptions: {},

@@ -29,6 +29,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const profileContactsModel = newModel(mongoose.connection, 'users_ProfileContacts', schema);
+const profileContactsModel = newModel(mongoose.connection, 'v1::users_ProfileContacts', schema);
 
 module.exports = { profileContactsModel };

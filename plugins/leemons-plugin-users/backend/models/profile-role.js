@@ -29,6 +29,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const profileRoleModel = newModel(mongoose.connection, 'users_ProfileRole', schema);
+const profileRoleModel = newModel(mongoose.connection, 'v1::users_ProfileRole', schema);
 
 module.exports = { profileRoleModel };

@@ -38,6 +38,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const centerLimitsModel = newModel(mongoose.connection, 'users_CenterLimits', schema);
+const centerLimitsModel = newModel(mongoose.connection, 'v1::users_CenterLimits', schema);
 
 module.exports = { centerLimitsModel };

@@ -33,6 +33,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userPreferencesModel = newModel(mongoose.connection, 'users_UserPreferences', schema);
+const userPreferencesModel = newModel(mongoose.connection, 'v1::users_UserPreferences', schema);
 
 module.exports = { userPreferencesModel };

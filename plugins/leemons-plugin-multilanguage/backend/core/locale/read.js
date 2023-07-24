@@ -45,7 +45,7 @@ async function getMany({ codes, ctx }) {
  * @param {MoleculerContext} params.ctx Moleculer context
  * @returns {Promise<Locale[]>} An array with all the locales in the database
  */
-async function getAll({ ctx } = {}) {
+async function getAll({ ctx }) {
   try {
     return await ctx.tx.db.Locales.find({ code: { $ne: null } }).lean();
   } catch (e) {
@@ -59,30 +59,27 @@ async function getAll({ ctx } = {}) {
  * Your specific locales -> User locale -> Center locale -> Platform locale
  * @returns {Promise<string[]>} Locale array
  */
-// TODO MIGRATE WHEN USERS
-async function resolveLocales(userSession, locales, { transacting } = {}) {
+async function resolveLocales({ locales, ctx }) {
   let finalLocales = [];
   // Your specific locales
   if (locales) {
     finalLocales = finalLocales.concat(locales);
   }
-  if (userSession) {
+  if (ctx.userSession) {
     // User locale
-    if (userSession.locale) finalLocales.push(userSession.locale);
+    if (ctx.userSession.locale) finalLocales.push(ctx.userSession.locale);
     // Center locale
-    if (userSession.userAgents) {
-      const centers = await leemons
-        .getPlugin('users')
-        .services.users.getUserAgentCenter(userSession.userAgents, { transacting });
+    if (ctx.userSession.userAgents) {
+      const centers = await ctx.tx.call('users.users.getUserAgentCenter', {
+        userAgent: ctx.userSession.userAgents,
+      });
       _.forEach(centers, ({ locale }) => {
         finalLocales.push(locale);
       });
     }
   }
   // Platform locale
-  const platformLocale = await leemons
-    .getPlugin('users')
-    .services.platform.getDefaultLocale({ transacting });
+  const platformLocale = await ctx.tx.call('users.platform.getDefaultLocale');
   if (platformLocale) {
     finalLocales.push(platformLocale);
   }
@@ -90,4 +87,4 @@ async function resolveLocales(userSession, locales, { transacting } = {}) {
   return _.uniq(finalLocales);
 }
 
-module.exports = { get, getMany, getAll };
+module.exports = { get, getMany, getAll, resolveLocales };

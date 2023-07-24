@@ -48,6 +48,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userAgentPermissionModel = newModel(mongoose.connection, 'users_UserAgentPermission', schema);
+const userAgentPermissionModel = newModel(
+  mongoose.connection,
+  'v1::users_UserAgentPermission',
+  schema
+);
 
 module.exports = { userAgentPermissionModel };

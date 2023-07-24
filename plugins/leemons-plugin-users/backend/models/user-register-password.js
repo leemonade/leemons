@@ -29,7 +29,7 @@ const schema = new mongoose.Schema(
 
 const userRegisterPasswordModel = newModel(
   mongoose.connection,
-  'users_UserRegisterPassword',
+  'v1::users_UserRegisterPassword',
   schema
 );
 

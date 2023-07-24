@@ -3,19 +3,17 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-
-const path = require('path');
-const { addLocales } = require('leemons-multilanguage');
-const { hasKey } = require('leemons-mongodb-helpers');
-const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
+const { getUserAgentCenter } = require('../core/user-agents/getUserAgentCenter');
+const Rest = require('./users.rest');
 
 /** @type {ServiceSchema} */
-module.exports = () => ({
-  name: 'multilanguage.init',
+module.exports = {
+  name: 'users.users',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -24,24 +22,18 @@ module.exports = () => ({
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
+    Rest,
   ],
-  events: {
-    'deployment-manager.install': function (ctx) {},
-    'multilanguage:newLocale': function (ctx) {
-      if (
-        !hasKey(ctx.db.KeyValue, `locale-${ctx.params.locale.code}-configured`) ||
-        process.env.RELOAD_I18N_ON_EVERY_INSTALL === 'true'
-      ) {
-        return addLocales({
-          ctx,
-          locales: ctx.params.locale.code,
-          i18nPath: path.resolve(__dirname, `../i18n/`),
-        });
-      }
-      return null;
+
+  actions: {
+    getUserAgentCenter: {
+      async handler(ctx) {
+        return getUserAgentCenter({ ...ctx.params, ctx });
+      },
     },
   },
+
   created() {
     mongoose.connect(process.env.MONGO_URI);
   },
-});
+};

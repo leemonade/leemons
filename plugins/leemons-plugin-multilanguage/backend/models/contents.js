@@ -31,6 +31,6 @@ const contentsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const contentsModel = newModel(mongoose.connection, 'multilanguage_Contents', contentsSchema);
+const contentsModel = newModel(mongoose.connection, 'v1::multilanguage_Contents', contentsSchema);
 
 module.exports = { contentsModel };

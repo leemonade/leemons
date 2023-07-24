@@ -34,6 +34,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userProfileModel = newModel(mongoose.connection, 'users_UserProfile', schema);
+const userProfileModel = newModel(mongoose.connection, 'v1::users_UserProfile', schema);
 
 module.exports = { userProfileModel };

@@ -16,7 +16,7 @@ const { getServiceModels } = require('../models');
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.greeter',
-  version: 2,
+  version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
@@ -86,9 +86,13 @@ module.exports = {
      * @param {String} name - User name
      */
     welcome: {
+      rest: {
+        method: 'GET',
+        path: '/welcome',
+      },
       /** @param {Context} ctx  */
       async handler(ctx) {
-        return `Welcome, ${new Date() - ctx.params.n}`;
+        return `Welcome, ${new Date()} ${ctx.params.n}`;
       },
     },
   },

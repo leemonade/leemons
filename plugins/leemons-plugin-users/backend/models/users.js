@@ -69,6 +69,6 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, email: 1 }, { unique: true });
 
-const usersModel = newModel(mongoose.connection, 'users_User', schema);
+const usersModel = newModel(mongoose.connection, 'v1::users_User', schema);
 
 module.exports = { usersModel };

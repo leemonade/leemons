@@ -40,6 +40,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const rolePermissionModel = newModel(mongoose.connection, 'users_RolePermission', schema);
+const rolePermissionModel = newModel(mongoose.connection, 'v1::users_RolePermission', schema);
 
 module.exports = { rolePermissionModel };

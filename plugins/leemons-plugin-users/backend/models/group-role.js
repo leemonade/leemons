@@ -29,6 +29,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const groupRoleModel = newModel(mongoose.connection, 'users_GroupRole', schema);
+const groupRoleModel = newModel(mongoose.connection, 'v1::users_GroupRole', schema);
 
 module.exports = { groupRoleModel };

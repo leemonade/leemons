@@ -34,6 +34,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userRememberLoginModel = newModel(mongoose.connection, 'users_UserRememberLogin', schema);
+const userRememberLoginModel = newModel(mongoose.connection, 'v1::users_UserRememberLogin', schema);
 
 module.exports = { userRememberLoginModel };

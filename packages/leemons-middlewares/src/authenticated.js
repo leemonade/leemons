@@ -4,10 +4,17 @@ const { LeemonsError } = require('leemons-error');
 module.exports =
   ({ continueEvenThoughYouAreNotLoggedIn } = {}) =>
   async (ctx) => {
-    if (!ctx.meta.authorization)
+    if (!ctx.meta.authorization) {
+      if (continueEvenThoughYouAreNotLoggedIn) {
+        ctx.userSession = null;
+        return;
+      }
+
       throw new LeemonsError(ctx, {
+        httpStatusCode: 401,
         message: '[LeemonsMiddlewareAuthenticated] No authorization header',
       });
+    }
 
     try {
       if (_.isString(ctx.meta.authorization)) {
@@ -44,6 +51,7 @@ module.exports =
       }
       throw new LeemonsError(ctx, { httpStatusCode: 401, message: 'Authorization required' });
     } catch (err) {
+      ctx.logger.error(err);
       if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
         ctx.userSession = null;
         return;

@@ -27,6 +27,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userRecoverPasswordModel = newModel(mongoose.connection, 'users_UserRecoverPassword', schema);
+const userRecoverPasswordModel = newModel(
+  mongoose.connection,
+  'v1::users_UserRecoverPassword',
+  schema
+);
 
 module.exports = { userRecoverPasswordModel };
