@@ -7220,6 +7220,11 @@ sprintf-kit@^2.0.1:
   dependencies:
     es5-ext "^0.10.53"
 
+squirrelly@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/squirrelly/-/squirrelly-9.0.0.tgz#465bced289aa2772ba0b650e0fb99c5a180b52c6"
+  integrity sha512-MutQSfwrpIxvdUOFJ8XOfRSioLy+9O10bmBVWLik4uzJkD5TbeNSTOCKqLjzZJVcgdJNyLc8JRFUN15qFlZx9Q==
+
 stack-utils@^2.0.3:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/stack-utils/-/stack-utils-2.0.6.tgz#aaf0748169c02fc33c8232abccf933f54a1cc34f"
