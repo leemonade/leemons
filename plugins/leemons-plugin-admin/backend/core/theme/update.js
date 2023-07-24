@@ -14,7 +14,7 @@ async function update({ ctx, ...theme }) {
   const newTheme = { ...currentTheme, ...theme };
   delete newTheme.id;
 
-  return ctx.tx.db.Theme.update({ id: currentTheme.id }, newTheme);
+  return ctx.tx.db.Theme.findOneAndUpdate({ id: currentTheme.id }, newTheme, { new: true });
 }
 
 module.exports = update;

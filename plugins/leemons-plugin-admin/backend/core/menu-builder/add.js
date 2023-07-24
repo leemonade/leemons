@@ -29,7 +29,7 @@ async function addMenuItem({ menuItem: menuItemService, config }, { item, permis
   // console.log('newItem:');
   // console.dir(item, { depth: null });
 
-  return menuItemService.update(
+  return menuItemService.findOneAndUpdate(
     menuKey,
     key,
     { ...item, parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined },

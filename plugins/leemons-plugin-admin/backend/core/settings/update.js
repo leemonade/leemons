@@ -26,10 +26,12 @@ async function update({ ctx, ...settings }) {
     const newSettings = { ...currentSettings, ...settings };
     delete newSettings.id;
 
-    return ctx.tx.db.Settings.update({ id: currentSettings.id }, newSettings);
+    return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
+      new: true,
+    });
   }
 
-  throw new LeemonsError('This method can only be called from the plugins.admin');
+  throw new LeemonsError(ctx, { message: 'This method can only be called from the plugins.admin' });
 }
 
 module.exports = update;

@@ -10,12 +10,12 @@ const update = require('./update');
  * */
 async function setDefaultLanguage({ lang, ctx } = {}) {
   if (!lang || !isString(lang) || isEmpty(lang)) {
-    throw new LeemonsError('Language is required');
+    throw new LeemonsError(ctx, { message: 'Language is required' });
   }
 
   const currentSettings = await findOne({ ctx });
   if (currentSettings && currentSettings.configured) {
-    throw new LeemonsError('Settings already configured');
+    throw new LeemonsError(ctx, { message: 'Settings already configured' });
   }
 
   await ctx.tx.call('users.platform.setDefaultLocale', { value: lang });
