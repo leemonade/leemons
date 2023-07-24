@@ -10,7 +10,7 @@ module.exports = {
     getProvidersRest: {
       rest: {
         method: 'GET',
-        path: '/mail/providers',
+        path: '/providers',
       },
       async handler(ctx) {
         try {
@@ -26,7 +26,7 @@ module.exports = {
     getPlatformEmailRest: {
       rest: {
         method: 'GET',
-        path: '/mail/platform',
+        path: '/platform',
       },
       async handler(ctx) {
         try {
@@ -42,7 +42,7 @@ module.exports = {
     savePlatformEmailRest: {
       rest: {
         method: 'POST',
-        path: '/mail/platform',
+        path: '/platform',
       },
       async handler(ctx) {
         try {
