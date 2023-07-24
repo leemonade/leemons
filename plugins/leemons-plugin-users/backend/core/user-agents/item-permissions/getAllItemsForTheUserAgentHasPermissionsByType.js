@@ -1,25 +1,23 @@
+/* eslint-disable camelcase */
 const _ = require('lodash');
 const { getBaseAllPermissionsQuery } = require('./getBaseAllPermissionsQuery');
 const { find } = require('../../item-permissions/find');
 
-async function getAllItemsForTheUserAgentHasPermissionsByType(
-  _userAgentId,
-  _type,
-  // eslint-disable-next-line camelcase
-  {
-    target,
-    ignoreOriginalTarget,
-    returnAllItemPermission,
-    type_$startssWith,
-    transacting,
-    item,
-  } = {}
-) {
-  const query = await getBaseAllPermissionsQuery(_userAgentId, { transacting });
+async function getAllItemsForTheUserAgentHasPermissionsByType({
+  userAgentId: _userAgentId,
+  type: _type,
+  target,
+  ignoreOriginalTarget,
+  returnAllItemPermission,
+  type_$startssWith,
+  item,
+  ctx,
+}) {
+  const query = await getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx });
 
   // eslint-disable-next-line camelcase
   if (type_$startssWith) {
-    query.type_$startssWith = _type;
+    query.type = { $regex: `^${_type}` };
   } else {
     query.type = _type;
   }
@@ -30,12 +28,12 @@ async function getAllItemsForTheUserAgentHasPermissionsByType(
 
   if (target) {
     const targetArr = _.isArray(target) ? target : [target];
-    query.target_$in = targetArr;
+    query.target = targetArr;
   }
 
   if (item) {
     const itemArr = _.isArray(item) ? item : [item];
-    query.item_$in = itemArr;
+    query.item = itemArr;
   }
 
   const _userAgents = _.isArray(_userAgentId) ? _userAgentId : [_userAgentId];
@@ -47,7 +45,7 @@ async function getAllItemsForTheUserAgentHasPermissionsByType(
         query
       )}`
   );
-  const cache = await leemons.cache.getMany(cacheKeys);
+  const cache = await ctx.cache.getMany(cacheKeys);
 
   if (Object.keys(cache).length) {
     if (returnAllItemPermission) {
@@ -56,14 +54,12 @@ async function getAllItemsForTheUserAgentHasPermissionsByType(
     return _.uniq(_.map(cache[Object.keys(cache)[0]], 'item'));
   }
 
-  const items = await find(query, {
-    transacting,
-  });
+  const items = await find({ params: query, ctx });
 
   await Promise.all(
     _.map(
       cacheKeys,
-      (key) => leemons.cache.set(key, items, 86400) // 1 dia
+      (key) => ctx.cache.set(key, items, 86400) // 1 dia
     )
   );
 

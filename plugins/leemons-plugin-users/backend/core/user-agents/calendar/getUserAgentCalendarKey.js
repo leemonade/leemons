@@ -1,5 +1,5 @@
-function getUserAgentCalendarKey(id) {
-  return leemons.plugin.prefixPN(`calendar.agent.${id}`);
+function getUserAgentCalendarKey({ userAgent, ctx }) {
+  return ctx.prefixPN(`calendar.agent.${userAgent}`);
 }
 
 module.exports = { getUserAgentCalendarKey };

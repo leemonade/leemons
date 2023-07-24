@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-async function getRolesProfiles({ roleIds, raw, ctx } = {}) {
+async function getRolesProfiles({ roleIds, raw, ctx }) {
   const profilesRoles = await ctx.tx.db.ProfileRole.find({ role: roleIds })
     .select(['id', 'profile', 'role'])
     .lean();

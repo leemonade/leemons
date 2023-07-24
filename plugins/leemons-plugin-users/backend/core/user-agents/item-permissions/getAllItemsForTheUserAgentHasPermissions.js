@@ -2,11 +2,12 @@ const _ = require('lodash');
 const { getBaseAllPermissionsQuery } = require('./getBaseAllPermissionsQuery');
 const { find } = require('../../item-permissions/find');
 
-async function getAllItemsForTheUserAgentHasPermissions(
-  _userAgentId,
-  { returnAllItemPermission, transacting } = {}
-) {
-  const query = await getBaseAllPermissionsQuery(_userAgentId, { transacting });
+async function getAllItemsForTheUserAgentHasPermissions({
+  userAgentId: _userAgentId,
+  returnAllItemPermission,
+  ctx,
+}) {
+  const query = await getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx });
 
   const _userAgents = _.isArray(_userAgentId) ? _userAgentId : [_userAgentId];
 
@@ -17,7 +18,7 @@ async function getAllItemsForTheUserAgentHasPermissions(
         query
       )}`
   );
-  const cache = await leemons.cache.getMany(cacheKeys);
+  const cache = await ctx.cache.getMany(cacheKeys);
 
   if (Object.keys(cache).length) {
     if (returnAllItemPermission) {
@@ -26,14 +27,12 @@ async function getAllItemsForTheUserAgentHasPermissions(
     return _.uniq(_.map(cache[Object.keys(cache)[0]], 'item'));
   }
 
-  const items = await find(query, {
-    transacting,
-  });
+  const items = await find({ params: query, ctx });
 
   await Promise.all(
     _.map(
       cacheKeys,
-      (key) => leemons.cache.set(key, items, 86400) // 1 dia
+      (key) => ctx.cache.set(key, items, 86400) // 1 dia
     )
   );
 

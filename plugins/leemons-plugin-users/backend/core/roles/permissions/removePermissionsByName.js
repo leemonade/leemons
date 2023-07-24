@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 const { validatePermissionName } = require('../../../validations/exists');
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
@@ -26,7 +25,7 @@ async function removePermissionsByName({ roleId, permissionNames, removeCustomPe
     };
   }
   await searchUsersWithRoleAndMarkAsReloadPermissions({ roleId, ctx });
-  return table.tx.db.RolePermission.deleteMany(query);
+  return ctx.tx.db.RolePermission.deleteMany(query);
 }
 
 module.exports = { removePermissionsByName };

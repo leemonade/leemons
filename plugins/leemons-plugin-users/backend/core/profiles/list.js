@@ -17,6 +17,7 @@ async function list({ page, size, withRoles, indexable = true, ctx }) {
     const profileRoleByProfile = _.groupBy(profileRoles, 'profile');
     const rolesById = _.keyBy(roles, 'id');
     _.forEach(results.items, (profile) => {
+      // eslint-disable-next-line no-param-reassign
       profile.roles = [];
       if (profileRoleByProfile[profile.id]) {
         _.forEach(profileRoleByProfile[profile.id], ({ role }) => {

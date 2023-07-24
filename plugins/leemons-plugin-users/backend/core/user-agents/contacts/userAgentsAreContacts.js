@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 
 /**
  * ES: Comprueba sin el from tiene acceso a ver al to
@@ -10,14 +9,11 @@ const { table } = require('../../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function userAgentsAreContacts(fromUserAgent, toUserAgent, { transacting } = {}) {
-  const response = await table.userAgentContacts.find(
-    {
-      fromUserAgent_$in: _.isArray(fromUserAgent) ? fromUserAgent : [fromUserAgent],
-      toUserAgent_$in: _.isArray(toUserAgent) ? toUserAgent : [toUserAgent],
-    },
-    { transacting }
-  );
+async function userAgentsAreContacts({ fromUserAgent, toUserAgent, ctx }) {
+  const response = await ctx.tx.db.UserAgentContacts.find({
+    fromUserAgent: _.isArray(fromUserAgent) ? fromUserAgent : [fromUserAgent],
+    toUserAgent: _.isArray(toUserAgent) ? toUserAgent : [toUserAgent],
+  }).lean();
   return !!response.length;
 }
 

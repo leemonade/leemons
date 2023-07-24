@@ -10,9 +10,7 @@ const { update } = require('./update');
  * @return {Promise<ManyResponse>} Updated permissions
  * */
 async function updateMany({ ctx, ...data }) {
-  const response = await Promise.allSettled(
-    _.map(data, (d) => ctx.call('users.permissions.update', { ...d, ctx }))
-  );
+  const response = await Promise.allSettled(_.map(data, (d) => update({ ...d, ctx })));
   return settledResponseToManyResponse(response);
 }
 
