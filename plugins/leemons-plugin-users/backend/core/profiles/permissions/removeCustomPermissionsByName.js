@@ -25,10 +25,11 @@ async function removeCustomPermissionsByName({ profileId, permissions: _permissi
   const role = await getProfileRole({ profileId, ctx });
 
   await Promise.all([
-    ctx.tx.call('users.roles.removePermissionsByName', {
+    removePermissionsByName({
       roleId: role,
       permissions,
       removeCustomPermissions: true,
+      ctx,
     }),
     markAllUsersWithProfileToReloadPermissions({ profileId, ctx }),
   ]);

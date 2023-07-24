@@ -26,6 +26,6 @@ const localesSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const localesModel = newModel(mongoose.connection, 'multilanguage_Locales', localesSchema);
+const localesModel = newModel(mongoose.connection, 'v1::multilanguage_Locales', localesSchema);
 
 module.exports = { localesModel };

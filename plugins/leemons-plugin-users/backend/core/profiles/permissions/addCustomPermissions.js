@@ -4,6 +4,10 @@ const { validatePermissionName } = require('../../../validations/exists');
 const {
   markAllUsersWithProfileToReloadPermissions,
 } = require('./markAllUsersWithProfileToReloadPermissions');
+const { addPermissionMany } = require('../../roles');
+const {
+  removePermissionsByNameAndTarget,
+} = require('../../roles/permissions/removePermissionsByNameAndTarget');
 
 /**
  * Update the provided role
@@ -23,19 +27,21 @@ async function addCustomPermissions({ profileId, permissions: _permissions, ctx 
   const role = await getProfileRole({ profileId, ctx });
   // ES: Borramos los permisos por si alguno ya existian de antes que se borre ya que se añadira mas adelante
   // EN: We delete the permissions, in case any of them already existed before they will be added later.
-  await ctx.tx.call('users.permissions.removePermissionsByNameAndTarget', {
+  await removePermissionsByNameAndTarget({
     roleId: role,
     permissions,
     removeCustomPermissions: true,
+    ctx,
   });
 
   await Promise.all([
     // ES: Añadimos los permisos
     // EN: Add permissions
-    ctx.tx.call('users.roles.addPermissionMany', {
+    addPermissionMany({
       roleId: role,
       permissions,
       isCustom: true,
+      ctx,
     }),
 
     // ES: Actualizamos los usuarios para que recarguen los permisos

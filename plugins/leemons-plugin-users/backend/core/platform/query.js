@@ -1,5 +1,5 @@
 async function query({ query: q, ctx }) {
-  return ctx.t.db.Config.find(q).lean();
+  return ctx.tx.db.Config.find(q).lean();
 }
 
 module.exports = query;

@@ -31,6 +31,6 @@ const commonSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const commonModel = newModel(mongoose.connection, 'multilanguage_Common', commonSchema);
+const commonModel = newModel(mongoose.connection, 'v1::multilanguage_Common', commonSchema);
 
 module.exports = { commonModel };

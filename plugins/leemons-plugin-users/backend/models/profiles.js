@@ -46,6 +46,6 @@ const schema = new mongoose.Schema(
 schema.index({ deploymentID: 1, name: 1 }, { unique: true });
 schema.index({ deploymentID: 1, uri: 1 }, { unique: true });
 
-const profilesModel = newModel(mongoose.connection, 'users_Profiles', schema);
+const profilesModel = newModel(mongoose.connection, 'v1::users_Profiles', schema);
 
 module.exports = { profilesModel };

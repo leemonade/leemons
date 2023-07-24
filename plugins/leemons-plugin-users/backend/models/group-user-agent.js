@@ -29,6 +29,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const groupUserAgentModel = newModel(mongoose.connection, 'users_GroupUserAgent', schema);
+const groupUserAgentModel = newModel(mongoose.connection, 'v1::users_GroupUserAgent', schema);
 
 module.exports = { groupUserAgentModel };

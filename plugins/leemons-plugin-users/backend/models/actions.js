@@ -28,6 +28,6 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, actionName: 1 }, { unique: true });
 
-const actionsModel = newModel(mongoose.connection, 'users_Actions', schema);
+const actionsModel = newModel(mongoose.connection, 'v1::users_Actions', schema);
 
 module.exports = { actionsModel };

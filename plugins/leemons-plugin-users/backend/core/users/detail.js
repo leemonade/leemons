@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
 
 /**
@@ -9,20 +9,17 @@ const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
  * @param {string|string[]} userId - User id
  * @return {Promise<User>}
  * */
-async function detail(userId, { transacting } = {}) {
-  let users = await table.users.find(
-    { id_$in: _.isArray(userId) ? userId : [userId] },
-    { transacting }
-  );
+async function detail({ userId, ctx }) {
+  let users = await ctx.tx.db.Users.find({ id: _.isArray(userId) ? userId : [userId] }).lean();
   if (users.length !== (_.isArray(userId) ? userId : [userId]).length) {
     if (_.isArray(userId)) {
-      throw new Error('One of users not found for the ids provided');
+      throw new LeemonsError(ctx, { message: 'One of users not found for the ids provided' });
     } else {
-      throw new Error('No user found for the id provided');
+      throw new LeemonsError(ctx, { message: 'No user found for the id provided' });
     }
   }
 
-  const superAdminUsersIds = await getSuperAdminUserIds({ transacting });
+  const superAdminUsersIds = await getSuperAdminUserIds({ ctx });
   users = users.map((user) => ({ ...user, isSuperAdmin: superAdminUsersIds.includes(user.id) }));
 
   return _.isArray(userId) ? users : users[0];

@@ -1,17 +1,12 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 const { getUserAgentPermissions } = require('../permissions/getUserAgentPermissions');
 
-async function getBaseAllPermissionsQuery(_userAgentId, { transacting } = {}) {
+async function getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx }) {
   const _userAgentIds = _.isArray(_userAgentId) ? _userAgentId : [_userAgentId];
-  const userAgentIds = _.map(_userAgentIds, (_userAgentId) => {
-    return _.isString(_userAgentId) ? _userAgentId : _userAgentId.id;
-  });
-  const userAgents = await table.userAgent.find({ id_$in: userAgentIds }, { transacting });
+  const userAgentIds = _.map(_userAgentIds, (uai) => (_.isString(uai) ? uai : uai.id));
+  const userAgents = await ctx.tx.db.UserAgent.find({ id: userAgentIds });
 
-  const permissions = await getUserAgentPermissions(userAgents, {
-    transacting,
-  });
+  const permissions = await getUserAgentPermissions({ userAgent: userAgents, ctx });
 
   const query = {
     $or: [],
@@ -23,7 +18,7 @@ async function getBaseAllPermissionsQuery(_userAgentId, { transacting } = {}) {
     _.forEach(permissions, (permission) => {
       query.$or.push({
         permissionName: permission.permissionName,
-        actionName_$in: permission.actionNames,
+        actionName: permission.actionNames,
         target: permission.target,
       });
     });

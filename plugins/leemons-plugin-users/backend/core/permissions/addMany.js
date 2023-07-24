@@ -10,9 +10,7 @@ const { add } = require('./add');
  * @return {Promise<ManyResponse>} Created permissions
  * */
 async function addMany({ ctx, ...data }) {
-  const response = await Promise.allSettled(
-    _.map(data, (d) => ctx.call('users.permissions.add', { ...d, ctx }))
-  );
+  const response = await Promise.allSettled(_.map(data, (d) => add({ ...d, ctx })));
   return settledResponseToManyResponse(response);
 }
 

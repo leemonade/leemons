@@ -39,6 +39,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userAgentModel = newModel(mongoose.connection, 'users_UserAgent', schema);
+const userAgentModel = newModel(mongoose.connection, 'v1::users_UserAgent', schema);
 
 module.exports = { userAgentModel };

@@ -1,17 +1,17 @@
 const _ = require('lodash');
+const { settledResponseToManyResponse } = require('leemons-utils');
 const { validateUserRemoveCustomPermission } = require('../../../validations/permissions');
 const { existUserAgent } = require('../existUserAgent');
 const { validatePermissionName } = require('../../../validations/exists');
-const { table } = require('../../tables');
 const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
 
-async function _removeCustomPermission(userAgentId, data, { transacting } = {}) {
-  await existUserAgent({ id: userAgentId }, true, { transacting });
+async function _removeCustomPermission({ userAgentId, data, ctx }) {
+  await existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: true, ctx });
 
   const query = {
     permissionName: data.permissionName,
     userAgent: userAgentId,
-    role_$null: true,
+    role: null,
   };
 
   if (data.target !== undefined) {
@@ -22,9 +22,9 @@ async function _removeCustomPermission(userAgentId, data, { transacting } = {}) 
     query.center = data.center;
   }
 
-  if (data.actionNames) query.actionName_$in = data.actionNames;
+  if (data.actionNames) query.actionName = data.actionNames;
 
-  await table.userAgentPermission.deleteMany(query, { transacting });
+  await ctx.tx.db.UserAgentPermission.deleteMany(query);
 
   return true;
 }
@@ -47,23 +47,23 @@ async function _removeCustomPermission(userAgentId, data, { transacting } = {}) 
  *    permissionName: 'plugins.classroom.level'
  * });
  * */
-async function removeCustomUserAgentPermission(userAgentId, data, { transacting } = {}) {
-  validatePermissionName(data.permissionName, this.calledFrom);
+async function removeCustomUserAgentPermission({ userAgentId, data, ctx }) {
+  validatePermissionName(data.permissionName, ctx.callerPlugin);
   validateUserRemoveCustomPermission(data);
 
   // console.log(userAgentId, data);
 
   if (_.isArray(userAgentId)) {
-    const response = await global.utils.settledResponseToManyResponse(
+    const response = await settledResponseToManyResponse(
       await Promise.allSettled(
-        _.map(userAgentId, (id) => _removeCustomPermission(id, data, { transacting }))
+        _.map(userAgentId, (id) => _removeCustomPermission({ userAgentId: id, data, ctx }))
       )
     );
-    await removeAllItemsCache();
+    await removeAllItemsCache({ ctx });
     return response;
   }
-  const response = await _removeCustomPermission(userAgentId, data, { transacting });
-  await removeAllItemsCache();
+  const response = await _removeCustomPermission({ userAgentId, data, ctx });
+  await removeAllItemsCache({ ctx });
   return response;
 }
 

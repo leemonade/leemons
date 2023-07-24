@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 
 /**
  *
@@ -10,36 +9,29 @@ const { table } = require('../../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function removeUserAgentContacts(
-  _fromUserAgent,
-  _toUserAgent,
-  { target = null, transacting: _transacting } = {}
-) {
+async function removeUserAgentContacts({
+  fromUserAgent: _fromUserAgent,
+  toUserAgent: _toUserAgent,
+  target = null,
+  ctx,
+}) {
   const fromUserAgents = _.isArray(_fromUserAgent) ? _fromUserAgent : [_fromUserAgent];
   const toUserAgents = _.isArray(_toUserAgent) ? _toUserAgent : [_toUserAgent];
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const pluginName = this.calledFrom;
+  const query = {
+    fromUserAgent: fromUserAgents,
+    toUserAgent: toUserAgents,
+    pluginName: ctx.callerPlugin,
+    target,
+  };
 
-      const query = {
-        fromUserAgent_$in: fromUserAgents,
-        toUserAgent_$in: toUserAgents,
-        pluginName,
-        target,
-      };
+  if (_fromUserAgent === '*') {
+    delete query.fromUserAgent;
+  }
+  if (_toUserAgent === '*') {
+    delete query.toUserAgent;
+  }
 
-      if (_fromUserAgent === '*') {
-        delete query.fromUserAgent_$in;
-      }
-      if (_toUserAgent === '*') {
-        delete query.toUserAgent_$in;
-      }
-
-      return table.userAgentContacts.deleteMany(query, { transacting });
-    },
-    table.userAgentContacts,
-    _transacting
-  );
+  return ctx.tx.db.UserAgentContacts.deleteMany(query);
 }
 
 module.exports = { removeUserAgentContacts };

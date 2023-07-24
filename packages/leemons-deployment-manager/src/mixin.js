@@ -13,6 +13,8 @@ function modifyCTX(ctx) {
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
 
+  ctx.logger = console;
+
   ctx.prefixPN = function (string) {
     return `${ctx.callerPlugin}.${string}`;
   };

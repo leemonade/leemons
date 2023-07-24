@@ -1,24 +1,19 @@
 const _ = require('lodash');
 const { getBaseAllPermissionsQuery } = require('./getBaseAllPermissionsQuery');
 const { count } = require('../../item-permissions/count');
-const { table } = require('../../tables');
 
-async function userAgentHasPermissionToItem(_userAgentId, _item, { transacting } = {}) {
-  const query = await getBaseAllPermissionsQuery(_userAgentId, { transacting });
+async function userAgentHasPermissionToItem({ userAgentId: _userAgentId, item: _item, ctx }) {
+  const query = await getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx });
 
   if (_.isArray(_item)) {
-    query.item_$in = _item;
-    const itemPermissions = await table.itemPermissions.find(query, {
-      transacting,
-    });
+    query.item = _item;
+    const itemPermissions = await ctx.tx.db.ItemPermissions.find(query).lean();
 
     return _.uniq(_.map(itemPermissions, 'item'));
   }
 
   query.item = _item;
-  const c = await count(query, {
-    transacting,
-  });
+  const c = await count({ params: query, ctx });
 
   return !!c;
 }

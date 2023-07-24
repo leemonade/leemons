@@ -11,6 +11,9 @@ class LeemonsError extends Error {
     if (!ctx.service || !ctx.service.name)
       throw new Error(errorMessage('ctx must be a valid moleculer context'));
     if (!message) throw new Error(errorMessage('message field is required'));
+    if (httpStatusCode) {
+      ctx.meta.$statusCode = httpStatusCode;
+    }
     super(message);
     _.forIn(rest, (value, key) => {
       this[key] = value;

@@ -1,4 +1,3 @@
-const { table } = require('../../tables');
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
 } = require('../searchUsersWithRoleAndMarkAsReloadPermissions');

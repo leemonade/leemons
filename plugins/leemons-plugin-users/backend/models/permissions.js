@@ -27,6 +27,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const permissionsModel = newModel(mongoose.connection, 'users_Permissions', schema);
+const permissionsModel = newModel(mongoose.connection, 'v1::users_Permissions', schema);
 
 module.exports = { permissionsModel };

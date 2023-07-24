@@ -23,6 +23,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const themeModel = newModel(mongoose.connection, 'admin_Theme', schema);
+const themeModel = newModel(mongoose.connection, 'v1::admin_Theme', schema);
 
 module.exports = { themeModel };

@@ -13,7 +13,7 @@ module.exports = {
     return {
       Settings: models.settingsModel,
       Theme: models.themeModel,
-      KeyValue: getKeyValueModel({ modelName: 'admin_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: 'v1::admin_KeyValue' }),
     };
   },
 };

@@ -29,6 +29,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const roleCenterModel = newModel(mongoose.connection, 'users_RoleCenter', schema);
+const roleCenterModel = newModel(mongoose.connection, 'v1::users_RoleCenter', schema);
 
 module.exports = { roleCenterModel };

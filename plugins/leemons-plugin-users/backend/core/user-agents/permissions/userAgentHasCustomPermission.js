@@ -1,6 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
-const constants = require('../../../../config/constants');
+const constants = require('../../../config/constants');
 
 /**
  * Check if user the permission
@@ -11,23 +10,26 @@ const constants = require('../../../../config/constants');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function userAgentHasCustomPermission(
+async function userAgentHasCustomPermission({
   userAgentId,
-  { permissionName, actionNames, target, center },
-  { transacting } = {}
-) {
+  permissionName,
+  actionNames,
+  target,
+  center,
+  ctx,
+}) {
   if (constants.basicPermission.permissionName === permissionName) {
     return actionNames.indexOf(constants.basicPermission.actionName) >= 0;
   }
   const query = {
-    role_$null: true,
-    userAgent_$in: _.isArray(userAgentId) ? userAgentId : [userAgentId],
+    role: null,
+    userAgent: _.isArray(userAgentId) ? userAgentId : [userAgentId],
     permissionName,
   };
-  if (actionNames) query.actionName_$in = actionNames;
+  if (actionNames) query.actionName = actionNames;
   if (target) query.target = target;
   if (center) query.center = center;
-  const response = await table.userAgentPermission.count(query, { transacting });
+  const response = await ctx.tx.db.UserAgentPermission.countDocuments(query);
   return !!response;
 }
 

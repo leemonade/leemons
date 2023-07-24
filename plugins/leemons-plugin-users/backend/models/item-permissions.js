@@ -46,6 +46,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const itemPermissionsModel = newModel(mongoose.connection, 'users_ItemPermissions', schema);
+const itemPermissionsModel = newModel(mongoose.connection, 'v1::users_ItemPermissions', schema);
 
 module.exports = { itemPermissionsModel };

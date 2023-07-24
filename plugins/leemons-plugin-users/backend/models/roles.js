@@ -34,6 +34,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const rolesModel = newModel(mongoose.connection, 'users_Roles', schema);
+const rolesModel = newModel(mongoose.connection, 'v1::users_Roles', schema);
 
 module.exports = { rolesModel };

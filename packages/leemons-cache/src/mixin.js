@@ -37,7 +37,7 @@ module.exports = ({ redis } = {}) => ({
   },
   created() {
     _.forIn(this.events, (value, key) => {
-      this.events[key] = async (params, opts, { afterModifyCTX }) =>
+      this.events[key] = async (params, opts, { afterModifyCTX } = {}) =>
         value(params, opts, {
           afterModifyCTX: async (ctx) => {
             await modifyCTX(ctx, {

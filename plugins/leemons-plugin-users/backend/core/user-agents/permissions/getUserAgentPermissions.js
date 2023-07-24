@@ -1,6 +1,6 @@
+/* eslint-disable camelcase */
 const _ = require('lodash');
-const { table } = require('../../tables');
-const constants = require('../../../../config/constants');
+const constants = require('../../../config/constants');
 const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
 
 /**
@@ -12,7 +12,7 @@ const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<ListOfUserPermissions>} User permissions
  * */
-async function getUserAgentPermissions(userAgent, { query: _query, transacting } = {}) {
+async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   const _userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
 
   const reloadUserAgents = [];
@@ -21,7 +21,7 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
   });
 
   if (reloadUserAgents.length) {
-    await updateUserAgentPermissions(reloadUserAgents, { transacting });
+    await updateUserAgentPermissions({ userAgentIds: reloadUserAgents, ctx });
   }
 
   const cacheKeys = _.map(
@@ -29,19 +29,20 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
     (_userAgent) =>
       `users:permissions:${_userAgent.id}:getUserAgentPermissions:${JSON.stringify(_query)}`
   );
-  const cache = await leemons.cache.getMany(cacheKeys);
+  const cache = await ctx.cache.getMany(cacheKeys);
 
   if (Object.keys(cache).length) {
     return cache[Object.keys(cache)[0]];
   }
 
-  const query = { ..._query, userAgent_$in: _.map(_userAgents, 'id') };
+  const query = { ..._query, userAgent: _.map(_userAgents, 'id') };
 
-  const results = await table.userAgentPermission.find(query, { transacting });
+  const results = await ctx.tx.db.UserAgentPermission.find(query).lean();
 
   const group = _.groupBy(
     results,
-    ({ actionName, id, userAgent, created_at, updated_at, ...rest }) => JSON.stringify(rest)
+    ({ actionName, id, userAgent: _ua, created_at, updated_at, createdAt, updatedAt, ...rest }) =>
+      JSON.stringify(rest)
   );
 
   const responses = [];
@@ -74,7 +75,7 @@ async function getUserAgentPermissions(userAgent, { query: _query, transacting }
   await Promise.all(
     _.map(
       cacheKeys,
-      (key) => leemons.cache.set(key, responses, 86400) // 1 dia
+      (key) => ctx.cache.set(key, responses, 86400) // 1 dia
     )
   );
 

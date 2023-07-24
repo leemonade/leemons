@@ -36,6 +36,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const groupsModel = newModel(mongoose.connection, 'users_Groups', schema);
+const groupsModel = newModel(mongoose.connection, 'v1::users_Groups', schema);
 
 module.exports = { groupsModel };

@@ -24,6 +24,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const superAdminUserModel = newModel(mongoose.connection, 'users_SuperAdminUser', schema);
+const superAdminUserModel = newModel(mongoose.connection, 'v1::users_SuperAdminUser', schema);
 
 module.exports = { superAdminUserModel };

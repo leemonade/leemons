@@ -31,6 +31,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const settingsModel = newModel(mongoose.connection, 'admin_Settings', schema);
+const settingsModel = newModel(mongoose.connection, 'v1::admin_Settings', schema);
 
 module.exports = { settingsModel };

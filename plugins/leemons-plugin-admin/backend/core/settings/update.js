@@ -13,7 +13,9 @@ async function update({ ctx, ...settings }) {
 
   if (
     ctx.callerPlugin &&
-    (ctx.callerPlugin.startsWith('bulk-template') || ctx.callerPlugin.startsWith('admin'))
+    (ctx.callerPlugin.startsWith('bulk-template') ||
+      ctx.callerPlugin.startsWith('admin') ||
+      ctx.callerPlugin.startsWith('gateway'))
   ) {
     allowed = true;
   }

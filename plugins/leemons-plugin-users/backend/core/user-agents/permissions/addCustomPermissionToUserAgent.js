@@ -1,26 +1,21 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
+const { settledResponseToManyResponse } = require('leemons-utils');
 const { existUserAgent } = require('../existUserAgent');
 const { validatePermissionName } = require('../../../validations/exists');
 const { validateUserAddCustomPermission } = require('../../../validations/permissions');
-const { table } = require('../../tables');
 const { userAgentHasCustomPermission } = require('./userAgentHasCustomPermission');
 const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
 
-async function _addCustomPermissionToUserAgent(
-  userAgentId,
-  data,
-  { throwIfExists = true, transacting } = {}
-) {
-  await existUserAgent({ id: userAgentId }, false, { transacting });
+async function _addCustomPermissionToUserAgent({ userAgentId, data, throwIfExists = true, ctx }) {
+  await existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: false, ctx });
 
   const hasPermissions = _.uniq(
-    await Promise.all(
-      _.map(data, (d) => userAgentHasCustomPermission(userAgentId, d, { transacting }))
-    )
+    await Promise.all(_.map(data, (d) => userAgentHasCustomPermission({ ...d, userAgentId, ctx })))
   );
   if (hasPermissions.length > 1 || hasPermissions[0]) {
     if (throwIfExists) {
-      throw new Error(`You have already been assigned this custom permit`);
+      throw new LeemonsError(ctx, { message: `You have already been assigned this custom permit` });
     } else {
       return null;
     }
@@ -37,7 +32,7 @@ async function _addCustomPermissionToUserAgent(
     });
   });
 
-  return table.userAgentPermission.createMany(dataToCreate, { transacting });
+  return ctx.tx.db.UserAgentPermission.insertMany(dataToCreate);
 }
 
 /**
@@ -63,33 +58,31 @@ async function _addCustomPermissionToUserAgent(
  * });
  *
  * */
-async function addCustomPermissionToUserAgent(
-  userAgentId,
-  data,
-  { throwIfExists = true, transacting } = {}
-) {
+async function addCustomPermissionToUserAgent({ userAgentId, data, throwIfExists = true, ctx }) {
   const _data = _.isArray(data) ? data : [data];
   _.forEach(_data, (d) => {
-    validatePermissionName(d.permissionName, this.calledFrom);
+    validatePermissionName(d.permissionName, ctx.callerPlugin);
     validateUserAddCustomPermission(d);
   });
 
   if (_.isArray(userAgentId)) {
-    const response = await global.utils.settledResponseToManyResponse(
+    const response = await settledResponseToManyResponse(
       await Promise.allSettled(
         _.map(userAgentId, (id) =>
-          _addCustomPermissionToUserAgent(id, _data, { throwIfExists, transacting })
+          _addCustomPermissionToUserAgent({ userAgentId: id, data: _data, throwIfExists, ctx })
         )
       )
     );
-    await removeAllItemsCache();
+    await removeAllItemsCache({ ctx });
     return response;
   }
-  const response = await _addCustomPermissionToUserAgent(userAgentId, _data, {
+  const response = await _addCustomPermissionToUserAgent({
+    userAgentId,
+    data: _data,
     throwIfExists,
-    transacting,
+    ctx,
   });
-  await removeAllItemsCache();
+  await removeAllItemsCache({ ctx });
   return response;
 }
 
