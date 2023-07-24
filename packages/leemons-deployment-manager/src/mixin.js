@@ -16,7 +16,7 @@ function modifyCTX(ctx) {
   ctx.logger = console;
 
   ctx.prefixPN = function (string) {
-    return `${ctx.callerPlugin}.${string}`;
+    return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
   };
 
   ctx.emit = function (event, params, opts) {
