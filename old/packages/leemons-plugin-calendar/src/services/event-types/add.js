@@ -24,7 +24,7 @@ async function add(key, url, options = {}, { order, transacting: _transacting } 
           key,
           url,
           order,
-          pluginName: this.calledFrom.replace('plugins.', ''),
+          pluginName: this.calledFrom,
         },
         { transacting }
       );

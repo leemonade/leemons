@@ -11,7 +11,7 @@ const update = require('./update');
 async function registerAdmin({ email, password, locale, ctx, ...user }) {
   const currentSettings = await findOne({ ctx });
   if (currentSettings && currentSettings.status !== STATUS.LOCALIZED) {
-    throw new LeemonsError('Super Admin already registered');
+    throw new LeemonsError(ctx, { message: 'Super Admin already registered' });
   }
 
   const profile = await ctx.tx.call('users.profiles.saveBySysName', profileSettings);
