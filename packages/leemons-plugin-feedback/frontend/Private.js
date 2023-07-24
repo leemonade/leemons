@@ -44,13 +44,13 @@ export default function Private() {
         <FeedbackAssign session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/draft`}>
-        <Redirect to={'/private/leebrary/tests-questions-banks/list?activeTab=draft'} />
+        <Redirect to={'/private/leebrary/assignables.feedback/list?activeTab=draft'} />
       </Route>
       <Route path={`${path}/:id`}>
         <FeedbackDetail session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}`}>
-        <Redirect to={'/private/leebrary/tests-questions-banks/list'} />
+        <Redirect to={'/private/leebrary/assignables.feedback/list'} />
       </Route>
     </Switch>
   );
