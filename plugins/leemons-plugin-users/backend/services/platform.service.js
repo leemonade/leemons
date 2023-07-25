@@ -8,7 +8,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const Rest = require('./platform.rest');
+const restActions = require('./platform.rest');
 const {
   getLocales,
   addLocale,
@@ -60,10 +60,10 @@ module.exports = {
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
 
   actions: {
+    ...restActions,
     query: {
       async handler(ctx) {
         return query({ ...ctx.params, ctx });

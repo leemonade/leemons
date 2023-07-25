@@ -9,7 +9,7 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const localization = require('../core/localization');
-const Rest = require('./common.rest');
+const { actions } = require('./common.rest');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -22,10 +22,10 @@ module.exports = () => ({
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
 
   actions: {
+    ...actions,
     countKeyStartsWith: {
       handler(ctx) {
         return localization.countKeyStartsWith({ ...ctx.params, isPrivate: false, ctx });

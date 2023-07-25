@@ -9,12 +9,12 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const path = require('path');
 const { addLocales } = require('leemons-multilanguage');
 const { hasKey, setKey } = require('leemons-mongodb-helpers');
-const { permissions, menuItems, widgets } = require('../config/constants');
+const { widgets } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'admin.init',
+  name: 'admin.deploy',
   version: 1,
   mixins: [
     LeemonsMongoDBMixin({
