@@ -62,21 +62,24 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
         !!editable && {
           icon: <EditWriteIcon />,
           children: localizations?.menuItems?.edit,
-          onClick: () => {
+          onClick: (e) => {
+            e.stopPropagation();
             history.push(`/private/learning-paths/modules/${id}/edit`);
           },
         },
         {
           icon: <ViewOnIcon />,
           children: localizations?.menuItems?.view,
-          onClick: () => {
+          onClick: (e) => {
+            e.stopPropagation();
             history.push(`/private/learning-paths/modules/${id}/view`);
           },
         },
         {
           icon: <AssignIcon />,
           children: localizations?.menuItems?.assign,
-          onClick: () => {
+          onClick: (e) => {
+            e.stopPropagation();
             history.push(`/private/learning-paths/modules/${id}/assign`);
           },
         },
@@ -141,6 +144,7 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
         },
       ].filter(Boolean),
     [
+      history,
       localizations,
       openConfirmationModal,
       openDeleteConfirmationModal,
