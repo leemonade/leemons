@@ -5,7 +5,7 @@
  * @param {Boolean} params.isPrivate Define if translation is private
  * @returns {Promise<Object>} DB Model to use
  */
-async function getLocalizationModelFromCTXAndIsPrivate({ ctx, isPrivate }) {
+function getLocalizationModelFromCTXAndIsPrivate({ ctx, isPrivate }) {
   if (isPrivate) return ctx.tx.db.Contents;
   return ctx.tx.db.Common;
 }

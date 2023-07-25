@@ -8,7 +8,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const Rest = require('./settings.rest');
+const restActions = require('./rest/settings.rest');
 const settingsService = require('../core/settings');
 
 /** @type {ServiceSchema} */
@@ -22,9 +22,9 @@ module.exports = {
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
   actions: {
+    ...restActions,
     findOne: {
       handler(ctx) {
         return settingsService.findOne({ ctx });

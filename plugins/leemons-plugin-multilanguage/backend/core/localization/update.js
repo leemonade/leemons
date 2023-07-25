@@ -267,7 +267,7 @@ async function setManyByJSON({ data, isPrivate, ctx }) {
   _.forIn(data, (json, lang) => {
     toAdd[lang] = {};
     _.forEach(getObjectArrayKeys(json), (key) => {
-      toAdd[lang][`${ctx.callerPlugin}${key}`] = _.get(data[lang], key);
+      toAdd[lang][`${ctx.callerPlugin}.${key}`] = _.get(data[lang], key);
     });
   });
 

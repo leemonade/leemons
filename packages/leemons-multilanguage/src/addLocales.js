@@ -9,8 +9,15 @@ async function addLocales({ locales: _locales, i18nPath, ctx }) {
     try {
       // eslint-disable-next-line import/no-dynamic-require, global-require
       localesData[locale] = require(`${i18nPath}/${locale}.js`);
-    } catch (err) {
-      ctx.logger.error(`Unable to load locale: ${i18nPath}`);
+    } catch (e) {
+      try {
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        localesData[locale] = require(`${i18nPath}/${locale}.json`);
+      } catch (err) {
+        ctx.logger.error(
+          `Unable to load locale: ${i18nPath}/${locale}.js or ${i18nPath}/${locale}.json`
+        );
+      }
     }
   }
 

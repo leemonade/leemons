@@ -60,7 +60,7 @@ module.exports = {
       UserRegisterPassword: models.userRegisterPasswordModel,
       UserRememberLogin: models.userRememberLoginModel,
       User: models.usersModel,
-      KeyValue: getKeyValueModel({ modelName: 'users_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: 'v1::users_KeyValue' }),
     };
   },
 };

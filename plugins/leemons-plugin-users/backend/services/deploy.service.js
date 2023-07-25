@@ -8,7 +8,7 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { addLocales } = require('leemons-multilanguage');
-const { hasKey } = require('leemons-mongodb-helpers');
+const { hasKey, setKey } = require('leemons-mongodb-helpers');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -23,16 +23,17 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   events: {
-    'multilanguage:newLocale': function (ctx) {
+    'multilanguage.newLocale': async function (ctx) {
       if (
-        !hasKey(ctx.db.KeyValue, `locale-${ctx.params.locale.code}-configured`) ||
+        !hasKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`) ||
         process.env.RELOAD_I18N_ON_EVERY_INSTALL === 'true'
       ) {
-        return addLocales({
+        await addLocales({
           ctx,
-          locales: ctx.params.locale.code,
+          locales: ctx.params.code,
           i18nPath: path.resolve(__dirname, `../i18n/`),
         });
+        await setKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`);
       }
       return null;
     },

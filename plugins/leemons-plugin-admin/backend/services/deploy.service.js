@@ -62,17 +62,18 @@ module.exports = () => ({
 
       ctx.tx.emit('init-widget-items');
     },
-    'multilanguage:newLocale': async function (ctx) {
+    'multilanguage.newLocale': async function (ctx) {
+      console.log('tilanguage:newLocale', ctx);
       if (
-        !hasKey(ctx.db.KeyValue, `locale-${ctx.params.locale.code}-configured`) ||
+        !hasKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`) ||
         process.env.RELOAD_I18N_ON_EVERY_INSTALL === 'true'
       ) {
         await addLocales({
           ctx,
-          locales: ctx.params.locale.code,
+          locales: ctx.params.code,
           i18nPath: path.resolve(__dirname, `../i18n/`),
         });
-        await setKey(ctx.db.KeyValue, `locale-${ctx.params.locale.code}-configured`);
+        await setKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`);
       }
       return null;
     },

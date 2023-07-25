@@ -7,7 +7,7 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getServiceModels } = require('../models');
-const Rest = require('./i18n.rest');
+const restActions = require('./rest/i18n.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -19,9 +19,10 @@ module.exports = {
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
-  actions: {},
+  actions: {
+    ...restActions,
+  },
   async created() {
     // mongoose.connect(process.env.MONGO_URI);
   },

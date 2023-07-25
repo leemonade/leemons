@@ -269,6 +269,7 @@ async function getKeyValueWithLocale({ locale, isPrivate, ctx }) {
  * @returns {Localization[]}
  */
 async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
+  console.log('key', key);
   const locales = _.isArray(locale) ? locale : [locale];
   // Validate the tuple and lowercase it
   const validator = new Validator(ctx.callerPlugin);
