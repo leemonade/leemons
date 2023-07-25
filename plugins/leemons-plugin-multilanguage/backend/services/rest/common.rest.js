@@ -7,8 +7,8 @@
 const { LeemonsValidator } = require('leemons-validator');
 const _ = require('lodash');
 const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
-const { getManyWithLocale, getKeyStartsWith } = require('../core/localization');
-const { resolveLocales } = require('../core/locale');
+const { getManyWithLocale, getKeyStartsWith } = require('../../core/localization');
+const { resolveLocales } = require('../../core/locale');
 
 async function get({ ctx }) {
   const { keys = null, keysStartsWith = null, locale } = ctx.params;
@@ -122,26 +122,24 @@ async function get({ ctx }) {
 }
 
 module.exports = {
-  actions: {
-    getLoggedRest: {
-      rest: {
-        method: 'POST',
-        path: '/logged',
-      },
-      middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
-      async handler(ctx) {
-        ctx.params.locale = await resolveLocales({ ctx });
-        return get({ ctx });
-      },
+  getLoggedRest: {
+    rest: {
+      method: 'POST',
+      path: '/logged',
     },
-    getRest: {
-      rest: {
-        method: 'POST',
-        path: '/',
-      },
-      async handler(ctx) {
-        return get({ ctx });
-      },
+    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    async handler(ctx) {
+      ctx.params.locale = await resolveLocales({ ctx });
+      return get({ ctx });
+    },
+  },
+  getRest: {
+    rest: {
+      method: 'POST',
+      path: '/',
+    },
+    async handler(ctx) {
+      return get({ ctx });
     },
   },
 };

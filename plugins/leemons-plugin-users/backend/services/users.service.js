@@ -9,7 +9,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const { getUserAgentCenter } = require('../core/user-agents/getUserAgentCenter');
-const restActions = require('./users.rest');
+const restActions = require('./rest/users.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {

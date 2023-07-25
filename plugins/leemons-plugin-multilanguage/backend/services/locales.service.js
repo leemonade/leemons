@@ -10,7 +10,7 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const locale = require('../core/locale');
 
-const Rest = require('./common.rest');
+const restActions = require('./rest/locales.rest');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -23,10 +23,10 @@ module.exports = () => ({
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
 
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return locale.add({ ...ctx.params, ctx });
