@@ -3,8 +3,13 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
+/** @type {ServiceSchema} */
 module.exports = {
   actions: {
     getProvidersRest: {
@@ -12,6 +17,14 @@ module.exports = {
         method: 'GET',
         path: '/providers',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.permissions.setup': {
+            actions: ['admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         try {
           const providers = await ctx.tx.call('emails.email.providers');
@@ -28,6 +41,14 @@ module.exports = {
         method: 'GET',
         path: '/platform',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.permissions.setup': {
+            actions: ['admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         try {
           const email = await ctx.tx.call('users.platform.getEmail');
@@ -44,6 +65,14 @@ module.exports = {
         method: 'POST',
         path: '/platform',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.permissions.setup': {
+            actions: ['admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         try {
           const email = await ctx.tx.call('users.platform.setEmail', { value: ctx.params.email });

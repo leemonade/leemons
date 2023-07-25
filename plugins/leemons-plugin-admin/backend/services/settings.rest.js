@@ -6,6 +6,10 @@
 
 const { LeemonsValidator } = require('leemons-validator');
 
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
 const settingsService = require('../core/settings');
 
 /** @type {ServiceSchema} */
@@ -26,6 +30,14 @@ module.exports = {
         method: 'POST',
         path: '/',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.permissions.setup': {
+            actions: ['admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         const validator = new LeemonsValidator({
           type: 'object',

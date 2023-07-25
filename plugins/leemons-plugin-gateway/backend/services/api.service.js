@@ -59,7 +59,16 @@ module.exports = {
           'GET admin/organization/jsonTheme': 'v1.admin.organization.getJsonThemeRest',
           'GET admin/i18n/:page/:lang': 'v1.admin.i18n.getLangRest',
           'GET admin/settings': 'v1.admin.settings.updateRest',
+
           'POST admin/settings/languages': 'v1.admin.settings.setLanguagesRest',
+
+          'GET emails/config': 'v1.emails.config.getConfigRest',
+          'POST emails/config': 'v1.emails.config.saveConfigRest',
+          'GET emails/email': 'v1.emails.email.providersRest',
+          'POST emails/send-test': 'v1.emails.email.sendTestRest',
+          'POST emails/send-custom-test': 'v1.emails.email.sendCustomTestRest',
+          'POST emails/save-provider': 'v1.emails.email.saveProviderRest',
+          'POST emails/remove-provider': 'v1.emails.email.removeProviderRest',
         },
 
         /**

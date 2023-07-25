@@ -4,6 +4,10 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
 const organizationService = require('../core/organization');
 
 /** @type {ServiceSchema} */
@@ -14,6 +18,14 @@ module.exports = {
         method: 'GET',
         path: '/',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.permissions.setup': {
+            actions: ['admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         try {
           const organization = await organizationService.getOrganization({
@@ -35,6 +47,14 @@ module.exports = {
         method: 'POST',
         path: '/',
       },
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          'plugins.permissions.setup': {
+            actions: ['admin'],
+          },
+        }),
+      ],
       async handler(ctx) {
         try {
           await organizationService.updateOrganization({

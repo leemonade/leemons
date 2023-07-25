@@ -7,7 +7,7 @@ async function getUserAgentsWithKeyValue({ key, value, ctx } = {}) {
   if (value) {
     query.value = JSON.stringify(value);
   } else {
-    query.value = { $neq: JSON.stringify(false) };
+    query.value = { $ne: JSON.stringify(false) };
   }
 
   const configs = await ctx.tx.db.Config.find(query, ['userAgent', 'value']).lean();

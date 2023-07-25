@@ -9,6 +9,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const { getUserAgentCenter } = require('../core/user-agents/getUserAgentCenter');
+const usersServices = require('../core/users');
 const restActions = require('./rest/users.rest');
 
 /** @type {ServiceSchema} */
@@ -23,9 +24,18 @@ module.exports = {
     }),
     LeemonsDeploymentManagerMixin(),
   ],
-
   actions: {
     ...restActions,
+    updateEmail: {
+      async handler(ctx) {
+        return usersServices.updateEmail({ ...ctx.params, ctx });
+      },
+    },
+    updatePassword: {
+      async handler(ctx) {
+        return usersServices.updatePassword({ ...ctx.params, ctx });
+      },
+    },
     getUserAgentCenter: {
       async handler(ctx) {
         return getUserAgentCenter({ ...ctx.params, ctx });

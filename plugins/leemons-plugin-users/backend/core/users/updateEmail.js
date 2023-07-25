@@ -1,19 +1,13 @@
-const { table } = require('../tables');
+const { LeemonsError } = require('packages/leemons-error/src');
 
-async function updateEmail(id, email, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const user = await table.users.findOne({ id_$ne: id, email }, { transacting });
+async function updateEmail({ id, email, ctx }) {
+  const user = await ctx.tx.db.Users.findOne({ id: { $ne: id }, email }).lean();
 
-      if (user) {
-        throw new Error('Email already exists');
-      }
+  if (user) {
+    throw new LeemonsError(ctx, { message: 'Email already exists' });
+  }
 
-      return table.users.update({ id }, { email }, { transacting });
-    },
-    table.users,
-    _transacting
-  );
+  return ctx.tx.db.Users.findOneAndUpdate({ id }, { email }, { new: true });
 }
 
 module.exports = { updateEmail };
