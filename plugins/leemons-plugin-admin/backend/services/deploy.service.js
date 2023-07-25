@@ -63,7 +63,6 @@ module.exports = () => ({
       ctx.tx.emit('init-widget-items');
     },
     'multilanguage.newLocale': async function (ctx) {
-      console.log('tilanguage:newLocale', ctx);
       if (
         !hasKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`) ||
         process.env.RELOAD_I18N_ON_EVERY_INSTALL === 'true'

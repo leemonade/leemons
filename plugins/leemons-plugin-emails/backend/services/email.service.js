@@ -8,7 +8,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const Rest = require('./email.rest');
+const restActions = require('./email.rest');
 
 const emailService = require('../core/email');
 
@@ -23,9 +23,9 @@ module.exports = {
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return emailService.add({ ...ctx.params, ctx });

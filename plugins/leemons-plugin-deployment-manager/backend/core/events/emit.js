@@ -17,8 +17,6 @@ async function emit(ctx) {
     });
   }
 
-  console.log(`Event emit: ${ctx.caller} - ${ctx.params.event}`);
-
   // Sacamos los plugins que tienen acceso a escuhar este evento desde el fromPluginName
   const relationships = await ctx.db.DeploymentPluginsRelationship.find({
     fromPluginName,

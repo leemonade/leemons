@@ -7,7 +7,7 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getServiceModels } = require('../models');
-const Rest = require('./config.rest');
+const restActions = require('./config.rest');
 
 const configService = require('../core/config');
 
@@ -21,9 +21,9 @@ module.exports = {
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
-    Rest,
   ],
   actions: {
+    ...restActions,
     getConfig: {
       handler(ctx) {
         return configService.getConfig({ ...ctx.params, ctx });
