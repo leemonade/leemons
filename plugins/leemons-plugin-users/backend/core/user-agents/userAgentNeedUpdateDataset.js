@@ -1,23 +1,13 @@
-const _ = require('lodash');
-const { table } = require('../tables');
-
-async function userSessionUserAgentNeedUpdateDataset(userSession, { transacting } = {}) {
-  const datasetService = leemons.getPlugin('dataset').services.dataset;
-
+async function userSessionUserAgentNeedUpdateDataset({ ctx }) {
   let schema;
   try {
-    schema = await datasetService.getSchemaWithLocale(
-      'user-data',
-      'plugins.users',
-      userSession.locale,
-      {
-        userSession,
-        transacting,
-      }
-    );
+    schema = await ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
+      locationName: 'user-data',
+      pluginName: 'plugins.users',
+      locale: ctx.userSession.locale,
+    });
   } catch (e) {
-    console.log('ERROR');
-    console.error(e);
+    ctx.logger.error(e);
   }
 
   if (!schema) {
@@ -29,18 +19,18 @@ async function userSessionUserAgentNeedUpdateDataset(userSession, { transacting 
     schema.compileJsonSchema.properties &&
     Object.keys(schema.compileJsonSchema.properties).length
   ) {
-    const values = await datasetService.getValues(
-      'user-data',
-      'plugins.users',
-      userSession.userAgents,
-      {
-        target: userSession.userAgents[0].id,
-        transacting,
-      }
-    );
+    const values = await ctx.tx.call('dataset.dataset.getValues', {
+      locationName: 'user-data',
+      pluginName: 'plugins.users',
+      userAgent: ctx.userSession.userAgents,
+      target: ctx.userSession.userAgents[0].id,
+    });
 
     try {
-      datasetService.validateDataForJsonSchema(schema.compileJsonSchema, values || {});
+      await ctx.tx.call('dataset.dataset.validateDataForJsonSchema', {
+        jsonSchema: schema.compileJsonSchema,
+        data: values || {},
+      });
     } catch (e) {
       return true;
     }

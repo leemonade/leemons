@@ -1,16 +1,10 @@
-const { table } = require('../tables');
-
 async function updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset({
   locationName,
   pluginName,
-  transacting,
+  ctx,
 }) {
   if (locationName === 'user-data' && pluginName === 'plugins.users') {
-    await table.userAgent.updateMany(
-      { id_$null: false },
-      { datasetIsGood: false },
-      { transacting }
-    );
+    await ctx.tx.db.UserAgent.updateMany({ id: { $ne: null } }, { datasetIsGood: false });
   }
 }
 

@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getPreferences(user, { transacting } = {}) {
-  return table.userPreferences.findOne({ user }, { transacting });
+async function getPreferences({ user, ctx }) {
+  return ctx.tx.db.UserPreferences.findOne({ user }).lean();
 }
 
 module.exports = { getPreferences };

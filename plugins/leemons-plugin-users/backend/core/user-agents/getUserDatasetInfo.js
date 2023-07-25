@@ -1,29 +1,24 @@
-async function getUserDatasetInfo(userId, { userSession, transacting } = {}) {
-  const datasetService = leemons.getPlugin('dataset').services.dataset;
+async function getUserDatasetInfo({ userId, ctx }) {
   let jsonSchema = null;
   let jsonUI = null;
   try {
-    const { compileJsonSchema, compileJsonUI } = await datasetService.getSchemaWithLocale(
-      'user-data',
-      'plugins.users',
-      userSession.locale,
+    const { compileJsonSchema, compileJsonUI } = await ctx.tx.call(
+      'dataset.dataset.getSchemaWithLocale',
       {
-        userSession,
-        transacting,
+        locationName: 'user-data',
+        pluginName: 'plugins.users',
+        locale: ctx.userSession.locale,
       }
     );
     jsonSchema = compileJsonSchema;
     jsonUI = compileJsonUI;
   } catch (e) {}
-  const value = await datasetService.getValues(
-    'user-data',
-    'plugins.users',
-    userSession.userAgents,
-    {
-      target: userId,
-      transacting,
-    }
-  );
+  const value = await ctx.tx.call('dataset.dataset.getValues', {
+    locationName: 'user-data',
+    pluginName: 'plugins.users',
+    userAgent: ctx.userSession.userAgents,
+    target: userId,
+  });
 
   return { jsonSchema, jsonUI, value };
 }

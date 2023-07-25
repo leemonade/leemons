@@ -1,11 +1,10 @@
-const _ = require('lodash');
-const { table } = require('../tables');
-
-async function setUserDatasetInfo(userId, value, { userSession, transacting } = {}) {
-  const datasetService = leemons.getPlugin('dataset').services.dataset;
-  return datasetService.setValues('user-data', 'plugins.users', value, userSession.userAgents, {
+async function setUserDatasetInfo({ userId, value, ctx }) {
+  return ctx.tx.call('dataset.dataset.setValues', {
+    locationName: 'user-data',
+    pluginName: 'plugins.users',
+    values: value,
+    userAgent: ctx.userSession.userAgents,
     target: userId,
-    transacting,
   });
 }
 
