@@ -1,4 +1,4 @@
-const { LeemonsError } = require('packages/leemons-error/src');
+const { LeemonsError } = require('leemons-error');
 
 async function updateEmail({ id, email, ctx }) {
   const user = await ctx.tx.db.Users.findOne({ id: { $ne: id }, email }).lean();
