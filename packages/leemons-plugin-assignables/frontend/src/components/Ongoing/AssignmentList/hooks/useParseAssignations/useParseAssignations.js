@@ -24,6 +24,7 @@ function useParseAssignationsLocalizations() {
     prefixPN('student_actions'),
     prefixPN('activity_status'),
     prefixPN('multiSubject'),
+    prefixPN('activities_list'),
   ]);
 
   const labels = useMemo(() => {
@@ -33,6 +34,7 @@ function useParseAssignationsLocalizations() {
         student_actions: _.get(res, prefixPN('student_actions')),
         activity_status: _.get(res, prefixPN('activity_status')),
         multiSubject: _.get(res, prefixPN('multiSubject')),
+        activitiesList: _.get(res, prefixPN('activities_list')),
       };
 
       return data;
