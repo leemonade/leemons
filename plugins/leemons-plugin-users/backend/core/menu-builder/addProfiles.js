@@ -15,7 +15,7 @@ async function addProfiles() {
     },
     [
       {
-        permissionName: 'plugins.users.profiles',
+        permissionName: 'users.profiles',
         actionNames: ['view', 'admin'],
       },
     ]

@@ -3,7 +3,7 @@ async function update({ userAgentId, tags, ctx }) {
   if (tags)
     promises.push(
       ctx.tx.call('common.tags.setTagsToValues', {
-        type: 'plugins.users.user-agent',
+        type: 'users.user-agent',
         tags,
         values: userAgentId,
       })

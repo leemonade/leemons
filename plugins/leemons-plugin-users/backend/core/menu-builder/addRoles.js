@@ -15,7 +15,7 @@ async function addRoles() {
     },
     [
       {
-        permissionName: 'plugins.users.roles',
+        permissionName: 'users.roles',
         actionNames: ['view', 'admin'],
       },
     ]

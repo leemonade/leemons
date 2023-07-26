@@ -14,11 +14,11 @@ async function addWelcome() {
     },
     [
       {
-        permissionName: 'plugins.users.users',
+        permissionName: 'users.users',
         actionNames: ['view', 'admin'],
       },
       {
-        permissionName: 'plugins.users.profiles',
+        permissionName: 'users.profiles',
         actionNames: ['view', 'admin'],
       },
     ]

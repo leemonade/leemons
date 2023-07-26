@@ -1,64 +1,44 @@
 {
   "permissions": [
     {
-      "permissionName": "plugins.users.users",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "users.users",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.users.user-data",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "users.user-data",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.users.centers",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "users.centers",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.users.profiles",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "users.profiles",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.dataset.dataset",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "dataset.dataset",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.calendar.calendar",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "calendar.calendar",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.timetable.config",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "timetable.config",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.timetable.timetable",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "timetable.timetable",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.leebrary.library",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "leebrary.library",
+      "actionNames": ["admin"]
     },
     {
-      "permissionName": "plugins.admin.setup",
-      "actionNames": [
-        "admin"
-      ]
+      "permissionName": "admin.setup",
+      "actionNames": ["admin"]
     }
   ],
   "name": "SuperAdmin",

@@ -96,6 +96,7 @@ async function get({ ctx }) {
   if (keys) {
     localizations.push(
       getManyWithLocale({
+        //! TODO USANDO EL FRONTEND VIEJO QUITAMOS PLUGINS. UNA VEZ MIGRADO SE PUEDE QUITAR EL REPLACE
         keys: _.map(keys, (key) => key.replace('plugins.', '')),
         locale,
         isPrivate: false,

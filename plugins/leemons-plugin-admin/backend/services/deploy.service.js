@@ -64,7 +64,7 @@ module.exports = () => ({
 
       // Permissions
       if (!(await hasKey(ctx.db.KeyValue, `permissions`))) {
-        await ctx.call('users.permissions.addMany', { data: permissions.permissions });
+        await ctx.call('users.permissions.addMany', permissions.permissions);
         await setKey(ctx.db.KeyValue, `permissions`);
       }
       ctx.emit('init-permissions');

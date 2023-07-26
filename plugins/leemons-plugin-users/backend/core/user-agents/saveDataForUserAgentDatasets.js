@@ -4,7 +4,7 @@ const { LeemonsError } = require('leemons-error');
 async function saveData({ value, ctx }) {
   const response = await ctx.tx.call('dataset.dataset.setValues', {
     locationName: 'user-data',
-    pluginName: 'plugins.users',
+    pluginName: 'users',
     values: value,
     userAgent: ctx.userSession.userAgents,
     target: ctx.userSession.userAgents[0].id,

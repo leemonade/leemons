@@ -44,7 +44,7 @@ async function _removeCustomPermission({ userAgentId, data, ctx }) {
  * .services.permissions.removeCustomUserAgentPermission(
  * 'userAgentId',
  * {
- *    permissionName: 'plugins.classroom.level'
+ *    permissionName: 'classroom.level'
  * });
  * */
 async function removeCustomUserAgentPermission({ userAgentId, data, ctx }) {

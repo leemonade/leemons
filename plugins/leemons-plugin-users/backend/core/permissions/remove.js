@@ -25,7 +25,7 @@ async function remove({ permissionName, ctx }) {
     }),
     ctx.tx.db.PermissionAction.deleteMany({ permissionName }),
     ctx.tx.call('multilanguage.common.deleteAll', {
-      key: `plugins.users.${permissionName}.name`,
+      key: `users.${permissionName}.name`,
     }),
   ];
 

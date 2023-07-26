@@ -15,7 +15,7 @@ async function addMain() {
     },
     [
       {
-        permissionName: 'plugins.users.users',
+        permissionName: 'users.users',
         actionNames: ['admin'],
       },
     ]

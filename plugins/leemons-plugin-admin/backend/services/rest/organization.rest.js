@@ -20,7 +20,7 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'plugins.permissions.setup': {
+        'permissions.setup': {
           actions: ['admin'],
         },
       }),
@@ -49,7 +49,7 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'plugins.permissions.setup': {
+        'permissions.setup': {
           actions: ['admin'],
         },
       }),

@@ -15,7 +15,7 @@ async function addUsers() {
     },
     [
       {
-        permissionName: 'plugins.users.users',
+        permissionName: 'users.users',
         actionNames: ['admin'],
       },
     ]

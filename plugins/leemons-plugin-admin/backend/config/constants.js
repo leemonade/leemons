@@ -1,4 +1,4 @@
-const permissionsPrefix = 'plugins.admin';
+const permissionsPrefix = 'admin';
 
 const permissionNames = {
   setup: `${permissionsPrefix}.setup`,
@@ -51,47 +51,47 @@ const profileSettings = {
   indexable: false,
   permissions: [
     {
-      permissionName: 'plugins.admin.setup',
+      permissionName: 'admin.setup',
       actionNames: ['admin'],
     },
     {
-      permissionName: 'plugins.users.users',
+      permissionName: 'users.users',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.users.user-data',
+      permissionName: 'users.user-data',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.users.centers',
+      permissionName: 'users.centers',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.users.profiles',
+      permissionName: 'users.profiles',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.dataset.dataset',
+      permissionName: 'dataset.dataset',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.calendar.calendar',
+      permissionName: 'calendar.calendar',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.calendar.calendar-configs',
+      permissionName: 'calendar.calendar-configs',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.timetable.config',
+      permissionName: 'timetable.config',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.timetable.timetable',
+      permissionName: 'timetable.timetable',
       actionNames: ['update'],
     },
     {
-      permissionName: 'plugins.leebrary.library',
+      permissionName: 'leebrary.library',
       actionNames: ['admin'],
     },
   ],
