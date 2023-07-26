@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { validatePrefix } = require('../validation/validate');
 const { LeemonsError } = require('leemons-error');
+const { validatePrefix } = require('../validation/validate');
 
 async function update({ zoneKey, key, url, name, description, properties, profiles, ctx }) {
   validatePrefix({ key, calledFrom: ctx.callerPlugin, ctx });

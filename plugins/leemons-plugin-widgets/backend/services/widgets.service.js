@@ -11,7 +11,9 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/widgets.rest');
 const zoneServices = require('../core/widgetZone');
+const { set: setZone } = require('../core/widgetZone/set');
 const itemServices = require('../core/widgetItem');
+const { set: setItem } = require('../core/widgetItem/set');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -55,14 +57,14 @@ module.exports = {
     },
     setZone: {
       handler(ctx) {
-        return zoneServices.set({ ...ctx.params, ctx });
+        return setZone({ ...ctx.params, ctx });
       },
     },
 
     // ---- WIDGET ITEMS ----
     setItemToZone: {
       handler(ctx) {
-        return itemServices.set({ ...ctx.params, ctx });
+        return setItem({ ...ctx.params, ctx });
       },
     },
     addItemToZone: {
