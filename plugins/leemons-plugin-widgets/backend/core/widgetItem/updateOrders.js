@@ -1,11 +1,10 @@
 const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
 const { validateUpdateItemOrders } = require('../validation/forms');
-const { contextParamsCloning } = require('../../../moleculer.config copy');
 
 async function updateOrders({ items, ctx }) {
   validateUpdateItemOrders(items);
-  const count = await contextParamsCloning.tx.db.WidgetItem.count({
+  const count = await ctx.tx.db.WidgetItem.count({
     id: _.map(items, 'id'),
   });
   if (count !== items.length) {

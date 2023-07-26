@@ -5,7 +5,7 @@
 
 const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
 
-const { get } = require('../../core/widget-zone/get');
+const { get } = require('../../core/widgetZone');
 
 module.exports = {
   getZoneRest: {

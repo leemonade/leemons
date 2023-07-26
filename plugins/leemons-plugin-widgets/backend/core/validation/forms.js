@@ -1,5 +1,4 @@
-const { LeemonsValidator } = global.utils;
-const _ = require('lodash');
+const { LeemonsValidator } = require('leemons-validator');
 
 const updateItemOrdersSchema = {
   type: 'array',
