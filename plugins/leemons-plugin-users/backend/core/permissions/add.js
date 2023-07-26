@@ -12,7 +12,7 @@ const { addActionMany } = require('./addActionMany');
 async function add({ ctx, ...data }) {
   validatePermissionName(data.permissionName, ctx.callerPlugin);
 
-  await validateExistPermission(data.permissionName);
+  await validateExistPermission({ permissionName: data.permissionName, ctx });
 
   ctx.logger.info(`Adding permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
 
@@ -22,7 +22,7 @@ async function add({ ctx, ...data }) {
       pluginName: ctx.callerPlugin,
     }),
     ctx.tx.call('multilanguage.common.addManyByKey', {
-      key: `plugins.users.${data.permissionName}.name`,
+      key: `users.${data.permissionName}.name`,
       data: data.localizationName,
     }),
   ]);

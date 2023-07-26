@@ -108,7 +108,7 @@ async function addUserBulk(
   }
 
   if (tags && _.isArray(tags) && tags.length) {
-    await tagsService.setTagsToValues('plugins.users.user-agent', tags, userAgent.id, {
+    await tagsService.setTagsToValues('users.user-agent', tags, userAgent.id, {
       transacting,
     });
   }

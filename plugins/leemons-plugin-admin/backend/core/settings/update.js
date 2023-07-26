@@ -33,7 +33,7 @@ async function update({ ctx, ...settings }) {
     });
   }
 
-  throw new LeemonsError(ctx, { message: 'This method can only be called from the plugins.admin' });
+  throw new LeemonsError(ctx, { message: 'This method can only be called from the admin' });
 }
 
 module.exports = update;

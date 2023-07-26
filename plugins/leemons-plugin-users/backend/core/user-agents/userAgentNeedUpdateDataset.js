@@ -3,7 +3,7 @@ async function userSessionUserAgentNeedUpdateDataset({ ctx }) {
   try {
     schema = await ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
       locationName: 'user-data',
-      pluginName: 'plugins.users',
+      pluginName: 'users',
       locale: ctx.userSession.locale,
     });
   } catch (e) {
@@ -21,7 +21,7 @@ async function userSessionUserAgentNeedUpdateDataset({ ctx }) {
   ) {
     const values = await ctx.tx.call('dataset.dataset.getValues', {
       locationName: 'user-data',
-      pluginName: 'plugins.users',
+      pluginName: 'users',
       userAgent: ctx.userSession.userAgents,
       target: ctx.userSession.userAgents[0].id,
     });

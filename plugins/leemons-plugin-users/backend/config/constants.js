@@ -4,42 +4,42 @@ module.exports = {
   daysForRegisterPassword: 30,
   // All users always have this permission
   basicPermission: {
-    permissionName: 'plugins.users.any',
+    permissionName: 'users.any',
     actionName: 'view',
   },
   defaultPermissions: [
     {
-      permissionName: 'plugins.users.centers',
+      permissionName: 'users.centers',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Centros', en: 'Centers' },
     },
     {
-      permissionName: 'plugins.users.user-data',
+      permissionName: 'users.user-data',
       actions: ['view', 'update', 'delete', 'admin'],
       localizationName: { es: 'Datos del usuario', en: 'User data' },
     },
     {
-      permissionName: 'plugins.users.users',
+      permissionName: 'users.users',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Usuarios', en: 'Users' },
     },
     {
-      permissionName: 'plugins.users.profiles',
+      permissionName: 'users.profiles',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Perfiles', en: 'Profiles' },
     },
     {
-      permissionName: 'plugins.users.import',
+      permissionName: 'users.import',
       actions: ['view', 'update', 'admin'],
       localizationName: { es: 'Importar', en: 'Import' },
     },
     {
-      permissionName: 'plugins.users.roles',
+      permissionName: 'users.roles',
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Roles', en: 'Roles' },
     },
     {
-      permissionName: 'plugins.users.enabledisable',
+      permissionName: 'users.enabledisable',
       actions: ['create', 'delete', 'admin'],
       localizationName: { es: 'Activar/Desactivar', en: 'Enable/Disable' },
     },
@@ -63,7 +63,7 @@ module.exports = {
         en: 'Adds additional data common to all users',
       },
       locationName: 'user-data',
-      pluginName: 'plugins.users',
+      pluginName: 'users',
     },
   ],
   url: {
@@ -82,6 +82,6 @@ module.exports = {
     },
   },
   widgets: {
-    zones: [{ key: 'plugins.users.user-detail' }],
+    zones: [{ key: 'users.user-detail' }],
   },
 };

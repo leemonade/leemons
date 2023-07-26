@@ -52,7 +52,7 @@ async function _addCustomPermissionToUserAgent({ userAgentId, data, throwIfExist
  * .services.permissions.addCustomPermissionToUserAgent(
  * 'userAgentId',
  * {
- *    permissionName: 'plugins.classroom.level',
+ *    permissionName: 'classroom.level',
  *    actionNames: ['admin'],
  *    target: level,
  * });

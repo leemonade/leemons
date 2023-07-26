@@ -15,7 +15,7 @@ async function addUserData() {
     },
     [
       {
-        permissionName: 'plugins.users.user-data',
+        permissionName: 'users.user-data',
         actionNames: ['view', 'admin'],
       },
     ]

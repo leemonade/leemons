@@ -84,7 +84,7 @@ async function add(
         const tagsService = leemons.getPlugin('common').services.tags;
         await Promise.all(
           _.map(user.userAgents, (userAgent) =>
-            tagsService.setTagsToValues('plugins.users.user-agent', tags, userAgent.id, {
+            tagsService.setTagsToValues('users.user-agent', tags, userAgent.id, {
               transacting,
             })
           )

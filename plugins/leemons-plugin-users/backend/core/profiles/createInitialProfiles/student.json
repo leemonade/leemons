@@ -1,109 +1,109 @@
 {
   "permissions": [
     {
-      "permissionName": "plugins.users.users",
+      "permissionName": "users.users",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.users.user-data",
+      "permissionName": "users.user-data",
       "actionNames": [
         "admin"
       ]
     },
     {
-      "permissionName": "plugins.users.centers",
+      "permissionName": "users.centers",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.dataset.dataset",
+      "permissionName": "dataset.dataset",
       "actionNames": [
         "create"
       ]
     },
     {
-      "permissionName": "plugins.calendar.calendar",
+      "permissionName": "calendar.calendar",
       "actionNames": [
         "admin"
       ]
     },
     {
-      "permissionName": "plugins.timetable.config",
+      "permissionName": "timetable.config",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.timetable.timetable",
+      "permissionName": "timetable.timetable",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.curriculum.curriculum",
+      "permissionName": "curriculum.curriculum",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.leebrary.library",
+      "permissionName": "leebrary.library",
       "actionNames": [
         "update"
       ]
     },
     {
-      "permissionName": "plugins.grades.rules",
+      "permissionName": "grades.rules",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.grades.evaluations",
+      "permissionName": "grades.evaluations",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.grades.promotions",
+      "permissionName": "grades.promotions",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.grades.dependencies",
+      "permissionName": "grades.dependencies",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.tests.tests",
+      "permissionName": "tests.tests",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.tests.questionsBanks",
+      "permissionName": "tests.questionsBanks",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.assignables.activities",
+      "permissionName": "assignables.activities",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.assignables.ongoing",
+      "permissionName": "assignables.ongoing",
       "actionNames": [
         "view"
       ]
     },
     {
-      "permissionName": "plugins.assignables.history",
+      "permissionName": "assignables.history",
       "actionNames": [
         "view"
       ]

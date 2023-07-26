@@ -25,7 +25,7 @@ async function update({ ctx, ...data }) {
   await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });
 
   await ctx.tx.call('multilanguage.common.setKey', {
-    key: `plugins.users.${data.permissionName}.name`,
+    key: `users.${data.permissionName}.name`,
     data: data.localizationName,
   });
 

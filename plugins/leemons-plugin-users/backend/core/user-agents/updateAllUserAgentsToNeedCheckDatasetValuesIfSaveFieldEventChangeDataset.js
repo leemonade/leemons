@@ -3,7 +3,7 @@ async function updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChange
   pluginName,
   ctx,
 }) {
-  if (locationName === 'user-data' && pluginName === 'plugins.users') {
+  if (locationName === 'user-data' && pluginName === 'users') {
     await ctx.tx.db.UserAgent.updateMany({ id: { $ne: null } }, { datasetIsGood: false });
   }
 }

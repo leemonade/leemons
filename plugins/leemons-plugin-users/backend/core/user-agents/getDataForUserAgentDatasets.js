@@ -4,11 +4,11 @@ async function getData(userSession, { transacting } = {}) {
   const datasetService = leemons.getPlugin('dataset').services.dataset;
 
   const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all([
-    datasetService.getSchemaWithLocale('user-data', 'plugins.users', userSession.locale, {
+    datasetService.getSchemaWithLocale('user-data', 'users', userSession.locale, {
       userSession,
       transacting,
     }),
-    datasetService.getValues('user-data', 'plugins.users', userSession.userAgents, {
+    datasetService.getValues('user-data', 'users', userSession.userAgents, {
       target: userSession.userAgents[0].id,
       transacting,
     }),

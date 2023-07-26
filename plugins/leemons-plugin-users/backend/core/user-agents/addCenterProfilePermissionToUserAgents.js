@@ -21,9 +21,7 @@ async function addCenterProfilePermissionToUserAgents({ userAgentIds, ctx }) {
           return ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
             userAgentId: userAgent.id,
             data: {
-              permissionName: `plugins.users.center.inside.${
-                rolesCentersByRole[userAgent.role].center
-              }`,
+              permissionName: `users.center.inside.${rolesCentersByRole[userAgent.role].center}`,
               actionNames: ['view'],
             },
             throwIfExists: false,
@@ -40,9 +38,7 @@ async function addCenterProfilePermissionToUserAgents({ userAgentIds, ctx }) {
           return ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
             userAgentId: userAgent.id,
             data: {
-              permissionName: `plugins.users.profile.inside.${
-                rolesProfilesByRole[userAgent.role].profile
-              }`,
+              permissionName: `users.profile.inside.${rolesProfilesByRole[userAgent.role].profile}`,
               actionNames: ['view'],
             },
             throwIfExists: false,
@@ -62,7 +58,7 @@ async function addCenterProfilePermissionToUserAgents({ userAgentIds, ctx }) {
           return ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
             userAgentId: userAgent.id,
             data: {
-              permissionName: `plugins.users.center-profile.inside.${
+              permissionName: `users.center-profile.inside.${
                 rolesCentersByRole[userAgent.role].center
               }.${rolesProfilesByRole[userAgent.role].profile}`,
               actionNames: ['view'],

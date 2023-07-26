@@ -51,7 +51,7 @@ async function add({ name, description, permissions, translations, indexable, sy
       [platformLocale]: `profile:${profile.id}`,
     },
     locationName: `profile.${profile.id}`,
-    pluginName: 'plugins.users',
+    pluginName: 'users',
   });
 
   await createNecessaryRolesForProfilesAccordingToCenters({ profileIds: profile.id, ctx });

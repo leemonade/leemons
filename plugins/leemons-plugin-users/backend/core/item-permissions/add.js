@@ -26,9 +26,9 @@ const { removeAllItemsCache } = require('./removeAllItemsCache');
  *
  * leemons.getPlugin('users').services.permissions.addItem(
  * 'id del item por ejemplo el id de un calendario',
- * 'plugins.calendar.calendar',
+ * 'calendar.calendar',
  * {
- *    permissionName: 'plugins.calendar.calendar.idcalendario',
+ *    permissionName: 'calendar.calendar.idcalendario',
  *    actionNames: ['view', 'delete', 'admin', 'owner'],
  * },
  * {
