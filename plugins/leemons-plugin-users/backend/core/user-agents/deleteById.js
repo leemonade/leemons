@@ -1,5 +1,5 @@
 async function deleteById({ id, soft, ctx }) {
-  return ctx.tx.db.UserAgent.delete({ id }, { soft, transacting });
+  return ctx.tx.db.UserAgent.findOneAndDelete({ id }, { soft });
 }
 
 module.exports = {

@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
-
 /**
  *
  * @public
@@ -10,22 +8,11 @@ const { table } = require('../../tables');
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function markAllUserAgentsForUserProfileToReloadPermissions(
-  user,
-  profile,
-  { transacting } = {}
-) {
-  const profileRoles = await table.profileRole.find(
-    { profile },
-    {
-      columns: ['id', 'role'],
-      transacting,
-    }
-  );
-  return table.userAgent.updateMany(
-    { role_$in: _.map(profileRoles, 'role'), user },
-    { reloadPermissions: true },
-    { transacting }
+async function markAllUserAgentsForUserProfileToReloadPermissions({ user, profile, ctx }) {
+  const profileRoles = await ctx.tx.db.ProfileRole.find({ profile }).select(['id', 'role']).lean();
+  return ctx.tx.db.UserAgent.updateMany(
+    { role: _.map(profileRoles, 'role'), user },
+    { reloadPermissions: true }
   );
 }
 

@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function disable(id, { transacting } = {}) {
-  return table.userAgent.update({ id }, { disabled: true }, { transacting });
+async function disable({ id, ctx }) {
+  return ctx.tx.db.UserAgent.findOneAndUpdate({ id }, { disabled: true }, { new: true });
 }
 
 module.exports = {

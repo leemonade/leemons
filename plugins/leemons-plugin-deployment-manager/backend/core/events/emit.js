@@ -17,8 +17,6 @@ async function emit(ctx) {
     });
   }
 
-  console.log(`Event emit: ${ctx.caller} - ${ctx.params.event}`);
-
   // Sacamos los plugins que tienen acceso a escuhar este evento desde el fromPluginName
   const relationships = await ctx.db.DeploymentPluginsRelationship.find({
     fromPluginName,
@@ -26,6 +24,8 @@ async function emit(ctx) {
   })
     .select(['id', 'fromPluginName', 'toPluginName', 'actions'])
     .lean();
+
+  if (process.env.DEBUG === 'true') console.log(`- Event emit: ${ctx.params.event}[${ctx.caller}]`);
 
   return Promise.all(
     _.map(relationships, (relationship) =>

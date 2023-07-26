@@ -1,5 +1,4 @@
 const { isEmpty } = require('lodash');
-const { table } = require('../tables');
 const {
   getRoleForRelationshipProfileCenter,
 } = require('../profiles/getRoleForRelationshipProfileCenter');
@@ -11,15 +10,15 @@ const {
  * @param {any=} transacting - DB Transaction
  * @return {Promise<UserAgent>}
  * */
-async function getUserAgentByCenterProfile(userId, centerId, profileId, { transacting } = {}) {
+async function getUserAgentByCenterProfile({ userId, centerId, profileId, ctx }) {
   if (!isEmpty(profileId) && !isEmpty(centerId)) {
-    const role = await getRoleForRelationshipProfileCenter(profileId, centerId, { transacting });
+    const role = await getRoleForRelationshipProfileCenter({ profileId, centerId, ctx });
 
     if (!isEmpty(role) && role.id) {
-      return table.userAgent.findOne({ role: role.id, user: userId }, { transacting });
+      return ctx.tx.db.UserAgent.findOne({ role: role.id, user: userId }).lean();
     }
   } else {
-    leemons.log.error('getUserAgentByCenterProfile > Missing params');
+    ctx.logger.error('getUserAgentByCenterProfile > Missing params');
   }
 
   return null;
