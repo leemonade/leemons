@@ -14,7 +14,7 @@ module.exports = {
     },
     async handler(ctx) {
       const configs = await configService.getConfig({
-        userAgent: ctx.userSession.userAgents[0].id,
+        userAgent: ctx.meta.userSession.userAgents[0].id,
         ctx,
       });
       return { status: 200, configs };
@@ -28,7 +28,7 @@ module.exports = {
     async handler(ctx) {
       const configs = await configService.saveConfig({
         ...ctx.params,
-        userAgent: ctx.userSession.userAgents[0].id,
+        userAgent: ctx.meta.userSession.userAgents[0].id,
         ctx,
       });
       return { status: 200, configs };
