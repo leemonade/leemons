@@ -2,16 +2,25 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
+
+const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+
+const { get } = require('../../core/widget-zone/get');
 
 module.exports = {
-  getConfigRest: {
+  getZoneRest: {
     rest: {
+      path: '/zone/:key',
       method: 'GET',
-      path: '/',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      return { status: 200, ctx };
+      const zone = await get({
+        key: ctx.params.key,
+        userSession: ctx.userSession,
+        ctx,
+      });
+      return { status: 200, zone };
     },
   },
 };

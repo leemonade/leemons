@@ -1,28 +1,23 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function get(key, { userSession, transacting } = {}) {
+async function get({ key, userSession, ctx }) {
   const [zone, items] = await Promise.all([
-    table.widgetZone.findOne({ key }, { transacting }),
-    table.widgetItem.find({ zoneKey: key }, { transacting }),
+    ctx.tx.db.WidgetZone.findOne({ key }),
+    ctx.tx.db.widgetItem.find({ zoneKey: key }),
   ]);
 
   let widgetItems = _.orderBy(items, ['order'], ['asc']);
 
   if (userSession) {
     const [userAgents, itemProfiles] = await Promise.all([
-      leemons
-        .getPlugin('users')
-        .services.users.getUserAgentsInfo(_.map(userSession.userAgents, 'id'), {
-          withProfile: true,
-          transacting,
-        }),
-      table.widgetItemProfile.find(
-        {
-          zoneKey: key,
-        },
-        { transacting }
-      ),
+      ctx.tx.call('users.getUserAgentsInfo', {
+        userAgentIds: _.map(userSession.userAgents),
+        userColumns: ['id'],
+        withProfile: true,
+      }),
+      ctx.tx.db.WidgetItemProfile.find({
+        zoneKey: key,
+      }),
     ]);
     const profiles = _.uniq(_.map(userAgents, (userAgent) => userAgent.profile?.id));
     const profilesByItemKey = {};
