@@ -72,7 +72,8 @@ async function getFileContent(ctx) {
 
     if (fileSize > 0) {
       ctx.set('Content-Length', fileSize);
-      ctx.set('Accept-Ranges', 'bytes');
+      // TODO Check if Accept-Ranges header is needed and streaming implications
+      // ctx.set('Accept-Ranges', 'bytes');
     }
 
     /*
