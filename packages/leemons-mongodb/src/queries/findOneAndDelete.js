@@ -5,6 +5,7 @@ const {
   increaseTransactionFinishedIfNeed,
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
+const { findOneAndUpdate } = require('./findOneAndUpdate');
 
 function findOneAndDelete({
   model,
@@ -15,7 +16,10 @@ function findOneAndDelete({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
+  return async function (_conditions, options) {
+    if (options.soft) {
+      return findOneAndUpdate(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
+    }
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -23,11 +27,10 @@ function findOneAndDelete({
     });
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
-      const [_conditions, ...args] = arguments;
       let conditions = _conditions;
       if (autoDeploymentID) conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
 
-      const item = await model.findOneAndDelete(conditions, ...args);
+      const item = await model.findOneAndDelete(conditions, options);
 
       if (!ignoreTransaction && ctx.meta.transactionID && item) {
         await addTransactionState(ctx, {

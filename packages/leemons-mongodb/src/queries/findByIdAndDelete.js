@@ -9,8 +9,7 @@ function findByIdAndDelete({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
-    const [id, ...args] = arguments;
+  return async function (id, ...args) {
     return findOneAndDelete({
       model,
       modelKey,

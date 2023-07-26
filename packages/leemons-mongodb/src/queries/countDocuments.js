@@ -1,14 +1,12 @@
-const {
-  addDeploymentIDToArrayOrObject,
-} = require("./helpers/addDeploymentIDToArrayOrObject");
+const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
+const { excludeDeleteIfNeedToQuery } = require('./helpers/excludeDeleteIfNeedToQuery');
 
 function countDocuments({ model, autoDeploymentID, ctx }) {
-  return function () {
-    const [_conditions, ...args] = arguments;
+  return function (_conditions, options, ...args) {
     let conditions = _conditions;
-    if (autoDeploymentID)
-      conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
-    return model.countDocuments(conditions, ...args);
+    if (autoDeploymentID) conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
+
+    return excludeDeleteIfNeedToQuery(model.countDocuments(conditions, options, ...args), options);
   };
 }
 

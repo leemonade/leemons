@@ -18,7 +18,7 @@ function create({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
+  return async function (toAdd, ...args) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -26,7 +26,6 @@ function create({
     });
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
-      const [toAdd, ...args] = arguments;
       let toCreate = toAdd;
       if (autoDeploymentID) toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
       if (autoLRN) toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx });

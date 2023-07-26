@@ -5,6 +5,7 @@ const {
   increaseTransactionFinishedIfNeed,
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
+const { updateMany } = require('./updateMany');
 
 function deleteMany({
   model,
@@ -15,7 +16,10 @@ function deleteMany({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
+  return async function (_conditions, options = {}) {
+    if (options.soft) {
+      return updateMany(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
+    }
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -23,15 +27,15 @@ function deleteMany({
     });
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
-      const [_conditions, ...args] = arguments;
       let conditions = _conditions;
       if (autoDeploymentID) {
         conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
       }
+
       let oldItems = [];
       if (!ignoreTransaction && ctx.meta.transactionID)
         oldItems = await model.find(conditions).lean();
-      const items = await model.deleteMany(conditions, ...args);
+      const items = await model.deleteMany(conditions, options);
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItems?.length) {
         await addTransactionState(ctx, {
