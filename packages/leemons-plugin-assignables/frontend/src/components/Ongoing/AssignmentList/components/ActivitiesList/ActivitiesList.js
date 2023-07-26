@@ -366,15 +366,14 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onSizeChange={setSize}
         onPageChange={setPage}
         selectable
-        onSelect={({ isBlocked, isEvaluable, dashboardURL }) => {
+        onSelect={({ isBlocked, dashboardURL }) => {
           if (isBlocked) {
             addErrorAlert(labels?.activitiesList?.blocked);
-          } else if (!isEvaluable) {
-            addInfoAlert(labels?.activitiesList?.nonEvaluable);
-          } else if (typeof dashboardURL === 'function') {
-            window.open(dashboardURL());
           } else {
-            window.open(dashboardURL);
+            const url = typeof dashboardURL === 'function' ? dashboardURL() : dashboardURL;
+            if (url) {
+              window.open(url);
+            }
           }
         }}
         labels={labels.pagination}

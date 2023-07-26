@@ -9,6 +9,7 @@ import { unflatten } from '@common';
 import { get } from 'lodash';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { addInfoAlert } from '@layout/alert';
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 
 function getStatus(assignation) {
@@ -182,7 +183,7 @@ function isFinished(assignation) {
   return finished;
 }
 
-function getDashboardURL(assignation) {
+function getDashboardURL(assignation, labels) {
   const { instance } = assignation;
   const {
     assignable: { roleDetails },
@@ -194,6 +195,11 @@ function getDashboardURL(assignation) {
     return roleDetails.studentDetailUrl
       .replace(':id', instance.id)
       .replace(':user', assignation.user);
+  }
+  if (!instance.requiresScoring && !instance.allowFeedback) {
+    addInfoAlert(labels?.activitiesList?.nonEvaluable);
+
+    return null;
   }
   return roleDetails.evaluationDetailUrl
     .replace(':id', instance.id)
@@ -209,15 +215,13 @@ export async function parseAssignationForStudentView(assignation, labels, option
   const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
 
   const isBlocked = blockingActivities.some((id) => !blockingActivitiesById[id].finished);
-  const finished = isFinished(assignation);
 
   return {
     ...commonData,
     isBlocked,
-    isEvaluable: !finished || instance.requiresScoring || instance.allowFeedback,
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
     messages: <UnreadMessages rooms={assignation.chatKeys} />,
-    dashboardURL: () => getDashboardURL(assignation),
+    dashboardURL: () => getDashboardURL(assignation, labels),
   };
 }
 

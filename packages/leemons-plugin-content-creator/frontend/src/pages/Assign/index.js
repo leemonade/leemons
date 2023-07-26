@@ -61,6 +61,7 @@ export default function Assign() {
       showMessageForStudents
       assignable={store.document}
       evaluationType="none"
+      evaluationTypes={['nonEvaluable']}
       buttonsComponent={
         <Stack fullWidth justifyContent="end">
           <Button loading={store.loading} type="submit">
