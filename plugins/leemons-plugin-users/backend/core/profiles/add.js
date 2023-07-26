@@ -45,8 +45,7 @@ async function add({ name, description, permissions, translations, indexable, sy
   // EN: We create the dataset for this profile to be able to add extra fields
   const platformLocale = await getDefaultLocale({ ctx });
 
-  // TODO MIGRAR DATASET
-  await leemons.getPlugin('dataset').services.dataset.addLocation({
+  await ctx.tx.call('dataset.dataset.addLocation', {
     name: {
       [platformLocale]: `profile:${profile.id}`,
     },
