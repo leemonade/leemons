@@ -30,11 +30,14 @@ async function updateOrganization({ ctx, ...body }) {
     ctx.tx.call('users.platform.setSquareLogo', { value: body.squareLogoUrl }),
     ctx.tx.call('users.platform.setEmailLogo', { value: body.emailLogoUrl }),
     ctx.tx.call('users.platform.setEmailWidthLogo', { value: body.emailWidthLogo }),
-    ctx.tx.call('users.users.updateEmail', { id: ctx.userSession.id, email: body.email }),
+    ctx.tx.call('users.users.updateEmail', { id: ctx.meta.userSession.id, email: body.email }),
   ];
   if (body.password) {
     promises.push(
-      ctx.tx.call('users.users.updatePassword', { id: ctx.userSession.id, password: body.password })
+      ctx.tx.call('users.users.updatePassword', {
+        id: ctx.meta.userSession.id,
+        password: body.password,
+      })
     );
   }
   const { h, s, l } = colord(body.mainColor).toHsl();

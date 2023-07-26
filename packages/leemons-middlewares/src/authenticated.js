@@ -5,11 +5,10 @@ module.exports =
   ({ continueEvenThoughYouAreNotLoggedIn } = {}) =>
   async (ctx) => {
     if (ctx.meta.userSession) {
-      ctx.userSession = ctx.meta.userSession;
+      return;
     }
     if (!ctx.meta.authorization) {
       if (continueEvenThoughYouAreNotLoggedIn) {
-        ctx.userSession = null;
         ctx.meta.userSession = null;
         return;
       }
@@ -26,7 +25,6 @@ module.exports =
           jwtToken: ctx.meta.authorization,
         });
         if (user) {
-          ctx.userSession = user;
           ctx.meta.userSession = user;
           return;
         }
@@ -46,13 +44,11 @@ module.exports =
         );
         if (user && userAgents.length) {
           user.userAgents = userAgents;
-          ctx.userSession = user;
           ctx.meta.userSession = user;
           return;
         }
       }
       if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
-        ctx.userSession = null;
         ctx.meta.userSession = null;
         return;
       }
@@ -60,7 +56,6 @@ module.exports =
     } catch (err) {
       ctx.logger.error(err);
       if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
-        ctx.userSession = null;
         ctx.meta.userSession = null;
         return;
       }
