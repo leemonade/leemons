@@ -65,13 +65,13 @@ async function resolveLocales({ locales, ctx }) {
   if (locales) {
     finalLocales = finalLocales.concat(locales);
   }
-  if (ctx.userSession) {
+  if (ctx.meta.userSession) {
     // User locale
-    if (ctx.userSession.locale) finalLocales.push(ctx.userSession.locale);
+    if (ctx.meta.userSession.locale) finalLocales.push(ctx.meta.userSession.locale);
     // Center locale
-    if (ctx.userSession.userAgents) {
+    if (ctx.meta.userSession.userAgents) {
       const centers = await ctx.tx.call('users.users.getUserAgentCenter', {
-        userAgent: ctx.userSession.userAgents,
+        userAgent: ctx.meta.userSession.userAgents,
       });
       _.forEach(centers, ({ locale }) => {
         finalLocales.push(locale);

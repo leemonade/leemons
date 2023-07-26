@@ -6,12 +6,12 @@ async function saveData({ value, ctx }) {
     locationName: 'user-data',
     pluginName: 'users',
     values: value,
-    userAgent: ctx.userSession.userAgents,
-    target: ctx.userSession.userAgents[0].id,
+    userAgent: ctx.meta.userSession.userAgents,
+    target: ctx.meta.userSession.userAgents[0].id,
   });
 
   await ctx.tx.db.UserAgent.updateOne(
-    { id: ctx.userSession.userAgents[0].id },
+    { id: ctx.meta.userSession.userAgents[0].id },
     { datasetIsGood: true }
   );
   return response;
@@ -19,7 +19,7 @@ async function saveData({ value, ctx }) {
 
 async function saveDataForUserAgentDatasets({ data, ctx }) {
   // ES: Comprobamos si las ids de los userAgents coinciden
-  if (!_.isEqual(_.map(ctx.userSession.userAgents, 'id'), _.map(data, 'userAgent'))) {
+  if (!_.isEqual(_.map(ctx.meta.userSession.userAgents, 'id'), _.map(data, 'userAgent'))) {
     throw new LeemonsError(ctx, { message: 'UserAgents ids do not match' });
   }
   return Promise.all(
@@ -29,8 +29,8 @@ async function saveDataForUserAgentDatasets({ data, ctx }) {
         ctx: {
           ...ctx,
           userSession: {
-            ...ctx.userSession,
-            userAgents: [_.find(ctx.userSession.userAgents, { id: d.userAgent })],
+            ...ctx.meta.userSession,
+            userAgents: [_.find(ctx.meta.userSession.userAgents, { id: d.userAgent })],
           },
         },
       })

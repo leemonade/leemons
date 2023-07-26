@@ -35,7 +35,7 @@ async function getOrganization({ ctx } = {}) {
       ? _.parseInt(v['platform-email-width-logo']?.value)
       : v['platform-email-width-logo']?.value,
     mainColor: v['platform-appearance-main-color']?.value || '#3B76CC',
-    email: ctx.userSession.email,
+    email: ctx.meta.userSession.email,
     contactPhone: v['platform-contact-phone']?.value,
     contactEmail: v['platform-contact-email']?.value,
     contactName: v['platform-contact-name']?.value,

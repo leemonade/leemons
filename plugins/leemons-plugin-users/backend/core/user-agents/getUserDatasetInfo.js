@@ -7,7 +7,7 @@ async function getUserDatasetInfo({ userId, ctx }) {
       {
         locationName: 'user-data',
         pluginName: 'users',
-        locale: ctx.userSession.locale,
+        locale: ctx.meta.userSession.locale,
       }
     );
     jsonSchema = compileJsonSchema;
@@ -16,7 +16,7 @@ async function getUserDatasetInfo({ userId, ctx }) {
   const value = await ctx.tx.call('dataset.dataset.getValues', {
     locationName: 'user-data',
     pluginName: 'users',
-    userAgent: ctx.userSession.userAgents,
+    userAgent: ctx.meta.userSession.userAgents,
     target: userId,
   });
 

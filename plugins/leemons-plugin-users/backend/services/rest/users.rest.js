@@ -15,7 +15,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const user = await detail({ userId: ctx.userSession.id, ctx });
+      const user = await detail({ userId: ctx.meta.userSession.id, ctx });
       return { status: 200, user };
     },
   },

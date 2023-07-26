@@ -3,7 +3,7 @@ async function setUserDatasetInfo({ userId, value, ctx }) {
     locationName: 'user-data',
     pluginName: 'users',
     values: value,
-    userAgent: ctx.userSession.userAgents,
+    userAgent: ctx.meta.userSession.userAgents,
     target: userId,
   });
 }
