@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
-const { isArray, forEach, uniq, map, uniqBy, groupBy } = require('lodash');
+const { isArray, forEach, uniq, map, uniqBy } = require('lodash');
 const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
-const { table } = require('../tables');
 
 /**
  * Find the users with the provided permissions

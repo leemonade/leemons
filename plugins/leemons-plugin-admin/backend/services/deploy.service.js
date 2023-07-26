@@ -7,9 +7,9 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
-const { addLocales } = require('leemons-multilanguage');
+const { addLocalesDeploy } = require('leemons-multilanguage');
 const { hasKey, setKey } = require('leemons-mongodb-helpers');
-const { widgets } = require('../config/constants');
+const { widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -24,8 +24,9 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async function (ctx) {
+      // Widgets
       if (
-        !hasKey(ctx.db.KeyValue, `widgets-zones`) ||
+        !(await hasKey(ctx.db.KeyValue, `widgets-zones`)) ||
         process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === 'true'
       ) {
         await Promise.allSettled(
@@ -42,7 +43,7 @@ module.exports = () => ({
       ctx.tx.emit('init-widget-zones');
 
       if (
-        !hasKey(ctx.db.KeyValue, `widgets-items-zones`) ||
+        !(await hasKey(ctx.db.KeyValue, `widgets-items-zones`)) ||
         process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === 'true'
       ) {
         await Promise.allSettled(
@@ -59,21 +60,22 @@ module.exports = () => ({
         );
         await setKey(ctx.db.KeyValue, `widgets-items-zones`);
       }
-
       ctx.tx.emit('init-widget-items');
+
+      // Permissions
+      if (!(await hasKey(ctx.db.KeyValue, `permissions`))) {
+        await ctx.call('users.permissions.addMany', { data: permissions.permissions });
+        await setKey(ctx.db.KeyValue, `permissions`);
+      }
+      ctx.emit('init-permissions');
     },
     'multilanguage.newLocale': async function (ctx) {
-      if (
-        !hasKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`) ||
-        process.env.RELOAD_I18N_ON_EVERY_INSTALL === 'true'
-      ) {
-        await addLocales({
-          ctx,
-          locales: ctx.params.code,
-          i18nPath: path.resolve(__dirname, `../i18n/`),
-        });
-        await setKey(ctx.db.KeyValue, `locale-${ctx.params.code}-configured`);
-      }
+      await addLocalesDeploy({
+        keyValueModel: ctx.db.KeyValue,
+        locale: ctx.params.code,
+        i18nPath: path.resolve(__dirname, `../i18n/`),
+        ctx,
+      });
       return null;
     },
   },

@@ -9,6 +9,7 @@ const {
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const { getLRNConfig } = require('./helpers/getLRNConfig');
+const { excludeDeleteIfNeedToQuery } = require('./helpers/excludeDeleteIfNeedToQuery');
 
 function findOneAndUpdate({
   model,
@@ -20,7 +21,7 @@ function findOneAndUpdate({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (_conditions, _update, ...args) {
+  return async function (_conditions, _update, _options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -29,7 +30,14 @@ function findOneAndUpdate({
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
       let conditions = _conditions;
+      let options = _options;
       let update = _update;
+
+      if (!options) options = {};
+      // eslint-disable-next-line no-prototype-builtins
+      if (!options.hasOwnProperty('new')) {
+        options.new = true;
+      }
       if (autoDeploymentID) {
         conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
@@ -39,8 +47,8 @@ function findOneAndUpdate({
       let rollbackAction = 'updateMany';
       // Si es upsert forzamos new a true para que siempre devuelva el elemento/creado actualizado
       // por que si no existe y se crea necesitamos saber que id es la que se a creado
-      if (args[0]?.upsert) {
-        args[0].new = true;
+      if (options?.upsert) {
+        options.new = true;
         if (autoLRN) {
           if (!_.isObject(update.$setOnInsert)) {
             update.$setOnInsert = {};
@@ -51,17 +59,20 @@ function findOneAndUpdate({
           });
         }
       }
-      if (!ignoreTransaction && ctx.meta.transactionID && (args[0]?.new || args[0]?.upsert)) {
-        oldItem = await model.findOne(conditions).lean();
+      if (!ignoreTransaction && ctx.meta.transactionID && (options?.new || options?.upsert)) {
+        oldItem = await excludeDeleteIfNeedToQuery(model.findOne(conditions).lean(), options);
       }
-      const item = await model.findOneAndUpdate(conditions, update, ...args);
+      const item = await excludeDeleteIfNeedToQuery(
+        model.findOneAndUpdate(conditions, update, options),
+        options
+      );
       // Si es upsert y no encontramos elemento previo la accion del rollback deberia de ser borrar lo que se cree nuevo
-      if (!oldItem && args[0]?.upsert) {
+      if (!oldItem && options?.upsert) {
         rollbackAction = 'removeMany';
         oldItem = item;
       }
       // Si upsert es false y new es false como nos devuelve el item antiguo lo almacenamos para el rollback
-      if (!args[0]?.new) {
+      if (!options?.new) {
         oldItem = item;
       }
 

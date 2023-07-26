@@ -4,9 +4,13 @@ const { LeemonsError } = require('leemons-error');
 module.exports =
   ({ continueEvenThoughYouAreNotLoggedIn } = {}) =>
   async (ctx) => {
+    if (ctx.meta.userSession) {
+      ctx.userSession = ctx.meta.userSession;
+    }
     if (!ctx.meta.authorization) {
       if (continueEvenThoughYouAreNotLoggedIn) {
         ctx.userSession = null;
+        ctx.meta.userSession = null;
         return;
       }
 
@@ -23,6 +27,7 @@ module.exports =
         });
         if (user) {
           ctx.userSession = user;
+          ctx.meta.userSession = user;
           return;
         }
       } else {
@@ -42,11 +47,13 @@ module.exports =
         if (user && userAgents.length) {
           user.userAgents = userAgents;
           ctx.userSession = user;
+          ctx.meta.userSession = user;
           return;
         }
       }
       if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
         ctx.userSession = null;
+        ctx.meta.userSession = null;
         return;
       }
       throw new LeemonsError(ctx, { httpStatusCode: 401, message: 'Authorization required' });
@@ -54,6 +61,7 @@ module.exports =
       ctx.logger.error(err);
       if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
         ctx.userSession = null;
+        ctx.meta.userSession = null;
         return;
       }
       throw new LeemonsError(ctx, { httpStatusCode: 401, message: 'Authorization required' });

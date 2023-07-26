@@ -1,4 +1,4 @@
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { exist } = require('./exist');
 
 /**
@@ -10,37 +10,25 @@ const { exist } = require('./exist');
  * @param {any} _transacting - DB transaction
  * @return {Promise<boolean>}
  * */
-async function add(user, profile, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      if (await exist(user, profile, { transacting }))
-        throw new Error('The user profile already exists');
+async function add({ user, profile, ctx }) {
+  if (await exist({ user, profile, ctx }))
+    throw new LeemonsError(ctx, { message: 'The user profile already exists' });
 
-      let userProfile = await table.userProfile.create(
-        {
-          user,
-          profile,
-        },
-        { transacting }
-      );
+  const userProfile = await ctx.tx.db.UserProfile.create({
+    user,
+    profile,
+  });
 
-      const role = await leemons.plugin.services.roles.add(
-        {
-          name: `user-profile:${userProfile.id}:role`,
-          type: leemons.plugin.prefixPN('user-profile-role'),
-          permissions: [],
-        },
-        { transacting }
-      );
+  const role = await ctx.tx.call('users.roles.add', {
+    name: `user-profile:${userProfile.id}:role`,
+    type: ctx.prefixPN('user-profile-role'),
+    permissions: [],
+  });
 
-      return await table.userProfile.update(
-        { id: userProfile.id },
-        { role: role.id },
-        { transacting }
-      );
-    },
-    table.userProfile,
-    _transacting
+  return ctx.tx.db.UserProfile.findOneAndUpdate(
+    { id: userProfile.id },
+    { role: role.id },
+    { new: true }
   );
 }
 

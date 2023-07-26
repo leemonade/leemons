@@ -12,7 +12,7 @@ const { add } = require('./add');
  * @return {Promise<ManyResponse>} Created actions
  * */
 async function addMany({ data, ctx }) {
-  const response = await Promise.allSettled(_.map(data, (d) => add({ data: d, ctx })));
+  const response = await Promise.allSettled(_.map(data, (d) => add({ ...d, ctx })));
   return settledResponseToManyResponse(response);
 }
 

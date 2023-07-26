@@ -9,6 +9,7 @@ const {
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const { getLRNConfig } = require('./helpers/getLRNConfig');
+const { excludeDeleteIfNeedToQuery } = require('./helpers/excludeDeleteIfNeedToQuery');
 
 function updateOne({
   model,
@@ -20,7 +21,7 @@ function updateOne({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
+  return async function (_conditions, _update, options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -28,7 +29,6 @@ function updateOne({
     });
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
-      const [_conditions, _update, ...args] = arguments;
       let conditions = _conditions;
       let update = _update;
       if (autoDeploymentID) {
@@ -37,7 +37,7 @@ function updateOne({
       }
       let oldItem = null;
 
-      if (args[0]?.upsert) {
+      if (options?.upsert) {
         if (autoLRN) {
           if (!_.isObject(update.$setOnInsert)) {
             update.$setOnInsert = {};
@@ -50,8 +50,11 @@ function updateOne({
       }
 
       if (!ignoreTransaction && ctx.meta.transactionID)
-        oldItem = await model.findOne(conditions).lean();
-      const item = await model.updateOne(conditions, update, ...args);
+        oldItem = await excludeDeleteIfNeedToQuery(model.findOne(conditions).lean(), options);
+      const item = await excludeDeleteIfNeedToQuery(
+        model.updateOne(conditions, update, options),
+        options
+      );
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx, {

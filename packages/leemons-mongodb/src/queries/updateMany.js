@@ -9,6 +9,7 @@ const {
 } = require('./helpers/increaseTransactionFinishedIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const { getLRNConfig } = require('./helpers/getLRNConfig');
+const { excludeDeleteIfNeedToQuery } = require('./helpers/excludeDeleteIfNeedToQuery');
 
 function updateMany({
   model,
@@ -20,7 +21,7 @@ function updateMany({
   ignoreTransaction,
   ctx,
 }) {
-  return async function () {
+  return async function (_conditions, _update, options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -28,7 +29,6 @@ function updateMany({
     });
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
-      const [_conditions, _update, ...args] = arguments;
       let conditions = _conditions;
       let update = _update;
       if (autoDeploymentID) {
@@ -37,7 +37,7 @@ function updateMany({
       }
       let oldItems = [];
 
-      if (args[0]?.upsert) {
+      if (options?.upsert) {
         if (autoLRN) {
           if (!_.isObject(update.$setOnInsert)) {
             update.$setOnInsert = {};
@@ -50,8 +50,11 @@ function updateMany({
       }
 
       if (!ignoreTransaction && ctx.meta.transactionID)
-        oldItems = await model.find(conditions).lean();
-      const items = await model.updateMany(conditions, update, ...args);
+        oldItems = await excludeDeleteIfNeedToQuery(model.find(conditions).lean(), options);
+      const items = await excludeDeleteIfNeedToQuery(
+        model.updateMany(conditions, update, options),
+        options
+      );
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItems?.length) {
         await addTransactionState(ctx, {

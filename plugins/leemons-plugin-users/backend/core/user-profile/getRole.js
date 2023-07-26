@@ -1,13 +1,7 @@
-const { table } = require('../tables');
-
-async function getRole(user, profile, { transacting } = {}) {
-  const userProfile = await table.userProfile.findOne(
-    { user, profile },
-    {
-      columns: ['role'],
-      transacting,
-    }
-  );
+async function getRole({ user, profile, ctx }) {
+  const userProfile = await ctx.tx.db.UserProfile.findOne({ user, profile })
+    .select(['role'])
+    .lean();
   if (userProfile) return userProfile.role;
   return null;
 }

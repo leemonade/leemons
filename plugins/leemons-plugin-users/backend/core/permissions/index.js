@@ -1,6 +1,5 @@
 const { add } = require('./add');
 const { list } = require('./list');
-const { init } = require('./init');
 const { exist } = require('./exist');
 const { update } = require('./update');
 const { remove } = require('./remove');
@@ -29,7 +28,6 @@ const {
 
 module.exports = {
   add,
-  init,
   list,
   exist,
   update,

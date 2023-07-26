@@ -1,3 +1,5 @@
+const { LeemonsError } = require('leemons-error');
+
 /**
  * Create the action only if the actionName does not already exist, if it does, the existing one is returned.
  * @public
@@ -9,7 +11,8 @@
  * */
 async function add({ ctx, ...data }) {
   const action = await ctx.tx.db.Actions.countDocuments({ actionName: data.actionName });
-  if (action) throw new Error(`Action '${data.actionName}' already exists`);
+  if (action)
+    throw new LeemonsError(ctx, { message: `Action '${data.actionName}' already exists` });
   const values = await Promise.all(
     ctx.tx.db.Actions.create({
       actionName: data.actionName,

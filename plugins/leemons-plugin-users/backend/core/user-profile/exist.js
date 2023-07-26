@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Return if exist user profile
  * @public
@@ -9,8 +7,8 @@ const { table } = require('../tables');
  * @param {any} transacting - DB transaction
  * @return {Promise<boolean>}
  * */
-async function exist(user, profile, { transacting } = {}) {
-  const count = await table.userProfile.count({ user, profile }, { transacting });
+async function exist({ user, profile, ctx }) {
+  const count = await ctx.tx.db.UserProfile.countDocuments({ user, profile });
   return !!count;
 }
 
