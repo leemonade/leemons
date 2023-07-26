@@ -26,7 +26,7 @@ module.exports = {
     // saveBySysName: profiles.saveBySysName,
     saveBySysName: {
       handler(ctx) {
-        return saveBySysName({ ...ctx.params });
+        return saveBySysName({ ...ctx.params, ctx });
       },
     },
   },
