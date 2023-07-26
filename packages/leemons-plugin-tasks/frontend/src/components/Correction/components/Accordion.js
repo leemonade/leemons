@@ -144,15 +144,6 @@ export default function Accordion({
         }}
         room={`plugins.assignables.subject|${subject}.assignation|${assignationId}.userAgent|${user}`}
       />
-      {store.room ? (
-        <ChatButton
-          room={store.room}
-          onClick={() => {
-            store.chatOpened = true;
-            render();
-          }}
-        />
-      ) : null}
     </>
   );
 

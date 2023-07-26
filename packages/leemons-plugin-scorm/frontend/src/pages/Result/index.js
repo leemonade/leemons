@@ -379,15 +379,6 @@ export default function Result() {
             }}
             room={`plugins.assignables.subject|${instance?.subjects?.[0]?.subject}.assignation|${assignation.id}.userAgent|${user}`}
           />
-          {room ? (
-            <ChatButton
-              room={room}
-              onClick={() => {
-                setChatOpened(true);
-                hooks.fireEvent('chat:onRoomOpened', room);
-              }}
-            />
-          ) : null}
         </>
       )}
     </ContextContainer>
