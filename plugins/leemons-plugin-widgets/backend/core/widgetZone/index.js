@@ -1,13 +1,15 @@
-const { get } = require('./get');
 const { add } = require('./add');
 const { exists } = require('./exists');
-const { update } = require('./update');
+const { get } = require('./get');
 const { remove } = require('./remove');
+const { set } = require('./set');
+const { update } = require('./update');
 
 module.exports = {
-  get,
   add,
   exists,
-  update,
+  get,
   remove,
+  set,
+  update,
 };

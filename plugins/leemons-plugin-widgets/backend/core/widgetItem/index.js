@@ -1,15 +1,17 @@
 const { add } = require('./add');
 const { exists } = require('./exists');
-const { update } = require('./update');
 const { remove } = require('./remove');
+const { set } = require('./set');
+const { update } = require('./update');
 const { updateOrders } = require('./updateOrders');
 const { updateProfiles } = require('./updateProfiles');
 
 module.exports = {
   add,
   exists,
-  update,
   remove,
+  set,
+  update,
   updateOrders,
   updateProfiles,
 };

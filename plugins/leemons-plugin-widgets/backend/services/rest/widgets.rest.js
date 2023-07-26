@@ -17,7 +17,7 @@ module.exports = {
     async handler(ctx) {
       const zone = await get({
         key: ctx.params.key,
-        userSession: ctx.userSession,
+        userSession: ctx.meta.userSession,
         ctx,
       });
       return { status: 200, zone };

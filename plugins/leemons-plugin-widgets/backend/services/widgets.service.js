@@ -10,6 +10,8 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/widgets.rest');
+const zoneServices = require('../core/widgetZone');
+const itemServices = require('../core/widgetItem');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -25,6 +27,74 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    // ---- WIDGET ZONES ----
+    getZone: {
+      handler(ctx) {
+        return zoneServices.get({ ...ctx.params, ctx });
+      },
+    },
+    addZone: {
+      handler(ctx) {
+        return zoneServices.add({ ...ctx.params, ctx });
+      },
+    },
+    existsZone: {
+      handler(ctx) {
+        return zoneServices.exists({ ...ctx.params, ctx });
+      },
+    },
+    updateZone: {
+      handler(ctx) {
+        return zoneServices.update({ ...ctx.params, ctx });
+      },
+    },
+    deleteZone: {
+      handler(ctx) {
+        return zoneServices.remove({ ...ctx.params, ctx });
+      },
+    },
+    setZone: {
+      handler(ctx) {
+        return zoneServices.set({ ...ctx.params, ctx });
+      },
+    },
+
+    // ---- WIDGET ITEMS ----
+    setItemToZone: {
+      handler(ctx) {
+        return itemServices.set({ ...ctx.params, ctx });
+      },
+    },
+    addItemToZone: {
+      handler(ctx) {
+        return itemServices.add({ ...ctx.params, ctx });
+      },
+    },
+    existsItemInZone: {
+      handler(ctx) {
+        return itemServices.exists({ ...ctx.params, ctx });
+      },
+    },
+    updateItemInZone: {
+      handler(ctx) {
+        return itemServices.update({ ...ctx.params, ctx });
+      },
+    },
+    deleteItemInZone: {
+      handler(ctx) {
+        return itemServices.remove({ ...ctx.params, ctx });
+      },
+    },
+    updateOrderItemsInZone: {
+      handler(ctx) {
+        return itemServices.updateOrders({ ...ctx.params, ctx });
+      },
+    },
+    updateProfileItemsInZone: {
+      handler(ctx) {
+        return itemServices.updateProfiles({ ...ctx.params, ctx });
+      },
+    },
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);

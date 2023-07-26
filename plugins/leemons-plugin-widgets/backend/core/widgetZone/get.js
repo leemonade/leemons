@@ -1,23 +1,24 @@
 const _ = require('lodash');
 
-async function get({ key, userSession, ctx }) {
+async function get({ key, ctx }) {
+  const { userSession } = ctx.meta;
   const [zone, items] = await Promise.all([
-    ctx.tx.db.WidgetZone.findOne({ key }),
-    ctx.tx.db.widgetItem.find({ zoneKey: key }),
+    ctx.tx.db.WidgetZone.findOne({ key }).lean(),
+    ctx.tx.db.WidgetItem.find({ zoneKey: key }).lean(),
   ]);
 
   let widgetItems = _.orderBy(items, ['order'], ['asc']);
 
   if (userSession) {
     const [userAgents, itemProfiles] = await Promise.all([
-      ctx.tx.call('users.getUserAgentsInfo', {
+      ctx.tx.call('users.users.getUserAgentsInfo', {
         userAgentIds: _.map(userSession.userAgents),
         userColumns: ['id'],
         withProfile: true,
       }),
       ctx.tx.db.WidgetItemProfile.find({
         zoneKey: key,
-      }),
+      }).lean(),
     ]);
     const profiles = _.uniq(_.map(userAgents, (userAgent) => userAgent.profile?.id));
     const profilesByItemKey = {};
