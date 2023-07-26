@@ -25,9 +25,8 @@ const schema = new mongoose.Schema(
       required: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
       // ref: 'users_Roles',
-      required: true,
+      type: String,
     },
     indexable: {
       type: Boolean,

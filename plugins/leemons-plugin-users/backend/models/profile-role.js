@@ -14,13 +14,13 @@ const schema = new mongoose.Schema(
       index: true,
     },
     profile: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Profiles',
+      type: String,
+      // ref: 'users_Profiles',
       required: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Roles',
+      type: String,
+      // ref: 'users_Roles',
       required: true,
     },
   },
