@@ -16,7 +16,7 @@ function getScormGrade({ state, numberOfQuestions }) {
 
     return { raw, min, max };
   }
-  if (Object.keys(state?.cmi?.interactions)?.length) {
+  if (state?.cmi?.interactions && Object.keys(state.cmi.interactions)?.length) {
     const interactions = toArray(state?.cmi?.interactions);
     const questionsLength = numberOfQuestions ?? uniqBy(interactions, 'id')?.length;
     const attemptsUsed = Math.floor(interactions.length / questionsLength);

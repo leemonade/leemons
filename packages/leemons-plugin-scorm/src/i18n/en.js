@@ -97,19 +97,22 @@ module.exports = {
     markAsFinish: 'Mark as finished',
     nextActivity: 'Next activity',
 
-    completionModal: {
-      title: 'Activity finished',
-      description: 'Your results have been successfully submitted',
-      results: 'See results',
-      module: 'Go to module',
-      ongoing: 'Ongoing activities',
-    },
-    incompleteAttemptModal: {
-      title: 'CAUTION: pending tasks',
+    modal: {
+      completedTitle: 'Activity Completed',
+      unCompletedTitle: 'Remaining content to review',
+      title: 'Important Information',
+
+      noProgressDescription:
+        "<p><b>We couldn't verify the % of progress for this activity.</b></p><p><b>If you believe this is an error, please contact the program responsible person.</b></p><p>While the activity remains open, you can revisit this content from the Ongoing Activities section.</p>",
       description:
-        'You have not completed all the tasks included in this activity. Please review your progress before marking as completed.',
-      finish: 'Finish anyway',
-      review: 'Review activity',
+        '<p>This activity is designed to measure the percentage of progress achieved.</p><p><b>You have reviewed a {{progress}}% of the total content.</b></p><p>While the activity remains open, you can revisit this content from the Ongoing Activities section.</p>',
+
+      nextActivity: 'Next Activity',
+      goToModule: 'Go to Module',
+      finish: 'Finish',
+      finishAnyway: 'Finish Anyway',
+
+      cancel: 'Back to Activity',
     },
   },
   scormCorrection: {

@@ -46,7 +46,9 @@ export function ScormRender({ marginTop, scormPackage, state }) {
       <iframe
         title="scorm"
         src={`${leemons.apiUrl}/api/scorm/public/index.html`}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', border: 'none' }}
+        scrolling="no"
+        frameBorder={0}
       />
     </Box>
   );

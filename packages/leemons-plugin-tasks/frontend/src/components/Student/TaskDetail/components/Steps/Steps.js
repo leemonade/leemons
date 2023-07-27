@@ -236,7 +236,7 @@ export function useUpdateTimestamps(mutateAsync, assignation) {
         }
       }
     },
-    [assignation?.id, mutateAsync]
+    [assignation?.id, assignation.instance, mutateAsync]
   );
 }
 

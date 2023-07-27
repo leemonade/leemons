@@ -139,7 +139,7 @@ export function parseDeadline(isTeacher, obj, labels) {
         secondary = labels?.submission;
         dateToShow = deadline.toDate();
       }
-    } else if (status === 'submitted') {
+    } else if (status === 'submitted' || status === 'ended') {
       main = labels?.submitted;
       if (submission.isValid()) {
         secondary = labels?.submitted;

@@ -91,23 +91,16 @@ async function initEmails() {
 }
 
 function initMenuBuilder(isInstalled) {
-  if (!isInstalled) {
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
-      async () => {
-        const [mainItem, ...items] = menuItems;
-        await addMenuItems(mainItem);
-        leemons.events.emit('init-menu');
-        await addMenuItems(items);
-        leemons.events.emit('init-submenu');
-      }
-    );
-  } else {
-    leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
+  leemons.events.once(
+    ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
+    async () => {
+      const [mainItem, ...items] = menuItems;
+      await addMenuItems(mainItem);
       leemons.events.emit('init-menu');
+      await addMenuItems(items);
       leemons.events.emit('init-submenu');
-    });
-  }
+    }
+  );
 }
 
 function initPermissions(isInstalled) {

@@ -340,7 +340,7 @@ export default function Detail() {
                       />
                     </Box>
                     <Box>
-                      <Controller
+                      {/* <Controller
                         control={form.control}
                         name="gradable"
                         shouldUnregister
@@ -382,7 +382,7 @@ export default function Detail() {
                             )}
                           </>
                         )}
-                      />
+                      /> */}
                     </Box>
                   </ContextContainer>
                 </AssetFormInput>

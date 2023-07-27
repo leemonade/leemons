@@ -99,19 +99,22 @@ module.exports = {
     markAsFinish: 'Marcar como finalizado',
     nextActivity: 'Siguiente actividad',
 
-    completionModal: {
-      title: 'Actividad finalizada',
-      description: 'Tus resultados han sido entregados con éxito',
-      results: 'Consultar resultados',
-      module: 'Ir al módulo',
-      ongoing: 'Actividades pendientes',
-    },
-    incompleteAttemptModal: {
-      title: 'ATENCIÓN: tareas pendientes',
+    modal: {
+      completedTitle: 'Actividad completada',
+      unCompletedTitle: 'Falta contenido por revisar',
+      title: 'Información importante',
+
+      noProgressDescription:
+        '<p><b>No hemos podido verificar el % de progreso de esta actividad.</b></p><p><b>Si crees que es un error, ponte en contacto con la persona responsable del programa.</b></p><p>Mientras la actividad continue abierta, puedes volver a consultar este contenido desde la sección de actividades en curso.</p>',
       description:
-        'No has finalizado todas las tareas incluidas en esta actividad. Por favor, revisa tu progreso antes de marcar como finalizado.',
-      finish: 'Finalizar de todas formas',
-      review: 'Revisar actividad',
+        '<p>Esta actividad está diseñada para medir el porcentaje de progreso obtenido.</p><p><b>Has revisado el {{progress}}% del contenido total.</b></p><p>Mientras la actividad continue abierta, puedes volver a consultar este contenido desde la sección de actividades en curso.</p>',
+
+      nextActivity: 'Siguiente actividad',
+      goToModule: 'Ir al módulo',
+      finish: 'Finalizar',
+      finishAnyway: 'Finalizar de todas formas',
+
+      cancel: 'Volver a la actividad',
     },
   },
   scormCorrection: {

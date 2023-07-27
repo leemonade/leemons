@@ -267,7 +267,10 @@ const ListAssetPage = () => {
     props.searchInProvider = false;
   }
 
-  if (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') {
+  if (
+    (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') &&
+    category?.key !== 'assignables.scorm'
+  ) {
     return (
       <Tabs
         panelColor="solid"

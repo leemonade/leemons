@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { Box, LoadingOverlay, Button, createStyles } from '@bubbles-ui/components';
+import { Box, LoadingOverlay, Button, createStyles, HtmlText } from '@bubbles-ui/components';
 import { ActivityContainer } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert } from '@layout/alert';
@@ -16,15 +16,24 @@ import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssign
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import { useLayout } from '@layout/context';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import { ScormRender } from '@scorm/components/ScormRender';
-import { useScorm } from '../../hooks/useScorm';
+import getScormProgress from '@scorm/helpers/getScormProgress';
+import { useScorm as useScormEvents } from '../../hooks/useScorm';
 
-function onSetValue({ instance, user, commit, LatestCommit }) {
+function onSetValue({ instance, user, commit, LatestCommit, setProgress }) {
+  const isNew = !isEqual(LatestCommit.current?.cmi, commit?.cmi);
+
+  if (!isNew) {
+    return;
+  }
+
   if (!isEmpty(commit)) {
     LatestCommit.current = { ...commit, leemonsCommitDate: new Date() };
   }
+
+  setProgress(getScormProgress({ state: LatestCommit.current, ensurePercentage: false }));
 
   updateStatus({ instance, user, state: commit }).catch((e) => addErrorAlert(e.message));
 }
@@ -92,70 +101,64 @@ const useViewStyles = createStyles((theme) => {
   };
 });
 
-function useOnScormComplete({
-  updateTimestamps,
-  nextActivityUrl,
-  moduleId,
-  id,
-  user,
-  LatestCommit,
-}) {
+function useOnScormComplete({ updateTimestamps, nextActivityUrl, moduleId, LatestCommit }) {
   const [t] = useTranslateLoader(prefixPN('scormView'));
   const { openConfirmationModal } = useLayout();
   const history = useHistory();
 
-  const onCompletedAttempt = async () => {
+  const showSubmissionModal = async (progress) => {
     updateTimestamps('end');
 
-    if (!nextActivityUrl) {
-      openConfirmationModal({
-        title: t('completionModal.title'),
-        description: t('completionModal.description'),
-        labels: {
-          cancel: moduleId ? t('completionModal.module') : t('completionModal.ongoing'),
-          confirm: t('completionModal.results'),
-        },
-        onConfirm: async () => history.push(`/private/scorm/result/${id}/${user}`),
-        onCancel: async () =>
-          moduleId
-            ? history.push(`/private/learning-paths/modules/dashboard/${moduleId}`)
-            : history.push('/private/assignables/ongoing'),
-      })();
-    } else {
-      openConfirmationModal({
-        title: t('completionModal.title'),
-        description: t('completionModal.description'),
-        labels: {
-          cancel: t('completionModal.results'),
-          confirm: t('nextActivity'),
-        },
-        onCancel: async () => history.push(`/private/scorm/result/${id}/${user}`),
-        onConfirm: async () => history.push(nextActivityUrl),
-      })();
-    }
-  };
+    const labels = {
+      description:
+        progress === null
+          ? t('modal.noProgressDescription')
+          : t('modal.description')?.replace('{{progress}}', progress),
+      cancel: t('modal.cancel'),
+    };
 
-  const onIncompletedAttempt = () => {
+    if (progress === 100) {
+      labels.title = t('modal.completedTitle');
+    } else if (progress < 100) {
+      labels.title = t('modal.uncompletedTitle');
+    } else {
+      labels.title = t('modal.title');
+    }
+
+    if (nextActivityUrl) {
+      labels.confirm = t('modal.nextActivity');
+    } else if (moduleId) {
+      labels.confirm = t('modal.goToModule');
+    } else if (progress === 100) {
+      labels.confirm = t('modal.finish');
+    } else {
+      labels.confirm = t('modal.finishAnyway');
+    }
+
     openConfirmationModal({
-      title: t('incompleteAttemptModal.title'),
-      description: t('incompleteAttemptModal.description'),
+      title: labels.title,
+      description: <HtmlText>{labels.description}</HtmlText>,
       labels: {
-        cancel: t('incompleteAttemptModal.finish'),
-        confirm: t('incompleteAttemptModal.review'),
+        cancel: labels.cancel,
+        confirm: labels.confirm,
       },
-      onCancel: () => setImmediate(onCompletedAttempt),
+
+      onConfirm: () => {
+        if (nextActivityUrl) {
+          history.push(nextActivityUrl);
+        } else if (moduleId) {
+          history.push(`/private/learning-paths/modules/dashboard/${moduleId}`);
+        } else {
+          history.push('/private/assignables/ongoing');
+        }
+      },
     })();
   };
 
   const onComplete = () => {
-    if (
-      LatestCommit?.current?.cmi?.completion_status === 'completed' ||
-      ['completed', 'failed', 'passed'].includes(LatestCommit?.current?.cmi?.core?.lesson_status)
-    ) {
-      onCompletedAttempt();
-    } else {
-      onIncompletedAttempt();
-    }
+    const progress = getScormProgress({ state: LatestCommit, ensurePercentage: false });
+
+    showSubmissionModal(progress);
   };
 
   return { onComplete };
@@ -166,6 +169,7 @@ export default function View() {
   const locale = useLocale();
   const { classes } = useViewStyles();
   const LatestCommit = useRef({});
+  const [progress, setProgress] = useState(null);
 
   // ----------------------------------------------------------------------
   // Data
@@ -185,12 +189,12 @@ export default function View() {
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
 
-  useScorm({
+  useScormEvents({
     onInitialize: () => {
       updateTimestamps('open');
       updateTimestamps('start');
     },
-    onSetValue: (commit) => onSetValue({ instance: id, user, commit, LatestCommit }),
+    onSetValue: (commit) => onSetValue({ instance: id, user, commit, LatestCommit, setProgress }),
   });
 
   useEffect(() => {
@@ -225,7 +229,7 @@ export default function View() {
     >
       <ActivityContainer
         header={{
-          title: scormPackage?.asset?.name,
+          title: `${scormPackage?.asset?.name} ${progress !== null ? `(${progress}%)` : ''}`,
           subtitle: classData?.name,
           icon: classData?.icon,
           color: classData?.color,

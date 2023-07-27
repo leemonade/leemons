@@ -73,6 +73,7 @@ const menuItems = [
       order: 202,
       iconSvg: '/public/assignables/menu-icon.svg',
       activeIconSvg: '/public/assignables/menu-icon.svg',
+      url: '/private/assignables/ongoing',
       label: {
         en: 'Ongoing Activities',
         es: 'Actividades en curso',
@@ -86,6 +87,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'activities.ongoing',
       order: 1,
