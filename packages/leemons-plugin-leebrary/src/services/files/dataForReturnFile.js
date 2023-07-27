@@ -2,7 +2,10 @@ const fs = require('fs');
 const mime = require('mime-types');
 const { getById } = require('./getById');
 
-async function dataForReturnFile(id, { path = '', transacting, start = -1, end = -1 } = {}) {
+async function dataForReturnFile(
+  id,
+  { path = '', transacting, start = -1, end = -1, forceStream = true } = {}
+) {
   const file = await getById(id, { transacting });
 
   if (!file) {
@@ -57,6 +60,7 @@ async function dataForReturnFile(id, { path = '', transacting, start = -1, end =
           transacting,
           start: bytesStart,
           end: bytesEnd,
+          forceStream,
         }
       ),
     };

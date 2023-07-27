@@ -48,6 +48,7 @@ async function getFileContent(ctx) {
     path: ctx.params[0],
     start: bytesStart,
     end: bytesEnd,
+    forceStream: false,
   });
 
   if (isString(readStream) && readStream.indexOf('http') === 0) {
@@ -132,7 +133,9 @@ async function getCoverFileContent(ctx) {
     );
   }
   if (asset.cover) {
-    const { readStream, fileName, contentType } = await fileService.dataForReturnFile(asset.cover);
+    const { readStream, fileName, contentType } = await fileService.dataForReturnFile(asset.cover, {
+      forceStream: false,
+    });
 
     if (isString(readStream) && readStream.indexOf('http') === 0) {
       // Redirect to external URL
