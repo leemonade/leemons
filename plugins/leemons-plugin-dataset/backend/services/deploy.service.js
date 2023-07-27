@@ -8,7 +8,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addPermissionsDeploy } = require('leemons-permissions');
 const { getServiceModels } = require('../models');
 const { defaultPermissions } = require('../config/constants');
 
@@ -24,11 +24,11 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async function (ctx) {
-      if (!(await hasKey(ctx.db.KeyValue, `permissions`))) {
-        await ctx.call('users.permissions.addMany', defaultPermissions);
-        await setKey(ctx.db.KeyValue, `permissions`);
-      }
-      ctx.emit('init-permissions');
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: defaultPermissions,
+        ctx,
+      });
     },
     'multilanguage.newLocale': async function newLocaleEvent(ctx) {
       await addLocalesDeploy({

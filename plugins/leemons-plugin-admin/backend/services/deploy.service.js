@@ -8,7 +8,8 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
+const { addPermissionsDeploy } = require('leemons-permissions');
 const { widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -25,53 +26,19 @@ module.exports = () => ({
   events: {
     'deployment-manager.install': async function (ctx) {
       // Widgets
-      if (
-        !(await hasKey(ctx.db.KeyValue, `widgets-zones`)) ||
-        process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === 'true'
-      ) {
-        await Promise.allSettled(
-          _.map(widgets.zones, (config) =>
-            ctx.tx.call('widgets.widgets.setZone', {
-              key: config.key,
-              name: config.name,
-              description: config.description,
-            })
-          )
-        );
-        await setKey(ctx.db.KeyValue, `widgets-zones`);
-      }
-      ctx.tx.emit('init-widget-zones');
-
-      if (
-        !(await hasKey(ctx.db.KeyValue, `widgets-items-zones`)) ||
-        process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === 'true'
-      ) {
-        await Promise.allSettled(
-          _.map(widgets.items, (config) =>
-            ctx.tx.call('widgets.widgets.setItemToZone', {
-              zoneKey: config.zoneKey,
-              key: config.key,
-              url: config.url,
-              name: config.name,
-              description: config.description,
-              properties: config.properties,
-            })
-          )
-        );
-        await setKey(ctx.db.KeyValue, `widgets-items-zones`);
-      }
-      ctx.tx.emit('init-widget-items');
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
 
       // Permissions
-      if (!(await hasKey(ctx.db.KeyValue, `permissions`))) {
-        await ctx.call('users.permissions.addMany', permissions.permissions);
-        await setKey(ctx.db.KeyValue, `permissions`);
-      }
-      ctx.emit('init-permissions');
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: permissions.permissions,
+        ctx,
+      });
     },
     'multilanguage.newLocale': async function (ctx) {
       await addLocalesDeploy({
-        keyValueModel: ctx.db.KeyValue,
+        keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,

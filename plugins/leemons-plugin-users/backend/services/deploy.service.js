@@ -9,6 +9,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { addLocales, addLocalesDeploy } = require('leemons-multilanguage');
 const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addPermissionsDeploy } = require('packages/leemons-permissions/src');
 const { getServiceModels } = require('../models');
 const { addMany } = require('../core/actions');
 const { defaultActions, defaultPermissions } = require('../config/constants');
@@ -34,11 +35,11 @@ module.exports = {
         await setKey(ctx.db.KeyValue, `actions`);
       }
       ctx.emit('init-actions');
-      if (!(await hasKey(ctx.db.KeyValue, `permissions`))) {
-        await ctx.call('users.permissions.addMany', defaultPermissions);
-        await setKey(ctx.db.KeyValue, `permissions`);
-      }
-      ctx.emit('init-permissions');
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: defaultPermissions,
+        ctx,
+      });
     },
     'users.change-platform-locale': async function (ctx) {
       await createInitialProfiles({ ctx });

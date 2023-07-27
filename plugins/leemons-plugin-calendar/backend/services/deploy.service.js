@@ -8,9 +8,10 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addPermissionsDeploy } = require('leemons-permissions');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { getServiceModels } = require('../models');
-const { defaultPermissions } = require('../config/constants');
+const { permissions, widgets } = require('../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -24,11 +25,15 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async function (ctx) {
-      if (!(await hasKey(ctx.db.KeyValue, `permissions`))) {
-        await ctx.call('users.permissions.addMany', defaultPermissions);
-        await setKey(ctx.db.KeyValue, `permissions`);
-      }
-      ctx.emit('init-permissions');
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions,
+        ctx,
+      });
+    },
+    'dashboard.init-widget-zones': async function (ctx) {
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
     'multilanguage.newLocale': async function newLocaleEvent(ctx) {
       await addLocalesDeploy({
