@@ -134,6 +134,14 @@ async function getCoverFileContent(ctx) {
   if (asset.cover) {
     const { readStream, fileName, contentType } = await fileService.dataForReturnFile(asset.cover);
 
+    if (isString(readStream) && readStream.indexOf('http') === 0) {
+      // Redirect to external URL
+      ctx.status = 307;
+      ctx.set('Cache-Control', 'max-age=300');
+      ctx.redirect(readStream);
+      return;
+    }
+
     const mediaType = contentType.split('/')[0];
 
     ctx.status = 200;
