@@ -1,4 +1,4 @@
-const { isEmpty } = require('lodash');
+const { isEmpty, isString } = require('lodash');
 const fs = require('fs/promises');
 const fileService = require('../src/services/files');
 const { getByFile } = require('../src/services/assets/files/getByFile');
@@ -50,6 +50,14 @@ async function getFileContent(ctx) {
     end: bytesEnd,
   });
 
+  if (isString(readStream) && readStream.indexOf('http') === 0) {
+    // Redirect to external URL
+    ctx.status = 307;
+    ctx.set('Cache-Control', 'max-age=300');
+    ctx.redirect(readStream);
+    return;
+  }
+
   const mediaType = contentType.split('/')[0];
 
   ctx.status = 200;
@@ -73,7 +81,7 @@ async function getFileContent(ctx) {
     if (fileSize > 0) {
       ctx.set('Content-Length', fileSize);
       // TODO Check if Accept-Ranges header is needed and streaming implications
-      // ctx.set('Accept-Ranges', 'bytes');
+      ctx.set('Accept-Ranges', 'bytes');
     }
 
     /*
@@ -125,6 +133,14 @@ async function getCoverFileContent(ctx) {
   }
   if (asset.cover) {
     const { readStream, fileName, contentType } = await fileService.dataForReturnFile(asset.cover);
+
+    if (isString(readStream) && readStream.indexOf('http') === 0) {
+      // Redirect to external URL
+      ctx.status = 307;
+      ctx.set('Cache-Control', 'max-age=300');
+      ctx.redirect(readStream);
+      return;
+    }
 
     const mediaType = contentType.split('/')[0];
 

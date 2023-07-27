@@ -1,17 +1,24 @@
 const getMenuBuilder = require('./getMenuBuilder');
 
-async function addMenuItem({ menuItem, config }, { item, permissions }) {
+async function addMenuItem({ menuItem, config }, { removed, item, permissions }) {
   // eslint-disable-next-line no-await-in-loop
   if (!(await menuItem.exist(config.constants.mainMenuKey, leemons.plugin.prefixPN(item.key)))) {
-    return menuItem.add(
-      {
-        ...item,
-        menuKey: config.constants.mainMenuKey,
-        key: leemons.plugin.prefixPN(item.key),
-        parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined,
-      },
-      permissions
-    );
+    if (!removed) {
+      return menuItem.add(
+        {
+          ...item,
+          menuKey: config.constants.mainMenuKey,
+          key: leemons.plugin.prefixPN(item.key),
+          parentKey: item.parentKey ? leemons.plugin.prefixPN(item.parentKey) : undefined,
+        },
+        permissions
+      );
+    }
+    return null;
+  }
+  if (removed) {
+    // ES: Si existe pero deberia de estar borrado lo borramos
+    await menuItem.remove(config.constants.mainMenuKey, leemons.plugin.prefixPN(item.key));
   }
   return null;
 }

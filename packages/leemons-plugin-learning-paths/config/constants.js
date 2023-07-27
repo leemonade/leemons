@@ -23,6 +23,7 @@ const permissions = [
  */
 const menuItems = [
   {
+    removed: true,
     item: {
       key: 'learningPaths',
       order: 301,
@@ -42,6 +43,7 @@ const menuItems = [
   },
   // Modules
   {
+    removed: true,
     item: {
       key: 'learningPaths.modules.new',
       order: 1,
@@ -60,6 +62,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'learningPaths.modules.library',
       order: 2,
