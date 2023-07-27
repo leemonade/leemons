@@ -11,6 +11,7 @@ const ASSET_KEYS = keys({
   ...IMAGE_ASSET,
   ...URL_ASSET,
   processed: true,
+  fileExtension: '',
 });
 
 function appendAuthorizationToUrl(url) {
@@ -95,6 +96,8 @@ export const LibraryExtension = Node.create({
             asset.tags = asset.tags ? JSON.parse(asset.tags) : [];
             asset.metadata = asset.metadata ? JSON.parse(asset.metadata) : [];
             asset.fileType = asset.fileType || asset.filetype;
+            asset.fileExtension =
+              asset.fileExtension ?? asset.fileextension ?? asset.file?.extension;
             element.setAttribute('asset', JSON.stringify(asset));
           }
 
@@ -111,12 +114,12 @@ export const LibraryExtension = Node.create({
     return {
       setLibrary:
         (attributes) =>
-          ({ commands }) =>
-            commands.insertContent({ type: this.name, attrs: attributes }),
+        ({ commands }) =>
+          commands.insertContent({ type: this.name, attrs: attributes }),
       unsetLibrary:
         () =>
-          ({ commands }) =>
-            commands.deleteSelection(),
+        ({ commands }) =>
+          commands.deleteSelection(),
     };
   },
 
