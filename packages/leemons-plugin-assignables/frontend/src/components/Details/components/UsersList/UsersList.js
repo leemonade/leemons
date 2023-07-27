@@ -59,22 +59,6 @@ export default function UserList({ instance }) {
     );
   }, [students, query]);
 
-  // const bulkActions = useMemo(
-  //   () => [
-  //     {
-  //       label: 'To be defined',
-  //       value: 'TBD',
-  //     },
-  //     {
-  //       label: labels?.bulkActions?.SEND_REMINDER,
-  //       value: 'SEND_REMINDER',
-  //     },
-  //   ],
-  //   []
-  // );
-
-  // const selected = [];
-
   return (
     <>
       <ContextContainer spacing={5} sx={(theme) => ({ padding: theme.spacing[5] })}>
@@ -130,30 +114,4 @@ UserList.propTypes = {
   descriptions: PropTypes.shape({
     searchStudent: PropTypes.string,
   }),
-};
-
-UserList.defaultProps = {
-  labels: {
-    students: 'Students',
-    assignStudent: 'Assign student',
-    bulkActions: {
-      label: 'Actions',
-      SEND_REMINDER: 'Send reminder',
-    },
-    studentListcolumns: {
-      student: 'Student',
-      status: 'Status',
-      completed: 'Completed',
-      avgTime: 'Avg. time',
-      score: 'Score',
-      unreadMessages: 'Messages',
-    },
-  },
-  placeholders: {
-    bulkActions: 'Select an action',
-    searchStudent: 'Search student',
-  },
-  descriptions: {
-    searchStudent: 'selected',
-  },
 };

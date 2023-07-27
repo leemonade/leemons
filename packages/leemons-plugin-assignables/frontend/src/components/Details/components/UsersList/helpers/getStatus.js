@@ -15,7 +15,9 @@ export default function getStatus(studentData, instanceData) {
   // ES: Estos valores son claves para el objeto de traducción prefixPN('activity_status')
 
   if (studentData.finished) {
-    if (hasGrades(studentData)) {
+    const isGradable = !!instanceData?.requiresScoring;
+
+    if (isGradable && hasGrades(studentData)) {
       return 'evaluated';
     }
     const deadline = dayjs(instanceData.dates.deadline || null);
@@ -28,7 +30,7 @@ export default function getStatus(studentData, instanceData) {
     }
 
     if (endDate.isValid()) {
-      return 'submitted';
+      return isGradable ? 'submitted' : 'ended';
     }
 
     return 'closed';

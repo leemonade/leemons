@@ -75,11 +75,11 @@ export default function StudentsList({ labels, instance, students }) {
         Header: labels?.studentListcolumns?.avgTime || '',
         accessor: 'avgTime',
       },
-      {
+      !!instance?.requiresScoring && {
         Header: labels?.studentListcolumns?.score || '',
         accessor: 'score',
       },
-      {
+      !!instance?.requiresScoring && {
         Header: labels?.studentListcolumns?.unreadMessages || '',
         accessor: 'unreadMessages',
       },
@@ -92,11 +92,8 @@ export default function StudentsList({ labels, instance, students }) {
         accessor: 'actions',
       },
     ];
-    if (!instance?.requiresScoring) {
-      cols.splice(4, 1);
-    }
 
-    return cols;
+    return cols.filter(Boolean);
   }, [labels, instance?.requiresScoring]);
 
   const headerStyles = {

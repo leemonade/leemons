@@ -1,7 +1,12 @@
 import { isNumber } from 'lodash';
 
-export function getScormProgress({ state }) {
-  let progress = state?.cmi?.progress_measure ?? 0;
+export function getScormProgress({ state, ensurePercentage = true }) {
+  let progress = state?.cmi?.progress_measure ?? ensurePercentage ? 0 : null;
+
+  if (progress === null && !ensurePercentage) {
+    return null;
+  }
+
   if (!progress && state?.cmi?.completion_status === 'completed') {
     progress = 1;
   }
