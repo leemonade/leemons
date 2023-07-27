@@ -6,16 +6,16 @@
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/config.rest');
-
-const configService = require('../core/config');
+const { saveBySysName } = require('../core/profiles');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'emails.config',
+  name: 'users.profiles',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
@@ -23,24 +23,14 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
-    ...restActions,
-    getConfig: {
+    // saveBySysName: profiles.saveBySysName,
+    saveBySysName: {
       handler(ctx) {
-        return configService.getConfig({ ...ctx.params, ctx });
-      },
-    },
-    getUserAgentsWithKeyValue: {
-      handler(ctx) {
-        return configService.getUserAgentsWithKeyValue({ ...ctx.params, ctx });
-      },
-    },
-    getValuesForUserAgentsAndKey: {
-      handler(ctx) {
-        return configService.getValuesForUserAgentsAndKey({ ...ctx.params, ctx });
+        return saveBySysName({ ...ctx.params, ctx });
       },
     },
   },
-  async created() {
+  created() {
     mongoose.connect(process.env.MONGO_URI);
   },
 };

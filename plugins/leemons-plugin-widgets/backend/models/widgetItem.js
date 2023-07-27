@@ -13,27 +13,33 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    name: {
+    //
+    zoneKey: {
       type: String,
       required: true,
+    },
+    key: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+    pluginName: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
     },
     description: {
       type: String,
     },
-    uri: {
-      type: String,
-      required: true,
+    order: {
+      type: Number,
     },
-    role: {
-      // ref: 'users_Roles',
-      type: String,
-    },
-    indexable: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
-    sysName: {
+    properties: {
       type: String,
     },
   },
@@ -42,9 +48,8 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.index({ deploymentID: 1, name: 1 }, { unique: true });
-schema.index({ deploymentID: 1, uri: 1 }, { unique: true });
+schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const profilesModel = newModel(mongoose.connection, 'v1::users_Profiles', schema);
+const widgetItemModel = newModel(mongoose.connection, 'v1::widgets_WidgetItem', schema);
 
-module.exports = { profilesModel };
+module.exports = { widgetItemModel };

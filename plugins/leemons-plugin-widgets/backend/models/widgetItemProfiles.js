@@ -13,14 +13,17 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    profile: {
+    //
+    zoneKey: {
       type: String,
-      // ref: 'users_Profiles',
       required: true,
     },
-    role: {
+    key: {
       type: String,
-      // ref: 'users_Roles',
+      required: true,
+    },
+    profile: {
+      type: String,
       required: true,
     },
   },
@@ -29,6 +32,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const profileRoleModel = newModel(mongoose.connection, 'v1::users_ProfileRole', schema);
+const widgetItemProfilesModel = newModel(
+  mongoose.connection,
+  'v1::widgets_WidgetItemProfiles',
+  schema
+);
 
-module.exports = { profileRoleModel };
+module.exports = { widgetItemProfilesModel };

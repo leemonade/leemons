@@ -18,6 +18,7 @@
     "leemons-plugin-multilanguage": "1.0.0",
     "leemons-plugin-transactions": "1.0.0",
     "leemons-plugin-users": "1.0.0",
+    "leemons-plugin-widgets": "1.0.0",
     "leemons-runner": "0.0.1",
     "squirrelly": "^9.0.0"
   }

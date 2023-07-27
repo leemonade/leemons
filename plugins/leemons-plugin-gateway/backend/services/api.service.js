@@ -61,6 +61,7 @@ module.exports = {
           'GET admin/settings': 'v1.admin.settings.findOneRest',
           'POST admin/settings': 'v1.admin.settings.updateRest',
           'POST admin/settings/languages': 'v1.admin.settings.setLanguagesRest',
+          'POST admin/settings/signup': 'v1.admin.settings.signupRest',
 
           'GET emails/config': 'v1.emails.config.getConfigRest',
           'POST emails/config': 'v1.emails.config.saveConfigRest',

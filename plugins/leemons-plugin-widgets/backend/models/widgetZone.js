@@ -13,22 +13,24 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    profile: {
+    //
+    key: {
       type: String,
-      // ref: 'users_Profiles',
       required: true,
     },
-    role: {
+    name: {
       type: String,
-      // ref: 'users_Roles',
-      required: true,
+    },
+    description: {
+      type: String,
     },
   },
   {
     timestamps: true,
   }
 );
+schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const profileRoleModel = newModel(mongoose.connection, 'v1::users_ProfileRole', schema);
+const widgetZoneModel = newModel(mongoose.connection, 'v1::widgets_widgetZone', schema);
 
-module.exports = { profileRoleModel };
+module.exports = { widgetZoneModel };
