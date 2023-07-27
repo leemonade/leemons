@@ -1,7 +1,7 @@
 const { update, add } = require('.');
 
 async function set({ zoneKey, key, url, name, description, profiles, properties = {}, ctx }) {
-  const exists = await ctx.tx.db.WidgetItem.count({ key });
+  const exists = await ctx.tx.db.WidgetItem.countDocuments({ key });
   if (exists) {
     return update({
       zoneKey,

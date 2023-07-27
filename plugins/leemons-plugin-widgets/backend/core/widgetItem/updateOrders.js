@@ -4,7 +4,7 @@ const { validateUpdateItemOrders } = require('../validation/forms');
 
 async function updateOrders({ items, ctx }) {
   validateUpdateItemOrders(items);
-  const count = await ctx.tx.db.WidgetItem.count({
+  const count = await ctx.tx.db.WidgetItem.countDocuments({
     id: _.map(items, 'id'),
   });
   if (count !== items.length) {

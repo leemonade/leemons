@@ -17,7 +17,7 @@ async function update({ zoneKey, key, url, name, description, properties, profil
   }
   const promises = [ctx.tx.db.WidgetItem.findOneAndUpdate({ key }, toUpdate, { new: true })];
   if (_.isArray(profiles) && profiles.length > 0) {
-    const existsProfiles = await leemons.getPlugin('users').services.profiles.existMany(profiles);
+    const existsProfiles = await ctx.tx.call('users.profiles.existMany', { ids: profiles });
     if (!existsProfiles) {
       throw new LeemonsError(ctx, { message: 'Profiles does not exist' });
     }
