@@ -23,16 +23,24 @@ module.exports = () => ({
     LeemonsDeploymentManagerMixin(),
   ],
   events: {
-    'deployment-manager.install': async function (ctx) {
+    'deployment-manager.install': async (ctx) => {
+      // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: defaultPermissions,
         ctx,
       });
-    },
-    'multilanguage.newLocale': async function newLocaleEvent(ctx) {
+      // Locales
       await addLocalesDeploy({
-        keyValueModel: ctx.db.KeyValue,
+        keyValueModel: ctx.tx.db.KeyValue,
+        locale: ['es', 'en'],
+        i18nPath: path.resolve(__dirname, `../i18n/`),
+        ctx,
+      });
+    },
+    'multilanguage.newLocale': async (ctx) => {
+      await addLocalesDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,

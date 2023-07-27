@@ -43,7 +43,7 @@ module.exports = () => ({
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
-    'multilanguage.newLocale': async function newLocaleEvent(ctx) {
+    'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
