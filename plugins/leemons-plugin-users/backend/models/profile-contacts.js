@@ -14,13 +14,13 @@ const schema = new mongoose.Schema(
       index: true,
     },
     fromProfile: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Profiles',
+      // ref: 'users_Profiles',
+      type: String,
       required: true,
     },
     toProfile: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Profiles',
+      // ref: 'users_Profiles',
+      type: String,
       required: true,
     },
   },
