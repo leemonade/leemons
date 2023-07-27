@@ -1,4 +1,4 @@
-const permissionsPrefix = 'plugins.calendar';
+const permissionsPrefix = 'calendar';
 
 module.exports = {
   permissions: [
