@@ -48,7 +48,7 @@ async function getFileContent(ctx) {
     path: ctx.params[0],
     start: bytesStart,
     end: bytesEnd,
-    forceStream: false,
+    forceStream: !!ctx.query.forceStream,
   });
 
   if (isString(readStream) && readStream.indexOf('http') === 0) {
@@ -98,11 +98,22 @@ async function getFileContent(ctx) {
   }
 }
 
+async function getFolderContent(ctx) {
+  ctx.query.forceStream = true;
+  return getFileContent(ctx);
+}
+
 /**
  *
  */
 async function getPublicFileContent(ctx) {
   ctx.query.onlyPublic = true;
+  return getFileContent(ctx);
+}
+
+async function getPublicFolderContent(ctx) {
+  ctx.query.onlyPublic = true;
+  ctx.query.forceStream = true;
   return getFileContent(ctx);
 }
 
@@ -188,7 +199,9 @@ async function finishMultipartFunc(ctx) {
 
 module.exports = {
   file: getFileContent,
+  folder: getFolderContent,
   publicFile: getPublicFileContent,
+  publicFolder: getPublicFolderContent,
   cover: getCoverFileContent,
   newMultipart: newMultipartFunc,
   abortMultipart: abortMultipartFunc,

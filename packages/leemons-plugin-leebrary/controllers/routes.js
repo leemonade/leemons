@@ -127,7 +127,7 @@ module.exports = [
   {
     path: '/file/public/:id/(.*)',
     method: 'GET',
-    handler: 'files.publicFile',
+    handler: 'files.publicFolder',
   },
   {
     path: '/file/:id',
@@ -138,7 +138,7 @@ module.exports = [
   {
     path: '/file/:id/(.*)',
     method: 'GET',
-    handler: 'files.file',
+    handler: 'files.folder',
     authenticated: true,
   },
   {
