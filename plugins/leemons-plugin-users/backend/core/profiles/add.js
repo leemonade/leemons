@@ -19,6 +19,7 @@ async function add({ name, description, permissions, translations, indexable, sy
   if (exist)
     throw new LeemonsError(ctx, { message: `Already exists one profile with the name '${name}'` });
 
+  // TODO Roberto: Ver porque no está haciendo ROLLBACK de este create cuando falla la función un poco más adelante
   let profile = await ctx.tx.db.Profiles.create({
     name,
     description,
