@@ -3,6 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const _ = require('lodash');
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
@@ -12,6 +13,7 @@ const { getUserAgentCenter } = require('../core/user-agents/getUserAgentCenter')
 const restActions = require('./rest/users.rest');
 const { updateEmail } = require('../core/users/updateEmail');
 const { updatePassword } = require('../core/users/updatePassword');
+const { detail } = require('../core/users');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -27,6 +29,19 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    detail: {
+      async handler(ctx) {
+        const users = await detail({ ...ctx.params, ctx });
+        const response = [];
+        _.forEach(
+          _.isArray(users) ? users : [users],
+          ({ id, email, name, surnames, secondSurname, avatar, locale, createdAt }) => {
+            response.push({ id, email, name, surnames, secondSurname, avatar, locale, createdAt });
+          }
+        );
+        return _.isArray(users) ? response : response[0];
+      },
+    },
     updateEmail: {
       async handler(ctx) {
         return updateEmail({ ...ctx.params, ctx });

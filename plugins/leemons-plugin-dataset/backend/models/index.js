@@ -3,7 +3,7 @@
 const { getKeyValueModel } = require('leemons-mongodb-helpers');
 
 const models = {
-  ...require('./dataset-values'),
+  ...require('./datasetValues'),
   ...require('./dataset'),
 };
 

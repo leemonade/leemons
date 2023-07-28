@@ -43,6 +43,6 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const eventTypesModel = newModel(mongoose.connection, 'v1::calendar_event-types', schema);
+const eventTypesModel = newModel(mongoose.connection, 'v1::calendar_eventTypes', schema);
 
 module.exports = { eventTypesModel };

@@ -13,13 +13,10 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // ref: plugins_calendar::calendars
-    calendar: {
+    //
+    key: {
       type: String,
-    },
-    // ref: plugins_calendar::events
-    event: {
-      type: String,
+      required: true,
     },
   },
   {
@@ -27,6 +24,8 @@ const schema = new mongoose.Schema(
   }
 );
 
-const eventCalendarModel = newModel(mongoose.connection, 'v1::calendar_event-calendar', schema);
+schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-module.exports = { eventCalendarModel };
+const menuModel = newModel(mongoose.connection, 'v1::menu-builder_menu', schema);
+
+module.exports = { menuModel };

@@ -2,20 +2,17 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
-const path = require('path');
-const { addLocales, addLocalesDeploy } = require('leemons-multilanguage');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
-const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsCacheMixin } = require('leemons-cache');
 const { getServiceModels } = require('../models');
+const { add, exist, remove, getIfHasPermission } = require('../core/menu');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'multilanguage.deploy',
+  name: 'umenu-builder.men',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -25,24 +22,26 @@ module.exports = () => ({
     }),
     LeemonsDeploymentManagerMixin(),
   ],
-  events: {
-    'deployment-manager.install': async (ctx) => {
-      // Locales
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ['es', 'en'],
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
+  actions: {
+    add: {
+      handler(ctx) {
+        return add({ ...ctx.params, ctx });
+      },
     },
-    'multilanguage.newLocale': async (ctx) => {
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ctx.params.code,
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
-      return null;
+    exist: {
+      handler(ctx) {
+        return exist({ ...ctx.params, ctx });
+      },
+    },
+    remove: {
+      handler(ctx) {
+        return remove({ ...ctx.params, ctx });
+      },
+    },
+    getIfHasPermission: {
+      handler(ctx) {
+        return getIfHasPermission({ ...ctx.params, ctx });
+      },
     },
   },
   created() {

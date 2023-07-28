@@ -6,7 +6,13 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
-const { add, update, addPermissionMany, removePermissionsByName } = require('../core/roles');
+const {
+  add,
+  update,
+  addPermissionMany,
+  removePermissionsByName,
+  getRoleProfile,
+} = require('../core/roles');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -39,6 +45,11 @@ module.exports = {
     removePermissionsByName: {
       handler(ctx) {
         return removePermissionsByName({ ...ctx.params, ctx });
+      },
+    },
+    getRoleProfile: {
+      handler(ctx) {
+        return getRoleProfile({ ...ctx.params, ctx });
       },
     },
   },

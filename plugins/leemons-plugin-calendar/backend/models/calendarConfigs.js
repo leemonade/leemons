@@ -75,6 +75,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const calendarConfigsModel = newModel(mongoose.connection, 'v1::calendar_calendar-configs', schema);
+const calendarConfigsModel = newModel(mongoose.connection, 'v1::calendar_calendarConfigs', schema);
 
 module.exports = { calendarConfigsModel };

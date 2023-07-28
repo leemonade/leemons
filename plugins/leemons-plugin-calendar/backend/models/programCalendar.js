@@ -13,12 +13,12 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // ref: plugins_users::centers
-    center: {
+    // ref: plugins_calendar::calendars
+    calendar: {
       type: String,
     },
-    // ref: plugins_calendar::calendar-configs
-    config: {
+    // ref: plugins_academic-portfolio::programs
+    program: {
       type: String,
     },
   },
@@ -27,10 +27,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const centerCalendarConfigsModel = newModel(
-  mongoose.connection,
-  'v1::calendar_center-calendar-configs',
-  schema
-);
+const programCalendarModel = newModel(mongoose.connection, 'v1::calendar_programCalendar', schema);
 
-module.exports = { centerCalendarConfigsModel };
+module.exports = { programCalendarModel };

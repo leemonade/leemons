@@ -17,6 +17,10 @@ const schema = new mongoose.Schema(
     calendar: {
       type: String,
     },
+    // ref: plugins_academic-portfolio::class
+    class: {
+      type: String,
+    },
     // ref: plugins_academic-portfolio::programs
     program: {
       type: String,
@@ -27,6 +31,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const programCalendarModel = newModel(mongoose.connection, 'v1::calendar_program-calendar', schema);
+const classCalendarModel = newModel(mongoose.connection, 'v1::calendar_classCalendar', schema);
 
-module.exports = { programCalendarModel };
+module.exports = { classCalendarModel };

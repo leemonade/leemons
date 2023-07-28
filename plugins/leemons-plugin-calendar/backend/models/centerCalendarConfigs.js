@@ -13,15 +13,12 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // ref: plugins_users::user-agent
-    userAgent: {
+    // ref: plugins_users::centers
+    center: {
       type: String,
     },
-    // ref: plugins_calendar::kanban-columns
-    column: {
-      type: String,
-    },
-    events: {
+    // ref: plugins_calendar::calendar-configs
+    config: {
       type: String,
     },
   },
@@ -30,10 +27,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const kanbanEventOrdersModel = newModel(
+const centerCalendarConfigsModel = newModel(
   mongoose.connection,
-  'v1::calendar_kanban-event-orders',
+  'v1::calendar_centerCalendarConfigs',
   schema
 );
 
-module.exports = { kanbanEventOrdersModel };
+module.exports = { centerCalendarConfigsModel };
