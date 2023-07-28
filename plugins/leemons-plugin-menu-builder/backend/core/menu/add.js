@@ -31,4 +31,4 @@ async function add({ key, permissions, ctx }) {
   return menu;
 }
 
-module.exports = add;
+module.exports = { add };

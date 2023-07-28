@@ -71,6 +71,6 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const menuItemModel = newModel(mongoose.connection, 'v1::menu-builder_menu-item', schema);
+const menuItemModel = newModel(mongoose.connection, 'v1::menu-builder_menuItem', schema);
 
 module.exports = { menuItemModel };

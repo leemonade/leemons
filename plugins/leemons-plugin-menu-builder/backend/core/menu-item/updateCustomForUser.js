@@ -1,9 +1,6 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
-const { translations } = require('../../translations');
+const { LeemonsError } = require('leemons-error');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
-
-const { withTransaction } = global.utils;
 
 /**
  * Update custom Menu Item
@@ -16,72 +13,50 @@ const { withTransaction } = global.utils;
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function updateCustomForUser(
-  userSession,
-  menuKey,
-  key,
-  { label, description, ...data },
-  { transacting: _transacting } = {}
-) {
-  const locales = translations();
-
-  if (!key.startsWith(leemons.plugin.prefixPN(`user.${userSession.id}.`))) {
-    throw new Error('You can only update your own custom items');
+async function updateCustomForUser({ menuKey, key, label, description, ctx, ...data }) {
+  if (!key.startsWith(ctx.prefixPN(`user.${ctx.meta.userSession.id}.`))) {
+    throw new LeemonsError('You can only update your own custom items');
   }
 
-  return withTransaction(
-    async (transacting) => {
-      // Check for required params
-      await validateNotExistMenu(menuKey, { transacting });
+  // Check for required params
+  await validateNotExistMenu({ key: menuKey, ctx });
 
-      // Check if the MENU ITEM exists
-      await validateNotExistMenuItem(menuKey, key, { transacting });
+  // Check if the MENU ITEM exists
+  await validateNotExistMenuItem({ menuKey, key, ctx });
 
-      // Update the MENU ITEM
-      const promises = [];
+  // Update the MENU ITEM
+  const promises = [];
 
-      if (!_.isEmpty(data)) {
-        promises.push(table.menuItem.update({ menuKey, key }, data, { transacting }));
-      }
+  if (!_.isEmpty(data)) {
+    promises.push(ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true }));
+  }
 
-      // Update LABEL & DESCRIPTIONS in locales
-      if (locales) {
-        if (label) {
-          promises.push(
-            locales.contents.setValue(
-              leemons.plugin.prefixPN(`${menuKey}.${key}.label`),
-              userSession.locale,
-              label,
-              {
-                transacting,
-              }
-            )
-          );
-        }
+  // Update LABEL & DESCRIPTIONS in locales
+  if (label) {
+    promises.push(
+      ctx.tx.call('multilanguage.contents.setValue', {
+        key: ctx.prefixPN(`${menuKey}.${key}.label`),
+        locale: ctx.meta.userSession.locale,
+        value: label,
+      })
+    );
+  }
 
-        if (description) {
-          promises.push(
-            locales.contents.setValue(
-              leemons.plugin.prefixPN(`${menuKey}.${key}.description`),
-              userSession.locale,
-              description,
-              {
-                transacting,
-              }
-            )
-          );
-        }
-      }
+  if (description) {
+    promises.push(
+      ctx.tx.call('multilanguage.contents.setValue', {
+        key: ctx.prefixPN(`${menuKey}.${key}.description`),
+        locale: ctx.meta.userSession.locale,
+        value: description,
+      })
+    );
+  }
 
-      await Promise.all(promises);
+  await Promise.all(promises);
 
-      leemons.log.info(`Updated custom menu item "${key}" from menu "${menuKey}"`);
+  ctx.logger.info(`Updated custom menu item "${key}" from menu "${menuKey}"`);
 
-      return true;
-    },
-    table.menuItem,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = updateCustomForUser;

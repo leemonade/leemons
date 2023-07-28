@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { translations } = require('../../translations');
-
 function setLabelAndDescriptionToItems({ menuItems, translationItemsByKey, ctx }) {
   const notFoundLabelsKeys = [];
   const notFoundDescriptionsKeys = [];

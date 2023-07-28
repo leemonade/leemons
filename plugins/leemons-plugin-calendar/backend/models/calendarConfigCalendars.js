@@ -17,12 +17,8 @@ const schema = new mongoose.Schema(
     calendar: {
       type: String,
     },
-    // ref: plugins_academic-portfolio::class
-    class: {
-      type: String,
-    },
-    // ref: plugins_academic-portfolio::programs
-    program: {
+    // ref: plugins_calendar::calendar-configs
+    config: {
       type: String,
     },
   },
@@ -31,6 +27,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const classCalendarModel = newModel(mongoose.connection, 'v1::calendar_class-calendar', schema);
+const calendarConfigCalendarsModel = newModel(
+  mongoose.connection,
+  'v1::calendar_calendarConfigCalendars',
+  schema
+);
 
-module.exports = { classCalendarModel };
+module.exports = { calendarConfigCalendarsModel };

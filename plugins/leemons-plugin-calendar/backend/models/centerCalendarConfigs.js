@@ -13,19 +13,13 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    //
-    order: {
-      type: Number,
-    },
-    isDone: {
-      type: Boolean,
-    },
-    isArchived: {
-      type: Boolean,
-    },
-    bgColor: {
+    // ref: plugins_users::centers
+    center: {
       type: String,
-      required: true,
+    },
+    // ref: plugins_calendar::calendar-configs
+    config: {
+      type: String,
     },
   },
   {
@@ -33,6 +27,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const kanbanColumnsModel = newModel(mongoose.connection, 'v1::calendar_kanban-columns', schema);
+const centerCalendarConfigsModel = newModel(
+  mongoose.connection,
+  'v1::calendar_centerCalendarConfigs',
+  schema
+);
 
-module.exports = { kanbanColumnsModel };
+module.exports = { centerCalendarConfigsModel };

@@ -32,7 +32,7 @@ const schema = new mongoose.Schema(
 
 const kanbanEventOrdersModel = newModel(
   mongoose.connection,
-  'v1::calendar_kanban-event-orders',
+  'v1::calendar_kanbanEventOrders',
   schema
 );
 

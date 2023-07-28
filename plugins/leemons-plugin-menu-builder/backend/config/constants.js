@@ -1,5 +1,5 @@
 module.exports = {
-  mainMenuKey: 'plugins.menu-builder.main',
+  mainMenuKey: 'menu-builder.main',
   CORE_PLUGINS: [
     'admin',
     'dashboard',
@@ -22,7 +22,7 @@ module.exports = {
 
     'leebrary',
     'families',
-  ].map((item) => `plugins.${item}`),
+  ],
   url: {
     base: 'menu-builder',
     frontend: {},

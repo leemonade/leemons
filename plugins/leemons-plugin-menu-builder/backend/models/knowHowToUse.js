@@ -13,13 +13,10 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // ref: plugins_calendar::calendars
-    calendar: {
+    //
+    user: {
       type: String,
-    },
-    // ref: plugins_calendar::calendar-configs
-    config: {
-      type: String,
+      required: true,
     },
   },
   {
@@ -27,10 +24,8 @@ const schema = new mongoose.Schema(
   }
 );
 
-const calendarConfigCalendarsModel = newModel(
-  mongoose.connection,
-  'v1::calendar_calendar-config-calendars',
-  schema
-);
+schema.index({ deploymentID: 1, user: 1 }, { unique: true });
 
-module.exports = { calendarConfigCalendarsModel };
+const knowHowToUseModel = newModel(mongoose.connection, 'v1::menu-builder_knowHowToUse', schema);
+
+module.exports = { knowHowToUseModel };

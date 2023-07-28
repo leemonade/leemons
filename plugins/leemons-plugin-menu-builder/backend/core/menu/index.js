@@ -1,11 +1,8 @@
-const add = require('./add');
-const remove = require('./remove');
-const exist = require('./exist');
-const getIfHasPermission = require('./getIfHasPermission');
+/* eslint-disable global-require */
 
 module.exports = {
-  add,
-  remove,
-  exist,
-  getIfHasPermission,
+  ...require('./add'),
+  ...require('./exist'),
+  ...require('./remove'),
+  ...require('./getIfHasPermission'),
 };

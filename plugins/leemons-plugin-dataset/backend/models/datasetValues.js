@@ -46,6 +46,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const datasetValuesModel = newModel(mongoose.connection, 'v1::dataset_dataset-values', schema);
+const datasetValuesModel = newModel(mongoose.connection, 'v1::dataset_datasetValues', schema);
 
 module.exports = { datasetValuesModel };

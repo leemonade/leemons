@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
+const { LeemonsError } = require('leemons-error');
 
 /**
  * Reorder user custom menu items
@@ -12,33 +12,21 @@ const { table } = require('../../tables');
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function reOrderCustomUserItems(
-  menuKey,
-  parentKey,
-  ids,
-  userSession,
-  { transacting: _transacting } = {}
-) {
+async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
   // Check if use have access to all menu item ids
-  const count = await table.menuItem.count(
-    {
-      menuKey,
-      parentKey,
-      id_$in: ids,
-      key_$startssWith: leemons.plugin.prefixPN(`user.${userSession.id}.`),
+  const count = await ctx.tx.db.MenuItem.countDocuments({
+    menuKey,
+    parentKey,
+    id: ids,
+    key: {
+      $regex: new RegExp(`^${ctx.prefixPN(`user.${ctx.meta.userSession.id}.`)}`),
     },
-    { transacting: _transacting }
-  );
+  });
   if (count !== ids.length)
-    throw new Error('The user does not have access to any of the following items');
+    throw new LeemonsError('The user does not have access to any of the following items');
 
-  return global.utils.withTransaction(
-    async (transacting) =>
-      Promise.all(
-        _.map(ids, (id, order) => table.menuItem.update({ id }, { order }, { transacting }))
-      ),
-    table.menuItem,
-    _transacting
+  return Promise.all(
+    _.map(ids, (id, order) => ctx.tx.db.MenuItem.findOneAndUpdate({ id }, { order }, { new: true }))
   );
 }
 

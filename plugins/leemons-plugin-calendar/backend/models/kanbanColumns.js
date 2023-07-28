@@ -13,13 +13,19 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // ref: plugins_calendar::calendars
-    calendar: {
-      type: String,
+    //
+    order: {
+      type: Number,
     },
-    // ref: plugins_calendar::events
-    event: {
+    isDone: {
+      type: Boolean,
+    },
+    isArchived: {
+      type: Boolean,
+    },
+    bgColor: {
       type: String,
+      required: true,
     },
   },
   {
@@ -27,6 +33,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const eventCalendarModel = newModel(mongoose.connection, 'v1::calendar_event-calendar', schema);
+const kanbanColumnsModel = newModel(mongoose.connection, 'v1::calendar_kanbanColumns', schema);
 
-module.exports = { eventCalendarModel };
+module.exports = { kanbanColumnsModel };

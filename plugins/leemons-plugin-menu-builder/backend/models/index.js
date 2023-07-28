@@ -3,8 +3,8 @@
 const { getKeyValueModel } = require('leemons-mongodb-helpers');
 
 const models = {
-  ...require('./know-how-to-use'),
-  ...require('./menu-item'),
+  ...require('./knowHowToUse'),
+  ...require('./menuItem'),
   ...require('./menu'),
 };
 

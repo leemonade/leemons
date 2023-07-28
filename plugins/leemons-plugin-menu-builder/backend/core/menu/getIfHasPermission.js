@@ -97,4 +97,4 @@ async function getIfHasPermission({ menuKey, ctx }) {
   });
 }
 
-module.exports = getIfHasPermission;
+module.exports = { getIfHasPermission };

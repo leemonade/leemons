@@ -13,10 +13,13 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    //
-    user: {
+    // ref: plugins_calendar::calendars
+    calendar: {
       type: String,
-      required: true,
+    },
+    // ref: plugins_academic-portfolio::programs
+    program: {
+      type: String,
     },
   },
   {
@@ -24,8 +27,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.index({ deploymentID: 1, user: 1 }, { unique: true });
+const programCalendarModel = newModel(mongoose.connection, 'v1::calendar_programCalendar', schema);
 
-const knowHowToUseModel = newModel(mongoose.connection, 'v1::menu-builder_know-how-to-use', schema);
-
-module.exports = { knowHowToUseModel };
+module.exports = { programCalendarModel };

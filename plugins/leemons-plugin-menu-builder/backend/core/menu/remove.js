@@ -30,4 +30,4 @@ async function remove({ key, ctx }) {
   return true;
 }
 
-module.exports = remove;
+module.exports = { remove };
