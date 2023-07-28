@@ -19,7 +19,7 @@ const { hasMany } = require('./has');
  * @param {Boolean} params.isPrivate Define if translation is private
  * @returns {Promise<Localization | null>} null if the locale already exists and the locale object if created
  */
-async function add({ key, locale, value, isPrivate, ctx } = {}) {
+async function add({ key, locale, value, isPrivate, ctx }) {
   // Validates the localization and returns it with the key and locale lowercased
   const validator = new Validator(ctx.callerPlugin);
   const { key: _key, locale: _locale } = validator.validateLocalization(

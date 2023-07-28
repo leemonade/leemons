@@ -180,7 +180,7 @@ module.exports = {
     },
     getAllItemsForTheUserAgentHasPermissions: {
       handler(ctx) {
-        return userAgentHasPermissionToItem({ ...ctx.params, ctx });
+        return getAllItemsForTheUserAgentHasPermissions({ ...ctx.params, ctx });
       },
     },
     getAllItemsForTheUserAgentHasPermissionsByType: {
