@@ -35,7 +35,7 @@ function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, 
             <ScoreInput
               {...scoreInputProps}
               tags={[]}
-              value={{ score: scale.number, letter: scale.letter }}
+              value={scale ? { score: scale.number, letter: scale.letter } : undefined}
               decimalPrecision={2}
               decimalSeparator=","
               direction="ltr"
