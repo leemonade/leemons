@@ -58,7 +58,7 @@ function dynamicImport(component) {
   );
 }
 
-function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} }) {
+function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => { } }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const [loading, setLoading] = useState(false);
@@ -308,7 +308,7 @@ function Detail() {
         const { jsonSchema, jsonUI } = await getDatasetFormRequest();
         jsonUI['ui:className'] = 'grid grid-cols-3 gap-6';
         familyDatasetForm = { jsonSchema, jsonUI };
-      } catch (e) {}
+      } catch (e) { }
       const [{ permissions }, phoneNumbersInstalled] = await Promise.all([
         getPermissionsWithActionsIfIHaveRequest([
           constants?.permissions.basicInfo,
@@ -538,12 +538,12 @@ function Detail() {
               edit: isEditMode
                 ? tCommonHeader('cancel')
                 : family?.id
-                ? tCommonHeader('delete')
-                : '',
+                  ? tCommonHeader('delete')
+                  : '',
               cancel: isEditMode ? '' : tCommonHeader('edit'),
             }}
             onSave={() => (formActions.isLoaded() ? formActions.submit() : null)}
-            onCancel={(e) => (isEditMode ? onCancelButton(e) : onDeleteButton(e))}
+            onCancel={isEditMode ? onCancelButton : onDeleteButton}
             onEdit={onEditButton}
             fullWidth
           />
