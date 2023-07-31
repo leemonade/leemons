@@ -82,11 +82,12 @@ export function SelectCustomGroup({
 
   useOnChange({ control, onChange, classes: availableClasses });
 
+  const { classes } = useSelectCustomGroupStyles();
+
   if (!assignableStudents) {
     return <Loader />;
   }
 
-  const { classes } = useSelectCustomGroupStyles();
   return (
     <Box className={classes.root}>
       <Box>

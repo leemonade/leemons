@@ -36,11 +36,11 @@ export function Container({
   hideDivider,
   hideSectionHeaders,
 }) {
+  const { classes } = useContainerStyles({ hideDivider });
+
   if (hidden) {
     return null;
   }
-
-  const { classes } = useContainerStyles({ hideDivider });
 
   return (
     <Box className={classes.root}>

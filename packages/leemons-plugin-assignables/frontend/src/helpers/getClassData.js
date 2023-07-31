@@ -55,14 +55,21 @@ export default async function getClassData(
     subject: data.subject.id,
   });
 
+  let name = labels?.groupName;
+
+  if (!name) {
+    if (data?.groups?.isAlone) {
+      name = '';
+    } else if (data?.groups?.name) {
+      name = `${data?.subject?.name} - ${data?.groups?.name}`;
+    } else {
+      name = `${data?.subject?.name} - ${data?.groups?.abbreviation}`;
+    }
+  }
+
   return {
     id: klass,
-    name:
-      labels?.groupName ||
-      `${data?.subject?.name}${data?.groups?.isAlone
-        ? ''
-        : ` - ${data?.groups?.name}` || ` - ${data?.groups?.abbreviation}`
-      }`,
+    name,
     subjectName: data?.subject?.name,
     groupName: labels?.groupName || data?.groups?.isAlone ? '' : data?.groups?.name,
     icon: getClassIcon(data),
