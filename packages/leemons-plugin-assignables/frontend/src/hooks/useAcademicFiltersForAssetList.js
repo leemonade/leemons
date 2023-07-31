@@ -46,7 +46,7 @@ function usePrograms({ labels }) {
               value: 'all',
               label: labels?.allPrograms || '',
             },
-            ...programsQueries?.flatMap((queryInfo) => {
+            ...programsQueries.flatMap((queryInfo) => {
               const centerPrograms = queryInfo.data;
               return centerPrograms.map((program) => ({
                 value: program.id,
