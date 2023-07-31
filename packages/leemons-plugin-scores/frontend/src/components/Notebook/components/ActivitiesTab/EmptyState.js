@@ -7,7 +7,7 @@ import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';
 import noResults from '../../assets/noResults.png';
 
-const useEmptyStateStyles = createStyles((theme, { top, bottom }) => ({
+const useEmptyStateStyles = createStyles((theme) => ({
   root: {
     display: 'flex',
     boxSizing: 'border-box',
