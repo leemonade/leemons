@@ -1793,44 +1793,6 @@
     react-big-calendar "^0.38.1"
     rrule "^2.6.8"
 
-"@bubbles-ui/components@1.1.4", "@bubbles-ui/components@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.1.4.tgz#b96d6b5a211fb7e74861d9431e9de4853393630c"
-  integrity sha512-I0VMAebOUwaP1cji2ih85Eu8/JF5OeswPcauZHUy6XM1I3RT08fBUApwI99Pn46696Bf2M/QjBsEaJVm32t7Ng==
-  dependencies:
-    "@bubbles-ui/icons" "1.1.4"
-    "@emotion/react" "^11.10.0"
-    "@heroicons/react" "^1.0.5"
-    "@leemonade/react-dnd-treeview" "^1.5.44"
-    "@mantine/core" "5.5.5"
-    "@mantine/dates" "5.5.5"
-    "@mantine/dropzone" "5.5.5"
-    "@mantine/hooks" "5.5.5"
-    "@mantine/modals" "5.5.5"
-    "@nivo/bar" "^0.79.1"
-    "@nivo/core" "^0.79.0"
-    "@yaireo/tagify" "^4.9.4"
-    colord "^2.9.2"
-    dayjs "^1.10.7"
-    immutability-helper "^3.1.1"
-    lodash "^4.17.21"
-    macy "^2.5.1"
-    namor "^2.0.3"
-    prop-types "^15.7.2"
-    react-beautiful-dnd "^13.1.0"
-    react-countdown-hook "^1.1.1"
-    react-dnd "^14.0.5"
-    react-dnd-html5-backend "^14.1.0"
-    react-helmet "^6.1.0"
-    react-hook-form "^7.22.1"
-    react-multiline-clamp "^2.0.0"
-    react-router-dom "^5.3.0"
-    react-table "^7.7.0"
-    react-zoom-pan-pinch "^2.1.3"
-    simplebar-react "^2.3.6"
-    swiper "^8.1.4"
-    uuid "^8.3.2"
-
 "@bubbles-ui/components@dev":
   version "1.1.59"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.1.59.tgz#dd761d724ec3d9d93b15783bb86908f9bc23da05"
@@ -1869,31 +1831,6 @@
     swiper "^8.1.4"
     uuid "^8.3.2"
 
-"@bubbles-ui/editors@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.1.4.tgz#b9ad0eedc271f799f631c81514b0376dd888da29"
-  integrity sha512-N4d+68xkr9Zt8mzQdqYazR8EDi1xRa+sEGS/aiz6ZJX8dHN0N89ITftGXAJ/RXggF4YEQ+b6UKvv3dUZwjNQpg==
-  dependencies:
-    "@tiptap/extension-character-count" "^2.0.0-beta.25"
-    "@tiptap/extension-code-block-lowlight" "^2.0.0-beta.68"
-    "@tiptap/extension-color" "^2.0.0-beta.9"
-    "@tiptap/extension-focus" "^2.0.0-beta.40"
-    "@tiptap/extension-image" "^2.0.0-beta.27"
-    "@tiptap/extension-link" "^2.0.0-beta.36"
-    "@tiptap/extension-placeholder" "^2.0.0-beta.46"
-    "@tiptap/extension-subscript" "^2.0.0-beta.10"
-    "@tiptap/extension-superscript" "^2.0.0-beta.10"
-    "@tiptap/extension-text-align" "^2.0.0-beta.29"
-    "@tiptap/extension-text-style" "^2.0.0-beta.23"
-    "@tiptap/extension-underline" "^2.0.0-beta.22"
-    "@tiptap/react" "^2.0.0-beta.105"
-    "@tiptap/starter-kit" "^2.0.0-beta.171"
-    lodash "^4.17.21"
-    lowlight "^2.6.1"
-    prop-types "^15.7.2"
-    styled-components "^5.3.3"
-    styled-icons "^10.45.0"
-
 "@bubbles-ui/editors@dev":
   version "1.1.59"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.1.59.tgz#f828fca4a508e827b4295ae37ea4d3ffd7663c21"
@@ -1920,38 +1857,10 @@
     styled-components "^5.3.3"
     styled-icons "^10.45.0"
 
-"@bubbles-ui/icons@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.1.4.tgz#6c1e02b92daa105232184178facb67d00beb11c5"
-  integrity sha512-S6hZu/jMup10SG21PR72o1l0DR2HibFBxwKAUOMmJi8X87uOL5O5/Xn48HwF8KUR9cXQi2wujj5S/FEfx2IeZw==
-
 "@bubbles-ui/icons@^1.1.59", "@bubbles-ui/icons@dev":
   version "1.1.59"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.1.59.tgz#c311cc332e7cbf5ffa633e6993f352abcd3ccc84"
   integrity sha512-9hE+PsNQ5HncsfnDKL4Vbyzu948y2C4l0dRkA5ejGHlKVLx8BraKxHDsazau6MLWv8z8K2LQs2q38B2+XnA0sg==
-
-"@bubbles-ui/leemons@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.1.4.tgz#2e514ac680f074704afe7ccec9be8780c62c5815"
-  integrity sha512-LCNxN42GCHhx+Xk54ZQYuxA0SHe0nRYbxJ50K3g+ZwInNO8lJK93yeQML1TMLy0Gih/7ajFB5i96EbiGdgRFvA==
-  dependencies:
-    "@leemonade/rjsf-core" "^3.0.0"
-    "@rjsf/core" "^3.2.1"
-    colord "^2.9.2"
-    framer-motion "6.3.11"
-    immutability-helper "^3.1.1"
-    json-rules-engine-simplified "^0.1.17"
-    lodash "^4.17.21"
-    prop-types "^15.7.2"
-    react-hook-form "^7.22.1"
-    react-pdf "6.2.2"
-    react-player "^2.9.0"
-    react-router-dom "^5.3.0"
-    react-table "^7.7.0"
-    react-table-sticky "^1.1.3"
-    rjsf-conditionals "^1.1.4"
-    rrule "^2.6.8"
-    uuid "^8.3.2"
 
 "@bubbles-ui/leemons@dev":
   version "1.1.59"
