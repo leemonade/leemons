@@ -17,15 +17,11 @@ async function remove(id, { transacting }) {
 }
 
 async function onAcademicPortfolioRemovePrograms(data, { programs, transacting }) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      await Promise.all(programs.map(({ id }) => remove(id, { transacting })));
-      resolve();
-    } catch (e) {
-      console.error(e);
-    }
-  });
+  try {
+    await Promise.all(programs.map(({ id }) => remove(id, { transacting })));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = { onAcademicPortfolioRemovePrograms };
