@@ -305,10 +305,7 @@ module.exports = async function createAssignation(
         // ES: Crea la asignación
         return await Promise.all(
           users.map(async (user) => {
-            const isOnInstance = await checkIfStudentIsOnInstance(user, assignableInstanceId, {
-              userSession,
-              transacting,
-            });
+            const isOnInstance = await checkIfStudentIsOnInstance(user, assignableInstanceId);
 
             if (isOnInstance) {
               throw new Error(
