@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, ImageLoader, Text, Button } from '@bubbles-ui/components';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
 import prefixPN from '@board-messages/helpers/prefixPN';
 import { addClickRequest } from '@board-messages/request';
+import { Box, Button, ImageLoader, Text } from '@bubbles-ui/components';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
+import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { BannerMessageStyles } from './BannerMessage.styles';
 
 const BannerMessage = ({ message }) => {
@@ -13,7 +13,7 @@ const BannerMessage = ({ message }) => {
 
   const openLink = () => {
     addClickRequest(message.id);
-    window.open(message.url, '_blank');
+    window.open(message.url, '_blank', 'noopener');
   };
 
   const stringToHTML = (str) => ({ __html: str });

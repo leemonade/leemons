@@ -84,17 +84,18 @@ function QuestionsCard({
   );
 
   const goToOnGoing = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open('/private/assignables/ongoing');
+    if (openInNewTab) window.open('/private/assignables/ongoing', 'AssignablesOngoing', 'noopener');
     history.push('/private/assignables/ongoing');
   };
 
   const gotToModuleDashboard = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(moduleDashboardUrl);
+    if (openInNewTab) window.open(moduleDashboardUrl, 'Dashboard', 'noopener');
     history.push(moduleDashboardUrl);
   };
 
   const goToResults = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(`/private/feedback/result/${instanceId}`);
+    if (openInNewTab)
+      window.open(`/private/feedback/result/${instanceId}`, 'FeedbackResult', 'noopener');
     if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
   };
 

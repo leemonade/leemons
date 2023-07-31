@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const ResultStyles = createStyles((theme, {}) => ({
+export const ResultStyles = createStyles((theme) => ({
   container: {
     width: '100%',
     display: 'flex',
@@ -55,3 +55,5 @@ export const ResultStyles = createStyles((theme, {}) => ({
     padding: theme.spacing[4],
   },
 }));
+
+export default ResultStyles;

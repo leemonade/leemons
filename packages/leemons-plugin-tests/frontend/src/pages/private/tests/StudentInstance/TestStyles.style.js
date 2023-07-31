@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { createStyles, getFontProductive } from '@bubbles-ui/components';
 
-export const TestStyles = createStyles((theme, {}) => ({
+export const TestStyles = createStyles((theme) => ({
   timeLimitContainer: {
     paddingTop: theme.spacing[6],
     width: '100%',

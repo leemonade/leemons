@@ -77,7 +77,7 @@ module.exports = {
       uploadImage: 'Upload image',
       changeImage: 'Change image',
       urlToResource: 'URL to resource',
-      urlToResourcePlaceholder: 'http://www.',
+      urlToResourcePlaceholder: 'https://www.',
       textOfLink: 'Link text',
       textOfLinkPlaceholder: 'Write the text',
       how: 'How will it be displayed?',

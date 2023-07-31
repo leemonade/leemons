@@ -1,4 +1,4 @@
-import { classByIdsRequest, getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
+import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import getClassData from '@assignables/helpers/getClassData';
 import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -21,7 +21,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
-import { forEach, intersection, intersectionBy, isString } from 'lodash';
+import { forEach, intersectionBy, isString } from 'lodash';
 import React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import {
@@ -225,10 +225,10 @@ function StudentInstance() {
         color: store.class.color,
         image: store.instance.assignable.asset.cover
           ? getFileUrl(
-            isString(store.instance.assignable.asset.cover)
-              ? store.instance.assignable.asset.cover
-              : store.instance.assignable.asset.cover.id
-          )
+              isString(store.instance.assignable.asset.cover)
+                ? store.instance.assignable.asset.cover
+                : store.instance.assignable.asset.cover.id
+            )
           : null,
         /*
         styles: {
@@ -316,7 +316,8 @@ function StudentInstance() {
   };
 
   const goToResults = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank');
+    if (openInNewTab)
+      window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank', 'noopener');
     else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
   };
 
@@ -348,8 +349,8 @@ function StudentInstance() {
             <Box className={classes.pagesContent}>
               {verticalStepperProps.data[store.currentStep]
                 ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                  isFirstStep: !store.currentStep,
-                })
+                    isFirstStep: !store.currentStep,
+                  })
                 : null}
             </Box>
           </Box>
@@ -357,7 +358,7 @@ function StudentInstance() {
         <Modal
           title={t('finishTestModalTitle')}
           opened={store.showFinishModal}
-          onClose={() => { }}
+          onClose={() => {}}
           centerTitle
           centered
           withCloseButton={false}

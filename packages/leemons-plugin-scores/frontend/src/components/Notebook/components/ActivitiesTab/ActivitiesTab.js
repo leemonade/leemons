@@ -1,13 +1,13 @@
-import React from 'react';
 import { Box, Loader } from '@bubbles-ui/components';
+import React from 'react';
 
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
+import { EmptyState } from './EmptyState';
 import { Filters } from './Filters';
 import { ScoresTable } from './ScoresTable';
-import { EmptyState } from './EmptyState';
 import { useExcelDownloadHandler } from './useExcelDownloadHandler';
 import { useTableData } from './useTableData';
 
@@ -46,7 +46,7 @@ function handleOpen({ rowId, columnId, activitiesData, labels }) {
 
   const url = activity.assignable.roleDetails.evaluationDetailUrl;
 
-  window.open(url.replace(':id', columnId).replace(':user', rowId), '_blank');
+  window.open(url.replace(':id', columnId).replace(':user', rowId), '_blank', 'noopener');
 }
 
 function renderView({ isLoading, activitiesData, grades, filters, labels }) {

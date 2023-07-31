@@ -18,12 +18,12 @@ import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import { MonoResponse } from './question-types/MonoResponse';
-import { Map } from './question-types/Map';
+import { QuestionMap } from './question-types/Map';
 
 const typesWithImage = ['mono-response'];
 const questionComponents = {
   'mono-response': <MonoResponse />,
-  map: <Map />,
+  map: <QuestionMap />,
 };
 
 export const questionTypeT = {

@@ -1,4 +1,5 @@
-import React from 'react';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import {
   Box,
   createStyles,
@@ -9,14 +10,13 @@ import {
   TextClamp,
   Title,
 } from '@bubbles-ui/components';
-import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
-import _ from 'lodash';
 import { unflatten, useCache } from '@common';
-import { useForm, Controller, useWatch } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
+import _ from 'lodash';
+import React from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useAcademicCalendarPeriods } from './useAcademicCalendarPeriods';
 
 function ClassItem({ class: klass, dropdown = false, ...props }) {
@@ -249,8 +249,9 @@ function usePeriods({ selectedClass, classes }) {
 
   const periods = React.useMemo(() => {
     const allPeriods = [
-      ...adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })),
-      ...academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })),
+      ...(adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })) || []),
+      ...(academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })) ||
+        []),
     ];
 
     if (!allPeriods.length) {
@@ -407,11 +408,11 @@ export function Filters({ onChange }) {
             name="period"
             render={({ field }) => {
               const data = [
-                ...periods?.map((period) => ({
+                ...(periods?.map((period) => ({
                   value: period.id,
                   label: period.name,
                   group: period.group,
-                })),
+                })) || []),
                 {
                   value: 'custom',
                   label: localizations?.period?.custom,

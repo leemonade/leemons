@@ -1,7 +1,7 @@
-import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
+import React, { useContext, useRef } from 'react';
 
-function observerState() {
+function useObserverState() {
   const ref = useRef({
     subscribers: [],
   });
@@ -46,7 +46,7 @@ function observerState() {
 // EN: Create a context to share the state of the observer
 // ES: Crear un contexto para compartir el estado del observador
 function createContext() {
-  const state = observerState();
+  const state = useObserverState();
   const context = React.createContext(state);
 
   const { Provider } = context;

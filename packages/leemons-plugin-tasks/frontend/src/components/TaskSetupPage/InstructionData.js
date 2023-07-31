@@ -11,7 +11,7 @@ import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 function useDefaultValues() {
   const { getValues } = useObservableContext();
 
-  useMemo(() => {
+  return useMemo(() => {
     const [instructionsForTeachers, instructionsForStudents] = getValues([
       'sharedData.instructionsForTeachers',
       'sharedData.instructionsForStudents',
