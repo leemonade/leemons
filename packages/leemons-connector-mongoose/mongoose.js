@@ -5,7 +5,7 @@ function percentEncoding(str) {
   return str.replace(/[ :/?#[\]@]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
 }
 
-function encodeURI(config) {
+function encodeMongoURI(config) {
   const user =
     config.connection.user && config.connection.password
       ? `${percentEncoding(config.connection.user)}:${percentEncoding(config.connection.password)}@`
@@ -46,7 +46,7 @@ function getMongoConnection(connection) {
       replicaSet: _.get(connection.settings, 'replicaSet', []),
     };
 
-    const URI = encodeURI(config);
+    const URI = encodeMongoURI(config);
     const options = {
       maxPoolSize: config.pool.max,
       minPoolSize: config.pool.min,
