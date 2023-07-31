@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-const WelcomeCardStyles = createStyles((theme, {}) => ({
+const WelcomeCardStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.mainWhite,
     borderRadius: 8,
