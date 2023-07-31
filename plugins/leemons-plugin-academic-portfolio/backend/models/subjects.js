@@ -1,34 +1,42 @@
-module.exports = {
-  modelName: 'subjects',
-  collectionName: 'subjects',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     name: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
+      type: String,
+      required: true,
     },
     program: {
-      references: {
-        collection: 'plugins_academic-portfolio::programs',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::programs',
     },
     course: {
-      references: {
-        collection: 'plugins_academic-portfolio::groups',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::groups',
     },
     image: {
-      type: 'string',
+      type: String,
     },
     icon: {
-      type: 'string',
+      type: String,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const subjectsModel = newModel(mongoose.connection, 'v1::academic-portfolio_Subjects', schema);
+
+module.exports = { subjectsModel };

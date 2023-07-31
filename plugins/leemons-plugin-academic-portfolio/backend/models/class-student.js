@@ -1,22 +1,36 @@
-module.exports = {
-  modelName: 'class-student',
-  collectionName: 'class-student',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     class: {
-      references: {
-        collection: 'plugins_academic-portfolio::class',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::class',
     },
     student: {
-      references: {
-        collection: 'plugins_users::user-agent',
-      },
+      type: String,
+      // ref: 'plugins_users::user-agent',
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const classStudentModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_ClassStudent',
+  schema
+);
+
+module.exports = { classStudentModel };

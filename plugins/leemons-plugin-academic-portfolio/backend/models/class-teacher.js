@@ -1,29 +1,41 @@
-module.exports = {
-  modelName: 'class-teacher',
-  collectionName: 'class-teacher',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     class: {
-      references: {
-        collection: 'plugins_academic-portfolio::class',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::class',
     },
     teacher: {
-      references: {
-        collection: 'plugins_users::user-agent',
-      },
+      type: String,
+      // ref: 'plugins_users::user-agent',
     },
     // main-teacher | associate-teacher
     type: {
-      type: 'string',
-      options: {
-        defaultTo: 'associate-teacher',
-      },
+      type: String,
+      default: 'associate-teacher',
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const classTeacherModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_ClassTeacher',
+  schema
+);
+
+module.exports = { classTeacherModel };

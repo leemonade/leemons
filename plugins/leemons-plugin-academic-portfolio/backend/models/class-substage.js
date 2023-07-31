@@ -1,22 +1,36 @@
-module.exports = {
-  modelName: 'class-substage',
-  collectionName: 'class-substage',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     class: {
-      references: {
-        collection: 'plugins_academic-portfolio::class',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::class',
     },
     substage: {
-      references: {
-        collection: 'plugins_academic-portfolio::groups',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::groups',
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const classSubstageModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_ClassSubstage',
+  schema
+);
+
+module.exports = { classSubstageModel };

@@ -1,22 +1,36 @@
-module.exports = {
-  modelName: 'class-knowledges',
-  collectionName: 'class-knowledges',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     class: {
-      references: {
-        collection: 'plugins_academic-portfolio::class',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::class',
     },
     knowledge: {
-      references: {
-        collection: 'plugins_academic-portfolio::knowledges',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::knowledges',
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const classKnowledgesModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_ClassKnowledges',
+  schema
+);
+
+module.exports = { classKnowledgesModel };
