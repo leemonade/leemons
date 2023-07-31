@@ -28,7 +28,6 @@ const addProgramSchema = {
     evaluationSystem: stringSchema,
     useOneStudentGroup: booleanSchema,
     hideStudentsToStudents: booleanSchema,
-    totalHours: numberSchema,
     cycles: {
       type: 'array',
       items: {
@@ -183,7 +182,6 @@ const updateProgramSchema = {
     treeType: integerSchema,
     managers: arrayStringSchema,
     hideStudentsToStudents: booleanSchema,
-    totalHours: numberSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -1017,7 +1015,7 @@ async function validateAddInstanceClass(data, { transacting } = {}) {
     await validateProgramNotUsingInternalId(
       data.program,
       (data.internalIdCourse ? await getCourseIndex(data.internalIdCourse, { transacting }) : '') +
-        data.internalId,
+      data.internalId,
       { transacting }
     );
   }
