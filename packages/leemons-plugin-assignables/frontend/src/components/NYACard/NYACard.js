@@ -65,7 +65,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     };
   }
 
-  const { count: gradeCount, sum: gradeSum } = instance.grades?.reduce(
+  const { count: gradeCount, sum: gradeSum } = (instance.grades ?? {}).reduce(
     ({ count, sum }, grade) => {
       if (grade.type === 'main') {
         return {
