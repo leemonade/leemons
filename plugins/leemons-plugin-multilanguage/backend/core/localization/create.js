@@ -226,9 +226,7 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
     const addedLocalizations = await getLocalizationModelFromCTXAndIsPrivate({
       isPrivate,
       ctx,
-    }).insertMany(newLocalizations, {
-      lean: true,
-    });
+    }).insertMany(newLocalizations);
 
     // #region Define Warning object
 
