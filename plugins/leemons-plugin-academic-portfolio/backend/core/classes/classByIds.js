@@ -9,11 +9,14 @@ const { getByClass: getGroupByClass } = require('./group/getByClass');
 const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
 const { subjectByIds } = require('../subjects/subjectByIds');
 
-async function classByIds(
+async function classByIds({
   ids,
-  { withProgram, withTeachers, userSession, noSearchChilds, noSearchParents, transacting } = {}
-) {
-  const timetableService = leemons.getPlugin('timetable').services.timetable;
+  withProgram,
+  withTeachers,
+  noSearchChilds,
+  noSearchParents,
+  ctx,
+}) {
   const [
     classes,
     knowledges,
@@ -25,38 +28,37 @@ async function classByIds(
     _childClasses,
     timeTables,
   ] = await Promise.all([
-    table.class.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    getKnowledgeByClass(ids, { transacting }),
-    getSubstageByClass(ids, { transacting }),
-    getCourseByClass(ids, { transacting }),
-    getGroupByClass(ids, { transacting }),
-    getTeacherByClass(ids, { transacting }),
-    getStudentByClass(ids, { transacting }),
-    table.class.find({ class_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    timetableService.listByClassIds(ids, { transacting }),
+    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }),
+    getKnowledgeByClass({ class: ids, ctx }),
+    getSubstageByClass({ class: ids, ctx }),
+    getCourseByClass({ class: ids, ctx }),
+    getGroupByClass({ class: ids, ctx }),
+    getTeacherByClass({ class: ids, ctx }),
+    getStudentByClass({ class: ids, ctx }),
+    ctx.tx.db.Class.find({ class: _.isArray(ids) ? ids : [ids] }).lean(),
+    // timetableService.listByClassIds(ids, { transacting }),
+    ctx.tx.call('timetable.timetable.listByClassIds', { classIds: ids }),
   ]);
 
   let programByIds = {};
   if (withProgram) {
     const programIds = _.uniq(_.map(classes, 'program'));
-    const programs = await table.programs.find({ id_$in: programIds }, { transacting });
+    const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
     programByIds = _.keyBy(programs, 'id');
   }
 
   let teacherByIds = {};
   if (withTeachers) {
     const teacherIds = _.uniq(_.map(teachers, 'teacher'));
-    const _teachers = await leemons
-      .getPlugin('users')
-      .services.users.getUserAgentsInfo(teacherIds, { transacting });
+    const _teachers = await ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentsIds: teacherIds,
+    });
     teacherByIds = _.keyBy(_teachers, 'id');
   }
 
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const images = await assetService.getByIds(_.map(classes, 'image'), {
+  const images = ctx.tx.call('leebrary.assets', {
+    assetIds: _.map(classes, 'image'),
     withFiles: true,
-    userSession,
-    transacting,
   });
 
   const imagesById = _.keyBy(images, 'id');
@@ -69,7 +71,7 @@ async function classByIds(
   const haveMultiCoursesByProgram = {};
   if (classPrograms.length) {
     const haveMultiCourses = await Promise.all(
-      _.map(classPrograms, (classProgram) => programHaveMultiCourses(classProgram, { transacting }))
+      _.map(classPrograms, (classProgram) => programHaveMultiCourses({ id: classProgram, ctx }))
     );
     _.forEach(classPrograms, (classProgram, index) => {
       haveMultiCoursesByProgram[classProgram] = haveMultiCourses[index];
@@ -83,12 +85,12 @@ async function classByIds(
     originalCourses,
     originalGroups,
   ] = await Promise.all([
-    table.subjectTypes.find({ id_$in: _.map(classes, 'subjectType') }, { transacting }),
-    table.knowledges.find({ id_$in: _.map(knowledges, 'knowledge') }, { transacting }),
-    subjectByIds(_.map(classes, 'subject'), { userSession, transacting }),
-    table.groups.find({ id_$in: _.map(substages, 'substage') }, { transacting }),
-    table.groups.find({ id_$in: _.map(courses, 'course') }, { transacting }),
-    table.groups.find({ id_$in: _.map(groups, 'group') }, { transacting }),
+    ctx.tx.db.SubjectTypes.find({ id: _.map(classes, 'subjectType') }).lean(),
+    ctx.tx.db.Knowledges.find({ id: _.map(knowledges, 'knowledge') }).lean(),
+    subjectByIds({ ids: _.map(classes, 'subject') }),
+    ctx.tx.db.Groups.find({ id: _.map(substages, 'substage') }).lean(),
+    ctx.tx.db.Groups.find({ id: _.map(courses, 'course') }).lean(),
+    ctx.tx.db.Groups.find({ id: _.map(groups, 'group') }).lean(),
   ]);
 
   const subjectTypesById = _.keyBy(originalSubjectTypes, 'id');
@@ -104,13 +106,13 @@ async function classByIds(
   if (!noSearchParents) {
     const parentClassesIds = _.uniq(_.compact(_.map(classes, 'class')));
     parentClasses = parentClassesIds.length
-      ? await classByIds(parentClassesIds, { noSearchChilds: true, transacting })
+      ? await classByIds({ ids: parentClassesIds, noSearchChilds: true, ctx })
       : [];
   }
 
   if (!noSearchChilds) {
     childClasses = _childClasses.length
-      ? await classByIds(_.map(_childClasses, 'id'), { noSearchParents: true, transacting })
+      ? await classByIds({ ids: _.map(_childClasses, 'id'), noSearchParents: true, ctx })
       : [];
   }
 

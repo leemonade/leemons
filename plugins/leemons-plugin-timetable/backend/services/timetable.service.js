@@ -8,12 +8,12 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/classes.rest');
-const { classByIds } = require('../core/classes');
+const restActions = require('./rest/timetable.rest');
+const listByClassIds = require('../core/timetables/listByClassIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.classes',
+  name: 'timetable.timetable',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -25,9 +25,9 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    classByIds: {
+    listByClassIds: {
       handler(ctx) {
-        return classByIds({ ...ctx.params, ctx });
+        return listByClassIds({ ...ctx.params, ctx });
       },
     },
   },

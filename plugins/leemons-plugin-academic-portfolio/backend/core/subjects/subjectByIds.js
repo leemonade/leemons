@@ -1,23 +1,16 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function subjectByIds(ids, { userSession, transacting } = {}) {
-  const subjects = await table.subjects.find(
-    { id_$in: _.isArray(ids) ? ids : [ids] },
-    { transacting }
-  );
+async function subjectByIds({ ids, ctx }) {
+  const subjects = await ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
 
-  const assetService = leemons.getPlugin('leebrary').services.assets;
   const [images, icons] = await Promise.all([
-    assetService.getByIds(_.map(subjects, 'image'), {
+    ctx.tx.call('leebrary.assets.getByIds', {
+      assetsIds: _.map(subjects, 'image'),
       withFiles: true,
-      userSession,
-      transacting,
     }),
-    assetService.getByIds(_.map(subjects, 'icon'), {
+    ctx.tx.call('leebrary.assets.getByIds', {
+      assetsIds: _.map(subjects, 'icon'),
       withFiles: true,
-      userSession,
-      transacting,
     }),
   ]);
 

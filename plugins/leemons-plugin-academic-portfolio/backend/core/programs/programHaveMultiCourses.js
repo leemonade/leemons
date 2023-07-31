@@ -1,10 +1,7 @@
-const { table } = require('../tables');
-
-async function programHaveMultiCourses(id, { transacting } = {}) {
-  const program = await table.programs.findOne(
-    { id },
-    { columns: ['id', 'moreThanOneAcademicYear'], transacting }
-  );
+async function programHaveMultiCourses({ id, ctx }) {
+  const program = await ctx.tx.db.Programs.findOne({ id })
+    .select(['id', 'moreThanOneAcademicYear'])
+    .lean();
 
   return program.moreThanOneAcademicYear;
 }
