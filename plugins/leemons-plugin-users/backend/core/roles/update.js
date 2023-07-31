@@ -60,7 +60,7 @@ async function update({ id, name, type, description, center, permissions, ctx })
   if (_.isNull(center) || center) await ctx.tx.db.RoleCenter.deleteOne({ id: roleCenter.id });
   if (center) await ctx.tx.db.RoleCenter.create({ role: role.id, center });
 
-  await addPermissionMany({ roleId: id, permissions });
+  await addPermissionMany({ roleId: id, permissions, ctx });
   return role;
 }
 

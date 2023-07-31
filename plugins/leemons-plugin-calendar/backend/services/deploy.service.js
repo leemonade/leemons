@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -15,7 +14,7 @@ const { permissions, widgets } = require('../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'dataset.deploy',
+  name: 'calendar.deploy',
   version: 1,
   mixins: [
     LeemonsMongoDBMixin({

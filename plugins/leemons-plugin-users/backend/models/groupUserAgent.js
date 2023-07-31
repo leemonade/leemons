@@ -14,13 +14,13 @@ const schema = new mongoose.Schema(
       index: true,
     },
     group: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Groups',
+      type: String,
+      // ref: 'users_Groups',
       required: true,
     },
     userAgent: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_UserAgent',
+      // ref: 'users_UserAgent',
+      type: String,
       required: true,
     },
   },

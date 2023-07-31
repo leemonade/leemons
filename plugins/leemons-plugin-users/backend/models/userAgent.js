@@ -14,13 +14,13 @@ const schema = new mongoose.Schema(
       index: true,
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Users',
+      // ref: 'users_Users',
+      type: String,
       required: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Roles',
+      // ref: 'users_Roles',
+      type: String,
       required: true,
     },
     reloadPermissions: {

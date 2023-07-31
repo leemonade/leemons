@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 const addKeywords = require('ajv-keywords');
+const { localeRegex } = require('./validations/localeCode');
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
@@ -35,6 +36,11 @@ class LeemonsValidator {
     return this.validate.errors;
   }
 }
+
+// Validaciones de tipos custom
+ajv.addFormat('localeCode', {
+  validate: (x) => localeRegex.test(x),
+});
 
 LeemonsValidator.ajv = ajv;
 
