@@ -138,7 +138,7 @@ export function useStudentState({ assignation = {} }) {
 }
 
 function PreviewActions({ activity, localizations }) {
-  const { id, roleDetails } = activity?.assignable;
+  const { id, roleDetails } = activity?.assignable ?? {};
 
   const url = roleDetails.previewUrl?.replace(':id', id);
 
