@@ -106,7 +106,7 @@ async function addSubjectAndClassroom({
     // ·····················································
     // STUDENTS
     leemons.log.debug(`Adding students in pool for subject: ${subject.name}`);
-    Object.keys([...Array(nStudents * nGroups)]).map((id) =>
+    Object.keys([...Array(nStudents * nGroups)]).forEach((id) =>
       studentsPool.add(() =>
         addUser(
           generateStudent({
