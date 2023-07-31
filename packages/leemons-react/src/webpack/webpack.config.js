@@ -9,7 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const LoadablePlugin = require('@loadable/webpack-plugin');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin'); 
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = function webpackConfig({
   app,
@@ -168,7 +168,7 @@ module.exports = function webpackConfig({
               },
             },
             {
-              test: /\.js|mjs|jsx$/,
+              test: /\.(js|mjs|jsx)$/,
               // exclude: /node_modules/,
               exclude: /node_modules\/(?!(@bubbles-ui\/*)\/).*/,
               loader: 'babel-loader',
@@ -230,17 +230,17 @@ module.exports = function webpackConfig({
       useDebug && new BundleAnalyzerPlugin(),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
-        new MiniCssExtractPlugin({
-          // Options similar to the same options in webpackOptions.output
-          // both options are optional
-          filename: 'static/css/[name].[contenthash:8].css',
-          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-        }),
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: 'static/css/[name].[contenthash:8].css',
+        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+      }),
       new LoadablePlugin({ filename: 'stats.json', writeToDisk: true }),
       publicFiles?.length &&
-        new CopyPlugin({
-          patterns: [...publicFiles],
-        }),
+      new CopyPlugin({
+        patterns: [...publicFiles],
+      }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
