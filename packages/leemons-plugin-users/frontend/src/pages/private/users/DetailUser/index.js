@@ -23,7 +23,7 @@ import _, { find, forEach, forIn } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import getUserFullName from '../../../../helpers/getUserFullName';
 import {
   getSystemDataFieldsConfigRequest,
@@ -49,11 +49,10 @@ function DetailUser({
   const [store, render] = useStore({ params: {}, centers: [], profiles: [], isEditMode: false });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const history = useHistory();
   let userId = _userId;
+  const { userId: _u } = useParams();
 
   if (!centerId && !profileId && !userId) {
-    const { userId: _u } = useParams();
     userId = _u;
     const query = new URLSearchParams(window.location.search);
     store.params.center = query.get('center');

@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { createCoreStore, createCoreStoreProvider } = require('./coreStore');
 const { createPlugins, createPluginsProvider } = require('./plugins');
 
-function formatModel(name, modelConfig, target = 'global') {
+function formatModel(name, modelConfig, target = 'global', leemons) {
   const defaultModel = {
     modelName: name,
     connection: leemons ? leemons.config.get('database.defaultConnection') : null,

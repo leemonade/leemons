@@ -1,18 +1,18 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
-import _, { keyBy, uniq, without } from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useLayout } from '@layout/context';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { getSessionConfig } from '@users/session';
 import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
-import { addErrorAlert, addInfoAlert } from '@layout/alert';
-import useParseAssignations from '../../hooks/useParseAssignations';
-import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
-import prefixPN from '../../../../../helpers/prefixPN';
+import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
+import { unflatten } from '@common';
+import { addErrorAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getSessionConfig } from '@users/session';
+import _, { keyBy, uniq, without } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useMemo, useState } from 'react';
 import EmptyState from '../../../../../assets/EmptyState.png';
+import prefixPN from '../../../../../helpers/prefixPN';
+import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
+import useParseAssignations from '../../hooks/useParseAssignations';
 
 function useAssignmentsColumns() {
   const isTeacher = useIsTeacher();
@@ -372,7 +372,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
           } else {
             const url = typeof dashboardURL === 'function' ? dashboardURL() : dashboardURL;
             if (url) {
-              window.open(url);
+              window.open(url, 'Dashboard', 'noopener');
             }
           }
         }}

@@ -533,7 +533,7 @@ function AssetList({
   }
 
   function handleOnDownload(item) {
-    window.open(item.url, '_blank');
+    window.open(item.url, '_blank', 'noopener');
   }
 
   function handleOnChangeCategory(key) {

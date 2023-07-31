@@ -26,7 +26,7 @@ import { QuestionImageMarkersModal } from '../../../../../../components/Question
 import { ListItemValueRender } from './components/ListItemValueRender';
 
 // eslint-disable-next-line import/prefer-default-export
-export function Map({ form, t }) {
+export function QuestionMap({ form, t }) {
   const [store, render] = useStore();
   const image = form.watch('properties.image');
   const markers = form.watch('properties.markers');
@@ -216,7 +216,7 @@ export function Map({ form, t }) {
   );
 }
 
-Map.propTypes = {
+QuestionMap.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
 };
