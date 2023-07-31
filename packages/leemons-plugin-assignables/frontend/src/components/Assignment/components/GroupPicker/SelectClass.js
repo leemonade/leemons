@@ -142,11 +142,11 @@ export function SelectClass({
     [availableClasses, value?.classes]
   );
 
+  const { classes } = useSelectClassStyles();
+
   if (!assignableStudents) {
     return <Loader />;
   }
-
-  const { classes } = useSelectClassStyles();
 
   return (
     <Box className={classes.root}>
