@@ -123,7 +123,7 @@ function initWidgets(isInstalled) {
 
 async function events(isInstalled) {
   initPermissions(isInstalled);
-  initMenuBuilder(isInstalled);
+  initMenuBuilder();
   initMultilanguage();
   setupAssignables(isInstalled);
   initWidgets(isInstalled);
