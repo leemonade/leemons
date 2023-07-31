@@ -79,7 +79,7 @@ const LibraryModal = ({
 }) => {
   const { currentTool } = useTextEditor();
   const openLibraryDrawer = !openLibraryModal;
-  const [showAssetDrawer, setShowAssetDrawer] = useState(false || openLibraryDrawer);
+  const [showAssetDrawer, setShowAssetDrawer] = useState(openLibraryDrawer);
   const [asset, setAsset] = useState(currentTool.data.asset);
   const [assetType, setAssetType] = useState('');
 
