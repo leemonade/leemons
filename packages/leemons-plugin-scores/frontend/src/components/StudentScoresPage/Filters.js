@@ -241,14 +241,11 @@ export function Filters({ onChange, setKlasses }) {
             name="period"
             render={({ field }) => {
               const data = [
-                ...periods?.map(
-                  (period) =>
-                    ({
-                      value: period.id,
-                      label: period.name,
-                      group: period.group,
-                    } || [])
-                ),
+                ...periods.map((period) => ({
+                  value: period.id,
+                  label: period.name,
+                  group: period.group,
+                })),
                 {
                   value: 'custom',
                   label: localizations?.period?.custom,
