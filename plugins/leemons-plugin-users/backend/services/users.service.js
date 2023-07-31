@@ -13,7 +13,7 @@ const { getUserAgentCenter } = require('../core/user-agents/getUserAgentCenter')
 const restActions = require('./rest/users.rest');
 const { updateEmail } = require('../core/users/updateEmail');
 const { updatePassword } = require('../core/users/updatePassword');
-const { detail } = require('../core/users');
+// const { detail } = require('../core/users');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -29,6 +29,7 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    /*
     detail: {
       async handler(ctx) {
         const users = await detail({ ...ctx.params, ctx });
@@ -42,6 +43,7 @@ module.exports = {
         return _.isArray(users) ? response : response[0];
       },
     },
+    */
     updateEmail: {
       async handler(ctx) {
         return updateEmail({ ...ctx.params, ctx });
