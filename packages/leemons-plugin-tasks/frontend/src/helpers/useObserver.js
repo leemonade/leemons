@@ -45,22 +45,24 @@ function useObserverState() {
 
 // EN: Create a context to share the state of the observer
 // ES: Crear un contexto para compartir el estado del observador
-function createContext() {
-  const state = useObserverState();
-  const context = React.createContext(state);
-
-  const { Provider } = context;
-
-  const Observer = ({ children }) => <Provider value={state}>{children}</Provider>;
-  Observer.propTypes = {
-    children: PropTypes.node,
-  };
-
-  return { ...state, Observer, useObserver: () => useContext(context) };
-}
-
 export default function useObserver() {
-  const ref = useRef(createContext());
+  const state = useObserverState();
+  const contextRef = React.useRef(React.createContext(state));
+  const context = contextRef.current;
 
-  return ref.current;
+  const Observer = React.useMemo(() => {
+    const { Provider } = context;
+
+    const ObserverProvider = ({ children }) => <Provider value={state}>{children}</Provider>;
+    ObserverProvider.propTypes = {
+      children: PropTypes.node,
+    };
+
+    return ObserverProvider;
+  }, [context.Provider]);
+
+  return React.useMemo(
+    () => ({ ...state, Observer, useObserver: () => useContext(context) }),
+    [JSON.stringify(state), Observer, useContext]
+  );
 }
