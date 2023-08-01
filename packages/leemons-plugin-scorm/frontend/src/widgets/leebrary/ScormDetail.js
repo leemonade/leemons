@@ -20,7 +20,7 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
     setLoading: setAppLoading,
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const toolbarItems = { toggle: t('toggle'), open: t('open') };
+  const toolbarItems = { toggle: t('toggle'), open: t('open'), view: t('view') };
 
   // ·········································································
   // HANDLERS
@@ -44,7 +44,7 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
   }
 
   const handleView = () => {
-    history.push(`/private/scorm/view/${asset.providerData.id}`);
+    history.push(`/private/scorm/preview/${asset.providerData.id}`);
   };
 
   const handleEdit = () => {
@@ -103,11 +103,12 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-              icon: <ViewOnIcon height={16} width={16} />,
-              onClick: handleView,
-            }
+            icon: <ViewOnIcon height={16} width={16} />,
+            onClick: handleView,
+          }
           : null
       }
+      onView={handleView}
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}

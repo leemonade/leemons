@@ -44,7 +44,7 @@ const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
           children: t('view'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/scorm/${asset.providerData.id}`);
+            history.push(`/private/scorm/preview/${asset.providerData.id}`);
           },
         });
       }

@@ -83,7 +83,7 @@ function useData({ id, user }) {
   };
 }
 
-const useViewStyles = createStyles((theme) => {
+export const useViewStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
