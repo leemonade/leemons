@@ -25,7 +25,7 @@ function useOnChange({ control, onChange, availableClasses }) {
   const { classes: selectedClasses, autoAssign, showExcluded, excluded } = useWatch({ control });
 
   React.useEffect(() => {
-    if (!selectedClasses || !availableClasses?.length || typeof onChange === 'function') {
+    if (!selectedClasses || !availableClasses?.length) {
       onChange({
         type: 'class',
         value: [],
