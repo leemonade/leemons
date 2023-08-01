@@ -16,7 +16,7 @@ import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssign
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import { useLayout } from '@layout/context';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, set } from 'lodash';
 import dayjs from 'dayjs';
 import { ScormRender } from '@scorm/components/ScormRender';
 import getScormProgress from '@scorm/helpers/getScormProgress';
@@ -156,12 +156,32 @@ function useOnScormComplete({ updateTimestamps, nextActivityUrl, moduleId, Lates
   };
 
   const onComplete = () => {
-    const progress = getScormProgress({ state: LatestCommit, ensurePercentage: false });
+    updateTimestamps('end');
 
-    showSubmissionModal(progress);
+    if (nextActivityUrl) {
+      history.push(nextActivityUrl);
+    } else if (moduleId) {
+      history.push(`/private/learning-paths/modules/dashboard/${moduleId}`);
+    } else {
+      history.push('/private/assignables/ongoing');
+    }
+
+    // const progress = getScormProgress({ state: LatestCommit, ensurePercentage: false });
+
+    // showSubmissionModal(progress);
   };
 
   return { onComplete };
+}
+
+function getButtonLabel({ nextActivityUrl, moduleId, t }) {
+  if (nextActivityUrl) {
+    return t('nextActivity');
+  }
+  if (moduleId) {
+    return t('modal.goToModule');
+  }
+  return t('markAsFinish');
 }
 
 export default function View() {
@@ -250,11 +270,9 @@ export default function View() {
         <ScormRender scormPackage={scormPackage} state={state} onSetValue={onSetValue} />
       </ActivityContainer>
       <Box className={classes.buttonContainer}>
-        {!scormPackage.gradable && !!nextActivityUrl ? (
-          <Button onClick={onComplete}>{t('nextActivity')}</Button>
-        ) : (
-          <Button onClick={onComplete}>{t('markAsFinish')}</Button>
-        )}
+        <Button onClick={onComplete}>
+          {getButtonLabel({ nextActivityUrl, moduleId: instance?.metadata?.module?.id, t })}
+        </Button>
       </Box>
     </Box>
   );
