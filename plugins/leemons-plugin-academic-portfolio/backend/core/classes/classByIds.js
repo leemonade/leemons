@@ -56,7 +56,7 @@ async function classByIds({
     teacherByIds = _.keyBy(_teachers, 'id');
   }
 
-  const images = ctx.tx.call('leebrary.assets', {
+  const images = ctx.tx.call('leebrary.assets.getByIds', {
     assetIds: _.map(classes, 'image'),
     withFiles: true,
   });

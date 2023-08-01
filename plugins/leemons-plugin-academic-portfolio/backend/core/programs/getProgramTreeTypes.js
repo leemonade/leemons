@@ -1,18 +1,20 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getProgramTreeTypes(programId, { transacting } = {}) {
+async function getProgramTreeTypes({ programId, ctx }) {
   let program = null;
+
   if (_.isString(programId)) {
-    program = await table.programs.findOne({ id: programId }, { transacting });
+    program = await ctx.tx.db.Programs.findOne({ id: programId }).lean();
   } else {
     program = programId;
   }
 
-  const haveCycles = await table.cycles.count({ program: program.id }, { transacting });
+  const haveCycles = await ctx.tx.db.Cycles.count({ program: program.id }).lean();
 
   // subject
   let result = [];
+
+  // Determine the program tree types based on the program's treeType value.
   switch (program.treeType) {
     case 2:
       result = ['center', 'program', 'courses', 'groups', 'knowledges', 'subjectType'];
@@ -36,6 +38,8 @@ async function getProgramTreeTypes(programId, { transacting } = {}) {
       }
       break;
   }
+
+  // If the program lasts more than one academic year, remove 'courses' from the tree types.
   if (program.moreThanOneAcademicYear) {
     const index = result.indexOf('courses');
     if (index >= 0) {

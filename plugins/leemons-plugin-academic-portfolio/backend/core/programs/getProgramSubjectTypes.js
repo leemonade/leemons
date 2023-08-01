@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getProgramSubjectTypes(ids, { transacting } = {}) {
-  return table.subjectTypes.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting });
+async function getProgramSubjectTypes({ ids, ctx }) {
+  return ctx.tx.db.SubjectTypes.find({ program: _.isArray(ids) ? ids : [ids] }).lean();
 }
 
 module.exports = { getProgramSubjectTypes };
