@@ -183,7 +183,7 @@ function isFinished(assignation) {
   return finished;
 }
 
-function getDashboardURL(assignation, labels) {
+function getDashboardURL(assignation) {
   const { instance } = assignation;
   const {
     assignable: { roleDetails },
@@ -191,16 +191,12 @@ function getDashboardURL(assignation, labels) {
 
   const finished = isFinished(assignation);
 
-  if (!finished) {
+  if (!finished || (!instance.requiresScoring && !instance.allowFeedback)) {
     return roleDetails.studentDetailUrl
       .replace(':id', instance.id)
       .replace(':user', assignation.user);
   }
-  if (!instance.requiresScoring && !instance.allowFeedback) {
-    addInfoAlert(labels?.activitiesList?.nonEvaluable);
 
-    return null;
-  }
   return roleDetails.evaluationDetailUrl
     .replace(':id', instance.id)
     .replace(':user', assignation.user);
