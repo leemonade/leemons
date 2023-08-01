@@ -57,6 +57,7 @@ export default function Preview() {
           title: scormPackage?.asset?.name ?? 'name',
           image: coverUrl,
         }}
+        collapsed
       >
         <ScormRender scormPackage={scormPackage} />
       </ActivityContainer>
