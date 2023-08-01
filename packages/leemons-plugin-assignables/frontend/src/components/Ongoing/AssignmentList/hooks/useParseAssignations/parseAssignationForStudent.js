@@ -217,7 +217,7 @@ export async function parseAssignationForStudentView(assignation, labels, option
     isBlocked,
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
     messages: <UnreadMessages rooms={assignation.chatKeys} />,
-    dashboardURL: () => getDashboardURL(assignation, labels),
+    dashboardURL: () => getDashboardURL(assignation),
   };
 }
 
