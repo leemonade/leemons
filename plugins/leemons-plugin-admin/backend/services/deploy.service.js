@@ -10,6 +10,7 @@ const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
+const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -18,10 +19,17 @@ module.exports = () => ({
   name: 'admin.deploy',
   version: 1,
   mixins: [
+    LeemonsMultiEventsMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
+  ],
+  multiEvents: [
+    {
+      events: ['deployment-manager.install', 'multilanguage.newLocale'],
+      handler: () => {},
+    },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {

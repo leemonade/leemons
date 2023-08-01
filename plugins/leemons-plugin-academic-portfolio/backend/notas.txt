@@ -1,0 +1,27 @@
+(Hecho) Cuando se devuelva el arbol si algun nivel tiene algun nodo que no esta en ninguna clase devolverlo debajo del programa
+(Hecho) Añadir creditos a cursos
+(Hecho) Cuando se generen los cursos que se metan los creditos a todos los cursos
+(Hecho) Añadir campo al programa de esconder cursos en el arbol
+(Hecho) Añadir a la funcion que devuelve el arbol que tambien se le pueda pasar asignaturas
+(Hecho) Modificar el endpoind del arbol para que devuelva los detalles de todas sus relaciones a nivel de clase
+(Hecho) Cuando se borre una clase si esta tiene clases referenciadas que estas tambien se borren
+(Hecho) Crear endpoind donde se le pueda pasar un array de clases y se le puedan actualizar ciertos campos (grupo, course, subjectType, knowledges)
+(Hecho) Crear endpoind para añadir estudiantes dada una clase/clases
+(Hecho) Revisar funcion de añadir estudiantes para que compruebe si la clase es una instancia y sacar los alumnos que hay en la clase final y el numero de slots para comprobar si se pueden añadir mas alumnos
+(Hecho) Endpoind/funcion de actualizar programa solo con los campos (nombre, abreviatura y creditos)
+(Hecho) Cambiar el internalId de la asignatura para que este en la tabla program-subjects-credits por que la asignatura puede estar usandose en distintos programas (por culpa de las clases que gacer referencia a clases)
+(Hecho) Los internal ids me los pasa el frontend, solo pueden ser digitos, con lo cual no los genera el backend
+(Hecho) Cuando se crea una clase instanciada, siempre me pueden pasar el internalId y los creditos, si ya existian configurados estos para ese programa, se machacan y ya
+(Hecho) Endpoind de crear instancia (clase que apunta a otra clase)
+
+
+
+Crear endpind de duplicar programa, se duplica todo menos los estudiantes y los profesores de las clases
+Cuando se duplica un grupo que se le pueda especificar si los alumnos/profesores permanecen en las clases o no
+
+
+Añadir a la asigantura un listado de cursos cuando se le añada el listado de cursos comprobar si alguna de las asignaturas que ya tiene vinculadas tiene algun otro curso, entonces devolver un error como que hay una inconcluencia entre las clases los cursos que tenen para asignatura y la asignatura los cursos en los que se ofrece.
+cuando se crea una clase comprobar si la asignatura tiene el curso que se le este especificando a la clase
+
+Hablar con miguel lo del clash shedule
+*
