@@ -1,25 +1,36 @@
-module.exports = {
-  modelName: 'managers',
-  collectionName: 'managers',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     // Id of type
     relationship: {
-      type: 'string',
+      type: String,
     },
     // program | course | knowledge | etz
     type: {
-      type: 'string',
+      type: String,
     },
     userAgent: {
-      references: {
-        collection: 'plugins_users::user-agent',
-      },
+      type: String,
+      // ref: 'plugins_users::user-agent',
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const managersModel = newModel(mongoose.connection, 'v1::academic-portfolio_Managers', schema);
+
+module.exports = { managersModel };
