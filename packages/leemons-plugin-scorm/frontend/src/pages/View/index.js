@@ -107,8 +107,6 @@ function useOnScormComplete({ updateTimestamps, nextActivityUrl, moduleId, Lates
   const history = useHistory();
 
   const showSubmissionModal = async (progress) => {
-    updateTimestamps('end');
-
     const labels = {
       description:
         progress === null
@@ -144,6 +142,8 @@ function useOnScormComplete({ updateTimestamps, nextActivityUrl, moduleId, Lates
       },
 
       onConfirm: () => {
+        updateTimestamps('end');
+
         if (nextActivityUrl) {
           history.push(nextActivityUrl);
         } else if (moduleId) {
