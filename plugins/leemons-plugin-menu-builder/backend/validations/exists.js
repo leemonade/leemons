@@ -1,6 +1,6 @@
 const { LeemonsError } = require('leemons-error');
-const existMenu = require('../core/menu/exist');
-const existMenuItem = require('../core/menu-item/exist');
+const { exist: existMenu } = require('../core/menu/exist');
+const { exist: existMenuItem } = require('../core/menu-item/exist');
 
 async function validateExistMenu({ key, ctx }) {
   if (await existMenu({ key, ctx }))

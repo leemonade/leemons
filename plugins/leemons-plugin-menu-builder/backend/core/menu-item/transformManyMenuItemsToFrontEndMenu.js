@@ -88,4 +88,4 @@ async function transformManyMenuItemsToFrontEndMenu({ menuItems, locale, customI
   return finalMenu;
 }
 
-module.exports = transformManyMenuItemsToFrontEndMenu;
+module.exports = { transformManyMenuItemsToFrontEndMenu };

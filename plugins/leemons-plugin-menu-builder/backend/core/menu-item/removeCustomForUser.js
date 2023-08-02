@@ -2,8 +2,6 @@ const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
 const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
 
-const { withTransaction } = global.utils;
-
 /**
  * Remove custom Menu Item
  * @private
@@ -62,4 +60,4 @@ async function removeCustomForUser({ menuKey, key, ctx }) {
   return true;
 }
 
-module.exports = removeCustomForUser;
+module.exports = { removeCustomForUser };

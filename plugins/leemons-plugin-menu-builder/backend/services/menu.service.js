@@ -12,7 +12,7 @@ const { add, exist, remove, getIfHasPermission } = require('../core/menu');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'umenu-builder.men',
+  name: 'menu-builder.menu',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

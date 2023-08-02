@@ -25,7 +25,7 @@ module.exports = {
   ],
   menuItems: [
     {
-      config: {
+      item: {
         key: 'calendar',
         order: 200,
         iconSvg: '/public/calendar/calendar.svg',
@@ -41,7 +41,7 @@ module.exports = {
       ],
     },
     {
-      config: {
+      item: {
         key: 'kanban',
         order: 201,
         iconSvg: '/public/calendar/plugin-kanban.svg',
@@ -57,7 +57,7 @@ module.exports = {
       ],
     },
     {
-      config: {
+      item: {
         key: 'calendar-config',
         parentKey: 'plugins.calendar.calendar',
         url: '/private/calendar/config',
@@ -71,7 +71,7 @@ module.exports = {
       ],
     },
     {
-      config: {
+      item: {
         key: 'calendar-classroom',
         parentKey: 'plugins.calendar.calendar',
         url: '/calendar/config/classroom',

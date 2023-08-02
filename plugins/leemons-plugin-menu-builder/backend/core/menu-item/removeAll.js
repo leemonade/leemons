@@ -36,4 +36,4 @@ async function removeAll({ menuKey, ctx }) {
   return true;
 }
 
-module.exports = removeAll;
+module.exports = { removeAll };

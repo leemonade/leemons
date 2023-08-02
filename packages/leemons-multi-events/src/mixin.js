@@ -28,7 +28,7 @@ async function markEventCalledAndCallIfCan({
   if (await hasKeys(model, _.map(events, getKey))) {
     // ES: Si el handler tiene que ser llamado solo una vez comprobamos si ya se llamo previamente y si no lo hizo lanzamos el handler
     if (type === 'once') {
-      if (!(await hasKey(getKey(JSON.stringify(events))))) {
+      if (!(await hasKey(model, getKey(JSON.stringify(events))))) {
         await handler(ctx, ...params);
       }
     } else {
@@ -43,7 +43,7 @@ async function markEventCalledAndCallIfCan({
 module.exports = ({ ctxKeyValueModelName = 'KeyValue' } = {}) => ({
   name: '',
   merged(schema) {
-    _.forIn(schema.multiEvents, ({ events, type = 'once', handler }) => {
+    _.forIn(schema.multiEvents, ({ events, type = 'on', handler }) => {
       _.forEach(events, (event) => {
         if (schema.events[event]) {
           if (_.isFunction(schema.events[event])) {

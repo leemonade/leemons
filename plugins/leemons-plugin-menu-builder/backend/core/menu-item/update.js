@@ -136,4 +136,4 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
   return menuItem;
 }
 
-module.exports = update;
+module.exports = { update };

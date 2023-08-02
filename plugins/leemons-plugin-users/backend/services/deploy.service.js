@@ -10,9 +10,10 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { addLocales, addLocalesDeploy } = require('leemons-multilanguage');
 const { hasKey, setKey } = require('leemons-mongodb-helpers');
 const { addPermissionsDeploy } = require('leemons-permissions');
+const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { getServiceModels } = require('../models');
 const { addMany } = require('../core/actions');
-const { defaultActions, defaultPermissions } = require('../config/constants');
+const { defaultActions, defaultPermissions, menuItems } = require('../config/constants');
 const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
@@ -49,6 +50,21 @@ module.exports = {
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
+    },
+    'menu-builder.init-main-menu': async (ctx) => {
+      const [mainMenuItem, ...otherMenuItems] = menuItems;
+      await addMenuItemsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        item: mainMenuItem,
+        ctx,
+      });
+      ctx.emit('init-menu');
+      await addMenuItemsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        item: otherMenuItems,
+        ctx,
+      });
+      ctx.emit('init-submenu');
     },
     'users.change-platform-locale': async (ctx) => {
       await createInitialProfiles({ ctx });
