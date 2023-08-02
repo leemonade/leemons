@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
+
 const existManyRoles = require('../roles/existMany');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { table } = require('../tables');
 const { exist } = require('./exist');
 const {
   addCalendarToUserAgentsIfNeedByUser,
@@ -24,81 +25,72 @@ const {
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function add(
-  {
+async function add({
+  name,
+  surnames,
+  secondSurname,
+  avatar,
+  birthdate,
+  tags,
+  gender,
+  email,
+  locale,
+  password,
+  active,
+  roles,
+  sendWellcomeEmail,
+  ctx,
+}) {
+  if (await exist({ query: { email }, ctx }))
+    throw new LeemonsError(ctx, { message: `"${email}" email already exists` });
+  if (!(await existManyRoles({ roles, ctx })))
+    throw new LeemonsError(ctx, { message: 'One of the roles specified does not exist.' });
+
+  const user = await ctx.tx.db.Users.create({
     name,
     surnames,
     secondSurname,
-    avatar,
-    birthdate,
-    tags,
-    gender,
+    birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
     email,
+    gender,
+    password: password ? await encryptPassword(password) : undefined,
     locale,
-    password,
-    active,
-  },
-  roles,
-  { sendWellcomeEmail, transacting: _transacting } = {}
-) {
-  if (await exist({ email })) throw new Error(`"${email}" email already exists`);
-  if (!(await existManyRoles(roles, { transacting: _transacting })))
-    throw new Error('One of the ids specified as profile does not exist.');
+    active: active || false,
+  });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const user = await table.users.create(
-        {
-          name,
-          surnames,
-          secondSurname,
-          birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
-          email,
-          gender,
-          password: password ? await encryptPassword(password) : undefined,
-          locale,
-          active: active || false,
-        },
-        { transacting }
-      );
-
-      await Promise.all(
-        _.map(roles, (role) => checkIfCanCreateNUserAgentsInRoleProfiles(1, role, { transacting }))
-      );
-
-      user.userAgents = await table.userAgent.createMany(
-        _.map(roles, (role) => ({
-          role,
-          user: user.id,
-          reloadPermissions: true,
-        })),
-        { transacting }
-      );
-
-      await addCenterProfilePermissionToUserAgents(_.map(user.userAgents, 'id'), { transacting });
-
-      // --- Asset
-      await addUserAvatar(user, avatar, { transacting });
-
-      if (tags && _.isArray(tags) && tags.length) {
-        const tagsService = leemons.getPlugin('common').services.tags;
-        await Promise.all(
-          _.map(user.userAgents, (userAgent) =>
-            tagsService.setTagsToValues('users.user-agent', tags, userAgent.id, {
-              transacting,
-            })
-          )
-        );
-      }
-
-      if (leemons.getPlugin('calendar')) {
-        await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
-      }
-      return user;
-    },
-    table.users,
-    _transacting
+  await Promise.all(
+    _.map(roles, (role) => checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx }))
   );
+
+  user.userAgents = await ctx.tx.db.UserAgent.insertMany(
+    _.map(roles, (role) => ({
+      role,
+      user: user.id,
+      reloadPermissions: true,
+    }))
+  );
+
+  await addCenterProfilePermissionToUserAgents({ userAgentIds: _.map(user.userAgents, 'id'), ctx });
+
+  // --- Asset
+  // TODO Roberto: ESTOY MIGRANDO ESTO... entrando al laberinto... (hay que meter los parámetros que quedan junto con CTX)
+  await addUserAvatar({ user, avatar, ctx });
+
+  if (tags && _.isArray(tags) && tags.length) {
+    const tagsService = leemons.getPlugin('common').services.tags;
+    await Promise.all(
+      _.map(user.userAgents, (userAgent) =>
+        tagsService.setTagsToValues('users.user-agent', tags, userAgent.id, {
+          transacting,
+        })
+      )
+    );
+  }
+
+  if (leemons.getPlugin('calendar')) {
+    await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
+  }
+  return user;
 }
 
 module.exports = { add };
