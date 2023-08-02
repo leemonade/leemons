@@ -1,14 +1,18 @@
 /* eslint-disable no-param-reassign */
 const { map, isEmpty, isNil, isString, isArray, trim, forEach } = require('lodash');
-const { CATEGORIES } = require('../../../config/constants');
-const { tables } = require('../tables');
+
+const got = require('got');
+const metascraper = require('metascraper');
+
+const { CATEGORIES } = require('../../config/constants');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');
 const { getById: getCategoryById } = require('../categories/getById');
 const { getByKey: getCategoryByKey } = require('../categories/getByKey');
-const { validateAddAsset } = require('../../validations/forms');
+const { validateAddAsset } = require('../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
+const { LeemonsError } = require('packages/leemons-error/src');
 
 /*
 * permissions example
@@ -21,17 +25,16 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
     },
   ]
 * */
-async function add(
-  { file, cover, category, canAccess, ...data },
-  {
-    newId,
-    published = true,
-    userSession,
-    permissions: _permissions,
-    transacting: t,
-    duplicating = false,
-  } = {}
-) {
+async function add({
+  file,
+  cover,
+  category,
+  canAccess,
+  options: { newId, published = true, permissions: _permissions, duplicating = false } = {},
+  ctx,
+  ...data
+}) {
+  const { userSession } = ctx.meta;
   // eslint-disable-next-line no-nested-ternary
   const pPermissions = _permissions
     ? isArray(_permissions)
@@ -48,8 +51,11 @@ async function add(
   if (data.categoryKey === CATEGORIES.BOOKMARKS) {
     if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
       try {
-        const { body: html } = await global.utils.got(data.url);
-        const metas = await global.utils.metascraper({ html, url: data.url });
+        const { body: html } = await got(data.url);
+        const metas = await metascraper({ html, url: data.url });
+        //! TODO Roberto: Preguntar a Jaime
+        //* const { body: html } = await global.utils.got(data.url);
+        //* const metas = await global.utils.metascraper({ html, url: data.url });
         data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
         data.description = data.description || metas.description;
 
@@ -80,10 +86,10 @@ async function add(
   if (isEmpty(category)) {
     if (!isEmpty(categoryId)) {
       // eslint-disable-next-line no-param-reassign
-      category = await getCategoryById(categoryId);
+      category = await getCategoryById({ id: categoryId, ctx });
     } else {
       // eslint-disable-next-line no-param-reassign
-      category = await getCategoryByKey(categoryKey);
+      category = await getCategoryByKey({ key: categoryKey, ctx });
     }
   } else if (isString(category)) {
     // Checks if uuid is passed
@@ -91,25 +97,25 @@ async function add(
       category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
     ) {
       // eslint-disable-next-line no-param-reassign
-      category = await getCategoryById(category);
+      category = await getCategoryById({ id: category, ctx });
     } else {
       // eslint-disable-next-line no-param-reassign
-      category = await getCategoryByKey(category);
+      category = await getCategoryByKey({ key: category, ctx });
     }
   }
 
-  let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
+  let canUse = [ctx.prefixPN(''), category?.pluginOwner];
   if (isArray(category?.canUse) && category?.canUse.length) {
     canUse = canUse.concat(category.canUse);
   }
-
-  if (category?.canUse !== '*' && !canUse.includes(this.calledFrom)) {
-    throw new global.utils.HttpError(
-      403,
-      `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`
-    );
+  if (category?.canUse !== '*' && !canUse.includes(ctx.callerPlugin)) {
+    throw new LeemonsError(ctx, {
+      message: `Category "${category.key}" was not created by the plugin "${ctx.callerPlugin}". You can only add assets to categories created by the plugin "${this.calledFrom}".`,
+      httpStatusCode: 403,
+    });
   }
 
+  // TODO Roberto: Estoy Aquí
   // ··········································································
   // UPLOAD FILE
 

@@ -1,16 +1,15 @@
 const { flattenDeep } = require('lodash');
-const { tables } = require('../tables');
 
-async function getByAssets(assetIds, { columns, userSession, transacting } = {}) {
+async function getByAssets({ assetIds, columns, ctx }) {
   const assetsIds = flattenDeep([assetIds]);
-
-  const query = { asset_$in: assetsIds };
+  const { userSession } = ctx.meta;
+  const query = { asset: assetsIds };
 
   if (userSession?.userAgents) {
     query.userAgent = userSession.userAgents[0].id;
   }
 
-  return tables.pins.find(query, { columns, transacting });
+  return ctx.tx.db.Pins.find(query).select(columns).lean();
 }
 
 module.exports = { getByAssets };
