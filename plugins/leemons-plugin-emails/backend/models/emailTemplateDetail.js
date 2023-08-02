@@ -1,46 +1,3 @@
-module.exports = {
-  modelName: 'email-template-detail',
-  collectionName: 'email-template-detail',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
-    template: {
-      references: {
-        collection: 'plugins_emails::email-template',
-      },
-    },
-    type: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    language: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    subject: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
-    },
-    html: {
-      type: 'richtext',
-      textType: 'mediumtext',
-      options: {
-        notNull: true,
-      },
-    },
-  },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
-
 const { mongoose, newModel } = require('leemons-mongodb');
 
 const schema = new mongoose.Schema(
@@ -58,25 +15,24 @@ const schema = new mongoose.Schema(
     },
     //
     template: {
-      // referencia a 'emails_EmailTemplate',
+      // ref: 'plugins_emails::email-template'
       type: String,
-      required: true,
     },
     type: {
       type: String,
-      required: true,
+      require: true,
     },
     language: {
       type: String,
-      required: true,
+      require: true,
     },
     subject: {
       type: String,
-      required: true,
+      require: true,
     },
     html: {
       type: String,
-      required: true,
+      require: true,
     },
   },
   {
@@ -84,9 +40,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.index({ deploymentID: 1, name: 1 }, { unique: true });
-schema.index({ deploymentID: 1, templateName: 1 }, { unique: true });
+const emailTemplateDetailModel = newModel(
+  mongoose.connection,
+  'v1::emails_EmailTemplateDetail',
+  schema
+);
 
-const emailTemplateModel = newModel(mongoose.connection, 'v1::emails_EmailTemplateDetail', schema);
-
-module.exports = { emailTemplateModel };
+module.exports = { emailTemplateDetailModel };

@@ -1,31 +1,29 @@
 const { groupBy, uniq } = require('lodash');
 
-async function getClassesPermissions(assetsIds, { withInfo, transacting, userSession }) {
+async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   const ids = Array.isArray(assetsIds) ? assetsIds : [assetsIds];
 
-  const { services: userService } = leemons.getPlugin('users');
-  const permissions = await userService.permissions.findItems(
-    {
-      item_$in: ids,
-      permissionName_$startsWith: 'plugins.academic-portfolio.class.',
-      type_$startsWith: leemons.plugin.prefixPN('asset'),
+  const permissions = await ctx.tx.call('users.permissions.findItems', {
+    params: {
+      item: ids,
+      // permissionName_$startsWith: 'academic-portfolio.class.',
+      permissionName: /^academic-portfolio.class/i,
+      // type_$startsWith: leemons.plugin.prefixPN('asset'),
+      type: `/^${ctx.prefixPN('asset')}/i`,
     },
-    { transacting }
-  );
+  });
 
   const classesData = {};
   if (withInfo) {
     const classes = uniq(
       permissions.map((permission) =>
-        permission.permissionName.replace(`plugins.academic-portfolio.class.`, '')
+        permission.permissionName.replace(`academic-portfolio.class.`, '')
       )
     );
 
     if (classes.length) {
-      const { services: aPortoflioServices } = leemons.getPlugin('academic-portfolio');
-      const classesInfo = await aPortoflioServices.classes.classByIds(classes, {
-        userSession,
-        transacting,
+      const classesInfo = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+        ids: classes,
       });
 
       classesInfo.forEach((klass) => {
@@ -47,11 +45,11 @@ async function getClassesPermissions(assetsIds, { withInfo, transacting, userSes
   return ids.map(
     (id) =>
       permissionsByAsset[id]?.map((permission) => {
-        const classId = permission.permissionName.replace(`plugins.academic-portfolio.class.`, '');
+        const classId = permission.permissionName.replace(`academic-portfolio.class.`, '');
         return {
           ...classesData[classId],
           class: classId,
-          role: permission.type === leemons.plugin.prefixPN('asset.can-edit') ? 'editor' : 'viewer',
+          role: permission.type === ctx.prefixPN('asset.can-edit') ? 'editor' : 'viewer',
         };
       }) ?? []
   );

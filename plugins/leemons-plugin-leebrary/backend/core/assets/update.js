@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+const { LeemonsError } = require('leemons-error');
 const {
   map,
   isArray,
@@ -10,11 +11,10 @@ const {
   pick,
 } = require('lodash');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
-const { tables } = require('../tables');
-const { validateAddAsset } = require('../../validations/forms');
+const { validateAddAsset } = require('../validations/forms');
 const { getByIds } = require('./getByIds');
 const { duplicate } = require('./duplicate');
-const { CATEGORIES } = require('../../../config/constants');
+const { CATEGORIES } = require('../../config/constants');
 const { getById: getCategory } = require('../categories/getById');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');
@@ -38,12 +38,9 @@ function getDiff(a, b) {
 // -----------------------------------------------------------------------------
 // MAIN FUNCTION
 
-async function update(
-  data,
-  { upgrade, scale = 'major', published = true, userSession, transacting } = {}
-) {
+async function update({ data, upgrade, scale = 'major', published = true, userSession, ctx }) {
   if (isEmpty(data)) {
-    throw new Error('No changes detected');
+    throw new LeemonsError(ctx, { message: 'No changes detected' });
   }
   data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
   if (isArray(data.subjects)) {
@@ -59,20 +56,20 @@ async function update(
 
   // EN: Get user's permissions
   // ES: Obtener los permisos del usuario
-  const { permissions } = await getPermissions(assetId, { userSession, transacting });
+  const { permissions } = await getPermissions({ assetId, ctx });
 
   // EN: Check if the user has permissions to update the asset
   // ES: Comprobar si el usuario tiene permisos para actualizar el activo
   if (!permissions.edit) {
-    throw new global.utils.HttpError(401, "You don't have permissions to update this asset");
+    throw new LeemonsError(ctx, { message: "You don't have permissions to update this asset" });
   }
 
   // EN: Get the current values
   // ES: Obtenemos los valores actuales
-  const currentAsset = (await getByIds(assetId, { withFiles: true, transacting }))[0];
+  const currentAsset = (await getByIds({ assetsIds: assetId, withFiles: true, ctx }))[0];
 
   if (!currentAsset) {
-    throw new global.utils.HttpError(422, 'Asset not found');
+    throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 422 });
   }
 
   const compareProps = [
@@ -89,7 +86,7 @@ async function update(
     'subjects',
   ];
 
-  const category = await getCategory(currentAsset.category, { transacting });
+  const category = await getCategory({ id: currentAsset.category, ctx });
   if (category.key === CATEGORIES.BOOKMARKS) {
     compareProps.push('url');
   }
@@ -111,25 +108,25 @@ async function update(
   // ·········································································
   // DUPLICATE ASSET
 
-  const { versionControl } = leemons.getPlugin('common').services;
-
   // EN: Check if the current version is published.
   // ES: Comprueba si la versión actual está publicada.
-  const currentVersion = await versionControl.getVersion(assetId, { transacting });
+  const currentVersion = await ctx.tx.call('common.versionControl.getVersion', { id: assetId });
 
   // ES: Si la versión actual es la publicada, hacemos el upgrade
   // EN: If the current version is the published one, we upgrade
   if (upgrade && currentVersion.published) {
-    const { fullId } = await versionControl.upgradeVersion(assetId, scale, {
+    const { fullId } = await ctx.tx.call('common.versionControl.upgradeVersion', {
+      id: assetId,
+      upgrade: scale,
       published,
-      transacting,
     });
 
-    const duplicatedAsset = await duplicate.call(this, assetId, {
+    //! TODO Roberto: VOY POR AQUÍ!!!!
+    const duplicatedAsset = await duplicate({
+      assetId,
       preserveName: true,
       newId: fullId,
-      userSession,
-      transacting,
+      ctx,
     });
     currentVersion.published = published;
     assetId = duplicatedAsset.id;

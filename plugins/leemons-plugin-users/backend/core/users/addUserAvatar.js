@@ -1,7 +1,4 @@
-const { table } = require('../tables');
-
-async function addUserAvatar(user, avatar, { transacting } = {}) {
-  const assetService = leemons.getPlugin('leebrary').services.assets;
+async function addUserAvatar({ user, avatar, ctx } = {}) {
   const assetData = {
     indexable: false,
     public: true,
@@ -10,14 +7,17 @@ async function addUserAvatar(user, avatar, { transacting } = {}) {
   if (avatar) assetData.cover = avatar;
   let asset;
   if (user.avatarAsset) {
-    asset = await assetService.update(
-      { ...assetData, id: user.avatarAsset },
-      {
-        published: true,
-        userSession: user,
-        transacting,
-      }
-    );
+    asset = await ctx.tx.call('leebrary.assets.update', {
+      // TODO Roberto: ESTOY SIGO MIGRANDO POR AQUÍ
+    });
+    // .update(
+    //   { ...assetData, id: user.avatarAsset },
+    //   {
+    //     published: true,
+    //     userSession: user,
+    //     transacting,
+    //   }
+    // );
   } else {
     asset = await assetService.add(assetData, {
       published: true,

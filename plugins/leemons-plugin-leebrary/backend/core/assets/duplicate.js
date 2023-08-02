@@ -1,24 +1,27 @@
+/**
+ * The `duplicate` function duplicates an asset, including its files and metadata, with the option to
+ * preserve the name and specify new permissions and visibility.
+ * @returns The function `duplicate` returns a new asset object that has been duplicated from an
+ * existing asset.
+ */
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
 const { getByAsset: getBookmark } = require('../bookmarks/getByAsset');
 const { add } = require('./add');
 const { getById: getCategory } = require('../categories/getById');
 const { duplicate: duplicateFile } = require('../files/duplicate');
-const { tables } = require('../tables');
 const { add: addFiles } = require('./files/add');
 
-async function duplicate(
+async function duplicate({
   assetId,
-  {
-    preserveName = false,
-    newId,
-    indexable,
-    public: isPublic,
-    userSession,
-    permissions: _permissions,
-    transacting,
-  }
-) {
+  preserveName = false,
+  newId,
+  indexable,
+  public: isPublic,
+  permissions: _permissions,
+  ctx,
+}) {
   // eslint-disable-next-line no-nested-ternary
   const pPermissions = _permissions
     ? _.isArray(_permissions)
@@ -27,21 +30,27 @@ async function duplicate(
     : _permissions;
   // EN: Get the user permissions
   // ES: Obtener los permisos del usuario
-  const { permissions } = await getPermissions(assetId, { userSession, transacting });
+  const { permissions } = await getPermissions({ assetId, ctx });
 
   // EN: Check if the user has permissions to update the asset
   // ES: Comprobar si el usuario tiene permisos para actualizar el activo
   if (!permissions.duplicate) {
-    throw new global.utils.HttpError(401, "You don't have permissions to duplicate this asset");
+    throw new LeemonsError(ctx, {
+      message: "You don't have permissions to duplicate this asset",
+      httpStatusCode: 401,
+    });
   }
 
-  const asset = await tables.assets.findOne({ id: assetId }, { transacting });
-  if (!asset) throw new global.utils.HttpError(422, 'Asset not found');
+  const asset = await ctx.tx.db.Assets.findOne({ id: assetId }).lean();
+  if (!asset) throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 422 });
 
-  const category = await getCategory(asset.category, { transacting });
+  const category = await getCategory({ id: asset.category, ctx });
 
   if (!category?.duplicable) {
-    throw new global.utils.HttpError(401, 'Assets in this category cannot be duplicated');
+    throw new LeemonsError(ctx, {
+      message: 'Assets in this category cannot be duplicated',
+      httpStatusCode: 401,
+    });
   }
 
   const fileIds = [];
@@ -50,7 +59,7 @@ async function duplicate(
   // BOOKMARK
   // ES: En caso de que el asset sea un Bookmark, entonces recuperamos los datos
   // EN: In case the asset is a Bookmark, then we recover the data
-  const bookmark = await getBookmark(assetId, { transacting });
+  const bookmark = await getBookmark({ assetId, ctx });
 
   if (bookmark) {
     asset.fileType = 'bookmark';
@@ -66,19 +75,16 @@ async function duplicate(
     fileIds.push(asset.cover);
   }
 
-  const assetFiles = await tables.assetsFiles.find({ asset: assetId }, { transacting });
+  const assetFiles = await ctx.tx.db.AssetsFiles.find({ asset: assetId }).lean();
   fileIds.push(..._.map(assetFiles, 'file'));
 
-  const files = await tables.files.find({ id_$in: fileIds }, { transacting });
+  const files = await ctx.tx.db.Files.find({ id: fileIds }).lean();
 
   const cover = _.find(files, { id: asset.cover });
 
-  // ·········································································
-  // TAGS
-  const tagsService = leemons.getPlugin('common').services.tags;
-  const [tags] = await tagsService.getValuesTags(assetId, {
-    type: leemons.plugin.prefixPN(''),
-    transacting,
+  const [tags] = ctx.tx.call('common.tags.getValuesTags', {
+    tags: assetId,
+    type: ctx.prefixPN(''),
   });
 
   // ·········································································
@@ -94,8 +100,9 @@ async function duplicate(
     'created_at',
     'updated_at',
   ]);
-  const newAsset = await add.call(
-    this,
+
+  // TODO Roberto: Estoy Aquí
+  const newAsset = await add(
     {
       ...assetData,
       tags,
@@ -106,7 +113,7 @@ async function duplicate(
         indexable === undefined ? asset.indexable : ['true', true, 1, '1'].includes(indexable),
       public: isPublic === undefined ? asset.public : ['true', true, 1, '1'].includes(isPublic),
     },
-    { newId, userSession, transacting, duplicating: true }
+    { newId, duplicating: true }
   );
 
   // ·········································································
