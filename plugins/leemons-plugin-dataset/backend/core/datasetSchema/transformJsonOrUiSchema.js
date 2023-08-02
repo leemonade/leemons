@@ -24,7 +24,7 @@ function removeArrayPropFromString(string) {
  *  @param {string[]=} replaces
  *  @return {any} The new dataset location
  *  */
-function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
+function transformJsonOrUiSchema({ jsonSchema, saveKeys, replaces }) {
   const schema = _.cloneDeep(jsonSchema);
 
   let keys = [];
@@ -83,7 +83,7 @@ function transformJsonOrUiSchema(jsonSchema, saveKeys, replaces) {
   };
 }
 
-function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
+function getJsonSchemaProfilePermissionsKeys({ jsonSchema }) {
   const keys = [];
   _.forEach(arrKeys(jsonSchema), (key) => {
     if (key.indexOf('.permissions.') >= 0) {
@@ -101,7 +101,7 @@ function getJsonSchemaProfilePermissionsKeys(jsonSchema) {
 module.exports = {
   arrKeys,
   getJsonSchemaProfilePermissionsKeys,
-  getJsonSchemaProfilePermissionsKeysByType(_jsonSchema) {
+  getJsonSchemaProfilePermissionsKeysByType({ jsonSchema: _jsonSchema }) {
     const jsonSchema = _.cloneDeep(_.isString(_jsonSchema) ? JSON.parse(_jsonSchema) : _jsonSchema);
     const profiles = _.clone(_.isString(jsonSchema) ? JSON.parse(jsonSchema) : jsonSchema || {});
     const roles = _.clone(_.isString(jsonSchema) ? JSON.parse(jsonSchema) : jsonSchema || {});
@@ -115,8 +115,8 @@ module.exports = {
       }
     });
     return {
-      profiles: getJsonSchemaProfilePermissionsKeys(profiles),
-      roles: getJsonSchemaProfilePermissionsKeys(roles),
+      profiles: getJsonSchemaProfilePermissionsKeys({ jsonSchema: profiles }),
+      roles: getJsonSchemaProfilePermissionsKeys({ jsonSchema: roles }),
     };
   },
   transformJsonSchema(jsonSchema, ignoreKeys = []) {

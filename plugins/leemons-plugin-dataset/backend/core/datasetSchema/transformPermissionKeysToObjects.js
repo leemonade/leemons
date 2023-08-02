@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-function transformPermissionKeysToObjects(jsonSchema, keys, prefix) {
+function transformPermissionKeysToObjects({ jsonSchema, keys, prefix, ctx }) {
   const result = {};
   _.forEach(keys, (key) => {
     const partials = _.split(key, '.');
@@ -10,7 +10,7 @@ function transformPermissionKeysToObjects(jsonSchema, keys, prefix) {
       result[profileId] = [];
     }
     result[profileId].push({
-      permissionName: leemons.plugin.prefixPN(`${prefix}.${saveKey}`),
+      permissionName: ctx.prefixPN(`${prefix}.${saveKey}`),
       actionNames: _.get(jsonSchema, key),
     });
   });
@@ -18,10 +18,15 @@ function transformPermissionKeysToObjects(jsonSchema, keys, prefix) {
   return result;
 }
 
-function transformPermissionKeysToObjectsByType(jsonSchema, keysByType, prefix) {
+function transformPermissionKeysToObjectsByType({ jsonSchema, keysByType, prefix, ctx }) {
   return {
-    profiles: transformPermissionKeysToObjects(jsonSchema, keysByType.profiles, prefix),
-    roles: transformPermissionKeysToObjects(jsonSchema, keysByType.roles, prefix),
+    profiles: transformPermissionKeysToObjects({
+      jsonSchema,
+      keys: keysByType.profiles,
+      prefix,
+      ctx,
+    }),
+    roles: transformPermissionKeysToObjects({ jsonSchema, keys: keysByType.roles, prefix, ctx }),
   };
 }
 

@@ -1,9 +1,11 @@
 const _ = require('lodash');
 const Sqrl = require('squirrelly');
 
+const { getPluginProviders, getPluginProvider } = require('leemons-providers');
+const { LeemonsError } = require('packages/leemons-error/src');
 const testTemplate = require('../emails/test');
 
-let sendMailTransporter = null;
+const sendMailTransporter = null;
 
 class Email {
   static get types() {
@@ -29,11 +31,11 @@ class Email {
     );
   }
 
-  static async getProvider(value) {
-    const providers = await value.services.email.getProviders();
+  static async getProvider({ pluginKeyValue, ctx }) {
+    const providers = await ctx.tx.call(`${pluginKeyValue.pluginName}.email.getProviders`);
     return {
-      ...value.services.email.data,
-      providerName: value.name,
+      ...pluginKeyValue.params,
+      providerName: pluginKeyValue.pluginName,
       providers,
     };
   }
@@ -44,25 +46,12 @@ class Email {
    * @static
    * @return {any[]}
    * */
-  static async providers() {
-    // TODO Roberto: Hay que repensar esta lógica en la que se solicita los plugins Providers de un determinado plugin
-    // Lanzo el error aposta
-    throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
-    //! Dejo comentado el código "antiguo"
-    /*
+  static async providers({ ctx }) {
     const providers = [];
-    _.forIn(leemons.listProviders(), (value) => {
-      if (
-        value.services?.email?.data &&
-        value.services.email &&
-        _.isFunction(value.services.email.getProviders)
-      ) {
-        providers.push(Email.getProvider(value));
-      }
+    _.forIn(await getPluginProviders({ keyValueModel: ctx.tx.db.KeyValue, raw: true }), (value) => {
+      providers.push(this.getProvider({ pluginKeyValue: value, ctx }));
     });
-
     return Promise.all(providers);
-    */
   }
 
   /**
@@ -71,16 +60,11 @@ class Email {
    * @static
    * @return {Promise<any>} new provider config
    * */
-  static async saveProvider({ ctx, ...data }) {
-    // TODO Roberto: Hay que repensar esta lógica en la que se solicita los plugins Providers de un determinado plugin
-    // Lanzo el error aposta
-    throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
-    //! Dejo comentado el código "antiguo"
-    /*  
-    if (!leemons.getProvider(data.providerName))
-      throw new Error(`No provider with the name ${data.providerName}`);
-    return leemons.getProvider(data.providerName).services.email.saveConfig(data.config); 
-    */
+  static async saveProvider({ ctx, providerName, config }) {
+    const provider = await getPluginProvider({ keyValueModel: ctx.tx.db.KeyValue, providerName });
+    if (!provider)
+      throw new LeemonsError(ctx, { message: `No provider with the name ${providerName}` });
+    return ctx.tx.call(`${providerName}.email.saveConfig`, { config });
   }
 
   /**
@@ -89,49 +73,11 @@ class Email {
    * @static
    * @return {Promise<any>} new provider config
    * */
-  static async removeProvider({ ctx, ...data }) {
-    // TODO Roberto: Hay que repensar esta lógica en la que se solicita los plugins Providers de un determinado plugin
-    // Lanzo el error aposta
-    throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
-    //! Dejo comentado el código "antiguo"
-    /* 
-    if (!leemons.getProvider(data.providerName))
-      throw new Error(`No provider with the name ${data.providerName}`);
-    return leemons.getProvider(data.providerName).services.email.removeConfig(data.id);
-    */
-  }
-
-  /**
-   * Send test email to check if the transporter is working with the provided config
-   * @private
-   * @static
-   * @return {Promise<any>} nodemailer transporters
-   * */
-  static async sendTest(data) {
-    const providersByName = _.keyBy(leemons.listProviders(), 'name');
-    if (!providersByName[data.providerName])
-      throw new Error(`No provider with the name ${data.providerName}`);
-    const transporter = providersByName[data.providerName].services.email.getTransporterByConfig(
-      data.config
-    );
-
-    // TODO Email Sacar idioma principal seleccionado
-    const language = 'es';
-    let email = await Email.findEmail('test-email', language);
-    if (!email) email = await Email.findEmail('test-email', 'en');
-
-    // Compile email with data
-    email.subject = Sqrl.render(email.subject, { name: 'Cerberupo' });
-    email.html = Sqrl.render(email.html, { name: 'Cerberupo' });
-
-    // TODO Cambiar emails por el del super admin para recibir el email y el del colegio para from
-    return Email.startToTrySendEmail(
-      'jaime@leemons.io',
-      'jaime@leemons.io',
-      email,
-      [transporter],
-      0
-    );
+  static async removeProvider({ ctx, providerName, id }) {
+    const provider = await getPluginProvider({ keyValueModel: ctx.tx.db.KeyValue, providerName });
+    if (!provider)
+      throw new LeemonsError(ctx, { message: `No provider with the name ${providerName}` });
+    return ctx.tx.call(`${providerName}.email.removeConfig`, { id });
   }
 
   /**
@@ -140,7 +86,7 @@ class Email {
    * @static
    * @return {Promise<any>} nodemailer transporters
    * */
-  static async getTransporters() {
+  static async getTransporters({ ctx }) {
     // TODO Roberto: Hay que repensar esta lógica en la que se solicita los plugins Providers de un determinado plugin
     // Lanzo el error aposta
     throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
@@ -235,7 +181,7 @@ class Email {
         ); */
     }
 
-    leemons.log.info(
+    ctx.logger.info(
       `Adding email template Name: ${templateName} Language: ${language} Type: ${type}`
     );
     return ctx.tx.db.EmailTemplateDetail.create({
@@ -258,7 +204,10 @@ class Email {
    * */
   static async delete({ templateName, language, type, ctx }) {
     const template = await ctx.tx.db.EmailTemplate.findOne({ templateName }, ['id']).lean();
-    if (!template) throw new Error(`There is no template with the name ${templateName}`);
+    if (!template)
+      throw new LeemonsError(ctx, {
+        message: `There is no template with the name ${templateName}`,
+      });
     const templateDetail = await ctx.tx.db.EmailTemplateDetail.findOne(
       {
         template: template.id,
@@ -268,10 +217,10 @@ class Email {
       ['id']
     ).lean();
     if (!templateDetail)
-      throw new Error(
-        `The ${templateName} email template does not have the language ${language} of type ${type}`
-      );
-    return ctx.tx.db.EmailTemplateDetail.delete({ id: templateDetail.id });
+      throw new LeemonsError(ctx, {
+        message: `The ${templateName} email template does not have the language ${language} of type ${type}`,
+      });
+    return ctx.tx.db.EmailTemplateDetail.deleteOne({ id: templateDetail.id });
   }
 
   /**
@@ -283,7 +232,10 @@ class Email {
    * */
   static async deleteAll({ templateName, ctx }) {
     const template = await ctx.tx.db.EmailTemplate.findOne({ templateName }, ['id']).lean();
-    if (!template) throw new Error(`There is no template with the name ${templateName}`);
+    if (!template)
+      throw new LeemonsError(ctx, {
+        message: `There is no template with the name ${templateName}`,
+      });
 
     const value = await Promise.all([
       ctx.tx.db.EmailTemplate.deleteOne({ id: template.id }),
@@ -304,19 +256,22 @@ class Email {
    * @param {any} context
    * @return {Promise<boolean>}
    * */
-  static async send({ from, to, templateName, language, callbackLanguage, context } = {}) {
+  static async send({ from, to, templateName, language, callbackLanguage, context, ctx }) {
     // Find email template
-    let email = await Email.findEmail(templateName, language);
-    if (!email) email = await Email.findEmail(templateName, callbackLanguage);
-    if (!email) throw new Error(`No email found for template '${templateName}' and language `);
+    let email = await Email.findEmail({ templateName, language, ctx });
+    if (!email) email = await Email.findEmail({ templateName, language: callbackLanguage, ctx });
+    if (!email)
+      throw new LeemonsError(ctx, {
+        message: `No email found for template '${templateName}' and language `,
+      });
     // Take email settings and try to send email with each setting until it is sent.
-    const transporters = await Email.getTransporters();
-    if (!transporters.length) throw new Error('No email providers configured yet');
+    const transporters = await Email.getTransporters({ ctx });
+    if (!transporters.length)
+      throw new LeemonsError(ctx, { message: 'No email providers configured yet' });
 
-    const { platform } = leemons.getPlugin('users').services;
     const [logo, width] = await Promise.all([
-      platform.getEmailLogo(),
-      platform.getEmailWidthLogo(),
+      ctx.tx.call('users.platform.getEmailLogo'),
+      ctx.tx.call('users.platform.getEmailWidthLogo'),
     ]);
 
     context.__from = from;
@@ -332,7 +287,7 @@ class Email {
 
     // console.log('--- EmailService > send:');
 
-    return Email.startToTrySendEmail(from, to, email, transporters, 0);
+    return Email.startToTrySendEmail({ from, to, email, transporters, index: 0, ctx });
   }
 
   /**
@@ -341,9 +296,10 @@ class Email {
    * @static
    * @return {Promise<any>} nodemailer transporters
    * */
-  static async sendCustomTest({ from, to, subject, body }) {
-    const transporters = await Email.getTransporters();
-    if (!transporters.length) throw new Error('No email providers configured yet');
+  static async sendCustomTest({ from, to, subject, body, ctx }) {
+    const transporters = await Email.getTransporters({ ctx });
+    if (!transporters.length)
+      throw new LeemonsError(ctx, { message: 'No email providers configured yet' });
 
     const context = {};
     context.__from = from;
@@ -357,7 +313,7 @@ class Email {
     email.subject = subject;
     email.html = body;
 
-    return Email.startToTrySendEmail(from, to, email, transporters, 0);
+    return Email.startToTrySendEmail({ from, to, email, transporters, index: 0, ctx });
   }
 
   /**
@@ -414,10 +370,10 @@ class Email {
       if (!locale) locale = pLocale;
     }
 
-    return Email.send({ email, to, templateName, language, locale, context });
+    return Email.send({ email, to, templateName, language, locale, context, ctx });
   }
 
-  static async startToTrySendEmail(from, to, email, transporters, index) {
+  static async startToTrySendEmail({ from, to, email, transporters, index, ctx }) {
     if (index < transporters.length) {
       try {
         // console.log('--- EmailService > startToTrySendEmail:');
@@ -427,7 +383,9 @@ class Email {
         const transporter = transporters[index];
 
         if (!transporter) {
-          throw new Error(`No existe un transporter para el index: ${index}`);
+          throw new LeemonsError(ctx, {
+            message: `No existe un transporter para el index: ${index}`,
+          });
         }
 
         // console.log('--> transporter:');
@@ -451,7 +409,7 @@ class Email {
         return info;
       } catch (err) {
         console.error('ERROR > Error email:', err);
-        return Email.startToTrySendEmail(from, to, email, transporters, index + 1);
+        return Email.startToTrySendEmail({ from, to, email, transporters, index: index + 1, ctx });
       }
     }
     return { error: true, message: 'Could not send email with any provider' };
@@ -467,7 +425,10 @@ class Email {
    * */
   static async findEmail({ templateName, language, ctx }) {
     const template = await ctx.tx.db.EmailTemplate.findOne({ templateName }, ['id']).lean();
-    if (!template) throw new Error(`There is no template with the name ${templateName}`);
+    if (!template)
+      throw new LeemonsError(ctx, {
+        message: `There is no template with the name ${templateName}`,
+      });
     return ctx.tx.db.EmailTemplateDetail.findOne(
       {
         template: template.id,
