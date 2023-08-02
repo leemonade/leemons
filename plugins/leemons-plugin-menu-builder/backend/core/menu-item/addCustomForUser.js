@@ -89,4 +89,4 @@ async function addCustomForUser({ label, description, ctx, ...data }) {
   return menuItem;
 }
 
-module.exports = addCustomForUser;
+module.exports = { addCustomForUser };

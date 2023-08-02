@@ -11,7 +11,8 @@ const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { widgets, permissions } = require('../config/constants');
+const { addMenuItemsDeploy } = require('leemons-menu-builder');
+const { widgets, permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -27,8 +28,14 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['deployment-manager.install', 'multilanguage.newLocale'],
-      handler: () => {},
+      events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
+      handler: async (ctx) => {
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: menuItems,
+          ctx,
+        });
+      },
     },
   ],
   events: {

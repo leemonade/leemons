@@ -6,8 +6,6 @@ const { validateExistMenuItem } = require('../../validations/exists');
 const { validateAddMenuItem } = require('../../validations/menu-item');
 const { validateNotExistMenu } = require('../../validations/exists');
 
-const { withTransaction } = global.utils;
-
 /**
  * Create a Menu Item
  * @private
@@ -155,4 +153,4 @@ async function add({
   return menuItem;
 }
 
-module.exports = add;
+module.exports = { add };

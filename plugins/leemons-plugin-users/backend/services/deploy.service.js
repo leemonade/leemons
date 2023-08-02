@@ -7,12 +7,13 @@ const path = require('path');
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { addLocales, addLocalesDeploy } = require('leemons-multilanguage');
+const { addLocalesDeploy } = require('leemons-multilanguage');
 const { hasKey, setKey } = require('leemons-mongodb-helpers');
 const { addPermissionsDeploy } = require('leemons-permissions');
+const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { getServiceModels } = require('../models');
 const { addMany } = require('../core/actions');
-const { defaultActions, defaultPermissions } = require('../config/constants');
+const { defaultActions, defaultPermissions, menuItems } = require('../config/constants');
 const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
@@ -31,11 +32,11 @@ module.exports = {
   events: {
     'deployment-manager.install': async (ctx) => {
       // Actions
-      if (!(await hasKey(ctx.db.KeyValue, `actions`))) {
+      if (!(await hasKey(ctx.tx.db.KeyValue, `actions`))) {
         await addMany({ data: defaultActions, ctx });
-        await setKey(ctx.db.KeyValue, `actions`);
+        await setKey(ctx.tx.db.KeyValue, `actions`);
       }
-      ctx.emit('init-actions');
+      ctx.tx.emit('init-actions');
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -49,6 +50,21 @@ module.exports = {
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
+    },
+    'menu-builder.init-main-menu': async (ctx) => {
+      const [mainMenuItem, ...otherMenuItems] = menuItems;
+      await addMenuItemsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        item: mainMenuItem,
+        ctx,
+      });
+      ctx.tx.emit('init-menu');
+      await addMenuItemsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        item: otherMenuItems,
+        ctx,
+      });
+      ctx.tx.emit('init-submenu');
     },
     'users.change-platform-locale': async (ctx) => {
       await createInitialProfiles({ ctx });

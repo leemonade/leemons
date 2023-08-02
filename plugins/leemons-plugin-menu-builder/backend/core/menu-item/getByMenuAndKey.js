@@ -17,4 +17,4 @@ async function getByMenuAndKey({ menuKey, key, ctx }) {
   return menuItem;
 }
 
-module.exports = getByMenuAndKey;
+module.exports = { getByMenuAndKey };

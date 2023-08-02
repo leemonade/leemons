@@ -9,18 +9,34 @@ const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
+const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
+const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { getServiceModels } = require('../models');
-const { permissions, widgets } = require('../config/constants');
+const { permissions, widgets, menuItems } = require('../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
   name: 'calendar.deploy',
   version: 1,
   mixins: [
+    LeemonsMultiEventsMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
+  ],
+  multiEvents: [
+    {
+      events: ['users.init-menu', 'calendar.init-permissions'],
+      handler: async (ctx) => {
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: menuItems,
+          shouldWait: true,
+          ctx,
+        });
+      },
+    },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {

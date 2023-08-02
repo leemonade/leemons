@@ -53,7 +53,6 @@ const schema = new mongoose.Schema(
     },
     url: {
       type: String,
-      required: true,
     },
     // SELF, BLANK, MODAL
     window: {

@@ -6,8 +6,14 @@ async function exec({ keyValueModel, menu, ctx }) {
     !(await hasKey(keyValueModel, `menu-${menu.key}`)) ||
     process.env.RELOAD_MENUS_ON_EVERY_INSTALL === 'true'
   ) {
-    await ctx.tx.call('menu-builder.menu.add', menu);
-    await setKey(keyValueModel, `menu-${menu.key}`);
+    if (
+      !(await ctx.call('menu-builder.menu.exist', {
+        key: menu.key,
+      }))
+    ) {
+      await ctx.tx.call('menu-builder.menu.add', menu);
+      await setKey(keyValueModel, `menu-${menu.key}`);
+    }
   }
   ctx.emit(`init-menu-${menu.key}`);
 }

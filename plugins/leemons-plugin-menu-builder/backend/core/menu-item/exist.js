@@ -17,4 +17,4 @@ async function exist({ menuKey, key, ctx }) {
   return !!existMenu;
 }
 
-module.exports = exist;
+module.exports = { exist };

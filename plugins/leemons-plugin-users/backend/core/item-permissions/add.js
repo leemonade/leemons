@@ -82,7 +82,7 @@ async function add({ item, type, data, isCustomPermission, ctx }) {
       });
     });
   });
-  const response = await ctx.tx.db.ItemPermissions.createMany(toSave);
+  const response = await ctx.tx.db.ItemPermissions.insertMany(toSave);
   await removeAllItemsCache({ ctx });
   return response;
 }

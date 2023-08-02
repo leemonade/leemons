@@ -84,4 +84,96 @@ module.exports = {
   widgets: {
     zones: [{ key: 'users.user-detail' }],
   },
+  menuItems: [
+    {
+      item: {
+        key: 'users',
+        order: 100,
+        iconSvg: '/public/users/menu-icon.svg',
+        activeIconSvg: '/public/users/menu-icon.svg',
+        label: {
+          en: 'Users',
+          es: 'Usuarios',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'users.users',
+          actionNames: ['admin'],
+        },
+      ],
+    },
+    {
+      item: {
+        key: 'roles-list',
+        order: 1,
+        parentKey: 'users.users',
+        url: '/private/users/roles/list',
+        label: {
+          en: 'Roles',
+          es: 'Roles',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'users.roles',
+          actionNames: ['view', 'admin'],
+        },
+      ],
+    },
+    {
+      item: {
+        key: 'profile-list',
+        order: 1,
+        parentKey: 'users.users',
+        url: '/private/users/profiles/list',
+        label: {
+          en: 'Profiles',
+          es: 'Perfiles',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'users.profiles',
+          actionNames: ['view', 'admin'],
+        },
+      ],
+    },
+    {
+      item: {
+        key: 'user-data',
+        parentKey: 'users.users',
+        order: 2,
+        url: '/private/users/user-data',
+        label: {
+          en: 'User data',
+          es: 'Datos del usuario',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'users.user-data',
+          actionNames: ['view', 'admin'],
+        },
+      ],
+    },
+    {
+      item: {
+        key: 'users-list',
+        order: 3,
+        parentKey: 'users.users',
+        url: '/private/users/list',
+        label: {
+          en: 'Users list',
+          es: 'Listado de usuarios',
+        },
+      },
+      permissions: [
+        {
+          permissionName: 'users.users',
+          actionNames: ['admin'],
+        },
+      ],
+    },
+  ],
 };

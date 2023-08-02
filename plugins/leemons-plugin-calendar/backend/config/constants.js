@@ -25,7 +25,7 @@ module.exports = {
   ],
   menuItems: [
     {
-      config: {
+      item: {
         key: 'calendar',
         order: 200,
         iconSvg: '/public/calendar/calendar.svg',
@@ -41,7 +41,7 @@ module.exports = {
       ],
     },
     {
-      config: {
+      item: {
         key: 'kanban',
         order: 201,
         iconSvg: '/public/calendar/plugin-kanban.svg',
@@ -57,9 +57,9 @@ module.exports = {
       ],
     },
     {
-      config: {
+      item: {
         key: 'calendar-config',
-        parentKey: 'plugins.calendar.calendar',
+        parentKey: 'calendar.calendar',
         url: '/private/calendar/config',
         label: { es: 'Configuración calendario', en: 'Calendar setup' },
       },
@@ -71,9 +71,9 @@ module.exports = {
       ],
     },
     {
-      config: {
+      item: {
         key: 'calendar-classroom',
-        parentKey: 'plugins.calendar.calendar',
+        parentKey: 'calendar.calendar',
         url: '/calendar/config/classroom',
         label: { es: 'Calendarios', en: 'Calendars' },
       },
@@ -155,23 +155,23 @@ module.exports = {
     items: [
       // ---- Dashboard
       {
-        zoneKey: 'plugins.dashboard.program.left',
+        zoneKey: 'dashboard.program.left',
         key: `${permissionsPrefix}.user.program.calendar`,
         url: 'user-program-calendar/index',
       },
       {
-        zoneKey: 'plugins.dashboard.program.left',
+        zoneKey: 'dashboard.program.left',
         key: `${permissionsPrefix}.user.program.kanban`,
         url: 'user-program-kanban/index',
       },
       // ---- Class (Control Panel)
       // {
-      //   zoneKey: 'plugins.dashboard.class.control-panel',
+      //   zoneKey: 'dashboard.class.control-panel',
       //   key: `${permissionsPrefix}.user.class.calendar`,
       //   url: 'user-program-calendar/index',
       // },
       // {
-      //   zoneKey: 'plugins.dashboard.class.control-panel',
+      //   zoneKey: 'dashboard.class.control-panel',
       //   key: `${permissionsPrefix}.user.class.kanban`,
       //   url: 'user-program-kanban/index',
       // },
@@ -192,7 +192,7 @@ module.exports = {
       },
       // ---- Class (Kanban [Tab])
       {
-        zoneKey: 'plugins.dashboard.class.tabs',
+        zoneKey: 'dashboard.class.tabs',
         key: `${permissionsPrefix}.class.tab.kanban`,
         url: 'tab-kanban/index',
         properties: {
@@ -201,7 +201,7 @@ module.exports = {
       },
       // ---- Class (Calendar [Tab])
       {
-        zoneKey: 'plugins.dashboard.class.tabs',
+        zoneKey: 'dashboard.class.tabs',
         key: `${permissionsPrefix}.class.tab.calendar`,
         url: 'tab-calendar/index',
         properties: {

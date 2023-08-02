@@ -51,4 +51,4 @@ async function addItemsFromPlugin({
   return Promise.all(items.map((item) => addMenuItem({ ...item, menuKey, ctx })));
 }
 
-module.exports = addItemsFromPlugin;
+module.exports = { addItemsFromPlugin };

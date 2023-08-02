@@ -59,4 +59,4 @@ async function updateCustomForUser({ menuKey, key, label, description, ctx, ...d
   return true;
 }
 
-module.exports = updateCustomForUser;
+module.exports = { updateCustomForUser };

@@ -42,4 +42,4 @@ async function remove({ menuKey, key, ctx }) {
   return true;
 }
 
-module.exports = remove;
+module.exports = { remove };

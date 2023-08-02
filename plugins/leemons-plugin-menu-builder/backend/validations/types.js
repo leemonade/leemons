@@ -1,16 +1,3 @@
-const { translations } = require('../translations');
-
-const { LeemonsValidator } = global.utils;
-
-LeemonsValidator.ajv.addFormat('localeCode', {
-  validate: (x) => {
-    if (translations() && translations().functions.isValidLocaleCode) {
-      return translations().functions.isValidLocaleCode(x);
-    }
-    return /^(([a-z]{2})|([a-z]{2}-[a-z]{2}))$/.test(x);
-  },
-});
-
 /**
  * String with format localeCode (xx or xx-yy)
  */
@@ -23,11 +10,6 @@ const localeSchema = {
 
 const localeObjectSchema = () => ({
   type: 'object',
-  patternProperties: {
-    [translations().functions.localeRegexString]: {
-      type: 'string',
-    },
-  },
 });
 
 const textSchema = {

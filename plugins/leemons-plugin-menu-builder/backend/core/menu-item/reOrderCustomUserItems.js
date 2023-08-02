@@ -30,4 +30,4 @@ async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
   );
 }
 
-module.exports = reOrderCustomUserItems;
+module.exports = { reOrderCustomUserItems };
