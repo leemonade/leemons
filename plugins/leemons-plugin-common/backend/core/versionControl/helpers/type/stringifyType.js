@@ -1,6 +1,8 @@
-module.exports = function stringifyType(calledFrom, type) {
+const { LeemonsError } = require('leemons-error');
+
+module.exports = function stringifyType({ calledFrom, type, ctx }) {
   if (type.includes('::')) {
-    throw new Error('Type cannot contain ::');
+    throw new LeemonsError(ctx, { message: 'Type cannot contain ::' });
   }
   return `${calledFrom}::${type}`;
 };

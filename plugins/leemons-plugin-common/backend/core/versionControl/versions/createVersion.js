@@ -4,14 +4,13 @@ const { parseId, parseVersion } = require('../helpers');
 const getVersion = require('./getVersion');
 
 module.exports = async function createVersion({ id, version, published = false, ctx }) {
-  const { uuid, version: v, fullId } = await parseId({ id, version });
-  const { major, minor, patch } = parseVersion(v);
+  const { uuid, version: v, fullId } = await parseId({ id: { id, version }, ctx });
+  const { major, minor, patch } = parseVersion({ v, ctx });
 
   // EN: Check if uuid exists
   // ES: Comprueba si el uuid existe
   try {
-    // await get.bind(this)(uuid);
-    await get(uuid);
+    await get({ uuid, ctx });
   } catch (e) {
     throw new LeemonsError(ctx, {
       message: "The uuid doesn't exist in the version control system or you don't have permissions",
@@ -19,8 +18,7 @@ module.exports = async function createVersion({ id, version, published = false, 
   }
 
   try {
-    // const existingVersion = await getVersion.bind(this)(fullId, { v });
-    const existingVersion = await getVersion({ id: fullId, ...v, ctx });
+    const existingVersion = await getVersion({ id: { id: fullId, version: v }, ctx });
     if (existingVersion) {
       throw new LeemonsError(ctx, { message: 'Version already exists' });
     }
@@ -40,5 +38,5 @@ module.exports = async function createVersion({ id, version, published = false, 
     published: Boolean(published),
   });
 
-  return parseId({ id: uuid, version });
+  return parseId({ id: { id: uuid, version }, ctx });
 };

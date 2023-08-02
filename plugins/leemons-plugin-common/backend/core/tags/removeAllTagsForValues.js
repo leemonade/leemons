@@ -3,7 +3,7 @@ const { LeemonsError } = require('leemons-error');
 const { validateTypePrefix } = require('../../validation/validate');
 
 async function removeAllTagsForValues({ type, values, ctx }) {
-  validateTypePrefix(type, this.calledFrom);
+  validateTypePrefix({ type, calledFrom: ctx.callerPluggin, ctx });
   let _values = _.isArray(values) ? values : [values];
   _values = _.map(_values, (value) => JSON.stringify(value));
   // Check if value not empty

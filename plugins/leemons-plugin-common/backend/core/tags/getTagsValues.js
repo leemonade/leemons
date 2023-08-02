@@ -3,7 +3,7 @@ const { LeemonsError } = require('leemons-error');
 
 async function getTagsValues({ type, tags, ctx }) {
   const _tags = _.isArray(tags) ? tags : [tags];
-  // Check if value not empty
+  // Check if value is not empty
   if (_tags.length === 0) {
     throw new LeemonsError(ctx, { message: 'Tags cannot be empty.' });
   }

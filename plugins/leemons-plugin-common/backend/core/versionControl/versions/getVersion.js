@@ -1,6 +1,4 @@
-// const {
-//   table: { versions },
-// } = require('../../tables');
+const { LeemonsError } = require('leemons-error');
 const get = require('../currentVersions/get');
 const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../helpers');
 
@@ -13,10 +11,11 @@ async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
 
   // EN: Verify ownership (get throws an error if not owned)
   // ES: Verificar propiedad (get lanza un error si no es propiedad)
-  // ! aquí vamos
+
   const uuidsInfo = await get({ uuid: uuids, ctx });
 
   const query = {};
+  let sortQuery = {};
 
   // TODO: Add more difficult searches (between versions, greather than, etc)
   query.$or = parsedIds.map(({ version, uuid }) => {
@@ -29,7 +28,7 @@ async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
     }
 
     if (['latest', 'published', 'draft'].includes(version)) {
-      query.$sort = 'major:DESC,minor:DESC,patch:DESC';
+      sortQuery = { major: 'desc', minor: 'desc', patch: 'desc' };
 
       if (version === 'published') {
         subQuery.published = true;
@@ -41,27 +40,28 @@ async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
 
       if (version === 'current') {
         const { current } = uuidsInfo.find((info) => info.uuid === uuid);
-
         v = current;
       }
 
-      const { major, minor, patch } = parseVersion(v);
+      const { major, minor, patch } = parseVersion({ version: v, ctx });
 
       subQuery.major = major;
       subQuery.minor = minor;
       subQuery.patch = patch;
     }
-
     return subQuery;
   });
 
-  const versionsFound = (await versions.find(query, { transacting })).map((version) => ({
-    ...version,
-    version: stringifyVersion(version),
-  }));
+  // If sortQuery is empty the query won't be sort.
+  const versionsFound = (await ctx.tx.db.Versions.find(query).sort(sortQuery).lean()).map(
+    (version) => ({
+      ...version,
+      version: stringifyVersion({ ...version, ctx }),
+    })
+  );
 
   if (!versionsFound?.length && !ignoreMissing) {
-    throw new Error('Versions not found');
+    throw new LeemonsError(ctx, { message: 'Versions not found' });
   }
 
   return parsedIds.map(({ version, uuid }) => {
@@ -72,20 +72,20 @@ async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
 
     if (!versionFound) {
       if (!ignoreMissing) {
-        throw new Error('Versions not found');
+        throw new LeemonsError(ctx, { message: 'Versions not found' });
       } else {
         return null;
       }
     }
 
-    const finalVersion = stringifyVersion(versionFound);
-    const fullId = stringifyId(uuid, finalVersion);
+    const finalVersion = stringifyVersion({ ...versionFound, ctx });
+    const fullId = stringifyId({ id: uuid, version: finalVersion, ctx });
 
     return { uuid, version: finalVersion, fullId, published: Boolean(versionFound.published) };
   });
 }
 
-module.exports = async function getVersion({ published, id, ignoreMissing, ctx }) {
+module.exports = async function getVersion({ id, published, ignoreMissing, ctx }) {
   const isArray = Array.isArray(id);
   const ids = isArray ? id : [id];
 

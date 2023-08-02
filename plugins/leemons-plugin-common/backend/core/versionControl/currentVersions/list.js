@@ -1,16 +1,14 @@
-const {
-  table: { currentVersions },
-} = require('../../tables');
+const { LeemonsError } = require('leemons-error');
 const stringifyType = require('../helpers/type/stringifyType');
 const verifyOwnership = require('../helpers/type/verifyOwnership');
 
-module.exports = async function list(type, { published, transacting }) {
-  const parsedType = stringifyType(this.calledFrom, type);
+module.exports = async function list({ type, published, ctx }) {
+  const parsedType = stringifyType({ calledFrom: ctx.callerPlugin, type, ctx });
 
-  if (!verifyOwnership(parsedType, this)) {
-    throw new Error(
-      "You don't have permissions to list versions of the given type or it doesn't exists"
-    );
+  if (!verifyOwnership({ type: parsedType, ctx })) {
+    throw new LeemonsError(ctx, {
+      message: "You don't have permissions to list versions of the given type or it doesn't exists",
+    });
   }
 
   const query = {
@@ -18,10 +16,10 @@ module.exports = async function list(type, { published, transacting }) {
   };
 
   if (typeof published === 'boolean') {
-    query.published_$null = !published;
+    query.published = published ? { $ne: null } : null;
   }
 
-  const results = await currentVersions.find(query, { transacting });
+  const results = await ctx.tx.db.CurrentVersions.find(query).lean();
 
   return results.map((r) => ({
     uuid: r.id,

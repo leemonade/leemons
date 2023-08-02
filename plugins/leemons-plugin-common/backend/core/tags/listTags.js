@@ -14,5 +14,3 @@ async function listTags({ page, size, query = {}, ctx }) {
 }
 
 module.exports = { listTags };
-
-// global.utils.paginate() === mongoDBPaginate({})

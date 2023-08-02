@@ -3,9 +3,9 @@ const { LeemonsError } = require('leemons-error');
 const { validateTypePrefix } = require('../../validation/validate');
 
 async function removeAllValuesForTags({ type, tags, ctx }) {
-  validateTypePrefix(type, this.calledFrom);
+  validateTypePrefix({ type, calledFrom: ctx.callerPluggin, ctx });
   const _tags = _.isArray(tags) ? tags : [tags];
-  // Check if tag not empty
+  // Check if tags is not empty
   if (_tags.length === 0) {
     throw new LeemonsError(ctx, { message: `Tags cannot be empty.` });
   }

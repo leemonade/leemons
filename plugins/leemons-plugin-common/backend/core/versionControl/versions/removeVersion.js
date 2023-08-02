@@ -1,21 +1,18 @@
-const {
-  table: { versions },
-} = require('../../tables');
 const get = require('../currentVersions/get');
 const { parseId, parseVersion } = require('../helpers');
 
-module.exports = async function removeVersion(id, { published, version, transacting } = {}) {
-  const { uuid, version: v } = await parseId({ id, version }, { verifyVersion: false });
+module.exports = async function removeVersion({ id, published, version, ctx }) {
+  const { uuid, version: v } = await parseId({ id: { id, version }, verifyVersion: false, ctx });
   const query = { uuid };
 
   // EN: Verify ownership (get throws an error if not owned)
   // ES: Verificar propiedad (get lanza un error si no es propiedad)
-  await get.bind(this)(uuid, { transacting });
+  await get({ uuid, ctx });
 
   // EN: If version is 'all', remove all versions.
   // ES: Si la versión es 'all', elimina todas las versiones.
   if (version !== 'all') {
-    const { major, minor, patch } = parseVersion(v);
+    const { major, minor, patch } = parseVersion({ version: v, ctx });
     query.major = major;
     query.minor = minor;
     query.patch = patch;
@@ -27,5 +24,5 @@ module.exports = async function removeVersion(id, { published, version, transact
     query.published = published;
   }
 
-  return versions.deleteMany(query, { transacting });
+  return ctx.tx.db.Versions.deleteMany(query);
 };
