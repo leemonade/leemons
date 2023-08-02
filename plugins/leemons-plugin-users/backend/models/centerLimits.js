@@ -15,8 +15,8 @@ const schema = new mongoose.Schema(
     },
     //  'users_Centers',
     center: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Centers',
+      // ref: 'users_Centers',
+      type: String,
       required: true,
     },
     type: {

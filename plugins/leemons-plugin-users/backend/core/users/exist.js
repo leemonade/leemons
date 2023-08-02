@@ -1,4 +1,4 @@
-const { table } = require('../tables');
+const { LeemonsError } = require('packages/leemons-error/src');
 
 /**
  * Check if user exists
@@ -8,9 +8,9 @@ const { table } = require('../tables');
  * @param {boolean} throwErrorIfNotExists
  * @return {Promise<boolean>}
  * */
-async function exist(query, throwErrorIfNotExists) {
-  const count = await table.users.count(query);
-  if (throwErrorIfNotExists && !count) throw new Error('User not found');
+async function exist({ query, throwErrorIfNotExists, ctx }) {
+  const count = await ctx.tx.db.Users.countDocuments(query);
+  if (throwErrorIfNotExists && !count) throw new LeemonsError(ctx, { message: 'User not found' });
   return !!count;
 }
 
