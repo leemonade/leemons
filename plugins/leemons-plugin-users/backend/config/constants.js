@@ -107,7 +107,7 @@ module.exports = {
       item: {
         key: 'roles-list',
         order: 1,
-        parentKey: 'users',
+        parentKey: 'users.users',
         url: '/private/users/roles/list',
         label: {
           en: 'Roles',
@@ -125,7 +125,7 @@ module.exports = {
       item: {
         key: 'profile-list',
         order: 1,
-        parentKey: 'users',
+        parentKey: 'users.users',
         url: '/private/users/profiles/list',
         label: {
           en: 'Profiles',
@@ -142,7 +142,7 @@ module.exports = {
     {
       item: {
         key: 'user-data',
-        parentKey: 'users',
+        parentKey: 'users.users',
         order: 2,
         url: '/private/users/user-data',
         label: {
@@ -161,7 +161,7 @@ module.exports = {
       item: {
         key: 'users-list',
         order: 3,
-        parentKey: 'users',
+        parentKey: 'users.users',
         url: '/private/users/list',
         label: {
           en: 'Users list',

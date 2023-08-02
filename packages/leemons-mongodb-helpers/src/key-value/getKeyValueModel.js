@@ -22,8 +22,6 @@ function getKeyValueModel({ modelName }) {
     }
   );
 
-  schema.index({ deploymentID: 1, key: 1 }, { unique: true });
-
   return newModel(mongoose.connection, modelName, schema);
 }
 

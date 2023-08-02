@@ -17,7 +17,6 @@ async function exec({ keyValueModel, item: { item, permissions, removed }, menuK
           ...item,
           menuKey,
           key: ctx.prefixPN(item.key),
-          parentKey: item.parentKey ? ctx.prefixPN(item.parentKey) : undefined,
           permissions,
         });
       }

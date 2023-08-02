@@ -8,7 +8,6 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/timetable.rest');
 const listByClassIds = require('../core/timetables/listByClassIds');
 
 /** @type {ServiceSchema} */
@@ -24,7 +23,6 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
-    ...restActions,
     listByClassIds: {
       handler(ctx) {
         return listByClassIds({ ...ctx.params, ctx });

@@ -32,6 +32,7 @@ module.exports = () => ({
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: menuItems,
+          shouldWait: true,
           ctx,
         });
       },

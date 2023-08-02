@@ -1,4 +1,4 @@
-const permissionsPrefix = 'plugins.academic-portfolio';
+const permissionsPrefix = 'academic-portfolio';
 
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
@@ -163,7 +163,7 @@ const menuItems = [
     item: {
       key: 'welcome',
       order: 1,
-      parentKey: 'portfolio',
+      parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/welcome',
       label: {
         en: 'Welcome',
@@ -182,7 +182,7 @@ const menuItems = [
     item: {
       key: 'profiles',
       order: 2,
-      parentKey: 'portfolio',
+      parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/profiles',
       label: {
         en: 'Profiles',
@@ -202,7 +202,7 @@ const menuItems = [
     item: {
       key: 'programs',
       order: 3,
-      parentKey: 'portfolio',
+      parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/programs',
       label: {
         en: 'Learning Programs',
@@ -222,7 +222,7 @@ const menuItems = [
     item: {
       key: 'subjects',
       order: 4,
-      parentKey: 'portfolio',
+      parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/subjects',
       label: {
         en: 'Subjects',
@@ -242,7 +242,7 @@ const menuItems = [
     item: {
       key: 'tree',
       order: 5,
-      parentKey: 'portfolio',
+      parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/tree',
       label: {
         en: 'Portfolio Tree',
@@ -266,7 +266,7 @@ const widgets = {
   ],
   items: [
     {
-      zoneKey: 'plugins.dashboard.program.left',
+      zoneKey: 'dashboard.program.left',
       key: `${permissionsPrefix}.user.classes.swiper`,
       url: 'user-classes-swiper/index',
     },
@@ -278,20 +278,20 @@ const widgets = {
     },
     // ---- Class Right (Students)
     {
-      zoneKey: `plugins.dashboard.class.right-tabs`,
+      zoneKey: `dashboard.class.right-tabs`,
       key: `${permissionsPrefix}.user.class.students`,
       url: 'class-students/index',
       properties: {
-        label: 'plugins.academic-portfolio.classStudents.label',
+        label: 'academic-portfolio.classStudents.label',
       },
     },
     // ---- Class (Detail [Tab])
     {
-      zoneKey: 'plugins.dashboard.class.tabs',
+      zoneKey: 'dashboard.class.tabs',
       key: `${permissionsPrefix}.class.tab.detail`,
       url: 'tab-detail/index',
       properties: {
-        label: 'plugins.academic-portfolio.tabDetail.label',
+        label: 'academic-portfolio.tabDetail.label',
         hideRightSide: true,
       },
     },
