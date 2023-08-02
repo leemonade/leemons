@@ -1,24 +1,32 @@
-module.exports = {
-  modelName: 'configs',
-  collectionName: 'configs',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     key: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
+      type: String,
+      required: true,
     },
     value: {
-      type: 'string',
-      options: {
-        notNull: true,
-      },
+      type: String,
+      required: true,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const configsModel = newModel(mongoose.connection, 'v1::academic-portfolio_Configs', schema);
+
+module.exports = { configsModel };

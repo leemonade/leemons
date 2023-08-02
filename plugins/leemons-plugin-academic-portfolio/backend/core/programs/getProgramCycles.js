@@ -1,11 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getProgramCycles(ids, { transacting } = {}) {
-  const cycles = await table.cycles.find(
-    { program_$in: _.isArray(ids) ? ids : [ids] },
-    { transacting }
-  );
+async function getProgramCycles({ ids, ctx }) {
+  const cycles = await ctx.tx.db.Cycles.find({ program: _.isArray(ids) ? ids : [ids] }).lean();
   return _.map(cycles, (cycle) => ({
     ...cycle,
     courses: JSON.parse(cycle.courses),

@@ -1,11 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getProgramCourses(ids, { transacting } = {}) {
-  return table.groups.find(
-    { program_$in: _.isArray(ids) ? ids : [ids], type: 'course' },
-    { transacting }
-  );
+async function getProgramCourses({ ids, ctx }) {
+  return ctx.tx.db.Groups.find({ program: _.isArray(ids) ? ids : [ids], type: 'course' }).lean();
 }
 
 module.exports = { getProgramCourses };
