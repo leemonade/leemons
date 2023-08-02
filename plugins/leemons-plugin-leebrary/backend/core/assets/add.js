@@ -4,7 +4,8 @@ const { map, isEmpty, isNil, isString, isArray, trim, forEach } = require('lodas
 const got = require('got');
 const metascraper = require('metascraper');
 
-const { CATEGORIES } = require('../../config/constants');
+const { LeemonsError } = require('leemons-error');
+const { CATEGORIES, assetRoles } = require('../../config/constants');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');
 const { getById: getCategoryById } = require('../categories/getById');
@@ -12,7 +13,6 @@ const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { validateAddAsset } = require('../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
-const { LeemonsError } = require('packages/leemons-error/src');
 
 /*
 * permissions example
@@ -53,9 +53,7 @@ async function add({
       try {
         const { body: html } = await got(data.url);
         const metas = await metascraper({ html, url: data.url });
-        //! TODO Roberto: Preguntar a Jaime
-        //* const { body: html } = await global.utils.got(data.url);
-        //* const metas = await global.utils.metascraper({ html, url: data.url });
+
         data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
         data.description = data.description || metas.description;
 
@@ -68,6 +66,7 @@ async function add({
           data.icon = data.icon || metas.logo;
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error getting bookmark metadata:', data.url, err);
       }
     }
@@ -115,7 +114,6 @@ async function add({
     });
   }
 
-  // TODO Roberto: Estoy Aquí
   // ··········································································
   // UPLOAD FILE
 
@@ -127,181 +125,179 @@ async function add({
 
   // Media files
   if (!isEmpty(file)) {
-    newFile = await uploadFromSource(file, { name: assetData.name }, { transacting: t });
+    newFile = await uploadFromSource({ source: file, name: assetData.name, ctx });
 
     if (newFile?.type?.indexOf('image') === 0) {
       coverFile = newFile;
     }
   }
-
   if (!coverFile && !isEmpty(cover)) {
-    coverFile = await uploadFromSource(cover, { name: assetData.name }, { transacting: t });
+    coverFile = await uploadFromSource({ source: cover, name: assetData.name, ctx });
   }
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      // ··········································································
-      // CREATE ASSET
+  // ··········································································
+  // CREATE ASSET
 
-      if (isNil(newId) || isEmpty(newId)) {
-        // ES: Añadimos el control de versiones
-        // EN: Add version control
-        const { versionControl } = leemons.getPlugin('common').services;
-        const { fullId } = await versionControl.register(leemons.plugin.prefixPN(category.id), {
-          published,
-          transacting,
-        });
+  if (isNil(newId) || isEmpty(newId)) {
+    // ES: Añadimos el control de versiones
+    // EN: Add version control
 
-        // eslint-disable-next-line no-param-reassign
-        newId = fullId;
-      }
+    // const { versionControl } = leemons.getPlugin('common').services;
+    // const { fullId } = await versionControl.register(leemons.plugin.prefixPN(category.id), {
+    //   published,
+    //   transacting,
+    // });
+    const { fullId } = await ctx.tx.call('common.versionControl.register', {
+      type: ctx.prefixPN(category.id),
+      published,
+    });
 
-      // Set indexable as TRUE by default
-      if (isNil(assetData.indexable)) {
-        assetData.indexable = true;
-      }
+    // eslint-disable-next-line no-param-reassign
+    newId = fullId;
+  }
 
-      // EN: Firstly create the asset in the database to get the id
-      // ES: Primero creamos el archivo en la base de datos para obtener el id
-      const newAsset = await tables.assets.create(
-        { ...assetData, id: newId, category: category.id, cover: coverFile?.id },
-        { transacting }
-      );
+  // Set indexable as TRUE by default
+  if (isNil(assetData.indexable)) {
+    assetData.indexable = true;
+  }
 
-      if (subjects && subjects.length) {
-        await Promise.all(
-          map(subjects, (item) =>
-            tables.assetsSubjects.create({ asset: newAsset.id, ...item }, { transacting })
-          )
-        );
-      }
+  // EN: Firstly create the asset in the database to get the id
+  // ES: Primero creamos el archivo en la base de datos para obtener el id
+  const newAsset = await ctx.tx.db.Assets.create({
+    ...assetData,
+    id: newId,
+    category: category.id,
+    cover: coverFile?.id,
+  });
 
-      // ··········································································
-      // ADD PERMISSIONS
+  if (subjects && subjects.length) {
+    await Promise.all(
+      map(subjects, (item) => ctx.tx.db.AssetsSubjects.create({ asset: newAsset.id, ...item }))
+    );
+  }
 
-      const { services: userService } = leemons.getPlugin('users');
-      const permissionName = getAssetPermissionName(newAsset.id);
+  // ··········································································
+  // ADD PERMISSIONS
 
-      // ES: Primero, añadimos permisos al archivo
-      // EN: First, add permission to the asset
-      const permissionsPromises = [
+  const permissionName = getAssetPermissionName({ assetId: newAsset.id });
+
+  // ES: Primero, añadimos permisos al archivo
+  // EN: First, add permission to the asset
+  const permissionsPromises = [
+    ctx.tx.call('users.permissions.addItem', {
+      item: newAsset.id,
+      type: ctx.prefixPN(category.id),
+      data: {
+        permissionName,
+        actionNames: assetRoles,
+      },
+      isCustomPermission: true,
+    }),
+  ];
+
+  //! TODO Roberto: Estoy Aquí
+  if (pPermissions && pPermissions.length) {
+    forEach(pPermissions, ({ isCustomPermission, canEdit, ...per }) => {
+      permissionsPromises.push(
         userService.permissions.addItem(
           newAsset.id,
-          leemons.plugin.prefixPN(category.id),
+          leemons.plugin.prefixPN(canEdit ? 'asset.can-edit' : 'asset.can-view'),
+          per,
+          { isCustomPermission, transacting }
+        )
+      );
+    });
+  }
+  await Promise.all(permissionsPromises);
+  // ES: Luego, añade los permisos a los usuarios
+  // EN: Then, add the permissions to the users
+  const permissions = [];
+  let hasOwner = false;
+
+  if (canAccess && !isEmpty(canAccess)) {
+    for (let i = 0, len = canAccess.length; i < len; i++) {
+      const { userAgent, role } = canAccess[i];
+      hasOwner = hasOwner || role === 'owner';
+
+      permissions.push(
+        userService.permissions.addCustomPermissionToUserAgent(
+          userAgent,
           {
             permissionName,
-            actionNames: leemons.plugin.config.constants.assetRoles,
+            actionNames: [role],
+            target: category.id,
           },
-          { isCustomPermission: true, transacting }
-        ),
-      ];
+          { transacting }
+        )
+      );
+    }
+  }
 
-      if (pPermissions && pPermissions.length) {
-        forEach(pPermissions, ({ isCustomPermission, canEdit, ...per }) => {
-          permissionsPromises.push(
-            userService.permissions.addItem(
-              newAsset.id,
-              leemons.plugin.prefixPN(canEdit ? 'asset.can-edit' : 'asset.can-view'),
-              per,
-              { isCustomPermission, transacting }
-            )
-          );
-        });
-      }
-      await Promise.all(permissionsPromises);
-      // ES: Luego, añade los permisos a los usuarios
-      // EN: Then, add the permissions to the users
-      const permissions = [];
-      let hasOwner = false;
+  if (!hasOwner) {
+    permissions.push(
+      userService.permissions.addCustomPermissionToUserAgent(
+        map(userSession.userAgents, 'id'),
+        {
+          permissionName,
+          actionNames: ['owner'],
+          target: category.id,
+        },
+        { transacting }
+      )
+    );
+  }
 
-      if (canAccess && !isEmpty(canAccess)) {
-        for (let i = 0, len = canAccess.length; i < len; i++) {
-          const { userAgent, role } = canAccess[i];
-          hasOwner = hasOwner || role === 'owner';
+  await Promise.all(permissions);
 
-          permissions.push(
-            userService.permissions.addCustomPermissionToUserAgent(
-              userAgent,
-              {
-                permissionName,
-                actionNames: [role],
-                target: category.id,
-              },
-              { transacting }
-            )
-          );
-        }
-      }
+  // ··········································································
+  // ADD FILES
 
-      if (!hasOwner) {
-        permissions.push(
-          userService.permissions.addCustomPermissionToUserAgent(
-            map(userSession.userAgents, 'id'),
-            {
-              permissionName,
-              actionNames: ['owner'],
-              target: category.id,
-            },
-            { transacting }
-          )
-        );
-      }
+  const promises = [];
 
-      await Promise.all(permissions);
+  // EN: Assign the file to the asset
+  // ES: Asignar el archivo al asset
 
-      // ··········································································
-      // ADD FILES
+  if (isString(newFile?.id)) {
+    try {
+      await addFiles(newFile.id, newAsset.id, {
+        skipPermissions: true,
+        userSession,
+        transacting,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-      const promises = [];
+  // ··········································································
+  // CREATE BOOKMARK
 
-      // EN: Assign the file to the asset
-      // ES: Asignar el archivo al asset
+  if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
+    promises.push(
+      addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
+        transacting,
+      })
+    );
+  }
 
-      if (isString(newFile?.id)) {
-        try {
-          await addFiles(newFile.id, newAsset.id, {
-            skipPermissions: true,
-            userSession,
-            transacting,
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      }
+  // ··········································································
+  // ADD TAGS
 
-      // ··········································································
-      // CREATE BOOKMARK
+  if (tags?.length > 0) {
+    const tagsService = leemons.getPlugin('common').services.tags;
+    promises.push(
+      tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
+        transacting,
+      })
+    );
+  }
 
-      if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
-        promises.push(
-          addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
-            transacting,
-          })
-        );
-      }
+  // ··········································································
+  // PROCCESS EVERYTHING
 
-      // ··········································································
-      // ADD TAGS
+  await Promise.all(promises);
 
-      if (tags?.length > 0) {
-        const tagsService = leemons.getPlugin('common').services.tags;
-        promises.push(
-          tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
-            transacting,
-          })
-        );
-      }
-
-      // ··········································································
-      // PROCCESS EVERYTHING
-
-      await Promise.all(promises);
-
-      return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
-    },
-    tables.assets,
-    t
-  );
+  return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
 }
 
 module.exports = { add };
