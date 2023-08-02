@@ -1,37 +1,50 @@
-module.exports = {
-  modelName: 'program-subjects-credits',
-  collectionName: 'program-subjects-credits',
-  options: {
-    useTimestamps: true,
-  },
-  attributes: {
+const { mongoose, newModel } = require('leemons-mongodb');
+
+const schema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     program: {
-      references: {
-        collection: 'plugins_academic-portfolio::programs',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::programs',
     },
     subject: {
-      references: {
-        collection: 'plugins_academic-portfolio::subjects',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::subjects',
     },
     // Curso solo seteado si el internalId tiene especificado un curso
     course: {
-      references: {
-        collection: 'plugins_academic-portfolio::groups',
-      },
+      type: String,
+      // ref: 'plugins_academic-portfolio::groups',
     },
     credits: {
-      type: 'integer',
+      type: Number,
     },
     internalId: {
-      type: 'string',
+      type: String,
     },
     compiledInternalId: {
-      type: 'string',
+      type: String,
     },
   },
-  primaryKey: {
-    type: 'uuid',
-  },
-};
+  {
+    timestamps: true,
+  }
+);
+
+const programSubjectsCreditsModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_ProgramSubjectsCredits',
+  schema
+);
+
+module.exports = { programSubjectsCreditsModel };
