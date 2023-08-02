@@ -159,7 +159,7 @@ export default function TaskDetail({ id, student, preview }) {
       collapsed={!isFirstStep}
     >
       <Steps
-        preview={preview}
+        preview={preview || assignation?.timestamps?.end}
         assignation={assignation}
         localizations={localizations}
         setIsFirstStep={setIsFirstStep}

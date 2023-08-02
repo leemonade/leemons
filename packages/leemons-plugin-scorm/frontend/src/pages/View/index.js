@@ -79,6 +79,8 @@ function useData({ id, user }) {
     classData,
     coverUrl,
 
+    isFinished: !dayjs(assignation?.timestamps?.end).isAfter(dayjs()),
+
     isLoading: instanceIsLoading || assignationIsLoading || scormIsLoading || classDataIsLoading,
   };
 }
@@ -202,6 +204,7 @@ export default function View() {
     scormPackage,
     classData,
     coverUrl,
+    isFinished,
     isLoading: dataIsLoading,
   } = useData({ id, user });
 
@@ -270,7 +273,7 @@ export default function View() {
         <ScormRender scormPackage={scormPackage} state={state} onSetValue={onSetValue} />
       </ActivityContainer>
       <Box className={classes.buttonContainer}>
-        <Button onClick={onComplete}>
+        <Button disabled={!!isFinished} onClick={onComplete}>
           {getButtonLabel({ nextActivityUrl, moduleId: instance?.metadata?.module?.id, t })}
         </Button>
       </Box>
