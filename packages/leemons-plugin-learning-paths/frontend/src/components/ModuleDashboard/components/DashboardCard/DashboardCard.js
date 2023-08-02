@@ -165,7 +165,7 @@ function TeacherActions({ activity, localizations }) {
 }
 
 function StudentActions({ isBlocked, activity, assignation, localizations }) {
-  const { assignable, id } = activity;
+  const { assignable, id, requiresScoring, allowFeedback } = activity;
   const { roleDetails } = assignable;
 
   const { isFinished, isStartedByStudent } = useStudentState({ assignation });
@@ -184,6 +184,13 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
         <Button disabled size="sm">
           {localizations?.buttons?.review}
         </Button>
+      );
+    }
+    if (!allowFeedback && !requiresScoring) {
+      return (
+        <Link to={activityUrl}>
+          <Button size="sm">{localizations?.buttons?.review}</Button>
+        </Link>
       );
     }
     return (
