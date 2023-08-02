@@ -119,7 +119,7 @@ module.exports = {
       roles: getJsonSchemaProfilePermissionsKeys({ jsonSchema: roles }),
     };
   },
-  transformJsonSchema(jsonSchema, ignoreKeys = []) {
+  transformJsonSchema({ jsonSchema, ignoreKeys = [] }) {
     const keys = [
       'title',
       'description',
@@ -137,13 +137,13 @@ module.exports = {
         keys.splice(index, 1);
       }
     });
-    return transformJsonOrUiSchema(jsonSchema, keys);
+    return transformJsonOrUiSchema({ jsonSchema, saveKeys: keys });
   },
   transformUiSchema(uiSchema) {
-    return transformJsonOrUiSchema(
-      uiSchema,
-      ['ui:title', 'ui:description', 'ui:help'],
-      ['ui_title', 'ui_description', 'ui_help']
-    );
+    return transformJsonOrUiSchema({
+      jsonSchema: uiSchema,
+      saveKeys: ['ui:title', 'ui:description', 'ui:help'],
+      replaces: ['ui_title', 'ui_description', 'ui_help'],
+    });
   },
 };

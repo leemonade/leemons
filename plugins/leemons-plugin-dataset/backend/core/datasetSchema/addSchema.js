@@ -38,30 +38,23 @@ async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) 
     });
 
   const promises = [
-    table.dataset.update(
+    ctx.tx.db.Dataset.findOneAndUpdate(
       { locationName, pluginName },
       {
         jsonSchema: JSON.stringify(jsonSchema),
         jsonUI: JSON.stringify(jsonUI),
       },
-      { transacting }
+      { new: true }
     ),
   ];
 
   _.forIn(profilePermissions, (permissions, profileId) => {
-    promises.push(
-      leemons.getPlugin('users').services.profiles.addCustomPermissions(profileId, permissions, {
-        transacting,
-      })
-    );
+    promises.push(ctx.tx.call('users.profiles.addCustomPermissions', { profileId, permissions }));
   });
 
   _.forIn(rolesPermissions, (permissions, roleId) => {
     promises.push(
-      leemons.getPlugin('users').services.roles.addPermissionMany(roleId, permissions, {
-        isCustom: true,
-        transacting,
-      })
+      ctx.tx.call('users.roles.addPermissionMany', { roleId, permissions, isCustom: true })
     );
   });
 

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Sqrl = require('squirrelly');
 
 const { getPluginProviders, getPluginProvider } = require('leemons-providers');
-const { LeemonsError } = require('packages/leemons-error/src');
+const { LeemonsError } = require('leemons-error');
 const testTemplate = require('../emails/test');
 
 const sendMailTransporter = null;
@@ -88,6 +88,7 @@ class Email {
    * */
   static async getTransporters({ ctx }) {
     // TODO Roberto: Hay que repensar esta lógica en la que se solicita los plugins Providers de un determinado plugin
+    //! TODO Jaime: Tenemos que ver como coger los transporters, ya que no creo que se puedan pasar las instancias de nodemailer
     // Lanzo el error aposta
     throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
     //! Dejo comentado el código "antiguo"
