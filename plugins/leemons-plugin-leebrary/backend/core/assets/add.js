@@ -26,13 +26,13 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
   ]
 * */
 async function add({
+  data,
   file,
   cover,
   category,
   canAccess,
   options: { newId, published = true, permissions: _permissions, duplicating = false } = {},
   ctx,
-  ...data
 }) {
   const { userSession } = ctx.meta;
   // eslint-disable-next-line no-nested-ternary
