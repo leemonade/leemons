@@ -35,6 +35,7 @@
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "moleculer": "^0.14.26",
+    "moment": "^2.29.4",
     "slugify": "^1.6.6"
   },
   "engines": {

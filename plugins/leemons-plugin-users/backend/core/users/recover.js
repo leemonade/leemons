@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const moment = require('moment');
-const { table } = require('../tables');
-const constants = require('../../../config/constants');
+const constants = require('../../config/constants');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const getHostname = require('../platform/getHostname');
 const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');

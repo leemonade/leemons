@@ -1,6 +1,4 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { table } = require('../tables');
-
 async function activateUser(userId, password) {
   return table.users.transaction(async (transacting) => {
     const user = await table.users.update(

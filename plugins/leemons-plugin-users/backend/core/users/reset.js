@@ -1,5 +1,4 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { table } = require('../tables');
 const { getResetConfig } = require('./getResetConfig');
 const getHostname = require('../platform/getHostname');
 

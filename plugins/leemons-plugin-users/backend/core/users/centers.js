@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { forEach, forIn } = require('lodash');
-const { table } = require('../tables');
 const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
 
 /**

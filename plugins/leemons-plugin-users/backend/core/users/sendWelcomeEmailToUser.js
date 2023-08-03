@@ -1,6 +1,5 @@
 const { generateJWTToken } = require('./jwt/generateJWTToken');
-const { table } = require('../tables');
-const constants = require('../../../config/constants');
+const constants = require('../../config/constants');
 const getHostname = require('../platform/getHostname');
 
 async function sendWelcomeEmailToUser(user, ctx, { transacting } = {}) {
