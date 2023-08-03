@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getProgramSubjectTypes } = require('./getProgramSubjectTypes');
 const { getProgramSubjects } = require('./getProgramSubjects');
 const { getProgramKnowledges } = require('./getProgramKnowledges');
@@ -9,9 +8,10 @@ const { getProgramSubstages } = require('./getProgramSubstages');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 const { getProgramCycles } = require('./getProgramCycles');
 
-async function programsByIds(ids, { onlyProgram, userSession, transacting } = {}) {
+async function programsByIds({ ids, onlyProgram, ctx }) {
+  const { userSession } = ctx.meta;
   if (onlyProgram) {
-    return table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting });
+    return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
   }
 
   const [
@@ -25,24 +25,22 @@ async function programsByIds(ids, { onlyProgram, userSession, transacting } = {}
     subjectTypes,
     cycles,
   ] = await Promise.all([
-    table.programs.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    table.programCenter.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    getProgramSubstages(ids, { transacting }),
-    getProgramCourses(ids, { transacting }),
-    getProgramGroups(ids, { transacting }),
-    getProgramKnowledges(ids, { transacting }),
-    getProgramSubjects(ids, { transacting }),
-    getProgramSubjectTypes(ids, { transacting }),
-    getProgramCycles(ids, { transacting }),
+    ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
+    ctx.tx.db.ProgramCenter.find({ program: _.isArray(ids) ? ids : [ids] }).lean(),
+    getProgramSubstages({ ids, ctx }),
+    getProgramCourses({ ids, ctx }),
+    getProgramGroups({ ids, ctx }),
+    getProgramKnowledges({ ids, ctx }),
+    getProgramSubjects({ ids, ctx }),
+    getProgramSubjectTypes({ ids, ctx }),
+    getProgramCycles({ ids, ctx }),
   ]);
 
   let imagesById = null;
   if (userSession) {
-    const assetService = leemons.getPlugin('leebrary').services.assets;
-    const images = await assetService.getByIds(_.map(programs, 'image'), {
+    const images = await ctx.tx.call('leebrary.assets.getByIds', {
+      assetsIds: _.map(programs, 'image'),
       withFiles: true,
-      userSession,
-      transacting,
     });
     imagesById = _.keyBy(images, 'id');
   }
@@ -57,7 +55,7 @@ async function programsByIds(ids, { onlyProgram, userSession, transacting } = {}
   const cyclesByProgram = _.groupBy(cycles, 'program');
 
   const treeTypes = await Promise.all(
-    programs.map((program) => getProgramTreeTypes(program, { transacting }))
+    programs.map((program) => getProgramTreeTypes({ programId: program, ctx }))
   );
 
   return programs.map((program, i) => ({

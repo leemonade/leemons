@@ -6,8 +6,7 @@ const {
   validateNotExistLocation,
   validateExistSchema,
 } = require('../../validations/exists');
-const { validateAddSchema } = require('../../validations/dataset-schema');
-const { table } = require('../tables');
+const { validateAddSchema } = require('../../validations/datasetSchema');
 
 /** *
  *  ES:
@@ -24,64 +23,47 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function addSchema(
-  { locationName, pluginName, jsonSchema, jsonUI },
-  { transacting: _transacting } = {}
-) {
+async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
-  await validateExistSchema(locationName, pluginName, { transacting: _transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateExistSchema({ locationName, pluginName, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const { profiles: profilePermissions, roles: rolesPermissions } =
-        transformPermissionKeysToObjectsByType(
-          jsonSchema,
-          getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
-          `${locationName}.${pluginName}`
-        );
+  const { profiles: profilePermissions, roles: rolesPermissions } =
+    transformPermissionKeysToObjectsByType({
+      jsonSchema,
+      keysByType: getJsonSchemaProfilePermissionsKeysByType({ jsonSchema, ctx }),
+      prefix: `${locationName}.${pluginName}`,
+      ctx,
+    });
 
-      const promises = [
-        table.dataset.update(
-          { locationName, pluginName },
-          {
-            jsonSchema: JSON.stringify(jsonSchema),
-            jsonUI: JSON.stringify(jsonUI),
-          },
-          { transacting }
-        ),
-      ];
+  const promises = [
+    ctx.tx.db.Dataset.findOneAndUpdate(
+      { locationName, pluginName },
+      {
+        jsonSchema: JSON.stringify(jsonSchema),
+        jsonUI: JSON.stringify(jsonUI),
+      },
+      { new: true }
+    ),
+  ];
 
-      _.forIn(profilePermissions, (permissions, profileId) => {
-        promises.push(
-          leemons
-            .getPlugin('users')
-            .services.profiles.addCustomPermissions(profileId, permissions, {
-              transacting,
-            })
-        );
-      });
+  _.forIn(profilePermissions, (permissions, profileId) => {
+    promises.push(ctx.tx.call('users.profiles.addCustomPermissions', { profileId, permissions }));
+  });
 
-      _.forIn(rolesPermissions, (permissions, roleId) => {
-        promises.push(
-          leemons.getPlugin('users').services.roles.addPermissionMany(roleId, permissions, {
-            isCustom: true,
-            transacting,
-          })
-        );
-      });
+  _.forIn(rolesPermissions, (permissions, roleId) => {
+    promises.push(
+      ctx.tx.call('users.roles.addPermissionMany', { roleId, permissions, isCustom: true })
+    );
+  });
 
-      const [dataset] = await Promise.all(promises);
+  const [dataset] = await Promise.all(promises);
 
-      dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
-      dataset.jsonUI = JSON.parse(dataset.jsonUI);
+  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
+  dataset.jsonUI = JSON.parse(dataset.jsonUI);
 
-      return dataset;
-    },
-    table.dataset,
-    _transacting
-  );
+  return dataset;
 }
 
 module.exports = addSchema;
