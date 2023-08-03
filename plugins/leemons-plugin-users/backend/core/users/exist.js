@@ -1,4 +1,4 @@
-const { LeemonsError } = require('packages/leemons-error/src');
+const { LeemonsError } = require('leemons-error');
 
 /**
  * Check if user exists

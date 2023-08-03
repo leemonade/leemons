@@ -8,7 +8,7 @@
  * */
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { comparePassword } = require('./bcrypt/comparePassword');
-const { table } = require('../tables');
+
 const { isSuperAdmin } = require('./isSuperAdmin');
 
 async function login(email, password) {

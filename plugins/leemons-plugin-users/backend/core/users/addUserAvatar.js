@@ -7,24 +7,27 @@ async function addUserAvatar({ user, avatar, ctx } = {}) {
   if (avatar) assetData.cover = avatar;
   let asset;
   if (user.avatarAsset) {
-    asset = await ctx.tx.call('leebrary.assets.update', {
-      // TODO Roberto: ESTOY SIGO MIGRANDO POR AQUÍ
-    });
-    // .update(
-    //   { ...assetData, id: user.avatarAsset },
-    //   {
-    //     published: true,
-    //     userSession: user,
-    //     transacting,
-    //   }
-    // );
+    // TODO Roberto: ESTOY SIGO MIGRANDO POR AQUÍ
+    // ? Dejo comentado el código para probar la llamada
+    //* asset = await ctx.tx.call('leebrary.assets.update', {
+    //   // Meter parámetros (COMENTADOS ABAJO)
+    //* });
+    //* .update(
+    //*   { ...assetData, id: user.avatarAsset },
+    //*   {
+    //*     published: true,
+    //*     userSession: user,
+    //*     transacting,
+    //*   }
+    //* );
   } else {
-    asset = await assetService.add(assetData, {
-      published: true,
-      userSession: user,
-      transacting,
-    });
+    //* asset = await assetService.add(assetData, {
+    //*   published: true,
+    //*   userSession: user,
+    //*   transacting,
+    //* });
   }
+
   const u = await table.users.update(
     { id: user.id },
     {

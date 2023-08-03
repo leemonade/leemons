@@ -1,5 +1,4 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { table } = require('../tables');
 const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
 
 async function registerPassword(token, password, ctx) {

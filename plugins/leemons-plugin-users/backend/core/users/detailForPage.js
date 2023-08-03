@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
 const { getPreferences } = require('../user-preferences/getPreferences');
 const { getUserDatasetInfo } = require('../user-agents/getUserDatasetInfo');
