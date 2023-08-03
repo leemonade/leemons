@@ -7,41 +7,44 @@ async function addUserAvatar({ user, avatar, ctx } = {}) {
   if (avatar) assetData.cover = avatar;
   let asset;
   if (user.avatarAsset) {
-    // TODO Roberto: ESTOY SIGO MIGRANDO POR AQUÍ
-    // ? Dejo comentado el código para probar la llamada
-    //* asset = await ctx.tx.call('leebrary.assets.update', {
-    //   // Meter parámetros (COMENTADOS ABAJO)
-    //* });
-    //* .update(
-    //*   { ...assetData, id: user.avatarAsset },
-    //*   {
-    //*     published: true,
-    //*     userSession: user,
-    //*     transacting,
-    //*   }
-    //* );
+    // TODO migration: Cuando se acabe de migrar el servicio de leebrary descomentar la llamada
+    /*
+      asset = await ctx.tx.call('leebrary.assets.update', {
+        data: { ...assetData, id: user.avatarAsset },
+        published: true,
+      });
+    */
   } else {
-    //* asset = await assetService.add(assetData, {
-    //*   published: true,
-    //*   userSession: user,
-    //*   transacting,
-    //* });
+    // TODO migration: Cuando se acabe de migrar el servicio de leebrary descomentar la llamada
+    /*
+      asset = await ctx.tx.call('leebrary.assets.add', {
+        data: assetData,
+        published: true,
+      });
+    */
   }
 
-  const u = await table.users.update(
+  // TODO migration: Quitar mock
+  const coverUrl = 'http://google.es/foto';
+  // ? Sería necesario meter await
+  /*
+    const coverUrl = ctx.tx.call('leebrary.assets.getCoverUrl', asset.id);
+  */
+
+  const u = await ctx.tx.db.Users.findOneAndUpdate(
     { id: user.id },
     {
-      avatar: `${assetService.getCoverUrl(asset.id)}?t=${Date.now()}`,
+      avatar: `${coverUrl}?t=${Date.now()}`,
       avatarAsset: asset.id,
     },
     {
-      transacting,
+      new: true,
     }
   );
 
   return {
     ...u,
-    avatar: assetService.getCoverUrl(asset.id),
+    avatar: coverUrl,
   };
 }
 
