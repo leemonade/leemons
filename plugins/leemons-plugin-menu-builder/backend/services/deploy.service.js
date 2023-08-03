@@ -33,7 +33,7 @@ module.exports = () => ({
       });
       // Menu
 
-      await addMenusDeploy({ key: mainMenuKey });
+      await addMenusDeploy({ keyValueModel: ctx.tx.db.KeyValue, menu: { key: mainMenuKey }, ctx });
       ctx.tx.emit('init-main-menu');
     },
     'multilanguage.newLocale': async (ctx) => {

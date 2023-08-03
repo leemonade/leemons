@@ -8,7 +8,21 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const { saveBySysName } = require('../core/profiles');
+const {
+  add,
+  list,
+  update,
+  existName,
+  detailByUri,
+  saveBySysName,
+  detailBySysName,
+  getProfileSysName,
+  addProfileContact,
+  getProfileContacts,
+  addCustomPermissions,
+  removeCustomPermissionsByName,
+  getRoleForRelationshipProfileCenter,
+} = require('../core/profiles');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -23,10 +37,69 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
-    // saveBySysName: profiles.saveBySysName,
+    add: {
+      handler(ctx) {
+        return add({ ...ctx.params, ctx });
+      },
+    },
+    list: {
+      handler(ctx) {
+        return list({ ...ctx.params, ctx });
+      },
+    },
+    update: {
+      handler(ctx) {
+        return update({ ...ctx.params, ctx });
+      },
+    },
+    existName: {
+      handler(ctx) {
+        return existName({ ...ctx.params, ctx });
+      },
+    },
+    detailByUri: {
+      handler(ctx) {
+        return detailByUri({ ...ctx.params, ctx });
+      },
+    },
     saveBySysName: {
       handler(ctx) {
         return saveBySysName({ ...ctx.params, ctx });
+      },
+    },
+    detailBySysName: {
+      handler(ctx) {
+        return detailBySysName({ ...ctx.params, ctx });
+      },
+    },
+    getProfileSysName: {
+      handler(ctx) {
+        return getProfileSysName({ ...ctx.params, ctx });
+      },
+    },
+    addProfileContact: {
+      handler(ctx) {
+        return addProfileContact({ ...ctx.params, ctx });
+      },
+    },
+    getProfileContacts: {
+      handler(ctx) {
+        return getProfileContacts({ ...ctx.params, ctx });
+      },
+    },
+    addCustomPermissions: {
+      handler(ctx) {
+        return addCustomPermissions({ ...ctx.params, ctx });
+      },
+    },
+    removeCustomPermissionsByName: {
+      handler(ctx) {
+        return removeCustomPermissionsByName({ ...ctx.params, ctx });
+      },
+    },
+    getRoleForRelationshipProfileCenter: {
+      handler(ctx) {
+        return getRoleForRelationshipProfileCenter({ ...ctx.params, ctx });
       },
     },
   },

@@ -1,11 +1,29 @@
 const fs = require('fs');
+const { LeemonsError } = require('leemons-error');
+
 const { getById } = require('./getById');
 
-async function dataForReturnFile(id, { transacting, start = -1, end = -1 } = {}) {
-  const file = await getById(id, { transacting });
+/**
+ * Retrieves file data for returning the file in the response.
+ *
+ * @async
+ * @function dataForReturnFile
+ * @param {Object} options - Input options.
+ * @param {string} options.id - The ID of the file to retrieve data for.
+ * @param {number} [options.start=-1] - The starting byte position for reading the file.
+ * @param {number} [options.end=-1] - The ending byte position for reading the file.
+ * @param {import("moleculer").Context} options.ctx - The Moleculer request context.
+ * @returns {Promise<Object>} Object containing file data and read stream for the response.
+ * @throws {LeemonsError} If the file with the specified ID does not exist.
+ */
+async function dataForReturnFile({ id, start = -1, end = -1, ctx }) {
+  const file = await getById({ id, ctx });
 
   if (!file) {
-    throw new global.utils.HttpError(422, `File with id ${id} does not exists`);
+    throw new LeemonsError(ctx, {
+      message: `File with id ${id} does not exists`,
+      httpStatusCode: 422,
+    });
   }
 
   let bytesStart = start;
@@ -36,6 +54,11 @@ async function dataForReturnFile(id, { transacting, start = -1, end = -1 } = {})
   }
 
   // Other providers
+  // TODO Roberto: Hay que repensar esta lógica en la que se solicita los plugins Providers de un determinado plugin
+  // Lanzo el error aposta
+  throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
+  //! Dejo comentado el código "antiguo"
+  /*
   const provider = leemons.getProvider(file.provider);
   if (provider?.services?.provider?.getReadStream) {
     return {
@@ -49,8 +72,8 @@ async function dataForReturnFile(id, { transacting, start = -1, end = -1 } = {})
       }),
     };
   }
-
   throw new global.utils.HttpError(400, `Provider "${file.provider}" not found`);
+  */
 }
 
 module.exports = { dataForReturnFile };

@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const moment = require('moment');
-const { table } = require('../tables');
-const constants = require('../../../config/constants');
+const constants = require('../../config/constants');
 
 async function setUserForRegisterPassword(userId, { transacting } = {}) {
   let recovery = await table.userRegisterPassword.findOne({ user: userId }, { transacting });

@@ -73,7 +73,7 @@ async function add({
   await addCenterProfilePermissionToUserAgents({ userAgentIds: _.map(user.userAgents, 'id'), ctx });
 
   // --- Asset
-  // TODO Roberto: ESTOY MIGRANDO ESTO... entrando al laberinto... (hay que meter los parámetros que quedan junto con CTX)
+  // TODO Roberto: ESTOY MIGRANDO ESTO... entrando al laberinto...
   await addUserAvatar({ user, avatar, ctx });
 
   if (tags && _.isArray(tags) && tags.length) {

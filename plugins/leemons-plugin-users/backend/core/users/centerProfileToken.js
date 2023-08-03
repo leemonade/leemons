@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { centers: getUserCenters } = require('./centers');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
-const { table } = require('../tables');
 
 async function centerProfileToken(user, centerId, profileId, { transacting } = {}) {
   const centers = await getUserCenters(user, { transacting });

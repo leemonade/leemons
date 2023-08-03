@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Create new group if name and type not in use
  * @public

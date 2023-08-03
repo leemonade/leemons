@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { profiles: getUserProfiles } = require('./profiles');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
-const { table } = require('../tables');
 
 /**
  * Return profiles for active user

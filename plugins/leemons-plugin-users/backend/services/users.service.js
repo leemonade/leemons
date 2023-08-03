@@ -13,6 +13,7 @@ const restActions = require('./rest/users.rest');
 const { updateEmail } = require('../core/users/updateEmail');
 const { updatePassword } = require('../core/users/updatePassword');
 const { getUserAgentsInfo } = require('../core/user-agents');
+const { add } = require('../core/users');
 // const { detail } = require('../core/users');
 
 /** @type {ServiceSchema} */
@@ -44,6 +45,11 @@ module.exports = {
       },
     },
     */
+    add: {
+      async handler(ctx) {
+        return add({ ...ctx.params, ctx });
+      },
+    },
     updateEmail: {
       async handler(ctx) {
         return updateEmail({ ...ctx.params, ctx });

@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
-const { table } = require('../tables');
 const { verifyJWTToken } = require('./jwt/verifyJWTToken');
-const constants = require('../../../config/constants');
+const constants = require('../../config/constants');
 
 async function getRegisterPasswordConfig(token) {
   const payload = await verifyJWTToken(token);

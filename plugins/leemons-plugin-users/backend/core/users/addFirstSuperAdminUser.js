@@ -1,5 +1,4 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { table } = require('../tables');
 
 /**
  * Create the first super-administrator user only if no user exists in the database.
