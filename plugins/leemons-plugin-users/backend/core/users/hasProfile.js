@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Checks if the user has the profile
  * @public

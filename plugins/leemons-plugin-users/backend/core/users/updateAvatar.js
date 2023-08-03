@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { addUserAvatar } = require('./addUserAvatar');
 
 async function updateAvatar(userId, avatar, { transacting: _transacting } = {}) {

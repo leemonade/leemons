@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 async function list(page, size, { profiles, centers, ...queries } = {}, { transacting } = {}) {
   const query = { ...queries };

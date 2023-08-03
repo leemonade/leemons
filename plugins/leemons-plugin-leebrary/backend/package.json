@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
+    "got": "^13.0.0",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
     "leemons-middlewares": "1.0.0",
@@ -32,7 +33,12 @@
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "leemons-widgets": "1.0.0",
-    "moleculer": "^0.14.26"
+    "mediainfo.js": "^0.2.0",
+    "metascraper": "^5.34.10",
+    "mime-types": "^2.1.35",
+    "moleculer": "^0.14.26",
+    "office-document-properties": "^1.1.0",
+    "sharp": "^0.32.4"
   },
   "engines": {
     "node": ">= 16.x.x"
