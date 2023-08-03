@@ -28,9 +28,12 @@ async function saveDataForUserAgentDatasets({ data, ctx }) {
         value: d.value,
         ctx: {
           ...ctx,
-          userSession: {
-            ...ctx.meta.userSession,
-            userAgents: [_.find(ctx.meta.userSession.userAgents, { id: d.userAgent })],
+          meta: {
+            ...ctx.meta,
+            userSession: {
+              ...ctx.meta.userSession,
+              userAgents: [_.find(ctx.meta.userSession.userAgents, { id: d.userAgent })],
+            },
           },
         },
       })

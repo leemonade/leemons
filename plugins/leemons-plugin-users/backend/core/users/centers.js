@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { forEach, forIn } = require('lodash');
-const { table } = require('../tables');
 const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
 
 /**
@@ -11,16 +10,18 @@ const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<array>}
  * */
-async function _centers(user, { transacting } = {}) {
-  const userAgentsIds = await table.userAgent.find(
-    { user, $or: [{ disabled_$null: true }, { disabled: false }] },
-    { columns: ['id'], transacting }
-  );
-  console.log('userAgentsIds', userAgentsIds);
-  const userAgents = await getUserAgentsInfo(_.map(userAgentsIds, 'id'), {
+async function centers({ user, ctx }) {
+  const userAgentsIds = await ctx.tx.db.UserAgent.find({
+    user,
+    $or: [{ disabled: null }, { disabled: false }],
+  })
+    .select(['id'])
+    .lean();
+  const userAgents = await getUserAgentsInfo({
+    userAgentIds: _.map(userAgentsIds, 'id'),
     withProfile: true,
     withCenter: true,
-    transacting,
+    ctx,
   });
   const values = {};
   forEach(userAgents, (userAgent) => {
@@ -41,4 +42,4 @@ async function _centers(user, { transacting } = {}) {
   return results;
 }
 
-module.exports = { centers: _centers };
+module.exports = { centers };

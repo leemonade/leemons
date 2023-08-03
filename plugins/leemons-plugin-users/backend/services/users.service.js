@@ -3,6 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const _ = require('lodash');
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
@@ -13,7 +14,14 @@ const restActions = require('./rest/users.rest');
 const { updateEmail } = require('../core/users/updateEmail');
 const { updatePassword } = require('../core/users/updatePassword');
 const { getUserAgentsInfo } = require('../core/user-agents');
-// const { detail } = require('../core/users');
+/*
+const {
+  detail,
+  isSuperAdmin,
+  userSessionCheckUserAgentDatasets,
+  centers,
+} = require('../core/users');
+*/
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -41,6 +49,21 @@ module.exports = {
           }
         );
         return _.isArray(users) ? response : response[0];
+      },
+    },
+    isSuperAdmin: {
+      async handler(ctx) {
+        return isSuperAdmin({ ...ctx.params, ctx });
+      },
+    },
+    userSessionCheckUserAgentDatasets: {
+      async handler(ctx) {
+        return userSessionCheckUserAgentDatasets({ ...ctx.params, ctx });
+      },
+    },
+    getUserCenters: {
+      async handler(ctx) {
+        return centers({ ...ctx.params, ctx });
       },
     },
     */
