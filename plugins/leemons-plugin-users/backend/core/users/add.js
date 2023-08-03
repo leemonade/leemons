@@ -86,8 +86,7 @@ async function add({
     });
   }
 
-  // TODO migration: Ver como preguntar a deploy-manager si "existe" calendar
-  if (leemons.getPlugin('calendar')) {
+  if (await ctx.tx.call('deployment-manager.pluginIsInstalled', { pluginName: 'calendar' })) {
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
   return user;
