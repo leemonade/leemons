@@ -48,4 +48,4 @@ async function addLocation({ name, description, locationName, pluginName, ctx })
   return response[0];
 }
 
-module.exports = addLocation;
+module.exports = { addLocation };

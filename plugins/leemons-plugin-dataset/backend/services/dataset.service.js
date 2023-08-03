@@ -26,7 +26,8 @@ module.exports = {
     // addLocation,
     addLocation: {
       handler(ctx) {
-        return addLocation({ ctx });
+          return addLocation({ ...ctx.params, ctx });
+        }
       },
     },
     // updateLocation,
