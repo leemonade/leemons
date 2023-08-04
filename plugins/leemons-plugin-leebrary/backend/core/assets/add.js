@@ -25,6 +25,28 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
     },
   ]
 * */
+
+/**
+ * Add a new asset with the specified data.
+ *
+ * @param {Object} options - Input options.
+ * @param {Object} options.data - The data for the asset to be added.
+ * @param {Object} options.file - The file to be uploaded as the asset's main file.
+ * @param {Object} options.cover - The file to be uploaded as the asset's cover image.
+ * @param {Object|string} options.category - The category of the asset. It can be either the category ID or category key.
+ * @param {Object[]} options.canAccess - The list of user agents and their roles that have access to the asset.
+ * @param {Object} options.options - Additional options for the asset.
+ * @param {string} options.options.newId - The new ID for the asset (optional).
+ * @param {boolean} options.options.published - Whether the asset is published (default is true).
+ * @param {Object[]|Object} options.options.permissions - The permissions for the asset.
+ * @param {boolean} options.options.duplicating - Whether the asset is being duplicated (default is false).
+ * @param {import("moleculer").Context} options.ctx - The Moleculer request context.
+ * @param {Object} options.ctx.meta - Context metadata for the request.
+ * @param {Object} options.ctx.meta.userSession - User session.
+ * @returns {Promise<Object>} The newly created asset with additional data.
+ * @throws {LeemonsError} If there is an error while adding the asset.
+ */
+
 async function add({
   data,
   file,
@@ -179,7 +201,7 @@ async function add({
   // ··········································································
   // ADD PERMISSIONS
 
-  const permissionName = getAssetPermissionName({ assetId: newAsset.id });
+  const permissionName = getAssetPermissionName({ assetId: newAsset.id, ctx });
 
   // ES: Primero, añadimos permisos al archivo
   // EN: First, add permission to the asset
@@ -195,16 +217,15 @@ async function add({
     }),
   ];
 
-  //! TODO Roberto: Estoy Aquí
   if (pPermissions && pPermissions.length) {
     forEach(pPermissions, ({ isCustomPermission, canEdit, ...per }) => {
       permissionsPromises.push(
-        userService.permissions.addItem(
-          newAsset.id,
-          leemons.plugin.prefixPN(canEdit ? 'asset.can-edit' : 'asset.can-view'),
-          per,
-          { isCustomPermission, transacting }
-        )
+        ctx.tx.call('users.permissions.addItem', {
+          item: newAsset.id,
+          type: ctx.prefixPN(canEdit ? 'asset.can-edit' : 'asset.can-view'),
+          data: per,
+          isCustomPermission,
+        })
       );
     });
   }
@@ -220,30 +241,28 @@ async function add({
       hasOwner = hasOwner || role === 'owner';
 
       permissions.push(
-        userService.permissions.addCustomPermissionToUserAgent(
-          userAgent,
-          {
+        ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+          userAgentId: userAgent,
+          data: {
             permissionName,
             actionNames: [role],
             target: category.id,
           },
-          { transacting }
-        )
+        })
       );
     }
   }
 
   if (!hasOwner) {
     permissions.push(
-      userService.permissions.addCustomPermissionToUserAgent(
-        map(userSession.userAgents, 'id'),
-        {
+      ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+        userAgent: map(userSession.userAgents, 'id'),
+        data: {
           permissionName,
           actionNames: ['owner'],
           target: category.id,
         },
-        { transacting }
-      )
+      })
     );
   }
 
@@ -259,12 +278,9 @@ async function add({
 
   if (isString(newFile?.id)) {
     try {
-      await addFiles(newFile.id, newAsset.id, {
-        skipPermissions: true,
-        userSession,
-        transacting,
-      });
+      await addFiles({ fileId: newFile.id, assetId: newAsset.id, skipPermissions: true, ctx });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   }
@@ -274,9 +290,7 @@ async function add({
 
   if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
     promises.push(
-      addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
-        transacting,
-      })
+      addBookmark({ url: assetData.url, iconUrl: assetData.icon, asset: newAsset, ctx })
     );
   }
 
@@ -284,10 +298,12 @@ async function add({
   // ADD TAGS
 
   if (tags?.length > 0) {
-    const tagsService = leemons.getPlugin('common').services.tags;
+    // const tagsService = leemons.getPlugin('common').services.tags;
     promises.push(
-      tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
-        transacting,
+      ctx.tx.call('common.tags.setTagsToValues', {
+        type: ctx.prefixPN(''),
+        tags,
+        values: newAsset.id,
       })
     );
   }

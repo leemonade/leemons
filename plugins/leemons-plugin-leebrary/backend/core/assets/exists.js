@@ -1,7 +1,5 @@
-const { tables } = require('../tables');
-
-async function exists(assetId, { transacting } = {}) {
-  const count = await tables.assets.count({ id: assetId }, { transacting });
+async function exists({ assetId, ctx } = {}) {
+  const count = await ctx.tx.db.Assets.countDocuments({ id: assetId });
   return count > 0;
 }
 

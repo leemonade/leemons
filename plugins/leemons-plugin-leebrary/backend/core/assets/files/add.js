@@ -1,13 +1,13 @@
+const { LeemonsError } = require('leemons-error');
 const { exists: fileExists } = require('../../files/exists');
 const { exists: assetExists } = require('../exists');
-const { tables } = require('../../tables');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 
-async function add(fileId, assetId, { skipPermissions, userSession, transacting } = {}) {
+async function add({ fileId, assetId, skipPermissions, ctx }) {
   try {
     // EN: Get the user permissions
     // ES: Obtener los permisos del usuario
-    const { permissions } = await getPermissions(assetId, { userSession, transacting });
+    const { permissions } = await getPermissions({ assetId, ctx });
 
     // EN: Check if the user has permissions to update the asset
     // ES: Comprobar si el usuario tiene permisos para actualizar el activo
@@ -15,22 +15,32 @@ async function add(fileId, assetId, { skipPermissions, userSession, transacting 
       throw new global.utils.HttpError(401, "You don't have permissions to update this asset");
     }
 
-    if (!(await fileExists(fileId, { transacting }))) {
+    if (!(await fileExists({ fileId, ctx }))) {
+      // eslint-disable-next-line no-console
       console.log('ERROR fileId:', fileId);
-      throw new global.utils.HttpError(422, 'File not found');
+      throw new LeemonsError(ctx, {
+        message: 'File not found',
+        httpStatusCode: 422,
+      });
     }
 
-    if (!(await assetExists(assetId, { transacting }))) {
-      throw new global.utils.HttpError(422, 'Asset not found');
+    if (!(await assetExists({ assetId, ctx }))) {
+      throw new LeemonsError(ctx, {
+        message: 'Asset not found',
+        httpStatusCode: 422,
+      });
     }
 
-    return tables.assetsFiles.set(
+    return ctx.tx.db.AssetsFiles.findOneAndUpdate(
       { asset: assetId, file: fileId },
       { asset: assetId, file: fileId },
-      { transacting }
+      { upsert: true }
     );
   } catch (e) {
-    throw new global.utils.HttpError(500, `Failed to add file: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Failed to add file: ${e.message}`,
+      httpStatusCode: 500,
+    });
   }
 }
 
