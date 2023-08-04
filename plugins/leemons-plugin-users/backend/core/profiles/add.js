@@ -56,7 +56,7 @@ async function add({ name, description, permissions, translations, indexable, sy
 
   await createNecessaryRolesForProfilesAccordingToCenters({ profileIds: profile.id, ctx });
 
-  ctx.emit('profile-permissions-change', { profile, permissions });
+  ctx.tx.emit('profile-permissions-change', { profile, permissions });
 
   return profile;
 }

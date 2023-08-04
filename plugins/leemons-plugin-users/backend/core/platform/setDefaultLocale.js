@@ -23,7 +23,7 @@ async function setDefaultLocale({ value, ctx }) {
       upsert: true,
     }
   );
-  await ctx.emit('change-platform-locale', { locale: value });
+  await ctx.tx.emit('change-platform-locale', { locale: value });
   return response;
 }
 

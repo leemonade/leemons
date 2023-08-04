@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
 const { randomString } = require('leemons-utils');
 const { LeemonsError } = require('leemons-error');
+const { newTransaction } = require('leemons-transactions');
 const { deploymentPluginsModel } = require('../models/deployment-plugins');
 const { deploymentPluginsRelationshipModel } = require('../models/deployment-plugins-relationship');
 const { savePluginsToDeployment } = require('../core/deployment-plugins/savePluginsToDeployment');
@@ -60,6 +61,8 @@ module.exports = () => ({
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
+        // TODO: Crear transaccion
+        ctx.meta.transactionID = await newTransaction(ctx);
         ctx.meta.initDeploymentProcessNumber = randomString();
         return ctx.call('deployment-manager.emit', {
           event: 'deployment-manager.install',

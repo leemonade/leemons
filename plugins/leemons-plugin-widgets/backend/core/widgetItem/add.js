@@ -4,14 +4,16 @@ const { validatePrefix } = require('../validation/validate');
 const { exists: existsZone } = require('../widgetZone');
 
 async function add({ zoneKey, key, url, name, description, profiles, properties = {}, ctx }) {
-  validatePrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  validatePrefix({ type: key, calledFrom: ctx.callerPlugin, ctx });
   if (!url || !_.isString(url)) {
     throw new LeemonsError(ctx, { message: 'url is required' });
   }
 
-  const existZone = await existsZone({ zoneKey, ctx });
+  const existZone = await existsZone({ key: zoneKey, ctx });
   if (!existZone) {
-    throw new LeemonsError(ctx, { message: `Zone with key ${zoneKey} does not exist` });
+    throw new LeemonsError(ctx, {
+      message: `Zone with key ${zoneKey} does not exist for add key ${key}`,
+    });
   }
 
   if (_.isArray(profiles) && profiles.length > 0) {
