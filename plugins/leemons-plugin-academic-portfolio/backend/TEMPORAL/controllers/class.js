@@ -206,7 +206,7 @@ async function classByIds(ctx) {
   const ids = JSON.parse(ctx.request.query.ids);
   const classes = await classService.classByIds(ids, {
     userSession: ctx.state.userSession,
-    noSearchChilds: ctx.request.query.noSearchChilds,
+    noSearchChildren: ctx.request.query.noSearchChilds,
     noSearchParents: ctx.request.query.noSearchParents,
   });
 

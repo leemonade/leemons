@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { validateTypePrefix } = require('../../validations/exists');
 const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
 const { validateExistItemPermissions } = require('../../validations/exists');
@@ -46,7 +47,7 @@ async function add({ item, type, data, isCustomPermission, ctx }) {
 
   if (!isCustomPermission) {
     if (!(await existMany({ permissionNames: _.map(_data, 'permissionName'), ctx }))) {
-      throw new Error('The specified permit does not exist');
+      throw new LeemonsError(ctx, { message: 'The specified permit does not exist' });
     }
     if (
       !(await manyPermissionsHasManyActions({
@@ -54,7 +55,9 @@ async function add({ item, type, data, isCustomPermission, ctx }) {
         ctx,
       }))
     ) {
-      throw new Error('Some of the actions do not exist for the specified permit');
+      throw new LeemonsError(ctx, {
+        message: 'Some of the actions do not exist for the specified permit',
+      });
     }
   }
 

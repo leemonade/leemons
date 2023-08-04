@@ -1,10 +1,8 @@
-const { table } = require('../tables');
-
-async function getCourseIndex(course, { transacting } = {}) {
-  const { index } = await table.groups.findOne(
-    { id: course, type: 'course' },
-    { columns: ['id', 'index'], transacting }
-  );
+async function getCourseIndex({ course, ctx }) {
+  const { index } = await ctx.tx.db.Table.groups
+    .findOne({ id: course, type: 'course' })
+    .select(['id', 'index'])
+    .lean();
   return index;
 }
 

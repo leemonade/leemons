@@ -1,84 +1,73 @@
-const { map } = require('lodash');
-const { table } = require('../../tables');
 const {
   addPermissionsBetweenStudentsAndTeachers,
 } = require('../addPermissionsBetweenStudentsAndTeachers');
 const { getClassProgram } = require('../getClassProgram');
 const { getProfiles } = require('../../settings/getProfiles');
 
-async function add(_class, teacher, type, { transacting } = {}) {
-  const roomService = leemons.getPlugin('comunica').services.room;
-
+async function add({ class: _class, teacher, type, ctx }) {
   const [classTeacher, program] = await Promise.all([
-    table.classTeacher.create(
-      {
-        class: _class,
-        teacher,
-        type,
-      },
-      { transacting }
-    ),
-    getClassProgram(_class),
-    roomService.addUserAgents(leemons.plugin.prefixPN(`room.class.${_class}`), teacher, {
-      transacting,
+    ctx.tx.db.ClassTeacher.create({
+      class: _class,
+      teacher,
+      type,
+    }),
+    getClassProgram({ id: _class, ctx }),
+    ctx.tx.call('comunica.room.addUserAgents', {
+      room: ctx.prefixPN(`room.class.${_class}`),
+      userAgent: teacher,
       isAdmin: true,
     }),
   ]);
 
-  const { teacher: teacherProfileId } = await getProfiles({ transacting });
+  const { teacher: teacherProfileId } = await getProfiles({ ctx });
 
-  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
-    teacher,
-    {
+  await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    userAgent: teacher,
+    data: {
       permissionName: `plugins.academic-portfolio.class.${_class}`,
       actionNames: ['view', 'edit'],
     },
-    { transacting }
-  );
+  });
 
-  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
-    teacher,
-    {
+  await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    userAgent: teacher,
+    data: {
       permissionName: `plugins.academic-portfolio.class-profile.${_class}.${teacherProfileId}`,
       actionNames: ['view', 'edit'],
     },
-    { transacting }
-  );
+  });
 
   try {
-    await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
-      teacher,
-      {
+    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+      userAgent: teacher,
+      data: {
         permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
         actionNames: ['view'],
       },
-      { transacting }
-    );
+    });
   } catch (e) {
     // Nothing
   }
 
   try {
-    const { teacher: teacherProfileId } = await getProfiles({ transacting });
-    await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
-      teacher,
-      {
+    const { teacher: teacherProfileId } = await getProfiles({ ctx });
+    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+      userAgent: teacher,
+      data: {
         permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}-${teacherProfileId}`,
         actionNames: ['view'],
       },
-      { transacting }
-    );
+    });
   } catch (e) {
     // Nothing
   }
 
-  await addPermissionsBetweenStudentsAndTeachers(_class, { transacting });
+  await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
 
-  await leemons.events.emit('after-add-class-teacher', {
+  await ctx.tx.emit('after-add-class-teacher', {
     class: _class,
     teacher,
     type,
-    transacting,
   });
 
   return classTeacher;

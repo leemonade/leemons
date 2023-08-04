@@ -645,7 +645,7 @@ async function validateUpdateGroup({ data, ctx }) {
 
 async function validateProgramNotUsingInternalId({ program, compiledInternalId, subject, ctx }) {
   const query = { program, compiledInternalId };
-  if (subject) query.subject_$ne = subject;
+  if (subject) query.subject = { $ne: subject };
   const count = await ctx.tx.db.ProgramSubjectsCredits.countDocuments(query);
   if (count) {
     throw new LeemonsError(ctx, { message: 'The internalId is already in use' });
@@ -683,7 +683,7 @@ const addSubjectSchema = {
   additionalProperties: false,
 };
 
-async function validateAddSubject(data, { transacting } = {}) {
+async function validateAddSubject({ data, ctx }) {
   const { course: _course, ..._data } = data;
   const validator = new LeemonsValidator(addSubjectSchema);
 
@@ -694,34 +694,36 @@ async function validateAddSubject(data, { transacting } = {}) {
   // ES: Comprobamos si el programa tiene o puede tener cursos asignados
   // EN: Check if the program has or can have courses assigned
   const [needCourse, haveMultiCourses] = await Promise.all([
-    subjectNeedCourseForAdd(data.program, { transacting }),
-    programHaveMultiCourses(data.program, { transacting }),
+    subjectNeedCourseForAdd({ program: data.program, ctx }),
+    programHaveMultiCourses({ id: data.program, ctx }),
   ]);
 
   // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
   // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
   if (!haveMultiCourses) {
     if (needCourse) {
-      if (!data.course) throw new Error('The course is required');
-      const course = await table.groups.findOne(
-        { id: data.course, type: 'course' },
-        { transacting }
-      );
-      if (!course) throw new Error('The course does not exist');
+      if (!data.course) throw new LeemonsError(ctx, { message: 'The course is required' });
+      const course = await ctx.tx.db.Groups.findOne({ id: data.course, type: 'course' }).lean();
+      if (!course) throw new LeemonsError(ctx, { message: 'The course does not exist' });
     }
     // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
     // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
     else if (data.course) {
-      throw new Error('The course is not required');
+      throw new LeemonsError(ctx, { message: 'The course is not required' });
     }
   }
-  await validateInternalIdHaveGoodFormat(data.program, data.internalId, { transacting });
+  await validateInternalIdHaveGoodFormat({
+    program: data.program,
+    internalId: data.internalId,
+    ctx,
+  });
 
-  await validateProgramNotUsingInternalId(
-    data.program,
-    (data.course ? await getCourseIndex(data.course, { transacting }) : '') + data.internalId,
-    { transacting }
-  );
+  await validateProgramNotUsingInternalId({
+    program: data.program,
+    compiledInternalId:
+      (data.course ? await getCourseIndex({ course: data.course, ctx }) : '') + data.internalId,
+    ctx,
+  });
 }
 
 const updateSubjectSchema = {
@@ -755,7 +757,7 @@ const updateSubjectInternalIdSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateSubject(data, { transacting } = {}) {
+async function validateUpdateSubject({ data, ctx }) {
   const { course, internalId, ..._data } = data;
   const validator = new LeemonsValidator(updateSubjectSchema);
 
@@ -770,18 +772,21 @@ async function validateUpdateSubject(data, { transacting } = {}) {
       throw validator2.error;
     }
 
-    const subject = await table.subjects.findOne(
-      { id: data.id },
-      { columns: ['program'], transacting }
-    );
+    const subject = await ctx.tx.db.Subjects.findOne({ id: data.id }).select(['program']).lean();
 
-    await validateInternalIdHaveGoodFormat(subject.program, data.internalId, { transacting });
+    await validateInternalIdHaveGoodFormat({
+      program: subject.program,
+      internalId: data.internalId,
+      ctx,
+    });
 
-    await validateProgramNotUsingInternalId(
-      subject.program,
-      (data.course ? await getCourseIndex(data.course, { transacting }) : '') + data.internalId,
-      { subject: data.id, transacting }
-    );
+    await validateProgramNotUsingInternalId({
+      program: subject.program,
+      compiledInternalId:
+        (data.course ? await getCourseIndex({ course: data.course, ctx }) : '') + data.internalId,
+      subject: data.id,
+      ctx,
+    });
   }
 }
 
@@ -962,7 +967,7 @@ const addInstanceClass2Schema = {
   additionalProperties: false,
 };
 
-async function validateAddInstanceClass(data, { transacting } = {}) {
+async function validateAddInstanceClass({ data, ctx }) {
   const { internalId, internalIdCourse, ..._data } = data;
 
   const validator = new LeemonsValidator(addInstanceClassSchema);
@@ -980,32 +985,39 @@ async function validateAddInstanceClass(data, { transacting } = {}) {
 
     // ES: Comprobamos si el programa tiene o puede tener cursos asignados
     // EN: Check if the program has or can have courses assigned
-    const needCourse = await subjectNeedCourseForAdd(data.program, { transacting });
+    const needCourse = await subjectNeedCourseForAdd({ program: data.program, ctx });
 
     // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
     // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
     if (needCourse) {
-      if (!data.internalIdCourse) throw new Error('The internalIdCourse is required');
-      const course = await table.groups.findOne(
-        { id: data.internalIdCourse, type: 'course' },
-        { transacting }
-      );
-      if (!course) throw new Error('The course does not exist');
+      if (!data.internalIdCourse)
+        throw new LeemonsError(ctx, { message: 'The internalIdCourse is required' });
+      const course = await ctx.tx.db.Groups.findOne({
+        id: data.internalIdCourse,
+        type: 'course',
+      }).lean();
+      if (!course) throw new LeemonsError(ctx, { message: 'The course does not exist' });
     }
     // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
     // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
     else if (data.internalIdCourse) {
-      throw new Error('The course is not required');
+      throw new LeemonsError(ctx, { message: 'The course is not required' });
     }
 
-    await validateInternalIdHaveGoodFormat(data.program, data.internalId, { transacting });
+    await validateInternalIdHaveGoodFormat({
+      program: data.program,
+      internalId: data.internalId,
+      ctx,
+    });
 
-    await validateProgramNotUsingInternalId(
-      data.program,
-      (data.internalIdCourse ? await getCourseIndex(data.internalIdCourse, { transacting }) : '') +
-        data.internalId,
-      { transacting }
-    );
+    await validateProgramNotUsingInternalId({
+      program: data.program,
+      compiledInternalId:
+        (data.internalIdCourse
+          ? await getCourseIndex({ course: data.internalIdCourse, ctx })
+          : '') + data.internalId,
+      ctx,
+    });
   }
 }
 
@@ -1162,26 +1174,26 @@ const updateClassSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateClass(data, { transacting }) {
+async function validateUpdateClass({ data, ctx }) {
   const validator = new LeemonsValidator(updateClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const classe = await table.class.findOne({ id: data.id }, { columns: 'program', transacting });
-  const haveMultiCourses = await programHaveMultiCourses(classe.program, { transacting });
+  const classe = await ctx.tx.db.Class.findOne({ id: data.id }).select(['program']).lean();
+  const haveMultiCourses = await programHaveMultiCourses({ id: classe.program, ctx });
 
   if (!haveMultiCourses) {
     if (isArray(data.course) && data.course.length > 1) {
-      throw new Error('Class does not have multi courses');
+      throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
     }
   }
 
   if (data.teachers) {
     const teachersByType = _.groupBy(data.teachers, 'type');
     if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
-      throw new Error('There can only be one main teacher');
+      throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
     }
   }
 }

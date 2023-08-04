@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function existKnowledgeInProgram(id, program, { transacting } = {}) {
-  const count = await table.knowledges.count({ id, program }, { transacting });
+async function existKnowledgeInProgram({ id, program, ctx }) {
+  const count = await ctx.tx.db.Knowledges.countDocuments({ id, program });
   return count > 0;
 }
 
