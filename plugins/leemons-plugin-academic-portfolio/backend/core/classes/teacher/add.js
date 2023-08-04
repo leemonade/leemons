@@ -50,7 +50,6 @@ async function add({ class: _class, teacher, type, ctx }) {
   }
 
   try {
-    const { teacher: teacherProfileId } = await getProfiles({ ctx });
     await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgent: teacher,
       data: {
