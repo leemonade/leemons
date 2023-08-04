@@ -29,7 +29,7 @@ async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber 
   // Si aun no han finalizado todos los pendiente esperamos un poco y lo volvemos a intentar
   if (transaction.finished < transaction.pending) {
     await timeoutPromise(100);
-    return await checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber + 1);
+    return checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber + 1);
   }
   return true;
 }
@@ -40,6 +40,8 @@ async function tryToRollbackState(ctx, state, tryNumber = 0) {
     return true;
   }
   try {
+    if (process.env.DEBUG === 'true')
+      console.log(`CALL from "${ctx.action?.name || ctx.event.name}" to  "${state.caller}"`);
     return await ctx.call(state.caller, state.payload);
   } catch (e) {
     return tryToRollbackState(ctx, state, tryNumber + 1);
@@ -65,6 +67,7 @@ module.exports = (broker) => ({
         if (!ctx.meta.deploymentID) {
           throw new Error('Need ctx.meta.deploymentID');
         }
+
         const transaction = await Transaction.create({
           deploymentID: ctx.meta.deploymentID,
           pending: 0,
@@ -82,6 +85,7 @@ module.exports = (broker) => ({
         if (!ctx.meta.transactionID) {
           throw new Error('Need ctx.meta.transactionID');
         }
+
         const transaction = await Transaction.findOneAndUpdate(
           {
             _id: ctx.meta.transactionID,
@@ -150,7 +154,7 @@ module.exports = (broker) => ({
             new TransactionState({
               deploymentID: ctx.meta.deploymentID,
               transaction: ctx.meta.transactionID,
-              action: ctx.params.action,
+              caller: `${ctx.caller}.${ctx.params.action}`,
               payload: ctx.params.payload,
             })
           );

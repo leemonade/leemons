@@ -24,10 +24,7 @@ module.exports = () => ({
     LeemonsDeploymentManagerMixin(),
   ],
   events: {
-    'deployment-manager.install': async function deploymentInstall(ctx) {
-      // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+    'deployment-manager.install': async (ctx) => {
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -35,9 +32,14 @@ module.exports = () => ({
         ctx,
       });
     },
-    'multilanguage.newLocale': async function newLocale(ctx) {
+    'admin.init-widget-zones': async (ctx) => {
+      // Widgets
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+    },
+    'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
-        keyValueModel: ctx.db.KeyValue,
+        keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,

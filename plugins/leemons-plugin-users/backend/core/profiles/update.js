@@ -36,14 +36,14 @@ async function update({ ctx, ...data }) {
 
   // Formato: data.permissions
   // [{ permissionName, actionNames }]
-  await ctx.call('users.roles.update', {
+  await ctx.tx.call('users.roles.update', {
     id: profileRole,
     name: `profile:${profile.id}:role`,
     type: ctx.prefixPN('profile-role'),
     permissions: data.permissions,
   });
 
-  ctx.emit('profile-permissions-change', { profile, permissions: data.permissions });
+  ctx.tx.emit('profile-permissions-change', { profile, permissions: data.permissions });
 
   return profile;
 }

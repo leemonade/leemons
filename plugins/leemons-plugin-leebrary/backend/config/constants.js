@@ -189,7 +189,7 @@ const widgets = {
   zones: [{ key: `${permissionsPrefix}.admin.config-providers` }],
   items: [
     {
-      zoneKey: `plugins.admin.admin-page`,
+      zoneKey: `admin.admin-page`,
       key: `${permissionsPrefix}.admin.config`,
       url: 'admin-config/index',
       properties: {

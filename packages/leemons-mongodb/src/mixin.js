@@ -321,12 +321,13 @@ module.exports = ({
             `Error on MongoDB rollback: The model "${ctx.params.modelKey}" not found in ctx.db`
           );
         }
-        if (debugTransaction) {
+        if (debugTransaction || process.env.DEBUG === 'true') {
           console.debug(
             `[MongoDB Transactions] (Rollback) - ${ctx.params.action}`,
             ctx.params.data
           );
         }
+
         switch (ctx.params.action) {
           case 'removeMany':
             await model.deleteMany({ id: ctx.params.data });
@@ -338,6 +339,7 @@ module.exports = ({
             await Promise.all(
               _.map(ctx.params.data, (data) => model.findOneAndUpdate({ id: data.id }, data))
             );
+            break;
           default:
             throw new Error(`Error on MongoDB rollback: The action ${ctx.params.action} not found`);
         }
@@ -349,6 +351,7 @@ module.exports = ({
     error: {
       '*': [
         async function (ctx, err) {
+          console.error(err);
           if (autoRollback && ctx.meta.transactionID) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);
@@ -373,6 +376,7 @@ module.exports = ({
             forceLeemonsDeploymentManagerMixinNeedToBeImported,
             models,
           });
+          await createTransactionIDIfNeed({ autoTransaction, ctx });
         },
       ],
     },
@@ -395,6 +399,7 @@ module.exports = ({
               forceLeemonsDeploymentManagerMixinNeedToBeImported,
               models,
             });
+            await createTransactionIDIfNeed({ autoTransaction, ctx });
             if (_.isFunction(afterModifyCTX)) {
               await afterModifyCTX(ctx);
             }

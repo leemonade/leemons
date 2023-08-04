@@ -12,7 +12,7 @@ const { remove } = require('./remove');
 async function removeMany({ permissionNames, ctx }) {
   const response = await Promise.allSettled(
     _.map(permissionNames, (permissionName) =>
-      ctx.call('users.permissions.remove', { permissionName, ctx })
+      ctx.tx.call('users.permissions.remove', { permissionName, ctx })
     )
   );
   return settledResponseToManyResponse(response);

@@ -3,6 +3,12 @@ const { mongoose, newModel } = require('leemons-mongodb');
 function getKeyValueModel({ modelName }) {
   const schema = new mongoose.Schema(
     {
+      id: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true,
+      },
       deploymentID: {
         type: String,
         required: true,

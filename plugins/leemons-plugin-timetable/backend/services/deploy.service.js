@@ -32,7 +32,7 @@ module.exports = () => ({
     },
     'multilanguage.newLocale': async function newLocale(ctx) {
       await addLocalesDeploy({
-        keyValueModel: ctx.db.KeyValue,
+        keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,

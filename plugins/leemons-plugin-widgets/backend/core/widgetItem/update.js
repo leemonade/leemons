@@ -3,7 +3,7 @@ const { LeemonsError } = require('leemons-error');
 const { validatePrefix } = require('../validation/validate');
 
 async function update({ zoneKey, key, url, name, description, properties, profiles, ctx }) {
-  validatePrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  validatePrefix({ type: key, calledFrom: ctx.callerPlugin, ctx });
 
   const toUpdate = {
     zoneKey,
