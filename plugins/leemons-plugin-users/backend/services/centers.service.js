@@ -12,7 +12,7 @@ const { add, list, detail, existName } = require('../core/centers');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.platform',
+  name: 'users.centers',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
