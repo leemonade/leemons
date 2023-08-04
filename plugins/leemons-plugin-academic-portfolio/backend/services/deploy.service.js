@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -52,9 +51,10 @@ module.exports = () => ({
         syncProgramProfilePermissionsIfNeed,
         // eslint-disable-next-line global-require
       } = require('../core/classes/__update__/syncProgramProfilePermissionsIfNeed');
-      await syncProgramProfilePermissionsIfNeed();
+      // ! depende de users.permissions.addCustomPermissionToUserAgentx
+      await syncProgramProfilePermissionsIfNeed({ ctx });
 
-      // Widgets
+      // Register widget zone
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
 
       // Locales
@@ -74,6 +74,7 @@ module.exports = () => ({
       });
       return null;
     },
+    // Widget items
     'dashboard.init-widget-zones': async (ctx) => {
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
