@@ -8,7 +8,7 @@ async function removeByClass({ classIds, soft, ctx }) {
     classCourses,
     soft,
   });
-  await ctx.tx.db.ClassCourse.deleteMany({ id: _.map(classCourses, 'id') }, { soft }); // ? Como hacemos soft deletes, este modelo no tiene deletedAt field
+  await ctx.tx.db.ClassCourse.deleteMany({ id: _.map(classCourses, 'id') }, { soft });
   await ctx.tx.emit('after-remove-classes-courses', {
     classCourses,
     soft,

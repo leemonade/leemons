@@ -43,33 +43,12 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-<<<<<<< HEAD
-      // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-
-=======
->>>>>>> microservices/dev
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: permissions.permissions,
         ctx,
       });
-<<<<<<< HEAD
-
-      // Locales
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ['es', 'en'],
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
-    },
-    'multilanguage.newLocale': async (ctx) => {
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-=======
     },
     'admin.init-widget-zones': async (ctx) => {
       // Widgets
@@ -79,7 +58,6 @@ module.exports = () => ({
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
->>>>>>> microservices/dev
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
