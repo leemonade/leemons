@@ -42,6 +42,12 @@ function modifyCTX(ctx) {
       'deployment-manager.getGoodActionToCall',
       { actionName }
     );
+
+    if (process.env.DEBUG === 'true')
+      console.log(
+        `CALL from "${ctx.action?.name || ctx.event?.name}" to "${manager.actionToCall}"`
+      );
+
     return ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, {
       ...opts,
       meta: {
@@ -74,9 +80,12 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
             modifyCTX(ctx);
 
             if (checkIfCanCallMe) {
-              // Si se esta intentando llamar al action leemonsDeploymentManagerEvent lo dejamos pasar
+              // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
               // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
-              if (!ctx.action.name.includes('leemonsDeploymentManagerEvent')) {
+              if (
+                !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
+                !ctx.action.name.includes('leemonsMongoDBRollback')
+              ) {
                 if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
                   if (!ctx.meta.relationshipID)
                     throw new LeemonsError(ctx, { message: 'relationshipID is required' });

@@ -7,13 +7,13 @@ async function exec({ keyValueModel, item: { item, permissions, removed }, menuK
     process.env.RELOAD_MENU_ITEMS_ON_EVERY_INSTALL === 'true'
   ) {
     if (
-      !(await ctx.call('menu-builder.menuItem.exist', {
+      !(await ctx.tx.call('menu-builder.menuItem.exist', {
         menuKey,
         key: ctx.prefixPN(item.key),
       }))
     ) {
       if (!removed) {
-        await ctx.call('menu-builder.menuItem.add', {
+        await ctx.tx.call('menu-builder.menuItem.add', {
           ...item,
           menuKey,
           key: ctx.prefixPN(item.key),
@@ -23,14 +23,14 @@ async function exec({ keyValueModel, item: { item, permissions, removed }, menuK
     }
     if (removed) {
       // ES: Si existe pero deberia de estar borrado lo borramos
-      await ctx.call('menu-builder.menuItem.remove', {
+      await ctx.tx.call('menu-builder.menuItem.remove', {
         menuKey,
         key: ctx.prefixPN(item.key),
       });
     }
     await setKey(keyValueModel, `menu-item-${menuKey}-${item.key}`);
   }
-  ctx.emit(`init-menu-item-${menuKey}.${item.key}`);
+  ctx.tx.emit(`init-menu-item-${menuKey}.${item.key}`);
 }
 
 /**

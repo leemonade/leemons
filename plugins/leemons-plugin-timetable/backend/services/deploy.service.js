@@ -49,6 +49,7 @@ module.exports = () => ({
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
+<<<<<<< HEAD
         locale: ['es', 'en'],
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
@@ -57,6 +58,8 @@ module.exports = () => ({
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
+=======
+>>>>>>> microservices/dev
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
