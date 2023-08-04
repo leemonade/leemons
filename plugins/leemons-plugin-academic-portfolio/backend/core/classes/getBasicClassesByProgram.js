@@ -1,21 +1,19 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getByClass: getKnowledgeByClass } = require('./knowledge/getByClass');
 const { getByClass: getSubstageByClass } = require('./substage/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
 
-async function getBasicClassesByProgram(program, { transacting } = {}) {
-  const classes = await table.class.find(
-    { program_$in: _.isArray(program) ? program : [program] },
-    { transacting }
-  );
+async function getBasicClassesByProgram({ program, ctx }) {
+  const classes = await ctx.tx.db.Class.find({
+    program: _.isArray(program) ? program : [program],
+  }).lean();
   const classIds = _.map(classes, 'id');
   const [knowledges, substages, courses, groups] = await Promise.all([
-    getKnowledgeByClass(classIds, { transacting }),
-    getSubstageByClass(classIds, { transacting }),
-    getCourseByClass(classIds, { transacting }),
-    getGroupByClass(classIds, { transacting }),
+    getKnowledgeByClass({ class: classIds, ctx }),
+    getSubstageByClass({ class: classIds, ctx }),
+    getCourseByClass({ class: classIds, ctx }),
+    getGroupByClass({ class: classIds, ctx }),
   ]);
 
   const knowledgesByClass = _.groupBy(knowledges, 'class');

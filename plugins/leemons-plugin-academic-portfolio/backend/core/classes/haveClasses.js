@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function haveClasses({ transacting } = {}) {
-  const count = await table.class.count({}, { transacting });
+async function haveClasses({ ctx }) {
+  const count = await ctx.tx.db.Class.countDocuments();
   return !!count;
 }
 

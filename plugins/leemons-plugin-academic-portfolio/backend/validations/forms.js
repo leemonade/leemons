@@ -1,4 +1,5 @@
-const { LeemonsValidator } = global.utils;
+const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsError } = require('leemons-error');
 const _ = require('lodash');
 const { isArray } = require('lodash');
 const {
@@ -10,12 +11,11 @@ const {
   stringSchemaNullable,
   numberSchema,
 } = require('./types');
-const { programsByIds } = require('../services/programs/programsByIds');
-const { table } = require('../services/tables');
-const { subjectNeedCourseForAdd } = require('../services/subjects/subjectNeedCourseForAdd');
-const { getCourseIndex } = require('../services/courses/getCourseIndex');
-const { getProgramSubjectDigits } = require('../services/programs/getProgramSubjectDigits');
-const { programHaveMultiCourses } = require('../services/programs/programHaveMultiCourses');
+const { programsByIds } = require('../core/programs/programsByIds');
+const { subjectNeedCourseForAdd } = require('../core/subjects/subjectNeedCourseForAdd');
+const { getCourseIndex } = require('../core/courses/getCourseIndex');
+const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectDigits');
+const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
 
 const teacherTypes = ['main-teacher', 'associate-teacher'];
 
@@ -197,16 +197,21 @@ function validateUpdateProgram(data) {
   }
 }
 
-function validateSubstagesFormat(programData, substages) {
+function validateSubstagesFormat({ programData, substages, ctx }) {
   if (substages.length < programData.numberOfSubstages)
-    throw new Error('The number of substages is less than the number of substages specified');
+    throw new LeemonsError(ctx, {
+      message: 'The number of substages is less than the number of substages specified',
+    });
   _.forEach(substages, (substage) => {
     if (substage.abbreviation.length > programData.maxSubstageAbbreviation)
-      throw new Error('The substage abbreviation is longer than the specified length');
+      throw new LeemonsError(ctx, {
+        message: 'The substage abbreviation is longer than the specified length',
+      });
     if (programData.maxSubstageAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(substage.abbreviation))
-      throw new Error(
-        'The substage abbreviation must be only numbers and the length must be the same as the specified length'
-      );
+      throw new LeemonsError(ctx, {
+        message:
+          'The substage abbreviation must be only numbers and the length must be the same as the specified length',
+      });
   });
 }
 
@@ -227,44 +232,43 @@ const addKnowledgeSchema = {
   additionalProperties: false,
 };
 
-async function validateAddKnowledge(data, { userSession, transacting } = {}) {
+async function validateAddKnowledge({ data, ctx }) {
   const validator = new LeemonsValidator(addKnowledgeSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const [program] = await programsByIds(data.program, { userSession, transacting });
+  const [program] = await programsByIds({ ids: data.program, ctx });
 
   if (!program) {
-    throw new Error('The program does not exist');
+    throw new LeemonsError(ctx, { message: 'The program does not exist' });
   }
 
   // ES: Comprobamos si el programa puede tener areas de conocimiento
   if (!program.haveKnowledge) {
-    throw new Error('The program does not have knowledges');
+    throw new LeemonsError(ctx, { message: 'The program does not have knowledges' });
   }
 
   if (program.maxKnowledgeAbbreviation) {
     // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
     if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
-      throw new Error('The knowledge abbreviation is longer than the specified length');
+      throw new LeemonsError(ctx, {
+        message: 'The knowledge abbreviation is longer than the specified length',
+      });
   }
 
   // ES: Comprobamos si el nobre del conocimiento es solo numeros
   if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new Error('The knowledge abbreviation must be only numbers');
+    throw new LeemonsError(ctx, { message: 'The knowledge abbreviation must be only numbers' });
 
   // ES: Comprobamos si el conocimiento ya existe
-  const knowledge = await table.knowledges.count(
-    {
-      abbreviation: data.abbreviation,
-      program: program.id,
-    },
-    { transacting }
-  );
+  const knowledge = await ctx.tx.db.Knowledges.countDocuments({
+    abbreviation: data.abbreviation,
+    program: program.id,
+  });
 
-  if (knowledge) throw new Error('The knowledge already exists');
+  if (knowledge) throw new LeemonsError(ctx, { message: 'The knowledge already exists' });
 }
 
 const updateKnowledgeSchema = {
@@ -283,50 +287,49 @@ const updateKnowledgeSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateKnowledge(data, { userSession, transacting } = {}) {
+async function validateUpdateKnowledge({ data, ctx }) {
   const validator = new LeemonsValidator(updateKnowledgeSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const _knowledge = await table.knowledges.findOne({ id: data.id }, { transacting });
+  const _knowledge = await ctx.tx.db.Knowledges.findOne({ id: data.id }).lean();
   if (!_knowledge) {
-    throw new Error('The knowledge does not exist');
+    throw new LeemonsError(ctx, { message: 'The knowledge does not exist' });
   }
 
-  const [program] = await programsByIds(_knowledge.program, { userSession, transacting });
+  const [program] = await programsByIds({ ids: _knowledge.program, ctx });
 
   if (!program) {
-    throw new Error('The program does not exist');
+    throw new LeemonsError(ctx, { message: 'The program does not exist' });
   }
 
   // ES: Comprobamos si el programa puede tener areas de conocimiento
   if (!program.haveKnowledge) {
-    throw new Error('The program does not have knowledges');
+    throw new LeemonsError(ctx, { message: 'The program does not have knowledges' });
   }
 
   if (program.maxKnowledgeAbbreviation) {
     // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
     if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
-      throw new Error('The knowledge abbreviation is longer than the specified length');
+      throw new LeemonsError(ctx, {
+        message: 'The knowledge abbreviation is longer than the specified length',
+      });
   }
 
   // ES: Comprobamos si el nobre del conocimiento es solo numeros
   if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new Error('The knowledge abbreviation must be only numbers');
+    throw new LeemonsError(ctx, { message: 'The knowledge abbreviation must be only numbers' });
 
   // ES: Comprobamos si el conocimiento ya existe
-  const knowledge = await table.knowledges.count(
-    {
-      id_$ne: data.id,
-      abbreviation: data.abbreviation,
-      program: program.id,
-    },
-    { transacting }
-  );
+  const knowledge = await ctx.tx.db.Knowledges.countDocuments({
+    id: { $ne: data.id },
+    abbreviation: data.abbreviation,
+    program: program.id,
+  });
 
-  if (knowledge) throw new Error('The knowledge already exists');
+  if (knowledge) throw new LeemonsError(ctx, { message: 'The knowledge already exists' });
 }
 
 const addSubjectTypeSchema = {
@@ -344,28 +347,25 @@ const addSubjectTypeSchema = {
   additionalProperties: false,
 };
 
-async function validateAddSubjectType(data, { transacting } = {}) {
+async function validateAddSubjectType({ data, ctx }) {
   const validator = new LeemonsValidator(addSubjectTypeSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const count = await table.programs.count({ id: data.program }, { transacting });
+  const count = await ctx.tx.db.Programs.countDocuments({ id: data.program });
   if (!count) {
-    throw new Error('The program does not exist');
+    throw new LeemonsError(ctx, { message: 'The program does not exist' });
   }
 
   // ES: Comprobamos que no exista ya el subject type
-  const subjectTypeCount = await table.subjectTypes.count(
-    {
-      program: data.program,
-      name: data.name,
-    },
-    { transacting }
-  );
+  const subjectTypeCount = await ctx.tx.db.SubjectTypes.countDocuments({
+    program: data.program,
+    name: data.name,
+  });
 
-  if (subjectTypeCount) throw new Error('The subject type already exists');
+  if (subjectTypeCount) throw new LeemonsError(ctx, { message: 'The subject type already exists' });
 }
 
 const updateSubjectTypeSchema = {
@@ -382,30 +382,27 @@ const updateSubjectTypeSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateSubjectType(data, { transacting } = {}) {
+async function validateUpdateSubjectType({ data, ctx }) {
   const validator = new LeemonsValidator(updateSubjectTypeSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const subjectType = await table.subjectTypes.findOne({ id: data.id }, { transacting });
+  const subjectType = await ctx.tx.db.SubjectTypes.findOne({ id: data.id }).lean();
 
   if (!subjectType) {
-    throw new Error('The subject type does not exist');
+    throw new LeemonsError(ctx, { message: 'The subject type does not exist' });
   }
 
   // ES: Comprobamos que no exista ya el subject type
-  const subjectTypeCount = await table.subjectTypes.count(
-    {
-      id_$ne: data.id,
-      program: subjectType.program,
-      name: data.name,
-    },
-    { transacting }
-  );
+  const subjectTypeCount = await ctx.tx.db.SubjectTypes.countDocuments({
+    id: { $ne: data.id },
+    program: subjectType.program,
+    name: data.name,
+  });
 
-  if (subjectTypeCount) throw new Error('The subject type already exists');
+  if (subjectTypeCount) throw new LeemonsError(ctx, { message: 'The subject type already exists' });
 }
 
 const addCourseSchema = {
@@ -421,25 +418,27 @@ const addCourseSchema = {
   additionalProperties: false,
 };
 
-async function validateAddCourse(data, { transacting } = {}) {
+async function validateAddCourse({ data, ctx }) {
   const validator = new LeemonsValidator(addCourseSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const program = await table.programs.findOne({ id: data.program }, { transacting });
+  const program = await ctx.tx.db.Programs.findOne({ id: data.program }).lean();
   if (!program) {
-    throw new Error('The program does not exist');
+    throw new LeemonsError(ctx, { message: 'The program does not exist' });
   }
 
   // ES: Comprobamos que no se sobrepase el numero maximo de cursos
-  const courseCount = await table.groups.count(
-    { program: data.program, type: 'course' },
-    { transacting }
-  );
+  const courseCount = await ctx.tx.db.Groups.countDocuments({
+    program: data.program,
+    type: 'course',
+  });
   if (courseCount >= program.maxNumberOfCourses) {
-    throw new Error('The program has reached the maximum number of courses');
+    throw new LeemonsError(ctx, {
+      message: 'The program has reached the maximum number of courses',
+    });
   }
 }
 
@@ -466,48 +465,47 @@ const addGroupSchema = {
   additionalProperties: false,
 };
 
-async function validateAddGroup(data, { transacting } = {}) {
+async function validateAddGroup({ data, ctx }) {
   const validator = new LeemonsValidator(addGroupSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const program = await table.programs.findOne({ id: data.program }, { transacting });
+  const program = await ctx.tx.db.Programs.findOne({ id: data.program }).lean();
   if (!program) {
-    throw new Error('The program does not exist');
+    throw new LeemonsError(ctx, { message: 'The program does not exist' });
   }
 
   if (program.useOneStudentGroup) {
-    const group = await table.groups.count(
-      { program: data.program, type: 'group' },
-      { transacting }
-    );
-    if (group) throw new Error('This program configured as one group, you can´t add a new group');
+    const group = await ctx.tx.db.Groups.countDocuments({ program: data.program, type: 'group' });
+    if (group)
+      throw new LeemonsError(ctx, {
+        message: 'This program configured as one group, you can´t add a new group',
+      });
   }
 
   if (!data.isAlone) {
     if (program.maxGroupAbbreviation) {
       // ES: Comprobamos si el nombre del grupo es mayor que el maximo
       if (data.abbreviation.length > program.maxGroupAbbreviation)
-        throw new Error('The group abbreviation is longer than the specified length');
+        throw new LeemonsError(ctx, {
+          message: 'The group abbreviation is longer than the specified length',
+        });
     }
 
     // ES: Comprobamos si el nombre del grupo es solo numeros
     if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-      throw new Error('The group abbreviation must be only numbers');
+      throw new LeemonsError(ctx, { message: 'The group abbreviation must be only numbers' });
   }
   // ES: Comprobamos que no exista ya el grupo
-  const groupCount = await table.groups.count(
-    {
-      abbreviation: data.abbreviation,
-      program: data.program,
-      type: 'group',
-    },
-    { transacting }
-  );
+  const groupCount = await ctx.tx.db.Groups.countDocuments({
+    abbreviation: data.abbreviation,
+    program: data.program,
+    type: 'group',
+  });
 
-  if (groupCount) throw new Error('The group already exists');
+  if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
 }
 
 const duplicateGroupSchema = {
@@ -533,44 +531,43 @@ const duplicateGroupSchema = {
   additionalProperties: false,
 };
 
-async function validateDuplicateGroup(data, { transacting } = {}) {
+async function validateDuplicateGroup({ data, ctx }) {
   const validator = new LeemonsValidator(duplicateGroupSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const group = await table.groups.findOne({ id: data.id }, { transacting });
+  const group = await ctx.tx.db.Groups.findOne({ id: data.id }).lean();
   if (!group) {
-    throw new Error('The group does not exist');
+    throw new LeemonsError(ctx, { message: 'The group does not exist' });
   }
 
-  const program = await table.programs.findOne({ id: group.program }, { transacting });
+  const program = await ctx.tx.db.Programs.findOne({ id: group.program }).lean();
   if (!program) {
-    throw new Error('The program does not exist');
+    throw new LeemonsError(ctx, { message: 'The program does not exist' });
   }
 
   if (program.maxGroupAbbreviation) {
     // ES: Comprobamos si el nombre del grupo es mayor que el maximo
     if (data.abbreviation.length > program.maxGroupAbbreviation)
-      throw new Error('The group abbreviation is longer than the specified length');
+      throw new LeemonsError(ctx, {
+        message: 'The group abbreviation is longer than the specified length',
+      });
   }
 
   // ES: Comprobamos si el nombre del grupo es solo numeros
   if (program.maxGroupAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new Error('The group abbreviation must be only numbers');
+    throw new LeemonsError(ctx, { message: 'The group abbreviation must be only numbers' });
 
   // ES: Comprobamos que no exista ya el grupo
-  const groupCount = await table.groups.count(
-    {
-      abbreviation: data.abbreviation,
-      program: program.id,
-      type: 'group',
-    },
-    { transacting }
-  );
+  const groupCount = await ctx.tx.db.Groups.countDocuments({
+    abbreviation: data.abbreviation,
+    program: program.id,
+    type: 'group',
+  });
 
-  if (groupCount) throw new Error('The group already exists');
+  if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
 }
 
 const updateCourseSchema = {
@@ -586,31 +583,28 @@ const updateCourseSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateCourse(data, { transacting } = {}) {
+async function validateUpdateCourse({ data, ctx }) {
   const validator = new LeemonsValidator(updateCourseSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const course = await table.groups.findOne({ id: data.id }, { transacting });
+  const course = await ctx.tx.db.Groups.findOne({ id: data.id }).lean();
   if (!course) {
-    throw new Error('The course does not exist');
+    throw new LeemonsError(ctx, { message: 'The course does not exist' });
   }
 
   // ES: Comprobamos que no exista ya el curso
   // EN: Check if the course already exists
-  const groupCount = await table.groups.count(
-    {
-      id_$ne: data.id,
-      abbreviation: data.abbreviation,
-      program: course.program,
-      type: 'course',
-    },
-    { transacting }
-  );
+  const groupCount = await ctx.tx.db.Groups.countDocuments({
+    id: { $ne: data.id },
+    abbreviation: data.abbreviation,
+    program: course.program,
+    type: 'course',
+  });
 
-  if (groupCount) throw new Error('The course already exists');
+  if (groupCount) throw new LeemonsError(ctx, { message: 'The course already exists' });
 }
 
 const updateGroupSchema = {
@@ -625,51 +619,46 @@ const updateGroupSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateGroup(data, { transacting } = {}) {
+async function validateUpdateGroup({ data, ctx }) {
   const validator = new LeemonsValidator(updateGroupSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const group = await table.groups.findOne({ id: data.id }, { transacting });
+  const group = await ctx.tx.db.Groups.findOne({ id: data.id }).lean();
   if (!group) {
-    throw new Error('The group does not exist');
+    throw new LeemonsError(ctx, { message: 'The group does not exist' });
   }
 
   // ES: Comprobamos que no exista ya el curso
   // EN: Check if the group already exists
-  const groupCount = await table.groups.count(
-    {
-      id_$ne: data.id,
-      abbreviation: data.abbreviation,
-      program: group.program,
-      type: 'group',
-    },
-    { transacting }
-  );
+  const groupCount = await ctx.tx.db.Groups.countDocuments({
+    id: { $ne: data.id },
+    abbreviation: data.abbreviation,
+    program: group.program,
+    type: 'group',
+  });
 
-  if (groupCount) throw new Error('The group already exists');
+  if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
 }
 
-async function validateProgramNotUsingInternalId(
-  program,
-  compiledInternalId,
-  { subject, transacting } = {}
-) {
+async function validateProgramNotUsingInternalId({ program, compiledInternalId, subject, ctx }) {
   const query = { program, compiledInternalId };
   if (subject) query.subject_$ne = subject;
-  const count = await table.programSubjectsCredits.count(query, { transacting });
+  const count = await ctx.tx.db.ProgramSubjectsCredits.countDocuments(query);
   if (count) {
-    throw new Error('The internalId is already in use');
+    throw new LeemonsError(ctx, { message: 'The internalId is already in use' });
   }
 }
 
-async function validateInternalIdHaveGoodFormat(program, internalId, { transacting }) {
-  const subjectDigits = await getProgramSubjectDigits(program, { transacting });
+async function validateInternalIdHaveGoodFormat({ program, internalId, ctx }) {
+  const subjectDigits = await getProgramSubjectDigits({ program, ctx });
   // ES: Comprobamos si el numero de digitos no es el mismo
   if (internalId.length !== subjectDigits)
-    throw new Error('internalId does not have the required number of digits');
+    throw new LeemonsError(ctx, {
+      message: 'internalId does not have the required number of digits',
+    });
   // ES: Comprobamos si son numeros
   // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
 }
@@ -924,28 +913,27 @@ const addClassSchema = {
   additionalProperties: false,
 };
 
-async function validateAddClass(data, { transacting }) {
+async function validateAddClass({ data, ctx }) {
   const validator = new LeemonsValidator(addClassSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const program = await table.programs.findOne(
-    { id: data.program },
-    { columns: ['id', 'moreThanOneAcademicYear', 'useOneStudentGroup'], transacting }
-  );
+  const program = await ctx.tx.db.Programs.findOne({ id: data.program })
+    .select(['id', 'moreThanOneAcademicYear', 'useOneStudentGroup'])
+    .lean();
 
   if (!program.moreThanOneAcademicYear) {
     if (isArray(data.course) && data.course.length > 1) {
-      throw new Error('Class does not have multi courses');
+      throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
     }
   }
 
   if (data.teachers) {
     const teachersByType = _.groupBy(data.teachers, 'type');
     if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
-      throw new Error('There can only be one main teacher');
+      throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
     }
   }
 }

@@ -9,7 +9,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/classes.rest');
-const { classByIds } = require('../core/classes');
+const { classByIds, listSessionClasses, getBasicClassesByProgram } = require('../core/classes');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -28,6 +28,17 @@ module.exports = {
     classByIds: {
       handler(ctx) {
         return classByIds({ ...ctx.params, ctx });
+      },
+    },
+    getBasicClassesByProgram: {
+      handler(ctx) {
+        return getBasicClassesByProgram({ ...ctx.params, ctx });
+      },
+    },
+    listSessionClasses: {
+      handler(ctx) {
+        // Note that it receives withProgram and _withProgram
+        return listSessionClasses({ ...ctx.params, ctx });
       },
     },
   },
