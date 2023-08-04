@@ -1,26 +1,38 @@
 const _ = require('lodash');
 
-async function getData(userSession, { transacting } = {}) {
-  const datasetService = leemons.getPlugin('dataset').services.dataset;
-
+async function getData({ ctx }) {
   const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all([
-    datasetService.getSchemaWithLocale('user-data', 'users', userSession.locale, {
-      userSession,
-      transacting,
+    ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
+      locationName: 'user-data',
+      pluginName: 'users',
+      locale: ctx.meta.userSession.locale,
     }),
-    datasetService.getValues('user-data', 'users', userSession.userAgents, {
-      target: userSession.userAgents[0].id,
-      transacting,
+    ctx.tx.call('dataset.dataset.getValues', {
+      locationName: 'user-data',
+      pluginName: 'users',
+      userAgent: ctx.meta.userSession.userAgents,
+      target: ctx.meta.userSession.userAgents[0].id,
     }),
   ]);
 
   return { jsonSchema: compileJsonSchema, jsonUI: compileJsonUI, value };
 }
 
-async function getDataForUserAgentDatasets(userSession, { transacting } = {}) {
+async function getDataForUserAgentDatasets({ ctx }) {
   return Promise.all(
-    _.map(userSession.userAgents, async (userAgent) => {
-      const data = await getData({ ...userSession, userAgents: [userAgent] }, { transacting });
+    _.map(ctx.meta.userSession.userAgents, async (userAgent) => {
+      const data = await getData({
+        ctx: {
+          ...ctx,
+          meta: {
+            ...ctx.meta,
+            userSession: {
+              ...ctx.meta.userSession,
+              userAgents: [userAgent],
+            },
+          },
+        },
+      });
 
       return {
         userAgent,

@@ -6,6 +6,7 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
 const { randomString } = require('leemons-utils');
+const { LeemonsError } = require('leemons-error');
 const { deploymentPluginsModel } = require('../models/deployment-plugins');
 const { deploymentPluginsRelationshipModel } = require('../models/deployment-plugins-relationship');
 const { savePluginsToDeployment } = require('../core/deployment-plugins/savePluginsToDeployment');
@@ -18,6 +19,7 @@ const {
 } = require('../core/deployment-plugins-relationship/getGoodServiceActionToCall');
 const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe');
 const { emit } = require('../core/events/emit');
+const { isInstalled } = require('../core/deployment-plugins/isInstalled');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -35,11 +37,19 @@ module.exports = () => ({
   ],
 
   actions: {
+    pluginIsInstalled: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+        }
+        return isInstalled({ ...ctx.params, ctx });
+      },
+    },
     savePlugins: {
       // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
         return savePluginsToDeployment(ctx, ctx.params);
       },
@@ -48,7 +58,7 @@ module.exports = () => ({
       // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
         ctx.meta.initDeploymentProcessNumber = randomString();
         return ctx.call('deployment-manager.emit', {
@@ -60,7 +70,7 @@ module.exports = () => ({
       // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
         return savePluginsRelationshipsToDeployment(ctx, ctx.params);
       },
@@ -68,7 +78,7 @@ module.exports = () => ({
     getGoodActionToCall: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
         return getGoodServiceActionToCall(ctx);
       },
@@ -76,7 +86,7 @@ module.exports = () => ({
     canCallMe: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
         return canCallMe(ctx);
       },
@@ -85,7 +95,7 @@ module.exports = () => ({
       // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
         return emit(ctx);
       },

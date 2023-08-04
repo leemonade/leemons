@@ -3,18 +3,23 @@ const {
   userSessionUserAgentNeedUpdateDataset,
 } = require('../user-agents/userAgentNeedUpdateDataset');
 
-async function checkUserAgentDataset(userAgent, userSession, { transacting } = {}) {
+async function checkUserAgentDataset({ userAgent, ctx }) {
   let good = true;
   if (!userAgent.datasetIsGood) {
-    const needUpdate = await userSessionUserAgentNeedUpdateDataset(
-      {
-        ...userSession,
-        userAgents: [userAgent],
+    const needUpdate = await userSessionUserAgentNeedUpdateDataset({
+      ctx: {
+        ...ctx,
+        meta: {
+          ...ctx.meta,
+          userSession: {
+            ...ctx.meta.userSession,
+            userAgents: [userAgent],
+          },
+        },
       },
-      { transacting }
-    );
+    });
     if (!needUpdate) {
-      await table.userAgent.update({ id: userAgent.id }, { datasetIsGood: true }, { transacting });
+      await ctx.tx.db.UserAgent.updateOne({ id: userAgent.id }, { datasetIsGood: true });
     } else {
       good = false;
     }
@@ -22,27 +27,23 @@ async function checkUserAgentDataset(userAgent, userSession, { transacting } = {
   return good;
 }
 
-async function userSessionCheckUserAgentDatasets(userSession, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      let good = true;
-      if (userSession && _.isArray(userSession.userAgents) && userSession.userAgents.length) {
-        const results = await Promise.all(
-          userSession.userAgents.map((userAgent) =>
-            checkUserAgentDataset(userAgent, userSession, { transacting })
-          )
-        );
-        _.forEach(results, (result) => {
-          if (!result) {
-            good = false;
-          }
-        });
+async function userSessionCheckUserAgentDatasets({ ctx }) {
+  let good = true;
+  if (
+    ctx.meta.userSession &&
+    _.isArray(ctx.meta.userSession.userAgents) &&
+    ctx.meta.userSession.userAgents.length
+  ) {
+    const results = await Promise.all(
+      ctx.meta.userSession.userAgents.map((userAgent) => checkUserAgentDataset({ userAgent, ctx }))
+    );
+    _.forEach(results, (result) => {
+      if (!result) {
+        good = false;
       }
-      return good;
-    },
-    table.userAgent,
-    _transacting
-  );
+    });
+  }
+  return good;
 }
 
 module.exports = { userSessionCheckUserAgentDatasets };
