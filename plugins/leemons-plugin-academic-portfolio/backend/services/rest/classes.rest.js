@@ -10,7 +10,7 @@ const { haveClasses } = require('../../core/classes/haveClasses');
 const { addClass } = require('../../core/classes/addClass');
 const { updateClass } = require('../../core/classes/updateClass');
 const { updateClassMany } = require('../../core/classes/updateClassMany');
-const { addInstanceClass } = require('../../core/classes');
+const { addInstanceClass } = require('../../core/classes/addInstanceClass');
 
 /** @type {ServiceSchema} */
 module.exports = {
