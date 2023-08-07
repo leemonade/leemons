@@ -1,22 +1,21 @@
-const { keyBy } = require('lodash');
-const { table } = require('../tables');
+// const { keyBy } = require('lodash'); // old
+// const { table } = require('../tables'); // old
 
 /**
  * @public
  * @static
  * @return {Promise<any>}
  * */
-async function getProfiles({ transacting } = {}) {
-  const d = leemons.getPlugin('users').services.profiles.detailBySysName;
+async function getProfiles({ ctx }) {
   const [teacher, student] = await Promise.all([
-    d('teacher', { transacting }),
-    d('student', { transacting }),
+    ctx.tx.call('users.profiles.detailBySysName', { sysName: 'teacher' }),
+    ctx.tx.call('users.profiles.detailBySysName', { sysName: 'student' }),
   ]);
   return {
     teacher: teacher.id,
     student: student.id,
   };
-  /*
+  /* 
   const results = await table.configs.find(
     { key_$in: ['profile.teacher', 'profile.student'] },
     { transacting }

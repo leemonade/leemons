@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -28,7 +27,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
+      events: ['menu-builder.init-main-menu', 'academic-portfolio.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
         await addMenuItemsDeploy({
@@ -36,28 +35,27 @@ module.exports = () => ({
           item: mainMenuItem,
           ctx,
         });
-        // ctx.tx.emit('init-menu'); // ?
+        ctx.tx.emit('init-menu');
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: otherMenuItems,
           ctx,
         });
-        // ctx.tx.emit('init-submenu'); // ?
+        ctx.tx.emit('init-submenu');
       },
     },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+      const {
+        syncProgramProfilePermissionsIfNeed,
+        // eslint-disable-next-line global-require
+      } = require('../core/classes/__update__/syncProgramProfilePermissionsIfNeed');
+      // ! depende de users.permissions.addCustomPermissionToUserAgentx
+      await syncProgramProfilePermissionsIfNeed({ ctx });
 
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
-        ctx,
-      });
+      // Register widget zone
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
 
       // Locales
       await addLocalesDeploy({
@@ -75,6 +73,18 @@ module.exports = () => ({
         ctx,
       });
       return null;
+    },
+    // Widget items
+    'dashboard.init-widget-zones': async (ctx) => {
+      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+    },
+    // Permissions
+    'users.init-permissions': async (ctx) => {
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: permissions.permissions,
+        ctx,
+      });
     },
   },
   created() {

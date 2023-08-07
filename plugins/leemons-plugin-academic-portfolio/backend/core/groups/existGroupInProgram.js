@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function existGroupInProgram(id, program, { transacting } = {}) {
-  const count = await table.groups.count({ id, program, type: 'group' }, { transacting });
+async function existGroupInProgram({ id, program, ctx }) {
+  const count = await ctx.tx.db.Groups.countDocuments({ id, program, type: 'group' });
   return count > 0;
 }
 

@@ -1,68 +1,43 @@
 const _ = require('lodash');
 const { getProfiles } = require('../../settings');
-const { table } = require('../../tables');
 
-function process(
-  classItems,
-  key,
-  { addCustomPermissionToUserAgent, classesById, profiles, transacting }
-) {
+function process({ classItems, key, classesById, profiles, ctx }) {
   return Promise.allSettled(
     _.map(_.uniqBy(classItems, key), (item) =>
-      addCustomPermissionToUserAgent(
-        item[key],
-        {
+      ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+        userAgentId: item[key],
+        data: {
           permissionName: `plugins.academic-portfolio.program-profile.inside.${
             classesById[item.class].program
           }.${profiles[key]}`,
           actionNames: ['view'],
         },
-        { transacting }
-      )
+      })
     )
   );
 }
 
-async function syncProgramProfilePermissionsIfNeed({ transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const hasKey = await table.configs.findOne(
-        {
-          key: '__syncProgramProfilePermissionsIfNeed2__',
-        },
-        { transacting }
-      );
-      if (!hasKey) {
-        console.log('---------- syncProgramProfilePermissionsIfNeed');
-        const { addCustomPermissionToUserAgent } = leemons.getPlugin('users').services.permissions;
-        const classes = await table.class.find({}, { transacting });
-        const classStudents = await table.classStudent.find({}, { transacting });
-        const classTeachers = await table.classTeacher.find({}, { transacting });
-        const profiles = await getProfiles({ transacting });
-        const classesById = _.keyBy(classes, 'id');
+async function syncProgramProfilePermissionsIfNeed({ ctx }) {
+  const hasKey = await ctx.tx.db.Configs.findOne({
+    key: '__syncProgramProfilePermissionsIfNeed2__',
+  }).lean();
+  if (!hasKey) {
+    console.log('---------- syncProgramProfilePermissionsIfNeed');
 
-        await process(classStudents, 'student', {
-          addCustomPermissionToUserAgent,
-          classesById,
-          profiles,
-          transacting,
-        });
-        await process(classTeachers, 'teacher', {
-          addCustomPermissionToUserAgent,
-          classesById,
-          profiles,
-          transacting,
-        });
+    const classes = await ctx.tx.db.Class.find({}).lean();
+    const classStudents = await ctx.tx.db.ClassStudent.find({}).lean();
+    const classTeachers = await ctx.tx.db.ClassTeacher.find({}).lean();
+    const profiles = await getProfiles({ ctx });
+    const classesById = _.keyBy(classes, 'id');
 
-        await table.configs.create(
-          { key: '__syncProgramProfilePermissionsIfNeed2__', value: 'true' },
-          { transacting }
-        );
-      }
-    },
-    table.configs,
-    _transacting
-  );
+    await process({ classItems: classStudents, key: 'student', classesById, profiles, ctx });
+    await process({ classItems: classTeachers, key: 'teacher', classesById, profiles, ctx });
+
+    await ctx.tx.db.Configs.create({
+      key: '__syncProgramProfilePermissionsIfNeed2__',
+      value: 'true',
+    });
+  }
 }
 
 module.exports = { syncProgramProfilePermissionsIfNeed };

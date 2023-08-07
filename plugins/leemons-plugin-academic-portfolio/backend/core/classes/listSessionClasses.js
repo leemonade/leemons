@@ -1,19 +1,15 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 
-async function getClassesProgramInfo({ programs: _programs, classes }, { transacting }) {
+async function getClassesProgramInfo({ programs: _programs, classes, ctx }) {
   const programsIds = Array.isArray(_programs) ? _programs : [_programs];
 
   const subjectIds = _.uniq(_.map(classes, (classe) => classe.subject.id));
 
-  const subjectsCredits = await table.programSubjectsCredits.find(
-    {
-      program_$in: programsIds,
-      subject_$in: subjectIds,
-    },
-    { transacting }
-  );
+  const subjectsCredits = await ctx.tx.db.ProgramSubjectsCredits.find({
+    program: programsIds,
+    subject: subjectIds,
+  }).lean();
 
   const creditsBySubject = _.keyBy(subjectsCredits, 'subject');
 
@@ -24,20 +20,18 @@ async function getClassesProgramInfo({ programs: _programs, classes }, { transac
 }
 
 async function listSessionClasses(
-  userSession,
-  { program, type, withProgram } = {},
-  { withProgram: _withProgram, withTeachers, transacting } = {}
+  // userSession,
+  // { program, type, withProgram } = {},
+  // { withProgram: _withProgram, withTeachers, transacting } = {}
+  { program, type, withProgram, _withProgram, withTeachers, ctx }
 ) {
+  const { userSession } = ctx.meta;
   if (_withProgram) {
     // eslint-disable-next-line no-param-reassign
     withProgram = _withProgram;
   }
   let typeQuery = {};
-  if (Array.isArray(type)) {
-    typeQuery = {
-      type_$in: type,
-    };
-  } else if (type) {
+  if (type) {
     typeQuery = {
       type,
     };
@@ -47,34 +41,29 @@ async function listSessionClasses(
     };
   }
   const [classStudent, classTeacher] = await Promise.all([
-    table.classStudent.find(
-      { student_$in: _.map(userSession.userAgents, 'id') },
-      { columns: ['class'], transacting }
-    ),
-    table.classTeacher.find(
-      { teacher_$in: _.map(userSession.userAgents, 'id'), ...typeQuery },
-      { columns: ['class', 'type'], transacting }
-    ),
+    ctx.tx.db.ClassStudent.find({ student: _.map(userSession.userAgents, 'id') })
+      .select(['class'])
+      .lean(),
+    ctx.tx.db.ClassTeacher.find({ teacher: _.map(userSession.userAgents, 'id'), ...typeQuery })
+      .select(['class', 'type'])
+      .lean(),
   ]);
 
   let classIds = _.map(classStudent, 'class').concat(_.map(classTeacher, 'class'));
   if (program) {
-    const programClasses = await table.class.find(
-      { program, id_$in: classIds },
-      { columns: ['id'], transacting }
-    );
+    const programClasses = await ctx.tx.db.Class.find({ program, id: classIds })
+      .select(['id'])
+      .lean();
     classIds = _.map(programClasses, 'id');
   }
 
-  let classes = await classByIds(classIds, { withProgram, withTeachers, transacting });
+  let classes = await classByIds({ classIds, withProgram, withTeachers, ctx });
 
-  classes = await getClassesProgramInfo(
-    {
-      programs: program || _.uniq(_.map(classes, 'subject.program')),
-      classes,
-    },
-    { transacting }
-  );
+  classes = await getClassesProgramInfo({
+    programs: program || _.uniq(_.map(classes, 'subject.program')),
+    classes,
+    ctx,
+  });
 
   return _.orderBy(classes, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
 }

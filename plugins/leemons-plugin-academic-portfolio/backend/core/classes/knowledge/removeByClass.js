@@ -1,33 +1,20 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 
-async function removeByClass(classIds, { soft, transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const classKnowledges = await table.classKnowledges.find(
-        { class_$in: _.isArray(classIds) ? classIds : [classIds] },
-        { transacting }
-      );
-      await leemons.events.emit('before-remove-classes-knowledges', {
-        classKnowledges,
-        soft,
-        transacting,
-      });
+async function removeByClass({ classIds, soft, ctx }) {
+  const classKnowledges = await ctx.tx.db.ClassKnowledges.find({
+    class: _.isArray(classIds) ? classIds : [classIds],
+  }).lean();
+  await ctx.tx.emit('before-remove-classes-knowledges', {
+    classKnowledges,
+    soft,
+  });
 
-      await table.classKnowledges.deleteMany(
-        { id_$in: _.map(classKnowledges, 'id') },
-        { soft, transacting }
-      );
-      await leemons.events.emit('after-remove-classes-knowledges', {
-        classKnowledges,
-        soft,
-        transacting,
-      });
-      return true;
-    },
-    table.classKnowledges,
-    _transacting
-  );
+  await ctx.tx.classKnowledges.deleteMany({ id: _.map(classKnowledges, 'id') }, { soft });
+  await ctx.tx.emit('after-remove-classes-knowledges', {
+    classKnowledges,
+    soft,
+  });
+  return true;
 }
 
 module.exports = { removeByClass };

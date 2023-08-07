@@ -1,12 +1,8 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function existSubstageInProgram(id, program, { transacting } = {}) {
+async function existSubstageInProgram({ id, program, ctx }) {
   const ids = _.isArray(id) ? id : [id];
-  const count = await table.groups.count(
-    { id_$in: ids, program, type: 'substage' },
-    { transacting }
-  );
+  const count = await ctx.tx.db.Groups.countDocuments({ id: ids, program, type: 'substage' });
   return count === ids.length;
 }
 

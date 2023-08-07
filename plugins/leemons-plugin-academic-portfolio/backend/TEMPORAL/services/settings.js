@@ -3,6 +3,6 @@ const enableAllMenuItems = require('../src/services/menu-builder/enableAllItems'
 
 module.exports = {
   setProfiles,
-  getProfiles,
+  getProfiles, // migrated
   enableAllMenuItems,
 };
