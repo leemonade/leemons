@@ -9,6 +9,8 @@ const _ = require('lodash');
 const { haveClasses } = require('../../core/classes/haveClasses');
 const { addClass } = require('../../core/classes/addClass');
 const { updateClass } = require('../../core/classes/updateClass');
+const { updateClassMany } = require('../../core/classes/updateClassMany');
+const { addInstanceClass } = require('../../core/classes');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -32,7 +34,7 @@ module.exports = {
       _.forIn(ctx.params.files, (value, key) => {
         _.set(data, key, value);
       });
-      const _class = await addClass(data, { userSession: ctx.state.userSession });
+      const _class = await addClass({ data, ctx });
       return { status: 200, class: _class };
     },
   },
@@ -46,7 +48,27 @@ module.exports = {
       _.forIn(ctx.params.files, (value, key) => {
         _.set(data, key, value);
       });
-      const _class = await updateClass(data, { userSession: ctx.state.userSession });
+      const _class = await updateClass({ data, ctx });
+      return { status: 200, class: _class };
+    },
+  },
+  putClassManyRest: {
+    rest: {
+      path: '/class/many',
+      method: 'PUT',
+    },
+    async handler(ctx) {
+      const classes = await updateClassMany({ data: ctx.params.data, ctx });
+      return { status: 200, classes };
+    },
+  },
+  postClassInstanceRest: {
+    rest: {
+      path: '/class/instance',
+      method: 'POST',
+    },
+    async handler(ctx) {
+      const _class = await addInstanceClass({ data: ctx.request.body, ctx });
       return { status: 200, class: _class };
     },
   },
