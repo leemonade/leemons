@@ -36,19 +36,28 @@ module.exports = () => ({
         });
       },
     },
+    // Permissions
+    {
+      events: [
+        'users.init-permissions',
+        'dataset.init-permissions',
+        'calendar.init-permissions',
+        'leebrary.init-permissions',
+      ],
+      handler: async (ctx) => {
+        await addPermissionsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          permissions: permissions.permissions,
+          ctx,
+        });
+      },
+    },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
-        ctx,
-      });
 
       // Locales
       await addLocalesDeploy({
