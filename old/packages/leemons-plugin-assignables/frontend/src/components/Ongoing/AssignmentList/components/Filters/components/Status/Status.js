@@ -29,7 +29,7 @@ function useStatus(labels) {
         label: labels?.seeAll,
       },
       {
-        value: 'opened',
+        value: 'open',
         label: localizations?.opened,
       },
       {

@@ -40,6 +40,9 @@ export default function Private() {
       <Route path={`${path}/modules/new`}>
         <ModuleSetupPage session={session} key="new" fallback={<Fallback />} />
       </Route>
+      <Route path={`${path}/modules/:id/view`}>
+        <ModuleDashboardPage session={session} fallback={<Fallback />} preview />
+      </Route>
       <Route path={`${path}/modules/:id/edit`}>
         <ModuleSetupPage
           session={session}

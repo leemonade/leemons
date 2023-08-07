@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
+import { useQuery } from '@tanstack/react-query';
 import { localizationsGetKey } from '../keys/localizations';
 
 function getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
@@ -46,11 +46,11 @@ export default function useLocalizations({ keys, keysStartsWith, locale, ...opti
     modificationTrend: 'frequently',
   });
 
-  const { data, isLoading, error } = useQuery({
+  const { data, error } = useQuery({
     ...options,
     queryKey,
     queryFn: getLocalizations({ keys, keysStartsWith, locale }),
   });
 
-  return { data, error, isLoading };
+  return { data, error, isLoading: !data?.items };
 }

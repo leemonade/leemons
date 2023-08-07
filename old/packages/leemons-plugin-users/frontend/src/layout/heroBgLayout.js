@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isNil, isEmpty } from 'lodash';
 import { todayQuoteRequest } from '@users/request';
-import { Box, createStyles, ThemeProvider } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
 import { LoginBg } from '@bubbles-ui/leemons';
 import { useLayout } from '@layout/context';
 

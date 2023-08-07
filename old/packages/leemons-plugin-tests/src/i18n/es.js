@@ -104,7 +104,7 @@ module.exports = {
     numberingStyle2: 'Estilo de numeración 2 (A, B, C, ...)',
   },
   testsList: {
-    pageTitle: 'Librería de tests',
+    pageTitle: 'Biblioteca de tests',
     nameHeader: 'Nombre',
     nQuestionsHeader: 'Preguntas',
     levelHeader: 'Nivel',

@@ -59,6 +59,8 @@ module.exports = {
       nameRequired: 'Field required',
       typeRequired: 'Field required',
       minScaleToPromoteRequired: 'Field required',
+      numeric: 'Numeric',
+      letter: 'Letter',
     },
   },
   conditionOptions: {

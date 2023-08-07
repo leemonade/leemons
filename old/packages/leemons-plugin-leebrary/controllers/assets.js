@@ -181,6 +181,7 @@ async function getAssets(ctx) {
     providerQuery,
     programs,
     subjects,
+    onlyShared,
   } = ctx.request.query;
   const { userSession } = ctx.state;
 
@@ -196,6 +197,7 @@ async function getAssets(ctx) {
   const assetPublished = trueValues.includes(published);
   const displayPublic = trueValues.includes(showPublic);
   const searchProvider = trueValues.includes(searchInProvider);
+  const _onlyShared = trueValues.includes(onlyShared);
   const parsedRoles = JSON.parse(roles || null) || [];
   const _providerQuery = JSON.parse(providerQuery || null);
   const _programs = JSON.parse(programs || null);
@@ -215,6 +217,9 @@ async function getAssets(ctx) {
         providerQuery: _providerQuery,
         programs: _programs,
         subjects: _subjects,
+        onlyShared: _onlyShared,
+        sortBy: 'updated_at',
+        sortDirection: 'desc',
       }
     );
   } else {
@@ -229,6 +234,9 @@ async function getAssets(ctx) {
       providerQuery: _providerQuery,
       programs: _programs,
       subjects: _subjects,
+      onlyShared: _onlyShared,
+      sortBy: 'updated_at',
+      sortDirection: 'desc',
     });
   }
 

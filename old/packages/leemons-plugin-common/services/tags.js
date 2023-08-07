@@ -1,6 +1,7 @@
 const tags = require('../src/services/tags');
 
 module.exports = {
+  getTagsValueByPartialTags: tags.getTagsValueByPartialTags,
   removeAllValuesForTags: tags.removeAllValuesForTags,
   removeAllTagsForValues: tags.removeAllTagsForValues,
   getControllerFunctions: tags.getControllerFunctions,

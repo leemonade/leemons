@@ -25,5 +25,8 @@ module.exports = {
     sessionN: 'Sesión {index}',
     studentAvg: 'Media por estudiante',
     search: 'Buscar',
+    'on-time': 'Presente',
+    not: 'Ausente',
+    late: 'Retraso',
   },
 };

@@ -1,13 +1,29 @@
 const _ = require('lodash');
 const { table } = require('../tables');
+const { getUserProgramIds } = require('./getUserProgramIds');
 
 async function listPrograms(page, size, center, { userSession, transacting } = {}) {
-  const programCenter = await table.programCenter.find({ center }, { transacting });
+  const [profile, programCenter] = await Promise.all([
+    leemons.getPlugin('users').services.profiles.getProfileSysName(userSession, { transacting }),
+    table.programCenter.find({ center }, { transacting }),
+  ]);
+
+  if (!['teacher', 'student', 'admin'].includes(profile)) {
+    throw new Error('Only teacher|student|admin can list programs');
+  }
+
+  let programIds = _.map(programCenter, 'program');
+
+  if (profile === 'teacher' || profile === 'student') {
+    const _programIds = await getUserProgramIds(userSession, { transacting });
+    programIds = _.intersection(_programIds, programIds);
+  }
+
   const results = await global.utils.paginate(
     table.programs,
     page,
     size,
-    { id_$in: _.map(programCenter, 'program') },
+    { id_$in: programIds },
     {
       transacting,
     }

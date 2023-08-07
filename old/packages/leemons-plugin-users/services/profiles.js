@@ -10,6 +10,7 @@ module.exports = {
   detailByUri: profiles.detailByUri,
   saveBySysName: profiles.saveBySysName,
   detailBySysName: profiles.detailBySysName,
+  getProfileSysName: profiles.getProfileSysName,
   // TODO Comprobar acceso
   addProfileContact: profiles.addProfileContact,
   getProfileContacts: profiles.getProfileContacts,

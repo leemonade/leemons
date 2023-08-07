@@ -80,7 +80,7 @@ module.exports = {
     actionsHeader: 'Acciones',
   },
   feedbackList: {
-    pageTitle: 'Librería de encuestas',
+    pageTitle: 'Biblioteca de encuestas',
     nameHeader: 'Nombre',
     nQuestionsHeader: 'Preguntas',
     actionsHeader: 'Acciones',

@@ -11,6 +11,9 @@ module.exports = {
         notNull: true,
       },
     },
+    path: {
+      type: 'string',
+    },
     etag: {
       type: 'string',
       options: {

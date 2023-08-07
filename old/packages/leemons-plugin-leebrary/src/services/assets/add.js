@@ -191,11 +191,17 @@ async function add(
       ];
 
       if (pPermissions && pPermissions.length) {
-        forEach(pPermissions, ({ isCustomPermission, canEdit, ...per }) => {
+        forEach(pPermissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
+          let permission = 'can-view';
+          if (canEdit) {
+            permission = 'can-edit';
+          } else if (canAssign) {
+            permission = 'can-assign';
+          }
           permissionsPromises.push(
             userService.permissions.addItem(
               newAsset.id,
-              leemons.plugin.prefixPN(canEdit ? 'asset.can-edit' : 'asset.can-view'),
+              leemons.plugin.prefixPN(`asset.${permission}`),
               per,
               { isCustomPermission, transacting }
             )

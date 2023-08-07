@@ -8,7 +8,7 @@ import { useLayout } from '@layout/context';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { getSessionConfig } from '@users/session';
 import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addInfoAlert } from '@layout/alert';
 import useParseAssignations from '../../hooks/useParseAssignations';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import prefixPN from '../../../../../helpers/prefixPN';
@@ -366,9 +366,11 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onSizeChange={setSize}
         onPageChange={setPage}
         selectable
-        onSelect={({ isBlocked, dashboardURL }) => {
+        onSelect={({ isBlocked, isEvaluable, dashboardURL }) => {
           if (isBlocked) {
             addErrorAlert(labels?.activitiesList?.blocked);
+          } else if (!isEvaluable) {
+            addInfoAlert(labels?.activitiesList?.nonEvaluable);
           } else if (typeof dashboardURL === 'function') {
             window.open(dashboardURL());
           } else {

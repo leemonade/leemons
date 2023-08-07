@@ -57,9 +57,8 @@ function ClassItem({ class: klass, ...props }) {
             src={getClassIcon(klass)}
           />
         </Box>
-        <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-        }`}</Text>
+        <Text>{`${klass.subject.name}${klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+          }`}</Text>
       </Box>
     </Box>
   );
@@ -193,7 +192,7 @@ const PermissionsDataClasses = ({
       input: {
         node: <Select />,
         rules: { required: 'Required field' },
-        data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
+        data: roles?.filter((role) => ['viewer', 'editor', 'assigner'].includes(role.value)),
       },
       valueRender: (val) => find(roles, { value: val })?.label,
     });

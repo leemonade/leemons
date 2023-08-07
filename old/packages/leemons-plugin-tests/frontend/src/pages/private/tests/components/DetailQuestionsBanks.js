@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   ActionButton,
   Alert,
@@ -14,12 +12,14 @@ import {
   Table,
   Title,
 } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import _, { find } from 'lodash';
-import { Link } from 'react-router-dom';
 import { ChevLeftIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert } from '@layout/alert';
+import _, { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { listQuestionsBanksRequest } from '../../../../request';
 
 export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
@@ -148,7 +148,7 @@ export default function DetailQuestionsBanks({ form, t, onNext, onPrev }) {
             ),
           }))
         : [],
-    [t, store.pagination]
+    [t, store.pagination, questionBank]
   );
 
   return (

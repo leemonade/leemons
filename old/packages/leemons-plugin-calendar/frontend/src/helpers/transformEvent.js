@@ -1,5 +1,5 @@
-import { cloneDeep, find, keyBy, uniq } from 'lodash';
 import { parseDeadline } from '@assignables/components/NYACard/NYACard';
+import { cloneDeep, find, keyBy, uniq } from 'lodash';
 
 export default function transformEvent(
   _event,

@@ -23,27 +23,27 @@ async function events(isInstalled) {
     await addLocales(locale.code);
   });
 
+  leemons.events.once(
+    ['plugins.menu-builder:init-main-menu', 'plugins.academic-portfolio:init-permissions'],
+    async () => {
+      await initMenuBuilder();
+    }
+  );
+
+  leemons.events.once('plugins.assignables:init-plugin', async () => {
+    const assignablesPlugin = leemons.getPlugin('assignables');
+    await Promise.allSettled(
+      _.map(assignableRoles, (role) =>
+        assignablesPlugin.services.assignables.registerRole(role.role, role.options)
+      )
+    );
+  });
+
   if (!isInstalled) {
     leemons.events.once('plugins.users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
-    });
-
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.academic-portfolio:init-permissions'],
-      async () => {
-        await initMenuBuilder();
-      }
-    );
-
-    leemons.events.once('plugins.assignables:init-plugin', async () => {
-      const assignablesPlugin = leemons.getPlugin('assignables');
-      await Promise.all(
-        _.map(assignableRoles, (role) =>
-          assignablesPlugin.services.assignables.registerRole(role.role, role.options)
-        )
-      );
     });
 
     leemons.events.once(

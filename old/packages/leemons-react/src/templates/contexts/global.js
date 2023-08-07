@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
+import { apiUrl as API_URL } from './apiURL';
 
 const context = createContext();
 
@@ -27,39 +28,40 @@ class LeemonsApi {
     this.api.hasRes = this.#apiHasResMiddleware;
     this.apiCache = {};
     this.apiWaitToFinish = {};
- 
-    this.returnWhenWaitFinish = (waitKey) => {
-      return new Promise((resolve, reject) => {
-          this.apiWaitToFinish[waitKey].waiting++;
-          const check = () => {
-            if (this.apiWaitToFinish[waitKey].finish) {
-              const isError = this.apiWaitToFinish[waitKey].isError;
-              const response = _.cloneDeep(this.apiWaitToFinish[waitKey].response);
-              this.apiWaitToFinish[waitKey].waiting--;
-              if (isError) {
-                reject(response);
-              } else {
-                resolve(response);
-              }
+
+    this.returnWhenWaitFinish = (waitKey) =>
+      new Promise((resolve, reject) => {
+        this.apiWaitToFinish[waitKey].waiting++;
+        const check = () => {
+          if (this.apiWaitToFinish[waitKey].finish) {
+            const { isError } = this.apiWaitToFinish[waitKey];
+            const response = _.cloneDeep(this.apiWaitToFinish[waitKey].response);
+            this.apiWaitToFinish[waitKey].waiting--;
+            if (isError) {
+              reject(response);
             } else {
-              window.requestAnimationFrame(check);
+              resolve(response);
             }
+          } else {
+            window.requestAnimationFrame(check);
           }
-          window.requestAnimationFrame(check);
+        };
+        window.requestAnimationFrame(check);
       });
-    }
     this.removeWhenNoWaits = (waitKey) => {
+      let times = 0;
       const check = () => {
-        if (this.apiWaitToFinish[waitKey].finish) {
-          if (!this.apiWaitToFinish[waitKey].waiting) {
-            delete this.apiWaitToFinish[waitKey];
-          }
-        } else {
+        if (this.apiWaitToFinish[waitKey].finish && !this.apiWaitToFinish[waitKey].waiting) {
+          delete this.apiWaitToFinish[waitKey];
+        } else if (times < 60) {
+          times++;
           window.requestAnimationFrame(check);
+        } else {
+          delete this.apiWaitToFinish[waitKey];
         }
-      }
+      };
       window.requestAnimationFrame(check);
-    }
+    };
   }
 
   api = async (url, options) => {
@@ -87,34 +89,30 @@ class LeemonsApi {
         }
       }
 
-      
       // if (ctx.options?.waitToFinish) {
-        const formDataValues = {};
-        if (ctx.options.body instanceof FormData) {
-          for (const [key, value] of ctx.options.body.entries()) {
-            formDataValues[key] = ctx.options.body.getAll(key);
-          }
+      const formDataValues = {};
+      if (ctx.options.body instanceof FormData) {
+        for (const [key, value] of ctx.options.body.entries()) {
+          formDataValues[key] = ctx.options.body.getAll(key);
         }
-        waitKey = JSON.stringify({
-          url: `${global.leemons.apiUrl}/api/${ctx.url}`,
-          options: ctx.options,
-          formDataValues
-        });
-        delete ctx.options.waitToFinish;
-        if (this.apiWaitToFinish[waitKey]) {
-          return await this.returnWhenWaitFinish(waitKey);
-        } else {
-          this.apiWaitToFinish[waitKey] = {
-            finish: false,
-            isError: false,
-            response: null,
-            waiting: 0
-          };
-        }
-        
-      // }
+      }
+      waitKey = JSON.stringify({
+        url: `${global.leemons.apiUrl}/api/${ctx.url}`,
+        options: ctx.options,
+        formDataValues,
+      });
+      delete ctx.options.waitToFinish;
+      if (this.apiWaitToFinish[waitKey]) {
+        return await this.returnWhenWaitFinish(waitKey);
+      }
+      this.apiWaitToFinish[waitKey] = {
+        finish: false,
+        isError: false,
+        response: null,
+        waiting: 0,
+      };
 
-      
+      // }
 
       const response = await fetch(`${global.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
 
@@ -138,8 +136,6 @@ class LeemonsApi {
         this.apiWaitToFinish[waitKey].response = responseCtx.response;
         this.removeWhenNoWaits(waitKey);
       }
-
-
 
       return responseCtx.response;
     } catch (response) {
@@ -229,11 +225,7 @@ export function Provider({ children }) {
     api.useRes(apiResponseParserMiddleware);
   }, []);
 
-  {{@if(it.apiUrl)}}
-    let apiUrl = "{{it.apiUrl}}";
-  {{#else}}
-    let apiUrl = window.location.origin;
-  {{/if}}
+  let apiUrl = API_URL;
 
   if (window.customEnv?.apiUrl) {
     apiUrl = window.customEnv.apiUrl;

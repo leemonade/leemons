@@ -7,7 +7,7 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
   try {
     const { services: userService } = leemons.getPlugin('users');
 
-    const [permissions, canView, canEdit] = await Promise.all([
+    const [permissions, canView, canEdit, canAssign] = await Promise.all([
       userService.permissions.getUserAgentPermissions(userSession.userAgents, {
         query: { permissionName: getAssetPermissionName(assetId) },
         transacting,
@@ -20,6 +20,11 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
       userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
         userSession.userAgents,
         leemons.plugin.prefixPN('asset.can-edit'),
+        { ignoreOriginalTarget: true, item: assetId, transacting }
+      ),
+      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+        userSession.userAgents,
+        leemons.plugin.prefixPN('asset.can-assign'),
         { ignoreOriginalTarget: true, item: assetId, transacting }
       ),
     ]);
@@ -47,6 +52,9 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
 
     if (canView.length && !role) {
       role = 'viewer';
+    }
+    if (canAssign.length && (!role || role !== 'owner')) {
+      role = 'assigner';
     }
     if (canEdit.length && (!role || role !== 'owner')) {
       role = 'editor';

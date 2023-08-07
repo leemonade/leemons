@@ -22,7 +22,7 @@ async function events(isInstalled) {
       syncProgramProfilePermissionsIfNeed,
     } = require('./src/services/classes/__update__/syncProgramProfilePermissionsIfNeed');
 
-    await syncProgramProfilePermissionsIfNeed();
+    await syncProgramProfilePermissionsIfNeed(isInstalled);
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
@@ -31,6 +31,10 @@ async function events(isInstalled) {
 
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
+  });
+  leemons.events.on('plugins.users:before-disable-user-agents', async (event, data) => {
+    const { onDisableUserAgents } = require('./src/services/events/onDisableUserAgents');
+    await onDisableUserAgents(data);
   });
 
   leemons.events.once('plugins.dashboard:init-widget-zones', async () => {

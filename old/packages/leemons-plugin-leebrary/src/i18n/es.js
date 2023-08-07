@@ -8,7 +8,7 @@ module.exports = {
   },
   home: {
     navbar: {
-      title: 'Librería',
+      title: 'Biblioteca',
       subjects: 'Asignaturas',
       sharedWithMe: 'Compartido conmigo',
       quickAccess: 'Destacados',
@@ -23,7 +23,7 @@ module.exports = {
     header: {
       back: 'Volver',
       close: 'Cerrar',
-      title: 'Librería',
+      title: 'Biblioteca',
     },
     basicData: {
       header: {
@@ -47,8 +47,8 @@ module.exports = {
         program: 'Programa',
         subjects: 'Asignaturas',
         dropFile: 'o arrastrar aquí desde el ordenador',
-        search: 'Buscar en la librería',
-        submitForm: 'Añadir a la librería',
+        search: 'Buscar en la biblioteca',
+        submitForm: 'Añadir a la biblioteca',
         submitChanges: 'Guardar cambios',
         name: 'Nombre',
         tagline: 'Subtítulo',
@@ -224,6 +224,7 @@ module.exports = {
       viewer: 'Lectura',
       commentor: 'Comentario',
       editor: 'Editor',
+      assigner: 'Asignador',
       owner: 'Propietario',
       public: 'Público',
     },
@@ -246,7 +247,7 @@ module.exports = {
       unpinnedSuccess: 'Recurso desanclado con éxito',
       listEmpty: 'No hay ningún recurso disponible',
       listEmptyDescription:
-        'Gracias a las Librerias de Leemons, los docentes pueden gestionar tareas, tests, sesiones... y tanto docentes como estudiantes crear y compartir archivos multi-media y guardar sus páginas web favoritas.',
+        'Gracias a las Biblioteca de Leemons, los docentes pueden gestionar tareas, tests, sesiones... y tanto docentes como estudiantes crear y compartir archivos multi-media y guardar sus páginas web favoritas.',
       searchListEmpty: 'No hay ningún recurso disponible con tus criterios de búsqueda',
       searchListEmptyDescription:
         'Prueba a buscar por palabras clave (tags) o a escribir un término más genérico y luego utiliza los filtros para refinar tu búsqueda.',
@@ -276,10 +277,10 @@ module.exports = {
   },
   pickerDrawer: {
     header: {
-      title: 'Librería',
+      title: 'Biblioteca',
     },
     tabs: {
-      library: 'Librería',
+      library: 'Biblioteca',
       new: 'Nuevo recurso',
     },
     filters: {
@@ -295,8 +296,8 @@ module.exports = {
   },
   admin: {
     card: {
-      title: 'Proveedores de libreria',
-      description: 'Configura tus proveedores para la gestion de la libreria',
+      title: 'Proveedores de biblioteca',
+      description: 'Configura tus proveedores para la gestion de la biblioteca',
     },
     setup: {
       chooseProvider: 'Selecciona un proveedor',
@@ -304,5 +305,12 @@ module.exports = {
   },
   uploadFileModal: {
     title: 'Subiendo archivo',
+    fileOf: 'Subiendo archivo {currentFile} de {totalFiles} - {currentFilePercentageCompleted}%',
+    init: 'Iniciando subida',
+    unzip: 'Preparando zip para la subida',
+  },
+  assetsList: {
+    published: 'Publicados',
+    draft: 'Borradores',
   },
 };

@@ -79,8 +79,6 @@ const AdminConfig = ({ onNextLabel, onNext = () => {} }) => {
     try {
       const { providers } = await getProvidersRequest();
 
-      console.log('providers', providers);
-
       store.providers = providers;
       store.loading = false;
       render();

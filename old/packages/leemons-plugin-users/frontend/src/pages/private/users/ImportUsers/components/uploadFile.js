@@ -19,25 +19,30 @@ export function UploadFile({ t, center, profile }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   async function load() {
-    const { data } = await getDataForUserAgentDatasetsRequest();
-    if (data?.length) {
-      const schema = data[0].data.jsonSchema;
-      const ui = data[0].data.jsonUI;
-      store.generalDataset = data[0].data;
-      store.generalDatasetEdit = [];
-      _.forIn(schema.properties, (value, key) => {
-        let add = true;
-        if (ui[key]?.['ui:readonly']) {
-          add = false;
-        }
-        if (add) {
-          store.generalDatasetEdit.push({
-            value: `dataset-common.${key}`,
-            label: value.title,
-          });
-        }
-      });
-      render();
+    try {
+      const { data } = await getDataForUserAgentDatasetsRequest();
+
+      if (data?.length) {
+        const schema = data[0].data.jsonSchema;
+        const ui = data[0].data.jsonUI;
+        store.generalDataset = data[0].data;
+        store.generalDatasetEdit = [];
+        _.forIn(schema.properties, (value, key) => {
+          let add = true;
+          if (ui[key]?.['ui:readonly']) {
+            add = false;
+          }
+          if (add) {
+            store.generalDatasetEdit.push({
+              value: `dataset-common.${key}`,
+              label: value.title,
+            });
+          }
+        });
+        render();
+      }
+    } catch (e) {
+      // Nothing
     }
   }
 

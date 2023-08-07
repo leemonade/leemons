@@ -10,6 +10,7 @@ module.exports = async function registerRole(
     studentDetailUrl,
     evaluationDetailUrl,
     dashboardUrl,
+    previewUrl,
     ...data
   } = {}
 ) {
@@ -29,7 +30,14 @@ module.exports = async function registerRole(
         const existingRole = await getRole.call(this, role, { transacting });
 
         if (existingRole) {
-          throw new Error('Role already exists');
+          await addCategory(
+            {
+              ...data,
+              role: `assignables.${role}`,
+            },
+            { transacting }
+          );
+          throw new Error(`Role "${role}" already exists`);
         }
       } catch (e) {
         if (e.message !== 'Role not found') {
@@ -46,6 +54,7 @@ module.exports = async function registerRole(
           studentDetailUrl,
           evaluationDetailUrl,
           dashboardUrl,
+          previewUrl,
           plugin: this.calledFrom,
           icon: data.menu.item.iconSvg,
         },

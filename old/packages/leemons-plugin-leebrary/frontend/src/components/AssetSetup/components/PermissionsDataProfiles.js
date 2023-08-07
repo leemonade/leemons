@@ -95,7 +95,7 @@ const PermissionsDataProfiles = ({
       input: {
         node: <Select />,
         rules: { required: 'Required field' },
-        data: roles?.filter((role) => ['viewer', 'editor'].includes(role.value)),
+        data: roles?.filter((role) => ['viewer', 'editor', 'assigner'].includes(role.value)),
       },
       valueRender: (val) => find(roles, { value: val })?.label,
     });

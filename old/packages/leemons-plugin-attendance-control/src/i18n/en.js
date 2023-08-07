@@ -25,5 +25,8 @@ module.exports = {
     sessionN: 'Session {index}',
     studentAvg: 'Average per student',
     search: 'Search',
+    'on-time': 'On time',
+    not: 'Missing',
+    late: 'Late',
   },
 };

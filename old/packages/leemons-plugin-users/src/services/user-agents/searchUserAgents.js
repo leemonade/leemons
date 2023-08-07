@@ -144,6 +144,10 @@ async function searchUserAgents(
     finalQuery.user_$nin = ignoreUserIds;
   }
 
+  // ES: Sacamos solo los userAgents que no este desabled
+  // ES: Remove only the userAgents that are not disabled.
+  finalQuery.$or = [{ disabled_$null: true }, { disabled: false }];
+
   // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
   // EN: Finally, the agents and their corresponding users according to the filters
   let userAgents = await table.userAgent.find(finalQuery, {

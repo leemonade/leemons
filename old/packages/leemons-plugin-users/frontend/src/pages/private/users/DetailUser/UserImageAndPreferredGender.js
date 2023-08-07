@@ -43,7 +43,7 @@ const Styles = createStyles((theme) => ({
 }));
 
 function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
-  const isMe = user.id === session.id;
+  const isMe = user.id === session?.id;
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { classes: styles } = Styles();
   const { openDeleteConfirmationModal, setLoading } = useLayout();

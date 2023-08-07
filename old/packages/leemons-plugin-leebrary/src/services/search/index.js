@@ -7,17 +7,16 @@ const {
   sortBy,
   intersection,
   groupBy,
+  isArray,
   forEach,
   find,
   set,
   map,
   isObject,
+  difference,
+  keyBy,
 } = require('lodash');
 const semver = require('semver');
-const { byName: getByName } = require('./byName');
-const { byTagline: getByTagline } = require('./byTagline');
-const { byDescription: getByDescription } = require('./byDescription');
-const { getByCategory } = require('../assets/getByCategory');
 const { getByIds } = require('../assets/getByIds');
 const { getIndexables } = require('../assets/getIndexables');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
@@ -44,6 +43,7 @@ async function search(
     pinned,
     showPublic,
     roles,
+    onlyShared,
     programs: _programs,
     subjects: _subjects,
     userSession,
@@ -100,8 +100,12 @@ async function search(
 
     if (pinned) {
       const pins = await getPinsByUser({ userSession, transacting });
-      assets = pins.map((pin) => pin.asset);
-      nothingFound = assets.length === 0;
+      nothingFound = false;
+      if (isArray(pins)) {
+        assets = pins.map((pin) => pin.asset);
+      } else {
+        nothingFound = assets.length === 0;
+      }
     }
 
     // if (!isEmpty(criteria)) {
@@ -134,7 +138,7 @@ async function search(
       }
 
       const assetIds = providerAssets || assets;
-      if (!isEmpty(assetIds)) {
+      if (!isEmpty(assetIds) || pinned) {
         query.id_$in = assetIds;
       }
 
@@ -144,7 +148,7 @@ async function search(
 
       const [assetsFound, byTags] = await Promise.all([
         tables.assets.find(query, { columns: ['id'], transacting }),
-        tagsService.getTagsValues(criteria, {
+        tagsService.getTagsValueByPartialTags(criteria, {
           type: leemons.plugin.prefixPN(''),
           transacting,
         }),
@@ -165,28 +169,36 @@ async function search(
       nothingFound = assets.length === 0;
     }
     // }
+    if (!onlyShared) {
+      if (type) {
+        assets = await getAssetsByType(type, { assets, transacting });
+        nothingFound = assets.length === 0;
+      }
 
-    if (type) {
-      assets = await getAssetsByType(type, { assets, transacting });
-      nothingFound = assets.length === 0;
+      if (programs) {
+        assets = await getAssetsByProgram(programs, { assets, transacting });
+        nothingFound = assets.length === 0;
+      }
+
+      if (subjects) {
+        assets = await getAssetsBySubject(subjects, { assets, transacting });
+        nothingFound = assets.length === 0;
+      }
+
+      if (indexable && assets && assets.length) {
+        assets = await getIndexables(assets, { columns: ['id'], transacting });
+        assets = map(assets, 'id');
+        nothingFound = assets.length === 0;
+      }
+    } else {
+      const sysName = await leemons
+        .getPlugin('users')
+        .services.profiles.getProfileSysName(userSession, { transacting });
+      if (sysName === 'student') {
+        const assetsToRemove = await getAssetsBySubject([], { assets, transacting });
+        assets = difference(assets, assetsToRemove);
+      }
     }
-
-    if (programs) {
-      assets = await getAssetsByProgram(programs, { assets, transacting });
-      nothingFound = assets.length === 0;
-    }
-
-    if (subjects) {
-      assets = await getAssetsBySubject(subjects, { assets, transacting });
-      nothingFound = assets.length === 0;
-    }
-
-    if (indexable && assets && assets.length) {
-      assets = await getIndexables(assets, { columns: ['id'], transacting });
-      assets = map(assets, 'id');
-      nothingFound = assets.length === 0;
-    }
-
     // Search by subject
 
     // EN: Only return assets that the user has permission to view
@@ -196,6 +208,7 @@ async function search(
       assetsWithPermissions = await getPermissions(uniq(assets), {
         showPublic,
         userSession,
+        onlyShared,
         transacting,
       });
       assets = assetsWithPermissions;
@@ -267,7 +280,7 @@ async function search(
         assets = assets.map(({ fullId }) => fullId);
       }
 
-      assets = assetsWithPermissions.filter(({ asset, role }) => {
+      assets = assetsWithPermissions.filter(({ asset, role, ...others }) => {
         if (roles?.length && !roles.includes(role)) {
           return false;
         }
@@ -276,12 +289,21 @@ async function search(
       });
     }
 
+    let result = uniqBy(assets, 'asset') || [];
+
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
     // EN: For the case that you need sorting, we need a different logic
-    if (!nothingFound && sortingBy && !isEmpty(sortingBy)) {
-      const assetIds = assets.map((item) => item.asset);
+
+    if (sortingBy && !isEmpty(sortingBy)) {
       const [items] = await Promise.all([
-        getByIds(assetIds, { withCategory: false, withTags: false, userSession, transacting }),
+        getByIds(map(result, 'asset'), {
+          withCategory: false,
+          withTags: false,
+          indexable,
+          showPublic,
+          userSession,
+          transacting,
+        }),
       ]);
 
       let sortedAssets = sortBy(items, sortingBy);
@@ -290,12 +312,18 @@ async function search(
         sortedAssets = sortedAssets.reverse();
       }
 
-      const sortedIds = sortedAssets.map((item) => item.id);
-
-      assets.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
+      const assetIds = sortedAssets.map((item) => item.id);
+      const _result = [];
+      const resultByAsset = keyBy(result, 'asset');
+      forEach(assetIds, (assetId) => {
+        if (resultByAsset[assetId]) {
+          _result.push(resultByAsset[assetId]);
+        }
+      });
+      result = _result;
     }
 
-    return uniqBy(assets, 'asset') || [];
+    return result;
   } catch (e) {
     console.log(e);
     throw new global.utils.HttpError(500, `Failed to find asset with query: ${e.message}`);

@@ -59,6 +59,8 @@ module.exports = {
       nameRequired: 'Campo necesario',
       typeRequired: 'Campo necesario',
       minScaleToPromoteRequired: 'Campo necesario',
+      numeric: 'Numérico',
+      letter: 'Letras',
     },
   },
   conditionOptions: {

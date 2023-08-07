@@ -1,23 +1,32 @@
 /* eslint-disable no-param-reassign */
-import React, { useMemo } from 'react';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import {
   Box,
-  Button,
   ContextContainer,
+  LoadingOverlay,
   PageContainer,
   Paper,
   Select,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useStore } from '@common/useStore';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { find, isArray, map } from 'lodash';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useStore } from '@common/useStore';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components/SelectCenter';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import _, { find, isArray, map } from 'lodash';
+import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
+import { KnowledgeTable } from '../../../components/KnowledgeTable';
+import { SubjectTypesTable } from '../../../components/SubjectTypesTable';
+import { SubjectsTable } from '../../../components/SubjectsTable';
+import { activeMenuItemTree } from '../../../helpers/activeMenuItemTree';
+import { getKnowledgesTranslation } from '../../../helpers/getKnowledgesTranslation';
+import { getProgramTreeTypeTranslation } from '../../../helpers/getProgramTreeTypeTranslation';
+import { getSubjectTypesTranslation } from '../../../helpers/getSubjectTypesTranslation';
+import { getSubjectsTranslation } from '../../../helpers/getSubjectsTranslation';
+import { getTableActionsTranslation } from '../../../helpers/getTableActionsTranslation';
 import {
   createClassRequest,
   createGroupRequest,
@@ -30,19 +39,9 @@ import {
   listProgramsRequest,
   listSubjectCreditsForProgramRequest,
   updateClassRequest,
-  updateProgramRequest,
   updateSubjectRequest,
+  updateSubjectTypeRequest,
 } from '../../../request';
-import { KnowledgeTable } from '../../../components/KnowledgeTable';
-import { getKnowledgesTranslation } from '../../../helpers/getKnowledgesTranslation';
-import { SubjectTypesTable } from '../../../components/SubjectTypesTable';
-import { getSubjectTypesTranslation } from '../../../helpers/getSubjectTypesTranslation';
-import { getTableActionsTranslation } from '../../../helpers/getTableActionsTranslation';
-import { getSubjectsTranslation } from '../../../helpers/getSubjectsTranslation';
-import { SubjectsTable } from '../../../components/SubjectsTable';
-import { ProgramTreeType } from '../../../components/ProgramTreeType';
-import { getProgramTreeTypeTranslation } from '../../../helpers/getProgramTreeTypeTranslation';
-import { activeMenuItemTree } from '../../../helpers/activeMenuItemTree';
 
 export default function SubjectList() {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
@@ -50,6 +49,7 @@ export default function SubjectList() {
   const history = useHistory();
 
   const [store, render] = useStore({
+    loading: false,
     mounted: true,
     programs: [],
     currentProgram: null,
@@ -142,6 +142,27 @@ export default function SubjectList() {
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
+    store.program.subjectTypes = [...store.program.subjectTypes];
+    store.program = { ...store.program };
+    render();
+  }
+
+  async function updateVisibility({ id, groupVisibility }) {
+    try {
+      store.loading = true;
+      render();
+      await updateSubjectTypeRequest({
+        id,
+        groupVisibility: !!groupVisibility,
+      });
+      const index = _.findIndex(store.program.subjectTypes, { id });
+      if (index >= 0) {
+        store.program.subjectTypes[index].groupVisibility = !!groupVisibility;
+      }
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.loading = false;
     store.program.subjectTypes = [...store.program.subjectTypes];
     store.program = { ...store.program };
     render();
@@ -319,159 +340,97 @@ export default function SubjectList() {
     return null;
   }
 
-  async function onProgramTreeTypeChange(event) {
-    try {
-      await updateProgramRequest({
-        id: store.program.id,
-        treeType: event,
-      });
-      store.program.treeType = event;
-      render();
-    } catch (err) {
-      addErrorAlert(getErrorMessage(err));
-    }
-  }
-
-  async function goTree() {
-    await history.push(
-      `/private/academic-portfolio/tree?center=${store.center}&program=${store.program.id}`
-    );
-  }
-
-  let help1 = null;
-  let help2 = null;
-  let help3 = null;
-
-  if (store.program?.moreThanOneAcademicYear) {
-    if (store.program?.cycles?.length) {
-      help1 = messages.programTreeType.opt1DescriptionNoCourseCycle;
-      help2 = messages.programTreeType.opt2DescriptionNoCourseCycle;
-      help3 = messages.programTreeType.opt3DescriptionNoCourseCycle;
-    } else {
-      help1 = messages.programTreeType.opt1DescriptionNoCourse;
-      help2 = messages.programTreeType.opt2DescriptionNoCourse;
-      help3 = messages.programTreeType.opt3DescriptionNoCourse;
-    }
-  } else if (store.program?.cycles?.length) {
-    help1 = messages.programTreeType.opt1DescriptionCycle;
-    help2 = messages.programTreeType.opt2DescriptionCycle;
-    help3 = messages.programTreeType.opt3DescriptionCycle;
-  } else {
-    help1 = messages.programTreeType.opt1Description;
-    help2 = messages.programTreeType.opt2Description;
-    help3 = messages.programTreeType.opt3Description;
-  }
-
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader values={messages.header} />
-      <Paper color="solid" shadow="none">
-        <PageContainer>
-          <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
-            <ContextContainer>
-              <ContextContainer direction="row">
-                <Box skipFlex>
-                  <SelectCenter
-                    label={t('centerLabel')}
-                    placeholder={t('centerPlaceholder')}
-                    onChange={onCenterChange}
-                    firstSelected
-                  />
-                </Box>
-                <Box skipFlex>
-                  <Select
-                    data={store.programs || []}
-                    disabled={!store.programs}
-                    label={t('programLabel')}
-                    placeholder={t('programPlaceholder')}
-                    onChange={onProgramChange}
-                    value={store.selectProgram}
-                    autoSelectOneOption
-                  />
-                </Box>
-              </ContextContainer>
+    <>
+      {store.loading ? (
+        <Box
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 5,
+          }}
+        >
+          <LoadingOverlay visible />
+        </Box>
+      ) : null}
 
-              {store.program ? (
-                <Paper>
-                  <ContextContainer divided>
-                    {store.program && store.program.haveKnowledge ? (
-                      <KnowledgeTable
-                        messages={messages.knowledge}
-                        tableLabels={messages.tableLabels}
-                        program={store.program}
-                        onAdd={addKnowledge}
-                      />
-                    ) : null}
-                    {store.program
-                      ? [
-                          <SubjectTypesTable
-                            key="1"
-                            messages={messages.subjectTypes}
-                            tableLabels={messages.tableLabels}
-                            program={store.program}
-                            onAdd={addSubjectType}
-                          />,
-                          <SubjectsTable
-                            key="2"
-                            messages={messages.subjects}
-                            tableLabels={messages.tableLabels}
-                            program={store.program}
-                            onAdd={(d, e) => addUpdateClass(d, e, false)}
-                            onUpdate={(d, e) => addUpdateClass(d, e, true)}
-                            teacherSelect={
-                              <SelectUserAgent
-                                profiles={store.profiles.teacher}
-                                centers={store.center}
-                              />
-                            }
-                            onlyNewSubject={!!store.program?.useOneStudentGroup}
-                          />,
-                          <ProgramTreeType
-                            key="3"
-                            messages={messages.programTreeType}
-                            value={store.program.treeType}
-                            onChange={onProgramTreeTypeChange}
-                            data={[
-                              {
-                                value: 1,
-                                label: messages.programTreeType.opt1Label,
-                                help: help1,
-                                helpPosition: 'bottom',
-                              },
-                              {
-                                value: 2,
-                                label: messages.programTreeType.opt2Label,
-                                help: help2,
-                                helpPosition: 'bottom',
-                              },
-                              {
-                                value: 3,
-                                label: messages.programTreeType.opt3Label,
-                                help: help3,
-                                helpPosition: 'bottom',
-                              },
-                              {
-                                value: 4,
-                                label: messages.programTreeType.opt4Label,
-                                help: messages.programTreeType.opt4Description,
-                                helpPosition: 'bottom',
-                              },
-                            ]}
-                          />,
-                        ]
-                      : null}
-                  </ContextContainer>
-                </Paper>
-              ) : null}
-            </ContextContainer>
-            {store.program ? (
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <Button onClick={goTree}>{t('goTree')}</Button>
-              </Box>
-            ) : null}
-          </Box>
-        </PageContainer>
-      </Paper>
-    </ContextContainer>
+      <ContextContainer fullHeight>
+        <AdminPageHeader values={messages.header} />
+        <Paper color="solid" shadow="none">
+          <PageContainer>
+            <Box sx={(theme) => ({ marginBottom: theme.spacing[12] })}>
+              <ContextContainer>
+                <ContextContainer direction="row">
+                  <Box skipFlex>
+                    <SelectCenter
+                      label={t('centerLabel')}
+                      placeholder={t('centerPlaceholder')}
+                      onChange={onCenterChange}
+                      firstSelected
+                    />
+                  </Box>
+                  <Box skipFlex>
+                    <Select
+                      data={store.programs || []}
+                      disabled={!store.programs}
+                      label={t('programLabel')}
+                      placeholder={t('programPlaceholder')}
+                      onChange={onProgramChange}
+                      value={store.selectProgram}
+                      autoSelectOneOption
+                    />
+                  </Box>
+                </ContextContainer>
+
+                {store.program ? (
+                  <Paper>
+                    <ContextContainer divided>
+                      {store.program && store.program.haveKnowledge ? (
+                        <KnowledgeTable
+                          messages={messages.knowledge}
+                          tableLabels={messages.tableLabels}
+                          program={store.program}
+                          onAdd={addKnowledge}
+                        />
+                      ) : null}
+                      {store.program
+                        ? [
+                            <SubjectTypesTable
+                              key="1"
+                              messages={messages.subjectTypes}
+                              tableLabels={messages.tableLabels}
+                              program={store.program}
+                              onAdd={addSubjectType}
+                              updateVisibility={updateVisibility}
+                            />,
+                            <SubjectsTable
+                              key="2"
+                              messages={messages.subjects}
+                              tableLabels={messages.tableLabels}
+                              program={store.program}
+                              onAdd={(d, e) => addUpdateClass(d, e, false)}
+                              onUpdate={(d, e) => addUpdateClass(d, e, true)}
+                              teacherSelect={
+                                <SelectUserAgent
+                                  profiles={store.profiles.teacher}
+                                  centers={store.center}
+                                />
+                              }
+                              onlyNewSubject={!!store.program?.useOneStudentGroup}
+                            />,
+                          ]
+                        : null}
+                    </ContextContainer>
+                  </Paper>
+                ) : null}
+              </ContextContainer>
+            </Box>
+          </PageContainer>
+        </Paper>
+      </ContextContainer>
+    </>
   );
 }

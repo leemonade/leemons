@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const programService = require('../src/services/programs');
-const enableMenuItemService = require('../src/services/menu-builder/enableItem');
 
 async function getProgramTree(ctx) {
   const tree = await programService.getProgramTree(ctx.request.params.id);

@@ -16,7 +16,6 @@ async function _centers(user, { transacting } = {}) {
     { user, $or: [{ disabled_$null: true }, { disabled: false }] },
     { columns: ['id'], transacting }
   );
-  console.log('userAgentsIds', userAgentsIds);
   const userAgents = await getUserAgentsInfo(_.map(userAgentsIds, 'id'), {
     withProfile: true,
     withCenter: true,

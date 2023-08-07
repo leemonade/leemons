@@ -124,6 +124,7 @@ export default function Assign() {
                     <Button type="submit">{t('next')}</Button>
                   </Stack>
                 }
+                onlyOneSubject
                 onSubmit={handleAssignment}
               />
             )}

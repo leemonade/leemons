@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Box, Button, ContextContainer, Stack, Title } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
-import _, { find } from 'lodash';
 import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
+import _, { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller } from 'react-hook-form';
 
 export default function DetailContent({ store, form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
@@ -23,7 +23,7 @@ export default function DetailContent({ store, form, t, onNext, onPrev }) {
   const subjectIds = form.getValues('subjects');
 
   const subjects = store.subjectsByProgram[programId];
-  const subject = find(subjects, { value: subjectIds[0].subject });
+  const subject = find(subjects, { value: subjectIds?.[0].subject });
 
   return (
     <ContextContainer divided>
@@ -42,7 +42,7 @@ export default function DetailContent({ store, form, t, onNext, onPrev }) {
         />
 
         <Title order={3}>{t('curriculum')}</Title>
-        <Title order={5}>{subject.label}</Title>
+        {subject ? <Title order={5}>{subject.label}</Title> : null}
 
         <Curriculum
           program={form.getValues('program')}

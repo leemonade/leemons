@@ -1,0 +1,11 @@
+{
+  "name": "leemons-plugin-scorm",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "fast-xml-parser": "4.1.3",
+    "koa-sendfile": "^3.0.0",
+    "mime-types": "^2.1.35"
+  }
+}

@@ -17,6 +17,9 @@ module.exports = {
         notNull: true,
       },
     },
+    path: {
+      type: 'string',
+    },
   },
   primaryKey: {
     type: 'uuid',
