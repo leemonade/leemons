@@ -5,7 +5,11 @@
  */
 
 const _ = require('lodash');
-const { haveClasses, addClass, updateClass } = require('../../core/classes');
+
+const { haveClasses } = require('../../core/classes/haveClasses');
+const { addClass } = require('../../core/classes/addClass');
+const { updateClass } = require('../../core/classes/updateClass');
+
 /** @type {ServiceSchema} */
 module.exports = {
   haveClassesRest: {

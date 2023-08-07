@@ -9,7 +9,10 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/classes.rest');
-const { classByIds, listSessionClasses, getBasicClassesByProgram } = require('../core/classes');
+
+const { classByIds } = require('../core/classes/classByIds');
+const { listSessionClasses } = require('../core/classes/listSessionClasses');
+const { getBasicClassesByProgram } = require('../core/classes/getBasicClassesByProgram');
 
 /** @type {ServiceSchema} */
 module.exports = {
