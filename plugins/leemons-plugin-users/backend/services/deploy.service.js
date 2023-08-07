@@ -68,6 +68,8 @@ module.exports = {
     },
     'users.change-platform-locale': async (ctx) => {
       await createInitialProfiles({ ctx });
+      // TODO migration: Creemos que es necesario mandar este evento para recibir en academic portfolio cuando se crean los perfiles y hacer funcionalidad allí
+      //! ctx.tx.emit('create-initial-profiles');
     },
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
