@@ -11,8 +11,8 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { widgets, permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
+const { permissions, widgets, menuItems } = require('../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -27,37 +27,25 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
+      events: ['users.init-menu', 'calendar.init-permissions'],
       handler: async (ctx) => {
-        const [mainMenuItem, ...otherMenuItems] = menuItems;
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
-          item: mainMenuItem,
+          item: menuItems,
+          shouldWait: true,
           ctx,
         });
-        // ctx.tx.emit('init-menu'); // ?
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: otherMenuItems,
-          ctx,
-        });
-        // ctx.tx.emit('init-submenu'); // ?
       },
     },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
+        permissions,
         ctx,
       });
-
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -66,7 +54,11 @@ module.exports = () => ({
         ctx,
       });
     },
-    'multilanguage.newLocale': async (ctx) => {
+    'dashboard.init-widget-zones': async (ctx) => {
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+    },
+    'multilanguage.newLocale': async function newLocaleEvent(ctx) {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
