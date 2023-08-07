@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { LeemonsValidator } = global.utils;
+const { LeemonsValidator } = require('leemons-validator');
 const {
   dateSchema,
   stringSchema,
@@ -65,7 +65,7 @@ const addEventSchema = {
 function validateAddEvent(data) {
   const schema = _.cloneDeep(addEventSchema);
 
-  if (data.type !== 'plugins.calendar.task') {
+  if (data.type !== 'calendar.task') {
     schema.required.push('startDate', 'endDate');
   }
 

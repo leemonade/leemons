@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Check if the event type key already exists
  * @public
@@ -8,8 +6,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function exist(key, { transacting } = {}) {
-  const count = await table.eventTypes.count({ key }, { transacting });
+async function exist({ key, ctx }) {
+  const count = await ctx.tx.db.EventTypes.countDocuments({ key });
   return !!count;
 }
 

@@ -1,61 +1,69 @@
-const { exist: existEvent } = require('../services/events/exist');
-const { exist: existCalendar } = require('../services/calendar/exist');
-const { exist: existEventType } = require('../services/event-types/exist');
-const { exist: existCalendarConfig } = require('../services/calendar-configs/exist');
-const { existByKey: existCalendarByKey } = require('../services/calendar/existByKey');
+const LeemonsError = require('leemons-error');
 
-async function validateExistCalendarKey(key, { transacting } = {}) {
-  if (await existCalendarByKey(key, { transacting }))
-    throw new Error(`Calendar '${key}' already exists`);
+const { exist: existEvent } = require('../core/events/exist');
+const { exist: existCalendar } = require('../core/calendar/exist');
+const { exist: existEventType } = require('../core/event-types/exist');
+const { exist: existCalendarConfig } = require('../core/calendar-configs/exist');
+const { existByKey: existCalendarByKey } = require('../core/calendar/existByKey');
+
+async function validateExistCalendarKey({ key, ctx }) {
+  if (await existCalendarByKey(key))
+    throw new LeemonsError(ctx, { message: `Calendar '${key}' already exists` });
 }
 
-async function validateNotExistCalendarKey(key, { transacting } = {}) {
-  if (!(await existCalendarByKey(key, { transacting })))
-    throw new Error(`Calendar '${key}' not exists`);
+async function validateNotExistCalendarKey({ key, ctx }) {
+  if (!(await existCalendarByKey({ key, ctx })))
+    throw new LeemonsError(ctx, { message: `Calendar '${key}' not exists` });
 }
 
-async function validateExistCalendar(id, { transacting } = {}) {
-  if (await existCalendar(id, { transacting })) throw new Error(`Calendar '${id}' already exists`);
+async function validateExistCalendar({ id, ctx }) {
+  if (await existCalendar({ id, ctx }))
+    throw new LeemonsError(ctx, { message: `Calendar '${id}' already exists` });
 }
 
-async function validateNotExistCalendar(id, { transacting } = {}) {
-  if (!(await existCalendar(id, { transacting }))) throw new Error(`Calendar '${id}' not exists`);
+async function validateNotExistCalendar({ id, ctx }) {
+  if (!(await existCalendar({ id, ctx })))
+    throw new LeemonsError(ctx, { message: `Calendar '${id}' not exists` });
 }
 
-async function validateExistEvent(id, { transacting } = {}) {
-  if (await existEvent(id, { transacting })) throw new Error(`Event '${id}' already exists`);
+async function validateExistEvent({ id, ctx }) {
+  if (await existEvent({ id, ctx }))
+    throw new LeemonsError(ctx, { message: `Event '${id}' already exists` });
 }
 
-async function validateNotExistEvent(id, { transacting } = {}) {
-  if (!(await existEvent(id, { transacting }))) throw new Error(`Event '${id}' not exists`);
+async function validateNotExistEvent({ id, ctx }) {
+  if (!(await existEvent({ id, ctx })))
+    throw new LeemonsError(ctx, { message: `Event '${id}' not exists` });
 }
 
-async function validateExistEventTypeKey(key, { transacting } = {}) {
-  if (await existEventType(key, { transacting }))
-    throw new Error(`Event type '${key}' already exists`);
+async function validateExistEventTypeKey({ key, ctx }) {
+  if (await existEventType({ key, ctx }))
+    throw new LeemonsError(ctx, { message: `Event type '${key}' already exists` });
 }
 
-async function validateNotExistEventTypeKey(key, { transacting } = {}) {
-  if (!(await existEventType(key, { transacting })))
-    throw new Error(`Event type '${key}' not exists`);
+async function validateNotExistEventTypeKey({ key, ctx }) {
+  if (!(await existEventType({ key, ctx })))
+    throw new LeemonsError(ctx, { message: `Event type '${key}' not exists` });
 }
 
-async function validateExistCalendarConfig(id, { transacting } = {}) {
-  if (await existCalendarConfig(id, { transacting }))
-    throw new Error(`Calendar config '${id}' already exists`);
+async function validateExistCalendarConfig({ id, ctx }) {
+  if (await existCalendarConfig({ id, ctx }))
+    throw new LeemonsError(ctx, { message: `Calendar config '${id}' already exists` });
 }
 
-async function validateNotExistCalendarConfig(id, { transacting } = {}) {
-  if (!(await existCalendarConfig(id, { transacting })))
-    throw new Error(`Calendar config '${id}' not exists`);
+async function validateNotExistCalendarConfig({ id, ctx }) {
+  if (!(await existCalendarConfig({ id, ctx })))
+    throw new LeemonsError(ctx, { message: `Calendar config '${id}' not exists` });
 }
 
-function validateKeyPrefix(key, calledFrom) {
-  if (!key.startsWith(calledFrom)) throw new Error(`The key must begin with ${calledFrom}`);
+function validateKeyPrefix({ key, calledFrom, ctx }) {
+  if (!key.startsWith(calledFrom))
+    throw new LeemonsError(ctx, { message: `The key must begin with ${calledFrom}` });
 }
 
-function validateSectionPrefix(key, calledFrom) {
-  if (!key.startsWith(calledFrom)) throw new Error(`The section must begin with ${calledFrom}`);
+function validateSectionPrefix({ key, calledFrom, ctx }) {
+  if (!key.startsWith(calledFrom))
+    throw new LeemonsError(ctx, { message: `The section must begin with ${calledFrom}` });
 }
 
 module.exports = {
