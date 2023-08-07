@@ -14,9 +14,6 @@ const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { getServiceModels } = require('../models');
 const { addMany } = require('../core/actions');
 const { defaultActions, defaultPermissions, menuItems } = require('../config/constants');
-const {
-  createInitialProfiles,
-} = require('../core/profiles/createInitialProfiles/createInitialProfiles');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -65,11 +62,6 @@ module.exports = {
         ctx,
       });
       ctx.tx.emit('init-submenu');
-    },
-    'users.change-platform-locale': async (ctx) => {
-      await createInitialProfiles({ ctx });
-      // TODO migration: Creemos que es necesario mandar este evento para recibir en academic portfolio cuando se crean los perfiles y hacer funcionalidad allí
-      //! ctx.tx.emit('create-initial-profiles');
     },
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({

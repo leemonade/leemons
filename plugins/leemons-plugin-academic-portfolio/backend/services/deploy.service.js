@@ -47,18 +47,11 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // TODO migration: ESTA PARTE DEL CÓDIGO CREEMOS QUE NO DEBERÍA LANZARSE AL INICIAR EL DEPLOY SINO CUANDO SE RECIBIERA UN DETERMINADO EVENTO
-      //! Ya que es necesario tener unos perfiles (estudiante y profesor) que solo se generan el el proceso de creación del superAdmin desde frontend en la instanción
-
-      // ! depende de users.permissions.addCustomPermissionToUserAgentx
-
-      /* LO COMENTAMOS PARA PODER SEGUIR
-        const {
-          syncProgramProfilePermissionsIfNeed,
-          // eslint-disable-next-line global-require
-        } = require('../core/classes/__update__/syncProgramProfilePermissionsIfNeed');
-        await syncProgramProfilePermissionsIfNeed({ ctx });
-      */
+      const {
+        syncProgramProfilePermissionsIfNeed,
+        // eslint-disable-next-line global-require
+      } = require('../core/classes/__update__/syncProgramProfilePermissionsIfNeed');
+      await syncProgramProfilePermissionsIfNeed({ ctx });
 
       // Register widget zone
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
@@ -92,18 +85,6 @@ module.exports = () => ({
         ctx,
       });
     },
-
-    // TODO migration: Este es el evento que debería lanzar users cuando crea los perfiles y entonces sí poder hacer syncProgramProfilePermissionsIfNeeded
-    /*
-    'users.create-initial-profiles': async (ctx) => {
-      const {
-        syncProgramProfilePermissionsIfNeed,
-        // eslint-disable-next-line global-require
-      } = require('../core/classes/__update__/syncProgramProfilePermissionsIfNeed');
-      // ! depende de users.permissions.addCustomPermissionToUserAgentx
-      await syncProgramProfilePermissionsIfNeed({ ctx });
-    },
-    */
   },
   created() {
     mongoose.connect(process.env.MONGO_URI);

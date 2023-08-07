@@ -7,7 +7,7 @@ function process({ classItems, key, classesById, profiles, ctx }) {
       ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
         userAgentId: item[key],
         data: {
-          permissionName: `plugins.academic-portfolio.program-profile.inside.${
+          permissionName: `academic-portfolio.program-profile.inside.${
             classesById[item.class].program
           }.${profiles[key]}`,
           actionNames: ['view'],
@@ -18,22 +18,32 @@ function process({ classItems, key, classesById, profiles, ctx }) {
 }
 
 async function syncProgramProfilePermissionsIfNeed({ ctx }) {
-  const hasKey = await ctx.tx.db.Configs.findOne({
-    key: '__syncProgramProfilePermissionsIfNeed2__',
-  }).lean();
-  if (!hasKey) {
-    console.log('---------- syncProgramProfilePermissionsIfNeed');
+  const isInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
+    pluginName: 'academic-portfolio',
+  });
 
-    const classes = await ctx.tx.db.Class.find({}).lean();
-    const classStudents = await ctx.tx.db.ClassStudent.find({}).lean();
-    const classTeachers = await ctx.tx.db.ClassTeacher.find({}).lean();
+  if (isInstalled) {
+    const hasKey = await ctx.tx.db.Configs.findOne({
+      key: '__syncProgramProfilePermissionsIfNeed2__',
+    }).lean();
+    if (!hasKey) {
+      console.log('---------- syncProgramProfilePermissionsIfNeed');
 
-    const profiles = await getProfiles({ ctx });
-    const classesById = _.keyBy(classes, 'id');
+      const classes = await ctx.tx.db.Class.find({}).lean();
+      const classStudents = await ctx.tx.db.ClassStudent.find({}).lean();
+      const classTeachers = await ctx.tx.db.ClassTeacher.find({}).lean();
+      const profiles = await getProfiles({ ctx });
+      const classesById = _.keyBy(classes, 'id');
 
-    await process({ classItems: classStudents, key: 'student', classesById, profiles, ctx });
-    await process({ classItems: classTeachers, key: 'teacher', classesById, profiles, ctx });
+      await process({ classItems: classStudents, key: 'student', classesById, profiles, ctx });
+      await process({ classItems: classTeachers, key: 'teacher', classesById, profiles, ctx });
 
+      await ctx.tx.db.Configs.create({
+        key: '__syncProgramProfilePermissionsIfNeed2__',
+        value: 'true',
+      });
+    }
+  } else {
     await ctx.tx.db.Configs.create({
       key: '__syncProgramProfilePermissionsIfNeed2__',
       value: 'true',
