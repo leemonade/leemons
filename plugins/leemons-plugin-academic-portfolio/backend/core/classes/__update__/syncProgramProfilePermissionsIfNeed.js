@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getProfiles } = require('../../settings');
+const { getProfiles } = require('../../settings/getProfiles');
 
 function process({ classItems, key, classesById, profiles, ctx }) {
   return Promise.allSettled(
@@ -27,6 +27,7 @@ async function syncProgramProfilePermissionsIfNeed({ ctx }) {
     const classes = await ctx.tx.db.Class.find({}).lean();
     const classStudents = await ctx.tx.db.ClassStudent.find({}).lean();
     const classTeachers = await ctx.tx.db.ClassTeacher.find({}).lean();
+
     const profiles = await getProfiles({ ctx });
     const classesById = _.keyBy(classes, 'id');
 
