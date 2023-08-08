@@ -1,28 +1,31 @@
-async function remove(id, { transacting }) {
+const { remove: removeCalendar } = require('../../calendar/remove');
+
+async function remove({ id, ctx }) {
   // eslint-disable-next-line global-require
-  const { table } = require('../../tables');
-  const programCalendar = await table.programCalendar.findOne(
-    {
-      program: id,
-    },
-    { transacting }
-  );
+  const programCalendar = await ctx.tx.db.ProgramCalendar.findOne({
+    program: id,
+  }).lean();
 
   if (programCalendar) {
     await Promise.all([
-      leemons.plugin.services.calendar.remove(programCalendar.calendar, { transacting }),
-      table.programCalendar.remove({ id: programCalendar.id }, { transacting }),
+      removeCalendar({ id: programCalendar.calendar, ctx }),
+      ctx.tx.db.ProgramCalendar.removeOne({ id: programCalendar.id }),
     ]);
   }
 }
 
-async function onAcademicPortfolioRemovePrograms(data, { programs, transacting }) {
+async function onAcademicPortfolioRemovePrograms({
+  // data // unused old param,
+  programs,
+  ctx,
+}) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      await Promise.all(programs.map(({ id }) => remove(id, { transacting })));
+      await Promise.all(programs.map(({ id }) => remove({ id, ctx })));
       resolve();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   });

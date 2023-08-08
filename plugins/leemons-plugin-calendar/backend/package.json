@@ -39,7 +39,8 @@
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "leemons-widgets": "1.0.0",
-    "moleculer": "^0.14.26"
+    "moleculer": "^0.14.26",
+    "randomcolor": "^0.6.2"
   },
   "engines": {
     "node": ">= 16.x.x"

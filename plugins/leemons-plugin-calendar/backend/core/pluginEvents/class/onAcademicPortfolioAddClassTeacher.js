@@ -1,34 +1,44 @@
-function onAcademicPortfolioAddClassTeacher(data, { class: classId, teacher, type, transacting }) {
+const {
+  unGrantAccessUserAgentToCalendar,
+} = require('../../calendar/unGrantAccessUserAgentToCalendar');
+
+function onAcademicPortfolioAddClassTeacher({
+  // data // unused old param
+  class: classId,
+  teacher,
+  type,
+  ctx,
+}) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      const { table } = require('../../tables');
       // console.log('Vamos ha añadir profesor a calendario clase');
-      const promises = [table.classCalendar.findOne({ class: classId }, { transacting })];
+      const promises = [ctx.tx.db.ClassCalendar.findOne({ class: classId }).lean()];
 
       promises.push(
-        leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(
-          leemons.plugin.prefixPN(`class.${classId}`),
-          teacher,
-          type === 'main-teacher' ? 'owner' : 'view',
-          { transacting }
-        )
+        unGrantAccessUserAgentToCalendar({
+          key: ctx.prefixPN(`class.${classId}`),
+          userAgentId: teacher,
+          actionName: type === 'main-teacher' ? 'owner' : 'view',
+          ctx,
+        })
       );
 
       const [classCalendar] = await Promise.all(promises);
 
       try {
-        await leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(
-          leemons.plugin.prefixPN(`program.${classCalendar.program}`),
-          teacher,
-          'view',
-          { transacting }
-        );
+        await unGrantAccessUserAgentToCalendar({
+          key: leemons.plugin.prefixPN(`program.${classCalendar.program}`),
+          userAgentId: teacher,
+          actionName: 'view',
+          ctx,
+        });
       } catch (e) {
         // console.error(e);
       }
       resolve();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   });

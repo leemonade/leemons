@@ -1,66 +1,77 @@
 const _ = require('lodash');
 
-async function removeStudentFromProgramIfNeed(program, userAgentId, { transacting }) {
-  const programService = leemons.getPlugin('academic-portfolio').services.programs;
-  const insideProgram = await programService.isUserInsideProgram(
-    { userAgents: [{ id: userAgentId }] },
-    program,
-    {
-      transacting,
-    }
-  );
+const unGrantAccessUserAgentToCalendar = require('../../calendar/unGrantAccessUserAgentToCalendar');
+
+async function removeStudentFromProgramIfNeed({ program, userAgentId, ctx }) {
+  const insideProgram = ctx.tx.call('academic-portfolio.programs.isUserInsideProgram', {
+    userSession: { userAgents: [{ id: userAgentId }] },
+    programId: program,
+  });
   if (!insideProgram) {
-    await leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
-      leemons.plugin.prefixPN(`program.${program}`),
+    await unGrantAccessUserAgentToCalendar({
+      key: ctx.prefixPN(`program.${program}`),
       userAgentId,
-      'view',
-      { transacting }
-    );
+      actionName: 'view',
+      ctx,
+    });
   }
 }
 
-async function remove(classe, { transacting }) {
+async function remove({ classe, ctx }) {
   // eslint-disable-next-line global-require
-  const { table } = require('../../tables');
-  const classCalendar = await table.classCalendar.findOne(
-    {
-      class: classe.id,
-    },
-    { transacting }
-  );
+  const classCalendar = await ctx.tx.db.ClassCalendar.findOne({
+    class: classe.id,
+  }).lean();
 
   if (classCalendar) {
     const promises = [];
     _.forEach(classCalendar.students, (student) => {
       promises.push(
-        removeStudentFromProgramIfNeed(classCalendar.program, student, { transacting })
+        removeStudentFromProgramIfNeed({
+          program: classCalendar.program,
+          userAgentId: student,
+          ctx,
+        })
       );
     });
     _.forEach(classCalendar.parentStudents, (student) => {
       promises.push(
-        removeStudentFromProgramIfNeed(classCalendar.program, student, { transacting })
+        removeStudentFromProgramIfNeed({
+          program: classCalendar.program,
+          userAgentId: student,
+          ctx,
+        })
       );
     });
     _.forEach(classCalendar.teachers, ({ teacher }) => {
       promises.push(
-        removeStudentFromProgramIfNeed(classCalendar.program, teacher, { transacting })
+        removeStudentFromProgramIfNeed({
+          program: classCalendar.program,
+          userAgentId: teacher,
+          ctx,
+        })
       );
     });
     await Promise.all([
-      leemons.plugin.services.calendar.remove(classCalendar.calendar, { transacting }),
-      table.classCalendar.delete({ id: classCalendar }, { transacting }),
+      remove({ classe: classCalendar.calendar, ctx }),
+      ctx.tx.db.ClassCalendar.deleteOne({ id: classCalendar }),
       ...promises,
     ]);
   }
 }
 
-async function onAcademicPortfolioRemoveClasses(data, { classes, transacting }) {
+async function onAcademicPortfolioRemoveClasses({
+  // data, // unused old param
+  classes,
+  ctx,
+}) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      await Promise.all(classes.map((classe) => remove(classe, { transacting })));
+      await Promise.all(classes.map((classe) => remove({ classe, ctx })));
       resolve();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   });

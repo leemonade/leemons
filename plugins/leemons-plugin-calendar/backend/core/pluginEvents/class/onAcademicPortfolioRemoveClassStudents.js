@@ -1,37 +1,42 @@
 const _ = require('lodash');
 
-async function remove(classCalendar, student, { transacting }) {
-  const programService = leemons.getPlugin('academic-portfolio').services.programs;
+const {
+  unGrantAccessUserAgentToCalendar,
+} = require('../../calendar/unGrantAccessUserAgentToCalendar');
+
+async function remove({ classCalendar, student, ctx }) {
   const [insideProgram] = await Promise.all([
-    programService.isUserInsideProgram({ userAgents: [{ id: student }] }, classCalendar.program, {
-      transacting,
+    ctx.tx.call('academic-portfolio.programs.isUserInsideProgram', {
+      programId: classCalendar.program,
+      userSession: { userAgents: [{ id: student }] },
     }),
-    leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
-      leemons.plugin.prefixPN(`class.${classCalendar.class}`),
-      student,
-      'view',
-      { transacting }
-    ),
+    unGrantAccessUserAgentToCalendar({
+      key: ctx.prefixPN(`class.${classCalendar.class}`),
+      userAgentId: student,
+      actionName: 'view',
+      ctx,
+    }),
   ]);
   if (!insideProgram) {
-    await leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
-      leemons.plugin.prefixPN(`program.${classCalendar.program}`),
-      student,
-      'view',
-      { transacting }
-    );
+    await unGrantAccessUserAgentToCalendar({
+      key: ctx.prefixPN(`program.${classCalendar.program}`),
+      userAgentId: student,
+      actionName: 'view',
+      ctx,
+    });
   }
 }
 
-function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents, transacting }) {
+function onAcademicPortfolioRemoveClassStudents({
+  // data // unused old param
+  classIds,
+  classStudents,
+  ctx,
+}) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      const { table } = require('../../tables');
-      const classCalendars = await table.classCalendar.find(
-        { class_$in: classIds },
-        { transacting }
-      );
+      const classCalendars = await ctx.tx.db.ClassCalendar.find({ class: classIds }).lean();
 
       const classCalendarsByClass = _.keyBy(classCalendars, 'class');
 
@@ -39,13 +44,14 @@ function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents,
       _.forEach(classIds, (classId) => {
         _.forEach(classStudents, ({ student }) => {
           if (classCalendarsByClass[classId]) {
-            promises.push(remove(classCalendarsByClass[classId], student, { transacting }));
+            promises.push(remove({ classCalendar: classCalendarsByClass[classId], student, ctx }));
           }
         });
       });
       await Promise.all(promises);
       resolve();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   });

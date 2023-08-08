@@ -1,4 +1,3 @@
-const { table } = require('../tables');
 const { getPermissionConfig } = require('./getPermissionConfig');
 
 /**
@@ -9,42 +8,27 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} _transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(id, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const permissionConfig = getPermissionConfig(id);
-      const permissionQuery = {
-        permissionName: permissionConfig.permissionName,
-      };
-      const userPlugin = leemons.getPlugin('users');
+async function remove({ id, ctx }) {
+  const permissionConfig = getPermissionConfig(id);
+  const permissionQuery = {
+    permissionName: permissionConfig.permissionName,
+  };
 
-      await Promise.all([
-        // ES: Borramos a todos los agentes el permiso del evento ya que este dejara de existir
-        await userPlugin.services.permissions.removeCustomPermissionForAllUserAgents(
-          permissionQuery,
-          {
-            transacting,
-          }
-        ),
-        // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
-        await userPlugin.services.permissions.removeItems(
-          {
-            type: permissionConfig.type,
-            item: id,
-          },
-          {
-            transacting,
-          }
-        ),
-      ]);
+  await Promise.all([
+    // ES: Borramos a todos los agentes el permiso del evento ya que este dejara de existir
+    await ctx.tx.call('users.permissions.removeCustomPermissionForAllUserAgents', {
+      data: permissionQuery,
+    }),
+    // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
 
-      await table.eventCalendar.deleteMany({ event: id }, { transacting });
+    await ctx.tx.call('users.permissions.removeItems', {
+      query: { type: permissionConfig.type, item: id },
+    }),
+  ]);
 
-      return table.events.delete({ id }, { transacting });
-    },
-    table.events,
-    _transacting
-  );
+  await ctx.tx.db.EventCalendar.deleteMany({ event: id });
+
+  return ctx.tx.db.Events.deleteOne({ id });
 }
 
 module.exports = { remove };
