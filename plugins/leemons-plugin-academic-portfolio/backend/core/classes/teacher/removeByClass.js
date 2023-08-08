@@ -4,8 +4,6 @@ const { removeCustomPermissions } = require('./removeCustomPermissions');
 const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeByClass({ classIds, soft, ctx }) {
-  // const roomService = leemons.getPlugin('comunica').services.room;
-
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
 
   const programs = await Promise.all(
@@ -18,10 +16,9 @@ async function removeByClass({ classIds, soft, ctx }) {
   await Promise.all(
     _.map(classeIds, (classId) => {
       const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
-      // ! Verificar que userAgents coincide con la función cuando comunica esté migrado.
       return ctx.tx.call('comunica.room.removeUserAgents', {
         key: ctx.prefixPN(`room.class.${classId}`),
-        userAgents: userIds,
+        userAgents: userIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
       });
     })
   );
@@ -70,7 +67,6 @@ async function removeByClass({ classIds, soft, ctx }) {
     )
   );
 
-  // const { removeUserAgentContacts } = leemons.getPlugin('users').services.users;
   const teacherIds = _.map(classTeachers, 'teacher');
   const promises = [];
   _.forEach(classIds, (classId) => {
