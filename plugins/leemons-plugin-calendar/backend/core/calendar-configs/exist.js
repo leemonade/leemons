@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Check if the calendar key already exists
  * @public
@@ -8,8 +6,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function exist(id, { transacting } = {}) {
-  const count = await table.calendarConfigs.count({ id }, { transacting });
+async function exist({ id, ctx } = {}) {
+  const count = await ctx.tx.db.CalendarConfigs.count({ id });
   return !!count;
 }
 

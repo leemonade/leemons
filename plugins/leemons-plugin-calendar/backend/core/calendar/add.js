@@ -1,5 +1,3 @@
-const _ = require('lodash');
-const { table } = require('../tables');
 const {
   validateKeyPrefix,
   validateExistCalendarKey,
@@ -17,36 +15,34 @@ const { validateAddCalendar } = require('../../validations/forms');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(key, config, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
-  validateSectionPrefix(config.section, this.calledFrom);
+async function add({ key, config, ctx }) {
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  validateSectionPrefix({ key: config.section, calledFrom: ctx.callerPlugin, ctx });
   validateAddCalendar(config);
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateExistCalendarKey(key, { transacting });
+  await validateExistCalendarKey({ key, ctx });
 
-      const permissionConfig = getPermissionConfig(key);
-      const calendar = await table.calendars.create(
-        {
-          key,
-          ...config,
-          metadata: JSON.stringify(config.metadata),
-        },
-        { transacting }
-      );
-      await leemons
-        .getPlugin('users')
-        .services.permissions.addItem(calendar.id, permissionConfig.type, permissionConfig.all, {
-          isCustomPermission: true,
-          transacting,
-        });
+  const permissionConfig = getPermissionConfig(key);
+  const calendar = await ctx.tx.db.Calendars.create({
+    key,
+    ...config,
+    metadata: JSON.stringify(config.metadata),
+  });
+  // await leemons
+  //   .getPlugin('users')
+  //   .services.permissions.addItem(calendar.id, permissionConfig.type, permissionConfig.all, {
+  //     isCustomPermission: true,
+  //     transacting,
+  //   });
 
-      return calendar;
-    },
-    table.calendars,
-    _transacting
-  );
+  await ctx.tx.call('users.permissions.addItem', {
+    item: calendar.id,
+    type: permissionConfig.type,
+    data: permissionConfig.all,
+    isCurrentPermission: true,
+  });
+
+  return calendar;
 }
 
 module.exports = { add };
