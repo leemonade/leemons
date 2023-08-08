@@ -1,40 +1,34 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { validateAddClassTeachers } = require('../../validations/forms');
 const { classByIds } = require('./classByIds');
 const { add: addTeacher } = require('./teacher/add');
 
-async function addClassTeachers(data, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateAddClassTeachers(data, { transacting });
+async function addClassTeachers({ data, ctx }) {
+  await validateAddClassTeachers(data);
 
-      const getClass = async () => (await classByIds(data.class, { transacting }))[0];
+  const getClass = async () => (await classByIds({ ids: data.class, ctx }))[0];
 
-      const _class = await getClass();
+  const _class = await getClass();
 
-      const hasMainTeacher = !!_.find(_class.teachers, { type: 'main-teacher' });
-      const newHasMainTeacher = !!_.find(data.teachers, { type: 'main-teacher' });
+  const hasMainTeacher = !!_.find(_class.teachers, { type: 'main-teacher' });
+  const newHasMainTeacher = !!_.find(data.teachers, { type: 'main-teacher' });
 
-      if (hasMainTeacher && newHasMainTeacher) {
-        throw new Error('The class already has a lead teacher');
-      }
+  if (hasMainTeacher && newHasMainTeacher) {
+    throw new LeemonsError(ctx, { message: 'The class already has a lead teacher' });
+  }
 
-      const classTeacherIds = _.map(_class.teachers, 'teacher');
+  const classTeacherIds = _.map(_class.teachers, 'teacher');
 
-      const promises = [];
-      _.forEach(data.teachers, ({ teacher, type }) => {
-        if (classTeacherIds.indexOf(teacher) < 0)
-          promises.push(addTeacher(data.class, teacher, type, { transacting }));
-      });
+  const promises = [];
+  _.forEach(data.teachers, ({ teacher, type }) => {
+    if (classTeacherIds.indexOf(teacher) < 0)
+      promises.push(addTeacher({ class: data.class, teacher, type, ctx }));
+  });
 
-      await Promise.all(promises);
+  await Promise.all(promises);
 
-      return getClass();
-    },
-    table.groups,
-    _transacting
-  );
+  return getClass();
 }
 
 module.exports = { addClassTeachers };

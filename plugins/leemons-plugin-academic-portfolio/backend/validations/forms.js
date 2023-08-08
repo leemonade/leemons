@@ -19,6 +19,7 @@ const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCo
 
 const teacherTypes = ['main-teacher', 'associate-teacher'];
 
+// TODO @askJaime: totalHours está duplicado en este schema
 const addProgramSchema = {
   type: 'object',
   properties: {
@@ -161,7 +162,7 @@ function validateAddProgram(data) {
     }
   }
 }
-
+// TODO @askJaime: totalHours está duplicado en este schema
 const updateProgramSchema = {
   type: 'object',
   properties: {
