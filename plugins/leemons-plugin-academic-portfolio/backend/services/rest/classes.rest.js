@@ -13,6 +13,7 @@ const { updateClass } = require('../../core/classes/updateClass');
 const { updateClassMany } = require('../../core/classes/updateClassMany');
 const { addInstanceClass } = require('../../core/classes/addInstanceClass');
 const { listClasses } = require('../../core/classes/listClasses');
+const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -104,6 +105,40 @@ module.exports = {
         return { status: 200, data };
       }
       throw validator.error;
+    },
+    listSubjectClassesRest: {
+      rest: {
+        path: '/subjects/class',
+        method: 'GET',
+      },
+      async handler(ctx) {
+        const validator = new LeemonsValidator({
+          type: 'object',
+          properties: {
+            page: { type: ['number', 'string'] },
+            size: { type: ['number', 'string'] },
+            subject: { type: 'string', format: 'uuid' },
+          },
+          required: ['page', 'size', 'subject'],
+          additionalProperties: false,
+        });
+
+        if (validator.validate(ctx.params.query)) {
+          const { page, size, subject } = ctx.params.query;
+
+          const data = await listSubjectClasses({
+            page: parseInt(page, 10),
+            size: parseInt(size, 10),
+            subject,
+            query: {
+              userSession: ctx.tx.meta.userSession, // TODO ask: Esto estaba así ctx.state.userSession, correcto?
+            },
+            ctx,
+          });
+          return { status: 200, data };
+        }
+        throw validator.error;
+      },
     },
   },
 };
