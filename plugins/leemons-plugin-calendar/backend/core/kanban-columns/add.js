@@ -1,7 +1,4 @@
-const { table } = require('../tables');
-
 const { validateAddKanbanColumn } = require('../../validations/forms');
-const { translations } = require('../../translations');
 
 /**
  * Add kanban column
@@ -12,26 +9,28 @@ const { translations } = require('../../translations');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(data, { transacting: _transacting } = {}) {
+async function add({ data, ctx }) {
   validateAddKanbanColumn(data);
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const locales = translations();
-      const { name, ..._data } = data;
-      const column = await table.kanbanColumns.create(_data, { transacting });
-      await locales.common.addManyByKey(
-        leemons.plugin.prefixPN(`kanban.columns.${column.id}`),
-        name,
-        {
-          transacting,
-        }
-      );
-      return column;
-    },
-    table.calendars,
-    _transacting
-  );
+  // const locales = translations();
+  //   transacting,
+  // });
+  const { name, ..._data } = data;
+  const column = await ctx.tx.db.KanbanColumns.create(_data);
+  // await locales.common.addManyByKey(
+  //   leemons.plugin.prefixPN(`kanban.columns.${column.id}`),
+  //   name,
+  //   {
+  //     transacting,
+  //   }
+  // );
+  await ctx.tx.call('multilanguage.common.addManyByKey', {
+    key: ctx.prefixPN(`kanban.columns.${column.id}`),
+    data: name,
+    ctx,
+  });
+
+  return column;
 }
 
 module.exports = { add };

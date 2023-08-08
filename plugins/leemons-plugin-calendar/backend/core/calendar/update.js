@@ -1,12 +1,8 @@
-const _ = require('lodash');
-const { table } = require('../tables');
 const {
   validateKeyPrefix,
-  validateExistCalendarKey,
   validateSectionPrefix,
   validateNotExistCalendarKey,
 } = require('../../validations/exists');
-const { getPermissionConfig } = require('./getPermissionConfig');
 const { validateAddCalendar } = require('../../validations/forms');
 
 /**
@@ -18,25 +14,21 @@ const { validateAddCalendar } = require('../../validations/forms');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(key, config, { transacting: _transacting } = {}) {
+async function update({ key, config, ctx }) {
   validateKeyPrefix(key, this.calledFrom);
   validateSectionPrefix(config.section, this.calledFrom);
   validateAddCalendar(config);
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistCalendarKey(key, { transacting });
-      return table.calendars.update(
-        { key },
-        {
-          ...config,
-          metadata: JSON.stringify(config.metadata),
-        },
-        { transacting }
-      );
+  await validateNotExistCalendarKey({ key, ctx });
+  return ctx.tx.db.Calendars.findOneAndUpdate(
+    { key },
+    {
+      ...config,
+      metadata: JSON.stringify(config.metadata),
     },
-    table.calendars,
-    _transacting
+    {
+      new: true,
+    }
   );
 }
 

@@ -3,7 +3,7 @@ const randomColor = require('randomcolor');
 const { add } = require('../../calendar/add');
 
 function onAcademicPortfolioAddClass({
-  data,
+  // data, //old unused param
   class: {
     id,
     color,
@@ -16,7 +16,6 @@ function onAcademicPortfolioAddClass({
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      // eslint-disable-next-line global-require,no-shadow
       const config = {
         name: `${name}${
           groups?.abbreviation && groups.abbreviation !== '-auto-'
@@ -38,7 +37,7 @@ function onAcademicPortfolioAddClass({
         ctx,
       });
 
-      await ctx.tx.ClassCalendar.create({
+      await ctx.tx.db.ClassCalendar.create({
         class: id,
         program,
         calendar: calendar.id,

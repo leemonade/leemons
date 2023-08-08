@@ -1,10 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const {
-  validateNotExistCalendarKey,
-  validateKeyPrefix,
-  validateNotExistEvent,
-} = require('../../validations/exists');
+const { validateNotExistCalendarKey, validateKeyPrefix } = require('../../validations/exists');
 const { getPermissionConfig } = require('./getPermissionConfig');
 
 /**
@@ -17,14 +12,9 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function unGrantAccessUserAgentToCalendar(
-  key,
-  userAgentId,
-  actionName,
-  { transacting } = {}
-) {
-  validateKeyPrefix(key, this.calledFrom);
-  await validateNotExistCalendarKey(key, { transacting });
+async function unGrantAccessUserAgentToCalendar({ key, userAgentId, actionName, ctx }) {
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistCalendarKey({ key, ctx });
 
   const userAgentIds = _.isArray(userAgentId) ? userAgentId : [userAgentId];
   const actionNames = _.isArray(actionName) ? actionName : [actionName];
@@ -38,9 +28,11 @@ async function unGrantAccessUserAgentToCalendar(
     query.actionNames = actionNames;
   }
 
-  const { warnings } = await leemons
-    .getPlugin('users')
-    .services.users.removeCustomUserAgentPermission(userAgentIds, query, { transacting });
+  const { warnings } = await ctx.tx.call('users.users.removeCustomUserAgentPermission', {
+    userAgentId: userAgentIds,
+    data: query,
+  });
+
   if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
   return true;
 }

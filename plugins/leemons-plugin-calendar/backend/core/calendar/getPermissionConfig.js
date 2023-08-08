@@ -6,9 +6,9 @@
  * @return {{type: string, permissionName: string, all: AddItemPermission}}
  * */
 function getPermissionConfig(key) {
-  const permissionName = `plugins.calendar.calendar.${key}`;
+  const permissionName = `calendar.calendar.${key}`;
   return {
-    type: 'plugins.calendar.calendar',
+    type: 'calendar.calendar',
     permissionName,
     all: {
       permissionName,

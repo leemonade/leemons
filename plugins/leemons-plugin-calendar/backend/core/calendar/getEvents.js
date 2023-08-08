@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistCalendar } = require('../../validations/exists');
 
 /**
@@ -11,13 +10,13 @@ const { validateNotExistCalendar } = require('../../validations/exists');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getEvents(calendar, { getPrivates = true, transacting } = {}) {
-  await validateNotExistCalendar(calendar);
-  const eventCalendars = await table.eventCalendar.find({ calendar }, { transacting });
+async function getEvents({ calendar, getPrivates = true, ctx }) {
+  await validateNotExistCalendar({ id: calendar, ctx });
+  const eventCalendars = await ctx.tx.db.EventCalendar.find({ calendar }).lean();
 
-  const query = { id_$in: _.map(eventCalendars, 'event') };
+  const query = { id: _.map(eventCalendars, 'event') };
   if (!getPrivates) query.isPrivate = false;
-  const events = await table.events.find(query, { transacting });
+  const events = await ctx.tx.db.Events.find(query).lean();
   return _.map(events, (event) => ({
     ...event,
     calendar,
@@ -25,15 +24,12 @@ async function getEvents(calendar, { getPrivates = true, transacting } = {}) {
   }));
 }
 
-async function getEventsMultipleCalendars(_calendars, { getPrivates = true, transacting } = {}) {
+async function getEventsMultipleCalendars({ calendars: _calendars, getPrivates = true, ctx }) {
   const calendars = _.isArray(_calendars) ? _calendars : [_calendars];
-  const eventCalendars = await table.eventCalendar.find(
-    { calendar_$in: calendars },
-    { transacting }
-  );
-  const query = { id_$in: _.uniq(_.map(eventCalendars, 'event')) };
+  const eventCalendars = await ctx.tx.db.EventCalendar.find({ calendar: calendars }).lean();
+  const query = { id: _.uniq(_.map(eventCalendars, 'event')) };
   if (!getPrivates) query.isPrivate = false;
-  const events = await table.events.find(query, { transacting });
+  const events = await ctx.tx.db.Events.find(query).lean();
   const eventsById = _.keyBy(events, 'id');
   const eventCalendarsByCalendar = _.groupBy(eventCalendars, 'calendar');
 

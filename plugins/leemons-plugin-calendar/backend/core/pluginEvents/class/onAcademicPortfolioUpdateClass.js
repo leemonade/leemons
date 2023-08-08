@@ -1,17 +1,17 @@
 const randomColor = require('randomcolor');
 
-function onAcademicPortfolioUpdateClass(
-  data,
-  {
-    class: {
-      id,
-      color,
-      groups,
-      subject: { name, icon, internalId },
-    },
-    transacting,
-  }
-) {
+const { update } = require('../../calendar/update');
+
+function onAcademicPortfolioUpdateClass({
+  // data, // old unused param
+  class: {
+    id,
+    color,
+    groups,
+    subject: { name, icon, internalId },
+  },
+  ctx,
+}) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     try {
@@ -21,23 +21,20 @@ function onAcademicPortfolioUpdateClass(
             ? ` (${groups.abbreviation})`
             : ''
         }`,
-        section: leemons.plugin.prefixPN('classes'),
+        section: ctx.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
         metadata: { internalId },
       };
 
       if (icon) {
-        config.icon = await leemons.getPlugin('leebrary').services.assets.getCoverUrl(icon.id);
+        config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', icon.id);
       }
 
-      await leemons.plugin.services.calendar.update(
-        leemons.plugin.prefixPN(`class.${id}`),
-        config,
-        { transacting }
-      );
+      await update({ key: ctx.prefixPN(`class.${id}`), config, ctx });
 
       resolve();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
       reject(e);
     }

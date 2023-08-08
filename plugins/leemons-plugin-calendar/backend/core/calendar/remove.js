@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistCalendar } = require('../../validations/exists');
 const { remove: removeEvent } = require('../events/remove');
 const { getPermissionConfig } = require('./getPermissionConfig');
@@ -13,52 +12,35 @@ const { getEvents } = require('./getEvents');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(id, { _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistCalendar(id, { transacting });
+async function remove({ id, ctx }) {
+  await validateNotExistCalendar({ id, ctx });
 
-      const userPlugin = leemons.getPlugin('users');
+  // -- Calendar events
+  const events = await getEvents({ calendar: id, ctx });
+  await Promise.all(_.map(events, (event) => removeEvent({ id: event.id, ctx })));
 
-      // -- Calendar events
-      const events = await getEvents(id, { transacting });
-      await Promise.all(_.map(events, (event) => removeEvent(event.id, { transacting })));
+  // -- Calendar
+  const calendar = await ctx.tx.db.Calendars.findOne({ id }).select(['id', 'key']).lean();
+  const permissionConfig = getPermissionConfig(calendar.key);
 
-      // -- Calendar
-      const calendar = await table.calendars.findOne(
-        { id },
-        { columns: ['id', 'key'], transacting }
-      );
-      const permissionConfig = getPermissionConfig(calendar.key);
+  await Promise.all([
+    // ES: Borramos a todos los agentes el permiso del calendario ya que este dejara de existir
+    await ctx.tx.call('users.permissions.removeCustomPermissionForAllUserAgents', {
+      data: { permissionName: permissionConfig.permissionName },
+    }),
+    // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
+    await ctx.tx.call('users.permissions.removeItems', {
+      query: {
+        type: permissionConfig.type,
+        item: id,
+      },
+    }),
+  ]);
 
-      await Promise.all([
-        // ES: Borramos a todos los agentes el permiso del calendario ya que este dejara de existir
-        await userPlugin.services.permissions.removeCustomPermissionForAllUserAgents(
-          { permissionName: permissionConfig.permissionName },
-          {
-            transacting,
-          }
-        ),
-        // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
-        await userPlugin.services.permissions.removeItems(
-          {
-            type: permissionConfig.type,
-            item: id,
-          },
-          {
-            transacting,
-          }
-        ),
-      ]);
+  await ctx.tx.db.ClassCalendar.deleteMany({ calendar: id });
+  await ctx.tx.db.Calendars.deleteOne({ id });
 
-      await table.classCalendar.deleteMany({ calendar: id }, { transacting });
-      await table.calendars.delete({ id }, { transacting });
-
-      return true;
-    },
-    table.calendars,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { remove };

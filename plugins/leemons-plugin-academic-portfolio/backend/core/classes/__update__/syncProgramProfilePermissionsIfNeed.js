@@ -18,6 +18,9 @@ function process({ classItems, key, classesById, profiles, ctx }) {
 }
 
 async function syncProgramProfilePermissionsIfNeed({ ctx }) {
+  // TODO Migration: Hemos usado la llamada a deploy manager para ver si está instalado o no
+  // ? Está eso bien?
+  // * No entiendo muy bien la lógica
   const isInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'academic-portfolio',
   });

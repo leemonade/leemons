@@ -23,15 +23,16 @@ async function remove(classCalendar, teacher, { transacting }) {
   }
 }
 
-function onAcademicPortfolioRemoveClassTeachers(data, { classIds, classTeachers, transacting }) {
+function onAcademicPortfolioRemoveClassTeachers({
+  // data // unused old param
+  classIds,
+  classTeachers,
+  ctx,
+}) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      const { table } = require('../../tables');
-      const classCalendars = await table.classCalendar.find(
-        { class_$in: classIds },
-        { transacting }
-      );
+      const classCalendars = await ctx.tx.db.ClassCalendar.find({ class: classIds }).lean();
 
       const classCalendarsByClass = _.keyBy(classCalendars, 'class');
 

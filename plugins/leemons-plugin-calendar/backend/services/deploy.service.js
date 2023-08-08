@@ -6,13 +6,79 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
+const _ = require('lodash');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { getServiceModels } = require('../models');
-const { permissions, widgets, menuItems } = require('../config/constants');
+const { permissions, widgets, menuItems, kanbanColumns } = require('../config/constants');
+
+const onAcademicPortfolioRemoveClassStudents = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassStudents');
+const onAcademicPortfolioAddClassStudent = require('../core/pluginEvents/class/onAcademicPortfolioAddClassStudent');
+const onAcademicPortfolioRemoveStudentFromClass = require('../core/pluginEvents/class/onAcademicPortfolioRemoveStudentFromClass');
+const onAcademicPortfolioUpdateClass = require('../core/pluginEvents/class/onAcademicPortfolioUpdateClass');
+const onAcademicPortfolioAddClass = require('../core/pluginEvents/class/onAcademicPortfolioAddClass');
+const onAcademicPortfolioRemoveClasses = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClasses');
+const onAcademicPortfolioAddClassTeacher = require('../core/pluginEvents/class/onAcademicPortfolioAddClassTeacher');
+const onAcademicPortfolioRemoveClassTeachers = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassTeachers');
+
+const {
+  onAcademicPortfolioAddProgram,
+} = require('../core/pluginEvents/program/onAcademicPortfolioAddProgram');
+const {
+  onAcademicPortfolioUpdateProgram,
+} = require('../core/pluginEvents/program/onAcademicPortfolioUpdateProgram');
+const {
+  onAcademicPortfolioRemovePrograms,
+} = require('../core/pluginEvents/program/onAcademicPortfolioRemovePrograms');
+
+const addEventTypes = require('../core/event-types/add');
+
+async function addEventType({ ctx }) {
+  // TODO Migration: Hemos usado la llamada a deploy manager para ver si está instalado o no
+  // ? Está eso bien?
+  const isInstalled = ctx.tx.call('deployment-manager.pluginIsInstalled', {
+    pluginName: 'calendar',
+  });
+  if (!isInstalled) {
+    // eslint-disable-next-line global-require
+    const { add: addKanbanColumn } = require('../core/kanban-columns/add');
+
+    await Promise.all(_.map(kanbanColumns, (d) => addKanbanColumn({ data: d, ctx })));
+    ctx.tx.emit('init-kanban-columns');
+
+    await addEventTypes({
+      key: ctx.prefixPN('event'),
+      url: 'event',
+      options: {
+        config: {
+          titleLabel: 'calendar.eventTitleLabel',
+        },
+      },
+      order: 1,
+      ctx,
+    });
+    await addEventTypes({
+      key: ctx.prefixPN('task'),
+      url: 'task',
+      options: {
+        onlyOneDate: true,
+        config: {
+          titleLabel: 'calendar.taskTitleLabel',
+          titlePlaceholder: 'calendar.taskPlaceholder',
+          // fromLabel: 'calendar.fromLabelDeadline',
+          hideAllDay: true,
+          hideRepeat: true,
+        },
+      },
+      order: 2,
+      ctx,
+    });
+  }
+  ctx.tx.emit('init-event-types');
+}
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -53,6 +119,8 @@ module.exports = () => ({
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
+      // Event types
+      await addEventType({ ctx });
     },
     'dashboard.init-widget-zones': async (ctx) => {
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
@@ -67,6 +135,22 @@ module.exports = () => ({
       });
       return null;
     },
+
+    // --- Classes ---
+    'academic-portfolio:after-remove-classes-students': onAcademicPortfolioRemoveClassStudents,
+    'academic-portfolio.after-add-class-student': onAcademicPortfolioAddClassStudent,
+    'academic-portfolio.after-remove-students-from-class':
+      onAcademicPortfolioRemoveStudentFromClass,
+    'academic-portfolio.after-update-class': onAcademicPortfolioUpdateClass,
+    'academic-portfolio.after-add-class': onAcademicPortfolioAddClass,
+    'academic-portfolio.before-remove-classes': onAcademicPortfolioRemoveClasses,
+    'academic-portfolio.after-add-class-teacher': onAcademicPortfolioAddClassTeacher,
+    'academic-portfolio.after-remove-classes-teachers': onAcademicPortfolioRemoveClassTeachers,
+
+    // --- Programs ---
+    'academic-portfolio.after-add-program': onAcademicPortfolioAddProgram,
+    'academic-portfolio.after-update-program': onAcademicPortfolioUpdateProgram,
+    'academic-portfolio.after-remove-programs': onAcademicPortfolioRemovePrograms,
   },
   created() {
     mongoose.connect(process.env.MONGO_URI);
