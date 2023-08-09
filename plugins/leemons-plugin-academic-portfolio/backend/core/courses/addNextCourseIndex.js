@@ -1,15 +1,14 @@
-const { table } = require('../tables');
 const { getNextCourseIndex } = require('./getNextCourseIndex');
 
-async function addNextCourseIndex(program, { index, transacting } = {}) {
+async function addNextCourseIndex({ program, index, ctx }) {
   let goodIndex = index;
   if (!index) {
-    goodIndex = await getNextCourseIndex(program, { transacting });
+    goodIndex = await getNextCourseIndex({ program, ctx });
   }
-  await table.configs.set(
+  await ctx.tx.db.Configs.findOneAndUpdate(
     { key: `program-${program}-course-index` },
     { key: `program-${program}-course-index`, value: goodIndex.toString() },
-    { transacting }
+    { upsert: true }
   );
   return goodIndex;
 }

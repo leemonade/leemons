@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getProgramGroups } = require('../programs/getProgramGroups');
 const { listClasses } = require('../classes/listClasses');
@@ -11,13 +10,13 @@ const { getManagers } = require('../managers/getManagers');
 const { getProgramCycles } = require('../programs/getProgramCycles');
 const { getClassesProgramInfo } = require('../classes/listSessionClasses');
 
-async function getTree(nodeTypes, { program, transacting } = {}) {
+async function getTree({ nodeTypes, program, ctx }) {
   const query = {};
   if (program && !_.isEmpty(program)) {
     query.program = program;
   }
 
-  const programCenter = await table.programCenter.find(query, { transacting });
+  const programCenter = await ctx.tx.db.ProgramCenter.find(query).lean();
   const programIds = _.map(programCenter, 'program');
   const [
     programs,
@@ -31,27 +30,34 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
     { items: _classes },
     cycles,
   ] = await Promise.all([
-    table.programs.find({ id_$in: programIds }, { transacting }),
-    leemons.getPlugin('users').services.centers.list(0, 9999, { transacting }),
-    getProgramCourses(programIds, { transacting }),
-    getProgramGroups(programIds, { transacting }),
-    getProgramSubstages(programIds, { transacting }),
-    getProgramKnowledges(programIds, { transacting }),
-    getProgramSubjects(programIds, { transacting }),
-    getProgramSubjectTypes(programIds, { transacting }),
-    listClasses(0, 99999, undefined, { query: { program_$in: programIds }, transacting }),
-    getProgramCycles(programIds, { transacting }),
+    ctx.tx.db.Programs.find({ id: programIds }).lean(),
+    ctx.tx.call('users.centers.list', {
+      page: 0,
+      size: 9999,
+    }),
+    getProgramCourses({ ids: programIds, ctx }),
+    getProgramGroups({ ids: programIds, ctx }),
+    getProgramSubstages({ ids: programIds, ctx }),
+    getProgramKnowledges({ ids: programIds, ctx }),
+    getProgramSubjects({ ids: programIds, ctx }),
+    getProgramSubjectTypes({ ids: programIds, ctx }),
+    listClasses({
+      page: 0,
+      size: 99999,
+      program: undefined,
+      query: { program: programIds },
+      ctx,
+    }),
+    getProgramCycles({ ids: programIds, ctx }),
   ]);
 
   let classes = _classes;
   if (programIds?.length) {
-    classes = await getClassesProgramInfo(
-      {
-        programs: programIds,
-        classes,
-      },
-      { transacting }
-    );
+    classes = await getClassesProgramInfo({
+      programs: programIds,
+      classes,
+      ctx,
+    });
   }
 
   let managerIds = [];
@@ -64,7 +70,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
   managerIds = managerIds.concat(_.map(subjectTypes, 'id'));
   managerIds = managerIds.concat(_.map(cycles, 'id'));
 
-  const managers = await getManagers(managerIds, { transacting, returnAgents: false });
+  const managers = await getManagers({ relationships: managerIds, returnAgents: false });
   const managersByRelationship = _.groupBy(managers, 'relationship');
 
   function process(items) {
@@ -140,6 +146,7 @@ async function getTree(nodeTypes, { program, transacting } = {}) {
         cycle = cy;
         return false;
       }
+      return true;
     });
     return cycle;
   }
