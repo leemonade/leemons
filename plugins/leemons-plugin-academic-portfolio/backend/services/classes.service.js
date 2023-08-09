@@ -9,20 +9,21 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/classes.rest');
-
-const { classByIds } = require('../core/classes/classByIds');
-const { listSessionClasses } = require('../core/classes/listSessionClasses');
-const { getBasicClassesByProgram } = require('../core/classes/getBasicClassesByProgram');
-const { addClass } = require('../core/classes/addClass');
-const { add: addTeacher } = require('../core/classes/teacher/add');
-const { removeByClass: removeTeachersByClass } = require('../core/classes/teacher/removeByClass');
-const { addClassStudentsMany } = require('../core/classes/addClassStudentsMany');
-const { listClasses } = require('../core/classes/listClasses');
-const { getClassesUnderProgram } = require('../core/classes/getClassesUnderProgram');
-const { getClassesUnderProgramCourse } = require('../core/classes/getClassesUnderProgramCourse');
+const {
+  classByIds,
+  getBasicClassesByProgram,
+  listSessionClasses,
+  addClass,
+  addClassStudentsMany,
+  listClasses,
+  getClassesUnderProgram,
+  getClassesUnderProgramCourse,
+  getTeachersByClass,
+} = require('../core/classes');
 const { getByClassAndUserAgent } = require('../core/classes/student/getByClassAndUserAgent');
 const { getByClass } = require('../core/classes/student/getByClass');
-const { getTeachersByClass } = require('../core/classes/getTeachersByClass');
+const { add: addTeacher } = require('../core/classes/teacher/add');
+const { removeByClass: removeTeachersByClass } = require('../core/classes/teacher/removeByClass');
 
 /** @type {ServiceSchema} */
 module.exports = {
