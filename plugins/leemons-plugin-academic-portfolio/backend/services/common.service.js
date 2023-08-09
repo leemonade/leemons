@@ -10,7 +10,6 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/common.rest');
 const { getTreeNodes } = require('../core/common/getTreeNodes');
-const { adminDashboard } = require('../core/common/adminDashboard');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -29,11 +28,6 @@ module.exports = {
     getTreeNodes: {
       handler(ctx) {
         return getTreeNodes({ ...ctx.params, ctx });
-      },
-    },
-    adminDashboard: {
-      handler(ctx) {
-        return adminDashboard({ ...ctx.params, ctx });
       },
     },
   },
