@@ -21,6 +21,8 @@ const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
 const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
 const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
 const { listSessionClasses } = require('../../core/classes/listSessionClasses');
+const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
+const { classByIds } = require('../../core/classes/classByIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -270,6 +272,31 @@ module.exports = {
     },
     async handler(ctx) {
       const classes = await listSessionClasses({ ...ctx.params, ctx });
+      return { status: 200, classes };
+    },
+  },
+  classDetailForDashboardRest: {
+    rest: {
+      path: '/class/dashboard/:id',
+      method: 'GET',
+    },
+    async handler(ctx) {
+      const data = await classDetailForDashboard({ classId: ctx.params.id, ctx });
+      return { status: 200, ...data };
+    },
+  },
+  classByIdsRest: {
+    rest: {
+      path: '/classes',
+      method: 'GET',
+    },
+    async handler(ctx) {
+      const ids = JSON.parse(ctx.params.ids);
+      const classes = await classByIds({
+        ids,
+        noSearchChildren: ctx.params.noSearchChildren,
+        noSearchParents: ctx.params.noSearchParents,
+      });
       return { status: 200, classes };
     },
   },
