@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { programsByIds } = require('./programsByIds');
 const { removeGroupByIds } = require('../groups/removeGroupByIds');
 const { removeCourseByIds } = require('../courses/removeCourseByIds');
@@ -11,14 +10,14 @@ const { removeProgramCentersByProgramIds } = require('./removeProgramCentersByPr
 const { removeProgramConfigsByProgramIds } = require('./removeProgramConfigsByProgramIds');
 const { removeClassesByIds } = require('../classes/removeClassesByIds');
 
-async function removeProgramByIds(ids, { userSession, soft, transacting: _transacting } = {}) {
+async function removeProgramByIds({ ids, userSession, soft, ctx } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
       const [programs, classes] = await Promise.all([
         programsByIds(_.isArray(ids) ? ids : [ids], { userSession, transacting }),
-        table.class.find({ program_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
+        ctx.tx.Class.find({ program: _.isArray(ids) ? ids : [ids] }).lean(),
       ]);
-      await leemons.events.emit('before-remove-programs', { programs, soft, transacting });
+      await leemons.events.emit('before-remove-programs', { programs, soft });
 
       let groups = [];
       let courses = [];
@@ -37,6 +36,7 @@ async function removeProgramByIds(ids, { userSession, soft, transacting: _transa
       });
       // ES: Eliminamos primero las clases y las asignaturas por que si no la bbdd da error por las claves foraneas
       // EN: First we delete the classes and subjects because if the database gives an error for foreign keys
+      //! TODO Roberto: ESTOY AQUI!!!!
       await removeClassesByIds(_.map(classes, 'id'), { userSession, soft, transacting });
       await removeSubjectByIds(_.map(subjects, 'id'), { userSession, soft, transacting });
 

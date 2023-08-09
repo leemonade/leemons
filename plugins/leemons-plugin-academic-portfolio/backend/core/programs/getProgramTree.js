@@ -1,14 +1,18 @@
+const { LeemonsError } = require('leemons-error');
 const { getTreeNodes } = require('../common');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 
-async function getProgramTree(programId, { transacting } = {}) {
-  const nodeTypes = await getProgramTreeTypes(programId, { transacting });
-  const tree = await getTreeNodes(nodeTypes, 'program', programId, {
+async function getProgramTree({ programId, ctx }) {
+  const nodeTypes = await getProgramTreeTypes({ programId, ctx });
+  const tree = await getTreeNodes({
+    nodeTypes,
+    nodeType: 'program',
+    nodeId: programId,
     program: programId,
-    transacting,
+    ctx,
   });
   if (!tree.length) {
-    throw new Error('Program tree is empty');
+    throw new LeemonsError(ctx, { message: 'Program tree is empty' });
   }
   tree[0].value.treeTypeNodes = nodeTypes;
   return tree[0];
