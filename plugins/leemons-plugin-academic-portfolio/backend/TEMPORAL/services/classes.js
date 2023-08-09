@@ -1,7 +1,7 @@
 const {
   getByClassAndUserAgent: studentGetByClassAndUserAgent,
 } = require('../src/services/classes/student/getByClassAndUserAgent');
-const { classByIds } = require('../src/services/classes/classByIds'); 
+const { classByIds } = require('../src/services/classes/classByIds');
 const { getByClass } = require('../src/services/classes/student/getByClass');
 const {
   getBasicClassesByProgram,
@@ -20,7 +20,7 @@ const {
 const { getTeachersByClass } = require('../src/services/classes/getTeachersByClass');
 
 module.exports = {
-  listSessionClasses, // migrated // ? preguntita del {withProgram} {_withProgram} que recibe.
+  listSessionClasses, // migrated
   getBasicClassesByProgram, // migrated
   student: {
     getByClassAndUserAgent: studentGetByClassAndUserAgent,
@@ -30,11 +30,11 @@ module.exports = {
     getByClass: getTeachersByClass,
   },
   classByIds, // migrated
-  addClass,
-  addTeacher,
-  removeTeachersByClass,
-  addStudentsToClasses: addClassStudentsMany,
-  listClasses,
-  getClassesUnderProgram,
-  getClassesUnderProgramCourse,
+  addClass, // migrated
+  addTeacher, // migrated
+  removeTeachersByClass, // migrated
+  addStudentsToClasses: addClassStudentsMany, // migrated
+  listClasses, // migrated
+  getClassesUnderProgram, // migrated
+  getClassesUnderProgramCourse, // migrated
 };

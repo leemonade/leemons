@@ -13,6 +13,16 @@ const restActions = require('./rest/classes.rest');
 const { classByIds } = require('../core/classes/classByIds');
 const { listSessionClasses } = require('../core/classes/listSessionClasses');
 const { getBasicClassesByProgram } = require('../core/classes/getBasicClassesByProgram');
+const { addClass } = require('../core/classes/addClass');
+const { add: addTeacher } = require('../core/classes/teacher/add');
+const { removeByClass: removeTeachersByClass } = require('../core/classes/teacher/removeByClass');
+const { addClassStudentsMany } = require('../core/classes/addClassStudentsMany');
+const { listClasses } = require('../core/classes/listClasses');
+const { getClassesUnderProgram } = require('../core/classes/getClassesUnderProgram');
+const { getClassesUnderProgramCourse } = require('../core/classes/getClassesUnderProgramCourse');
+const { getByClassAndUserAgent } = require('../core/classes/student/getByClassAndUserAgent');
+const { getByClass } = require('../core/classes/student/getByClass');
+const { getTeachersByClass } = require('../core/classes/getTeachersByClass');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -42,6 +52,56 @@ module.exports = {
       handler(ctx) {
         // Note that it receives withProgram and _withProgram
         return listSessionClasses({ ...ctx.params, ctx });
+      },
+    },
+    addClass: {
+      handler(ctx) {
+        return addClass({ ...ctx.params, ctx });
+      },
+    },
+    addTeacher: {
+      handler(ctx) {
+        return addTeacher({ ...ctx.params, ctx });
+      },
+    },
+    removeTeachersByClass: {
+      handler(ctx) {
+        return removeTeachersByClass({ ...ctx.params, ctx });
+      },
+    },
+    addStudentsToClasses: {
+      handler(ctx) {
+        return addClassStudentsMany({ ...ctx.params, ctx });
+      },
+    },
+    listClasses: {
+      handler(ctx) {
+        return listClasses({ ...ctx.params, ctx });
+      },
+    },
+    getClassesUnderProgram: {
+      handler(ctx) {
+        return getClassesUnderProgram({ ...ctx.params, ctx });
+      },
+    },
+    getClassesUnderProgramCourse: {
+      handler(ctx) {
+        return getClassesUnderProgramCourse({ ...ctx.params, ctx });
+      },
+    },
+    'student.getByClassAndUserAgent': {
+      handler(ctx) {
+        return getByClassAndUserAgent({ ...ctx.params, ctx });
+      },
+    },
+    'student.getByClass': {
+      handler(ctx) {
+        return getByClass({ ...ctx.params, ctx });
+      },
+    },
+    'teacher.getByClass': {
+      handler(ctx) {
+        return getTeachersByClass({ ...ctx.params, ctx });
       },
     },
   },

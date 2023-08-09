@@ -1,12 +1,8 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getClassesUnderProgram(program, { transacting } = {}) {
+async function getClassesUnderProgram({ program, ctx }) {
   const programs = _.isArray(program) ? program : [program];
-  const classes = await table.class.find(
-    { program_$in: programs },
-    { columns: ['id'], transacting }
-  );
+  const classes = await ctx.tx.db.Class.find({ program: programs }).select(['id']).lean();
   return _.map(classes, 'id');
 }
 
