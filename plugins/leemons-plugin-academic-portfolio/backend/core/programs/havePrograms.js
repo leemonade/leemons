@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function havePrograms({ transacting } = {}) {
-  const count = await table.programs.count({}, { transacting });
+async function havePrograms({ ctx }) {
+  const count = await ctx.tx.db.Programs.countDocuments();
   return !!count;
 }
 

@@ -9,7 +9,7 @@ async function getProgramTreeTypes({ programId, ctx }) {
     program = programId;
   }
 
-  const haveCycles = await ctx.tx.db.Cycles.count({ program: program.id }).lean();
+  const haveCycles = await ctx.tx.db.Cycles.countDocuments({ program: program.id });
 
   // subject
   let result = [];

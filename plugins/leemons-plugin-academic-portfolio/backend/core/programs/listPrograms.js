@@ -1,24 +1,22 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
-async function listPrograms(page, size, center, { userSession, transacting } = {}) {
-  const programCenter = await table.programCenter.find({ center }, { transacting });
-  const results = await global.utils.paginate(
-    table.programs,
+async function listPrograms({ page, size, center, ctx } = {}) {
+  // TODO Migration: Cuidado, antes había un userSession optativo como parámetro
+  const programCenter = await ctx.tx.db.ProgramCenter.find({ center }).lean();
+
+  const results = await mongoDBPaginate({
+    model: ctx.tx.db.Class,
     page,
     size,
-    { id_$in: _.map(programCenter, 'program') },
-    {
-      transacting,
-    }
-  );
-
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const images = await assetService.getByIds(_.map(results.items, 'image'), {
-    withFiles: true,
-    userSession,
-    transacting,
+    query: { id: _.map(programCenter, 'program') },
   });
+
+  const images = await ctx.tx.call('leebrary.assets.getByIds', {
+    assetsIds: _.map(results.items, 'image'),
+    withFiles: true,
+  });
+
   const imagesById = _.keyBy(images, 'id');
 
   const centersByProgram = _.groupBy(programCenter, 'program');

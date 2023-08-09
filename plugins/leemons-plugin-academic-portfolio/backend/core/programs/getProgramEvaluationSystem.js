@@ -1,13 +1,13 @@
 const _ = require('lodash');
-const { map, min, max, find } = require('lodash');
-const { table } = require('../tables');
+const { find } = require('lodash');
 
-async function getProgramEvaluationSystem(id, { transacting } = {}) {
-  const program = await table.programs.findOne({ id }, { transacting });
+async function getProgramEvaluationSystem({ id, ctx }) {
+  const program = await ctx.tx.db.Programs.findOne({ id }).lean();
   if (program.evaluationSystem) {
-    const values = await leemons
-      .getPlugin('grades')
-      .services.evaluations.byIds(program.evaluationSystem, { transacting });
+    const values = await ctx.tx.call('grades.evaluations.byIds', {
+      ids: program.evaluationSystem,
+    });
+
     const evaluationSystem = values[0];
     const scaleNumbers = _.map(evaluationSystem.scales, 'number');
     const minNumber = _.min(scaleNumbers);
