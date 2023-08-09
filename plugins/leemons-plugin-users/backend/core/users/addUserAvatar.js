@@ -18,7 +18,7 @@ async function addUserAvatar({ user, avatar, ctx } = {}) {
     });
   }
 
-  const coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', asset.id);
+  const coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: asset.id });
 
   const u = await ctx.tx.db.Users.findOneAndUpdate(
     { id: user.id },
