@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { getUserProgramIds } = require('../../programs/getUserProgramIds');
-const { getProfiles } = require('../../settings');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeCustomPermissions({ studentId, programId, ctx }) {
   const programs = await getUserProgramIds({
