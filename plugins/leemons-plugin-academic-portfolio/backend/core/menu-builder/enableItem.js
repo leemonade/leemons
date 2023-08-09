@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
+const { LeemonsError } = require('leemons-error');
 const { isEmpty } = require('lodash');
 const update = require('./update');
-const { menuItems } = require('../../../config/constants');
+const { menuItems } = require('../../config/constants');
 
-async function enableItem(key, item) {
+async function enableItem({ key, item, ctx }) {
   try {
     if (isEmpty(item)) {
       const menuItem = menuItems.find(({ item: _item }) => _item.key === key);
@@ -14,12 +15,13 @@ async function enableItem(key, item) {
       return update({
         ...item,
         disabled: false,
+        ctx,
       });
     }
 
     return null;
   } catch (e) {
-    throw new Error(`No menuItem with the key ${key} was found`);
+    throw new LeemonsError(ctx, { message: `No menuItem with the key ${key} was found` });
   }
 }
 
