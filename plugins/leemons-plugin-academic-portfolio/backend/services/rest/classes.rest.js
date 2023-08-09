@@ -19,6 +19,8 @@ const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMan
 const { listStudentClasses } = require('../../core/classes/listStudentClasses');
 const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
 const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
+const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
+const { listSessionClasses } = require('../../core/classes/listSessionClasses');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -245,6 +247,30 @@ module.exports = {
         const data = await removeClassesByIds({ ids: ctx.params.id, soft: true, ctx });
         return { status: 200, data };
       },
+    },
+  },
+  removeStudentRest: {
+    rest: {
+      path: '/class/remove/students',
+      method: 'POST',
+    },
+    async handler(ctx) {
+      const data = await removeStudentFromClass({
+        classId: ctx.params.class,
+        studentId: ctx.params.student,
+        ctx,
+      });
+      return { status: 200, data };
+    },
+  },
+  listSessionClassesRest: {
+    rest: {
+      path: '/session/classes',
+      method: 'POST',
+    },
+    async handler(ctx) {
+      const classes = await listSessionClasses({ ...ctx.params, ctx });
+      return { status: 200, classes };
     },
   },
 };
