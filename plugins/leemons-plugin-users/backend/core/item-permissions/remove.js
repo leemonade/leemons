@@ -25,7 +25,7 @@ async function remove({ query, ctx }) {
     typeArray = true;
   }
   if (_.isRegExp(query.type)) typeKey = 'type';
-  if (!typeKey) throw new LeemonsError('type param is required');
+  if (!typeKey) throw new LeemonsError(ctx, { message: 'type param is required' });
 
   if (typeArray) {
     _.forEach(query[typeKey], (key) => {
