@@ -1,21 +1,21 @@
 const _ = require('lodash');
 const { getProfiles } = require('../settings/getProfiles');
 
-async function getStudentsByTags(tags, { center, transacting } = {}) {
-  const tagsService = leemons.getPlugin('common').services.tags;
-  const userService = leemons.getPlugin('users').services.users;
-  const profiles = await getProfiles({ transacting });
-  const tagsValues = await tagsService.getTagsValues(tags, {
-    type: 'plugins.users.user-agent',
-    transacting,
+async function getStudentsByTags({ tags, center, ctx }) {
+  const profiles = await getProfiles({ ctx });
+  const tagsValues = await ctx.tx.call('common.tags.getTagsValues', {
+    tags,
+    type: 'users.user-agent',
   });
-  const userAgentIds = await userService.filterUserAgentsByProfileAndCenter(
-    _.uniq(_.flatten(tagsValues)),
-    profiles.student,
+  const userAgentIds = await ctx.tx.call('users.users.filterUserAgentsByProfileAndCenter', {
+    userAgentIds: _.uniq(_.flatten(tagsValues)),
+    profile: profiles.student,
     center,
-    { transacting }
-  );
-  return userService.getUserAgentsInfo(userAgentIds, { withProfile: true, transacting });
+  });
+  return ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds,
+    withProfile: true,
+  });
 }
 
 module.exports = { getStudentsByTags };
