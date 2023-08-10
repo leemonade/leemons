@@ -1,10 +1,12 @@
 const _ = require('lodash');
 const { getUserProgramIds } = require('../../programs/getUserProgramIds');
-
 const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeCustomPermissions({ teacherId, programId, ctx }) {
-  const programs = await getUserProgramIds({ ctx });
+  const programs = await getUserProgramIds({
+    userSession: { userAgents: [{ id: teacherId }] },
+    ctx,
+  });
   if (programs.length) {
     const programsIds = _.map(programs, 'id');
     if (!programsIds.includes(programId)) {

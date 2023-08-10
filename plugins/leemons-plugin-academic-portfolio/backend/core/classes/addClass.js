@@ -71,7 +71,6 @@ async function addClass({ data, ctx }) {
         ],
         published: true,
       },
-      ctx,
     });
 
     nClass = await ctx.tx.db.Class.findOneAndUpdate(
@@ -157,7 +156,6 @@ async function addClass({ data, ctx }) {
           actionNames: ['view'],
         },
         isCustomPermission: true,
-        ctx,
       })
     );
 
@@ -194,12 +192,10 @@ async function addClass({ data, ctx }) {
     if (assetImage.cover) {
       roomData.image = assetImage.id;
     }
-    // const roomService = leemons.getPlugin('comunica').services.room;
-    // await roomService.add(ctx.prefixPN(`room.class.${nClass.id}`), roomData);
+
     await ctx.tx.call('comunica.room.add', {
       key: ctx.prefixPN(`room.class.${nClass.id}`),
       ...roomData,
-      ctx,
     });
 
     [classe] = await getClassesProgramInfo({

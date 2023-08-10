@@ -1,14 +1,10 @@
 const _ = require('lodash');
-const { table } = require('../../tables');
 
-async function getByClassAndUserAgent(_class, userAgent, { transacting } = {}) {
-  return table.classStudent.find(
-    {
-      class_$in: _.isArray(_class) ? _class : [_class],
-      student_$in: _.isArray(userAgent) ? userAgent : [userAgent],
-    },
-    { transacting }
-  );
+async function getByClassAndUserAgent({ _class, userAgent, ctx }) {
+  return ctx.tx.db.ClassStudent.find({
+    class: _.isArray(_class) ? _class : [_class],
+    student: _.isArray(userAgent) ? userAgent : [userAgent],
+  }).lean();
 }
 
 module.exports = { getByClassAndUserAgent };

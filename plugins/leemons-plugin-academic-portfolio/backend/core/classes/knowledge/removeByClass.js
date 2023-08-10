@@ -9,7 +9,7 @@ async function removeByClass({ classIds, soft, ctx }) {
     soft,
   });
 
-  await ctx.tx.classKnowledges.deleteMany({ id: _.map(classKnowledges, 'id') }, { soft });
+  await ctx.tx.db.ClassKnowledges.deleteMany({ id: _.map(classKnowledges, 'id') }, { soft });
   await ctx.tx.emit('after-remove-classes-knowledges', {
     classKnowledges,
     soft,

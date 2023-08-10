@@ -17,6 +17,12 @@ const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
 const { addClassStudentsMany } = require('../../core/classes/addClassStudentsMany');
 const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMany');
 const { listStudentClasses } = require('../../core/classes/listStudentClasses');
+const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
+const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
+const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
+const { listSessionClasses } = require('../../core/classes/listSessionClasses');
+const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
+const { classByIds } = require('../../core/classes/classByIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -153,7 +159,7 @@ module.exports = {
           if (!_.isArray(ctx.params.students)) {
             ctx.params.students = [];
           }
-          ctx.params.students.push(ctx.meta.userSession.userAgents[0].id); // TODO ask Esto estaba así ctx.state.userSession.userAgents[0].id, correcto?
+          ctx.params.students.push(ctx.meta.userSession.userAgents[0].id);
         }
         const _class = await addClassStudentsMany({ data: ctx.params, ctx });
         return { status: 200, class: _class };
@@ -198,13 +204,100 @@ module.exports = {
           const data = await listStudentClasses({
             page: parseInt(page, 10),
             size: parseInt(size, 10),
-            student: ctx.request.params.id,
+            student: ctx.params.id,
             ctx,
           });
           return { status: 200, data };
         }
         throw validator.error;
       },
+    },
+    listTeacherClassesRest: {
+      rest: {
+        path: '/teacher/:id/classes',
+        method: 'GET',
+      },
+      async handler(ctx) {
+        const validator = new LeemonsValidator({
+          type: 'object',
+          properties: {
+            page: { type: ['number', 'string'] },
+            size: { type: ['number', 'string'] },
+          },
+          required: ['page', 'size'],
+          additionalProperties: false,
+        });
+        if (validator.validate(ctx.params)) {
+          const { page, size } = ctx.params;
+          const data = await listTeacherClasses({
+            page: parseInt(page, 10),
+            size: parseInt(size, 10),
+            teacher: ctx.params.id,
+            ctx,
+          });
+          return { status: 200, data };
+        }
+        throw validator.error;
+      },
+    },
+    removeClassRest: {
+      rest: {
+        path: '/class/:id',
+        method: 'DELETE',
+      },
+      async handler(ctx) {
+        const data = await removeClassesByIds({ ids: ctx.params.id, soft: true, ctx });
+        return { status: 200, data };
+      },
+    },
+  },
+  removeStudentRest: {
+    rest: {
+      path: '/class/remove/students',
+      method: 'POST',
+    },
+    async handler(ctx) {
+      const data = await removeStudentFromClass({
+        classId: ctx.params.class,
+        studentId: ctx.params.student,
+        ctx,
+      });
+      return { status: 200, data };
+    },
+  },
+  listSessionClassesRest: {
+    rest: {
+      path: '/session/classes',
+      method: 'POST',
+    },
+    async handler(ctx) {
+      const classes = await listSessionClasses({ ...ctx.params, ctx });
+      return { status: 200, classes };
+    },
+  },
+  classDetailForDashboardRest: {
+    rest: {
+      path: '/class/dashboard/:id',
+      method: 'GET',
+    },
+    async handler(ctx) {
+      const data = await classDetailForDashboard({ classId: ctx.params.id, ctx });
+      return { status: 200, ...data };
+    },
+  },
+  classByIdsRest: {
+    rest: {
+      path: '/classes',
+      method: 'GET',
+    },
+    async handler(ctx) {
+      const ids = JSON.parse(ctx.params.ids);
+      const classes = await classByIds({
+        ids,
+        noSearchChildren: ctx.params.noSearchChildren,
+        noSearchParents: ctx.params.noSearchParents,
+      });
+      return { status: 200, classes };
     },
   },
 };

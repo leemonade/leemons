@@ -1,35 +1,32 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { classByIds } = require('./classByIds');
 const { listSessionClasses } = require('./listSessionClasses');
 
-async function classDetailForDashboard(classId, userSession, { transacting } = {}) {
-  const { services: userServices } = leemons.getPlugin('users');
+async function classDetailForDashboard({ classId, ctx }) {
+  const { userSession } = ctx.meta;
 
-  const hasPermission = await userServices.permissions.userAgentHasCustomPermission(
-    _.map(userSession.userAgents, 'id'),
-    {
-      permissionName: `plugins.academic-portfolio.class.${classId}`,
-    },
-    { transacting }
-  );
+  const hasPermission = await ctx.tx.call('users.permissions.userAgentHasCustomPermission', {
+    userAgentId: _.map(userSession.userAgents, 'id'),
+    permissionName: `plugins.academic-portfolio.class.${classId}`,
+  });
   if (!hasPermission) {
-    throw new Error('You do not have permission to view this class.');
+    throw new LeemonsError(ctx, { message: 'You do not have permission to view this class.' });
   }
 
-  const [classe] = await classByIds(classId, { transacting });
+  const [classe] = await classByIds({ ids: classId, ctx });
   const [programClasses, students, parentStudents, teachers, program] = await Promise.all([
-    listSessionClasses(userSession, { program: classe.program }, { transacting }),
-    userServices.users.getUserAgentsInfo(classe.students, { transacting }),
-    userServices.users.getUserAgentsInfo(classe.parentStudents, { transacting }),
-    userServices.users.getUserAgentsInfo(_.map(classe.teachers, 'teacher'), { transacting }),
-    table.programs.findOne(
-      { id: classe.program },
-      {
-        columns: ['hideStudentsToStudents'],
-        transacting,
-      }
-    ),
+    listSessionClasses({ program: classe.program, ctx }),
+    ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: classe.students,
+    }),
+    ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: classe.parentStudents,
+    }),
+    ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: _.map(classe.teachers, 'teacher'),
+    }),
+    ctx.tx.db.Programs.findOne({ id: classe.program }).select(['hideStudentsToStudents']).lean(),
   ]);
 
   const teachersById = _.keyBy(teachers, 'id');

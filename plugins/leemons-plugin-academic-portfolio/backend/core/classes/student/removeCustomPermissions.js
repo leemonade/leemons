@@ -1,28 +1,30 @@
 const _ = require('lodash');
 const { getUserProgramIds } = require('../../programs/getUserProgramIds');
-const { getProfiles } = require('../../settings');
+const { getProfiles } = require('../../settings/getProfiles');
 
-async function removeCustomPermissions(studentId, programId, { transacting } = {}) {
-  const programs = await getUserProgramIds({ userAgents: [{ id: studentId }] });
+async function removeCustomPermissions({ studentId, programId, ctx }) {
+  // TODO @askJaime: Por lo que se le pasa a getUserProgramIds, dentro de dicha función no queremos sacar el userSession del ctx, correcto?
+  const programs = await getUserProgramIds({
+    userSession: { userAgents: [{ id: studentId }] },
+    ctx,
+  });
   if (programs.length) {
     const programsIds = _.map(programs, 'id');
     if (!programsIds.includes(programId)) {
-      await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
-        studentId,
-        {
+      await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+        userAgentId: studentId,
+        data: {
           permissionName: `plugins.academic-portfolio.program.inside.${programId}`,
         },
-        { transacting }
-      );
-      const { student: studentProfileId } = await getProfiles({ transacting });
+      });
+      const { student: studentProfileId } = await getProfiles({ ctx });
 
-      await leemons.getPlugin('users').services.permissions.removeCustomUserAgentPermission(
-        studentId,
-        {
+      await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+        userAgentId: studentId,
+        data: {
           permissionName: `plugins.academic-portfolio.program-profile.inside.${programId}-${studentProfileId}`,
         },
-        { transacting }
-      );
+      });
     }
   }
 }
