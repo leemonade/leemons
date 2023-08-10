@@ -1,5 +1,5 @@
 const { LeemonsError } = require('leemons-error');
-const { getTreeNodes } = require('../common');
+const { getTreeNodes } = require('../common/getTreeNodes');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 
 async function getProgramTree({ programId, ctx }) {

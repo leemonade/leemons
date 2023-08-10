@@ -5,7 +5,7 @@ const { addSubstage } = require('../substages/addSubstage');
 const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
 const enableMenuItemService = require('../menu-builder/enableItem');
-const { addCycle } = require('../cycle');
+const { addCycle } = require('../cycle/addCycle');
 const { addGroup } = require('../groups/addGroup');
 
 async function addProgram({ data, userSession, ctx }) {
