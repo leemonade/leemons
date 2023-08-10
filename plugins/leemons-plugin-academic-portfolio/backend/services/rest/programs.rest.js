@@ -8,22 +8,22 @@ const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
 const { LeemonsValidator } = require('leemons-validator');
 
-const { getProgramTree } = require('../../core/programs/getProgramTree');
-const { havePrograms } = require('../../core/programs/havePrograms');
-const { addProgram } = require('../../core/programs/addProgram');
-const { listPrograms } = require('../../core/programs/listPrograms');
-const { programsByIds } = require('../../core/programs/programsByIds');
-const { updateProgram } = require('../../core/programs/updateProgram');
-const { getProgramCourses } = require('../../core/programs/getProgramCourses');
-const { getProgramGroups } = require('../../core/programs/getProgramGroups');
-const { getProgramSubstages } = require('../../core/programs/getProgramSubstages');
-const { removeProgramByIds } = require('../../core/programs/removeProgramByIds');
-const { duplicateProgramByIds } = require('../../core/programs/duplicateProgramByIds');
 const {
+  getProgramTree,
+  havePrograms,
+  addProgram,
+  listPrograms,
+  programsByIds,
+  updateProgram,
+  getProgramCourses,
+  getProgramGroups,
+  getProgramSubstages,
+  removeProgramByIds,
+  duplicateProgramByIds,
   addStudentsToClassesUnderNodeTree,
-} = require('../../core/programs/addStudentsToClassesUnderNodeTree');
-const { getUserPrograms } = require('../../core/programs/getUserPrograms');
-const { getProgramEvaluationSystem } = require('../../core/programs/getProgramEvaluationSystem');
+  getUserPrograms,
+  getProgramEvaluationSystem,
+} = require('../../core/programs');
 
 /** @type {ServiceSchema} */
 module.exports = {
