@@ -10,7 +10,7 @@ const { removeProgramCentersByProgramIds } = require('./removeProgramCentersByPr
 const { removeProgramConfigsByProgramIds } = require('./removeProgramConfigsByProgramIds');
 const { removeClassesByIds } = require('../classes/removeClassesByIds');
 
-async function removeProgramByIds({ ids, soft, ctx } = {}) {
+async function removeProgramByIds({ ids, soft, ctx }) {
   const [programs, classes] = await Promise.all([
     programsByIds({ ids: _.isArray(ids) ? ids : [ids], ctx }),
     ctx.tx.Class.find({ program: _.isArray(ids) ? ids : [ids] }).lean(),

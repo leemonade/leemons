@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
 async function getUserProgramIds({
-  ctx,
   userSession, // Es el userSession del que queremos conocer sus ProgramIds
+  ctx,
 }) {
   const userAgentIds = _.map(userSession.userAgents, 'id');
   const [stClasses, thClasses] = await Promise.all([
