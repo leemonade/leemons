@@ -1,3 +1,4 @@
+// TODO Migration: Preguntar a Jaime para que es esto!!!!!!!!!! :o
 const callbacks = {
   beforeRemoveProgram: [],
   afterRemoveProgram: [],
