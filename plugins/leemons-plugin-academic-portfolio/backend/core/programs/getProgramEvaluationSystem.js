@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { find } = require('lodash');
+const { LeemonsError } = require('leemons-error');
 
 async function getProgramEvaluationSystem({ id, ctx }) {
   const program = await ctx.tx.db.Programs.findOne({ id }).lean();
@@ -19,7 +20,7 @@ async function getProgramEvaluationSystem({ id, ctx }) {
     });
     return evaluationSystem;
   }
-  throw new Error('This program dont have evaluation system');
+  throw new LeemonsError(ctx, { message: 'This program dont have evaluation system' });
 }
 
 module.exports = { getProgramEvaluationSystem };
