@@ -53,6 +53,7 @@ module.exports = {
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           program,
+          ctx,
         });
         return { status: 200, data };
       }
