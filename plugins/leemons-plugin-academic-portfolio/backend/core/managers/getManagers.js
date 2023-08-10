@@ -9,7 +9,7 @@ async function getManagers({ relationships, types, returnAgents = true, ctx }) {
       relationship: _relationships,
     };
     if (_types && _types.length) {
-      query.type_$in = _types;
+      query.type = _types;
     }
     const responses = await ctx.tx.db.Managers.find(query).lean();
     if (returnAgents) {

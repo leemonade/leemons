@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 async function processScheduleForClass({ schedule, classId, ctx }) {
-  const timetables = await ctx.tx.call('timetable.timetable.get', { classId, ctx });
+  const timetables = await ctx.tx.call('timetable.timetable.get', { classId });
 
   const alreadyIds = _.map(timetables, 'id');
   const toCreate = _.filter(schedule, ({ id }) => !id);

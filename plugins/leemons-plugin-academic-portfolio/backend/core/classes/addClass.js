@@ -65,7 +65,7 @@ async function addClass({ data, ctx }) {
           {
             canEdit: true,
             isCustomPermission: true,
-            permissionName: leemons.plugin.prefixPN('programs'),
+            permissionName: ctx.prefixPN('programs'),
             actionNames: ['update', 'admin'],
           },
         ],
