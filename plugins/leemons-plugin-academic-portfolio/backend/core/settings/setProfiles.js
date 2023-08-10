@@ -1,5 +1,3 @@
-const { keyBy } = require('lodash');
-const { table } = require('../tables');
 const { getProfiles } = require('./getProfiles');
 const enableMenuItemService = require('../menu-builder/enableItem');
 
@@ -8,9 +6,9 @@ const enableMenuItemService = require('../menu-builder/enableItem');
  * @static
  * @return {Promise<any>}
  * */
-async function setProfiles({ teacher, student }, { transacting } = {}) {
+async function setProfiles({ teacher, student, ctx }) {
   await Promise.all([
-    table.configs.set(
+    ctx.tx.db.Configs.updateOne(
       {
         key: 'profile.teacher',
       },
@@ -18,9 +16,9 @@ async function setProfiles({ teacher, student }, { transacting } = {}) {
         key: 'profile.teacher',
         value: teacher,
       },
-      { transacting }
+      { upsert: true }
     ),
-    table.configs.set(
+    ctx.tx.db.Configs.updateOne(
       {
         key: 'profile.student',
       },
@@ -28,12 +26,15 @@ async function setProfiles({ teacher, student }, { transacting } = {}) {
         key: 'profile.student',
         value: student,
       },
-      { transacting }
+      { upsert: true }
     ),
   ]);
-  await Promise.all([enableMenuItemService('profiles'), enableMenuItemService('programs')]);
+  await Promise.all([
+    enableMenuItemService({ key: 'profiles', ctx }),
+    enableMenuItemService({ key: 'programs', ctx }),
+  ]);
 
-  return getProfiles({ transacting });
+  return getProfiles({ ctx });
 }
 
 module.exports = { setProfiles };

@@ -5,7 +5,7 @@ async function addNextGroupIndex({ program, index, ctx }) {
   if (!index) {
     goodIndex = await getNextGroupIndex({ program, ctx });
   }
-  await ctx.tx.db.Configs.findOneAndUpdate(
+  await ctx.tx.db.Configs.updateOne(
     { key: `program-${program}-group-index` },
     { key: `program-${program}-group-index`, value: goodIndex.toString() },
     { upsert: true }

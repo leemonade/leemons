@@ -5,7 +5,7 @@ async function addNextCourseIndex({ program, index, ctx }) {
   if (!index) {
     goodIndex = await getNextCourseIndex({ program, ctx });
   }
-  await ctx.tx.db.Configs.findOneAndUpdate(
+  await ctx.tx.db.Configs.updateOne(
     { key: `program-${program}-course-index` },
     { key: `program-${program}-course-index`, value: goodIndex.toString() },
     { upsert: true }
