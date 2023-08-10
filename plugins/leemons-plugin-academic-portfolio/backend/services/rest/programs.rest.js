@@ -18,7 +18,10 @@ const { getProgramCourses } = require('../../core/programs/getProgramCourses');
 const { getProgramGroups } = require('../../core/programs/getProgramGroups');
 const { getProgramSubstages } = require('../../core/programs/getProgramSubstages');
 const { removeProgramByIds } = require('../../core/programs/removeProgramByIds');
-// const { duplicateProgramByIds } = require('../../core/programs/duplicateProgramByIds');
+const { duplicateProgramByIds } = require('../../core/programs/duplicateProgramByIds');
+const {
+  addStudentsToClassesUnderNodeTree,
+} = require('../../core/programs/addStudentsToClassesUnderNodeTree');
 
 /** @type {ServiceSchema} */
 (
@@ -188,18 +191,31 @@ const { removeProgramByIds } = require('../../core/programs/removeProgramByIds')
         return { status: 200 };
       },
     },
-    // duplicateProgramRest: {
-    //   rest: {
-    //     path: '/program/:id/duplicate',
-    //     method: 'POST',
-    //   },
-    //   async handler(ctx) {
-    //     const [program] = await duplicateProgramByIds(ctx.request.params.id, {
-    //       userSession: ctx.state.userSession,
-    //     });
-    //     ctx.status = 200;
-    //     ctx.body = { status: 200, program };
-    //   },
-    // },
+    duplicateProgramRest: {
+      rest: {
+        path: '/program/:id/duplicate',
+        method: 'POST',
+      },
+      async handler(ctx) {
+        const [program] = await duplicateProgramByIds({ ids: ctx.params.id, ctx });
+        return { status: 200, program };
+      },
+    },
+    addStudentsToClassesUnderNodeTreeRest: {
+      rest: {
+        path: '/program/add-students-to-classes-under-node-tree',
+        method: 'POST',
+      },
+      async handler(ctx) {
+        const data = await addStudentsToClassesUnderNodeTree({
+          program: ctx.params.program,
+          nodetype: ctx.params.nodeType,
+          nodeId: ctx.params.nodeId,
+          students: ctx.params.students,
+          ctx,
+        });
+        return { status: 200, data };
+      },
+    },
   }
 );

@@ -55,16 +55,19 @@ async function duplicateProgramByIds({ ids, ctx }) {
   await duplicateCourseByIds({ ids: _.map(courses, 'id'), duplications, ctx });
   await duplicateSubjectByIds({ ids: _.map(subjects, 'id'), duplications, ctx });
 
-  await duplicateProgramCentersByProgramIds(_.map(programs, 'id'), {
+  await duplicateProgramCentersByProgramIds({
+    programIds: _.map(programs, 'id'),
     duplications,
-    transacting,
+    ctx,
   });
-  await duplicateProgramConfigsByProgramIds(_.map(programs, 'id'), {
+  await duplicateProgramConfigsByProgramIds({
+    programIds: _.map(programs, 'id'),
     duplications,
-    transacting,
+    ctx,
   });
 
-  await duplicateClassesByIds(_.map(classes, 'id'), {
+  await duplicateClassesByIds({
+    ids: _.map(classes, 'id'),
     duplications,
     students: false,
     teachers: false,
@@ -72,14 +75,12 @@ async function duplicateProgramByIds({ ids, ctx }) {
     courses: true,
     substages: true,
     knowledges: true,
-    userSession,
-    transacting,
+    ctx,
   });
 
-  await leemons.events.emit('after-duplicate-programs', {
+  await ctx.tx.emit('after-duplicate-programs', {
     programs,
     duplications: duplications.programs,
-    transacting,
   });
 
   const newProgramIds = [];
@@ -87,7 +88,7 @@ async function duplicateProgramByIds({ ids, ctx }) {
     newProgramIds.push(id);
   });
 
-  return programsByIds(newProgramIds, { userSession, transacting });
+  return programsByIds({ ids: newProgramIds, ctx });
 }
 
 module.exports = { duplicateProgramByIds };
