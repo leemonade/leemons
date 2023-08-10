@@ -8,7 +8,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/classes.rest');
+const restActions = require('./rest/class.rest');
 const {
   classByIds,
   getBasicClassesByProgram,

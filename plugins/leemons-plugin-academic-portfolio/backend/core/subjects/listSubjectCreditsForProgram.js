@@ -1,13 +1,9 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function listSubjectCreditsForProgram(program, { transacting } = {}) {
-  return table.programSubjectsCredits.find(
-    {
-      program_$in: _.isArray(program) ? program : [program],
-    },
-    { transacting }
-  );
+async function listSubjectCreditsForProgram({ program, ctx }) {
+  return ctx.tx.db.ProgramSubjectsCredits.find({
+    program: _.isArray(program) ? program : [program],
+  }).lean();
 }
 
 module.exports = { listSubjectCreditsForProgram };

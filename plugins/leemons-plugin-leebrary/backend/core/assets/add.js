@@ -48,11 +48,7 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
  */
 
 async function add({
-  data,
-  file,
-  cover,
-  category,
-  canAccess,
+  asset: { file, cover, category, canAccess, ...data },
   options: { newId, published = true, permissions: _permissions, duplicating = false } = {},
   ctx,
 }) {

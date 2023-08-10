@@ -1,10 +1,6 @@
 const _ = require('lodash');
 
-async function duplicateSubjectCreditsBySubjectsIds({
-  subjectIds,
-  duplications: dup = {},
-  ctx,
-} = {}) {
+async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: dup = {}, ctx }) {
   const duplications = dup;
 
   const programSubjectCredits = await ctx.tx.db.ProgramSubjectsCredits.find({
