@@ -181,11 +181,11 @@ module.exports = {
     },
     async handler(ctx) {
       await removeProgramByIds({
-        ids: ctx.request.params.id,
-        soft: ctx.request.query.soft === 'true',
+        ids: ctx.params.id,
+        soft: ctx.params.soft === 'true',
         ctx,
       });
-      ctx.body = { status: 200 };
+      return { status: 200 };
     },
   },
 };
