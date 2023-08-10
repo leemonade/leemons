@@ -13,7 +13,7 @@ const { addCourse } = require('../core/courses/addCourse');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.programs',
+  name: 'academic-portfolio.courses',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

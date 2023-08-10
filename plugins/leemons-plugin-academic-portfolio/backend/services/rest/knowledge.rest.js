@@ -3,37 +3,35 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
+
 const { LeemonsValidator } = require('leemons-validator');
-const { updateCourse, listCourses } = require('../../core/courses');
+const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/knowledges');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  postCourseRest: {
+  postKnowledgeRest: {
     rest: {
-      path: '/course',
+      path: '/knowledge',
       method: 'POST',
     },
-    async handler() {
-      /*
-      const course = await courseService.addCourse(ctx.params;
-      return { status: 200, course };
-      */
-      return { status: 400, message: 'Course creation disabled' };
+    async handler(ctx) {
+      const knowledge = await addKnowledge({ data: ctx.params, ctx });
+      return { status: 200, knowledge };
     },
   },
-  putCourseRest: {
+  putKnowledgeRest: {
     rest: {
-      path: '/course',
+      path: '/knowledge',
       method: 'PUT',
     },
     async handler(ctx) {
-      const course = await updateCourse({ data: ctx.params, ctx });
-      return { status: 200, course };
+      const knowledge = await updateKnowledge({ data: ctx.params, ctx });
+      return { status: 200, knowledge };
     },
   },
-  listCourseRest: {
+  listKnowledgeRest: {
     rest: {
-      path: '/course',
+      path: '/knowledge',
       method: 'GET',
     },
     async handler(ctx) {
@@ -49,11 +47,10 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         const { page, size, program } = ctx.params;
-        const data = await listCourses({
+        const data = await listKnowledges({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           program,
-          ctx,
         });
         return { status: 200, data };
       }

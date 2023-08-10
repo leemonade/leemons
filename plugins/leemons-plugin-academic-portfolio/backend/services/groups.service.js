@@ -8,13 +8,12 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/common.rest');
-const { getTreeNodes } = require('../core/common/getTreeNodes');
-const { adminDashboard } = require('../core/common/adminDashboard');
+const restActions = require('./rest/group.rest');
+const { addGroup, listGroups, duplicateGroup, addGroupIfNotExists } = require('../core/groups');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.common',
+  name: 'academic-portfolio.groups',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -26,14 +25,24 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    getTreeNodes: {
+    addGroup: {
       handler(ctx) {
-        return getTreeNodes({ ...ctx.params, ctx });
+        return addGroup({ ...ctx.params, ctx });
       },
     },
-    adminDashboard: {
+    listGroups: {
       handler(ctx) {
-        return adminDashboard({ ctx });
+        return listGroups({ ...ctx.params, ctx });
+      },
+    },
+    duplicateGroup: {
+      handler(ctx) {
+        return duplicateGroup({ ...ctx.params, ctx });
+      },
+    },
+    addGroupIfNotExists: {
+      handler(ctx) {
+        return addGroupIfNotExists({ ...ctx.params, ctx });
       },
     },
   },
