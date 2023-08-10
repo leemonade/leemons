@@ -19,6 +19,9 @@ const { getProgramGroups } = require('../../core/programs/getProgramGroups');
 const { getProgramSubstages } = require('../../core/programs/getProgramSubstages');
 const { removeProgramByIds } = require('../../core/programs/removeProgramByIds');
 const { duplicateProgramByIds } = require('../../core/programs/duplicateProgramByIds');
+const {
+  addStudentsToClassesUnderNodeTree,
+} = require('../../core/programs/addStudentsToClassesUnderNodeTree');
 
 /** @type {ServiceSchema} */
 (
@@ -196,6 +199,22 @@ const { duplicateProgramByIds } = require('../../core/programs/duplicateProgramB
       async handler(ctx) {
         const [program] = await duplicateProgramByIds({ ids: ctx.params.id, ctx });
         return { status: 200, program };
+      },
+    },
+    addStudentsToClassesUnderNodeTreeRest: {
+      rest: {
+        path: '/program/add-students-to-classes-under-node-tree',
+        method: 'POST',
+      },
+      async handler(ctx) {
+        const data = await addStudentsToClassesUnderNodeTree({
+          program: ctx.params.program,
+          nodetype: ctx.params.nodeType,
+          nodeId: ctx.params.nodeId,
+          students: ctx.params.students,
+          ctx,
+        });
+        return { status: 200, data };
       },
     },
   }
