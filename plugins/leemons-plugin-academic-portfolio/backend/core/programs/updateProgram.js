@@ -18,15 +18,7 @@ async function updateProgram({ data, ctx }) {
     name: program.id,
   };
   if (image) imageData.cover = image;
-  // const assetService = leemons.getPlugin('leebrary').services.assets;
-  // const assetImage = await assetService.update(
-  //   { id: program.image, ...imageData },
-  //   {
-  //     published: true,
-  //     userSession,
-  //     transacting,
-  //   }
-  // );
+
   const assetImage = await ctx.tx.call('leebrary.assets.update', {
     data: { id: program.image, ...imageData },
     published: true,

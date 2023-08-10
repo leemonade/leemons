@@ -7,12 +7,6 @@ async function getUserPrograms({ ctx }) {
   const programIds = await getUserProgramIds({ userSession, ctx });
   const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
 
-  // const assetService = leemons.getPlugin('leebrary').services.assets;
-  // const images = await assetService.getByIds(map(programs, 'image'), {
-  //   withFiles: true,
-  //   userSession,
-  //   transacting,
-  // });
   const images = await ctx.tx.call('leebrary.assets.getByIds', {
     assetsIds: map(programs, 'image'),
     withFiles: true,
