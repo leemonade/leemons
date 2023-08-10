@@ -5,9 +5,9 @@ async function getMenuBuilder({ ctx }) {
   // const menu = leemons.getPlugin('menu-builder');
   // if (menu) return menu;
   // throw new Error(`Plugin 'menu-builder' need to be installed`);
-  const config = await ctx.tx.call('menu-builder.config.constants');
-  if (!config) throw new LeemonsError(`Plugin 'menu-builder' need to be installed`);
-  return config;
+  const constants = await ctx.tx.call('menu-builder.config.constants');
+  if (!constants) throw new LeemonsError(`Plugin 'menu-builder' need to be installed`);
+  return constants;
 }
 
 module.exports = getMenuBuilder;

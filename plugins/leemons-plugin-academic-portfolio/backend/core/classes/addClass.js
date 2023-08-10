@@ -59,13 +59,13 @@ async function addClass({ data, ctx }) {
     if (image) imageData.cover = image;
 
     const assetImage = await ctx.tx.call('leebrary.assets.add', {
-      ...imageData,
+      asset: imageData,
       options: {
         permissions: [
           {
             canEdit: true,
             isCustomPermission: true,
-            permissionName: leemons.plugin.prefixPN('programs'),
+            permissionName: ctx.prefixPN('programs'),
             actionNames: ['update', 'admin'],
           },
         ],
