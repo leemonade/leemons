@@ -1,4 +1,4 @@
-const { menuItems } = require('../../../config/constants');
+const { menuItems } = require('../../config/constants');
 const enableItem = require('./enableItem');
 
 async function enableAllItems() {

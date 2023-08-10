@@ -10,6 +10,7 @@ async function setSubjectInternalId({ subject, program, internalId, course, ctx 
   if (course) toSave.course = course;
   return ctx.tx.db.ProgramSubjectsCredits.findOneAndUpdate({ subject, program }, toSave, {
     upsert: true,
+    new: true,
   });
 }
 
