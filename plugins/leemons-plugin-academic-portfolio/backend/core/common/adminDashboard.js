@@ -1,14 +1,16 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function adminDashboard(config, { transacting } = {}) {
+async function adminDashboard({
+  // config // unused old param,
+  ctx,
+}) {
   const [programs, classStudents, classTeachers, classes, subjects, groups] = await Promise.all([
-    table.programs.find({}, { transacting }),
-    table.classStudent.find({}, { transacting }),
-    table.classTeacher.find({}, { transacting }),
-    table.class.find({}, { columns: ['id', 'program'], transacting }),
-    table.subjects.find({}, { columns: ['id', 'program'], transacting }),
-    table.groups.find({}, { columns: ['id', 'type', 'program'], transacting }),
+    ctx.tx.db.Programs.find({}).lean(),
+    ctx.tx.db.ClassStudent.find({}).lean(),
+    ctx.tx.db.ClassTeacher.find({}).lean(),
+    ctx.tx.db.Class.find({}).select(['id', 'program']).lean(),
+    ctx.tx.db.Subjects.find({}).select(['id', 'program']).lean(),
+    ctx.tx.db.Groups.find({}).select(['id', 'type', 'program']).lean(),
   ]);
 
   const results = {
