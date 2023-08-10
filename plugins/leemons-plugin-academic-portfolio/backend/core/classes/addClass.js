@@ -59,7 +59,7 @@ async function addClass({ data, ctx }) {
     if (image) imageData.cover = image;
 
     const assetImage = await ctx.tx.call('leebrary.assets.add', {
-      ...imageData,
+      asset: imageData,
       options: {
         permissions: [
           {

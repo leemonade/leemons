@@ -13,7 +13,7 @@ async function addUserAvatar({ user, avatar, ctx } = {}) {
     });
   } else {
     asset = await ctx.tx.call('leebrary.assets.add', {
-      data: assetData,
+      asset: assetData,
       published: true,
     });
   }
