@@ -12,7 +12,7 @@ async function getUserProgramIds({
 
   const classeIds = _.uniq(_.map(stClasses, 'class').concat(_.map(thClasses, 'class')));
 
-  const classes = await ctx.tx.db.Class.find({ id_$in: classeIds }).select(['program']).lean();
+  const classes = await ctx.tx.db.Class.find({ id: classeIds }).select(['program']).lean();
   return _.uniq(_.map(classes, 'program'));
 }
 
