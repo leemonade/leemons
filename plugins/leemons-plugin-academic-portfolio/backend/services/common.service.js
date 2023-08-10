@@ -13,7 +13,7 @@ const { getTreeNodes } = require('../core/common/getTreeNodes');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.programs',
+  name: 'academic-portfolio.common',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
