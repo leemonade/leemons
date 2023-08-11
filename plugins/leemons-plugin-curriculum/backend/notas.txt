@@ -1,0 +1,63 @@
+Ver como añadimos "bloques"/"ciclos" debajo de zonas del arbol, ya que el arbol se monta en funcion
+de los campos de las clases, no existe un arbol como tal
+
+https://vldzx7.axshare.com/#id=gmi2zx&p=estados__rbol&g=1
+
+- curriculum
+  - id
+  - name
+  - locale
+  - center
+  - program
+
+- nodeLevels
+  - id
+  - curriculum
+  - type // Tipo de nodo (program | area | subject | ... | custom)
+  - name
+  - listType
+  - order
+
+- node
+  - id
+  - curriculum
+  - name
+  - nodeLevel
+  - parentNode
+  - nodeOrder // Ordena dentro del mismo padre
+
+- rules
+  - nodeLevel
+  - node (relation)
+  - name
+  - type
+  - ordered
+  - orderedType
+  - codeComposer
+  - codeFromParentBlock
+  - addCode
+
+
+
+En el primer paso donde se seleccionan los niveles de academic portfolio, se generan todos los nodos duplicados y se separa completamente curriculum de academic portfolio.
+
+Ver con luz como montamos los indices que tienen 0 por delante, dodne esta la configuracion de eso.
+
+
+El backend tendra que recalcular todos los indices/ordenes de las listas cada vez que se guarde lo que sea y devolver el arbol entero de nuevo con todos los indices/ordenes actualizados
+
+// plugins.leebrary.leemons.io
+
+
+
+
+
+
+Mirar en dataset si podriamos añadir un uevo tipo list y group para curriculum, poder definir a cada campo si se puede buscar por el o no, y si se puede crear una funcion donde pasandole un/unos datasets busque todos los registros con LIKE de los campos que sean buscables dentro de dichos datasets.
+
+
+
+
+
+
+Ver tiene que poder ver cualquier persona hasta los que no estan logados, y editar solo los perfiles que se especifiquen previamenteen una tabla, tocara editar todos los campos de todos los datasets cuando se modifique esa tabla.
