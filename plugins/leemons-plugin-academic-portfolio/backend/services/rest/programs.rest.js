@@ -9,6 +9,11 @@ const { LeemonsError } = require('leemons-error');
 const { LeemonsValidator } = require('leemons-validator');
 
 const {
+  LeemonsMiddlewareNecessaryPermits,
+  LeemonsMiddlewareAuthenticated,
+} = require('leemons-middlewares');
+
+const {
   getProgramTree,
   havePrograms,
   addProgram,
@@ -32,6 +37,14 @@ module.exports = {
       path: '/program/:id/tree',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const tree = await getProgramTree({ programId: ctx.params.id, ctx });
       return { status: 200, tree };
@@ -42,6 +55,14 @@ module.exports = {
       path: '/program/have',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const have = await havePrograms({ ctx });
       return { status: 200, have };
@@ -52,6 +73,14 @@ module.exports = {
       path: '/program',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const data = JSON.parse(ctx.params.data);
       _.forIn(ctx.params.files, (value, key) => {
@@ -66,6 +95,14 @@ module.exports = {
       path: '/program',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const data = JSON.parse(ctx.params.data);
       _.forIn(ctx.params.files, (value, key) => {
@@ -80,6 +117,7 @@ module.exports = {
       path: '/program',
       method: 'GET',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
@@ -112,6 +150,14 @@ module.exports = {
       path: '/program/:id',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const [program] = await programsByIds({ ids: ctx.params.id, ctx });
       if (!program) throw new LeemonsError(ctx, { message: 'Program not found' });
@@ -123,6 +169,14 @@ module.exports = {
       path: '/program/:id/has/courses',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const courses = await getProgramCourses({ ids: ctx.params.id, ctx });
       return { status: 200, has: courses.length > 0 };
@@ -143,6 +197,14 @@ module.exports = {
       path: '/program/:id/has/substages',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const substages = await getProgramSubstages({ ids: ctx.params.id, ctx });
       return { status: 200, has: substages.length > 0 };
@@ -153,6 +215,14 @@ module.exports = {
       path: '/program/:id/courses',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const courses = await getProgramCourses({ ids: ctx.params.id, ctx });
       return { status: 200, courses };
@@ -163,6 +233,14 @@ module.exports = {
       path: '/program/:id/groups',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const groups = await getProgramGroups({ ids: ctx.params.id, ctx });
       return { status: 200, groups };
@@ -173,6 +251,14 @@ module.exports = {
       path: '/program/:id/substages',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const substages = await getProgramSubstages({ ids: ctx.params.id, ctx });
       return { status: 200, substages };
@@ -183,6 +269,14 @@ module.exports = {
       path: '/program/:id',
       method: 'DELETE',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['delete'],
+        },
+      }),
+    ],
     async handler(ctx) {
       await removeProgramByIds({
         ids: ctx.params.id,
@@ -197,6 +291,14 @@ module.exports = {
       path: '/program/:id/duplicate',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const [program] = await duplicateProgramByIds({ ids: ctx.params.id, ctx });
       return { status: 200, program };
@@ -207,6 +309,14 @@ module.exports = {
       path: '/program/add-students-to-classes-under-node-tree',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const data = await addStudentsToClassesUnderNodeTree({
         program: ctx.params.program,
@@ -223,6 +333,7 @@ module.exports = {
       path: '/user/programs',
       method: 'GET',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const programs = await getUserPrograms({ ctx });
       return { status: 200, programs };
@@ -233,6 +344,7 @@ module.exports = {
       path: '/program/:id/evaluation-system',
       method: 'GET',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const evaluationSystem = await getProgramEvaluationSystem({ id: ctx.params.id, ctx });
       return { status: 200, evaluationSystem };

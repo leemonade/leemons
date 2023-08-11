@@ -5,6 +5,11 @@
  */
 const { LeemonsValidator } = require('leemons-validator');
 const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
+const {
   addGroup,
   updateGroup,
   listGroups,
@@ -20,6 +25,14 @@ module.exports = {
       path: '/group',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const group = await addGroup({ data: ctx.params, ctx });
       return { status: 200, group };
@@ -30,6 +43,14 @@ module.exports = {
       path: '/group-from-classes-under-node-tree',
       method: 'DELETE',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['delete'],
+        },
+      }),
+    ],
     async handler(ctx) {
       await removeGroupFromClassesUnderNodeTree(ctx.params.group);
       return { status: 200 };
@@ -40,6 +61,14 @@ module.exports = {
       path: '/group',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const group = await updateGroup({ data: ctx.params, ctx });
       return { status: 200, group };
@@ -50,6 +79,14 @@ module.exports = {
       path: '/group',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
@@ -80,6 +117,14 @@ module.exports = {
       path: '/group/:id/duplicate-with-classes-under-node-tree',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const duplications = await duplicateGroupWithClassesUnderNodeTreeByIds({
         nodeTypes: ctx.params.nodeTypes,
@@ -93,6 +138,14 @@ module.exports = {
       path: '/group/duplicate',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const duplications = await duplicateGroup({ data: ctx.params, ctx });
       return { status: 200, duplications };

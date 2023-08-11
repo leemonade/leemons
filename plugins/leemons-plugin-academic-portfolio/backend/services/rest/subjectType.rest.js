@@ -5,6 +5,11 @@
  */
 
 const { LeemonsValidator } = require('leemons-validator');
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
 const { updateSubjectType, addSubjectType, listSubjectType } = require('../../core/subject-type');
 
 /** @type {ServiceSchema} */
@@ -14,6 +19,14 @@ module.exports = {
       path: '/subject-type',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const subjectType = await addSubjectType({ data: ctx.params, ctx });
       return { status: 200, subjectType };
@@ -24,6 +37,14 @@ module.exports = {
       path: '/subject-type',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const subjectType = await updateSubjectType({ data: ctx.params, ctx });
       return { status: 200, subjectType };
@@ -34,6 +55,14 @@ module.exports = {
       path: '/subject-type',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
