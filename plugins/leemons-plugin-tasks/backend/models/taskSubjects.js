@@ -13,11 +13,21 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    task: {
       type: String,
+      required: true,
     },
-    assignable: {
+    course: {
       type: String,
+      required: true,
+    },
+    subject: {
+      type: String, // uuid
+      required: true,
+    },
+    level: {
+      type: String,
+      required: true,
     },
   },
   {
@@ -25,6 +35,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const taskSubjectsModel = newModel(mongoose.connection, 'v1::tasks_TaskSubjects', schema);
 
-module.exports = { documentsModel };
+module.exports = { taskSubjectsModel };

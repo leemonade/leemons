@@ -13,11 +13,11 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    key: {
       type: String,
     },
-    assignable: {
-      type: String,
+    profile: {
+      type: String, // uuid
     },
   },
   {
@@ -25,6 +25,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const profilesModel = newModel(mongoose.connection, 'v1::tasks_Profiles', schema);
 
-module.exports = { documentsModel };
+module.exports = { profilesModel };

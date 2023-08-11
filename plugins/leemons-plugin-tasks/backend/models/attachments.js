@@ -13,11 +13,11 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    task: {
       type: String,
     },
-    assignable: {
-      type: String,
+    attachment: {
+      type: String, // uuid
     },
   },
   {
@@ -25,6 +25,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const attachmentsModel = newModel(mongoose.connection, 'v1::tasks_Attachments', schema);
 
-module.exports = { documentsModel };
+module.exports = { attachmentsModel };

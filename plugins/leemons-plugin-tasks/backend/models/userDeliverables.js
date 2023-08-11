@@ -13,10 +13,16 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    instance: {
+      type: String, // uuid
+    },
+    user: {
+      type: String, // uuid
+    },
+    deliverable: {
       type: String,
     },
-    assignable: {
+    type: {
       type: String,
     },
   },
@@ -25,6 +31,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const userDeliverablesModel = newModel(mongoose.connection, 'v1::tasks_UserDeliverables', schema);
 
-module.exports = { documentsModel };
+module.exports = { userDeliverablesModel };

@@ -13,11 +13,14 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    group: {
       type: String,
     },
-    assignable: {
-      type: String,
+    instance: {
+      type: String, // uuid
+    },
+    student: {
+      type: String, // uuid
     },
   },
   {
@@ -25,6 +28,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const groupsInstancesModel = newModel(mongoose.connection, 'v1::tasks_GroupsInstances', schema);
 
-module.exports = { documentsModel };
+module.exports = { groupsInstancesModel };

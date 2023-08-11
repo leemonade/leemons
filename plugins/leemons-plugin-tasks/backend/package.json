@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-scores",
+  "name": "leemons-plugin-tasks",
   "version": "1.0.0",
-  "description": "Leemons scores plugin",
+  "description": "Leemons tasks plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",

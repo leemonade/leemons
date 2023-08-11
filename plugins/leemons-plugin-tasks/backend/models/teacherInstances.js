@@ -13,11 +13,11 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
-      type: String,
+    instance: {
+      type: String, // uuid
     },
-    assignable: {
-      type: String,
+    teacher: {
+      type: String, // uuid
     },
   },
   {
@@ -25,6 +25,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const teacherInstancesModel = newModel(mongoose.connection, 'v1::tasks_TeacherInstances', schema);
 
-module.exports = { documentsModel };
+module.exports = { teacherInstancesModel };

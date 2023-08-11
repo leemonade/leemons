@@ -13,11 +13,17 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    task: {
       type: String,
     },
-    assignable: {
+    assessmentCriteria: {
       type: String,
+    },
+    subject: {
+      type: String, // uuid
+    },
+    position: {
+      type: Number,
     },
   },
   {
@@ -25,6 +31,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const taskAssessmentCriteriaModel = newModel(
+  mongoose.connection,
+  'v1::tasks_TaskAssessmentCriteria',
+  schema
+);
 
-module.exports = { documentsModel };
+module.exports = { taskAssessmentCriteriaModel };

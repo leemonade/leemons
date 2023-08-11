@@ -13,11 +13,11 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
-      type: String,
+    hideWelcome: {
+      type: Boolean,
     },
-    assignable: {
-      type: String,
+    configured: {
+      type: Boolean,
     },
   },
   {
@@ -25,6 +25,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const settingsModel = newModel(mongoose.connection, 'v1::tasks_Settings', schema);
 
-module.exports = { documentsModel };
+module.exports = { settingsModel };

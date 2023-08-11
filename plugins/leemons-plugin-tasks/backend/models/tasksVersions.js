@@ -13,10 +13,19 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
-      type: String,
+    task: {
+      type: String, // uuid
     },
-    assignable: {
+    major: {
+      type: Number,
+    },
+    minor: {
+      type: Number,
+    },
+    patch: {
+      type: Number,
+    },
+    status: {
       type: String,
     },
   },
@@ -25,6 +34,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const tasksVersionsModel = newModel(mongoose.connection, 'v1::tasks_TasksVersions', schema);
 
-module.exports = { documentsModel };
+module.exports = { tasksVersionsModel };

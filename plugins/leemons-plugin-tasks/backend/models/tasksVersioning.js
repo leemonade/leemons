@@ -13,10 +13,13 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
+    name: {
       type: String,
     },
-    assignable: {
+    last: {
+      type: String,
+    },
+    current: {
       type: String,
     },
   },
@@ -25,6 +28,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const tasksVersioningModel = newModel(mongoose.connection, 'v1::tasks_TasksVersioning', schema);
 
-module.exports = { documentsModel };
+module.exports = { tasksVersioningModel };

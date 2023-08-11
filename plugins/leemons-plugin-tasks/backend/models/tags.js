@@ -13,10 +13,10 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    content: {
-      type: String,
+    task: {
+      type: String, // uuid
     },
-    assignable: {
+    tag: {
       type: String,
     },
   },
@@ -25,6 +25,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const tagsModel = newModel(mongoose.connection, 'v1::tasks_Tags', schema);
 
-module.exports = { documentsModel };
+module.exports = { tagsModel };
