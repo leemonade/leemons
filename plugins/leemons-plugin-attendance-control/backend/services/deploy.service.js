@@ -8,15 +8,15 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
-
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-// const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { permissions } = require('../config/constants');
+const { addMenuItemsDeploy } = require('leemons-menu-builder');
+const { widgets, permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'timetable.deploy',
+  name: 'attendance-control.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -25,21 +25,22 @@ module.exports = () => ({
     }),
     LeemonsDeploymentManagerMixin(),
   ],
-  //! Comentado porque aparecía comentado en el "viejo" events.js
-  // multiEvents: [
-  //   {
-  //     events: ['menu-builder.init-main-menu', 'timetable.init-permissions'],
-  //     handler: async (ctx) => {
-  // await addMenuItemsDeploy({
-  //   keyValueModel: ctx.tx.db.KeyValue,
-  //   item: menuItems,
-  //   ctx,
-  // });
-  //     },
-  //   },
-  // ],
+  multiEvents: [
+    {
+      events: ['menu-builder.init-main-menu', 'scores.init-menu'],
+      handler: async (ctx) => {
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: menuItems,
+          ctx,
+        });
+      },
+    },
+  ],
   events: {
     'deployment-manager.install': async (ctx) => {
+      // Widgets
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -47,7 +48,6 @@ module.exports = () => ({
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
-      return null;
     },
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
@@ -59,14 +59,21 @@ module.exports = () => ({
       return null;
     },
     'users.init-permissions': async (ctx) => {
-      // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: permissions.permissions,
         ctx,
       });
     },
+    'dashboard.init-widgets-zones': async (ctx) => {
+      await addWidgetItemsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        items: widgets.items,
+        ctx,
+      });
+    },
   },
+
   created() {
     mongoose.connect(process.env.MONGO_URI);
   },

@@ -43,19 +43,22 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Permissions
-      await addPermissionsDeploy({
+      // Locales
+      await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
+        locale: ['es', 'en'],
+        i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
+      // Register widget zone
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
     },
     'admin.init-widget-zones': async (ctx) => {
       // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
     'multilanguage.newLocale': async (ctx) => {
+      // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
@@ -63,6 +66,14 @@ module.exports = () => ({
         ctx,
       });
       return null;
+    },
+    'users.init-permissions': async (ctx) => {
+      // Permissions
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: permissions.permissions,
+        ctx,
+      });
     },
   },
   created() {

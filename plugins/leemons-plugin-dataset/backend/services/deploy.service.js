@@ -24,12 +24,6 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: defaultPermissions,
-        ctx,
-      });
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -46,6 +40,14 @@ module.exports = () => ({
         ctx,
       });
       return null;
+    },
+    'users.init-permissions': async (ctx) => {
+      // Permissions
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: defaultPermissions,
+        ctx,
+      });
     },
   },
   created() {
