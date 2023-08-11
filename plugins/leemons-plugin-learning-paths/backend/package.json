@@ -1,0 +1,41 @@
+{
+  "name": "leemons-plugin-learning-paths",
+  "version": "1.0.0",
+  "description": "Leemons learning paths plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1",
+    "turbo": "^1.9.6"
+  },
+  "dependencies": {
+    "@moleculer/channels": "^0.1.6",
+    "ioredis": "^5.3.2",
+    "leemons-mongodb": "1.0.0",
+    "moleculer": "^0.14.26",
+    "moleculer-web": "^0.10.5"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}
