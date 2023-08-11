@@ -22,7 +22,7 @@ module.exports = {
       MessageConfigPrograms: models.messageConfigProgramsModel,
       MessageConfigViews: models.messageConfigViewsModel,
       MessageConfig: models.messageConfigModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::academic-portfolio_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: 'v1::board-messages_KeyValue' }),
     };
   },
 };
