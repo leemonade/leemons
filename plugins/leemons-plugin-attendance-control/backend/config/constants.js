@@ -1,4 +1,4 @@
-const permissionsPrefix = 'plugins.attendance-control';
+const permissionsPrefix = 'attendance-control';
 
 const permissionNames = {
   attendance: `${permissionsPrefix}.attendance`,
