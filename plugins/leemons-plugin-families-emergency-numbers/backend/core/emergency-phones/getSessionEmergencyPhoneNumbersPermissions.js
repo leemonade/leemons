@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
 async function getSessionEmergencyPhoneNumbersPermissions(userSession, { transacting } = {}) {
