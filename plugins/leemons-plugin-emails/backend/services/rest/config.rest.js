@@ -4,6 +4,8 @@
  */
 /** @type {ServiceSchema} */
 
+const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+
 const configService = require('../../core/config');
 
 module.exports = {
@@ -12,6 +14,7 @@ module.exports = {
       method: 'GET',
       path: '/',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const configs = await configService.getConfig({
         userAgent: ctx.meta.userSession.userAgents[0].id,
@@ -25,6 +28,7 @@ module.exports = {
       method: 'POST',
       path: '/',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const configs = await configService.saveConfig({
         ...ctx.params,
