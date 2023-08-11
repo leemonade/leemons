@@ -40,4 +40,4 @@ const schema = new mongoose.Schema(
 
 const feedbackDatesModel = newModel(mongoose.connection, 'v1::feedback_feedbackDates', schema);
 
-module.exports = { feedbackModel: feedbackDatesModel };
+module.exports = { feedbackDatesModel };

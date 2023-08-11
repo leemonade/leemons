@@ -41,4 +41,4 @@ const feedbackResponsesModel = newModel(
   schema
 );
 
-module.exports = { feedbackModel: feedbackResponsesModel };
+module.exports = { feedbackResponsesModel };
