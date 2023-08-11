@@ -38,6 +38,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const feedbackModel = newModel(mongoose.connection, 'v1::feedback_feedbackDates', schema);
+const feedbackDatesModel = newModel(mongoose.connection, 'v1::feedback_feedbackDates', schema);
 
-module.exports = { feedbackModel };
+module.exports = { feedbackModel: feedbackDatesModel };
