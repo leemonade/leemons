@@ -40,13 +40,6 @@ module.exports = () => ({
   // ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
-        ctx,
-      });
-
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,

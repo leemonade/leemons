@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -31,10 +30,6 @@ module.exports = () => ({
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
-      // Menu
-
-      await addMenusDeploy({ keyValueModel: ctx.tx.db.KeyValue, menu: { key: mainMenuKey }, ctx });
-      ctx.tx.emit('init-main-menu');
     },
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
@@ -44,6 +39,11 @@ module.exports = () => ({
         ctx,
       });
       return null;
+    },
+    'users.init-permissions': async (ctx) => {
+      // Menu
+      await addMenusDeploy({ keyValueModel: ctx.tx.db.KeyValue, menu: { key: mainMenuKey }, ctx });
+      ctx.tx.emit('init-main-menu');
     },
   },
   created() {

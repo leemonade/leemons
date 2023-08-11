@@ -38,7 +38,7 @@ const addEventTypes = require('../core/event-types/add');
 
 async function addEventType({ ctx }) {
   // TODO Migration: Hemos usado la llamada a deploy manager para ver si está instalado o no
-  // ? Está eso bien?
+  // ? Está eso bien? o es mejor "jugar" con la colección KeyValue ?
   const isInstalled = ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'calendar',
   });
@@ -121,9 +121,10 @@ module.exports = () => ({
       });
       // Event types
       await addEventType({ ctx });
+      // Register widget zone
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
     },
     'dashboard.init-widget-zones': async (ctx) => {
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
     'multilanguage.newLocale': async function newLocaleEvent(ctx) {
