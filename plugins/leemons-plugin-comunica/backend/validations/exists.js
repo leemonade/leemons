@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { exist: existRoom } = require('../services/room/exist');
-const { existUserAgent } = require('../services/room/existUserAgent');
+const { exist: existRoom } = require('../core/room/exist');
+const { existUserAgent } = require('../core/room/existUserAgent');
 
 function validateKeyPrefix(_key, calledFrom) {
   if (calledFrom) {

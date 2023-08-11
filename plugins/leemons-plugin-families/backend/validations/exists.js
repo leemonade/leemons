@@ -1,4 +1,4 @@
-const { existMember } = require('../services/family-members/existMember');
+const { existMember } = require('../core/family-members/existMember');
 
 async function validateExistMemberInFamily(family, user, { transacting } = {}) {
   if (await existMember(family, user, { transacting }))
