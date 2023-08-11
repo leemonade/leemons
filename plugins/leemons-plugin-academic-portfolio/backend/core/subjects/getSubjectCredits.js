@@ -1,22 +1,16 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getSubjectCredits(subject, program, { transacting } = {}) {
-  const response = await table.programSubjectsCredits.find(
-    {
-      subject_$in: _.isArray(subject) ? subject : [subject],
-      program_$in: _.isArray(program) ? program : [program],
-    },
-    { transacting }
-  );
+async function getSubjectCredits({ subject, program, ctx }) {
+  const response = await ctx.tx.db.ProgramSubjectsCredits.find({
+    subject: _.isArray(subject) ? subject : [subject],
+    program: _.isArray(program) ? program : [program],
+  }).lean();
   return _.isArray(subject) || _.isArray(program) ? response : response[0];
 }
 
-async function getSubjectsCredits(subjects, { transacting } = {}) {
+async function getSubjectsCredits({ subjects, ctx }) {
   const query = subjects.map((subject) => _.pick(subject, ['subject', 'program']));
-
-  const response = await table.programSubjectsCredits.find({ $or: query }, { transacting });
-
+  const response = await ctx.tx.db.ProgramSubjectsCredits.find({ $or: query }).lean();
   return response;
 }
 

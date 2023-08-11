@@ -1,8 +1,11 @@
-const { table } = require('../tables');
-const { getNextSubjectIndex } = require('./getNextSubjectIndex');
+// const { table } = require('../tables');
+// const { getNextSubjectIndex } = require('./getNextSubjectIndex');
+// const { LeemonsError } = require('leemons-error')
 
+// TODO @askJaime: y esto...
 async function addNextSubjectIndex(program, { course, index, transacting } = {}) {
   throw new Error('No use addNextSubjectIndex');
+  // throw new LeemonsError(ctx, { message: 'No use addNextSubjectIndex' });
   /*
   let goodIndex = index;
   if (!index) {
