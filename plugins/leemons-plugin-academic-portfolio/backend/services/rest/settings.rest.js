@@ -5,6 +5,11 @@
  */
 const { LeemonsValidator } = require('leemons-validator');
 const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
+const {
   getProfiles,
   setProfiles,
   isProfilesConfig,
@@ -22,6 +27,7 @@ module.exports = {
       path: '/settings/profiles',
       method: 'GET',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const profiles = await getProfiles({ ctx });
       return { status: 200, profiles };
@@ -32,6 +38,14 @@ module.exports = {
       path: '/settings/profiles',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.profiles': {
+          actions: ['create', 'update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const profiles = await setProfiles({ ...ctx.params, ctx });
       return { status: 200, profiles };
@@ -42,6 +56,14 @@ module.exports = {
       path: '/settings/profiles/is-config',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.profiles': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const isConfig = await isProfilesConfig({ ctx });
       return { status: 200, isConfig };
@@ -52,6 +74,14 @@ module.exports = {
       path: '/settings',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.portfolio': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const settings = await findOne({ ctx });
       return { status: 200, settings };
@@ -62,6 +92,14 @@ module.exports = {
       path: '/settings',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.portfolio': {
+          actions: ['edit'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
@@ -81,6 +119,14 @@ module.exports = {
       path: '/settings/enable-menu-item',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.portfolio': {
+          actions: ['edit'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
@@ -96,6 +142,7 @@ module.exports = {
   },
   // TODO @askJaime: Esta acción no tiene ruta.
   // TODO @askJaime: removeMenuItemsService recibe los valores que se prevee que recibirá después de que se migre.
+  //! Añadir también permisos si los requiere
   removeMenuItemRest: {
     rest: {
       // path: '/settings/remove-menu-item',

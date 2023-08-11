@@ -7,6 +7,11 @@
 const _ = require('lodash');
 const { LeemonsValidator } = require('leemons-validator');
 const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
+const {
   validatePutSubjectCredits,
   validateGetSubjectCredits,
   validateGetSubjectCreditsProgram,
@@ -31,6 +36,14 @@ module.exports = {
       path: '/subject',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const data = JSON.parse(ctx.params.data);
       _.forIn(ctx.params.files, (value, key) => {
@@ -45,6 +58,14 @@ module.exports = {
       path: '/subject',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const data = JSON.parse(ctx.params.data);
       _.forIn(ctx.params.files, (value, key) => {
@@ -59,6 +80,15 @@ module.exports = {
       path: '/subject/:id',
       method: 'DELETE',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['delete'],
+        },
+      }),
+    ],
+
     async handler(ctx) {
       await deleteSubjectWithClasses({ id: ctx.params.id, ctx });
       return { status: 200 };
@@ -69,6 +99,14 @@ module.exports = {
       path: '/subject/credits',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       validatePutSubjectCredits(ctx.params);
       const { subject, program, credits } = ctx.params;
@@ -81,6 +119,7 @@ module.exports = {
       path: '/subject/credits',
       method: 'GET',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       let { subjects } = ctx.params;
       if (subjects) {
@@ -100,6 +139,14 @@ module.exports = {
       path: '/subject/credits/list',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       validateGetSubjectCreditsProgram(ctx.params);
       const { program } = ctx.params;
@@ -112,6 +159,15 @@ module.exports = {
       path: '/subject',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['view'],
+        },
+      }),
+    ],
+
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
@@ -143,6 +199,14 @@ module.exports = {
       path: '/subject/:id',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       let { id } = ctx.params;
       if (!id) {

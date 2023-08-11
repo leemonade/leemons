@@ -6,6 +6,10 @@
 
 const _ = require('lodash');
 const { LeemonsValidator } = require('leemons-validator');
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
 
 const { listClassesSubjects } = require('../../core/common/listClassesSubjects');
 const {
@@ -22,6 +26,14 @@ module.exports = {
       path: '/class-subjects',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
@@ -46,6 +58,14 @@ module.exports = {
       path: '/tree',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.tree': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const { program } = ctx.params;
       let { nodeTypes } = ctx.params;
@@ -67,6 +87,14 @@ module.exports = {
       path: '/classes-under-node-tree',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.tree': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const { nodeType, nodeId } = ctx.params;
       let { nodeTypes } = ctx.params;
@@ -88,6 +116,14 @@ module.exports = {
       path: '/classes-under-node-tree',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const { nodeType, nodeId } = ctx.params;
       let { nodeTypes } = ctx.params;
@@ -109,6 +145,14 @@ module.exports = {
       path: '/add-teachers-to-classes-under-node-tree',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       if (process.env.NODE_ENV !== 'production') {
         if (!_.isArray(ctx.params.students)) {
@@ -134,6 +178,14 @@ module.exports = {
       path: '/students/by/tags',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.subjects': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const students = await getStudentsByTags({
         tags: ctx.params.tags,

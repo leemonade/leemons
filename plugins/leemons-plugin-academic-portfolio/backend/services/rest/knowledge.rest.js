@@ -5,6 +5,11 @@
  */
 
 const { LeemonsValidator } = require('leemons-validator');
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
 const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/knowledges');
 
 /** @type {ServiceSchema} */
@@ -14,6 +19,14 @@ module.exports = {
       path: '/knowledge',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const knowledge = await addKnowledge({ data: ctx.params, ctx });
       return { status: 200, knowledge };
@@ -24,6 +37,14 @@ module.exports = {
       path: '/knowledge',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const knowledge = await updateKnowledge({ data: ctx.params, ctx });
       return { status: 200, knowledge };
@@ -34,6 +55,14 @@ module.exports = {
       path: '/knowledge',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',

@@ -4,6 +4,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const { LeemonsValidator } = require('leemons-validator');
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('leemons-middlewares');
+
 const { updateCourse, listCourses } = require('../../core/courses');
 
 /** @type {ServiceSchema} */
@@ -13,6 +18,14 @@ module.exports = {
       path: '/course',
       method: 'POST',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['create'],
+        },
+      }),
+    ],
     async handler() {
       /*
       const course = await courseService.addCourse(ctx.params;
@@ -26,6 +39,14 @@ module.exports = {
       path: '/course',
       method: 'PUT',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['update'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const course = await updateCourse({ data: ctx.params, ctx });
       return { status: 200, course };
@@ -36,6 +57,14 @@ module.exports = {
       path: '/course',
       method: 'GET',
     },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        'permissions.programs': {
+          actions: ['view'],
+        },
+      }),
+    ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
         type: 'object',
