@@ -14,20 +14,22 @@ const schema = new mongoose.Schema(
       index: true,
     },
     //
-    instance: {
-      // ref: 'plugins_assignables::assignableInstances',
+    number: {
+      type: Number,
+      required: true,
+    },
+    description: {
       type: String,
     },
-    userAgent: {
-      // ref: 'plugins_users::user-agent',
+    letter: {
       type: String,
     },
-    question: {
-      // ref: 'plugins_feedback::feedback-questions',
+    grade: {
+      // ref: 'plugins_grades::grades',
       type: String,
     },
-    response: {
-      type: String,
+    order: {
+      type: Number,
     },
   },
   {
@@ -35,10 +37,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const feedbackResponsesModel = newModel(
-  mongoose.connection,
-  'v1::feedback_feedbackResponses',
-  schema
-);
+const gradeScalesModel = newModel(mongoose.connection, 'v1::grades_gradeScales', schema);
 
-module.exports = { feedbackResponsesModel };
+module.exports = { gradeScalesModel };
