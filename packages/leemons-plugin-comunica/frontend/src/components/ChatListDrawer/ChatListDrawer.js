@@ -500,7 +500,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
                         direction="column"
                         onChange={onChangeTypeFilters}
                         data={store.roomTypes.map((type) => ({
-                          label: t(type.replace(/\./g, '_')),
+                          label: t(type?.replace(/\./g, '_')),
                           value: type,
                           checked: store.typeFilters?.includes(type),
                         }))}
