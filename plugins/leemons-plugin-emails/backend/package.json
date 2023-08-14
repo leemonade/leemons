@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-test",
+  "name": "leemons-plugin-emails",
   "version": "1.0.0",
-  "description": "Leemons test plugin",
+  "description": "Leemons emails plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
