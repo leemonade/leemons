@@ -8,15 +8,14 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { widgets, permissions, menuItems } = require('../config/constants');
+const { permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'board-messages.deploy',
+  name: 'curriculum.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -27,22 +26,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['dashboard.init-widget-zones', 'academic-portfolio.init-widget-zones'],
-      handler: async (ctx) => {
-        await addWidgetZonesDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          zones: widgets.zones,
-          ctx,
-        });
-        await addWidgetItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          items: widgets.items,
-          ctx,
-        });
-      },
-    },
-    {
-      events: ['menu-builder.init-main-menu', 'board-messages.init-permissions'],
+      events: ['users.init-menu', 'curriculum.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
         await addMenuItemsDeploy({
@@ -56,7 +40,6 @@ module.exports = () => ({
           item: otherMenuItems,
           ctx,
         });
-        ctx.tx.emit('init-submenu');
       },
     },
   ],
@@ -83,9 +66,17 @@ module.exports = () => ({
     'users.init-permissions': async (ctx) => {
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
+        permissions,
         ctx,
       });
+    },
+    'users.profile-permissions-change': async (ctx) => {
+      const {
+        onProfilePermissionsChange,
+        // eslint-disable-next-line global-require
+      } = require('../core/configs/onProfilePermissionsChange');
+      await onProfilePermissionsChange({ ...ctx.params, ctx });
+      ctx.tx.emit('permissions-change');
     },
   },
   created() {

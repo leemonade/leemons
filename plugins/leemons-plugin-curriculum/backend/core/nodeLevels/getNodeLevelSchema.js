@@ -1,23 +1,17 @@
-async function getNodeLevelSchema(nodeLevelId, locale, { transacting }) {
+async function getNodeLevelSchema({ nodeLevelId, locale, ctx }) {
   try {
     if (locale) {
-      return await leemons
-        .getPlugin('dataset')
-        .services.dataset.getSchemaWithLocale(
-          `node-level-${nodeLevelId}`,
-          'plugins.curriculum',
-          locale,
-          {
-            transacting,
-            useDefaultLocaleCallback: false,
-          }
-        );
-    }
-    return await leemons
-      .getPlugin('dataset')
-      .services.dataset.getSchema(`node-level-${nodeLevelId}`, 'plugins.curriculum', {
-        transacting,
+      return await ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
+        locationName: `node-level-${nodeLevelId}`,
+        pluginName: 'curriculum',
+        locale,
+        useDefaultLocaleCallback: false,
       });
+    }
+    return await ctx.tx.call('dataset.dataset.getSchema', {
+      locationName: `node-level-${nodeLevelId}`,
+      pluginName: 'curriculum',
+    });
   } catch (err) {
     return null;
   }

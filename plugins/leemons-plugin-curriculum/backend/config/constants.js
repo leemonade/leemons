@@ -15,7 +15,7 @@ const permissions = [
 
 const menuItems = [
   {
-    config: {
+    item: {
       key: 'curriculum',
       order: 300,
       iconSvg: '/public/curriculum/curriculum.svg',
@@ -33,7 +33,7 @@ const menuItems = [
     ],
   },
   {
-    config: {
+    item: {
       key: 'curriculum-new',
       parentKey: `${pluginName}.curriculum`,
       url: '/private/curriculum/new',
@@ -50,7 +50,7 @@ const menuItems = [
     ],
   },
   {
-    config: {
+    item: {
       key: 'curriculum-library',
       parentKey: `${pluginName}.curriculum`,
       url: '/private/curriculum/list',
