@@ -40,6 +40,7 @@ module.exports = () => ({
           item: otherMenuItems,
           ctx,
         });
+        // TODO @askJaime: en el events no se lanza el init-submenu, todo bien?
       },
     },
   ],
@@ -66,7 +67,7 @@ module.exports = () => ({
     'users.init-permissions': async (ctx) => {
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
-        permissions,
+        permissions: permissions.permissions,
         ctx,
       });
     },
