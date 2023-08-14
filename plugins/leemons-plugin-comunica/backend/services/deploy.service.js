@@ -29,11 +29,19 @@ module.exports = () => ({
     {
       events: ['menu-builder.init-main-menu', 'comunica.init-permissions'],
       handler: async (ctx) => {
+        const [mainMenuItem, ...otherMenuItems] = menuItems;
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
-          item: menuItems,
+          item: mainMenuItem,
           ctx,
         });
+        ctx.tx.emit('init-menu');
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: otherMenuItems,
+          ctx,
+        });
+        ctx.tx.emit('init-submenu');
       },
     },
   ],
