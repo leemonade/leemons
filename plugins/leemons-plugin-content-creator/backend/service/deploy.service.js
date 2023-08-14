@@ -6,17 +6,19 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
+const { map } = require('lodash');
+
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { permissions, menuItems } = require('../config/constants');
+const { permissions, menuItems, assignableRoles } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'comunica.deploy',
+  name: 'content-creator.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -27,7 +29,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['menu-builder.init-main-menu', 'comunica.init-permissions'],
+      events: ['menu-builder.init-main-menu', 'content-creator.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
         await addMenuItemsDeploy({
@@ -71,6 +73,17 @@ module.exports = () => ({
         permissions: permissions.permissions,
         ctx,
       });
+    },
+
+    'assignables.init-plugin': async (ctx) => {
+      await Promise.allSettled(
+        map(assignableRoles, (role) =>
+          ctx.tx.call('assignables.assignables.registerRole', {
+            role: role.role,
+            ...role.options,
+          })
+        )
+      );
     },
   },
   created() {

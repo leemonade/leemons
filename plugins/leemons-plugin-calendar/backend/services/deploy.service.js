@@ -101,6 +101,7 @@ module.exports = () => ({
           shouldWait: true,
           ctx,
         });
+        ctx.tx.emit('init-menu');
       },
     },
   ],
