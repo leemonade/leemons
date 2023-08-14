@@ -122,12 +122,17 @@ module.exports = () => ({
       });
       // Event types
       await addEventType({ ctx });
-      // Register widget zone
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
     },
     'dashboard.init-widget-zones': async (ctx) => {
+      // Widgets
+      console.log('------------ZONAS--------------');
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+    },
+    'calendar.init-widget-zones': async (ctx) => {
+      console.log('------------ITEMS--------------');
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
+
     'multilanguage.newLocale': async function newLocaleEvent(ctx) {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
