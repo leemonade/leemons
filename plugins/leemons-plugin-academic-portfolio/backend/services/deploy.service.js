@@ -47,12 +47,6 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      const {
-        syncProgramProfilePermissionsIfNeed,
-        // eslint-disable-next-line global-require
-      } = require('../core/classes/__update__/syncProgramProfilePermissionsIfNeed');
-      await syncProgramProfilePermissionsIfNeed({ ctx });
-
       // Register widget zone
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
 

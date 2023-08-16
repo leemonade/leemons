@@ -40,7 +40,7 @@ const menuItems = [
     item: {
       key: 'fundae-list',
       order: 2,
-      parentKey: `${permissionsPrefix}.fundae`, // TODO @askJaime: el parent item queda como 'fundae.fundae' en la base de datos, antes estaba sólo 'fundae' y daba error.
+      parentKey: `${permissionsPrefix}.fundae`,
       url: '/private/fundae/reports',
       label: {
         en: 'Configuration and reporting',

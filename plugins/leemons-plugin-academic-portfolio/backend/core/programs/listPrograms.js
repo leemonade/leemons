@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
 async function listPrograms({ page, size, center, ctx }) {
-  // TODO Migration: Cuidado, antes había un userSession optativo como parámetro
+  // TODO Robert: Remigrar!
   const programCenter = await ctx.tx.db.ProgramCenter.find({ center }).lean();
 
   const results = await mongoDBPaginate({

@@ -7,17 +7,9 @@ const permissionNames = {
   familiesCustomInfo: `${pluginName}.families-custom-info`,
   familiesGuardiansInfo: `${pluginName}.families-guardians-info`,
   familiesStudentsInfo: `${pluginName}.families-students-info`,
-  familiesUser: `${pluginName}.user-families`,
 };
 
 const permissions = [
-  // ! Añadido por mí: family.user-families
-  // TODO @askJaime: Este permiso no estaba en el constants y sin el se cae el backend :(
-  {
-    permissionName: permissionNames.familiesUser,
-    actions: ['view', 'admin'],
-    localizationName: { es: 'Familias - Usuario', en: 'Families - User' },
-  },
   {
     permissionName: permissionNames.families,
     actions: ['view', 'create', 'update', 'delete', 'admin'],

@@ -37,7 +37,6 @@ async function getByIds({
   showPublic,
   ctx,
 }) {
-  // TODO Migration: Cuidado, antes había un userSession optativo como parámetro (ahora lo forzamos al del ctx)
   const { userSession } = ctx.meta;
   const ids = flatten([assetsIds]);
 

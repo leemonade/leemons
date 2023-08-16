@@ -14,7 +14,7 @@ const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { getServiceModels } = require('../models');
 const { permissions, widgets, menuItems, kanbanColumns } = require('../config/constants');
-
+const { add: addKanbanColumn } = require('../core/kanban-columns/add');
 const onAcademicPortfolioRemoveClassStudents = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassStudents');
 const onAcademicPortfolioAddClassStudent = require('../core/pluginEvents/class/onAcademicPortfolioAddClassStudent');
 const onAcademicPortfolioRemoveStudentFromClass = require('../core/pluginEvents/class/onAcademicPortfolioRemoveStudentFromClass');
@@ -37,15 +37,11 @@ const {
 const addEventTypes = require('../core/event-types/add');
 
 async function addEventType({ ctx }) {
-  // TODO Migration: Hemos usado la llamada a deploy manager para ver si está instalado o no
-  // ? Está eso bien? o es mejor "jugar" con la colección KeyValue ?
-  const isInstalled = ctx.tx.call('deployment-manager.pluginIsInstalled', {
+  // TODO ROBERTO: Está eso bien? o es mejor "jugar" con la colección KeyValue ? Key-value!
+  const isInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'calendar',
   });
   if (!isInstalled) {
-    // eslint-disable-next-line global-require
-    const { add: addKanbanColumn } = require('../core/kanban-columns/add');
-
     await Promise.all(_.map(kanbanColumns, (d) => addKanbanColumn({ data: d, ctx })));
     ctx.tx.emit('init-kanban-columns');
 

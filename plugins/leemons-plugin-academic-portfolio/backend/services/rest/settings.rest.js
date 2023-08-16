@@ -114,6 +114,7 @@ module.exports = {
       throw validator.error;
     },
   },
+  // TODO Verificar que esto se va a usar
   enableMenuItemRest: {
     rest: {
       path: '/settings/enable-menu-item',
@@ -140,25 +141,23 @@ module.exports = {
       throw validator.error;
     },
   },
-  // TODO @askJaime: Esta acción no tiene ruta.
-  // TODO @askJaime: removeMenuItemsService recibe los valores que se prevee que recibirá después de que se migre.
-  //! Añadir también permisos si los requiere
-  removeMenuItemRest: {
-    rest: {
-      // path: '/settings/remove-menu-item',
-      // method: 'DELETE'? 'PUT?
-    },
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
-      });
-      if (validator.validate(ctx.params)) {
-        const item = await removeMenuItemService({ key: ctx.params.key, ctx });
-        return { status: 200, item };
-      }
-      throw validator.error;
-    },
-  },
+  // TODO Verificar que esto se va a usar
+  // removeMenuItemRest: {
+  //   rest: {
+  //     // path: '/settings/remove-menu-item',
+  //     // method: 'DELETE'? 'PUT?
+  //   },
+  //   async handler(ctx) {
+  //     const validator = new LeemonsValidator({
+  //       type: 'object',
+  //       properties: { key: { type: 'string' } },
+  //       required: ['key'],
+  //     });
+  //     if (validator.validate(ctx.params)) {
+  //       const item = await removeMenuItemService({ key: ctx.params.key, ctx });
+  //       return { status: 200, item };
+  //     }
+  //     throw validator.error;
+  //   },
+  // },
 };
