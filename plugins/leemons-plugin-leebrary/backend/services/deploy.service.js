@@ -25,6 +25,8 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
+      // Widgets
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -34,7 +36,6 @@ module.exports = () => ({
     },
     'admin.init-widget-zones': async (ctx) => {
       // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
     'multilanguage.newLocale': async (ctx) => {
