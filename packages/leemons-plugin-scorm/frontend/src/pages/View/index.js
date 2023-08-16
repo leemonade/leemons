@@ -79,7 +79,8 @@ function useData({ id, user }) {
     classData,
     coverUrl,
 
-    isFinished: !dayjs(assignation?.timestamps?.end).isAfter(dayjs()),
+    isFinished:
+      !!assignation?.timestamps?.end && !dayjs(assignation?.timestamps?.end).isAfter(dayjs()),
 
     isLoading: instanceIsLoading || assignationIsLoading || scormIsLoading || classDataIsLoading,
   };
