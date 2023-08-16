@@ -23,7 +23,7 @@ async function duplicateClassesByIds({
   ctx,
 }) {
   const duplications = dup;
-  const [classes, rawClasses, timeTables] = await Promise.all([
+  const [classes, rawClasses] = await Promise.all([
     classByIds({ ids, ctx }),
     ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
     ctx.tx.call('timetable.timetable.listByClassIds', {
@@ -32,7 +32,6 @@ async function duplicateClassesByIds({
   ]);
   const classesById = _.keyBy(classes, 'id');
   const classesIds = _.map(classes, 'id');
-  const timetablesByClass = _.groupBy(timeTables, 'class'); // TODO @askJaime: Borramos esto?
   await ctx.tx.emit('before-duplicate-classes', { classes });
 
   // ES: Empezamos la duplicación de los items
@@ -99,8 +98,7 @@ async function duplicateClassesByIds({
 
   if (students) {
     if (_.isBoolean(students)) {
-      // TODO @askJaime: podemos quitar el students de aquí ya que duplicateStudentsByClass no lo usa
-      await duplicateStudentsByClass({ classIds: classesIds, duplications, students, ctx });
+      await duplicateStudentsByClass({ classIds: classesIds, duplications, ctx });
     } else {
       await addClassStudentsMany({ data: { class: _.map(newClasses, 'id'), students }, ctx });
     }

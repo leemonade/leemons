@@ -20,8 +20,7 @@ async function exec({ keyValueModel, item: { item, permissions, removed }, menuK
           permissions,
         });
       }
-    }
-    if (removed) {
+    } else if (removed) {
       // ES: Si existe pero deberia de estar borrado lo borramos
       await ctx.tx.call('menu-builder.menuItem.remove', {
         menuKey,

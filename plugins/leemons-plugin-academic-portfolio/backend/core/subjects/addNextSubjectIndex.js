@@ -2,7 +2,7 @@
 // const { getNextSubjectIndex } = require('./getNextSubjectIndex');
 // const { LeemonsError } = require('leemons-error')
 
-// TODO @askJaime: y esto...
+// TODO paola SUPER VERIFICAR Y BORRAS
 async function addNextSubjectIndex(program, { course, index, transacting } = {}) {
   throw new Error('No use addNextSubjectIndex');
   // throw new LeemonsError(ctx, { message: 'No use addNextSubjectIndex' });
