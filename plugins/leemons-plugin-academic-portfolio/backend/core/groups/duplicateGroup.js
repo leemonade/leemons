@@ -9,7 +9,6 @@ async function duplicateGroup({ data, ctx }) {
   const { id, ...props } = data;
   const group = await ctx.tx.db.Groups.findOne({ id }).lean();
   const nodeTypes = await getProgramTreeTypes({ programId: group.program, ctx });
-  // TODO @askJaime: Estamos pasando datos que no se usan en la función -> groups, courses, substages, knowledges
   return duplicateGroupWithClassesUnderNodeTreeByIds({
     nodeTypes,
     id,

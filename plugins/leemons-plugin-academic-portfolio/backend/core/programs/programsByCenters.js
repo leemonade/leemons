@@ -2,8 +2,6 @@ const _ = require('lodash');
 const { programsByIds } = require('./programsByIds');
 
 async function programsByCenters({ centerIds, returnRelation, returnIds, ctx }) {
-  // TODO Migration: Cuidado, antes había un userSession optativo como parámetro
-
   const programCenters = await ctx.tx.db.ProgramCenter.find({
     center: _.isArray(centerIds) ? centerIds : [centerIds],
   }).lean();

@@ -9,7 +9,6 @@ const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 const { getProgramCycles } = require('./getProgramCycles');
 
 async function programsByIds({ ids, onlyProgram, ctx }) {
-  // TODO Migration: Cuidado, antes había un userSession optativo como parámetro
   const { userSession } = ctx.meta;
   if (onlyProgram) {
     return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean();

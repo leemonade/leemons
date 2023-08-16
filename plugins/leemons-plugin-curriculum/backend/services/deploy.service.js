@@ -40,7 +40,7 @@ module.exports = () => ({
           item: otherMenuItems,
           ctx,
         });
-        // TODO @askJaime: en el events no se lanza el init-submenu, todo bien?
+        ctx.tx.emit('init-submenu');
       },
     },
   ],

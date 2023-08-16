@@ -155,12 +155,10 @@ module.exports = {
       if (validator.validate(ctx.params)) {
         const { page, size, program, ...options } = ctx.params;
         const data = await listClasses({
+          ...options,
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           program,
-          query: {
-            ...options,
-          },
           ctx,
         });
         return { status: 200, data };

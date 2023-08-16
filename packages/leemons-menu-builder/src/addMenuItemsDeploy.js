@@ -1,7 +1,12 @@
 const _ = require('lodash');
 const { hasKey, setKey } = require('leemons-mongodb-helpers');
 
-async function exec({ keyValueModel, item: { item, permissions, removed }, menuKey, ctx }) {
+async function exec({
+  keyValueModel,
+  item: { item, permissions, removed, isCustomPermission },
+  menuKey,
+  ctx,
+}) {
   if (
     !(await hasKey(keyValueModel, `menu-item-${menuKey}-${item.key}`)) ||
     process.env.RELOAD_MENU_ITEMS_ON_EVERY_INSTALL === 'true'
@@ -18,12 +23,10 @@ async function exec({ keyValueModel, item: { item, permissions, removed }, menuK
           menuKey,
           key: ctx.prefixPN(item.key),
           permissions,
+          isCustomPermission,
         });
       }
-    }
-    // TODO Migration: Añadido un else al if (sino está entrando cuando el menú no existe y pretende borrarlo por lo que da error)
-    // ? Para que es el flag removed?
-    else if (removed) {
+    } else if (removed) {
       // ES: Si existe pero deberia de estar borrado lo borramos
       await ctx.tx.call('menu-builder.menuItem.remove', {
         menuKey,

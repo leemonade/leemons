@@ -3,7 +3,6 @@ const _ = require('lodash');
 const { classByIds } = require('./classByIds');
 
 async function listClasses({ page, size, program, query, ctx }) {
-  // TODO @askJamime Query podría ser un objeto vacío? Deberíamos asegurarnos de que no lo es?
   const response = await mongoDBPaginate({
     model: ctx.tx.db.Class,
     page,

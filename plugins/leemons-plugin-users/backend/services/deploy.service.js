@@ -26,10 +26,11 @@ const {
 const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
+const recoverEmail = require('../emails/recoverPassword');
 
-// TODO Migration: ¿Hace falta eso ahora? No aparece el directorio emails en el core de users ¿Por qué?
+// TODO ROBERTO: ¿Hace falta eso ahora? No aparece el directorio emails en el core de users ¿Por qué? R// Falta migrar la carpeta de emails
+// TODO Descomentar lo de abajo
 /*
-const recoverEmail = require('../core /emails/recoverPassword');
 async function initEmails({ ctx }) {
   // await leemons
   //   .getPlugin('emails')
@@ -117,9 +118,8 @@ async function initEmails({ ctx }) {
 */
 
 const initDataset = async ({ ctx }) => {
-  // TODO Migration: Hemos usado la llamada a deploy manager para ver si está instalado o no
-  // ? Está eso bien? o es mejor "jugar" con la colección KeyValue ?
-  const isInstalled = ctx.tx.call('deployment-manager.pluginIsInstalled', {
+  // TODO Roberto Está eso bien? o es mejor "jugar" con la colección KeyValue ? key-value
+  const isInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'users',
   });
   if (!isInstalled) {
@@ -172,14 +172,6 @@ module.exports = {
 
       // Dataset Locations
       await initDataset({ ctx });
-
-      // TODO Migration: ¿No haría falta el código de abajo según el events.js? El directorio core/user-agents/__update__ ya no existe...
-      /*
-      const {
-        syncUserAgentCenterProfilePermissionsIfNeed,
-      } = require('../core/user-agents/__update__/syncUserAgentCenterProfilePermissionsIfNeed');
-      await syncUserAgentCenterProfilePermissionsIfNeed(isInstalled);
-      */
     },
     'menu-builder.init-main-menu': async (ctx) => {
       const [mainMenuItem, ...otherMenuItems] = menuItems;

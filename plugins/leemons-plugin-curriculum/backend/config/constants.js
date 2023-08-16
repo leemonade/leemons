@@ -18,7 +18,6 @@ const permissions = [
   },
 ];
 
-// TODO @askJaime: se ha cambiado el 'config' a 'item' en todos los menuItems para que se ajusten a la función genérica. No se ha encontrado alguna otra llamada, está bien?
 const menuItems = [
   {
     item: {
@@ -73,13 +72,6 @@ const menuItems = [
     ],
   },
 ];
-
-// TODO @askJaime: Se ha migrado este constants file, no he encontrado que se llame en otro lugar. Está bien?
-// module.exports = {
-//   pluginName,
-//   permissions,
-//   menuItems,
-// };
 
 module.exports = {
   pluginName,

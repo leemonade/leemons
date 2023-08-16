@@ -1,9 +1,7 @@
 const _ = require('lodash');
 
-async function getUserProgramIds({
-  userSession, // Es el userSession del que queremos conocer sus ProgramIds
-  ctx,
-}) {
+async function getUserProgramIds({ ctx }) {
+  const { userSession } = ctx.meta;
   const userAgentIds = _.map(userSession.userAgents, 'id');
   const [stClasses, thClasses] = await Promise.all([
     ctx.tx.db.ClassStudent.find({ student: userAgentIds }).lean(),

@@ -14,8 +14,7 @@ const { permissions, datasetLocations } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 const initDataset = async ({ ctx }) => {
-  // TODO Migration: Hemos usado la llamada a deploy manager para ver si está instalado o no
-  // ? Está eso bien? o es mejor "jugar" con la colección KeyValue ?
+  // TODO Roberto Está eso bien? o es mejor "jugar" con la colección KeyValue ? key-value
   const isInstalled = ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'families-emergency-numbers',
   });
