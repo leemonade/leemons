@@ -15,7 +15,6 @@ async function addWidgetZonesDeploy({ keyValueModel, zones, ctx }) {
         })
       )
     );
-    console.log('----->DESPUÉS DEL ALLSETTLED');
     await setKey(keyValueModel, `widgets-zones`);
   }
   ctx.tx.emit('init-widget-zones');
