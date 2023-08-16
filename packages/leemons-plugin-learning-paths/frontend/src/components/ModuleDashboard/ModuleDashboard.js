@@ -178,12 +178,12 @@ function useHeaderData(module) {
       activityDates: alwaysAvailable
         ? null
         : {
-          startLabel: 'Desde',
-          endLabel: 'Hasta',
-          hourLabel: 'Hora',
-          startDate: new Date(dates?.start),
-          endDate: new Date(dates?.deadline),
-        },
+            startLabel: 'Desde',
+            endLabel: 'Hasta',
+            hourLabel: 'Hora',
+            startDate: new Date(dates?.start),
+            endDate: new Date(dates?.deadline),
+          },
     },
   };
 }
@@ -300,7 +300,7 @@ export function ModuleDashboard({ id, preview }) {
 
   return (
     <Box className={classes.root}>
-      <ActivityContainer {...headersData} collapseOnScroll>
+      <ActivityContainer {...headersData}>
         <ModuleDashboardBody
           activities={activities}
           activitiesById={activitiesById}
