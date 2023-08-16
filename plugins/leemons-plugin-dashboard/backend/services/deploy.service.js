@@ -3,6 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
@@ -11,12 +12,19 @@ const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets'
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { widgets, permissions, menuItems } = require('../config/constants');
+const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
   name: 'dashboard.deploy',
   version: 1,
-  mixins: [LeemonsMultiEventsMixin(), LeemonsDeploymentManagerMixin()],
+  mixins: [
+    LeemonsMultiEventsMixin(),
+    LeemonsMongoDBMixin({
+      models: getServiceModels(),
+    }),
+    LeemonsDeploymentManagerMixin(),
+  ],
   multiEvents: [
     {
       events: ['users.init-menu', 'dashboard.init-permissions'],
@@ -34,6 +42,7 @@ module.exports = () => ({
     'deployment-manager.install': async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      console.log('ME TOCA----SOY DASHBOARD-------------');
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
 
       // Locales
@@ -65,6 +74,6 @@ module.exports = () => ({
     },
   },
   created() {
-    // mongoose.connect(process.env.MONGO_URI);
+    mongoose.connect(process.env.MONGO_URI);
   },
 });

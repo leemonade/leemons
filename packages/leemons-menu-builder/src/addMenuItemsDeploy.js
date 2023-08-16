@@ -20,7 +20,10 @@ async function exec({ keyValueModel, item: { item, permissions, removed }, menuK
           permissions,
         });
       }
-    } else if (removed) {
+    }
+    // TODO Migration: Añadido un else al if (sino está entrando cuando el menú no existe y pretende borrarlo por lo que da error)
+    // ? Para que es el flag removed?
+    else if (removed) {
       // ES: Si existe pero deberia de estar borrado lo borramos
       await ctx.tx.call('menu-builder.menuItem.remove', {
         menuKey,

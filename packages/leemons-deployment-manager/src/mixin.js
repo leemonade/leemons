@@ -104,7 +104,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
     created() {
       _.forIn(this.events, (value, key) => {
         const innerEvent = this._serviceSpecification.events[key];
-        this.events[key] = async (params, opts, { afterModifyCTX }) => {
+        this.events[key] = async (params, opts, { afterModifyCTX } = {}) => {
           // -- Init moleculer core code --
           let ctx;
           if (opts && opts.ctx) {
