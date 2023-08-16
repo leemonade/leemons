@@ -1,0 +1,68 @@
+  [] Estructura datos componentes
+
+Peticiones Johan
+  [] Selector de archivos Media-Library
+  [] Ver menú LibraryCard
+  Related subjects como seleccionarlo?
+
+Preguntas
+  El Development lo podemos dejar como RichText por ahora (Se debería de poder poner en lista de preguntas) (El problema por ahora son los checkbox)
+
+Library
+  [] Library view as table  (D1)
+  [] Library pagination
+  [] New sticker en task/library (D3)
+
+Assignment
+  [] Unassign students
+  [] Student subject selector
+  [] Assignment show curriculum content to students. (Dependency on Content) (D3)
+  [] Gradable (Dependency on Grades) (D3)
+  [] Mandatory || Final examen (Consultar a Johan) (D3)
+  [] Rubrics (Dependency on Rubrics plugin) (D3)
+
+Ongoing & History
+  [Backend] Ongoing filters (D2)
+
+Students
+  Dashboard
+    [B] List students tasks
+  Task details
+    [] Get tasks
+  Correction Details
+
+[] Dashboard widget
+Ongoing Filter by:
+  Name
+  Group
+  Knowledge Area
+  Date of: (from...to)
+    - Assigned
+    - Deadline
+  Status
+
+
+Integraciones
+  Curriculum - Solo las de la asignatura
+  Media Library - Permisos custom tarea
+  Permisos
+  Academic-Rules (Sistema de notas (Con aprobados))
+  Dashboard
+  Tests
+  Fase 2 - Rubrics
+  Calendar
+
+
+
+
+
+Dependencies Needed:
+  Task Creation
+    [] Upload Task Cover (D2)
+    [] Previous Task (D4)
+    [] Self Reflection (08.02.02.02D) (D3)
+    [] Feedback (08.02.02.02D) (D3)
+    [] Content (Curriculum) (D4)
+    [] Assessment Criteria (List and tagged to content) (D4)
+    [] Resources (Library dependency) (D2)
+

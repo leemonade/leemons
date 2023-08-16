@@ -6,7 +6,7 @@ async function addWidgetZonesDeploy({ keyValueModel, zones, ctx }) {
     !(await hasKey(keyValueModel, `widgets-zones`)) ||
     process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === 'true'
   ) {
-    await Promise.allSettled(
+    await Promise.all(
       _.map(zones, (config) =>
         ctx.tx.call('widgets.widgets.setZone', {
           key: config.key,

@@ -3,20 +3,28 @@ const { isArray } = require('lodash');
 const constants = require('../../../config/constants');
 const addItem = require('./add');
 const existItem = require('./exist');
+const removeItem = require('./remove');
 
-async function addMenuItem(menuKey, { item, permissions }, { transacting }) {
-  if (!(await existItem.call(this, menuKey, leemons.plugin.prefixPN(item.key), { transacting }))) {
-    return addItem.call(
-      this,
-      {
-        ...item,
-        menuKey,
-        key: `${this.calledFrom}.${item.key}`,
-        parentKey: item.parentKey ? `${this.calledFrom}.${item.parentKey}` : undefined,
-      },
-      permissions,
-      { transacting }
-    );
+async function addMenuItem(menuKey, { removed, item, permissions }, { transacting }) {
+  if (!(await existItem.call(this, menuKey, `${this.calledFrom}.${item.key}`, { transacting }))) {
+    if (!removed) {
+      return addItem.call(
+        this,
+        {
+          ...item,
+          menuKey,
+          key: `${this.calledFrom}.${item.key}`,
+          parentKey: item.parentKey ? `${this.calledFrom}.${item.parentKey}` : undefined,
+        },
+        permissions,
+        { transacting }
+      );
+    }
+    return null;
+  }
+  if (removed) {
+    // ES: Si existe pero deberia de estar borrado lo borramos
+    await removeItem.call(this, menuKey, `${this.calledFrom}.${item.key}`);
   }
   return null;
 }

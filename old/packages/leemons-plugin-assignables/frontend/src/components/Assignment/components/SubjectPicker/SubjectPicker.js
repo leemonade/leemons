@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, TagsInput, createStyles } from '@bubbles-ui/components';
+import { Box, MultiSelect, createStyles, Select } from '@bubbles-ui/components';
 import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
 import { map, uniqBy } from 'lodash';
 import { Container } from '../Container';
@@ -43,16 +43,15 @@ export function useSubjectsForSubjectPicker(subjects) {
 export function SubjectPicker({
   assignable,
   localizations,
-  value: parentValue,
+  value,
   onChange,
   error,
   hideSectionHeaders,
+  onlyOneSubject,
   ...props
 }) {
   const subjects = useSubjectsForSubjectPicker(assignable?.subjects);
   const { classes } = useSubjectPickerStyles();
-
-  const [value, setValue] = React.useState(parentValue || []);
 
   const isFirstSubjectsLoad = React.useRef(true);
 
@@ -63,29 +62,39 @@ export function SubjectPicker({
   React.useEffect(() => {
     if (isFirstSubjectsLoad.current && subjects?.length) {
       if (assignable?.subjects?.length) {
-        setValue(map(subjects, 'value'));
+        const values = map(subjects, 'value');
+        onChange(onlyOneSubject ? [values?.[0]] : values);
       }
       isFirstSubjectsLoad.current = false;
     }
   }, [subjects]);
 
-  React.useEffect(() => {
-    onChange?.(value);
-  }, [value]);
-
   return (
     <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
       <Box className={classes.subjectPicker}>
-        <TagsInput
-          {...props}
-          label={localizations?.subjectInput?.label}
-          placeholder={localizations?.subjectInput?.placeholder}
-          canAddNewSuggestions={false}
-          suggestions={subjects}
-          onChange={onChange}
-          error={error && localizations?.subjectInput?.error}
-          value={value}
-        />
+        {onlyOneSubject ? (
+          <Select
+            {...props}
+            label={localizations?.subjectInput?.label}
+            placeholder={localizations?.subjectInput?.placeholder}
+            data={subjects}
+            onChange={(data) => onChange([data])}
+            error={error && localizations?.subjectInput?.error}
+            value={value?.[0]}
+            searchable
+          />
+        ) : (
+          <MultiSelect
+            {...props}
+            label={localizations?.subjectInput?.label}
+            placeholder={localizations?.subjectInput?.placeholder}
+            canAddNewSuggestions={false}
+            data={subjects}
+            onChange={onChange}
+            error={error && localizations?.subjectInput?.error}
+            value={value}
+          />
+        )}
       </Box>
     </Container>
   );
@@ -98,4 +107,5 @@ SubjectPicker.propTypes = {
   value: PropTypes.arrayOf(PropTypes.string),
   error: PropTypes.any,
   hideSectionHeaders: PropTypes.bool,
+  onlyOneSubject: PropTypes.bool,
 };

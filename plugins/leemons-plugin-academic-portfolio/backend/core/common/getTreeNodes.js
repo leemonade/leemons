@@ -1,12 +1,16 @@
+const { LeemonsError } = require('leemons-error');
 const _ = require('lodash');
 const { getTree } = require('./getTree');
 
-async function getTreeNodes(nodeTypes, nodeType, nodeId, { program, transacting } = {}) {
-  if (!_.isUndefined(this) && this.calledFrom !== 'plugins.curriculum')
-    throw new Error('getTreeNodes only can be called by curriculum plugin');
+async function getTreeNodes({ nodeTypes, nodeType, nodeId, program, ctx }) {
+  // TODO Migration: Preguntar a Jaime que hacemos con este isUndefined(this)...
+  if (!_.isUndefined(this) && ctx.callerPlugin !== 'curriculum')
+    throw new LeemonsError(ctx, {
+      message: 'getTreeNodes only can be called by curriculum plugin',
+    });
 
   const nodeIds = _.isArray(nodeId) ? nodeId : [nodeId];
-  const tree = await getTree(nodeTypes, { program, transacting });
+  const tree = await getTree({ nodeTypes, program, ctx });
 
   const getParentNodes = (nodes) => {
     let pNodes = [];

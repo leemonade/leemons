@@ -133,12 +133,14 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                     justify-content: center;
                   "
                 >
+                {{ @if (it.userSession.avatarUrl) }}
                 <img
                   src="{{it.userSession.avatarUrl}}"
                   height="36"
                   width="36"
                   style="border-radius: 50%; margin-right: 8px; display: inline-block;vertical-align: middle;"
                 />
+                 {{ /if}}
                  {{it.userSession.name}} {{it.userSession.surnames}}
                 </td>
               </tr>
@@ -193,7 +195,7 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
                         "
                   >
                     <div
-                      style="width: 100%; height: 180px; position: relative; background-size: cover; background-image: url('{{ it.instance.assignable.asset.url }}')"
+                      style="width: 100%; height: 180px; position: relative; background: url({{ it.instance.assignable.asset.url }}); background-size: cover!important;"
                     >
                       <div style="display: flex;height: 100%">
                         <div

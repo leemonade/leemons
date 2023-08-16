@@ -1,22 +1,14 @@
-const { table } = require('../tables');
 const { validateUpdateKnowledge } = require('../../validations/forms');
 const { saveManagers } = require('../managers/saveManagers');
 
-async function updateKnowledge(data, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateUpdateKnowledge(data, { transacting });
-      const { id, managers, ..._data } = data;
+async function updateKnowledge({ data, ctx }) {
+  await validateUpdateKnowledge({ data, ctx });
+  const { id, managers, ..._data } = data;
 
-      const [knowledge] = await Promise.all([
-        table.knowledges.update({ id }, _data, { transacting }),
-        saveManagers(managers, 'knowledge', id, { transacting }),
-      ]);
-      return knowledge;
-    },
-    table.knowledges,
-    _transacting
-  );
+  const [knowledge] = await Promise.all([
+    ctx.tx.db.Knowledges.findOneAndUpdate({ id }, _data, { new: true }).lean(),
+    saveManagers({ userAgents: managers, type: 'knowledge', relationship: id, ctx }),
+  ]);
+  return knowledge;
 }
-
 module.exports = { updateKnowledge };

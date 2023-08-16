@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Alert, Box, Button, ContextContainer, InputWrapper, Stack } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import PropTypes from 'prop-types';
+import React from 'react';
 import QuestionsTable from './QuestionsTable';
 
 export default function DetailQuestionsSelect({

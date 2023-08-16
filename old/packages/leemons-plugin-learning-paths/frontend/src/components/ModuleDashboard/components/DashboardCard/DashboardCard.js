@@ -104,7 +104,7 @@ function useDurationInSeconds({ duration }) {
   }, [duration]);
 }
 
-export function useStudentState({ assignation }) {
+export function useStudentState({ assignation = {} }) {
   if (!assignation) {
     return {};
   }
@@ -135,6 +135,22 @@ export function useStudentState({ assignation }) {
     isFinished,
     isStartedByStudent,
   };
+}
+
+function PreviewActions({ activity, localizations }) {
+  const { id, roleDetails } = activity?.assignable;
+
+  const url = roleDetails.previewUrl?.replace(':id', id);
+
+  if (!url) {
+    return null;
+  }
+
+  return (
+    <Link to={url}>
+      <Button size="sm">{localizations?.buttons?.preview}</Button>
+    </Link>
+  );
 }
 
 function TeacherActions({ activity, localizations }) {
@@ -193,7 +209,7 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
   );
 }
 
-function Actions({ isBlocked, activity, assignation, localizations }) {
+function Actions({ isBlocked, activity, assignation, localizations, preview }) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
 
@@ -201,6 +217,9 @@ function Actions({ isBlocked, activity, assignation, localizations }) {
     return null;
   }
 
+  if (preview) {
+    return <PreviewActions activity={activity} localizations={localizations} />;
+  }
   if (isTeacher) {
     return <TeacherActions activity={activity} localizations={localizations} />;
   }
@@ -218,7 +237,7 @@ function Actions({ isBlocked, activity, assignation, localizations }) {
   return <></>;
 }
 
-export function DashboardCard({ activity, assignation, isBlocked, localizations }) {
+export function DashboardCard({ activity, assignation, isBlocked, localizations, preview }) {
   const {
     assignable,
     dates: { deadline },
@@ -287,6 +306,7 @@ export function DashboardCard({ activity, assignation, isBlocked, localizations 
               activity={activity}
               assignation={assignation}
               localizations={localizations}
+              preview={preview}
             />
           </Box>
         </Box>
@@ -299,5 +319,6 @@ DashboardCard.propTypes = {
   activity: PropTypes.object,
   assignation: PropTypes.object,
   isBlocked: PropTypes.bool,
+  preview: PropTypes.bool,
   localizations: PropTypes.object,
 };

@@ -10,6 +10,7 @@ const {
   groupBy,
   find,
   omit,
+  keyBy,
 } = require('lodash');
 const semver = require('semver');
 const getRolePermissions = require('./helpers/getRolePermissions');
@@ -61,7 +62,7 @@ async function getByCategory(
 
     const { services: userService } = leemons.getPlugin('users');
 
-    const [permissions, viewItems, editItems] = await Promise.all([
+    const [permissions, viewItems, editItems, assignItems] = await Promise.all([
       userService.permissions.getUserAgentPermissions(userSession.userAgents, {
         query: {
           permissionName_$startsWith: leemons.plugin.prefixPN(''),
@@ -79,9 +80,19 @@ async function getByCategory(
         leemons.plugin.prefixPN('asset.can-edit'),
         { ignoreOriginalTarget: true, target: categoryId, transacting }
       ),
+      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+        userSession.userAgents,
+        leemons.plugin.prefixPN('asset.can-assign'),
+        { ignoreOriginalTarget: true, target: categoryId, transacting }
+      ),
     ]);
 
-    const publicAssets = showPublic ? await getPublic(categoryId, { indexable, transacting }) : [];
+    // ES: Incluir assets públicos tan solo si no se expecifican roles, o está el rol de viewer (que es el rol de los públicos)
+    // EN: Include public assets only if no role is specified or the viewer role is included (which is the public assets role)
+    const publicAssets =
+      showPublic && (!roles?.length || roles.includes('view'))
+        ? await getPublic(categoryId, { indexable, transacting })
+        : [];
     // ES: Concatenamos todas las IDs, y luego obtenemos la intersección en función de su status
     // EN: Concatenate all IDs, and then get the intersection in accordance with their status
     let assetIds = uniq(
@@ -90,6 +101,7 @@ async function getByCategory(
         .concat(publicAssets.map((item) => item.asset))
         .concat(viewItems)
         .concat(editItems)
+        .concat(assignItems)
     );
 
     try {
@@ -135,34 +147,6 @@ async function getByCategory(
       assetIds = await getAssetsBySubject(subjects, { assets: assetIds, transacting });
     }
 
-    // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
-    // EN: For the case that you need sorting, we need a different logic
-    if (sortingBy && !isEmpty(sortingBy)) {
-      const [assets, assetsAccessibles] = await Promise.all([
-        getByIds(assetIds, {
-          withCategory: false,
-          withTags: false,
-          indexable,
-          showPublic,
-          userSession,
-          transacting,
-        }),
-        getByAssets(assetIds, { showPublic, userSession, transacting }),
-      ]);
-
-      let sortedAssets = sortBy(assets, sortingBy);
-
-      if (sortDirection === 'desc') {
-        sortedAssets = sortedAssets.reverse();
-      }
-
-      const sortedIds = sortedAssets.map((item) => item.id);
-
-      return assetsAccessibles.sort(
-        (a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset)
-      );
-    }
-
     let results = permissions
       .map((item) => ({
         asset: getAssetIdFromPermissionName(item.permissionName),
@@ -184,6 +168,24 @@ async function getByCategory(
             asset,
             role: 'viewer',
             permissions: getRolePermissions('viewer'),
+          });
+        }
+      });
+    }
+
+    if (!roles?.length || roles.includes('assigner')) {
+      forEach(assignItems, (asset) => {
+        const index = findIndex(results, { asset });
+        if (index >= 0) {
+          if (results[index].role === 'viewer') {
+            results[index].role = 'assigner';
+            results[index].permissions = getRolePermissions('assigner');
+          }
+        } else if (assetIds.includes(asset)) {
+          results.push({
+            asset,
+            role: 'assigner',
+            permissions: getRolePermissions('assigner'),
           });
         }
       });
@@ -258,7 +260,40 @@ async function getByCategory(
       });
     }
 
-    return uniqBy(results, 'asset');
+    let result = uniqBy(results, 'asset');
+
+    // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
+    // EN: For the case that you need sorting, we need a different logic
+    if (sortingBy && !isEmpty(sortingBy)) {
+      const [assets] = await Promise.all([
+        getByIds(map(result, 'asset'), {
+          withCategory: false,
+          withTags: false,
+          indexable,
+          showPublic,
+          userSession,
+          transacting,
+        }),
+      ]);
+
+      let sortedAssets = sortBy(assets, sortingBy);
+
+      if (sortDirection === 'desc') {
+        sortedAssets = sortedAssets.reverse();
+      }
+
+      assetIds = sortedAssets.map((item) => item.id);
+      const _result = [];
+      const resultByAsset = keyBy(result, 'asset');
+      forEach(assetIds, (assetId) => {
+        if (resultByAsset[assetId]) {
+          _result.push(resultByAsset[assetId]);
+        }
+      });
+      result = _result;
+    }
+
+    return result;
   } catch (e) {
     console.error(e);
     throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);

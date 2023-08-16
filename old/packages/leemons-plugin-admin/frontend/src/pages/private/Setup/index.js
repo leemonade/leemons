@@ -84,22 +84,6 @@ function Setup({ session }) {
     render();
   };
 
-  const handleOnNext = () => {
-    if (store.currentStep <= store.steps - 1) {
-      store.currentStep += 1;
-    } else {
-      store.currentStep = 0;
-    }
-    render();
-  };
-
-  const handleOnPrev = () => {
-    if (store.currentStep > 0) {
-      store.currentStep -= 1;
-      render();
-    }
-  };
-
   const steppers = React.useMemo(() => {
     const steps = [
       { label: t('welcome.label'), status: 'OK' },
@@ -110,11 +94,25 @@ function Setup({ session }) {
       { label: t('profiles.label'), status: 'OK' },
       { label: t('admins.label'), status: 'OK' },
     ];
+
     _.forEach(store.zone?.widgetItems, (item) => {
       steps.push({ label: store.zoneTranslations[item.properties?.card?.title], status: 'OK' });
     });
+
+    if (!store.configured) {
+      steps.push({ label: t('finish.label'), status: 'OK' });
+    }
     return steps;
-  }, [store.zone]);
+  }, [store.zone, store.configured]);
+
+  const handleOnNext = () => {
+    if (store.currentStep <= steppers.length - 1) {
+      store.currentStep += 1;
+    } else {
+      store.currentStep = 0;
+    }
+    render();
+  };
 
   const steppersDom = React.useMemo(() => {
     const stepsDom = [
@@ -162,19 +160,26 @@ function Setup({ session }) {
       );
     });
 
+    if (!store.configured) {
+      stepsDom.push(<Finish key={`s${stepsDom.length}${1}`} />);
+    }
+
     return stepsDom;
-  }, [store.zone]);
+  }, [store.zone, store.configured]);
 
-  if (store.loading) return <LoadingOverlay visible />;
+  const stepperProps = React.useMemo(() => {
+    if (!store.configured) {
+      return {};
+    }
 
-  const stepperProps = {};
+    return {
+      completedSteps: [...Array(store.steps + 1).keys()],
+      visitedSteps: [...Array(store.steps + 1).keys()],
+    };
+  }, [store.configured]);
 
-  if (!store.configured) {
-    steppers.push({ label: t('finish.label'), status: 'OK' });
-    steppersDom.push(<Finish key={`s${steppersDom.length}${1}`} />);
-  } else {
-    stepperProps.completedSteps = [...Array(store.steps + 1).keys()];
-    stepperProps.visitedSteps = [...Array(store.steps + 1).keys()];
+  if (store.loading) {
+    return <LoadingOverlay visible />;
   }
 
   return (

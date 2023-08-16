@@ -38,7 +38,9 @@ function getDiff(a, b) {
 // -----------------------------------------------------------------------------
 // MAIN FUNCTION
 
-async function update({ data, upgrade, scale = 'major', published = true, userSession, ctx }) {
+async function update({ data, upgrade, scale = 'major', published = true, ctx }) {
+  const { userSession } = ctx.meta;
+
   if (isEmpty(data)) {
     throw new LeemonsError(ctx, { message: 'No changes detected' });
   }

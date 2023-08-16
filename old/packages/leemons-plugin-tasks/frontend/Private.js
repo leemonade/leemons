@@ -49,6 +49,9 @@ export default function Private() {
       <Route path={`${path}/library/create`}>
         <SetupTask key="create" session={session} fallback={<LoadingOverlay visible />} />
       </Route>
+      <Route path={`${path}/library/view/:id`}>
+        <UserDetails session={session} fallback={<LoadingOverlay visible />} preview />
+      </Route>
       <Route path={`${path}/library/assign/:id`}>
         <AssignmentPage session={session} fallback={<LoadingOverlay visible />} />
       </Route>

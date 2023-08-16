@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import { useLocale } from '@common';
-import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default function Calendar({ config, course, printMode }) {
   const locale = useLocale();

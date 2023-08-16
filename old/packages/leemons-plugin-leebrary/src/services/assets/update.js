@@ -71,6 +71,8 @@ async function update(
   // ES: Obtenemos los valores actuales
   const currentAsset = (await getByIds(assetId, { withFiles: true, transacting }))[0];
 
+  console.log('currentAsset', await getByIds(assetId, { withFiles: true, transacting }));
+
   if (!currentAsset) {
     throw new global.utils.HttpError(422, 'Asset not found');
   }

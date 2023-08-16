@@ -148,7 +148,7 @@ AssignmentDrawer.defaultValues = async (activity) => {
       filters: {
         useAllQuestions: true,
       },
-      questions: test.questions,
+      questions: map(test.questions, 'id'),
     },
     ...evaluationTypes.calificable,
   };

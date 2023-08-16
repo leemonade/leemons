@@ -120,7 +120,23 @@ module.exports = [
     authenticated: true,
   },
   {
+    path: '/file/public/:id',
+    method: 'GET',
+    handler: 'files.publicFile',
+  },
+  {
+    path: '/file/public/:id/(.*)',
+    method: 'GET',
+    handler: 'files.publicFile',
+  },
+  {
     path: '/file/:id',
+    method: 'GET',
+    handler: 'files.file',
+    authenticated: true,
+  },
+  {
+    path: '/file/:id/(.*)',
     method: 'GET',
     handler: 'files.file',
     authenticated: true,

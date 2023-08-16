@@ -1,5 +1,6 @@
-const { table } = require('../tables');
-const { getNextSubjectIndex } = require('./getNextSubjectIndex');
+// const { table } = require('../tables');
+// const { getNextSubjectIndex } = require('./getNextSubjectIndex');
+
 
 async function generateNextSubjectInternalId(program, { course, transacting } = {}) {
   throw new Error('No use generateNextSubjectInternalId');

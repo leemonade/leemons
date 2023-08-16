@@ -7,10 +7,11 @@ async function updateSubjectType(data, { transacting: _transacting } = {}) {
     async (transacting) => {
       await validateUpdateSubjectType(data, { transacting });
       const { id, managers, ..._data } = data;
-      const [subjectType] = await Promise.all([
-        table.subjectTypes.update({ id }, _data, { transacting }),
-        saveManagers(managers, 'subject-type', id, { transacting }),
-      ]);
+      const promises = [table.subjectTypes.update({ id }, _data, { transacting })];
+      if (managers) {
+        promises.push(saveManagers(managers, 'subject-type', id, { transacting }));
+      }
+      const [subjectType] = await Promise.all(promises);
       return subjectType;
     },
     table.subjectTypes,

@@ -94,6 +94,36 @@ async function createRelatedInstance(
   return { ..._.omit(relation, ['id', 'instance']), id: createdInstance.id };
 }
 
+async function updateEventAndAddToUsers({ assignable, event, dates, id }, { transacting }) {
+  const classes = _.map(await listAssignableInstanceClasses(id, { transacting }), 'class');
+
+  try {
+    if (event) {
+      await updateEvent(event, assignable, classes, { dates, transacting });
+    }
+    // TODO: Create the event and add it to the users. Needs: Users assigned and teachers
+    //  else {
+    //   const { id: eventId } = await registerEvent(assignable, classes, {
+    //     dates,
+    //     transacting,
+    //   });
+    //   newEvent = eventId;
+    //   await leemons
+    //     .getPlugin('calendar')
+    //     .services.calendar.grantAccessUserAgentToEvent(
+    //       event,
+    //       [...newTeacherIds, ...newStudentIds],
+    //       'view',
+    //       {
+    //         transacting,
+    //       }
+    //     );
+    // }
+  } catch (e) {
+    leemons.log.error(`Error creating/updating event for assignable instance: ${e.message}`);
+  }
+}
+
 async function updateAssignableInstance(
   assignableInstance,
   { userSession, transacting: t, propagateRelated } = {}
@@ -190,71 +220,8 @@ async function updateAssignableInstance(
         await assignableInstances.update({ id }, cleanObj, { transacting });
       }
 
-      // ----------
-
-      const { assignable } = object;
-
-      const oldInstance = {
-        event: object.event,
-      };
-      const classes = _.map(await listAssignableInstanceClasses(id, { transacting }), 'class');
-      const { dates } = object;
-
-      const teachersIdsToRemove = [];
-      const studentsIdsToRemove = [];
-      const newTeacherIds = [];
-      const newStudentIds = [];
-
-      let { event } = oldInstance;
-
-      const { calendar: calendarService } = leemons.getPlugin('calendar').services;
-
-      try {
-        if (event) {
-          if (dates && dates.start && dates.deadline) {
-            // ES: Si ya existe evento y seguimos teniendo fechas buenas actualizamos el evento
-            await updateEvent(event, assignable, classes, { dates, transacting });
-          } else {
-            // ES: Si ya existe evento pero las nuevas fechas no cumplen los criterios tenemos que eliminar el evento
-            await calendarService.removeEvent(event, { transacting });
-            event = null;
-          }
-        } else if (dates && dates.start && dates.deadline) {
-          // ES: Si no existe el evento y tenemos fechas buenas creamos el evento
-          const newEvent = await registerEvent(assignable, classes, { dates, transacting });
-          event = newEvent.id;
-        }
-      } catch (e) {
-        leemons.log.error(`Error creating/updating event for assignable instance: ${e.message}`);
-        // throw new Error(`Error updating event: ${e.message}`);
-      }
-
-      // ES: Eliminamos los profesores/estudiantes que ya no estan en el asignable
-      if (event && (teachersIdsToRemove.length || studentsIdsToRemove.length)) {
-        await leemons
-          .getPlugin('calendar')
-          .services.calendar.unGrantAccessUserAgentToEvent(
-            event,
-            [...teachersIdsToRemove, ...studentsIdsToRemove],
-            {
-              transacting,
-            }
-          );
-      }
-
-      // ES: Añadimos los nuevos profesores/estudiantes
-      if (event && (newTeacherIds.length || newStudentIds.length)) {
-        await leemons
-          .getPlugin('calendar')
-          .services.calendar.grantAccessUserAgentToEvent(
-            event,
-            [...newTeacherIds, ...newStudentIds],
-            'view',
-            {
-              transacting,
-            }
-          );
-      }
+      const { assignable, dates, event } = object;
+      await updateEventAndAddToUsers({ assignable, dates, event, id }, { transacting });
 
       return {
         id,

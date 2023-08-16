@@ -6,7 +6,7 @@
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { addLocation } = require('../core/datesetLocation/addLocation');
+const addLocation = require('../core/datesetLocation/addLocation');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -29,6 +29,7 @@ module.exports = {
         return addLocation({ ...ctx.params, ctx });
       },
     },
+
     // updateLocation,
     // deleteLocation,
     // existLocation,

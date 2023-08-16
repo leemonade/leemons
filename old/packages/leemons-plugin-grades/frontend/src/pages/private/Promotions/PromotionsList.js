@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useMemo } from 'react';
-import { clone, cloneDeep, find, forIn, identity, isNil, isString, map, pickBy } from 'lodash';
+import { detailProgramRequest, listProgramsRequest } from '@academic-portfolio/request';
 import {
   Box,
   Col,
@@ -11,12 +10,24 @@ import {
   Tree,
 } from '@bubbles-ui/components';
 import { AdminPageHeader, uuidv4 } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
-import { SelectCenter } from '@users/components/SelectCenter';
 import { useStore } from '@common/useStore';
+import prefixPN from '@grades/helpers/prefixPN';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { detailProgramRequest, listProgramsRequest } from '@academic-portfolio/request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { clone, cloneDeep, find, forIn, identity, isNil, isString, map, pickBy } from 'lodash';
+import React, { useMemo } from 'react';
+import {
+  PROMOTION_DETAIL_FORM_ERROR_MESSAGES,
+  PromotionDetail,
+} from '../../../components/PromotionDetail';
+import { TreeItem } from '../../../components/TreeItem/TreeItem';
+import { activeMenuItemDependencies } from '../../../helpers/activeMenuItemDependencies';
+import { getDataTypes } from '../../../helpers/getDataTypes';
+import { getOperators } from '../../../helpers/getOperators';
+import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
+import { getScaleLabel } from '../../../helpers/getScaleLabel';
+import { getSources } from '../../../helpers/getSources';
 import {
   addPromotionRequest,
   deletePromotionRequest,
@@ -24,20 +35,9 @@ import {
   listPromotionsRequest,
   updatePromotionRequest,
 } from '../../../request';
-import { TreeItem } from '../../../components/TreeItem/TreeItem';
-import {
-  PROMOTION_DETAIL_FORM_ERROR_MESSAGES,
-  PromotionDetail,
-} from '../../../components/PromotionDetail';
-import { getSources } from '../../../helpers/getSources';
-import { getDataTypes } from '../../../helpers/getDataTypes';
-import { getOperators } from '../../../helpers/getOperators';
-import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
-import { activeMenuItemDependencies } from '../../../helpers/activeMenuItemDependencies';
-import { getScaleLabel } from '../../../helpers/getScaleLabel';
 
 export default function PromotionsList() {
-  const [t, translations] = useTranslateLoader(prefixPN('promotionsPage'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('promotionsPage'));
   const [tC] = useTranslateLoader(prefixPN('conditionOptions'));
   const [tP] = useTranslateLoader(prefixPN('promotionDetail'));
 
@@ -301,7 +301,7 @@ export default function PromotionsList() {
               <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
-                    {translations && (
+                    {!tLoading && (
                       <Box>
                         <SelectCenter label={t('selectCenter')} onChange={onSelectCenter} />
                       </Box>

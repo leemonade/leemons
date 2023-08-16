@@ -1,10 +1,5 @@
-const { table } = require('../tables');
-
-async function getNextCourseIndex(program, { transacting } = {}) {
-  const config = await table.configs.findOne(
-    { key: `program-${program}-course-index` },
-    { transacting }
-  );
+async function getNextCourseIndex({ program, ctx }) {
+  const config = await ctx.tx.db.Configs.findOne({ key: `program-${program}-course-index` }).lean();
   if (!config) return 1;
   return parseInt(config.value, 10) + 1;
 }

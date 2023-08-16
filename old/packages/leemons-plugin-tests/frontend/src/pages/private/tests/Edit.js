@@ -1,28 +1,28 @@
-import React from 'react';
+import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import {
   Box,
   LoadingOverlay,
   Stack,
-  useDebouncedCallback,
   VerticalStepperContainer,
+  useDebouncedCallback,
 } from '@bubbles-ui/components';
+import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { groupBy, map, uniqBy } from 'lodash';
-import { PluginTestIcon } from '@bubbles-ui/icons/outline';
-import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import DetailConfig from './components/DetailConfig';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
-import DetailQuestionsBanks from './components/DetailQuestionsBanks';
-import DetailQuestions from './components/DetailQuestions';
+import DetailConfig from './components/DetailConfig';
 import DetailContent from './components/DetailContent';
 import DetailInstructions from './components/DetailInstructions';
+import DetailQuestions from './components/DetailQuestions';
+import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 
 export default function Edit() {
   const [t] = useTranslateLoader(prefixPN('testsEdit'));
@@ -48,12 +48,11 @@ export default function Edit() {
     try {
       store.saving = 'duplicate';
       render();
-      console.log(formValues);
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects.map(({ subject }) => subject);
       await saveTestRequest({ ...toSend, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests');
+      history.push('/private/tests/draft');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -66,7 +65,7 @@ export default function Edit() {
       store.saving = 'edit';
       render();
       const { subjects, ...toSend } = formValues;
-      toSend.subjects = subjects.map(({ subject }) => subject);
+      toSend.subjects = subjects?.map(({ subject }) => subject);
       const { test } = await saveTestRequest({ ...toSend, published: true });
       addSuccessAlert(t('published'));
       if (redictToAssign) {
@@ -230,7 +229,7 @@ export default function Edit() {
                 alwaysOpen: true,
                 fileToRight: true,
                 colorToRight: true,
-                program: { show: true, required: true },
+                program: { show: true, required: false },
                 subjects: { show: true, required: true, showLevel: false, maxOne: true },
               }}
               form={form}

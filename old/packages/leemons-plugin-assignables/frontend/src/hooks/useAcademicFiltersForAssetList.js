@@ -1,15 +1,14 @@
-import React from 'react';
 import { Select } from '@bubbles-ui/components';
+import React from 'react';
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
-import { useUserCenters } from '@users/hooks';
-import { getMultiClassData } from '@assignables/helpers/getClassData';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import { getSessionConfig } from '@users/session';
 import { SelectSubject, SubjectItem } from '@academic-portfolio/components/SelectSubject';
+import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
+import { getMultiClassData } from '@assignables/helpers/getClassData';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useUserCenters } from '@users/hooks';
+import _ from 'lodash';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 export function useAssignablesAssetListLocalizations() {
   const [, translations] = useTranslateLoader('plugins.assignables.assetListFilters');
@@ -177,11 +176,9 @@ export function SelectAutoClearable({ data, value, onChange, ...props }) {
 }
 
 function SubjectFilters({ onChange, loading, hideProgramSelect, useLabels }) {
-  const sessionConfig = getSessionConfig();
-  const selectedProgram = sessionConfig?.program || 'all';
   const { control, watch, getValues } = useForm({
     defaultValues: {
-      program: selectedProgram,
+      program: 'all',
       subject: null,
     },
   });

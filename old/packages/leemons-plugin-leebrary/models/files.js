@@ -41,6 +41,9 @@ module.exports = {
         notNull: true,
       },
     },
+    isFolder: {
+      type: 'boolean',
+    },
     metadata: {
       type: 'text',
       textType: 'mediumText',

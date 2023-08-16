@@ -124,8 +124,12 @@ module.exports = async function searchAssignables(
 
     // EN: Get all the assignables matching the query
     // ES: Obtener todos los asignables que coincidan con la query
-    let assignablesIds = await assignables.find(query, { columns: ['id', 'asset'], transacting });
+    const assignablesData = await assignables.find(query, {
+      columns: ['id', 'asset'],
+      transacting,
+    });
 
+    let assignablesIds = assignablesData;
     if (sorting) {
       if (_.find(sorting, { key: 'name' })) {
         assignablesIds = assignablesIds.map((assignable) => {
@@ -152,7 +156,7 @@ module.exports = async function searchAssignables(
 
     // EN: Filter the assignables based on user permissions
     // ES: Filtrar los asignables según los permisos del usuario
-    const permissions = await getUserPermissions(assignablesIds, { userSession, transacting });
+    const permissions = await getUserPermissions(assignablesData, { userSession, transacting });
     assignablesIds = assignablesIds.filter((id) => permissions[id]?.actions?.includes('view'));
 
     // EN: Filter by published status

@@ -7,8 +7,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
-const { addLocales, addLocalesDeploy } = require('leemons-multilanguage');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addLocalesDeploy } = require('leemons-multilanguage');
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');

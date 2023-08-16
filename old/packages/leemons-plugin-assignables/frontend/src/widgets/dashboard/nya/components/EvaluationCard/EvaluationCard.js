@@ -5,8 +5,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { get } from 'lodash';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import ScoreFeedback from './components/ScoreFeedback';
 import { Link } from 'react-router-dom';
+import ScoreFeedback from './components/ScoreFeedback';
 
 function useRoleLocalization(role) {
   const localizationKey = prefixPN(`roles.${role}.singular`);
@@ -172,7 +172,12 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
   const { classes } = useEvaluationCardStyles();
 
   return (
-    <Link to={roleDetails.evaluationDetailUrl?.replace(':id', instance.id)?.replace(':user', assignation.user)} style={{ textDecoration: 'none' }}>
+    <Link
+      to={roleDetails.evaluationDetailUrl
+        ?.replace(':id', instance.id)
+        ?.replace(':user', assignation.user)}
+      style={{ textDecoration: 'none' }}
+    >
       <Box className={classes.root}>
         <Box className={classes.leftContainer}>
           <Box className={classes.topLeftSection}>
@@ -188,7 +193,7 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
         <Box>
           <Box>
             <ScoreFeedback
-              program={assignable.subjects[0].program}
+              program={instance?.subjects?.[0]?.program}
               isCalificable={instance.requiresScoring}
               score={instance.requiresScoring && score.toFixed(2)}
               rooms={instance.allowFeedback && assignation.chatKeys}
@@ -198,6 +203,5 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
         </Box>
       </Box>
     </Link>
-
   );
 }

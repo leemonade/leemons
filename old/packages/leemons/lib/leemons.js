@@ -244,6 +244,7 @@ class Leemons {
     return async (ctx, next) => {
       try {
         let { authorization } = ctx.headers;
+
         if (!authorization) authorization = ctx.request.query.authorization;
 
         try {
@@ -259,6 +260,7 @@ class Leemons {
             return next();
           }
         } else {
+          authorization = _.compact(authorization);
           const user = await this.plugins.users.services.users.detailForJWT(authorization[0], true);
           const userAgents = await Promise.all(
             _.map(authorization, (auth) =>
@@ -279,6 +281,7 @@ class Leemons {
         ctx.body = { status: 401, message: 'Authorization required' };
         return undefined;
       } catch (err) {
+        console.error(err);
         if (_.isObject(authenticated) && authenticated.nextWithoutSession) {
           ctx.state.userSession = null;
           return next();

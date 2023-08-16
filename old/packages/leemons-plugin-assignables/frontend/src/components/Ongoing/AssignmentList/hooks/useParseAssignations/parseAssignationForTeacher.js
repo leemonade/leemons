@@ -141,7 +141,7 @@ function Evaluated({ instance }) {
 export async function parseAssignationForTeacherView(instance, labels, options) {
   const commonData = await parseAssignationForCommonView(instance, labels, options);
   const role = instance?.assignable?.roleDetails;
-  const dashboardURL = (role.dashboardURL || '/private/assignables/details/:id').replace(
+  const dashboardURL = (role.dashboardUrl || '/private/assignables/details/:id').replace(
     ':id',
     instance.id
   );

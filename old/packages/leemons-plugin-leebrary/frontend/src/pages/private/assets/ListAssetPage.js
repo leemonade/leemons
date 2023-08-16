@@ -1,12 +1,15 @@
 /* eslint-disable no-unreachable */
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
+import { Box, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
 import { isEmpty, isNil } from 'lodash';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AssetList } from '../../../components/AssetList';
 import LibraryContext from '../../../context/LibraryContext';
+import prefixPN from '../../../helpers/prefixPN';
 import { VIEWS } from '../library/Library.constants';
 
 function useQuery() {
@@ -14,18 +17,40 @@ function useQuery() {
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
+const ListPageStyles = createStyles((theme) => ({
+  tabPane: {
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    paddingTop: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+  },
+  original: {
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    paddingTop: theme.spacing[5],
+    paddingBottom: theme.spacing[5],
+    paddingLeft: theme.spacing[8],
+    paddingRight: theme.spacing[8],
+  },
+}));
+
 const ListAssetPage = () => {
   const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
-
+  const [t] = useTranslateLoader(prefixPN('assetsList'));
+  const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
+
   const [assetType, setAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
   const [showPublished, setShowPublished] = useState(true);
   const history = useHistory();
   const params = useParams();
   const query = useQuery();
+  const [activeTab, setActiveTab] = useState(query.get('activeTab') || 'published');
   const location = useLocation();
   const profile = useGetProfileSysName();
   const isStudent = useIsStudent();
@@ -58,6 +83,7 @@ const ListAssetPage = () => {
     const assetId = query.get('open');
     const criteria = query.get('search');
     const type = query.get('type');
+    const _activeTab = query.get('activeTab');
     const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
 
     if (displayPublic !== showPublic) {
@@ -82,16 +108,33 @@ const ListAssetPage = () => {
     } else if (type !== assetType) {
       setAssetType(type);
     }
+
+    if (isEmpty(_activeTab)) {
+      setActiveTab('published');
+    } else if (_activeTab !== activeTab) {
+      setActiveTab(_activeTab);
+    }
   }, [query, asset]);
 
   // ·········································································
   // LABELS & STATIC
 
   const getQueryParams = useCallback(
-    ({ includeSearch, includeOpen, includeType, includePublic, includePublished }, suffix) => {
+    (
+      {
+        includeSearch,
+        includeOpen,
+        includeType,
+        includePublic,
+        includePublished,
+        includeActiveTab,
+      },
+      suffix
+    ) => {
       const open = query.get('open');
       const search = query.get('search');
       const type = query.get('type');
+      const _activeTab = query.get('activeTab');
       const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
       const result = [];
 
@@ -100,6 +143,9 @@ const ListAssetPage = () => {
       }
       if (!isEmpty(search) && includeSearch) {
         result.push(`search=${search}`);
+      }
+      if (!isEmpty(_activeTab) && includeActiveTab) {
+        result.push(`activeTab=${_activeTab}`);
       }
 
       if (!isEmpty(type) && includeType) {
@@ -129,7 +175,13 @@ const ListAssetPage = () => {
   const handleOnSelectItem = (item) => {
     history.push(
       `${location.pathname}?${getQueryParams(
-        { includeSearch: true, includeType: true, includePublic: true, includePublished: true },
+        {
+          includeSearch: true,
+          includeType: true,
+          includePublic: true,
+          includePublished: true,
+          includeActiveTab: true,
+        },
         `open=${item.id}`
       )}`
     );
@@ -143,7 +195,12 @@ const ListAssetPage = () => {
     if (!isEmpty(criteria)) {
       history.push(
         `${location.pathname}?${getQueryParams(
-          { includeType: true, includePublic: true, includePublished: true },
+          {
+            includeType: true,
+            includePublic: true,
+            includePublished: true,
+            includeActiveTab: true,
+          },
           `search=${criteria}`
         )}`
       );
@@ -153,6 +210,7 @@ const ListAssetPage = () => {
           includeType: true,
           includePublic: true,
           includePublished: true,
+          includeActiveTab: true,
         })}`
       );
     }
@@ -161,7 +219,7 @@ const ListAssetPage = () => {
   const handleOnShowPublic = (value) => {
     history.push(
       `${location.pathname}?${getQueryParams(
-        { includeType: true, includePublished: true, includeSearch: true },
+        { includeType: true, includePublished: true, includeSearch: true, includeActiveTab: true },
         `showPublic=${value}`
       )}`
     );
@@ -170,8 +228,26 @@ const ListAssetPage = () => {
   const handleOnTypeChange = (type) => {
     history.push(
       `${location.pathname}?${getQueryParams(
-        { includeSearch: true, includePublic: true, includePublished: true },
+        {
+          includeSearch: true,
+          includePublic: true,
+          includePublished: true,
+          includeActiveTab: true,
+        },
         `type=${type}`
+      )}`
+    );
+  };
+
+  const handleOnTabChange = (tab) => {
+    history.push(
+      `${location.pathname}?${getQueryParams(
+        {
+          includeSearch: true,
+          includePublic: true,
+          includePublished: true,
+        },
+        `activeTab=${tab}`
       )}`
     );
   };
@@ -181,9 +257,7 @@ const ListAssetPage = () => {
 
   let props = {};
   if (
-    (category?.key === 'pins' ||
-      category?.key === 'assignables.task' ||
-      category?.key === 'assignables.tests') &&
+    (category?.key === 'pins' || category?.key?.startsWith('assignables.')) &&
     (isTeacher || isStudent)
   ) {
     props = academicFilters;
@@ -193,25 +267,94 @@ const ListAssetPage = () => {
     props.searchInProvider = false;
   }
 
+  if (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') {
+    return (
+      <Tabs
+        panelColor="solid"
+        usePageLayout
+        fullHeight
+        fullWidth
+        activeKey={activeTab}
+        onTabClick={(e) => {
+          handleOnTabChange(e);
+          setCurrentAsset(null);
+        }}
+      >
+        <TabPanel key="published" label={t('published')}>
+          <Box className={classes.tabPane}>
+            <AssetList
+              {...props}
+              category={category}
+              categories={categories}
+              asset={currentAsset}
+              search={searchCriteria}
+              layout="grid"
+              showPublic={showPublic}
+              onSelectItem={handleOnSelectItem}
+              onEditItem={handleOnEditItem}
+              onSearch={handleOnSearch}
+              onTypeChange={handleOnTypeChange}
+              onShowPublic={handleOnShowPublic}
+              assetType={assetType}
+              pinned={category?.key === 'pins'}
+              onLoading={setLoading}
+              published={true}
+              variant="embedded"
+            />
+          </Box>
+        </TabPanel>
+        <TabPanel key="draft" label={t('draft')}>
+          <Box className={classes.tabPane}>
+            <AssetList
+              {...props}
+              category={category}
+              categories={categories}
+              asset={currentAsset}
+              search={searchCriteria}
+              layout="grid"
+              showPublic={showPublic}
+              onSelectItem={handleOnSelectItem}
+              onEditItem={handleOnEditItem}
+              onSearch={handleOnSearch}
+              onTypeChange={handleOnTypeChange}
+              onShowPublic={handleOnShowPublic}
+              assetType={assetType}
+              pinned={category?.key === 'pins'}
+              onLoading={setLoading}
+              published={false}
+              variant="embedded"
+            />
+          </Box>
+        </TabPanel>
+      </Tabs>
+    );
+  }
+
   return !isNil(categories) && !isEmpty(categories) ? (
-    <AssetList
-      {...props}
-      category={category}
-      categories={categories}
-      asset={currentAsset}
-      search={searchCriteria}
-      layout="grid"
-      published={showPublished}
-      showPublic={showPublic}
-      onSelectItem={handleOnSelectItem}
-      onEditItem={handleOnEditItem}
-      onSearch={handleOnSearch}
-      onTypeChange={handleOnTypeChange}
-      onShowPublic={handleOnShowPublic}
-      assetType={assetType}
-      pinned={category?.key === 'pins'}
-      onLoading={setLoading}
-    />
+    <Box
+      className={classes.original}
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}
+    >
+      <AssetList
+        {...props}
+        category={category}
+        categories={categories}
+        asset={currentAsset}
+        search={searchCriteria}
+        layout="grid"
+        published={showPublished}
+        showPublic={showPublic}
+        onSelectItem={handleOnSelectItem}
+        onEditItem={handleOnEditItem}
+        onSearch={handleOnSearch}
+        onTypeChange={handleOnTypeChange}
+        onShowPublic={handleOnShowPublic}
+        assetType={assetType}
+        pinned={category?.key === 'pins'}
+        onLoading={setLoading}
+        variant="embedded"
+      />
+    </Box>
   ) : null;
 };
 

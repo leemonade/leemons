@@ -1,14 +1,6 @@
-import React from 'react';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { find, forEach, map, orderBy } from 'lodash';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
-import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -25,14 +17,23 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevronRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@tests/helpers/prefixPN';
+import hooks from 'leemons-hooks';
+import { find, forEach, map, orderBy } from 'lodash';
+import React from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
-import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import ChatButton from '@comunica/components/ChatButton';
-import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
+import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
+import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getFeedbackRequest,
   getQuestionByIdsRequest,
@@ -41,9 +42,9 @@ import {
   setInstanceTimestampRequest,
 } from '../../../request';
 import { ResultStyles } from './Result.style';
-import { htmlToText } from './StudentInstance/helpers/htmlToText';
-import ViewModeQuestions from '../../../components/ViewModeQuestions';
+import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
+import { htmlToText } from './StudentInstance/helpers/htmlToText';
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('testResult'));
@@ -87,14 +88,18 @@ export default function Result() {
     try {
       store.loading = true;
       render();
+      console.log('init');
       [store.instance, store.assignation] = await Promise.all([
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
+      console.log('store.instance');
+      console.log(store.instance);
+
       const [{ evaluationSystem }, { questions }, { responses }, { timestamps }, { feedback }] =
         await Promise.all([
-          getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
+          getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
           getQuestionByIdsRequest(store.instance.metadata.questions, { categories: true }),
           getUserQuestionResponsesRequest(params.id, getUserId()),
           setInstanceTimestampRequest(params.id, 'open', getUserId()),
@@ -230,52 +235,52 @@ export default function Result() {
     () =>
       store.questions
         ? map(store.questions, (question) => {
-            let result = '';
-            if (store.questionResponses[question.id].status === 'ok') {
-              result = (
-                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
-                  <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
-                    <ImageLoader src={'/public/tests/question-done.svg'} />
-                  </Box>
+          let result = '';
+          if (store.questionResponses[question.id].status === 'ok') {
+            result = (
+              <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+                  <ImageLoader src={'/public/tests/question-done.svg'} />
                 </Box>
-              );
-            } else if (store.questionResponses[question.id].status === 'ko') {
-              result = (
-                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
-                  <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
-                    <ImageLoader src={'/public/tests/question-error.svg'} />
-                  </Box>
+              </Box>
+            );
+          } else if (store.questionResponses[question.id].status === 'ko') {
+            result = (
+              <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+                  <ImageLoader src={'/public/tests/question-error.svg'} />
                 </Box>
-              );
-            } else {
-              result = (
-                <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
-                  <Box
-                    sx={(theme) => ({
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      backgroundColor: theme.colors.ui01,
-                    })}
-                  />
-                </Box>
-              );
-            }
-            return {
-              question: <Box className={styles.tableCell}>{htmlToText(question.question)}</Box>,
-              category: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.category?.category || '-'}
-                </Box>
-              ),
-              level: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.level ? find(levels, { value: question.level }).label : '-'}
-                </Box>
-              ),
-              result,
-            };
-          })
+              </Box>
+            );
+          } else {
+            result = (
+              <Box style={{ minWidth: '100px' }} className={styles.tableCell}>
+                <Box
+                  sx={(theme) => ({
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: theme.colors.ui01,
+                  })}
+                />
+              </Box>
+            );
+          }
+          return {
+            question: <Box className={styles.tableCell}>{htmlToText(question.question)}</Box>,
+            category: (
+              <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+                {question.category?.category || '-'}
+              </Box>
+            ),
+            level: (
+              <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+                {question.level ? find(levels, { value: question.level }).label : '-'}
+              </Box>
+            ),
+            result,
+          };
+        })
         : [],
     [store.questions, store.questionResponses, levels]
   );
@@ -507,6 +512,7 @@ export default function Result() {
                       rounded
                       rightIcon={<PluginComunicaIcon />}
                       onClick={() => {
+                        hooks.fireEvent('chat:onRoomOpened', store.room);
                         store.chatOpened = true;
                         render();
                       }}
@@ -526,6 +532,7 @@ export default function Result() {
         <>
           <ChatDrawer
             onClose={() => {
+              hooks.fireEvent('chat:closeDrawer');
               store.chatOpened = false;
               render();
             }}
@@ -542,15 +549,15 @@ export default function Result() {
               store.room.unreadMessages = 0;
               render();
             }}
-            room={`plugins.assignables.subject|${
-              store.instance.assignable.subjects[0].subject
-            }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
+            room={`plugins.assignables.subject|${store?.instance?.subjects?.[0]?.subject
+              }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
           />
           {store.room ? (
             <ChatButton
               room={store.room}
               onClick={() => {
                 store.chatOpened = true;
+                hooks.fireEvent('chat:onRoomOpened', store.room);
                 render();
               }}
             />

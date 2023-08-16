@@ -84,6 +84,7 @@ export default function DevelopmentStep({
   index,
   previousIndex,
   marginTop,
+  preview,
 }) {
   const labels = _labels?.development_step;
   const { development: developments } = assignation.instance.assignable.metadata;
@@ -147,7 +148,7 @@ export default function DevelopmentStep({
             variant={hasNextStep ? 'outline' : 'filled'}
             rightIcon={<ChevRightIcon />}
             rounded
-            disabled={!!animation || !canSubmit}
+            disabled={!!animation || !canSubmit || (!hasNextStep && preview)}
           >
             {hasNextStep ? _labels?.buttons?.next : _labels?.buttons?.finish}
           </Button>

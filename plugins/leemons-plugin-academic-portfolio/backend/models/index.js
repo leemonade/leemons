@@ -32,7 +32,7 @@ module.exports = {
       ClassKnowledges: models.classKnowledgesModel,
       ClassStudent: models.classStudentModel,
       ClassSubstage: models.classSubstageModel,
-      ClassTeacher: models.ClassTeacher,
+      ClassTeacher: models.classTeacherModel,
       Class: models.classModel,
       Configs: models.configsModel,
       Cycles: models.cyclesModel,

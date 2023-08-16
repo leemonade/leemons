@@ -68,16 +68,18 @@ module.exports = async function getUserDataForFundae(userAgent, classes, { trans
   _.forEach(assignations, (assignation) => {
     const instance = instanceById[assignation.instance];
     const assignable = assignablesById[instance.assignable];
-    const asset = assetsById[assignable.asset];
-    const toSave = assignation;
-    const date = endDatesByAssignation[assignation.id];
-    const subjects = _.map(subjectsByAssignable[assignable.id], 'subject');
-    if (instance.gradable) {
-      if (date) endDatesGradables.push(date);
-      gradables.push({ ...toSave, instance, assignable, endDate: date, asset, subjects });
-    } else {
-      if (date) endDatesNoGradables.push(date);
-      noGradables.push({ ...toSave, instance, assignable, endDate: date, asset, subjects });
+    if (assignable) {
+      const asset = assetsById[assignable.asset];
+      const toSave = assignation;
+      const date = endDatesByAssignation[assignation.id];
+      const subjects = _.map(subjectsByAssignable[assignable.id], 'subject');
+      if (instance.gradable) {
+        if (date) endDatesGradables.push(date);
+        gradables.push({ ...toSave, instance, assignable, endDate: date, asset, subjects });
+      } else {
+        if (date) endDatesNoGradables.push(date);
+        noGradables.push({ ...toSave, instance, assignable, endDate: date, asset, subjects });
+      }
     }
   });
 

@@ -1,13 +1,16 @@
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 const _ = require('lodash');
-const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 
-async function listClasses(page, size, program, { query, transacting } = {}) {
-  const response = await global.utils.paginate(table.class, page, size, query || { program }, {
-    transacting,
+async function listClasses({ page, size, program, query, ctx }) {
+  const response = await mongoDBPaginate({
+    model: ctx.tx.db.Class,
+    page,
+    size,
+    query: query || { program },
   });
 
-  response.items = await classByIds(_.map(response.items, 'id'), { transacting });
+  response.items = await classByIds({ ids: _.map(response.items, 'id'), ctx });
 
   return response;
 }

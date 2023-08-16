@@ -30,6 +30,11 @@ module.exports = {
         return getByIds({ ...ctx.params, ctx });
       },
     },
+    getCoverUrl: {
+      handler(ctx) {
+        return `/api/leebrary/img/${ctx.params.assetId}`;
+      },
+    },
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);

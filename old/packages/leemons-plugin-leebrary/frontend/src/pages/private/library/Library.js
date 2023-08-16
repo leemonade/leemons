@@ -1,17 +1,17 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import _, { find, isEmpty } from 'lodash';
-import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
-import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
-import { LibraryNavbar } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten, useStore } from '@common';
-import loadable from '@loadable/component';
+import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { listSessionClasses } from '@academic-portfolio/request/classes';
-import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
+import { LibraryNavbar } from '@bubbles-ui/leemons';
+import { unflatten, useStore } from '@common';
+import loadable from '@loadable/component';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _, { find, isEmpty } from 'lodash';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext';
 import prefixPN from '../../../helpers/prefixPN';
 import { hasPinsRequest, listCategoriesRequest } from '../../../request';
-import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext';
 import { VIEWS } from './Library.constants';
 
 const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
@@ -115,7 +115,7 @@ const LibraryPageContent = () => {
             showSharedsWithMe
             labels={navbarLabels}
             categories={categories}
-            selectedCategory={category?.id}
+            selectedCategory={category?.key === 'leebrary-shared' ? 'shared-with-me' : category?.id}
             subjects={store.subjects}
             onNavSubject={onNavSubject}
             onNavShared={onNavShared}
@@ -201,6 +201,8 @@ const LibraryPage = () => {
         });
       } else if (key === 'pins' && category?.key !== 'pins') {
         setCategory({ key: 'pins', id: null });
+      } else if (key === 'leebrary-shared' && category?.key !== 'leebrary-shared') {
+        setCategory({ key: 'leebrary-shared', id: null });
       } else {
         const item = find(categories, { key });
         if (!isEmpty(item) && item.key !== category?.key) {

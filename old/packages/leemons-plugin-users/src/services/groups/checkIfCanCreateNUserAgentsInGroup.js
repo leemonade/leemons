@@ -31,7 +31,7 @@ async function checkIfCanCreateUserAgentInGroup(userAgentId, group, { transactin
       {
         id_$in: _.map(userAgents, 'userAgent'),
         role_$in: _.map(roles, 'role'),
-        disabled_$ne: true,
+        $or: [{ disabled_$null: true }, { disabled: false }],
       },
       { transacting }
     );
@@ -43,4 +43,46 @@ async function checkIfCanCreateUserAgentInGroup(userAgentId, group, { transactin
   return true;
 }
 
-module.exports = { checkIfCanCreateUserAgentInGroup };
+async function checkIfCanCreateNUserAgentInGroupByRole(
+  nUserAgents,
+  group,
+  role,
+  { transacting } = {}
+) {
+  const [center] = await getRolesCenters(role, { transacting });
+
+  const limit = await table.centerLimits.findOne({
+    center,
+    item: group,
+    type: 'role',
+  });
+
+  if (!limit.unlimited && limit.limit) {
+    const roles = await table.roleCenter.find(
+      { center },
+      {
+        columns: ['role'],
+        transacting,
+      }
+    );
+    const userAgents = await table.groupUserAgent.find(
+      { group },
+      { columns: ['userAgent'], transacting }
+    );
+    const count = await table.userAgent.count(
+      {
+        id_$in: _.map(userAgents, 'userAgent'),
+        role_$in: _.map(roles, 'role'),
+        $or: [{ disabled_$null: true }, { disabled: false }],
+      },
+      { transacting }
+    );
+    if (count + nUserAgents > limit.limit) {
+      throw new Error('Cannot add the user exceeds the maximum limit.');
+    }
+  }
+
+  return true;
+}
+
+module.exports = { checkIfCanCreateUserAgentInGroup, checkIfCanCreateNUserAgentInGroupByRole };

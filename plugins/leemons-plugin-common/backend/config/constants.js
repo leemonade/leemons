@@ -1,4 +1,4 @@
-const permissionsPrefix = 'plugins.content-creator';
+const permissionsPrefix = 'common';
 
 module.exports = {
   pluginName: permissionsPrefix,

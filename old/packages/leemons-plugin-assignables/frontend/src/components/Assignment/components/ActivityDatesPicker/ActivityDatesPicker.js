@@ -46,7 +46,14 @@ function useOnChange({ control, onChange }) {
   }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime]);
 }
 
-export function ActivityDatesPicker({ localizations, onChange, value, error, hideSectionHeaders }) {
+export function ActivityDatesPicker({
+  localizations,
+  onChange,
+  value,
+  error,
+  hideSectionHeaders,
+  hideMaxTime,
+}) {
   const options = React.useMemo(
     () => [
       {
@@ -117,31 +124,33 @@ export function ActivityDatesPicker({ localizations, onChange, value, error, hid
                 )}
               />
             )}
-            <Controller
-              name="maxTimeToggle"
-              control={control}
-              render={({ field: maxTimeToggleField }) => (
-                <ConditionalInput
-                  {...maxTimeToggleField}
-                  checked={!!maxTimeToggleField.value}
-                  label={localizations?.maxTime}
-                  showOnTrue
-                  render={() => (
-                    <Controller
-                      name="maxTime"
-                      control={control}
-                      render={({ field }) => (
-                        <TimeUnitsInput
-                          {...field}
-                          label={localizations?.maxTimeInput?.label}
-                          min={1}
-                        />
-                      )}
-                    />
-                  )}
-                />
-              )}
-            />
+            {!hideMaxTime && (
+              <Controller
+                name="maxTimeToggle"
+                control={control}
+                render={({ field: maxTimeToggleField }) => (
+                  <ConditionalInput
+                    {...maxTimeToggleField}
+                    checked={!!maxTimeToggleField.value}
+                    label={localizations?.maxTime}
+                    showOnTrue
+                    render={() => (
+                      <Controller
+                        name="maxTime"
+                        control={control}
+                        render={({ field }) => (
+                          <TimeUnitsInput
+                            {...field}
+                            label={localizations?.maxTimeInput?.label}
+                            min={1}
+                          />
+                        )}
+                      />
+                    )}
+                  />
+                )}
+              />
+            )}
           </Box>
         </Box>
       </Box>
@@ -155,4 +164,5 @@ ActivityDatesPicker.propTypes = {
   value: PropTypes.func,
   error: PropTypes.any,
   hideSectionHeaders: PropTypes.bool,
+  hideMaxTime: PropTypes.bool,
 };

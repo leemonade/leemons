@@ -23,7 +23,7 @@ const {
 
 async function addUserBulk(
   role,
-  { id, tags, password, birthdate, avatar, created_at, dataset, ...userData },
+  { id, tags, password, birthdate, avatar, created_at, active, dataset, ...userData },
   ctx,
   { profile, transacting, userSession } = {}
 ) {
@@ -66,7 +66,7 @@ async function addUserBulk(
 
   let userAgent = await table.userAgent.findOne(
     {
-      deleted_$null: false,
+      $or: [{ deleted_$null: false }, { deleted_$ne: false }],
       user: user.id,
       role,
     },
@@ -90,7 +90,7 @@ async function addUserBulk(
   } else if (userAgent.deleted) {
     userAgent = await table.userAgent.update(
       {
-        deleted_$null: false,
+        $or: [{ deleted_$null: false }, { deleted_$ne: false }],
         role,
         user: user.id,
       },

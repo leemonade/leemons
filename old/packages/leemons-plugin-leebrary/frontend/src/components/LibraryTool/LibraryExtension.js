@@ -14,7 +14,7 @@ const ASSET_KEYS = keys({
 });
 
 function appendAuthorizationToUrl(url) {
-  if (!url || url === 'null') {
+  if (!url || url === 'null' || url === 'undefined') {
     return undefined;
   }
 
@@ -111,12 +111,12 @@ export const LibraryExtension = Node.create({
     return {
       setLibrary:
         (attributes) =>
-        ({ commands }) =>
-          commands.insertContent({ type: this.name, attrs: attributes }),
+          ({ commands }) =>
+            commands.insertContent({ type: this.name, attrs: attributes }),
       unsetLibrary:
         () =>
-        ({ commands }) =>
-          commands.deleteSelection(),
+          ({ commands }) =>
+            commands.deleteSelection(),
     };
   },
 

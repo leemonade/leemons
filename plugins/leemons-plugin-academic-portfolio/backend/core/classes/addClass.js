@@ -1,6 +1,6 @@
+const { LeemonsError } = require('leemons-error');
 const _ = require('lodash');
 const { isArray, map } = require('lodash');
-const { table } = require('../tables');
 const { validateAddClass } = require('../../validations/forms');
 const { add: addKnowledge } = require('./knowledge/add');
 const { add: addSubstage } = require('./substage/add');
@@ -19,206 +19,203 @@ const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 
-async function addClass(data, { userSession, transacting: _transacting } = {}) {
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const roomService = leemons.getPlugin('comunica').services.room;
+async function addClass({ data, ctx }) {
+  try {
+    await validateAddClass({ data, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      try {
-        await validateAddClass(data, { transacting });
+    let goodGroup = null;
 
-        let goodGroup = null;
+    const program = await ctx.tx.db.Programs.findOne({ id: data.program })
+      .select(['id', 'name', 'useOneStudentGroup'])
+      .lean();
 
-        const program = await table.programs.findOne(
-          { id: data.program },
-          { columns: ['id', 'name', 'useOneStudentGroup'], transacting }
-        );
+    if (program.useOneStudentGroup) {
+      const group = await ctx.tx.db.Groups.findOne({
+        isAlone: true,
+        type: 'group',
+        program: program.id,
+      })
+        .select(['id'])
+        .lean();
+      goodGroup = group.id;
+    }
 
-        if (program.useOneStudentGroup) {
-          const group = await table.groups.findOne(
-            {
-              isAlone: true,
-              type: 'group',
-              program: program.id,
-            },
-            { columns: ['id'], transacting }
-          );
-          goodGroup = group.id;
-        }
+    // eslint-disable-next-line prefer-const
+    let { course, group, knowledge, substage, teachers, schedule, image, icon, ...rest } = data;
 
-        // eslint-disable-next-line prefer-const
-        let { course, group, knowledge, substage, teachers, schedule, image, icon, ...rest } = data;
+    if (!goodGroup && group) {
+      goodGroup = group;
+    }
 
-        if (!goodGroup && group) {
-          goodGroup = group;
-        }
+    // ES: Creamos la clase
+    let nClass = await ctx.tx.db.Class.create(rest);
 
-        // ES: Creamos la clase
-        let nClass = await table.class.create(rest, { transacting });
+    // ES: Añadimos el asset de la imagen
+    const imageData = {
+      indexable: true,
+      public: true, // TODO Cambiar a false despues de hacer la demo
+      name: nClass.id,
+    };
+    if (image) imageData.cover = image;
 
-        // ES: Añadimos el asset de la imagen
-        const imageData = {
-          indexable: true,
-          public: true, // TODO Cambiar a false despues de hacer la demo
-          name: nClass.id,
-        };
-        if (image) imageData.cover = image;
-
-        const assetImage = await assetService.add(imageData, {
-          permissions: [
-            {
-              canEdit: true,
-              isCustomPermission: true,
-              permissionName: leemons.plugin.prefixPN('programs'),
-              actionNames: ['update', 'admin'],
-            },
-          ],
-          published: true,
-          userSession,
-          transacting,
-        });
-        nClass = await table.class.update(
-          { id: nClass.id },
+    const assetImage = await ctx.tx.call('leebrary.assets.add', {
+      asset: imageData,
+      options: {
+        permissions: [
           {
-            image: assetImage.id,
+            canEdit: true,
+            isCustomPermission: true,
+            permissionName: ctx.prefixPN('programs'),
+            actionNames: ['update', 'admin'],
           },
-          { transacting }
-        );
+        ],
+        published: true,
+      },
+    });
 
-        // ES: Añadimos todas las relaciones de la clase
-        const promises = [];
-
-        if (knowledge) {
-          // ES: Comprobamos que todos los conocimientos existen y pertenecen al programa
-          if (!(await existKnowledgeInProgram(knowledge, nClass.program, { transacting }))) {
-            throw new Error('knowledge not in program');
-          }
-          promises.push(addKnowledge(nClass.id, knowledge, { transacting }));
-        }
-        if (substage) {
-          // ES: Comprobamos que todos los substages existen y pertenecen al programa
-          if (!(await existSubstageInProgram(substage, nClass.program, { transacting }))) {
-            throw new Error('substage not in program');
-          }
-          const substages = _.isArray(substage) ? substage : [substage];
-          _.forEach(substages, (sub) => {
-            promises.push(addSubstage(nClass.id, sub, { transacting }));
-          });
-        }
-        if (!course) {
-          const programCourses = await getProgramCourses(nClass.program, { transacting });
-          course = programCourses[0].id;
-        }
-        if (course) {
-          // ES: Comprobamos que todos los cursos existen y pertenecen al programa
-          if (!(await existCourseInProgram(course, nClass.program, { transacting }))) {
-            throw new Error('course not in program');
-          }
-          const courses = isArray(course) ? course : [course];
-          promises.push(
-            Promise.all([
-              Promise.all(map(courses, (c) => addCourse(nClass.id, c, { transacting }))),
-              setToAllClassesWithSubject(nClass.subject, courses, { transacting }),
-            ])
-          );
-        }
-
-        if (goodGroup) {
-          // ES: Comprobamos que todos los grupos existen y pertenecen al programa
-          if (!(await existGroupInProgram(goodGroup, nClass.program, { transacting }))) {
-            throw new Error('group not in program');
-          }
-          if (
-            await isUsedInSubject(nClass.subject, goodGroup, { classe: nClass.id, transacting })
-          ) {
-            throw new Error('group is already used in subject');
-          }
-          promises.push(addGroup(nClass.id, goodGroup, { transacting }));
-        }
-
-        // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
-        promises.push(
-          table.class.updateMany(
-            { subject: nClass.subject },
-            { subjectType: nClass.subjectType, color: nClass.color },
-            { transacting }
-          )
-        );
-
-        promises.push(
-          leemons.getPlugin('users').services.permissions.addItem(
-            nClass.id,
-            'plugins.academic-portfolio.class',
-            {
-              permissionName: `plugins.academic-portfolio.class.${nClass.id}`,
-              actionNames: ['view'],
-            },
-            { isCustomPermission: true, transacting }
-          )
-        );
-
-        // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
-        promises.push(changeBySubject(nClass.subject, knowledge, { transacting }));
-
-        if (schedule) {
-          promises.push(processScheduleForClass(schedule, nClass.id, { transacting }));
-        }
-
-        await Promise.all(promises);
-
-        let classe = (await classByIds(nClass.id, { transacting }))[0];
-
-        let subName = program.name;
-        if (classe.groups?.abbreviation) {
-          subName += ` - ${classe.groups?.abbreviation}`;
-        }
-        const roomData = {
-          name: classe.subject.name,
-          type: leemons.plugin.prefixPN('class'),
-          subName,
-          bgColor: classe.subject.color,
-          image: null,
-          icon: null,
-          program: data.program,
-          transacting,
-        };
-        if (classe.subject.icon?.cover) {
-          roomData.icon = classe.subject.icon.id;
-        }
-        if (classe.subject.image?.cover) {
-          roomData.image = classe.subject.image.id;
-        }
-        if (assetImage.cover) {
-          roomData.image = assetImage.id;
-        }
-        await roomService.add(leemons.plugin.prefixPN(`room.class.${nClass.id}`), roomData);
-
-        [classe] = await getClassesProgramInfo(
-          {
-            programs: data.program,
-            classes: [classe],
-          },
-          { transacting }
-        );
-        await leemons.events.emit('after-add-class', { class: classe, transacting });
-
-        if (teachers) {
-          await Promise.all(
-            _.map(teachers, ({ teacher, type }) =>
-              addTeacher(nClass.id, teacher, type, { transacting })
-            )
-          );
-        }
-
-        return (await classByIds(nClass.id, { transacting }))[0];
-      } catch (e) {
-        console.error(e);
+    nClass = await ctx.tx.db.Class.findOneAndUpdate(
+      { id: nClass.id },
+      {
+        image: assetImage.id,
+      },
+      {
+        new: true,
       }
-    },
-    table.groups,
-    _transacting
-  );
+    );
+
+    // ES: Añadimos todas las relaciones de la clase
+    const promises = [];
+
+    if (knowledge) {
+      // ES: Comprobamos que todos los conocimientos existen y pertenecen al programa
+      if (!(await existKnowledgeInProgram({ id: knowledge, program: nClass.program, ctx }))) {
+        throw new LeemonsError(ctx, { message: 'knowledge not in program' });
+      }
+      promises.push(addKnowledge({ class: nClass.id, knowledge, ctx }));
+    }
+    if (substage) {
+      // ES: Comprobamos que todos los substages existen y pertenecen al programa
+      if (!(await existSubstageInProgram({ id: substage, program: nClass.program, ctx }))) {
+        throw new LeemonsError(ctx, { message: 'substage not in program' });
+      }
+      const substages = _.isArray(substage) ? substage : [substage];
+      _.forEach(substages, (sub) => {
+        promises.push(addSubstage({ class: nClass.id, substage: sub, ctx }));
+      });
+    }
+    if (!course) {
+      const programCourses = await getProgramCourses({ ids: nClass.program, ctx });
+      course = programCourses[0].id;
+    }
+    if (course) {
+      // ES: Comprobamos que todos los cursos existen y pertenecen al programa
+      if (!(await existCourseInProgram({ id: course, program: nClass.program, ctx }))) {
+        throw new LeemonsError(ctx, { message: 'course not in program' });
+      }
+      const courses = isArray(course) ? course : [course];
+      promises.push(
+        Promise.all([
+          Promise.all(map(courses, (c) => addCourse({ class: nClass.id, course: c, ctx }))),
+          setToAllClassesWithSubject({ subject: nClass.subject, course: courses, ctx }),
+        ])
+      );
+    }
+
+    if (goodGroup) {
+      // ES: Comprobamos que todos los grupos existen y pertenecen al programa
+      if (!(await existGroupInProgram({ id: goodGroup, program: nClass.program, ctx }))) {
+        throw new LeemonsError(ctx, { message: 'group not in program' });
+      }
+      if (
+        await isUsedInSubject({
+          subject: nClass.subject,
+          group: goodGroup,
+          classe: nClass.id,
+          ctx,
+        })
+      ) {
+        throw new LeemonsError(ctx, { message: 'group is already used in subject' });
+      }
+      promises.push(addGroup({ class: nClass.id, group: goodGroup, ctx }));
+    }
+
+    // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
+    promises.push(
+      ctx.tx.db.Class.updateMany(
+        { subject: nClass.subject },
+        { subjectType: nClass.subjectType, color: nClass.color }
+      )
+    );
+
+    promises.push(
+      ctx.tx.call('users.permissions.addItem', {
+        item: nClass.id,
+        type: 'plugins.academic-portfolio.class',
+        data: {
+          permissionName: `plugins.academic-portfolio.class.${nClass.id}`,
+          actionNames: ['view'],
+        },
+        isCustomPermission: true,
+      })
+    );
+
+    // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
+    promises.push(changeBySubject({ subjectId: nClass.subject, knowledge, ctx }));
+
+    if (schedule) {
+      promises.push(processScheduleForClass({ schedule, classId: nClass.id, ctx }));
+    }
+
+    await Promise.all(promises);
+
+    let classe = (await classByIds({ ids: nClass.id, ctx }))[0];
+
+    let subName = program.name;
+    if (classe.groups?.abbreviation) {
+      subName += ` - ${classe.groups?.abbreviation}`;
+    }
+    const roomData = {
+      name: classe.subject.name,
+      type: ctx.prefixPN('class'),
+      subName,
+      bgColor: classe.subject.color,
+      image: null,
+      icon: null,
+      program: data.program,
+    };
+    if (classe.subject.icon?.cover) {
+      roomData.icon = classe.subject.icon.id;
+    }
+    if (classe.subject.image?.cover) {
+      roomData.image = classe.subject.image.id;
+    }
+    if (assetImage.cover) {
+      roomData.image = assetImage.id;
+    }
+
+    await ctx.tx.call('comunica.room.add', {
+      key: ctx.prefixPN(`room.class.${nClass.id}`),
+      ...roomData,
+    });
+
+    [classe] = await getClassesProgramInfo({
+      programs: data.program,
+      classes: [classe],
+      ctx,
+    });
+    await ctx.tx.emit('after-add-class', { class: classe });
+
+    if (teachers) {
+      await Promise.all(
+        _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
+      );
+    }
+
+    return (await classByIds({ ids: nClass.id, ctx }))[0];
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }
 
 module.exports = { addClass };

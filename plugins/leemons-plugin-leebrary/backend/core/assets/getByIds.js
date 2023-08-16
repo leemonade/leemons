@@ -272,7 +272,6 @@ async function getByIds({
   if (withTags) {
     tags = await Promise.all(
       assets.map((item) =>
-        //! TODO Roberto: HAY QUE MIGRAR EL PLUGIN COMMON
         ctx.tx.call('common.tags.getValuesTags', {
           value: item.id,
           tags: ctx.prefixPN(''),

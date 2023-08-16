@@ -1,5 +1,3 @@
-const { keyBy } = require('lodash');
-const { table } = require('../tables');
 const { getProfiles } = require('./getProfiles');
 
 /**
@@ -7,8 +5,8 @@ const { getProfiles } = require('./getProfiles');
  * @static
  * @return {Promise<any>}
  * */
-async function isProfilesConfig({ transacting } = {}) {
-  const profiles = await getProfiles({ transacting });
+async function isProfilesConfig({ ctx } = {}) {
+  const profiles = await getProfiles({ ctx });
   return !!profiles.teacher && !!profiles.student;
 }
 

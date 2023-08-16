@@ -34,9 +34,13 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
 
   // Generate App contexts folder
   await createFolderIfMissing(path.resolve(outputDir, 'contexts'));
+  await copyFile(
+    path.resolve(templateDir, 'contexts', 'global.js'),
+    path.resolve(outputDir, 'contexts', 'global.js')
+  );
   await copyFileWithSquirrelly(
-    path.resolve(templateDir, 'contexts', 'global.squirrelly'),
-    path.resolve(outputDir, 'contexts', 'global.js'),
+    path.resolve(templateDir, 'contexts', 'apiURL.squirrelly'),
+    path.resolve(outputDir, 'contexts', 'apiURL.js'),
     { apiUrl: process.env.API_URL }
   );
 

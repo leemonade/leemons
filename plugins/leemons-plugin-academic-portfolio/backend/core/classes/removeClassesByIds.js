@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { classByIds } = require('./classByIds');
 const { removeByClass: removeKnowledgeByClass } = require('./knowledge/removeByClass');
 const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
@@ -8,62 +7,46 @@ const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClas
 const { removeByClass: removeCourseByClass } = require('./course/removeByClass');
 const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
 
-async function removeClassesByIds(ids, { soft, userSession, transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const classes = await classByIds(_.isArray(ids) ? ids : [ids], { transacting });
-      const classesIds = _.map(classes, 'id');
-      await leemons.events.emit('before-remove-classes', { classes, soft, transacting });
+async function removeClassesByIds({ ids, soft, ctx }) {
+  const classes = await classByIds({ ids: _.isArray(ids) ? ids : [ids], ctx });
+  const classesIds = _.map(classes, 'id');
+  await ctx.tx.emit('before-remove-classes', { classes, soft });
 
-      await leemons.getPlugin('users').services.permissions.removeItems(
-        {
-          item_$in: _.map(classes, 'id'),
-          type: 'plugins.academic-portfolio.class',
-        },
-        { transacting }
-      );
-
-      const assetService = leemons.getPlugin('leebrary').services.assets;
-
-      await Promise.allSettled(
-        _.map(classes, (classe) =>
-          assetService.remove(
-            { id: classe.image.id },
-            {
-              userSession,
-              transacting,
-            }
-          )
-        )
-      );
-
-      await removeKnowledgeByClass(classesIds, { soft, transacting });
-      await removeSubstageByClass(classesIds, { soft, transacting });
-      await removeStudentsByClass(classesIds, { soft, transacting });
-      await removeTeachersByClass(classesIds, { soft, transacting });
-      await removeCourseByClass(classesIds, { soft, transacting });
-      await removeGroupByClass(classesIds, { soft, transacting });
-
-      const refClasses = await table.class.find(
-        { class_$in: _.map(classes, 'id') },
-        { transacting }
-      );
-
-      const refIds = _.isArray(refClasses) ? _.map(refClasses, 'id') : [];
-      if (refIds && refIds.length) {
-        await removeClassesByIds(refIds, { soft, transacting });
-      }
-
-      await table.class.deleteMany({ id_$in: _.map(classes, 'id') }, { soft, transacting });
-      // TODO: Borrar permiso de la clase a todo quisqui
-      /*
-       * permissions.removeItems */
-      await leemons.events.emit('after-remove-classes', { classes, soft, transacting });
-      return true;
+  await ctx.tx.call('users.permissions.removeItems', {
+    query: {
+      item: _.map(classes, 'id'),
+      type: 'plugins.academic-portfolio.class',
     },
-    table.class,
-    _transacting
+  });
+
+  await Promise.allSettled(
+    _.map(classes, (classe) =>
+      ctx.tx.call('leebrary.assets.remove', {
+        id: { id: classe.image.id },
+      })
+    )
   );
+
+  await removeKnowledgeByClass({ classesIds, soft, ctx });
+  await removeSubstageByClass({ classesIds, soft, ctx });
+  await removeStudentsByClass({ classesIds, soft, ctx });
+  await removeTeachersByClass({ classesIds, soft, ctx });
+  await removeCourseByClass({ classesIds, soft, ctx });
+  await removeGroupByClass({ classesIds, soft, ctx });
+
+  const refClasses = await ctx.tx.db.Class.find({ class: _.map(classes, 'id') }).lean();
+
+  const refIds = _.isArray(refClasses) ? _.map(refClasses, 'id') : [];
+  if (refIds && refIds.length) {
+    await removeClassesByIds({ ids: refIds, soft, ctx });
+  }
+
+  await ctx.tx.db.Class.deleteMany({ id: _.map(classes, 'id') }, { soft });
+  // TODO: Borrar permiso de la clase a todo quisqui
+  /*
+   * permissions.removeItems */
+  await ctx.tx.emit('after-remove-classes', { classes, soft });
+  return true;
 }
 
 module.exports = { removeClassesByIds };

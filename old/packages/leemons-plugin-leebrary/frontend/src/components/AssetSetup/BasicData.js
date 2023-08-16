@@ -10,8 +10,9 @@ import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
+// eslint-disable-next-line import/no-cycle
 import { LibraryForm } from '../LibraryForm/LibraryForm';
-import UploadingFileModal from '../UploadingFileModal';
+import { UploadingFileModal } from '../UploadingFileModal';
 
 const BasicData = ({
   file,
@@ -19,13 +20,13 @@ const BasicData = ({
   asset: assetProp,
   categoryId,
   editing,
-  onSave = () => {},
-  onNext = () => {},
+  onSave = () => { },
+  onNext = () => { },
   ...props
 }) => {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading, setLoading] = useState(false);
-  const [uploadingFilePercentage, setUploadingFilePercentage] = useState(null);
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
   const [tags, setTags] = useState(assetProp?.tags || []);
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -60,11 +61,12 @@ const BasicData = ({
   const handleOnSubmit = async (data) => {
     try {
       data.file = await uploadFileAsMultipart(data.file, {
-        onProgress: ({ percentageCompleted }) => {
-          setUploadingFilePercentage(percentageCompleted);
+        onProgress: (info) => {
+          // console.log(info);
+          setUploadingFileInfo(info);
         },
       });
-      setUploadingFilePercentage(null);
+      setUploadingFileInfo(null);
 
       let { cover } = data;
       if (cover === preparedAsset.cover) {
@@ -89,7 +91,7 @@ const BasicData = ({
         addErrorAlert(getErrorMessage(err));
       }
     } catch (e) {
-      setUploadingFilePercentage(null);
+      setUploadingFileInfo(null);
     }
   };
 
@@ -117,10 +119,7 @@ const BasicData = ({
           />
         </ContextContainer>
       </LibraryForm>
-      <UploadingFileModal
-        opened={uploadingFilePercentage !== null}
-        percentage={uploadingFilePercentage}
-      />
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </>
   );
 };
@@ -132,6 +131,7 @@ BasicData.propTypes = {
   asset: PropTypes.instanceOf(Object),
   onSave: PropTypes.func,
   onNext: PropTypes.func,
+  advancedConfig: PropTypes.instanceOf(Object),
 };
 
 export { BasicData };

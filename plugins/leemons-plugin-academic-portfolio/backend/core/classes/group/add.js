@@ -1,7 +1,5 @@
-const { table } = require('../../tables');
-
-async function add(_class, group, { transacting } = {}) {
-  return table.classGroup.create({ class: _class, group }, { transacting });
+async function add({ class: _class, group, ctx }) {
+  return ctx.tx.db.ClassGroup.create({ class: _class, group });
 }
 
 module.exports = { add };

@@ -18,6 +18,7 @@ import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import Sidebar from '@tasks/components/Student/TaskDetail/components/Sidebar/Sidebar';
 import { DashboardCard } from './components/DashboardCard';
+import { useHeaderDataForPreview, useModuleDataForPreview } from './helpers/previewHooks';
 
 export function useModuleDashboardLocalizations() {
   // key is string
@@ -226,7 +227,7 @@ export const useModuleDashboardBodyStyles = createStyles((theme, { marginTop }) 
   },
 }));
 
-function ModuleDashboardBody({
+export function ModuleDashboardBody({
   classes,
   localizations,
   activities,
@@ -234,6 +235,7 @@ function ModuleDashboardBody({
   assignationsById,
   module,
   marginTop,
+  preview,
 }) {
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
 
@@ -254,6 +256,7 @@ function ModuleDashboardBody({
                   activity={activitiesById[activity?.id]}
                   assignation={assignationsById[activity?.id]}
                   key={activity?.id}
+                  preview={preview}
                 />
               ),
               created_at: activitiesById[activity?.id].created_at,
@@ -279,12 +282,15 @@ ModuleDashboardBody.propTypes = {
   assignationsById: PropTypes.object,
   module: PropTypes.object,
   marginTop: PropTypes.number,
+  preview: PropTypes.bool,
 };
 
-export function ModuleDashboard({ id }) {
-  const { module, activities, activitiesById, assignationsById, isLoading } = useModuleData(id);
+export function ModuleDashboard({ id, preview }) {
+  const { module, activities, activitiesById, assignationsById, isLoading } = preview
+    ? useModuleDataForPreview(id)
+    : useModuleData(id);
   const localizations = useModuleDashboardLocalizations();
-  const headersData = useHeaderData(module);
+  const headersData = preview ? useHeaderDataForPreview(module) : useHeaderData(module);
 
   const { classes } = useModuleDashboardStyles();
 
@@ -302,6 +308,7 @@ export function ModuleDashboard({ id }) {
           classes={classes}
           localizations={localizations}
           module={module}
+          preview={preview}
         />
       </ActivityContainer>
     </Box>
@@ -309,5 +316,6 @@ export function ModuleDashboard({ id }) {
 }
 
 ModuleDashboard.propTypes = {
-  id: PropTypes.any,
+  id: PropTypes.string,
+  preview: PropTypes.bool,
 };

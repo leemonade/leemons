@@ -47,6 +47,7 @@ function buttonsToSet({
   onNextStep,
   onSave,
   localizations,
+  preview,
 }) {
   let next = true;
   let save = true;
@@ -63,6 +64,10 @@ function buttonsToSet({
   } else if (status === 'loading') {
     save = false;
     next = false;
+  }
+
+  if (preview) {
+    save = false;
   }
 
   return (
@@ -88,7 +93,7 @@ function buttonsToSet({
               onNextStep();
             }
           }}
-          disabled={!next}
+          disabled={!next || (!hasNextStep && preview)}
           rounded
           rightIcon={hasNextStep && <ChevRightIcon />}
         >
@@ -108,6 +113,7 @@ export default function DeliveryStep({
   hasPrevStep,
   hasNextStep,
   localizations: _labels,
+  preview,
 }) {
   React.useEffect(() => {
     updateTimestamps('start');
@@ -150,9 +156,10 @@ export default function DeliveryStep({
         onNextStep,
         onSave,
         localizations: _labels,
+        preview,
       })
     );
-  }, [status, hasPrevStep, hasNextStep, onPrevStep, onNextStep, _labels?.buttons]);
+  }, [status, hasPrevStep, hasNextStep, onPrevStep, onNextStep, _labels?.buttons, preview]);
 
   const Component = (type) =>
     loadable(() => {
