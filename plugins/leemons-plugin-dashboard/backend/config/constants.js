@@ -4,7 +4,7 @@ const permissions = [];
 
 const menuItems = [
   {
-    config: {
+    item: {
       key: 'dashboard',
       order: 1,
       iconSvg: '/public/dashboard/menu-icon.svg',
