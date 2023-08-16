@@ -30,6 +30,7 @@ module.exports = () => ({
       events: ['menu-builder.init-main-menu', 'academic-portfolio.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
+     
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: mainMenuItem,

@@ -21,7 +21,7 @@ const { validateAddLocation } = require('../../validations/datasetLocation');
 async function addLocation({ name, description, locationName, pluginName, ctx }) {
   validateAddLocation({ name, description, locationName, pluginName });
   validatePluginName(pluginName, ctx.callerPlugin);
-  await validateExistLocation(locationName, pluginName);
+  await validateExistLocation({ locationName, pluginName, ctx });
 
   const promises = [ctx.tx.db.Dataset.create({ locationName, pluginName })];
 

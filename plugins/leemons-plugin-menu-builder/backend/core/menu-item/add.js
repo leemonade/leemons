@@ -67,8 +67,13 @@ async function add({
     disabled,
   });
 
-  // Check for required params
-  await validateNotExistMenu({ key: menuKey, ctx });
+  try {
+    // Check for required params
+    await validateNotExistMenu({ key: menuKey, ctx });
+  } catch (e) {
+    console.log('key', key);
+    throw e;
+  }
 
   // Check if the MENU ITEM exists
   await validateExistMenuItem({ menuKey, key, ctx });

@@ -34,7 +34,7 @@ const {
   onAcademicPortfolioRemovePrograms,
 } = require('../core/pluginEvents/program/onAcademicPortfolioRemovePrograms');
 
-const addEventTypes = require('../core/event-types/add');
+const { add: addEventTypes } = require('../core/event-types/add');
 
 async function addEventType({ ctx }) {
   // TODO ROBERTO: Está eso bien? o es mejor "jugar" con la colección KeyValue ? Key-value!
