@@ -1,22 +1,36 @@
 const _ = require('lodash');
 const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { LeemonsError } = require('leemons-error');
+const { getUserProgramIds } = require('./getUserProgramIds');
 
 async function listPrograms({ page, size, center, ctx }) {
-  // TODO Robert: Remigrar!
-  const programCenter = await ctx.tx.db.ProgramCenter.find({ center }).lean();
+  const [profile, programCenter] = await Promise.all([
+    ctx.tx.call('users.profiles.getProfileSysName'),
+    ctx.tx.db.ProgramCenter.find({ center }).lean(),
+  ]);
+
+  if (!['teacher', 'student', 'admin'].includes(profile)) {
+    throw new LeemonsError(ctx, { message: 'Only teacher|student|admin can list programs' });
+  }
+
+  let programIds = _.map(programCenter, 'program');
+
+  if (profile === 'teacher' || profile === 'student') {
+    const _programIds = await getUserProgramIds({ ctx });
+    programIds = _.intersection(_programIds, programIds);
+  }
 
   const results = await mongoDBPaginate({
-    model: ctx.tx.db.Class,
+    model: ctx.tx.db.Programs,
     page,
     size,
-    query: { id: _.map(programCenter, 'program') },
+    query: { id: programIds },
   });
 
   const images = await ctx.tx.call('leebrary.assets.getByIds', {
     assetsIds: _.map(results.items, 'image'),
     withFiles: true,
   });
-
   const imagesById = _.keyBy(images, 'id');
 
   const centersByProgram = _.groupBy(programCenter, 'program');
