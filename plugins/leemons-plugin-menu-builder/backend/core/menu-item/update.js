@@ -74,7 +74,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
     promises.push(
       ctx.tx.call('users.permissions.removeItems', {
         query: {
-          type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+          type: ctx.prefixPN(`${menuKey}.menu-item`),
           item: key,
         },
       })
@@ -104,7 +104,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
   if (_.isArray(permissions)) {
     await ctx.tx.call('users.permissions.removeItems', {
       query: {
-        type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+        type: ctx.prefixPN(`${menuKey}.menu-item`),
         item: key,
       },
     });
@@ -118,14 +118,12 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
     }
   }
 
-  if (leemons.getPlugin('users')) {
-    promises.push(
-      await ctx.tx.call('users.permissions.addItemBasicIfNeed', {
-        item: data.key,
-        type: ctx.prefixPN(`${data.menuKey}.menu-item`),
-      })
-    );
-  }
+  promises.push(
+    await ctx.tx.call('users.permissions.addItemBasicIfNeed', {
+      item: data.key,
+      type: ctx.prefixPN(`${data.menuKey}.menu-item`),
+    })
+  );
 
   const [menuItem] = await Promise.all(promises);
 
