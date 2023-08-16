@@ -1,6 +1,6 @@
-async function updateNodeLevelSchema(schemaData, { transacting }) {
-  await leemons.getPlugin('dataset').services.dataset.updateSchema(schemaData, {
-    transacting,
+async function updateNodeLevelSchema({ schemaData, ctx }) {
+  await ctx.tx.call('dataset.dataset.updateSchema', {
+    ...schemaData,
   });
 }
 

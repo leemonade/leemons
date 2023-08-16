@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getCanEditProfiles({ transacting } = {}) {
-  const result = await table.configs.findOne({ key: 'can-edit-profiles' }, { transacting });
+async function getCanEditProfiles({ ctx }) {
+  const result = await ctx.tx.db.Configs.findOne({ key: 'can-edit-profiles' }).lean();
   return result ? JSON.parse(result.value) : [];
 }
 
