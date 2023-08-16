@@ -2,7 +2,6 @@ const _ = require('lodash');
 const { validateAddSubject } = require('../../validations/forms');
 const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
-const enableMenuItemService = require('../menu-builder/enableItem');
 
 async function addSubject({ data: _data, ctx }) {
   await validateAddSubject({ data: _data, ctx });
@@ -72,8 +71,8 @@ async function addSubject({ data: _data, ctx }) {
     });
   }
   await Promise.all([
-    enableMenuItemService({ key: 'subjects' }),
-    enableMenuItemService({ key: 'tree' }),
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('subjects') }),
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('tree') }),
   ]);
   return subject;
 }

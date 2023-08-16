@@ -1,5 +1,4 @@
 const { getProfiles } = require('./getProfiles');
-const enableMenuItemService = require('../menu-builder/enableItem');
 
 /**
  * @public
@@ -30,8 +29,8 @@ async function setProfiles({ teacher, student, ctx }) {
     ),
   ]);
   await Promise.all([
-    enableMenuItemService({ key: 'profiles', ctx }),
-    enableMenuItemService({ key: 'programs', ctx }),
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('programs') }),
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('profiles') }),
   ]);
 
   return getProfiles({ ctx });

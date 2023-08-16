@@ -17,8 +17,6 @@ const {
   update,
 } = require('../../core/settings');
 const settingsSchema = require('../../models/settings');
-const enableMenuItemService = require('../../core/menu-builder/enableItem');
-const removeMenuItemService = require('../../core/menu-builder/remove');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -135,7 +133,9 @@ module.exports = {
         required: ['key'],
       });
       if (validator.validate(ctx.params)) {
-        const item = await enableMenuItemService({ key: ctx.params.key, ctx });
+        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+          key: ctx.prefixPN(ctx.params.key),
+        });
         return { status: 200, item };
       }
       throw validator.error;

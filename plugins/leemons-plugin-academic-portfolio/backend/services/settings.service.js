@@ -10,7 +10,6 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/settings.rest');
 const { setProfiles, getProfiles } = require('../core/settings');
-const enableAllMenuItems = require('../core/menu-builder/enableAllItems');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -37,8 +36,13 @@ module.exports = {
       },
     },
     enableAllMenuItems: {
-      handler() {
-        return enableAllMenuItems();
+      handler(ctx) {
+        return Promise.all([
+          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('programs') }),
+          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('profiles') }),
+          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('subjects') }),
+          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('tree') }),
+        ]);
       },
     },
   },
