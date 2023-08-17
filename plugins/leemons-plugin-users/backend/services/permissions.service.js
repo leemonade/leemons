@@ -45,6 +45,7 @@ const {
   addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile,
 } = require('../core/user-profile');
+const restActions = require('./rest/actions.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -58,6 +59,7 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return add({ ...ctx.params, ctx });
