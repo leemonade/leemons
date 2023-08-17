@@ -15,13 +15,13 @@ const schema = new mongoose.Schema(
     },
     //
     instance: {
-      type: 'uuid',
+      type: String,
     },
     user: {
-      type: 'uuid',
+      type: String,
     },
     state: {
-      type: 'mixed',
+      type: mongoose.Schema.Types.Mixed,
     },
   },
   {
