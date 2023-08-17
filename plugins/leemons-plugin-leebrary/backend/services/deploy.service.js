@@ -43,6 +43,8 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
+      // Register widget zone
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -50,8 +52,6 @@ module.exports = () => ({
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
-      // Register widget zone
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
     },
     'admin.init-widget-zones': async (ctx) => {
       // Widgets

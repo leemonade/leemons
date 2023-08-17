@@ -22,7 +22,7 @@ async function remove({ menuKey, key, ctx }) {
     // Delete item permissions
     ctx.tx.call('users.permissions.removeItems', {
       query: {
-        type: leemons.plugin.prefixPN(`${menuKey}.menu-item`),
+        type: ctx.prefixPN(`${menuKey}.menu-item`),
         item: key,
       },
     }),

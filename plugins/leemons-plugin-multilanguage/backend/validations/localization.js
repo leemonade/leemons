@@ -14,7 +14,7 @@ class Validator {
      * If the prefix is required, the key must be the prefix of start with the '${prefix}.'
      */
     this.keySchema = (usePrefix) => {
-      const pattern = `([a-zA-Z0-9_-]+\\.){0,}[a-zA-Z0-9_-]{0,}`;
+      const pattern = `([a-zA-Z0-9:_-]+\\.){0,}[a-zA-Z0-9:_-]{0,}`;
       return {
         type: 'string',
         pattern: `^(${usePrefix && prefix ? `((${prefix})|(${prefix}\\.${pattern}))` : pattern})$`,
@@ -272,6 +272,7 @@ class Validator {
     const _key = typeof key === 'string' ? key : null;
 
     const validator = new LeemonsValidator(this.keySchema(usePrefix));
+
 
     // Throw validation error
     if (!validator.validate(_key)) {
