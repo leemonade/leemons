@@ -8,7 +8,7 @@ module.exports = {
   ...models,
   getServiceModels() {
     return {
-      KeyValue: getKeyValueModel({ modelName: 'v1::calendar_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: 'v1::dashboard_KeyValue' }),
     };
   },
 };

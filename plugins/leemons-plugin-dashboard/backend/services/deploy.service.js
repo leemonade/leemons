@@ -42,7 +42,6 @@ module.exports = () => ({
     'deployment-manager.install': async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      console.log('ME TOCA----SOY DASHBOARD-------------');
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
 
       // Locales
