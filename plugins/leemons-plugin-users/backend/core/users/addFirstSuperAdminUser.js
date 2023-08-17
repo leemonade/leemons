@@ -15,8 +15,6 @@ const { encryptPassword } = require('./bcrypt/encryptPassword');
 async function addFirstSuperAdminUser({ name, surnames, email, password, locale, ctx }) {
   const hasUsers = await ctx.tx.db.Users.countDocuments();
   if (!hasUsers) {
-    // TODO Paola: Confirmar que lo comentado se debería ir
-    // return table.users.transaction(async (transacting) => {
     const user = await ctx.tx.db.Users.create({
       name,
       surnames,
@@ -28,7 +26,6 @@ async function addFirstSuperAdminUser({ name, surnames, email, password, locale,
     await ctx.tx.db.SuperAdminUser.create({ user: user.id });
     delete user.password;
     return user;
-    // });
   }
   throw new LeemonsError(ctx, {
     message:

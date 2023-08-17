@@ -1,8 +1,6 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 
 async function activateUser({ userId, password, ctx }) {
-  // TODO Paola: Confirmar esto es correcto (que lo comentado se va)
-  // return table.users.transaction(async (transacting) => {
   const user = await ctx.tx.db.Users.findOneAndUpdate(
     { id: userId },
     { password: await encryptPassword(password), status: 'password-registered', active: true },
@@ -19,7 +17,6 @@ async function activateUser({ userId, password, ctx }) {
   // }
 
   return user;
-  // });
 }
 
 module.exports = {

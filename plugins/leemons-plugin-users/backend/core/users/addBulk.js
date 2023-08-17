@@ -91,8 +91,7 @@ async function addUserBulk({
       },
       { new: true }
     );
-    // TODO Paola: Cambiar : por . correcto?
-    await ctx.tx.emit('user-agent:restore', { userAgent });
+    await ctx.tx.emit('user-agent.restore', { userAgent });
   }
 
   if (isNewUser) {
@@ -117,7 +116,6 @@ async function addUserBulk({
   if (calendarPluginExists) {
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
-
   return user;
 }
 
