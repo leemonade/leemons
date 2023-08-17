@@ -12,6 +12,8 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
+const { hasKey, setKey } = require('leemons-mongodb-helpers');
+
 const { getServiceModels } = require('../models');
 const { permissions, widgets, menuItems, kanbanColumns } = require('../config/constants');
 const { add: addKanbanColumn } = require('../core/kanban-columns/add');
@@ -37,11 +39,7 @@ const {
 const addEventTypes = require('../core/event-types/add');
 
 async function addEventType({ ctx }) {
-  // TODO ROBERTO: Está eso bien? o es mejor "jugar" con la colección KeyValue ? Key-value!
-  const isInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
-    pluginName: 'calendar',
-  });
-  if (!isInstalled) {
+  if (!(await hasKey(ctx.tx.db.KeyValueModel, 'kanban-columns'))) {
     await Promise.all(_.map(kanbanColumns, (d) => addKanbanColumn({ data: d, ctx })));
     ctx.tx.emit('init-kanban-columns');
 
@@ -72,6 +70,7 @@ async function addEventType({ ctx }) {
       order: 2,
       ctx,
     });
+    await setKey(ctx.tx.db.KeyValueModel, 'kanban-columns');
   }
   ctx.tx.emit('init-event-types');
 }

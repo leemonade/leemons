@@ -10,18 +10,17 @@ const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
+const { hasKey, setKey } = require('leemons-mongodb-helpers');
+
 const { permissions, datasetLocations } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 const initDataset = async ({ ctx }) => {
-  // TODO Roberto Está eso bien? o es mejor "jugar" con la colección KeyValue ? key-value
-  const isInstalled = ctx.tx.call('deployment-manager.pluginIsInstalled', {
-    pluginName: 'families-emergency-numbers',
-  });
-  if (!isInstalled) {
+  if (!(await hasKey(ctx.tx.db.KeyValueModel, 'dataset-locations'))) {
     await Promise.all(
       _.map(datasetLocations, (config) => ctx.tx.call('dataset.dataset.addLocation', config))
     );
+    await setKey(ctx.tx.db.KeyValue, 'dataset-locations');
   }
   ctx.tx.emit('init-dataset-locations');
 };
