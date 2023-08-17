@@ -8,6 +8,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
+const restActions = require('./rest/actions.rest');
 const { add, exist, addMany } = require('../core/actions');
 
 /** @type {ServiceSchema} */
@@ -24,6 +25,7 @@ module.exports = {
   ],
 
   actions: {
+    ...restActions,
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });
