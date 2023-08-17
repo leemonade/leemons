@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-users",
+  "name": "leemons-plugin-emails-smtp",
   "version": "1.0.0",
-  "description": "Leemons users plugins",
+  "description": "Leemons emails plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
@@ -15,29 +15,32 @@
   ],
   "author": "",
   "devDependencies": {
+    "@jimdo/serverless-dotenv": "^1.0.0",
     "eslint": "^8.25.0",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1",
+    "serverless-domain-manager": "^7.0.4",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-offline": "^12.0.4",
     "turbo": "^1.9.6"
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
-    "jsonwebtoken": "^9.0.0",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
     "leemons-emails": "1.0.0",
-    "leemons-menu-builder": "1.0.0",
+    "leemons-error": "1.0.0",
     "leemons-middlewares": "1.0.0",
     "leemons-mongodb": "1.0.0",
     "leemons-mongodb-helpers": "1.0.0",
-    "leemons-multi-events": "1.0.0",
     "leemons-multilanguage": "1.0.0",
-    "leemons-permissions": "1.0.0",
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
+    "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
-    "moment": "^2.29.4",
-    "slugify": "^1.6.6"
+    "nodemailer": "^6.9.4",
+    "nodemailer-html-to-text": "^3.2.0",
+    "nodemailer-plugin-inline-base64": "^2.1.1"
   },
   "engines": {
     "node": ">= 16.x.x"

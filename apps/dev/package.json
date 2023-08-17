@@ -22,6 +22,8 @@
     "leemons-plugin-dataset": "1.0.0",
     "leemons-plugin-deployment-manager": "1.0.0",
     "leemons-plugin-emails": "1.0.0",
+    "leemons-plugin-emails-aws-ses": "1.0.0",
+    "leemons-plugin-emails-smtp": "1.0.0",
     "leemons-plugin-families": "1.0.0",
     "leemons-plugin-families-emergency-numbers": "1.0.0",
     "leemons-plugin-feedback": "1.0.0",

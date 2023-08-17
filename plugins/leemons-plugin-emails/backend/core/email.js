@@ -3,31 +3,25 @@ const Sqrl = require('squirrelly');
 
 const { getPluginProviders, getPluginProvider } = require('leemons-providers');
 const { LeemonsError } = require('leemons-error');
+const { getEmailTypes } = require('leemons-emails');
+const nodemailer = require('nodemailer');
 const testTemplate = require('../emails/test');
 
-const sendMailTransporter = null;
-
 class Email {
-  static get types() {
-    return {
-      active: 'active',
-    };
-  }
-
   static async init() {
     await Email.addIfNotExist(
       'test-email',
       'es',
       'Email de prueba',
       testTemplate.es,
-      Email.types.active
+      getEmailTypes().active
     );
     await Email.addIfNotExist(
       'test-email',
       'en',
       'Test email',
       testTemplate.en,
-      Email.types.active
+      getEmailTypes().active
     );
   }
 
@@ -49,9 +43,23 @@ class Email {
   static async providers({ ctx }) {
     const providers = [];
     _.forIn(await getPluginProviders({ keyValueModel: ctx.tx.db.KeyValue, raw: true }), (value) => {
-      providers.push(this.getProvider({ pluginKeyValue: value, ctx }));
+      providers.push(Email.getProvider({ pluginKeyValue: value, ctx }));
     });
     return Promise.all(providers);
+  }
+
+  static async providersArray({ ctx }) {
+    const _providers = await Email.providers({ ctx });
+    const result = [];
+    _.forEach(_providers, ({ providers, ...data }) => {
+      _.forEach(providers, (p) => {
+        result.push({
+          ...data,
+          ...p,
+        });
+      });
+    });
+    return result;
   }
 
   /**
@@ -266,8 +274,8 @@ class Email {
         message: `No email found for template '${templateName}' and language `,
       });
     // Take email settings and try to send email with each setting until it is sent.
-    const transporters = await Email.getTransporters({ ctx });
-    if (!transporters.length)
+    const providers = await Email.providersArray({ ctx });
+    if (!providers.length)
       throw new LeemonsError(ctx, { message: 'No email providers configured yet' });
 
     const [logo, width] = await Promise.all([
@@ -288,7 +296,7 @@ class Email {
 
     // console.log('--- EmailService > send:');
 
-    return Email.startToTrySendEmail({ from, to, email, transporters, index: 0, ctx });
+    return Email.startToTrySendEmail({ from, to, email, providers, index: 0, ctx });
   }
 
   /**
@@ -298,8 +306,8 @@ class Email {
    * @return {Promise<any>} nodemailer transporters
    * */
   static async sendCustomTest({ from, to, subject, body, ctx }) {
-    const transporters = await Email.getTransporters({ ctx });
-    if (!transporters.length)
+    const providers = await Email.providersArray({ ctx });
+    if (!providers.length)
       throw new LeemonsError(ctx, { message: 'No email providers configured yet' });
 
     const context = {};
@@ -314,7 +322,7 @@ class Email {
     email.subject = subject;
     email.html = body;
 
-    return Email.startToTrySendEmail({ from, to, email, transporters, index: 0, ctx });
+    return Email.startToTrySendEmail({ from, to, email, providers, index: 0, ctx });
   }
 
   /**
@@ -374,46 +382,69 @@ class Email {
     return Email.send({ email, to, templateName, language, locale, context, ctx });
   }
 
-  static async startToTrySendEmail({ from, to, email, transporters, index, ctx }) {
-    if (index < transporters.length) {
-      try {
-        // console.log('--- EmailService > startToTrySendEmail:');
-        // console.log('--> transporters length:', transporters.length);
-        // console.log('--> index:', index);
+  static async startToTrySendEmail({
+    from,
+    to,
+    email,
+    providers,
+    index,
+    errIfNotProvider = false,
+    ctx,
+  }) {
+    try {
+      // console.log('--- EmailService > startToTrySendEmail:');
+      // console.log('--> transporters length:', transporters.length);
+      // console.log('--> index:', index);
+      const receipts = {
+        from: from || 'dev@leemons.io',
+        to,
+      };
 
-        const transporter = transporters[index];
+      const provider = providers[index];
 
-        if (!transporter) {
-          throw new LeemonsError(ctx, {
-            message: `No existe un transporter para el index: ${index}`,
-          });
+      if (!provider) {
+        if (errIfNotProvider) {
+          return { error: true, message: 'Could not send email with any provider' };
         }
-
-        // console.log('--> transporter:');
-        // console.dir(transporter, { depth: null });
-
-        const receipts = {
-          from: from || 'dev@leemons.io',
-          to,
-        };
-
-        // console.log('--> receipts:');
-        // console.dir(receipts, { depth: null });
-
-        const info = await transporter.sendMail({
-          ...receipts,
-          subject: email.subject,
-          html: email.html,
-        });
-        // console.log('--> Resultado email:', info);
-        info.error = false;
-        return info;
-      } catch (err) {
-        console.error('ERROR > Error email:', err);
-        return Email.startToTrySendEmail({ from, to, email, transporters, index: index + 1, ctx });
+        // eslint-disable-next-line no-param-reassign
+        errIfNotProvider = true;
+        await nodemailer
+          .createTransport({
+            sendmail: true,
+          })
+          .sendMail({
+            ...receipts,
+            subject: email.subject,
+            html: email.html,
+          });
       }
+
+      // console.log('--> transporter:');
+      // console.dir(transporter, { depth: null });
+
+      // console.log('--> receipts:');
+      // console.dir(receipts, { depth: null });
+      const info = await ctx.tx.call(`${provider.providerName}.email.sendMail`, {
+        ...receipts,
+        subject: email.subject,
+        html: email.html,
+        provider,
+      });
+      // console.log('--> Resultado email:', info);
+      info.error = false;
+      return info;
+    } catch (err) {
+      console.error('ERROR > Error email:', err);
+      return Email.startToTrySendEmail({
+        from,
+        to,
+        email,
+        providers,
+        index: index + 1,
+        errIfNotProvider,
+        ctx,
+      });
     }
-    return { error: true, message: 'Could not send email with any provider' };
   }
 
   /**
@@ -434,7 +465,7 @@ class Email {
       {
         template: template.id,
         language,
-        type: Email.types.active,
+        type: getEmailTypes().active,
       },
       ['id', 'subject', 'html']
     ).lean();
