@@ -13,6 +13,7 @@ const { hasKey, setKey } = require('leemons-mongodb-helpers');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { addWidgetZonesDeploy } = require('leemons-widgets');
+const { getEmailTypes } = require('leemons-emails');
 
 const { getServiceModels } = require('../models');
 const { addMany } = require('../core/actions');
@@ -27,105 +28,87 @@ const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
 const recoverEmail = require('../emails/recoverPassword');
+const resetPassword = require('../emails/resetPassword');
+const welcomeEmail = require('../emails/welcome');
+const newProfileAdded = require('../emails/newProfileAdded');
 
-// TODO ROBERTO: ¿Hace falta eso ahora? No aparece el directorio emails en el core de users ¿Por qué? R// Falta migrar la carpeta de emails
-// TODO Descomentar lo de abajo
-/*
 async function initEmails({ ctx }) {
-  // await leemons
-  //   .getPlugin('emails')
-  //   .services.email.addIfNotExist(
-  //     'user-recover-password',
-  //     'es',
-  //     'Recuperar contraseña',
-  //     recoverEmail.es,
-  //     leemons.getPlugin('emails').services.email.types.active
-  //   );
-  ctx.tx.call('emails.email.addIfNotExist', {
+  await ctx.tx.call('emails.email.addIfNotExist', {
     template: 'user-recover-password',
     language: 'es',
     subject: 'Recuperar contraseña',
     html: recoverEmail.es,
-    type: (await ctx.tx.call('emails.email.types')).active,
+    type: getEmailTypes.active,
   });
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-recover-password',
-      'en',
-      'Recover password',
-      recoverEmail.en,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  leemons.events.emit('init-email-recover-password');
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-reset-password',
-      'es',
-      'Su contraseña fue restablecida',
-      resetPassword.es,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-reset-password',
-      'en',
-      'Your password was reset',
-      resetPassword.en,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-welcome',
-      'es',
-      'Bienvenida',
-      welcomeEmail.es,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-welcome',
-      'en',
-      'Welcome',
-      welcomeEmail.en,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-new-profile-added',
-      'es',
-      'Nuevo perfil',
-      newProfileAdded.es,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  await leemons
-    .getPlugin('emails')
-    .services.email.addIfNotExist(
-      'user-new-profile-added',
-      'en',
-      'New profile',
-      newProfileAdded.en,
-      leemons.getPlugin('emails').services.email.types.active
-    );
-  leemons.events.emit('init-email-reset-password');
-  leemons.events.emit('init-emails');
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-recover-password',
+    language: 'en',
+    subject: 'Recover password',
+    html: recoverEmail.en,
+    type: getEmailTypes.active,
+  });
+
+  ctx.tx.emit('init-email-recover-password');
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-reset-password',
+    language: 'es',
+    subject: 'Su contraseña fue restablecida',
+    html: resetPassword.es,
+    type: getEmailTypes.active,
+  });
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-reset-password',
+    language: 'en',
+    subject: 'Your password was reset',
+    html: resetPassword.en,
+    type: getEmailTypes.active,
+  });
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-welcome',
+    language: 'es',
+    subject: 'Bienvenida',
+    html: welcomeEmail.es,
+    type: getEmailTypes.active,
+  });
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-welcome',
+    language: 'en',
+    subject: 'Welcome',
+    html: welcomeEmail.en,
+    type: getEmailTypes.active,
+  });
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-new-profile-added',
+    language: 'es',
+    subject: 'Nuevo perfil',
+    html: newProfileAdded.es,
+    type: getEmailTypes.active,
+  });
+
+  await ctx.tx.call('emails.email.addIfNotExist', {
+    templateName: 'user-new-profile-added',
+    language: 'en',
+    subject: 'New profile',
+    html: newProfileAdded.en,
+    type: getEmailTypes.active,
+  });
+
+  ctx.tx.emit('init-email-reset-password');
+  ctx.tx.emit('init-emails');
 }
-*/
 
 const initDataset = async ({ ctx }) => {
-  // TODO Roberto Está eso bien? o es mejor "jugar" con la colección KeyValue ? key-value
-  const isInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
-    pluginName: 'users',
-  });
-  if (!isInstalled) {
+  if (!(await hasKey(ctx.tx.db.KeyValueModel, 'dataset-locations'))) {
     await Promise.all(
       _.map(defaultDatasetLocations, (config) => ctx.tx.call('dataset.dataset.addLocation', config))
     );
+    await setKey(ctx.tx.db.KeyValue, 'dataset-locations');
   }
   ctx.tx.emit('init-dataset-locations');
 };
@@ -172,6 +155,9 @@ module.exports = {
 
       // Dataset Locations
       await initDataset({ ctx });
+
+      // email Templates
+      await initEmails();
     },
     'menu-builder.init-main-menu': async (ctx) => {
       const [mainMenuItem, ...otherMenuItems] = menuItems;
@@ -207,12 +193,6 @@ module.exports = {
     'users.change-platform-locale': async (ctx) => {
       createInitialProfiles({ ctx });
     },
-    // TODO Migration: Faltan archivos para que funcione el initEmails (ver TODO de arriba)
-    /*
-    'emails:pluginDidLoadServices': async (ctx) => {
-      await initEmails();
-    },
-    */
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);

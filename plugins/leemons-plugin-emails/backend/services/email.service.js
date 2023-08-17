@@ -36,11 +36,6 @@ module.exports = {
         return emailService.send({ ...ctx.params });
       },
     },
-    types: {
-      handler() {
-        return emailService.types();
-      },
-    },
     delete: {
       handler(ctx) {
         return emailService.delete({ ...ctx.params, ctx });
