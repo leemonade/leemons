@@ -1,28 +1,22 @@
 const _ = require('lodash');
 
-const {
-  unGrantAccessUserAgentToCalendar,
-} = require('../../calendar/unGrantAccessUserAgentToCalendar');
-
 async function remove({ classCalendar, student, ctx }) {
   const [insideProgram] = await Promise.all([
     ctx.tx.call('academic-portfolio.programs.isUserInsideProgram', {
       programId: classCalendar.program,
       userSession: { userAgents: [{ id: student }] },
     }),
-    unGrantAccessUserAgentToCalendar({
+    ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
       key: ctx.prefixPN(`class.${classCalendar.class}`),
       userAgentId: student,
       actionName: 'view',
-      ctx,
     }),
   ]);
   if (!insideProgram) {
-    await unGrantAccessUserAgentToCalendar({
+    await ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
       key: ctx.prefixPN(`program.${classCalendar.program}`),
       userAgentId: student,
       actionName: 'view',
-      ctx,
     });
   }
 }

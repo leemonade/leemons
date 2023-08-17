@@ -8,15 +8,14 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { widgets, permissions, menuItems } = require('../config/constants');
+const { permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'academic-portfolio.deploy',
+  name: 'academic-calendar.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -48,9 +47,6 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Register widget zone
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -68,10 +64,7 @@ module.exports = () => ({
       });
       return null;
     },
-    // Widget items
-    'dashboard.init-widget-zones': async (ctx) => {
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-    },
+
     // Permissions
     'users.init-permissions': async (ctx) => {
       await addPermissionsDeploy({

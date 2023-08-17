@@ -1,13 +1,8 @@
-const {
-  unGrantAccessUserAgentToCalendar,
-} = require('../../calendar/unGrantAccessUserAgentToCalendar');
-
 async function remove({ classId, student, ctx }) {
-  await unGrantAccessUserAgentToCalendar({
+  await ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
     key: ctx.prefixPN(`class.${classId}`),
     userAgentId: student,
     actionName: 'view',
-    ctx,
   });
 }
 

@@ -10,6 +10,7 @@
   "dependencies": {
     "colord": "^2.9.3",
     "dotenv": "^16.0.3",
+    "leemons-plugin-academic-calendar": "1.0.0",
     "leemons-plugin-academic-portfolio": "1.0.0",
     "leemons-plugin-admin": "1.0.0",
     "leemons-plugin-attendance-control": "1.0.0",

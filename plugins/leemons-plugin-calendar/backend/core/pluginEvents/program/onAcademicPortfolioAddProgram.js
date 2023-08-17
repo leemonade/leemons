@@ -1,11 +1,6 @@
 const randomColor = require('randomcolor');
 const _ = require('lodash');
 
-const {
-  add,
-  grantAccessUserAgentToCalendar,
-} = require('../../calendar/grantAccessUserAgentToCalendar');
-
 function onAcademicPortfolioAddProgram({
   // data, //unused old param
   program: { id, name, color, icon },
@@ -24,15 +19,17 @@ function onAcademicPortfolioAddProgram({
 
       if (icon) config.icon = icon;
 
-      const calendar = await add({ key: ctx.prefixPN(`program.${id}`), config, ctx });
+      const calendar = await ctx.tx.call('calendar.calendar.add', {
+        key: ctx.prefixPN(`program.${id}`),
+        config,
+      });
 
       if (userSession) {
         try {
-          await grantAccessUserAgentToCalendar({
+          await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
             key: ctx.prefixPN(`program.${id}`),
             userAgentId: _.map(userSession.userAgents, 'id'),
             actionName: 'owner',
-            ctx,
           });
         } catch (e) {
           // eslint-disable-next-line no-console
