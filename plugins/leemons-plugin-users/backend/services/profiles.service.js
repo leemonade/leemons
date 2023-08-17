@@ -22,6 +22,7 @@ const {
   addCustomPermissions,
   removeCustomPermissionsByName,
   getRoleForRelationshipProfileCenter,
+  existMany,
 } = require('../core/profiles');
 
 /** @type {ServiceSchema} */
@@ -55,6 +56,11 @@ module.exports = {
     existName: {
       handler(ctx) {
         return existName({ ...ctx.params, ctx });
+      },
+    },
+    existMany: {
+      handler(ctx) {
+        return existMany({ ...ctx.params, ctx });
       },
     },
     detailByUri: {
