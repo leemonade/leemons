@@ -14,6 +14,7 @@ const restActions = require('./rest/users.rest');
 const { updateEmail } = require('../core/users/updateEmail');
 const { updatePassword } = require('../core/users/updatePassword');
 const { getUserAgentsInfo } = require('../core/user-agents');
+const { add, addBulk } = require('../core/users');
 
 /*
 const {
@@ -71,6 +72,11 @@ module.exports = {
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });
+      },
+    },
+    addBulk: {
+      async handler(ctx) {
+        return addBulk({ ...ctx.params, ctx });
       },
     },
     updateEmail: {
