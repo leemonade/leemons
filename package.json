@@ -29,6 +29,12 @@
     "plugins/*/frontend",
     "apps/*"
   ],
+  "scripts": {
+    "start:app": "yarn workspace leemons-app backend:dev",
+    "done": "echo Done ✨",
+    "check": "start-server-and-test 'yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
+    "postinstall": "husky install"
+  },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
     "eslint": "^8.25.0",
@@ -37,8 +43,10 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1",
+    "start-server-and-test": "^2.0.0",
     "turbo": "^1.9.3"
   }
 }
