@@ -351,7 +351,7 @@ module.exports = ({
     error: {
       '*': [
         async function (ctx, err) {
-          console.error(err);
+          console.error('[leemons-mongodb]', err);
           if (autoRollback && ctx.meta.transactionID) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);
@@ -384,10 +384,18 @@ module.exports = ({
   created() {
     _.forIn(this.events, (value, key) => {
       this.events[key] = async (params, opts, { afterModifyCTX } = {}) =>
-        // Si forceLeemonsDeploymentManagerMixinNeedToBeImported es true estaremos llamando al evento de deployment-manager
-        // y este una vez el configura el ctx llama a afterModifyCTX para que podamos configurar nuestro contexto de mongodb
-        // En caso de que no sea un evento de deployment-manager no podremos acceder a ctx.db y ctx.tx en el evento
         value(params, opts, {
+          onError: async (ctx, err) => {
+            console.error('[leemons-mongodb] event - ', err);
+            if (autoRollback && ctx.meta.transactionID) {
+              if (waitToRollbackFinishOnError) {
+                await rollbackTransaction(ctx);
+              } else {
+                rollbackTransaction(ctx);
+              }
+            }
+            throw err;
+          },
           afterModifyCTX: async (ctx) => {
             modifyCTX(ctx, {
               waitToRollbackFinishOnError,
@@ -405,6 +413,9 @@ module.exports = ({
             }
           },
         });
+      // Si forceLeemonsDeploymentManagerMixinNeedToBeImported es true estaremos llamando al evento de deployment-manager
+      // y este una vez el configura el ctx llama a afterModifyCTX para que podamos configurar nuestro contexto de mongodb
+      // En caso de que no sea un evento de deployment-manager no podremos acceder a ctx.db y ctx.tx en el evento
     });
   },
 });

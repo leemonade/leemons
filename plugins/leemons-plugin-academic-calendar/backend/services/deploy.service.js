@@ -26,7 +26,11 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['menu-builder.init-main-menu', 'academic-portfolio.init-permissions'],
+      events: [
+        'menu-builder.init-main-menu',
+        'academic-portfolio.init-permissions',
+        'academic-calendar.init-permissions',
+      ],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
 
@@ -67,11 +71,14 @@ module.exports = () => ({
 
     // Permissions
     'users.init-permissions': async (ctx) => {
-      await addPermissionsDeploy({
+      console.log('EN EL EVENTO --------');
+
+      throw new Error('miau');
+      /** await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: permissions.permissions,
         ctx,
-      });
+      }); */
     },
   },
   created() {
