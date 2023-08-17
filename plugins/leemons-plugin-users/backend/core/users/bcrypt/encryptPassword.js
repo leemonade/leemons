@@ -5,9 +5,12 @@
  * @param {string} password
  * @return {Promise<string>} Generated hash password
  * */
+
+const { genSalt, hash } = require('bcrypt');
+
 async function encryptPassword(password) {
-  const salt = await global.utils.bcrypt.genSalt(10);
-  return global.utils.bcrypt.hash(password, salt);
+  const salt = await genSalt(10);
+  return hash(password, salt);
 }
 
 module.exports = { encryptPassword };
