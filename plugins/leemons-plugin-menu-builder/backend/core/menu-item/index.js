@@ -5,6 +5,7 @@ module.exports = {
   ...require('./exist'),
   ...require('./remove'),
   ...require('./update'),
+  ...require('./enable'),
   ...require('./removeAll'),
   ...require('./getByMenuAndKey'),
   ...require('./addCustomForUser'),

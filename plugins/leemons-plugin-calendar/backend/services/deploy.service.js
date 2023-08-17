@@ -36,10 +36,10 @@ const {
   onAcademicPortfolioRemovePrograms,
 } = require('../core/pluginEvents/program/onAcademicPortfolioRemovePrograms');
 
-const addEventTypes = require('../core/event-types/add');
+const { add: addEventTypes } = require('../core/event-types/add');
 
 async function addEventType({ ctx }) {
-  if (!(await hasKey(ctx.tx.db.KeyValueModel, 'kanban-columns'))) {
+  if (!(await hasKey(ctx.tx.db.KeyValue, 'kanban-columns'))) {
     await Promise.all(_.map(kanbanColumns, (d) => addKanbanColumn({ data: d, ctx })));
     ctx.tx.emit('init-kanban-columns');
 
@@ -70,7 +70,7 @@ async function addEventType({ ctx }) {
       order: 2,
       ctx,
     });
-    await setKey(ctx.tx.db.KeyValueModel, 'kanban-columns');
+    await setKey(ctx.tx.db.KeyValue, 'kanban-columns');
   }
   ctx.tx.emit('init-event-types');
 }

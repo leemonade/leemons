@@ -47,7 +47,9 @@ async function add({ item, type, data, isCustomPermission, ctx }) {
 
   if (!isCustomPermission) {
     if (!(await existMany({ permissionNames: _.map(_data, 'permissionName'), ctx }))) {
-      throw new LeemonsError(ctx, { message: 'The specified permit does not exist' });
+      throw new LeemonsError(ctx, {
+        message: `The specified permit does not exist: ${_.map(_data, 'permissionName')}`,
+      });
     }
     if (
       !(await manyPermissionsHasManyActions({
