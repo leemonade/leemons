@@ -1,4 +1,4 @@
-const LeemonsError = require('leemons-error');
+const { LeemonsError } = require('leemons-error');
 
 const { exist: existEvent } = require('../core/events/exist');
 const { exist: existCalendar } = require('../core/calendar/exist');
