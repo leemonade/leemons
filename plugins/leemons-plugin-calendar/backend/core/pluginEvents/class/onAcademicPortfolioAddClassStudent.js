@@ -1,7 +1,3 @@
-const {
-  unGrantAccessUserAgentToCalendar,
-} = require('../../calendar/unGrantAccessUserAgentToCalendar');
-
 function onAcademicPortfolioAddClassStudent({
   // data //unused old param,
   class: classId,
@@ -13,19 +9,18 @@ function onAcademicPortfolioAddClassStudent({
     try {
       const [classCalendar] = await Promise.all([
         ctx.tx.db.ClassCalendar.findOne({ class: classId }).lean(),
-        unGrantAccessUserAgentToCalendar({
+
+        ctx.tx.call('calendar.calendar.GrantAccessUserAgentToCalendar', {
           key: ctx.prefixPN(`class.${classId}`),
           userAgentId: student,
           actionName: 'view',
-          ctx,
         }),
       ]);
       try {
-        await unGrantAccessUserAgentToCalendar({
+        await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
           key: ctx.prefixPN(`program.${classCalendar.program}`),
           userAgentId: student,
           actionName: 'view',
-          ctx,
         });
       } catch (e) {
         // console.error(e);

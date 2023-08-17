@@ -1,7 +1,5 @@
 const randomColor = require('randomcolor');
 
-const { update } = require('../../calendar/update');
-
 function onAcademicPortfolioUpdateClass({
   // data, // old unused param
   class: {
@@ -30,7 +28,10 @@ function onAcademicPortfolioUpdateClass({
         config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', icon.id);
       }
 
-      await update({ key: ctx.prefixPN(`class.${id}`), config, ctx });
+      await ctx.tx.call('calendar.calendar.update', {
+        key: ctx.prefixPN(`class.${id}`),
+        config,
+      });
 
       resolve();
     } catch (e) {

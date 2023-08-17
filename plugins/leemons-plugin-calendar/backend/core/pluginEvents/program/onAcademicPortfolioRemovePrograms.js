@@ -1,5 +1,3 @@
-const { remove: removeCalendar } = require('../../calendar/remove');
-
 async function remove({ id, ctx }) {
   // eslint-disable-next-line global-require
   const programCalendar = await ctx.tx.db.ProgramCalendar.findOne({
@@ -8,7 +6,9 @@ async function remove({ id, ctx }) {
 
   if (programCalendar) {
     await Promise.all([
-      removeCalendar({ id: programCalendar.calendar, ctx }),
+      ctx.tx.call('calendar.calendar.remove', {
+        id: programCalendar.calendar,
+      }),
       ctx.tx.db.ProgramCalendar.removeOne({ id: programCalendar.id }),
     ]);
   }

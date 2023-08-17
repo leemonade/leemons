@@ -1,25 +1,27 @@
 const _ = require('lodash');
 
-async function remove(classCalendar, teacher, { transacting }) {
-  const programService = leemons.getPlugin('academic-portfolio').services.programs;
+async function remove({ classCalendar, teacher, ctx }) {
+  // const programService = leemons.getPlugin('academic-portfolio').services.programs;
   const [insideProgram] = await Promise.all([
-    programService.isUserInsideProgram({ userAgents: [{ id: teacher }] }, classCalendar.program, {
-      transacting,
-    }),
-    leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
-      leemons.plugin.prefixPN(`class.${classCalendar.class}`),
-      teacher,
-      ['owner', 'view'],
-      { transacting }
+    ctx.tx.call(
+      'academic-portfolio.programs.isUserInsideProgram',
+      {
+        programId: classCalendar.program,
+      },
+      { meta: { userSession: { userAgents: [{ id: teacher }] } } }
     ),
+    ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
+      keykey: ctx.prefixPN(`class.${classCalendar.class}`),
+      userAgentId: teacher,
+      actionName: ['owner', 'view'],
+    }),
   ]);
   if (!insideProgram) {
-    await leemons.plugin.services.calendar.unGrantAccessUserAgentToCalendar(
-      leemons.plugin.prefixPN(`program.${classCalendar.program}`),
-      teacher,
-      'view',
-      { transacting }
-    );
+    await ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
+      keykey: ctx.prefixPN(`program.${classCalendar.program}`),
+      userAgentId: teacher,
+      actionName: 'view',
+    });
   }
 }
 
@@ -40,13 +42,14 @@ function onAcademicPortfolioRemoveClassTeachers({
       _.forEach(classIds, (classId) => {
         _.forEach(classTeachers, ({ teacher }) => {
           if (classCalendarsByClass[classId]) {
-            promises.push(remove(classCalendarsByClass[classId], teacher, { transacting }));
+            promises.push(remove({ classCalendar: classCalendarsByClass[classId], teacher, ctx }));
           }
         });
       });
       await Promise.all(promises);
       resolve();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   });

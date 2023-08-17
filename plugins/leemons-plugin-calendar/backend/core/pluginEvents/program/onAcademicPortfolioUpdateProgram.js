@@ -1,5 +1,4 @@
 const randomColor = require('randomcolor');
-const { update } = require('../../calendar/update');
 
 function onAcademicPortfolioUpdateProgram({
   // data, // unused old param
@@ -17,7 +16,7 @@ function onAcademicPortfolioUpdateProgram({
 
       if (icon) config.icon = icon;
 
-      await update({ key: ctx.prefixPN(`program.${id}`), config, ctx });
+      await ctx.tx.call('calendar.calendar.update', { key: ctx.prefixPN(`program.${id}`), config });
 
       resolve();
     } catch (e) {

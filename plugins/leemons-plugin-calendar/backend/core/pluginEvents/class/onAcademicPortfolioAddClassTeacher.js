@@ -1,7 +1,3 @@
-const {
-  unGrantAccessUserAgentToCalendar,
-} = require('../../calendar/unGrantAccessUserAgentToCalendar');
-
 function onAcademicPortfolioAddClassTeacher({
   // data // unused old param
   class: classId,
@@ -16,22 +12,20 @@ function onAcademicPortfolioAddClassTeacher({
       const promises = [ctx.tx.db.ClassCalendar.findOne({ class: classId }).lean()];
 
       promises.push(
-        unGrantAccessUserAgentToCalendar({
+        ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
           key: ctx.prefixPN(`class.${classId}`),
           userAgentId: teacher,
           actionName: type === 'main-teacher' ? 'owner' : 'view',
-          ctx,
         })
       );
 
       const [classCalendar] = await Promise.all(promises);
 
       try {
-        await unGrantAccessUserAgentToCalendar({
+        await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
           key: leemons.plugin.prefixPN(`program.${classCalendar.program}`),
           userAgentId: teacher,
           actionName: 'view',
-          ctx,
         });
       } catch (e) {
         // console.error(e);
