@@ -1,7 +1,7 @@
 {
   "name": "leemons-plugin-common",
   "version": "1.0.0",
-  "description": "Leemons academic portfolio plugin",
+  "description": "Leemons common plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
