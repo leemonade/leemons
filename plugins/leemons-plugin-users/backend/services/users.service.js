@@ -14,7 +14,14 @@ const restActions = require('./rest/users.rest');
 const { updateEmail } = require('../core/users/updateEmail');
 const { updatePassword } = require('../core/users/updatePassword');
 const { getUserAgentsInfo } = require('../core/user-agents');
-const { add, addBulk } = require('../core/users');
+const {
+  add,
+  addBulk,
+  detail,
+  isSuperAdmin,
+  userSessionCheckUserAgentDatasets,
+  centers,
+} = require('../core/users');
 
 /*
 const {
@@ -39,7 +46,7 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    /*
+
     detail: {
       async handler(ctx) {
         const users = await detail({ ...ctx.params, ctx });
@@ -60,7 +67,7 @@ module.exports = {
     },
     userSessionCheckUserAgentDatasets: {
       async handler(ctx) {
-        return userSessionCheckUserAgentDatasets({ ...ctx.params, ctx });
+        return userSessionCheckUserAgentDatasets({ ctx });
       },
     },
     getUserCenters: {
@@ -68,7 +75,7 @@ module.exports = {
         return centers({ ...ctx.params, ctx });
       },
     },
-    */
+
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });
