@@ -4,6 +4,7 @@
  */
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { hasKey, setKey } = require('leemons-mongodb-helpers');
 
 const path = require('path');
 const { map } = require('lodash');
@@ -55,14 +56,17 @@ module.exports = () => ({
       });
     },
     'assignables.init-plugin': async (ctx) => {
-      await Promise.allSettled(
-        map(assignableRoles, (role) =>
-          ctx.tx.call('assignables.assignables.registerRole', {
-            role: role.role,
-            ...role.options,
-          })
-        )
-      );
+      if (!(await hasKey(ctx.tx.db.KeyValue, 'init-assignables'))) {
+        await Promise.allSettled(
+          map(assignableRoles, (role) =>
+            ctx.tx.call('assignables.assignables.registerRole', {
+              role: role.role,
+              ...role.options,
+            })
+          )
+        );
+        await setKey(ctx.tx.db.KeyValue, 'init-assignables');
+      }
     },
   },
   created() {
