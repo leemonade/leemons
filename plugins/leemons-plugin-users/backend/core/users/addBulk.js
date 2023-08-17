@@ -106,10 +106,6 @@ async function addUserBulk({
     });
   }
 
-  // TODO Paola: verificar con Jaime que esto está correcto
-  // if (leemons.getPlugin('calendar')) {
-  //   await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
-  // }
   const calendarPluginExists = await ctx.tx.call('deployment-manager.pluginsIsInstalled', {
     pluginName: 'calendar',
   });

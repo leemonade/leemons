@@ -1,25 +1,17 @@
 const _ = require('lodash');
 const { addUserAvatar } = require('./addUserAvatar');
 
-async function updateAvatar(userId, avatar, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const user = await table.users.findOne({ id: userId }, { transacting });
+async function updateAvatar({ userId, avatar, ctx }) {
+  const user = await ctx.tx.db.Users.findOne({ id: userId }).lean();
 
-      if (!_.isUndefined(avatar)) {
-        const userAgents = await table.userAgent.find({ user: user.id }, { transacting });
-        const { avatar: url } = await addUserAvatar({ ...user, userAgents }, avatar, {
-          transacting,
-        });
+  if (!_.isUndefined(avatar)) {
+    const userAgents = await ctx.tx.db.UserAgent.find({ user: user.id }).lean();
+    const { avatar: url } = await addUserAvatar({ user: { ...user, userAgents }, avatar, ctx });
+    // TODO migration: socket, por definir ctx.socket...
+    ctx.socket.emitToAll('USER_CHANGE_AVATAR', { url });
+  }
 
-        leemons.socket.emitToAll('USER_CHANGE_AVATAR', { url });
-      }
-
-      return user;
-    },
-    table.users,
-    _transacting
-  );
+  return user;
 }
 
 module.exports = { updateAvatar };
