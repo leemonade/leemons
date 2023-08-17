@@ -16,7 +16,7 @@ const { permissions, datasetLocations } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 const initDataset = async ({ ctx }) => {
-  if (!(await hasKey(ctx.tx.db.KeyValueModel, 'dataset-locations'))) {
+  if (!(await hasKey(ctx.tx.db.KeyValue, 'dataset-locations'))) {
     await Promise.all(
       _.map(datasetLocations, (config) => ctx.tx.call('dataset.dataset.addLocation', config))
     );

@@ -38,7 +38,7 @@ async function initEmails({ ctx }) {
     language: 'es',
     subject: 'Recuperar contraseña',
     html: recoverEmail.es,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   await ctx.tx.call('emails.email.addIfNotExist', {
@@ -46,7 +46,7 @@ async function initEmails({ ctx }) {
     language: 'en',
     subject: 'Recover password',
     html: recoverEmail.en,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   ctx.tx.emit('init-email-recover-password');
@@ -56,7 +56,7 @@ async function initEmails({ ctx }) {
     language: 'es',
     subject: 'Su contraseña fue restablecida',
     html: resetPassword.es,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   await ctx.tx.call('emails.email.addIfNotExist', {
@@ -64,7 +64,7 @@ async function initEmails({ ctx }) {
     language: 'en',
     subject: 'Your password was reset',
     html: resetPassword.en,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   await ctx.tx.call('emails.email.addIfNotExist', {
@@ -72,7 +72,7 @@ async function initEmails({ ctx }) {
     language: 'es',
     subject: 'Bienvenida',
     html: welcomeEmail.es,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   await ctx.tx.call('emails.email.addIfNotExist', {
@@ -80,7 +80,7 @@ async function initEmails({ ctx }) {
     language: 'en',
     subject: 'Welcome',
     html: welcomeEmail.en,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   await ctx.tx.call('emails.email.addIfNotExist', {
@@ -88,7 +88,7 @@ async function initEmails({ ctx }) {
     language: 'es',
     subject: 'Nuevo perfil',
     html: newProfileAdded.es,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   await ctx.tx.call('emails.email.addIfNotExist', {
@@ -96,7 +96,7 @@ async function initEmails({ ctx }) {
     language: 'en',
     subject: 'New profile',
     html: newProfileAdded.en,
-    type: getEmailTypes.active,
+    type: getEmailTypes().active,
   });
 
   ctx.tx.emit('init-email-reset-password');
@@ -104,7 +104,7 @@ async function initEmails({ ctx }) {
 }
 
 const initDataset = async ({ ctx }) => {
-  if (!(await hasKey(ctx.tx.db.KeyValueModel, 'dataset-locations'))) {
+  if (!(await hasKey(ctx.tx.db.KeyValue, 'dataset-locations'))) {
     await Promise.all(
       _.map(defaultDatasetLocations, (config) => ctx.tx.call('dataset.dataset.addLocation', config))
     );
@@ -157,7 +157,7 @@ module.exports = {
       await initDataset({ ctx });
 
       // email Templates
-      await initEmails();
+      await initEmails({ ctx });
     },
     'menu-builder.init-main-menu': async (ctx) => {
       const [mainMenuItem, ...otherMenuItems] = menuItems;
