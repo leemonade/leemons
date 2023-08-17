@@ -8,18 +8,14 @@ const _ = require('lodash');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function profiles(user, { transacting } = {}) {
-  const userAgents = await table.userAgent.find({ user }, { columns: ['role'], transacting });
+async function profiles({ user, ctx }) {
+  const userAgents = await ctx.tx.db.UserAgent.find({ user }).select(['role']).lean();
 
-  const profileRoles = await table.profileRole.find(
-    { role_$in: _.map(userAgents, 'role') },
-    { transacting }
-  );
+  const profileRoles = await ctx.tx.db.ProfileRole.find({ role: _.map(userAgents, 'role') }).lean();
 
-  return table.profiles.find(
-    { $or: [{ id_$in: _.map(profileRoles, 'profile') }, { role_$in: _.map(userAgents, 'role') }] },
-    { transacting }
-  );
+  return ctx.tx.db.Profiles.find({
+    $or: [{ id: _.map(profileRoles, 'profile') }, { role: _.map(userAgents, 'role') }],
+  }).lean();
 }
 
 module.exports = { profiles };

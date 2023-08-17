@@ -1,8 +1,7 @@
-const _ = require('lodash');
 const { generateJWTPrivateKey } = require('./jwt/generateJWTPrivateKey');
 
-async function init() {
-  await generateJWTPrivateKey();
+async function init({ ctx }) {
+  await generateJWTPrivateKey({ ctx });
 }
 
 module.exports = { init };

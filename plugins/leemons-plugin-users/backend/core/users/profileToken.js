@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { profiles: getUserProfiles } = require('./profiles');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 
@@ -11,52 +12,53 @@ const { generateJWTToken } = require('./jwt/generateJWTToken');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function profileToken(user, profile, { transacting } = {}) {
-  const profiles = await getUserProfiles(user, { transacting });
+
+async function profileToken({ user, profile, ctx }) {
+  const profiles = await getUserProfiles({ user, ctx });
   const profil = _.find(profiles, { id: profile });
-  if (!profil) throw new Error('Yu dont have access to this profile');
+  if (!profil) throw new LeemonsError(ctx, { message: 'You do not have access to this profile.' });
 
-  const userAgents = await table.userAgent.find({ user }, { columns: ['id', 'role'], transacting });
+  const userAgents = await ctx.tx.db.UserAgent.find({ user }).select(['id', 'role']).lean();
 
-  const classes = await leemons
-    .getPlugin('academic-portfolio')
-    .services.classes.listSessionClasses({ userAgents }, undefined, { transacting });
+  const classes = await ctx.tx.call(
+    'academic-portfolio.classes.listSessionClasses',
+    {},
+    { meta: { userSession: { userAgents } } }
+  );
+
   const sessionConfig = {};
   if (classes && classes.length) {
     sessionConfig.program = classes[0].program;
   }
 
-  const profileRoles = await table.profileRole.find(
-    {
-      profile,
-      role_$in: _.map(userAgents, 'role'),
-    },
-    { columns: ['role'], transacting }
-  );
+  const profileRoles = await ctx.tx.db.ProfileRole.find({
+    profile,
+    role: _.map(userAgents, 'role'),
+  })
+    .select(['role'])
+    .lean();
 
-  const rolesCenters = await table.roleCenter.find(
-    { role_$in: _.map(profileRoles, 'role') },
-    { transacting }
-  );
+  const rolesCenters = await ctx.tx.db.RoleCenter.find({
+    role: _.map(profileRoles, 'role'),
+  }).lean();
 
-  const centers = await table.centers.find(
-    { id_$in: _.map(rolesCenters, 'center') },
-    {
-      columns: ['id', 'name', 'locale', 'uri'],
-      transacting,
-    }
-  );
+  const centers = await ctx.tx.db.Centers.find({ id: _.map(rolesCenters, 'center') })
+    .select(['id', 'name', 'locale', 'uri'])
+    .lean();
 
   const userAgentsByRole = _.keyBy(userAgents, 'role');
   const rolesCentersByCenter = _.keyBy(rolesCenters, 'center');
 
-  const promises = [generateJWTToken({ sessionConfig, id: user })];
+  const promises = [generateJWTToken({ payload: { sessionConfig, id: user }, ctx })];
 
   for (let i = 0, l = centers.length; i < l; i++) {
     promises.push(
       generateJWTToken({
-        sessionConfig,
-        userAgent: userAgentsByRole[rolesCentersByCenter[centers[i].id].role].id,
+        payload: {
+          sessionConfig,
+          userAgent: userAgentsByRole[rolesCentersByCenter[centers[i].id].role].id,
+        },
+        ctx,
       })
     );
   }
