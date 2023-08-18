@@ -357,6 +357,7 @@ const mixin = ({
     error: {
       '*': [
         async function (ctx, err) {
+          console.error('[MongoDB Hook Error] - ', err);
           if (autoRollback && ctx.meta.transactionID) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);
@@ -391,7 +392,7 @@ const mixin = ({
       this.events[key] = async (params, opts, { afterModifyCTX } = {}) =>
         value(params, opts, {
           onError: async (ctx, err) => {
-            console.error('[leemons-mongodb] event - ', err);
+            console.error('[MongoDB Event Error] - ', err);
             if (autoRollback && ctx.meta.transactionID) {
               if (waitToRollbackFinishOnError) {
                 await rollbackTransaction(ctx);

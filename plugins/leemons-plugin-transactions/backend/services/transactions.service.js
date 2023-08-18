@@ -168,6 +168,7 @@ module.exports = (broker) => ({
     },
     rollbackTransaction: {
       async handler(ctx) {
+        console.log('--- ROLLBACK');
         if (!ctx.meta.deploymentID) {
           throw new Error('Need ctx.meta.deploymentID');
         }

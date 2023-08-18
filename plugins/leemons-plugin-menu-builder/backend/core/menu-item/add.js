@@ -71,7 +71,7 @@ async function add({
     // Check for required params
     await validateNotExistMenu({ key: menuKey, ctx });
   } catch (e) {
-    console.log('key', key);
+    console.log('Error adding menu item for key - ', key);
     throw e;
   }
 
