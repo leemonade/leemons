@@ -57,7 +57,6 @@ export default function Assign() {
     <Form
       action={t('assign')}
       onSubmit={send}
-      showReport
       showInstructions
       showMessageForStudents
       assignable={store.document}

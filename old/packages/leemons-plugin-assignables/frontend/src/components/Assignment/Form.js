@@ -75,7 +75,7 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
   };
 
   if (values.instructions) {
-    submissionValues.statement = values.instructions;
+    set(submissionValues, 'metadata.statement', values.instructions);
   }
 
   if (values.students.value[0]?.name) {
@@ -104,19 +104,21 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
  * @returns
  */
 export default function Form({
-  assignable,
-  onSubmit,
   action,
+  assignable,
+  buttonsComponent,
   evaluationType,
-  showInstructions,
+  evaluationTypes,
+  hideMaxTime,
+  hideSectionHeaders,
+  onlyOneSubject,
+  onSubmit,
   showEvaluation,
+  showInstructions,
+  showMessageForStudents,
   showReport,
   showResponses,
-  showMessageForStudents,
   withoutLayout,
-  hideSectionHeaders,
-  buttonsComponent,
-  evaluationTypes,
 
   defaultValues,
 }) {
@@ -154,6 +156,7 @@ export default function Form({
                 assignable={assignable}
                 localizations={localizations?.subjects}
                 hideSectionHeaders={hideSectionHeaders}
+                onlyOneSubject={onlyOneSubject}
               />
             )}
           />
@@ -186,6 +189,7 @@ export default function Form({
                 {...field}
                 localizations={localizations?.dates}
                 error={error}
+                hideMaxTime={hideMaxTime}
                 hideSectionHeaders={hideSectionHeaders}
               />
             )}
@@ -243,18 +247,20 @@ export default function Form({
 }
 
 Form.propTypes = {
-  assignable: PropTypes.object,
-  onSubmit: PropTypes.func,
-  evaluationType: PropTypes.oneOf(['manual', 'auto', 'none']).isRequired,
   action: PropTypes.string,
-  showInstructions: PropTypes.bool,
+  assignable: PropTypes.object,
+  buttonsComponent: PropTypes.node,
+  defaultValues: PropTypes.object,
+  evaluationType: PropTypes.oneOf(['manual', 'auto', 'none']).isRequired,
+  evaluationTypes: PropTypes.arrayOf('string'),
+  hideMaxTime: PropTypes.bool,
+  hideSectionHeaders: PropTypes.bool,
+  onlyOneSubject: PropTypes.bool,
+  onSubmit: PropTypes.func,
   showEvaluation: PropTypes.bool,
+  showInstructions: PropTypes.bool,
+  showMessageForStudents: PropTypes.bool,
   showReport: PropTypes.bool,
   showResponses: PropTypes.bool,
-  showMessageForStudents: PropTypes.bool,
-  hideSectionHeaders: PropTypes.bool,
   withoutLayout: PropTypes.bool,
-  buttonsComponent: PropTypes.node,
-  evaluationTypes: PropTypes.arrayOf('string'),
-  defaultValues: PropTypes.object,
 };

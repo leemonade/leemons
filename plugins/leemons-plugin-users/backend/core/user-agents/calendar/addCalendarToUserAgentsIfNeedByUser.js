@@ -1,6 +1,16 @@
 const _ = require('lodash');
 const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
 
+/**
+ * Adds a calendar to the specified user agent.
+ *
+ * @async
+ * @function addCalendarToUserAgent
+ * @param {Object} options - Input options.
+ * @param {string} options.userAgent - The user agent to which the calendar will be added.
+ * @param {import("moleculer").Context} options.ctx - The Moleculer request context.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the user agent and the added calendar.
+ */
 async function addCalendarToUserAgent({ userAgent, ctx }) {
   const calendarKey = getUserAgentCalendarKey({ userAgent, ctx });
   // ES: Añadimos calendario del agente
@@ -30,13 +40,14 @@ async function addCalendarToUserAgent({ userAgent, ctx }) {
 }
 
 /**
- * Add calendars to all user agents of user
- * @public
- * @static
- * @param {string} user - User id
- * @param {any=} transacting - DB Transaction
- * @return {Promise<boolean>}
- * */
+ * Adds calendars to all user agents of a specific user if they do not already exist.
+ *
+ * @async
+ * @function addCalendarToUserAgentsIfNeedByUser
+ * @param {string} user - The ID of the user.
+ * @param {import("moleculer").Context} ctx - The Moleculer request context.
+ * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if calendars were added to all user agents successfully.
+ */
 async function addCalendarToUserAgentsIfNeedByUser({ user, ctx }) {
   // TODO, Esta funcion no deberia de existir, esto deberia de lanzar un evento de usuario creado y que el plugin de calendario lo cogiera
   const userAgents = await ctx.tx.db.UserAgent.find({ user }).lean();

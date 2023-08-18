@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.0",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
+    "leemons-emails": "1.0.0",
     "leemons-menu-builder": "1.0.0",
     "leemons-middlewares": "1.0.0",
     "leemons-mongodb": "1.0.0",

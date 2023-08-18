@@ -157,7 +157,8 @@ export const useActivityCardStyles = createStyles(() => ({
 }));
 
 function ActivityCard({ activity, assignation }) {
-  const { roleDetails, role, id } = activity.assignable;
+  const { roleDetails, role } = activity.assignable;
+  const { id } = activity;
   const isStudent = useIsStudent();
 
   const asset = prepareAsset(activity.assignable.asset);

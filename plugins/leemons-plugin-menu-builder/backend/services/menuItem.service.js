@@ -13,6 +13,7 @@ const {
   exist,
   remove,
   update,
+  enable,
   addCustomForUserWithProfile,
   addItemsFromPlugin,
   addCustomForUser,
@@ -45,6 +46,11 @@ module.exports = () => ({
     remove: {
       handler(ctx) {
         return remove({ ...ctx.params, ctx });
+      },
+    },
+    enable: {
+      handler(ctx) {
+        return enable({ ...ctx.params, ctx });
       },
     },
     update: {

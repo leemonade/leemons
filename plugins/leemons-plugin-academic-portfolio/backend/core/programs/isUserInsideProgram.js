@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { getUserProgramIds } = require('./getUserProgramIds');
 
-async function isUserInsideProgram(userSession, programId, { transacting } = {}) {
-  const programIds = await getUserProgramIds(userSession, { transacting });
+async function isUserInsideProgram({ programId, ctx }) {
+  const programIds = await getUserProgramIds({ ctx });
   return _.includes(programIds, programId);
 }
 

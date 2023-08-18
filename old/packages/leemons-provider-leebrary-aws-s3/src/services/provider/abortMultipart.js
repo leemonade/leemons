@@ -3,13 +3,13 @@ const { table } = require('../tables');
 const { getS3AndConfig } = require('./getS3AndConfig');
 
 async function abortMultipart(dbfile, { transacting } = {}) {
-  const multipartConfig = await table.multipartUploads.findOne(
+  const multipartConfig = await table.multipartUploads.find(
     {
       fileId: dbfile.id,
     },
     { transacting }
   );
-  if (!multipartConfig) {
+  if (!multipartConfig.length) {
     throw new Error('No started multipart upload for this file');
   }
 
@@ -29,13 +29,17 @@ async function abortMultipart(dbfile, { transacting } = {}) {
     { transacting }
   );
 
-  await s3
-    .abortMultipartUpload({
-      Bucket: config.bucket,
-      Key: dbfile.uri,
-      UploadId: multipartConfig.uploadId,
-    })
-    .promise();
+  await Promise.all(
+    _.map(multipartConfig, (conf) =>
+      s3
+        .abortMultipartUpload({
+          Bucket: config.bucket,
+          Key: dbfile.isFolder ? `${dbfile.uri}/${conf.path}` : dbfile.uri,
+          UploadId: conf.uploadId,
+        })
+        .promise()
+    )
+  );
 
   return true;
 }

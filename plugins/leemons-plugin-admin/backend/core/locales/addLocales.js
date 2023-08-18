@@ -23,7 +23,7 @@ async function addLocales({ langs, ctx }) {
       }
     }
 
-    await languageService.common.setManyByJSON(localesData, leemons.plugin.prefixPN(''));
+    await languageService.common.setManyByJSON(localesData, ctx.prefixPN(''));
   }
 }
 

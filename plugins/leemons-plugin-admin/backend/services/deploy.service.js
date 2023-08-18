@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -28,11 +27,29 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
       handler: async (ctx) => {
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: menuItems,
+          ctx,
+        });
+      },
+    },
+    // Permissions
+    {
+      type: 'once-per-install',
+      events: [
+        'users.init-permissions',
+        'dataset.init-permissions',
+        'calendar.init-permissions',
+        'leebrary.init-permissions',
+      ],
+      handler: async (ctx) => {
+        await addPermissionsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          permissions: permissions.permissions,
           ctx,
         });
       },
@@ -43,13 +60,6 @@ module.exports = () => ({
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
-        ctx,
-      });
 
       // Locales
       await addLocalesDeploy({

@@ -1,6 +1,4 @@
-const _ = require('lodash');
 const { table } = require('../../tables');
-const { getUserPrograms } = require('../../programs');
 const { getClassProgram } = require('../getClassProgram');
 
 const { getProfiles } = require('../../settings/getProfiles');

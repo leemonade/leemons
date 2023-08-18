@@ -101,7 +101,7 @@ async function events(isInstalled) {
       syncUserAgentCenterProfilePermissionsIfNeed,
     } = require('./src/services/user-agents/__update__/syncUserAgentCenterProfilePermissionsIfNeed');
 
-    await syncUserAgentCenterProfilePermissionsIfNeed();
+    await syncUserAgentCenterProfilePermissionsIfNeed(isInstalled);
   });
 
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {

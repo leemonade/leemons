@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
 
-async function getTagsValues({ type, tags, ctx }) {
+async function getTagsValues({ tags, type, ctx }) {
   const _tags = _.isArray(tags) ? tags : [tags];
   // Check if value is not empty
   if (_tags.length === 0) {

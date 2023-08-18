@@ -2,7 +2,7 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
+
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
@@ -24,12 +24,6 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: defaultPermissions,
-        ctx,
-      });
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -46,6 +40,14 @@ module.exports = () => ({
         ctx,
       });
       return null;
+    },
+    'users.init-permissions': async (ctx) => {
+      // Permissions
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions: defaultPermissions,
+        ctx,
+      });
     },
   },
   created() {

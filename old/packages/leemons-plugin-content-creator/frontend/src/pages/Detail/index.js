@@ -112,7 +112,7 @@ export default function Index({ readOnly, isNew }) {
 
   async function publishAndAssign() {
     await saveAsPublish();
-    history.push(`/private/content-creator/assign/${store.document.assignable}`);
+    history.push(`/private/content-creator/${store.document.assignable}/assign`);
   }
 
   async function init() {
@@ -198,7 +198,7 @@ export default function Index({ readOnly, isNew }) {
     alwaysOpen: true,
     fileToRight: true,
     colorToRight: true,
-    program: { show: true, required: true },
+    program: { show: true, required: false },
     subjects: { show: true, required: true, showLevel: true, maxOne: false },
   };
 

@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import {
+  ActionButton,
   Box,
+  Button,
   ColorInput,
   ContextContainer,
   MultiSelect,
@@ -10,6 +12,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { AddIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { useLocale, useStore } from '@common';
 import { ScheduleInput } from '@timetable/components';
 import _, {
@@ -28,6 +31,7 @@ import { forEachRight } from 'lodash/collection';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { SubjectsDrawer } from './SubjectsDrawer';
 
 function getGroups({ program, selectGroups, subject }) {
   const classes = filter(program.classes, (cl) => cl.subject.id === subject);
@@ -94,7 +98,7 @@ const EnableIfFormPropHasValue = forwardRef(
     function _onCreate(val) {
       const toSend = { ...formValues };
       set(toSend, props.name, val);
-      onCreate({ formValues, onCreateFieldName: props.name, value: val });
+      onCreate({ formValues, onCreateFieldName: props.name, value: val }, props);
     }
 
     return React.cloneElement(children, {
@@ -131,6 +135,16 @@ function SubjectsTable({
     tempSubjects: [],
     tempGroups: [],
   });
+
+  const groupErrorMessage = (
+    program.maxGroupAbbreviationIsOnlyNumbers ? messages.groupNumbers : messages.groupAny
+  ).replace('{max}', program.maxGroupAbbreviation);
+  const groupRegex = new RegExp(
+    `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+      program.maxGroupAbbreviation
+    }}|.{36})$`,
+    'g'
+  );
 
   const form = useForm();
 
@@ -210,7 +224,7 @@ function SubjectsTable({
     [program, store.tempSubjects, store.tempGroups]
   );
 
-  function onCreateSubject(event) {
+  function onCreateSubject(event, props) {
     store.tempSubjects = [
       ...store.tempSubjects,
       {
@@ -218,30 +232,40 @@ function SubjectsTable({
         value: event.value,
       },
     ];
+    props.form.clearErrors(props.name);
+    props.form.setValue(props.name, event.value);
     render();
   }
 
-  function onCreateGroup(event) {
-    store.tempGroups = [
-      ...store.tempGroups,
-      {
-        label: event.value,
-        value: event.value,
-      },
-    ];
-    render();
+  function onCreateGroup(event, props) {
+    if (groupRegex.test(event.value)) {
+      store.tempGroups = [
+        ...store.tempGroups,
+        {
+          label: event.value,
+          value: event.value,
+        },
+      ];
+      props.form.clearErrors(props.name);
+      props.form.setValue(props.name, event.value);
+      render();
+    } else {
+      props.form.setError(props.name, { message: groupErrorMessage });
+    }
   }
 
   const columns = [];
 
   columns.push({
     Header: messages.subject,
+    showOnTable: true,
     accessor: 'subject',
     input: {
       node: (
         <EnableIfFormPropHasValue onCreate={onCreateSubject}>
           <Select
-            data={onlyNewSubject ? store.tempSubjects : selects.subjects}
+            // data={onlyNewSubject ? store.tempSubjects : selects.subjects}
+            data={selects.subjects.concat(store.tempSubjects)}
             required
             searchable
             creatable
@@ -252,12 +276,40 @@ function SubjectsTable({
       ),
       rules: { required: messages.subjectRequired },
     },
-    valueRender: (value) => <>{value?.name}</>,
+    cellStyle: {
+      paddingLeft: 0,
+    },
+    valueRender: (value, formValues) => (
+      <Box style={{ display: 'flex', gap: '3px' }}>
+        <Box
+          sx={(theme) => ({ marginRight: theme.spacing[2] })}
+          style={{
+            background: formValues.color,
+            width: '18px',
+            height: '18px',
+            borderRadius: '50%',
+          }}
+        />
+        <Box>{value?.name}</Box>{' '}
+        {formValues.courses || formValues.internalId ? (
+          <>
+            -{' '}
+            {program.subjectsFirstDigit === 'course' &&
+            formValues.courses &&
+            !_.isArray(formValues.courses)
+              ? formValues.courses.index
+              : ''}
+            {formValues.internalId ? formValues.internalId : ''}
+          </>
+        ) : null}
+      </Box>
+    ),
   });
 
   if (program.maxNumberOfCourses > 1) {
     columns.push({
       Header: messages.course,
+      showOnTable: true,
       accessor: 'courses',
       input: {
         node: (
@@ -270,6 +322,9 @@ function SubjectsTable({
           </EnableIfFormPropHasValue>
         ),
         rules: { required: messages.courseRequired },
+      },
+      cellStyle: {
+        paddingLeft: 0,
       },
       valueRender: (v) => {
         // eslint-disable-next-line no-nested-ternary
@@ -289,6 +344,9 @@ function SubjectsTable({
   columns.push({
     Header: messages.id,
     accessor: 'internalId',
+    cellStyle: {
+      paddingLeft: 0,
+    },
     input: {
       node: (
         <EnableIfFormPropHasValue property="subject">
@@ -318,6 +376,9 @@ function SubjectsTable({
         ),
         rules: { required: messages.knowledgeRequired },
       },
+      cellStyle: {
+        paddingLeft: 0,
+      },
       valueRender: (value) => <>{value?.name}</>,
     });
   }
@@ -326,6 +387,7 @@ function SubjectsTable({
   columns.push({
     Header: messages.subjectType,
     accessor: 'subjectType',
+    showOnTable: true,
     input: {
       node: (
         <EnableIfFormPropHasValue>
@@ -333,6 +395,9 @@ function SubjectsTable({
         </EnableIfFormPropHasValue>
       ),
       rules: { required: messages.subjectTypeRequired },
+    },
+    cellStyle: {
+      paddingLeft: 0,
     },
     valueRender: (value) => <>{value?.name}</>,
   });
@@ -350,6 +415,9 @@ function SubjectsTable({
         ),
         rules: { required: messages.subjectTypeRequired },
       },
+      cellStyle: {
+        paddingLeft: 0,
+      },
     });
   }
 
@@ -360,6 +428,9 @@ function SubjectsTable({
     input: {
       node: <ColorInput required />,
       rules: { required: messages.colorRequired },
+    },
+    cellStyle: {
+      paddingLeft: 0,
     },
     valueRender: (val) => (
       <>
@@ -375,24 +446,20 @@ function SubjectsTable({
   if (!program.useOneStudentGroup) {
     columns.push({
       Header: messages.group,
+      showOnTable: true,
       accessor: 'groups',
       input: {
         rules: {
           pattern: {
-            message: (program.maxGroupAbbreviationIsOnlyNumbers
-              ? messages.groupNumbers
-              : messages.groupAny
-            ).replace('{max}', program.maxGroupAbbreviation),
-            value: new RegExp(
-              `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
-                program.maxGroupAbbreviation
-              }}|.{36})$`,
-              'g'
-            ),
+            message: groupErrorMessage,
+            value: groupRegex,
           },
           required: messages.groupRequired,
         },
-
+        onChange: (e, props) => {
+          props.form.clearErrors(props.field.name);
+          props.form.setValue(props.field.name, e);
+        },
         node: (
           <Group
             selectGroups={selects.groups}
@@ -403,13 +470,22 @@ function SubjectsTable({
           />
         ),
       },
-      valueRender: (value) => <>{value?.name}</>,
+      cellStyle: {
+        paddingLeft: 0,
+      },
+      valueRender: (value, formValues) => (
+        <>
+          {value?.name}
+          {formValues.seats ? `(${formValues.seats} ${messages.seats})` : null}
+        </>
+      ),
     });
   }
 
   if (program.haveSubstagesPerCourse) {
     columns.push({
       Header: messages.substage,
+      showOnTable: true,
       accessor: 'substages',
       input: {
         node: (
@@ -417,6 +493,9 @@ function SubjectsTable({
             <MultiSelect data={selects.substages} />
           </EnableIfFormPropHasValue>
         ),
+      },
+      cellStyle: {
+        paddingLeft: 0,
       },
       valueRender: (value) => (
         <>
@@ -439,19 +518,26 @@ function SubjectsTable({
     input: {
       node: <NumberInput />,
     },
+    cellStyle: {
+      paddingLeft: 0,
+    },
   });
 
   columns.push({
     Header: messages.teacher,
     accessor: 'teacher',
+    showOnTable: true,
     input: {
       node: <EnableIfFormPropHasValue>{teacherSelect}</EnableIfFormPropHasValue>,
+    },
+    cellStyle: {
+      paddingLeft: 0,
     },
     valueRender: (value) => (
       <EnableIfFormPropHasValue value={value}>
         {React.cloneElement(teacherSelect, {
           readOnly: true,
-          disabled: true,
+          disabled: false,
         })}
       </EnableIfFormPropHasValue>
     ),
@@ -463,12 +549,17 @@ function SubjectsTable({
     input: {
       node: <ScheduleInput locale={locale} label={false} />,
     },
+    cellStyle: {
+      paddingLeft: 0,
+    },
     valueRender: (value) => (
       <ScheduleInput locale={locale} label={false} value={value} readOnly={true} />
     ),
   });
 
   async function _onAdd({ tableInputRowId, ...formData }) {
+    store.subjectSaving = true;
+    render();
     const tempSubjectsValues = map(store.tempSubjects, 'value');
     const tempGroupsValues = map(store.tempGroups, 'value');
     const isNewSubject = tempSubjectsValues.indexOf(formData.subject) >= 0;
@@ -479,9 +570,14 @@ function SubjectsTable({
       store.tempGroups = [];
       render();
     }
+    store.selectedSubject = null;
+    store.subjectSaving = false;
+    render();
   }
 
   async function _onUpdate({ oldItem, newItem }) {
+    store.subjectSaving = true;
+    render();
     const tempSubjectsValues = map(store.tempSubjects, 'value');
     const tempGroupsValues = map(store.tempGroups, 'value');
     const subject = isObject(newItem.subject) ? newItem.subject.id : newItem.subject;
@@ -513,6 +609,18 @@ function SubjectsTable({
     );
     store.tempSubjects = [];
     store.tempGroups = [];
+    store.selectedSubject = null;
+    store.subjectSaving = false;
+    render();
+  }
+
+  function newSubject() {
+    store.selectedSubject = {};
+    render();
+  }
+
+  function edit(data) {
+    store.selectedSubject = data;
     render();
   }
 
@@ -520,13 +628,31 @@ function SubjectsTable({
     <ContextContainer direction="column" fullWidth>
       <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
       <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
-        <Box style={{ width: '2000px' }}>
+        <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+          <Button onClick={newSubject} variant="link" leftIcon={<AddIcon />}>
+            {messages.addSubject}
+          </Button>
+        </Box>
+        <Box>
           <TableInput
             data={program.classes}
             onAdd={_onAdd}
             onUpdate={_onUpdate}
             form={form}
-            columns={columns}
+            columns={[
+              ..._.filter(columns, { showOnTable: true }),
+              {
+                Header: '',
+                accessor: 'actions',
+                valueRender: (value, formValues) => (
+                  <Box>
+                    <ActionButton onClick={() => edit(formValues)} icon={<EditIcon />} />
+                  </Box>
+                ),
+              },
+            ]}
+            showHeaders={true}
+            disabled={true}
             editable
             sortable={false}
             removable={false}
@@ -535,6 +661,23 @@ function SubjectsTable({
           />
         </Box>
       </Box>
+      <SubjectsDrawer
+        opened={!!store.selectedSubject}
+        value={store.selectedSubject}
+        onSave={(data) => {
+          if (store.selectedSubject.id) {
+            _onUpdate({ oldItem: store.selectedSubject, newItem: data });
+          } else {
+            _onAdd(data);
+          }
+        }}
+        saving={store.subjectSaving}
+        columns={columns}
+        onClose={() => {
+          store.selectedSubject = null;
+          render();
+        }}
+      />
     </ContextContainer>
   );
 }

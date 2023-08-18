@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { rollbackTransaction } = require('leemons-transactions');
 const { LeemonsError } = require('leemons-error');
+const { ObjectId } = require('mongoose').Types;
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');
 const { findById } = require('./queries/findById');
@@ -330,7 +331,12 @@ const mixin = ({
 
         switch (ctx.params.action) {
           case 'removeMany':
-            await model.deleteMany({ id: ctx.params.data });
+            await model.deleteMany({
+              $or: [
+                { id: ctx.params.data },
+                { _id: _.filter(ctx.params.data, (id) => ObjectId.isValid(id)) },
+              ],
+            });
             break;
           case 'createMany':
             await model.create(ctx.params.data);
@@ -351,7 +357,7 @@ const mixin = ({
     error: {
       '*': [
         async function (ctx, err) {
-          console.error(err);
+          console.error('[leemons-mongodb]', err);
           if (autoRollback && ctx.meta.transactionID) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);
@@ -384,10 +390,18 @@ const mixin = ({
   created() {
     _.forIn(this.events, (value, key) => {
       this.events[key] = async (params, opts, { afterModifyCTX } = {}) =>
-        // Si forceLeemonsDeploymentManagerMixinNeedToBeImported es true estaremos llamando al evento de deployment-manager
-        // y este una vez el configura el ctx llama a afterModifyCTX para que podamos configurar nuestro contexto de mongodb
-        // En caso de que no sea un evento de deployment-manager no podremos acceder a ctx.db y ctx.tx en el evento
         value(params, opts, {
+          onError: async (ctx, err) => {
+            console.error('[leemons-mongodb] event - ', err);
+            if (autoRollback && ctx.meta.transactionID) {
+              if (waitToRollbackFinishOnError) {
+                await rollbackTransaction(ctx);
+              } else {
+                rollbackTransaction(ctx);
+              }
+            }
+            throw err;
+          },
           afterModifyCTX: async (ctx) => {
             modifyCTX(ctx, {
               waitToRollbackFinishOnError,
@@ -405,6 +419,9 @@ const mixin = ({
             }
           },
         });
+      // Si forceLeemonsDeploymentManagerMixinNeedToBeImported es true estaremos llamando al evento de deployment-manager
+      // y este una vez el configura el ctx llama a afterModifyCTX para que podamos configurar nuestro contexto de mongodb
+      // En caso de que no sea un evento de deployment-manager no podremos acceder a ctx.db y ctx.tx en el evento
     });
   },
 });

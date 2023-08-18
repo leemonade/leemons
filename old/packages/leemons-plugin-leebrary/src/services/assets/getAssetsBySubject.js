@@ -3,9 +3,10 @@ const { tables } = require('../tables');
 
 async function getAssetsBySubject(subject, { assets, transacting }) {
   const subjects = isArray(subject) ? subject : [subject];
-  const query = {
-    subject_$in: subjects,
-  };
+  const query = {};
+  if (subjects.length) {
+    query.subject_$in = subjects;
+  }
   if (isArray(assets) && assets.length) {
     query.asset_$in = assets;
   } else {

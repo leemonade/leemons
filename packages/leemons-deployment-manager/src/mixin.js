@@ -101,10 +101,11 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
         ],
       },
     },
+
     created() {
       _.forIn(this.events, (value, key) => {
         const innerEvent = this._serviceSpecification.events[key];
-        this.events[key] = async (params, opts, { afterModifyCTX }) => {
+        this.events[key] = async (params, opts, { afterModifyCTX, onError } = {}) => {
           // -- Init moleculer core code --
           let ctx;
           if (opts && opts.ctx) {
@@ -125,17 +126,36 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
           modifyCTX(ctx);
 
-          if (_.isFunction(afterModifyCTX)) {
-            await afterModifyCTX(ctx);
+          try {
+            if (_.isFunction(afterModifyCTX)) {
+              await afterModifyCTX(ctx);
+            }
+
+            await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
+              fromService: getPluginNameFromServiceName(key),
+              toEvent: key,
+              relationshipID: ctx.meta.relationshipID,
+            });
+
+            return await innerEvent.handler(ctx).then(async (data) => {
+              if (data?.err) {
+                if (data?.err) {
+                  if (_.isFunction(onError)) {
+                    await onError(ctx, data.err);
+                  } else {
+                    throw data.err;
+                  }
+                }
+              }
+              return data;
+            });
+          } catch (err) {
+            if (_.isFunction(onError)) {
+              await onError(ctx, err);
+            } else {
+              throw err;
+            }
           }
-
-          await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-            fromService: getPluginNameFromServiceName(key),
-            toEvent: key,
-            relationshipID: ctx.meta.relationshipID,
-          });
-
-          return innerEvent.handler(ctx);
         };
       });
     },

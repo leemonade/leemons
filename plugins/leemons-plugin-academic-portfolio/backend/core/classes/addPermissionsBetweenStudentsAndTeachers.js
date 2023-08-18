@@ -1,27 +1,20 @@
 const { map } = require('lodash');
-const { table } = require('../tables');
 
-async function addPermissionsBetweenStudentsAndTeachers(
-  classId,
-  { transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const [students, teachers] = await Promise.all([
-        table.classStudent.find({ class: classId }, { transacting }),
-        table.classTeacher.find({ class: classId }, { transacting }),
-      ]);
+async function addPermissionsBetweenStudentsAndTeachers({ classId, ctx }) {
+  const [students, teachers] = await Promise.all([
+    ctx.tx.db.ClassStudent.find({ class: classId }).lean(),
+    ctx.tx.db.ClassTeacher.find({ class: classId }).lean(),
+  ]);
 
-      const studentsIds = map(students, 'student');
-      const teachersIds = map(teachers, 'teacher');
-      const allIds = studentsIds.concat(teachersIds);
+  const studentsIds = map(students, 'student');
+  const teachersIds = map(teachers, 'teacher');
+  const allIds = studentsIds.concat(teachersIds);
 
-      const { addUserAgentContacts } = leemons.getPlugin('users').services.users;
-      return addUserAgentContacts(allIds, allIds, { target: classId, transacting });
-    },
-    table.classStudent,
-    _transacting
-  );
+  return ctx.tx.call('users.users.addUserAgentContacts', {
+    fromUserAgent: allIds,
+    toUserAgent: allIds,
+    target: classId,
+  });
 }
 
 module.exports = { addPermissionsBetweenStudentsAndTeachers };

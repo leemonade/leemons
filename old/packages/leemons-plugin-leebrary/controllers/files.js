@@ -14,6 +14,7 @@ const { uploadMultipartChunk } = require('../src/services/files/uploadMultipartC
  */
 async function getFileContent(ctx) {
   const { id, download } = ctx.params;
+  const { onlyPublic } = ctx.query;
   const { userSession } = ctx.state;
   const { headers } = ctx.request;
 
@@ -21,7 +22,11 @@ async function getFileContent(ctx) {
     throw new global.utils.HttpError(400, 'id is required');
   }
 
-  const asset = await getByFile(id, { checkPermissions: true, userSession });
+  const asset = await getByFile(id, {
+    checkPermissions: !onlyPublic,
+    onlyPublic,
+    userSession,
+  });
 
   const canAccess = !isEmpty(asset);
 
@@ -29,19 +34,20 @@ async function getFileContent(ctx) {
     throw new global.utils.HttpError(403, 'You do not have permissions to view this file');
   }
 
-  // let bytesStart = -1;
-  // let bytesEnd = -1;
+  let bytesStart = -1;
+  let bytesEnd = -1;
   const { range } = headers;
 
   if (!download && range?.indexOf('bytes=') > -1) {
-    // const parts = range.replace(/bytes=/, '').split('-');
-    // bytesStart = parseInt(parts[0], 10);
-    // bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
+    const parts = range.replace(/bytes=/, '').split('-');
+    bytesStart = parseInt(parts[0], 10);
+    bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
   }
 
   const { readStream, fileName, contentType, file } = await fileService.dataForReturnFile(id, {
-    // start: bytesStart,
-    // end: bytesEnd,
+    path: ctx.params[0],
+    start: bytesStart,
+    end: bytesEnd,
   });
 
   const mediaType = contentType.split('/')[0];
@@ -50,7 +56,8 @@ async function getFileContent(ctx) {
   ctx.body = readStream;
   ctx.set('Content-Type', contentType);
 
-  if (download || !['image', 'video', 'audio'].includes(mediaType)) {
+  if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
+    // if (download || !['image', 'video', 'audio'].includes(mediaType)) {
     ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
   }
 
@@ -79,6 +86,14 @@ async function getFileContent(ctx) {
     }
     */
   }
+}
+
+/**
+ *
+ */
+async function getPublicFileContent(ctx) {
+  ctx.query.onlyPublic = true;
+  return getFileContent(ctx);
 }
 
 /**
@@ -153,6 +168,7 @@ async function finishMultipartFunc(ctx) {
 
 module.exports = {
   file: getFileContent,
+  publicFile: getPublicFileContent,
   cover: getCoverFileContent,
   newMultipart: newMultipartFunc,
   abortMultipart: abortMultipartFunc,

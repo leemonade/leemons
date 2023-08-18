@@ -1,15 +1,14 @@
-const { table } = require('../tables');
 const { getNextGroupIndex } = require('./getNextGroupIndex');
 
-async function addNextGroupIndex(program, { index, transacting } = {}) {
+async function addNextGroupIndex({ program, index, ctx }) {
   let goodIndex = index;
   if (!index) {
-    goodIndex = await getNextGroupIndex(program, { transacting });
+    goodIndex = await getNextGroupIndex({ program, ctx });
   }
-  await table.configs.set(
+  await ctx.tx.db.Configs.updateOne(
     { key: `program-${program}-group-index` },
     { key: `program-${program}-group-index`, value: goodIndex.toString() },
-    { transacting }
+    { upsert: true }
   );
   return goodIndex;
 }

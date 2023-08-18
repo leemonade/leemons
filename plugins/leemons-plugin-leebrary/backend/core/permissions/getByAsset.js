@@ -7,14 +7,17 @@ const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 /**
  * Retrieves permissions for an asset for a specific user.
  *
+ * @async
+ * @function getByAsset
  * @param {Object} options - Input options.
  * @param {string} options.assetId - The ID of the asset to retrieve permissions for.
  * @param {import("moleculer").Context} options.ctx - The Moleculer request context.
  * @param {Object} options.ctx.meta - Context metadata for the request.
  * @param {Object} options.ctx.meta.userSession - User session.
- * @returns {Promise<Object>} Object with information about the asset's permissions for the user.
+ * @returns {Promise<Object>} A promise that resolves to an object with information about the asset's permissions for the user.
  * @throws {LeemonsError} If fails to retrieve permissions.
  */
+
 async function getByAsset({ assetId, ctx }) {
   try {
     const { userSession } = ctx.meta;

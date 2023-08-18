@@ -120,7 +120,7 @@ export function useParsedActivities(
         name: activity.assignable.asset.name,
         deadline: activity.dates.deadline || activity.dates.closed,
         weight: activity.gradable ? 1 / calificableInstancesCount : 0,
-        allowChange: !isPeriodSubmitted && activity.assignable.role !== 'tests',
+        allowChange: !isPeriodSubmitted && activity.metadata.evaluationType !== 'auto',
         type: activity.gradable ? 'calificable' : 'evaluable',
         activity,
       })),

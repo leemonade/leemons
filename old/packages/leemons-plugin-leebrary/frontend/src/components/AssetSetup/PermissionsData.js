@@ -36,19 +36,29 @@ const ROLESBYROLE = {
   viewer: [
     { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer', disabled: true },
+    { label: 'Assigner', value: 'assigner', disabled: true },
     { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   editor: [
     { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer' },
+    { label: 'Assigner', value: 'assigner' },
     { label: 'Editor', value: 'editor' },
+    // { label: 'Commentor', value: 'commentor' },
+  ],
+  assigner: [
+    { label: 'Owner', value: 'owner', disabled: true },
+    { label: 'Viewer', value: 'viewer', disabled: true },
+    { label: 'Assigner', value: 'assigner', disabled: true },
+    { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   owner: [
     { label: 'Owner', value: 'owner' },
     { label: 'Viewer', value: 'viewer' },
     { label: 'Editor', value: 'editor' },
+    { label: 'Assigner', value: 'assigner' },
     // { label: 'Commentor', value: 'commentor' },
   ],
 };
@@ -196,6 +206,7 @@ const PermissionsData = ({
     const result = {
       viewer: [],
       editor: [],
+      assigner: [],
       isPublic: false,
     };
     _.forEach(perms, (permission) => {
@@ -217,34 +228,37 @@ const PermissionsData = ({
 
   async function savePermissions() {
     try {
-      setLoading(true);
-      const canAccess = usersData
-        .filter((item) => item.editable !== false)
-        .map((userData) => ({
-          userAgent: userData.user.value || userData.user.userAgentIds[0],
-          role: userData.role,
-        }));
+      if (store.shareType) {
+        setLoading(true);
+        const canAccess = usersData
+          .filter((item) => item.editable !== false)
+          .map((userData) => ({
+            userAgent: userData.user.value || userData.user.userAgentIds[0],
+            role: userData.role,
+          }));
 
-      const { isPublic, ..._permissions } = getPermissionsToSave(permissions);
+        const { isPublic, ..._permissions } = getPermissionsToSave(permissions);
 
-      const toSend = {
-        canAccess,
-        permissions: _permissions,
-        isPublic,
-      };
+        const toSend = {
+          canAccess,
+          permissions: _permissions,
+          isPublic,
+        };
 
-      if (isFunction(onSavePermissions)) {
-        await onSavePermissions(asset.id, toSend);
-      } else {
-        await setPermissionsRequest(asset.id, toSend);
+        if (isFunction(onSavePermissions)) {
+          await onSavePermissions(asset.id, toSend);
+        } else {
+          await setPermissionsRequest(asset.id, toSend);
+        }
+
+        setLoading(false);
+        addSuccessAlert(
+          sharing
+            ? t(`permissionsData.labels.shareSuccess`)
+            : t(`permissionsData.labels.permissionsSuccess`)
+        );
       }
 
-      setLoading(false);
-      addSuccessAlert(
-        sharing
-          ? t(`permissionsData.labels.shareSuccess`)
-          : t(`permissionsData.labels.permissionsSuccess`)
-      );
       onNext();
     } catch (err) {
       console.error('Error saving permissions', err);
@@ -482,7 +496,7 @@ const PermissionsData = ({
                 </Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <Stack justifyContent={'end'} fullWidth>
-                    <Button loading={loading} disabled={!store.shareType} onClick={savePermissions}>
+                    <Button loading={loading} onClick={savePermissions}>
                       {sharing
                         ? t('permissionsData.labels.shareButton')
                         : t('permissionsData.labels.saveButton')}

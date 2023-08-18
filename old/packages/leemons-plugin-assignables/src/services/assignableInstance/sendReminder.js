@@ -67,6 +67,7 @@ module.exports = async function sendReminder(
         hostname,
         hostnameApi,
         ignoreUserConfig: true,
+        isReminder: true,
       })
     );
   });

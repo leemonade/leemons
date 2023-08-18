@@ -305,7 +305,7 @@ export function AttendanceControlDrawer({
                           value={store.comments[student.id]}
                           label={t('comment')}
                           onChange={(e) => {
-                            if (e) store.comments[student.id] = e;
+                            store.comments[student.id] = e;
                             render();
                           }}
                         />

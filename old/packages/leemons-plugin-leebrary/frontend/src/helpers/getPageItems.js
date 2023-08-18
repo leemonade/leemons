@@ -1,6 +1,4 @@
 function getPageItems({ data = [], page = 1, size = 10 }) {
-  console.log('page, size', page, size);
-
   const startRow = page * size;
   const endRow = startRow + size;
   const totalCount = data.length;

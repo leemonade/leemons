@@ -87,10 +87,12 @@ function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labe
 
   const subjectsWithCurriculum = React.useMemo(
     () =>
-      curriculum?.map((subject) => ({
-        ...subject,
-        name: subjects.find((s) => s.id === subject.subject)?.name,
-      })),
+      curriculum
+        ?.map((subject) => ({
+          ...subject,
+          name: subjects.find((s) => s.id === subject.subject)?.name,
+        }))
+        ?.filter((subject) => subject.name),
     [subjects, curriculum]
   );
 
@@ -154,6 +156,7 @@ export default function StatementStep({
   hasNextStep,
   hasNextActivity,
   onNextStep,
+  preview,
 }) {
   const labels = _labels.statement_step;
 
@@ -167,7 +170,10 @@ export default function StatementStep({
   const now = dayjs();
   const startDate = dayjs(assignation?.instance?.dates?.start || null);
   const canSubmit =
-    assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+    (!!preview && hasNextStep) ||
+    (!preview &&
+      (assignation?.instance?.alwaysAvailable ||
+        (startDate.isValid() && !now.isBefore(startDate))));
 
   React.useEffect(() => {
     setButtons(

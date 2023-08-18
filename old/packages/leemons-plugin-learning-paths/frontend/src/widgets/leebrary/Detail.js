@@ -5,19 +5,22 @@ import { PluginLearningPathsIcon } from '@bubbles-ui/icons/outline';
 import { LibraryDetail } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';
-import prefixPN from '@tests/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import removeModuleRequest from '@learning-paths/requests/removeModule';
+import { prefixPN } from '@learning-paths/helpers';
 import { useListCardLocalizations } from './ListCard';
 
-function Details({ asset, onRefresh, ...props }) {
+function Details({ asset, onRefresh, onShare, ...props }) {
   const { id, published } = asset?.providerData ?? {};
-  const { name } = asset;
+  const { name, role } = asset;
+
+  const isOwner = role === 'owner';
+
   const localizations = useListCardLocalizations();
-  const [t] = useTranslateLoader(prefixPN('testsCard'));
+  const [t, traslations] = useTranslateLoader(prefixPN('libraryCard.menuItems'));
   const {
     openDeleteConfirmationModal,
     openConfirmationModal,
@@ -25,7 +28,7 @@ function Details({ asset, onRefresh, ...props }) {
   } = useLayout();
   const history = useHistory();
 
-  const toolbarItems = { toggle: t('toggle'), open: t('open'), duplicate: t('duplicate') };
+  const toolbarItems = { toggle: t('toggle'), open: t('open'), view: t('view') };
 
   if (asset?.id) {
     if (asset.editable) {
@@ -42,8 +45,15 @@ function Details({ asset, onRefresh, ...props }) {
     if (asset.duplicable) {
       toolbarItems.duplicate = t('duplicate');
     }
+
+    if (isOwner) {
+      toolbarItems.share = t('share');
+    }
   }
 
+  const handleView = () => {
+    history.push(`/private/learning-paths/modules/${id}/view`);
+  };
   const handleEdit = () => {
     history.push(`/private/learning-paths/modules/${id}/edit`);
   };
@@ -108,8 +118,10 @@ function Details({ asset, onRefresh, ...props }) {
       toolbarItems={toolbarItems}
       onDelete={handleDelete}
       onEdit={handleEdit}
+      onView={handleView}
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
+      onShare={onShare}
     />
   );
 }

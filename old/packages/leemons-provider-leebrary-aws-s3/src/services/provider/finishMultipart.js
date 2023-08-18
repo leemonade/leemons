@@ -2,20 +2,16 @@ const _ = require('lodash');
 const { table } = require('../tables');
 const { getS3AndConfig } = require('./getS3AndConfig');
 
-async function finishMultipart(dbfile, { transacting } = {}) {
+async function finishMultipart(dbfile, path, { transacting } = {}) {
+  let Key = dbfile.uri;
+  const query = { fileId: dbfile.id };
+  if (dbfile.isFolder) {
+    query.path = path;
+    Key += `/${path}`;
+  }
   const [multipartConfig, etags] = await Promise.all([
-    table.multipartUploads.findOne(
-      {
-        fileId: dbfile.id,
-      },
-      { transacting }
-    ),
-    table.multipartEtag.find(
-      {
-        fileId: dbfile.id,
-      },
-      { transacting }
-    ),
+    table.multipartUploads.findOne(query, { transacting }),
+    table.multipartEtag.find(query, { transacting }),
   ]);
   if (!multipartConfig) {
     throw new Error('No started multipart upload for this file');
@@ -40,24 +36,14 @@ async function finishMultipart(dbfile, { transacting } = {}) {
   await s3
     .completeMultipartUpload({
       Bucket: config.bucket,
-      Key: dbfile.uri,
+      Key,
       MultipartUpload,
       UploadId: multipartConfig.uploadId,
     })
     .promise();
 
-  await table.multipartUploads.deleteMany(
-    {
-      fileId: dbfile.id,
-    },
-    { transacting }
-  );
-  await table.multipartEtag.deleteMany(
-    {
-      fileId: dbfile.id,
-    },
-    { transacting }
-  );
+  await table.multipartUploads.deleteMany(query, { transacting });
+  await table.multipartEtag.deleteMany(query, { transacting });
 
   return true;
 }

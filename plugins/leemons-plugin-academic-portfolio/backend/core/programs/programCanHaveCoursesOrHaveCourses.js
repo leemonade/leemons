@@ -1,17 +1,14 @@
-const _ = require('lodash');
-const { table } = require('../tables');
 const { getProgramCourses } = require('./getProgramCourses');
 
-async function programCanHaveCoursesOrHaveCourses(id, { transacting } = {}) {
-  const program = await table.programs.findOne(
-    { id },
-    { columns: ['id', 'maxNumberOfCourses'], transacting }
-  );
+async function programCanHaveCoursesOrHaveCourses({ id, ctx }) {
+  const program = await ctx.tx.db.Programs.findOne({ id })
+    .select(['id', 'maxNumberOfCourses'])
+    .lean();
   if (program.maxNumberOfCourses > 1) {
     return true;
   }
 
-  const courses = await getProgramCourses(id, { transacting });
+  const courses = await getProgramCourses({ id, ctx });
   if (courses.length > 1) {
     return true;
   }

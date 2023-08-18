@@ -3,8 +3,8 @@ import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/requ
 import {
   Box,
   Button,
-  Col,
   COLORS,
+  Col,
   ContextContainer,
   Grid,
   IconButton,
@@ -26,8 +26,8 @@ import { generateReportRequest, listReportsRequest, retryReportRequest } from '@
 import { addErrorAlert } from '@layout/alert';
 import { SocketIoService } from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { getCentersWithToken } from '@users/session';
 import _ from 'lodash';
 import React from 'react';
 import { useReactToPrint } from 'react-to-print';
@@ -194,13 +194,23 @@ export default function Index() {
 
       const [{ profiles }] = await Promise.all([getProfilesRequest(), list()]);
       store.profiles = profiles;
-      store.centerId = getCentersWithToken()[0].id;
 
       store.loading = false;
       render();
     } catch (error) {
       addErrorAlert(error);
     }
+  }
+
+  async function onSelectCenter(centerId) {
+    store.courseId = null;
+    store.selectedUserAgents = [];
+    store.programId = null;
+    store.filterProgramId = null;
+    store.centerId = centerId;
+    store.filterSelectedUserAgents = [];
+    store.filterCourseId = null;
+    render();
   }
 
   async function onSelectProgram(programId) {
@@ -313,6 +323,16 @@ export default function Index() {
         <PageContainer>
           <ContextContainer>
             <Box sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+              <Grid>
+                <Col span={3}>
+                  <SelectCenter
+                    clearable={true}
+                    label={t('centerLabel')}
+                    onChange={onSelectCenter}
+                    value={store.centerId}
+                  />
+                </Col>
+              </Grid>
               <Grid grow>
                 <Col span={3}>
                   <SelectProgram
@@ -379,6 +399,7 @@ export default function Index() {
                   <Col span={3}>
                     <SelectProgram
                       clearable
+                      firstSelected
                       label={t('programLabel')}
                       onChange={onFilterSelectProgram}
                       center={store.centerId}

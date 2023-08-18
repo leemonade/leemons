@@ -1,10 +1,8 @@
-const { table } = require('../tables');
-
-async function setSubjectCredits(subject, program, credits, { transacting } = {}) {
-  return table.programSubjectsCredits.set(
+async function setSubjectCredits({ subject, program, credits, ctx }) {
+  return ctx.tx.db.ProgramSubjectsCredits.findOneAndUpdate(
     { subject, program },
     { subject, program, credits },
-    { transacting }
+    { upsert: true }
   );
 }
 

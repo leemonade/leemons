@@ -1,15 +1,12 @@
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
-async function listCourses(page, size, program, { transacting } = {}) {
-  return global.utils.paginate(
-    table.groups,
+async function listCourses({ page, size, program, ctx }) {
+  return mongoDBPaginate({
+    model: ctx.tx.db.Groups,
     page,
     size,
-    { program, type: 'course' },
-    {
-      transacting,
-    }
-  );
+    query: { program, type: 'course' },
+  });
 }
 
 module.exports = { listCourses };

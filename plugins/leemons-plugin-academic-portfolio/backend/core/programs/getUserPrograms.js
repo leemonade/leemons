@@ -1,17 +1,17 @@
 const { keyBy, map } = require('lodash');
-const { table } = require('../tables');
 const { getUserProgramIds } = require('./getUserProgramIds');
 
-async function getUserPrograms(userSession, { transacting } = {}) {
-  const programIds = await getUserProgramIds(userSession, { transacting });
-  const programs = await table.programs.find({ id_$in: programIds }, { transacting });
+async function getUserPrograms({ ctx }) {
+  const { userSession } = ctx.meta;
 
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const images = await assetService.getByIds(map(programs, 'image'), {
+  const programIds = await getUserProgramIds({ userSession, ctx });
+  const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
+
+  const images = await ctx.tx.call('leebrary.assets.getByIds', {
+    assetsIds: map(programs, 'image'),
     withFiles: true,
-    userSession,
-    transacting,
   });
+
   const imagesById = keyBy(images, 'id');
 
   return programs.map((program) => ({ ...program, image: imagesById[program.image] }));

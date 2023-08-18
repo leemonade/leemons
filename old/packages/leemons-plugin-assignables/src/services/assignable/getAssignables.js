@@ -74,7 +74,7 @@ module.exports = async function getAssignables(
     // EN: Now we need to check the user has permissions to read the assignables
     // ES: Ahora necesitamos determinar si el usuario tiene permisos para verlos
 
-    const permissions = await getUserPermissions(assignablesFoundIds, { userSession, transacting });
+    const permissions = await getUserPermissions(assignablesData, { userSession, transacting });
     if (
       throwOnMissing &&
       !Object.values(permissions).every((permission) => permission.actions.includes('view'))

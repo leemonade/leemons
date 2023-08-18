@@ -1,8 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import { cloneDeep, forEach, map, times } from 'lodash';
-import PropTypes from 'prop-types';
-import { useStore } from '@common';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -10,22 +6,27 @@ import {
   Badge,
   Box,
   ContextContainer,
-  createStyles,
   ImageLoader,
-  LoadingOverlay,
   PageContainer,
   Paper,
   Stack,
   Swiper,
   Text,
   Title,
+  createStyles,
 } from '@bubbles-ui/components';
-import { LibraryCardBasic } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@dashboard/helpers/prefixPN';
-import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
+import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
+import { LibraryCardBasic } from '@bubbles-ui/leemons';
+import { useStore } from '@common';
+import prefixPN from '@dashboard/helpers/prefixPN';
 import { getLocalizations } from '@multilanguage/useTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components';
+import { cloneDeep, forEach, map, times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
 import SkeletonDashboardLoader from './SkeletonDashboardLoader';
 
@@ -96,6 +97,7 @@ export default function AdminDashboard({ session }) {
     loading: true,
     isAcademicMode: false,
   });
+  const history = useHistory();
   const { classes: styles } = Styles();
   const [t, tl] = useTranslateLoader(prefixPN('adminDashboard'));
 
@@ -120,7 +122,6 @@ export default function AdminDashboard({ session }) {
     };
 
     store.pc = pc;
-    store.academicPortfolio = academicPortfolio;
     store.instances = cloneDeep(base);
     store.activeUsers = cloneDeep(base);
 
@@ -166,6 +167,22 @@ export default function AdminDashboard({ session }) {
     }
   }
 
+  async function handleOnSelectCenter(center) {
+    store.center = center;
+    store.loadingCenter = true;
+    render();
+    try {
+      const {
+        data: { academicPortfolio },
+      } = await getAdminDashboardRequest({ center });
+      store.academicPortfolio = academicPortfolio;
+    } catch (e) {
+      // Nothing
+    }
+    store.loadingCenter = false;
+    render();
+  }
+
   React.useEffect(() => {
     if (tl) init();
   }, [tl]);
@@ -198,6 +215,10 @@ export default function AdminDashboard({ session }) {
     }
   }
   // if (store.loading) return <LoadingOverlay visible />;
+
+  function goProgram(program) {
+    history.push(`/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`);
+  }
 
   return (
     <ContextContainer
@@ -235,44 +256,62 @@ export default function AdminDashboard({ session }) {
               <rect x="732" y="0" width="350" height="350" rx="3" />
             </SkeletonDashboardLoader>
           ) : (
-            <Swiper
-              className={styles.cardContainer}
-              breakAt={{
-                1800: { slidesPerView: 4, spaceBetween: 2 },
-                1600: { slidesPerView: 3, spaceBetween: 2 },
-                1200: { slidesPerView: 3, spaceBetween: 2 },
-                940: { slidesPerView: 2, spaceBetween: 2 },
-                520: { slidesPerView: 1, spaceBetween: 2 },
-                360: { slidesPerView: 1, spaceBetween: 2 },
-              }}
-            >
-              {store.academicPortfolio?.programs.map((program) => (
-                <LibraryCardBasic
-                  key={program.id}
-                  blur={20}
-                  asset={{
-                    name: program.program.name,
-                    color: program.program.color,
-                    cover: program.program.imageUrl,
+            <>
+              <Box sx={(theme) => ({ marginBottom: theme.spacing[2], maxWidth: 300 })}>
+                <SelectCenter
+                  label={t('selectCenter')}
+                  onChange={handleOnSelectCenter}
+                  firstSelected
+                />
+              </Box>
+              {store.loadingCenter ? (
+                <SkeletonDashboardLoader height="350">
+                  <rect x="0" y="0" width="350" height="350" rx="3" />
+                  <rect x="366" y="0" width="350" height="350" rx="3" />
+                  <rect x="732" y="0" width="350" height="350" rx="3" />
+                </SkeletonDashboardLoader>
+              ) : null}
+              {!store.loadingCenter && store.academicPortfolio?.programs.length ? (
+                <Swiper
+                  className={styles.cardContainer}
+                  breakAt={{
+                    1800: { slidesPerView: 4, spaceBetween: 2 },
+                    1600: { slidesPerView: 3, spaceBetween: 2 },
+                    1200: { slidesPerView: 3, spaceBetween: 2 },
+                    940: { slidesPerView: 2, spaceBetween: 2 },
+                    520: { slidesPerView: 1, spaceBetween: 2 },
+                    360: { slidesPerView: 1, spaceBetween: 2 },
                   }}
                 >
-                  <Box
-                    style={{
-                      display: 'flex',
-                      height: '100%',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      padding: 12,
-                    }}
-                  >
-                    <Box
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 16,
+                  {store.academicPortfolio?.programs.map((program) => (
+                    <LibraryCardBasic
+                      key={program.program.id}
+                      blur={20}
+                      onClick={() => goProgram(program.program)}
+                      style={{ cursor: 'pointer' }}
+                      asset={{
+                        name: program.program.name,
+                        color: program.program.color,
+                        cover: program.program.imageUrl,
                       }}
                     >
-                      {/* <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
+                      <Box
+                        style={{
+                          display: 'flex',
+                          height: '100%',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          padding: 12,
+                        }}
+                      >
+                        <Box
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 16,
+                          }}
+                        >
+                          {/* <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
                           <FamilyChildIcon width={16} height={16} />
                           <Text role="productive" color="primary">
                             Familias:
@@ -281,43 +320,49 @@ export default function AdminDashboard({ session }) {
                             320
                           </Text>
                         </Box>  */}
-                      <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
-                        <SingleActionsGraduateIcon width={16} height={16} />
-                        <Text role="productive" color="primary">
-                          {t('students')}:
-                        </Text>
-                        <Text role="productive" color="primary" strong>
-                          {program.students}
-                        </Text>
+                          <Box
+                            style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}
+                          >
+                            <SingleActionsGraduateIcon width={16} height={16} />
+                            <Text role="productive" color="primary">
+                              {t('students')}:
+                            </Text>
+                            <Text role="productive" color="primary" strong>
+                              {program.students}
+                            </Text>
+                          </Box>
+                          <Box
+                            style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}
+                          >
+                            <SchoolTeacherMaleIcon width={16} height={16} />
+                            <Text role="productive" color="primary">
+                              {t('teachers')}:
+                            </Text>
+                            <Text role="productive" color="primary" strong>
+                              {program.teachers}
+                            </Text>
+                          </Box>
+                        </Box>
+                        <Box style={{ display: 'flex' }}>
+                          <Box style={{ flex: 1 }}>
+                            <Title order={3}>{program.courses}</Title>
+                            <Text role="productive" color="primary">
+                              {t('courses')}
+                            </Text>
+                          </Box>
+                          <Box style={{ flex: 1 }}>
+                            <Title order={3}>{program.subjects}</Title>
+                            <Text role="productive" color="primary">
+                              {t('subjects')}
+                            </Text>
+                          </Box>
+                        </Box>
                       </Box>
-                      <Box style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}>
-                        <SchoolTeacherMaleIcon width={16} height={16} />
-                        <Text role="productive" color="primary">
-                          {t('teachers')}:
-                        </Text>
-                        <Text role="productive" color="primary" strong>
-                          {program.teachers}
-                        </Text>
-                      </Box>
-                    </Box>
-                    <Box style={{ display: 'flex' }}>
-                      <Box style={{ flex: 1 }}>
-                        <Title order={3}>{program.courses}</Title>
-                        <Text role="productive" color="primary">
-                          {t('courses')}
-                        </Text>
-                      </Box>
-                      <Box style={{ flex: 1 }}>
-                        <Title order={3}>{program.subjects}</Title>
-                        <Text role="productive" color="primary">
-                          {t('subjects')}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </Box>
-                </LibraryCardBasic>
-              ))}
-            </Swiper>
+                    </LibraryCardBasic>
+                  ))}
+                </Swiper>
+              ) : null}
+            </>
           )}
         </Box>
 

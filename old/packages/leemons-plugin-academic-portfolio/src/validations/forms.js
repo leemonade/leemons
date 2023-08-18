@@ -378,7 +378,7 @@ const updateSubjectTypeSchema = {
     credits_program: integerSchemaNullable,
     managers: arrayStringSchema,
   },
-  required: ['id', 'name', 'groupVisibility'],
+  required: ['id', 'groupVisibility'],
   additionalProperties: false,
 };
 
@@ -396,16 +396,18 @@ async function validateUpdateSubjectType(data, { transacting } = {}) {
   }
 
   // ES: Comprobamos que no exista ya el subject type
-  const subjectTypeCount = await table.subjectTypes.count(
-    {
-      id_$ne: data.id,
-      program: subjectType.program,
-      name: data.name,
-    },
-    { transacting }
-  );
+  if (data.name) {
+    const subjectTypeCount = await table.subjectTypes.count(
+      {
+        id_$ne: data.id,
+        program: subjectType.program,
+        name: data.name,
+      },
+      { transacting }
+    );
 
-  if (subjectTypeCount) throw new Error('The subject type already exists');
+    if (subjectTypeCount) throw new Error('The subject type already exists');
+  }
 }
 
 const addCourseSchema = {

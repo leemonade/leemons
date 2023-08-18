@@ -46,6 +46,7 @@
     "leemons-plugin-multilanguage": "0.0.1",
     "leemons-plugin-package-manager": "0.0.1",
     "leemons-plugin-scores": "0.0.1",
+    "leemons-plugin-scorm": "0.0.1",
     "leemons-plugin-tasks": "0.0.1",
     "leemons-plugin-tests": "0.0.1",
     "leemons-plugin-timetable": "0.0.1",

@@ -1,23 +1,35 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { LeemonsError } = require('leemons-error');
+const { getUserProgramIds } = require('./getUserProgramIds');
 
-async function listPrograms(page, size, center, { userSession, transacting } = {}) {
-  const programCenter = await table.programCenter.find({ center }, { transacting });
-  const results = await global.utils.paginate(
-    table.programs,
+async function listPrograms({ page, size, center, ctx }) {
+  const [profile, programCenter] = await Promise.all([
+    ctx.tx.call('users.profiles.getProfileSysName'),
+    ctx.tx.db.ProgramCenter.find({ center }).lean(),
+  ]);
+
+  if (!['teacher', 'student', 'admin'].includes(profile)) {
+    throw new LeemonsError(ctx, { message: 'Only teacher|student|admin can list programs' });
+  }
+
+  let programIds = _.map(programCenter, 'program');
+
+  if (profile === 'teacher' || profile === 'student') {
+    const _programIds = await getUserProgramIds({ ctx });
+    programIds = _.intersection(_programIds, programIds);
+  }
+
+  const results = await mongoDBPaginate({
+    model: ctx.tx.db.Programs,
     page,
     size,
-    { id_$in: _.map(programCenter, 'program') },
-    {
-      transacting,
-    }
-  );
+    query: { id: programIds },
+  });
 
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const images = await assetService.getByIds(_.map(results.items, 'image'), {
+  const images = await ctx.tx.call('leebrary.assets.getByIds', {
+    assetsIds: _.map(results.items, 'image'),
     withFiles: true,
-    userSession,
-    transacting,
   });
   const imagesById = _.keyBy(images, 'id');
 

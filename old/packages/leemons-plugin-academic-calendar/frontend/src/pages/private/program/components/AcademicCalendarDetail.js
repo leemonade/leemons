@@ -1,25 +1,25 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { ContextContainer, createStyles, HorizontalStepper } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import Step1 from '@academic-calendar/pages/private/program/components/Step1';
+import Step2 from '@academic-calendar/pages/private/program/components/Step2';
+import Step3 from '@academic-calendar/pages/private/program/components/Step3';
 import {
   getConfigRequest,
   listRegionalConfigsRequest,
   saveConfigRequest,
 } from '@academic-calendar/request';
 import { detailProgram } from '@academic-portfolio/request/programs';
-import Step1 from '@academic-calendar/pages/private/program/components/Step1';
+import { ContextContainer, createStyles, HorizontalStepper } from '@bubbles-ui/components';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import listCenters from '@users/request/listCenters';
-import Step2 from '@academic-calendar/pages/private/program/components/Step2';
-import Step3 from '@academic-calendar/pages/private/program/components/Step3';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const useStyle = createStyles((theme) => ({
   root: {
     padding: theme.spacing[5],
-    maxWidth: 700,
+    // maxWidth: 700,
     width: '100%',
   },
 }));

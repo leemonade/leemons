@@ -1,3 +1,4 @@
+const { getTagsValueByPartialTags } = require('./getTagsValueByPartialTags');
 const { removeAllValuesForTags } = require('./removeAllValuesForTags');
 const { removeAllTagsForValues } = require('./removeAllTagsForValues');
 const { getControllerFunctions } = require('./getControllerFunctions');
@@ -11,6 +12,7 @@ const { listTags } = require('./listTags');
 const { getTags } = require('./getTags');
 
 module.exports = {
+  getTagsValueByPartialTags,
   removeAllValuesForTags,
   removeAllTagsForValues,
   getControllerFunctions,

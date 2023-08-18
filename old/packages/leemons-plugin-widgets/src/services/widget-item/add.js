@@ -28,6 +28,9 @@ async function add(
     }
   }
 
+  const split = this.calledFrom.split('.');
+  split.shift();
+
   const promises = [
     table.widgetItem.create(
       {
@@ -37,7 +40,7 @@ async function add(
         name,
         description,
         properties: JSON.stringify(properties),
-        pluginName: this.calledFrom,
+        pluginName: split.join('.'),
       },
       { transacting }
     ),

@@ -36,6 +36,7 @@ function updateOne({
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }
       let oldItem = null;
+      let rollbackAction = 'updateMany';
 
       if (options?.upsert) {
         if (autoLRN) {
@@ -49,19 +50,25 @@ function updateOne({
         }
       }
 
-      if (!ignoreTransaction && ctx.meta.transactionID)
+      if (!ignoreTransaction && ctx.meta.transactionID && options?.upsert)
         oldItem = await excludeDeleteIfNeedToQuery(model.findOne(conditions).lean(), options);
       const item = await excludeDeleteIfNeedToQuery(
         model.updateOne(conditions, update, options),
         options
       );
 
+      // Si es upsert y no encontramos elemento previo la accion del rollback deberia de ser borrar lo que se cree nuevo
+      if (!oldItem && options?.upsert) {
+        rollbackAction = 'removeMany';
+        oldItem = item.upsertedId;
+      }
+
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx, {
           action: 'leemonsMongoDBRollback',
           payload: {
             modelKey,
-            action: 'updateMany',
+            action: rollbackAction,
             data: [oldItem],
           },
         });

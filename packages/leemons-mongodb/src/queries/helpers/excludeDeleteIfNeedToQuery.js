@@ -1,5 +1,5 @@
-function excludeDeleteIfNeedToQuery(query, { exludeDeleted = true } = {}) {
-  if (exludeDeleted) {
+function excludeDeleteIfNeedToQuery(query, { excludeDeleted = true } = {}) {
+  if (excludeDeleted) {
     query.where({ isDeleted: false });
   }
   return query;

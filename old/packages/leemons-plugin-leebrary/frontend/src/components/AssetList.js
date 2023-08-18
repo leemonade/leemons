@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import {
   Box,
@@ -18,7 +19,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import { find, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { getPageItems } from '../helpers/getPageItems';
@@ -172,7 +173,6 @@ function AssetList({
       store.loading = false;
       loadingRef.current.loading = false;
       render();
-      // console.log('Ahora está permitido cargar Assets!!');
     }, 500);
   }
 
@@ -182,10 +182,10 @@ function AssetList({
       loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
+      store.page = 1;
       store.asset = null;
       store.loading = true;
       render();
-      // console.log('Pasamos por aquí!!');
       try {
         const query = {
           providerQuery: _filters ? JSON.stringify(_filters) : null,
@@ -197,17 +197,17 @@ function AssetList({
           pinned,
           preferCurrent,
           searchInProvider,
-          subjects: JSON.stringify(
-            store.subjects ? (isArray(store.subjects) ? store.subjects : [store.subjects]) : null
-          ),
-          programs: JSON.stringify(
-            store.programs ? (isArray(store.programs) ? store.programs : [store.programs]) : null
-          ),
+          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
+          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
           roles: JSON.stringify(roles || []),
         };
 
         if (categoryProp?.key?.includes('leebrary-subject')) {
           delete query.category;
+        }
+        if (categoryProp?.key === 'leebrary-shared') {
+          delete query.category;
+          query.onlyShared = true;
         }
 
         const response = await getAssetsRequest(query);
@@ -224,7 +224,6 @@ function AssetList({
         }
 
         const results = response?.assets || [];
-        // console.log('results:', results);
         store.assets = uniqBy(results, 'asset');
 
         if (isEmpty(results)) {
@@ -264,9 +263,16 @@ function AssetList({
             published,
             showPublic: !pinned ? store.showPublic : true,
           });
+
           paginated.items = response.assets || [];
+          forEach(paginated.items, (item) => {
+            if (item.file?.metadata?.indexOf('pathsInfo')) {
+              item.file.metadata = JSON.parse(item.file.metadata);
+              delete item.file.metadata.pathsInfo;
+              item.file.metadata = JSON.stringify(item.file.metadata);
+            }
+          });
           paginated.page += 1;
-          // console.log('paginated.items:', paginated.items);
           store.serverData = paginated;
         } else {
           store.serverData = [];
@@ -287,17 +293,16 @@ function AssetList({
       if (item && !forceLoad) {
         store.asset = prepareAsset(item, published);
       } else {
-        // console.log('loadAsset > id:', id);
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
-          // console.log('asset:', value);
 
           if (store.asset) store.asset = prepareAsset(value, published);
 
           if (forceLoad && item) {
             const index = store.serverData.items.findIndex((i) => i.id === id);
             store.serverData.items[index] = value;
+            store.serverData.items = [...store.serverData.items];
             store.serverData = { ...store.serverData };
           }
         } else {
@@ -428,7 +433,7 @@ function AssetList({
     if (!isEmpty(store.category?.id)) {
       // loadAssets(category.id);
       loadAssetTypes(store.category.id);
-    } else if (categoryProp?.key === 'pins') {
+    } else if (categoryProp?.key === 'pins' || categoryProp?.key === 'leebrary-shared') {
       const cat = find(store.categories, { key: 'media-files' });
       if (cat) loadAssetTypes(cat.id);
     } else {
@@ -464,10 +469,19 @@ function AssetList({
 
   useEffect(() => {
     // Good
-    if (!isEmpty(store.category?.id) || pinned) {
+    if (!isEmpty(store.category?.id) || pinned || categoryProp?.key === 'leebrary-shared') {
       loadAssets(store.category?.id, searchProp, store.assetType, filters);
     }
-  }, [searchProp, store.category, store.assetType, store.showPublic, pinned, published, filters]);
+  }, [
+    JSON.stringify(categoryProp),
+    searchProp,
+    store.category,
+    store.assetType,
+    store.showPublic,
+    pinned,
+    published,
+    filters,
+  ]);
 
   // ·········································································
   // HANDLERS
@@ -945,6 +959,7 @@ function AssetList({
         onNext={() => {
           loadAsset(store.sharingItem.id, true);
           store.sharingItem = null;
+          render();
         }}
         onClose={() => {
           store.sharingItem = null;

@@ -8,18 +8,17 @@ const { findOne: getSettings } = require('../settings');
 // -----------------------------------------------------------------------------
 // MAIN FUNCTIONS
 
-async function finishMultipart({ fileId }, { transacting } = {}) {
+async function finishMultipart({ fileId, path }, { transacting } = {}) {
   const dbfile = await tables.files.findOne({ id: fileId }, { transacting });
   if (!dbfile) throw new Error('No field found');
 
   if (dbfile.provider !== 'sys') {
     const provider = leemons.getProvider(dbfile.provider);
     if (provider?.services?.provider?.finishMultipart) {
-      await provider.services.provider.finishMultipart(dbfile, { transacting });
+      await provider.services.provider.finishMultipart(dbfile, path, { transacting });
     }
-  } else {
-    // TODO: Añadir el cacho al archivo del sistema
   }
+
   return true;
 }
 

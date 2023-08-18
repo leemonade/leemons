@@ -7,7 +7,7 @@ module.exports = {
     duplicable: true,
     provider: 'leebrary-tests',
     canUse: ['plugins.tests'],
-    order: 6,
+    order: 204,
     menu: {
       item: {
         iconSvg: '/public/leebrary-tests/menu-icon.svg',

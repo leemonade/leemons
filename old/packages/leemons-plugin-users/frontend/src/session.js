@@ -64,6 +64,7 @@ function getUserToken(data) {
 
 export function getCookieToken(onlyCookie) {
   let token = Cookies.get('token');
+
   try {
     token = JSON.parse(token);
   } catch (e) {

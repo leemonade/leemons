@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { LibraryDetail } from '@bubbles-ui/leemons';
-import { useHistory } from 'react-router-dom';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { LibraryDetail } from '@bubbles-ui/leemons';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import prefixPN from '@content-creator/helpers/prefixPN';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 const DocumentDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
@@ -43,11 +43,11 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
   }
 
   const handleView = () => {
-    history.push(`/private/content-creator/${asset.providerData.id}`);
+    history.push(`/private/content-creator/${asset.providerData.id}/view`);
   };
 
   const handleEdit = () => {
-    history.push(`/private/content-creator/${asset.providerData.id}`);
+    history.push(`/private/content-creator/${asset.providerData.id}/edit`);
   };
 
   const handleDelete = () => {

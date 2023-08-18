@@ -36,16 +36,32 @@ import UserAgentTags from './UserAgentTags';
 import UserDataset from './UserDataset';
 import UserImageAndPreferredGender from './UserImageAndPreferredGender';
 
-function DetailUser({ session }) {
+function DetailUser({
+  session,
+  centerId,
+  profileId,
+  userId: _userId,
+  onDisabled = () => {},
+  onActive = () => {},
+  isDrawer,
+}) {
   const [t] = useTranslateLoader(prefixPN('detailUser'));
   const [store, render] = useStore({ params: {}, centers: [], profiles: [], isEditMode: false });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
-  const { userId } = useParams();
-  const query = new URLSearchParams(window.location.search);
-  store.params.center = query.get('center');
-  store.params.profile = query.get('profile');
+  let userId = _userId;
+
+  if (!centerId && !profileId && !userId) {
+    const { userId: _u } = useParams();
+    userId = _u;
+    const query = new URLSearchParams(window.location.search);
+    store.params.center = query.get('center');
+    store.params.profile = query.get('profile');
+  } else {
+    store.params.center = centerId;
+    store.params.profile = profileId;
+  }
   store.params.user = !userId || userId === 'me' ? session?.id : userId;
 
   const form = useForm();
@@ -184,6 +200,7 @@ function DetailUser({ session }) {
           const index = _.findIndex(store.userAgents, { id: store.userAgent.id });
           store.userAgents[index].disabled = true;
           store.userAgent.disabled = true;
+          onDisabled();
           addSuccessAlert(t('disableSucess'));
           render();
         } catch (error) {
@@ -199,6 +216,7 @@ function DetailUser({ session }) {
       const index = _.findIndex(store.userAgents, { id: store.userAgent.id });
       store.userAgents[index].disabled = false;
       store.userAgent.disabled = false;
+      onActive();
       addSuccessAlert(t('activeSucess'));
       render();
     } catch (error) {
@@ -265,10 +283,49 @@ function DetailUser({ session }) {
 
   if (!store.user) return null;
 
-  console.log('store.userAgent', store.userAgent);
+  const buttons = (
+    <>
+      {store.isEditMode ? (
+        <Stack direction="row" spacing={5} skipFlex>
+          {store.canDisable && !store.userAgent?.disabled ? (
+            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
+              {t('disableBtn')}
+            </Button>
+          ) : null}
+          {store.canActive && store.userAgent?.disabled ? (
+            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: 'end' })}>
+              {t('active')}
+            </Button>
+          ) : null}
+          <Button variant="light" onClick={cancelEdit}>
+            {t('cancel')}
+          </Button>
+          <Button onClick={tryToSave}>{t('save')}</Button>
+        </Stack>
+      ) : (
+        <Stack direction="row" spacing={5} skipFlex>
+          {store.canDisable && !store.userAgent?.disabled ? (
+            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
+              {t('disableBtn')}
+            </Button>
+          ) : null}
+          {store.canActive && store.userAgent?.disabled ? (
+            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: 'end' })}>
+              {t('active')}
+            </Button>
+          ) : null}
+          {store.canUpdate ? (
+            <Button onClick={setCanEdit} sx={() => ({ justifySelf: 'end' })}>
+              {t('edit')}
+            </Button>
+          ) : null}
+        </Stack>
+      )}
+    </>
+  );
 
   return (
-    <Box ref={containerRef} sx={(theme) => ({ paddingBottom: theme.spacing[10] })}>
+    <Box ref={containerRef} sx={(theme) => ({ paddingBottom: isDrawer ? 0 : theme.spacing[10] })}>
       <Box
         ref={childRef}
         style={{ width: containerRect.width, top: containerRect.top }}
@@ -278,7 +335,7 @@ function DetailUser({ session }) {
           zIndex: 9,
         })}
       >
-        <PageContainer>
+        <PageContainer sx={(theme) => (isDrawer ? { padding: 0 } : {})}>
           <Stack
             sx={(theme) => ({ paddingTop: theme.spacing[5], paddingBottom: theme.spacing[5] })}
             fullWidth
@@ -302,41 +359,15 @@ function DetailUser({ session }) {
                 onChange={selectProfile}
                 data={store.profiles}
               />
+              {isDrawer ? null : buttons}
             </ContextContainer>
-
-            {store.isEditMode ? (
-              <Stack direction="row" spacing={5} skipFlex>
-                <Button variant="light" onClick={cancelEdit}>
-                  {t('cancel')}
-                </Button>
-                <Button onClick={tryToSave}>{t('save')}</Button>
-              </Stack>
-            ) : (
-              <Stack direction="row" spacing={5} skipFlex>
-                {store.canDisable && !store.userAgent?.disabled ? (
-                  <Button onClick={disable} sx={() => ({ justifySelf: 'end' })}>
-                    {t('disable')}
-                  </Button>
-                ) : null}
-                {store.canActive && store.userAgent?.disabled ? (
-                  <Button onClick={active} sx={() => ({ justifySelf: 'end' })}>
-                    {t('active')}
-                  </Button>
-                ) : null}
-                {store.canUpdate ? (
-                  <Button onClick={setCanEdit} sx={() => ({ justifySelf: 'end' })}>
-                    {t('edit')}
-                  </Button>
-                ) : null}
-              </Stack>
-            )}
           </Stack>
           <Divider />
         </PageContainer>
       </Box>
       <PageContainer
-        sx={(theme) => ({ paddingTop: theme.spacing[5] })}
-        style={{ marginTop: childRect.height }}
+        sx={(theme) => (isDrawer ? { padding: 0 } : { paddingTop: theme.spacing[5] })}
+        style={{ marginTop: isDrawer ? childRect.height - 65 : childRect.height }}
       >
         <ContextContainer direction="row">
           <ContextContainer divided>
@@ -374,20 +405,40 @@ function DetailUser({ session }) {
                 isEditMode={store.isEditMode}
               />
             ) : null}
+            {isDrawer ? (
+              <>
+                <ContextContainer>
+                  <ZoneWidgets zone="plugins.users.user-detail">
+                    {({ Component, key }) => (
+                      <Box key={key}>
+                        <Component
+                          user={store.user}
+                          userAgent={store.userAgent}
+                          isEditMode={store.isEditMode}
+                        />
+                      </Box>
+                    )}
+                  </ZoneWidgets>
+                </ContextContainer>
+                <Box style={{ textAlign: 'right' }}>{buttons}</Box>
+              </>
+            ) : null}
           </ContextContainer>
-          <ContextContainer>
-            <ZoneWidgets zone="plugins.users.user-detail">
-              {({ Component, key }) => (
-                <Box key={key}>
-                  <Component
-                    user={store.user}
-                    userAgent={store.userAgent}
-                    isEditMode={store.isEditMode}
-                  />
-                </Box>
-              )}
-            </ZoneWidgets>
-          </ContextContainer>
+          {isDrawer ? null : (
+            <ContextContainer>
+              <ZoneWidgets zone="plugins.users.user-detail">
+                {({ Component, key }) => (
+                  <Box key={key}>
+                    <Component
+                      user={store.user}
+                      userAgent={store.userAgent}
+                      isEditMode={store.isEditMode}
+                    />
+                  </Box>
+                )}
+              </ZoneWidgets>
+            </ContextContainer>
+          )}
         </ContextContainer>
       </PageContainer>
     </Box>
@@ -396,6 +447,12 @@ function DetailUser({ session }) {
 
 DetailUser.propTypes = {
   session: PropTypes.object,
+  centerId: PropTypes.string,
+  profileId: PropTypes.string,
+  userId: PropTypes.string,
+  onDisabled: PropTypes.func,
+  onActive: PropTypes.func,
+  isDrawer: PropTypes.bool,
 };
 
 export default DetailUser;

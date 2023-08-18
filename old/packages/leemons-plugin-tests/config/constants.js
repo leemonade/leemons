@@ -66,6 +66,7 @@ const permissionsBundles = {
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'tests',
       order: 304,
@@ -89,6 +90,7 @@ const menuItems = [
   },
   // Tests
   {
+    removed: true,
     item: {
       key: 'test',
       order: 2,
@@ -96,7 +98,7 @@ const menuItems = [
       url: '/private/tests',
       label: {
         en: 'Tests library',
-        es: 'Librería de tests',
+        es: 'Biblioteca de tests',
       },
     },
     permissions: [
@@ -107,6 +109,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'new-test',
       order: 3,
@@ -126,6 +129,7 @@ const menuItems = [
   },
   // Question banks
   {
+    removed: true,
     item: {
       key: 'questionBanks',
       order: 4,
@@ -144,6 +148,7 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'new-questionBanks',
       order: 5,
@@ -170,12 +175,13 @@ const assignableRoles = [
       teacherDetailUrl: '/private/tests/detail/:id',
       studentDetailUrl: '/private/tests/student/:id/:user',
       evaluationDetailUrl: '/private/tests/result/:id/:user',
+      previewUrl: '/private/tests/detail/:id',
       creatable: true,
       createUrl: '/private/tests/new',
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'tests', es: 'tests' },
       singularName: { en: 'test', es: 'test' },
-      order: 5,
+      order: 3,
       menu: {
         item: {
           iconSvg: '/public/tests/menu-icon.svg',

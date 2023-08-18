@@ -1,0 +1,5 @@
+{{@if(it.apiUrl)}}
+export const apiUrl = "{{it.apiUrl}}";
+{{#else}}
+export const apiUrl = window.location.origin;
+{{/if}}

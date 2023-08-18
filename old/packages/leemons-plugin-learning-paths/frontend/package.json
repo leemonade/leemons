@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@bubbles-ui/components": "^1.1.4",
+    "@bubbles-ui/components": "dev",
     "@loadable/component": "^5.15.3",
     "@tanstack/react-query": "^4.24.4",
     "dayjs": "^1.11.7",

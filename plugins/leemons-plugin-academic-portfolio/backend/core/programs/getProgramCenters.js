@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getProgramCenters(programId, { transacting } = {}) {
-  const pc = await table.programCenter.find({ program: programId }, { transacting });
+async function getProgramCenters({ programId, ctx }) {
+  const pc = await ctx.tx.ProgramCenter.find({ program: programId }).lean();
   return _.map(pc, 'center');
 }
 

@@ -73,22 +73,21 @@ async function add({
   await addCenterProfilePermissionToUserAgents({ userAgentIds: _.map(user.userAgents, 'id'), ctx });
 
   // --- Asset
-  // TODO Roberto: ESTOY MIGRANDO ESTO... entrando al laberinto...
   await addUserAvatar({ user, avatar, ctx });
 
   if (tags && _.isArray(tags) && tags.length) {
-    const tagsService = leemons.getPlugin('common').services.tags;
-    await Promise.all(
-      _.map(user.userAgents, (userAgent) =>
-        tagsService.setTagsToValues('users.user-agent', tags, userAgent.id, {
-          transacting,
-        })
-      )
-    );
+    await Promise.all;
+    _.map(user.userAgents, (userAgent) => {
+      ctx.tx.call('common.tags.setTagsToValues', {
+        type: 'users.user-agent',
+        tags,
+        values: userAgent.id,
+      });
+    });
   }
 
-  if (leemons.getPlugin('calendar')) {
-    await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
+  if (await ctx.tx.call('deployment-manager.pluginIsInstalled', { pluginName: 'calendar' })) {
+    await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
   return user;
 }

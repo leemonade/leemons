@@ -13,7 +13,7 @@ async function classByIds({
   ids,
   withProgram,
   withTeachers,
-  noSearchChilds,
+  noSearchChildren,
   noSearchParents,
   ctx,
 }) {
@@ -36,7 +36,6 @@ async function classByIds({
     getTeacherByClass({ class: ids, ctx }),
     getStudentByClass({ class: ids, ctx }),
     ctx.tx.db.Class.find({ class: _.isArray(ids) ? ids : [ids] }).lean(),
-    // timetableService.listByClassIds(ids, { transacting }),
     ctx.tx.call('timetable.timetable.listByClassIds', { classIds: ids }),
   ]);
 
@@ -87,7 +86,7 @@ async function classByIds({
   ] = await Promise.all([
     ctx.tx.db.SubjectTypes.find({ id: _.map(classes, 'subjectType') }).lean(),
     ctx.tx.db.Knowledges.find({ id: _.map(knowledges, 'knowledge') }).lean(),
-    subjectByIds({ ids: _.map(classes, 'subject') }),
+    subjectByIds({ ids: _.map(classes, 'subject'), ctx }),
     ctx.tx.db.Groups.find({ id: _.map(substages, 'substage') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(courses, 'course') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(groups, 'group') }).lean(),
@@ -106,11 +105,11 @@ async function classByIds({
   if (!noSearchParents) {
     const parentClassesIds = _.uniq(_.compact(_.map(classes, 'class')));
     parentClasses = parentClassesIds.length
-      ? await classByIds({ ids: parentClassesIds, noSearchChilds: true, ctx })
+      ? await classByIds({ ids: parentClassesIds, noSearchChildren: true, ctx })
       : [];
   }
 
-  if (!noSearchChilds) {
+  if (!noSearchChildren) {
     childClasses = _childClasses.length
       ? await classByIds({ ids: _.map(_childClasses, 'id'), noSearchParents: true, ctx })
       : [];
