@@ -22,21 +22,41 @@ async function markEventCalledAndCallIfCan({
       message: '[leemons-multi-events] The key-value model you provide not found',
     });
 
+  if (type === 'once-per-install') {
+    event = `${ctx.meta.initDeploymentProcessNumber}-${event}`;
+  }
+
   // ES: Seteamos que el evento a sido recibido
   await setKey(model, getKey(event));
   // ES: Comprobamos si ya han sido lanzados todos los eventos
   if (await hasKeys(model, _.map(events, getKey))) {
-    // ES: Si el handler tiene que ser llamado solo una vez comprobamos si ya se llamo previamente y si no lo hizo lanzamos el handler
-    if (type === 'once') {
+    if (type === 'once-per-install') {
+      if (
+        !(await hasKey(
+          model,
+          getKey(`${ctx.meta.initDeploymentProcessNumber}-${JSON.stringify(events)}`)
+        ))
+      ) {
+        // ES: Siempre marcamos como que este evento ya se lanzo
+        await setKey(
+          model,
+          getKey(`${ctx.meta.initDeploymentProcessNumber}-${JSON.stringify(events)}`)
+        );
+        await handler(ctx, ...params);
+      }
+    } else if (type === 'once') {
+      // ES: Si el handler tiene que ser llamado solo una vez comprobamos si ya se llamo previamente y si no lo hizo lanzamos el handler
       if (!(await hasKey(model, getKey(JSON.stringify(events))))) {
+        // ES: Siempre marcamos como que este evento ya se lanzo
+        await setKey(model, getKey(JSON.stringify(events)));
         await handler(ctx, ...params);
       }
     } else {
+      // ES: Siempre marcamos como que este evento ya se lanzo
+      await setKey(model, getKey(JSON.stringify(events)));
       // ES: Como se lanzaron todos los eventos lanzamos el handler
       await handler(ctx, ...params);
     }
-    // ES: Siempre marcamos como que este evento ya se lanzo
-    await setKey(model, getKey(JSON.stringify(events)));
   }
 }
 

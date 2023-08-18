@@ -30,6 +30,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['menu-builder.init-main-menu', 'content-creator.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;

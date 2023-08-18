@@ -26,6 +26,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['users.init-menu', 'curriculum.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
