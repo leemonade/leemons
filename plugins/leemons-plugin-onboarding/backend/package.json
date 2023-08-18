@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-common",
+  "name": "leemons-plugin-onboarding",
   "version": "1.0.0",
-  "description": "Leemons common plugin",
+  "description": "Leemons users plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
@@ -15,30 +15,14 @@
   ],
   "author": "",
   "devDependencies": {
-    "@jimdo/serverless-dotenv": "^1.0.0",
     "eslint": "^8.25.0",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1",
-    "serverless-domain-manager": "^7.0.4",
-    "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-offline": "^12.0.4",
     "turbo": "^1.9.6"
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
-    "leemons-cache": "1.0.0",
-    "leemons-deployment-manager": "1.0.0",
-    "leemons-error": "1.0.0",
-    "leemons-middlewares": "1.0.0",
-    "leemons-mongodb": "1.0.0",
-    "leemons-mongodb-helpers": "1.0.0",
-    "leemons-multilanguage": "1.0.0",
-    "leemons-permissions": "1.0.0",
-    "leemons-utils": "1.0.0",
-    "leemons-validator": "1.0.0",
-    "leemons-widgets": "1.0.0",
-    "moleculer": "^0.14.26",
-    "semver": "^7.5.4"
+    "moleculer": "^0.14.26"
   },
   "engines": {
     "node": ">= 16.x.x"

@@ -14,7 +14,7 @@ module.exports = {
       Config: models.configModel,
       RegionalConfig: models.regionalConfigModel,
       //
-      KeyValue: getKeyValueModel({ modelName: 'v1::academic-portfolio_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: 'v1::academic-calendar_KeyValue' }),
     };
   },
 };
