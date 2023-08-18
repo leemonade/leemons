@@ -26,7 +26,11 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
-      events: ['menu-builder.init-main-menu', 'academic-portfolio.init-permissions'],
+      events: [
+        'menu-builder.init-main-menu',
+        'academic-portfolio.init-permissions',
+        'academic-calendar.init-permissions',
+      ],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
 

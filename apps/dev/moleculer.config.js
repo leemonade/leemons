@@ -25,6 +25,7 @@
  *
  * @type {import('moleculer').BrokerOptions}
  */
+
 module.exports = {
   // Namespace of nodes to segment your nodes on the same network.
   namespace: '',
@@ -148,7 +149,7 @@ module.exports = {
   // Enable action & event parameter validation. More info: https://moleculer.services/docs/0.14/validating.html
   validator: true,
 
-  errorHandler: null,
+  errorHandler: (err, params) => ({ err, params }),
 
   // Enable/disable built-in metrics function. More info: https://moleculer.services/docs/0.14/metrics.html
   metrics: {

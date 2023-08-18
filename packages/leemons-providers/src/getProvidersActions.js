@@ -15,7 +15,7 @@ function getProvidersActions({ ctxKeyValueModelName = 'KeyValue' } = {}) {
       handler: async (ctx) => {
         const model = getModel({ ctx, ctxKeyValueModelName });
         await model.updateOne(
-          { key: '_providers_', value: { pluginName: ctx.callerPlugin } },
+          { key: '_providers_', 'value.pluginName': ctx.callerPlugin },
           {
             key: '_providers_',
             value: { pluginName: ctx.callerPlugin, params: ctx.params },
@@ -28,7 +28,7 @@ function getProvidersActions({ ctxKeyValueModelName = 'KeyValue' } = {}) {
     unregister: {
       handler: async (ctx) => {
         const model = getModel({ ctx, ctxKeyValueModelName });
-        await model.deleteOne({ key: '_providers_', value: { pluginName: ctx.callerPlugin } });
+        await model.deleteOne({ key: '_providers_', 'value.pluginName': ctx.callerPlugin });
         return true;
       },
     },
