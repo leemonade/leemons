@@ -14,6 +14,7 @@ const {
   getRoleProfile,
 } = require('../core/roles');
 const { getServiceModels } = require('../models');
+const restActions = require('./rest/roles.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -27,6 +28,7 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return add({ ...ctx.params, ctx });

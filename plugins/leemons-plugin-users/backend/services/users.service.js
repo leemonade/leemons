@@ -9,20 +9,55 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const { getUserAgentCenter } = require('../core/user-agents/getUserAgentCenter');
 const restActions = require('./rest/users.rest');
-const { updateEmail } = require('../core/users/updateEmail');
-const { updatePassword } = require('../core/users/updatePassword');
-const { getUserAgentsInfo } = require('../core/user-agents');
 
-/*
 const {
+  add,
+  addBulk,
   detail,
   isSuperAdmin,
   userSessionCheckUserAgentDatasets,
   centers,
+  hasPermissionCTX,
+  updateEmail,
+  updatePassword,
 } = require('../core/users');
-*/
+const { detailForJWT } = require('../core/users/jwt/detailForJWT');
+const {
+  getUserAgentsInfo,
+  searchUserAgents,
+  filterUserAgentsByProfileAndCenter,
+  getUserAgentByCenterProfile,
+  getUserAgentCenter,
+} = require('../core/user-agents');
+const { userAgentsAreContacts } = require('../core/user-agents/contacts/userAgentsAreContacts');
+const { getUserAgentContacts } = require('../core/user-agents/contacts/getUserAgentContacts');
+const { addUserAgentContacts } = require('../core/user-agents/contacts/addUserAgentContacts');
+const { removeUserAgentContacts } = require('../core/user-agents/contacts/removeUserAgentContacts');
+const { getUserAgentCalendarKey } = require('../core/user-agents/calendar/getUserAgentCalendarKey');
+const {
+  getUserAgentPermissions,
+  userAgentHasCustomPermission,
+  addCustomPermissionToUserAgent,
+} = require('../core/permissions');
+const {
+  userAgentHasPermission,
+} = require('../core/user-agents/permissions/userAgentHasPermission');
+const {
+  updateUserAgentPermissions,
+} = require('../core/user-agents/permissions/updateUserAgentPermissions');
+const {
+  removeCustomUserAgentPermission,
+} = require('../core/user-agents/permissions/removeCustomUserAgentPermission');
+const {
+  userAgentHasPermissionToItem,
+} = require('../core/user-agents/item-permissions/userAgentHasPermissionToItem');
+const {
+  getAllItemsForTheUserAgentHasPermissions,
+} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissions');
+const {
+  getAllItemsForTheUserAgentHasPermissionsByType,
+} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -38,7 +73,7 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    /*
+
     detail: {
       async handler(ctx) {
         const users = await detail({ ...ctx.params, ctx });
@@ -59,7 +94,7 @@ module.exports = {
     },
     userSessionCheckUserAgentDatasets: {
       async handler(ctx) {
-        return userSessionCheckUserAgentDatasets({ ...ctx.params, ctx });
+        return userSessionCheckUserAgentDatasets({ ctx });
       },
     },
     getUserCenters: {
@@ -67,10 +102,14 @@ module.exports = {
         return centers({ ...ctx.params, ctx });
       },
     },
-    */
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });
+      },
+    },
+    addBulk: {
+      async handler(ctx) {
+        return addBulk({ ...ctx.params, ctx });
       },
     },
     updateEmail: {
@@ -83,6 +122,7 @@ module.exports = {
         return updatePassword({ ...ctx.params, ctx });
       },
     },
+    // User agents
     getUserAgentCenter: {
       async handler(ctx) {
         return getUserAgentCenter({ ...ctx.params, ctx });
@@ -91,6 +131,104 @@ module.exports = {
     getUserAgentsInfo: {
       async handler(ctx) {
         return getUserAgentsInfo({ ...ctx.params, ctx });
+      },
+    },
+    searchUserAgents: {
+      async handler(ctx) {
+        return searchUserAgents({ ...ctx.params, ctx });
+      },
+    },
+    filterUserAgentsByProfileAndCenter: {
+      async handler(ctx) {
+        return filterUserAgentsByProfileAndCenter({ ...ctx.params, ctx });
+      },
+    },
+    getUserAgentByCenterProfile: {
+      async handler(ctx) {
+        return getUserAgentByCenterProfile({ ...ctx.params, ctx });
+      },
+    },
+    // Contacts
+    userAgentsAreContacts: {
+      async handler(ctx) {
+        return userAgentsAreContacts({ ...ctx.params, ctx });
+      },
+    },
+    getUserAgentContacts: {
+      async handler(ctx) {
+        return getUserAgentContacts({ ...ctx.params, ctx });
+      },
+    },
+    addUserAgentContacts: {
+      async handler(ctx) {
+        return addUserAgentContacts({ ...ctx.params, ctx });
+      },
+    },
+    removeUserAgentContacts: {
+      async handler(ctx) {
+        return removeUserAgentContacts({ ...ctx.params, ctx });
+      },
+    },
+    // Calendar
+    getUserAgentCalendarKey: {
+      async handler(ctx) {
+        return getUserAgentCalendarKey({ ...ctx.params, ctx });
+      },
+    },
+
+    // Permissions
+    getUserAgentPermissions: {
+      async handler(ctx) {
+        return getUserAgentPermissions({ ...ctx.params, ctx });
+      },
+    },
+    userAgentHasPermission: {
+      async handler(ctx) {
+        return userAgentHasPermission({ ...ctx.params, ctx });
+      },
+    },
+    updateUserAgentPermissions: {
+      async handler(ctx) {
+        return updateUserAgentPermissions({ ...ctx.params, ctx });
+      },
+    },
+    userAgentHasCustomPermission: {
+      async handler(ctx) {
+        return userAgentHasCustomPermission({ ...ctx.params, ctx });
+      },
+    },
+    addCustomPermissionToUserAgent: {
+      async handler(ctx) {
+        return addCustomPermissionToUserAgent({ ...ctx.params, ctx });
+      },
+    },
+    removeCustomUserAgentPermission: {
+      async handler(ctx) {
+        return removeCustomUserAgentPermission({ ...ctx.params, ctx });
+      },
+    },
+    // Item permissions
+    userAgentHasPermissionToItem: {
+      async handler(ctx) {
+        return userAgentHasPermissionToItem({ ...ctx.params, ctx });
+      },
+    },
+    getAllItemsForTheUserAgentHasPermissions: {
+      async handler(ctx) {
+        return getAllItemsForTheUserAgentHasPermissions({ ...ctx.params, ctx });
+      },
+    },
+    getAllItemsForTheUserAgentHasPermissionsByType: {
+      async handler(ctx) {
+        return getAllItemsForTheUserAgentHasPermissionsByType({ ...ctx.params, ctx });
+      },
+    },
+    getUserFullName: {
+      async handler(ctx) {
+        const { userSession } = ctx.meta;
+        return `${userSession.name ? userSession.name : ''}${
+          userSession.surnames ? ` ${userSession.surnames}` : ''
+        }${userSession.secondSurname ? ` ${userSession.secondSurname}` : ''}`;
       },
     },
   },

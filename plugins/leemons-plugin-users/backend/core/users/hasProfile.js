@@ -7,8 +7,8 @@
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>} If have permission return true if not false
  * */
-async function hasProfile(user, profile, { transacting } = {}) {
-  const results = await table.userAgent.count({ user, profile }, { transacting });
+async function hasProfile({ user, profile, ctx }) {
+  const results = await ctx.tx.db.UserAgent.countDocuments({ user, profile });
   return !!results;
 }
 

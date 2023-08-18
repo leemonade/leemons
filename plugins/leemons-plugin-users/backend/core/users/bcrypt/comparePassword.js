@@ -6,8 +6,11 @@
  * @param {string} hashPassword
  * @return {Promise<boolean>} If they are equal, returns true
  * */
+
+const { compare } = require('bcrypt');
+
 function comparePassword(password, hashPassword) {
-  return global.utils.bcrypt.compare(password, hashPassword);
+  return compare(password, hashPassword);
 }
 
 module.exports = { comparePassword };

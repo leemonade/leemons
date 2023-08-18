@@ -1,21 +1,22 @@
 const _ = require('lodash');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
-async function list(page, size, { profiles, centers, ...queries } = {}, { transacting } = {}) {
+async function list({ page, size, profiles, centers, ctx, ...queries }) {
   const query = { ...queries };
   let roles = null;
 
   if (centers) {
-    const centerRoles = await table.roleCenter.find(
-      { center_$in: _.isArray(centers) ? centers : [centers] },
-      { columns: ['id', 'role'], transacting }
-    );
+    const centerRoles = await ctx.tx.db.RoleCenter.find({
+      center: _.isArray(centers) ? centers : [centers],
+    })
+      .select(['id', 'role'])
+      .lean();
     roles = _.map(centerRoles, 'role');
   }
   if (profiles) {
-    const profileRoles = await table.profileRole.find(
-      { profile_$in: _.isArray(profiles) ? profiles : [profiles] },
-      { columns: ['id', 'role'], transacting }
-    );
+    const profileRoles = await ctx.tx.db.ProfileRole.find({
+      profile: _.isArray(profiles) ? profiles : [profiles],
+    }).select(['id', 'role']);
     if (_.isArray(roles)) {
       roles = _.intersection(roles, _.map(profileRoles, 'role'));
     } else {
@@ -24,14 +25,18 @@ async function list(page, size, { profiles, centers, ...queries } = {}, { transa
   }
 
   if (_.isArray(roles)) {
-    const userAgents = await table.userAgent.find(
-      { role_$in: roles },
-      { columns: ['id', 'user'], transacting }
-    );
-    query.id_$in = _.map(userAgents, 'user');
+    const userAgents = await ctx.tx.db.UserAgent.find({ role: roles })
+      .select(['id', 'user'])
+      .lean();
+    query.id = _.map(userAgents, 'user');
   }
 
-  return global.utils.paginate(table.users, page, size, query, { transacting });
+  return mongoDBPaginate({
+    model: ctx.tx.db.Users,
+    page,
+    size,
+    query,
+  });
 }
 
 module.exports = { list };

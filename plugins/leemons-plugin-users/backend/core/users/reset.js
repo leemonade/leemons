@@ -13,36 +13,36 @@ const getHostname = require('../platform/getHostname');
  * @param {any} ctx - Koa context
  * @return {Promise<undefined>} Updated user
  * */
-async function reset(token, password, ctx) {
-  const config = await getResetConfig(token);
+async function reset({ token, password, ctx }) {
+  const config = await getResetConfig({ token, ctx });
 
-  return table.users.transaction(async (transacting) => {
-    const values = await Promise.all([
-      table.users.update(
-        { id: config.user.id },
-        { password: await encryptPassword(password) },
-        { transacting }
-      ),
-      table.userRecoverPassword.delete({ id: config.recoveryId }, { transacting }),
-    ]);
+  const values = await Promise.all([
+    ctx.tx.db.Users.findOneAndUpdate(
+      { id: config.user.id },
+      { password: await encryptPassword(password) },
+      { new: true }
+    ),
+    ctx.tx.db.UserRecoverPassword.deleteOne({ id: config.recoveryId }),
+  ]);
 
-    if (leemons.getPlugin('emails')) {
-      const hostname = await getHostname();
-      await leemons
-        .getPlugin('emails')
-        .services.email.sendAsEducationalCenter(
-          config.user.email,
-          'user-reset-password',
-          config.user.locale,
-          {
-            name: config.user.name,
-            loginUrl: `${hostname || ctx.request.header.origin}/users/public/login`,
-          }
-        );
-    }
+  if (
+    await ctx.tx.call('deployment-manager.pluginIsInstalled', {
+      pluginName: 'emails',
+    })
+  ) {
+    const hostname = await getHostname({ ctx });
+    await ctx.tx.call('emails.email.sendAsEducationalCenter', {
+      to: config.user.email,
+      templateName: 'user-reset-password',
+      language: config.user.locale,
+      context: {
+        name: config.user.name,
+        loginUrl: `${hostname}/users/public/login`,
+      },
+    });
+  }
 
-    return values[0];
-  });
+  return values[0];
 }
 
 module.exports = {

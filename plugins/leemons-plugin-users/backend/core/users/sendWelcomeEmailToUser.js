@@ -1,27 +1,28 @@
+const { LeemonsError } = require('leemons-error');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const constants = require('../../config/constants');
 const getHostname = require('../platform/getHostname');
 
-async function sendWelcomeEmailToUser(user, ctx, { transacting } = {}) {
-  const recovery = await table.userRegisterPassword.findOne({ user: user.id }, { transacting });
+async function sendWelcomeEmailToUser({ user, ctx }) {
+  const recovery = await ctx.tx.db.UserRegisterPassword.findOne({ user: user.id }).lean();
   const hostname = await getHostname();
 
-  if (!recovery) throw new Error('User is already active');
-  const email = await leemons
-    .getPlugin('emails')
-    .services.email.sendAsPlatform(user.email, 'user-welcome', user.locale, {
+  if (!recovery) throw new LeemonsError(ctx, { message: 'User is already active' });
+  const email = await ctx.tx.call('emails.email.sendAsPlatform', {
+    to: user.name,
+    templateName: 'userWelcome',
+    language: user.locale,
+    context: {
       name: user.name,
-      url: `${
-        hostname || ctx.request.header.origin
-      }/users/register-password?token=${encodeURIComponent(
+      url: `${hostname}/users/register-password?token=${encodeURIComponent(
         await generateJWTToken({
-          id: user.id,
-          code: recovery.code,
+          payload: { id: user.id, code: recovery.code },
+          ctx,
         })
       )}`,
       expDays: constants.daysForRegisterPassword,
-    });
-
+    },
+  });
   return email;
 }
 

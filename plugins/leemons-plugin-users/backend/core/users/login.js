@@ -6,32 +6,40 @@
  * @param {string} password - User password in raw
  * @return {Promise<User>} Created / Updated role
  * */
+
+const { LeemonsError } = require('leemons-error');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { comparePassword } = require('./bcrypt/comparePassword');
 
 const { isSuperAdmin } = require('./isSuperAdmin');
 
-async function login(email, password) {
-  const userP = await table.users.findOne({ email, active: true }, { columns: ['id', 'password'] });
-  if (!userP) throw new global.utils.HttpError(401, 'Credentials do not match');
+async function login({ email, password, ctx }) {
+  const userP = await ctx.tx.db.Users.findOne({ email, active: true })
+    .select(['id', 'password'])
+    .lean();
+  if (!userP)
+    throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
 
-  const userAgents = await table.userAgent.find(
-    { user: userP.id, $or: [{ disabled_$null: true }, { disabled: false }] },
-    { columns: ['id'] }
-  );
+  const userAgents = await ctx.tx.db.UserAgent.find({
+    user: userP.id,
+    $or: [{ disabled: null }, { disabled: false }],
+  })
+    .select(['id'])
+    .lean();
 
   const areEquals = await comparePassword(password, userP.password);
-  if (!areEquals) throw new global.utils.HttpError(401, 'Credentials do not match');
+  if (!areEquals)
+    throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
 
   const [user, token] = await Promise.all([
-    table.users.findOne({ email }),
-    generateJWTToken({ id: userP.id }),
-  ]);
+    ctx.tx.db.Users.findOne({ email }),
+    generateJWTToken({ payload: { id: userP.id }, ctx }),
+  ]).lean();
 
   if (user && user.id) {
-    user.isSuperAdmin = await isSuperAdmin(user.id);
+    user.isSuperAdmin = await isSuperAdmin({ userId: user.id, ctx });
     if (!userAgents.length && user.isSuperAdmin) {
-      throw new global.utils.HttpError(401, 'No user agents to connect');
+      throw new LeemonsError(ctx, { message: 'No user agents to connect', httpStatusCode: 401 });
     }
   }
 

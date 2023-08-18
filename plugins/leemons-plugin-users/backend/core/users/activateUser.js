@@ -1,25 +1,22 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-async function activateUser(userId, password) {
-  return table.users.transaction(async (transacting) => {
-    const user = await table.users.update(
-      { id: userId },
-      { password: await encryptPassword(password), status: 'password-registered', active: true },
-      { transacting }
-    );
 
-    const userRegisterPasswordUser = await table.userRegisterPassword.findOne(
-      { user: userId },
-      { transacting }
-    );
+async function activateUser({ userId, password, ctx }) {
+  const user = await ctx.tx.db.Users.findOneAndUpdate(
+    { id: userId },
+    { password: await encryptPassword(password), status: 'password-registered', active: true },
+    { new: true }
+  );
 
-    if (userRegisterPasswordUser)
-      await table.userRegisterPassword.delete({ user: userId }, { transacting });
-    // if (leemons.getPlugin('emails')) {
-    //   // TODO Mandar algun email si se quiere cuando el usuario haya seteado su contraseña del todo
-    // }
+  const userRegisterPasswordUser = await ctx.tx.db.UserRegisterPassword.findOne({
+    user: userId,
+  }).lean();
 
-    return user;
-  });
+  if (userRegisterPasswordUser) await ctx.tx.db.UserRegisterPassword.deleteOne({ user: userId });
+  // if (leemons.getPlugin('emails')) {
+  //   // TODO Mandar algun email si se quiere cuando el usuario haya seteado su contraseña del todo
+  // }
+
+  return user;
 }
 
 module.exports = {

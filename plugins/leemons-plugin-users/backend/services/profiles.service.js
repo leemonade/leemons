@@ -22,7 +22,9 @@ const {
   addCustomPermissions,
   removeCustomPermissionsByName,
   getRoleForRelationshipProfileCenter,
+  existMany,
 } = require('../core/profiles');
+const restActions = require('./rest/profiles.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -37,6 +39,7 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return add({ ...ctx.params, ctx });
@@ -55,6 +58,11 @@ module.exports = {
     existName: {
       handler(ctx) {
         return existName({ ...ctx.params, ctx });
+      },
+    },
+    existMany: {
+      handler(ctx) {
+        return existMany({ ...ctx.params, ctx });
       },
     },
     detailByUri: {

@@ -20,76 +20,68 @@ const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
 
-async function addUserBulk(
+async function addUserBulk({
   role,
-  { id, tags, password, birthdate, avatar, created_at, dataset, ...userData },
+  id,
+  tags,
+  password,
+  birthdate,
+  avatar,
+  // eslint-disable-next-line camelcase
+  created_at,
+  dataset,
+  profile,
   ctx,
-  { profile, transacting, userSession } = {}
-) {
-  const tagsService = leemons.getPlugin('common').services.tags;
-
+  ...userData
+}) {
   let user = null;
   if (id) {
-    user = await table.users.findOne({ id }, { transacting });
+    user = await ctx.tx.db.Users.findOne({ id }).lean();
   } else {
-    user = await table.users.findOne({ email: userData.email }, { transacting });
+    user = await ctx.tx.db.Users.findOne({ email: userData.email }).lean();
   }
   let isNewUser = false;
   if (!user) {
-    user = await table.users.create(
-      {
-        ...userData,
-        birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
-        password: password ? await encryptPassword(password) : undefined,
-      },
-      {
-        transacting,
-      }
-    );
-    await setUserForRegisterPassword(user.id, { transacting });
-    await sendWelcomeEmailToUser(user, ctx, { transacting });
+    user = await ctx.tx.db.Users.create({
+      ...userData,
+      birthdate,
+      password: password ? await encryptPassword(password) : undefined,
+    });
+    await setUserForRegisterPassword({ userId: user.id, ctx });
+    await sendWelcomeEmailToUser({ user, ctx });
     isNewUser = true;
   } else if (id) {
-    await table.users.update(
+    await ctx.tx.db.Users.updateOne(
       { id },
       {
         ...userData,
-        birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
-      },
-      {
-        transacting,
+        birthdate,
       }
     );
   }
-  if (dataset) await setUserDatasetInfo(user.id, dataset, { userSession, transacting });
+  if (dataset) await setUserDatasetInfo({ userId: user.id, value: dataset, ctx });
 
-  let userAgent = await table.userAgent.findOne(
-    {
-      deleted_$null: false,
-      user: user.id,
-      role,
-    },
-    { transacting }
-  );
+  let userAgent = await ctx.tx.db.UserAgent.findOne({
+    deleted: { $ne: null },
+    user: user.id,
+    role,
+  }).lean();
   if (!userAgent) {
-    await checkIfCanCreateNUserAgentsInRoleProfiles(1, role, { transacting });
-    userAgent = await table.userAgent.create(
-      {
-        role,
-        user: user.id,
-        reloadPermissions: true,
-      },
-      { transacting }
-    );
-    await addCenterProfilePermissionToUserAgents(userAgent.id, { transacting });
+    await checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx });
+    userAgent = await ctx.tx.db.UserAgent.create({
+      role,
+      user: user.id,
+      reloadPermissions: true,
+    });
+    await addCenterProfilePermissionToUserAgents({ userAgentIds: userAgent.id, ctx });
     // ES: Si no tenia el perfil y no es nuevo usuario, le mandamos el email
     if (!isNewUser) {
-      await sendNewProfileAddedEmailToUser(user, profile, ctx, { transacting });
+      await sendNewProfileAddedEmailToUser({ user, profile, ctx });
     }
   } else if (userAgent.deleted) {
-    userAgent = await table.userAgent.update(
+    userAgent = await ctx.tx.db.UserAgent.findOneAndUpdate(
       {
-        deleted_$null: false,
+        deleted: { $ne: null },
         role,
         user: user.id,
       },
@@ -97,57 +89,54 @@ async function addUserBulk(
         deleted: false,
         deleted_at: null,
       },
-      { transacting }
+      { new: true }
     );
-    await leemons.events.emit('user-agent:restore', { userAgent, transacting });
+    await ctx.tx.emit('user-agent.restore', { userAgent });
   }
 
   if (isNewUser) {
-    await addUserAvatar({ ...user, userAgents: [userAgent] }, avatar, { transacting });
+    await addUserAvatar({ user: { ...user, userAgents: [userAgent] }, avatar, ctx });
   }
 
   if (tags && _.isArray(tags) && tags.length) {
-    await tagsService.setTagsToValues('users.user-agent', tags, userAgent.id, {
-      transacting,
+    await ctx.tx.call('common.tags.setTagsToValues', {
+      type: 'users.user-agent',
+      tags,
+      values: userAgent.id,
     });
   }
 
-  if (leemons.getPlugin('calendar')) {
-    await addCalendarToUserAgentsIfNeedByUser(user.id, { transacting });
+  const calendarPluginExists = await ctx.tx.call('deployment-manager.pluginsIsInstalled', {
+    pluginName: 'calendar',
+  });
+  if (calendarPluginExists) {
+    await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
   return user;
 }
 
-async function addBulk(data, ctx, { userSession, transacting: _transacting } = {}) {
+async function addBulk({ data, ctx }) {
   const { center, profile, users } = data;
-  return global.utils.withTransaction(
-    async (transacting) => {
-      validateAddUsersBulkForm(data);
-      const [role, locale, _profile, _center] = await Promise.all([
-        getRoleForRelationshipProfileCenter(profile, center, { transacting }),
-        getDefaultLocale({ transacting }),
-        table.profiles.findOne({ id: profile }, { transacting }),
-        table.centers.findOne({ id: center }, { transacting }),
-      ]);
+  validateAddUsersBulkForm(data);
+  const [role, locale, _profile, _center] = await Promise.all([
+    getRoleForRelationshipProfileCenter({ profileId: profile, centerId: center, ctx }),
+    getDefaultLocale({ ctx }),
+    ctx.tx.db.Profiles.findOne({ id: profile }).lean(),
+    ctx.tx.db.Centers.findOne({ id: center }).lean(),
+  ]);
 
-      return Promise.all(
-        _.map(users, (user) =>
-          addUserBulk(
-            role.id,
-            {
-              ...user,
-              locale: user.locale || _center.locale || locale,
-              status: 'created',
-              active: false,
-            },
-            ctx,
-            { profile: _profile, userSession, transacting }
-          )
-        )
-      );
-    },
-    table.users,
-    _transacting
+  return Promise.all(
+    _.map(users, (user) =>
+      addUserBulk({
+        role: role.id,
+        ...user,
+        locale: user.locale || _center.locale || locale,
+        status: 'created',
+        active: false,
+        profile: _profile,
+        ctx,
+      })
+    )
   );
 }
 

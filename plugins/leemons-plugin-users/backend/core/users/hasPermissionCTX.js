@@ -9,14 +9,14 @@ const constants = require('../../config/constants');
  * Checks if the user has 1 or more of the specified permissions.
  * @public
  * @static
- * @param {UserSession} userSession - User session to check
  * @param {Object} allowedPermissions - Allowed permission by key
  * @property {string[]} allowedPermissions.actions - Array of allowed actions
  * @property {string} allowedPermissions.target - Target
- * @param {any?} ctx - Koa context
+ * @param {any?} ctx - Moleculer context
  * @return {Promise<boolean>} If have permission return true if not false
  * */
-async function hasPermissionCTX({ userSession, allowedPermissions, ctx }) {
+async function hasPermissionCTX({ allowedPermissions, ctx }) {
+  const { userSession } = ctx.meta;
   if (_.isArray(userSession.userAgents) && userSession.userAgents.length) {
     const reloadUserAgents = [];
     _.forEach(userSession.userAgents, (userAgent) => {

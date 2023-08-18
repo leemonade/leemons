@@ -7,9 +7,9 @@ const { getResetConfig } = require('./getResetConfig');
  * @param {string} token - User token
  * @return {Promise<boolean>}
  * */
-async function canReset(token) {
+async function canReset({ token, ctx }) {
   try {
-    await getResetConfig(token);
+    await getResetConfig({ token, ctx });
     return true;
   } catch (err) {
     return false;

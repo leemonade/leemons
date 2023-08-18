@@ -14,7 +14,6 @@ module.exports =
       });
     }
     const hasPermission = await ctx.tx.call('users.auth.hasPermissionCTX', {
-      userSession: ctx.meta.userSession,
       allowedPermissions,
     });
 

@@ -8,12 +8,12 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const { add, list, detail, existName } = require('../core/centers');
-const restActions = require('./rest/centers.rest');
+const restActions = require('./rest/actions.rest');
+const { add, exist, addMany } = require('../core/actions');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.centers',
+  name: 'users.actions',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -31,19 +31,14 @@ module.exports = {
         return add({ ...ctx.params, ctx });
       },
     },
-    list: {
+    exist: {
       async handler(ctx) {
-        return list({ ...ctx.params, ctx });
+        return exist({ ...ctx.params, ctx });
       },
     },
-    detail: {
+    addMany: {
       async handler(ctx) {
-        return detail({ ...ctx.params, ctx });
-      },
-    },
-    existName: {
-      async handler(ctx) {
-        return existName({ ...ctx.params, ctx });
+        return addMany({ ...ctx.params, ctx });
       },
     },
   },

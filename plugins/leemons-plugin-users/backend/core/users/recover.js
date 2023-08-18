@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
+const { randomString } = require('leemons-utils');
 const moment = require('moment');
 const constants = require('../../config/constants');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
@@ -16,47 +18,54 @@ const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
  * @param {any} ctx - Next context
  * @return {Promise<undefined>}
  * */
-async function recover(email, ctx) {
-  const user = await table.users.findOne(
-    { email },
-    { columns: ['id', 'locale', 'name', 'email', 'active'] }
-  );
-  if (!user) throw new global.utils.HttpError(401, 'Email not found');
+async function recover({ email, ctx }) {
+  const user = await ctx.tx.db.Users.findOne({ email })
+    .select(['id', 'locale', 'name', 'email', 'active'])
+    .lean();
+  if (!user) throw new LeemonsError(ctx, { message: 'Email not found', httpStatusCode: 401 });
+
   if (!user.active) {
-    await setUserForRegisterPassword(user.id);
-    await sendWelcomeEmailToUser(user, ctx);
-    throw new global.utils.HttpErrorWithCustomCode(400, 1001, 'User not active');
+    await setUserForRegisterPassword({ userId: user.id, ctx });
+    await sendWelcomeEmailToUser({ user, ctx });
+    throw new LeemonsError(ctx, { message: 'User not active', httpStatusCode: 400, code: 1001 });
   }
-  let recovery = await table.userRecoverPassword.findOne({ user: user.id });
+  let recovery = await ctx.tx.db.UserRecoverPassword.findOne({ user: user.id }).lean();
   if (recovery) {
     const now = moment(_.now());
     const updatedAt = moment(recovery.updated_at);
     if (now.diff(updatedAt, 'minutes') >= constants.timeForRecoverPassword) {
-      recovery = await table.userRecoverPassword.update(
+      recovery = await ctx.tx.db.UserRecoverPassword.update(
         { id: recovery.id },
-        { code: global.utils.randomString(12) }
+        { code: randomString(12) }
       );
     }
   } else {
-    recovery = await table.userRecoverPassword.create({
+    recovery = await ctx.tx.db.UserRecoverPassword.create({
       user: user.id,
-      code: global.utils.randomString(12),
+      code: randomString(12),
     });
   }
   if (leemons.getPlugin('emails')) {
-    const hostname = await getHostname();
-    await leemons
-      .getPlugin('emails')
-      .services.email.sendAsEducationalCenter(email, 'user-recover-password', user.locale, {
+    const hostname = await getHostname({ ctx });
+
+    await ctx.tx.call('emails.email.sendAsEducationalCenter', {
+      to: email,
+      templateName: 'user-recover-password',
+      language: user.locale,
+      context: {
         name: user.name,
-        resetUrl: `${hostname || ctx.request.header.origin}/users/reset?token=${encodeURIComponent(
+        resetUrl: `${hostname}/users/reset?token=${encodeURIComponent(
           await generateJWTToken({
-            id: user.id,
-            code: recovery.code,
+            payload: {
+              id: user.id,
+              code: recovery.code,
+            },
+            ctx,
           })
         )}`,
-        recoverUrl: `${hostname || ctx.request.header.origin}/users/recover`,
-      });
+        recoverUrl: `${hostname}/users/recover`,
+      },
+    });
   }
   return undefined;
 }
