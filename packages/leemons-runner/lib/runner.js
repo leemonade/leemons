@@ -288,7 +288,12 @@ class LeemonsRunner {
   mergeOptions() {
     this.config = _.defaultsDeep(this.configFile, ServiceBroker.defaultOptions);
     this.config = this.overwriteFromEnv(this.config);
-    this.config.errorHandler = (err, params) => ({ err, params });
+    this.config.errorHandler = (err, params) => {
+      if (params.event) {
+        return { err, params };
+      }
+      throw err;
+    };
 
     if (this.flags.silent) this.config.logger = false;
 

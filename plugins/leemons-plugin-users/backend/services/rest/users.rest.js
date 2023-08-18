@@ -13,10 +13,13 @@ module.exports = {
       method: 'GET',
       path: '/',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated()],
+    // middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      throw new Error('wtf');
+      /*
       const user = await detail({ userId: ctx.meta.userSession.id, ctx });
       return { status: 200, user };
+      */
     },
   },
 };

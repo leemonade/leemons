@@ -357,7 +357,6 @@ const mixin = ({
     error: {
       '*': [
         async function (ctx, err) {
-          console.error('[leemons-mongodb]', err);
           if (autoRollback && ctx.meta.transactionID) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);

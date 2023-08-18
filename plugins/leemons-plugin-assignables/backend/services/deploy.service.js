@@ -24,6 +24,7 @@ module.exports = {
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
       handler: async (ctx) => {
         await addMenuItemsDeploy({
