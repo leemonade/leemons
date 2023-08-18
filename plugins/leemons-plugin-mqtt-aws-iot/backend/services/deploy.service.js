@@ -7,18 +7,16 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
 
-const { registerAssignableRolesDeploy } = require('leemons-assignables');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
-
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { permissions, menuItems, assignableRoles } = require('../config/constants');
+const { permissions, widgets } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'content-creator.deploy',
+  name: 'mqtt-aws-iot.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -27,27 +25,7 @@ module.exports = () => ({
     }),
     LeemonsDeploymentManagerMixin(),
   ],
-  multiEvents: [
-    {
-      type: 'once-per-install',
-      events: ['menu-builder.init-main-menu', 'content-creator.init-permissions'],
-      handler: async (ctx) => {
-        const [mainMenuItem, ...otherMenuItems] = menuItems;
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: mainMenuItem,
-          ctx,
-        });
-        ctx.tx.emit('init-menu');
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: otherMenuItems,
-          ctx,
-        });
-        ctx.tx.emit('init-submenu');
-      },
-    },
-  ],
+  multiEvents: [],
   events: {
     'deployment-manager.install': async (ctx) => {
       // Locales
@@ -67,19 +45,16 @@ module.exports = () => ({
       });
       return null;
     },
+    // Widget items
+    'admin.init-widget-zones': async (ctx) => {
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+    },
     // Permissions
     'users.init-permissions': async (ctx) => {
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: permissions.permissions,
-        ctx,
-      });
-    },
-
-    'assignables.init-plugin': async (ctx) => {
-      await registerAssignableRolesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        assignableRoles,
         ctx,
       });
     },

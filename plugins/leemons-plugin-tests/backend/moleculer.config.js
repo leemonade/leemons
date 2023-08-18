@@ -1,4 +1,5 @@
-const ChannelsMiddleware = require('@moleculer/channels').Middleware;
+// 'use strict';
+// const ChannelsMiddleware = require('@moleculer/channels').Middleware;
 
 /**
  * Moleculer ServiceBroker configuration file
@@ -31,7 +32,7 @@ module.exports = {
   // Namespace of nodes to segment your nodes on the same network.
   namespace: '',
   // Unique node identifier. Must be unique in a namespace.
-  nodeID: 'leemons-multilanguage',
+  nodeID: 'leemons-tests',
   // Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
   metadata: {},
 
@@ -193,20 +194,23 @@ module.exports = {
 
   // Register custom middlewares
   middlewares: [
+    /*
     ChannelsMiddleware({
-      adapter: process.env.REDIS_URI,
+      adapter:
+        "redis://",
     }),
+    */
   ],
 
   // Register custom REPL commands.
   replCommands: null,
 
   // Called after broker created.
-  created(broker) {},
+  // created(broker) {},
 
   // Called after broker started.
-  async started(broker) {},
+  // async started(broker) {},
 
   // Called after broker stopped.
-  async stopped(broker) {},
+  // async stopped(broker) {},
 };

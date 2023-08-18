@@ -10,7 +10,6 @@ const path = require('path');
 const { registerAssignableRolesDeploy } = require('leemons-assignables');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
-
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { permissions, menuItems, assignableRoles } = require('../config/constants');
@@ -18,7 +17,7 @@ const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'content-creator.deploy',
+  name: 'tasks.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -30,9 +29,10 @@ module.exports = () => ({
   multiEvents: [
     {
       type: 'once-per-install',
-      events: ['menu-builder.init-main-menu', 'content-creator.init-permissions'],
+      events: ['menu-builder.init-main-menu', 'tasks.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
+
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: mainMenuItem,
@@ -75,7 +75,6 @@ module.exports = () => ({
         ctx,
       });
     },
-
     'assignables.init-plugin': async (ctx) => {
       await registerAssignableRolesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,

@@ -103,6 +103,7 @@ module.exports = () => ({
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -121,11 +122,6 @@ module.exports = () => ({
     },
     'dashboard.init-widget-zones': async (ctx) => {
       // Widgets
-      console.log('------------ZONAS--------------');
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-    },
-    'calendar.init-widget-zones': async (ctx) => {
-      console.log('------------ITEMS--------------');
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
 
