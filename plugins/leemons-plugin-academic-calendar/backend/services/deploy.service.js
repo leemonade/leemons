@@ -26,12 +26,14 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: [
         'menu-builder.init-main-menu',
         'academic-portfolio.init-permissions',
         'academic-calendar.init-permissions',
       ],
       handler: async (ctx) => {
+        console.log('---- ME LLAMO', ctx.event.name);
         const [mainMenuItem, ...otherMenuItems] = menuItems;
 
         await addMenuItemsDeploy({

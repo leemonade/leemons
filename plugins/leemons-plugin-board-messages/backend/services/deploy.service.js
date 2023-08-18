@@ -27,6 +27,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['dashboard.init-widget-zones', 'academic-portfolio.init-widget-zones'],
       handler: async (ctx) => {
         await addWidgetZonesDeploy({

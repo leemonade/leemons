@@ -26,6 +26,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['menu-builder.init-main-menu', 'agrades.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
