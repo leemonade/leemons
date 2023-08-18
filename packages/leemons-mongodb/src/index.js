@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const mixin = require('./mixin');
+const { mixin } = require('./mixin');
 
 module.exports = {
   LeemonsMongoDBMixin: mixin,
