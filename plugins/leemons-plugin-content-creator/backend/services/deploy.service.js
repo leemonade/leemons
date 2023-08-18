@@ -86,8 +86,8 @@ module.exports = () => ({
             })
           )
         );
+        await setKey(ctx.tx.db.KeyValue, 'init-assignables');
       }
-      await setKey(ctx.tx.db.KeyValue, 'init-assignables');
     },
   },
   created() {
