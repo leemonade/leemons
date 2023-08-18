@@ -9,6 +9,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const { add, list, detail, existName } = require('../core/centers');
+const restActions = require('./rest/centers.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
   ],
 
   actions: {
+    ...restActions,
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });

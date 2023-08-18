@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const slugify = require('slugify');
 const existName = require('./existName');
 const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/createNecessaryRolesForProfilesAccordingToCenters');
@@ -13,10 +14,10 @@ const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/c
  * */
 async function add({ id, name, locale, limits, ctx, ...centerData }) {
   if (await existName({ name, id, ctx }))
-    throw new Error(`Center with name '${name}' already exists`);
+    throw new LeemonsError(ctx, { message: `Center with name '${name}' already exists` });
 
   if (!(await ctx.tx.call('multilanguage.locales.has', { code: locale }))) {
-    throw new Error(`The locale '${locale}' not exists`);
+    throw new LeemonsError(ctx, { message: `The locale '${locale}' not exists` });
   }
 
   let center = null;
