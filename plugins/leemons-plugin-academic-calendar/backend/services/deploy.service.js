@@ -71,14 +71,11 @@ module.exports = () => ({
 
     // Permissions
     'users.init-permissions': async (ctx) => {
-      console.log('EN EL EVENTO --------');
-
-      throw new Error('miau');
-      /** await addPermissionsDeploy({
+      await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: permissions.permissions,
         ctx,
-      }); */
+      });
     },
   },
   created() {

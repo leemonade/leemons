@@ -1,38 +1,3 @@
-function wrapEventErrorHandler(handler) {
-  return function errorHandlerMiddleware(ctx) {
-    // Call the handler
-    return handler(ctx)
-      .catch((err) => {
-        console.log('petazo evento');
-        if (!(err instanceof Error)) err = new Error(err);
-
-        this.logger.debug(
-          `Error occured in the '${ctx.event.name}' event handler in the '${ctx.service.fullName}' service.`,
-          { requestID: ctx.requestID },
-          err
-        );
-
-        Object.defineProperty(err, 'ctx', {
-          value: ctx,
-          writable: true,
-          enumerable: false,
-        });
-
-        // Call global errorHandler
-        return ctx.broker.errorHandler(err, {
-          ctx,
-          service: ctx.service,
-          event: ctx.event,
-        });
-      })
-      .catch((err) => {
-        console.log('dio otro pete por que no se maneja');
-        // No global error Handler, or thrown further, so we handle it because it's an event handler.
-        ctx.broker.logger.error(err);
-      });
-  }.bind(this);
-}
-
 /**
  * Moleculer ServiceBroker configuration file
  *
@@ -60,6 +25,7 @@ function wrapEventErrorHandler(handler) {
  *
  * @type {import('moleculer').BrokerOptions}
  */
+
 module.exports = {
   // Namespace of nodes to segment your nodes on the same network.
   namespace: '',

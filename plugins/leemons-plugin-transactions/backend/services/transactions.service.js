@@ -174,7 +174,7 @@ module.exports = (broker) => ({
         if (!ctx.meta.transactionID) {
           throw new Error('Need ctx.meta.transactionID');
         }
-        console.log(`-------- rollback - ${ctx.meta.transactionID}`);
+
         let transaction = await Transaction.findOne({
           _id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { rollbackTransaction } = require('leemons-transactions');
 const { LeemonsError } = require('leemons-error');
+const { ObjectId } = require('mongoose').Types;
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');
 const { findById } = require('./queries/findById');
@@ -330,7 +331,12 @@ module.exports = ({
 
         switch (ctx.params.action) {
           case 'removeMany':
-            await model.deleteMany({ id: ctx.params.data });
+            await model.deleteMany({
+              $or: [
+                { id: ctx.params.data },
+                { _id: _.filter(ctx.params.data, (id) => ObjectId.isValid(id)) },
+              ],
+            });
             break;
           case 'createMany':
             await model.create(ctx.params.data);
