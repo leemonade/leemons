@@ -52,7 +52,6 @@ module.exports = () => ({
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
-        console.log(' en savePlugins ');
         return savePluginsToDeployment(ctx, ctx.params);
       },
     },
