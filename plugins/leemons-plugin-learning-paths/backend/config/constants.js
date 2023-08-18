@@ -96,6 +96,46 @@ const widgets = {
   ],
 };
 
+const assignableRoles = [
+  {
+    role: 'learningpaths.module',
+    options: {
+      // Not used yet
+      dashboardUrl: '/private/learning-paths/modules/dashboard/:id',
+      teacherDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      studentDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      evaluationDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      previewUrl: '/private/learning-paths/modules/:id/view',
+      creatable: true,
+      createUrl: '/private/learning-paths/modules/new',
+      canUse: [], // Usable by the plugin owner and assignables plugin
+      pluralName: { en: 'modules', es: 'módulos' },
+      singularName: { en: 'module', es: 'módulo' },
+      order: 6,
+      menu: {
+        item: {
+          iconSvg: '/public/learning-paths/modules-leebrary-icon.svg',
+          activeIconSvg: '/public/learning-paths/modules-leebrary-icon.svg',
+          label: {
+            en: 'Modules',
+            es: 'Módulos',
+          },
+        },
+        permissions: [
+          {
+            permissionName: permissionNames.modules,
+            actionNames: ['view', 'admin'],
+          },
+        ],
+      },
+
+      componentOwner: 'learning-paths',
+      listCardComponent: 'ListCard',
+      detailComponent: 'Detail',
+    },
+  },
+];
+
 module.exports = {
   pluginName,
 
@@ -106,4 +146,5 @@ module.exports = {
   },
 
   widgets,
+  assignableRoles,
 };
