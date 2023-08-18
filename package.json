@@ -33,7 +33,7 @@
     "start:app": "yarn workspace leemons-app backend:dev",
     "done": "echo Done ✨",
     "check": "start-server-and-test 'yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
-    "postinstall": "husky install"
+    "prepare": "husky install"
   },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {

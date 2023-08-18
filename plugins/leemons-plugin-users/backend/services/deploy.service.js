@@ -14,6 +14,9 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { addWidgetZonesDeploy } = require('leemons-widgets');
 const { getEmailTypes } = require('leemons-emails');
+const {
+  updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
+} = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
 
 const { getServiceModels } = require('../models');
 const { addMany } = require('../core/actions');
@@ -138,11 +141,6 @@ module.exports = {
         permissions: defaultPermissions,
         ctx,
       });
-      // Default Actions
-      // eslint-disable-next-line global-require
-      const actionsService = require('../core/actions');
-      await actionsService.init({ ctx });
-      ctx.tx.emit('init-actions');
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -184,10 +182,6 @@ module.exports = {
       return null;
     },
     'dataset.save-field': async (ctx) => {
-      const {
-        updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
-        // eslint-disable-next-line global-require
-      } = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
       await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(ctx.params);
     },
     'users.change-platform-locale': async (ctx) => {

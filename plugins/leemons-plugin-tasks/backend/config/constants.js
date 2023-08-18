@@ -188,6 +188,44 @@ const menuItems = [
   },
 ];
 
+const assignableRoles = [
+  {
+    role: 'task',
+    options: {
+      teacherDetailUrl: '/',
+      studentDetailUrl: '/private/tasks/student-detail/:id/:user',
+      evaluationDetailUrl: '/private/tasks/correction/:id/:user',
+      previewUrl: '/private/tasks/library/:id/view',
+      creatable: true,
+      createUrl: '/private/tasks/library/create',
+      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      pluralName: { en: 'tasks', es: 'tareas' },
+      singularName: { en: 'task', es: 'tarea' },
+      order: 2,
+      menu: {
+        item: {
+          iconSvg: '/public/tasks/leebrary-menu-icon.svg',
+          activeIconSvg: '/public/tasks/leebrary-menu-icon.svg',
+          label: {
+            en: 'Tasks',
+            es: 'Tareas',
+          },
+        },
+        permissions: [
+          {
+            permissionName: 'plugins.tasks.library',
+            actionNames: ['view', 'admin'],
+          },
+        ],
+      },
+
+      componentOwner: 'plugins.tasks',
+      listCardComponent: 'ListCard',
+      detailComponent: 'Detail',
+    },
+  },
+];
+
 const widgets = {
   zones: [{ key: `${permissionsPrefix}.class.students.tasks` }],
   items: [
@@ -215,5 +253,6 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  assignableRoles,
   widgets,
 };

@@ -8,7 +8,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
  * @typedef {import('http').ServerResponse} ServerResponse HTTP Server Response
  * @typedef {import('moleculer-web').ApiSettingsSchema} ApiSettingsSchema API Setting Schema
  */
-
+// ad
 module.exports = {
   name: 'gateway',
   mixins: [ApiGateway, LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false })],
@@ -127,7 +127,7 @@ module.exports = {
     ],
 
     // Do not log client side errors (does not log an error response when the error.code is 400<=X<500)
-    log4XXResponses: false,
+    log4XXResponses: true,
     // Logging the request parameters. Set to any log level to enable it. E.g. "info"
     logRequestParams: null,
     // Logging the response data. Set to any log level to enable it. E.g. "info"

@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-test",
+  "name": "leemons-plugin-tests",
   "version": "1.0.0",
-  "description": "Leemons test plugin",
+  "description": "Leemons tests plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
+    "leemons-assignables": "1.0.0",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
     "leemons-error": "1.0.0",

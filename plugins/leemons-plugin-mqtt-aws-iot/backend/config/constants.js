@@ -7,10 +7,6 @@ const permissions = [];
 
 const permissionsBundles = {};
 
-const menuItems = [];
-
-const removeMenuItems = ['aws-iot'];
-
 const widgets = {
   zones: [],
   items: [
@@ -40,7 +36,5 @@ module.exports = {
     names: permissionNames,
     bundles: permissionsBundles,
   },
-  removeMenuItems,
-  menuItems,
   widgets,
 };
