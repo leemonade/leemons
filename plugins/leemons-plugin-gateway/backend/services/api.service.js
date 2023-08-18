@@ -8,7 +8,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
  * @typedef {import('http').ServerResponse} ServerResponse HTTP Server Response
  * @typedef {import('moleculer-web').ApiSettingsSchema} ApiSettingsSchema API Setting Schema
  */
-
+// ad
 module.exports = {
   name: 'gateway',
   mixins: [ApiGateway, LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false })],
