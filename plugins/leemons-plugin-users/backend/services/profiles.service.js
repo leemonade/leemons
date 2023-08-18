@@ -24,7 +24,7 @@ const {
   getRoleForRelationshipProfileCenter,
   existMany,
 } = require('../core/profiles');
-const restActions = require('./rest/actions.rest');
+const restActions = require('./rest/profiles.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {

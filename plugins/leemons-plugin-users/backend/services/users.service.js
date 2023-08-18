@@ -102,16 +102,6 @@ module.exports = {
         return centers({ ...ctx.params, ctx });
       },
     },
-    detailForJWT: {
-      handler(ctx) {
-        return detailForJWT({ ...ctx.params, ctx });
-      },
-    },
-    hasPermissionCTX: {
-      handler(ctx) {
-        return hasPermissionCTX({ ...ctx.params, ctx });
-      },
-    },
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });
