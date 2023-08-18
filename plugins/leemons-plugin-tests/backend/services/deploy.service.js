@@ -11,13 +11,14 @@ const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
+const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { registerAssignableRolesDeploy } = require('leemons-assignables');
-const { permissions, assignableRoles } = require('../config/constants');
+const { permissions, assignableRoles, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'scorm.deploy',
+  name: 'tests.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -26,7 +27,27 @@ module.exports = () => ({
     }),
     LeemonsDeploymentManagerMixin(),
   ],
-  multiEvents: [],
+  multiEvents: [
+    {
+      type: 'once-per-install',
+      events: ['menu-builder.init-main-menu', 'academic-portfolio.init-permissions'],
+      handler: async (ctx) => {
+        const [mainMenuItem, ...otherMenuItems] = menuItems;
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: mainMenuItem,
+          ctx,
+        });
+        ctx.tx.emit('init-menu');
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: otherMenuItems,
+          ctx,
+        });
+        ctx.tx.emit('init-submenu');
+      },
+    },
+  ],
   events: {
     'deployment-manager.install': async (ctx) => {
       // Locales
