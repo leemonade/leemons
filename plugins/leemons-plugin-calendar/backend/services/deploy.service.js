@@ -88,6 +88,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: ['users.init-menu', 'calendar.init-permissions'],
       handler: async (ctx) => {
         await addMenuItemsDeploy({

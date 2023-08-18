@@ -52,6 +52,7 @@ module.exports = () => ({
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
+        console.log(' en savePlugins ');
         return savePluginsToDeployment(ctx, ctx.params);
       },
     },
@@ -111,15 +112,17 @@ module.exports = () => ({
 
   events: {
     '$broker.started': async function () {
-      try {
-        if (process.env.DISABLE_AUTO_INIT !== 'true') {
-          console.info('- Auto init -');
-          await autoInit(this.broker);
-          console.info('- Auto init finished -');
+      setTimeout(async () => {
+        try {
+          if (process.env.DISABLE_AUTO_INIT !== 'true') {
+            console.info('- Auto init -');
+            await autoInit(this.broker);
+            console.info('- Auto init finished -');
+          }
+        } catch (e) {
+          console.error('- Auto init error -', e);
         }
-      } catch (e) {
-        console.error('- Auto init error -', e);
-      }
+      }, 10000);
     },
   },
 });

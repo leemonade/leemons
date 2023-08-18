@@ -15,7 +15,7 @@ module.exports = {
       CurrentVersions: models.currentVersionsModel,
       Tags: models.tagsModel,
       Versions: models.versionsModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::academic-portfolio_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: 'v1::common_KeyValue' }),
     };
   },
 };

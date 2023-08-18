@@ -27,6 +27,7 @@ module.exports = () => ({
   ],
   multiEvents: [
     {
+      type: 'once-per-install',
       events: [
         'menu-builder.init-main-menu',
         // 'leebrary.library.pluginDidLoadServices', // ? Es necesario este evento todavía?

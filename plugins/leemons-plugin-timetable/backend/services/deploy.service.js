@@ -28,6 +28,7 @@ module.exports = () => ({
   //! Comentado porque aparecía comentado en el "viejo" events.js
   // multiEvents: [
   //   {
+  //     type: 'once-per-install',
   //     events: ['menu-builder.init-main-menu', 'timetable.init-permissions'],
   //     handler: async (ctx) => {
   // await addMenuItemsDeploy({

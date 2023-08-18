@@ -94,6 +94,9 @@ module.exports = (broker) => ({
           { $inc: { pending: 1 } },
           { lean: true }
         );
+
+        // console.log(`pendding - ${ctx.meta.transactionID} - ${transaction.pending}`);
+
         if (!transaction)
           throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
         return true;
@@ -115,6 +118,7 @@ module.exports = (broker) => ({
           { $inc: { finished: 1 } },
           { lean: true }
         );
+        // console.log(`finished - ${ctx.meta.transactionID} - ${transaction.finished}`);
         if (!transaction)
           throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
         return true;
@@ -170,6 +174,7 @@ module.exports = (broker) => ({
         if (!ctx.meta.transactionID) {
           throw new Error('Need ctx.meta.transactionID');
         }
+
         let transaction = await Transaction.findOne({
           _id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,

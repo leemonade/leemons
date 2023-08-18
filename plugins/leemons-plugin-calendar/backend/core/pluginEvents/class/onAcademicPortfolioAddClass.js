@@ -1,7 +1,5 @@
 const randomColor = require('randomcolor');
 
-const { add } = require('../../calendar/add');
-
 function onAcademicPortfolioAddClass({
   // data, //old unused param
   class: {
@@ -31,10 +29,9 @@ function onAcademicPortfolioAddClass({
         config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', icon.id);
       }
 
-      const calendar = await add({
+      const calendar = await ctx.tx.call('calendar.calendar.add', {
         item: ctx.prefixPN(`class.${id}`),
         config,
-        ctx,
       });
 
       await ctx.tx.db.ClassCalendar.create({
