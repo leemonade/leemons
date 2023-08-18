@@ -18,11 +18,9 @@ const {
   isSuperAdmin,
   userSessionCheckUserAgentDatasets,
   centers,
-  hasPermissionCTX,
   updateEmail,
   updatePassword,
 } = require('../core/users');
-const { detailForJWT } = require('../core/users/jwt/detailForJWT');
 const {
   getUserAgentsInfo,
   searchUserAgents,
@@ -73,7 +71,6 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-
     detail: {
       async handler(ctx) {
         const users = await detail({ ...ctx.params, ctx });
