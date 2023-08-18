@@ -44,13 +44,6 @@ module.exports = {
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
 
-      // Permissions
-      await addPermissionsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        permissions: permissions.permissions,
-        ctx,
-      });
-
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -87,6 +80,15 @@ module.exports = {
         keyValueModel: ctx.tx.db.KeyValue,
         locale: ctx.params.code,
         i18nPath: path.resolve(__dirname, '../i18n'),
+        ctx,
+      });
+    },
+    // Permissions
+    'users.init-permissions': async (ctx) => {
+      await addPermissionsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        permissions,
+        ctx,
       });
     },
   },

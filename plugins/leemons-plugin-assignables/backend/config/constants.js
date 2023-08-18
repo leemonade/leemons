@@ -2,13 +2,31 @@ const permissionsPrefix = 'assignables';
 
 const permissionsNames = {
   activities: `${permissionsPrefix}.activities`,
+  ongoing: `${permissionsPrefix}.ongoing`,
+  history: `${permissionsPrefix}.history`,
 };
 
 const permissions = [
   {
-    permissionsName: permissionsNames.activities,
+    permissionName: permissionsNames.activities,
     actions: ['view'],
     localizationName: { es: 'Actividades', en: 'Activities' },
+  },
+  {
+    permissionName: permissionsNames.ongoing,
+    actions: ['view'],
+    localizationName: {
+      es: 'Actividades - En curso',
+      en: 'Activities - Ongoing',
+    },
+  },
+  {
+    permissionName: permissionsNames.history,
+    actions: ['view'],
+    localizationName: {
+      es: 'Actividades - Histórico',
+      en: 'Activities - History',
+    },
   },
 ];
 
@@ -45,7 +63,7 @@ const widgets = {
   items: [
     // --- Class (Ongoing tab) ---
     {
-      zoneKey: 'plugins.dashboard.class.tabs',
+      zoneKey: 'dashboard.class.tabs',
       key: `${permissionsPrefix}.class.tab.ongoing`,
       url: 'dashboard/tab-ongoing/index',
       properties: {
@@ -54,7 +72,7 @@ const widgets = {
     },
     // --- NYA (Subject Dashboard Ongoing) ---
     {
-      // zoneKey: 'plugins.dashboard.class.control-panel',
+      // zoneKey: 'dashboard.class.control-panel',
       zoneKey: `${permissionsPrefix}.class.ongoing`,
       key: `${permissionsPrefix}.dashboard.subject.need-your-attention`,
       url: 'dashboard/nya/index',
@@ -67,7 +85,7 @@ const widgets = {
     },
     // --- NYA (Main Dashboard) ---
     {
-      zoneKey: 'plugins.dashboard.program.left',
+      zoneKey: 'dashboard.program.left',
       key: `${permissionsPrefix}.dashboard.need-your-attention`,
       url: 'dashboard/nya/index',
     },

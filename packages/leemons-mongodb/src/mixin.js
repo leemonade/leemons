@@ -357,7 +357,9 @@ const mixin = ({
     error: {
       '*': [
         async function (ctx, err) {
-          console.error('[MongoDB Hook Error] - ', err);
+          if (!err.message.includes('LeemonsMiddlewareAuthenticated')) {
+            console.error('[MongoDB Hook Error] - ', err);
+          }
           if (autoRollback && ctx.meta.transactionID) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);
