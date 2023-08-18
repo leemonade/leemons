@@ -1,0 +1,13 @@
+{
+  "name": "leemons-testing",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "build": "turbo build"
+  },
+  "dependencies": {
+    "leemons-mongodb": "1.0.0",
+    "mongodb-memory-server-core": "^8.15.0"
+  }
+}

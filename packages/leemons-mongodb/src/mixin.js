@@ -301,7 +301,7 @@ function modifyCTX(
   };
 }
 
-module.exports = ({
+const mixin = ({
   waitToRollbackFinishOnError = true,
   autoDeploymentID = true,
   autoTransaction = true,
@@ -408,3 +408,10 @@ module.exports = ({
     });
   },
 });
+
+module.exports = {
+  mixin,
+  getModelActions,
+  getDBModels,
+  modifyCTX,
+};
