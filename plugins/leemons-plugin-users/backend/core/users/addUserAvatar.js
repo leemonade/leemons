@@ -1,4 +1,4 @@
-async function addUserAvatar({ user, avatar, ctx } = {}) {
+async function addUserAvatar({ user, avatar, ctx }) {
   const assetData = {
     indexable: false,
     public: true,

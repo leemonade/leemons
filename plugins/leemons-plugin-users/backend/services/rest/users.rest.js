@@ -22,6 +22,7 @@ const {
   update,
   disable,
   active,
+  saveDataForUserAgentDatasets,
 } = require('../../core/user-agents');
 const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
 
@@ -556,6 +557,7 @@ module.exports = {
       });
     },
   },
+  // TODO @askJaime: En la ruta aparece -> disableUserAgentDatasetCheck: true, hay que reflejarlo aquí de alguna forma?
   getDataForUserAgentDatasetsRest: {
     rest: {
       path: '/get-data-for-user-agent-datasets',
@@ -564,6 +566,21 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const data = await getDataForUserAgentDatasets({ ctx });
+      return { status: 200, data };
+    },
+  },
+  // TODO @askJaime: En la ruta aparece -> disableUserAgentDatasetCheck: true, hay que reflejarlo aquí de alguna forma?
+  saveDataForUserAgentDatasetsRest: {
+    rest: {
+      path: '/save-data-for-user-agent-datasets',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await saveDataForUserAgentDatasets({
+        data: ctx.request.body,
+        ctx,
+      });
       return { status: 200, data };
     },
   },

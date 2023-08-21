@@ -8,7 +8,7 @@ const URL = require('url');
  * @return {Promise<any>}
  * */
 async function setHostnameApi({ value, ctx }) {
-  const url = URL.parse(hostname, true);
+  const url = URL.parse(value, true);
   return ctx.tx.db.Config.updateOne(
     { key: 'platform-hostname-api' },
     {

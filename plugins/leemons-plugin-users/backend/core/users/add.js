@@ -38,7 +38,6 @@ async function add({
   password,
   active,
   roles,
-  sendWellcomeEmail,
   ctx,
 }) {
   if (await exist({ query: { email }, ctx }))
