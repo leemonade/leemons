@@ -557,7 +557,7 @@ module.exports = {
       });
     },
   },
-  // TODO @askJaime: En la ruta aparece -> disableUserAgentDatasetCheck: true, hay que reflejarlo aquí de alguna forma?
+  // TODO dataset middleware?
   getDataForUserAgentDatasetsRest: {
     rest: {
       path: '/get-data-for-user-agent-datasets',
@@ -569,7 +569,7 @@ module.exports = {
       return { status: 200, data };
     },
   },
-  // TODO @askJaime: En la ruta aparece -> disableUserAgentDatasetCheck: true, hay que reflejarlo aquí de alguna forma?
+
   saveDataForUserAgentDatasetsRest: {
     rest: {
       path: '/save-data-for-user-agent-datasets',

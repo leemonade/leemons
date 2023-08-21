@@ -49,7 +49,7 @@ async function add({
     name,
     surnames,
     secondSurname,
-    birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
+    birthdate,
     email,
     gender,
     password: password ? await encryptPassword(password) : undefined,
@@ -85,9 +85,8 @@ async function add({
     });
   }
 
-  if (await ctx.tx.call('deployment-manager.pluginIsInstalled', { pluginName: 'calendar' })) {
-    await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
-  }
+  await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
+
   return user;
 }
 
