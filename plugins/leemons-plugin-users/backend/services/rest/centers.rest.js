@@ -13,7 +13,7 @@ const { list, add, remove } = require('../../core/centers');
 module.exports = {
   listRest: {
     rest: {
-      path: '/centers',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -57,7 +57,7 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/centers/add',
+      path: '/add',
       method: 'POST',
     },
     middlewares: [
@@ -78,7 +78,7 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      path: '/centers/remove',
+      path: '/remove',
       method: 'POST',
     },
     middlewares: [

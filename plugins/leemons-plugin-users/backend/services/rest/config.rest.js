@@ -30,7 +30,7 @@ module.exports = {
   },
   saveSystemDataFieldsConfigRest: {
     rest: {
-      path: '/config/system-data-fields',
+      path: '/system-data-fields',
       method: 'POST',
     },
     middlewares: [
