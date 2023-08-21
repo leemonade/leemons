@@ -16,7 +16,7 @@ const { updateSubjectType, addSubjectType, listSubjectType } = require('../../co
 module.exports = {
   postSubjectTypeRest: {
     rest: {
-      path: '/subject-type',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -34,7 +34,7 @@ module.exports = {
   },
   putSubjectTypeRest: {
     rest: {
-      path: '/subject-type',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -52,7 +52,7 @@ module.exports = {
   },
   listSubjectTypeRest: {
     rest: {
-      path: '/subject-type',
+      path: '/',
       method: 'GET',
     },
     middlewares: [

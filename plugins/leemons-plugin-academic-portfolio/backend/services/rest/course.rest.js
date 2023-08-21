@@ -15,7 +15,7 @@ const { updateCourse, listCourses } = require('../../core/courses');
 module.exports = {
   postCourseRest: {
     rest: {
-      path: '/course',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -36,7 +36,7 @@ module.exports = {
   },
   putCourseRest: {
     rest: {
-      path: '/course',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -54,7 +54,7 @@ module.exports = {
   },
   listCourseRest: {
     rest: {
-      path: '/course',
+      path: '/',
       method: 'GET',
     },
     middlewares: [

@@ -33,7 +33,7 @@ const {
 module.exports = {
   postSubjectRest: {
     rest: {
-      path: '/subject',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -55,7 +55,7 @@ module.exports = {
   },
   putSubjectRest: {
     rest: {
-      path: '/subject',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -77,7 +77,7 @@ module.exports = {
   },
   deleteSubjectRest: {
     rest: {
-      path: '/subject/:id',
+      path: '/:id',
       method: 'DELETE',
     },
     middlewares: [
@@ -96,7 +96,7 @@ module.exports = {
   },
   putSubjectCreditsRest: {
     rest: {
-      path: '/subject/credits',
+      path: '/credits',
       method: 'PUT',
     },
     middlewares: [
@@ -116,7 +116,7 @@ module.exports = {
   },
   getSubjectCreditsRest: {
     rest: {
-      path: '/subject/credits',
+      path: '/credits',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -136,7 +136,7 @@ module.exports = {
   },
   listSubjectCreditsForProgramRest: {
     rest: {
-      path: '/subject/credits/list',
+      path: '/credits/list',
       method: 'GET',
     },
     middlewares: [
@@ -156,7 +156,7 @@ module.exports = {
   },
   listSubjectRest: {
     rest: {
-      path: '/subject',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
@@ -196,7 +196,7 @@ module.exports = {
   },
   subjectByIdsRest: {
     rest: {
-      path: '/subject/:id',
+      path: '/:id',
       method: 'GET',
     },
     middlewares: [

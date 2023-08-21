@@ -16,7 +16,7 @@ const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/kn
 module.exports = {
   postKnowledgeRest: {
     rest: {
-      path: '/knowledge',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -34,7 +34,7 @@ module.exports = {
   },
   putKnowledgeRest: {
     rest: {
-      path: '/knowledge',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -52,7 +52,7 @@ module.exports = {
   },
   listKnowledgeRest: {
     rest: {
-      path: '/knowledge',
+      path: '/',
       method: 'GET',
     },
     middlewares: [

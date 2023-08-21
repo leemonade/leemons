@@ -32,7 +32,7 @@ const { classByIds } = require('../../core/classes/classByIds');
 module.exports = {
   haveClassesRest: {
     rest: {
-      path: '/classes/have',
+      path: '/have',
       method: 'GET',
     },
     middlewares: [
@@ -50,7 +50,7 @@ module.exports = {
   },
   postClassRest: {
     rest: {
-      path: '/class',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -72,7 +72,7 @@ module.exports = {
   },
   putClassRest: {
     rest: {
-      path: '/class',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -94,7 +94,7 @@ module.exports = {
   },
   putClassManyRest: {
     rest: {
-      path: '/class/many',
+      path: '/many',
       method: 'PUT',
     },
     middlewares: [
@@ -112,7 +112,7 @@ module.exports = {
   },
   postClassInstanceRest: {
     rest: {
-      path: '/class/instance',
+      path: '/instance',
       method: 'POST',
     },
     middlewares: [
@@ -130,7 +130,7 @@ module.exports = {
   },
   listClassRest: {
     rest: {
-      path: '/class',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
@@ -210,7 +210,7 @@ module.exports = {
   },
   postClassStudentsRest: {
     rest: {
-      path: '/class/students',
+      path: '/students',
       method: 'POST',
     },
     middlewares: [
@@ -234,7 +234,7 @@ module.exports = {
   },
   postClassTeachersRest: {
     rest: {
-      path: '/class/teachers',
+      path: '/teachers',
       method: 'POST',
     },
     middlewares: [
@@ -261,7 +261,7 @@ module.exports = {
   },
   listStudentClassesRest: {
     rest: {
-      path: '/student/:id/classes',
+      path: '/student/:id',
       method: 'GET',
     },
     middlewares: [
@@ -297,7 +297,7 @@ module.exports = {
   },
   listTeacherClassesRest: {
     rest: {
-      path: '/teacher/:id/classes',
+      path: '/teacher/:id',
       method: 'GET',
     },
     middlewares: [
@@ -333,7 +333,7 @@ module.exports = {
   },
   removeClassRest: {
     rest: {
-      path: '/class/:id',
+      path: '/:id',
       method: 'DELETE',
     },
     middlewares: [
@@ -351,7 +351,7 @@ module.exports = {
   },
   removeStudentRest: {
     rest: {
-      path: '/class/remove/students',
+      path: '/remove/students',
       method: 'POST',
     },
     middlewares: [
@@ -373,7 +373,7 @@ module.exports = {
   },
   listSessionClassesRest: {
     rest: {
-      path: '/session/classes',
+      path: '/session',
       method: 'POST',
     },
     middlewares: [
@@ -391,7 +391,7 @@ module.exports = {
   },
   classDetailForDashboardRest: {
     rest: {
-      path: '/class/dashboard/:id',
+      path: '/dashboard/:id',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -402,7 +402,8 @@ module.exports = {
   },
   classByIdsRest: {
     rest: {
-      path: '/classes',
+      // raw porque a diferencia del get a '/' no utiliza mongoDBPaginate();
+      path: '/raw-list',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

@@ -22,7 +22,7 @@ const settingsSchema = require('../../models/settings');
 module.exports = {
   getProfilesRest: {
     rest: {
-      path: '/settings/profiles',
+      path: '/profiles',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -33,7 +33,7 @@ module.exports = {
   },
   setProfilesRest: {
     rest: {
-      path: '/settings/profiles',
+      path: '/profiles',
       method: 'PUT',
     },
     middlewares: [
@@ -51,7 +51,7 @@ module.exports = {
   },
   isProfilesConfigRest: {
     rest: {
-      path: '/settings/profiles/is-config',
+      path: '/profiles/is-config',
       method: 'GET',
     },
     middlewares: [
@@ -69,7 +69,7 @@ module.exports = {
   },
   findOneRest: {
     rest: {
-      path: '/settings',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
@@ -87,7 +87,7 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/settings',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -115,7 +115,7 @@ module.exports = {
   // TODO Verificar que esto se va a usar
   enableMenuItemRest: {
     rest: {
-      path: '/settings/enable-menu-item',
+      path: '/enable-menu-item',
       method: 'POST',
     },
     middlewares: [
