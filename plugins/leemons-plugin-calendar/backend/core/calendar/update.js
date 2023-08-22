@@ -26,9 +26,7 @@ async function update({ key, config, ctx }) {
       ...config,
       metadata: JSON.stringify(config.metadata),
     },
-    {
-      new: true,
-    }
+    { new: true, lean: true }
   );
 }
 
