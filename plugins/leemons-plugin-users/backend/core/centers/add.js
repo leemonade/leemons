@@ -61,7 +61,7 @@ async function add({ id, name, locale, limits, ctx, ...centerData }) {
             ...limit,
             center: center.id,
           },
-          { upsert: true, new: true }
+          { upsert: true, new: true, lean: true }
         )
       )
     );

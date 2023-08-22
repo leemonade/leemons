@@ -26,9 +26,7 @@ async function addUserAvatar({ user, avatar, ctx }) {
       avatar: `${coverUrl}?t=${Date.now()}`,
       avatarAsset: asset.id,
     },
-    {
-      new: true,
-    }
+    { new: true, lean: true }
   );
 
   return {

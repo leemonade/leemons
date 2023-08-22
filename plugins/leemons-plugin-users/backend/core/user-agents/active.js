@@ -25,7 +25,11 @@ async function active({ id, ctx }) {
       )
     ),
   ]);
-  return ctx.tx.db.UserAgent.findOneAndUpdate({ id }, { disabled: false }, { new: true });
+  return ctx.tx.db.UserAgent.findOneAndUpdate(
+    { id },
+    { disabled: false },
+    { new: true, lean: true }
+  );
 }
 
 module.exports = {

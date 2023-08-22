@@ -7,7 +7,7 @@ async function updateEmail({ id, email, ctx }) {
     throw new LeemonsError(ctx, { message: 'Email already exists' });
   }
 
-  return ctx.tx.db.Users.findOneAndUpdate({ id }, { email }, { new: true });
+  return ctx.tx.db.Users.findOneAndUpdate({ id }, { email }, { new: true, lean: true });
 }
 
 module.exports = { updateEmail };
