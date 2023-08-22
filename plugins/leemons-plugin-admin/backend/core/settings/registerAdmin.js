@@ -15,6 +15,7 @@ async function registerAdmin({ email, password, locale, ctx, ...user }) {
   }
 
   const profile = await ctx.tx.call('users.profiles.saveBySysName', profileSettings);
+  // test
 
   await ctx.tx.call('users.users.add', {
     email,
