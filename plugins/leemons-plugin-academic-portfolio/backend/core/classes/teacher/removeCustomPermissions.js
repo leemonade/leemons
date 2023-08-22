@@ -13,7 +13,7 @@ async function removeCustomPermissions({ teacherId, programId, ctx }) {
       await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
         userAgentId: teacherId,
         data: {
-          permissionName: `plugins.academic-portfolio.program.inside.${programId}`,
+          permissionName: `academic-portfolio.program.inside.${programId}`,
         },
       });
       const { teacher: teacherProfileId } = await getProfiles({ ctx });
@@ -21,7 +21,7 @@ async function removeCustomPermissions({ teacherId, programId, ctx }) {
       await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
         userAgentId: teacherId,
         data: {
-          permissionName: `plugins.academic-portfolio.program-profile.inside.${programId}-${teacherProfileId}`,
+          permissionName: `academic-portfolio.program-profile.inside.${programId}-${teacherProfileId}`,
         },
       });
     }

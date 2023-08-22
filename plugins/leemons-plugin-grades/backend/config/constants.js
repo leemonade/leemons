@@ -139,7 +139,7 @@ const menuItems = [
     item: {
       key: 'welcome',
       order: 1,
-      parentKey: 'rules',
+      parentKey: `${permissionsPrefix}.rules`,
       url: '/private/grades/welcome',
       label: {
         en: 'Welcome',
@@ -158,7 +158,7 @@ const menuItems = [
     item: {
       key: 'evaluations',
       order: 2,
-      parentKey: 'rules',
+      parentKey: `${permissionsPrefix}.rules`,
       url: '/private/grades/evaluations',
       label: {
         en: 'Evaluation system',
@@ -178,7 +178,7 @@ const menuItems = [
     item: {
       key: 'promotions',
       order: 3,
-      parentKey: 'rules',
+      parentKey: `${permissionsPrefix}.rules`,
       url: '/private/grades/promotions',
       label: {
         en: 'Promotion rules',
@@ -198,7 +198,7 @@ const menuItems = [
     item: {
       key: 'dependencies',
       order: 4,
-      parentKey: 'rules',
+      parentKey: `${permissionsPrefix}.rules`,
       url: '/private/grades/dependencies',
       label: {
         en: 'Dependencies',

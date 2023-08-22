@@ -20,7 +20,7 @@ const menuItems = [
     item: {
       key: 'attendance-control.attendance',
       order: 3,
-      parentKey: 'plugins.scores.scores',
+      parentKey: 'scores.scores',
       url: '/private/attendance-control/attendance',
       label: {
         en: 'Attendance',
@@ -35,8 +35,8 @@ const widgets = {
   zones: [],
   items: [
     {
-      zoneKey: 'plugins.academic-portfolio.class.students',
-      key: `plugins.attendance-control.class.header-bar`,
+      zoneKey: 'academic-portfolio.class.students',
+      key: `attendance-control.class.header-bar`,
       url: 'class-header-bar/index',
     },
   ],

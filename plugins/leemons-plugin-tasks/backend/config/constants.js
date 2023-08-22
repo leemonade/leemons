@@ -114,7 +114,7 @@ const menuItems = [
     item: {
       key: 'welcome',
       order: 1,
-      parentKey: 'tasks',
+      parentKey: `${permissionsPrefix}.tasks`,
       url: '/private/tasks/welcome',
       label: {
         en: 'Welcome',
@@ -133,7 +133,7 @@ const menuItems = [
     item: {
       key: 'profiles',
       order: 2,
-      parentKey: 'tasks',
+      parentKey: `${permissionsPrefix}.tasks`,
       url: '/private/tasks/profiles',
       label: {
         en: 'Profiles',
@@ -153,7 +153,7 @@ const menuItems = [
     item: {
       key: 'library',
       order: 3,
-      parentKey: 'tasks',
+      parentKey: `${permissionsPrefix}.tasks`,
       url: '/private/tasks/library',
       label: {
         en: 'Library',
@@ -172,7 +172,7 @@ const menuItems = [
     item: {
       key: 'new-task',
       order: 4,
-      parentKey: 'tasks',
+      parentKey: `${permissionsPrefix}.tasks`,
       url: '/private/tasks/library/create',
       label: {
         en: 'New task',
@@ -213,13 +213,13 @@ const assignableRoles = [
         },
         permissions: [
           {
-            permissionName: 'plugins.tasks.library',
+            permissionName: 'tasks.library',
             actionNames: ['view', 'admin'],
           },
         ],
       },
 
-      componentOwner: 'plugins.tasks',
+      componentOwner: 'tasks',
       listCardComponent: 'ListCard',
       detailComponent: 'Detail',
     },

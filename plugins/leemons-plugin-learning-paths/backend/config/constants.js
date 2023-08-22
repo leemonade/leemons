@@ -45,7 +45,7 @@ const menuItems = [
     item: {
       key: 'learningPaths.modules.new',
       order: 1,
-      parentKey: 'learningPaths',
+      parentKey: `${pluginName}.learning-paths`,
       url: '/private/learning-paths/modules/new',
       label: {
         es: 'Nuevo módulo',
@@ -63,7 +63,7 @@ const menuItems = [
     item: {
       key: 'learningPaths.modules.library',
       order: 2,
-      parentKey: 'learningPaths',
+      parentKey: `${pluginName}.learning-paths`,
       url: '/private/learning-paths/modules/library',
       label: {
         es: 'Biblioteca de módulos',

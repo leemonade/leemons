@@ -8,7 +8,7 @@ async function classDetailForDashboard({ classId, ctx }) {
 
   const hasPermission = await ctx.tx.call('users.permissions.userAgentHasCustomPermission', {
     userAgentId: _.map(userSession.userAgents, 'id'),
-    permissionName: `plugins.academic-portfolio.class.${classId}`,
+    permissionName: `academic-portfolio.class.${classId}`,
   });
   if (!hasPermission) {
     throw new LeemonsError(ctx, { message: 'You do not have permission to view this class.' });

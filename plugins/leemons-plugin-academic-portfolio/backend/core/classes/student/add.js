@@ -22,7 +22,7 @@ async function add({ class: _class, student, ctx }) {
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: student,
     data: {
-      permissionName: `plugins.academic-portfolio.class.${_class}`,
+      permissionName: `academic-portfolio.class.${_class}`,
       actionNames: ['view'],
     },
   });
@@ -30,7 +30,7 @@ async function add({ class: _class, student, ctx }) {
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: student,
     data: {
-      permissionName: `plugins.academic-portfolio.class-profile.${_class}.${studentProfileId}`,
+      permissionName: `academic-portfolio.class-profile.${_class}.${studentProfileId}`,
       actionNames: ['view'],
     },
   });
@@ -39,7 +39,7 @@ async function add({ class: _class, student, ctx }) {
     await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
-        permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+        permissionName: `academic-portfolio.program.inside.${program.id}`,
         actionNames: ['view'],
       },
     });
@@ -51,7 +51,7 @@ async function add({ class: _class, student, ctx }) {
     await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
-        permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
+        permissionName: `academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
         actionNames: ['view'],
       },
     });

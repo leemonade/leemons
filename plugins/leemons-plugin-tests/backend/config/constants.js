@@ -94,7 +94,7 @@ const menuItems = [
     item: {
       key: 'test',
       order: 2,
-      parentKey: 'tests',
+      parentKey: `${permissionsPrefix}.tests`,
       url: '/private/tests',
       label: {
         en: 'Tests library',
@@ -113,7 +113,7 @@ const menuItems = [
     item: {
       key: 'new-test',
       order: 3,
-      parentKey: 'tests',
+      parentKey: `${permissionsPrefix}.tests`,
       url: '/private/tests/new',
       label: {
         en: 'New tests',
@@ -133,7 +133,7 @@ const menuItems = [
     item: {
       key: 'questionBanks',
       order: 4,
-      parentKey: 'tests',
+      parentKey: `${permissionsPrefix}.tests`,
       url: '/private/tests/questions-banks',
       label: {
         en: 'Questions banks',
@@ -152,7 +152,7 @@ const menuItems = [
     item: {
       key: 'new-questionBanks',
       order: 5,
-      parentKey: 'tests',
+      parentKey: `${permissionsPrefix}.tests`,
       url: '/private/tests/questions-banks/new',
       label: {
         en: 'New question bank',
@@ -199,7 +199,7 @@ const assignableRoles = [
         ],
       },
 
-      componentOwner: 'plugins.tests',
+      componentOwner: 'tests',
       listCardComponent: 'TestsListCard',
       detailComponent: 'TestsDetail',
     },
