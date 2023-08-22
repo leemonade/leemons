@@ -33,7 +33,7 @@ async function updateProfiles({ items, ctx }) {
             profile,
             zoneKey: item.zoneKey,
             key: item.key,
-          })
+          }).then((mongooseDoc) => mongooseDoc.toObject())
         )
       )
     )
