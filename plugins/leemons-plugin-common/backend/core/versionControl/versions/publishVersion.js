@@ -44,7 +44,7 @@ module.exports = async function publishVersion({
 
   const versionObject = parseVersion({ version: versionToUpdate.version, ctx });
 
-  await ctx.tx.db.Versions.findOneAndUpdate(
+  await ctx.tx.db.Versions.updateOne(
     {
       uuid: versionToUpdate.uuid,
       ...versionObject,
