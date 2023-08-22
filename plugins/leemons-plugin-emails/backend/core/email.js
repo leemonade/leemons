@@ -101,7 +101,7 @@ class Email {
     throw new Error('TODO: HAY QUE REPENSAR LA LÓGICA DE LOS PROVIDERS');
     //! Dejo comentado el código "antiguo"
 
-    /* 
+    /*
     const promises = [];
 
     _.forIn(leemons.listProviders(), (value) => {
@@ -162,11 +162,13 @@ class Email {
    * */
   static async add({ templateName, language, subject, html, type, ctx }) {
     let template = await ctx.tx.db.EmailTemplate.findOne({ templateName }, ['id']).lean();
-    if (!template)
+    if (!template) {
       template = await ctx.tx.db.EmailTemplate.create({
         name: templateName,
         templateName,
       });
+      template = template.toObject();
+    }
     const detail = await ctx.tx.db.EmailTemplateDetail.countDocuments({
       template: template.id,
       language,
@@ -182,7 +184,7 @@ class Email {
           html,
           type,
         },
-        { new: true }
+        { new: true, lean: true }
       );
       /*
         * throw new Error(
@@ -193,13 +195,14 @@ class Email {
     ctx.logger.info(
       `Adding email template Name: ${templateName} Language: ${language} Type: ${type}`
     );
-    return ctx.tx.db.EmailTemplateDetail.create({
+    const emailTemplateDetailDoc = await ctx.tx.db.EmailTemplateDetail.create({
       template: template.id,
       language,
       subject,
       html,
       type,
     });
+    return emailTemplateDetailDoc.toObjecet();
   }
 
   /**
