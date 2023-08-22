@@ -1,3 +1,4 @@
+const { LeemonsError } = require('leemons-error');
 const { validateLocale } = require('../../validations/locale');
 
 /**
@@ -17,11 +18,11 @@ async function setName({ code, name, ctx }) {
     return await ctx.tx.db.Locales.findOneAndUpdate(
       { code: _code },
       { code: _code, name },
-      { upsert: true, new: true }
+      { upsert: true, new: true, lean: true }
     );
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while setting the locale');
+    throw new LeemonsError(ctx, { message: 'An error occurred while setting the locale' });
   }
 }
 

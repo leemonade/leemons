@@ -6,7 +6,7 @@ async function update({ key, name, description, ctx }) {
   const toUpdate = {};
   if (!_.isUndefined(name)) toUpdate.name = name;
   if (!_.isUndefined(description)) toUpdate.description = description;
-  return ctx.tx.db.WidgetZone.findOneAndUpdate({ key }, toUpdate, { new: true });
+  return ctx.tx.db.WidgetZone.findOneAndUpdate({ key }, toUpdate, { new: true, lean: true });
 }
 
 module.exports = { update };
