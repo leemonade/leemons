@@ -37,7 +37,7 @@ function create({
           payload: {
             modelKey,
             action: 'removeMany',
-            data: _.isArray(items) ? _.map(items, 'id') : [items.id],
+            data: _.isArray(items) ? _.map(items, (item) => item.id) : [items.id],
           },
         });
       }

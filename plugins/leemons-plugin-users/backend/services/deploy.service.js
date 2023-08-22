@@ -185,7 +185,7 @@ module.exports = {
       await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(ctx.params);
     },
     'users.change-platform-locale': async (ctx) => {
-      createInitialProfiles({ ctx });
+      await createInitialProfiles({ ctx });
     },
   },
   async created() {
