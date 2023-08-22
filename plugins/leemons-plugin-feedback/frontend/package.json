@@ -1,0 +1,13 @@
+{
+  "name": "leemons-plugin-feedback-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/icons": "dev",
+    "lodash": "^4.17.21",
+    "exceljs": "^4.3.0"
+  },
+  "devDependencies": {}
+}

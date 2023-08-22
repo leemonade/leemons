@@ -2,8 +2,11 @@ const fs = require('fs-extra');
 const path = require('path');
 
 async function getJsConfig(basePath) {
+  console.log(' entra en getJsConfig');
+  console.log('basePath ----> ', basePath);
   try {
     const jsConfig = await fs.readJSON(path.resolve(basePath, 'jsconfig.json'));
+    console.log('jsConfig -----> ', jsConfig);
 
     if (jsConfig) {
       return jsConfig;
@@ -29,6 +32,7 @@ module.exports = async function createJsConfig({
   plugins,
   basePath = path.resolve(__dirname, '../../../../'),
 }) {
+  console.log('entra en CreateJsConfig y plugins es ', plugins);
   if (!basePath) {
     throw new Error('basePath is required to create jsconfig.json');
   }

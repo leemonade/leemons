@@ -1,3 +1,4 @@
+const { generateEnv } = require('leemons-utils');
 const getAppDir = require('../src/paths/getAppDir');
 const getPlugins = require('../src/plugins');
 const generateMonorepo = require('../src/monorepo');
@@ -7,7 +8,6 @@ const generatePublicFolders = require('../src/plugins/generatePublicFolders');
 const devServer = require('../src/webpack/devServer');
 const getBuildDir = require('../src/paths/getBuildDir');
 const getBasePath = require('../src/paths/getBasePath');
-const { generateEnv } = require('../../leemons-utils/lib/env');
 
 module.exports = async function dev({ app, build, output, base, port }) {
   process.env.NODE_ENV = 'development';

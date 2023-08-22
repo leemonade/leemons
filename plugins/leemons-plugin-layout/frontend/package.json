@@ -1,0 +1,12 @@
+{
+  "name": "leemons-plugin-layout-frontend-react",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/notifications": "dev",
+    "p-min-delay": "^4.0.0",
+    "prop-types": "^15.7.2"
+  },
+  "devDependencies": {}
+}

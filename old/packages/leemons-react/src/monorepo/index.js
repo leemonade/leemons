@@ -61,6 +61,7 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
   await installDeps(outputDir);
 
   if (basePath) {
+    console.log('entra en el if');
     // Re-generate "jsconfig.json" file
     await createJSConfig({
       plugins,
