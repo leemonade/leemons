@@ -9,6 +9,22 @@ const { getByIds } = require('./getByIds');
 const { remove: removeBookmark } = require('../bookmarks/remove');
 const { CATEGORIES } = require('../../../config/constants');
 
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
+/**
+ * Removes an asset from the database.
+ * 
+ * @async
+ * @function remove
+ * @param {string} id - The id of the asset to be removed.
+ * @param {object} options - An object containing various options.
+ * @param {boolean} options.soft - A flag indicating whether to perform a soft delete.
+ * @param {object} options.userSession - The user session object.
+ * @param {object} options.transacting - The transaction object.
+ * @returns {Promise<boolean>} - Returns a promise that resolves to true if the asset was successfully removed.
+ * @throws {HttpError} - Throws an HttpError if the asset does not exist or the user does not have permission to remove the asset.
+ */
 async function remove(id, { soft, userSession, transacting: t } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {

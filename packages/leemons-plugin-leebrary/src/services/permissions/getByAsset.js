@@ -3,29 +3,33 @@ const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 
+/**
+ * Asynchronously gets permissions by asset.
+ *
+ * @async
+ * @param {string} assetId - The asset ID.
+ * @param {Object} options - The options.
+ * @param {Object} options.userSession - The user session object.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Object>} An object containing the role, permissions and canAccessRole.
+ * @throws {HttpError} Throws an HTTP error if unable to get permissions.
+ */
 async function getByAsset(assetId, { userSession, transacting } = {}) {
   try {
     const { services: userService } = leemons.getPlugin('users');
+    const permissionTypes = ['asset.can-view', 'asset.can-edit', 'asset.can-assign'];
 
-    const [permissions, canView, canEdit, canAssign] = await Promise.all([
+    const [permissions, ...permissionResponses] = await Promise.all([
       userService.permissions.getUserAgentPermissions(userSession.userAgents, {
         query: { permissionName: getAssetPermissionName(assetId) },
         transacting,
       }),
-      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-view'),
-        { ignoreOriginalTarget: true, item: assetId, transacting }
-      ),
-      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-edit'),
-        { ignoreOriginalTarget: true, item: assetId, transacting }
-      ),
-      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-assign'),
-        { ignoreOriginalTarget: true, item: assetId, transacting }
+      ...permissionTypes.map(type =>
+        userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+          userSession.userAgents,
+          leemons.plugin.prefixPN(type),
+          { ignoreOriginalTarget: true, item: assetId, transacting }
+        )
       ),
     ]);
 
@@ -43,22 +47,19 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
 
     const permission = find(
       permissions,
-      (item) => item.permissionName.indexOf(assetId) > -1 // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
+      (item) => item.permissionName.indexOf(assetId) > -1
     );
 
     role = role ?? permission?.actionNames[0];
 
     const canAccessRole = role;
 
-    if (canView.length && !role) {
-      role = 'viewer';
-    }
-    if (canAssign.length && (!role || role !== 'owner')) {
-      role = 'assigner';
-    }
-    if (canEdit.length && (!role || role !== 'owner')) {
-      role = 'editor';
-    }
+    const roles = ['viewer', 'assigner', 'editor'];
+    permissionResponses.forEach((response, index) => {
+      if (response.length && (!role || role !== 'owner')) {
+        role = roles[index];
+      }
+    });
 
     return { role, permissions: getRolePermissions(role), canAccessRole: canAccessRole || role };
   } catch (e) {

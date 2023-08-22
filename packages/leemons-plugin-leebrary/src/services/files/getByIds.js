@@ -1,11 +1,16 @@
 const { isArray, isEmpty } = require('lodash');
 const { tables } = require('../tables');
+const { parseMetadata } = require('./helpers/parseMetadata');
 
 /**
- * @public
- * @static
- * @return {Promise<any>}
- * */
+ * Fetches files by their IDs.
+ * @param {Array|string} fileIds - The file IDs.
+ * @param {Object} options - The options object.
+ * @param {string} options.type - The type of the files.
+ * @param {Array} options.columns - The columns to be returned.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Array>} The files objects.
+ */
 async function getByIds(fileIds, { type, columns, transacting } = {}) {
   const ids = isArray(fileIds) ? fileIds : [fileIds];
   const query = {
@@ -17,13 +22,7 @@ async function getByIds(fileIds, { type, columns, transacting } = {}) {
   }
 
   const items = await tables.files.find(query, { columns, transacting });
-  const data = items.map((item) => {
-    const file = { ...item };
-    if (file.metadata) file.metadata = JSON.parse(file.metadata);
-    return file;
-  });
-
-  return data;
+  return items.map(parseMetadata);
 }
 
 module.exports = { getByIds };

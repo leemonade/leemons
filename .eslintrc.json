@@ -9,6 +9,7 @@
     "leemons": true
   },
   "extends": [
+    "plugin:sonarjs/recommended",
     "plugin:react/recommended",
     "airbnb-base",
     "prettier"
@@ -22,6 +23,7 @@
     "sourceType": "module"
   },
   "plugins": [
+    "sonarjs",
     "react",
     "import",
     "prettier"

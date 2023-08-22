@@ -1,5 +1,4 @@
-/* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil, isString, isArray, trim, forEach } = require('lodash');
+const { map, isEmpty, isNil, isString, isArray, trim, forEach, compact } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
@@ -10,41 +9,17 @@ const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 
-/*
-* permissions example
-* [
-    {
-      canEdit: true,
-      isCustomPermission: true,
-      permissionName: 'plugins.calendar.calendar.idcalendario',
-      actionNames: ['view', 'delete', 'admin', 'owner'],
-    },
-  ]
-* */
-async function add(
-  { file, cover, category, canAccess, ...data },
-  {
-    newId,
-    published = true,
-    userSession,
-    permissions: _permissions,
-    transacting: t,
-    duplicating = false,
-  } = {}
-) {
-  // eslint-disable-next-line no-nested-ternary
-  const pPermissions = _permissions
-    ? isArray(_permissions)
-      ? _permissions
-      : [_permissions]
-    : _permissions;
+// -----------------------------------------------------------------------------
+// PRIVATE METHODS
 
-  // ES: Asignamos la categoría de "media-files" por defecto.
-  // EN: Assign the "media-files" category by default.
-  data.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
-
-  // ES: En caso de que se quiera crear un Bookmark, pero no vengan los datos desde el frontend, los obtenemos.
-  // EN: In case you want to create a Bookmark, but not come from the frontend, we get them.
+/**
+ * Handles the bookmark data.
+ * @async
+ * @param {Object} data - The data of the bookmark.
+ * @param {string} cover - The cover of the bookmark.
+ * @returns {Promise<Object>} The handled bookmark data.
+ */
+async function handleBookmarkData(data, cover) {
   if (data.categoryKey === CATEGORIES.BOOKMARKS) {
     if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
       try {
@@ -52,12 +27,9 @@ async function add(
         const metas = await global.utils.metascraper({ html, url: data.url });
         data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
         data.description = data.description || metas.description;
-
         if (isEmpty(trim(data.cover))) data.cover = null;
-
         data.cover = cover ?? metas.image;
         cover = data.cover;
-
         if (!isEmpty(metas.logo)) {
           data.icon = data.icon || metas.logo;
         }
@@ -66,236 +38,360 @@ async function add(
       }
     }
   }
+  return data;
+}
 
-  await validateAddAsset(data);
-
-  const { categoryId, categoryKey, tags, subjects, ...assetData } = data;
-
+/**
+ * Handles the user session data.
+ * @param {Object} assetData - The data of the asset.
+ * @param {Object} userSession - The user session.
+ * @returns {Object} The handled user session data.
+ */
+function handleUserSessionData(assetData, userSession) {
   if (userSession) {
     assetData.fromUser = userSession.id;
     assetData.fromUserAgent =
       userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
   }
+  return assetData;
+}
 
+/**
+ * Handles the category data.
+ * @async
+ * @param {string} category - The category of the asset.
+ * @param {string} categoryId - The ID of the category.
+ * @param {string} categoryKey - The key of the category.
+ * @returns {Promise<Object>} The handled category data.
+ */
+async function handleCategoryData(category, categoryId, categoryKey) {
   if (isEmpty(category)) {
     if (!isEmpty(categoryId)) {
-      // eslint-disable-next-line no-param-reassign
       category = await getCategoryById(categoryId);
     } else {
-      // eslint-disable-next-line no-param-reassign
       category = await getCategoryByKey(categoryKey);
     }
   } else if (isString(category)) {
-    // Checks if uuid is passed
     if (
       category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
     ) {
-      // eslint-disable-next-line no-param-reassign
       category = await getCategoryById(category);
     } else {
-      // eslint-disable-next-line no-param-reassign
       category = await getCategoryByKey(category);
     }
   }
+  return category;
+}
 
-  let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
+/**
+ * Handles the can use data.
+ * @param {Array} canUse - The can use data.
+ * @param {Object} category - The category of the asset.
+ * @returns {Array} The handled can use data.
+ */
+function handleCanUseData(canUse, category) {
   if (isArray(category?.canUse) && category?.canUse.length) {
     canUse = canUse.concat(category.canUse);
   }
+  return canUse;
+}
 
-  if (category?.canUse !== '*' && !canUse.includes(this.calledFrom)) {
+/**
+ * Checks the category permission.
+ * @param {Object} category - The category of the asset.
+ * @param {Array} canUse - The can use data.
+ * @param {string} calledFrom - The plugin that called the function.
+ * @throws {HttpError} If the category was not created by the plugin that called the function.
+ */
+function checkCategoryPermission(category, canUse, calledFrom) {
+  if (category?.canUse !== '*' && !canUse.includes(calledFrom)) {
     throw new global.utils.HttpError(
       403,
-      `Category "${category.key}" was not created by the plugin "${this.calledFrom}". You can only add assets to categories created by the plugin "${this.calledFrom}".`
+      `Category "${category.key}" was not created by the plugin "${calledFrom}". You can only add assets to categories created by the plugin "${calledFrom}".`
     );
   }
+}
 
-  // ··········································································
-  // UPLOAD FILE
-
-  // EN: Upload the file to the provider
-  // ES: Subir el archivo al proveedor
-
+/**
+ * Handles the file upload.
+ * @async
+ * @param {string} file - The file to upload.
+ * @param {string} cover - The cover of the asset.
+ * @param {string} assetName - The name of the asset.
+ * @param {Object} t - The transaction object.
+ * @returns {Promise<Object>} The uploaded file and cover.
+ */
+async function handleFileUpload(file, cover, assetName, t) {
   let newFile;
   let coverFile;
-
-  // Media files
   if (!isEmpty(file)) {
-    newFile = await uploadFromSource(file, { name: assetData.name }, { transacting: t });
-
+    newFile = await uploadFromSource(file, { name: assetName }, { transacting: t });
     if (newFile?.type?.indexOf('image') === 0) {
       coverFile = newFile;
     }
   }
-
   if (!coverFile && !isEmpty(cover)) {
-    coverFile = await uploadFromSource(cover, { name: assetData.name }, { transacting: t });
+    coverFile = await uploadFromSource(cover, { name: assetName }, { transacting: t });
   }
+  return { newFile, coverFile };
+}
+
+/**
+ * Handles the asset version creation.
+ * @async
+ * @param {string} newId - The new ID for the asset.
+ * @param {string} categoryId - The ID of the category.
+ * @param {boolean} published - Whether the asset is published.
+ * @param {Object} transacting - The transaction object.
+ * @returns {Promise<string>} The new ID of the asset.
+ */
+async function handleVersionCreation(newId, categoryId, published, transacting) {
+  if (isNil(newId) || isEmpty(newId)) {
+    const { versionControl } = leemons.getPlugin('common').services;
+    const { fullId } = await versionControl.register(leemons.plugin.prefixPN(categoryId), {
+      published,
+      transacting,
+    });
+    newId = fullId;
+  }
+  return newId;
+}
+
+/**
+ * Creates an asset in the database.
+ * @async
+ * @param {string} newId - The new ID for the asset.
+ * @param {string} categoryId - The ID of the category.
+ * @param {string} coverId - The ID of the cover.
+ * @param {Object} assetData - The data of the asset.
+ * @param {Object} transacting - The transaction object.
+ * @returns {Promise<Object>} The created asset.
+ */
+async function createAssetInDB(newId, categoryId, coverId, assetData, transacting) {
+  return await tables.assets.create(
+    { ...assetData, id: newId, category: categoryId, cover: coverId },
+    { transacting }
+  );
+}
+
+/**
+ * Handles the subjects of the asset.
+ * @async
+ * @param {Array} subjects - The subjects of the asset.
+ * @param {string} assetId - The ID of the asset.
+ * @param {Object} transacting - The transaction object.
+ */
+async function handleSubjects(subjects, assetId, transacting) {
+  if (subjects && subjects.length) {
+    await Promise.all(
+      map(subjects, (item) =>
+        tables.assetsSubjects.create({ asset: assetId, ...item }, { transacting })
+      )
+    );
+  }
+}
+
+/**
+ * Handles the permissions of the asset.
+ * @async
+ * @param {Array} pPermissions - The permissions of the asset.
+ * @param {string} assetId - The ID of the asset.
+ * @param {string} categoryId - The ID of the category.
+ * @param {Array} canAccess - The can access data.
+ * @param {Object} userSession - The user session.
+ * @param {Object} transacting - The transaction object.
+ */
+async function handlePermissions(pPermissions, assetId, categoryId, canAccess, userSession, transacting) {
+  const { services: userService } = leemons.getPlugin('users');
+  const permissionName = getAssetPermissionName(assetId);
+  const permissionsPromises = [
+    userService.permissions.addItem(
+      assetId,
+      leemons.plugin.prefixPN(categoryId),
+      {
+        permissionName,
+        actionNames: leemons.plugin.config.constants.assetRoles,
+      },
+      { isCustomPermission: true, transacting }
+    ),
+  ];
+  if (pPermissions && pPermissions.length) {
+    forEach(pPermissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
+      let permission = 'can-view';
+      if (canEdit) {
+        permission = 'can-edit';
+      } else if (canAssign) {
+        permission = 'can-assign';
+      }
+      permissionsPromises.push(
+        userService.permissions.addItem(
+          assetId,
+          leemons.plugin.prefixPN(`asset.${permission}`),
+          per,
+          { isCustomPermission, transacting }
+        )
+      );
+    });
+  }
+  await Promise.all(permissionsPromises);
+  const permissions = [];
+  let hasOwner = false;
+  if (canAccess && !isEmpty(canAccess)) {
+    for (let i = 0, len = canAccess.length; i < len; i++) {
+      const { userAgent, role } = canAccess[i];
+      hasOwner = hasOwner || role === 'owner';
+      permissions.push(
+        userService.permissions.addCustomPermissionToUserAgent(
+          userAgent,
+          {
+            permissionName,
+            actionNames: [role],
+            target: categoryId,
+          },
+          { transacting }
+        )
+      );
+    }
+  }
+  if (!hasOwner) {
+    permissions.push(
+      userService.permissions.addCustomPermissionToUserAgent(
+        map(userSession.userAgents, 'id'),
+        {
+          permissionName,
+          actionNames: ['owner'],
+          target: categoryId,
+        },
+        { transacting }
+      )
+    );
+  }
+  await Promise.all(permissions);
+}
+
+/**
+ * Handles the files of the asset.
+ * @async
+ * @param {string} newFile - The new file of the asset.
+ * @param {string} assetId - The ID of the asset.
+ * @param {Object} userSession - The user session.
+ * @param {Object} transacting - The transaction object.
+ */
+async function handleFiles(newFile, assetId, userSession, transacting) {
+  if (isString(newFile?.id)) {
+    try {
+      await addFiles(newFile.id, assetId, {
+        skipPermissions: true,
+        userSession,
+        transacting,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+/**
+ * Handles the bookmark creation.
+ * @async
+ * @param {boolean} duplicating - Whether the asset is a duplicate.
+ * @param {string} categoryKey - The key of the category.
+ * @param {Object} assetData - The data of the asset.
+ * @param {Object} newAsset - The new asset.
+ * @param {Object} transacting - The transaction object.
+ */
+async function handleBookmarkCreation(duplicating, categoryKey, assetData, newAsset, transacting) {
+  if (!duplicating && categoryKey === CATEGORIES.BOOKMARKS) {
+    await addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
+      transacting,
+    });
+  }
+}
+
+/**
+ * Handles the tags of the asset.
+ * @async
+ * @param {Array} tags - The tags of the asset.
+ * @param {string} assetId - The ID of the asset.
+ * @param {Object} transacting - The transaction object.
+ */
+async function handleTags(tags, assetId, transacting) {
+  if (tags?.length > 0) {
+    const tagsService = leemons.getPlugin('common').services.tags;
+    await tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, assetId, {
+      transacting,
+    });
+  }
+}
+
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
+/**
+ * Adds an asset to the database.
+ * @async
+ * @param {Object} assetData - The data of the asset to add.
+ * @param {Object} options - Additional options.
+ * @param {string} options.newId - The new ID for the asset.
+ * @param {boolean} options.published - Whether the asset is published.
+ * @param {Object} options.userSession - The user session.
+ * @param {Array} options.permissions - The permissions for the asset.
+ * @param {Object} options.transacting - The transaction object.
+ * @param {boolean} options.duplicating - Whether the asset is a duplicate.
+ * @returns {Promise<Object>} The added asset.
+ */
+async function add(
+  { file, cover, category, canAccess, ...data },
+  {
+    newId,
+    published = true,
+    userSession,
+    permissions,
+    transacting: t,
+    duplicating = false,
+  } = {}
+) {
+
+  /* permissions example
+    [
+      {
+        canEdit: true,
+        isCustomPermission: true,
+        permissionName: 'plugins.calendar.calendar.idcalendario',
+        actionNames: ['view', 'delete', 'admin', 'owner'],
+      },
+    ]
+  */
+
+  const pPermissions = compact(isArray(permissions) ? permissions : [permissions]);
+  const categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
+  let assetData = await handleBookmarkData({ ...data, categoryKey }, cover);
+
+  await validateAddAsset(assetData);
+
+  const { categoryId, categoryKey: assetCategoryKey, tags, subjects, ...otherAssetData } = assetData;
+  assetData = handleUserSessionData({ ...otherAssetData }, userSession);
+
+  const categoryData = await handleCategoryData(category, categoryId, assetCategoryKey);
+  let canUse = [leemons.plugin.prefixPN(''), categoryData?.pluginOwner];
+  canUse = handleCanUseData(canUse, categoryData);
+
+  checkCategoryPermission(categoryData, canUse, this.calledFrom);
+
+  // If the asset is valid & the caller has permissions, then move forward
+  let { newFile, coverFile } = await handleFileUpload(file, cover, assetData.name, t);
 
   return global.utils.withTransaction(
     async (transacting) => {
-      // ··········································································
-      // CREATE ASSET
+      newId = await handleVersionCreation(newId, categoryData.id, published, transacting);
+      assetData.indexable = isNil(assetData.indexable) ? true : assetData.indexable;
+      const newAsset = await createAssetInDB(newId, categoryData.id, coverFile?.id, assetData, transacting);
 
-      if (isNil(newId) || isEmpty(newId)) {
-        // ES: Añadimos el control de versiones
-        // EN: Add version control
-        const { versionControl } = leemons.getPlugin('common').services;
-        const { fullId } = await versionControl.register(leemons.plugin.prefixPN(category.id), {
-          published,
-          transacting,
-        });
-
-        // eslint-disable-next-line no-param-reassign
-        newId = fullId;
-      }
-
-      // Set indexable as TRUE by default
-      if (isNil(assetData.indexable)) {
-        assetData.indexable = true;
-      }
-
-      // EN: Firstly create the asset in the database to get the id
-      // ES: Primero creamos el archivo en la base de datos para obtener el id
-      const newAsset = await tables.assets.create(
-        { ...assetData, id: newId, category: category.id, cover: coverFile?.id },
-        { transacting }
-      );
-
-      if (subjects && subjects.length) {
-        await Promise.all(
-          map(subjects, (item) =>
-            tables.assetsSubjects.create({ asset: newAsset.id, ...item }, { transacting })
-          )
-        );
-      }
-
-      // ··········································································
-      // ADD PERMISSIONS
-
-      const { services: userService } = leemons.getPlugin('users');
-      const permissionName = getAssetPermissionName(newAsset.id);
-
-      // ES: Primero, añadimos permisos al archivo
-      // EN: First, add permission to the asset
-      const permissionsPromises = [
-        userService.permissions.addItem(
-          newAsset.id,
-          leemons.plugin.prefixPN(category.id),
-          {
-            permissionName,
-            actionNames: leemons.plugin.config.constants.assetRoles,
-          },
-          { isCustomPermission: true, transacting }
-        ),
-      ];
-
-      if (pPermissions && pPermissions.length) {
-        forEach(pPermissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
-          let permission = 'can-view';
-          if (canEdit) {
-            permission = 'can-edit';
-          } else if (canAssign) {
-            permission = 'can-assign';
-          }
-          permissionsPromises.push(
-            userService.permissions.addItem(
-              newAsset.id,
-              leemons.plugin.prefixPN(`asset.${permission}`),
-              per,
-              { isCustomPermission, transacting }
-            )
-          );
-        });
-      }
-      await Promise.all(permissionsPromises);
-      // ES: Luego, añade los permisos a los usuarios
-      // EN: Then, add the permissions to the users
-      const permissions = [];
-      let hasOwner = false;
-
-      if (canAccess && !isEmpty(canAccess)) {
-        for (let i = 0, len = canAccess.length; i < len; i++) {
-          const { userAgent, role } = canAccess[i];
-          hasOwner = hasOwner || role === 'owner';
-
-          permissions.push(
-            userService.permissions.addCustomPermissionToUserAgent(
-              userAgent,
-              {
-                permissionName,
-                actionNames: [role],
-                target: category.id,
-              },
-              { transacting }
-            )
-          );
-        }
-      }
-
-      if (!hasOwner) {
-        permissions.push(
-          userService.permissions.addCustomPermissionToUserAgent(
-            map(userSession.userAgents, 'id'),
-            {
-              permissionName,
-              actionNames: ['owner'],
-              target: category.id,
-            },
-            { transacting }
-          )
-        );
-      }
-
-      await Promise.all(permissions);
-
-      // ··········································································
-      // ADD FILES
-
-      const promises = [];
-
-      // EN: Assign the file to the asset
-      // ES: Asignar el archivo al asset
-
-      if (isString(newFile?.id)) {
-        try {
-          await addFiles(newFile.id, newAsset.id, {
-            skipPermissions: true,
-            userSession,
-            transacting,
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
-      // ··········································································
-      // CREATE BOOKMARK
-
-      if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
-        promises.push(
-          addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
-            transacting,
-          })
-        );
-      }
-
-      // ··········································································
-      // ADD TAGS
-
-      if (tags?.length > 0) {
-        const tagsService = leemons.getPlugin('common').services.tags;
-        promises.push(
-          tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
-            transacting,
-          })
-        );
-      }
-
-      // ··········································································
-      // PROCCESS EVERYTHING
-
-      await Promise.all(promises);
+      await handleSubjects(subjects, newAsset.id, transacting);
+      await handlePermissions(pPermissions, newAsset.id, categoryData.id, canAccess, userSession, transacting);
+      await handleFiles(newFile, newAsset.id, userSession, transacting);
+      await handleBookmarkCreation(duplicating, categoryData.key, assetData, newAsset, transacting);
+      await handleTags(tags, newAsset.id, transacting);
 
       return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
     },

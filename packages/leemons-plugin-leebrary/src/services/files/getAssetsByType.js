@@ -3,21 +3,53 @@ const { getByAssets: getFilesByAssets } = require('../assets/files/getByAssets')
 const { getByFiles: getAssetsByFiles } = require('../assets/files/getByFiles');
 const { getByType } = require('./getByType');
 
-async function getAssetsByType(type, { assets, transacting }) {
-  let fileIds = [];
-  let assetFiles = [];
+// -----------------------------------------------------------------------------
+// PRIVATE METHODS
 
-  if (assets && !isEmpty(assets)) {
-    const ids = isArray(assets) ? assets : [assets];
-    assetFiles = await getFilesByAssets(ids, { transacting });
-    fileIds = uniq(assetFiles.map((item) => item.file));
+/**
+ * Fetches the asset files by assets.
+ * @param {Array} assets - The assets.
+ * @param {Object} transacting - The transaction object.
+ * @returns {Promise<Array>} The asset files.
+ */
+async function fetchAssetFilesByAssets(assets, transacting) {
+  if (!assets || isEmpty(assets)) {
+    return [];
   }
 
+  const ids = isArray(assets) ? assets : [assets];
+  const assetFiles = await getFilesByAssets(ids, { transacting });
+
+  return uniq(assetFiles.map((item) => item.file));
+}
+
+/**
+ * Fetches the asset files by type.
+ * @param {string} type - The type.
+ * @param {Array} fileIds - The file IDs.
+ * @param {Object} transacting - The transaction object.
+ * @returns {Promise<Array>} The asset files.
+ */
+async function fetchAssetFilesByType(type, fileIds, transacting) {
   const files = await getByType(type, { files: fileIds, transacting });
-  assetFiles = await getAssetsByFiles(
-    files.map(({ id }) => id),
-    { transacting }
-  );
+
+  return getAssetsByFiles(files.map(({ id }) => id), { transacting });
+}
+
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
+/**
+ * Fetches the assets by type.
+ * @param {string} type - The type.
+ * @param {Object} options - The options.
+ * @param {Array} options.assets - The assets.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Array>} The assets.
+ */
+async function getAssetsByType(type, { assets, transacting }) {
+  const fileIds = await fetchAssetFilesByAssets(assets, transacting);
+  const assetFiles = await fetchAssetFilesByType(type, fileIds, transacting);
 
   return assetFiles.map(({ asset }) => asset);
 }
