@@ -47,6 +47,7 @@ async function addUserBulk({
       birthdate,
       password: password ? await encryptPassword(password) : undefined,
     });
+    user = user.toObject();
     await setUserForRegisterPassword({ userId: user.id, ctx });
     await sendWelcomeEmailToUser({ user, ctx });
     isNewUser = true;
@@ -73,6 +74,7 @@ async function addUserBulk({
       user: user.id,
       reloadPermissions: true,
     });
+    userAgent = userAgent.toObject();
     await addCenterProfilePermissionToUserAgents({ userAgentIds: userAgent.id, ctx });
     // ES: Si no tenia el perfil y no es nuevo usuario, le mandamos el email
     if (!isNewUser) {
@@ -89,7 +91,7 @@ async function addUserBulk({
         deleted: false,
         deleted_at: null,
       },
-      { new: true }
+      { new: true, lean: true }
     );
     await ctx.tx.emit('user-agent.restore', { userAgent });
   }

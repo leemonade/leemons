@@ -24,6 +24,7 @@ async function addWithRole({ name, description, permissions, indexable, ctx }) {
     uri: slugify(name, { lower: true }),
     indexable,
   });
+  group = group.toObject();
 
   const role = await add({
     name: `group:${group.id}:role`,

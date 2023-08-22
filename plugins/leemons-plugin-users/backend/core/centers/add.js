@@ -40,6 +40,7 @@ async function add({ id, name, locale, limits, ctx, ...centerData }) {
       locale,
       uri: slugify(name, { lower: true }),
     });
+    center = center.toObject();
     await createNecessaryRolesForProfilesAccordingToCenters({
       profileIds: undefined,
       centerIds: center.id,

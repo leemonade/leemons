@@ -45,7 +45,7 @@ async function add({
   if (!(await existManyRoles({ roles, ctx })))
     throw new LeemonsError(ctx, { message: 'One of the roles specified does not exist.' });
 
-  const user = await ctx.tx.db.Users.create({
+  const userDoc = await ctx.tx.db.Users.create({
     name,
     surnames,
     secondSurname,
@@ -56,6 +56,7 @@ async function add({
     locale,
     active: active || false,
   });
+  const user = userDoc.toObject();
 
   await Promise.all(
     _.map(roles, (role) => checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx }))

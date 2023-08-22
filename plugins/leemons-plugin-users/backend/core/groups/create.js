@@ -16,7 +16,8 @@ async function create({ name, type, ctx }) {
   }).lean();
   if (group)
     throw new LeemonsError(ctx, { message: 'There is already a group with this name and type' });
-  return ctx.tx.db.Groups.create({ name, type });
+  const createdGroupDoc = await ctx.tx.db.Groups.create({ name, type });
+  return createdGroupDoc.toObject();
 }
 
 module.exports = { create };

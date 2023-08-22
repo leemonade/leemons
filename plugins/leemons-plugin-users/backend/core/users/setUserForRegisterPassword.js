@@ -12,7 +12,7 @@ async function setUserForRegisterPassword({ userId, ctx }) {
       recovery = await ctx.tx.db.UserRegisterPassword.findOneAndUpdate(
         { id: recovery.id },
         { code: randomString(6) },
-        { new: true }
+        { new: true, lean: true }
       );
     }
   } else {
@@ -20,6 +20,7 @@ async function setUserForRegisterPassword({ userId, ctx }) {
       user: userId,
       code: randomString(6),
     });
+    recovery = recovery.toObject();
   }
   return recovery;
 }

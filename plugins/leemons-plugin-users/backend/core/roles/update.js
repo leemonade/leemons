@@ -51,7 +51,7 @@ async function update({ id, name, type, description, center, permissions, ctx })
 
   ctx.logger.info(`Updating role '${name}'`);
   const [role, roleCenter] = await Promise.all([
-    ctx.tx.db.Roles.findByIdAndUpdate(id, { name, type, description }, { new: true }),
+    ctx.tx.db.Roles.findByIdAndUpdate(id, { name, type, description }, { lean: true, new: true }),
     ctx.tx.db.RoleCenter.findOne({ role: id }).lean(),
     removePermissionAll({ roleId: id, ctx }),
   ]);
