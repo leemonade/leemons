@@ -26,7 +26,9 @@ async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
     throw new LeemonsError('The user does not have access to any of the following items');
 
   return Promise.all(
-    _.map(ids, (id, order) => ctx.tx.db.MenuItem.findOneAndUpdate({ id }, { order }, { new: true }))
+    _.map(ids, (id, order) =>
+      ctx.tx.db.MenuItem.findOneAndUpdate({ id }, { order }, { new: true, lean: true })
+    )
   );
 }
 
