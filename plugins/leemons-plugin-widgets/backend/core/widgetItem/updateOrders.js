@@ -12,7 +12,11 @@ async function updateOrders({ items, ctx }) {
   }
   return Promise.all(
     _.map(items, (item) =>
-      ctx.tx.db.WidgetItem.findOneAndUpdate({ id: item.id }, { order: item.order }, { new: true })
+      ctx.tx.db.WidgetItem.findOneAndUpdate(
+        { id: item.id },
+        { order: item.order },
+        { new: true, lean: true }
+      )
     )
   );
 }

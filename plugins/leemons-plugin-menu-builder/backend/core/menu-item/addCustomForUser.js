@@ -36,7 +36,7 @@ async function addCustomForUser({ label, description, ctx, ...data }) {
   await validateNotExistMenuItem({ menuKey: data.menuKey, key: data.parentKey, ctx });
 
   // Create the MENU ITEM
-  const promises = [ctx.tx.db.MenuItem.create(data)];
+  const promises = [ctx.tx.db.MenuItem.create(data).then((mongooseDoc) => mongooseDoc.toObject())];
 
   // Create LABEL & DESCRIPTIONS in locales
   if (label) {

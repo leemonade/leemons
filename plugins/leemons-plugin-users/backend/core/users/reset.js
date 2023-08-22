@@ -20,7 +20,7 @@ async function reset({ token, password, ctx }) {
     ctx.tx.db.Users.findOneAndUpdate(
       { id: config.user.id },
       { password: await encryptPassword(password) },
-      { new: true }
+      { new: true, lean: true }
     ),
     ctx.tx.db.UserRecoverPassword.deleteOne({ id: config.recoveryId }),
   ]);

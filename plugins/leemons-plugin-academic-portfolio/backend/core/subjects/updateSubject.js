@@ -40,7 +40,7 @@ async function updateSubject({ data, ctx }) {
   let { id, course, credits, internalId, subjectType, knowledge, image, icon, color, ..._data } =
     data;
 
-  let subject = await ctx.tx.db.Subjects.findOneAndUpdate({ id }, _data, { new: true });
+  let subject = await ctx.tx.db.Subjects.findOneAndUpdate({ id }, _data, { new: true, lean: true });
   const promises = [];
 
   // ES: Añadimos el asset de la imagen
@@ -69,7 +69,7 @@ async function updateSubject({ data, ctx }) {
       image: assetImage.id,
       icon: assetIcon.id,
     },
-    { new: true }
+    { new: true, lean: true }
   );
 
   await ctx.tx.db.Class.updateMany({ subject: subject.id }, { color });

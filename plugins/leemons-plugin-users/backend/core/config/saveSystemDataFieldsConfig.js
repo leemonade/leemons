@@ -3,7 +3,7 @@ const { validateSaveSystemDataFieldsConfig } = require('../../validations/item-p
 
 async function saveSystemDataFieldsConfig({ ctx, ...data }) {
   validateSaveSystemDataFieldsConfig(data);
-  await ctx.tx.db.Config.findOneAndUpdate(
+  await ctx.tx.db.Config.updateOne(
     { key: 'SystemDataFields' },
     {
       key: 'SystemDataFields',

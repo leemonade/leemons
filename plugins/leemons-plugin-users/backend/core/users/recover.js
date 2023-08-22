@@ -37,9 +37,8 @@ async function recover({ email, ctx }) {
       recovery = await ctx.tx.db.UserRecoverPassword.findOneAndUpdate(
         { id: recovery.id },
         { code: randomString(12) },
-        { new: true }
+        { new: true, lean: true }
       );
-      recovery = recovery.toObject();
     }
   } else {
     recovery = await ctx.tx.db.UserRecoverPassword.create({

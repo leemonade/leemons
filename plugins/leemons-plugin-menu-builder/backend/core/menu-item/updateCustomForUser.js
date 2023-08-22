@@ -28,7 +28,9 @@ async function updateCustomForUser({ menuKey, key, label, description, ctx, ...d
   const promises = [];
 
   if (!_.isEmpty(data)) {
-    promises.push(ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true }));
+    promises.push(
+      ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true, lean: true })
+    );
   }
 
   // Update LABEL & DESCRIPTIONS in locales

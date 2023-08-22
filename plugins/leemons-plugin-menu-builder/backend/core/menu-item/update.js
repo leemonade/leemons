@@ -62,7 +62,9 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
   data.pluginName = ctx.callerPlugin;
 
   // Create the MENU ITEM
-  const promises = [ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true })];
+  const promises = [
+    ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true, lean: true }),
+  ];
 
   // ES: Si la clave o el menu quieren ser actualizados tenemos que borrar de la tabla de traducciones y de permisos los registros, ya que dejan de existir
   if ((data.key && data.key !== key) || (data.menuKey && data.menuKey !== menuKey)) {

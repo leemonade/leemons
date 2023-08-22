@@ -11,7 +11,7 @@ async function update({ userId, dataset, birthdate, preferences, avatar, ctx, ..
       birthdate,
       ...data,
     },
-    { new: true }
+    { new: true, lean: true }
   );
 
   if (dataset) await setUserDatasetInfo({ userId, value: dataset, ctx });

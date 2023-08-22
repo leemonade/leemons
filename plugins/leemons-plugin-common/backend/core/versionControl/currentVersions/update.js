@@ -29,9 +29,7 @@ module.exports = async function update({ uuid, version, ctx }) {
       {
         published: v,
       },
-      {
-        new: true,
-      }
+      { new: true, lean: true }
     );
 
     return { uuid: versionedEntity.id, currentPublished: versionedEntity.published };

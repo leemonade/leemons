@@ -202,7 +202,7 @@ class Email {
       html,
       type,
     });
-    return emailTemplateDetailDoc.toObjecet();
+    return emailTemplateDetailDoc.toObject();
   }
 
   /**

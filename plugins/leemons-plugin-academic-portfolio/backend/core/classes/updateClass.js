@@ -53,7 +53,7 @@ async function updateClass({ data, ctx }) {
   }
 
   // ES: Actualizamos la clase
-  let nClass = await ctx.tx.db.Class.findOneAndUpdate({ id }, rest, { new: true });
+  let nClass = await ctx.tx.db.Class.findOneAndUpdate({ id }, rest, { new: true, lean: true });
 
   // ES: Añadimos el asset de la imagen
   const imageData = {
@@ -72,7 +72,7 @@ async function updateClass({ data, ctx }) {
     {
       image: assetImage.id,
     },
-    { new: true }
+    { new: true, lean: true }
   );
 
   const promises = [];

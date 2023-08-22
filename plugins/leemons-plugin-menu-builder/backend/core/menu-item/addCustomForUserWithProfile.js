@@ -37,7 +37,7 @@ async function addCustomForUserWithProfile({
   const user = await ctx.tx.call('users.users.detail', { userId });
 
   // Create the MENU ITEM
-  const promises = [ctx.tx.db.MenuItem.create(data)];
+  const promises = [ctx.tx.db.MenuItem.create(data).then((mongooseDoc) => mongooseDoc.toObject())];
 
   // Create LABEL & DESCRIPTIONS in locales
   if (label) {

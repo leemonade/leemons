@@ -43,7 +43,7 @@ async function add({ url, iconUrl, asset, ctx }) {
   }
 
   const bookmark = await ctx.tx.db.Bookmarks.create({ url, asset: asset.id, icon });
-  return bookmark;
+  return bookmark.toObject();
 }
 
 module.exports = { add };
