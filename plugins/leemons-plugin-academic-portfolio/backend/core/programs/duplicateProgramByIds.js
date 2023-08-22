@@ -40,7 +40,9 @@ async function duplicateProgramByIds({ ids, ctx }) {
 
   // ES: Empezamos la duplicación de los programas
   const newPrograms = await Promise.all(
-    _.map(rawPrograms, ({ id, ...item }) => ctx.tx.db.Programs.create(item))
+    _.map(rawPrograms, ({ id, ...item }) =>
+      ctx.tx.db.Programs.create(item).then((mongooseDoc) => mongooseDoc.toObject())
+    )
   );
 
   // Es: Añadimos los programas duplicados de tal forma que el indice es el id original y el valor es el nuevo item duplicado

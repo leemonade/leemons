@@ -12,7 +12,8 @@ async function addInstanceClass({ data, ctx }) {
   await validateAddInstanceClass({ data, ctx });
   const { internalIdCourse, internalId, credits, course, group, ...rest } = data;
   // ES: Creamos la clase
-  const nClass = await ctx.tx.db.Class.create(rest);
+  const nClassDoc = await ctx.tx.db.Class.create(rest);
+  const nClass = nClassDoc.toObject();
 
   const pClass = (await classByIds({ ids: nClass.class, ctx }))[0];
 

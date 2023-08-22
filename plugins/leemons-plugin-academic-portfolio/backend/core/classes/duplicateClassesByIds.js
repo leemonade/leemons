@@ -59,7 +59,7 @@ async function duplicateClassesByIds({
           duplications.subjects && duplications.subjects[item.subject]
             ? duplications.subjects[item.subject].id
             : item.subject,
-      });
+      }).then((mongooseDoc) => mongooseDoc.toObject());
 
       if (classesById[id].schedule) {
         await processScheduleForClass(

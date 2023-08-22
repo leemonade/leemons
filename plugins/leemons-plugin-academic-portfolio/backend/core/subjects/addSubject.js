@@ -8,6 +8,7 @@ async function addSubject({ data: _data, ctx }) {
   const { credits, internalId, image, icon, ...data } = _data;
 
   let subject = await ctx.tx.db.Subjects.create({ ...data });
+  subject = subject.toObject();
 
   // ES: Añadimos el asset de la imagen
   const imageData = {
@@ -54,7 +55,7 @@ async function addSubject({ data: _data, ctx }) {
       image: assetImage.id,
       icon: assetIcon.id,
     },
-    { new: true }
+    { new: true, lean: true }
   );
 
   // ES: Seteamos los creditos a la asignatura para el programa en el que estamos creando la asignatura

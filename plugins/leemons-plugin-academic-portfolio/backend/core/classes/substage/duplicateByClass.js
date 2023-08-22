@@ -23,7 +23,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx }) {
           duplications.substages && duplications.substages[item.substage]
             ? duplications.substages[item.substage].id
             : item.substage,
-      })
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 

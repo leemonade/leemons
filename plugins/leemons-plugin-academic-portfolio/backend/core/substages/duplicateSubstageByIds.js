@@ -19,7 +19,7 @@ async function duplicateSubstageByIds({ ids, duplications: dup = {}, ctx }) {
           duplications.programs && duplications.programs[item.program]
             ? duplications.programs[item.program].id
             : item.program,
-      })
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 

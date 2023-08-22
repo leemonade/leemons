@@ -1,5 +1,6 @@
 async function add({ class: _class, group, ctx }) {
-  return ctx.tx.db.ClassGroup.create({ class: _class, group });
+  const classGroupDoc = await ctx.tx.db.ClassGroup.create({ class: _class, group });
+  return classGroupDoc.toObject();
 }
 
 module.exports = { add };

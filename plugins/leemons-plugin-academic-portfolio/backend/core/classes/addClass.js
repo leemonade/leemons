@@ -49,6 +49,7 @@ async function addClass({ data, ctx }) {
 
     // ES: Creamos la clase
     let nClass = await ctx.tx.db.Class.create(rest);
+    nClass = nClass.toObject();
 
     // ES: Añadimos el asset de la imagen
     const imageData = {
@@ -79,6 +80,7 @@ async function addClass({ data, ctx }) {
         image: assetImage.id,
       },
       {
+        lean: true,
         new: true,
       }
     );

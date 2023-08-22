@@ -7,7 +7,9 @@ const { getProfiles } = require('../../settings/getProfiles');
 async function add({ class: _class, student, ctx }) {
   // TODO check again when comunica is migrated
   const [classStudent, program] = await Promise.all([
-    ctx.tx.db.ClassStudent.create({ class: _class, student }),
+    ctx.tx.db.ClassStudent.create({ class: _class, student }).then((mongooseDoc) =>
+      mongooseDoc.toObject()
+    ),
     getClassProgram({ id: _class, ctx }),
     ctx.tx.call('comunica.room.addUserAgents', {
       room: ctx.prefixPN(`room.class.${_class}`),
