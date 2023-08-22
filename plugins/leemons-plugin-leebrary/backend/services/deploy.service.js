@@ -75,6 +75,7 @@ module.exports = () => ({
         permissions: permissions.permissions,
         ctx,
       });
+      console.log('----leebrary perm');
     },
   },
   created() {

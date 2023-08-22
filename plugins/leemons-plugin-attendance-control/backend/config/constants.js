@@ -20,7 +20,7 @@ const menuItems = [
     item: {
       key: 'attendance-control.attendance',
       order: 3,
-      parentKey: 'plugins.scores.scores',
+      parentKey: 'scores.scores',
       url: '/private/attendance-control/attendance',
       label: {
         en: 'Attendance',

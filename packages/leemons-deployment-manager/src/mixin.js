@@ -139,12 +139,8 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
             return await innerEvent.handler(ctx).then(async (data) => {
               if (data?.err) {
-                if (data?.err) {
-                  if (_.isFunction(onError)) {
-                    await onError(ctx, data.err);
-                  } else {
-                    throw data.err;
-                  }
+                if (_.isFunction(onError)) {
+                  await onError(ctx, data.err);
                 }
               }
               return data;

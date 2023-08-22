@@ -397,7 +397,7 @@ class LeemonsRunner {
       ? serviceDir
       : path.resolve(process.cwd(), serviceDir);
 
-    
+
 
     let patterns = this.servicePaths;
 

@@ -21,6 +21,7 @@
     "turbo": "^1.9.6"
   },
   "dependencies": {
+    "leemons-utils": "1.0.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
     "mongoose": "^7.1.1"

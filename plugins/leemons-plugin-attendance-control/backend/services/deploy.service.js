@@ -57,7 +57,6 @@ module.exports = () => ({
         i18nPath: path.resolve(__dirname, `../i18n/`),
         ctx,
       });
-      return null;
     },
     'users.init-permissions': async (ctx) => {
       await addPermissionsDeploy({
