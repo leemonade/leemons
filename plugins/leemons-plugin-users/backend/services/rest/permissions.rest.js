@@ -11,7 +11,7 @@ const { getUserAgentPermissions } = require('../../core/permissions');
 module.exports = {
   listRest: {
     rest: {
-      path: '/permission/list',
+      path: '/list',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -22,7 +22,7 @@ module.exports = {
   },
   getPermissionsWithActionsIfIHaveRest: {
     rest: {
-      path: '/permission/get-if-have',
+      path: '/get-if-have', // rename to exist ?
       method: 'POST',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

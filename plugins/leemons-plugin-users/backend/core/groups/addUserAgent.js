@@ -26,7 +26,9 @@ async function addUserAgent({ groupId, userAgentId, checksDisabled, ctx }) {
     await checkIfCanCreateUserAgentInGroup({ userAgentId, groupId, ctx });
 
     const values = await Promise.all([
-      ctx.tx.db.GroupUserAgent.create({ group: groupId, userAgent: userAgentId }),
+      ctx.tx.db.GroupUserAgent.create({ group: groupId, userAgent: userAgentId }).then(
+        (mongooseDoc) => mongooseDoc.toObject()
+      ),
       ctx.tx.db.UserAgent.update({ id: userAgentId }, { reloadPermissions: true }),
     ]);
     return values[0];

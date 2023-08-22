@@ -1,3 +1,4 @@
+const { LeemonsError } = require('leemons-error');
 const { validateLocale, validateLocalesArray } = require('../../validations/locale');
 const { has, hasMany } = require('./has');
 
@@ -18,7 +19,8 @@ async function add({ code, name, ctx }) {
   try {
     // If the locale does not exist, create it
     if (!(await has({ code: locale.code, ctx }))) {
-      const dbLocale = await ctx.tx.db.Locales.create(locale);
+      const dbLocaleDoc = await ctx.tx.db.Locales.create(locale);
+      const dbLocale = dbLocaleDoc.toObject();
       await ctx.tx.emit('newLocale', dbLocale);
       return dbLocale;
     }
@@ -26,7 +28,7 @@ async function add({ code, name, ctx }) {
     return null;
   } catch (e) {
     ctx.logger.error(e.message);
-    throw new Error('An error occurred while creating the locale');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the locale' });
   }
 }
 
@@ -53,7 +55,7 @@ async function addMany({ ctx, locales }) {
 
   // Check for duplicated codes
   if (codes.length > [...new Set(codes)].length) {
-    throw new Error('The inserted locale codes should be unique');
+    throw new LeemonsError(ctx, { message: 'The inserted locale codes should be unique' });
   }
 
   try {
@@ -69,7 +71,8 @@ async function addMany({ ctx, locales }) {
     }
 
     // Return the new locales
-    const addedLocales = await ctx.tx.db.Locales.create(newLocales);
+    const addedLocalesDoc = await ctx.tx.db.Locales.create(newLocales);
+    const addedLocales = addedLocalesDoc.toObject();
     ctx.logger.info(
       `New locales added: ${newLocales
         .map((locale) => `${locale.code} | ${locale.name}`)
@@ -78,7 +81,7 @@ async function addMany({ ctx, locales }) {
     return addedLocales;
   } catch (e) {
     ctx.logger.error(e.message);
-    throw new Error('An error occurred while creating the locales');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the locales' });
   }
 }
 

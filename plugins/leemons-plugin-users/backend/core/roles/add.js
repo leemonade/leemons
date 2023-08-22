@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const slugify = require('slugify');
 const existByName = require('./existByName');
 const { validateRoleType } = require('../../validations/exists');
@@ -20,7 +21,7 @@ async function add({ name, type, description, center, profile, permissions, ctx 
     const error = `Role with name '${name}' and type '${type}' already exists${
       center ? ` in center ${center}` : ''
     }`;
-    throw new Error(error);
+    throw new LeemonsError(ctx, { message: error });
   }
 
   const dataToCheckPermissions = _.map(permissions, (permission) => [
@@ -29,16 +30,17 @@ async function add({ name, type, description, center, profile, permissions, ctx 
   ]);
 
   if (!(await manyPermissionsHasManyActions({ data: dataToCheckPermissions, ctx })))
-    throw new Error(`One or more permissions or his actions not exist`);
+    throw new LeemonsError(ctx, { message: `One or more permissions or his actions not exist` });
 
   ctx.logger.info(`Creating role '${name}'`);
 
-  const role = await ctx.tx.db.Roles.create({
+  let role = await ctx.tx.db.Roles.create({
     name,
     type,
     description,
     uri: slugify(name, { lower: true }),
   });
+  role = role.toObject();
   if (center) await ctx.tx.db.RoleCenter.create({ role: role.id, center });
   if (profile) await ctx.tx.db.ProfileRole.create({ role: role.id, profile });
 

@@ -15,7 +15,7 @@ const { encryptPassword } = require('./bcrypt/encryptPassword');
 async function addFirstSuperAdminUser({ name, surnames, email, password, locale, ctx }) {
   const hasUsers = await ctx.tx.db.Users.countDocuments();
   if (!hasUsers) {
-    const user = await ctx.tx.db.Users.create({
+    const userDoc = await ctx.tx.db.Users.create({
       name,
       surnames,
       email,
@@ -23,6 +23,7 @@ async function addFirstSuperAdminUser({ name, surnames, email, password, locale,
       locale,
       active: true,
     });
+    const user = userDoc.toObject();
     await ctx.tx.db.SuperAdminUser.create({ user: user.id });
     delete user.password;
     return user;

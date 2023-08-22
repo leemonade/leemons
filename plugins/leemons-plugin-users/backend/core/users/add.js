@@ -38,7 +38,6 @@ async function add({
   password,
   active,
   roles,
-  sendWellcomeEmail,
   ctx,
 }) {
   if (await exist({ query: { email }, ctx }))
@@ -46,17 +45,18 @@ async function add({
   if (!(await existManyRoles({ roles, ctx })))
     throw new LeemonsError(ctx, { message: 'One of the roles specified does not exist.' });
 
-  const user = await ctx.tx.db.Users.create({
+  const userDoc = await ctx.tx.db.Users.create({
     name,
     surnames,
     secondSurname,
-    birthdate: birthdate ? global.utils.sqlDatetime(birthdate) : birthdate,
+    birthdate,
     email,
     gender,
     password: password ? await encryptPassword(password) : undefined,
     locale,
     active: active || false,
   });
+  const user = userDoc.toObject();
 
   await Promise.all(
     _.map(roles, (role) => checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx }))
@@ -86,9 +86,8 @@ async function add({
     });
   }
 
-  if (await ctx.tx.call('deployment-manager.pluginIsInstalled', { pluginName: 'calendar' })) {
-    await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
-  }
+  await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
+
   return user;
 }
 

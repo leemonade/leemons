@@ -33,10 +33,10 @@ async function searchUserAgents({
   withCenter,
   userColumns,
   onlyContacts,
-  userSession,
   queryWithContains = true,
   ctx,
 }) {
+  const { userSession } = ctx.meta;
   const finalQuery = {};
   // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
   // de ids de usuarios para luego filtrar los agentes

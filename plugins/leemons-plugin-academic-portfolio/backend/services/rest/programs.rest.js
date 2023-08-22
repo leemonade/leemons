@@ -34,7 +34,7 @@ const {
 module.exports = {
   getProgramTreeRest: {
     rest: {
-      path: '/program/:id/tree',
+      path: '/:id/tree',
       method: 'GET',
     },
     middlewares: [
@@ -52,7 +52,7 @@ module.exports = {
   },
   haveProgramsRest: {
     rest: {
-      path: '/program/have',
+      path: '/have',
       method: 'GET',
     },
     middlewares: [
@@ -70,7 +70,7 @@ module.exports = {
   },
   postProgramRest: {
     rest: {
-      path: '/program',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -92,7 +92,7 @@ module.exports = {
   },
   putProgramRest: {
     rest: {
-      path: '/program',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -114,7 +114,7 @@ module.exports = {
   },
   listProgramRest: {
     rest: {
-      path: '/program',
+      path: '/',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -147,7 +147,7 @@ module.exports = {
   },
   detailProgramRest: {
     rest: {
-      path: '/program/:id',
+      path: '/:id',
       method: 'GET',
     },
     middlewares: [
@@ -166,7 +166,7 @@ module.exports = {
   },
   programHasCoursesRest: {
     rest: {
-      path: '/program/:id/has/courses',
+      path: '/:id/has/courses',
       method: 'GET',
     },
     middlewares: [
@@ -184,7 +184,7 @@ module.exports = {
   },
   programHasGroupsRest: {
     rest: {
-      path: '/program/:id/has/groups',
+      path: '/:id/has/groups',
       method: 'GET',
     },
     async handler(ctx) {
@@ -194,7 +194,7 @@ module.exports = {
   },
   programHasSubstagesRest: {
     rest: {
-      path: '/program/:id/has/substages',
+      path: '/:id/has/substages',
       method: 'GET',
     },
     middlewares: [
@@ -212,7 +212,7 @@ module.exports = {
   },
   programCoursesRest: {
     rest: {
-      path: '/program/:id/courses',
+      path: '/:id/courses',
       method: 'GET',
     },
     middlewares: [
@@ -230,7 +230,7 @@ module.exports = {
   },
   programGroupsRest: {
     rest: {
-      path: '/program/:id/groups',
+      path: '/:id/groups',
       method: 'GET',
     },
     middlewares: [
@@ -248,7 +248,7 @@ module.exports = {
   },
   programSubstagesRest: {
     rest: {
-      path: '/program/:id/substages',
+      path: '/:id/substages',
       method: 'GET',
     },
     middlewares: [
@@ -266,7 +266,7 @@ module.exports = {
   },
   deleteProgramRest: {
     rest: {
-      path: '/program/:id',
+      path: '/:id',
       method: 'DELETE',
     },
     middlewares: [
@@ -288,7 +288,7 @@ module.exports = {
   },
   duplicateProgramRest: {
     rest: {
-      path: '/program/:id/duplicate',
+      path: '/:id/duplicate',
       method: 'POST',
     },
     middlewares: [
@@ -306,7 +306,7 @@ module.exports = {
   },
   addStudentsToClassesUnderNodeTreeRest: {
     rest: {
-      path: '/program/add-students-to-classes-under-node-tree',
+      path: '/add-students-to-classes-under-node-tree',
       method: 'POST',
     },
     middlewares: [
@@ -330,7 +330,7 @@ module.exports = {
   },
   getUserProgramsRest: {
     rest: {
-      path: '/user/programs',
+      path: '/user',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -341,7 +341,7 @@ module.exports = {
   },
   getProgramEvaluationSystemRest: {
     rest: {
-      path: '/program/:id/evaluation-system',
+      path: '/:id/evaluation-system',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

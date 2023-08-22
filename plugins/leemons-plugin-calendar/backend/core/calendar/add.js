@@ -23,17 +23,12 @@ async function add({ key, config, ctx }) {
   await validateExistCalendarKey({ key, ctx });
 
   const permissionConfig = getPermissionConfig(key);
-  const calendar = await ctx.tx.db.Calendars.create({
+  const calendarDoc = await ctx.tx.db.Calendars.create({
     key,
     ...config,
     metadata: JSON.stringify(config.metadata),
   });
-  // await leemons
-  //   .getPlugin('users')
-  //   .services.permissions.addItem(calendar.id, permissionConfig.type, permissionConfig.all, {
-  //     isCustomPermission: true,
-  //     transacting,
-  //   });
+  const calendar = calendarDoc.toObject();
 
   await ctx.tx.call('users.permissions.addItem', {
     item: calendar.id,

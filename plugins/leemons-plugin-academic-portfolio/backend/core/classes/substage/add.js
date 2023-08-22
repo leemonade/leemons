@@ -1,5 +1,6 @@
 async function add({ class: _class, substage, ctx }) {
-  return ctx.tx.db.ClassSubstage.create({ class: _class, substage });
+  const classSubstageDoc = await ctx.tx.db.ClassSubstage.create({ class: _class, substage });
+  return classSubstageDoc.toObject();
 }
 
 module.exports = { add };

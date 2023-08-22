@@ -22,7 +22,7 @@ const {
 module.exports = {
   postGroupRest: {
     rest: {
-      path: '/group',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
@@ -58,7 +58,7 @@ module.exports = {
   },
   putGroupRest: {
     rest: {
-      path: '/group',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
@@ -76,7 +76,7 @@ module.exports = {
   },
   listGroupRest: {
     rest: {
-      path: '/group',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
@@ -114,7 +114,7 @@ module.exports = {
   },
   duplicateGroupWithClassesUnderNodeTreeRest: {
     rest: {
-      path: '/group/:id/duplicate-with-classes-under-node-tree',
+      path: '/:id/duplicate-with-classes-under-node-tree',
       method: 'POST',
     },
     middlewares: [
@@ -135,7 +135,7 @@ module.exports = {
   },
   duplicateGroupRest: {
     rest: {
-      path: '/group/duplicate',
+      path: '/duplicate',
       method: 'POST',
     },
     middlewares: [

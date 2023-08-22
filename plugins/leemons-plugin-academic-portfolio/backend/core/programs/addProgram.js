@@ -50,7 +50,8 @@ async function addProgram({ data, userSession, ctx }) {
     }
   }
 
-  let program = await ctx.tx.db.Programs.create(programData);
+  const programDoc = await ctx.tx.db.Programs.create(programData);
+  let program = programDoc.toObject();
 
   // ES: Añadimos el asset de la imagen
   const imageData = {

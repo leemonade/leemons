@@ -15,7 +15,7 @@ const { updateCycle } = require('../../core/cycle');
 module.exports = {
   putCycleRest: {
     rest: {
-      path: '/cycle',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [

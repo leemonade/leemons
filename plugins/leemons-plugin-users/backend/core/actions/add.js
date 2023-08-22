@@ -17,7 +17,7 @@ async function add({ ctx, ...data }) {
     ctx.tx.db.Actions.create({
       actionName: data.actionName,
       order: data.order,
-    }),
+    }).then((mongooseDoc) => mongooseDoc.toObject()),
     ctx.tx.call('multilanguage.common.addManyByKey', {
       key: `users.${data.actionName}.name`,
       data: data.localizationName,

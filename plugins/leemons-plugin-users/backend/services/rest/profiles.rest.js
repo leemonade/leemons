@@ -54,7 +54,7 @@ const translationsValidations = {
 module.exports = {
   listRest: {
     rest: {
-      path: '/profile/list',
+      path: '/list',
       method: 'POST',
     },
     middlewares: [
@@ -94,7 +94,7 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/profile/add',
+      path: '/add',
       method: 'POST',
     },
     middlewares: [
@@ -126,7 +126,7 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      path: '/profile/detail/:uri',
+      path: '/detail/:uri',
       method: 'GET',
     },
     middlewares: [
@@ -155,7 +155,7 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/profile/update',
+      path: '/update',
       method: 'POST',
     },
     middlewares: [
@@ -188,7 +188,7 @@ module.exports = {
   },
   getProfileSysNameRest: {
     rest: {
-      path: '/profile/sysName',
+      path: '/sysName',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

@@ -113,8 +113,8 @@ module.exports = {
   },
   addStudentsToClassesUnderNodeTreeRest: {
     rest: {
-      path: '/classes-under-node-tree',
-      method: 'GET',
+      path: '/add-students-to-classes-under-node-tree',
+      method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),

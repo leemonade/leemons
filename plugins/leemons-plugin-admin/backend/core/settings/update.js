@@ -24,6 +24,7 @@ async function update({ ctx, ...settings }) {
     let currentSettings = await findOne({ ctx });
     if (_.isNil(currentSettings)) {
       currentSettings = await ctx.tx.db.Settings.create({ configured: false });
+      currentSettings = currentSettings.toObject();
     }
     const newSettings = { ...currentSettings.toObject(), ...settings };
     delete newSettings.id;
@@ -31,6 +32,7 @@ async function update({ ctx, ...settings }) {
     return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
       lean: true,
       new: true,
+      lean: true,
     });
   }
 

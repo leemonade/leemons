@@ -28,7 +28,7 @@ async function update({ zoneKey, key, url, name, description, properties, profil
           zoneKey,
           key,
           profile,
-        })
+        }).then((mongooseDoc) => mongooseDoc.toObject())
       );
     });
   }

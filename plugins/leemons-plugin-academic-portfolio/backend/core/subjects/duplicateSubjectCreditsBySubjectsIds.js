@@ -28,7 +28,7 @@ async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: 
           duplications.courses && duplications.courses[item.course]
             ? duplications.courses[item.course].id
             : item.course,
-      })
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 

@@ -17,7 +17,7 @@ async function add({ zoneKey, key, url, name, description, profiles, properties 
   }
 
   if (_.isArray(profiles) && profiles.length > 0) {
-    const existsProfiles = ctx.tx.call('users.profiles.existMany', { ids: profiles });
+    const existsProfiles = await ctx.tx.call('users.profiles.existMany', { ids: profiles });
     if (!existsProfiles) {
       throw new LeemonsError(ctx, { message: `Profiles does not exist` });
     }
@@ -32,7 +32,7 @@ async function add({ zoneKey, key, url, name, description, profiles, properties 
       description,
       properties: JSON.stringify(properties),
       pluginName: ctx.callerPlugin,
-    }),
+    }).then((mongooseDoc) => mongooseDoc.toObject()),
   ];
 
   if (_.isArray(profiles) && profiles.length > 0) {
@@ -42,7 +42,7 @@ async function add({ zoneKey, key, url, name, description, profiles, properties 
           zoneKey,
           key,
           profile,
-        })
+        }).then((mongooseDoc) => mongooseDoc.toObject())
       );
     });
   }

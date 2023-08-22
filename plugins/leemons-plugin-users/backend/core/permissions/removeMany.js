@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { settledResponseToManyResponse } = require('leemons-utils');
-const { remove } = require('./remove');
 
 /**
  * Delete multiple permissions

@@ -9,7 +9,7 @@ const { list } = require('../../core/actions');
 module.exports = {
   listRest: {
     rest: {
-      path: '/action/list',
+      path: '/list',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

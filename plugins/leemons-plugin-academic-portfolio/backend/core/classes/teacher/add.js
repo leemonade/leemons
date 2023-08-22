@@ -10,7 +10,7 @@ async function add({ class: _class, teacher, type, ctx }) {
       class: _class,
       teacher,
       type,
-    }),
+    }).then((mongooseDoc) => mongooseDoc.toObject()),
     getClassProgram({ id: _class, ctx }),
     ctx.tx.call('comunica.room.addUserAgents', {
       room: ctx.prefixPN(`room.class.${_class}`),

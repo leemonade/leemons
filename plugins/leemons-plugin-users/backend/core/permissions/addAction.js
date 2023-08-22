@@ -26,7 +26,11 @@ async function addAction({ permissionName, actionName, ctx }) {
     });
 
   ctx.logger.info(`Adding action '${actionName}' for permission '${permissionName}'`);
-  return ctx.tx.db.PermissionAction.create({ permissionName, actionName });
+  const permissionActionDoc = await ctx.tx.db.PermissionAction.create({
+    permissionName,
+    actionName,
+  });
+  return permissionActionDoc.toObject();
 }
 
 module.exports = { addAction };
