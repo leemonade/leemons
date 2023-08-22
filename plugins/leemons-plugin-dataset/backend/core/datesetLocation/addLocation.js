@@ -23,7 +23,11 @@ async function addLocation({ name, description, locationName, pluginName, ctx })
   validatePluginName(pluginName, ctx.callerPlugin);
   await validateExistLocation({ locationName, pluginName, ctx });
 
-  const promises = [ctx.tx.db.Dataset.create({ locationName, pluginName })];
+  const promises = [
+    ctx.tx.db.Dataset.create({ locationName, pluginName }).then((mongooseDoc) =>
+      mongooseDoc.toObject()
+    ),
+  ];
 
   if (name) {
     promises.push(
