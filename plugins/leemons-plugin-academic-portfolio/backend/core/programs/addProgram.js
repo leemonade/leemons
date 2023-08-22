@@ -72,7 +72,7 @@ async function addProgram({ data, userSession, ctx }) {
       image: assetImage.id,
       imageUrl: ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assetImage.id }),
     },
-    { new: true }
+    { new: true, lean: true }
   );
 
   if (_.isArray(substages)) {
