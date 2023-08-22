@@ -34,7 +34,7 @@ async function add({ fileId, assetId, skipPermissions, ctx }) {
     return ctx.tx.db.AssetsFiles.findOneAndUpdate(
       { asset: assetId, file: fileId },
       { asset: assetId, file: fileId },
-      { upsert: true }
+      { upsert: true, lean: true, new: true }
     );
   } catch (e) {
     throw new LeemonsError(ctx, {
