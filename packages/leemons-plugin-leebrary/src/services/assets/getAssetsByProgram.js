@@ -8,7 +8,7 @@ const { normalizeItemsArray } = require('./shared');
  * @param {object} options - The options object
  * @param {Array} options.assets - The assets
  * @param {object} options.transacting - The transaction object
- * @returns {Array} - Returns an array of asset IDs
+ * @returns {Promise<Array>} - Returns an array of asset IDs
  */
 async function getAssetsByProgram(program, { assets, transacting }) {
   const programs = normalizeItemsArray(program);

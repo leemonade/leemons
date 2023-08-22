@@ -8,6 +8,7 @@ const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
+const { normalizeItemsArray } = require('../shared');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
@@ -16,6 +17,12 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
  * Handles the bookmark data.
  * @async
  * @param {Object} data - The data of the bookmark.
+ * @param {string} data.categoryKey - The category key of the bookmark.
+ * @param {string} data.url - The URL of the bookmark.
+ * @param {string} data.icon - The icon of the bookmark.
+ * @param {string} data.name - The name of the bookmark.
+ * @param {string} data.description - The description of the bookmark.
+ * @param {string} data.cover - The cover of the asset.
  * @param {string} cover - The cover of the bookmark.
  * @returns {Promise<Object>} The handled bookmark data.
  */
@@ -45,7 +52,7 @@ async function handleBookmarkData(data, cover) {
  * Handles the user session data.
  * @param {Object} assetData - The data of the asset.
  * @param {Object} userSession - The user session.
- * @returns {Object} The handled user session data.
+ * @returns {Object} The handled asset data.
  */
 function handleUserSessionData(assetData, userSession) {
   if (userSession) {
@@ -91,7 +98,7 @@ async function handleCategoryData(category, categoryId, categoryKey) {
  */
 function handleCanUseData(canUse, category) {
   if (isArray(category?.canUse) && category?.canUse.length) {
-    canUse = canUse.concat(category.canUse);
+    canUse = [...canUse, ...category.canUse];
   }
   return canUse;
 }
@@ -118,20 +125,20 @@ function checkCategoryPermission(category, canUse, calledFrom) {
  * @param {string} file - The file to upload.
  * @param {string} cover - The cover of the asset.
  * @param {string} assetName - The name of the asset.
- * @param {Object} t - The transaction object.
+ * @param {Object} transacting - The transaction object.
  * @returns {Promise<Object>} The uploaded file and cover.
  */
-async function handleFileUpload(file, cover, assetName, t) {
-  let newFile;
-  let coverFile;
+async function handleFileUpload(file, cover, assetName, transacting) {
+  let newFile = null;
+  let coverFile = null;
   if (!isEmpty(file)) {
-    newFile = await uploadFromSource(file, { name: assetName }, { transacting: t });
+    newFile = await uploadFromSource(file, { name: assetName }, { transacting });
     if (newFile?.type?.indexOf('image') === 0) {
       coverFile = newFile;
     }
   }
   if (!coverFile && !isEmpty(cover)) {
-    coverFile = await uploadFromSource(cover, { name: assetName }, { transacting: t });
+    coverFile = await uploadFromSource(cover, { name: assetName }, { transacting });
   }
   return { newFile, coverFile };
 }
@@ -194,14 +201,14 @@ async function handleSubjects(subjects, assetId, transacting) {
 /**
  * Handles the permissions of the asset.
  * @async
- * @param {Array} pPermissions - The permissions of the asset.
+ * @param {Array} permissions - The permissions of the asset.
  * @param {string} assetId - The ID of the asset.
  * @param {string} categoryId - The ID of the category.
  * @param {Array} canAccess - The can access data.
  * @param {Object} userSession - The user session.
  * @param {Object} transacting - The transaction object.
  */
-async function handlePermissions(pPermissions, assetId, categoryId, canAccess, userSession, transacting) {
+async function handlePermissions(permissions, assetId, categoryId, canAccess, userSession, transacting) {
   const { services: userService } = leemons.getPlugin('users');
   const permissionName = getAssetPermissionName(assetId);
   const permissionsPromises = [
@@ -215,8 +222,8 @@ async function handlePermissions(pPermissions, assetId, categoryId, canAccess, u
       { isCustomPermission: true, transacting }
     ),
   ];
-  if (pPermissions && pPermissions.length) {
-    forEach(pPermissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
+  if (permissions && permissions.length) {
+    forEach(permissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
       let permission = 'can-view';
       if (canEdit) {
         permission = 'can-edit';
@@ -234,13 +241,13 @@ async function handlePermissions(pPermissions, assetId, categoryId, canAccess, u
     });
   }
   await Promise.all(permissionsPromises);
-  const permissions = [];
+  const result = [];
   let hasOwner = false;
   if (canAccess && !isEmpty(canAccess)) {
     for (let i = 0, len = canAccess.length; i < len; i++) {
       const { userAgent, role } = canAccess[i];
       hasOwner = hasOwner || role === 'owner';
-      permissions.push(
+      result.push(
         userService.permissions.addCustomPermissionToUserAgent(
           userAgent,
           {
@@ -254,7 +261,7 @@ async function handlePermissions(pPermissions, assetId, categoryId, canAccess, u
     }
   }
   if (!hasOwner) {
-    permissions.push(
+    result.push(
       userService.permissions.addCustomPermissionToUserAgent(
         map(userSession.userAgents, 'id'),
         {
@@ -266,7 +273,7 @@ async function handlePermissions(pPermissions, assetId, categoryId, canAccess, u
       )
     );
   }
-  await Promise.all(permissions);
+  await Promise.all(result);
 }
 
 /**
@@ -363,7 +370,7 @@ async function add(
     ]
   */
 
-  const pPermissions = compact(isArray(permissions) ? permissions : [permissions]);
+  const pPermissions = normalizeItemsArray(permissions);
   const categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
   let assetData = await handleBookmarkData({ ...data, categoryKey }, cover);
 
@@ -400,4 +407,20 @@ async function add(
   );
 }
 
-module.exports = { add };
+module.exports = {
+  add,
+  handleBookmarkData,
+  handleUserSessionData,
+  handleCategoryData,
+  handleCanUseData,
+  checkCategoryPermission,
+  handleFileUpload,
+  handleVersionCreation,
+  createAssetInDB,
+  handleSubjects,
+  handlePermissions,
+  handleFiles,
+  handleBookmarkCreation,
+  handleTags
+
+};

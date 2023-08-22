@@ -29,6 +29,76 @@ const { tables } = require('../tables');
 const { getAssetsByProgram } = require('../assets/getAssetsByProgram');
 const { getAssetsBySubject } = require('../assets/getAssetsBySubject');
 
+// -----------------------------------------------------------------------------
+// PRIVATE METHODS
+
+/**
+ * Prepares the provider query by adding program and subjects if they are not already present in the provider query.
+ * @param {Object} providerQuery - The initial provider query.
+ * @param {Array} programs - The programs to be added to the provider query.
+ * @param {Array} subjects - The subjects to be added to the provider query.
+ * @returns {Object} The updated provider query.
+ */
+function prepareProviderQuery({ providerQuery, programs, subjects }) {
+  if (!providerQuery?.program && programs) {
+    providerQuery.program = programs[0];
+  }
+  if (!providerQuery?.subjects && subjects) {
+    providerQuery.subjects = subjects;
+  }
+
+  return providerQuery;
+}
+
+/**
+ * Processes the category ID. If the category is an ID, it fetches the category by ID. If not, it fetches the category by key.
+ * @param {Object} params - The parameters for processing the category ID.
+ * @param {string} params.category - The category to be processed.
+ * @param {Object} params.transacting - The transaction object.
+ * @returns {string} The ID of the category.
+ */
+async function processCategoryId({ category, transacting }) {
+  let result;
+  let isId = category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+
+  if (isId) {
+    result = await getCategoryById(category, { columns: ['id'], transacting });
+  } else {
+    result = await getCategoryByKey(category, { columns: ['id'], transacting });
+  }
+
+  return result.id;
+}
+
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
+/**
+ * Searches for assets based on various criteria.
+ * @async
+ * @param {Object} params - The parameters for the search.
+ * @param {string} params.criteria - The search criteria.
+ * @param {string} params.type - The type of asset to search for.
+ * @param {string} params.category - The category of the asset to search for.
+ * @param {Object} options - The options for the search.
+ * @param {boolean} options.allVersions - Whether to include all versions of the asset.
+ * @param {string} options.sortBy - The field to sort the results by.
+ * @param {string} options.sortDirection - The direction to sort the results in.
+ * @param {boolean} options.published - Whether to only include published assets.
+ * @param {boolean} options.indexable - Whether to only include indexable assets.
+ * @param {boolean} options.preferCurrent - Whether to prefer the current version of the asset.
+ * @param {boolean} options.searchInProvider - Whether to search in the provider.
+ * @param {Object} options.providerQuery - The query to use when searching in the provider.
+ * @param {boolean} options.pinned - Whether to only include pinned assets.
+ * @param {boolean} options.showPublic - Whether to only include public assets.
+ * @param {Array} options.roles - The roles to include in the search.
+ * @param {boolean} options.onlyShared - Whether to only include shared assets.
+ * @param {Array} options.programs - The programs to include in the search.
+ * @param {Array} options.subjects - The subjects to include in the search.
+ * @param {Object} options.userSession - The user session.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Array>} The search results.
+ */
 async function search(
   { criteria = '', type, category },
   {
@@ -64,12 +134,7 @@ async function search(
     subjects = providerQuery.subjects;
   }
 
-  if (!providerQuery?.program && programs) {
-    providerQuery.program = programs[0];
-  }
-  if (!providerQuery?.subjects && subjects) {
-    providerQuery.subjects = subjects;
-  }
+  providerQuery = prepareProviderQuery({ providerQuery, programs, subjects });
 
   let assets = [];
   let nothingFound = false;
@@ -82,21 +147,17 @@ async function search(
   }
 
   try {
+
+    // ·································
+    // BY CATEGORY
+
     let categoryId;
     if (category) {
-      let _category;
-
-      if (
-        category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-      ) {
-        // eslint-disable-next-line no-param-reassign
-        _category = await getCategoryById(category, { columns: ['id'], transacting });
-      } else {
-        // eslint-disable-next-line no-param-reassign
-        _category = await getCategoryByKey(category, { columns: ['id'], transacting });
-      }
-      categoryId = _category.id;
+      categoryId = await processCategoryId({ category, transacting });
     }
+
+    // ·································
+    // BY PINS
 
     if (pinned) {
       const pins = await getPinsByUser({ userSession, transacting });
@@ -108,8 +169,8 @@ async function search(
       }
     }
 
-    // if (!isEmpty(criteria)) {
-    const tagsService = leemons.getPlugin('common').services.tags;
+    // ·································
+    // BY PROVIDER
 
     let providerAssets = null;
     if (searchInProvider && categoryId && !isEmpty(criteria)) {
@@ -146,6 +207,10 @@ async function search(
         query.category = categoryId;
       }
 
+      // ·································
+      // BY TAGS
+
+      const tagsService = leemons.getPlugin('common').services.tags;
       const [assetsFound, byTags] = await Promise.all([
         tables.assets.find(query, { columns: ['id'], transacting }),
         tagsService.getTagsValueByPartialTags(criteria, {
@@ -168,7 +233,11 @@ async function search(
 
       nothingFound = assets.length === 0;
     }
-    // }
+
+
+    // ·································
+    // BY SHARED
+
     if (!onlyShared) {
       if (type) {
         assets = await getAssetsByType(type, { assets, transacting });
@@ -199,7 +268,9 @@ async function search(
         assets = difference(assets, assetsToRemove);
       }
     }
-    // Search by subject
+
+    // ·································
+    // BY PERMISSIONS
 
     // EN: Only return assets that the user has permission to view
     // ES: Sólo devuelve los recursos que el usuario tiene permiso para ver
@@ -214,6 +285,9 @@ async function search(
       assets = assetsWithPermissions;
       nothingFound = assets.length === 0;
     }
+
+    // ·································
+    // BY STATUS
 
     // EN: Filter by published status
     // ES: Filtrar por estado publicado

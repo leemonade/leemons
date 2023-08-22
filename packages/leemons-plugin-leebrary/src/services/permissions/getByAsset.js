@@ -4,7 +4,7 @@ const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 
 /**
- * Asynchronously gets permissions by asset.
+ * Gets permissions by asset ID.
  *
  * @async
  * @param {string} assetId - The asset ID.

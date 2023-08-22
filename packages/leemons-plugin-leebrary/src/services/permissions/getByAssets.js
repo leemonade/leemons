@@ -4,8 +4,11 @@ const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');
 const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
 
+// -----------------------------------------------------------------------------
+// PRIVATE METHODS
+
 /**
- * Asynchronously gets user permissions for given assets.
+ * Gets user permissions for given assets.
  *
  * @async
  * @param {Object} params - The parameters.
@@ -63,8 +66,11 @@ function processFinalPermissions({ assetPermissions, viewItems, assignItems, edi
   return assetPermissions;
 }
 
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
 /**
- * Asynchronously gets permissions by assets.
+ * Gets permissions for a given array of assets IDs.
  *
  * @async
  * @param {Array} assetIds - An array of asset IDs.
@@ -73,7 +79,7 @@ function processFinalPermissions({ assetPermissions, viewItems, assignItems, edi
  * @param {Object} options.userSession - The user session object.
  * @param {boolean} options.onlyShared - Whether to only show shared assets.
  * @param {Object} options.transacting - The transaction object.
- * @returns {Array} An array of objects each containing the asset ID, role and permissions.
+ * @returns {Promise<Array>} An array of objects each containing the asset ID, role and permissions.
  * @throws {HttpError} Throws an HTTP error if unable to get permissions.
  */
 async function getByAssets(assetIds, { showPublic, userSession, onlyShared, transacting } = {}) {

@@ -18,6 +18,15 @@ const rolePermissionType = {
   assigner: leemons.plugin.prefixPN(`asset.can-assign`),
 };
 
+// -----------------------------------------------------------------------------
+// PRIVATE METHODS
+
+/**
+ * Checks if the roles exist in the system.
+ * @param {Array} canAccess - Array of objects containing user agents and their roles.
+ * @param {Object} permissions - Object containing permissions.
+ * @throws Will throw an error if a role is invalid.
+ */
 function checkIfRolesExists(canAccess, permissions) {
   const roles = [];
   if (canAccess.length) {
@@ -34,6 +43,22 @@ function checkIfRolesExists(canAccess, permissions) {
   });
 }
 
+/**
+ * Add permissions to a user agent.
+ * @async
+ * @param {Object} params - Function parameters.
+ * @param {string} params.id - Asset ID.
+ * @param {string} params.role - Role to be assigned.
+ * @param {string} params.userAgent - User agent to be assigned the role.
+ * @param {string} params.categoryId - Category ID of the asset.
+ * @param {Object} params.userSession - User session data.
+ * @param {Object} params.transacting - Transaction object.
+ * @param {Object} params.userService - User service object.
+ * @param {string} params.assignerRole - Role of the assigner.
+ * @param {string} params.permissionName - Name of the permission to be assigned.
+ * @returns {Promise<Array>} Returns a promise that resolves to an array of results.
+ * @throws Will throw an error if the assigner does not have permission to assign the role.
+ */
 async function addPermissionsToUserAgent({
   id,
   role,
@@ -116,6 +141,18 @@ async function addPermissionsToUserAgent({
   return result;
 }
 
+/**
+ * Add permissions to an asset.
+ * @async
+ * @param {Object} params - Function parameters.
+ * @param {string} params.id - Asset ID.
+ * @param {string} params.categoryId - Category ID of the asset.
+ * @param {Object} params.permissions - Permissions to be assigned.
+ * @param {Object} params.userService - User service object.
+ * @param {Object} params.transacting - Transaction object.
+ * @param {string} params.assignerRole - Role of the assigner.
+ * @throws Will throw an error if the assigner does not have permission to assign the permission with the specified role.
+ */
 async function addPermissionsToAsset({
   id,
   categoryId,
@@ -194,6 +231,18 @@ async function addPermissionsToAsset({
   });
 }
 
+/**
+ * Remove a user agent that is missing from the asset.
+ * @async
+ * @param {Object} params - Function parameters.
+ * @param {string} params.id - Asset ID.
+ * @param {string} params.userAgent - User agent to be removed.
+ * @param {Object} params.transacting - Transaction object.
+ * @param {Object} params.userService - User service object.
+ * @param {string} params.assignerRole - Role of the assigner.
+ * @param {string} params.permissionName - Name of the permission to be removed.
+ * @throws Will throw an error if the assigner does not have permission to unassign the role.
+ */
 async function removeMissingUserAgent({
   id,
   userAgent,
@@ -227,6 +276,19 @@ async function removeMissingUserAgent({
   }
 }
 
+/**
+ * Remove user agents that are missing from the asset.
+ * @async
+ * @param {Object} params - Function parameters.
+ * @param {string} params.id - Asset ID.
+ * @param {Array} params.toUpdate - Array of user agents to update.
+ * @param {Object} params.transacting - Transaction object.
+ * @param {Object} params.userService - User service object.
+ * @param {string} params.assignerRole - Role of the assigner.
+ * @param {string} params.permissionName - Name of the permission to be removed.
+ * @param {Array} params.currentUserAgentIds - Array of current user agent IDs.
+ * @throws Will throw an error if the assigner does not have permission to unassign the role.
+ */
 async function removeMissingUserAgents({
   id,
   toUpdate,
@@ -259,6 +321,17 @@ async function removeMissingUserAgents({
   if (removePromises.length) await Promise.all(removePromises);
 }
 
+/**
+ * Remove permissions that are missing from the asset.
+ * @async
+ * @param {Object} params - Function parameters.
+ * @param {string} params.id - Asset ID.
+ * @param {Object} params.permissions - Permissions to be removed.
+ * @param {Object} params.userService - User service object.
+ * @param {string} params.assignerRole - Role of the assigner.
+ * @param {Object} params.transacting - Transaction object.
+ * @throws Will throw an error if the assigner does not have permission to unassign the role.
+ */
 async function removeMissingPermissions({
   id,
   permissions,
@@ -327,15 +400,24 @@ async function removeMissingPermissions({
   await Promise.all(promises);
 }
 
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
 /**
- * Set userAgents permissions / roles in order to access to the specified assetID
- * @public
- * @static
- * @param {string} assetId - Asset ID
- * @param {any=} isPublic, canAccess - Array of { userAgent: string, role: string }
- * @param {any=} transacting - DB Transaction
- * @return {Promise<string[]>}
- * */
+ * Set permissions for an asset.
+ * @async
+ * @param {string|Array} assetId - Asset ID or an array of asset IDs.
+ * @param {Object} options - Options for setting permissions.
+ * @param {boolean} options.isPublic - Whether the asset is public.
+ * @param {Object} options.permissions - Permissions to be set.
+ * @param {Array} options.canAccess - Array of objects containing user agents and their roles.
+ * @param {boolean} options.deleteMissing - Whether to delete missing permissions.
+ * @param {Object} context - Context for setting permissions.
+ * @param {Object} context.userSession - User session data.
+ * @param {Object} context.transacting - Transaction object.
+ * @returns {Promise<boolean>} Returns a promise that resolves to true if the permissions were successfully set.
+ * @throws Will throw an error if the permissions could not be set.
+ */
 async function set(
   assetId,
   { isPublic, permissions, canAccess, deleteMissing },
