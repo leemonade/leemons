@@ -42,7 +42,7 @@ const menuItems = [
     item: {
       key: 'feedback-list',
       order: 2,
-      parentKey: 'feedback',
+      parentKey: `${permissionsPrefix}.feedback`,
       url: '/private/feedback',
       label: {
         en: 'Feedback library',
@@ -62,7 +62,7 @@ const menuItems = [
     item: {
       key: 'feedback-new',
       order: 3,
-      parentKey: 'feedback',
+      parentKey: `${permissionsPrefix}.feedback`,
       url: '/private/feedback/new',
       label: {
         en: 'New feedback',
@@ -109,7 +109,7 @@ const assignableRoles = [
         ],
       },
 
-      componentOwner: 'plugins.feedback',
+      componentOwner: 'feedback',
       listCardComponent: 'FeedbackListCard',
       detailComponent: 'FeedbackDetail',
     },

@@ -36,7 +36,7 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'plugins.users.users': {
+        'users.users': {
           actions: ['update', 'create', 'delete', 'admin'],
         },
       }),

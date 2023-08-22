@@ -42,7 +42,7 @@ const menuItems = [
     item: {
       key: 'content-creator-library',
       order: 2,
-      parentKey: 'content-creator',
+      parentKey: `${permissionsPrefix}.content-creator`,
       url: '/private/content-creator',
       label: {
         en: 'Documents library',
@@ -62,7 +62,7 @@ const menuItems = [
     item: {
       key: 'content-creator-new',
       order: 3,
-      parentKey: 'content-creator',
+      parentKey: `${permissionsPrefix}.content-creator`,
       url: '/private/content-creator/new',
       label: {
         en: 'New document',
@@ -109,7 +109,7 @@ const assignableRoles = [
         ],
       },
 
-      componentOwner: 'plugins.content-creator',
+      componentOwner: 'content-creator',
       listCardComponent: 'DocumentListCard',
       detailComponent: 'DocumentDetail',
     },
