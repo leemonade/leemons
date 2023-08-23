@@ -13,7 +13,7 @@ async function setDefaultLocale({ value, ctx }) {
     code: value,
   });
   if (!exists) throw new LeemonsError(ctx, { message: `The locale '${value}' not exists` });
-  const response = await ctx.tx.db.Config.updateOne(
+  const response = await ctx.tx.db.Config.findOneAndUpdate(
     { key: 'platform-locale' },
     {
       key: 'platform-locale',

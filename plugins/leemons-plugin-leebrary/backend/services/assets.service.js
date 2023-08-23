@@ -25,6 +25,11 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    add: {
+      handler() {
+        return { id: 'test' };
+      },
+    },
     getByIds: {
       handler(ctx) {
         return getByIds({ ...ctx.params, ctx });
@@ -32,6 +37,7 @@ module.exports = {
     },
     getCoverUrl: {
       handler(ctx) {
+        // TODO: Esto deberia de hacerse en un paquete de leebrary para gastar menos recursos
         return `/api/leebrary/img/${ctx.params.assetId}`;
       },
     },

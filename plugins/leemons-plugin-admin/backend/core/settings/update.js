@@ -26,13 +26,12 @@ async function update({ ctx, ...settings }) {
       currentSettings = await ctx.tx.db.Settings.create({ configured: false });
       currentSettings = currentSettings.toObject();
     }
-    const newSettings = { ...currentSettings.toObject(), ...settings };
+    const newSettings = { ...currentSettings, ...settings };
     delete newSettings.id;
 
     return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
       lean: true,
       new: true,
-      lean: true,
     });
   }
 
