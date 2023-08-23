@@ -49,14 +49,14 @@ async function remove({ classId, studentId, soft, ctx }) {
   await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
     userAgentId: classStudent.student,
     data: {
-      permissionName: `plugins.academic-portfolio.class.${classStudent.class}`,
+      permissionName: `academic-portfolio.class.${classStudent.class}`,
     },
   });
 
   await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
     userAgentId: classStudent.student,
     data: {
-      permissionName: `plugins.academic-portfolio.class-profile.${classStudent.class}.${studentProfileId}`,
+      permissionName: `academic-portfolio.class-profile.${classStudent.class}.${studentProfileId}`,
     },
   });
 

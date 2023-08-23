@@ -152,9 +152,9 @@ async function addClass({ data, ctx }) {
     promises.push(
       ctx.tx.call('users.permissions.addItem', {
         item: nClass.id,
-        type: 'plugins.academic-portfolio.class',
+        type: 'academic-portfolio.class',
         data: {
-          permissionName: `plugins.academic-portfolio.class.${nClass.id}`,
+          permissionName: `academic-portfolio.class.${nClass.id}`,
           actionNames: ['view'],
         },
         isCustomPermission: true,

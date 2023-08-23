@@ -15,7 +15,7 @@ async function removeClassesByIds({ ids, soft, ctx }) {
   await ctx.tx.call('users.permissions.removeItems', {
     query: {
       item: _.map(classes, 'id'),
-      type: 'plugins.academic-portfolio.class',
+      type: 'academic-portfolio.class',
     },
   });
 
