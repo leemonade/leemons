@@ -1,15 +1,13 @@
 import React from 'react';
 import { SetupBasicData, SETUP_BASIC_DATA_DEFAULT_PROPS } from './SetupBasicData';
-import mdx from './SetupBasicData.mdx';
+import { Box } from '@bubbles-ui/components';
 import { BASIC_DATA } from '../mocks/data';
 
 export default {
   title: 'leemons/AcademicPortfolio/Setup/BasicData',
   parameters: {
     component: SetupBasicData,
-    docs: {
-      page: mdx,
-    },
+
     design: {
       type: 'figma',
     },
@@ -20,7 +18,11 @@ export default {
 };
 
 const Template = ({ ...props }) => {
-  return <SetupBasicData {...props} />;
+  return (
+    <Box style={{ width: 560 }}>
+      <SetupBasicData {...props} />
+    </Box>
+  );
 };
 
 export const Playground = Template.bind({});
