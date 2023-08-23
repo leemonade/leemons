@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Box, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
 import _, { isEmpty } from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { Header } from './components/Header';

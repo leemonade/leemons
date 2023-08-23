@@ -10,7 +10,7 @@ import {
   ADD_CURRICULUM_FORM_MESSAGES,
   AddCurriculumForm,
 } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';

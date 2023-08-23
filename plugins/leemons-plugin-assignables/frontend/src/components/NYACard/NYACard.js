@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@bubbles-ui/leemons';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common-frontend-react';
+import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _, { get } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';

@@ -3,7 +3,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { Stack, TabPanel, Tabs } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { SystemData } from './SystemData';
 import { CommonFields } from './CommonFields';
 

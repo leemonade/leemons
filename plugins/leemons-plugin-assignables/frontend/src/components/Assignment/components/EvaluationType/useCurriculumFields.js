@@ -2,7 +2,7 @@ import React from 'react';
 import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
 import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
 import { cloneDeep, get, intersection, isArray, last, set, uniqBy } from 'lodash';
-import { unflatten, useStore } from '@common-frontend-react';
+import { unflatten, useStore } from '@common';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { useParams, useHistory } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';

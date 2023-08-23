@@ -17,7 +17,7 @@ import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import { getCentersWithToken } from '@users/session';
 
 import _, { isFunction, uniqBy } from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';

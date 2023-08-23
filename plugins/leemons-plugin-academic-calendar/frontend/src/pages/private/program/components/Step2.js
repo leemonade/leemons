@@ -18,8 +18,8 @@ import {
   Title,
   useDebouncedCallback,
 } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
-import { useLocale, useStore } from '@common-frontend-react';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useLocale, useStore } from '@common';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert } from '@layout/alert';
 import { Controller, useForm } from 'react-hook-form';

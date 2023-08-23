@@ -6,158 +6,158 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import "./global.css";
 
 // Plugins imports
-const AcademicCalendarFrontendReactPrivate = loadable(() => pMinDelay(import('@academic-calendar-frontend-react/../Private'), 1000));
-const AcademicPortfolioFrontendReactPrivate = loadable(() => pMinDelay(import('@academic-portfolio-frontend-react/../Private'), 1000));
-const AdminFrontendReactPublic = loadable(() => pMinDelay(import('@admin-frontend-react/../Public'), 1000));
-const AdminFrontendReactPrivate = loadable(() => pMinDelay(import('@admin-frontend-react/../Private'), 1000));
-const AttendanceControlFrontendReactPrivate = loadable(() => pMinDelay(import('@attendance-control-frontend-react/../Private'), 1000));
-const BoardMessagesFrontendReactPrivate = loadable(() => pMinDelay(import('@board-messages-frontend-react/../Private'), 1000));
-import { Provider as BoardMessagesFrontendReactGlobalProvider } from '@board-messages-frontend-react/../globalContext';
-const CalendarFrontendReactPrivate = loadable(() => pMinDelay(import('@calendar-frontend-react/../Private'), 1000));
-import { Provider as CommonFrontendReactGlobalProvider } from '@common-frontend-react/../globalContext';
-const ComunicaFrontendReactPrivate = loadable(() => pMinDelay(import('@comunica-frontend-react/../Private'), 1000));
-import { Provider as ComunicaFrontendReactGlobalProvider } from '@comunica-frontend-react/../globalContext';
-const ContentCreatorFrontendReactPrivate = loadable(() => pMinDelay(import('@content-creator-frontend-react/../Private'), 1000));
-const CurriculumFrontendReactPrivate = loadable(() => pMinDelay(import('@curriculum-frontend-react/../Private'), 1000));
-const DashboardFrontendReactPrivate = loadable(() => pMinDelay(import('@dashboard-frontend-react/../Private'), 1000));
-const EmailsFrontendReactPrivate = loadable(() => pMinDelay(import('@emails-frontend-react/../Private'), 1000));
-const FamiliesFrontendReactPrivate = loadable(() => pMinDelay(import('@families-frontend-react/../Private'), 1000));
-const FeedbackFrontendReactPrivate = loadable(() => pMinDelay(import('@feedback-frontend-react/../Private'), 1000));
-const FundaeFrontendReactPrivate = loadable(() => pMinDelay(import('@fundae-frontend-react/../Private'), 1000));
-import { Provider as FundaeFrontendReactGlobalProvider } from '@fundae-frontend-react/../globalContext';
-const AssignablesFrontendReactPrivate = loadable(() => pMinDelay(import('@assignables-frontend-react/../Private'), 1000));
-const GradesFrontendReactPrivate = loadable(() => pMinDelay(import('@grades-frontend-react/../Private'), 1000));
-import { Provider as LayoutFrontendReactGlobalProvider } from '@layout-frontend-react/../globalContext';
-const LearningPathsFrontendReactPrivate = loadable(() => pMinDelay(import('@learning-paths-frontend-react/../Private'), 1000));
-const LeebraryFrontendReactPrivate = loadable(() => pMinDelay(import('@leebrary-frontend-react/../Private'), 1000));
-import { Provider as LeebraryFrontendReactGlobalProvider } from '@leebrary-frontend-react/../globalContext';
-import { Provider as MenuBuilderFrontendReactGlobalProvider } from '@menu-builder-frontend-react/../globalContext';
-const MqttAwsIotFrontendReactPrivate = loadable(() => pMinDelay(import('@mqtt-aws-iot-frontend-react/../Private'), 1000));
-import { Provider as MqttAwsIotFrontendReactGlobalProvider } from '@mqtt-aws-iot-frontend-react/../globalContext';
-import { Provider as MqttSocketIoFrontendReactGlobalProvider } from '@mqtt-socket-io-frontend-react/../globalContext';
-const ScoresFrontendReactPrivate = loadable(() => pMinDelay(import('@scores-frontend-react/../Private'), 1000));
-const ScormFrontendReactPrivate = loadable(() => pMinDelay(import('@scorm-frontend-react/../Private'), 1000));
-const TasksFrontendReactPrivate = loadable(() => pMinDelay(import('@tasks-frontend-react/../Private'), 1000));
-const TestsFrontendReactPrivate = loadable(() => pMinDelay(import('@tests-frontend-react/../Private'), 1000));
-const TimetableFrontendReactPublic = loadable(() => pMinDelay(import('@timetable-frontend-react/../Public'), 1000));
-const UsersFrontendReactPublic = loadable(() => pMinDelay(import('@users-frontend-react/../Public'), 1000));
-const UsersFrontendReactPrivate = loadable(() => pMinDelay(import('@users-frontend-react/../Private'), 1000));
-import { Provider as UsersFrontendReactGlobalProvider } from '@users-frontend-react/../globalContext';
-import { Provider as XapiFrontendReactGlobalProvider } from '@xapi-frontend-react/../globalContext';
+const AcademicCalendarPrivate = loadable(() => pMinDelay(import('@academic-calendar/../Private'), 1000));
+const AcademicPortfolioPrivate = loadable(() => pMinDelay(import('@academic-portfolio/../Private'), 1000));
+const AdminPublic = loadable(() => pMinDelay(import('@admin/../Public'), 1000));
+const AdminPrivate = loadable(() => pMinDelay(import('@admin/../Private'), 1000));
+const AttendanceControlPrivate = loadable(() => pMinDelay(import('@attendance-control/../Private'), 1000));
+const BoardMessagesPrivate = loadable(() => pMinDelay(import('@board-messages/../Private'), 1000));
+import { Provider as BoardMessagesGlobalProvider } from '@board-messages/../globalContext';
+const CalendarPrivate = loadable(() => pMinDelay(import('@calendar/../Private'), 1000));
+import { Provider as CommonGlobalProvider } from '@common/../globalContext';
+const ComunicaPrivate = loadable(() => pMinDelay(import('@comunica/../Private'), 1000));
+import { Provider as ComunicaGlobalProvider } from '@comunica/../globalContext';
+const ContentCreatorPrivate = loadable(() => pMinDelay(import('@content-creator/../Private'), 1000));
+const CurriculumPrivate = loadable(() => pMinDelay(import('@curriculum/../Private'), 1000));
+const DashboardPrivate = loadable(() => pMinDelay(import('@dashboard/../Private'), 1000));
+const EmailsPrivate = loadable(() => pMinDelay(import('@emails/../Private'), 1000));
+const FamiliesPrivate = loadable(() => pMinDelay(import('@families/../Private'), 1000));
+const FeedbackPrivate = loadable(() => pMinDelay(import('@feedback/../Private'), 1000));
+const FundaePrivate = loadable(() => pMinDelay(import('@fundae/../Private'), 1000));
+import { Provider as FundaeGlobalProvider } from '@fundae/../globalContext';
+const AssignablesPrivate = loadable(() => pMinDelay(import('@assignables/../Private'), 1000));
+const GradesPrivate = loadable(() => pMinDelay(import('@grades/../Private'), 1000));
+import { Provider as LayoutGlobalProvider } from '@layout/../globalContext';
+const LearningPathsPrivate = loadable(() => pMinDelay(import('@learning-paths/../Private'), 1000));
+const LeebraryPrivate = loadable(() => pMinDelay(import('@leebrary/../Private'), 1000));
+import { Provider as LeebraryGlobalProvider } from '@leebrary/../globalContext';
+import { Provider as MenuBuilderGlobalProvider } from '@menu-builder/../globalContext';
+const MqttAwsIotPrivate = loadable(() => pMinDelay(import('@mqtt-aws-iot/../Private'), 1000));
+import { Provider as MqttAwsIotGlobalProvider } from '@mqtt-aws-iot/../globalContext';
+import { Provider as MqttSocketIoGlobalProvider } from '@mqtt-socket-io/../globalContext';
+const ScoresPrivate = loadable(() => pMinDelay(import('@scores/../Private'), 1000));
+const ScormPrivate = loadable(() => pMinDelay(import('@scorm/../Private'), 1000));
+const TasksPrivate = loadable(() => pMinDelay(import('@tasks/../Private'), 1000));
+const TestsPrivate = loadable(() => pMinDelay(import('@tests/../Private'), 1000));
+const TimetablePublic = loadable(() => pMinDelay(import('@timetable/../Public'), 1000));
+const UsersPublic = loadable(() => pMinDelay(import('@users/../Public'), 1000));
+const UsersPrivate = loadable(() => pMinDelay(import('@users/../Private'), 1000));
+import { Provider as UsersGlobalProvider } from '@users/../globalContext';
+import { Provider as XapiGlobalProvider } from '@xapi/../globalContext';
 
 function App() {
   // Plugins hooks
   return (
     <Router>
-        <BoardMessagesFrontendReactGlobalProvider>
-        <CommonFrontendReactGlobalProvider>
-        <ComunicaFrontendReactGlobalProvider>
-        <FundaeFrontendReactGlobalProvider>
-        <LayoutFrontendReactGlobalProvider>
-        <LeebraryFrontendReactGlobalProvider>
-        <MenuBuilderFrontendReactGlobalProvider>
-        <MqttAwsIotFrontendReactGlobalProvider>
-        <MqttSocketIoFrontendReactGlobalProvider>
-        <UsersFrontendReactGlobalProvider>
-        <XapiFrontendReactGlobalProvider>
+        <BoardMessagesGlobalProvider>
+        <CommonGlobalProvider>
+        <ComunicaGlobalProvider>
+        <FundaeGlobalProvider>
+        <LayoutGlobalProvider>
+        <LeebraryGlobalProvider>
+        <MenuBuilderGlobalProvider>
+        <MqttAwsIotGlobalProvider>
+        <MqttSocketIoGlobalProvider>
+        <UsersGlobalProvider>
+        <XapiGlobalProvider>
             <Switch>
               {/* Define each plugin route */}
-                <Route path="/private/academic-calendar-frontend-react">
-                  <AcademicCalendarFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/academic-calendar">
+                  <AcademicCalendarPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/academic-portfolio-frontend-react">
-                  <AcademicPortfolioFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/academic-portfolio">
+                  <AcademicPortfolioPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/admin-frontend-react">
-                  <AdminFrontendReactPublic fallback={<LoadingOverlay visible />} />
+                <Route path="/admin">
+                  <AdminPublic fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/admin-frontend-react">
-                  <AdminFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/admin">
+                  <AdminPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/attendance-control-frontend-react">
-                  <AttendanceControlFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/attendance-control">
+                  <AttendanceControlPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/board-messages-frontend-react">
-                  <BoardMessagesFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/board-messages">
+                  <BoardMessagesPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/calendar-frontend-react">
-                  <CalendarFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/calendar">
+                  <CalendarPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/comunica-frontend-react">
-                  <ComunicaFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/comunica">
+                  <ComunicaPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/content-creator-frontend-react">
-                  <ContentCreatorFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/content-creator">
+                  <ContentCreatorPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/curriculum-frontend-react">
-                  <CurriculumFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/curriculum">
+                  <CurriculumPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/dashboard-frontend-react">
-                  <DashboardFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/dashboard">
+                  <DashboardPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/emails-frontend-react">
-                  <EmailsFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/emails">
+                  <EmailsPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/families-frontend-react">
-                  <FamiliesFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/families">
+                  <FamiliesPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/feedback-frontend-react">
-                  <FeedbackFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/feedback">
+                  <FeedbackPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/fundae-frontend-react">
-                  <FundaeFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/fundae">
+                  <FundaePrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/assignables-frontend-react">
-                  <AssignablesFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/assignables">
+                  <AssignablesPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/grades-frontend-react">
-                  <GradesFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/grades">
+                  <GradesPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/learning-paths-frontend-react">
-                  <LearningPathsFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/learning-paths">
+                  <LearningPathsPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/leebrary-frontend-react">
-                  <LeebraryFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/leebrary">
+                  <LeebraryPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/mqtt-aws-iot-frontend-react">
-                  <MqttAwsIotFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/mqtt-aws-iot">
+                  <MqttAwsIotPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/scores-frontend-react">
-                  <ScoresFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/scores">
+                  <ScoresPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/scorm-frontend-react">
-                  <ScormFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/scorm">
+                  <ScormPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/tasks-frontend-react">
-                  <TasksFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/tasks">
+                  <TasksPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/tests-frontend-react">
-                  <TestsFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/tests">
+                  <TestsPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/timetable-frontend-react">
-                  <TimetableFrontendReactPublic fallback={<LoadingOverlay visible />} />
+                <Route path="/timetable">
+                  <TimetablePublic fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/users-frontend-react">
-                  <UsersFrontendReactPublic fallback={<LoadingOverlay visible />} />
+                <Route path="/users">
+                  <UsersPublic fallback={<LoadingOverlay visible />} />
                 </Route>
-                <Route path="/private/users-frontend-react">
-                  <UsersFrontendReactPrivate fallback={<LoadingOverlay visible />} />
+                <Route path="/private/users">
+                  <UsersPrivate fallback={<LoadingOverlay visible />} />
                 </Route>
               <Route path="/">
                    <Redirect to={`/admin`} />
               </Route>
             </Switch>
-        </XapiFrontendReactGlobalProvider>
-        </UsersFrontendReactGlobalProvider>
-        </MqttSocketIoFrontendReactGlobalProvider>
-        </MqttAwsIotFrontendReactGlobalProvider>
-        </MenuBuilderFrontendReactGlobalProvider>
-        </LeebraryFrontendReactGlobalProvider>
-        </LayoutFrontendReactGlobalProvider>
-        </FundaeFrontendReactGlobalProvider>
-        </ComunicaFrontendReactGlobalProvider>
-        </CommonFrontendReactGlobalProvider>
-        </BoardMessagesFrontendReactGlobalProvider>
+        </XapiGlobalProvider>
+        </UsersGlobalProvider>
+        </MqttSocketIoGlobalProvider>
+        </MqttAwsIotGlobalProvider>
+        </MenuBuilderGlobalProvider>
+        </LeebraryGlobalProvider>
+        </LayoutGlobalProvider>
+        </FundaeGlobalProvider>
+        </ComunicaGlobalProvider>
+        </CommonGlobalProvider>
+        </BoardMessagesGlobalProvider>
     </Router>
   );
 }

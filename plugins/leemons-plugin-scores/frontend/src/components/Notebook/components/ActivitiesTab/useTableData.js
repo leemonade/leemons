@@ -4,7 +4,7 @@ import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import { map, uniq } from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { useCache } from '@common-frontend-react';
+import { useCache } from '@common';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { useParsedActivities } from './useParsedActivities';
 import useFinalData from './useFinalData';

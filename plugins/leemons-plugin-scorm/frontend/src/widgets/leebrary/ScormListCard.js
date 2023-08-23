@@ -8,7 +8,7 @@ import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { prefixPN } from '@scorm/helpers';
 import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';
 import { CardVariantIcon } from '@scorm/components/icons';

@@ -3,7 +3,7 @@ import { Box, createStyles, Select, Title } from '@bubbles-ui/components';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import _ from 'lodash';
-import { unflatten, useCache } from '@common-frontend-react';
+import { unflatten, useCache } from '@common';
 import { getCentersWithToken } from '@users/session';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { prefixPN } from '@scores/helpers';

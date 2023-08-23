@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import _ from 'lodash';
 import { Box, Button, Text } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';

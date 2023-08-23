@@ -13,7 +13,7 @@ import {
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import { ChevronRightIcon, PluginTestIcon } from '@bubbles-ui/icons/outline';

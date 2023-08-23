@@ -7,7 +7,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { addSuccessAlert } from '@layout/alert';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

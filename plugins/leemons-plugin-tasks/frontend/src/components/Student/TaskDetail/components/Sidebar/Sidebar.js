@@ -1,6 +1,6 @@
 import { Box, Text } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import React from 'react';

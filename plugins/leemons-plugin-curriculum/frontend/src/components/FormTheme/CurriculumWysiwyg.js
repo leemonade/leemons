@@ -1,6 +1,6 @@
 import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
 import _ from 'lodash';
 import PropTypes from 'prop-types';

@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { loginRequest, getUserProfilesRequest, getUserProfileTokenRequest } from '@users/request';
 import prefixPN from '../../../helpers/prefixPN';
 import { HeroWrapper } from '../../../components/HeroWrapper';

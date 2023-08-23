@@ -15,7 +15,7 @@ import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete } from '@common-frontend-react';
+import { TagsAutocomplete } from '@common';
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import { MonoResponse } from './question-types/MonoResponse';
 import { QuestionMap } from './question-types/Map';

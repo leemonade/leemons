@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { get, isEqual } from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { evaluationTypes } from '@assignables/components/Assignment/components/EvaluationType';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 

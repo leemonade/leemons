@@ -9,8 +9,8 @@ import {
   Select,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
-import { useStore } from '@common-frontend-react/useStore';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useStore } from '@common/useStore';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';

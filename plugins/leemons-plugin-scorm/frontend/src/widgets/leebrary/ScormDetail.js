@@ -5,7 +5,7 @@ import { LibraryDetail } from '@bubbles-ui/leemons';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { prefixPN } from '@scorm/helpers';
 import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';

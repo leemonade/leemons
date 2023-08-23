@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { deleteTestRequest, duplicateRequest } from '../../request';

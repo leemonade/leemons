@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { prefixPN } from '.';
 
 export default function useTableInputLabels() {

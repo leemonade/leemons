@@ -7,7 +7,7 @@ import {
   Stack,
   SegmentedControl,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common-frontend-react/components';
+import { TextEditorInput } from '@common/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';
@@ -18,7 +18,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
 
 // Local files
-import { useObservableContext } from '@common-frontend-react/context/ObservableContext';
+import { useObservableContext } from '@common/context/ObservableContext';
 import Attachments from './components/Attachments';
 import Curriculum from './components/Curriculum';
 import Objectives from './components/Objectives';

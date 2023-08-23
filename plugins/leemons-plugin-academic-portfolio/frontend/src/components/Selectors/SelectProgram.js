@@ -1,5 +1,5 @@
 import { MultiSelect, Select } from '@bubbles-ui/components';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useState } from 'react';

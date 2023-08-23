@@ -1,5 +1,5 @@
 import { Box, createStyles, InputWrapper, Select, TextInput } from '@bubbles-ui/components';
-import { htmlToText, useStore } from '@common-frontend-react';
+import { htmlToText, useStore } from '@common';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 import _ from 'lodash';
 import PropTypes from 'prop-types';

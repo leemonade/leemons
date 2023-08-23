@@ -18,7 +18,7 @@ import {
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
 import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
 import { LibraryCardBasic } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

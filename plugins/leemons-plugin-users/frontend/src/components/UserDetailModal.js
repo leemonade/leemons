@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { LoadingOverlay } from '@bubbles-ui/components';
 import { UserDetailModal as UserDetailModalBubbles } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { find } from 'lodash';
 import prefixPN from '@users/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

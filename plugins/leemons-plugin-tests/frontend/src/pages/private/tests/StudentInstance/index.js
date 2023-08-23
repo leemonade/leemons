@@ -14,7 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { ActivityContainer } from '@bubbles-ui/leemons';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

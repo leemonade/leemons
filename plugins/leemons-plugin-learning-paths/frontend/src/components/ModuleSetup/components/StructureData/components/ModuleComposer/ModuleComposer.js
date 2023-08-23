@@ -7,7 +7,7 @@ import { AddIcon } from '@bubbles-ui/icons/outline';
 import { get, head, map, uniq } from 'lodash';
 
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { useCache } from '@common-frontend-react';
+import { useCache } from '@common';
 import { useQueries } from '@tanstack/react-query';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { assignablesGetKey } from '@assignables/requests/hooks/keys/assignables';

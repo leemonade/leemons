@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import searchAssignableInstances from '../../requests/assignableInstances/searchAssignableInstances';
 
 export default function useSearchAssignableInstances(query = {}) {

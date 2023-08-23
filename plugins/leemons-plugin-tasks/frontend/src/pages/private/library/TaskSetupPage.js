@@ -6,17 +6,8 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import {
-  unflatten,
-  useProcessTextEditor,
-  useQuery,
-  useSearchParams,
-  useStore,
-} from '@common-frontend-react';
-import {
-  ObservableContextProvider,
-  useObservableContext,
-} from '@common-frontend-react/context/ObservableContext';
+import { unflatten, useProcessTextEditor, useQuery, useSearchParams, useStore } from '@common';
+import { ObservableContextProvider, useObservableContext } from '@common/context/ObservableContext';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { BasicData, ContentData, InstructionData, Setup } from '../../../components/TaskSetupPage';

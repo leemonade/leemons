@@ -1,6 +1,6 @@
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { LibraryDetail } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

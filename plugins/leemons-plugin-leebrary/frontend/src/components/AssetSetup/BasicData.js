@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { ContextContainer } from '@bubbles-ui/components';
-import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common-frontend-react';
+import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';

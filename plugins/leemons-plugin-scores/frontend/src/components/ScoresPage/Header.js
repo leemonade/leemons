@@ -1,5 +1,5 @@
 import { Box, createStyles, Text, Title } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN as _prefixPN } from '@scores/helpers';
 import _ from 'lodash';

@@ -4,7 +4,7 @@ import { isNil } from 'lodash';
 import { LibraryDetail } from '@bubbles-ui/leemons';
 import loadable from '@loadable/component';
 
-import { getShare, useBeforeUnload, useStore } from '@common-frontend-react';
+import { getShare, useBeforeUnload, useStore } from '@common';
 import { getSessionConfig } from '@users/session';
 
 function dynamicImport(pluginName, component) {

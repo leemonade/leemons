@@ -7,7 +7,7 @@ import {
 } from '@bubbles-ui/components';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';

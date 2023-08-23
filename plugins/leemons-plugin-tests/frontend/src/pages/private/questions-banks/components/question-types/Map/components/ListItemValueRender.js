@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Title } from '@bubbles-ui/components';
 import { ViewOffIcon } from '@bubbles-ui/icons/outline';
-import { numberToEncodedLetter } from '@common-frontend-react';
+import { numberToEncodedLetter } from '@common';
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListItemValueRender({

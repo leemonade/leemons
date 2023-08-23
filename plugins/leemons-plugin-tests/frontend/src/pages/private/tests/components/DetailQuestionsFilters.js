@@ -15,7 +15,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { forIn, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { TagsAutocomplete } from '@common-frontend-react';
+import { TagsAutocomplete } from '@common';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { questionTypeT } from '../../questions-banks/components/QuestionForm';

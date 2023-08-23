@@ -5,7 +5,7 @@ import { Box, COLORS, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { addErrorAlert } from '@layout/alert';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getCentersWithToken } from '@users/session';

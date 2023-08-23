@@ -9,7 +9,7 @@ import {
 } from '@bubbles-ui/components';
 import { ChevDownIcon, ChevronLeftIcon, ChevUpIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
 import prefixPN from '@comunica/helpers/prefixPN';

@@ -15,10 +15,10 @@ import {
 import { listFamiliesRequest } from '@families/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@families/helpers/prefixPN';
 import { Link, useHistory } from 'react-router-dom';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 
 function List() {
   const config = useRef({

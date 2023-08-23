@@ -11,7 +11,7 @@ import usePackage from '@scorm/request/hooks/queries/usePackage';
 import useAssignation from '@scorm/request/hooks/queries/useAssignation';
 import { updateStatus } from '@scorm/request/assignation';
 import useClassData from '@assignables/hooks/useClassDataQuery';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';

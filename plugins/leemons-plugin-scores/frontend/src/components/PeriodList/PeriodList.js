@@ -10,7 +10,7 @@ import {
   SearchInput,
   Select,
 } from '@bubbles-ui/components';
-import { LocaleDate, unflatten } from '@common-frontend-react';
+import { LocaleDate, unflatten } from '@common';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';

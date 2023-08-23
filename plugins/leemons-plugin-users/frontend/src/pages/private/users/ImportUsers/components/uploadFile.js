@@ -1,7 +1,7 @@
 import { Box, Button, ContextContainer, FileUpload, NumberInput } from '@bubbles-ui/components';
 import { CloudUploadIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';

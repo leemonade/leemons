@@ -15,7 +15,7 @@ import {
 } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
 import { LibraryCard } from '@bubbles-ui/leemons';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';

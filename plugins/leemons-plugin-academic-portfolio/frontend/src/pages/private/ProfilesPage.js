@@ -4,7 +4,7 @@ import { Box, Button, ContextContainer, PageContainer, Grid, Col } from '@bubble
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { SelectProfile } from '@users/components/SelectProfile';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { getProfilesRequest, setProfilesRequest } from '../../request';

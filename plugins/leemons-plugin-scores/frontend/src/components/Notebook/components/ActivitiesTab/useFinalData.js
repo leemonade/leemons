@@ -3,7 +3,7 @@ import { useUserAgentsInfo } from '@users/hooks';
 import React from 'react';
 import _ from 'lodash';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { useCache } from '@common-frontend-react';
+import { useCache } from '@common';
 import { filterStudentsByLocalFilters, sortByStudentName } from './useParsedActivities';
 
 function useStudents(students) {

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import { uniqBy, map } from 'lodash';
 import { classByIdsRequest } from '../request';
 

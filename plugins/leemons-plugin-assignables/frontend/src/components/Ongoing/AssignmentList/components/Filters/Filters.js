@@ -5,7 +5,7 @@ import { Box, SearchInput, useDebouncedValue } from '@bubbles-ui/components';
 
 import { difference, map, pick } from 'lodash';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { useQuery } from '@common-frontend-react';
+import { useQuery } from '@common';
 import { useHistory } from 'react-router-dom';
 import { Subject, Status, Type, Sort } from './components';
 import { useFiltersStyle } from './Filters.style';

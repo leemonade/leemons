@@ -8,13 +8,13 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore, useProcessTextEditor } from '@common-frontend-react';
+import { useStore, useProcessTextEditor } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { DocumentIcon, SetupContent } from '@content-creator/components/icons';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import ContentEditorInput from '@common-frontend-react/components/ContentEditorInput/ContentEditorInput';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import {
   saveDocumentRequest,
   getDocumentRequest,

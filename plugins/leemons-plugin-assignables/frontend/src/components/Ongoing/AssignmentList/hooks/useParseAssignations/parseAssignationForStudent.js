@@ -5,7 +5,7 @@ import { Badge } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { get } from 'lodash';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import { useClassesSubjects } from '@academic-portfolio/hooks';

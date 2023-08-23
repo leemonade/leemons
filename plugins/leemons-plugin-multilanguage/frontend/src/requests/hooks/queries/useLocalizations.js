@@ -1,4 +1,4 @@
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 import { localizationsGetKey } from '../keys/localizations';
 

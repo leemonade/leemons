@@ -2,8 +2,8 @@ import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, Button, ContextContainer, Select, Stack, Text, Title } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
-import { useStore } from '@common-frontend-react';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useStore } from '@common';
 import { Controller, useForm } from 'react-hook-form';
 
 export default function Step1({ regionalConfigs, program, config, onChange, t }) {

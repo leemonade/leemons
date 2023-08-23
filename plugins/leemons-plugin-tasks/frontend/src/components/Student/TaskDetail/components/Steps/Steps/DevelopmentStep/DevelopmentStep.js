@@ -10,7 +10,7 @@ import {
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { TextEditorViewer } from '@common-frontend-react/components';
+import { TextEditorViewer } from '@common/components';
 import dayjs from 'dayjs';
 import LimitedTimeAlert from '../../../LimitedTimeAlert';
 import { AnimatedPane } from './AnimatedPane';

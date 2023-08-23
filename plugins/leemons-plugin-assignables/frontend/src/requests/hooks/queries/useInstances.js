@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import getAssignableInstances from '@assignables/requests/assignableInstances/getAssignableInstances';
 import { head } from 'lodash';
 import { instancesGetKey } from '../keys/instances';

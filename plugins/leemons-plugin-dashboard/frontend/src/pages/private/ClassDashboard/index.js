@@ -5,7 +5,7 @@ import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { getShare, useLocale, useStore } from '@common-frontend-react';
+import { getShare, useLocale, useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { LayoutContext } from '@layout/context/layout';
 import { getLocalizations } from '@multilanguage/useTranslate';

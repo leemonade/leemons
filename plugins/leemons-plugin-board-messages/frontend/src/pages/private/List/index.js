@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, PageHeader, Tabs, TabPanel, createStyles } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@board-messages/helpers/prefixPN';
 import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';

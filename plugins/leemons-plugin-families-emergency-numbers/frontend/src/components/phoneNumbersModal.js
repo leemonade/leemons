@@ -2,10 +2,10 @@ import * as _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 // import { Button, FormControl, Input } from 'leemons--ui';
 import { useForm } from 'react-hook-form';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
-import formWithTheme from '@common-frontend-react/formWithTheme';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import formWithTheme from '@common/formWithTheme';
 import PropTypes from 'prop-types';
 import { EmergencyNumbersService } from '../services';
 

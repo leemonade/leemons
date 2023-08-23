@@ -10,7 +10,7 @@ import {
   Stack,
   Table,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import PropTypes from 'prop-types';
 import { map } from 'lodash';
 import {

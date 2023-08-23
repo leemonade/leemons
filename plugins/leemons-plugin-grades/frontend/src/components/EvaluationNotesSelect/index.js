@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { Select } from '@bubbles-ui/components';
 import { map, orderBy } from 'lodash';
 import { getGradeRequest } from '../../request';

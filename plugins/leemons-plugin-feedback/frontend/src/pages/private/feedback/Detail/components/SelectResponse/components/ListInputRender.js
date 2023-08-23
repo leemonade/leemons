@@ -9,7 +9,7 @@ import {
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { useFilterByLength } from '../Notebook/components/ActivitiesTab/Filters';
 
 function useFiltersLocalizations() {

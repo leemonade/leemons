@@ -28,7 +28,7 @@ import {
 
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
 import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { useLocale, useRequestErrorMessage, useStore } from '@common-frontend-react';
+import { useLocale, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';

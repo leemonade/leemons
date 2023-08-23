@@ -1,6 +1,6 @@
 import { Box, Select, Stack, Table, createStyles, useDebouncedValue } from '@bubbles-ui/components';
 import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
 import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';

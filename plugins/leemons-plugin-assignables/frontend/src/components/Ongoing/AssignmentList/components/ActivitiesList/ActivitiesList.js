@@ -1,7 +1,7 @@
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
 import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

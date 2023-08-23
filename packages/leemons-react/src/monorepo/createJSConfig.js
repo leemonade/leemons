@@ -43,7 +43,7 @@ module.exports = async function createJsConfig({
     .sort((a, b) => a.name.localeCompare(b.name))
     .forEach((plugin) => {
       const relativePath = path.relative(basePath, plugin.path);
-      const pluginName = `@${plugin.name}/*`;
+      const pluginName = `@${plugin.name.replace('-frontend-react', '')}/*`;
 
       if (plugin.name === 'common') {
         paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];

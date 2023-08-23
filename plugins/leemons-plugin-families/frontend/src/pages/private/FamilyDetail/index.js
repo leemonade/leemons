@@ -30,7 +30,7 @@ import {
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import {
   addFamilyRequest,
   detailFamilyRequest,
@@ -41,8 +41,8 @@ import {
 } from '@families/request';
 import { constants } from '@families/constants';
 import moment from 'moment';
-import { useAsync } from '@common-frontend-react/useAsync';
-import formWithTheme from '@common-frontend-react/formWithTheme';
+import { useAsync } from '@common/useAsync';
+import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
 import { PackageManagerService } from '@package-manager/services';

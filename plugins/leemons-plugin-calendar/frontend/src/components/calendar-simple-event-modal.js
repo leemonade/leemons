@@ -1,6 +1,6 @@
 import { Button, Checkbox, Drawer, Radio, Select, TextInput } from '@bubbles-ui/components';
 import prefixPN from '@calendar/helpers/prefixPN';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import tKeys from '@multilanguage/helpers/tKeys';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';

@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, ImageLoader, Select, Stack, Text } from '@bubbles-ui/components';
 import { cloneDeep, find, forEach, isArray, isNil, isNumber, isObject, shuffle } from 'lodash';
-import { numberToEncodedLetter } from '@common-frontend-react';
+import { numberToEncodedLetter } from '@common';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 
 export default function Responses(props) {

@@ -18,7 +18,7 @@ import {
 } from '@bubbles-ui/components';
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { forEach, isArray, isString, map } from 'lodash';
 import { useLayout } from '@layout/context';
 import { TreeClassroomUsersDetail } from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, colord, COLORS, createStyles } from '@bubbles-ui/components';
-import { numberToEncodedLetter } from '@common-frontend-react';
+import { numberToEncodedLetter } from '@common';
 import { LeebraryImage } from '@leebrary/components';
 
 export const QuestionImageStyles = createStyles((theme, { isLight }) => ({

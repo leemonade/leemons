@@ -9,7 +9,7 @@ import { getSettingsRequest } from '@admin/request/settings';
 import { Box, LoadingOverlay, Stack, VerticalStepperContainer } from '@bubbles-ui/components';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import loadable from '@loadable/component';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

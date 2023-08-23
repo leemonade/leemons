@@ -1,7 +1,7 @@
 import { Box, createStyles, useDebouncedCallback } from '@bubbles-ui/components';
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useNotifications } from '@bubbles-ui/notifications';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { ChatListDrawer, RoomAvatar } from '@comunica/components';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import getRoomsByParent from '@comunica/helpers/getRoomsByParent';

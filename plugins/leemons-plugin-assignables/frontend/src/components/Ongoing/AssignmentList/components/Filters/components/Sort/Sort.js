@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import prefixPN from '@assignables/helpers/prefixPN';
 import { Select } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
 import React from 'react';

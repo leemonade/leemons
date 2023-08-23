@@ -12,7 +12,7 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { FilterIcon, PluginSettingsIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
 import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';

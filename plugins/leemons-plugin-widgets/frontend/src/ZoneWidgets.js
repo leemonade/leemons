@@ -1,5 +1,5 @@
 import { Box } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import loadable from '@loadable/component';
 import { isFunction, map } from 'lodash';
 import PropTypes from 'prop-types';

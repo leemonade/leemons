@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, Text } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
 import { LeebraryImage } from '@leebrary/components';
 import { isArray, isNil } from 'lodash';

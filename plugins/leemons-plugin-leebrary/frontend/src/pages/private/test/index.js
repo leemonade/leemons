@@ -4,9 +4,9 @@ import { Button, Box, Paper, ContextContainer, Stack, TagifyInput } from '@bubbl
 import { AssetPlayer } from '@bubbles-ui/leemons';
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
-import { LocaleDuration } from '@common-frontend-react/LocaleDate';
-import { TextEditorInput } from '@common-frontend-react/components/TextEditorInput';
-import ContentEditorInput from '@common-frontend-react/components/ContentEditorInput/ContentEditorInput';
+import { LocaleDuration } from '@common/LocaleDate';
+import { TextEditorInput } from '@common/components/TextEditorInput';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, uploadFilesRequest, removeFileRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';

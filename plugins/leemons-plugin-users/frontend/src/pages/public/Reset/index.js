@@ -18,7 +18,7 @@ import {
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '@users/helpers/prefixPN';
 import tLoader from '@multilanguage/helpers/tLoader';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { canResetRequest, resetRequest } from '@users/request';
 
 const PageStyles = createStyles((theme) => ({

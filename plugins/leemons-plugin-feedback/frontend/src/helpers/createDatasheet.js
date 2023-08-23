@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { htmlToText } from '@common-frontend-react';
+import { htmlToText } from '@common';
 import { getFeedbackResultsWithTime } from '@feedback/request/feedback';
 import { Workbook } from 'exceljs';
 import { groupBy, forEach } from 'lodash';

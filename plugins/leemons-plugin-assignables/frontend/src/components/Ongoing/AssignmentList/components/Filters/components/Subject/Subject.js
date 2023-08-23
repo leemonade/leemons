@@ -3,7 +3,7 @@ import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import { useIsStudent, useSessionClasses } from '@academic-portfolio/hooks';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import prefixPN from '@assignables/helpers/prefixPN';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig } from '@users/session';
 import _ from 'lodash';

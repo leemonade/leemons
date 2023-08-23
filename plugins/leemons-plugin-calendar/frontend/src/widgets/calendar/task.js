@@ -26,7 +26,7 @@ import { AddCircleIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/o
 import { DeleteBinIcon, EditorListBulletsIcon, PluginKanbanIcon } from '@bubbles-ui/icons/solid';
 import prefixPN from '@calendar/helpers/prefixPN';
 import { listKanbanColumnsRequest } from '@calendar/request';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import tKeys from '@multilanguage/helpers/tKeys';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';

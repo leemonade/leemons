@@ -1,4 +1,4 @@
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { SocketIoService } from '@mqtt-socket-io/service';
 import PropTypes from 'prop-types';

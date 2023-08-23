@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { isArray, isNil, isString, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SchedulePicker } from '@bubbles-ui/leemons';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { prefixPN } from '../../helpers';
 
 const ScheduleInput = forwardRef(({ label, ...props }, ref) => {

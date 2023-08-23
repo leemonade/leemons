@@ -24,10 +24,16 @@ module.exports = async function dev({ app, build, output, base, port }) {
   const basePath = getBasePath(base);
 
   const plugins = await getPlugins({ app: appDir });
-  const publicFiles = await generatePublicFolders(outputDir, plugins);
-  const alias = generateAlias(outputDir, plugins);
+  const pluginsWithShortName = plugins.map((plugin) => {
+    return {
+      ...plugin,
+      name: plugin.name.replace('-frontend-react', ''),
+    };
+  });
+  const publicFiles = await generatePublicFolders(outputDir, pluginsWithShortName);
+  const alias = generateAlias(outputDir, pluginsWithShortName);
 
-  await generateMonorepo({ plugins, app: appDir, outputDir, basePath });
+  await generateMonorepo({ plugins: pluginsWithShortName, app: appDir, outputDir, basePath });
 
   await devServer({ app: outputDir, alias, build: buildDir, publicFiles });
 };

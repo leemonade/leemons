@@ -1,5 +1,5 @@
 import { Box, Button, Modal } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { SocketIoService } from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SessionContext, SessionProvider } from '@users/context/session';

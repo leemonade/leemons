@@ -11,7 +11,7 @@ import {
   Paper,
 } from '@bubbles-ui/components';
 
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';

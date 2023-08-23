@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Button, ImageLoader, Modal, Paragraph, Text, Title } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
-import { getLocaleDuration, LocaleDuration } from '@common-frontend-react';
+import { getLocaleDuration, LocaleDuration } from '@common';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import { useSession } from '@users/session';
 import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';

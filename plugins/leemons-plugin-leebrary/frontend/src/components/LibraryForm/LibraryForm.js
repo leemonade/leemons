@@ -19,7 +19,7 @@ import {
   useViewportSize,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common-frontend-react';
+import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
 import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';

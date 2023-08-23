@@ -21,7 +21,7 @@ import RelationSelect from '@families/components/relationSelect';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { StarIcon } from '@bubbles-ui/icons/solid';
 import { searchUsersRequest } from '@families/request';
-import { useRequestErrorMessage } from '@common-frontend-react';
+import { useRequestErrorMessage } from '@common';
 import { FamilyChildIcon, SingleActionsGraduateMaleIcon } from '@bubbles-ui/icons/outline';
 import { SearchUserDrawerStyles } from './SearchUserDrawer.styles';
 

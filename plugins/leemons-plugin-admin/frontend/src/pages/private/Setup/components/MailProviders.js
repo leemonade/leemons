@@ -18,8 +18,8 @@ import {
   Title,
   createStyles,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

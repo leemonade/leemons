@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, isString } from 'lodash';
 import { Box, Button, ImagePreviewInput, Stack } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../helpers/prefixPN';
 import { AssetListDrawer } from './AssetListDrawer';

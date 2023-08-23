@@ -13,7 +13,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { AddIcon, EditIcon } from '@bubbles-ui/icons/outline';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import { ScheduleInput } from '@timetable/components';
 import _, {
   cloneDeep,

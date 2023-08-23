@@ -1,5 +1,5 @@
 import { Badge, Box, createStyles, MultiSelect } from '@bubbles-ui/components';
-import { ellipsis, htmlToText, useStore } from '@common-frontend-react';
+import { ellipsis, htmlToText, useStore } from '@common';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
 import _ from 'lodash';
 import PropTypes from 'prop-types';

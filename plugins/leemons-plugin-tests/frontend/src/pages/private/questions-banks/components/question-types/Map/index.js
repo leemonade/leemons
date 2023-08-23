@@ -18,7 +18,7 @@ import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 
 import { Controller } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { findIndex, forEach, map } from 'lodash';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { QuestionImage } from '../../../../../../components/QuestionImage';

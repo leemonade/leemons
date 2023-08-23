@@ -14,7 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import { LibraryItem } from '@bubbles-ui/leemons';
-import { LocaleDate, unflatten, useRequestErrorMessage, useStore } from '@common-frontend-react';
+import { LocaleDate, unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

@@ -11,7 +11,7 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { htmlToText, useStore } from '@common-frontend-react';
+import { htmlToText, useStore } from '@common';
 import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 import _ from 'lodash';
 import PropTypes from 'prop-types';

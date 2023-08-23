@@ -1,5 +1,5 @@
 import { ContextContainer, Paper, TableInput, TextInput } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@emails-aws-ses/helpers/prefixPN';
 import { removeProviderRequest, saveProviderRequest } from '@emails/request';
 import { addErrorAlert } from '@layout/alert';

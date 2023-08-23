@@ -5,7 +5,7 @@ import pMinDelay from 'p-min-delay';
 import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
-import { useSearchParams } from '@common-frontend-react';
+import { useSearchParams } from '@common';
 
 const AssignmentPage = loadable(() =>
   pMinDelay(import('./src/pages/private/assignment/AssignmentPage'), 1000)

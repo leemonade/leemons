@@ -10,7 +10,7 @@ import {
   createStyles,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { prefixPN } from '@learning-paths/helpers';
 import { get } from 'lodash';
 import {

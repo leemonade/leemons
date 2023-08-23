@@ -1,5 +1,5 @@
 import { Select } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { isArray, isFunction, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect } from 'react';

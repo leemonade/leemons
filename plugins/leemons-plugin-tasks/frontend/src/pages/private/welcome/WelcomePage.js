@@ -10,7 +10,7 @@ import {
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, useRequestErrorMessage } from '@common-frontend-react';
+import { useStore, useRequestErrorMessage } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import hooks from 'leemons-hooks';
 import { prefixPN } from '../../../helpers';

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { withLayout } from '@layout/hoc';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import { useHistory, useParams } from 'react-router-dom';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

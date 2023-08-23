@@ -6,7 +6,7 @@ import { Box, Button, FileIcon, Table } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { AddIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import { concat, get, keyBy, map } from 'lodash';
-import { useCache } from '@common-frontend-react';
+import { useCache } from '@common';
 import { ResourceRenderer } from '../../../StructureData/components/ModuleComposer/components/ResourceRenderer';
 
 // useLocalizations

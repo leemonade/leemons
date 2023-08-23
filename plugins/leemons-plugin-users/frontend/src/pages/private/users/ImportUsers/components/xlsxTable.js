@@ -11,8 +11,8 @@ import {
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
 import { ajv as Ajv, EMAIL_REGEX, transformErrorsFromAjv } from '@bubbles-ui/leemons';
-import { useLocale, useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useLocale, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';

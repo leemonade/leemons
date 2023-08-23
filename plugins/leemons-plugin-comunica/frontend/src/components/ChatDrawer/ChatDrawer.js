@@ -16,8 +16,8 @@ import {
   RemoveIcon,
   SendMessageIcon,
 } from '@bubbles-ui/icons/outline';
-import { useLocale, useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useLocale, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';

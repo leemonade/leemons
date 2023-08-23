@@ -15,7 +15,7 @@ import { MeetingCameraIcon, PluginRedactorIcon, SmileyPinIcon } from '@bubbles-u
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { linkify } from '@common-frontend-react';
+import { linkify } from '@common';
 
 export default function Event({ isEditing, event, form, data, allFormData, classes, disabled }) {
   const [t] = useTranslateLoader(prefixPN('event_mode_event_type'));

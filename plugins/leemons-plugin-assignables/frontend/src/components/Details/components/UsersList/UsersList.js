@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ContextContainer, SearchInput, Stack, Title } from '@bubbles-ui/components';
 import _ from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useParsedStudents from './helpers/useParseStudents';
 import StudentsList from './StudentsList';

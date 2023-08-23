@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, Box, Text, TextClamp, ImageLoader } from '@bubbles-ui/components';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { get } from 'lodash';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { Link } from 'react-router-dom';

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { Box, InputWrapper, Paragraph, Stack, Text } from '@bubbles-ui/components';
 import { find, groupBy, isArray, map, values } from 'lodash';
 import { getDataForKeysRequest } from '../../request';

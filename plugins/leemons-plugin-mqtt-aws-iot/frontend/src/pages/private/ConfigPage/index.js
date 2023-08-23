@@ -1,6 +1,6 @@
 import { Box, Button, ContextContainer, PasswordInput, TextInput } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import prefixPN from '@mqtt-aws-iot/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { Box, Button } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';

@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import _ from 'lodash';
-import { hashObject, unflatten } from '@common-frontend-react';
+import { hashObject, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQuery } from '@tanstack/react-query';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import prefixPN from '@assignables/helpers/prefixPN';
 import { parseAssignationForTeacherView } from './parseAssignationForTeacher';
 import { parseAssignationForStudentView } from './parseAssignationForStudent';

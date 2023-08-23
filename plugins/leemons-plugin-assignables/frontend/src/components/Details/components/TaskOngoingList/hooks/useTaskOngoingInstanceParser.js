@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { useLocale, unflatten } from '@common-frontend-react';
+import { useLocale, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useProgramEvaluationSystem from '../../../../../hooks/useProgramEvaluationSystem';
 import useClassData from '../../../../../hooks/useClassData';

@@ -1,6 +1,6 @@
 import { Col, Grid, InputWrapper } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
-import formWithTheme from '@common-frontend-react/formWithTheme';
+import { useStore } from '@common';
+import formWithTheme from '@common/formWithTheme';
 import * as _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';

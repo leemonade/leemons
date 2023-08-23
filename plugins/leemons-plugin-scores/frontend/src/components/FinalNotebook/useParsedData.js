@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCache } from '@common-frontend-react';
+import { useCache } from '@common';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getCookieToken } from '@users/session';
 

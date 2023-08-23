@@ -5,7 +5,7 @@ import {
   LibraryGlobalContext,
   LibraryGlobalProvider,
 } from '@leebrary/context/LibraryGlobalContext';
-import { useTextEditor } from '@common-frontend-react/context';
+import { useTextEditor } from '@common/context';
 import { LibraryTool } from '@leebrary/components';
 import libraryProcessor from '@leebrary/helpers/libraryProcessor';
 

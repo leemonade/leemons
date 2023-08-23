@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 
 const DateItem = ({ startDate, endDate }) => {
   const locale = useLocale();

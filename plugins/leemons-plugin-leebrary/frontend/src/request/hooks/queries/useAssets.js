@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 
 import { useCallback } from 'react';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';

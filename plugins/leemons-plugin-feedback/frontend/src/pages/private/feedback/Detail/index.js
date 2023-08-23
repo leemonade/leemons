@@ -7,7 +7,7 @@ import {
 } from '@bubbles-ui/components';
 import { PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { getFeedbackRequest, saveFeedbackRequest } from '@feedback/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

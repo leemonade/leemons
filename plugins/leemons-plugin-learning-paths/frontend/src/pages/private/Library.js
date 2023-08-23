@@ -7,7 +7,7 @@ import { get } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { unflatten, useQuery as useQueryParams } from '@common-frontend-react';
+import { unflatten, useQuery as useQueryParams } from '@common';
 import { prefixPN } from '@learning-paths/helpers';
 import AssetList from '@leebrary/components/AssetList';
 import { prepareAsset } from '@leebrary/helpers/prepareAsset';

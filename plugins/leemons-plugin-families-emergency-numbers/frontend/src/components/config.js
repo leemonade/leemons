@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Modal, PageContainer, Table, Text } from '@bubbles-ui/components';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { CheckIcon, PlusIcon } from '@heroicons/react/outline';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@families-emergency-numbers/helpers/prefixPN';

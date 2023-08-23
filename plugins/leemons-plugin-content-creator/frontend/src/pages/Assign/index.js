@@ -1,6 +1,6 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button, Stack } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

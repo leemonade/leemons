@@ -2,7 +2,7 @@ import React from 'react';
 import { get } from 'lodash';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 
 export default function useNyaLocalizations() {
   const localizationKeys = [

@@ -1,5 +1,5 @@
 import { getDocumentRequest } from '@content-creator/request';
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 import { getDocumentKey } from '../keys/document';
 

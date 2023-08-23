@@ -13,16 +13,16 @@ import {
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { AddIcon } from '@bubbles-ui/icons/outline';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import {
   getDatasetSchemaLocaleRequest,
   getDatasetSchemaRequest,
   removeDatasetFieldRequest,
 } from '@dataset/request';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import formWithTheme from '@common-frontend-react/formWithTheme';
+import formWithTheme from '@common/formWithTheme';
 import PropTypes from 'prop-types';
 import { useLayout } from '@layout/context';
 

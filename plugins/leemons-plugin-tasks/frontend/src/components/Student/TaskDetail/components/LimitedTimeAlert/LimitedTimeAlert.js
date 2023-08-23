@@ -11,7 +11,7 @@ import {
   Title,
   createStyles,
 } from '@bubbles-ui/components';
-import { LocaleDate, LocaleDuration } from '@common-frontend-react';
+import { LocaleDate, LocaleDuration } from '@common';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 
 dayjs.extend(dayjsDuration);

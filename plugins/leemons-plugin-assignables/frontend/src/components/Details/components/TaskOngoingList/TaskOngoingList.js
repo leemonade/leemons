@@ -11,7 +11,7 @@ import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icon
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { useLayout } from '@layout/context';

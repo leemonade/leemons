@@ -19,7 +19,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore, unflatten } from '@common-frontend-react';
+import { useStore, unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { AssetFormInput, UploadingFileModal } from '@leebrary/components';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';

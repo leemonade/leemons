@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Box, Text, TextClamp, createStyles } from '@bubbles-ui/components';
 
-import { LocaleDate } from '@common-frontend-react';
+import { LocaleDate } from '@common';
 import { AvatarActivity } from '../../../AvatarActivity';
 
 export const useResourceRendererStyles = createStyles((theme) => {

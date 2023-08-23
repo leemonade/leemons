@@ -10,7 +10,7 @@ import {
   Transition,
 } from '@bubbles-ui/components';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { numberToEncodedLetter } from '@common-frontend-react';
+import { numberToEncodedLetter } from '@common';
 import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';

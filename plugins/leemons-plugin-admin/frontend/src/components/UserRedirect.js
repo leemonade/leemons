@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { LoadingOverlay } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { getSettingsRequest } from '../request/settings';
 import LocaleContext from '../contexts/translations';
 

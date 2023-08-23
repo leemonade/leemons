@@ -9,7 +9,7 @@ import {
   Stack,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { groupBy, map, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';

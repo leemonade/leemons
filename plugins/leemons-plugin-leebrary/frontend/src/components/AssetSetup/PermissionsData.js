@@ -12,7 +12,7 @@ import {
   Tabs,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
-import { unflatten, useRequestErrorMessage, useStore } from '@common-frontend-react';
+import { unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

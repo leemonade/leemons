@@ -14,7 +14,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/request';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
 import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
 import { haveClassesRequest, haveProgramsRequest, isConfigProfilesRequest } from '../../request';

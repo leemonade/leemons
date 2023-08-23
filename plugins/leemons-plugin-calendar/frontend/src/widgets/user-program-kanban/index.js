@@ -13,7 +13,7 @@ import {
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
 import { AddIcon as PlusIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';

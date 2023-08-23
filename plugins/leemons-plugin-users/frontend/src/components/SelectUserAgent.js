@@ -4,7 +4,7 @@ import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
 import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { useRequestErrorMessage, useStore } from '@common-frontend-react';
+import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import {
   cloneDeep,

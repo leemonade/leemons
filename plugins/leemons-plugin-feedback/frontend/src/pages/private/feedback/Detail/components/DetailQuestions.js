@@ -12,7 +12,7 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import QuestionForm from '@feedback/pages/private/feedback/Detail/components/QuestionForm';
 import { useLayout } from '@layout/context';

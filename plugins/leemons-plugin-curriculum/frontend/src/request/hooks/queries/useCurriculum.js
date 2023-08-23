@@ -1,4 +1,4 @@
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 import { detailCurriculumRequest } from '@curriculum/request/';
 import { allCurriculumDetailKey, curriculumDetailKey } from '../keys/curriculum';
@@ -6,7 +6,7 @@ import { allCurriculumDetailKey, curriculumDetailKey } from '../keys/curriculum'
 /**
  *
  * @param {string} id
- * @param {import("@common-frontend-react/queries/useVariantForQueryKey").QueryOptions} options
+ * @param {import("@common/queries/useVariantForQueryKey").QueryOptions} options
  */
 export default function useCurriculum(id, options) {
   useVariantForQueryKey(allCurriculumDetailKey, {

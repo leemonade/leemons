@@ -10,7 +10,7 @@ import {
 } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -22,7 +22,7 @@ import _, { forIn } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 
 // import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
-import { LocaleDate } from '@common-frontend-react';
+import { LocaleDate } from '@common';
 import { SelectUserAgent } from '@users/components';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { useHistory, useParams } from 'react-router-dom';

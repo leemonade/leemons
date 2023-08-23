@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import getAssignableInstances from '../../requests/assignableInstances/getAssignableInstances';
 
 export default function useAssignableInstances(ids, details = true) {

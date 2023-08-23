@@ -13,8 +13,8 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
 import _, { find } from 'lodash';
 import PropTypes from 'prop-types';

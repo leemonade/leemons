@@ -17,7 +17,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import { ChevronRightIcon, EditIcon, PluginFeedbackIcon } from '@bubbles-ui/icons/outline';

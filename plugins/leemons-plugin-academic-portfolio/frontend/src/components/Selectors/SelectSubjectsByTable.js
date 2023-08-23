@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, ContextContainer, Select, Table, TextInput } from '@bubbles-ui/components';
 import { SearchIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { Controller, useForm } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';

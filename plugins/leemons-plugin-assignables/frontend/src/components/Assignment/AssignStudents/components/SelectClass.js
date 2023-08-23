@@ -15,7 +15,7 @@ import {
 import { SelectUserAgent } from '@users/components';
 import { useForm, Controller } from 'react-hook-form';
 import { getUserAgentsInfoRequest } from '@users/request';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 
 function useUserAgentsInfo(users) {

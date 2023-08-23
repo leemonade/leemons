@@ -14,7 +14,7 @@ import { AdminPageHeader, uuidv4 } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { SelectCenter } from '@users/components/SelectCenter';
-import { useStore } from '@common-frontend-react/useStore';
+import { useStore } from '@common/useStore';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { detailProgramRequest, listProgramsRequest } from '@academic-portfolio/request';
 import {

@@ -1,7 +1,7 @@
 import { Box, ContextContainer, Title } from '@bubbles-ui/components';
 import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
 import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import CurriculumForm from '@curriculum/components/FormTheme/CurriculumForm';
 import { getParentNodes } from '@curriculum/helpers/getParentNodes';
 import * as _ from 'lodash';

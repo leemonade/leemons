@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Select } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { prefixPN } from '../../../helpers/prefixPN';
 
 function useMethodologyLabels() {

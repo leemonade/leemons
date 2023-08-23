@@ -3,7 +3,7 @@ import { Box, Button, LoadingOverlay } from '@bubbles-ui/components';
 import { ActivityContainer } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scorm/helpers';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 import { useParams } from 'react-router-dom';
 import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
 import usePackage from '@scorm/request/hooks/queries/usePackage';

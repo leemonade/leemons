@@ -1,5 +1,5 @@
 import { Box, Button, Modal } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import PropTypes from 'prop-types';

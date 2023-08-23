@@ -10,7 +10,7 @@ import {
   Tree,
 } from '@bubbles-ui/components';
 import { AdminPageHeader, uuidv4 } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react/useStore';
+import { useStore } from '@common/useStore';
 import prefixPN from '@grades/helpers/prefixPN';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

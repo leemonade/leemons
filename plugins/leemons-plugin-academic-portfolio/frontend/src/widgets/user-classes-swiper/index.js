@@ -11,7 +11,7 @@ import {
   Text,
   TextClamp,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';

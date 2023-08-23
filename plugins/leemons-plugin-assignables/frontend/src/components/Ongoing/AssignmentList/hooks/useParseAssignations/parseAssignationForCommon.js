@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Box, createStyles, ImageLoader, Text, TextClamp } from '@bubbles-ui/components';
-import { LocaleDate, unflatten } from '@common-frontend-react';
+import { LocaleDate, unflatten } from '@common';
 
 import dayjs from 'dayjs';
 import { get, mapValues, pick } from 'lodash';

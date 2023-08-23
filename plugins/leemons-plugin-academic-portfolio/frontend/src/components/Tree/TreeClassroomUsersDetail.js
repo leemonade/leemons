@@ -16,7 +16,7 @@ import {
 import { SearchIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { LocaleDate, useStore } from '@common-frontend-react';
+import { LocaleDate, useStore } from '@common';
 import { filter, map, sortBy } from 'lodash';
 import { getUserAgentsInfoRequest } from '@users/request';
 import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';

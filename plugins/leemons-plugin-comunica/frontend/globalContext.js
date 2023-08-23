@@ -1,5 +1,5 @@
 import { NotificationProvider } from '@bubbles-ui/notifications';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import ContextButton from '@comunica/components/ContextButton';
 import RoomService from '@comunica/RoomService';
 import SocketIoService from '@mqtt-socket-io/service';

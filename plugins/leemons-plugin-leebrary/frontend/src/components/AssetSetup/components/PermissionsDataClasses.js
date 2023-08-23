@@ -12,7 +12,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { SelectProfile } from '@users/components';
 import _, { find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';

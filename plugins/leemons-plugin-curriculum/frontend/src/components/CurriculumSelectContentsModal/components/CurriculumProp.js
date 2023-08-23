@@ -11,7 +11,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import { htmlToText, useStore } from '@common-frontend-react';
+import { htmlToText, useStore } from '@common';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';

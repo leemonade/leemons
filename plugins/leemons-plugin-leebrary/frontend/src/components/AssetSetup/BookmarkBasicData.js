@@ -1,5 +1,5 @@
 import { ContextContainer } from '@bubbles-ui/components';
-import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common-frontend-react';
+import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isEmpty } from 'lodash';

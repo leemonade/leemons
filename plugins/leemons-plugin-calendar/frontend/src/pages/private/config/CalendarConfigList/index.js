@@ -7,7 +7,7 @@ import { Link, useHistory } from 'react-router-dom';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 // import { PageContainer, PageHeader, Table } from 'leemons--ui';
 import { addErrorAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { listCalendarConfigsRequest, removeCalendarConfigRequest } from '@calendar/request';
 
 

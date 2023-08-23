@@ -20,7 +20,7 @@ import { LibraryItem } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { unflatten, useRequestErrorMessage } from '@common-frontend-react';
+import { unflatten, useRequestErrorMessage } from '@common';
 import prefixPN from '../../../helpers/prefixPN';
 import { prepareAsset } from '../../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../../request';

@@ -20,8 +20,8 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@admin/helpers/prefixPN';
 import usersPrefixPN from '@users/helpers/prefixPN';
-import { TagsMultiSelect, useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { TagsMultiSelect, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
 import { useForm } from 'react-hook-form';
 import { EMAIL_REGEX } from '@admin/constants';

@@ -13,7 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import { ChevronLeftIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
 import { searchUserAgentsRequest } from '@users/request';

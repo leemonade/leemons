@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, NumberInput } from '@bubbles-ui/components';
-import { numberToEncodedLetter, useStore } from '@common-frontend-react';
+import { numberToEncodedLetter, useStore } from '@common';
 import { getExampleTextForListOrderedConfig } from '@curriculum/bubbles-components/BranchBlockListCustomOrderFieldOrder';
 
 const useStyle = createStyles((theme) => ({

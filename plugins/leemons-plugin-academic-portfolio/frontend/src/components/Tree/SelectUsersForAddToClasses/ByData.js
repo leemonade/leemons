@@ -16,7 +16,7 @@ import getUserFullName from '@users/helpers/getUserFullName';
 import { AlertWarningTriangleIcon, BlockIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert } from '@layout/alert';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { LocaleDate, useStore } from '@common-frontend-react';
+import { LocaleDate, useStore } from '@common';
 import { cloneDeep, filter, findIndex, forEach, isNil, map } from 'lodash';
 import SelectUserAgent, { SelectUserAgentValueComponent } from '@users/components/SelectUserAgent';
 import { getProfilesRequest } from '../../../request';

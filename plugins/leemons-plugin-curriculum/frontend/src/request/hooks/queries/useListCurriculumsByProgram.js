@@ -1,4 +1,4 @@
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 import { listCurriculumsByProgramRequest } from '@curriculum/request/';
 import { allListCurriculumsByProgramKey, listCurriculumsByProgramKey } from '../keys/curriculum';
@@ -6,7 +6,7 @@ import { allListCurriculumsByProgramKey, listCurriculumsByProgramKey } from '../
 /**
  *
  * @param {string} program
- * @param {import("@common-frontend-react/queries/useVariantForQueryKey").QueryOptions} options
+ * @param {import("@common/queries/useVariantForQueryKey").QueryOptions} options
  */
 export default function useListCurriculumsByProgram(program, options) {
   useVariantForQueryKey(allListCurriculumsByProgramKey, {

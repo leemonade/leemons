@@ -15,7 +15,7 @@ import {
   useTree,
 } from '@bubbles-ui/components';
 import { useHistory } from 'react-router-dom';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { addNodeLevelsRequest } from '../../../request';
 
 function AddCurriculumStep1({ curriculum, onNext }) {

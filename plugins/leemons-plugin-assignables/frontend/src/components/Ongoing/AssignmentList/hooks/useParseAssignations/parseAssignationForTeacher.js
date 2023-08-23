@@ -7,7 +7,7 @@ import { forEach, get, uniq } from 'lodash';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 

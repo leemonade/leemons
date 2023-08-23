@@ -19,7 +19,7 @@ import {
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { LocaleDate, useStore } from '@common-frontend-react';
+import { LocaleDate, useStore } from '@common';
 import prefixPN from '@fundae/helpers/prefixPN';
 import { Pdf } from '@fundae/pages/private/reports/pdf';
 import { generateReportRequest, listReportsRequest, retryReportRequest } from '@fundae/request';

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import _ from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '../../../helpers/prefixPN';
 

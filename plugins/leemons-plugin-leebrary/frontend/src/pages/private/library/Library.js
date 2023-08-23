@@ -3,7 +3,7 @@ import { useIsStudent } from '@academic-portfolio/hooks';
 import { listSessionClasses } from '@academic-portfolio/request/classes';
 import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import { LibraryNavbar } from '@bubbles-ui/leemons';
-import { unflatten, useStore } from '@common-frontend-react';
+import { unflatten, useStore } from '@common';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _, { find, isEmpty } from 'lodash';

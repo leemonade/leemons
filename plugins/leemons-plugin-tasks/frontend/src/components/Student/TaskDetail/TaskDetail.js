@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import { unflatten, useLocale } from '@common-frontend-react';
+import { unflatten, useLocale } from '@common';
 import _, { map } from 'lodash';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { Loader } from '@bubbles-ui/components';

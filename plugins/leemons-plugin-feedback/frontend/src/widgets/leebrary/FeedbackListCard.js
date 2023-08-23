@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({

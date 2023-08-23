@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { get, isFunction, map, uniqBy } from 'lodash';
 
 import { Box, Table, TimeInput, createStyles } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { prefixPN } from '@learning-paths/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';

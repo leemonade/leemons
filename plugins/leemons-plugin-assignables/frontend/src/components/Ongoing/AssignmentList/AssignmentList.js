@@ -12,7 +12,7 @@ import {
 } from '@bubbles-ui/components';
 
 import _ from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import Filters from './components/Filters';

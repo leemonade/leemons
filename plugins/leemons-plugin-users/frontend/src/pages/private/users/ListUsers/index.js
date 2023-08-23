@@ -19,8 +19,8 @@ import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { LocaleDate, useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { LocaleDate, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';

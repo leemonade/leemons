@@ -15,7 +15,7 @@ import {
   Switch,
   createStyles,
 } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useScores } from '@scores/requests/hooks/queries';
 import _, { capitalize, map } from 'lodash';

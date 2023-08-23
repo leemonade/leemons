@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Box, Button, ContextContainer, createStyles, TextInput } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { randomString, useStore } from '@common-frontend-react';
+import { randomString, useStore } from '@common';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { FormContext } from './FormContext';
 

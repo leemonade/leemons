@@ -6,109 +6,112 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@academic-calendar-frontend-react/*": [
+      "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
       ],
-      "@academic-portfolio-frontend-react/*": [
+      "@academic-portfolio/*": [
         "./plugins/leemons-plugin-academic-portfolio/frontend/src/*"
       ],
-      "@admin-frontend-react/*": [
+      "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
       ],
-      "@assignables-frontend-react/*": [
+      "@assignables/*": [
         "./plugins/leemons-plugin-assignables/frontend/src/*"
       ],
-      "@attendance-control-frontend-react/*": [
+      "@attendance-control/*": [
         "./plugins/leemons-plugin-attendance-control/frontend/src/*"
       ],
-      "@board-messages-frontend-react/*": [
+      "@board-messages/*": [
         "./plugins/leemons-plugin-board-messages/frontend/src/*"
       ],
-      "@calendar-frontend-react/*": [
+      "@calendar/*": [
         "./plugins/leemons-plugin-calendar/frontend/src/*"
       ],
-      "@common-frontend-react/*": [
+      "@common": [
+        "./plugins/leemons-plugin-common/frontend/src/index"
+      ],
+      "@common/*": [
         "./plugins/leemons-plugin-common/frontend/src/*"
       ],
-      "@comunica-frontend-react/*": [
+      "@comunica/*": [
         "./plugins/leemons-plugin-comunica/frontend/src/*"
       ],
-      "@content-creator-frontend-react/*": [
+      "@content-creator/*": [
         "./plugins/leemons-plugin-content-creator/frontend/src/*"
       ],
-      "@curriculum-frontend-react/*": [
+      "@curriculum/*": [
         "./plugins/leemons-plugin-curriculum/frontend/src/*"
       ],
-      "@dashboard-frontend-react/*": [
+      "@dashboard/*": [
         "./plugins/leemons-plugin-dashboard/frontend/src/*"
       ],
-      "@dataset-frontend-react/*": [
+      "@dataset/*": [
         "./plugins/leemons-plugin-dataset/frontend/src/*"
       ],
-      "@emails-frontend-react/*": [
+      "@emails/*": [
         "./plugins/leemons-plugin-emails/frontend/src/*"
       ],
-      "@families-emergency-numbers-frontend-react/*": [
-        "./plugins/leemons-plugin-families-emergency-numbers/frontend/src/*"
-      ],
-      "@families-frontend-react/*": [
+      "@families/*": [
         "./plugins/leemons-plugin-families/frontend/src/*"
       ],
-      "@feedback-frontend-react/*": [
+      "@families-emergency-numbers/*": [
+        "./plugins/leemons-plugin-families-emergency-numbers/frontend/src/*"
+      ],
+      "@feedback/*": [
         "./plugins/leemons-plugin-feedback/frontend/src/*"
       ],
-      "@fundae-frontend-react/*": [
+      "@fundae/*": [
         "./plugins/leemons-plugin-fundae/frontend/src/*"
       ],
-      "@grades-frontend-react/*": [
+      "@grades/*": [
         "./plugins/leemons-plugin-grades/frontend/src/*"
       ],
-      "@layout-frontend-react/*": [
+      "@layout/*": [
         "./plugins/leemons-plugin-layout/frontend/src/*"
       ],
-      "@learning-paths-frontend-react/*": [
+      "@learning-paths/*": [
         "./plugins/leemons-plugin-learning-paths/frontend/src/*"
       ],
-      "@leebrary-frontend-react/*": [
+      "@leebrary/*": [
         "./plugins/leemons-plugin-leebrary/frontend/src/*"
       ],
-      "@menu-builder-frontend-react/*": [
+      "@menu-builder/*": [
         "./plugins/leemons-plugin-menu-builder/frontend/src/*"
       ],
-      "@mqtt-aws-iot-frontend-react/*": [
+      "@mqtt-aws-iot/*": [
         "./plugins/leemons-plugin-mqtt-aws-iot/frontend/src/*"
       ],
-      "@mqtt-socket-io-frontend-react/*": [
+      "@mqtt-socket-io/*": [
         "./plugins/leemons-plugin-mqtt-socket-io/frontend/src/*"
       ],
-      "@multilanguage-frontend-react/*": [
+      "@multilanguage/*": [
         "./plugins/leemons-plugin-multilanguage/frontend/src/*"
       ],
-      "@onboarding-frontend-react/*": [
+      "@onboarding/*": [
         "./plugins/leemons-plugin-onboarding/frontend/src/*"
       ],
-      "@scores-frontend-react/*": [
+      "@scores/*": [
         "./plugins/leemons-plugin-scores/frontend/src/*"
       ],
-      "@scorm-frontend-react/*": [
+      "@scorm/*": [
         "./plugins/leemons-plugin-scorm/frontend/src/*"
       ],
-      "@tasks-frontend-react/*": [
+      "@tasks/*": [
         "./plugins/leemons-plugin-tasks/frontend/src/*"
       ],
-      "@tests-frontend-react/*": [
+      "@tests/*": [
         "./plugins/leemons-plugin-tests/frontend/src/*"
       ],
-      "@timetable-frontend-react/*": [
+      "@timetable/*": [
         "./plugins/leemons-plugin-timetable/frontend/src/*"
       ],
-      "@users-frontend-react/*": [
+      "@users/*": [
         "./plugins/leemons-plugin-users/frontend/src/*"
       ],
-      "@widgets-frontend-react/*": [
+      "@widgets/*": [
         "./plugins/leemons-plugin-widgets/frontend/src/*"
       ],
-      "@xapi-frontend-react/*": [
+      "@xapi/*": [
         "./plugins/leemons-plugin-xapi/frontend/src/*"
       ]
     }

@@ -11,7 +11,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
-import { unflatten, useStore } from '@common-frontend-react';
+import { unflatten, useStore } from '@common';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';

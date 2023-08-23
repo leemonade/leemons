@@ -1,4 +1,4 @@
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import { getGradeRequest } from '@grades/request';
 
 export default function useGrades(evaluation) {

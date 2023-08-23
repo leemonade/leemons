@@ -1,5 +1,5 @@
 import { Box, Drawer, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';

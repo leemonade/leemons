@@ -1,5 +1,5 @@
 import { createStyles } from '@bubbles-ui/components';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 import CardWrapper from '@leebrary/components/CardWrapper';
 import React, { useMemo } from 'react';
 

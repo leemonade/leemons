@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ContextContainer, createStyles, DatePicker, Stack } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
-import { useStore } from '@common-frontend-react';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useStore } from '@common';
 import { Controller, useForm } from 'react-hook-form';
 import { get } from 'lodash';
 import OtherEvents from '@academic-calendar/pages/private/program/components/OtherEvents';

@@ -18,7 +18,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { LocaleDuration } from '@common-frontend-react';
+import { LocaleDuration } from '@common';
 import hooks from 'leemons-hooks';
 
 import { ChatDrawer } from '@comunica/components';

@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { useObservableContext } from '@common-frontend-react/context/ObservableContext';
+import { useObservableContext } from '@common/context/ObservableContext';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
 
 function useDefaultValues() {

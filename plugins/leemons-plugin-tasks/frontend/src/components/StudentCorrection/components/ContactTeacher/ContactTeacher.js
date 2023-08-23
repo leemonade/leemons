@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, Button, UserDisplayItem, Box } from '@bubbles-ui/components';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/solid';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
 import contactTeacherStyles from './ContactTeacher.style';
 

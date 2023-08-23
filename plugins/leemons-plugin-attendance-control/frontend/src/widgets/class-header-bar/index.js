@@ -4,7 +4,7 @@ import { getSessionsBackFromToday } from '@attendance-control/helpers/getSession
 import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import { getTemporalSessionsRequest } from '@attendance-control/request';
 import { Button } from '@bubbles-ui/components';
-import { useRequestErrorMessage, useStore } from '@common-frontend-react';
+import { useRequestErrorMessage, useStore } from '@common';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import infoPlugin from '@package-manager/request/infoPlugin';
 import { getPermissionsWithActionsIfIHaveRequest, getProfileSysNameRequest } from '@users/request';

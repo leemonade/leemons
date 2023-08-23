@@ -15,8 +15,8 @@ import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy }
 import React, { useMemo } from 'react';
 
 import { detailProgramRequest } from '@academic-portfolio/request';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useHistory, useParams } from 'react-router-dom';
 import NewBranchDetailValue from '../../../bubbles-components/NewBranchDetailValue';

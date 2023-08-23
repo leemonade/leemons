@@ -5,7 +5,7 @@
 import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
 import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import loadable from '@loadable/component';
 import tKeys from '@multilanguage/helpers/tKeys';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
@@ -18,7 +18,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import prefixPN from '@calendar/helpers/prefixPN';
-import { getLocale, useStore } from '@common-frontend-react';
+import { getLocale, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

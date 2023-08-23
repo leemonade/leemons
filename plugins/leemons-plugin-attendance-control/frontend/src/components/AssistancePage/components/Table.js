@@ -22,7 +22,7 @@ import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 import { generateAssistancesWB } from '@attendance-control/components/ExcelExport/assistencesWB';
 import { getFile } from '@attendance-control/components/ExcelExport/helpers/workbook/getFile';
 import { CommonTableStyles } from '@bubbles-ui/leemons';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getUserAgentsInfoRequest } from '@users/request';
 import _ from 'lodash';

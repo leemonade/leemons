@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { stringMatch, useCache } from '@common-frontend-react';
+import { stringMatch, useCache } from '@common';
 import { useScores } from '@scores/requests/hooks/queries';
 
 function parseStudentsData({ studentsData, values: _values, scores, isSubmitted }) {

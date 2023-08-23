@@ -1,5 +1,5 @@
 import { MainNav, Spotlight } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { getMenu } from '@menu-builder/helpers';
 import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@mqtt-socket-io/service';

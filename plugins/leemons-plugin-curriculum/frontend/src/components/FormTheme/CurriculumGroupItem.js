@@ -14,7 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ArrowChevDownIcon, ArrowChevUpIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { htmlToText, numberToEncodedLetter, useStore } from '@common-frontend-react';
+import { htmlToText, numberToEncodedLetter, useStore } from '@common';
 import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
 import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
 import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';

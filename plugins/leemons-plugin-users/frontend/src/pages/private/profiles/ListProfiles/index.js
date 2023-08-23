@@ -5,7 +5,7 @@ import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { listProfilesRequest } from '@users/request';
 import { goDetailProfilePage } from '@users/navigate';
 import prefixPN from '@users/helpers/prefixPN';

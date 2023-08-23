@@ -1,4 +1,4 @@
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { SocketIoService } from '@mqtt-socket-io/service';
 import { getCookieToken } from '@users/session';
 import hooks from 'leemons-hooks';

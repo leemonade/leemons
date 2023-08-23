@@ -16,9 +16,9 @@ import {
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { AdminPageHeader, EMAIL_REGEX } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@users/helpers/prefixPN';
-import { TagsMultiSelect, useStore } from '@common-frontend-react';
+import { TagsMultiSelect, useStore } from '@common';
 import { useForm } from 'react-hook-form';
 import { forEach, map, uniq } from 'lodash';
 import {

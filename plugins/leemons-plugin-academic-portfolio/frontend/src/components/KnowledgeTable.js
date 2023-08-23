@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, ColorInput, NumberInput, TableInput, TextInput, Title } from '@bubbles-ui/components';
-import { regex } from '@common-frontend-react';
+import { regex } from '@common';
 
 function KnowledgeTable({ messages, program, tableLabels, onAdd = () => {} }) {
   const abbrRules = {

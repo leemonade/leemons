@@ -1,7 +1,7 @@
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { Box, createStyles, DatePicker, Select } from '@bubbles-ui/components';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { getSessionConfig } from '@users/session';

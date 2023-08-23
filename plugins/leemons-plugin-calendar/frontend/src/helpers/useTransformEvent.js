@@ -2,7 +2,7 @@ import React from 'react';
 import useTranslateTitle from '@calendar/helpers/useTranslateTitle';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listKanbanColumnsRequest } from '@calendar/request';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import * as _ from 'lodash';
 import transformEvent from './transformEvent';
 

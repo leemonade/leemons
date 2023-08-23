@@ -19,7 +19,7 @@ import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents
 import prefixPN from '@calendar/helpers/prefixPN';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import loadable from '@loadable/component';

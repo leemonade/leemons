@@ -2,11 +2,11 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, PageContainer, Table } from '@bubbles-ui/components';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import { PlusIcon } from '@heroicons/react/outline';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 

@@ -10,7 +10,7 @@ import {
   PageContainer,
   Title,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import AddCurriculumStep0 from '@curriculum/pages/private/AddCurriculumStep0';
 import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';

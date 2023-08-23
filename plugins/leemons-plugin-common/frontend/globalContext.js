@@ -1,4 +1,4 @@
-import { TextEditorContext, TextEditorProvider } from '@common-frontend-react/context';
+import { TextEditorContext, TextEditorProvider } from '@common/context';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';

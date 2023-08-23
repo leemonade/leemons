@@ -4,7 +4,7 @@ import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 
 import _ from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';

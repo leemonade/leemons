@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { TestStyles } from '../pages/private/tests/StudentInstance/TestStyles.style';
 import { StudentInstanceStyles } from '../pages/private/tests/StudentInstance/StudentInstance.style';
 import QuestionList from '../pages/private/tests/StudentInstance/components/QuestionList';

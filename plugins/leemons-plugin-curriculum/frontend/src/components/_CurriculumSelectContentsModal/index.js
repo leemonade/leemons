@@ -14,7 +14,7 @@ import {
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { filter, find, forEach, isArray } from 'lodash';
 import { detailCurriculumRequest } from '../../request';
 import { CurriculumTab } from './components/CurriculumTab';

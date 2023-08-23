@@ -11,7 +11,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import { isValidHttpUrl, useStore } from '@common-frontend-react';
+import { isValidHttpUrl, useStore } from '@common';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { ScheduleInput } from '@timetable/components';
 import { filter, find, map } from 'lodash';

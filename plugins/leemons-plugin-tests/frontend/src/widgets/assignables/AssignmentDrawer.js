@@ -11,7 +11,7 @@ import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { Box, Button, Divider, Loader, createStyles } from '@bubbles-ui/components';
 import { map } from 'lodash';
 import AssignConfig from '@tests/components/AssignConfig';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { getAssignConfigsRequest, getTestRequest } from '@tests/request';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

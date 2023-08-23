@@ -1,5 +1,5 @@
-import prefixPN from '@common-frontend-react/helpers/prefixPN';
-import unflatten from '@common-frontend-react/unflatten';
+import prefixPN from '@common/helpers/prefixPN';
+import unflatten from '@common/unflatten';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get, isEmpty } from 'lodash';
 import { useState, useEffect } from 'react';

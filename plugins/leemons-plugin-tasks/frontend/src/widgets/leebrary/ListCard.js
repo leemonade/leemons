@@ -14,7 +14,7 @@ import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import _ from 'lodash';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '../../helpers/prefixPN';
 

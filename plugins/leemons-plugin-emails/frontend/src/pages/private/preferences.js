@@ -15,10 +15,10 @@ import {
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@emails/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { Controller, useForm } from 'react-hook-form';
 import { getConfigRequest, saveConfigRequest } from '@emails/request';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
 const ListPageStyles = createStyles((theme) => ({

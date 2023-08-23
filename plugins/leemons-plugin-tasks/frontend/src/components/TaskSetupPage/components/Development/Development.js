@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { InputWrapper, TableInput } from '@bubbles-ui/components';
-import { TextEditorInput, TextEditorViewer } from '@common-frontend-react/components';
+import { TextEditorInput, TextEditorViewer } from '@common/components';
 import useTableInputLabels from '@tasks/helpers/useTableInputLabels';
 
 export default function Development({ name, label, placeholder, required }) {

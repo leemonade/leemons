@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
 import { ActionButton, Box, Col, Grid, Stack } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
-import { useRequestErrorMessage } from '@common-frontend-react';
+import { useRequestErrorMessage } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { find, isArray, isEmpty } from 'lodash';

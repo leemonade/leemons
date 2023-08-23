@@ -9,9 +9,9 @@ import {
   HtmlText,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import ContentEditorInput from '@common-frontend-react/components/ContentEditorInput/ContentEditorInput';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import { useParams, useHistory } from 'react-router-dom';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';

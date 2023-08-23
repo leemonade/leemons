@@ -3,9 +3,9 @@ import React from 'react';
 /*
 
 import { useForm } from 'react-hook-form';
-import { useAsync } from '@common-frontend-react/useAsync';
+import { useAsync } from '@common/useAsync';
 import { useHistory, useParams } from 'react-router-dom';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import {
   addCalendarConfigRequest,

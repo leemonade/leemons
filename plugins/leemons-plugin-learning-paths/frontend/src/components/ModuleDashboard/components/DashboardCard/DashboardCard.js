@@ -6,7 +6,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { capitalize, get } from 'lodash';
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
-import { LocaleDate, LocaleDuration } from '@common-frontend-react';
+import { LocaleDate, LocaleDuration } from '@common';
 import {
   useEvaluationType,
   useEvaluationTypeLocalizations,

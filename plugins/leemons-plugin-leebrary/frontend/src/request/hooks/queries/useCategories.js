@@ -1,4 +1,4 @@
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 import { listCategoriesRequest } from '@leebrary/request';
 import { listCategoriesKey } from '../keys/categories';

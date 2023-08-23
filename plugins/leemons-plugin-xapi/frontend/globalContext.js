@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { share, useBeforeUnload, useIdle, useStore } from '@common-frontend-react';
+import { share, useBeforeUnload, useIdle, useStore } from '@common';
 import { getSessionConfig } from '@users/session';
 import { XAPI } from '@xapi';
 

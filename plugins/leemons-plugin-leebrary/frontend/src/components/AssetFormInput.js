@@ -2,7 +2,7 @@ import React from 'react';
 import { find, isEmpty } from 'lodash';
 import { Box, InputWrapper } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { LibraryForm } from './LibraryForm/LibraryForm';

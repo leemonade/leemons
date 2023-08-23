@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { filter, isString, keyBy, map } from 'lodash';

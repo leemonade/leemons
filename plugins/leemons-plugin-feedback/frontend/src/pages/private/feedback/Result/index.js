@@ -1,7 +1,7 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
-import { htmlToText, useStore } from '@common-frontend-react';
+import { htmlToText, useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   ActivityAccordion,

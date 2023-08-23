@@ -10,7 +10,7 @@ import {
   TextClamp,
   Title,
 } from '@bubbles-ui/components';
-import { unflatten, useCache } from '@common-frontend-react';
+import { unflatten, useCache } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';

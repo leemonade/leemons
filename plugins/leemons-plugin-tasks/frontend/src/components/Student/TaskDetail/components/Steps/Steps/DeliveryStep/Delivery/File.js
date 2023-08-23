@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { FileUpload } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { deleteAssetRequest, newAssetRequest, listCategoriesRequest } from '@leebrary/request';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import handleDeliverySubmission from './handleDeliverySubmission';
 

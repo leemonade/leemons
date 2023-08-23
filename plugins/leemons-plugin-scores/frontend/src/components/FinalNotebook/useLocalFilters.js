@@ -1,5 +1,5 @@
 import React from 'react';
-import { stringMatch, useCache } from '@common-frontend-react';
+import { stringMatch, useCache } from '@common';
 import dayjs from 'dayjs';
 import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
 

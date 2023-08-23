@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, HtmlText, ImageLoader, Stack, Text } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
-import { numberToEncodedLetter } from '@common-frontend-react';
+import { numberToEncodedLetter } from '@common';
 import { find } from 'lodash';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 import { htmlToText } from '../../../helpers/htmlToText';

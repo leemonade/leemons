@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useApi } from '@common-frontend-react';
+import { useApi } from '@common';
 import getCorrectionRequest from '../../../request/instance/getCorrection';
 
 export default function useCorrection(instance, student) {

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, createStyles } from '@bubbles-ui/components';
 import PeriodSelector from '@scores/components/PeriodSelector/PeriodSelector';
 import PeriodList from '@scores/components/PeriodList/PeriodList';
-import { useLocale, unflatten } from '@common-frontend-react';
+import { useLocale, unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { usePeriodMutation } from '@scores/requests/hooks/mutations';
 import _, { isFunction } from 'lodash';

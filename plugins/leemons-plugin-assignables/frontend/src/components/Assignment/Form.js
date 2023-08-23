@@ -4,7 +4,7 @@ import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { get, set, uniq } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { Layout } from './components/Layout';
 import { SubjectPicker } from './components/SubjectPicker';
 import { GroupPicker } from './components/GroupPicker';

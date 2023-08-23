@@ -1,8 +1,8 @@
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
 import { UserDisplayItem } from '@bubbles-ui/components';
-import { LocaleDate, LocaleDuration, unflatten, useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { LocaleDate, LocaleDuration, unflatten, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';

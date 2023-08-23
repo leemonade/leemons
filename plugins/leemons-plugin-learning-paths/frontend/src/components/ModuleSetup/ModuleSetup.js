@@ -6,7 +6,7 @@ import { fireEvent } from 'leemons-hooks';
 import { get, isFunction, omit } from 'lodash';
 
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import { prefixPN } from '@learning-paths/helpers';

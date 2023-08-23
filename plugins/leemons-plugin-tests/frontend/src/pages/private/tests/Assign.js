@@ -2,7 +2,7 @@ import React from 'react';
 import { forIn, map, omit, set, uniq } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   Box,

@@ -12,8 +12,8 @@ import {
   LinkTool,
   ButtonGroup,
 } from '@bubbles-ui/editors';
-import { useTextEditor } from '@common-frontend-react/context';
-import { useEditorLabels } from '@common-frontend-react/hooks/useEditorLabels';
+import { useTextEditor } from '@common/context';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
 import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 import {

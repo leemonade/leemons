@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 /*
 import { Button } from '@bubbles-ui/components';
-import { useAsync } from '@common-frontend-react/useAsync';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useAsync } from '@common/useAsync';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import * as _ from 'lodash';

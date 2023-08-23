@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { NumberInput, Select, Stack, InputWrapper, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, PageHeader, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
 import { useHistory } from 'react-router-dom';
-import { useStore, useQuery } from '@common-frontend-react';
+import { useStore, useQuery } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';

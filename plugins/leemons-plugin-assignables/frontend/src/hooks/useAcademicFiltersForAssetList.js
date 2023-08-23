@@ -4,7 +4,7 @@ import React from 'react';
 import { SelectSubject, SubjectItem } from '@academic-portfolio/components/SelectSubject';
 import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUserCenters } from '@users/hooks';
 import _ from 'lodash';

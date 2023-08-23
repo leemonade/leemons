@@ -3,7 +3,7 @@ import { ContextContainer, Box, TabPanel, Tabs, createStyles } from '@bubbles-ui
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';

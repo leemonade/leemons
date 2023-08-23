@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { Avatar, Box, ContextContainer, Table, Title } from '@bubbles-ui/components';
-import { LocaleDate } from '@common-frontend-react';
+import { LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import UserDetailModal from '@users/components/UserDetailModal';
 import getUserFullName from '@users/helpers/getUserFullName';

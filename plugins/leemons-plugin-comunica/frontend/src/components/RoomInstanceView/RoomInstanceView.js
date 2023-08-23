@@ -2,7 +2,7 @@ import { useIsTeacher } from '@academic-portfolio/hooks';
 import assignablesPrefixPN from '@assignables/helpers/prefixPN';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import { Box } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
 import _ from 'lodash';
 import PropTypes from 'prop-types';

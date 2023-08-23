@@ -12,8 +12,8 @@ import {
 } from '@bubbles-ui/components';
 import { FolderIcon } from '@bubbles-ui/icons/outline';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
 import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

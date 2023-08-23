@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCache } from '@common-frontend-react/useCache';
+import { useCache } from '@common/useCache';
 import { useQueryClient } from '@tanstack/react-query';
 import { isEqual } from 'lodash';
 import { cachingStrategy, modificationTrend, refetchFrequency } from './variants';

@@ -12,9 +12,9 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { addErrorAlert } from '@layout/alert';
-import { LocaleDate, TagsAutocomplete, useStore } from '@common-frontend-react';
+import { LocaleDate, TagsAutocomplete, useStore } from '@common';
 import { AlertWarningTriangleIcon, BlockIcon } from '@bubbles-ui/icons/solid';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { cloneDeep, difference, forEach, isNil, map } from 'lodash';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { getStudentsByTagsRequest } from '../../../request';

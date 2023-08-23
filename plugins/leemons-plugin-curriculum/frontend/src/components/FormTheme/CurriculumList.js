@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { Box, Button, Stack, TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';

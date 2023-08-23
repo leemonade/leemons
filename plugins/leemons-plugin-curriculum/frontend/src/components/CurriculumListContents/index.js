@@ -4,7 +4,7 @@ import { Badge } from '@bubbles-ui/components';
 import { filter, find, forEach, forIn, isArray, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@curriculum/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { detailCurriculumRequest } from '@curriculum/request';
 import { CurriculumTab } from '@curriculum/components/CurriculumSelectContentsModal/components/CurriculumTab';
 import { getCurriculumSelectedContentValueByKey } from '@curriculum/helpers/getCurriculumSelectedContentValueByKey';

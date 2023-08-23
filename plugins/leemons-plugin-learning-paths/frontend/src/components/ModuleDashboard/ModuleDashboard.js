@@ -7,7 +7,7 @@ import { capitalize, get, map, sortBy } from 'lodash';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

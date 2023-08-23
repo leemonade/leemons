@@ -1,6 +1,6 @@
 import React from 'react';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { unflatten, useCache, useLocale } from '@common-frontend-react';
+import { unflatten, useCache, useLocale } from '@common';
 import _ from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import { useScores } from '@scores/requests/hooks/queries';

@@ -14,7 +14,7 @@ import {
   Stack,
   Title,
 } from '@bubbles-ui/components';
-import { numberToEncodedLetter, useStore } from '@common-frontend-react';
+import { numberToEncodedLetter, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { LeebraryImage } from '@leebrary/components';

@@ -15,7 +15,7 @@ import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ChatButton from '@comunica/components/ChatButton';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { findNearestFloorScore } from '@assignables/widgets/dashboard/nya/components/EvaluationCard/components/ScoreFeedback';
 
 function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {

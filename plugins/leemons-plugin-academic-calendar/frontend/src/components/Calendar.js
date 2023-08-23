@@ -1,6 +1,6 @@
 import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
 import { BigCalendar } from '@bubbles-ui/calendars';
-import { useLocale } from '@common-frontend-react';
+import { useLocale } from '@common';
 import PropTypes from 'prop-types';
 import React from 'react';
 

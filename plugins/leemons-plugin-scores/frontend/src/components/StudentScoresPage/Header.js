@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { get } from 'lodash';
 import { prefixPN } from '@scores/helpers';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { PageHeader } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';

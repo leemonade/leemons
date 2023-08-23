@@ -3,7 +3,7 @@ import { Box, PageHeader, createStyles, TabPanel, Tabs } from '@bubbles-ui/compo
 // import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import { useStore, useQuery } from '@common-frontend-react';
+import { useStore, useQuery } from '@common';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useHistory } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';

@@ -1,5 +1,5 @@
 import { TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
-import { numberToEncodedLetter } from '@common-frontend-react';
+import { numberToEncodedLetter } from '@common';
 
 // eslint-disable-next-line import/prefer-default-export
 export function getItemTitleNumbered(blockData, values, index, onlyNumber, item) {

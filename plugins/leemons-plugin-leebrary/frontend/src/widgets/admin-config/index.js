@@ -10,8 +10,8 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import { useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import loadable from '@loadable/component';

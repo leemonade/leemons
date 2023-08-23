@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { listPeriodsRequest } from '@scores/requests';
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { allPaginatedPeriodsListsKey, paginatePeriodsListKey } from '../keys/periods';
 
 async function queryFn({ queryKey: [{ page, size, query, sort }] }) {

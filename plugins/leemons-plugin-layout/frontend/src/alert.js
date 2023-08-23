@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import hooks from 'leemons-hooks';
-import { getRequestErrorMessage } from '@common-frontend-react/useRequestErrorMessage';
+import { getRequestErrorMessage } from '@common/useRequestErrorMessage';
 
 export function addAlert(type, title, message, options) {
   hooks.fireEvent('layout:add:alert', {

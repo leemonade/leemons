@@ -11,8 +11,8 @@ import {
   ScriptsTool,
   LinkTool,
 } from '@bubbles-ui/editors';
-import { useTextEditor } from '@common-frontend-react/context';
-import { useEditorLabels } from '@common-frontend-react/hooks/useEditorLabels';
+import { useTextEditor } from '@common/context';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { TextEditorInputStyles } from './TextEditorInput.styles';
 import {
   TEXT_EDITOR_INPUT_DEFAULT_PROPS,

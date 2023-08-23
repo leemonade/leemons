@@ -1,6 +1,6 @@
 import { Box, Button, createStyles, Modal, Paragraph, Stack, Text } from '@bubbles-ui/components';
 import { ArrowLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
 import HeaderProgressBar from '@feedback/pages/private/feedback/StudentInstance/components/questions/HeaderProgressBar';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';

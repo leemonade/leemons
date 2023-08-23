@@ -1,7 +1,7 @@
 import { Box, Button, HtmlText, TableInput, TextInput } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ArrowChevDownIcon, ArrowChevUpIcon } from '@bubbles-ui/icons/solid';
-import { ellipsis, useStore } from '@common-frontend-react';
+import { ellipsis, useStore } from '@common';
 import { htmlToText } from '@tests/pages/private/tests/StudentInstance/helpers/htmlToText';
 import PropTypes from 'prop-types';
 import React from 'react';

@@ -14,13 +14,13 @@ import {
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@comunica/helpers/prefixPN';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { ConfigPageStyles } from '@comunica/pages/private/ConfigPage/index.styles';
 import { Controller, useForm } from 'react-hook-form';
 import { SelectCenter } from '@users/components';
 import { listProgramsRequest } from '@academic-portfolio/request';
 import RoomService from '@comunica/RoomService';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 
 export default function ConfigPage() {
   const [t] = useTranslateLoader(prefixPN('config'));

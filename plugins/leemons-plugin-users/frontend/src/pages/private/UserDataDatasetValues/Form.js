@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
-import formWithTheme from '@common-frontend-react/formWithTheme';
+import formWithTheme from '@common/formWithTheme';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 function Form({ data, formActions }) {

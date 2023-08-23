@@ -10,7 +10,7 @@ import {
   Tree,
   useTree,
 } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { removeDatasetFieldRequest, saveDatasetFieldRequest } from '@dataset/request';
 import { useLayout } from '@layout/context';

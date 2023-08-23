@@ -9,7 +9,7 @@ import {
   Tabs,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import PlatformLocales from '@multilanguage/components/PlatformLocales';
 import PlatformLocalesModal from '@multilanguage/components/PlatformLocalesModal';

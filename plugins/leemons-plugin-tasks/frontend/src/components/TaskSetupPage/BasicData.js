@@ -5,7 +5,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Button, ContextContainer, Stack, Switch } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AssetFormInput } from '@leebrary/components/AssetFormInput';
-import { useObservableContext } from '@common-frontend-react/context/ObservableContext';
+import { useObservableContext } from '@common/context/ObservableContext';
 
 function useUpdateFormData(formData) {
   const { useWatch: useContextWatch } = useObservableContext();

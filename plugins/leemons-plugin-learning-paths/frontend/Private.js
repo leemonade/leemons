@@ -7,7 +7,7 @@ import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 
 import { goLoginPage } from '@users/navigate';
-import { useSearchParams } from '@common-frontend-react';
+import { useSearchParams } from '@common';
 import { useSession } from '@users/session';
 
 const Library = loadable(() => pMinDelay(import('./src/pages/private/Library'), 1000));

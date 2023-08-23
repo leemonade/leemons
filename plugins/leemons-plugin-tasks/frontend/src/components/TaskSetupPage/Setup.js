@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, isNil } from 'lodash';
 import { VerticalStepperContainer } from '@bubbles-ui/components';
-import { useObservableContext } from '@common-frontend-react/context/ObservableContext';
+import { useObservableContext } from '@common/context/ObservableContext';
 
 function getInitialProgram(sharedData) {
   if (sharedData?.subjects?.length > 0) {

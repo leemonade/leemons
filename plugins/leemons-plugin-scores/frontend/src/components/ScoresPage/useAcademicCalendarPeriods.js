@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { useCache } from '@common-frontend-react';
+import { useCache } from '@common';
 import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 

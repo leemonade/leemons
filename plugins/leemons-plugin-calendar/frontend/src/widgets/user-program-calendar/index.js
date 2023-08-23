@@ -13,7 +13,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { AddIcon as PlusIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { BigCalendar } from '@bubbles-ui/calendars';

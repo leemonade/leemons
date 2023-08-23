@@ -14,7 +14,7 @@ import { ListEditIcon } from '@bubbles-ui/icons/outline';
 import _, { isFunction } from 'lodash';
 import { CutStarIcon } from '@bubbles-ui/icons/solid';
 
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';

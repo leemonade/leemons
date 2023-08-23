@@ -1,5 +1,5 @@
 import { Box, Loader, TabPanel, Tabs } from '@bubbles-ui/components';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import CurriculumGroup from '@curriculum/components/FormTheme/CurriculumGroup';
 import CurriculumList from '@curriculum/components/FormTheme/CurriculumList';
 import CurriculumTextInput from '@curriculum/components/FormTheme/CurriculumTextInput';

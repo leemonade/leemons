@@ -1,6 +1,6 @@
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginProfileSelector } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import { LayoutContext } from '@layout/context/layout';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

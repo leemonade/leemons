@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { LocaleDate, useCache } from '@common-frontend-react';
+import { LocaleDate, useCache } from '@common';
 import { Controller, useFormContext, useForm, useWatch } from 'react-hook-form';
 import { Box, createStyles, ImageLoader, Select, Switch, Text } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';

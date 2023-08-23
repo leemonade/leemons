@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { TranslatorModal } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '../helpers/useCommonTranslate';
 
 export default function PlatformLocalesModal({ children, title, ...props }) {

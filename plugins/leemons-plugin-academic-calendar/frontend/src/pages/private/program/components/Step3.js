@@ -13,10 +13,10 @@ import {
   IconButton,
   Title,
 } from '@bubbles-ui/components';
-import { useLocale, useStore } from '@common-frontend-react';
+import { useLocale, useStore } from '@common';
 import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common-frontend-react/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { saveConfig } from '@academic-calendar/request/config';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
 import ReactToPrint from 'react-to-print';

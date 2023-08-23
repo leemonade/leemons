@@ -2,7 +2,7 @@
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { Box, ContextContainer, PageContainer, createStyles } from '@bubbles-ui/components';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
-import { useStore } from '@common-frontend-react';
+import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig, updateSessionConfig } from '@users/session';

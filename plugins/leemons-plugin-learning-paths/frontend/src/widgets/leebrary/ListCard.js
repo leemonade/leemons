@@ -15,7 +15,7 @@ import { LibraryCard } from '@bubbles-ui/leemons';
 import { get } from 'lodash';
 
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { unflatten } from '@common-frontend-react';
+import { unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common-frontend-react/queries';
+import { useVariantForQueryKey } from '@common/queries';
 import { head } from 'lodash';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { assignablesGetKey } from '../keys/assignables';

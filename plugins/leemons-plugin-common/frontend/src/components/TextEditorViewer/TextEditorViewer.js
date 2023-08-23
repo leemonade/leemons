@@ -11,7 +11,7 @@ import {
   ScriptsTool,
   LinkTool,
 } from '@bubbles-ui/editors';
-import { useTextEditor } from '@common-frontend-react/context';
+import { useTextEditor } from '@common/context';
 
 const TextEditorViewer = ({ children, ...props }) => {
   const { textEditorTools } = useTextEditor();
