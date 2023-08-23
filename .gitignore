@@ -6,7 +6,6 @@ npm-debug.log_
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log\*
-events.json
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 
@@ -146,3 +145,7 @@ data.xlsx
 packages/leemons-react/front
 build.tar.gz
 cache.js
+
+apps/dev/frontend
+apps/dev/build
+apps/dev/events.json

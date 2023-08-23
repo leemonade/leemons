@@ -22,7 +22,14 @@ module.exports = async function buildFront({ app, build, output, base }) {
   const buildDir = getBuildDir(build);
   const basePath = getBasePath(base);
 
-  const plugins = await getPlugins({ app: appDir });
+  const pluginsRaw = await getPlugins({ app: appDir });
+  const plugins = pluginsRaw.map((plugin) => {
+    return {
+      ...plugin,
+      name: plugin.name.replace('-frontend-react', ''),
+    };
+  });
+
   const publicFiles = await generatePublicFolders(outputDir, plugins);
   const alias = generateAlias(outputDir, plugins);
 

@@ -227,7 +227,7 @@ module.exports = function webpackConfig({
         template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
       }),
       isDev && new ReactRefreshWebpackPlugin(),
-      useDebug && new BundleAnalyzerPlugin(),
+      useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'static' }),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
       new MiniCssExtractPlugin({

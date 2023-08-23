@@ -6,7 +6,8 @@
     "backend:dev": "leemons-runner --env --hot services/**/*.service.js",
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
-    "front:dev": "leemonsFront dev -m ../.."
+    "front:dev": "leemonsFront dev -m ../..",
+    "front:build": "leemonsFront build"
   },
   "leemons": {},
   "dependencies": {

@@ -18,13 +18,13 @@ import {
   useResizeObserver,
   useTree,
 } from '@bubbles-ui/components';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   AcademicProgramSetup,
   AcademicProgramSetupBasicData,
   AcademicProgramSetupCourses,
-  AcademicProgramSetupSubjects,
-  AdminPageHeader,
-} from '@bubbles-ui/leemons';
+  AcademicProgramSetupSubjects
+} from '@academic-portfolio/components/ProgramSetup';
 import { unflatten, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
