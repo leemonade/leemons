@@ -9,9 +9,9 @@ const { detail } = require('./detail');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getByCenterId(center, { transacting } = {}) {
-  const centerConfig = await getCenterConfigByCenter(center, { transacting });
-  if (centerConfig) return detail(centerConfig.config, { transacting });
+async function getByCenterId({ center, ctx }) {
+  const centerConfig = await getCenterConfigByCenter({ center, ctx });
+  if (centerConfig) return detail({ id: centerConfig.config, ctx });
   return null;
 }
 

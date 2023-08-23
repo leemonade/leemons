@@ -1,8 +1,6 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
-const { removeByConfigId } = require('../center-calendar-configs');
 
 /**
  * Delete calendar config
@@ -13,19 +11,15 @@ const { removeByConfigId } = require('../center-calendar-configs');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getCalendars(id, { withEvents, transacting } = {}) {
-  await validateNotExistCalendarConfig(id, { transacting });
-  const configCalendars = await table.calendarConfigCalendars.find({ config: id }, { transacting });
-  const calendars = await table.calendars.find(
-    { id_$in: _.map(configCalendars, 'calendar') },
-    { transacting }
-  );
+async function getCalendars({ id, withEvents, ctx }) {
+  await validateNotExistCalendarConfig({ id, ctx });
+  const configCalendars = await ctx.tx.db.CalendarConfigCalendars.find({ config: id }).lean();
+  const calendars = await ctx.tx.db.Calendars.find({
+    id: _.map(configCalendars, 'calendar'),
+  }).lean();
   let eventsByCalendar = null;
   if (withEvents) {
-    const events = await table.events.find(
-      { calendar_$in: _.map(calendars, 'id') },
-      { transacting }
-    );
+    const events = await ctx.tx.db.Events.find({ calendar: _.map(calendars, 'id') }).lean();
     eventsByCalendar = _.groupBy(
       _.map(events, (event) => ({
         ...event,

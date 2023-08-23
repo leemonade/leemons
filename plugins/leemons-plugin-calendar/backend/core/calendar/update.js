@@ -15,8 +15,8 @@ const { validateAddCalendar } = require('../../validations/forms');
  * @return {Promise<any>}
  * */
 async function update({ key, config, ctx }) {
-  validateKeyPrefix(key, this.calledFrom);
-  validateSectionPrefix(config.section, this.calledFrom);
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  validateSectionPrefix({ key: config.section, calledFrom: ctx.callerPlugin, ctx });
   validateAddCalendar(config);
 
   await validateNotExistCalendarKey({ key, ctx });

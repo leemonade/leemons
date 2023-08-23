@@ -1,4 +1,3 @@
-const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistEventTypeKey } = require('../../validations/exists');
 
 /**
@@ -11,20 +10,11 @@ const { validateKeyPrefix, validateNotExistEventTypeKey } = require('../../valid
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(key, url, options = {}, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
-
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistEventTypeKey(key, { transacting });
-      delete options.id;
-      delete options.key;
-      delete options.pluginName;
-      return table.eventTypes.update({ key }, { ...options, url }, { transacting });
-    },
-    table.eventTypes,
-    _transacting
-  );
+async function update({ key, url, options = {}, ctx }) {
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistEventTypeKey({ key, ctx });
+  const { id, key: __, pluginName, ...opt } = options;
+  return ctx.tx.db.EventTypes.findOneAndUpdate({ key }, { ...opt, url }, { new: true, lean: true });
 }
 
 module.exports = { update };

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
+const { getUserAgentCalendarKey } = require('leemons-users');
 
 /**
  * Adds a calendar to the specified user agent.
@@ -12,7 +12,7 @@ const { getUserAgentCalendarKey } = require('./getUserAgentCalendarKey');
  * @returns {Promise<Object>} A promise that resolves to an object containing the user agent and the added calendar.
  */
 async function addCalendarToUserAgent({ userAgent, ctx }) {
-  const calendarKey = getUserAgentCalendarKey({ userAgent, ctx });
+  const calendarKey = getUserAgentCalendarKey({ userAgent });
   // ES: Añadimos calendario del agente
   // EN: Add user agent calendar
   const calendar = await ctx.tx.call('calendar.calendar.add', {

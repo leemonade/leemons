@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistCalendarKey } = require('../../validations/exists');
 
 /**
@@ -10,9 +9,9 @@ const { validateNotExistCalendarKey } = require('../../validations/exists');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function detailByKey(key, { transacting } = {}) {
-  await validateNotExistCalendarKey(key, { transacting });
-  return table.calendars.findOne({ key }, { transacting });
+async function detailByKey({ key, ctx }) {
+  await validateNotExistCalendarKey({ key, ctx });
+  return ctx.tx.db.Calendars.findOne({ key }).lean();
 }
 
 module.exports = { detailByKey };

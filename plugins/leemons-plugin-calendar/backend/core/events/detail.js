@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistEvent } = require('../../validations/exists');
 
 /**
@@ -10,9 +9,9 @@ const { validateNotExistEvent } = require('../../validations/exists');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function detail(id, { transacting } = {}) {
-  await validateNotExistEvent(id, { transacting });
-  const event = await table.events.findOne({ id }, { transacting });
+async function detail({ id, ctx }) {
+  await validateNotExistEvent({ id, ctx });
+  const event = await ctx.tx.db.Events.findOne({ id }).lean();
   return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
 }
 
