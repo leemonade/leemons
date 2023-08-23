@@ -1,8 +1,6 @@
-const { isArray, map, uniq } = require('lodash');
-const { tables } = require('../tables');
-
-const { normalizeItemsArray } = require('./shared/normalizeItemsArray');
 const { map, uniq } = require('lodash');
+const { tables } = require('../tables');
+const { normalizeItemsArray } = require('../shared/');
 
 /**
  * Get assets by subject

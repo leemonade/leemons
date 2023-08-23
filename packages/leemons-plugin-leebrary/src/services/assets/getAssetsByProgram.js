@@ -1,6 +1,6 @@
 const { map } = require('lodash');
 const { tables } = require('../tables');
-const { normalizeItemsArray } = require('./shared');
+const { normalizeItemsArray } = require('../shared');
 
 /**
  * Get assets by program

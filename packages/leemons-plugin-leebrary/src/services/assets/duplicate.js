@@ -189,7 +189,7 @@ async function handleCreateAsset(asset, tags, permissions, preserveName, isIndex
   ]);
   const name = isTruthy(preserveName) ? asset.name : `${asset.name} (1)`;
   const indexable = isIndexable === undefined ? asset.indexable : isTruthy(isIndexable);
-  const public = isPublic === undefined ? asset.public : isTruthy(isPublic);
+  const assetIsPublic = isPublic === undefined ? asset.public : isTruthy(isPublic);
 
   const newAsset = await add.call(
     this,
@@ -200,7 +200,7 @@ async function handleCreateAsset(asset, tags, permissions, preserveName, isIndex
       categoryId: asset.category,
       permissions,
       indexable,
-      public,
+      public: assetIsPublic,
     },
     { newId, userSession, transacting, duplicating: true }
   );

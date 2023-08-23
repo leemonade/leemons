@@ -1,3 +1,4 @@
+const { beforeAll, afterAll } = require('@jest/globals');
 const {
     handleBookmarkData,
     handleUserSessionData,
@@ -14,6 +15,37 @@ const {
     handleTags,
     add
 } = require('./add');
+
+const MOCK_DATA = {
+    CATEGORY: {
+        id: "13ce91bb-9135-49d9-9030-9d2559c74198",
+        key: "media-files",
+        pluginOwner: "plugins.leebrary",
+        creatable: 1,
+        createUrl: null,
+        duplicable: 1,
+        provider: "leebrary",
+        componentOwner: "plugins.leebrary",
+        listCardComponent: null,
+        listItemComponent: null,
+        detailComponent: null,
+        canUse: "*",
+        order: 1,
+        deleted: 0,
+    }
+};
+
+const leemons = {};
+
+global.leemons = leemons;
+
+beforeAll(() => {
+
+})
+
+afterAll(() => {
+    jest.restoreAllMocks();
+});
 
 describe('Add Asset', () => {
     describe('handleBookmarkData', () => {
@@ -56,7 +88,7 @@ describe('Add Asset', () => {
     describe('handleCategoryData', () => {
         it('should handle category data correctly', async () => {
             // Arrange
-            const category = '';
+            const category = MOCK_DATA.CATEGORY;
             const categoryId = '';
             const categoryKey = '';
             const expectedValue = {}; // Define your expected value here
@@ -237,9 +269,89 @@ describe('Add Asset', () => {
     describe('add', () => {
         it('should add an asset correctly', async () => {
             // Arrange
-            const assetData = {}; // Add your test data
-            const options = {}; // Add your test options
-            const expectedValue = {}; // Define your expected value here
+            const assetData = {
+                file: "87cc62db-ad40-484c-86da-c3392841c3f1",
+                name: "Logo de F1 in Schools",
+                tagline: "Soy un subtítulo",
+                description: "Soy una descripción",
+                color: "#668fcc",
+                url: null,
+                program: null,
+                subjects: null,
+                category: MOCK_DATA.CATEGORY,
+                categoryId: MOCK_DATA.CATEGORY.id,
+                cover: undefined,
+                tags: [
+                    "logo",
+                ],
+            }; // Add your test data
+            const options = {
+                published: true,
+                permissions: [],
+                duplicating: false,
+            }; // Add your test options
+            const expectedValue = {
+                name: "Logo de F1 in Schools",
+                tagline: "Soy un subtítulo",
+                description: "Soy una descripción",
+                color: "#668fcc",
+                program: null,
+                fromUser: "0a8d2aab-ce31-43f8-8db2-1e0780666a38",
+                fromUserAgent: "78c223d9-0c58-413d-86dd-f6d44a367588",
+                indexable: 1,
+                category: MOCK_DATA.CATEGORY.id,
+                cover: "df7e9435-9216-424a-a580-4acb82204d07",
+                id: "7e85a377-7af6-4f54-957e-3292d94ef1f7@1.0.0",
+                updated_at: "2023-08-23T15:25:49.000Z",
+                created_at: "2023-08-23T15:25:49.000Z",
+                public: null,
+                center: null,
+                deleted: 0,
+                deleted_at: null,
+                file: {
+                    id: "df7e9435-9216-424a-a580-4acb82204d07",
+                    provider: "leebrary-aws-s3",
+                    type: "image/png",
+                    extension: "png",
+                    name: "Logo de F1 in Schools",
+                    size: 118955,
+                    uri: "leemons/leebrary/df7e9435-9216-424a-a580-4acb82204d07.png",
+                    isFolder: null,
+                    metadata: {
+                        size: "116.2 KB",
+                        format: "PNG",
+                        width: "2134",
+                        height: "202",
+                    },
+                    deleted: 0,
+                    created_at: "2023-08-23T15:25:47.000Z",
+                    updated_at: "2023-08-23T15:25:49.000Z",
+                    deleted_at: null,
+                },
+                cover: {
+                    id: "df7e9435-9216-424a-a580-4acb82204d07",
+                    provider: "leebrary-aws-s3",
+                    type: "image/png",
+                    extension: "png",
+                    name: "Logo de F1 in Schools",
+                    size: 118955,
+                    uri: "leemons/leebrary/df7e9435-9216-424a-a580-4acb82204d07.png",
+                    isFolder: null,
+                    metadata: {
+                        size: "116.2 KB",
+                        format: "PNG",
+                        width: "2134",
+                        height: "202",
+                    },
+                    deleted: 0,
+                    created_at: "2023-08-23T15:25:47.000Z",
+                    updated_at: "2023-08-23T15:25:49.000Z",
+                    deleted_at: null,
+                },
+                tags: [
+                    "logo",
+                ]
+            }; // Define your expected value here
 
             // Act
             const result = await add(assetData, options);
