@@ -73,6 +73,36 @@ it('Should register the role correctly', async () => {
   expect(response).toBe(true);
 });
 
+it('Should throw if the role already exists', async () => {
+  // Arrange
+  const { role } = getRoleObject();
+
+  const actions = {
+    'multilanguage.common.addManyByKey': fn(),
+    'leebrary.categories.add': fn(),
+  };
+
+  const ctx = generateCtx({
+    actions,
+    models: {
+      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+    },
+
+    caller: 'testing',
+  });
+
+  await ctx.tx.db.Roles.create({
+    name: role.name,
+    plugin: ctx.callerPlugin,
+  });
+
+  // Act
+  const testFn = () => registerRole({ ...role, ctx });
+
+  // Assert
+  return expect(testFn).rejects.toThrowError(`Role "${role.name}" already exists in assignables`);
+});
+
 it('Should throw if the required params are not provided', () => {
   // Arrange
   const { role } = getRoleObject();
