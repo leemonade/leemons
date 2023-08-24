@@ -13,7 +13,7 @@ const { removeOrCancel, detail } = require('../events');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeEvent({ config, eventId, ctx }) {
+async function removeEvent({ config, event: eventId, ctx }) {
   await validateNotExistCalendarConfig({ id: config, ctx });
   const [calendars, event] = await Promise.all([
     getCalendars({ id: config, ctx }),

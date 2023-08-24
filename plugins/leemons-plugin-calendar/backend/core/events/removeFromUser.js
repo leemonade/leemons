@@ -1,12 +1,7 @@
 const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
-const { table } = require('../tables');
-const {
-  getPermissionConfig: getPermissionConfigCalendar,
-} = require('../calendar/getPermissionConfig');
+
 const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
-const { detail: detailEvent } = require('./detail');
-const { detail: detailCalendar } = require('../calendar/detail');
 const { removeOrCancel } = require('./removeOrCancel');
 const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEvent');
 
