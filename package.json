@@ -48,5 +48,8 @@
     "prettier-eslint": "^15.0.1",
     "start-server-and-test": "^2.0.0",
     "turbo": "^1.9.3"
+  },
+  "dependencies": {
+    "jest": "^29.6.2"
   }
 }

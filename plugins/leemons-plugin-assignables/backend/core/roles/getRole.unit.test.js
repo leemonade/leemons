@@ -56,11 +56,13 @@ it('Should return the requested role', async () => {
 });
 
 it('Should throw if not role is given', async () => {
+  // Arrange
+  const expectedError = 'Role param is required';
   // Act
   const testFn = () => getRole({});
 
   // Assert
-  expect(testFn).rejects.toThrowError('Role param is required');
+  expect(testFn).rejects.toThrowError(expectedError);
 });
 
 it('Should throw if the given role is not found', () => {
