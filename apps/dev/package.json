@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "backend:dev": "leemons-runner --env --hot services/**/*.service.js",
+    "backend:dev": "PORT=8080 leemons-runner --env --hot services/**/*.service.js",
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
-    "front:dev": "leemonsFront dev -m ../..",
+    "front:dev": "PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
     "front:build": "leemonsFront build"
   },
   "leemons": {},
