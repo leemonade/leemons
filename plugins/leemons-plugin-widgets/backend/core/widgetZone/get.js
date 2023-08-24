@@ -16,7 +16,7 @@ async function get({ key, ctx }) {
         userColumns: ['id'],
         withProfile: true,
       }),
-      ctx.tx.db.WidgetItemProfile.find({
+      ctx.tx.db.WidgetItemProfiles.find({
         zoneKey: key,
       }).lean(),
     ]);

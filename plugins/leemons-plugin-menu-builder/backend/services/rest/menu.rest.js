@@ -59,6 +59,8 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      // TODO POSTMIGRATION REMOVE
+      ctx.params.menuKey = ctx.params.menuKey.replace('plugins.', '');
       const menu = await getIfHasPermission({ ...ctx.params, ctx });
       return { status: 200, menu };
     },

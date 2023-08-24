@@ -32,8 +32,8 @@ async function add({ centers, ctx, ...data }) {
     addCalendar({
       key: ctx.prefixPN(`config.${response.id}.holidays_vacation`),
       config: {
-        section: leemons.plugin.prefixPN(`config.${response.id}`),
-        name: leemons.plugin.prefixPN(`holidays_vacation`),
+        section: ctx.prefixPN(`config.${response.id}`),
+        name: ctx.prefixPN(`holidays_vacation`),
         bgColor: '#b8e79c',
         borderColor: '#b8e79c',
       },
@@ -45,8 +45,8 @@ async function add({ centers, ctx, ...data }) {
     addCalendar({
       key: ctx.prefixPN(`config.${response.id}.regional_holidays`),
       config: {
-        section: leemons.plugin.prefixPN(`config.${response.id}`),
-        name: leemons.plugin.prefixPN(`regional_holidays`),
+        section: ctx.prefixPN(`config.${response.id}`),
+        name: ctx.prefixPN(`regional_holidays`),
         bgColor: '#d29ce7',
         borderColor: '#d29ce7',
       },
@@ -58,8 +58,8 @@ async function add({ centers, ctx, ...data }) {
     addCalendar({
       key: ctx.prefixPN(`config.${response.id}.non_school_day`),
       config: {
-        section: leemons.plugin.prefixPN(`config.${response.id}`),
-        name: leemons.plugin.prefixPN(`non_school_day`),
+        section: ctx.prefixPN(`config.${response.id}`),
+        name: ctx.prefixPN(`non_school_day`),
         bgColor: '#e79ccf',
         borderColor: '#e79ccf',
       },

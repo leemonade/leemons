@@ -9,6 +9,7 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { getServiceModels } = require('../models');
 const { add, exist, remove, getIfHasPermission } = require('../core/menu');
+const restActions = require('./rest/menu.rest');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -23,6 +24,7 @@ module.exports = () => ({
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return add({ ...ctx.params, ctx });

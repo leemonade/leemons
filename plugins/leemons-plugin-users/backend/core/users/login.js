@@ -32,9 +32,9 @@ async function login({ email, password, ctx }) {
     throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
 
   const [user, token] = await Promise.all([
-    ctx.tx.db.Users.findOne({ email }),
+    ctx.tx.db.Users.findOne({ email }).lean(),
     generateJWTToken({ payload: { id: userP.id }, ctx }),
-  ]).lean();
+  ]);
 
   if (user && user.id) {
     user.isSuperAdmin = await isSuperAdmin({ userId: user.id, ctx });

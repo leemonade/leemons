@@ -1,4 +1,4 @@
-async function getUserAgentCalendarKey({ userAgent }) {
+function getUserAgentCalendarKey({ userAgent }) {
   return `users.calendar.agent.${userAgent}`;
 }
 

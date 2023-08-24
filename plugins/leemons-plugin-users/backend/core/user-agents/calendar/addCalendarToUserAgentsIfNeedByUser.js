@@ -8,7 +8,6 @@ const { getUserAgentCalendarKey } = require('leemons-users');
  * @function addCalendarToUserAgent
  * @param {Object} options - Input options.
  * @param {string} options.userAgent - The user agent to which the calendar will be added.
- * @param {import("moleculer").Context} options.ctx - The Moleculer request context.
  * @returns {Promise<Object>} A promise that resolves to an object containing the user agent and the added calendar.
  */
 async function addCalendarToUserAgent({ userAgent, ctx }) {
@@ -21,7 +20,7 @@ async function addCalendarToUserAgent({ userAgent, ctx }) {
       name: userAgent,
       bgColor: '#3C72C2',
       borderColor: '#4F96FF',
-      section: leemons.plugin.prefixPN('calendar.user_section'),
+      section: ctx.prefixPN('calendar.user_section'),
     },
   });
 
