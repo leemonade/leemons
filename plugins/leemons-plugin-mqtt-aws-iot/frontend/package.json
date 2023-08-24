@@ -1,0 +1,10 @@
+{
+  "name": "leemons-plugin-mqtt-aws-iot-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-iot-device-sdk-v2": "^1.9.5"
+  },
+  "devDependencies": {}
+}

@@ -4,4 +4,5 @@ module.exports = {
   ...require('./randomString'),
   ...require('./getObjectArrayKeys'),
   ...require('./settledResponseToManyResponse'),
+  ...require('./env'),
 };

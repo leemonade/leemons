@@ -1,0 +1,10 @@
+{
+  "name": "leemons-plugin-menu-builder-frontend-react",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "prop-types": "^15.7.2"
+  },
+  "devDependencies": {}
+}
