@@ -6,6 +6,7 @@ const { getByIds } = require('./getByIds');
 const { getByKeys } = require('./getByKeys');
 const { getByAsset } = require('./getByAsset');
 const { removeByKey } = require('./removeByKey');
+const { checkDuplicable } = require('./checkDuplicable');
 const { listWithMenuItem } = require('./listWithMenuItem');
 
 module.exports = {
@@ -17,5 +18,6 @@ module.exports = {
   getByKeys,
   getByAsset,
   removeByKey,
+  checkDuplicable,
   listWithMenuItem,
 };
