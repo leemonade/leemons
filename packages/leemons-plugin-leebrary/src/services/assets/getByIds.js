@@ -45,23 +45,25 @@ async function getUserPermissionsByAsset({ assets, userSession, transacting }) {
   let canEditPermissions = [];
 
   const permissionTypes = ['asset.can-view', 'asset.can-edit', 'asset.can-assign'];
-  const permissionsPromises = permissionTypes.map(type =>
-    userService.permissions.getItemPermissions(
-      map(assets, 'id'),
-      leemons.plugin.prefixPN(type),
-      { transacting, returnRaw: true }
-    )
+  const permissionsPromises = permissionTypes.map((type) =>
+    userService.permissions.getItemPermissions(map(assets, 'id'), leemons.plugin.prefixPN(type), {
+      transacting,
+      returnRaw: true,
+    })
   );
 
-  const [viewPermissions, editPermissions, assignPermissions] = await Promise.all(permissionsPromises);
+  const [viewPermissions, editPermissions, assignPermissions] = await Promise.all(
+    permissionsPromises
+  );
   const currentPermissions = [...viewPermissions, ...editPermissions, ...assignPermissions];
 
   if (userSession) {
-    canEditPermissions = await userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-      userSession.userAgents,
-      leemons.plugin.prefixPN('asset.can-edit'),
-      { ignoreOriginalTarget: true, item: map(assets, 'id'), transacting }
-    );
+    canEditPermissions =
+      await userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+        userSession.userAgents,
+        leemons.plugin.prefixPN('asset.can-edit'),
+        { ignoreOriginalTarget: true, item: map(assets, 'id'), transacting }
+      );
   }
 
   const permissionsByAsset = {};
@@ -86,6 +88,117 @@ async function getUserPermissionsByAsset({ assets, userSession, transacting }) {
 }
 
 /**
+ * Filters assets based on permissions and returns their IDs.
+ * @param {Array} assets - The assets to filter.
+ * @param {Array} classesPermissionsPerAsset - The permissions per asset for each class.
+ * @param {Array} permissions - The permissions to check against.
+ * @returns {Array} - Returns an array of asset IDs.
+ */
+function getAssetIdsWithPermissions(assets, classesPermissionsPerAsset, permissions) {
+  return assets
+    .filter((asset) => {
+      const classesWithPermissions = classesPermissionsPerAsset.find(
+        (item) => item.asset === asset.id
+      );
+      asset.isPrivate = !classesWithPermissions.length;
+      asset.classesCanAccess = classesWithPermissions;
+      const permission = permissions.find((item) => item.asset === asset.id);
+      return !isEmpty(permission?.permissions);
+    })
+    .map((asset) => asset.id);
+}
+
+/**
+ * Maps asset with user agents based on permissions.
+ * @param {Object} asset - The asset to map.
+ * @param {Array} permissions - The permissions to check against.
+ * @param {Array} rawUserAgents - The raw user agents data.
+ * @param {Object} userAgentsById - The user agents data by ID.
+ * @returns {Object} - Returns the asset mapped with user agents.
+ */
+function mapAssetWithUserAgents(asset, permissions, rawUserAgents, userAgentsById) {
+  const permission = permissions.find((item) => item.asset === asset.id);
+  const assetPermissionName = getAssetPermissionName(asset.id);
+  const { role: userRole } = permission;
+  const rawPerm = filter(
+    rawUserAgents,
+    ({ permissionName }) => permissionName === assetPermissionName
+  );
+  const assetUserAgents = uniqBy(rawPerm, 'userAgent');
+
+  let assetPermissions = [];
+  forEach(assetUserAgents, (raw) => {
+    const userAgent = userAgentsById[raw.userAgent];
+    const perm = find(assetPermissions, { id: userAgent.user.id });
+    if (perm) {
+      perm.userAgentIds.push(userAgent.id);
+      perm.permissions.push(raw.actionName);
+    } else {
+      assetPermissions.push({
+        ...userAgent.user,
+        userAgentIds: [userAgent.id],
+        permissions: [raw.actionName],
+      });
+    }
+  });
+  assetPermissions = assetPermissions.map((user) => {
+    const item = { ...user };
+    item.editable = canUnassignRole(userRole, item.permissions[0]);
+    return item;
+  });
+  asset.canAccess = assetPermissions;
+  if (asset.canAccess?.length) {
+    const noOwners = filter(asset.canAccess, (item) => !item.permissions?.includes('owner'));
+    if (noOwners.length) {
+      asset.isPrivate = false;
+    }
+  }
+
+  const _permission = permissions.find((item) => item.asset === asset.id);
+  if (!isEmpty(_permission?.permissions)) {
+    const { permissions: userPermissions } = _permission;
+    if (!userPermissions.edit) {
+      const owner = find(asset.canAccess, (item) => item.permissions?.includes('owner'));
+      asset.canAccess = null;
+      if (owner) {
+        asset.canAccess = [owner];
+      }
+    }
+  }
+  return asset;
+}
+
+/**
+ * Maps assets with user agents based on permissions.
+ * @async
+ * @param {Array} assets - The assets to map.
+ * @param {Array} getUsersAssetIds - The IDs of the users to get assets for.
+ * @param {Array} permissions - The permissions to check against.
+ * @param {Object} transacting - The transaction object.
+ * @returns {Promise<Array>} - Returns an array of assets mapped with user agents.
+ */
+async function mapAssetsWithUserAgents(assets, getUsersAssetIds, permissions, transacting) {
+  const { services } = leemons.getPlugin('users');
+  const rawUserAgents = await services.permissions.findUsersWithPermissions(
+    {
+      permissionName_$in: map(getUsersAssetIds, getAssetPermissionName),
+    },
+    { returnRaw: true, transacting }
+  );
+  const userAgentsById = keyBy(
+    await getUserAgentsInfo(uniq(map(rawUserAgents, 'userAgent')), { transacting }),
+    'id'
+  );
+
+  return assets.map((asset) => {
+    if (getUsersAssetIds.includes(asset.id)) {
+      asset = mapAssetWithUserAgents(asset, permissions, rawUserAgents, userAgentsById);
+    }
+    return asset;
+  });
+}
+
+/**
  * Fetches assets with permissions
  * @async
  * @param {Object} params - The params object
@@ -96,7 +209,13 @@ async function getUserPermissionsByAsset({ assets, userSession, transacting }) {
  * @param {object} params.transacting - The transaction object
  * @returns {Promise<Array>} - Returns an array of assets with permissions
  */
-async function getAssetsWithPermissions({ assets, assetsIds, showPublic, userSession, transacting }) {
+async function getAssetsWithPermissions({
+  assets,
+  assetsIds,
+  showPublic,
+  userSession,
+  transacting,
+}) {
   const classesPermissionsPerAsset = await getClassesPermissions(map(assets, 'id'), {
     withInfo: true,
     transacting,
@@ -112,84 +231,14 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, userSes
   const privateAssets = permissions.map((item) => item.asset);
   assets = assets.filter((asset) => privateAssets.includes(asset.id));
 
-  const getUsersAssetIds = assets
-    .filter((asset) => {
-      const classesWithPermissions = classesPermissionsPerAsset.find((item) => item.asset === asset.id);
-      asset.isPrivate = !classesWithPermissions.length;
-      asset.classesCanAccess = classesWithPermissions;
-      const permission = permissions.find((item) => item.asset === asset.id);
-      return !isEmpty(permission?.permissions);
-    })
-    .map((asset) => asset.id);
+  const getUsersAssetIds = getAssetIdsWithPermissions(
+    assets,
+    classesPermissionsPerAsset,
+    permissions
+  );
 
   if (getUsersAssetIds.length) {
-    const { services } = leemons.getPlugin('users');
-    const rawUserAgents = await services.permissions.findUsersWithPermissions(
-      {
-        permissionName_$in: map(getUsersAssetIds, getAssetPermissionName),
-      },
-      { returnRaw: true, transacting }
-    );
-    const userAgentsById = keyBy(await getUserAgentsInfo(uniq(map(rawUserAgents, 'userAgent')), { transacting }), 'id');
-
-    assets = assets.map((asset) => {
-      if (getUsersAssetIds.includes(asset.id)) {
-        const permission = permissions.find((item) => item.asset === asset.id);
-        const assetPermissionName = getAssetPermissionName(asset.id);
-        const { role: userRole } = permission;
-        const rawPerm = filter(
-          rawUserAgents,
-          ({ permissionName }) => permissionName === assetPermissionName
-        );
-        const assetUserAgents = uniqBy(rawPerm, 'userAgent');
-
-        let assetPermissions = [];
-        forEach(assetUserAgents, (raw) => {
-          const userAgent = userAgentsById[raw.userAgent];
-          const perm = find(assetPermissions, { id: userAgent.user.id });
-          if (perm) {
-            perm.userAgentIds.push(userAgent.id);
-            perm.permissions.push(raw.actionName);
-          } else {
-            assetPermissions.push({
-              ...userAgent.user,
-              userAgentIds: [userAgent.id],
-              permissions: [raw.actionName],
-            });
-          }
-        });
-        assetPermissions = assetPermissions.map((user) => {
-          const item = { ...user };
-          item.editable = canUnassignRole(userRole, item.permissions[0]);
-          return item;
-        });
-        asset.canAccess = assetPermissions;
-        if (asset.canAccess?.length) {
-          const noOwners = filter(
-            asset.canAccess,
-            (item) => !item.permissions?.includes('owner')
-          );
-          if (noOwners.length) {
-            asset.isPrivate = false;
-          }
-        }
-
-        const _permission = permissions.find((item) => item.asset === asset.id);
-        if (!isEmpty(_permission?.permissions)) {
-          const { permissions: userPermissions } = _permission;
-          if (!userPermissions.edit) {
-            const owner = find(asset.canAccess, (item) =>
-              item.permissions?.includes('owner')
-            );
-            asset.canAccess = null;
-            if (owner) {
-              asset.canAccess = [owner];
-            }
-          }
-        }
-      }
-      return asset;
-    });
+    assets = await mapAssetsWithUserAgents(assets, getUsersAssetIds, permissions, transacting);
   }
 
   return assets;
@@ -206,7 +255,9 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, userSes
  */
 async function getAssetsWithFiles({ assets, assetsIds, transacting }) {
   const assetsFiles = await tables.assetsFiles.find({ asset_$in: assetsIds }, { transacting });
-  const fileIds = compact(uniq(map(assetsFiles, 'file').concat(assets.map((asset) => asset.cover))));
+  const fileIds = compact(
+    uniq(map(assetsFiles, 'file').concat(assets.map((asset) => asset.cover)))
+  );
 
   const bookmarks = await findBookmarks({ asset_$in: assetsIds }, { transacting });
   fileIds.push(...compact(uniq(map(bookmarks, 'icon'))));
@@ -229,7 +280,10 @@ async function getAssetsWithFiles({ assets, assetsIds, transacting }) {
     }
 
     if (asset.cover) {
-      asset.file = asset.files.length > 1 ? asset.files.filter((file) => file.id !== asset.cover.id) : asset.files[0];
+      asset.file =
+        asset.files.length > 1
+          ? asset.files.filter((file) => file.id !== asset.cover.id)
+          : asset.files[0];
     }
 
     return asset;
@@ -246,7 +300,10 @@ async function getAssetsWithFiles({ assets, assetsIds, transacting }) {
  * @returns {Promise<Array>} - Returns an array of assets with their associated subjects
  */
 async function getAssetsWithSubjects({ assets, assetsIds, transacting }) {
-  const assetsSubjects = await tables.assetsSubjects.find({ asset_$in: assetsIds }, { transacting });
+  const assetsSubjects = await tables.assetsSubjects.find(
+    { asset_$in: assetsIds },
+    { transacting }
+  );
   const subjectsByAsset = groupBy(assetsSubjects, 'asset');
 
   return assets.map((asset) => ({
@@ -265,13 +322,11 @@ async function getAssetsWithSubjects({ assets, assetsIds, transacting }) {
  */
 async function getAssetsTags({ assets, transacting }) {
   const tagsService = leemons.getPlugin('common').services.tags;
-  const tags = await Promise.all(
+  return await Promise.all(
     assets.map((asset) =>
       tagsService.getValuesTags(asset.id, { type: leemons.plugin.prefixPN(''), transacting })
     )
   );
-
-  return tags;
 }
 
 /**
@@ -315,7 +370,7 @@ async function getAssetsCategoryData({ assets, userSession, transacting }) {
  * @returns {Promise<Object>} - Returns an object with programs aggregated by ID
  */
 async function getAssetsProgramsAggregatedById({ assets, transacting }) {
-  const programIds = assets.filter(asset => asset.program).map(asset => asset.program);
+  const programIds = assets.filter((asset) => asset.program).map((asset) => asset.program);
 
   if (!programIds.length) {
     return {};
@@ -349,7 +404,20 @@ async function getAssetsProgramsAggregatedById({ assets, transacting }) {
  * @param {Array} params.canEditPermissions - The permissions that the user can edit
  * @returns {Promise<Object>} - Returns the processed asset with additional properties
  */
-async function processFinalAsset({ asset, userAgents, programsById, permissionsByAsset, withCategory, categories, assetCategoryData, withTags, tags, checkPins, pins, canEditPermissions }) {
+async function processFinalAsset({
+  asset,
+  userAgents,
+  programsById,
+  permissionsByAsset,
+  withCategory,
+  categories,
+  assetCategoryData,
+  withTags,
+  tags,
+  checkPins,
+  pins,
+  canEditPermissions,
+}) {
   const roles = {
     delete: ['owner'],
     share: ['owner', 'editor'],
@@ -383,24 +451,26 @@ async function processFinalAsset({ asset, userAgents, programsById, permissionsB
   }
 
   if (isArray(item.canAccess)) {
-    Object.keys(roles).forEach(role => {
-      item[`${role}able`] = item.canAccess.some(permission =>
-        intersection(permission.permissions, roles[role]).length > 0 &&
-        intersection(permission.userAgentIds, userAgents).length > 0
+    Object.keys(roles).forEach((role) => {
+      item[`${role}able`] = item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, roles[role]).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
       );
     });
 
-    item.role = ['viewer', 'editor', 'owner'].find(role =>
-      item.canAccess.some(permission =>
-        intersection(permission.permissions, [role]).length > 0 &&
-        intersection(permission.userAgentIds, userAgents).length > 0
+    item.role = ['viewer', 'editor', 'owner'].find((role) =>
+      item.canAccess.some(
+        (permission) =>
+          intersection(permission.permissions, [role]).length > 0 &&
+          intersection(permission.userAgentIds, userAgents).length > 0
       )
     );
   }
 
   if (canEditPermissions.includes(item.id) && item.role !== 'owner') {
     item.role = 'editor';
-    Object.keys(roles).forEach(role => {
+    Object.keys(roles).forEach((role) => {
       item[`${role}able`] = roles[role].includes('editor');
     });
   }
@@ -470,10 +540,20 @@ async function getByIds(
   // ··········································
   // PERMISSIONS & PERSONS
 
-  const [permissionsByAsset, canEditPermissions] = await getUserPermissionsByAsset({ assets, userSession, transacting });
+  const [permissionsByAsset, canEditPermissions] = await getUserPermissionsByAsset({
+    assets,
+    userSession,
+    transacting,
+  });
 
   if (checkPermissions && userSession) {
-    assets = await getAssetsWithPermissions({ assets, assetsIds, showPublic, userSession, transacting });
+    assets = await getAssetsWithPermissions({
+      assets,
+      assetsIds,
+      showPublic,
+      userSession,
+      transacting,
+    });
   }
 
   // ··········································
@@ -504,7 +584,11 @@ async function getByIds(
   let categories = [];
   let assetCategoryData = [];
   if (withCategory) {
-    [categories, assetCategoryData] = await getAssetsCategoryData({ assets, userSession, transacting });
+    [categories, assetCategoryData] = await getAssetsCategoryData({
+      assets,
+      userSession,
+      transacting,
+    });
   }
 
   // ··········································
@@ -521,9 +605,22 @@ async function getByIds(
   const programsById = await getAssetsProgramsAggregatedById({ assets, transacting });
   const userAgents = userSession?.userAgents.map(({ id }) => id) || [];
 
-  const finalAssets = assets.map((asset, index) => {
-    return processFinalAsset({ asset, userAgents, programsById, permissionsByAsset, withCategory, categories, assetCategoryData, withTags, tags: tags[index], checkPins, pins, canEditPermissions })
-  });
+  const finalAssets = assets.map((asset, index) =>
+    processFinalAsset({
+      asset,
+      userAgents,
+      programsById,
+      permissionsByAsset,
+      withCategory,
+      categories,
+      assetCategoryData,
+      withTags,
+      tags: tags[index],
+      checkPins,
+      pins,
+      canEditPermissions,
+    })
+  );
 
   const finalAssetsAggregatedById = keyBy(finalAssets, 'id');
 
