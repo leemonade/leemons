@@ -4,7 +4,8 @@
  * @return {Promise<any>}
  * */
 async function count({ params, ctx }) {
-  return ctx.tx.db.ItemPermissions.countDocuments(...params);
+  console.log('params count', params);
+  return ctx.tx.db.ItemPermissions.countDocuments({ ...params });
 }
 
 module.exports = { count };

@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 const { validateAddEvent } = require('../../validations/forms');
 const { detailByKey } = require('../calendar/detailByKey');
@@ -17,7 +16,7 @@ const { addToCalendar } = require('./addToCalendar');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(key, data, { ignoreType, transacting: _transacting } = {}) {
+async function add({ key, data, ignoreType, ctx }) {
   const keys = _.isArray(key) ? key : [key];
   validateAddEvent(data);
 
@@ -26,35 +25,28 @@ async function add(key, data, { ignoreType, transacting: _transacting } = {}) {
   // eslint-disable-next-line no-param-reassign
   if (data.endDate) data.endDate = data.endDate.slice(0, 19).replace('T', ' ');
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      if (!ignoreType) await validateNotExistEventTypeKey(data.type, { transacting });
+  if (!ignoreType) await validateNotExistEventTypeKey({ key: data.type, ctx });
 
-      const event = await table.events.create(
-        {
-          ...data,
-          data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
-        },
-        { transacting }
-      );
+  let event = await ctx.tx.db.events.create({
+    ...data,
+    data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
+  });
+  event = event.toObject();
 
-      const calendars = await Promise.all(_.map(keys, (k) => detailByKey(k, { transacting })));
+  const calendars = await Promise.all(_.map(keys, (k) => detailByKey({ key: k, ctx })));
 
-      await addToCalendar(event.id, _.map(calendars, 'id'), { transacting });
+  await addToCalendar({ eventIds: event.id, calendarIds: _.map(calendars, 'id'), ctx });
 
-      const permissionConfig = getPermissionConfig(event.id);
-      await leemons
-        .getPlugin('users')
-        .services.permissions.addItem(event.id, permissionConfig.type, permissionConfig.all, {
-          isCustomPermission: true,
-          transacting,
-        });
-      await addNexts(event.id, { transacting });
-      return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
-    },
-    table.calendars,
-    _transacting
-  );
+  const permissionConfig = getPermissionConfig(event.id);
+  await ctx.tx.call('users.permissions.addItem', {
+    item: event.id,
+    type: permissionConfig.type,
+    data: permissionConfig.all,
+    isCustomPermission: true,
+    ctx,
+  });
+  await addNexts({ eventId: event.id, ctx });
+  return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
 }
 
 module.exports = { add };

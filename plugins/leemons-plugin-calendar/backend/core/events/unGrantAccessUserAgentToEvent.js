@@ -12,8 +12,8 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function unGrantAccessUserAgentToEvent(id, userAgentId, { actionName, transacting } = {}) {
-  await validateNotExistEvent(id, { transacting });
+async function unGrantAccessUserAgentToEvent({ id, userAgentId, actionName, ctx }) {
+  await validateNotExistEvent({ id, ctx });
 
   const userAgentIds = _.isArray(userAgentId) ? userAgentId : [userAgentId];
   const actionNames = _.isArray(actionName) ? actionName : [actionName];
@@ -27,9 +27,11 @@ async function unGrantAccessUserAgentToEvent(id, userAgentId, { actionName, tran
     query.actionNames = actionNames;
   }
 
-  const { warnings } = await leemons
-    .getPlugin('users')
-    .services.users.removeCustomUserAgentPermission(userAgentIds, query, { transacting });
+  const { warnings } = await ctx.tx.call('users.users.removeCustomUserAgentPermission', {
+    userAgentId: userAgentIds,
+    data: query,
+  });
+
   if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
   return true;
 }

@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  *
@@ -8,10 +7,10 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getCentersWithOutAssign({ transacting } = {}) {
+async function getCentersWithOutAssign({ ctx }) {
   const [centerCalendars, centers] = await Promise.all([
-    table.centerCalendarConfigs.find({}, { transacting }),
-    leemons.getPlugin('users').services.centers.list(0, 99999, { transacting }),
+    ctx.tx.db.CenterCalendarConfigs.find({}).lean(),
+    ctx.tx.call('users.centers.list', { page: 0, size: 99999 }),
   ]);
   return _.differenceBy(centers.items, centerCalendars, (item) => item.center || item.id);
 }

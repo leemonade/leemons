@@ -50,26 +50,54 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          // -- Multilanguage (Finish) --
           'POST multilanguage/common': 'v1.multilanguage.common.getRest',
           'POST multilanguage/common/logged': 'v1.multilanguage.common.getLoggedRest',
+          'POST multilanguage/locale': 'v1.multilanguage.locales.addRest',
+          'GET multilanguage/locales': 'v1.multilanguage.locales.getRest',
 
+          // -- Users --
           'GET users/platform/theme': 'v1.users.platform.getThemeRest',
           'GET users/user': 'v1.users.users.detailRest',
+          'POST users/user/login': 'v1.users.users.loginRest',
+          'GET users/user/profile': 'v1.users.users.profilesRest',
+          'GET users/user/centers': 'v1.users.users.centersRest',
 
-          'GET admin/organization/jsonTheme': 'v1.admin.organization.getJsonThemeRest',
+          // -- Admin (Finish) --
           'GET admin/i18n/:page/:lang': 'v1.admin.i18n.getLangRest',
           'GET admin/settings': 'v1.admin.settings.findOneRest',
-          'POST admin/settings': 'v1.admin.settings.updateRest',
           'POST admin/settings/languages': 'v1.admin.settings.setLanguagesRest',
+          'GET admin/settings/languages': 'v1.admin.settings.getLanguagesRest',
           'POST admin/settings/signup': 'v1.admin.settings.signupRest',
+          'POST admin/settings': 'v1.admin.settings.updateRest',
+          'GET admin/mail/providers': 'v1.admin.mail.getProvidersRest',
+          'GET admin/mail/platform': 'v1.admin.mail.getPlatformEmailRest',
+          'POST admin/mail/platform': 'v1.admin.mail.savePlatformEmailRest',
+          'GET admin/organization': 'v1.admin.organization.getRest',
+          'POST admin/organization': 'v1.admin.organization.postRest',
+          'GET admin/organization/jsonTheme': 'v1.admin.organization.getJsonThemeRest',
 
-          'GET emails/config': 'v1.emails.config.getConfigRest',
-          'POST emails/config': 'v1.emails.config.saveConfigRest',
-          'GET emails/email': 'v1.emails.email.providersRest',
+          // -- Emails (Finish) --
+          'GET emails/providers': 'v1.emails.email.providersRest',
           'POST emails/send-test': 'v1.emails.email.sendTestRest',
           'POST emails/send-custom-test': 'v1.emails.email.sendCustomTestRest',
           'POST emails/save-provider': 'v1.emails.email.saveProviderRest',
           'POST emails/remove-provider': 'v1.emails.email.removeProviderRest',
+          'GET emails/config': 'v1.emails.config.getConfigRest',
+          'POST emails/config': 'v1.emails.config.saveConfigRest',
+
+          // -- Menu builder (Finish) --
+          'GET menu-builder/know-how-to-use': 'v1.menu-builder.menu.getIfKnowHowToUseRest',
+          'POST menu-builder/know-how-to-use': 'v1.menu-builder.menu.setKnowHowToUseRest',
+          'GET menu-builder/menu/:menuKey': 'v1.menu-builder.menu.getIfHasPermissionRest',
+          'POST menu-builder/menu/:menuKey/add-item': 'v1.menu-builder.menu.addCustomForUserRest',
+          'POST menu-builder/menu/:menuKey/re-order':
+            'v1.menu-builder.menu.reOrderCustomUserItemsRest',
+          'DELETE menu-builder/menu/:menuKey/:key': 'v1.menu-builder.menu.removeCustomForUserRest',
+          'POST menu-builder/menu/:menuKey/:key': 'v1.menu-builder.menu.updateCustomForUserRest',
+
+          // -- Widgets (Finish) --
+          'GET widgets/zone/:key': 'v1.widgets.widgets.getZoneRest',
         },
 
         /**

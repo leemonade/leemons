@@ -1,0 +1,26 @@
+{
+  "name": "leemons-plugin-leebrary-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/editors": "dev",
+    "@bubbles-ui/icons": "dev",
+    "@bubbles-ui/leemons": "dev",
+    "@tanstack/react-query": "^4.28.0",
+    "jszip": "^3.10.1",
+    "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
+    "prop-types": "^15.7.2",
+    "react-hook-form": "^7.22.1"
+  },
+  "devDependencies": {
+    "react-hook-form": "^7.22.1"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5"
+  }
+}

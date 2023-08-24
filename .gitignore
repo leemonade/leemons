@@ -145,3 +145,7 @@ data.xlsx
 packages/leemons-react/front
 build.tar.gz
 cache.js
+
+apps/dev/frontend
+apps/dev/build
+apps/dev/events.json

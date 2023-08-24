@@ -32,7 +32,6 @@ const { userAgentsAreContacts } = require('../core/user-agents/contacts/userAgen
 const { getUserAgentContacts } = require('../core/user-agents/contacts/getUserAgentContacts');
 const { addUserAgentContacts } = require('../core/user-agents/contacts/addUserAgentContacts');
 const { removeUserAgentContacts } = require('../core/user-agents/contacts/removeUserAgentContacts');
-const { getUserAgentCalendarKey } = require('../core/user-agents/calendar/getUserAgentCalendarKey');
 const {
   getUserAgentPermissions,
   userAgentHasCustomPermission,
@@ -166,12 +165,6 @@ module.exports = {
         return removeUserAgentContacts({ ...ctx.params, ctx });
       },
     },
-    // Calendar
-    getUserAgentCalendarKey: {
-      async handler(ctx) {
-        return getUserAgentCalendarKey({ ...ctx.params, ctx });
-      },
-    },
 
     // Permissions
     getUserAgentPermissions: {
@@ -218,14 +211,6 @@ module.exports = {
     getAllItemsForTheUserAgentHasPermissionsByType: {
       async handler(ctx) {
         return getAllItemsForTheUserAgentHasPermissionsByType({ ...ctx.params, ctx });
-      },
-    },
-    getUserFullName: {
-      async handler(ctx) {
-        const { userSession } = ctx.meta;
-        return `${userSession.name ? userSession.name : ''}${
-          userSession.surnames ? ` ${userSession.surnames}` : ''
-        }${userSession.secondSurname ? ` ${userSession.secondSurname}` : ''}`;
       },
     },
   },

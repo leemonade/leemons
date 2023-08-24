@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
 const { getCalendars } = require('./getCalendars');
 const { add: addEventE } = require('../events');
@@ -13,21 +13,17 @@ const { add: addEventE } = require('../events');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addEvent(config, event, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistCalendarConfig(config, { transacting });
-      const calendars = await getCalendars(config, { transacting });
-      const calendar = _.find(calendars, { id: event.calendar });
-      if (!calendar) {
-        throw new Error(`The calendar ${event.calendar} not exist in this config calendars`);
-      }
-      delete event.calendar;
-      return await addEventE(calendar.key, event, { ignoreType: true, transacting });
-    },
-    table.calendars,
-    _transacting
-  );
+async function addEvent({ config, event, ctx }) {
+  await validateNotExistCalendarConfig({ id: config, ctx });
+  const calendars = await getCalendars({ id: config });
+  const calendar = _.find(calendars, { id: event.calendar });
+  if (!calendar) {
+    throw new LeemonsError(ctx, {
+      message: `The calendar ${event.calendar} not exist in this config calendars`,
+    });
+  }
+  const { calendar: __, ...ev } = event;
+  return addEventE({ key: calendar.key, data: ev, ignoreType: true, ctx });
 }
 
 module.exports = { addEvent };

@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  *
  * @public
@@ -8,8 +6,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeByConfigId(configId, { transacting } = {}) {
-  return table.centerCalendarConfigs.deleteMany({ config: configId }, { transacting });
+async function removeByConfigId({ configId, ctx }) {
+  return ctx.tx.db.CenterCalendarConfigs.deleteMany({ config: configId });
 }
 
 module.exports = { removeByConfigId };

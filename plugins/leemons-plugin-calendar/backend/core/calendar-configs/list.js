@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * List kanban columns
@@ -8,11 +7,11 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function list({ transacting } = {}) {
+async function list({ ctx }) {
   const [responses, centersConfigs, centers] = await Promise.all([
-    table.calendarConfigs.find({}, { transacting }),
-    table.centerCalendarConfigs.find({}, { transacting }),
-    leemons.getPlugin('users').services.centers.list(0, 99999, { transacting }),
+    ctx.tx.db.CalendarConfigs.find({}).lean(),
+    ctx.tx.db.CenterCalendarConfigs.find({}).lean(),
+    ctx.tx.call('users.centers.list', { page: 0, size: 99999 }),
   ]);
 
   const centersConfigsByConfig = _.groupBy(centersConfigs, 'group');

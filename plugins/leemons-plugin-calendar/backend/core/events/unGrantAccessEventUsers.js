@@ -11,26 +11,24 @@ const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEve
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function unGrantAccessEventUsers(id, { transacting } = {}) {
-  await validateNotExistEvent(id, { transacting });
+async function unGrantAccessEventUsers({ id, ctx }) {
+  await validateNotExistEvent({ id, ctx });
 
   const permissionConfig = getPermissionConfig(id);
 
   const [toRemove, notRemove] = await Promise.all([
-    leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
-      {
+    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+      permissions: {
         permissionName: permissionConfig.permissionName,
         actionNames: ['view'],
       },
-      { transacting }
-    ),
-    leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
-      {
+    }),
+    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+      permissions: {
         permissionName: permissionConfig.permissionName,
         actionNames: ['owner'],
       },
-      { transacting }
-    ),
+    }),
   ]);
 
   _.forEach(notRemove, (nr) => {
@@ -39,7 +37,7 @@ async function unGrantAccessEventUsers(id, { transacting } = {}) {
     }
   });
 
-  return unGrantAccessUserAgentToEvent(id, toRemove, { actionName: ['view'], transacting });
+  return unGrantAccessUserAgentToEvent({ id, userAgentId: toRemove, actionName: ['view'], ctx });
 }
 
 module.exports = { unGrantAccessEventUsers };

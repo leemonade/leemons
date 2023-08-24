@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 const { validateAddCalendarConfig } = require('../../validations/forms');
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
@@ -16,35 +15,26 @@ const { detail } = require('./detail');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(id, { centers, ...data }, { transacting: _transacting } = {}) {
+async function update({ id, centers, ctx, ...data }) {
   validateAddCalendarConfig({ centers, ...data });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistCalendarConfig(id, { transacting });
-      const response = await table.calendarConfigs.update(
-        { id },
-        {
-          ...data,
-          schoolDays: JSON.stringify(data.schoolDays),
-          notSchoolDays: JSON.stringify(data.notSchoolDays),
-        },
-        { transacting }
-      );
-
-      await removeByConfigId(id, { transacting });
-      if (_.isArray(centers)) {
-        await addMany(
-          _.map(centers, (center) => ({ center, config: response.id })),
-          { transacting }
-        );
-      }
-
-      return detail(response.id, { transacting });
+  await validateNotExistCalendarConfig({ id, ctx });
+  const response = await ctx.tx.db.CalendarConfigs.findOneAndUpdate(
+    { id },
+    {
+      ...data,
+      schoolDays: JSON.stringify(data.schoolDays),
+      notSchoolDays: JSON.stringify(data.notSchoolDays),
     },
-    table.calendars,
-    _transacting
+    { new: true, lean: true }
   );
+
+  await removeByConfigId({ configId: id, ctx });
+  if (_.isArray(centers)) {
+    await addMany({ items: _.map(centers, (center) => ({ center, config: response.id })), ctx });
+  }
+
+  return detail({ id: response.id, ctx });
 }
 
 module.exports = { update };

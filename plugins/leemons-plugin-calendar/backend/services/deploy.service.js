@@ -17,14 +17,30 @@ const { hasKey, setKey } = require('leemons-mongodb-helpers');
 const { getServiceModels } = require('../models');
 const { permissions, widgets, menuItems, kanbanColumns } = require('../config/constants');
 const { add: addKanbanColumn } = require('../core/kanban-columns/add');
-const onAcademicPortfolioRemoveClassStudents = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassStudents');
-const onAcademicPortfolioAddClassStudent = require('../core/pluginEvents/class/onAcademicPortfolioAddClassStudent');
-const onAcademicPortfolioRemoveStudentFromClass = require('../core/pluginEvents/class/onAcademicPortfolioRemoveStudentFromClass');
-const onAcademicPortfolioUpdateClass = require('../core/pluginEvents/class/onAcademicPortfolioUpdateClass');
-const onAcademicPortfolioAddClass = require('../core/pluginEvents/class/onAcademicPortfolioAddClass');
-const onAcademicPortfolioRemoveClasses = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClasses');
-const onAcademicPortfolioAddClassTeacher = require('../core/pluginEvents/class/onAcademicPortfolioAddClassTeacher');
-const onAcademicPortfolioRemoveClassTeachers = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassTeachers');
+const {
+  onAcademicPortfolioRemoveClassStudents,
+} = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassStudents');
+const {
+  onAcademicPortfolioAddClassStudent,
+} = require('../core/pluginEvents/class/onAcademicPortfolioAddClassStudent');
+const {
+  onAcademicPortfolioRemoveStudentFromClass,
+} = require('../core/pluginEvents/class/onAcademicPortfolioRemoveStudentFromClass');
+const {
+  onAcademicPortfolioUpdateClass,
+} = require('../core/pluginEvents/class/onAcademicPortfolioUpdateClass');
+const {
+  onAcademicPortfolioAddClass,
+} = require('../core/pluginEvents/class/onAcademicPortfolioAddClass');
+const {
+  onAcademicPortfolioRemoveClasses,
+} = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClasses');
+const {
+  onAcademicPortfolioAddClassTeacher,
+} = require('../core/pluginEvents/class/onAcademicPortfolioAddClassTeacher');
+const {
+  onAcademicPortfolioRemoveClassTeachers,
+} = require('../core/pluginEvents/class/onAcademicPortfolioRemoveClassTeachers');
 
 const {
   onAcademicPortfolioAddProgram,
@@ -136,20 +152,41 @@ module.exports = () => ({
     },
 
     // --- Classes ---
-    'academic-portfolio:after-remove-classes-students': onAcademicPortfolioRemoveClassStudents,
-    'academic-portfolio.after-add-class-student': onAcademicPortfolioAddClassStudent,
-    'academic-portfolio.after-remove-students-from-class':
-      onAcademicPortfolioRemoveStudentFromClass,
-    'academic-portfolio.after-update-class': onAcademicPortfolioUpdateClass,
-    'academic-portfolio.after-add-class': onAcademicPortfolioAddClass,
-    'academic-portfolio.before-remove-classes': onAcademicPortfolioRemoveClasses,
-    'academic-portfolio.after-add-class-teacher': onAcademicPortfolioAddClassTeacher,
-    'academic-portfolio.after-remove-classes-teachers': onAcademicPortfolioRemoveClassTeachers,
+    'academic-portfolio:after-remove-classes-students': async (ctx) => {
+      await onAcademicPortfolioRemoveClassStudents({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-add-class-student': async (ctx) => {
+      await onAcademicPortfolioAddClassStudent({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-remove-students-from-class': async (ctx) => {
+      await onAcademicPortfolioRemoveStudentFromClass({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-update-class': async (ctx) => {
+      await onAcademicPortfolioUpdateClass({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-add-class': async (ctx) => {
+      await onAcademicPortfolioAddClass({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.before-remove-classes': async (ctx) => {
+      await onAcademicPortfolioRemoveClasses({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-add-class-teacher': async (ctx) => {
+      await onAcademicPortfolioAddClassTeacher({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-remove-classes-teachers': async (ctx) => {
+      await onAcademicPortfolioRemoveClassTeachers({ ...ctx.params, ctx });
+    },
 
     // --- Programs ---
-    'academic-portfolio.after-add-program': onAcademicPortfolioAddProgram,
-    'academic-portfolio.after-update-program': onAcademicPortfolioUpdateProgram,
-    'academic-portfolio.after-remove-programs': onAcademicPortfolioRemovePrograms,
+    'academic-portfolio.after-add-program': async (ctx) => {
+      await onAcademicPortfolioAddProgram({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-update-program': async (ctx) => {
+      await onAcademicPortfolioUpdateProgram({ ...ctx.params, ctx });
+    },
+    'academic-portfolio.after-remove-programs': async (ctx) => {
+      await onAcademicPortfolioRemovePrograms({ ...ctx.params, ctx });
+    },
   },
   created() {
     mongoose.connect(process.env.MONGO_URI);

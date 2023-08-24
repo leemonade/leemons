@@ -34,6 +34,7 @@
     "leemons-multi-events": "1.0.0",
     "leemons-multilanguage": "1.0.0",
     "leemons-permissions": "1.0.0",
+    "leemons-users": "1.0.0",
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "moleculer": "^0.14.26",
