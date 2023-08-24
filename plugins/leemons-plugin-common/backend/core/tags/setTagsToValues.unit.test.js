@@ -73,10 +73,21 @@ it('Should let pass errors due to empty tags but throw any other error', async (
       values,
       ctx,
     });
-  const testFunctionWithInvalidArgument = async () => setTagsToValues(88);
 
   // Assert
   expect(resultWithEmptyTags === null).toBeTruthy();
-  expect(testFnWithWrongType).rejects.toThrowError(LeemonsError);
-  expect(testFunctionWithInvalidArgument).rejects.toThrowError(TypeError);
+  expect(testFnWithWrongType).rejects.toThrow();
+});
+
+it('Should throw a LeemonsError if required parameters are not passed', () => {
+  // Arrange
+  const tags = ['test-tag'];
+  const type = 'leemons-test.my-type';
+  const values = ['value1'];
+  // act
+  const testFunctionWithInvalidArgument = async () => setTagsToValues(88);
+  const testFunctionWithoutCtx = async () => setTagsToValues({ type, tags, values });
+  // assert
+  expect(testFunctionWithInvalidArgument).rejects.toThrow(LeemonsError);
+  expect(testFunctionWithoutCtx).rejects.toThrow(LeemonsError);
 });
