@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { isArray, isNil, isEmpty } from 'lodash';
 import { todayQuoteRequest } from '@users/request';
 import { Box, createStyles } from '@bubbles-ui/components';
-import { LoginBg } from '@bubbles-ui/leemons';
+import { LoginBg } from '@users/components/LoginBg';
 import { useLayout } from '@layout/context';
 
 const HeroBgLayoutStyles = createStyles(() => ({

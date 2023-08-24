@@ -15,7 +15,7 @@ import {
   PasswordInput,
   Modal,
 } from '@bubbles-ui/components';
-import { EMAIL_REGEX } from '@bubbles-ui/leemons';
+import { EMAIL_REGEX } from '@users/components/LoginForm';
 import { Controller, useForm } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';

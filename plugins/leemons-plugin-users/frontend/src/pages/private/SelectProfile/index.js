@@ -1,5 +1,5 @@
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
-import { LoginProfileSelector } from '@bubbles-ui/leemons';
+import { LoginProfileSelector } from '@users/components/LoginProfileSelector';
 import { useStore } from '@common';
 import { LayoutContext } from '@layout/context/layout';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';

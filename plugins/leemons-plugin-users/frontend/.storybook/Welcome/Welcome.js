@@ -6,7 +6,7 @@ export const Welcome = () => {
   return (
     <div>
       <Title order={1} sx={({ colors }) => ({ color: colors.interactive01 })}>
-        Academic Portfolio - Leemons Organisms
+        Users - Leemons Organisms
       </Title>
       <Title
         order={2}

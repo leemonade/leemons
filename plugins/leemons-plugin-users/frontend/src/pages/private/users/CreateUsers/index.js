@@ -14,7 +14,8 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { AdminPageHeader, EMAIL_REGEX } from '@bubbles-ui/leemons';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { EMAIL_REGEX } from '@users/components/LoginForm';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@users/helpers/prefixPN';

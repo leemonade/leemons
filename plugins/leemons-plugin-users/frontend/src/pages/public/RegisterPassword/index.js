@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import { Alert, Box, createStyles, Stack } from '@bubbles-ui/components';
-import { RegisterPasswordForm } from '@bubbles-ui/leemons';
+import { RegisterPasswordForm } from '@users/components/RegisterPasswordForm';
 import { getCookieToken, useSession } from '@users/session';
 import { goLoginPage, goRecoverPage } from '@users/navigate';
 import HeroBgLayout from '@users/layout/heroBgLayout';

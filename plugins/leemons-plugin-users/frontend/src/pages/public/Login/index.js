@@ -1,5 +1,5 @@
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
-import { LoginForm } from '@bubbles-ui/leemons';
+import { LoginForm } from '@users/components/LoginForm';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslate from '@multilanguage/useTranslate';

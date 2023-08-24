@@ -10,7 +10,8 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { ajv as Ajv, EMAIL_REGEX, transformErrorsFromAjv } from '@bubbles-ui/leemons';
+import { ajv as Ajv, transformErrorsFromAjv } from '@bubbles-ui/leemons';
+import { EMAIL_REGEX } from '@users/components/LoginForm';
 import { useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
