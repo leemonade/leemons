@@ -1,9 +1,7 @@
-const { LeemonsError } = require('leemons-error');
 const { validateTypePrefix } = require('../../validation/validate');
 const { removeAllTagsForValues } = require('./removeAllTagsForValues');
 const { addTagsToValues } = require('./addTagsToValues');
 
-// eslint-disable-next-line consistent-return
 async function setTagsToValues({ type, tags, values, ctx }) {
   try {
     validateTypePrefix({ type, calledFrom: ctx.callerPlugin, ctx });
@@ -13,7 +11,7 @@ async function setTagsToValues({ type, tags, values, ctx }) {
     if (error.message === 'Tags cannot be empty.') {
       return null;
     }
-    throw new LeemonsError(ctx, { message: error.message });
+    throw error;
   }
 }
 

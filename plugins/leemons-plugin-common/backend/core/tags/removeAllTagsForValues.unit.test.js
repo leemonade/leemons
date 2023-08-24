@@ -5,6 +5,7 @@ const { LeemonsError } = require('leemons-error');
 
 const { removeAllTagsForValues } = require('./removeAllTagsForValues');
 const { tagsSchema } = require('../../models/tags');
+const tagsFixtures = require('../../__fixtures__/tagsFixtures');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -36,14 +37,10 @@ beforeEach(async () => {
 
 it('Should remove all tags for values correctly', async () => {
   // Arrange
-  const type = 'leemons-test.my-type';
-  const valuesToDelete = ['value2'];
+  const { type, values } = tagsFixtures().initialData;
+  const valuesToDelete = values[1];
 
-  const initialTags = [
-    { tag: 'test-tag', value: '"value1"', type: 'leemons-test.my-type' },
-    { tag: 'test-tag', value: '"value2"', type: 'leemons-test.my-type' },
-    { tag: 'confirmation-tag', value: '"value2"', type: 'leemons-test.my-type' },
-  ];
+  const initialTags = tagsFixtures().tagsObjectFiltered;
   await Promise.all(
     initialTags.map(async (tag) =>
       ctx.tx.db.Tags.create(tag).then((mongooseDoc) => mongooseDoc.toObject())
@@ -51,7 +48,9 @@ it('Should remove all tags for values correctly', async () => {
   );
   const expectedValues = {
     deletedCount: 2,
-    dbFinalState: [{ tag: 'test-tag', value: '"value1"', type: 'leemons-test.my-type' }],
+    dbFinalState: tagsFixtures()
+      .tagsObjectFiltered.filter((objTag) => objTag.value !== JSON.stringify(valuesToDelete))
+      .sort((a, b) => a.tag.localeCompare(b.tag)),
   };
 
   // Act
@@ -60,49 +59,56 @@ it('Should remove all tags for values correctly', async () => {
     values: valuesToDelete,
     ctx,
   });
-  const dbFinalState = await ctx.tx.db.Tags.find({}).lean();
+  const dbFinalState = await ctx.tx.db.Tags.find({})
+    .lean()
+    .then((result) =>
+      result
+        .map((remainingTag) => ({
+          tag: remainingTag.tag,
+          value: remainingTag.value,
+          type: remainingTag.type,
+        }))
+        .sort((a, b) => a.tag.localeCompare(b.tag))
+    );
 
   // Assert
   expect(response.deletedCount).toEqual(expectedValues.deletedCount);
-  expect(
-    dbFinalState.map((remainingTag) => ({
-      tag: remainingTag.tag,
-      value: remainingTag.value,
-      type: remainingTag.type,
-    }))
-  ).toEqual(expectedValues.dbFinalState);
+  expect(dbFinalState).toEqual(expectedValues.dbFinalState);
 });
 
 it('Should throw when wrong values are passed', async () => {
   // Arrange
-  const type = 'leemons-test.my-type';
-  const emptyValues = [];
-  const wrongValues = {};
+  const { type } = tagsFixtures().initialData;
 
   // Act
-
-  const testFnWithEmptyValues = async () =>
+  const testFnWithEmptyArray = async () =>
     removeAllTagsForValues({
       type,
-      values: emptyValues,
+      values: [],
       ctx,
     });
-  const testFnWithWrongValues = async () =>
+  const testFnWithEmptyString = async () =>
     removeAllTagsForValues({
       type,
-      values: wrongValues,
+      values: '',
+      ctx,
+    });
+  const testFnWithWrongType = async () =>
+    removeAllTagsForValues({
+      type,
+      values: {},
       ctx,
     });
 
   // Assert
-  await expect(testFnWithEmptyValues).rejects.toThrowError(LeemonsError);
-  await expect(testFnWithWrongValues).rejects.toThrowError(LeemonsError);
+  await expect(testFnWithEmptyArray).rejects.toThrowError(LeemonsError);
+  await expect(testFnWithEmptyString).rejects.toThrowError(LeemonsError);
+  await expect(testFnWithWrongType).rejects.toThrowError(LeemonsError);
 });
 
 it('Should throw when required parameters are missing', async () => {
   // Arrange
-  const type = 'leemons-test.my-type';
-  const values = ['value1'];
+  const { type, values } = tagsFixtures().initialData;
 
   // Act
   const testFnWithNoType = async () =>

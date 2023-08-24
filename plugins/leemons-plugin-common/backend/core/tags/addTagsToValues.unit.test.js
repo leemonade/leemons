@@ -5,9 +5,11 @@ const { LeemonsError } = require('leemons-error');
 
 const { addTagsToValues } = require('./addTagsToValues');
 const { tagsSchema } = require('../../models/tags');
+const tagsFixtures = require('../../__fixtures__/tagsFixtures');
 
 let mongooseConnection;
 let disconnectMongoose;
+let ctx;
 
 beforeAll(async () => {
   const { mongoose, disconnect } = await createMongooseConnection();
@@ -25,33 +27,23 @@ afterAll(async () => {
 
 beforeEach(async () => {
   await mongooseConnection.dropDatabase();
-});
-
-it('Should create and return all tags associated to all values with expected properties', async () => {
-  // Arrange
-  const tags = ['test-tag', 'confirmation-tag'];
-  const type = 'leemons-test.my-type';
-  const values = ['value1', 'value2'];
-
-  const ctx = generateCtx({
+  ctx = generateCtx({
     caller: 'leemons-test',
     models: {
       Tags: newModel(mongooseConnection, 'Tags', tagsSchema),
     },
   });
+});
 
-  const expectedValue = [
-    { tag: 'test-tag', value: '"value1"', type: 'leemons-test.my-type' },
-    { tag: 'test-tag', value: '"value2"', type: 'leemons-test.my-type' },
-    { tag: 'confirmation-tag', value: '"value1"', type: 'leemons-test.my-type' },
-    { tag: 'confirmation-tag', value: '"value2"', type: 'leemons-test.my-type' },
-  ];
+it('Should create and return all tags associated to all values with expected properties', async () => {
+  // Arrange
+  const { initialData, tagsObjectFiltered: expectedValue } = tagsFixtures();
+  const { type, tags, values } = initialData;
 
   // Act
   const response = await addTagsToValues({ type, tags, values, ctx });
 
   // Assert
-  // Tags and values were associated correctly
   expect(
     response.map((createdTag) => ({
       tag: createdTag.tag,
@@ -59,7 +51,7 @@ it('Should create and return all tags associated to all values with expected pro
       type: createdTag.type,
     }))
   ).toEqual(expectedValue);
-  // Each tag should contain the necesary related fields
+  // response contain db added fields as well
   response.forEach((tag) => {
     expect(tag).toHaveProperty('id');
     expect(tag).toHaveProperty('deploymentID');
@@ -72,16 +64,7 @@ it('Should create and return all tags associated to all values with expected pro
 
 it('Should throw if the required tags or values are empty or of a different type', () => {
   // Arrange
-  const tags = ['test-tag', 'confirmation-tag'];
-  const type = 'leemons-test.my-type';
-  const values = ['value1', 'value2'];
-
-  const ctx = generateCtx({
-    caller: 'leemons-test',
-    models: {
-      Tags: newModel(mongooseConnection, 'Tags', tagsSchema),
-    },
-  });
+  const { tags, type, values } = tagsFixtures().initialData;
 
   // Act
   const testFnWithoutTags = () => addTagsToValues({ type, tags: [], values, ctx });
@@ -100,16 +83,7 @@ it('Should throw if the required tags or values are empty or of a different type
 
 it('Should throw if the required params are not provided', async () => {
   // Arrange
-  const tags = ['test-tag', 'confirmation-tag'];
-  const type = 'leemons-test.my-type';
-  const values = ['value1', 'value2'];
-
-  const ctx = generateCtx({
-    caller: 'leemons-test',
-    models: {
-      Tags: newModel(mongooseConnection, 'Tags', tagsSchema),
-    },
-  });
+  const { tags, type, values } = tagsFixtures().initialData;
 
   // Act
   const testFnWithoutTags = () => addTagsToValues({ type, tags: undefined, values, ctx });

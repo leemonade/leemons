@@ -13,6 +13,7 @@ jest.mock('./removeAllTagsForValues');
 
 const addTagsToValues = require('./addTagsToValues');
 const removeAllTagsForValues = require('./removeAllTagsForValues');
+const tagsFixtures = require('../../__fixtures__/tagsFixtures');
 
 afterEach(() => {
   resetAllMocks();
@@ -20,15 +21,12 @@ afterEach(() => {
 
 it('Should call dependencies with correct arguments and return expected value', async () => {
   // Arrange
-  const tags = ['test-tag'];
-  const type = 'leemons-test.my-type';
-  const values = ['value1'];
+  const { initialData, tagsObjectFiltered: expectedValue } = tagsFixtures();
+  const { type, tags, values } = initialData;
 
   const ctx = generateCtx({
     caller: 'leemons-test',
   });
-
-  const expectedValue = [{ tag: 'test-tag', value: '"value1"', type: 'leemons-test.my-type' }];
 
   addTagsToValues.addTagsToValues.mockResolvedValue(expectedValue);
 
@@ -47,9 +45,7 @@ it('Should call dependencies with correct arguments and return expected value', 
 
 it('Should let pass errors due to empty tags but throw any other error', async () => {
   // Arrange
-  const tags = ['test-tag'];
-  const type = 'leemons-test.my-type';
-  const values = ['value1'];
+  const { tags, values, type } = tagsFixtures().initialData;
 
   const ctx = generateCtx({
     caller: 'leemons-test',
@@ -73,21 +69,13 @@ it('Should let pass errors due to empty tags but throw any other error', async (
       values,
       ctx,
     });
+  const testFunctionWithInvalidArgument = async () => setTagsToValues(88);
 
   // Assert
   expect(resultWithEmptyTags === null).toBeTruthy();
   expect(testFnWithWrongType).rejects.toThrow();
+  expect(testFunctionWithInvalidArgument).rejects.toThrow();
 });
 
-it('Should throw a LeemonsError if required parameters are not passed', () => {
-  // Arrange
-  const tags = ['test-tag'];
-  const type = 'leemons-test.my-type';
-  const values = ['value1'];
-  // act
-  const testFunctionWithInvalidArgument = async () => setTagsToValues(88);
-  const testFunctionWithoutCtx = async () => setTagsToValues({ type, tags, values });
-  // assert
-  expect(testFunctionWithInvalidArgument).rejects.toThrow(LeemonsError);
-  expect(testFunctionWithoutCtx).rejects.toThrow(LeemonsError);
-});
+// setTagsToValues itself doesn't contain logic to validate its inputs, it relies on its dependencies to
+// throw if they get incorrect inputs.
