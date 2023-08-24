@@ -227,20 +227,20 @@ module.exports = function webpackConfig({
         template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
       }),
       isDev && new ReactRefreshWebpackPlugin(),
-      useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'static' }),
+      useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'disabled' }),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
-      new MiniCssExtractPlugin({
-        // Options similar to the same options in webpackOptions.output
-        // both options are optional
-        filename: 'static/css/[name].[contenthash:8].css',
-        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-      }),
+        new MiniCssExtractPlugin({
+          // Options similar to the same options in webpackOptions.output
+          // both options are optional
+          filename: 'static/css/[name].[contenthash:8].css',
+          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        }),
       new LoadablePlugin({ filename: 'stats.json', writeToDisk: true }),
       publicFiles?.length &&
-      new CopyPlugin({
-        patterns: [...publicFiles],
-      }),
+        new CopyPlugin({
+          patterns: [...publicFiles],
+        }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
