@@ -23,7 +23,7 @@ const transactionSchema = new mongoose.Schema(
       required: true,
     },
     checkNumber: {
-      type: Number,
+      type: String,
     },
     createdAt: {
       type: Date,

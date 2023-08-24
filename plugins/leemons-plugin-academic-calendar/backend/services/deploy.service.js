@@ -33,7 +33,6 @@ module.exports = () => ({
         'academic-calendar.init-permissions',
       ],
       handler: async (ctx) => {
-        console.log('---- ME LLAMO', ctx.event.name);
         const [mainMenuItem, ...otherMenuItems] = menuItems;
 
         await addMenuItemsDeploy({

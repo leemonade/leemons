@@ -5,6 +5,7 @@
 const _ = require('lodash');
 const { setTimeout } = require('timers/promises');
 const mongoose = require('mongoose');
+const { randomString } = require('leemons-utils');
 const { Transaction } = require('../models/transaction');
 const { TransactionState } = require('../models/transaction-state');
 
@@ -188,7 +189,7 @@ module.exports = (broker) => ({
         }
 
         // Para protegernos ante multiples llamadas al rollback (lo cual seria un problema) marcamos ya la transaccion como desactivada y le añadimos un numero que solo conoce esta funcion.
-        const checkNumber = Math.floor(Math.random() * 500000);
+        const checkNumber = randomString();
         await Transaction.findOneAndUpdate(
           {
             _id: ctx.meta.transactionID,

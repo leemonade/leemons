@@ -135,6 +135,7 @@ module.exports = {
         await setKey(ctx.tx.db.KeyValue, `actions`);
       }
       ctx.tx.emit('init-actions');
+
       // Permissions
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
