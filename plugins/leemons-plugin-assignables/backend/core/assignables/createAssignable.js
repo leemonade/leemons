@@ -1,6 +1,9 @@
 const { pick } = require('lodash');
 const { validateAssignable } = require('../../validations/validateAssignable');
 const { duplicateAsset } = require('../leebrary/assets/duplicateAsset');
+const { registerAssignablePermission } = require('../permissions/assignables');
+const { addPermissionToUser } = require('../permissions/users/addPermissionToUser');
+const { saveSubjects } = require('../subjects/saveSubjects');
 
 async function createAsset({ asset, role, subjects, published, ctx }) {
   const assetProgram = subjects?.length ? subjects[0].program : null;
@@ -63,6 +66,16 @@ async function saveResources({ resources, leebraryResources, ctx }) {
   };
 }
 
+async function registerVersionIfNoId({ id, ctx }) {
+  if (!id) {
+    const version = await ctx.tx.call('common.versions.register');
+
+    return version.fullId;
+  }
+
+  return id;
+}
+
 async function createAssignable({
   assignable,
   published,
@@ -70,66 +83,85 @@ async function createAssignable({
 
   ctx,
 }) {
-  let idToUse = id;
+  try {
+    const {
+      asset: assignableAsset,
+      metadata,
+      resources,
+      role,
+      subjects,
+      ...assignableObject
+    } = assignable;
 
-  // EN: Verify the assignable object and throw if not valid
-  // ES: Verifica el objeto assignable y lanza un error si no es válido
-  validateAssignable(assignable);
+    /*
+      Validate entities
+    */
 
-  const {
-    asset: assignableAsset,
-    metadata,
-    resources,
-    role,
-    subjects,
-    ...assignableObject
-  } = assignable;
+    validateAssignable(assignable);
+    await ctx.tx.call('assignables.roles.get', { role: assignable.role });
 
-  // EN: Check if the role exists
-  // ES: Comprobar si existe el rol
-  await ctx.tx.call('assignables.roles.get', { role: assignable.role });
+    /*
+      Compute the ids to save
+    */
+    const idToUse = await registerVersionIfNoId({ id, ctx });
 
-  // EN: Register a new versioned entity.
-  // ES: Registra una nueva versión de una entidad.
-  if (!id) {
-    const version = await ctx.tx.call('common.versions.register');
+    // Duplicate assets to avoid permission conflicts
+    const { resources: resourcesToSave, leebraryResources } = await saveResources({
+      resources,
+      leebraryResources: metadata?.leebrary,
+      ctx,
+    });
 
-    idToUse = version.fullId;
+    /*
+      Create the assignable entity
+    */
+    const asset = id
+      ? assignableAsset
+      : (await createAsset({ asset: assignableAsset, role, subjects, published: false, ctx })).id;
+
+    const assignableToCreate = {
+      ...assignableObject,
+      id: idToUse,
+      role,
+      asset,
+      metadata: leebraryResources
+        ? {
+            ...metadata,
+            leebrary: leebraryResources,
+          }
+        : metadata,
+      resources: resourcesToSave,
+    };
+
+    const assignableCreated = await ctx.tx.db.Assignables.create(assignableToCreate);
+
+    await saveSubjects({
+      assignableId: assignableCreated.id,
+      subjects,
+      ctx,
+    });
+
+    /*
+      Permissions
+    */
+    await registerAssignablePermission({
+      id: assignableCreated.id,
+      role: assignableCreated.role,
+      ctx,
+    });
+
+    await addPermissionToUser({
+      id: assignableCreated.id,
+      userAgents: ctx.meta.userSession.userAgents.map((user) => user.id),
+      role: 'owner',
+      ctx,
+    });
+
+    return assignableCreated;
+  } catch (e) {
+    e.messsage = `Failed to create assignable: ${e.message}`;
+    throw e;
   }
-
-  // EN: Create the asset
-  // ES: Crea el asset
-  const asset = !id
-    ? (await createAsset({ asset: assignableAsset, role, subjects, published: false, ctx })).id
-    : assignableAsset;
-
-  // EN: Create the resources
-  // ES: Crea los recursos
-  const { resources: resourcesToSave, leebraryResources } = await saveResources({
-    resources,
-    leebraryResources: metadata?.leebrary,
-    ctx,
-  });
-
-  // EN: Create the assignable for the given version.
-  // ES: Crea el asignable para la versión dada.
-  await ctx.tx.db.Assignables.create({
-    ...assignableObject,
-    id: idToUse,
-    asset,
-    metadata: leebraryResources
-      ? {
-          ...metadata,
-          leebrary: leebraryResources,
-        }
-      : metadata,
-    resources: resourcesToSave,
-  });
-
-  return {
-    resourcesToSave,
-    leebraryResources,
-  };
 }
 
 module.exports = { createAssignable };
