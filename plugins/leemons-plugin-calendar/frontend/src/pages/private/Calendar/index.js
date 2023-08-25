@@ -13,7 +13,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
+import { CalendarSubNavFilters, EventDetailPanel } from '@calendar/components';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
 import prefixPN from '@calendar/helpers/prefixPN';
