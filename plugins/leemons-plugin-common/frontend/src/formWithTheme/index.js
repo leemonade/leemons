@@ -1,4 +1,3 @@
-import React from 'react';
 import { FormWithTheme } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
