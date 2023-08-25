@@ -9,6 +9,7 @@ const { tables } = require('../tables');
 const { add: addFiles } = require('./files/add');
 const { normalizeItemsArray, isTruthy } = require('../shared');
 const { getByIds: getFiles } = require('../files/getByIds');
+const { CATEGORIES } = require('../../../config/constants');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
@@ -68,7 +69,7 @@ async function getFileIds({ asset, transacting }) {
   const assetFiles = await tables.assetsFiles.find({ asset: asset.id }, { transacting });
   fileIds.push(..._.map(assetFiles, 'file'));
 
-  return fileIds;
+  return _.compact(_.uniq(fileIds));
 }
 
 /**
@@ -81,11 +82,11 @@ async function getFileIds({ asset, transacting }) {
  * @param {Object} params.transacting - The transaction object
  * @returns {Promise<Object>} - Returns a promise with an object containing the files and the cover
  */
-async function handleFiles({ filesIds, coverId, transacting }) {
-  const files = await getFiles(filesIds, { parsed: false, transacting });
-  const cover = _.find(files, { id: coverId });
+async function getFilesToDuplicate({ filesIds, coverId, transacting }) {
+  const filesToDuplicate = await getFiles(filesIds, { parsed: false, transacting });
+  const cover = _.find(filesToDuplicate, { id: coverId });
 
-  return { files, cover };
+  return { filesToDuplicate, cover };
 }
 
 /**
@@ -190,15 +191,15 @@ async function handleCoverDuplication({ newAsset, cover, transacting }) {
  * @param {Object} params - An object containing the parameters
  * @param {Object} params.newAsset - The new asset object
  * @param {Object} params.bookmark - The bookmark object
- * @param {Array} params.files - An array of file objects
+ * @param {Array} params.filesToDuplicate - An array of file objects
  * @param {Object} params.transacting - The transaction object
  * @returns {Promise<Object>} - Returns a promise with the updated asset
  */
-async function handleBookmarkDuplication({ newAsset, bookmark, files, transacting }) {
+async function handleBookmarkDuplication({ newAsset, bookmark, filesToDuplicate, transacting }) {
   let newIconId = null;
 
   if (bookmark.icon) {
-    const icon = _.find(files, { id: bookmark.icon });
+    const icon = _.find(filesToDuplicate, { id: bookmark.icon });
     const newIcon = await duplicateFile(icon, { transacting });
     newIconId = newIcon?.id;
 
@@ -216,40 +217,65 @@ async function handleBookmarkDuplication({ newAsset, bookmark, files, transactin
   return newAsset;
 }
 
-async function handleFilesDuplication({ files, cover, newAsset, userSession, transacting }) {
-  let newFiles = null;
+/**
+ * Handles the duplication of files associated with a given asset.
+ * It duplicates each file, excluding the cover, and updates the new asset with the duplicated files.
+ * If the asset has a cover, it is added to the files array.
+ * The function returns the updated asset.
+ *
+ * @param {Object} params - An object containing the parameters
+ * @param {Array} params.filesToDuplicate - An array of file objects
+ * @param {Object} params.cover - The cover file object
+ * @param {Object} params.newAsset - The new asset object
+ * @param {Object} params.category - The category object
+ * @param {Object} params.userSession - The user session object
+ * @param {Object} params.transacting - The transaction object
+ * @returns {Promise<Object>} - Returns a promise with the updated asset
+ */
+async function handleFilesDuplication({
+  filesToDuplicate,
+  cover,
+  newAsset,
+  category,
+  userSession,
+  transacting,
+}) {
+  let newFiles = [];
+  const isMediaFile = category.key === CATEGORIES.MEDIA_FILES;
 
-  if (files.length) {
-    const filesP = [];
+  // EN: Duplicate all the files
+  if (filesToDuplicate.length) {
+    const toDuplicatePromises = [];
 
-    // Skip cover duplication again
-    _.forEach(files, (file) => {
-      if (file.id !== cover?.id) {
-        filesP.push(duplicateFile(file, { transacting }));
-      }
+    _.forEach(filesToDuplicate, (file) => {
+      toDuplicatePromises.push(duplicateFile(file, { transacting }));
     });
 
-    newFiles = await Promise.all(filesP);
-    const promises = [];
-    _.forEach(newFiles, (f) => {
-      promises.push(
-        addFiles(f.id, newAsset.id, {
-          skipPermissions: true,
-          userSession,
-          transacting,
-        })
-      );
-    });
-    await Promise.allSettled(promises);
+    newFiles = await Promise.all(toDuplicatePromises);
   }
 
+  // EN: If the asset is a MediaFile, and has NO files, means it is an Image, and the cover is the file
+  if (isMediaFile && _.isEmpty(newFiles) && cover?.id) {
+    newFiles.push(cover);
+  }
+
+  // EN: Now, let's create the relation between the file and Asset
+  const addFileToAssetPromises = [];
+  _.forEach(newFiles, (file) => {
+    addFileToAssetPromises.push(
+      addFiles(file.id, newAsset.id, {
+        skipPermissions: true,
+        userSession,
+        transacting,
+      })
+    );
+  });
+
+  await Promise.allSettled(addFileToAssetPromises);
+
+  // If the new asset doesn't have a cover, assign the first file in the newFiles array to the newAsset.file
   if (!_.isEmpty(newFiles)) {
-    if (newAsset.cover) {
-      newAsset.file =
-        newFiles.length > 1
-          ? newFiles.filter((item) => item.id !== newAsset.cover.id)
-          : newFiles[0];
-    } else {
+    if (!newAsset.cover) {
       [newAsset.file] = newFiles;
     }
   }
@@ -294,7 +320,7 @@ async function duplicate(
   await checkDuplicatePermissions({ assetId, userSession, transacting });
 
   const asset = await getAndCheckAsset({ assetId, transacting });
-  await checkCategoryDuplicable({ categoryId: asset.category, transacting });
+  const category = await checkCategoryDuplicable({ categoryId: asset.category, transacting });
 
   // EN: Store the IDs of files associated with the asset in order to track them
   const filesIds = await getFileIds({ asset, transacting });
@@ -319,7 +345,12 @@ async function duplicate(
   // ·········································································
   // HANDLE FILES
 
-  const { files, cover } = await handleFiles({ filesIds, transacting });
+  // eslint-disable-next-line prefer-const
+  let { filesToDuplicate, cover } = await getFilesToDuplicate({
+    filesIds,
+    coverId: asset.cover,
+    transacting,
+  });
 
   // ·········································································
   // TAGS
@@ -347,13 +378,27 @@ async function duplicate(
 
   if (cover) {
     newAsset = await handleCoverDuplication({ newAsset, cover, transacting });
+    // Remove the old cover from files to be duplicated
+    filesToDuplicate = filesToDuplicate.filter((file) => file.id !== cover.id);
   }
 
   if (bookmark) {
-    newAsset = await handleBookmarkDuplication({ newAsset, bookmark, files, transacting });
+    newAsset = await handleBookmarkDuplication({
+      newAsset,
+      bookmark,
+      filesToDuplicate,
+      transacting,
+    });
+  } else {
+    newAsset = await handleFilesDuplication({
+      filesToDuplicate,
+      cover: newAsset.cover,
+      newAsset,
+      category,
+      userSession,
+      transacting,
+    });
   }
-
-  newAsset = await handleFilesDuplication({ newAsset, cover, files, userSession, transacting });
 
   return newAsset;
 }

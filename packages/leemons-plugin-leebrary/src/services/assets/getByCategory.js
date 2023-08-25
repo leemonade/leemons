@@ -2,6 +2,17 @@ const { isEmpty } = require('lodash');
 const { tables } = require('../tables');
 const { getByIds } = require('./getByIds');
 
+/**
+ * Fetch assets by category
+ *
+ * @param {string} categoryId - The category ID
+ * @param {object} options - The options object
+ * @param {boolean} options.details - The details flag
+ * @param {boolean} options.indexable - The indexable flag
+ * @param {Array} options.assets - The asset IDs
+ * @param {object} options.transacting - The transaction object
+ * @returns {Array} - Returns an array of assets or asset IDs
+ */
 async function getByCategory(
   categoryId,
   { details = false, indexable = true, assets: assetIds, transacting } = {}
