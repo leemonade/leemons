@@ -69,7 +69,7 @@ module.exports = {
       throw validator.error;
     },
   },
-  ResetRest: {
+  resetRest: {
     rest: {
       path: '/reset',
       method: 'POST',
@@ -557,7 +557,7 @@ module.exports = {
       });
     },
   },
-  // TODO dataset middleware?
+  // TODO añadir disableUserAgentDatasetCheck middleware una vez este programado
   getDataForUserAgentDatasetsRest: {
     rest: {
       path: '/get-data-for-user-agent-datasets',

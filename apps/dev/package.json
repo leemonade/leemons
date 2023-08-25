@@ -46,6 +46,8 @@
     "leemons-plugin-families-frontend-react": "1.0.0",
     "leemons-plugin-families-emergency-numbers": "1.0.0",
     "leemons-plugin-families-emergency-numbers-frontend-react": "1.0.0",
+    "leemons-plugin-emails-smtp-frontend-react": "1.0.0",
+    "leemons-plugin-emails-aws-ses-frontend-react": "1.0.0",
     "leemons-plugin-feedback": "1.0.0",
     "leemons-plugin-feedback-frontend-react": "1.0.0",
     "leemons-plugin-fundae": "1.0.0",

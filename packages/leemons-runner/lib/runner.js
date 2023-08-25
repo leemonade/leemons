@@ -289,6 +289,7 @@ class LeemonsRunner {
     this.config = _.defaultsDeep(this.configFile, ServiceBroker.defaultOptions);
     this.config = this.overwriteFromEnv(this.config);
     this.config.errorHandler = (err, params) => {
+      console.log('errorHandler', err);
       if (params.event) {
         return { err, params };
       }

@@ -1,13 +1,11 @@
 async function setAppearanceMenuMainColor({ value, ctx }) {
-  return ctx.tx.db.Config.updateOne(
+  return ctx.tx.db.Config.findOneAndUpdate(
     { key: 'platform-appearance-menu-main-color' },
     {
       key: 'platform-appearance-menu-main-color',
       value,
     },
-    {
-      upsert: true,
-    }
+    { lean: true, new: true, upsert: true }
   );
 }
 

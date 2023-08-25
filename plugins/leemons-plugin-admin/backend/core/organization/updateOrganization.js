@@ -10,6 +10,10 @@ const overrideColor = (color, hsl) => {
 };
 
 async function updateOrganization({ ctx, ...body }) {
+  const { h, s, l } = colord(body.mainColor).toHsl();
+  const { customPrimary } = jsonRaw.core.core.color;
+  overrideColor(customPrimary, { h, s, l });
+  await compileTokens({ jsonRaw, ctx });
   const promises = [
     ctx.tx.call('users.platform.setName', { value: body.name }),
     ctx.tx.call('users.platform.setHostname', { value: body.hostname }),
@@ -40,10 +44,6 @@ async function updateOrganization({ ctx, ...body }) {
       })
     );
   }
-  const { h, s, l } = colord(body.mainColor).toHsl();
-  const { customPrimary } = jsonRaw.core.core.color;
-  overrideColor(customPrimary, { h, s, l });
-  await compileTokens({ jsonRaw, ctx });
   await Promise.all(promises);
 }
 

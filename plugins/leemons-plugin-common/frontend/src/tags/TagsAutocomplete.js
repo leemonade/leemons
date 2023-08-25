@@ -14,7 +14,7 @@ function TagsAutocomplete({ pluginName, type, ...props }) {
   const [store, render] = useStore({ data: [] });
 
   async function search(text) {
-    const query = { tag_$contains: text };
+    const query = { tag: { $regex: text, $options: 'i' } };
     if (type) query.type = type;
     const result = await TagsService.listTags(pluginName, 0, 10, query);
     store.data = result?.data?.items || [];

@@ -176,7 +176,7 @@ export default function Index() {
         filters.course = store.filterCourseId;
       }
       if (store.filterSelectedUserAgents?.length) {
-        filters.userAgent_$in = store.filterSelectedUserAgents;
+        filters.userAgent = store.filterSelectedUserAgents;
       }
       const result = await listReportsRequest(store.page - 1, store.perPage, filters);
 

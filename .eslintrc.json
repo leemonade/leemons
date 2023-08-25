@@ -58,6 +58,8 @@
           "@dashboard",
           "@dataset",
           "@emails",
+          "@emails-aws-ses",
+          "@emails-smtp",
           "@families",
           "@families-emergency-numbers",
           "@feedback",

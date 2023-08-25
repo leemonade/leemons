@@ -170,12 +170,12 @@ function ListUsers() {
     const query = {};
     if (store.search) {
       query.$or = [
-        { name_$contains: store.search.toLowerCase() },
-        { surnames_$contains: store.search.toLowerCase() },
-        { secondSurname_$contains: store.search.toLowerCase() },
-        { email_$contains: store.search.toLowerCase() },
-        { phone_$contains: store.search.toLowerCase() },
-        { birthdate_$contains: store.search.toLowerCase() },
+        { name: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { surnames: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { secondSurname: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { email: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { phone: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { birthdate: { $regex: store.search.toLowerCase(), $options: 'i' } },
       ];
     }
     if (store.profile) {

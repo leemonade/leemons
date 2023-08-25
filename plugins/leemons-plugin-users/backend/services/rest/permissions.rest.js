@@ -16,6 +16,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      console.log('wtf');
       const permissions = await list({ ctx });
       return { status: 200, permissions };
     },

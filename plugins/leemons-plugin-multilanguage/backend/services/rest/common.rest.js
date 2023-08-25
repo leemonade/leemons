@@ -97,7 +97,7 @@ async function get({ ctx }) {
     localizations.push(
       getManyWithLocale({
         //! TODO USANDO EL FRONTEND VIEJO QUITAMOS PLUGINS. UNA VEZ MIGRADO SE PUEDE QUITAR EL REPLACE
-        keys: _.map(keys, (key) => key.replace('plugins.', '')),
+        keys: _.map(keys, (key) => key.replace('plugins.', '').replace('providers.', '')),
         locale,
         isPrivate: false,
         ctx,
@@ -109,12 +109,14 @@ async function get({ ctx }) {
     localizations.push(
       ...keysStartsWith.map((key) =>
         //! TODO USANDO EL FRONTEND VIEJO QUITAMOS PLUGINS. UNA VEZ MIGRADO SE PUEDE QUITAR EL REPLACE
-        getKeyStartsWith({ key: key.replace('plugins.', ''), locale, isPrivate: false, ctx }).then(
-          (_localizations) =>
-            // Return in object format: { key: 'value' }
-            _.fromPairs(
-              _localizations.map((localization) => [localization.key, localization.value])
-            )
+        getKeyStartsWith({
+          key: key.replace('plugins.', '').replace('providers.', ''),
+          locale,
+          isPrivate: false,
+          ctx,
+        }).then((_localizations) =>
+          // Return in object format: { key: 'value' }
+          _.fromPairs(_localizations.map((localization) => [localization.key, localization.value]))
         )
       )
     );
@@ -130,6 +132,7 @@ async function get({ ctx }) {
   //! TODO BORRAR ESTO CUANDO SOBRE LO DE PLUGINS. EN EL FRONTEND
   _.forIn(resolvedLocalizations, (value, key) => {
     resolvedLocalizations[`plugins.${key}`] = value;
+    resolvedLocalizations[`providers.${key}`] = value;
     delete resolvedLocalizations[key];
   });
   //! -----
