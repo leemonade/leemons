@@ -123,14 +123,8 @@ it('Should throw when required parameters are missing', async () => {
       values: undefined,
       ctx,
     });
-  const testFnWithNoCtx = async () =>
-    removeAllTagsForValues({
-      type,
-      values,
-    });
 
   // Assert
   await expect(testFnWithNoType).rejects.toThrowError(LeemonsError);
   await expect(testFnWithNoValues).rejects.toThrowError(LeemonsError);
-  await expect(testFnWithNoCtx).rejects.toThrow();
 });

@@ -51,7 +51,7 @@ it('Should create and return all tags associated to all values with expected pro
       type: createdTag.type,
     }))
   ).toEqual(expectedValue);
-  // response contain db added fields as well
+  // verify db added fields exist
   response.forEach((tag) => {
     expect(tag).toHaveProperty('id');
     expect(tag).toHaveProperty('deploymentID');
@@ -62,17 +62,21 @@ it('Should create and return all tags associated to all values with expected pro
   });
 });
 
-it('Should throw if the required tags or values are empty or of a different type', () => {
+it('Should throw when unexpected or empty tags or values are passed', () => {
   // Arrange
   const { tags, type, values } = tagsFixtures().initialData;
 
   // Act
   const testFnWithoutTags = () => addTagsToValues({ type, tags: [], values, ctx });
+  const testFnWithUnexpectedTags = () => addTagsToValues({ type, tags: [{}], values, ctx });
   const testFnWithoutValues = () => addTagsToValues({ type, tags, values: '', ctx });
   const testFnWrongValues = () => addTagsToValues({ type, tags, values: {}, ctx });
 
   // Assert
   expect(testFnWithoutTags).rejects.toThrowError(
+    new LeemonsError(ctx, { message: 'Tags cannot be empty.' })
+  );
+  expect(testFnWithUnexpectedTags).rejects.toThrowError(
     new LeemonsError(ctx, { message: 'Tags cannot be empty.' })
   );
   expect(testFnWithoutValues).rejects.toThrowError(

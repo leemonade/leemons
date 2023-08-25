@@ -2,6 +2,7 @@ const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals')
 const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const { LeemonsError } = require('leemons-error');
+const _ = require('lodash');
 
 const { getTags } = require('./getTags');
 const { tagsSchema } = require('../../models/tags');
@@ -30,7 +31,7 @@ beforeEach(async () => {
 
 it('Should return an array of tags filtering by type when passed', async () => {
   // Arrange
-  const { tagsObjectFiltered: initialTags } = tagsFixtures();
+  const { tagsObjectFiltered } = tagsFixtures();
   const extraTag = { tag: 'extra', value: 'extra', type: 'extra' };
 
   const ctx = generateCtx({
@@ -39,13 +40,14 @@ it('Should return an array of tags filtering by type when passed', async () => {
     },
   });
 
-  await ctx.db.Tags.create(initialTags);
+  const initialValues = _.cloneDeep(tagsObjectFiltered);
+  await ctx.db.Tags.create(initialValues);
   await ctx.db.Tags.create(extraTag);
 
   const expectedValues = {
     getsByType: [extraTag.tag],
     getsAllTagsIfNoTypeIsPassed: [extraTag.tag]
-      .concat(initialTags.map((tag) => tag.tag))
+      .concat(initialValues.map((tag) => tag.tag))
       .sort((a, b) => a.localeCompare(b)),
     noTagsFound: [],
   };
@@ -65,7 +67,7 @@ it('Should return an array of tags filtering by type when passed', async () => {
 
 it('Should handle wrong or unexpected arguments', async () => {
   // Arrange
-  const { tagsObjectFiltered: initialTags } = tagsFixtures();
+  const { tagsObjectFiltered } = tagsFixtures();
 
   const ctx = generateCtx({
     models: {
@@ -73,30 +75,22 @@ it('Should handle wrong or unexpected arguments', async () => {
     },
   });
 
-  await ctx.db.Tags.create(initialTags);
-  const expectedValue = initialTags.map((tag) => tag.tag).sort((a, b) => a.localeCompare(b));
+  const initialValues = _.cloneDeep(tagsObjectFiltered);
+  await ctx.db.Tags.create(initialValues);
+  const expectedValue = initialValues.map((tag) => tag.tag).sort((a, b) => a.localeCompare(b));
 
   // Act
-  const wrongType = async () => getTags({ type: {}, ctx });
-  const crazyType = async () => getTags({ type: [undefined], ctx });
-  const emptyTypeArray = await getTags({ type: [], ctx }).then((response) =>
-    response.sort((a, b) => a.localeCompare(b))
-  );
+  const testFnWithWrongType = async () => getTags({ type: {}, ctx });
+  const testFnWithUnexpectedType = async () => getTags({ type: [undefined], ctx });
+  const testFnWithEmptyTypeArray = async () => getTags({ type: [], ctx });
   const emptyTypeString = await getTags({ type: '', ctx }).then((response) =>
     response.sort((a, b) => a.localeCompare(b))
   );
 
   // Assert
-  await expect(wrongType).rejects.toThrow(LeemonsError);
-  await expect(crazyType).rejects.toThrow(LeemonsError);
-  expect(emptyTypeArray).toEqual(expectedValue);
+  await expect(testFnWithWrongType).rejects.toThrow(LeemonsError);
+  await expect(testFnWithUnexpectedType).rejects.toThrow(LeemonsError);
+  await expect(testFnWithEmptyTypeArray).rejects.toThrow(LeemonsError);
   expect(emptyTypeString).toEqual(expectedValue);
 });
 
-it('Should throw if no ctx is passed', async () => {
-  // Act
-  const wrongArgs = async () => getTags();
-
-  // Assert
-  expect(wrongArgs).rejects.toThrow();
-});

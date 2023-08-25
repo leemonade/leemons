@@ -4,12 +4,12 @@ const { validateTypePrefix } = require('../../validation/validate');
 
 async function removeAllTagsForValues({ type, values, ctx }) {
   validateTypePrefix({ type, calledFrom: ctx.callerPlugin, ctx });
-  if (!values || !values.length) {
+  // Validate values
+  if (!values?.length || (_.isArray(values) && !_.every(values, _.isString))) {
     throw new LeemonsError(ctx, { message: `Values cannot be empty.` });
   }
   let _values = _.isArray(values) ? values : [values];
   _values = _.map(_values, (value) => JSON.stringify(value));
-  // Check if value not empty
   return ctx.tx.db.Tags.deleteMany({ type, value: _values });
 }
 
