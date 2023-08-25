@@ -16,7 +16,7 @@ import {
   Switch,
   UserDisplayItem,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@bubbles-ui/leemons';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

@@ -11,7 +11,7 @@ import {
   TabPanel,
   Tabs,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@bubbles-ui/leemons';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import { unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
