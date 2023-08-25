@@ -11,8 +11,6 @@ async function list({ ctx }) {
     ctx.tx.db.PermissionAction.find().lean(),
   ]);
 
-  console.log('permissions', permissions);
-
   let permission;
   _.forEach(permissions, (_permission) => {
     permission = _permission;
