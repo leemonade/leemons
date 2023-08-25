@@ -45,7 +45,7 @@ const {
   addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile,
 } = require('../core/user-profile');
-const restActions = require('./rest/actions.rest');
+const restActions = require('./rest/permissions.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {

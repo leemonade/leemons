@@ -1,6 +1,6 @@
 const { LeemonsValidator } = require('leemons-validator');
 
-async function getTagsRouterActions({ middlewares } = {}) {
+function getTagsRouterActions({ middlewares } = {}) {
   return {
     listTagsRest: {
       rest: {

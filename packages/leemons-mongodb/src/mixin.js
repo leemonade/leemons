@@ -367,6 +367,7 @@ const mixin = ({
               rollbackTransaction(ctx);
             }
           }
+          console.log('va a petar');
           throw err;
         },
       ],

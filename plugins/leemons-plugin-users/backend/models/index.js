@@ -27,6 +27,7 @@ const models = {
   ...require('./userProfile'),
   ...require('./userRecoverPassword'),
   ...require('./userRememberLogin'),
+  ...require('./userRegisterPassword'),
   ...require('./users'),
 };
 

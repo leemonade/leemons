@@ -42,8 +42,8 @@ module.exports = {
       },
     },
     providers: {
-      handler() {
-        return emailService.providers();
+      handler(ctx) {
+        return emailService.providers({ ctx });
       },
     },
     deleteAll: {

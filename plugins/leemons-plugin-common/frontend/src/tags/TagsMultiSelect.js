@@ -16,7 +16,7 @@ function TagsMultiSelect({ pluginName, type, ...props }) {
 
   async function search(text) {
     callback(async () => {
-      const query = { tag_$contains: text };
+      const query = { tag: { $regex: text, $options: 'i' } };
       if (type) query.type = type;
       const result = await TagsService.listTags(pluginName, 0, 10, query);
       store.data = result.data.items;

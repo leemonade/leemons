@@ -48,14 +48,14 @@ module.exports =
           return;
         }
       }
-      if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
+      if (continueEvenThoughYouAreNotLoggedIn) {
         ctx.meta.userSession = null;
         return;
       }
       throw new LeemonsError(ctx, { httpStatusCode: 401, message: 'Authorization required' });
     } catch (err) {
       ctx.logger.error(err);
-      if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
+      if (continueEvenThoughYouAreNotLoggedIn) {
         ctx.meta.userSession = null;
         return;
       }

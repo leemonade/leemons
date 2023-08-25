@@ -38,9 +38,12 @@ function modifyCTX(ctx) {
     if (isCoreService(actionName)) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
+
     const manager = await ctx.__leemonsDeploymentManagerCall(
       'deployment-manager.getGoodActionToCall',
-      { actionName }
+      {
+        actionName,
+      }
     );
 
     if (process.env.DEBUG === 'true')

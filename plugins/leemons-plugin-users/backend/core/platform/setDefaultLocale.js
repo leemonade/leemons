@@ -20,6 +20,8 @@ async function setDefaultLocale({ value, ctx }) {
       value,
     },
     {
+      new: true,
+      lean: true,
       upsert: true,
     }
   );

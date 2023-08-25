@@ -171,32 +171,32 @@ module.exports = {
         return platformService.getAppearanceDarkMode({ ctx });
       },
     },
-    setAppereanceMainColor: {
+    setAppearanceMainColor: {
       async handler(ctx) {
         return platformService.setAppearanceMainColor({ ...ctx.params, ctx });
       },
     },
-    getAppereanceMainColor: {
+    getAppearanceMainColor: {
       async handler(ctx) {
         return platformService.getAppearanceMainColor({ ctx });
       },
     },
-    setAppereanceMenuMainColor: {
+    setAppearanceMenuMainColor: {
       async handler(ctx) {
         return platformService.setAppearanceMenuMainColor({ ...ctx.params, ctx });
       },
     },
-    getAppereanceMenuMainColor: {
+    getAppearanceMenuMainColor: {
       async handler(ctx) {
         return platformService.getAppearanceMenuMainColor({ ctx });
       },
     },
-    setAppereanceMenuDrawerColor: {
+    setAppearanceMenuDrawerColor: {
       async handler(ctx) {
         return platformService.setAppearanceMenuDrawerColor({ ...ctx.params, ctx });
       },
     },
-    getAppereanceMenuDrawerColor: {
+    getAppearanceMenuDrawerColor: {
       async handler(ctx) {
         return platformService.getAppearanceMenuDrawerColor({ ctx });
       },
