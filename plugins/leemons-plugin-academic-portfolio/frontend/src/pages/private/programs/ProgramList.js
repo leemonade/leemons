@@ -18,12 +18,14 @@ import {
   useResizeObserver,
   useTree,
 } from '@bubbles-ui/components';
+// TODO: import from @common plugin
+
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   AcademicProgramSetup,
   AcademicProgramSetupBasicData,
   AcademicProgramSetupCourses,
-  AcademicProgramSetupSubjects
+  AcademicProgramSetupSubjects,
 } from '@academic-portfolio/components/ProgramSetup';
 import { unflatten, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';

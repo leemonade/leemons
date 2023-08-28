@@ -21,6 +21,8 @@ import {
   PluginSettingsIcon,
   RemoveIcon,
 } from '@bubbles-ui/icons/outline';
+// TODO: import from @common plugin
+
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useQuery, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
