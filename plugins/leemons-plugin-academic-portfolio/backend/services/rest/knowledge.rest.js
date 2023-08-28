@@ -22,8 +22,8 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create'],
+        'academic-portfolio.programs': {
+          actions: ['admin', 'create'],
         },
       }),
     ],
@@ -40,8 +40,8 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['update'],
+        'academic-portfolio.programs': {
+          actions: ['admin', 'update'],
         },
       }),
     ],
@@ -58,8 +58,8 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['view'],
+        'academic-portfolio.programs': {
+          actions: ['admin', 'view'],
         },
       }),
     ],
