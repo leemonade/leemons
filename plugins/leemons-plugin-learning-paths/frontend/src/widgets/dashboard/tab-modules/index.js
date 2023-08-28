@@ -14,6 +14,7 @@ import {
   useTheme,
 } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
+// TODO: import from @library plugin
 import { LibraryCard } from '@bubbles-ui/leemons';
 import { useLocale } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';

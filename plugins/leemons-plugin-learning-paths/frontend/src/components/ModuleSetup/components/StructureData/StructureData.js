@@ -11,6 +11,7 @@ import {
   useViewportSize,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+// TODO: import from @common plugin
 import { uuidv4 } from '@bubbles-ui/leemons';
 
 import { fireEvent } from 'leemons-hooks';

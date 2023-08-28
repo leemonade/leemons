@@ -10,6 +10,7 @@ import {
   ShareIcon,
   ViewOnIcon,
 } from '@bubbles-ui/icons/outline';
+// TODO: import from @library plugin
 import { LibraryCard } from '@bubbles-ui/leemons';
 
 import { get } from 'lodash';
