@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { TranslatorModal } from '@bubbles-ui/leemons';
+import { TranslatorModal } from '../components/TranslatorModal';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '../helpers/useCommonTranslate';
 
