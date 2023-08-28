@@ -15,9 +15,6 @@ const {
   forEach,
   groupBy,
 } = require('lodash');
-const {
-  getUserAgentsInfo,
-} = require('leemons-plugin-users/src/services/user-agents/getUserAgentsInfo');
 const { tables } = require('../tables');
 const { CATEGORIES } = require('../../../config/constants');
 const { getByAssets: getPermissions } = require('../permissions/getByAssets');
@@ -55,7 +52,7 @@ function buildQuery({ assetsIds, indexable }) {
  * @async
  * @param {Object} params - The params object
  * @param {Array} params.assets - The assets to fetch permissions for
- * @param {object} params.userSession - The user session object
+ * @param {UserSession} params.userSession - The user session object
  * @param {object} params.transacting - The transaction object
  * @returns {Promise<Array>} - Returns an array containing permissions by asset and canEditPermissions
  */
@@ -82,12 +79,11 @@ async function getUserPermissionsByAsset({ assets, userSession, transacting }) {
   ]);
 
   if (userSession) {
-    canEditPermissions =
-      await userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-edit'),
-        { ignoreOriginalTarget: true, item: map(assets, 'id'), transacting }
-      );
+    canEditPermissions = await userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
+      userSession.userAgents,
+      leemons.plugin.prefixPN('asset.can-edit'),
+      { ignoreOriginalTarget: true, item: map(assets, 'id'), transacting }
+    );
   }
 
   const currentPermissions = [...viewPerms, ...editPerms, ...assignPerms];
@@ -120,7 +116,7 @@ async function getUserPermissionsByAsset({ assets, userSession, transacting }) {
  * @param {Array} params.assets - The assets to fetch permissions for
  * @param {Array} params.assetsIds - The IDs of the assets
  * @param {boolean} params.showPublic - Flag to show public assets
- * @param {object} params.userSession - The user session object
+ * @param {UserSession} params.userSession - The user session object
  * @param {object} params.transacting - The transaction object
  * @returns {Promise<Array>} - Returns an array of assets with permissions
  */
@@ -165,15 +161,15 @@ async function getAssetsWithPermissions({
   }
 
   if (getUsersAssetIds.length) {
-    const { services } = leemons.getPlugin('users');
-    const rawUserAgents = await services.permissions.findUsersWithPermissions(
+    const { services: userService } = leemons.getPlugin('users');
+    const rawUserAgents = await userService.permissions.findUsersWithPermissions(
       {
         permissionName_$in: map(getUsersAssetIds, getAssetPermissionName),
       },
       { returnRaw: true, transacting }
     );
     const userAgentIds = uniq(map(rawUserAgents, 'userAgent'));
-    const userAgents = await getUserAgentsInfo(userAgentIds, { transacting });
+    const userAgents = await userService.users.getUserAgentsInfo(userAgentIds, { transacting });
     const userAgentsById = keyBy(userAgents, 'id');
 
     for (let i = 0, l = assets.length; i < l; i++) {
@@ -210,10 +206,7 @@ async function getAssetsWithPermissions({
         });
         assets[i].canAccess = assetPermissions;
         if (assets[i].canAccess?.length) {
-          const noOwners = filter(
-            assets[i].canAccess,
-            (item) => !item.permissions?.includes('owner')
-          );
+          const noOwners = filter(assets[i].canAccess, (item) => !item.permissions?.includes('owner'));
           if (noOwners.length) {
             assets[i].isPrivate = false;
           }
@@ -247,10 +240,7 @@ async function getAssetsWithPermissions({
  * @returns {Promise<Array>} - Returns an array of assets with their associated subjects
  */
 async function getAssetsWithSubjects({ assets, assetsIds, transacting }) {
-  const assetsSubjects = await tables.assetsSubjects.find(
-    { asset_$in: assetsIds },
-    { transacting }
-  );
+  const assetsSubjects = await tables.assetsSubjects.find({ asset_$in: assetsIds }, { transacting });
 
   const subjectsByAsset = groupBy(assetsSubjects, 'asset');
 
@@ -271,9 +261,7 @@ async function getAssetsWithSubjects({ assets, assetsIds, transacting }) {
  */
 async function getAssetsWithFiles({ assets, assetsIds, transacting }) {
   const assetsFiles = await tables.assetsFiles.find({ asset_$in: assetsIds }, { transacting });
-  const fileIds = compact(
-    uniq(map(assetsFiles, 'file').concat(assets.map((asset) => asset.cover)))
-  );
+  const fileIds = compact(uniq(map(assetsFiles, 'file').concat(assets.map((asset) => asset.cover))));
 
   // ES: En caso de que algún asset sea un Bookmark, entonces recuperamos el icono
   // EN: In case one asset is a Bookmark, then we recover the icon
@@ -337,7 +325,7 @@ async function getAssetsTags({ assets, transacting }) {
  * @async
  * @param {Object} params - The params object
  * @param {Array} params.assets - The assets to fetch category data for
- * @param {object} params.userSession - The user session object
+ * @param {UserSession} params.userSession - The user session object
  * @param {object} params.transacting - The transaction object
  * @returns {Promise<Array>} - Returns an array of categories and asset category data
  */
@@ -355,9 +343,7 @@ async function getAssetsCategoryData({ assets, userSession, transacting }) {
       const categoryProvider = category.provider;
       const assetProviderService = leemons.getProvider(categoryProvider).services.assets;
       return assetProviderService.getByIds(
-        assets
-          .filter((item) => item.category === category.id)
-          .map((item) => ({ ...item, category })),
+        assets.filter((item) => item.category === category.id).map((item) => ({ ...item, category })),
         { userSession, transacting }
       );
     })

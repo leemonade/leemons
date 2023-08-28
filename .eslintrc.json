@@ -24,13 +24,6 @@
     "import/no-extraneous-dependencies": "off",
     "react/react-in-jsx-scope": "off",
     "no-underscore-dangle": "off",
-    "prettier/prettier": [
-      2,
-      {},
-      {
-        "usePrettierrc": true
-      }
-    ],
     "import/no-names-as-default": "off",
     "import/no-unresolved": [
       2,
