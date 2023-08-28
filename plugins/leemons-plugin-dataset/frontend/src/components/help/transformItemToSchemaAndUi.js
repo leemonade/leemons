@@ -1,4 +1,4 @@
-import { transformFormDataToSchemaAndUi } from '@bubbles-ui/leemons';
+import { transformFormDataToSchemaAndUi } from '../DatasetItemDrawer/help/transformFormDataToSchemaAndUi';
 
 const transformItemToSchemaAndUi = (item, locale) => transformFormDataToSchemaAndUi(item, locale);
 
