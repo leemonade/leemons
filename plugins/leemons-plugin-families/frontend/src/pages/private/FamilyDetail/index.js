@@ -21,6 +21,7 @@ import {
   Text,
   UserDisplayItem,
 } from '@bubbles-ui/components';
+// TODO: fix this import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   DeleteBinIcon,
