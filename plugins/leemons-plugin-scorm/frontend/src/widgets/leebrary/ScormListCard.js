@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
+// TODO: import from @library plugin maybe?
 import { LibraryCard } from '@bubbles-ui/leemons';
 import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
