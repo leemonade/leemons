@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
+// TODO: import from @library plugin
 import { LibraryCard } from '@bubbles-ui/leemons';
 import getFakeImage from '../../helpers/getFakeImage';
 

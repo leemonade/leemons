@@ -1,4 +1,5 @@
 import { Box, Text } from '@bubbles-ui/components';
+// TODO: import from @library plugin
 import { LibraryItem } from '@bubbles-ui/leemons';
 import { useApi } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
