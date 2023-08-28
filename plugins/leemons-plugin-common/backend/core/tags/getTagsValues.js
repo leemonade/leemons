@@ -18,7 +18,7 @@ const { LeemonsError } = require('leemons-error');
  */
 
 async function getTagsValues({ tags, type, ctx }) {
-  // Validate type
+  // Validate tags
   if (!tags?.length || (_.isArray(tags) && !_.every(tags, _.isString))) {
     throw new LeemonsError(ctx, {
       message: 'Tags must be a not empty string or array of strings.',
@@ -34,7 +34,7 @@ async function getTagsValues({ tags, type, ctx }) {
     (_.isArray(type) && (!_.every(type, _.isString) || _.isEmpty(type)))
   ) {
     throw new LeemonsError(ctx, {
-      message: 'Type must be a not empty string or array of strings. No type filter applied.',
+      message: 'Type must be a not empty string or array of strings.',
     });
   }
 
