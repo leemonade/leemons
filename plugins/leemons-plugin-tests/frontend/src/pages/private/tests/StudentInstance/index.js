@@ -13,6 +13,7 @@ import {
   VerticalStepper,
 } from '@bubbles-ui/components';
 import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+// TODO: import from @feedback plugin maybe?
 import { ActivityContainer } from '@bubbles-ui/leemons';
 import { useLocale, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
