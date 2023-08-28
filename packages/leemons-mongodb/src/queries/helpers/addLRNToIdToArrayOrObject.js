@@ -8,11 +8,12 @@ function addLRNToIdToArrayOrObject({ items: _items, modelKey, ctx }) {
   const config = getLRNConfig({ modelKey, ctx });
   if (_.isArray(items)) {
     return _.map(items, (item) => {
-      item.id = generateLRN({ ...config, resourceID: new ObjectId() });
+      // eslint-disable-next-line no-param-reassign
+      item.id = item.id ?? generateLRN({ ...config, resourceID: new ObjectId() });
       return item;
     });
   }
-  items.id = generateLRN({ ...config, resourceID: new ObjectId() });
+  items.id = items.id ?? generateLRN({ ...config, resourceID: new ObjectId() });
   return items;
 }
 
