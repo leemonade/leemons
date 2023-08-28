@@ -17,7 +17,7 @@ function deleteOne({
   ctx,
 }) {
   return async function (_conditions, options = {}) {
-    if (options.soft) {
+    if (options?.soft) {
       return updateOne(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
     }
     await createTransactionIDIfNeed({

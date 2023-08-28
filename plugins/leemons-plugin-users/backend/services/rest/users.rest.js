@@ -303,7 +303,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const jwtToken = await usersService.profileToken({
-        user: ctx.state.userSession.id,
+        user: ctx.meta.userSession.id,
         profile: ctx.params.id,
         ctx,
       });

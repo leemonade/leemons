@@ -433,7 +433,7 @@ class Email {
         html: email.html,
         provider,
       });
-      // console.log('--> Resultado email:', info);
+      console.log('--> Resultado email:', info);
       info.error = false;
       return info;
     } catch (err) {

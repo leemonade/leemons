@@ -140,7 +140,7 @@ module.exports = {
       return { status: 200, classes };
     },
   },
-  addTeachersToClassesUnderNodeTree: {
+  addTeachersToClassesUnderNodeTreeRest: {
     rest: {
       path: '/add-teachers-to-classes-under-node-tree',
       method: 'POST',

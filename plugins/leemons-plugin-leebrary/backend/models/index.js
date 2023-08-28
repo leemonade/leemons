@@ -15,17 +15,17 @@ const models = {
 
 module.exports = {
   ...models,
-  Assets: models.assetsModel,
-  AssetsFiles: models.assetsFilesModel,
-  AssetsSubjects: models.assetsSubjectsModel,
-  Bookmarks: models.bookmarksModel,
-  Categories: models.categoriesModel,
-  Files: models.filesModel,
-  Pins: models.pinsModel,
-  Settings: models.settingsModel,
   getServiceModels() {
     return {
       Actions: models.actionsModel,
+      Assets: models.assetsModel,
+      AssetsFiles: models.assetsFilesModel,
+      AssetsSubjects: models.assetsSubjectsModel,
+      Bookmarks: models.bookmarksModel,
+      Categories: models.categoriesModel,
+      Files: models.filesModel,
+      Pins: models.pinsModel,
+      Settings: models.settingsModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::leebrary_KeyValue' }),
     };
   },

@@ -4,6 +4,7 @@
   "main": "Public.js",
   "license": "MIT",
   "dependencies": {
+    "react-content-loader": "^6.2.0",
     "@bubbles-ui/leemons": "dev",
     "@bubbles-ui/components": "dev",
     "prop-types": "^15.7.2",

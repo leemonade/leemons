@@ -27,7 +27,7 @@ function dynamicImport(pluginName, component) {
 
 // Pagina a la que solo tendra acceso el super admin
 function Setup({ session }) {
-  const [t] = useTranslateLoader(prefixPN('setup'));
+  const [t, translations] = useTranslateLoader(prefixPN('setup'));
 
   // ····················································
   // SETTINGS
@@ -103,7 +103,7 @@ function Setup({ session }) {
       steps.push({ label: t('finish.label'), status: 'OK' });
     }
     return steps;
-  }, [store.zone, store.configured]);
+  }, [store.zone, store.configured, translations]);
 
   const handleOnNext = () => {
     if (store.currentStep <= steppers.length - 1) {

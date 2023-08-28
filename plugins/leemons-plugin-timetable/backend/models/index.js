@@ -11,13 +11,13 @@ const models = {
 
 module.exports = {
   ...models,
-  Breaks: models.breaksModel,
-  Config: models.configModel,
-  Settings: models.settingsModel,
-  Timetable: models.timetableModel,
   getServiceModels() {
     return {
       Actions: models.actionsModel,
+      Breaks: models.breaksModel,
+      Config: models.configModel,
+      Settings: models.settingsModel,
+      Timetable: models.timetableModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::timetable_KeyValue' }),
     };
   },

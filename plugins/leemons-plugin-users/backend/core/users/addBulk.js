@@ -108,7 +108,7 @@ async function addUserBulk({
     });
   }
 
-  const calendarPluginExists = await ctx.tx.call('deployment-manager.pluginsIsInstalled', {
+  const calendarPluginExists = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'calendar',
   });
   if (calendarPluginExists) {
