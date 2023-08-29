@@ -22,17 +22,18 @@ async function validateNotExistItemPermissions({ query, ctx }) {
 }
 
 function validateTypePrefix(type, calledFrom) {
-  if (!type.startsWith(calledFrom)) throw new Error(`The type name must begin with ${calledFrom}`);
+  if (!type.startsWith(calledFrom))
+    throw new Error(`The type name (${type}) must begin with ${calledFrom}`);
 }
 
 function validatePermissionName(permissionName, calledFrom) {
   if (!permissionName.startsWith(calledFrom))
-    throw new Error(`The permission name must begin with ${calledFrom}`);
+    throw new Error(`The permission name (${permissionName}) must begin with ${calledFrom}`);
 }
 
 function validateRoleType(permissionName, calledFrom) {
   if (!permissionName.startsWith(calledFrom))
-    throw new Error(`The role type must begin with ${calledFrom}`);
+    throw new Error(`The role type (${permissionName}) must begin with ${calledFrom} `);
 }
 
 module.exports = {

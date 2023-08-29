@@ -16,6 +16,8 @@ const {
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/roles.rest');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const _ = require('lodash');
+const { validatePermissionName } = require('../validations/exists');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -43,6 +45,11 @@ module.exports = {
     },
     addPermissionMany: {
       handler(ctx) {
+        if (ctx.callerPlugin !== 'users') {
+          _.forEach(ctx.params.permissions, (permission) => {
+            validatePermissionName(permission.permissionName, ctx.callerPlugin);
+          });
+        }
         return addPermissionMany({ ...ctx.params, ctx });
       },
     },

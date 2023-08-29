@@ -23,7 +23,7 @@ import {
   AcademicProgramSetup,
   AcademicProgramSetupBasicData,
   AcademicProgramSetupCourses,
-  AcademicProgramSetupSubjects
+  AcademicProgramSetupSubjects,
 } from '@academic-portfolio/components/ProgramSetup';
 import { unflatten, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -162,7 +162,7 @@ export default function ProgramList() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins['academic-portfolio'].programs_page.setup;
+      const data = res['academic-portfolio'].programs_page.setup;
       setSetupLabels(data);
     }
   }, [translations]);

@@ -155,7 +155,7 @@ module.exports = {
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const role = await groupsService.updateWithRole(ctx, ...ctx.params);
+        const role = await groupsService.updateWithRole({ ...ctx.params, ctx });
         return { status: 200, role };
       }
       throw validator.error;

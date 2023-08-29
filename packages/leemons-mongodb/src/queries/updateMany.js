@@ -21,7 +21,7 @@ function updateMany({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (_conditions, _update, options) {
+  return async function (_conditions = {}, _update = {}, options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,

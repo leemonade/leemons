@@ -166,9 +166,8 @@ module.exports = {
           'POST academic-portfolio/program': 'v1.academic-portfolio.programs.postProgramRest',
           'GET academic-portfolio/program': 'v1.academic-portfolio.programs.listProgramRest',
           'GET academic-portfolio/program/:id/tree':
-            'v1.academic-portfolio.programs.haveProgramsRest',
-          'GET academic-portfolio/program/have':
             'v1.academic-portfolio.programs.getProgramTreeRest',
+          'GET academic-portfolio/program/have': 'v1.academic-portfolio.programs.haveProgramsRest',
           'POST academic-portfolio/program/:id/duplicate':
             'v1.academic-portfolio.programs.duplicateProgramRest',
           'GET academic-portfolio/program/:id': 'v1.academic-portfolio.programs.detailProgramRest',

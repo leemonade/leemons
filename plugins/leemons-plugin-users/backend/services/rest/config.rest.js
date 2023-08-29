@@ -46,7 +46,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const config = await saveSystemDataFieldsConfig({ ctx, ...ctx.request.body });
+      const config = await saveSystemDataFieldsConfig({ ctx, ...ctx.params });
       return { status: 200, config };
     },
   },
