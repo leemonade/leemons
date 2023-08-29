@@ -12,7 +12,6 @@ import {
   ContextContainer,
   Divider,
   Grid,
-  ImageLoader,
   InputWrapper,
   LoadingOverlay,
   MultiSelect,
@@ -21,6 +20,7 @@ import {
   TextClamp,
   TextInput,
   Textarea,
+  BulletSubject,
 } from '@bubbles-ui/components';
 import { AddCircleIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditorListBulletsIcon, PluginKanbanIcon } from '@bubbles-ui/icons/solid';
@@ -181,20 +181,14 @@ export default function Task({ event, form, classes, disabled, allProps }) {
               <Box className={classes.divider}>
                 <Divider />
               </Box>
-
               <InputWrapper label={t('classe')}>
                 <Box className={classes.subject}>
-                  <Box
-                    className={classes.subjectIcon}
-                    style={{ backgroundColor: store.subjectData.color }}
-                  >
-                    <ImageLoader
-                      forceImage
-                      height={12}
-                      imageStyles={{ width: 12 }}
-                      src={store.subjectData.icon}
-                    />
-                  </Box>
+                  <BulletSubject
+                    color={store.subjectData.color}
+                    icon={store.subjectData.icon}
+                    size={'sm'}
+                    altText={store.subjectData.name}
+                  />
                   <TextClamp lines={1}>
                     <Text color="primary" role="productive" size="xs">
                       {store.subjectData.name}

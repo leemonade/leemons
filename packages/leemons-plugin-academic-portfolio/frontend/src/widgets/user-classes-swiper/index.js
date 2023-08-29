@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import {
   Box,
   createStyles,
-  ImageLoader,
   Loader,
   Stack,
   Swiper,
   Text,
   TextClamp,
+  BulletSubject,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
@@ -154,6 +154,7 @@ function UserClassesSwiperWidget({ program }) {
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
+          const iconSubject = getClassIcon(classe);
           return (
             <Box
               key={classe.id}
@@ -171,24 +172,14 @@ function UserClassesSwiperWidget({ program }) {
                 <Box className={styles.imageContainer}>
                   <Box className={styles.image} style={imageStyle} />
                   {classe.color || classe.icon ? (
-                    <Box
-                      style={classe.color ? { backgroundColor: classe.color } : {}}
-                      className={styles.colorIcon}
-                    >
-                      {getClassIcon(classe) ? (
-                        <Box className={styles.icon}>
-                          <ImageLoader
-                            height="12px"
-                            width="12px"
-                            imageStyles={{
-                              width: 12,
-                              position: 'absolute',
-                              left: '50%',
-                              top: '50%',
-                              transform: 'translate(-50%, -50%)',
-                            }}
-                            src={getClassIcon(classe)}
-                            forceImage
+                    <Box className={styles.colorIcon}>
+                      {iconSubject ? (
+                        <Box>
+                          <BulletSubject
+                            color={classe.color}
+                            icon={iconSubject}
+                            size={'sm'}
+                            altText={name}
                           />
                         </Box>
                       ) : null}

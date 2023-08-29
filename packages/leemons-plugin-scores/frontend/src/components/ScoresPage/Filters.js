@@ -4,11 +4,11 @@ import {
   Box,
   createStyles,
   DatePicker,
-  ImageLoader,
   Select,
   Text,
   TextClamp,
   Title,
+  BulletSubject,
 } from '@bubbles-ui/components';
 import { unflatten, useCache } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -30,31 +30,12 @@ function ClassItem({ class: klass, dropdown = false, ...props }) {
           alignItems: 'center',
         })}
       >
-        <Box
-          sx={() => ({
-            position: dropdown ? 'static' : 'absolute',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 26,
-            minHeight: 26,
-            maxWidth: 26,
-            maxHeight: 26,
-            borderRadius: '50%',
-            backgroundColor: klass?.color,
-          })}
-        >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={getClassIcon(klass)}
-          />
-        </Box>
+        <BulletSubject
+          color={klass?.color}
+          icon={getClassIcon(klass)}
+          size={'lg'}
+          altText={klass?.subject.name}
+        />
         <Box
           sx={(theme) => ({
             marginLeft: dropdown ? 0 : 26 + theme.spacing[2],
