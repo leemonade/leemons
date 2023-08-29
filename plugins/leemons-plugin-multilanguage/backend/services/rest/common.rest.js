@@ -96,8 +96,7 @@ async function get({ ctx }) {
   if (keys) {
     localizations.push(
       getManyWithLocale({
-        //! TODO USANDO EL FRONTEND VIEJO QUITAMOS PLUGINS. UNA VEZ MIGRADO SE PUEDE QUITAR EL REPLACE
-        keys: _.map(keys, (key) => key.replace('plugins.', '').replace('providers.', '')),
+        keys,
         locale,
         isPrivate: false,
         ctx,
@@ -108,9 +107,8 @@ async function get({ ctx }) {
   if (keysStartsWith) {
     localizations.push(
       ...keysStartsWith.map((key) =>
-        //! TODO USANDO EL FRONTEND VIEJO QUITAMOS PLUGINS. UNA VEZ MIGRADO SE PUEDE QUITAR EL REPLACE
         getKeyStartsWith({
-          key: key.replace('plugins.', '').replace('providers.', ''),
+          key,
           locale,
           isPrivate: false,
           ctx,
@@ -128,14 +126,6 @@ async function get({ ctx }) {
       .filter((localization) => localization.status === 'fulfilled')
       .map((localization) => localization.value)
   );
-
-  //! TODO BORRAR ESTO CUANDO SOBRE LO DE PLUGINS. EN EL FRONTEND
-  _.forIn(resolvedLocalizations, (value, key) => {
-    resolvedLocalizations[`plugins.${key}`] = value;
-    resolvedLocalizations[`providers.${key}`] = value;
-    delete resolvedLocalizations[key];
-  });
-  //! -----
 
   await ctx.cache.set(cacheKey, resolvedLocalizations, 60 * 30); // 30 minutos
 

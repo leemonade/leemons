@@ -34,9 +34,9 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.users:pluginDidLoadServices',
-        'plugins.admin:pluginDidLoadServices',
-        'plugins.multilanguage:pluginDidLoadServices',
+        'users:pluginDidLoadServices',
+        'admin:pluginDidLoadServices',
+        'multilanguage:pluginDidLoadServices',
       ],
       async () => {
         leemons.log.debug(chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`);
@@ -54,8 +54,8 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.emails:pluginDidLoadServices',
-        'plugins.leebrary:pluginDidLoadServices',
+        'emails:pluginDidLoadServices',
+        'leebrary:pluginDidLoadServices',
         'providers.emails-aws-ses:providerDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
       ],
@@ -72,23 +72,23 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.users:init-permissions',
-        'plugins.dataset:init-permissions',
-        'plugins.calendar:init-permissions',
-        'plugins.calendar:init-event-types',
-        'plugins.academic-portfolio:init-permissions',
-        'plugins.leebrary:init-permissions',
-        'plugins.grades:init-permissions',
-        'plugins.tasks:init-permissions',
-        'plugins.tests:init-permissions',
-        'plugins.assignables:init-permissions',
-        'plugins.scores:init-permissions',
-        'plugins.academic-calendar:init-permissions',
-        'plugins.content-creator:init-permissions',
-        'plugins.comunica:init-permissions',
-        'plugins.leebrary:pluginDidLoadServices',
-        'plugins.admin:pluginDidLoadServices',
-        'plugins.bulk-template:init-providers',
+        'users:init-permissions',
+        'dataset:init-permissions',
+        'calendar:init-permissions',
+        'calendar:init-event-types',
+        'academic-portfolio:init-permissions',
+        'leebrary:init-permissions',
+        'grades:init-permissions',
+        'tasks:init-permissions',
+        'tests:init-permissions',
+        'assignables:init-permissions',
+        'scores:init-permissions',
+        'academic-calendar:init-permissions',
+        'content-creator:init-permissions',
+        'comunica:init-permissions',
+        'leebrary:pluginDidLoadServices',
+        'admin:pluginDidLoadServices',
+        'bulk-template:init-providers',
       ],
       async () => {
         try {
@@ -121,11 +121,7 @@ async function events(isInstalled) {
     // FAMILIES
 
     leemons.events.once(
-      [
-        'plugins.families:pluginDidLoadServices',
-        'plugins.bulk-template:init-profiles',
-        'plugins.bulk-template:init-users',
-      ],
+      ['families:pluginDidLoadServices', 'bulk-template:init-profiles', 'bulk-template:init-users'],
       async () => {
         // await initFamilies(docPath, config.profiles, config.users);
       }
@@ -136,10 +132,10 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.leebrary:pluginDidLoadServices',
+        'leebrary:pluginDidLoadServices',
         'providers.leebrary-aws-s3:providerDidLoadServices',
-        'plugins.bulk-template:init-profiles',
-        'plugins.bulk-template:init-users',
+        'bulk-template:init-profiles',
+        'bulk-template:init-users',
       ],
       async () => {
         leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
@@ -150,7 +146,7 @@ async function events(isInstalled) {
     );
 
     leemons.events.once(
-      ['plugins.bulk-template:init-academic-portfolio', 'plugins.bulk-template:init-leebrary'],
+      ['bulk-template:init-academic-portfolio', 'bulk-template:init-leebrary'],
       async () => {
         leemons.log.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
         await updateLibrary(docPath, config);
@@ -163,12 +159,12 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.academic-portfolio:pluginDidLoadServices',
-        'plugins.bulk-template:init-profiles',
-        'plugins.bulk-template:init-centers',
-        'plugins.bulk-template:init-users',
-        'plugins.bulk-template:init-grades',
-        'plugins.bulk-template:init-leebrary',
+        'academic-portfolio:pluginDidLoadServices',
+        'bulk-template:init-profiles',
+        'bulk-template:init-centers',
+        'bulk-template:init-users',
+        'bulk-template:init-grades',
+        'bulk-template:init-leebrary',
       ],
       async () => {
         try {
@@ -186,7 +182,7 @@ async function events(isInstalled) {
     // CALENDAR & KANBAN
 
     leemons.events.once(
-      ['plugins.calendar:pluginDidLoadServices', 'plugins.bulk-template:init-academic-portfolio'],
+      ['calendar:pluginDidLoadServices', 'bulk-template:init-academic-portfolio'],
       async () => {
         try {
           leemons.log.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
@@ -204,10 +200,10 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.tests:pluginDidLoadServices',
-        'plugins.assignables:init-plugin',
-        'plugins.bulk-template:init-academic-portfolio',
-        'plugins.bulk-template:init-leebrary',
+        'tests:pluginDidLoadServices',
+        'assignables:init-plugin',
+        'bulk-template:init-academic-portfolio',
+        'bulk-template:init-leebrary',
       ],
       async () => {
         try {
@@ -226,11 +222,11 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.tasks:pluginDidLoadServices',
-        'plugins.assignables:init-plugin',
-        'plugins.bulk-template:init-academic-portfolio',
-        'plugins.bulk-template:init-leebrary',
-        'plugins.bulk-template:init-tests',
+        'tasks:pluginDidLoadServices',
+        'assignables:init-plugin',
+        'bulk-template:init-academic-portfolio',
+        'bulk-template:init-leebrary',
+        'bulk-template:init-tests',
       ],
       async () => {
         try {
@@ -249,10 +245,10 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.dashboard:init-widget-zones',
-        'plugins.academic-portfolio:init-widget-items',
-        'plugins.calendar:init-widget-items',
-        'plugins.bulk-template:init-academic-portfolio',
+        'dashboard:init-widget-zones',
+        'academic-portfolio:init-widget-items',
+        'calendar:init-widget-items',
+        'bulk-template:init-academic-portfolio',
       ],
       async () => {
         try {
@@ -270,19 +266,19 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.bulk-template:init-locales',
-        'plugins.bulk-template:init-platform',
-        'plugins.bulk-template:init-providers',
-        'plugins.bulk-template:init-centers',
-        'plugins.bulk-template:init-profiles',
-        'plugins.bulk-template:init-users',
-        'plugins.bulk-template:init-grades',
-        'plugins.bulk-template:init-academic-portfolio',
-        'plugins.bulk-template:init-leebrary',
-        'plugins.bulk-template:init-tests',
-        'plugins.bulk-template:init-tasks',
-        'plugins.bulk-template:init-calendar',
-        'plugins.bulk-template:init-widgets',
+        'bulk-template:init-locales',
+        'bulk-template:init-platform',
+        'bulk-template:init-providers',
+        'bulk-template:init-centers',
+        'bulk-template:init-profiles',
+        'bulk-template:init-users',
+        'bulk-template:init-grades',
+        'bulk-template:init-academic-portfolio',
+        'bulk-template:init-leebrary',
+        'bulk-template:init-tests',
+        'bulk-template:init-tasks',
+        'bulk-template:init-calendar',
+        'bulk-template:init-widgets',
       ],
       () => {
         leemons.log.info(chalk`{cyan.bold BULK DONE} Template loaded`);

@@ -70,7 +70,7 @@ module.exports = {
     addEvent: {
       handler(ctx) {
         const keys = _.isArray(ctx.params.key) ? ctx.params.key : [ctx.params.key];
-        // Check if keys start with 'plugins.assignables'
+        // Check if keys start with 'assignables'
         _.forEach(keys, (k) => {
           if (
             !ctx.callerPlugin.startsWith('assignables') &&

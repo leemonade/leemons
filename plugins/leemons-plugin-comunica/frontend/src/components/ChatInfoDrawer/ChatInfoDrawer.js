@@ -299,7 +299,7 @@ function ChatInfoDrawer({
             <Switch checked={!!store.attached} onChange={toggleAttached} label={t('setRoom')} />
             <Switch checked={!!store.muted} onChange={toggleMute} label={t('muteRoom')} />
             {store.programConfig?.teachersCanDisableSubjectsRooms &&
-            room?.type === 'plugins.academic-portfolio.class' &&
+            room?.type === 'academic-portfolio.class' &&
             room?.isAdmin ? (
               <Switch
                 checked={!!store.adminDisableMessages}

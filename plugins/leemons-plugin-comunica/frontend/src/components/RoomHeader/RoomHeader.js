@@ -10,13 +10,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { RoomHeaderStyles } from './RoomHeader.styles';
 
-const noNUsersTypes = [
-  'plugins.assignables.assignation',
-  'plugins.assignables.assignation.subject',
-  'chat',
-];
+const noNUsersTypes = ['assignables.assignation', 'assignables.assignation.subject', 'chat'];
 
-const showViewTypes = ['plugins.assignables.assignation', 'plugins.assignables.assignation.user'];
+const showViewTypes = ['assignables.assignation', 'assignables.assignation.user'];
 
 function RoomHeader({ room, t, onImageChange }) {
   const { classes } = RoomHeaderStyles({ type: room.type }, { name: 'RoomHeader' });
@@ -26,10 +22,10 @@ function RoomHeader({ room, t, onImageChange }) {
   const subNameIcon = React.useMemo(() => {
     if (
       [
-        'plugins.assignables.assignation.subject',
-        'plugins.assignables.assignation.user',
-        'plugins.assignables.assignation.group',
-        'plugins.assignables.assignation',
+        'assignables.assignation.subject',
+        'assignables.assignation.user',
+        'assignables.assignation.group',
+        'assignables.assignation',
       ].includes(room.type)
     ) {
       if (room.subName === 'multisubjects') {
@@ -46,7 +42,7 @@ function RoomHeader({ room, t, onImageChange }) {
       }
 
       const isTeacher = isTeacherByRoom(room);
-      if (isTeacher && room.type === 'plugins.assignables.assignation.user') {
+      if (isTeacher && room.type === 'assignables.assignation.user') {
         const student = _.find(
           _.map(room.userAgents, 'userAgent'),
           (userAgent) => userAgent?.profile?.sysName === 'student'

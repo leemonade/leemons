@@ -103,7 +103,7 @@ function ContextButton({ onShowDrawerChange }) {
     }
     store.parentRooms = _.filter(store.parentRooms, (room) => {
       if (
-        room.type === 'plugins.academic-portfolio.class' &&
+        room.type === 'academic-portfolio.class' &&
         !store.programConfig[room.program]?.enableSubjectsRoom
       ) {
         return false;

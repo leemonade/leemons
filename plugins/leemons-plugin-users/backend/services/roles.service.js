@@ -15,12 +15,16 @@ const {
 } = require('../core/roles');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/roles.rest');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const _ = require('lodash');
+const { validatePermissionName } = require('../validations/exists');
 
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.roles',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
@@ -41,6 +45,11 @@ module.exports = {
     },
     addPermissionMany: {
       handler(ctx) {
+        if (ctx.callerPlugin !== 'users') {
+          _.forEach(ctx.params.permissions, (permission) => {
+            validatePermissionName(permission.permissionName, ctx.callerPlugin);
+          });
+        }
         return addPermissionMany({ ...ctx.params, ctx });
       },
     },

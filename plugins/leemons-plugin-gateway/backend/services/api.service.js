@@ -155,6 +155,10 @@ module.exports = {
           // -- Widgets (Finish) --
           'GET widgets/zone/:key': 'v1.widgets.widgets.getZoneRest',
 
+          // -- Dashboard (Finish) --
+          'GET dashboard/admin/realtime': 'v1.dashboard.admin.adminRealtimeRest',
+          'GET dashboard/admin': 'v1.dashboard.admin.adminRest',
+
           // -- Academic portfolio (Finish) --
           'GET academic-portfolio/user/programs':
             'v1.academic-portfolio.programs.getUserProgramsRest',
@@ -162,9 +166,8 @@ module.exports = {
           'POST academic-portfolio/program': 'v1.academic-portfolio.programs.postProgramRest',
           'GET academic-portfolio/program': 'v1.academic-portfolio.programs.listProgramRest',
           'GET academic-portfolio/program/:id/tree':
-            'v1.academic-portfolio.programs.haveProgramsRest',
-          'GET academic-portfolio/program/have':
             'v1.academic-portfolio.programs.getProgramTreeRest',
+          'GET academic-portfolio/program/have': 'v1.academic-portfolio.programs.haveProgramsRest',
           'POST academic-portfolio/program/:id/duplicate':
             'v1.academic-portfolio.programs.duplicateProgramRest',
           'GET academic-portfolio/program/:id': 'v1.academic-portfolio.programs.detailProgramRest',

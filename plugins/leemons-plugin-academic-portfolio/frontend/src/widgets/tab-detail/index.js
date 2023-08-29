@@ -6,7 +6,7 @@ import { ZoneWidgets } from '@widgets';
 
 function TabDetailWidget(props) {
   return (
-    <ZoneWidgets zone="plugins.academic-portfolio.class.detail">
+    <ZoneWidgets zone="academic-portfolio.class.detail">
       {({ Component, key, properties }) => (
         <Box
           key={key}

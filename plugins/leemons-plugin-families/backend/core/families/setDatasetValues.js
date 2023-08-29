@@ -12,7 +12,7 @@ const _ = require('lodash');
  * */
 async function setDatasetValues(family, userSession, values, { transacting } = {}) {
   const locationName = 'families-data';
-  const pluginName = 'plugins.families';
+  const pluginName = 'families';
   const dataset = leemons.getPlugin('dataset').services.dataset;
   let functionName = 'addValues';
   if (await dataset.existValues(locationName, pluginName, { target: family, transacting })) {

@@ -18,8 +18,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -36,13 +38,15 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
     async handler(ctx) {
-      const config = await saveSystemDataFieldsConfig({ ctx, ...ctx.request.body });
+      const config = await saveSystemDataFieldsConfig({ ctx, ...ctx.params });
       return { status: 200, config };
     },
   },

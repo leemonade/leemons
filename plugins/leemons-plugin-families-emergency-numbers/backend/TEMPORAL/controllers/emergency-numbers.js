@@ -5,7 +5,7 @@ async function getDatasetForm(ctx) {
     .getPlugin('dataset')
     .services.dataset.getSchemaWithLocale(
       `families-emergency-numbers-data`,
-      'plugins.families-emergency-numbers',
+      'families-emergency-numbers',
       ctx.state.userSession.locale,
       { userSession: ctx.state.userSession }
     );

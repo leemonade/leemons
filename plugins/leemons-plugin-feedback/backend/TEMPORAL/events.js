@@ -14,29 +14,26 @@ async function initMenuBuilder() {
 }
 
 async function events(isInstalled) {
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+  leemons.events.once('multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
 
-  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+  leemons.events.on('multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
 
-  leemons.events.once(
-    ['plugins.menu-builder:init-main-menu', 'plugins.feedback:init-permissions'],
-    async () => {
-      await initMenuBuilder();
-    }
-  );
+  leemons.events.once(['menu-builder:init-main-menu', 'feedback:init-permissions'], async () => {
+    await initMenuBuilder();
+  });
 
   if (!isInstalled) {
-    leemons.events.once('plugins.users:init-permissions', async () => {
+    leemons.events.once('users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
     });
 
-    leemons.events.once('plugins.assignables:init-plugin', async () => {
+    leemons.events.once('assignables:init-plugin', async () => {
       const assignablesPlugin = leemons.getPlugin('assignables');
       await Promise.allSettled(
         _.map(assignableRoles, (role) =>
@@ -45,7 +42,7 @@ async function events(isInstalled) {
       );
     });
   } else {
-    leemons.events.once('plugins.feedback:pluginDidInit', async () => {
+    leemons.events.once('feedback:pluginDidInit', async () => {
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-menu');
       leemons.events.emit('init-submenu');

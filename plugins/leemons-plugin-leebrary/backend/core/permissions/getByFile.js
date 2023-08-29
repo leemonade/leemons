@@ -28,7 +28,7 @@ async function getByFile(fileId, { userSession, transacting } = {}) {
 
     const permission = find(
       permissions,
-      (item) => fileId === last(item.permissionName.split('.')) // 'plugins.leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
+      (item) => fileId === last(item.permissionName.split('.')) // 'leebrary.23ee5f1b-9e71-4a39-9ddf-db472c7cdefd',
     );
 
     const role = permission?.actionNames[0];

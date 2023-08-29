@@ -59,7 +59,7 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
     const calendarIds = map(store.calendarFilters, 'value');
     if (program) {
       const programCalendar = find(store.centerData.calendars, {
-        key: `plugins.calendar.program.${program.id}`,
+        key: `calendar.program.${program.id}`,
       });
       if (programCalendar) {
         calendarIds.push(programCalendar.id);
@@ -74,7 +74,7 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
 
       if (canShowInCalendar) {
         // console.log(event, calendarIds, calendarIds.includes(event.calendar), store.selectedCalendar);
-        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
+        if (event.type === 'calendar.task' && event.data && event.data.classes) {
           // eslint-disable-next-line consistent-return
           forEach(event.data.classes, (calendar) => {
             if (

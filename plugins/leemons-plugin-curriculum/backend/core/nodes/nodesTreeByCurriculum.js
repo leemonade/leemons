@@ -9,7 +9,7 @@ async function getNodeValues(node, userSession, { transacting } = {}) {
         .getPlugin('dataset')
         .services.dataset.getValues(
           `node-level-${node.nodeLevel}`,
-          'plugins.curriculum',
+          'curriculum',
           userSession?.userAgents,
           { target: node.id, transacting }
         ),

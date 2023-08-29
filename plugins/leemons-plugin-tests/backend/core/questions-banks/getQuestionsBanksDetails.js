@@ -33,7 +33,7 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
   if (questionsBanks.length) {
     promises.push(
       tagsService.getValuesTags(_.map(questionsBanks, 'id'), {
-        type: 'plugins.tests.questionBanks',
+        type: 'tests.questionBanks',
         transacting,
       })
     );

@@ -48,11 +48,9 @@ async function sendMessage(key, _userAgent, _message, { transacting: _transactin
 
       const userAgentsWithPermissions = await leemons
         .getPlugin('users')
-        .services.permissions.getUserAgentsWithPermissionsForItem(
-          key,
-          'plugins.comunica.room.view',
-          { transacting }
-        );
+        .services.permissions.getUserAgentsWithPermissionsForItem(key, 'comunica.room.view', {
+          transacting,
+        });
 
       const userAgentIds = _.uniq(
         _.map(userAgentsInRoom, 'userAgent').concat(userAgentsWithPermissions)

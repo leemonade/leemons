@@ -18,7 +18,7 @@ async function canViewFamily(familyId, userSession, { transacting } = {}) {
     .services.permissions.getUserAgentPermissions(userSession.userAgents, {
       transacting,
       query: {
-        permissionName: 'plugins.families.families',
+        permissionName: 'families.families',
         actionName_$in: ['view', 'admin'],
       },
     });

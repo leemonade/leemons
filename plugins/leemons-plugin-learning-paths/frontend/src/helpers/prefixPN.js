@@ -1,3 +1,3 @@
 export default function prefixPN(str) {
-  return `plugins.learning-paths.${str}`;
+  return `learning-paths.${str}`;
 }

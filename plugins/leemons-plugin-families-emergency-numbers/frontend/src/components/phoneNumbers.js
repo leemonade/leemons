@@ -21,7 +21,7 @@ function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () =
 
   const [loading, setLoading] = useState(true);
   const [_permissions, setPermissions] = useState([]);
-  const [tRelations] = useTranslateLoader('plugins.families.detail_page.relations');
+  const [tRelations] = useTranslateLoader('families.detail_page.relations');
   const [t] = useTranslateLoader(prefixPN('phone_numbers'));
   const [phones, setPhones] = useState(phoneNumbers || []);
   const [item, setItem] = useState(null);

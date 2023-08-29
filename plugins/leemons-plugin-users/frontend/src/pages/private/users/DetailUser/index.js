@@ -111,8 +111,8 @@ function DetailUser({
   async function getPermissions() {
     const [{ permissions: userPermissions }, { permissions: enadisPermissions }] =
       await Promise.all([
-        getPermissionsWithActionsIfIHaveRequest(['plugins.users.users']),
-        getPermissionsWithActionsIfIHaveRequest(['plugins.users.enabledisable']),
+        getPermissionsWithActionsIfIHaveRequest(['users.users']),
+        getPermissionsWithActionsIfIHaveRequest(['users.enabledisable']),
       ]);
     if (userPermissions[0]) {
       store.canUpdate =
@@ -407,7 +407,7 @@ function DetailUser({
             {isDrawer ? (
               <>
                 <ContextContainer>
-                  <ZoneWidgets zone="plugins.users.user-detail">
+                  <ZoneWidgets zone="users.user-detail">
                     {({ Component, key }) => (
                       <Box key={key}>
                         <Component
@@ -425,7 +425,7 @@ function DetailUser({
           </ContextContainer>
           {isDrawer ? null : (
             <ContextContainer>
-              <ZoneWidgets zone="plugins.users.user-detail">
+              <ZoneWidgets zone="users.user-detail">
                 {({ Component, key }) => (
                   <Box key={key}>
                     <Component

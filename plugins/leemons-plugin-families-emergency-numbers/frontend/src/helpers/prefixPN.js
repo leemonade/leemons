@@ -11,5 +11,5 @@
  * @return {string} str with plugin name prefix
  * */
 export default function prefixPN(str) {
-  return `plugins.families-emergency-numbers.${str}`;
+  return `families-emergency-numbers.${str}`;
 }

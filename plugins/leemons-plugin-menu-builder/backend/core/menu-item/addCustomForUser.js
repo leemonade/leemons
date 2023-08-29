@@ -5,7 +5,7 @@ const {
   validateNotExistMenuItem,
 } = require('../../validations/exists');
 
-// plugins.menu-builder.plugins.menu-builder.main.plugins.menu-builder.user:a3578518-b547-4059-8afb-3d715a623b6d.user-list-22.8jrwn3fd8me1ulvna75wgjws2xj0c9a6n.label
+// menu-builder.menu-builder.main.menu-builder.user:a3578518-b547-4059-8afb-3d715a623b6d.user-list-22.8jrwn3fd8me1ulvna75wgjws2xj0c9a6n.label
 
 /**
  * Create a Menu Item

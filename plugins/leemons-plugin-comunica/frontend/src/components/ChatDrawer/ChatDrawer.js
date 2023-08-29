@@ -215,10 +215,7 @@ function ChatDrawer({
       if (store.room?.program === data.program) {
         store.programConfig = data.config;
       }
-      if (
-        store.room?.type === 'plugins.academic-portfolio.class' &&
-        store.room?.program === data.program
-      ) {
+      if (store.room?.type === 'academic-portfolio.class' && store.room?.program === data.program) {
         if (!data.config.enableSubjectsRoom) {
           returnOrClose();
         }
@@ -299,7 +296,7 @@ function ChatDrawer({
   let canWrite = !store.room?.adminMuted;
   if (
     canWrite &&
-    store.room?.type === 'plugins.academic-portfolio.class' &&
+    store.room?.type === 'academic-portfolio.class' &&
     store.programConfig?.onlyTeachersCanWriteInSubjectsRooms
   ) {
     canWrite = isTeacherByRoom(store.room);

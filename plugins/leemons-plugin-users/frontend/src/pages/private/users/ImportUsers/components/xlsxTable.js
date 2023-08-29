@@ -125,7 +125,7 @@ export function XlsxTable({
   onSave = () => {},
 }) {
   const [store, render] = useStore();
-  const [tForm, tFormTrans] = useTranslateLoader('plugins.multilanguage.formWithTheme');
+  const [tForm, tFormTrans] = useTranslateLoader('multilanguage.formWithTheme');
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
   const callback = useDebouncedCallback(100);

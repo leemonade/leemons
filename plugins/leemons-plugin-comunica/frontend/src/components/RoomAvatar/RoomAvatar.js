@@ -10,10 +10,10 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
   const { classes } = RoomAvatarStyles(
     {
       imageSquare: [
-        isHeader ? 'plugins.assignables.assignation.user' : null,
-        isHeader ? 'plugins.assignables.assignation.group' : null,
-        isHeader ? 'plugins.assignables.assignation.subject' : null,
-        'plugins.assignables.assignation',
+        isHeader ? 'assignables.assignation.user' : null,
+        isHeader ? 'assignables.assignation.group' : null,
+        isHeader ? 'assignables.assignation.subject' : null,
+        'assignables.assignation',
       ].includes(room.type),
       size,
     },

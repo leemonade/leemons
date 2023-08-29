@@ -78,7 +78,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   if (tests.length) {
     promises.push(
       tagsService.getValuesTags(_.map(tests, 'id'), {
-        type: 'plugins.tests.tests',
+        type: 'tests.tests',
         transacting,
       })
     );
@@ -89,7 +89,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   if (questions.length) {
     promises.push(
       tagsService.getValuesTags(_.map(questions, 'id'), {
-        type: 'plugins.tests.questions',
+        type: 'tests.questions',
         transacting,
       })
     );

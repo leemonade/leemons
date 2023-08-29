@@ -13,23 +13,20 @@ async function initMenuBuilder() {
 }
 
 async function events(isInstalled) {
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+  leemons.events.once('multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
 
-  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+  leemons.events.on('multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
 
   if (!isInstalled) {
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', 'plugins.comunica:init-permissions'],
-      async () => {
-        await initMenuBuilder();
-      }
-    );
+    leemons.events.once(['menu-builder:init-main-menu', 'comunica:init-permissions'], async () => {
+      await initMenuBuilder();
+    });
 
-    leemons.events.once('plugins.users:init-permissions', async () => {
+    leemons.events.once('users:init-permissions', async () => {
       const usersPlugin = leemons.getPlugin('users');
       await usersPlugin.services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');

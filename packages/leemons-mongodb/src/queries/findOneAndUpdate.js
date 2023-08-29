@@ -21,7 +21,7 @@ function findOneAndUpdate({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (_conditions, _update, _options) {
+  return async function (_conditions = {}, _update, _options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,

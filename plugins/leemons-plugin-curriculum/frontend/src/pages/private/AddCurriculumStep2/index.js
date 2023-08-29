@@ -277,7 +277,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   async function onSaveBlock(data) {
     const toSave = {
       locationName: `node-level-${store.activeNodeLevel.id}`,
-      pluginName: 'plugins.curriculum',
+      pluginName: 'curriculum',
       schemaConfig: {
         schema: {
           frontConfig: {
@@ -412,7 +412,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
             render();
             await removeDatasetFieldRequest(
               `node-level-${store.activeNodeLevel.id}`,
-              'plugins.curriculum',
+              'curriculum',
               e.id
             );
             await load(true);

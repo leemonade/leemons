@@ -38,7 +38,7 @@ export default function List() {
 
   async function getPermissions() {
     const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      'plugins.content-creator.creator',
+      'content-creator.creator',
     ]);
     if (permissions[0]) {
       store.canAdd =

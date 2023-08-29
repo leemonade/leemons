@@ -38,7 +38,7 @@ function RoomInstanceView({ room, t }) {
     store.url = null;
     if (data?.length) {
       const response = data[0];
-      if (room.type === 'plugins.assignables.assignation.user') {
+      if (room.type === 'assignables.assignation.user') {
         if (isTeacher) {
           const student = getChatUserAgent(room.userAgents);
           if (student) {
