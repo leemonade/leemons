@@ -53,21 +53,21 @@ function onScoresDownload(extension) {
   const onClearTimer = () => {
     clearTimeout(timer);
 
-    removeAction('plugins.scores::downloaded-intercepted', onClearTimer);
+    removeAction('scores::downloaded-intercepted', onClearTimer);
   };
 
   const onError = ({ args: [e] }) => {
     addErrorAlert(`Error downloading scores report ${e.message}`);
 
-    removeAction('plugins.scores::download-scores-error', onError);
+    removeAction('scores::download-scores-error', onError);
   };
 
-  addAction('plugins.scores::downloaded-intercepted', onClearTimer);
-  addAction('plugins.scores::download-scores-error', onError);
+  addAction('scores::downloaded-intercepted', onClearTimer);
+  addAction('scores::download-scores-error', onError);
 
-  fireEvent('plugins.scores::download-scores', extension);
+  fireEvent('scores::download-scores', extension);
   timer = setTimeout(() => {
-    fireEvent('plugins.scores::download-scores-error', new Error('timeout'));
+    fireEvent('scores::download-scores-error', new Error('timeout'));
   }, 1000);
 }
 

@@ -11,5 +11,5 @@
  * @return {string} str with plugin name prefix
  * */
 export default function prefixPN(str) {
-  return `plugins.academic-calendar.${str}`;
+  return `academic-calendar.${str}`;
 }

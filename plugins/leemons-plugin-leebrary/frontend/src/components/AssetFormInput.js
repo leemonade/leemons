@@ -40,7 +40,7 @@ const AssetFormInput = ({
   const formLabels = React.useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.assetSetup.basicData;
+      const data = items.leebrary.assetSetup.basicData;
       data.labels.title = data.header.titleNew;
       return {
         ...data,

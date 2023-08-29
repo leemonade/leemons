@@ -135,14 +135,9 @@ async function saveQuestionsBanks(_data, { userSession, transacting: _transactin
       }
 
       // -- Tags --
-      await tagsService.setTagsToValues(
-        `plugins.tests.questionBanks`,
-        tags || [],
-        questionBank.id,
-        {
-          transacting,
-        }
-      );
+      await tagsService.setTagsToValues(`tests.questionBanks`, tags || [], questionBank.id, {
+        transacting,
+      });
 
       const [currentCategories, currentQuestions] = await Promise.all([
         table.questionBankCategories.find(

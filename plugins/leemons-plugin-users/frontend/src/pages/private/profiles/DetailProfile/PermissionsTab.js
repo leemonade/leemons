@@ -129,7 +129,7 @@ export const PermissionsTab = ({
     setSelectPermissions(
       map(perms, ({ pluginName }) => ({
         pluginName,
-        name: pluginName.split('.')[1],
+        name: pluginName,
       }))
     );
   }
@@ -164,6 +164,7 @@ export const PermissionsTab = ({
 
   const initDataLoad = useCallback(async () => {
     const permissionsResponse = await listPermissionsRequest();
+    console.log('permissionsResponse', permissionsResponse);
     const permissionsTranslate = await getLocalizationsByArrayOfItems(
       permissionsResponse.permissions,
       (permission) => getTranslationKeyPermissions(permission.permissionName, 'name')

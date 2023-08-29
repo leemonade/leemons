@@ -37,7 +37,7 @@ import { SelectProfile } from '../../../../components/SelectProfile';
 import { listUsersRequest } from '../../../../request';
 
 function ListUsers() {
-  const [t] = useTranslateLoader(prefixPN('list_users'));
+  const [t, trans] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -216,8 +216,8 @@ function ListUsers() {
 
   async function getPermissions() {
     const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
+      getPermissionsWithActionsIfIHaveRequest('users.users'),
+      getPermissionsWithActionsIfIHaveRequest('users.import'),
     ]);
     if (addPermission) {
       store.canAdd =

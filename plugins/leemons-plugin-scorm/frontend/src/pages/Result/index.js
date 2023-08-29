@@ -377,7 +377,7 @@ export default function Result() {
             onMessagesMarkAsRead={() => {
               setRoom((r) => ({ ...r, unreadMessages: 0 }));
             }}
-            room={`plugins.assignables.subject|${instance?.subjects?.[0]?.subject}.assignation|${assignation.id}.userAgent|${user}`}
+            room={`assignables.subject|${instance?.subjects?.[0]?.subject}.assignation|${assignation.id}.userAgent|${user}`}
           />
         </>
       )}

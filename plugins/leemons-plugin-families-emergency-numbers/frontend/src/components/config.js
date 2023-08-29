@@ -38,10 +38,7 @@ function Config() {
 
   const load = useMemo(
     () => () =>
-      getDatasetSchemaRequest(
-        `families-emergency-numbers-data`,
-        'plugins.families-emergency-numbers'
-      ),
+      getDatasetSchemaRequest(`families-emergency-numbers-data`, 'families-emergency-numbers'),
     []
   );
 
@@ -195,7 +192,7 @@ function Config() {
               try {
                 await removeDatasetFieldRequest(
                   `families-emergency-numbers-data`,
-                  'plugins.families-emergency-numbers',
+                  'families-emergency-numbers',
                   itemToRemove.id
                 );
                 addSuccessAlert(t('dataset_tab.deleted_done'));
@@ -232,7 +229,7 @@ function Config() {
 
               <DatasetItemDrawer
                 locationName={`families-emergency-numbers-data`}
-                pluginName="plugins.families-emergency-numbers"
+                pluginName="families-emergency-numbers"
                 item={item}
                 onSave={onSave}
               />

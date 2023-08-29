@@ -62,7 +62,7 @@ async function autoInit(broker) {
   );
   console.log('- Auto init - Post SavePlugins');
   console.log('- Auto init - Pre SavePluginsRelationships');
-  // We simulate that the store adds the permissions between the actions of the plugins.
+  // We simulate that the store adds the permissions between the actions of the
   await broker.call('deployment-manager.savePluginsRelationships', relationship, {
     meta: { deploymentID },
   });

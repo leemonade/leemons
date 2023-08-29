@@ -39,8 +39,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.profiles': {
-          actions: ['admin', 'create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.profiles': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -57,8 +59,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.profiles': {
-          actions: ['admin', 'view'],
+        allowedPermissions: {
+          'academic-portfolio.profiles': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -75,8 +79,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.portfolio': {
-          actions: ['admin', 'view'],
+        allowedPermissions: {
+          'academic-portfolio.portfolio': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -93,8 +99,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.portfolio': {
-          actions: ['admin', 'edit'],
+        allowedPermissions: {
+          'academic-portfolio.portfolio': {
+            actions: ['admin', 'edit'],
+          },
         },
       }),
     ],
@@ -121,8 +129,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.portfolio': {
-          actions: ['admin', 'edit'],
+        allowedPermissions: {
+          'academic-portfolio.portfolio': {
+            actions: ['admin', 'edit'],
+          },
         },
       }),
     ],

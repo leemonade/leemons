@@ -7,10 +7,10 @@ export default function transformEvent(
   { forKanban, columns, isTeacher, t, translate }
 ) {
   const event = cloneDeep(_event);
-  // if (event.type === 'plugins.calendar.task' && event.data && event.data.classes) {
+  // if (event.type === 'calendar.task' && event.data && event.data.classes) {
   const calendarsByKey = keyBy(calendars, 'id');
   let classes = event.data?.classes ? cloneDeep(event.data.classes) : [];
-  if (calendarsByKey[event.calendar]?.key.indexOf('plugins.calendar.class.') >= 0) {
+  if (calendarsByKey[event.calendar]?.key.indexOf('calendar.class.') >= 0) {
     classes.push(event.calendar);
   }
   classes = uniq(classes);

@@ -34,7 +34,7 @@ async function addNodeLevels(data, { transacting: _transacting } = {}) {
                 en: `node-level-${nodeLevel.id}`,
               },
               locationName: `node-level-${nodeLevel.id}`,
-              pluginName: 'plugins.curriculum',
+              pluginName: 'curriculum',
             },
             { transacting }
           )

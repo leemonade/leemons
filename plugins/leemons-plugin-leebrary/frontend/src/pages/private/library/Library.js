@@ -66,7 +66,7 @@ const LibraryPageContent = () => {
   const navbarLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.home.navbar;
+      const data = items.leebrary.home.navbar;
       return data;
     }
     return {};

@@ -10,7 +10,7 @@ export default function useTableInputLabels() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.leebrary.tableInput;
+      const data = res.leebrary.tableInput;
 
       setTableInputLabels(data);
 

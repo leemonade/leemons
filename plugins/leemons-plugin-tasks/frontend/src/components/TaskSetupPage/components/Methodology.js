@@ -13,7 +13,7 @@ function useMethodologyLabels() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.methodology;
+      const data = res.tasks.methodology;
 
       // EN: Save your translations keys to use them in your component
       // ES: Guarda tus traducciones para usarlas en tu componente

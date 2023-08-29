@@ -20,7 +20,7 @@ async function deleteQuestions(questionId, { userSession, transacting: _transact
       // TODO: Añadir borrado de assets
       await Promise.all([
         table.questions.deleteMany({ id_$in: questionIds }, { transacting }),
-        tagsService.removeAllTagsForValues('plugins.tests.questionBanks', questionIds, {
+        tagsService.removeAllTagsForValues('tests.questionBanks', questionIds, {
           transacting,
         }),
       ]);

@@ -38,7 +38,7 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.tests.tests']);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['tests.tests']);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes('create') ||

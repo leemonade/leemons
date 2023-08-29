@@ -62,7 +62,7 @@ async function add(
       if (viewPermissions) {
         await leemons
           .getPlugin('users')
-          .services.permissions.addItem(key, 'plugins.comunica.room.view', viewPermissions, {
+          .services.permissions.addItem(key, 'comunica.room.view', viewPermissions, {
             isCustomPermission: true,
             transacting,
           });

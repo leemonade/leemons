@@ -29,28 +29,22 @@ function ChatListDrawerIntermediate({
   const room = React.useMemo(() => getRoomParsed(_room), [_room]);
   const rooms = React.useMemo(() => {
     let types = null;
-    // "plugins.assignables.assignation.user"
-    // "plugins.assignables.assignation.subject"
-    // "plugins.assignables.assignation.group"
-    if (room.type === 'plugins.assignables.assignation') {
+    // "assignables.assignation.user"
+    // "assignables.assignation.subject"
+    // "assignables.assignation.group"
+    if (room.type === 'assignables.assignation') {
       if (isTeacherByRoom(room)) {
-        types = [
-          'plugins.assignables.assignation.group',
-          'plugins.assignables.assignation.subject',
-        ];
+        types = ['assignables.assignation.group', 'assignables.assignation.subject'];
       } else {
-        types = ['plugins.assignables.assignation.group', 'plugins.assignables.assignation.user'];
+        types = ['assignables.assignation.group', 'assignables.assignation.user'];
       }
     }
     let results = getRoomsByParent(room.childrens, room, types);
-    if (room.type === 'plugins.assignables.assignation') {
-      const subjectRooms = _.filter(results, { type: 'plugins.assignables.assignation.subject' });
+    if (room.type === 'assignables.assignation') {
+      const subjectRooms = _.filter(results, { type: 'assignables.assignation.subject' });
       // Si solo tenemos una sala de tipo asignatura pintamos directamente sus salas hijas
       if (subjectRooms.length === 1) {
-        results = _.filter(
-          results,
-          ({ type }) => type !== 'plugins.assignables.assignation.subject'
-        );
+        results = _.filter(results, ({ type }) => type !== 'assignables.assignation.subject');
         const subjectChildrens = getRoomChildrens(room.childrens, subjectRooms[0]);
         results.push(...subjectChildrens);
       }

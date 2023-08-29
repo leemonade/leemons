@@ -29,8 +29,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.subjects': {
-          actions: ['admin', 'view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -61,8 +63,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.tree': {
-          actions: ['admin', 'view'],
+        allowedPermissions: {
+          'academic-portfolio.tree': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -90,8 +94,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.tree': {
-          actions: ['admin', 'view'],
+        allowedPermissions: {
+          'academic-portfolio.tree': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -119,8 +125,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.subjects': {
-          actions: ['admin', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -148,8 +156,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.subjects': {
-          actions: ['admin', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -181,8 +191,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'academic-portfolio.subjects': {
-          actions: ['admin', 'view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],

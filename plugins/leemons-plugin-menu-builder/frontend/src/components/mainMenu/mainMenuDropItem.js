@@ -14,7 +14,7 @@ export default function MainMenuDropItem({ children, className, item }) {
 
   const _item = {
     ...item,
-    menuKey: item.menuKey || 'plugins.menu-builder.main',
+    menuKey: item.menuKey || 'menu-builder.main',
     url: item.url || window.location.pathname,
     label: item.label || getInnerText(goodChildren),
   };

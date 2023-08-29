@@ -32,8 +32,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar': {
-          actions: ['view', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar': {
+            actions: ['view', 'admin'],
+          },
         },
       }),
     ],
@@ -50,8 +52,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar': {
-          actions: ['view', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar': {
+            actions: ['view', 'admin'],
+          },
         },
       }),
     ],
@@ -157,8 +161,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['create', 'update', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['create', 'update', 'admin'],
+          },
         },
       }),
     ],
@@ -175,8 +181,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['update', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['update', 'admin'],
+          },
         },
       }),
     ],
@@ -197,8 +205,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['view', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['view', 'admin'],
+          },
         },
       }),
     ],
@@ -217,8 +227,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['view', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['view', 'admin'],
+          },
         },
       }),
     ],
@@ -238,8 +250,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],
@@ -259,8 +273,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['view', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['view', 'admin'],
+          },
         },
       }),
     ],
@@ -279,8 +295,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['view', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['view', 'admin'],
+          },
         },
       }),
     ],
@@ -301,8 +319,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['create', 'update', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['create', 'update', 'admin'],
+          },
         },
       }),
     ],
@@ -322,8 +342,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['update', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['update', 'admin'],
+          },
         },
       }),
     ],
@@ -343,8 +365,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'calendar.calendar-configs': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'calendar.calendar-configs': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],

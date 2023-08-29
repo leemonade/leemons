@@ -13,5 +13,5 @@ import { PLUGIN_NAME } from '../constants';
  * @return {string} str with plugin name prefix
  * */
 export default function prefixPN(str) {
-  return `plugins.${PLUGIN_NAME}.${str}`;
+  return `${PLUGIN_NAME}.${str}`;
 }

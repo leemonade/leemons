@@ -155,6 +155,10 @@ module.exports = {
           // -- Widgets (Finish) --
           'GET widgets/zone/:key': 'v1.widgets.widgets.getZoneRest',
 
+          // -- Dashboard (Finish) --
+          'GET dashboard/admin/realtime': 'v1.dashboard.admin.adminRealtimeRest',
+          'GET dashboard/admin': 'v1.dashboard.admin.adminRest',
+
           // -- Academic portfolio (Finish) --
           'GET academic-portfolio/user/programs':
             'v1.academic-portfolio.programs.getUserProgramsRest',

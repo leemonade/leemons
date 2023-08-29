@@ -89,7 +89,7 @@ const assignableRoles = [
       creatable: true,
       order: 1,
       createUrl: '/private/content-creator/new',
-      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
       pluralName: { en: 'contents', es: 'contenidos' },
       singularName: { en: 'content', es: 'contenido' },
       menu: {

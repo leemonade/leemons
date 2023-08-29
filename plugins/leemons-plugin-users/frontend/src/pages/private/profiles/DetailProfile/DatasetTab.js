@@ -33,10 +33,7 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
     toggle();
   }
 
-  const load = useMemo(
-    () => () => getDatasetSchemaRequest(`profile.${profile.id}`, 'plugins.users'),
-    []
-  );
+  const load = useMemo(() => () => getDatasetSchemaRequest(`profile.${profile.id}`, 'users'), []);
 
   const onSuccess = useMemo(
     () =>
@@ -82,7 +79,7 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
     },
     onConfirm: async () => {
       try {
-        await removeDatasetFieldRequest(`profile.${profile.id}`, 'plugins.users', itemToRemove.id);
+        await removeDatasetFieldRequest(`profile.${profile.id}`, 'users', itemToRemove.id);
         addSuccessAlert(t('dataset_tab.deleted_done'));
         reload();
       } catch (e) {
@@ -156,7 +153,7 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
 
               <DatasetItemDrawer
                 locationName={`profile.${profile.id}`}
-                pluginName="plugins.users"
+                pluginName="users"
                 item={item}
                 onSave={onSave}
               />

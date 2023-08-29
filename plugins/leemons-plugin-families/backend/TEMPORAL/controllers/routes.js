@@ -8,7 +8,7 @@ module.exports = [
     handler: 'families.searchUsers',
     authenticated: true,
     allowedPermissions: {
-      'plugins.families.families': {
+      'families.families': {
         actions: ['update', 'create', 'admin'],
       },
     },
@@ -22,7 +22,7 @@ module.exports = [
     handler: 'families.getDatasetForm',
     authenticated: true,
     allowedPermissions: {
-      'plugins.families.families': {
+      'families.families': {
         actions: ['view', 'update', 'create', 'admin'],
       },
     },
@@ -36,7 +36,7 @@ module.exports = [
     handler: 'families.add',
     authenticated: true,
     allowedPermissions: {
-      'plugins.families.families': {
+      'families.families': {
         actions: ['create', 'admin'],
       },
     },
@@ -59,7 +59,7 @@ module.exports = [
     handler: 'families.remove',
     authenticated: true,
     allowedPermissions: {
-      'plugins.families.families': {
+      'families.families': {
         actions: ['delete', 'admin'],
       },
     },
@@ -70,7 +70,7 @@ module.exports = [
     handler: 'families.list',
     authenticated: true,
     allowedPermissions: {
-      'plugins.families.families': {
+      'families.families': {
         actions: ['view', 'admin'],
       },
     },
@@ -81,7 +81,7 @@ module.exports = [
     handler: 'families.listDetailPage',
     authenticated: true,
     allowedPermissions: {
-      'plugins.users.users': {
+      'users.users': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },

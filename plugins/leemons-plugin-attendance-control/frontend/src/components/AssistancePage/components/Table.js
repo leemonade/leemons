@@ -304,7 +304,7 @@ export default function Table({ sessions, classe, onSave }) {
 
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
-      fireEvent('plugins.scores::downloaded-intercepted');
+      fireEvent('scores::downloaded-intercepted');
 
       try {
         const wb = generateAssistancesWB({
@@ -327,14 +327,14 @@ export default function Table({ sessions, classe, onSave }) {
           },
         });
         getFile(wb, format);
-        fireEvent('plugins.scores::downloaded');
+        fireEvent('scores::downloaded');
       } catch (e) {
-        fireEvent('plugins.scores::download-scores-error', e);
+        fireEvent('scores::download-scores-error', e);
       }
     };
 
-    addAction('plugins.scores::download-scores', onDownload);
-    return () => removeAction('plugins.scores::download-scores', onDownload);
+    addAction('scores::download-scores', onDownload);
+    return () => removeAction('scores::download-scores', onDownload);
   }, [sessions, store.data, tLoading]);
 
   return (

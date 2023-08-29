@@ -118,6 +118,8 @@ export default function Login() {
               getUserCentersRequest(response.jwtToken),
               getUserProfilesRequest(response.jwtToken),
             ]);
+            console.log('profile', centers, profiles);
+
             // Si solo tiene un perfil (aun que este en muchos centros) y este es el de admin entramos como todos los centros a la vez
             if (profiles.length === 1 && profiles[0].sysName === 'admin') {
               const { jwtToken } = await getUserProfileTokenRequest(
@@ -133,6 +135,8 @@ export default function Login() {
                 centers[0].profiles[0].id,
                 response.jwtToken
               );
+
+              console.log('jwtToken', jwtToken);
 
               await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
               response.jwtToken = jwtToken;

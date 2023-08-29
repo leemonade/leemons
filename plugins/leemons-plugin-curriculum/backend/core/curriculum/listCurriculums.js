@@ -11,7 +11,7 @@ async function listCurriculums(
   const userServices = leemons.getPlugin('users').services;
   const [[{ actionNames }], centers] = await Promise.all([
     userServices.permissions.getUserAgentPermissions(userSession.userAgents, {
-      query: { permissionName: 'plugins.curriculum.curriculum' },
+      query: { permissionName: 'curriculum.curriculum' },
     }),
     userServices.users.getUserAgentCenter(userSession.userAgents),
   ]);

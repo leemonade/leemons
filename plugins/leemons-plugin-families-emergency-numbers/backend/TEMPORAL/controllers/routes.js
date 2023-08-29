@@ -8,7 +8,7 @@ module.exports = [
     handler: 'emergency-numbers.getDatasetForm',
     authenticated: true,
     allowedPermissions: {
-      'plugins.families-emergency-numbers.families-emergency-numbers': {
+      'families-emergency-numbers.families-emergency-numbers': {
         actions: ['view', 'update', 'create', 'admin'],
       },
     },

@@ -29,6 +29,7 @@ module.exports =
           return;
         }
       } else {
+        ctx.meta.authorization = _.compact(ctx.meta.authorization);
         const user = await ctx.tx.call('users.auth.detailForJWT', {
           jwtToken: ctx.meta.authorization[0],
           forceOnlyUser: true,

@@ -4,7 +4,7 @@ function getRoleObject() {
     createUrl: '/createUrl',
     order: 2,
 
-    componentOwner: 'plugins.testing',
+    componentOwner: 'testing',
     listCardComponent: 'ListCard',
     detailComponent: 'Detail',
 
@@ -19,7 +19,7 @@ function getRoleObject() {
       },
       permissions: [
         {
-          permissionName: 'plugins.testing.role',
+          permissionName: 'testing.role',
           actionNames: ['view'],
         },
       ],

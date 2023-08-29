@@ -75,7 +75,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         if (loadMenu) {
           store.isLoading = true;
           render();
-          const menu = await getMenu('plugins.menu-builder.main', forceReload.current);
+          const menu = await getMenu('menu-builder.main', forceReload.current);
           if (mounted) {
             setMenuData(menu);
             store.isLoading = false;

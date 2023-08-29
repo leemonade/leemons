@@ -7,7 +7,7 @@
  * @return {string}
  * */
 function getTranslationKey(actionName, key) {
-  const pluginName = 'plugins.users';
+  const pluginName = 'users';
   if (key) return `${pluginName}.${actionName}.${key}`;
   return `${pluginName}.${actionName}`;
 }

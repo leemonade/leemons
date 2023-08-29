@@ -75,7 +75,7 @@ async function getDatasetForm(ctx) {
     .getPlugin('dataset')
     .services.dataset.getSchemaWithLocale(
       `families-data`,
-      'plugins.families',
+      'families',
       ctx.state.userSession.locale,
       { userSession: ctx.state.userSession }
     );

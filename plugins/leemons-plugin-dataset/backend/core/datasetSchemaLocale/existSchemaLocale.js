@@ -16,7 +16,7 @@ const { validateExistSchemaLocaleData } = require('../../validations/datasetSche
  * @param {string} locale
  * @param {any=} transacting - DB transaction
  * @example
- * existLocation('users-dataset', 'plugins.users');
+ * existLocation('users-dataset', 'users');
  * @return {Promise<boolean>}
  * */
 async function _existSchemaLocale({ locationName, pluginName, key, locale, ctx }) {

@@ -41,9 +41,7 @@ export default function List() {
   // INIT DATA LOADING
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      'plugins.scorm.creator',
-    ]);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['scorm.creator']);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes('create') ||

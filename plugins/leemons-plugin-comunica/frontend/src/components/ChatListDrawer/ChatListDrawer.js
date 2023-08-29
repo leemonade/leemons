@@ -61,7 +61,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
     }
     store.rooms = _.filter(store.rooms, (room) => {
       if (
-        room.type === 'plugins.academic-portfolio.class' &&
+        room.type === 'academic-portfolio.class' &&
         !store.programConfig[room.program]?.enableSubjectsRoom
       ) {
         return false;

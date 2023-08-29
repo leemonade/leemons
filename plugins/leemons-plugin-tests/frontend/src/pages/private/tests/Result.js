@@ -549,9 +549,9 @@ export default function Result() {
               store.room.unreadMessages = 0;
               render();
             }}
-            room={`plugins.assignables.subject|${
-              store?.instance?.subjects?.[0]?.subject
-            }.assignation|${store.assignation.id}.userAgent|${getUserId()}`}
+            room={`assignables.subject|${store?.instance?.subjects?.[0]?.subject}.assignation|${
+              store.assignation.id
+            }.userAgent|${getUserId()}`}
           />
         </>
       ) : null}

@@ -47,7 +47,7 @@ function Setup({ session }) {
       store.loading = true;
       render();
       const [{ zone }, { settings }] = await Promise.all([
-        getZoneRequest('plugins.admin.admin-page'),
+        getZoneRequest('admin.admin-page'),
         getSettingsRequest(),
       ]);
       const keys = [];

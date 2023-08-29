@@ -590,7 +590,7 @@ function Detail() {
                               </Text>
                               <Text>
                                 {t(
-                                  guardian.memberType.replace('plugins.families.detail_page.', '')
+                                  guardian.memberType.replace('families.detail_page.', '')
                                 )}
                               </Text>
                             </Box>

@@ -30,7 +30,7 @@ async function setConfig(ctx) {
 
   if (isSuperAdmin) {
     const providers = await setProviderConfig.call(
-      { calledFrom: 'plugins.leebrary' },
+      { calledFrom: 'leebrary' },
       ctx.request.body.provider,
       ctx.request.body.config
     );

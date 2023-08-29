@@ -15,12 +15,14 @@ const {
 } = require('../core/roles');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/roles.rest');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.roles',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),

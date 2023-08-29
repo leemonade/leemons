@@ -11,5 +11,5 @@
  * @return {string} str with plugin name prefix
  * */
 export default function prefixPN(str) {
-  return `plugins.mqtt-aws-iot.${str}`;
+  return `mqtt-aws-iot.${str}`;
 }

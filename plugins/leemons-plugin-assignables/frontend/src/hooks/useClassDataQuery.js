@@ -14,7 +14,7 @@ export default function useClassData(instances, labels = {}, { multiSubject } = 
 
       return {
         queryKey: [
-          'plugins.assignables.classData',
+          'assignables.classData',
           {
             classes,
             multiSubjectLabel: labels?.multiSubject,

@@ -12,15 +12,15 @@ const { defaultCategory: defaultCategoryKey } = require('./config/config');
 const { addLocales } = require('./src/services/locales/addLocales');
 
 async function events(isInstalled) {
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+  leemons.events.once('multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
 
-  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+  leemons.events.on('multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
 
-  leemons.events.once('plugins.admin:init-widget-zones', async () => {
+  leemons.events.once('admin:init-widget-zones', async () => {
     await Promise.allSettled(
       _.map(widgets.zones, (config) =>
         leemons.getPlugin('widgets').services.widgets.setZone(config.key, {
@@ -48,7 +48,7 @@ async function events(isInstalled) {
     // ·······························································
     // REGISTER PERMISSIONS
 
-    leemons.events.once('plugins.users:init-permissions', async () => {
+    leemons.events.once('users:init-permissions', async () => {
       const { services } = leemons.getPlugin('users');
       await services.permissions.addMany(permissions.permissions);
       leemons.events.emit('init-permissions');
@@ -59,7 +59,7 @@ async function events(isInstalled) {
 
     leemons.events.once(
       [
-        'plugins.menu-builder:init-main-menu',
+        'menu-builder:init-main-menu',
         `${pluginName}:pluginDidLoadServices`,
         `${pluginName}:init-permissions`,
       ],
