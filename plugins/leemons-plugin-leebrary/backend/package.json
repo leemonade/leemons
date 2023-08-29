@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
-    "ci": "jest --watch",
-    "test": "jest --coverage",
+    "test": "jest --watch --coverage",
     "lint": "eslint services"
   },
   "keywords": [
@@ -22,7 +21,7 @@
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
-    "got": "^13.0.0",
+    "got": "11.8.5",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
     "leemons-middlewares": "1.0.0",
@@ -30,6 +29,7 @@
     "leemons-mongodb-helpers": "1.0.0",
     "leemons-multilanguage": "1.0.0",
     "leemons-permissions": "1.0.0",
+    "leemons-testing": "1.0.0",
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "leemons-widgets": "1.0.0",
@@ -56,13 +56,5 @@
   },
   "engines": {
     "node": ">= 16.x.x"
-  },
-  "jest": {
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "rootDir": "./services",
-    "roots": [
-      "../test"
-    ]
   }
 }

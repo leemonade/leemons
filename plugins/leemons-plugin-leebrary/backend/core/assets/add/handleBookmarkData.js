@@ -12,7 +12,6 @@ const metascraper = require('../../shared/metascraper');
  * @param {Object} params - The parameters for the function.
  * @param {Object} params.data - The data of the bookmark.
  * @param {string} params.data.categoryKey - The category key of the bookmark.
- * @param {string} params.data.url - The URL of the bookmark.
  * @param {string} params.data.icon - The icon of the bookmark.
  * @param {string} params.data.name - The name of the bookmark.
  * @param {string} params.data.description - The description of the bookmark.
