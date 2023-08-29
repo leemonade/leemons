@@ -28,9 +28,9 @@ function generateCtx({
     prefixPN: (str) => `${pluginName}.${str}`,
     callerPlugin: caller ?? undefined,
     logger: {
-      log: (str) => console.log(str),
-      warn: (str) => console.warn(str),
-      error: (str) => console.error(str),
+      log: (...args) => console.log(...args),
+      warn: (...args) => console.warn(...args),
+      error: (...args) => console.error(...args),
     },
   };
 
