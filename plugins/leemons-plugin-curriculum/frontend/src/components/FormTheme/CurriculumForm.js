@@ -12,7 +12,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, defaultValues }) {
   const [store, render] = useStore({ loading: true });
-  const [t] = useTranslateLoader('plugins.multilanguage.formWithTheme');
+  const [t] = useTranslateLoader('multilanguage.formWithTheme');
   const form = useForm({ defaultValues });
 
   React.useEffect(() => {

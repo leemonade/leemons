@@ -36,8 +36,8 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
 
   const [, translations] = useTranslateLoader([
     prefixPN('cardMenu'),
-    'plugins.tasks.variant',
-    'plugins.tasks.expressVariant',
+    'tasks.variant',
+    'tasks.expressVariant',
   ]);
 
   const { menuLabels, taskLabel, expressTaskLabel } = useMemo(() => {
@@ -48,8 +48,8 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       // ES: Modifica el objeto data aquí
       return {
         menuLabels: _.get(res, prefixPN('cardMenu')),
-        taskLabel: _.get(res, 'plugins.tasks.variant'),
-        expressTaskLabel: _.get(res, 'plugins.tasks.expressVariant'),
+        taskLabel: _.get(res, 'tasks.variant'),
+        expressTaskLabel: _.get(res, 'tasks.expressVariant'),
       };
     }
 

@@ -47,7 +47,7 @@ function CommonFields({ t }) {
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const { openDeleteConfirmationModal } = useLayout();
 
-  const load = useMemo(() => () => getDatasetSchemaRequest('user-data', 'plugins.users'), []);
+  const load = useMemo(() => () => getDatasetSchemaRequest('user-data', 'users'), []);
 
   const onSuccess = useMemo(
     () =>
@@ -70,10 +70,7 @@ function CommonFields({ t }) {
 
   useAsync(load, onSuccess, onError);
 
-  const load2 = useMemo(
-    () => () => getDatasetSchemaLocaleRequest('user-data', 'plugins.users'),
-    []
-  );
+  const load2 = useMemo(() => () => getDatasetSchemaLocaleRequest('user-data', 'users'), []);
 
   const onSuccess2 = useMemo(
     () =>
@@ -129,7 +126,7 @@ function CommonFields({ t }) {
       description: t('remove_modal.message'),
       onConfirm: async () => {
         try {
-          await removeDatasetFieldRequest('user-data', 'plugins.users', _item.id);
+          await removeDatasetFieldRequest('user-data', 'users', _item.id);
           addSuccessAlert(t('dataset.deleted_done'));
           await reload();
         } catch (e) {
@@ -186,12 +183,7 @@ function CommonFields({ t }) {
 
   return (
     <>
-      <DatasetItemDrawer
-        locationName="user-data"
-        pluginName="plugins.users"
-        item={item}
-        onSave={onSave}
-      />
+      <DatasetItemDrawer locationName="user-data" pluginName="users" item={item} onSave={onSave} />
       <ContextContainer
         sx={(theme) => ({ paddingTop: theme.spacing[4], paddingBottom: theme.spacing[4] })}
       >

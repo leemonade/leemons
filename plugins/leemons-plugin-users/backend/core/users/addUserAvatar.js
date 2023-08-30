@@ -1,4 +1,4 @@
-async function addUserAvatar({ user, avatar, ctx } = {}) {
+async function addUserAvatar({ user, avatar, ctx }) {
   const assetData = {
     indexable: false,
     public: true,
@@ -26,9 +26,7 @@ async function addUserAvatar({ user, avatar, ctx } = {}) {
       avatar: `${coverUrl}?t=${Date.now()}`,
       avatarAsset: asset.id,
     },
-    {
-      new: true,
-    }
+    { new: true, lean: true }
   );
 
   return {

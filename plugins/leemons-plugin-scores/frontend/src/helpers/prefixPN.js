@@ -12,5 +12,5 @@
  * @return {string} str with plugin name prefix
  * */
 export function prefixPN(str) {
-  return `plugins.scores.${str}`;
+  return `scores.${str}`;
 }

@@ -35,12 +35,15 @@ function modifyCTX(ctx) {
     if (_.isObject(actionName)) {
       actionName = actionName.action.name;
     }
-    if (isCoreService(actionName)) {
+    if (actionName.startsWith('deployment-manager.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
+
     const manager = await ctx.__leemonsDeploymentManagerCall(
       'deployment-manager.getGoodActionToCall',
-      { actionName }
+      {
+        actionName,
+      }
     );
 
     if (process.env.DEBUG === 'true')
@@ -139,12 +142,8 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
             return await innerEvent.handler(ctx).then(async (data) => {
               if (data?.err) {
-                if (data?.err) {
-                  if (_.isFunction(onError)) {
-                    await onError(ctx, data.err);
-                  } else {
-                    throw data.err;
-                  }
+                if (_.isFunction(onError)) {
+                  await onError(ctx, data.err);
                 }
               }
               return data;

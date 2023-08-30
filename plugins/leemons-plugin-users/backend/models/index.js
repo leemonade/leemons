@@ -27,6 +27,7 @@ const models = {
   ...require('./userProfile'),
   ...require('./userRecoverPassword'),
   ...require('./userRememberLogin'),
+  ...require('./userRegisterPassword'),
   ...require('./users'),
 };
 
@@ -59,7 +60,7 @@ module.exports = {
       UserRecoverPassword: models.userRecoverPasswordModel,
       UserRegisterPassword: models.userRegisterPasswordModel,
       UserRememberLogin: models.userRememberLoginModel,
-      User: models.usersModel,
+      Users: models.usersModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::users_KeyValue' }),
     };
   },

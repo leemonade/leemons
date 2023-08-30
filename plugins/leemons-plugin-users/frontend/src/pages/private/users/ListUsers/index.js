@@ -38,7 +38,7 @@ import { SelectProfile } from '../../../../components/SelectProfile';
 import { listUsersRequest } from '../../../../request';
 
 function ListUsers() {
-  const [t] = useTranslateLoader(prefixPN('list_users'));
+  const [t, trans] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -171,12 +171,12 @@ function ListUsers() {
     const query = {};
     if (store.search) {
       query.$or = [
-        { name_$contains: store.search.toLowerCase() },
-        { surnames_$contains: store.search.toLowerCase() },
-        { secondSurname_$contains: store.search.toLowerCase() },
-        { email_$contains: store.search.toLowerCase() },
-        { phone_$contains: store.search.toLowerCase() },
-        { birthdate_$contains: store.search.toLowerCase() },
+        { name: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { surnames: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { secondSurname: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { email: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { phone: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { birthdate: { $regex: store.search.toLowerCase(), $options: 'i' } },
       ];
     }
     if (store.profile) {
@@ -217,8 +217,8 @@ function ListUsers() {
 
   async function getPermissions() {
     const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
+      getPermissionsWithActionsIfIHaveRequest('users.users'),
+      getPermissionsWithActionsIfIHaveRequest('users.import'),
     ]);
     if (addPermission) {
       store.canAdd =

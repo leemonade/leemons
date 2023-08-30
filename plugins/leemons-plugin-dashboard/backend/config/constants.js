@@ -25,15 +25,15 @@ const widgets = {
     { key: 'dashboard.class.tabs' },
     { key: 'dashboard.class.right-tabs' },
     { key: 'dashboard.class.header-bar' },
-    // { key: 'plugins.dashboard.class.control-panel' },
+    // { key: 'dashboard.class.control-panel' },
   ],
   items: [
     // {
-    //   zoneKey: 'plugins.dashboard.class.tabs',
-    //   key: `plugins.dashboard.class.tab.control-panel`,
+    //   zoneKey: 'dashboard.class.tabs',
+    //   key: `dashboard.class.tab.control-panel`,
     //   url: 'tab-control-panel/index',
     //   properties: {
-    //     label: 'plugins.dashboard.tabControlPanel.label',
+    //     label: 'dashboard.tabControlPanel.label',
     //   },
     // },
   ],

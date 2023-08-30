@@ -33,14 +33,16 @@ const {
 module.exports = {
   postSubjectRest: {
     rest: {
-      path: '/subject',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
@@ -55,14 +57,16 @@ module.exports = {
   },
   putSubjectRest: {
     rest: {
-      path: '/subject',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -77,14 +81,16 @@ module.exports = {
   },
   deleteSubjectRest: {
     rest: {
-      path: '/subject/:id',
+      path: '/:id',
       method: 'DELETE',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['delete'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'delete'],
+          },
         },
       }),
     ],
@@ -96,14 +102,16 @@ module.exports = {
   },
   putSubjectCreditsRest: {
     rest: {
-      path: '/subject/credits',
+      path: '/credits',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -116,7 +124,7 @@ module.exports = {
   },
   getSubjectCreditsRest: {
     rest: {
-      path: '/subject/credits',
+      path: '/credits',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -136,14 +144,16 @@ module.exports = {
   },
   listSubjectCreditsForProgramRest: {
     rest: {
-      path: '/subject/credits/list',
+      path: '/credits/list',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -156,14 +166,16 @@ module.exports = {
   },
   listSubjectRest: {
     rest: {
-      path: '/subject',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -196,14 +208,16 @@ module.exports = {
   },
   subjectByIdsRest: {
     rest: {
-      path: '/subject/:id',
+      path: '/:id',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],

@@ -29,6 +29,7 @@ module.exports =
           return;
         }
       } else {
+        ctx.meta.authorization = _.compact(ctx.meta.authorization);
         const user = await ctx.tx.call('users.auth.detailForJWT', {
           jwtToken: ctx.meta.authorization[0],
           forceOnlyUser: true,
@@ -48,14 +49,14 @@ module.exports =
           return;
         }
       }
-      if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
+      if (continueEvenThoughYouAreNotLoggedIn) {
         ctx.meta.userSession = null;
         return;
       }
       throw new LeemonsError(ctx, { httpStatusCode: 401, message: 'Authorization required' });
     } catch (err) {
       ctx.logger.error(err);
-      if (_.isObject(ctx.meta.authorization) && continueEvenThoughYouAreNotLoggedIn) {
+      if (continueEvenThoughYouAreNotLoggedIn) {
         ctx.meta.userSession = null;
         return;
       }

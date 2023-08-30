@@ -4,7 +4,7 @@ async function activateUser({ userId, password, ctx }) {
   const user = await ctx.tx.db.Users.findOneAndUpdate(
     { id: userId },
     { password: await encryptPassword(password), status: 'password-registered', active: true },
-    { new: true }
+    { new: true, lean: true }
   );
 
   const userRegisterPasswordUser = await ctx.tx.db.UserRegisterPassword.findOne({

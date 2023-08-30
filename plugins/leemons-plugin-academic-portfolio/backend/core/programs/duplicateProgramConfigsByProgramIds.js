@@ -32,7 +32,7 @@ async function duplicateProgramConfigsByProgramIds({ programIds, duplications: d
       return ctx.tx.db.Configs.create({
         ...item,
         key,
-      });
+      }).then((mongooseDoc) => mongooseDoc.toObject());
     })
   );
 

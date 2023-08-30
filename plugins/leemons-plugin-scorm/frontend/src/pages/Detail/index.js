@@ -36,7 +36,7 @@ import { PageContent } from './components/PageContent/PageContent';
 
 export default function Detail() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('scormSetup'));
-  const [, translations] = useTranslateLoader('plugins.leebrary.assetSetup');
+  const [, translations] = useTranslateLoader('leebrary.assetSetup');
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -64,7 +64,7 @@ export default function Detail() {
   const formLabels = React.useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.assetSetup.basicData;
+      const data = items.leebrary.assetSetup.basicData;
       return data;
     }
     return null;

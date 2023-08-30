@@ -22,14 +22,16 @@ const {
 module.exports = {
   postGroupRest: {
     rest: {
-      path: '/group',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
@@ -46,8 +48,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['delete'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'delete'],
+          },
         },
       }),
     ],
@@ -58,14 +62,16 @@ module.exports = {
   },
   putGroupRest: {
     rest: {
-      path: '/group',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -76,14 +82,16 @@ module.exports = {
   },
   listGroupRest: {
     rest: {
-      path: '/group',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -114,14 +122,16 @@ module.exports = {
   },
   duplicateGroupWithClassesUnderNodeTreeRest: {
     rest: {
-      path: '/group/:id/duplicate-with-classes-under-node-tree',
+      path: '/:id/duplicate-with-classes-under-node-tree',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
@@ -135,14 +145,16 @@ module.exports = {
   },
   duplicateGroupRest: {
     rest: {
-      path: '/group/duplicate',
+      path: '/duplicate',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],

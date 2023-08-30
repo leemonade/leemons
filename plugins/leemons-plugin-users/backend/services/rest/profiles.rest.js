@@ -54,14 +54,16 @@ const translationsValidations = {
 module.exports = {
   listRest: {
     rest: {
-      path: '/profile/list',
+      path: '/list',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -94,14 +96,16 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/profile/add',
+      path: '/add',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['create', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['create', 'admin'],
+          },
         },
       }),
     ],
@@ -126,14 +130,16 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      path: '/profile/detail/:uri',
+      path: '/detail/:uri',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -155,14 +161,16 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/profile/update',
+      path: '/update',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['update', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['update', 'admin'],
+          },
         },
       }),
     ],
@@ -188,7 +196,7 @@ module.exports = {
   },
   getProfileSysNameRest: {
     rest: {
-      path: '/profile/sysName',
+      path: '/sysName',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

@@ -16,7 +16,8 @@ async function add({ data, ctx }) {
   //   transacting,
   // });
   const { name, ..._data } = data;
-  const column = await ctx.tx.db.KanbanColumns.create(_data);
+  const columnDoc = await ctx.tx.db.KanbanColumns.create(_data);
+  const column = columnDoc.toObject();
   // await locales.common.addManyByKey(
   //   leemons.plugin.prefixPN(`kanban.columns.${column.id}`),
   //   name,

@@ -53,7 +53,7 @@ const ImagePicker = ({
   const formLabels = useMemo(() => {
     if (translations && translations.items) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.assetSetup.basicData;
+      const data = items.leebrary.assetSetup.basicData;
       return {
         changeImage: data.labels.changeImage || labels.changeImage,
         uploadButton: data.labels.uploadButton || labels.uploadButton,

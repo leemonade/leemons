@@ -26,10 +26,14 @@ export function Provider({ children }) {
   const location = useLocation();
 
   async function load() {
-    if (!store.config) {
-      const { enabled } = await RoomService.getGeneralConfig();
-      store.enabled = enabled;
-      render();
+    try {
+      if (!store.config) {
+        const { enabled } = await RoomService.getGeneralConfig();
+        store.enabled = enabled;
+        render();
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 

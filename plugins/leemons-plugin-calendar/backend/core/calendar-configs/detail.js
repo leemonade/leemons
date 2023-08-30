@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
 const { listByConfigId } = require('../center-calendar-configs');
 
@@ -11,16 +10,14 @@ const { listByConfigId } = require('../center-calendar-configs');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function detail(id, { transacting } = {}) {
-  await validateNotExistCalendarConfig(id, { transacting });
-  const response = await table.calendarConfigs.findOne({ id }, { transacting });
+async function detail({ id, ctx }) {
+  await validateNotExistCalendarConfig({ id, ctx });
+  const response = await ctx.tx.db.CalendarConfigs.findOne({ id }).lean();
   response.centers = [];
 
-  const centersConfig = await listByConfigId(id, { transacting });
+  const centersConfig = await listByConfigId({ config: id, ctx });
   if (centersConfig.length) {
-    const centers = await leemons
-      .getPlugin('users')
-      .services.centers.list(0, 99999, { transacting });
+    const centers = await ctx.tx.call('users.centers.list', { page: 0, size: 99999 });
     response.centers = _.intersectionBy(
       centers.items,
       centersConfig,

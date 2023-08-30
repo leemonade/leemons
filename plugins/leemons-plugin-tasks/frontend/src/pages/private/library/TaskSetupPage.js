@@ -319,7 +319,7 @@ function TaskSetup() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.task_setup_page.setup;
+      const data = res.tasks.task_setup_page.setup;
       setLabels(data);
     }
   }, [translations]);

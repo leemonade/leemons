@@ -16,14 +16,16 @@ const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/kn
 module.exports = {
   postKnowledgeRest: {
     rest: {
-      path: '/knowledge',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
@@ -34,14 +36,16 @@ module.exports = {
   },
   putKnowledgeRest: {
     rest: {
-      path: '/knowledge',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -52,14 +56,16 @@ module.exports = {
   },
   listKnowledgeRest: {
     rest: {
-      path: '/knowledge',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],

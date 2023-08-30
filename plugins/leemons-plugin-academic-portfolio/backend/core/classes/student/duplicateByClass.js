@@ -25,7 +25,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
           duplications.classes && duplications.classes[item.class]
             ? duplications.classes[item.class].id
             : item.class,
-      })
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 
@@ -34,7 +34,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
       ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
         userAgentId: student,
         data: {
-          permissionName: `plugins.academic-portfolio.class.${
+          permissionName: `academic-portfolio.class.${
             duplications.classes && duplications.classes[item.class]
               ? duplications.classes[item.class].id
               : item.class
@@ -52,7 +52,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
       ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
         userAgentId: student,
         data: {
-          permissionName: `plugins.academic-portfolio.class-profile.${
+          permissionName: `academic-portfolio.class-profile.${
             duplications.classes && duplications.classes[item.class]
               ? duplications.classes[item.class].id
               : item.class

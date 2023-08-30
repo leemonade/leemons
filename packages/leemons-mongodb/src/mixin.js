@@ -367,6 +367,7 @@ const mixin = ({
               rollbackTransaction(ctx);
             }
           }
+          console.log('va a petar');
           throw err;
         },
       ],
@@ -402,7 +403,6 @@ const mixin = ({
                 rollbackTransaction(ctx);
               }
             }
-            throw err;
           },
           afterModifyCTX: async (ctx) => {
             modifyCTX(ctx, {

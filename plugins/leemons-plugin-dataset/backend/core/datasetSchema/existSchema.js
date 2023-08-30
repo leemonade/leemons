@@ -13,7 +13,7 @@ const { validateLocationAndPlugin } = require('../../validations/datasetLocation
  * @param {string} pluginName - Plugin name
  * @param {any=} ctx - moleculer ctx
  * @example
- * existLocation('users-dataset', 'plugins.users');
+ * existLocation('users-dataset', 'users');
  * @return {Promise<boolean>}
  * */
 async function existSchema({ locationName, pluginName, ctx }) {

@@ -77,7 +77,7 @@ const menuItems = [
     item: {
       key: 'scores.periods',
       order: 1,
-      parentKey: 'scores',
+      parentKey: 'scores.scores',
       url: '/private/scores/periods',
       label: {
         en: 'Periods',
@@ -95,7 +95,7 @@ const menuItems = [
     item: {
       key: 'scores.notebook',
       order: 2,
-      parentKey: 'scores',
+      parentKey: 'scores.scores',
       url: '/private/scores/notebook',
       label: {
         en: 'Evaluation Notebook',
@@ -113,7 +113,7 @@ const menuItems = [
     item: {
       key: 'scores.review',
       order: 3,
-      parentKey: 'scores',
+      parentKey: 'scores.scores',
       url: '/private/scores/notebook/review',
       label: {
         en: 'Final grades',
@@ -126,7 +126,7 @@ const menuItems = [
     item: {
       key: 'scores.scores',
       order: 4,
-      parentKey: 'scores',
+      parentKey: 'scores.scores',
       url: '/private/scores/scores',
       label: {
         en: 'Scores',

@@ -8,14 +8,17 @@ const URL = require('url');
  * @return {Promise<any>}
  * */
 async function setHostname({ value, ctx }) {
+  // TODO @askJaime: He cambiado en la línea de abajo hostname a value, bien?
   const url = URL.parse(value, true);
-  return ctx.tx.db.Config.updateOne(
+  return ctx.tx.db.Config.findOneAndUpdate(
     { key: 'platform-hostname' },
     {
       key: 'platform-hostname',
       value: `${url.protocol}//${url.host}`,
     },
     {
+      lean: true,
+      new: true,
       upsert: true,
     }
   );

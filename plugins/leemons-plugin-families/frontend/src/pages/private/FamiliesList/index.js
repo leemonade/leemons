@@ -116,7 +116,7 @@ function List() {
   const search = async () => {
     delete config.current.query;
     if (searchValue) {
-      config.current.query = { name_$contains: searchValue };
+      config.current.query = { name: { $regex: searchValue, $options: 'i' } };
     }
     setPagination(await list());
   };

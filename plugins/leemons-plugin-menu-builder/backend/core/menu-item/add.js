@@ -114,7 +114,7 @@ async function add({
       activeIconSvg,
       iconAlt,
       disabled,
-    }),
+    }).then((mongooseDoc) => mongooseDoc.toObject()),
   ];
 
   // Create LABEL & DESCRIPTIONS in locales

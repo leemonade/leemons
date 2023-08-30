@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const { LeemonsError } = require('leemons-error');
-const transformManyMenuItemsToFrontEndMenu = require('../menu-item/transformManyMenuItemsToFrontEndMenu');
+const {
+  transformManyMenuItemsToFrontEndMenu,
+} = require('../menu-item/transformManyMenuItemsToFrontEndMenu');
 const { validateNotExistMenu } = require('../../validations/exists');
 
 /**

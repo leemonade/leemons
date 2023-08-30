@@ -8,7 +8,7 @@ async function updateProgram({ data, ctx }) {
   const { id, image, managers, ...programData } = data;
 
   let [program] = await Promise.all([
-    ctx.tx.db.Programs.findOneAndUpdate({ id }, programData, { new: true }),
+    ctx.tx.db.Programs.findOneAndUpdate({ id }, programData, { new: true, lean: true }),
     saveManagers({ userAgents: managers, type: 'program', relationship: id, ctx }),
   ]);
 

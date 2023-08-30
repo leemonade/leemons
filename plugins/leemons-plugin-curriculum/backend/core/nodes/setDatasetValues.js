@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 async function setDatasetValues(node, userSession, values, { transacting } = {}) {
   const locationName = `node-level-${node.nodeLevel}`;
-  const pluginName = 'plugins.curriculum';
+  const pluginName = 'curriculum';
   const { dataset } = leemons.getPlugin('dataset').services;
   let functionName = 'addValues';
   if (await dataset.existValues(locationName, pluginName, { target: node.id, transacting })) {

@@ -26,11 +26,11 @@ async function addMember({ family, user, memberType }, { transacting } = {}) {
     profile,
     [
       {
-        permissionName: 'plugins.families.user-families',
+        permissionName: 'families.user-families',
         actionNames: ['view'],
       },
       {
-        permissionName: `plugins.families.family-${family}`,
+        permissionName: `families.family-${family}`,
         actionNames: ['view'],
       },
     ],

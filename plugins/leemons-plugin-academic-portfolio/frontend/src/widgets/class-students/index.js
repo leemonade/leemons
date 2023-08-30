@@ -6,7 +6,7 @@ import { getZoneRequest, ZoneWidgets } from '@widgets';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const zoneKey = 'plugins.academic-portfolio.class.students';
+const zoneKey = 'academic-portfolio.class.students';
 function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) {
   const [openedStudent, setOpenedStudent] = React.useState();
   const [label, setLabel] = React.useState();

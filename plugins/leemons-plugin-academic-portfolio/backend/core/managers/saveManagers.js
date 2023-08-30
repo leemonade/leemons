@@ -5,13 +5,13 @@ async function saveManagers({ userAgents, type, relationship, ctx }) {
   if (userAgents) {
     const _userAgents = _.isArray(userAgents) ? userAgents : [userAgents];
     const promises = [];
-    _.forEach(_userAgents, (userAgent) => {
+    _.forEach(_userAgents, async (userAgent) => {
       promises.push(
         ctx.tx.db.Managers.create({
           relationship,
           type,
           userAgent,
-        })
+        }).then((mongooseDoc) => mongooseDoc.toObject()) // Convert Mongoose document to regular object here
       );
     });
     return Promise.all(promises);

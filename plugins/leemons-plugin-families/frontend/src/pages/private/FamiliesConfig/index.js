@@ -115,10 +115,7 @@ function DatasetTabs({ t }) {
     [t, tCommonTypes]
   );
 
-  const load = useMemo(
-    () => () => getDatasetSchemaRequest(`families-data`, 'plugins.families'),
-    []
-  );
+  const load = useMemo(() => () => getDatasetSchemaRequest(`families-data`, 'families'), []);
 
   const onSuccess = useMemo(
     () =>
@@ -156,11 +153,7 @@ function DatasetTabs({ t }) {
             <Button
               onClick={async () => {
                 try {
-                  await removeDatasetFieldRequest(
-                    `families-data`,
-                    'plugins.families',
-                    itemToRemove.id
-                  );
+                  await removeDatasetFieldRequest(`families-data`, 'families', itemToRemove.id);
                   addSuccessAlert(t('dataset_tab.deleted_done'));
                   setRemoveOpened(false);
                   await reload();
@@ -203,7 +196,7 @@ function DatasetTabs({ t }) {
                 </Button>
                 <DatasetItemDrawer
                   locationName={`families-data`}
-                  pluginName="plugins.families"
+                  pluginName="families"
                   item={item}
                   onSave={onSave}
                 />

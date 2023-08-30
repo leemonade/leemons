@@ -5,7 +5,7 @@ async function setPreferences({ user, values, ctx }) {
       user,
       ...values,
     },
-    { upsert: true }
+    { upsert: true, lean: true, new: true }
   );
 }
 

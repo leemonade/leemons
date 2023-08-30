@@ -100,25 +100,25 @@ const PermissionsData = ({
 
   function getObjectByPermission(permission) {
     const split = permission.split('.');
-    if (permission.startsWith('plugins.academic-portfolio.program-profile.inside.')) {
+    if (permission.startsWith('academic-portfolio.program-profile.inside.')) {
       return { center: null, program: split[split.length - 2], profile: split[split.length - 1] };
     }
-    if (permission.startsWith('plugins.academic-portfolio.program.inside.')) {
+    if (permission.startsWith('academic-portfolio.program.inside.')) {
       return { center: null, program: split[split.length - 1] };
     }
-    if (permission.startsWith('plugins.academic-portfolio.class.')) {
+    if (permission.startsWith('academic-portfolio.class.')) {
       return { center: null, class: split[split.length - 1] };
     }
-    if (permission.startsWith('plugins.academic-portfolio.class-profile.')) {
+    if (permission.startsWith('academic-portfolio.class-profile.')) {
       return { center: null, class: split[split.length - 2], profile: split[split.length - 1] };
     }
-    if (permission.startsWith('plugins.users.center-profile.inside.')) {
+    if (permission.startsWith('users.center-profile.inside.')) {
       return { center: split[split.length - 2], profile: split[split.length - 1] };
     }
-    if (permission.startsWith('plugins.users.center.inside.')) {
+    if (permission.startsWith('users.center.inside.')) {
       return { center: split[split.length - 1] };
     }
-    if (permission.startsWith('plugins.users.profile.inside.')) {
+    if (permission.startsWith('users.profile.inside.')) {
       return { center: '*', profile: split[split.length - 1] };
     }
     return null;
@@ -176,25 +176,25 @@ const PermissionsData = ({
 
   function calculePermission(permission) {
     if (permission.center !== '*' && permission.program && permission.profile) {
-      return `plugins.academic-portfolio.program-profile.inside.${permission.program}.${permission.profile}`;
+      return `academic-portfolio.program-profile.inside.${permission.program}.${permission.profile}`;
     }
     if (permission.center !== '*' && permission.profile && permission.class) {
-      return `plugins.academic-portfolio.class-profile.${permission.class}.${permission.profile}`;
+      return `academic-portfolio.class-profile.${permission.class}.${permission.profile}`;
     }
     if (permission.center !== '*' && permission.class) {
-      return `plugins.academic-portfolio.class.${permission.class}`;
+      return `academic-portfolio.class.${permission.class}`;
     }
     if (permission.center !== '*' && permission.program) {
-      return `plugins.academic-portfolio.program.inside.${permission.program}`;
+      return `academic-portfolio.program.inside.${permission.program}`;
     }
     if (permission.center !== '*' && permission.profile) {
-      return `plugins.users.center-profile.inside.${permission.center}.${permission.profile}`;
+      return `users.center-profile.inside.${permission.center}.${permission.profile}`;
     }
     if (permission.center !== '*') {
-      return `plugins.users.center.inside.${permission.center}`;
+      return `users.center.inside.${permission.center}`;
     }
     if (permission.center === '*' && permission.profile) {
-      return `plugins.users.profile.inside.${permission.profile}`;
+      return `users.profile.inside.${permission.profile}`;
     }
     if (permission.center === '*') {
       return '*';
@@ -352,7 +352,7 @@ const PermissionsData = ({
   useEffect(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const { roleLabels } = items.plugins.leebrary.assetSetup;
+      const { roleLabels } = items.leebrary.assetSetup;
       const ROLES = ROLESBYROLE[asset?.role || 'owner'];
       ROLES.forEach((rol, index) => {
         ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;

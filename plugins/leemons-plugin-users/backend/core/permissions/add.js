@@ -20,7 +20,7 @@ async function add({ ctx, ...data }) {
     ctx.tx.db.Permissions.create({
       permissionName: data.permissionName,
       pluginName: ctx.callerPlugin,
-    }),
+    }).then((mongooseDoc) => mongooseDoc.toObject()),
     ctx.tx.call('multilanguage.common.addManyByKey', {
       key: `users.${data.permissionName}.name`,
       data: data.localizationName,

@@ -18,8 +18,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -30,19 +32,21 @@ module.exports = {
   },
   saveSystemDataFieldsConfigRest: {
     rest: {
-      path: '/config/system-data-fields',
+      path: '/system-data-fields',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'plugins.users.users': {
-          actions: ['update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
     async handler(ctx) {
-      const config = await saveSystemDataFieldsConfig({ ctx, ...ctx.request.body });
+      const config = await saveSystemDataFieldsConfig({ ctx, ...ctx.params });
       return { status: 200, config };
     },
   },

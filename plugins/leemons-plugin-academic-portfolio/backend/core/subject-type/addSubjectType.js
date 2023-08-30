@@ -6,7 +6,8 @@ const { saveManagers } = require('../managers/saveManagers');
 async function addSubjectType({ data: _data, ctx }) {
   await validateAddSubjectType({ data: _data, ctx });
   const { subjects, managers, ...data } = _data;
-  const subjectType = await ctx.tx.db.SubjectTypes.create(data);
+  const subjectTypeDoc = await ctx.tx.db.SubjectTypes.create(data);
+  const subjectType = subjectTypeDoc.toObject();
   await saveManagers({
     userAgents: managers,
     type: 'subject-type',

@@ -14,7 +14,7 @@ const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.timetable.schedule_picker;
+      const data = res.timetable.schedule_picker;
 
       if (!isNil(data.labels)) {
         if (!label) data.labels.input = '';

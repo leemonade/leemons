@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { htmlToText } = require('nodemailer-html-to-text');
 const inlineBase64 = require('nodemailer-plugin-inline-base64');
 const aws = require('aws-sdk');
@@ -7,17 +6,22 @@ const nodemailer = require('nodemailer');
 class Email {
   static async saveConfig({ ctx, config }) {
     if (config.id) {
-      return ctx.tx.db.Config.findOneAndUpdate({ id: config.id }, config);
+      return ctx.tx.db.Config.findOneAndUpdate({ id: config.id }, config, {
+        new: true,
+        lean: true,
+      });
     }
-    return ctx.tx.db.Config.create(config);
+    const configDoc = await ctx.tx.db.Config.create(config);
+    return configDoc.toObject();
   }
 
   static async removeConfig({ id, ctx }) {
-    return ctx.tx.db.Config.findOneAndDelete({ id });
+    const deletedDoc = await ctx.tx.db.Config.findOneAndDelete({ id });
+    return deletedDoc.toObject();
   }
 
   static async getProviders({ ctx }) {
-    return ctx.tx.db.Config.find();
+    return ctx.tx.db.Config.find().lean();
   }
 
   static async sendMail({ ctx, provider, ...emailConfig }) {

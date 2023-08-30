@@ -16,14 +16,16 @@ const { updateSubjectType, addSubjectType, listSubjectType } = require('../../co
 module.exports = {
   postSubjectTypeRest: {
     rest: {
-      path: '/subject-type',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
@@ -34,14 +36,16 @@ module.exports = {
   },
   putSubjectTypeRest: {
     rest: {
-      path: '/subject-type',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -52,14 +56,18 @@ module.exports = {
   },
   listSubjectTypeRest: {
     rest: {
-      path: '/subject-type',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['view'],
+        allowedPermissions: {
+          allowedPermissions: {
+            'academic-portfolio.programs': {
+              actions: ['admin', 'view'],
+            },
+          },
         },
       }),
     ],

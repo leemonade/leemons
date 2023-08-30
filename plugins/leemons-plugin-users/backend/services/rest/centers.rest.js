@@ -13,17 +13,19 @@ const { list, add, remove } = require('../../core/centers');
 module.exports = {
   listRest: {
     rest: {
-      path: '/centers',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.centers': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -57,17 +59,21 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/centers/add',
+      path: '/add',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['update', 'create', 'delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          allowedPermissions: {
+            'users.centers': {
+              actions: ['update', 'create', 'delete', 'admin'],
+            },
+            'admin.setup': {
+              actions: ['update', 'create', 'delete', 'admin'],
+            },
+          },
         },
       }),
     ],
@@ -78,17 +84,19 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      path: '/centers/remove',
+      path: '/remove',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'users.centers': {
+            actions: ['delete', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],

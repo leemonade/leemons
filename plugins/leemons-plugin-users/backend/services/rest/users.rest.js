@@ -19,6 +19,10 @@ const {
   getUserAgentsInfo,
   searchUserAgents,
   getDataForUserAgentDatasets,
+  update,
+  disable,
+  active,
+  saveDataForUserAgentDatasets,
 } = require('../../core/user-agents');
 const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
 
@@ -299,7 +303,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const jwtToken = await usersService.profileToken({
-        user: ctx.state.userSession.id,
+        user: ctx.meta.userSession.id,
         profile: ctx.params.id,
         ctx,
       });
@@ -317,6 +321,7 @@ module.exports = {
         user: ctx.meta.userSession.id,
         centerId: ctx.params.centerId,
         profileId: ctx.params.profileId,
+        ctx,
       });
       return { status: 200, jwtToken };
     },
@@ -408,11 +413,13 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['create', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['update', 'create', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['create', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['update', 'create', 'admin'],
+          },
         },
       }),
     ],
@@ -429,11 +436,13 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'users.centers': {
+            actions: ['delete', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],
@@ -450,8 +459,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -486,8 +497,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -508,8 +521,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -553,14 +568,240 @@ module.exports = {
       });
     },
   },
+  // TODO: Hacer un middleware de dataset que refleje: disableUserAgentDatasetCheck: true,
   getDataForUserAgentDatasetsRest: {
     rest: {
       path: '/get-data-for-user-agent-datasets',
       method: 'GET',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const data = await getDataForUserAgentDatasets({ ctx });
       return { status: 200, data };
+    },
+  },
+
+  saveDataForUserAgentDatasetsRest: {
+    rest: {
+      path: '/save-data-for-user-agent-datasets',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await saveDataForUserAgentDatasets({
+        data: ctx.request.body,
+        ctx,
+      });
+      return { status: 200, data };
+    },
+  },
+  updateUserRest: {
+    rest: {
+      path: '/:id/update',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const allowedPermissions = {
+        'users.users': {
+          actions: ['update', 'admin'],
+        },
+      };
+      let hasPermission = ctx.params.id === ctx.meta.userSession.id;
+
+      if (!hasPermission) {
+        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+      }
+
+      if (hasPermission) {
+        const data = await usersService.update({ userId: ctx.params.id, ...ctx.params, ctx });
+        return { status: 200, data };
+      }
+      const rAllowedPermissions = [];
+      _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+        rAllowedPermissions.push({ permissionName, actions });
+      });
+      return {
+        status: 401,
+        message: 'You do not have permissions',
+        allowedPermissions: rAllowedPermissions,
+      };
+    },
+  },
+  updateUserAvatarRest: {
+    rest: {
+      path: '/:id/update-avatar',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const allowedPermissions = {
+        'users.users': {
+          actions: ['update', 'admin'],
+        },
+      };
+      let hasPermission = ctx.params.id === ctx.meta.userSession.id;
+
+      if (!hasPermission) {
+        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+      }
+
+      if (hasPermission) {
+        const data = await usersService.updateAvatar({
+          userId: ctx.params.id,
+          avatar: ctx.params.files.image,
+          ctx,
+        });
+        return { status: 200, data };
+      }
+      const rAllowedPermissions = [];
+      _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+        rAllowedPermissions.push({ permissionName, actions });
+      });
+      return {
+        status: 401,
+        message: 'You do not have permissions',
+        allowedPermissions: rAllowedPermissions,
+      };
+    },
+  },
+  updateUserAgentRest: {
+    rest: {
+      path: '/user-agent/:id/update',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const allowedPermissions = {
+        'users.users': {
+          actions: ['update', 'admin'],
+        },
+      };
+      let hasPermission = ctx.params.id === ctx.meta.userSession.id;
+
+      if (!hasPermission) {
+        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+      }
+
+      if (hasPermission) {
+        const data = await update({
+          userAgentId: ctx.params.id,
+          tags: ctx.params.tags,
+          ctx,
+        });
+        return { status: 200, data };
+      }
+      const rAllowedPermissions = [];
+      _.forIn(allowedPermissions, ({ actions }, permissionName) => {
+        rAllowedPermissions.push({ permissionName, actions });
+      });
+      return {
+        status: 401,
+        message: 'You do not have permissions',
+        allowedPermissions: rAllowedPermissions,
+      };
+    },
+  },
+  updateSessionConfigRest: {
+    rest: {
+      path: '/session/config',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await usersService.updateSessionConfig({ ctx });
+      return { status: 200, data };
+    },
+  },
+  activateUserRest: {
+    rest: {
+      path: '/activate-user',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'users.users': {
+            actions: ['admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const user = await usersService.activateUser({
+        userId: ctx.params.id,
+        password: ctx.params.password,
+        ctx,
+      });
+      return { status: 200, user };
+    },
+  },
+  sendWelcomeEmailToUserRest: {
+    rest: {
+      path: '/activation-mail',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'users.users': {
+            actions: ['admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      try {
+        const email = await usersService.sendWelcomeEmailToUser({
+          user: ctx.params.user,
+          ctx,
+        });
+        return { status: 200, email };
+      } catch (e) {
+        return { status: 200, code: e.code, message: 'Email sent' };
+      }
+    },
+  },
+  disableUserAgentRest: {
+    rest: {
+      path: '/user-agents/disable',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'users.enabledisable': {
+            actions: ['delete', 'admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      await disable({ id: ctx.params.userAgent, ctx });
+      return { status: 200 };
+    },
+  },
+  activeUserAgentRest: {
+    rest: {
+      path: '/user-agents/active',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'users.enabledisable': {
+            actions: ['create', 'admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      await active({ id: ctx.params.userAgent, ctx });
+      return { status: 200 };
     },
   },
 };

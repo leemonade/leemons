@@ -19,14 +19,14 @@ import Steps from './components/Steps';
 function useTaskDetailLocalizations() {
   const [, translations] = useTranslateLoader([
     prefixPN('task_realization'),
-    'plugins.assignables.multiSubject',
+    'assignables.multiSubject',
   ]);
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = _.get(res, prefixPN('task_realization'));
-      data.multiSubject = _.get(res, 'plugins.assignables.multiSubject');
+      data.multiSubject = _.get(res, 'assignables.multiSubject');
 
       return data;
     }

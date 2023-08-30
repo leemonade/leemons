@@ -20,7 +20,7 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
     {
       canEdit: true,
       isCustomPermission: true,
-      permissionName: 'plugins.calendar.calendar.idcalendario',
+      permissionName: 'calendar.calendar.idcalendario',
       actionNames: ['view', 'delete', 'admin', 'owner'],
     },
   ]
@@ -181,12 +181,13 @@ async function add({
 
   // EN: Firstly create the asset in the database to get the id
   // ES: Primero creamos el archivo en la base de datos para obtener el id
-  const newAsset = await ctx.tx.db.Assets.create({
+  const newAssetDoc = await ctx.tx.db.Assets.create({
     ...assetData,
     id: newId,
     category: category.id,
     cover: coverFile?.id,
   });
+  const newAsset = newAssetDoc.toObject();
 
   if (subjects && subjects.length) {
     await Promise.all(

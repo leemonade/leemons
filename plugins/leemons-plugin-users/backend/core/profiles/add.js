@@ -27,6 +27,7 @@ async function add({ name, description, permissions, translations, indexable, sy
     indexable,
     sysName,
   });
+  profile = profile.toObject();
 
   const role = await ctx.tx.call('users.roles.add', {
     name: `profile:${profile.id}:role`,
@@ -37,7 +38,7 @@ async function add({ name, description, permissions, translations, indexable, sy
   profile = await ctx.tx.db.Profiles.findByIdAndUpdate(
     profile.id,
     { role: role.id },
-    { new: true }
+    { lean: true, new: true }
   );
 
   if (translations) await updateProfileTranslations({ profile, translations, ctx });

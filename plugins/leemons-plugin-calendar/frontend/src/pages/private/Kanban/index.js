@@ -303,7 +303,7 @@ function Kanban({ session }) {
           classCalendars={ref.current.filtersData.calendars}
           event={ref.current.event}
           close={toggleEventModal}
-          forceType="plugins.calendar.task"
+          forceType="calendar.task"
         />
       ) : null}
       <Box sx={() => ({ position: 'absolute', top: 0, left: 0, width: '100%' })}>

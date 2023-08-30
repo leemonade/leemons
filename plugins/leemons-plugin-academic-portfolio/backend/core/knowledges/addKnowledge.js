@@ -6,7 +6,8 @@ const { saveManagers } = require('../managers/saveManagers');
 async function addKnowledge({ data: _data, ctx }) {
   await validateAddKnowledge({ data: _data, ctx });
   const { subjects, managers, ...data } = _data;
-  const knowledge = await ctx.tx.db.Knowledges.create(data);
+  const knowledgeDoc = await ctx.tx.db.Knowledges.create(data);
+  const knowledge = knowledgeDoc.toObject();
   await saveManagers({ userAgents: managers, type: 'knowledge', relationship: knowledge.id, ctx });
   if (subjects && subjects.length) {
     const classes = await ctx.tx.db.Class.find({

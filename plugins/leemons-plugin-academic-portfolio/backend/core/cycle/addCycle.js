@@ -2,7 +2,11 @@ const { validateAddCycle } = require('../../validations/forms');
 
 async function addCycle({ data, ctx }) {
   await validateAddCycle(data);
-  return ctx.tx.db.Cycles.create({ ...data, courses: JSON.stringify(data.courses) });
+  const cycleDoc = await ctx.tx.db.Cycles.create({
+    ...data,
+    courses: JSON.stringify(data.courses),
+  });
+  return cycleDoc.toObject();
 }
 
 module.exports = { addCycle };

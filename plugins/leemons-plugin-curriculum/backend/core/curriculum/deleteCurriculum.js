@@ -22,7 +22,7 @@ async function deleteCurriculum(curriculumId, { transacting: _transacting } = {}
         promises.push(
           leemons
             .getPlugin('dataset')
-            .services.dataset.deleteLocation(`node-level-${nodeLevel.id}`, 'plugins.curriculum', {
+            .services.dataset.deleteLocation(`node-level-${nodeLevel.id}`, 'curriculum', {
               deleteValues: true,
               transacting,
             })

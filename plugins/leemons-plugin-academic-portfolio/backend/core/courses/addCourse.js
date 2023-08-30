@@ -9,7 +9,8 @@ async function addCourse({ data, index: _index, ctx }) {
     index = await getNextCourseIndex({ program: data.program, ctx });
     await addNextCourseIndex({ program: data.program, index, ctx });
   }
-  return ctx.tx.db.Groups.create({ ...data, index, type: 'course' });
+  const groupDoc = await ctx.tx.db.Groups.create({ ...data, index, type: 'course' });
+  return groupDoc.toObject();
 }
 
 module.exports = { addCourse };

@@ -38,8 +38,8 @@ import listUsers from '@users/request/listUsers';
 const Styles = createStyles((theme) => ({}));
 
 const Admins = ({ onNextLabel, onNext = () => {} }) => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('setup.admins'));
-  const [tU] = useTranslateLoader(usersPrefixPN('create_users'));
+  const [t, tTrans, , tLoading] = useTranslateLoader(prefixPN('setup.admins'));
+  const [tU, tUtrans] = useTranslateLoader(usersPrefixPN('create_users'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const debouncedFunction = useDebouncedCallback(500);
@@ -324,7 +324,8 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
     });
     return result;
   }, [
-    t,
+    tUtrans,
+    tTrans,
     store.center,
     store.profile,
     JSON.stringify(store.avatar),

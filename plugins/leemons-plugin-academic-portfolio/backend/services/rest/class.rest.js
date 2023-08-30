@@ -32,14 +32,16 @@ const { classByIds } = require('../../core/classes/classByIds');
 module.exports = {
   haveClassesRest: {
     rest: {
-      path: '/classes/have',
+      path: '/have',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -50,14 +52,16 @@ module.exports = {
   },
   postClassRest: {
     rest: {
-      path: '/class',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
@@ -72,14 +76,16 @@ module.exports = {
   },
   putClassRest: {
     rest: {
-      path: '/class',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -94,14 +100,16 @@ module.exports = {
   },
   putClassManyRest: {
     rest: {
-      path: '/class/many',
+      path: '/many',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -112,14 +120,16 @@ module.exports = {
   },
   postClassInstanceRest: {
     rest: {
-      path: '/class/instance',
+      path: '/instance',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -130,14 +140,16 @@ module.exports = {
   },
   listClassRest: {
     rest: {
-      path: '/class',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -174,8 +186,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -210,14 +224,16 @@ module.exports = {
   },
   postClassStudentsRest: {
     rest: {
-      path: '/class/students',
+      path: '/students',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -234,14 +250,16 @@ module.exports = {
   },
   postClassTeachersRest: {
     rest: {
-      path: '/class/teachers',
+      path: '/teachers',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -261,14 +279,16 @@ module.exports = {
   },
   listStudentClassesRest: {
     rest: {
-      path: '/student/:id/classes',
+      path: '/student/:id',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -297,14 +317,16 @@ module.exports = {
   },
   listTeacherClassesRest: {
     rest: {
-      path: '/teacher/:id/classes',
+      path: '/teacher/:id',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -333,14 +355,16 @@ module.exports = {
   },
   removeClassRest: {
     rest: {
-      path: '/class/:id',
+      path: '/:id',
       method: 'DELETE',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -351,14 +375,16 @@ module.exports = {
   },
   removeStudentRest: {
     rest: {
-      path: '/class/remove/students',
+      path: '/remove/students',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['delete'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'delete'],
+          },
         },
       }),
     ],
@@ -373,17 +399,10 @@ module.exports = {
   },
   listSessionClassesRest: {
     rest: {
-      path: '/session/classes',
+      path: '/session',
       method: 'POST',
     },
-    middlewares: [
-      LeemonsMiddlewareAuthenticated(),
-      LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['update'],
-        },
-      }),
-    ],
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const classes = await listSessionClasses({ ...ctx.params, ctx });
       return { status: 200, classes };
@@ -391,7 +410,7 @@ module.exports = {
   },
   classDetailForDashboardRest: {
     rest: {
-      path: '/class/dashboard/:id',
+      path: '/dashboard/:id',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -402,7 +421,8 @@ module.exports = {
   },
   classByIdsRest: {
     rest: {
-      path: '/classes',
+      // raw porque a diferencia del get a '/' no utiliza mongoDBPaginate();
+      path: '/raw-list',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],

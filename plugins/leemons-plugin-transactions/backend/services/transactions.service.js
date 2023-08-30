@@ -3,15 +3,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const _ = require('lodash');
+const { setTimeout } = require('timers/promises');
 const mongoose = require('mongoose');
+const { randomString } = require('leemons-utils');
 const { Transaction } = require('../models/transaction');
 const { TransactionState } = require('../models/transaction-state');
-
-function timeoutPromise(time) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
 
 async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber = 0) {
   const transaction = await Transaction.findOne({
@@ -28,7 +24,7 @@ async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber 
   }
   // Si aun no han finalizado todos los pendiente esperamos un poco y lo volvemos a intentar
   if (transaction.finished < transaction.pending) {
-    await timeoutPromise(100);
+    await setTimeout(100);
     return checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber + 1);
   }
   return true;
@@ -141,6 +137,7 @@ module.exports = (broker) => ({
         })
           .select(['active'])
           .lean();
+
         if (!transaction)
           throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
         // Si la transaccion esta activa añadimos el estado por si se hace rollback
@@ -168,7 +165,7 @@ module.exports = (broker) => ({
     },
     rollbackTransaction: {
       async handler(ctx) {
-        console.log('--- ROLLBACK');
+        console.log(`--- ROLLBACK - ${ctx.meta.transactionID}`);
         if (!ctx.meta.deploymentID) {
           throw new Error('Need ctx.meta.deploymentID');
         }
@@ -180,19 +177,19 @@ module.exports = (broker) => ({
           _id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
-          .select(['active'])
+          .select(['active', 'pending'])
           .lean();
 
         if (!transaction)
           throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
 
         // Si no esta activo es que ya se esta lanzando algun rollback ignoramos y devolvemos como que esta todo ok
-        if (!transaction.active) {
+        if (!transaction.active || !transaction.pending) {
           return true;
         }
 
         // Para protegernos ante multiples llamadas al rollback (lo cual seria un problema) marcamos ya la transaccion como desactivada y le añadimos un numero que solo conoce esta funcion.
-        const checkNumber = Math.floor(Math.random() * 500000);
+        const checkNumber = randomString();
         await Transaction.findOneAndUpdate(
           {
             _id: ctx.meta.transactionID,
@@ -203,7 +200,7 @@ module.exports = (broker) => ({
         );
 
         // Esperamos un poco a que todos los posibles update que hayan llegado hasta aqui se ejecuten si o si
-        await timeoutPromise(100);
+        await setTimeout(100);
         // Volvemos a consultar la transaccion y la que tenga el checkNumber sera la que ejecute el rollback y asi nos evitamos duplicados
         transaction = await Transaction.findOne({
           _id: ctx.meta.transactionID,

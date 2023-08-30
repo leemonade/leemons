@@ -42,7 +42,7 @@ const menuItems = [
     item: {
       key: 'feedback-list',
       order: 2,
-      parentKey: 'feedback',
+      parentKey: `${permissionsPrefix}.feedback`,
       url: '/private/feedback',
       label: {
         en: 'Feedback library',
@@ -62,7 +62,7 @@ const menuItems = [
     item: {
       key: 'feedback-new',
       order: 3,
-      parentKey: 'feedback',
+      parentKey: `${permissionsPrefix}.feedback`,
       url: '/private/feedback/new',
       label: {
         en: 'New feedback',
@@ -88,7 +88,7 @@ const assignableRoles = [
       dashboardUrl: '/private/feedback/result/:id',
       creatable: true,
       createUrl: '/private/feedback/new',
-      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
       pluralName: { en: 'feedbacks', es: 'encuestas' },
       singularName: { en: 'feedback', es: 'encuesta' },
       order: 5,
@@ -109,7 +109,7 @@ const assignableRoles = [
         ],
       },
 
-      componentOwner: 'plugins.feedback',
+      componentOwner: 'feedback',
       listCardComponent: 'FeedbackListCard',
       detailComponent: 'FeedbackDetail',
     },

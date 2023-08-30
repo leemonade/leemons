@@ -51,6 +51,12 @@
       "@emails/*": [
         "./plugins/leemons-plugin-emails/frontend/src/*"
       ],
+      "@emails-aws-ses/*": [
+        "./plugins/leemons-plugin-emails-aws-ses/frontend/src/*"
+      ],
+      "@emails-smtp/*": [
+        "./plugins/leemons-plugin-emails-smtp/frontend/src/*"
+      ],
       "@families/*": [
         "./plugins/leemons-plugin-families/frontend/src/*"
       ],

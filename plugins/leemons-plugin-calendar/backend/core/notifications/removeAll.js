@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Remove all notifications for event
@@ -9,14 +8,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeAll(eventId, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      // TODO Calcular y añadir notificaciones del evento del calendario
-    },
-    table.calendars,
-    _transacting
-  );
+async function removeAll({ eventId, ctx }) {
+  // TODO Calcular y añadir notificaciones del evento del calendario
 }
 
 module.exports = { removeAll };

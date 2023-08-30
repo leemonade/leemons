@@ -6,7 +6,7 @@ import { ZoneWidgets } from '@widgets';
 
 function TabCalendarWidget(props) {
   return (
-    <ZoneWidgets zone="plugins.calendar.class.calendar">
+    <ZoneWidgets zone="calendar.class.calendar">
       {({ Component, key, properties }) => (
         <Box
           key={key}

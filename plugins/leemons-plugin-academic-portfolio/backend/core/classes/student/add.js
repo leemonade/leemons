@@ -7,7 +7,9 @@ const { getProfiles } = require('../../settings/getProfiles');
 async function add({ class: _class, student, ctx }) {
   // TODO check again when comunica is migrated
   const [classStudent, program] = await Promise.all([
-    ctx.tx.db.ClassStudent.create({ class: _class, student }),
+    ctx.tx.db.ClassStudent.create({ class: _class, student }).then((mongooseDoc) =>
+      mongooseDoc.toObject()
+    ),
     getClassProgram({ id: _class, ctx }),
     ctx.tx.call('comunica.room.addUserAgents', {
       room: ctx.prefixPN(`room.class.${_class}`),
@@ -20,7 +22,7 @@ async function add({ class: _class, student, ctx }) {
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: student,
     data: {
-      permissionName: `plugins.academic-portfolio.class.${_class}`,
+      permissionName: `academic-portfolio.class.${_class}`,
       actionNames: ['view'],
     },
   });
@@ -28,7 +30,7 @@ async function add({ class: _class, student, ctx }) {
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: student,
     data: {
-      permissionName: `plugins.academic-portfolio.class-profile.${_class}.${studentProfileId}`,
+      permissionName: `academic-portfolio.class-profile.${_class}.${studentProfileId}`,
       actionNames: ['view'],
     },
   });
@@ -37,7 +39,7 @@ async function add({ class: _class, student, ctx }) {
     await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
-        permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+        permissionName: `academic-portfolio.program.inside.${program.id}`,
         actionNames: ['view'],
       },
     });
@@ -49,7 +51,7 @@ async function add({ class: _class, student, ctx }) {
     await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
-        permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
+        permissionName: `academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
         actionNames: ['view'],
       },
     });

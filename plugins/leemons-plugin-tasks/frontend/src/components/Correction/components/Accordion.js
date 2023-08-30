@@ -148,7 +148,7 @@ export default function Accordion({
           store.room.unreadMessages = 0;
           render();
         }}
-        room={`plugins.assignables.subject|${subject}.assignation|${assignationId}.userAgent|${user}`}
+        room={`assignables.subject|${subject}.assignation|${assignationId}.userAgent|${user}`}
       />
     </>
   );

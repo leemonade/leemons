@@ -24,12 +24,16 @@ async function addWithRole({ name, description, permissions, indexable, ctx }) {
     uri: slugify(name, { lower: true }),
     indexable,
   });
+  group = group.toObject();
 
   const role = await add({
     name: `group:${group.id}:role`,
     type: ctx.prefixPN('group-role'),
     permissions,
-    ctx,
+    ctx: {
+      ...ctx,
+      callerPlugin: ctx.prefixPN(''),
+    },
   });
 
   await ctx.tx.db.GroupRole.create({ group: group.id, role: role.id });

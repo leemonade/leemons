@@ -16,7 +16,7 @@ async function setAssetPermissionsForClasses(
   { transacting }
 ) {
   const classesPermissionNames = classesCanAccess.map(
-    ({ class: classId }) => `plugins.academic-portfolio.class.${classId}`
+    ({ class: classId }) => `academic-portfolio.class.${classId}`
   );
 
   const { services: userService } = leemons.getPlugin('users');
@@ -33,7 +33,7 @@ async function setAssetPermissionsForClasses(
     const role = permission.type.includes('can-edit') ? 'editor' : 'viewer';
     return {
       ...obj,
-      [permission.permissionName.replace(`plugins.academic-portfolio.class.`, '')]: role,
+      [permission.permissionName.replace(`academic-portfolio.class.`, '')]: role,
     };
   }, {});
 
@@ -79,7 +79,7 @@ async function setAssetPermissionsForClasses(
       editorClasses.map((klass) => ({
         actionNames: ['view'],
         target,
-        permissionName: `plugins.academic-portfolio.class.${klass.class}`,
+        permissionName: `academic-portfolio.class.${klass.class}`,
       })),
       { transacting, isCustomPermission: true }
     ),
@@ -89,7 +89,7 @@ async function setAssetPermissionsForClasses(
       viewerClasses.map((klass) => ({
         actionNames: ['view'],
         target,
-        permissionName: `plugins.academic-portfolio.class.${klass.class}`,
+        permissionName: `academic-portfolio.class.${klass.class}`,
       })),
       { transacting, isCustomPermission: true }
     ),
@@ -102,7 +102,7 @@ async function removeMissingClassesPermissions(
 ) {
   const { services: userService } = leemons.getPlugin('users');
   const classesPermissionNames = classesCanAccess.map(
-    ({ class: classId }) => `plugins.academic-portfolio.class.${classId}`
+    ({ class: classId }) => `academic-portfolio.class.${classId}`
   );
 
   // EN: Get all the classes that were assigned
@@ -138,7 +138,7 @@ async function removeMissingClassesPermissions(
     {
       item: asset,
       permissionName_$nin: classesPermissionNames,
-      permissionName_$startsWith: 'plugins.academic-portfolio.class.',
+      permissionName_$startsWith: 'academic-portfolio.class.',
       type_$startsWith: leemons.plugin.prefixPN('asset'),
     },
     { transacting }
@@ -305,10 +305,10 @@ async function set(
       _.forEach(centersCanAccess, (center) => {
         if (_.isArray(centerProfilesCanAccess) && centerProfilesCanAccess.length) {
           _.forEach(centerProfilesCanAccess, (profile) => {
-            permissionsToAdd.push(`plugins.users.center-profile.inside.${center}-${profile}`);
+            permissionsToAdd.push(`users.center-profile.inside.${center}-${profile}`);
           });
         } else {
-          permissionsToAdd.push(`plugins.users.center.inside.${center}`);
+          permissionsToAdd.push(`users.center.inside.${center}`);
         }
       });
 
@@ -323,7 +323,7 @@ async function set(
 
       // Recorremos los permisos actuales, comprobamos si son de academic portfolio y si lo sin y no nos los han pasado de nuevo es que los han borrado
       forEach(currentPermissionNames, (currentPerm) => {
-        if (currentPerm.startsWith('plugins.users.center') && !toNothing.includes(currentPerm)) {
+        if (currentPerm.startsWith('users.center') && !toNothing.includes(currentPerm)) {
           finalPermissionsToRemove.push(currentPerm);
         }
       });
@@ -338,11 +338,11 @@ async function set(
         if (_.isArray(programProfilesCanAccess) && programProfilesCanAccess.length) {
           _.forEach(programProfilesCanAccess, (profile) => {
             permissionsToAdd.push(
-              `plugins.academic-portfolio.program-profile.inside.${program}-${profile}`
+              `academic-portfolio.program-profile.inside.${program}-${profile}`
             );
           });
         } else {
-          permissionsToAdd.push(`plugins.academic-portfolio.program.inside.${program}`);
+          permissionsToAdd.push(`academic-portfolio.program.inside.${program}`);
         }
       });
 
@@ -358,7 +358,7 @@ async function set(
       // Recorremos los permisos actuales, comprobamos si son de academic portfolio y si lo sin y no nos los han pasado de nuevo es que los han borrado
       forEach(currentPermissionNames, (currentPerm) => {
         if (
-          currentPerm.startsWith('plugins.academic-portfolio.program') &&
+          currentPerm.startsWith('academic-portfolio.program') &&
           !toNothing.includes(currentPerm)
         ) {
           finalPermissionsToRemove.push(currentPerm);

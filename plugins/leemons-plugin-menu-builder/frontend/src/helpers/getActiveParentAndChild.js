@@ -3,7 +3,7 @@ import { getMenu } from '@menu-builder/helpers';
 
 async function getActiveParentAndChild(_key) {
   let key = _key;
-  if (_.isNil(key)) key = 'plugins.menu-builder.main';
+  if (_.isNil(key)) key = 'menu-builder.main';
   const menu = await getMenu(key);
   const url = window.location.pathname;
   const result = {

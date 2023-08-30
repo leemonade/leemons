@@ -79,7 +79,7 @@ function AddCurriculum() {
       ] = await Promise.all([
         detailCurriculumRequest(id),
         listCentersRequest({ page: 0, size: 999999 }),
-        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
+        getPermissionsWithActionsIfIHaveRequest(['curriculum.curriculum']),
       ]);
 
       const isEditMode = actionNames.includes('admin') || actionNames.includes('edit');

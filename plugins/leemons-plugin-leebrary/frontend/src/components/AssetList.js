@@ -700,7 +700,7 @@ function AssetList({
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.list.labels;
+      const data = items.leebrary.list.labels;
       return data;
     }
     return {};

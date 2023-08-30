@@ -6,7 +6,7 @@ import { ZoneWidgets } from '@widgets';
 
 function TabControlPanelWidget(props) {
   return (
-    <ZoneWidgets zone="plugins.dashboard.class.control-panel">
+    <ZoneWidgets zone="dashboard.class.control-panel">
       {({ Component, key, properties }) => (
         <Box
           key={key}

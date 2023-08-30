@@ -217,7 +217,7 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
-      if (properties.label === 'plugins.academic-portfolio.tabDetail.label' && store.hideStudents) {
+      if (properties.label === 'academic-portfolio.tabDetail.label' && store.hideStudents) {
         return null;
       }
 
@@ -302,7 +302,7 @@ export default function ClassDashboard({ session }) {
             rightSide={
               <>
                 {!store.loading ? (
-                  <ZoneWidgets zone="plugins.dashboard.class.header-bar">{classHeader}</ZoneWidgets>
+                  <ZoneWidgets zone="dashboard.class.header-bar">{classHeader}</ZoneWidgets>
                 ) : null}
               </>
             }
@@ -335,7 +335,7 @@ export default function ClassDashboard({ session }) {
         */}
         {!store.loading ? (
           <ZoneWidgets
-            zone="plugins.dashboard.class.tabs"
+            zone="dashboard.class.tabs"
             onGetZone={onGetZone}
             container={
               <Tabs
@@ -381,7 +381,7 @@ export default function ClassDashboard({ session }) {
         ) : null} */}
           <Box className={styles.rightSidewidgetsContainer}>
             {!store.loading ? (
-              <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
+              <ZoneWidgets zone="dashboard.class.right-tabs" onGetZone={onGetRightZone}>
                 {classRightTabs}
               </ZoneWidgets>
             ) : null}

@@ -28,7 +28,7 @@ async function add({ user, profile, ctx }) {
   return ctx.tx.db.UserProfile.findOneAndUpdate(
     { id: userProfile.id },
     { role: role.id },
-    { new: true }
+    { new: true, lean: true }
   );
 }
 

@@ -1,3 +1,3 @@
 module.exports = {
-  ...leemons.getPlugin('common').services.tags.getControllerFunctions('plugins.tests'),
+  ...leemons.getPlugin('common').services.tags.getControllerFunctions('tests'),
 };

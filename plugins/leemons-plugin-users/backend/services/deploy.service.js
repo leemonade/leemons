@@ -135,7 +135,9 @@ module.exports = {
         await setKey(ctx.tx.db.KeyValue, `actions`);
       }
       ctx.tx.emit('init-actions');
+
       // Permissions
+      console.log('Vamos a añadir los permisos');
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: defaultPermissions,
@@ -185,7 +187,7 @@ module.exports = {
       await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(ctx.params);
     },
     'users.change-platform-locale': async (ctx) => {
-      createInitialProfiles({ ctx });
+      await createInitialProfiles({ ctx });
     },
   },
   async created() {

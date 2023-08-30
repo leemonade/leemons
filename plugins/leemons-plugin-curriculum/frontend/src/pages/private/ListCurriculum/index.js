@@ -69,7 +69,7 @@ function ListCurriculum() {
         listCurriculumRequest({ page: 0, size: 999999, canListUnpublished: true }),
         listCentersRequest({ page: 0, size: 999999 }),
         getPlatformLocalesRequest(),
-        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
+        getPermissionsWithActionsIfIHaveRequest(['curriculum.curriculum']),
       ]);
 
       if (

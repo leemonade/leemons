@@ -22,7 +22,7 @@ const settingsSchema = require('../../models/settings');
 module.exports = {
   getProfilesRest: {
     rest: {
-      path: '/settings/profiles',
+      path: '/profiles',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -33,14 +33,16 @@ module.exports = {
   },
   setProfilesRest: {
     rest: {
-      path: '/settings/profiles',
+      path: '/profiles',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.profiles': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.profiles': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],
@@ -51,14 +53,16 @@ module.exports = {
   },
   isProfilesConfigRest: {
     rest: {
-      path: '/settings/profiles/is-config',
+      path: '/profiles/is-config',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.profiles': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.profiles': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -69,14 +73,16 @@ module.exports = {
   },
   findOneRest: {
     rest: {
-      path: '/settings',
+      path: '/',
       method: 'GET',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.portfolio': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.portfolio': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -87,14 +93,16 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/settings',
+      path: '/',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.portfolio': {
-          actions: ['edit'],
+        allowedPermissions: {
+          'academic-portfolio.portfolio': {
+            actions: ['admin', 'edit'],
+          },
         },
       }),
     ],
@@ -115,14 +123,16 @@ module.exports = {
   // TODO Verificar que esto se va a usar
   enableMenuItemRest: {
     rest: {
-      path: '/settings/enable-menu-item',
+      path: '/enable-menu-item',
       method: 'POST',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.portfolio': {
-          actions: ['edit'],
+        allowedPermissions: {
+          'academic-portfolio.portfolio': {
+            actions: ['admin', 'edit'],
+          },
         },
       }),
     ],
@@ -141,7 +151,7 @@ module.exports = {
       throw validator.error;
     },
   },
-  // TODO Verificar que esto se va a usar
+  // TODO Verificar que esto se va a usar, la ruta no existía
   // removeMenuItemRest: {
   //   rest: {
   //     // path: '/settings/remove-menu-item',

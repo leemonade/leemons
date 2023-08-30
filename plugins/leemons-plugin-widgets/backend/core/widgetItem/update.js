@@ -15,7 +15,9 @@ async function update({ zoneKey, key, url, name, description, properties, profil
   if (_.isArray(profiles)) {
     await ctx.tx.db.WidgetItemProfile.deleteMany({ key });
   }
-  const promises = [ctx.tx.db.WidgetItem.findOneAndUpdate({ key }, toUpdate, { new: true })];
+  const promises = [
+    ctx.tx.db.WidgetItem.findOneAndUpdate({ key }, toUpdate, { new: true, lean: true }),
+  ];
   if (_.isArray(profiles) && profiles.length > 0) {
     const existsProfiles = await ctx.tx.call('users.profiles.existMany', { ids: profiles });
     if (!existsProfiles) {
@@ -28,7 +30,7 @@ async function update({ zoneKey, key, url, name, description, properties, profil
           zoneKey,
           key,
           profile,
-        })
+        }).then((mongooseDoc) => mongooseDoc.toObject())
       );
     });
   }

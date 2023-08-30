@@ -45,13 +45,15 @@ const {
   addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile,
 } = require('../core/user-profile');
-const restActions = require('./rest/actions.rest');
+const restActions = require('./rest/permissions.rest');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.permissions',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),

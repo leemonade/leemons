@@ -402,6 +402,7 @@ async function upload({ path, type, name, ctx }) {
   // EN: Firstly save the file to the database and get the id
   // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
   let newFile = await ctx.tx.db.Files.create(fileData);
+  newFile = newFile.toObject();
 
   // EN: Use active provider
   // ES: Usar el proveedor activo
@@ -444,7 +445,10 @@ async function upload({ path, type, name, ctx }) {
 
   // EN: Update the asset with the new URI and provider
   // ES: Actualizamos el archivo con la nueva URI y proveedor
-  newFile = await ctx.tx.db.Files.findOneAndUpdate({ id: newFile.id }, urlData, { new: true });
+  newFile = await ctx.tx.db.Files.findOneAndUpdate({ id: newFile.id }, urlData, {
+    new: true,
+    lean: true,
+  });
 
   return { ...newFile, metadata };
 }

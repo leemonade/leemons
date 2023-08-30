@@ -15,14 +15,16 @@ const { updateCycle } = require('../../core/cycle');
 module.exports = {
   putCycleRest: {
     rest: {
-      path: '/cycle',
+      path: '/',
       method: 'PUT',
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],

@@ -34,9 +34,10 @@ async function recover({ email, ctx }) {
     const now = moment(_.now());
     const updatedAt = moment(recovery.updated_at);
     if (now.diff(updatedAt, 'minutes') >= constants.timeForRecoverPassword) {
-      recovery = await ctx.tx.db.UserRecoverPassword.update(
+      recovery = await ctx.tx.db.UserRecoverPassword.findOneAndUpdate(
         { id: recovery.id },
-        { code: randomString(12) }
+        { code: randomString(12) },
+        { new: true, lean: true }
       );
     }
   } else {
@@ -44,6 +45,7 @@ async function recover({ email, ctx }) {
       user: user.id,
       code: randomString(12),
     });
+    recovery = recovery.toObject();
   }
   if (leemons.getPlugin('emails')) {
     const hostname = await getHostname({ ctx });

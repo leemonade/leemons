@@ -44,7 +44,7 @@ async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) 
         jsonSchema: JSON.stringify(jsonSchema),
         jsonUI: JSON.stringify(jsonUI),
       },
-      { new: true }
+      { new: true, lean: true }
     ),
   ];
 

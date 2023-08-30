@@ -1,5 +1,5 @@
 {
-  "name": "emails-amazon-smtp",
+  "name": "leemons-plugin-emails-aws-ses-frontend-react",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

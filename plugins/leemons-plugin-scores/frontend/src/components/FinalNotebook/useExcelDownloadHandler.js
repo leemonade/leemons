@@ -46,7 +46,7 @@ export function useExcelDownloadHandler({ classes, students, filters, grades, pe
 
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
-      fireEvent('plugins.scores::downloaded-intercepted');
+      fireEvent('scores::downloaded-intercepted');
 
       try {
         const wb = generateExcel({
@@ -63,16 +63,16 @@ export function useExcelDownloadHandler({ classes, students, filters, grades, pe
           labels: excelLabels,
         });
         getFile(wb, format);
-        fireEvent('plugins.scores::downloaded');
+        fireEvent('scores::downloaded');
       } catch (e) {
         console.error(e);
-        fireEvent('plugins.scores::download-scores-error', e);
-        // removeAction('plugins.scores::download-scores', onDownload);
+        fireEvent('scores::download-scores-error', e);
+        // removeAction('scores::download-scores', onDownload);
       }
     };
 
-    addAction('plugins.scores::download-scores', onDownload);
-    return () => removeAction('plugins.scores::download-scores', onDownload);
+    addAction('scores::download-scores', onDownload);
+    return () => removeAction('scores::download-scores', onDownload);
   }, [classes, students, grades, programName, courseName, groupName, periodName]);
 }
 

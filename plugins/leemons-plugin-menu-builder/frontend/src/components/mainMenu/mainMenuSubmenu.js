@@ -111,7 +111,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
           if (_.isString(id)) {
             if (isLast) {
               await reOrderCustomUserItemsRequest(
-                'plugins.menu-builder.main',
+                'menu-builder.main',
                 item.key,
                 _.map(newCustomChildrens, 'id')
               );
@@ -138,7 +138,7 @@ export default function MainMenuSubmenu({ item, onClose, activeItem, state, setS
       console.log(menuItem);
       if (index >= 0) {
         order[index] = menuItem.id;
-        await reOrderCustomUserItemsRequest('plugins.menu-builder.main', item.key, order);
+        await reOrderCustomUserItemsRequest('menu-builder.main', item.key, order);
       }
       await hooks.fireEvent('menu-builder:user:addCustomItem', menuItem);
     },

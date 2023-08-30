@@ -33,7 +33,7 @@ module.exports = {
     },
     adminDashboard: {
       handler(ctx) {
-        return adminDashboard({ ctx });
+        return adminDashboard({ ...ctx.params, ctx });
       },
     },
   },

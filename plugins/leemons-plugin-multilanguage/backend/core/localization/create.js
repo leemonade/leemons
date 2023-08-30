@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 
 const { getObjectArrayKeys } = require('leemons-utils');
 const localesFunctions = require('../locale');
@@ -38,15 +39,19 @@ async function add({ key, locale, value, isPrivate, ctx }) {
       const localeChecked = await localesFunctions.has({ code: _locale, ctx });
       if (localeChecked || ['es', 'en'].includes(_locale)) {
         // Create the new localization
-        return getLocalizationModelFromCTXAndIsPrivate({ isPrivate, ctx }).create({
+        const newLocalizationDoc = await getLocalizationModelFromCTXAndIsPrivate({
+          isPrivate,
+          ctx,
+        }).create({
           key: _key,
           locale: _locale,
           value,
         });
+        return newLocalizationDoc.toObject();
       }
 
       // The given locale does not exists
-      throw new Error('Invalid locale');
+      throw new LeemonsError(ctx, { message: 'Invalid locale' });
     }
     // No localization created (already exists)
     return null;
@@ -55,7 +60,7 @@ async function add({ key, locale, value, isPrivate, ctx }) {
       throw e;
     }
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the localization');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localization' });
   }
 }
 
@@ -154,7 +159,7 @@ async function addMany({ data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the localizations');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
   }
 }
 
@@ -264,7 +269,7 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the localizations');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
   }
 }
 

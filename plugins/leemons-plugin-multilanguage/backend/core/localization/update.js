@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { getObjectArrayKeys } = require('leemons-utils');
 const { Validator } = require('../../validations/localization');
 const {
@@ -32,7 +33,7 @@ async function setValue({ key, locale, value, isPrivate, ctx }) {
     }).findOneAndUpdate(
       { key: _key, locale: _locale },
       { key: _key, locale: _locale, value },
-      { upsert: true }
+      { upsert: true, lean: true, new: true }
     );
   } catch (e) {
     if (e.message === 'Invalid locale') {
@@ -40,7 +41,7 @@ async function setValue({ key, locale, value, isPrivate, ctx }) {
     }
 
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while updating the localization');
+    throw new LeemonsError(ctx, { message: 'An error occurred while updating the localization' });
   }
 }
 
@@ -84,7 +85,7 @@ async function setKey({ key, data, isPrivate, ctx }) {
         return getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).findOneAndUpdate(query, { ...query, value }, { upsert: true });
+        }).findOneAndUpdate(query, { ...query, value }, { upsert: true, lean: true, new: true });
       })
     );
 
@@ -109,7 +110,7 @@ async function setKey({ key, data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the localizations');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
   }
 }
 
@@ -161,7 +162,7 @@ async function setMany({ data, isPrivate, ctx }) {
         return getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).findOneAndUpdate(query, { ...query, value }, { upsert: true });
+        }).findOneAndUpdate(query, { ...query, value }, { upsert: true, lean: true, new: true });
       })
     );
 
@@ -183,7 +184,7 @@ async function setMany({ data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the localizations');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
   }
 }
 
@@ -227,7 +228,7 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
             ...newLocalization.query,
             ...newLocalization.item,
           },
-          { upsert: true }
+          { upsert: true, lean: true, new: true }
         )
       )
     );
@@ -258,7 +259,7 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the localizations');
+    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
   }
 }
 

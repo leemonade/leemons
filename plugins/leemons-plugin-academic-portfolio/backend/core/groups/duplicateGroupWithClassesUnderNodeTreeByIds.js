@@ -33,7 +33,7 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds({
         ...item,
         name: name || item.name,
         abbreviation: abbreviation || item.abbreviation,
-      })
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 

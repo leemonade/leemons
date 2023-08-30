@@ -3,11 +3,11 @@ const { validateKeyPrefix, validateExistEventTypeKey } = require('../../validati
 /**
  * Add event type with the provided key if not already exists
  * */
-async function add({ key, url, options = {}, order, ctx } = {}) {
+async function add({ key, url, options = {}, order, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
   await validateExistEventTypeKey({ key, ctx });
-  return ctx.tx.db.EventTypes.create({
+  const eventType = await ctx.tx.db.EventTypes.create({
     ...options,
     config: JSON.stringify(options.config || {}),
     key,
@@ -15,6 +15,7 @@ async function add({ key, url, options = {}, order, ctx } = {}) {
     order,
     pluginName: ctx.callerPlugin,
   });
+  return eventType.toObject();
 }
 
 module.exports = { add };

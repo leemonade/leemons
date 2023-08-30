@@ -133,7 +133,7 @@ function Calendar({ session }) {
       }
 
       if (canShowInCalendar) {
-        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes?.length) {
+        if (event.type === 'calendar.task' && event.data && event.data.classes?.length) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {

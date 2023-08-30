@@ -21,7 +21,7 @@ async function detail(familyId, userSession, { transacting } = {}) {
     getMembers(familyId, { transacting }),
     leemons
       .getPlugin('dataset')
-      .services.dataset.getValues('families-data', 'plugins.families', userSession.userAgents, {
+      .services.dataset.getValues('families-data', 'families', userSession.userAgents, {
         target: familyId,
         transacting,
       }),

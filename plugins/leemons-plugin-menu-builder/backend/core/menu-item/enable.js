@@ -26,7 +26,7 @@ async function enable({ menuKey = constants.mainMenuKey, key, ctx }) {
   const menuItem = await ctx.tx.db.MenuItem.findOneAndUpdate(
     { menuKey, key },
     { disabled: false },
-    { new: true }
+    { new: true, lean: true }
   );
 
   ctx.logger.info(`Enabled menu item "${key}" of menu "${menuKey}"`);

@@ -15,7 +15,8 @@ async function add({ key, permissions, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
   await validateExistMenu({ key, ctx });
 
-  const menu = await ctx.tx.db.Menu.create({ key });
+  const menuDoc = await ctx.tx.db.Menu.create({ key });
+  const menu = menuDoc.toObject();
 
   // Add the necessary permissions to view the item
   if (_.isArray(permissions) && permissions.length) {

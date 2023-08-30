@@ -7,7 +7,6 @@ const { agentDetailForPage } = require('./agentDetailForPage');
 const { getUserAgentByCenterProfile } = require('./getUserAgentByCenterProfile');
 
 // Calendars
-const { getUserAgentCalendarKey } = require('./calendar/getUserAgentCalendarKey');
 const {
   addCalendarToUserAgentsIfNeedByUser,
 } = require('./calendar/addCalendarToUserAgentsIfNeedByUser');
@@ -59,7 +58,6 @@ module.exports = {
   getUserAgentByCenterProfile,
   filterUserAgentsByProfileAndCenter,
   calendars: {
-    getUserAgentCalendarKey,
     addCalendarToUserAgentsIfNeedByUser,
   },
   contacts: {

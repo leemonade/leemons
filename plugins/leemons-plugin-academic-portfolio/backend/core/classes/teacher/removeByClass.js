@@ -43,14 +43,12 @@ async function removeByClass({ classIds, soft, ctx }) {
 
   const { teacher: teacherProfileId } = await getProfiles({ ctx });
 
-  // TODO Add remove `plugins.academic-portfolio.program.inside.${program.id}`
-
   await Promise.all(
     _.map(classTeachers, (classTeacher) =>
       ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
         userAgentId: classTeacher.teacher,
         data: {
-          permissionName: `plugins.academic-portfolio.class.${classTeacher.class}`,
+          permissionName: `academic-portfolio.class.${classTeacher.class}`,
         },
       })
     )
@@ -61,7 +59,7 @@ async function removeByClass({ classIds, soft, ctx }) {
       ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
         userAgentId: classTeacher.teacher,
         data: {
-          permissionName: `plugins.academic-portfolio.class-profile.${classTeacher.class}.${teacherProfileId}`,
+          permissionName: `academic-portfolio.class-profile.${classTeacher.class}.${teacherProfileId}`,
         },
       })
     )

@@ -40,7 +40,8 @@
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "leemons-widgets": "1.0.0",
-    "moleculer": "^0.14.26"
+    "moleculer": "^0.14.26",
+    "systeminformation": "^5.21.1"
   },
   "engines": {
     "node": ">= 16.x.x"
