@@ -236,7 +236,7 @@ export function useUpdateTimestamps(mutateAsync, assignation) {
         }
       }
     },
-    [assignation?.id, assignation.instance, mutateAsync]
+    [assignation?.id, assignation?.instance, mutateAsync]
   );
 }
 
@@ -328,7 +328,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
       React.cloneElement(currentStep?.component, {
         assignation,
         localizations,
-        setButtons: currentStep.customButtons ? setButtonsf(setButtons) : () => { },
+        setButtons: currentStep.customButtons ? setButtonsf(setButtons) : () => {},
         onNextStep: () => (hasNext ? onNextStep : toggleModal.current)(),
         onPrevStep,
         setStep,
