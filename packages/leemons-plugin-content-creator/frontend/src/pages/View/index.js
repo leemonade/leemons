@@ -25,6 +25,57 @@ import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 
+function FinishButton({ assignation, updateTimestamps }) {
+  const history = useHistory();
+  const { instance } = assignation;
+  const [t] = useTranslateLoader(prefixPN('contentCreatorDetail'));
+
+  const moduleId = instance?.metadata?.module?.id;
+  const nextActivityUrl = useNextActivityUrl(assignation);
+  const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
+
+  if (nextActivityUrl) {
+    return (
+      <Button
+        rightIcon={<ChevRightIcon />}
+        onClick={() =>
+          updateTimestamps('end').then(() => {
+            history.push(nextActivityUrl);
+          })
+        }
+      >
+        {t('nextActivity')}
+      </Button>
+    );
+  }
+  if (moduleId) {
+    return (
+      <Button
+        rightIcon={<ChevRightIcon />}
+        onClick={() =>
+          updateTimestamps('end').then(() => {
+            history.push(moduleDashboardUrl);
+          })
+        }
+      >
+        {t('goToModule')}
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      onClick={() =>
+        updateTimestamps('end').then(() => {
+          history.push('/private/assignables/ongoing');
+        })
+      }
+    >
+      {t('markRead')}
+    </Button>
+  );
+}
+
 function useDocumentData({ id, user }) {
   const { data: assignation, isLoading: assignationIsLoading } = useAssignations(
     { instance: id, user },
@@ -94,7 +145,6 @@ export default function DocumentView() {
       id,
       user,
     });
-  const nextActivityUrl = useNextActivityUrl(assignation);
 
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
@@ -160,28 +210,7 @@ export default function DocumentView() {
           readOnly
         />
         <Box className={classes.buttonContainer}>
-          {nextActivityUrl ? (
-            <Button
-              rightIcon={<ChevRightIcon />}
-              onClick={() =>
-                updateTimestamps('end').then(() => {
-                  history.push(nextActivityUrl);
-                })
-              }
-            >
-              {t('nextActivity')}
-            </Button>
-          ) : (
-            <Button
-              onClick={() =>
-                updateTimestamps('end').then(() => {
-                  history.push('/private/assignables/ongoing');
-                })
-              }
-            >
-              {t('markRead')}
-            </Button>
-          )}
+          <FinishButton assignation={assignation} updateTimestamps={updateTimestamps} />
         </Box>
       </>
     </ActivityContainer>

@@ -77,6 +77,7 @@ module.exports = {
     config: 'Configuración general',
     markRead: 'Marcar como leído',
     nextActivity: 'Siguiente actividad',
+    goToModule: 'Ir al módulo',
     instructions: 'Instrucciones',
   },
   contentCreatorAssign: {
