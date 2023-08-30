@@ -89,10 +89,6 @@ it('Logs an error message when an error is catched and handles unexpected values
     dataInputWithEmptyFields.url,
     expect.any(Error)
   );
-
-  //* Este test es inecesario realmente, es una función privada a la que SIEMPRE se le pasa data
-  //* Validar data es responsabilidad de la main function, que la invoca a esta helper.
-  //* ====> expect(responseWithoutData).toEqual([undefined, cover]);
 });
 
-// TODO Paola: So, where are fields like data.name validated? What if data.name = ['surprise']
+// TODO paola@skJohan: So, where are fields like data.name validated? What if data.name = ['surprise']

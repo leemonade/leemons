@@ -1,11 +1,9 @@
 /* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil, isString, isArray, trim, forEach } = require('lodash');
+const { map, isEmpty, isNil, isString, isArray, forEach } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');
-const { getById: getCategoryById } = require('../categories/getById');
-const { getByKey: getCategoryByKey } = require('../categories/getByKey');
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
@@ -14,36 +12,6 @@ const { handleBookmarkData } = require('./handleBookmarkData');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * Handles the category data.
- * Fetches the category by its ID or key if it's empty. If it's a string, it checks for UUID format to decide the fetch method.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {string} params.category - The category of the asset.
- * @param {string} params.categoryId - The ID of the category.
- * @param {string} params.categoryKey - The key of the category.
- * @returns {Promise<Object>} The handled category data.
- */
-async function handleCategoryData({ category, categoryId, categoryKey }) {
-  if (isEmpty(category)) {
-    if (!isEmpty(categoryId)) {
-      category = await getCategoryById(categoryId);
-    } else {
-      category = await getCategoryByKey(categoryKey);
-    }
-  } else if (isString(category)) {
-    if (
-      category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-    ) {
-      category = await getCategoryById(category);
-    } else {
-      category = await getCategoryByKey(category);
-    }
-  }
-  return category;
-}
 
 /**
  * Handles 'can use' data for an asset category.
@@ -343,7 +311,7 @@ async function add({
   // ··········································
   // PROCESS CATEGORY AND CHECK PERMISSIONS
 
-  category = await handleCategoryData({ category, categoryId, categoryKey });
+  category = await handleCategoryData({ category, categoryId, categoryKey, ctx });
 
   checkAndHandleCanUse({ category, calledFrom: this.calledFrom });
 
