@@ -9,35 +9,12 @@ const { add: addBookmark } = require('../bookmarks/add');
 const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 const { normalizeItemsArray } = require('../shared');
 const { handleBookmarkData } = require('./handleBookmarkData');
+const { handleUserSessionData } = require('./handleUserSessionData');
+const { handleCategoryData } = require('./handleCategoryData');
+const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * Handles 'can use' data for an asset category.
- * Creates a user array based on category data.
- * Checks if caller is in 'can use' list, throws error if not.
- *
- * @param {Object} params - The parameters object.
- * @param {string} params.calledFrom - The plugin that called this function.
- * @param {Object} params.category - The category of the asset. It should have 'pluginOwner' and 'canUse' properties.
- * @returns {Array} The handled 'can use' data, an array of users who can use the asset.
- */
-function checkAndHandleCanUse({ category, calledFrom }) {
-  let canUse = [leemons.plugin.prefixPN(''), category?.pluginOwner];
-  if (isArray(category?.canUse) && category?.canUse.length) {
-    canUse = canUse.concat(category.canUse);
-  }
-
-  if (category?.canUse !== '*' && !canUse.includes(calledFrom)) {
-    throw new global.utils.HttpError(
-      403,
-      `Category "${category.key}" was not created by the plugin "${calledFrom}". You can only add assets to categories created by the plugin "${calledFrom}".`
-    );
-  }
-
-  return canUse;
-}
 
 /**
  * Handles file and cover upload.
@@ -295,7 +272,6 @@ async function add({
 
   // ··········································
   // DATA INTEGRITY VALIDATION
-
   await validateAddAsset(data);
 
   // ··········································
@@ -312,8 +288,7 @@ async function add({
   // PROCESS CATEGORY AND CHECK PERMISSIONS
 
   category = await handleCategoryData({ category, categoryId, categoryKey, ctx });
-
-  checkAndHandleCanUse({ category, calledFrom: this.calledFrom });
+  checkAndHandleCanUse({ category, calledFrom: ctx.callerPlugin, ctx });
 
   // ··········································································
   // UPLOAD FILE
