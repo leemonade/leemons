@@ -16,22 +16,6 @@ const { handleBookmarkData } = require('./handleBookmarkData');
 // PRIVATE METHODS
 
 /**
- * Handles the user session data.
- *
- * @param {Object} params - The parameters object.
- * @param {Object} params.assetData - The data of the asset.
- * @param {Object} params.userSession - The user session.
- * @returns {Object} The handled asset data.
- */
-function handleUserSessionData({ assetData, userSession }) {
-  assetData.fromUser = userSession.id;
-  assetData.fromUserAgent =
-    userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
-
-  return assetData;
-}
-
-/**
  * Handles the category data.
  * Fetches the category by its ID or key if it's empty. If it's a string, it checks for UUID format to decide the fetch method.
  *
@@ -325,6 +309,7 @@ async function add({
   options: { newId, published = true, permissions, duplicating = false } = {},
   ctx,
 }) {
+  const { userSession } = ctx.meta;
   const pPermissions = normalizeItemsArray(permissions);
 
   // ··········································
@@ -352,7 +337,7 @@ async function add({
   let { categoryId, categoryKey, tags, subjects, ...assetData } = data;
 
   if (userSession) {
-    assetData = handleUserSessionData({ assetData, userSession });
+    assetData = handleUserSessionData({ assetData, userSession, ctx });
   }
 
   // ··········································

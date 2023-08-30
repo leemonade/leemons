@@ -71,7 +71,7 @@ it('Should process bookmark data and cover correctly, only when data.url is pass
 
 it('Logs an error message when an error is catched and handles unexpected values without throwing', async () => {
   // Arrange
-  const { dataInput, dataInputWithEmptyFields, cover } = getBookmarkData();
+  const { dataInputWithEmptyFields, cover } = getBookmarkData();
 
   const ctx = generateCtx({});
   const spyLogger = spyOn(ctx.logger, 'error');

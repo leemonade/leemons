@@ -1,0 +1,36 @@
+module.exports = function getUserSession () {
+  return {
+    id: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
+    name: 'Willy',
+    surnames: 'Rodríguez',
+    secondSurname: null,
+    email: 'teacher@leemons.io',
+    phone: null,
+    avatar: '/api/leebrary/img/5456aaf2-2637-4a5b-bd4d-edc7fe18cd14@1.0.0?t=1690442384793',
+    avatarAsset: '5456aaf2-2637-4a5b-bd4d-edc7fe18cd14@1.0.0',
+    birthdate: new Date('1975-10-03T00:00:00.000Z'),
+    locale: 'es',
+    active: 1,
+    status: null,
+    gender: 'male',
+    deleted: 0,
+    created_at: new Date('2023-07-25T09:27:20.000Z'),
+    updated_at: new Date('2023-08-02T09:05:26.000Z'),
+    deleted_at: null,
+    sessionConfig: { program: '584191ed-1744-431e-81e1-64b4bd9bcd36' },
+    userAgents: [
+      {
+        id: 'a1c917f3-8771-4f92-8e2d-18657b3ec709',
+        user: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
+        role: 'ef7425c9-6431-409f-8016-663dfa6e484b',
+        reloadPermissions: 0,
+        datasetIsGood: 1,
+        disabled: null,
+        deleted: 0,
+        created_at: new Date('2023-07-25T09:27:20.000Z'),
+        updated_at: new Date('2023-08-01T16:47:55.000Z'),
+        deleted_at: null,
+      },
+    ],
+  };
+};
