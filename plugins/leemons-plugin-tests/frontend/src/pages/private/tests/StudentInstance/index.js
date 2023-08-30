@@ -14,7 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @feedback plugin maybe?
-import { ActivityContainer } from '@bubbles-ui/leemons';
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import { useLocale, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';

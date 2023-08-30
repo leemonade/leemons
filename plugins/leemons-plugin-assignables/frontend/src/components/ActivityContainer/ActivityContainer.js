@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import { Box, useResizeObserver } from '@bubbles-ui/components';
 import { ActivityContainerStyles } from './ActivityContainer.styles';
-// TODO: import from @common plugin
-import { HeaderBackground, TaskDeadline, TaskHeader } from '../../common';
-import {
-  ACTIVITY_CONTAINER_DEFAULT_PROPS,
-  ACTIVITY_CONTAINER_PROP_TYPES,
-} from './ActivityContainer.constants';
+import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
+import { ACTIVITY_CONTAINER_DEFAULT_PROPS } from './ActivityContainer.constants';
 
 const headerCollapsedHeight = 64;
 
