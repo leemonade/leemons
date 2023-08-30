@@ -17,7 +17,7 @@ const metascraper = require('../../shared/metascraper');
  * @param {string} params.data.description - The description of the bookmark.
  * @param {string} params.data.cover - The cover of the asset.
  * @param {string} params.cover - The cover of the bookmark.
- * @param {import('moleculer').Context} params.ctx - The Moleculer context.
+ * @param {MoleculerContext} params.ctx Moleculer context
  * @returns {Promise<[Object, string]>} The handled bookmark data as a tuple [data, cover].
  */
 async function handleBookmarkData({ data, cover, ctx }) {

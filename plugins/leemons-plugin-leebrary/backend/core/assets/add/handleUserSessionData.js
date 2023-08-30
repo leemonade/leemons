@@ -1,9 +1,10 @@
 /**
- * Handles the user session data.
+ * Handles the user session data and logs warnings if necessary.
  *
  * @param {Object} params - The parameters object.
  * @param {Object} params.assetData - The data of the asset.
  * @param {Object} params.userSession - The user session.
+ * @param {MoleculerContext} params.ctx Moleculer context
  * @returns {Object} The handled asset data.
  */
 function handleUserSessionData({ assetData, userSession, ctx }) {
