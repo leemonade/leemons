@@ -1,3 +1,5 @@
+const { LeemonsError } = require('leemons-error');
+
 /**
  *
  * @param {object} options
@@ -9,7 +11,10 @@
  */
 async function unregisterDates({ type, instance, name, ctx }) {
   if (!type || !instance || !name) {
-    throw new Error('Cannot unregister dates: type, instance and name are required');
+    throw new LeemonsError(ctx, {
+      message: 'Cannot unregister dates: type, instance and name are required',
+      httpStatusCode: 400,
+    });
   }
   const { deletedCount } = await ctx.tx.db.Dates.deleteMany({ type, instance, name });
 

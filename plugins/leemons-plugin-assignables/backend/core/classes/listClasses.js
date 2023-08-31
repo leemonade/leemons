@@ -1,3 +1,4 @@
+const { LeemonsError } = require('leemons-error');
 const { map } = require('lodash');
 
 async function listClasses({ assignable, instance, ctx }) {
@@ -12,7 +13,10 @@ async function listClasses({ assignable, instance, ctx }) {
       assignableInstance: instance,
     };
   } else {
-    throw new Error('You must provide an assignable or an assignableInstance');
+    throw new LeemonsError(ctx, {
+      message: 'You must provide an assignable or an assignableInstance',
+      httpStatusCode: 400,
+    });
   }
 
   const classes = await ctx.tx.db.Classes.find(query).lean();

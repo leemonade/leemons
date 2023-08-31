@@ -102,8 +102,15 @@ it('Should only delete the specified role', async () => {
 });
 
 it('Should throw if no role is provided', () => {
+  // Arrange
+  const ctx = generateCtx({
+    models: {
+      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+    },
+  });
+
   // Act
-  const testFn = () => unregisterRole({});
+  const testFn = () => unregisterRole({ ctx });
 
   // Assert
   expect(testFn).rejects.toThrowError('Role param is required');

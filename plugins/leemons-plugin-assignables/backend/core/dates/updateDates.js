@@ -1,4 +1,5 @@
 const { pick, isNull, pickBy, negate, difference, keys, without } = require('lodash');
+const { LeemonsError } = require('leemons-error');
 const { getDates } = require('./getDates');
 // const { unregisterDates } = require('./unregisterDates');
 const { registerDates } = require('./registerDates');
@@ -33,7 +34,10 @@ function getDiff(oldObject, newObject) {
  */
 async function updateDates({ type, instance, dates, ctx }) {
   if (!type || !instance || !dates) {
-    throw new Error('Cannot update dates: type, instance and dates are required');
+    throw new LeemonsError(ctx, {
+      message: 'Cannot update dates: type, instance and dates are required',
+      httpStatusCode: 400,
+    });
   }
 
   const currentDates = await getDates({ type, instance, ctx });

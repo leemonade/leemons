@@ -1,8 +1,13 @@
+const { LeemonsError } = require('leemons-error');
+
 async function registerClass({ id, instance, assignable, ctx }) {
   const ids = Array.isArray(id) ? id : [id].filter(Boolean);
 
   if (!ids.length || !instance || !assignable) {
-    throw new Error('id, instance and assignable are required');
+    throw new LeemonsError(ctx, {
+      message: 'id, instance and assignable are required',
+      httpStatusCode: 400,
+    });
   }
   const classesToSave = ids.map((classId) => ({
     assignableInstance: instance,

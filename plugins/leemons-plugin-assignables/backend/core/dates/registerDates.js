@@ -1,3 +1,4 @@
+const { LeemonsError } = require('leemons-error');
 const { map } = require('lodash');
 
 /**
@@ -10,7 +11,10 @@ const { map } = require('lodash');
  */
 async function registerDates({ type, instance, dates, ctx }) {
   if (!type || !instance || !dates) {
-    throw new Error('Cannot regster dates: type, instance and dates are required');
+    throw new LeemonsError(ctx, {
+      message: 'Cannot regster dates: type, instance and dates are required',
+      httpStatusCode: 400,
+    });
   }
   const datesToSave = map(dates, (date, name) => ({ type, instance, name, date }));
 

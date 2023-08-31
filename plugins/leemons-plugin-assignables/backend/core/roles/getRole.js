@@ -1,6 +1,8 @@
+const { LeemonsError } = require('leemons-error');
+
 async function getRole({ role, ctx }) {
   if (!role) {
-    throw new Error('Role param is required');
+    throw new LeemonsError(ctx, { message: 'Role param is required', httpStatusCode: 400 });
   }
   const foundRole = await ctx.tx.db.Roles.findOne({ name: role }).lean();
 
@@ -8,7 +10,7 @@ async function getRole({ role, ctx }) {
     return foundRole;
   }
 
-  throw new Error('Role not found');
+  throw new LeemonsError(ctx, { message: 'Role not found', httpStatusCode: 404 });
 }
 
 module.exports = { getRole };

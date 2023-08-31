@@ -1,8 +1,12 @@
+const { LeemonsError } = require('leemons-error');
 const { set } = require('lodash');
 
 async function getDates({ type, instance, ctx }) {
   if (!type || !instance) {
-    throw new Error('Cannot get dates: type and instance are required');
+    throw new LeemonsError(ctx, {
+      message: 'Cannot get dates: type and instance are required',
+      httpStatusCode: 400,
+    });
   }
 
   if (!Array.isArray(instance)) {
