@@ -35,7 +35,7 @@ function modifyCTX(ctx) {
     if (_.isObject(actionName)) {
       actionName = actionName.action.name;
     }
-    if (isCoreService(actionName)) {
+    if (actionName.startsWith('deployment-manager.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
 

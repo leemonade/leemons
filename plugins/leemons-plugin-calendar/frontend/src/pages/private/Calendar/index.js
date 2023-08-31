@@ -13,7 +13,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
+import { CalendarSubNavFilters, EventDetailPanel } from '@calendar/components';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -133,7 +133,7 @@ function Calendar({ session }) {
       }
 
       if (canShowInCalendar) {
-        if (event.type === 'plugins.calendar.task' && event.data && event.data.classes?.length) {
+        if (event.type === 'calendar.task' && event.data && event.data.classes?.length) {
           // eslint-disable-next-line consistent-return
           _.forEach(event.data.classes, (calendar) => {
             if (calendarsByKey[calendar]?.showEvents) {

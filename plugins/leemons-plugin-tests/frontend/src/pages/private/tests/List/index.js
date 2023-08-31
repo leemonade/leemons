@@ -1,5 +1,6 @@
 import React from 'react';
 import { ContextContainer, TabPanel, Tabs, Box, createStyles } from '@bubbles-ui/components';
+// TODO: import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -38,7 +39,7 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['plugins.tests.tests']);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['tests.tests']);
     if (permissions[0]) {
       store.canAdd =
         permissions[0].actionNames.includes('create') ||

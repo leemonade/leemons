@@ -17,6 +17,7 @@ import {
 import { DeleteBinIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
+// TODO: import from @common plugin
 
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { LocaleDate, useStore } from '@common';
@@ -37,7 +38,7 @@ import { SelectProfile } from '../../../../components/SelectProfile';
 import { listUsersRequest } from '../../../../request';
 
 function ListUsers() {
-  const [t] = useTranslateLoader(prefixPN('list_users'));
+  const [t, trans] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -216,8 +217,8 @@ function ListUsers() {
 
   async function getPermissions() {
     const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.users'),
-      getPermissionsWithActionsIfIHaveRequest('plugins.users.import'),
+      getPermissionsWithActionsIfIHaveRequest('users.users'),
+      getPermissionsWithActionsIfIHaveRequest('users.import'),
     ]);
     if (addPermission) {
       store.canAdd =

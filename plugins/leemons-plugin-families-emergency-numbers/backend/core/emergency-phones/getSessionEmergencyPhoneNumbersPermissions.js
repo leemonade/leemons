@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 async function getSessionEmergencyPhoneNumbersPermissions(userSession, { transacting } = {}) {
   const permissionsNames = {
-    phoneNumbersInfo: 'plugins.families-emergency-numbers.families-emergency-numbers',
+    phoneNumbersInfo: 'families-emergency-numbers.families-emergency-numbers',
   };
   const permissions = await leemons
     .getPlugin('users')

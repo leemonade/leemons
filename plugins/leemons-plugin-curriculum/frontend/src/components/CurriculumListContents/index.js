@@ -16,7 +16,7 @@ export function CurriculumListContents({ value, subjects: _subjects }) {
 
   // eslint-disable-next-line no-nested-ternary
   const [t] = useTranslateLoader(prefixPN('selectContentModal'));
-  const [t2] = useTranslateLoader('plugins.multilanguage.formWithTheme');
+  const [t2] = useTranslateLoader('multilanguage.formWithTheme');
   const [store, render] = useStore({ value });
 
   function getTreeData() {

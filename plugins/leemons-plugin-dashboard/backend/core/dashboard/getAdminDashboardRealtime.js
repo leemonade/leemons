@@ -1,11 +1,11 @@
 const _ = require('lodash');
-
-async function getAdminDashboardRealtime({ transacting } = {}) {
+const systeminformation = require('systeminformation');
+async function getAdminDashboardRealtime() {
   const [currentLoad, mem, networkInterfaces, networkInterfaceDefault] = await Promise.all([
-    global.utils.systeminformation.currentLoad(),
-    global.utils.systeminformation.mem(),
-    global.utils.systeminformation.networkInterfaces(),
-    global.utils.systeminformation.networkInterfaceDefault(),
+    systeminformation.currentLoad(),
+    systeminformation.mem(),
+    systeminformation.networkInterfaces(),
+    systeminformation.networkInterfaceDefault(),
   ]);
 
   return {

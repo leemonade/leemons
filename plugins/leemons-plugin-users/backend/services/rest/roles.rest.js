@@ -37,8 +37,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.roles': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.roles': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -68,8 +70,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.roles': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.roles': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -97,8 +101,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.roles': {
-          actions: ['create', 'admin'],
+        allowedPermissions: {
+          'users.roles': {
+            actions: ['create', 'admin'],
+          },
         },
       }),
     ],
@@ -128,8 +134,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.roles': {
-          actions: ['update', 'admin'],
+        allowedPermissions: {
+          'users.roles': {
+            actions: ['update', 'admin'],
+          },
         },
       }),
     ],
@@ -147,7 +155,7 @@ module.exports = {
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const role = await groupsService.updateWithRole(ctx, ...ctx.params);
+        const role = await groupsService.updateWithRole({ ...ctx.params, ctx });
         return { status: 200, role };
       }
       throw validator.error;

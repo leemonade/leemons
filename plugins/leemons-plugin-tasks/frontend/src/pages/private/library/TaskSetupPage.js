@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isArray, isEmpty, isNil } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
 import { Box, Stack } from '@bubbles-ui/components';
+// TODO: import from @feedback plugin maybe?
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -318,7 +319,7 @@ function TaskSetup() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res.plugins.tasks.task_setup_page.setup;
+      const data = res.tasks.task_setup_page.setup;
       setLabels(data);
     }
   }, [translations]);

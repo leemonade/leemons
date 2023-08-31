@@ -20,7 +20,7 @@ const getAssetPermissionName = require('../permissions/helpers/getAssetPermissio
     {
       canEdit: true,
       isCustomPermission: true,
-      permissionName: 'plugins.calendar.calendar.idcalendario',
+      permissionName: 'calendar.calendar.idcalendario',
       actionNames: ['view', 'delete', 'admin', 'owner'],
     },
   ]

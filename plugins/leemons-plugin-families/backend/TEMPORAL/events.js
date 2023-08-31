@@ -4,22 +4,18 @@ const { add } = require('./src/services/menu-builder/add');
 const { addLocales } = require('./src/services/locales/addLocales');
 
 async function events(isInstalled) {
-  leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
+  leemons.events.once('multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
 
-  leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
+  leemons.events.on('multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
   });
 
   if (!isInstalled) {
     // Menu
     leemons.events.once(
-      [
-        'plugins.users:init-menu',
-        'plugins.families:init-permissions',
-        'plugins.menu-builder:pluginDidLoadServices',
-      ],
+      ['users:init-menu', 'families:init-permissions', 'menu-builder:pluginDidLoadServices'],
       async () => {
         for (let i = 0, l = constants.menuItems.length; i < l; i++) {
           // eslint-disable-next-line no-await-in-loop
@@ -33,7 +29,7 @@ async function events(isInstalled) {
       }
     );
 
-    leemons.events.once('plugins.users:init-widget-zones', async () => {
+    leemons.events.once('users:init-widget-zones', async () => {
       await Promise.all(
         _.map(constants.widgets.items, (config) =>
           leemons
@@ -49,14 +45,14 @@ async function events(isInstalled) {
     });
 
     // Permissions
-    leemons.events.once('plugins.users:init-permissions', async () => {
+    leemons.events.once('users:init-permissions', async () => {
       await leemons.getPlugin('users').services.permissions.addMany(constants.permissions);
       leemons.events.emit('init-permissions');
     });
 
     // Dataset
     leemons.events.once(
-      ['plugins.dataset:pluginDidLoadServices', 'plugins.multilanguage:pluginDidLoad'],
+      ['dataset:pluginDidLoadServices', 'multilanguage:pluginDidLoad'],
       async () => {
         await Promise.all(
           _.map(constants.datasetLocations, (config) =>
@@ -67,7 +63,7 @@ async function events(isInstalled) {
       }
     );
   } else {
-    leemons.events.once('plugins.families:pluginDidInit', async () => {
+    leemons.events.once('families:pluginDidInit', async () => {
       leemons.events.emit('init-menu');
       leemons.events.emit('init-permissions');
       leemons.events.emit('init-dataset-locations');

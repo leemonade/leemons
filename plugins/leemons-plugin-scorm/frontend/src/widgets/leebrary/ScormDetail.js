@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { LibraryDetail } from '@bubbles-ui/leemons';
+// TODO: import from @library plugin maybe?
+import { LibraryDetail } from '@library/components/LibraryDetail';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';

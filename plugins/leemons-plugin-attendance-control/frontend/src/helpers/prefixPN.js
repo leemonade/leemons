@@ -12,5 +12,5 @@
  * @return {string} str with plugin name prefix
  * */
 export function prefixPN(str) {
-  return `plugins.attendance-control.${str}`;
+  return `attendance-control.${str}`;
 }

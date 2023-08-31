@@ -13,7 +13,7 @@ import {
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
-import { LibraryItem } from '@bubbles-ui/leemons';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import { LocaleDate, unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -700,7 +700,7 @@ function AssetList({
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.list.labels;
+      const data = items.leebrary.list.labels;
       return data;
     }
     return {};

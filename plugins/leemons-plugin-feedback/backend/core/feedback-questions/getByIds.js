@@ -32,7 +32,7 @@ async function getByIds(id, { options, userSession, transacting } = {}) {
       transacting,
     }),
     tagsService.getValuesTags(_.map(questions, 'id'), {
-      type: 'plugins.tests.questions',
+      type: 'tests.questions',
       transacting,
     }),
   ]);

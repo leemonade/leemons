@@ -1,5 +1,6 @@
 import { Box, Kanban as BubblesKanban } from '@bubbles-ui/components';
-import { KanbanFilters, KanbanTaskCard } from '@bubbles-ui/leemons';
+// TODO: import from plugin not from bubbles
+import { KanbanFilters, KanbanTaskCard } from '@calendar/components';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import prefixPN from '@calendar/helpers/prefixPN';
 import {
@@ -302,7 +303,7 @@ function Kanban({ session }) {
           classCalendars={ref.current.filtersData.calendars}
           event={ref.current.event}
           close={toggleEventModal}
-          forceType="plugins.calendar.task"
+          forceType="calendar.task"
         />
       ) : null}
       <Box sx={() => ({ position: 'absolute', top: 0, left: 0, width: '100%' })}>

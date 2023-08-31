@@ -14,7 +14,7 @@ async function getFamilyMenuBuilderData(family, familyName, { transacting } = {}
     },
     permissions: [
       {
-        permissionName: `plugins.families.family-${family}`,
+        permissionName: `families.family-${family}`,
         actionNames: ['view', 'admin'],
       },
     ],

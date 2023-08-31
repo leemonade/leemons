@@ -13,7 +13,7 @@ import {
   Paper,
   useViewportSize,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@bubbles-ui/leemons';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import {
   EditorLeftAlignIcon,
   EditorRightAlignIcon,

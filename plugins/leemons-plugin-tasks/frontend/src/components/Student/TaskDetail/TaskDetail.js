@@ -6,7 +6,8 @@ import { unflatten, useLocale } from '@common';
 import _, { map } from 'lodash';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { Loader } from '@bubbles-ui/components';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+// TODO: import from @feedback plugin maybe?
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';

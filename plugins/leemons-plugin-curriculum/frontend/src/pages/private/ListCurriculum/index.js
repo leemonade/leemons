@@ -9,6 +9,7 @@ import {
 } from '@bubbles-ui/components';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+//TODO: import LibraryCard from '@leebrary/components/LibraryCard';
 import { AdminPageHeader, LibraryCard } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -68,7 +69,7 @@ function ListCurriculum() {
         listCurriculumRequest({ page: 0, size: 999999, canListUnpublished: true }),
         listCentersRequest({ page: 0, size: 999999 }),
         getPlatformLocalesRequest(),
-        getPermissionsWithActionsIfIHaveRequest(['plugins.curriculum.curriculum']),
+        getPermissionsWithActionsIfIHaveRequest(['curriculum.curriculum']),
       ]);
 
       if (

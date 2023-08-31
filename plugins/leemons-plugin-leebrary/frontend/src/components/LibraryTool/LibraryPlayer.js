@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import { NodeViewWrapper } from '@bubbles-ui/editors';
-import { AssetPlayer, LibraryCardEmbed, LibraryCard } from '@bubbles-ui/leemons';
+// TODO: AssetPlayer comes from @common
+import { AssetPlayer } from '@bubbles-ui/leemons';
+import { LibraryCardEmbed, LibraryCard } from '@leebrary/components';
 
 export const LIBRARY_PLAYER_DISPLAYS = ['card', 'player'];
 export const LIBRARY_PLAYER_ALIGNS = ['left', 'center', 'right'];

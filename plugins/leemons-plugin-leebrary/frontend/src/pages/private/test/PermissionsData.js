@@ -16,7 +16,7 @@ import {
   Switch,
   UserDisplayItem,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@bubbles-ui/leemons';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -99,7 +99,7 @@ const PermissionsData = ({ sharing }) => {
   useEffect(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const { roleLabels } = items.plugins.leebrary.assetSetup;
+      const { roleLabels } = items.leebrary.assetSetup;
       ROLES.forEach((rol, index) => {
         ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;
       });

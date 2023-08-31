@@ -5,7 +5,7 @@ module.exports = [
     handler: 'messages.list',
     authenticated: true,
     allowedPermissions: {
-      'plugins.board-messages.board-messages': {
+      'board-messages.board-messages': {
         actions: ['view', 'update', 'create', 'delete', 'admin'],
       },
     },
@@ -16,7 +16,7 @@ module.exports = [
     handler: 'messages.save',
     authenticated: true,
     allowedPermissions: {
-      'plugins.board-messages.board-messages': {
+      'board-messages.board-messages': {
         actions: ['update', 'create', 'admin'],
       },
     },
@@ -27,7 +27,7 @@ module.exports = [
     handler: 'messages.getOverlaps',
     authenticated: true,
     allowedPermissions: {
-      'plugins.board-messages.board-messages': {
+      'board-messages.board-messages': {
         actions: ['update', 'create', 'admin'],
       },
     },

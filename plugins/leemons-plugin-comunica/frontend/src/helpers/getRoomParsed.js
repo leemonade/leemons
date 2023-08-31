@@ -13,7 +13,7 @@ export function getRoomParsed(room) {
   const config = {
     ...room,
   };
-  if (isTeacher && room.type === 'plugins.assignables.assignation.user') {
+  if (isTeacher && room.type === 'assignables.assignation.user') {
     const student = _.find(
       _.map(room.userAgents, 'userAgent'),
       (userAgent) => userAgent?.profile?.sysName === 'student'
@@ -26,7 +26,7 @@ export function getRoomParsed(room) {
     config.metadata.headerImageIsUrl = false;
     config.metadata.headerImageIsUser = false;
   }
-  if (!isTeacher && room.type === 'plugins.assignables.assignation.user') {
+  if (!isTeacher && room.type === 'assignables.assignation.user') {
     config.metadata.headerSubName = config.name;
     config.metadata.headerIcon = config.icon;
     config.metadata.headerSubNameReplaces = config.nameReplaces;

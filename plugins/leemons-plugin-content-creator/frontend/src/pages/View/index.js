@@ -17,7 +17,7 @@ import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';

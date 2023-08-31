@@ -30,6 +30,7 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
     if (item) {
       setValue('name', item.name);
       setValue('phone', item.phone);
+      // TODO: MIGRACION MIRAR LA LOGICA DEL PLUGINS.
       if (item.relation.startsWith('plugins.')) {
         setValue('relation', item.relation);
       } else {

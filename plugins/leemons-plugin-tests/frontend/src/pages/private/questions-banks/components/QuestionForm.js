@@ -134,7 +134,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                     <Box style={{ width: '484px' }}>
                       <TagsAutocomplete
                         pluginName="tests"
-                        type="plugins.tests.questionBanks"
+                        type="tests.questionBanks"
                         label={t('tagsLabel')}
                         labels={{ addButton: t('addTag') }}
                         {...field}

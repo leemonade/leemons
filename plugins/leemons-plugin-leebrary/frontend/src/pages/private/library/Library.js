@@ -2,7 +2,7 @@ import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { listSessionClasses } from '@academic-portfolio/request/classes';
 import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
-import { LibraryNavbar } from '@bubbles-ui/leemons';
+import { LibraryNavbar } from '@leebrary/components/LibraryNavbar';
 import { unflatten, useStore } from '@common';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -66,7 +66,7 @@ const LibraryPageContent = () => {
   const navbarLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.home.navbar;
+      const data = items.leebrary.home.navbar;
       return data;
     }
     return {};

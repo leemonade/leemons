@@ -25,7 +25,7 @@ async function removeMember(family, user, { transacting } = {}) {
   const profile = isStudent ? profiles.student : profiles.guardian;
   // ES: Borramos el permiso de ver a la familia, asi ya no le sale en el menu
   // EN: We delete the permission to see the family, so it does not appear in the menu.
-  const permissionsToRemove = [`plugins.families.family-${family}`];
+  const permissionsToRemove = [`families.family-${family}`];
 
   // ES: Una vez borrado de la familia comprobamos si ya no esta en ninguna familia, si no esta en
   // ninguna le quitamos el permiso de que le salga el menu item de familias
@@ -39,7 +39,7 @@ async function removeMember(family, user, { transacting } = {}) {
   }
   const inAnyFamily = await table.familyMembers.count(query, { transacting });
   if (!inAnyFamily) {
-    permissionsToRemove.push('plugins.families.user-families');
+    permissionsToRemove.push('families.user-families');
   }
 
   await permissionsService.removeCustomPermissionToUserProfile(user, profile, permissionsToRemove, {

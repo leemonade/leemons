@@ -12,7 +12,7 @@ import {
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
 import { AddIcon as PlusIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
-import { KanbanTaskCard } from '@bubbles-ui/leemons';
+import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -182,7 +182,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
         }
          */
         let toReturn = false;
-        if (c.type === 'plugins.calendar.task' && c.data && c.data.classes) {
+        if (c.type === 'calendar.task' && c.data && c.data.classes) {
           // eslint-disable-next-line consistent-return
           forEach(c.data.classes, (calendar) => {
             if (calendarIds.includes(calendar)) {
@@ -341,7 +341,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
             event={store.selectedEvent}
             close={toggleEventModal}
             classCalendars={store.filtersData.calendars}
-            forceType={'plugins.calendar.task'}
+            forceType={'calendar.task'}
           />
           <BubblesKanban
             value={store.board}

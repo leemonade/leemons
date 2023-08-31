@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { RuleGroup } from '@bubbles-ui/leemons';
+import { RuleGroup } from '../../RuleGroup';
 
 const Conditions = ({ messages, errorMessages, selectData, form }) => {
   const {

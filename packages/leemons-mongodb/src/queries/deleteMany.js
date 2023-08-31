@@ -16,8 +16,8 @@ function deleteMany({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (_conditions, options = {}) {
-    if (options.soft) {
+  return async function (_conditions = {}, options = {}) {
+    if (options?.soft) {
       return updateMany(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
     }
     await createTransactionIDIfNeed({

@@ -11,12 +11,12 @@ import _ from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 export function useAssignablesAssetListLocalizations() {
-  const [, translations] = useTranslateLoader('plugins.assignables.assetListFilters');
+  const [, translations] = useTranslateLoader('assignables.assetListFilters');
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, 'plugins.assignables.assetListFilters');
+      const data = _.get(res, 'assignables.assetListFilters');
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí

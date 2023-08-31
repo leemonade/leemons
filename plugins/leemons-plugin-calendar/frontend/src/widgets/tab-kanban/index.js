@@ -6,7 +6,7 @@ import { ZoneWidgets } from '@widgets';
 
 function TabKanbanWidget(props) {
   return (
-    <ZoneWidgets zone="plugins.calendar.class.kanban">
+    <ZoneWidgets zone="calendar.class.kanban">
       {({ Component, key, properties }) => (
         <Box
           key={key}

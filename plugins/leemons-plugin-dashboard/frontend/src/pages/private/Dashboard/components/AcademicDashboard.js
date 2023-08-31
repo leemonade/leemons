@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { Box, ContextContainer, PageContainer, createStyles } from '@bubbles-ui/components';
+//TODO: HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
@@ -168,7 +169,7 @@ export default function AcademicDashboard({ session }) {
               {store.selectedProgram ? (
                 <>
                   {/* -- LEFT ZONE -- */}
-                  <ZoneWidgets zone="plugins.dashboard.program.left">{widgets}</ZoneWidgets>
+                  <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
                 </>
               ) : null}
             </Box>
@@ -187,7 +188,7 @@ export default function AcademicDashboard({ session }) {
               width: rightZoneWidth,
             })}
           >
-            <ZoneWidgets zone="plugins.dashboard.program.right">
+            <ZoneWidgets zone="dashboard.program.right">
               {({ Component, key }) => (
                 <Box key={key}>
                   <Component program={store.selectedProgram} session={session} />

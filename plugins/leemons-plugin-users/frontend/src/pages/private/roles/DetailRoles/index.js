@@ -9,6 +9,8 @@ import {
   Tabs,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+// TODO: import from @common plugin
+
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

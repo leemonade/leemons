@@ -6,7 +6,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 export function useEvaluationTypeLocalizations() {
   // key is array
-  const key = 'plugins.assignables.assignmentForm.evaluation.typeInput.options';
+  const key = 'assignables.assignmentForm.evaluation.typeInput.options';
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {

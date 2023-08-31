@@ -88,7 +88,7 @@ const assignableRoles = [
       dashboardUrl: '/private/feedback/result/:id',
       creatable: true,
       createUrl: '/private/feedback/new',
-      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
       pluralName: { en: 'feedbacks', es: 'encuestas' },
       singularName: { en: 'feedback', es: 'encuesta' },
       order: 5,

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import { Box, COLORS, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';

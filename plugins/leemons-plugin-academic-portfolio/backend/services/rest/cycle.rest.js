@@ -21,8 +21,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],

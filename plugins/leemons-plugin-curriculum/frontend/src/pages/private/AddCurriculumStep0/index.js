@@ -9,7 +9,7 @@ import {
   ADD_CURRICULUM_FORM_ERROR_MESSAGES,
   ADD_CURRICULUM_FORM_MESSAGES,
   AddCurriculumForm,
-} from '@bubbles-ui/leemons';
+} from '@curriculum/components/AddCurriculumForm';
 import { useStore } from '@common';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';

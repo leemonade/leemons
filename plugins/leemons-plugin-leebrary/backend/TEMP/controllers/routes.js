@@ -4,7 +4,7 @@ module.exports = [
   ...leemons.getPlugin('common').services.tags.getRoutes('tags', {
     authenticated: true,
     allowedPermissions: {
-      'plugins.leebrary.library': {
+      'leebrary.library': {
         actions: ['update', 'create', 'delete', 'admin'],
       },
     },

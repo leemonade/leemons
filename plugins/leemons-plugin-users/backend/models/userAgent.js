@@ -32,6 +32,7 @@ const schema = new mongoose.Schema(
     },
     disabled: {
       type: Boolean,
+      default: false,
     },
   },
   {

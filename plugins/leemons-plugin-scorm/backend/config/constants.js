@@ -24,7 +24,7 @@ const assignableRoles = [
       evaluationDetailUrl: '/private/scorm/result/:id/:user',
       creatable: true,
       createUrl: '/private/scorm/new',
-      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
       pluralName: { en: 'SCORM contents', es: 'contenidos SCORM' },
       singularName: { en: 'SCORM content', es: 'contenido SCORM' },
       order: 7,

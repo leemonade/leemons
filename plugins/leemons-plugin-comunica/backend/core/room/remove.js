@@ -17,7 +17,7 @@ async function remove(key, { ignoreCalledFrom, transacting: _transacting } = {})
         table.message.deleteMany({ room: key }, { transacting }),
         leemons.getPlugin('users').services.permissions.removeItems(
           {
-            type: 'plugins.comunica.room.view',
+            type: 'comunica.room.view',
             item: key,
           },
           { transacting }

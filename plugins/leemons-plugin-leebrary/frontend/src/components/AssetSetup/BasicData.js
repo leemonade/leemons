@@ -36,7 +36,7 @@ const BasicData = ({
   const formLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.plugins.leebrary.assetSetup.basicData;
+      const data = items.leebrary.assetSetup.basicData;
       data.labels.title = editing ? data.header.titleEdit : data.header.titleNew;
       data.labels.submitForm = editing ? data.labels.submitChanges : data.labels.submitForm;
       return data;

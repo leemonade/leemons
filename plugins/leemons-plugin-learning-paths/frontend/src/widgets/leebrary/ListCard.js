@@ -10,7 +10,8 @@ import {
   ShareIcon,
   ViewOnIcon,
 } from '@bubbles-ui/icons/outline';
-import { LibraryCard } from '@bubbles-ui/leemons';
+// TODO: import from @library plugin
+import { LibraryCard } from '@leebrary/components';
 
 import { get } from 'lodash';
 
@@ -23,10 +24,7 @@ import removeModuleRequest from '@learning-paths/requests/removeModule';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 export function useListCardLocalizations() {
-  const keys = [
-    'plugins.assignables.roles.learningpaths.module.singular',
-    'plugins.learning-paths.libraryCard',
-  ];
+  const keys = ['assignables.roles.learningpaths.module.singular', 'learning-paths.libraryCard'];
   const [, translations] = useTranslateLoader(keys);
 
   return useMemo(() => {

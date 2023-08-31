@@ -10,7 +10,7 @@ const _ = require('lodash');
  * */
 async function removeDatasetValues(family, { transacting } = {}) {
   const locationName = 'families-data';
-  const pluginName = 'plugins.families';
+  const pluginName = 'families';
   const dataset = leemons.getPlugin('dataset').services.dataset;
 
   if (await dataset.existValues(locationName, pluginName, { target: family, transacting })) {

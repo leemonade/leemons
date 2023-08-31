@@ -1,7 +1,7 @@
 const { set: updateSettings } = require('./set');
 
 async function setDefaultCategory(categoryId, { transacting } = {}) {
-  if (this.calledFrom !== 'plugins.leebrary') {
+  if (this.calledFrom !== 'leebrary') {
     throw new Error('Must be called from leemons-plugin-leebrary');
   }
 

@@ -137,6 +137,7 @@ module.exports = {
       ctx.tx.emit('init-actions');
 
       // Permissions
+      console.log('Vamos a añadir los permisos');
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: defaultPermissions,

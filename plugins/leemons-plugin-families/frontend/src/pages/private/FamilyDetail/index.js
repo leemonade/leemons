@@ -21,6 +21,7 @@ import {
   Text,
   UserDisplayItem,
 } from '@bubbles-ui/components';
+// TODO: fix this import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import {
   DeleteBinIcon,
@@ -590,7 +591,7 @@ function Detail() {
                               </Text>
                               <Text>
                                 {t(
-                                  guardian.memberType.replace('plugins.families.detail_page.', '')
+                                  guardian.memberType.replace('families.detail_page.', '')
                                 )}
                               </Text>
                             </Box>

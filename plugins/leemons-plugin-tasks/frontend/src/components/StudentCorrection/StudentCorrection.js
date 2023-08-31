@@ -70,7 +70,7 @@ function SubjectTab({ assignation, subject, labels, classes, evaluationSystem })
           store.room.unreadMessages = 0;
           render();
         }}
-        room={`plugins.assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`}
+        room={`assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`}
       />
     </>
   );

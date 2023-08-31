@@ -4,6 +4,7 @@ import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
+//TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
@@ -216,7 +217,7 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
-      if (properties.label === 'plugins.academic-portfolio.tabDetail.label' && store.hideStudents) {
+      if (properties.label === 'academic-portfolio.tabDetail.label' && store.hideStudents) {
         return null;
       }
 
@@ -301,7 +302,7 @@ export default function ClassDashboard({ session }) {
             rightSide={
               <>
                 {!store.loading ? (
-                  <ZoneWidgets zone="plugins.dashboard.class.header-bar">{classHeader}</ZoneWidgets>
+                  <ZoneWidgets zone="dashboard.class.header-bar">{classHeader}</ZoneWidgets>
                 ) : null}
               </>
             }
@@ -334,7 +335,7 @@ export default function ClassDashboard({ session }) {
         */}
         {!store.loading ? (
           <ZoneWidgets
-            zone="plugins.dashboard.class.tabs"
+            zone="dashboard.class.tabs"
             onGetZone={onGetZone}
             container={
               <Tabs
@@ -380,7 +381,7 @@ export default function ClassDashboard({ session }) {
         ) : null} */}
           <Box className={styles.rightSidewidgetsContainer}>
             {!store.loading ? (
-              <ZoneWidgets zone="plugins.dashboard.class.right-tabs" onGetZone={onGetRightZone}>
+              <ZoneWidgets zone="dashboard.class.right-tabs" onGetZone={onGetRightZone}>
                 {classRightTabs}
               </ZoneWidgets>
             ) : null}

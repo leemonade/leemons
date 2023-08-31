@@ -19,11 +19,13 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.centers': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -63,11 +65,15 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['update', 'create', 'delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          allowedPermissions: {
+            'users.centers': {
+              actions: ['update', 'create', 'delete', 'admin'],
+            },
+            'admin.setup': {
+              actions: ['update', 'create', 'delete', 'admin'],
+            },
+          },
         },
       }),
     ],
@@ -84,11 +90,13 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'users.centers': {
+            actions: ['delete', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],

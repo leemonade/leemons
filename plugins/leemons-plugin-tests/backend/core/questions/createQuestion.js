@@ -79,7 +79,7 @@ async function createQuestion(data, { userSession, published, transacting: _tran
         { transacting }
       );
 
-      await tagsService.setTagsToValues('plugins.tests.questions', tags || [], question.id, {
+      await tagsService.setTagsToValues('tests.questions', tags || [], question.id, {
         transacting,
       });
       return question;

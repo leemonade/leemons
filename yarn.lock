@@ -2688,7 +2688,7 @@
 
 "@babel/preset-modules@0.1.6-no-external-plugins":
   version "0.1.6-no-external-plugins"
-  resolved "https://registry.yarnpkg.com/@babel/preset-modules/-/preset-modules-0.1.6-no-external-plugins.tgz#ccb88a2c49c817236861fee7826080573b8a923a"
+  resolved "https://registry.yarnpkg.com/@babel/preset-modules/-/preset-modules-0.1.6-no-external-tgz#ccb88a2c49c817236861fee7826080573b8a923a"
   integrity sha512-HrcgcIESLm9aIR842yhJ5RWan/gebQUJ6E/E5+rf0y9o6oj7w0Br+sWuL6kEQ/o/AdfvR1Je9jG18/gnpwjEyA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
@@ -17548,6 +17548,11 @@ react-confetti@^6.1.0:
   dependencies:
     tween-functions "^1.2.0"
 
+react-content-loader@^6.2.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/react-content-loader/-/react-content-loader-6.2.1.tgz#8feb733c2d2495002e1b216f13707f2b5f2a8ead"
+  integrity sha512-6ONbFX+Hi3SHuP66JB8CPvJn372pj+qwltJV0J8z/8MFrq98I1cbFdZuhDWeQXu3CFxiiDTXJn7DFxx2ZvrO7g==
+
 react-countdown-hook@^1.1.1:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/react-countdown-hook/-/react-countdown-hook-1.1.3.tgz#04609f3243ee71aadceb5ddfcd538a813a3443ea"
@@ -19480,6 +19485,11 @@ synchronous-promise@^2.0.15:
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-2.0.17.tgz#38901319632f946c982152586f2caf8ddc25c032"
   integrity sha512-AsS729u2RHUfEra9xJrE39peJcc2stq2+poBXX8bcM08Y6g9j/i/PUzwNQqkaJde7Ntg1TO7bSREbR5sdosQ+g==
+
+systeminformation@^5.21.1:
+  version "5.21.1"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.1.tgz#2104bbba0cd8955c0eaa895897d6f1a6d738c44d"
+  integrity sha512-3912xn/PS+3JPR+qSmNL0Vk01Q1bPQZzA0BODx4ACnRlYL+P3nvaoV/Az/Cq5pP+hyJsgHmKydhOdg5scit5kQ==
 
 tapable@^2.0.0, tapable@^2.1.1, tapable@^2.2.0, tapable@^2.2.1:
   version "2.2.1"
