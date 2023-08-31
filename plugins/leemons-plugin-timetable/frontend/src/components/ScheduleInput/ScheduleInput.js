@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isNil, isString, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+// TODO: This comes from @bubbles-ui/leemons/common
 import { SchedulePicker } from '@bubbles-ui/leemons';
 import { unflatten } from '@common';
 import { prefixPN } from '../../helpers';

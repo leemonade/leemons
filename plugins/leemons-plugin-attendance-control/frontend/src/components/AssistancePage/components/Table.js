@@ -21,7 +21,7 @@ import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 
 import { generateAssistancesWB } from '@attendance-control/components/ExcelExport/assistencesWB';
 import { getFile } from '@attendance-control/components/ExcelExport/helpers/workbook/getFile';
-import { CommonTableStyles } from '@bubbles-ui/leemons';
+import { CommonTableStyles } from '@scores/components/Tables/ScoresBasicTable/ScoresBasicTable.styles.js';
 import { useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getUserAgentsInfoRequest } from '@users/request';

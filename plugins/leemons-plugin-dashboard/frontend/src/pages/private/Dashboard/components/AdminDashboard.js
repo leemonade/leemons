@@ -17,7 +17,7 @@ import {
 } from '@bubbles-ui/components';
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
 import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
-import { LibraryCardBasic } from '@bubbles-ui/leemons';
+import { LibraryCardBasic } from '@leebrary/components/LibraryCard';
 import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { getLocalizations } from '@multilanguage/useTranslate';

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
-import { LibraryCard } from '@bubbles-ui/leemons';
+// TODO: import from @library plugin
+import { LibraryCard } from '@leebrary/components';
 import getFakeImage from '../../helpers/getFakeImage';
 
 export default function Card({ refresh, ...task }) {

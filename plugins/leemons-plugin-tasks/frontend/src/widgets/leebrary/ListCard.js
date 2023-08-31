@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@bubbles-ui/leemons';
+// TODO: import from @library plugin
+import { LibraryCard } from '@leebrary/components';
 
 import {
   AssignIcon,

@@ -13,6 +13,7 @@ import {
   Paper,
   ActionButton,
 } from '@bubbles-ui/components';
+// TODO: fix this import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { CheckIcon, AddIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';

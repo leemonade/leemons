@@ -4,7 +4,7 @@ import { unflatten, useCache, useLocale } from '@common';
 import _ from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import { useScores } from '@scores/requests/hooks/queries';
-import { ScoresReviewerTable } from '@bubbles-ui/leemons';
+import { ScoresReviewerTable } from '../Tables/ScoresReviewerTable';
 import { Box, Loader } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';

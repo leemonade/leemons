@@ -2,7 +2,7 @@ import React from 'react';
 import { isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@bubbles-ui/leemons';
+import { LibraryCard } from '@leebrary/components/LibraryCard';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import {

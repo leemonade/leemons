@@ -1,5 +1,6 @@
 import { Box, Kanban as BubblesKanban } from '@bubbles-ui/components';
-import { KanbanFilters, KanbanTaskCard } from '@bubbles-ui/leemons';
+// TODO: import from plugin not from bubbles
+import { KanbanFilters, KanbanTaskCard } from '@calendar/components';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import prefixPN from '@calendar/helpers/prefixPN';
 import {
