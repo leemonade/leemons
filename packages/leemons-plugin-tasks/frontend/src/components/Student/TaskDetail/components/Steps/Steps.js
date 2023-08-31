@@ -4,7 +4,6 @@ import { VerticalStepper, Box, createStyles, Button } from '@bubbles-ui/componen
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import StatementStep from './Steps/StatementStep';
 import DevelopmentStep from './Steps/DevelopmentStep';
 import DeliveryStep from './Steps/DeliveryStep';
@@ -174,6 +173,7 @@ function setDefaultButtons({
   hasDeliverable,
   hasNextActivity,
   localizations,
+  preview,
 }) {
   return (
     <>
@@ -190,6 +190,7 @@ function setDefaultButtons({
             variant={hasNext ? 'outline' : 'filled'}
             onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
             rounded
+            disabled={!hasNext && preview}
             rightIcon={hasNext && <ChevRightIcon />}
           >
             {hasNext ? localizations?.buttons?.next : localizations?.buttons?.finish}
@@ -200,6 +201,7 @@ function setDefaultButtons({
             variant="filled"
             rounded
             onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
+            disabled={preview}
             rightIcon={<ChevRightIcon />}
           >
             {localizations?.buttons?.nextActivity}
@@ -216,15 +218,15 @@ function setButtonsf(setButtons) {
   };
 }
 
-function useUpdateTimestamps(mutateAsync, assignation) {
+export function useUpdateTimestamps(mutateAsync, assignation) {
   return React.useCallback(
     async (timestamps) => {
       if (timestamps && !assignation?.timestamps?.[timestamps]) {
         try {
           const time = Date.now();
           await mutateAsync({
-            instance: assignation?.instance?.id,
-            student: assignation.user,
+            instance: assignation?.instance?.id ?? assignation?.instance,
+            student: assignation?.user,
             timestamps: {
               [timestamps]: time,
             },
@@ -234,13 +236,13 @@ function useUpdateTimestamps(mutateAsync, assignation) {
         }
       }
     },
-    [assignation?.id, mutateAsync]
+    [assignation?.id, assignation?.instance, mutateAsync]
   );
 }
 
-async function useUpdateVisitedSteps(assignation, step) {
+async function useUpdateVisitedSteps(assignation, step, preview) {
   React.useMemo(async () => {
-    if (step?.id && !assignation?.metadata?.visitedSteps?.includes(step.id)) {
+    if (step?.id && !assignation?.metadata?.visitedSteps?.includes(step.id) && !preview) {
       try {
         const visitedSteps = [...(assignation?.metadata?.visitedSteps || []), step.id];
         await updateStudentRequest({
@@ -260,7 +262,7 @@ async function useUpdateVisitedSteps(assignation, step) {
   }, [step?.id]);
 }
 
-export default function Steps({ assignation, localizations, marginTop, setIsFirstStep }) {
+export default function Steps({ assignation, localizations, marginTop, setIsFirstStep, preview }) {
   const [buttons, setButtons] = React.useState(null);
 
   const { classes, theme } = useStepsStyles({ marginTop });
@@ -301,7 +303,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
 
   const currentStep = steps[index];
 
-  useUpdateVisitedSteps(assignation, currentStep);
+  useUpdateVisitedSteps(assignation, currentStep, preview);
 
   React.useEffect(() => {
     if (!currentStep.customButtons) {
@@ -315,20 +317,19 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
           localizations,
           hasDeliverable,
           hasNextActivity,
+          preview,
         })
       );
     }
-  }, [currentStep, localizations?.buttons]);
+  }, [currentStep, localizations?.buttons, preview]);
 
   const currentStepComponent = React.useMemo(
     () =>
       React.cloneElement(currentStep?.component, {
         assignation,
         localizations,
-        setButtons: currentStep.customButtons ? setButtonsf(setButtons) : () => { },
-        onNextStep: () => {
-          hasNext ? onNextStep() : toggleModal.current();
-        },
+        setButtons: currentStep.customButtons ? setButtonsf(setButtons) : () => {},
+        onNextStep: () => (hasNext ? onNextStep : toggleModal.current)(),
         onPrevStep,
         setStep,
         hasPrevStep: hasPrev,
@@ -339,8 +340,17 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
         previousIndex,
         updateTimestamps,
         marginTop: marginTop + theme.spacing[7] * 2,
+        preview,
       }),
-    [currentStep?.component, assignation, localizations, setButtons, marginTop, theme.spacing[7]]
+    [
+      currentStep?.component,
+      assignation,
+      localizations,
+      setButtons,
+      marginTop,
+      theme.spacing[7],
+      preview,
+    ]
   );
 
   return (

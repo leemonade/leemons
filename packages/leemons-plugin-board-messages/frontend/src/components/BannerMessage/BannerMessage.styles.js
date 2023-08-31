@@ -1,7 +1,7 @@
 import { createStyles, getBoxShadowFromToken, getHtmlStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
-export const BannerMessageStyles = createStyles((theme, {}) => {
+export const BannerMessageStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
   const { root: htmlStyles } = getHtmlStyles(theme);
   return {

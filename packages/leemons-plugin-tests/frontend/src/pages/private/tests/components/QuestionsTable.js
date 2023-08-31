@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { ActionButton, Box, Checkbox, Table, TableInput } from '@bubbles-ui/components';
-import { keyBy, map } from 'lodash';
+import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { keyBy, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 import { ResultStyles } from '../Result.style';
 
@@ -73,42 +73,44 @@ export default function QuestionsTable({
       });
     }
     return result;
-  }, [t, reorderMode]);
+  }, [t, reorderMode, value]);
 
   const tableItems = React.useMemo(
     () =>
       questions && questions.length
-        ? map(questions, (item) => ({
-            ...getQuestionForTable(item, t2, styles),
-            check: (
-              <Checkbox
-                checked={value ? value.includes(item.id) : false}
-                onChange={() => {
-                  const index = value.indexOf(item.id);
-                  if (index >= 0) {
-                    value.splice(index, 1);
-                  } else {
-                    value.push(item.id);
-                  }
+        ? map(questions, (item) => {
+            return {
+              ...getQuestionForTable(item, t2, styles),
+              check: (
+                <Checkbox
+                  checked={value ? value.includes(item.id) : false}
+                  onChange={() => {
+                    const index = value.indexOf(item.id);
+                    if (index >= 0) {
+                      value.splice(index, 1);
+                    } else {
+                      value.push(item.id);
+                    }
 
-                  onChange(value);
-                }}
-              />
-            ),
-            actions: () => (
-              <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
-                <ActionButton
-                  as={Link}
-                  target="_blank"
-                  to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
-                  tooltip={t('view')}
-                  icon={<ExpandDiagonalIcon />}
+                    onChange(value);
+                  }}
                 />
-              </Box>
-            ),
-          }))
+              ),
+              actions: () => (
+                <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
+                  <ActionButton
+                    as={Link}
+                    target="_blank"
+                    to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
+                    tooltip={t('view')}
+                    icon={<ExpandDiagonalIcon />}
+                  />
+                </Box>
+              ),
+            };
+          })
         : [],
-    [t, questions]
+    [t, questions, value]
   );
 
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;

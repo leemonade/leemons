@@ -33,7 +33,7 @@ async function getUserAgentsInfo(
   const userAgents = await table.userAgent.find(
     { id_$in: userAgentIds },
     {
-      columns: ['id', 'user', 'role'],
+      columns: ['id', 'user', 'role', 'disabled'],
       transacting,
     }
   );

@@ -1,5 +1,6 @@
 async function getProfileSysName() {
   return leemons.api('users/profile/sysName', {
+    allAgents: true,
     method: 'GET',
   });
 }

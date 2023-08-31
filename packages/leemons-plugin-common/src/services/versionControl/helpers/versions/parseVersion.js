@@ -3,7 +3,7 @@ module.exports = function parseVersion(version) {
     throw new Error('Version must be a string');
   }
 
-  const [major, minor, patch] = version.split('.')?.map(Number);
+  const [major, minor, patch] = version.split('.').map(Number);
 
   if (Number.isNaN(major) || Number.isNaN(minor) || Number.isNaN(patch)) {
     throw new Error('Version must be a string of numbers separated by dots');

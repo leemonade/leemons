@@ -25,9 +25,13 @@ async function getClassesProgramInfo({ programs: _programs, classes }, { transac
 
 async function listSessionClasses(
   userSession,
-  { program, type } = {},
-  { withProgram, withTeachers, transacting } = {}
+  { program, type, withProgram } = {},
+  { withProgram: _withProgram, withTeachers, transacting } = {}
 ) {
+  if (_withProgram) {
+    // eslint-disable-next-line no-param-reassign
+    withProgram = _withProgram;
+  }
   let typeQuery = {};
   if (Array.isArray(type)) {
     typeQuery = {

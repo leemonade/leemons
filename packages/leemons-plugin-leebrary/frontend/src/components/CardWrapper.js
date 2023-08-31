@@ -155,6 +155,7 @@ const CardWrapper = ({
         className={classes.root}
         embedded={isEmbedded}
         onRefresh={onRefresh}
+        onShare={onShare}
         single={single}
         locale={locale}
       />

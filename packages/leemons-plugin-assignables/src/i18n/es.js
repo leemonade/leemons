@@ -315,6 +315,7 @@ module.exports = {
   activities_list: {
     emptyState: 'No hay actividades aún',
     blocked: 'La actividad seleccionada está bloqueada',
+    nonEvaluable: 'La actividad seleccionada no es evaluable y ya ha sido finalizada',
   },
   ongoing: {
     ongoing: 'Actividades en curso',
@@ -327,6 +328,7 @@ module.exports = {
     deadline: 'Entrega',
     close: 'Cierre',
     closed: 'Cerrada',
+    teacherDeadline: 'Límite de corrección',
   },
   need_your_attention: {
     activitiesTitle: 'Actividades pendientes',
@@ -344,6 +346,18 @@ module.exports = {
       grade: 'Puntuación',
       score: 'Respuestas correctas',
       activityType: 'Tipo de actividad',
+    },
+    status: {
+      evaluated: 'Ver evaluación',
+      submission: 'Entrega',
+      evaluate: 'Para evaluar',
+      evaluation: 'Evaluación',
+      opened: 'Actividad abierta',
+      start: 'Fecha inicio',
+      assigned: 'Programada',
+      late: 'Tarde',
+      submitted: 'Entregada',
+      startActivity: 'Empezar actividad',
     },
   },
   pagination: {

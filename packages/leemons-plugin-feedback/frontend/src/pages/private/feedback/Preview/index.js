@@ -271,11 +271,11 @@ export default function Preview() {
                     </Box>
                     <Table
                       columns={tableHeaders}
-                      data={map(store.feedback?.questions, (question, i) => ({
+                      data={map(store.feedback?.questions, (question) => ({
                         ...getQuestionForTable(question, tD),
                         actions: (
                           <Stack justifyContent="end" fullWidth>
-                            <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
+                            <ActionButton icon={<EditIcon />} onClick={editQuestion} />
                           </Stack>
                         ),
                       }))}

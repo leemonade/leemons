@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   BUBBLES_THEME,
   colord,
@@ -13,7 +14,6 @@ import { getPlatformThemeRequest } from '@users/request';
 import hooks from 'leemons-hooks';
 import { forEach, isEmpty, isNil, isString } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import PrivateLayout from './src/components/PrivateLayout';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
@@ -31,6 +31,66 @@ LayoutWrapper.propTypes = {
   isPrivate: PropTypes.bool,
 };
 
+function useLayoutProviderModals() {
+  const modals = useModals();
+  const [t] = useTranslateLoader(prefixPN('modals'));
+
+  const openConfirmationModal = useCallback(
+    ({ title, description, labels, onCancel = () => { }, onConfirm = () => { } }) =>
+      () =>
+        modals.openConfirmModal({
+          title: title || t('title.confirm'),
+          children: isString(description) ? (
+            <Paragraph
+              sx={(theme) => ({
+                paddingBottom: theme.spacing[5],
+              })}
+              dangerouslySetInnerHTML={{ __html: description || t('description.confirm') }}
+            />
+          ) : (
+            description
+          ),
+          labels: {
+            confirm: labels?.confirm || t('buttons.confirm'),
+            cancel: labels?.cancel || t('buttons.cancel'),
+          },
+          onCancel,
+          onConfirm,
+        }),
+    [modals, t]
+  );
+
+  const openDeleteConfirmationModal = useCallback(
+    ({ title, description, labels, onCancel = () => { }, onConfirm = () => { } }) =>
+      () =>
+        modals.openConfirmModal({
+          title: title || t('title.delete', { 'title.delete': 'Esta muriendo' }),
+          children: (
+            <Paragraph
+              sx={(theme) => ({
+                paddingBottom: theme.spacing[5],
+              })}
+              dangerouslySetInnerHTML={{ __html: description || t('description.delete') }}
+            />
+          ),
+          labels: {
+            confirm: labels?.confirm || t('buttons.confirm'),
+            cancel: labels?.cancel || t('buttons.cancel'),
+          },
+          confirmProps: { color: 'fatic' },
+          onCancel,
+          onConfirm,
+        }),
+    [modals, t]
+  );
+
+  return {
+    modals,
+    openConfirmationModal,
+    openDeleteConfirmationModal,
+  };
+}
+
 function LayoutProviderWrapper({ children, theme: themeProp }) {
   const [layoutState, setLayoutState] = useState({
     loading: false,
@@ -39,8 +99,8 @@ function LayoutProviderWrapper({ children, theme: themeProp }) {
     profileChecked: false,
   });
   const location = useLocation();
-  const modals = useModals();
-  const [t] = useTranslateLoader(prefixPN('modals'));
+
+  const { modals, openConfirmationModal, openDeleteConfirmationModal } = useLayoutProviderModals();
 
   SocketIoService.useOn('USER_CHANGE_AVATAR', (event, { url }) => {
     const elements = document.getElementsByTagName('img');
@@ -50,52 +110,6 @@ function LayoutProviderWrapper({ children, theme: themeProp }) {
       }
     });
   });
-
-  // TODO: Las traducciones se están tardando una eternidad, por eso al inicio se cargan solo las keys
-  const openDeleteConfirmationModal =
-    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
-    () =>
-      modals.openConfirmModal({
-        title: title || t('title.delete', { 'title.delete': 'Esta muriendo' }),
-        children: (
-          <Paragraph
-            sx={(theme) => ({
-              paddingBottom: theme.spacing[5],
-            })}
-            dangerouslySetInnerHTML={{ __html: description || t('description.delete') }}
-          />
-        ),
-        labels: {
-          confirm: labels?.confirm || t('buttons.confirm'),
-          cancel: labels?.cancel || t('buttons.cancel'),
-        },
-        confirmProps: { color: 'fatic' },
-        onCancel,
-        onConfirm,
-      });
-
-  const openConfirmationModal =
-    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
-    () =>
-      modals.openConfirmModal({
-        title: title || t('title.confirm'),
-        children: isString(description) ? (
-          <Paragraph
-            sx={(theme) => ({
-              paddingBottom: theme.spacing[5],
-            })}
-            dangerouslySetInnerHTML={{ __html: description || t('description.confirm') }}
-          />
-        ) : (
-          description
-        ),
-        labels: {
-          confirm: labels?.confirm || t('buttons.confirm'),
-          cancel: labels?.cancel || t('buttons.cancel'),
-        },
-        onCancel,
-        onConfirm,
-      });
 
   const setPrivateLayout = (val) => {
     setLayoutState({ ...layoutState, private: val });
@@ -214,7 +228,7 @@ export function Provider({ children }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <ModalsProvider>
+      <ModalsProvider modalProps={{ zIndex: 9999 }}>
         <LayoutProviderWrapper theme={platformTheme}>{children}</LayoutProviderWrapper>
       </ModalsProvider>
     </ThemeProvider>

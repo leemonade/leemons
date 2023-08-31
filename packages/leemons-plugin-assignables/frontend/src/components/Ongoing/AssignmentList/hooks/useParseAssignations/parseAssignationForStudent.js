@@ -9,6 +9,7 @@ import { unflatten } from '@common';
 import { get } from 'lodash';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { addInfoAlert } from '@layout/alert';
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 
 function getStatus(assignation) {
@@ -159,7 +160,7 @@ function Progress({ assignation, isBlocked }) {
   }
 }
 
-function getDashboardURL(assignation) {
+function isFinished(assignation) {
   const {
     instance,
     timestamps: { end },
@@ -167,7 +168,6 @@ function getDashboardURL(assignation) {
   const {
     alwaysAvailable,
     dates: { deadline: _deadline, closed },
-    assignable: { roleDetails },
   } = instance;
 
   const now = dayjs();
@@ -175,16 +175,28 @@ function getDashboardURL(assignation) {
   const closeDate = dayjs(closed || null);
   const endTimestamp = dayjs(end || null);
 
-  const isFinished =
+  const finished =
     (alwaysAvailable && closeDate.isValid()) ||
     endTimestamp.isValid() ||
     (deadline.isValid() && !deadline.isAfter(now));
 
-  if (!isFinished) {
+  return finished;
+}
+
+function getDashboardURL(assignation) {
+  const { instance } = assignation;
+  const {
+    assignable: { roleDetails },
+  } = instance;
+
+  const finished = isFinished(assignation);
+
+  if (!finished || (!instance.requiresScoring && !instance.allowFeedback)) {
     return roleDetails.studentDetailUrl
       .replace(':id', instance.id)
       .replace(':user', assignation.user);
   }
+
   return roleDetails.evaluationDetailUrl
     .replace(':id', instance.id)
     .replace(':user', assignation.user);

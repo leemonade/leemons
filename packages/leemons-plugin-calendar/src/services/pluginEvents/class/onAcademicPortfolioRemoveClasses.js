@@ -55,15 +55,11 @@ async function remove(classe, { transacting }) {
 }
 
 async function onAcademicPortfolioRemoveClasses(data, { classes, transacting }) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      await Promise.all(classes.map((classe) => remove(classe, { transacting })));
-      resolve();
-    } catch (e) {
-      console.error(e);
-    }
-  });
+  try {
+    await Promise.all(classes.map((classe) => remove(classe, { transacting })));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = { onAcademicPortfolioRemoveClasses };

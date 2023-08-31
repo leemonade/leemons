@@ -1,6 +1,7 @@
 module.exports = {
   reports: {
     title: 'Configuración Fundae',
+    centerLabel: 'Centro',
     programLabel: 'Programa',
     courseLabel: 'Curso',
     studentsLabel: 'Estudiantes',

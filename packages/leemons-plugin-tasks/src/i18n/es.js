@@ -50,7 +50,7 @@ module.exports = {
     },
   },
   library_page: {
-    page_title: 'Librería de tareas',
+    page_title: 'Biblioteca de tareas',
     published: 'Publicado',
     draft: 'Borrador',
   },
@@ -143,7 +143,7 @@ module.exports = {
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           attachmentsTitle: 'Recursos',
           supportImage: 'Imagen de apoyo',
-          searchFromLibrary: 'Buscar en la librería',
+          searchFromLibrary: 'Buscar en la biblioteca',
           searchFromLibraryDocsAndMedia: 'Añadir documentos y multimedia',
           content: 'Contenidos',
           assessmentCriteria: 'Criterios de evaluación',
@@ -321,6 +321,7 @@ module.exports = {
     label: 'Tareas y actividades',
   },
   cardMenu: {
+    view: 'Ver',
     edit: 'Editar',
     assign: 'Asignar',
     delete: 'Eliminar',
@@ -466,6 +467,6 @@ module.exports = {
     saveMessage: 'Cambios guardados con éxito',
     saveAndSendMessage: 'Cambios guardados y enviados al estudiante con éxito',
     saveError: 'No se han podido guardar los cambios: {{error}}',
-    subjectNotCorrectedYet: 'Esta asignatura todavía no ha sido corregida',
+    subjectNotCorrectedYet: 'Esta actividad todavía no ha sido corregida',
   },
 };

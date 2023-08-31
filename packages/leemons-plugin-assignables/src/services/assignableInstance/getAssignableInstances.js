@@ -1,4 +1,4 @@
-const { set, map, difference } = require('lodash');
+const { set, map, difference, uniq, flatten } = require('lodash');
 const listAssignableInstanceClasses = require('../classes/listAssignableInstanceClasses');
 const getUserPermissions = require('./permissions/assignableInstance/users/getUserPermissions');
 const tables = require('../tables');
@@ -92,6 +92,43 @@ async function getAssignationsData(instances, { instancesTeached, userSession, t
   return studentsPerInstance;
 }
 
+async function getInstancesSubjects(classesPerInstance, { userSession, transacting }) {
+  const instances = Object.keys(classesPerInstance);
+  const classes = uniq(flatten(Object.values(classesPerInstance)));
+  const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services.classes;
+
+  const classesData = await academicPortfolioServices.classByIds(classes, {
+    withProgram: false,
+    withTeachers: false,
+    noSearchChilds: true,
+    noSearchParents: true,
+    userSession,
+    transacting,
+  });
+
+  const subjectPerClass = {};
+
+  classesData.forEach((klass) => {
+    subjectPerClass[klass.id] = { program: klass.program, subject: klass.subject.id };
+  });
+
+  const subjectsPerInstance = {};
+
+  instances.forEach((instance) => {
+    const instanceClasses = classesPerInstance[instance];
+
+    const subjects = [];
+
+    instanceClasses.forEach((klass) => {
+      subjects.push(subjectPerClass[klass]);
+    });
+
+    subjectsPerInstance[instance] = uniq(subjects);
+  });
+
+  return subjectsPerInstance;
+}
+
 async function getAssignableInstances(
   ids,
   { relatedAssignableInstances, details, throwOnMissing = true, userSession, transacting } = {}
@@ -139,10 +176,11 @@ async function getAssignableInstances(
     promises.push(undefined);
   }
 
+  let classes;
   if (details) {
     // EN: Get classes
     // ES: Obtener las clases
-    promises.push(listAssignableInstanceClasses(instancesIds, { transacting }));
+    classes = await listAssignableInstanceClasses(instancesIds, { transacting });
 
     // EN: Get dates
     // ES: Obtener las fechas
@@ -166,9 +204,11 @@ async function getAssignableInstances(
     promises.push(
       getAssignationsData(instancesIds, { instancesTeached, userSession, transacting })
     );
+
+    promises.push(getInstancesSubjects(classes, { userSession, transacting }));
   }
 
-  const [relatedInstances, classes, instancesDates, assignables, assignations] = await Promise.all(
+  const [relatedInstances, instancesDates, assignables, assignations, subjects] = await Promise.all(
     promises
   );
 
@@ -193,6 +233,7 @@ async function getAssignableInstances(
       instanceData.classes = classes[instance.id] || [];
       instanceData.dates = instancesDates[instance.id] || {};
       instanceData.assignable = assignables[instance.assignable];
+      instanceData.subjects = subjects[instance.id] || [];
     }
 
     if (isTeacher && details) {

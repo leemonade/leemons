@@ -101,7 +101,7 @@ function useGrades(assignableInstances) {
   const instanceWithProgram = React.useMemo(
     () =>
       assignableInstances?.find(
-        (instance) => !!instance.assignable.subjects?.find((subject) => !!subject.program)
+        (instance) => !!instance.subjects?.find((subject) => !!subject.program)
       ),
     [assignableInstances]
   );

@@ -62,7 +62,6 @@ function CenterAlignedSelect(props) {
     />
   );
 }
-
 function PeriodFilters({ centers, programs, onChange }) {
   /*
     --- Form Handling ---
@@ -129,108 +128,20 @@ function PeriodFilters({ centers, programs, onChange }) {
         <Controller
           name="center"
           control={control}
-          render={({ field }) => {
-            const data = React.useMemo(
-              () =>
-                centers?.map((center) => ({
-                  label: center.name,
-                  value: center.id,
-                })),
-              [centers]
-            );
-
-            React.useEffect(() => {
-              if (field.value && !data.some((d) => d.value === field.value)) {
-                field.onChange(null);
-              }
-            }, [data]);
-
-            return (
-              <CenterAlignedSelect
-                label={labels?.center}
-                placeholder={labels?.centerPlaceholder}
-                disabled={!centers?.length}
-                data={data}
-                clearable="clear"
-                {...field}
-              />
-            );
-          }}
+          render={({ field }) => <CenterSelect field={field} centers={centers} labels={labels} />}
         />
         <Controller
           name="program"
           control={control}
-          render={({ field }) => {
-            const center = watch('center');
-
-            const programsMatchingCenter = React.useMemo(
-              () =>
-                !center ? programs : programs.filter((program) => program.centers.includes(center)),
-              [center, programs]
-            );
-
-            const data = React.useMemo(
-              () =>
-                programsMatchingCenter.map((program) => ({
-                  label: program.name,
-                  value: program.id,
-                })),
-              [programsMatchingCenter]
-            );
-
-            React.useEffect(() => {
-              if (field.value && !data.some((d) => d.value === field.value)) {
-                field.onChange(null);
-              }
-            }, [data]);
-
-            return (
-              <CenterAlignedSelect
-                label={labels?.program}
-                placeholder={labels?.programPlaceholder}
-                disabled={!data?.length}
-                data={data}
-                clearable="clear"
-                {...field}
-              />
-            );
-          }}
+          render={({ field }) => (
+            <ProgramSelect field={field} labels={labels} programs={programs} watch={watch} />
+          )}
         />
 
         <Controller
           name="course"
           control={control}
-          render={({ field }) => {
-            const program = watch('program');
-
-            const { data: programObj } = useProgramDetail(program, { enabled: !!program });
-
-            const courses = React.useMemo(
-              () =>
-                programObj?.courses?.map((course) => ({
-                  label: getCourseName(course),
-                  value: course.id,
-                })),
-              [programObj]
-            );
-
-            React.useEffect(() => {
-              if (field.value && !courses?.some((course) => course.value === field.value)) {
-                field.onChange(null);
-              }
-            }, [courses]);
-
-            return (
-              <CenterAlignedSelect
-                label={labels?.course}
-                placeholder={labels?.coursePlaceholder}
-                disabled={!programObj}
-                data={courses}
-                clearable="clear"
-                {...field}
-              />
-            );
-          }}
+          render={({ field }) => <CourseSelect field={field} watch={watch} labels={labels} />}
         />
       </Box>
     </Box>
@@ -257,6 +168,101 @@ PeriodActions.propTypes = {
   period: PropTypes.object.isRequired,
   onRemove: PropTypes.func,
 };
+
+function CenterSelect({ field, centers, labels }) {
+  const data = React.useMemo(
+    () =>
+      centers?.map((center) => ({
+        label: center.name,
+        value: center.id,
+      })),
+    [centers]
+  );
+
+  React.useEffect(() => {
+    if (field.value && !data.some((d) => d.value === field.value)) {
+      field.onChange(null);
+    }
+  }, [data]);
+
+  return (
+    <CenterAlignedSelect
+      label={labels?.center}
+      placeholder={labels?.centerPlaceholder}
+      disabled={!centers?.length}
+      data={data}
+      clearable="clear"
+      {...field}
+    />
+  );
+}
+
+function ProgramSelect({ field, watch, programs, labels }) {
+  const center = watch('center');
+
+  const programsMatchingCenter = React.useMemo(
+    () => (!center ? programs : programs.filter((program) => program.centers.includes(center))),
+    [center, programs]
+  );
+
+  const data = React.useMemo(
+    () =>
+      programsMatchingCenter.map((program) => ({
+        label: program.name,
+        value: program.id,
+      })),
+    [programsMatchingCenter]
+  );
+
+  React.useEffect(() => {
+    if (field.value && !data.some((d) => d.value === field.value)) {
+      field.onChange(null);
+    }
+  }, [data]);
+
+  return (
+    <CenterAlignedSelect
+      label={labels?.program}
+      placeholder={labels?.programPlaceholder}
+      disabled={!data?.length}
+      data={data}
+      clearable="clear"
+      {...field}
+    />
+  );
+}
+
+function CourseSelect({ field, watch, labels }) {
+  const program = watch('program');
+
+  const { data: programObj } = useProgramDetail(program, { enabled: !!program });
+
+  const courses = React.useMemo(
+    () =>
+      programObj?.courses?.map((course) => ({
+        label: getCourseName(course),
+        value: course.id,
+      })),
+    [programObj]
+  );
+
+  React.useEffect(() => {
+    if (field.value && !courses?.some((course) => course.value === field.value)) {
+      field.onChange(null);
+    }
+  }, [courses]);
+
+  return (
+    <CenterAlignedSelect
+      label={labels?.course}
+      placeholder={labels?.coursePlaceholder}
+      disabled={!programObj}
+      data={courses}
+      clearable="clear"
+      {...field}
+    />
+  );
+}
 
 export default function PeriodList({ onRemove, className }) {
   /*

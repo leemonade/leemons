@@ -23,32 +23,29 @@ async function remove(classCalendar, student, { transacting }) {
   }
 }
 
-function onAcademicPortfolioRemoveClassStudents(data, { classIds, classStudents, transacting }) {
+async function onAcademicPortfolioRemoveClassStudents(
+  data,
+  { classIds, classStudents, transacting }
+) {
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      const { table } = require('../../tables');
-      const classCalendars = await table.classCalendar.find(
-        { class_$in: classIds },
-        { transacting }
-      );
+  try {
+    const { table } = require('../../tables');
+    const classCalendars = await table.classCalendar.find({ class_$in: classIds }, { transacting });
 
-      const classCalendarsByClass = _.keyBy(classCalendars, 'class');
+    const classCalendarsByClass = _.keyBy(classCalendars, 'class');
 
-      const promises = [];
-      _.forEach(classIds, (classId) => {
-        _.forEach(classStudents, ({ student }) => {
-          if (classCalendarsByClass[classId]) {
-            promises.push(remove(classCalendarsByClass[classId], student, { transacting }));
-          }
-        });
+    const promises = [];
+    _.forEach(classIds, (classId) => {
+      _.forEach(classStudents, ({ student }) => {
+        if (classCalendarsByClass[classId]) {
+          promises.push(remove(classCalendarsByClass[classId], student, { transacting }));
+        }
       });
-      await Promise.all(promises);
-      resolve();
-    } catch (e) {
-      console.error(e);
-    }
-  });
+    });
+    await Promise.all(promises);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = { onAcademicPortfolioRemoveClassStudents };

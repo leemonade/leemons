@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { Box, Drawer, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
+import { unflatten } from '@common';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common';
 import { get } from 'lodash';
-import { Header } from './components/Header';
+import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import { AssetList } from './components/AssetList';
+import { Header } from './components/Header';
 import { NewResource } from './components/NewResource';
 
 export function useAssetPickerDrawerLocalizations() {
@@ -42,11 +42,19 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
   };
 });
 
+/**
+ *
+ * @param {{
+ *  layout: 'rows' | 'thumbnails' | 'cards'
+ *  filters: {type: 'image' | 'audio' | 'video' | 'document'}
+ * }} param0
+ */
 export function AssetPickerDrawer({
   position,
   opened,
   size,
   shadow,
+  layout,
   creatable,
   categories,
   filters,
@@ -60,7 +68,7 @@ export function AssetPickerDrawer({
   return (
     <Drawer
       position={position}
-      opened={opened}
+      opened={!!opened}
       size={size}
       shadow={shadow}
       close={false}
@@ -72,8 +80,8 @@ export function AssetPickerDrawer({
         {creatable ? (
           <Tabs usePaddedLayout fullHeight>
             <TabPanel key="library" label={localizations?.tabs?.library}>
-              {' '}
               <AssetList
+                variant={layout}
                 localizations={localizations}
                 categories={categories}
                 filters={filters}
@@ -87,6 +95,7 @@ export function AssetPickerDrawer({
         ) : (
           <Box className={classes.contentPadding}>
             <AssetList
+              variant={layout}
               localizations={localizations}
               categories={categories}
               filters={filters}
@@ -108,5 +117,6 @@ AssetPickerDrawer.propTypes = {
   onClose: PropTypes.func,
   onSelect: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.string),
+  layout: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
   filters: PropTypes.object,
 };

@@ -28,7 +28,6 @@ const addProgramSchema = {
     evaluationSystem: stringSchema,
     useOneStudentGroup: booleanSchema,
     hideStudentsToStudents: booleanSchema,
-    totalHours: numberSchema,
     cycles: {
       type: 'array',
       items: {
@@ -183,7 +182,6 @@ const updateProgramSchema = {
     treeType: integerSchema,
     managers: arrayStringSchema,
     hideStudentsToStudents: booleanSchema,
-    totalHours: numberSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -378,7 +376,7 @@ const updateSubjectTypeSchema = {
     credits_program: integerSchemaNullable,
     managers: arrayStringSchema,
   },
-  required: ['id', 'name', 'groupVisibility'],
+  required: ['id', 'groupVisibility'],
   additionalProperties: false,
 };
 
@@ -396,16 +394,18 @@ async function validateUpdateSubjectType(data, { transacting } = {}) {
   }
 
   // ES: Comprobamos que no exista ya el subject type
-  const subjectTypeCount = await table.subjectTypes.count(
-    {
-      id_$ne: data.id,
-      program: subjectType.program,
-      name: data.name,
-    },
-    { transacting }
-  );
+  if (data.name) {
+    const subjectTypeCount = await table.subjectTypes.count(
+      {
+        id_$ne: data.id,
+        program: subjectType.program,
+        name: data.name,
+      },
+      { transacting }
+    );
 
-  if (subjectTypeCount) throw new Error('The subject type already exists');
+    if (subjectTypeCount) throw new Error('The subject type already exists');
+  }
 }
 
 const addCourseSchema = {
@@ -1015,7 +1015,7 @@ async function validateAddInstanceClass(data, { transacting } = {}) {
     await validateProgramNotUsingInternalId(
       data.program,
       (data.internalIdCourse ? await getCourseIndex(data.internalIdCourse, { transacting }) : '') +
-        data.internalId,
+      data.internalId,
       { transacting }
     );
   }

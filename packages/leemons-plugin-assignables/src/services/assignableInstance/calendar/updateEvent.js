@@ -12,8 +12,8 @@ module.exports = async function updateEvent(
       title: assignable.asset.name,
       isPrivate: true,
       type: 'plugins.calendar.task',
-      startDate: typeof dates.start === 'string' ? dates.start : dates.start.toISOString(),
-      endDate: typeof dates.deadline === 'string' ? dates.deadline : dates.deadline.toISOString(),
+      startDate: dates.startDate instanceof Date ? dates.startDate.toISOString() : dates.startDate,
+      endDate: dates.deadline instanceof Date ? dates.deadline.toISOString() : dates.deadline,
     },
     { calendar: _.map(classes, (classe) => `plugins.calendar.class.${classe}`), transacting }
   );

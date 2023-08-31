@@ -7,7 +7,7 @@ import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';
 import noFilters from './assets/noFilters.png';
 
-const useEmptyStateStyles = createStyles((theme, {}) => ({
+const useEmptyStateStyles = createStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',

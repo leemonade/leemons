@@ -96,9 +96,49 @@ module.exports = [
   // ························································
   // Files
   {
+    path: '/file/multipart/new',
+    method: 'POST',
+    handler: 'files.newMultipart',
+    authenticated: true,
+  },
+  {
+    path: '/file/multipart/chunk',
+    method: 'POST',
+    handler: 'files.uploadMultipartChunk',
+    authenticated: true,
+  },
+  {
+    path: '/file/multipart/abort',
+    method: 'POST',
+    handler: 'files.abortMultipart',
+    authenticated: true,
+  },
+  {
+    path: '/file/multipart/finish',
+    method: 'POST',
+    handler: 'files.finishMultipart',
+    authenticated: true,
+  },
+  {
+    path: '/file/public/:id',
+    method: 'GET',
+    handler: 'files.publicFile',
+  },
+  {
+    path: '/file/public/:id/(.*)',
+    method: 'GET',
+    handler: 'files.publicFolder',
+  },
+  {
     path: '/file/:id',
     method: 'GET',
     handler: 'files.file',
+    authenticated: true,
+  },
+  {
+    path: '/file/:id/(.*)',
+    method: 'GET',
+    handler: 'files.folder',
     authenticated: true,
   },
   {

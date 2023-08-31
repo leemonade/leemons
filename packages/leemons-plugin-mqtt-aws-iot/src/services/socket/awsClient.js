@@ -93,7 +93,6 @@ async function getClientCached() {
     try {
       // Si el cliente esta siendo creado por alguna llamada anterior
       if (creatingClient) {
-        console.log('ya se esta creando un cliente');
         // Empezamos a mirar si se a creado el cliente
         waitAndResolveOrReject(resolve, reject);
       } else if (!client) {
@@ -120,7 +119,6 @@ async function getClientCached() {
           // Empezamos a mirar si se a creado el cliente
           waitAndResolveOrReject(resolve, reject);
 
-          console.log('vamos a crear el cliente', credentials);
           // Creamos el cliente
           client = createClient(credentials.connectionConfig);
           onConnectResolve = resolve;

@@ -13,7 +13,7 @@ const permissions = [
   },
   {
     permissionName: permissionNames.modules,
-    actions: ['admin', 'create', 'update', 'delete', 'view'],
+    actions: ['admin', 'create', 'update', 'delete', 'assign', 'view'],
     localizationName: { es: 'Módulos', en: 'Modules' },
   },
 ];
@@ -23,6 +23,7 @@ const permissions = [
  */
 const menuItems = [
   {
+    removed: true,
     item: {
       key: 'learningPaths',
       order: 301,
@@ -42,6 +43,7 @@ const menuItems = [
   },
   // Modules
   {
+    removed: true,
     item: {
       key: 'learningPaths.modules.new',
       order: 1,
@@ -60,13 +62,14 @@ const menuItems = [
     ],
   },
   {
+    removed: true,
     item: {
       key: 'learningPaths.modules.library',
       order: 2,
       parentKey: 'learningPaths',
       url: '/private/learning-paths/modules/library',
       label: {
-        es: 'Librería de módulos',
+        es: 'Biblioteca de módulos',
         en: 'Modules library',
       },
     },

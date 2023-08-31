@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
 import { Box, Button, PaginatedList, RadioGroup } from '@bubbles-ui/components';
 import { SendEmailEnvelopeIcon } from '@bubbles-ui/icons/outline';
-import { useLayout } from '@layout/context';
 import { useStore } from '@common';
-import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export default function StudentsList({ labels, instance, students }) {
   const { openConfirmationModal } = useLayout();
@@ -75,11 +75,11 @@ export default function StudentsList({ labels, instance, students }) {
         Header: labels?.studentListcolumns?.avgTime || '',
         accessor: 'avgTime',
       },
-      {
+      !!instance?.requiresScoring && {
         Header: labels?.studentListcolumns?.score || '',
         accessor: 'score',
       },
-      {
+      !!instance?.requiresScoring && {
         Header: labels?.studentListcolumns?.unreadMessages || '',
         accessor: 'unreadMessages',
       },
@@ -92,11 +92,8 @@ export default function StudentsList({ labels, instance, students }) {
         accessor: 'actions',
       },
     ];
-    if (!instance?.requiresScoring) {
-      cols.splice(4, 1);
-    }
 
-    return cols;
+    return cols.filter(Boolean);
   }, [labels, instance?.requiresScoring]);
 
   const headerStyles = {
@@ -124,6 +121,13 @@ export default function StudentsList({ labels, instance, students }) {
       onPageChange={setPage}
       onSizeChange={setSize}
       selectable
+      onStyleRow={({ row, theme }) => {
+        if (row.original.userAgentIsDisabled) {
+          return {
+            backgroundColor: theme.other.core.color.neutral['100'],
+          };
+        }
+      }}
       labels={labels?.pagination}
       headerStyles={headerStyles}
     ></PaginatedList>

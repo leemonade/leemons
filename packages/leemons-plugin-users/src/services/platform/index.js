@@ -8,6 +8,8 @@ const addLocale = require('./addLocale');
 const getLocales = require('./getLocales');
 const setHostname = require('./setHostname');
 const getHostname = require('./getHostname');
+const setHostnameApi = require('./setHostnameApi');
+const getHostnameApi = require('./getHostnameApi');
 const getContactName = require('./getContactName');
 const getContactEmail = require('./getContactEmail');
 const getContactPhone = require('./getContactPhone');
@@ -17,6 +19,8 @@ const setContactPhone = require('./setContactPhone');
 const setDefaultLocale = require('./setDefaultLocale');
 const getDefaultLocale = require('./getDefaultLocale');
 const setSquareLogo = require('./setSquareLogo');
+const getEmailLogo = require('./getEmailLogo');
+const setEmailLogo = require('./setEmailLogo');
 const getSquareLogo = require('./getSquareLogo');
 const setLandscapeLogo = require('./setLandscapeLogo');
 const getLandscapeLogo = require('./getLandscapeLogo');
@@ -30,6 +34,8 @@ const getAppearanceMenuDrawerColor = require('./getAppearanceMenuDrawerColor');
 const setAppearanceMenuDrawerColor = require('./setAppearanceMenuDrawerColor');
 const getPicturesEmptyStates = require('./getPicturesEmptyStates');
 const setPicturesEmptyStates = require('./setPicturesEmptyStates');
+const getEmailWidthLogo = require('./getEmailWidthLogo');
+const setEmailWidthLogo = require('./setEmailWidthLogo');
 
 module.exports = {
   query,
@@ -52,6 +58,12 @@ module.exports = {
   getDefaultLocale,
   setSquareLogo,
   getSquareLogo,
+  getEmailLogo,
+  setEmailLogo,
+  setHostnameApi,
+  getHostnameApi,
+  getEmailWidthLogo,
+  setEmailWidthLogo,
   setLandscapeLogo,
   getLandscapeLogo,
   getAppearanceMainColor,

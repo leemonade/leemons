@@ -89,6 +89,7 @@ function AssignmentStep({ localizations, assignable, onNextStep }) {
     <Form
       action={localizations?.steps?.assignmentForm?.action}
       assignable={assignable}
+      hideMaxTime
       showInstructions
       showMessageForStudents
       withoutLayout

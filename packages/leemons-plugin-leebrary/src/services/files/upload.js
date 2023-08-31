@@ -295,14 +295,14 @@ async function upload(file, { name }, { transacting } = {}) {
 
   // EN: Use active provider
   // ES: Usar el proveedor activo
-  const { providerName } = await getSettings({ transacting });
+  const settings = await getSettings({ transacting });
   const urlData = {};
 
-  if (providerName) {
-    const provider = leemons.getProvider(providerName);
+  if (settings?.providerName) {
+    const provider = leemons.getProvider(settings.providerName);
     if (provider?.services?.provider?.upload) {
       const buffer = await fsPromises.readFile(path);
-      urlData.provider = providerName;
+      urlData.provider = settings.providerName;
 
       urlData.uri = await provider.services.provider.upload(newFile, buffer, { transacting });
     }
@@ -362,6 +362,9 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   const file = await getById(url);
 
   if (file?.id) {
+    if (file.isFolder) {
+      return file;
+    }
     const fileStream = await dataForReturnFile(file.id);
     return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
   }

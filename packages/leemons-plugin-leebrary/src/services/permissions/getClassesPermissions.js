@@ -47,11 +47,19 @@ async function getClassesPermissions(assetsIds, { withInfo, transacting, userSes
   return ids.map(
     (id) =>
       permissionsByAsset[id]?.map((permission) => {
+        let role = 'viewer';
+        if (permission.type === leemons.plugin.prefixPN('asset.can-edit')) {
+          role = 'editor';
+        }
+
+        if (permission.type === leemons.plugin.prefixPN('asset.can-assign')) {
+          role = 'assigner';
+        }
         const classId = permission.permissionName.replace(`plugins.academic-portfolio.class.`, '');
         return {
           ...classesData[classId],
           class: classId,
-          role: permission.type === leemons.plugin.prefixPN('asset.can-edit') ? 'editor' : 'viewer',
+          role,
         };
       }) ?? []
   );

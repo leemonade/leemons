@@ -40,7 +40,8 @@ export const Schema = ({ schema, schemaLabel, isSchemaOpened, setIsSchemaOpened 
         </Box>
         <Box className={classes.schema}>
           {schema.map((element, index) => {
-            const acceptedElements = ['library', 'heading'];
+            // const acceptedElements = ['library', 'heading'];
+            const acceptedElements = ['heading'];
             const isLibrary = element.type === 'library';
 
             // If the element is not a heading level 1 or 2, is not an accepted element or it has no content return false.

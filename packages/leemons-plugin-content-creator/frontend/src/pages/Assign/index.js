@@ -57,11 +57,11 @@ export default function Assign() {
     <Form
       action={t('assign')}
       onSubmit={send}
-      showReport
       showInstructions
       showMessageForStudents
       assignable={store.document}
       evaluationType="none"
+      evaluationTypes={['nonEvaluable']}
       buttonsComponent={
         <Stack fullWidth justifyContent="end">
           <Button loading={store.loading} type="submit">

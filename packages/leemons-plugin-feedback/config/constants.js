@@ -18,6 +18,7 @@ const permissions = [
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'feedback',
       order: 305,
@@ -37,6 +38,7 @@ const menuItems = [
   },
   // List
   {
+    removed: true,
     item: {
       key: 'feedback-list',
       order: 2,
@@ -44,7 +46,7 @@ const menuItems = [
       url: '/private/feedback',
       label: {
         en: 'Feedback library',
-        es: 'Librería de encuestas',
+        es: 'Biblioteca de encuestas',
       },
     },
     permissions: [
@@ -56,6 +58,7 @@ const menuItems = [
   },
   // New
   {
+    removed: true,
     item: {
       key: 'feedback-new',
       order: 3,
@@ -88,7 +91,7 @@ const assignableRoles = [
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'feedbacks', es: 'encuestas' },
       singularName: { en: 'feedback', es: 'encuesta' },
-      order: 7,
+      order: 5,
       menu: {
         item: {
           iconSvg: '/public/feedback/menu-icon.svg',

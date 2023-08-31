@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -10,17 +10,16 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import _ from 'lodash';
-import { unflatten, useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import { unflatten, useStore } from '@common';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
-import ChatButton from '@comunica/components/ChatButton';
-import SubjectTabs from '../Correction/components/SubjectTabs';
-import studentCorrectionStyles from './StudentCorrection.style';
-import Submission from '../Correction/components/Submission';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _ from 'lodash';
+import React, { useMemo } from 'react';
 import { prefixPN } from '../../helpers';
+import SubjectTabs from '../Correction/components/SubjectTabs';
+import Submission from '../Correction/components/Submission';
+import studentCorrectionStyles from './StudentCorrection.style';
 import ContactTeacher from './components/ContactTeacher/ContactTeacher';
 
 function SubjectTab({ assignation, subject, labels, classes, evaluationSystem }) {
@@ -73,15 +72,6 @@ function SubjectTab({ assignation, subject, labels, classes, evaluationSystem })
         }}
         room={`plugins.assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`}
       />
-      {store.room ? (
-        <ChatButton
-          room={store.room}
-          onClick={() => {
-            store.chatOpened = true;
-            render();
-          }}
-        />
-      ) : null}
     </>
   );
 

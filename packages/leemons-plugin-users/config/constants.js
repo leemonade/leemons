@@ -38,6 +38,11 @@ module.exports = {
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Roles', en: 'Roles' },
     },
+    {
+      permissionName: 'plugins.users.enabledisable',
+      actions: ['create', 'delete', 'admin'],
+      localizationName: { es: 'Activar/Desactivar', en: 'Enable/Disable' },
+    },
   ],
   defaultActions: [
     { order: 1, actionName: 'view', localizationName: { es: 'Ver', en: 'View' } },

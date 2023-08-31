@@ -6,7 +6,7 @@ import { useRoomsMessageCount } from '@comunica/components';
 import { cloneDeep, sortBy } from 'lodash';
 import CommentIcon from './CommentIcon.svg';
 
-function findNearestFloorScore(score, scales) {
+export function findNearestFloorScore(score, scales) {
   const sortedScales = sortBy(cloneDeep(scales), 'number');
 
   let nearestScore = null;

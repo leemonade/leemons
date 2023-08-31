@@ -12,6 +12,7 @@ module.exports = {
     label: 'Panel de control',
   },
   adminDashboard: {
+    selectCenter: 'Centro',
     activityInPlatform: 'Actividad en la plataforma',
     activeUsers: 'Usuarios activos',
     students: 'Alumnos',

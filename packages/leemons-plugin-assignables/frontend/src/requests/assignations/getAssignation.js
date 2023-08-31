@@ -15,7 +15,7 @@ export default async function getAssignation({ id, user, details = true }) {
   if (details) {
     assignations = {
       ...assignations,
-      instance: await getAssignableInstance({ id: assignations.instance, details: true }),
+      instance: await getAssignableInstance({ id: assignations?.instance, details: true }),
     };
   }
   return assignations;

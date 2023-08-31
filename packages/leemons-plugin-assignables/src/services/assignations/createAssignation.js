@@ -253,6 +253,7 @@ module.exports = async function createAssignation(
       });
 
       const hostname = await leemons.getPlugin('users').services.platform.getHostname();
+      const hostnameApi = await leemons.getPlugin('users').services.platform.getHostnameApi();
 
       const _classes = _.uniqBy(classesData, 'subject.id');
       const userAgentByIds = _.keyBy(userAgents, 'id');
@@ -304,10 +305,7 @@ module.exports = async function createAssignation(
         // ES: Crea la asignación
         return await Promise.all(
           users.map(async (user) => {
-            const isOnInstance = await checkIfStudentIsOnInstance(user, assignableInstanceId, {
-              userSession,
-              transacting,
-            });
+            const isOnInstance = await checkIfStudentIsOnInstance(user, assignableInstanceId);
 
             if (isOnInstance) {
               throw new Error(
@@ -370,6 +368,7 @@ module.exports = async function createAssignation(
                 classes: _classes,
                 ctx,
                 hostname,
+                hostnameApi,
               });
             }
 

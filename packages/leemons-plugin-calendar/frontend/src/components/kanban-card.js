@@ -31,20 +31,6 @@ export default function KanbanCard({
   const calendar = _.find(config.calendars, { id: event.calendar });
   if (!calendar) return null;
 
-  const getInitials = () => {
-    const words = calendar.name.split(' ');
-    return (
-      <span>
-        {words[0] ? words[0][0] : ''}
-        {words[1] ? words[1][0] : ''}
-      </span>
-    );
-  };
-
-  const getIcon = () => <div>icono</div>;
-
-  const getAvatar = () => <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png" />;
-
   const style = {};
   const className = ['m-2', 'text-secondary'];
 
@@ -71,7 +57,7 @@ export default function KanbanCard({
       <div>
         <Avatar
           fullName={calendar.name}
-          image="http://daisyui.com/tailwind-css-component-profile-1@40w.png"
+          image="https://daisyui.com/tailwind-css-component-profile-1@40w.png"
           style={style}
         />
         {avatarType === 'avatar'

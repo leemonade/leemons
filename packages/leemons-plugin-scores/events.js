@@ -56,5 +56,5 @@ function initLocalizations() {
 module.exports = async function events(isInstalled) {
   initLocalizations();
   initPermissions(isInstalled);
-  initMenuBuilder(isInstalled);
+  initMenuBuilder();
 };

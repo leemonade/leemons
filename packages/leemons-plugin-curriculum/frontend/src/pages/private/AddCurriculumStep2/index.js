@@ -21,16 +21,16 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useMemo } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import BranchContent from '../../../bubbles-components/BranchContent';
-import {
-  BRANCH_CONTENT_ERROR_MESSAGES,
-  BRANCH_CONTENT_MESSAGES,
-  BRANCH_CONTENT_SELECT_DATA,
-} from '../../../bubbles-components/branchContentDefaultValues';
 import NewBranchConfig, {
   NEW_BRANCH_CONFIG_ERROR_MESSAGES,
   NEW_BRANCH_CONFIG_MESSAGES,
   NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
 } from '../../../bubbles-components/NewBranchConfig';
+import {
+  BRANCH_CONTENT_ERROR_MESSAGES,
+  BRANCH_CONTENT_MESSAGES,
+  BRANCH_CONTENT_SELECT_DATA,
+} from '../../../bubbles-components/branchContentDefaultValues';
 import {
   addNodeLevelsRequest,
   detailCurriculumRequest,

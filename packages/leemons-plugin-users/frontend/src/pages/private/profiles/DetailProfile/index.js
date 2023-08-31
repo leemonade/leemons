@@ -1,8 +1,3 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { forIn } from 'lodash';
-import useTranslate from '@multilanguage/useTranslate';
-import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
-import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
 import {
   Alert,
   Box,
@@ -14,21 +9,26 @@ import {
   Tabs,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import tLoader from '@multilanguage/helpers/tLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import prefixPN from '@users/helpers/prefixPN';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import PlatformLocales from '@multilanguage/components/PlatformLocales';
 import PlatformLocalesModal from '@multilanguage/components/PlatformLocalesModal';
+import tLoader from '@multilanguage/helpers/tLoader';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslate from '@multilanguage/useTranslate';
+import prefixPN from '@users/helpers/prefixPN';
+import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
+import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
 import hooks from 'leemons-hooks';
+import { forIn } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
-import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import { DatasetTab } from './DatasetTab';
-import { PermissionsTab } from './PermissionsTab';
 import { LocaleTab } from './LocaleTab';
+import { PermissionsTab } from './PermissionsTab';
 
 function ProfileDetail() {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_profile') });
@@ -259,7 +259,7 @@ function ProfileDetail() {
                   />
                 </Paper>
               </TabPanel>
-              <TabPanel label={t('dataset')}>
+              <TabPanel disabled label={t('dataset')}>
                 <Paper padding={2} mt={20} mb={20} fullWidth>
                   <DatasetTab t={t} profile={profile} isEditMode={editMode} />
                 </Paper>

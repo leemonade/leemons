@@ -30,7 +30,7 @@ module.exports = {
       },
     },
     size: {
-      type: 'integer',
+      type: 'bigint',
       options: {
         defaultTo: 0,
       },
@@ -41,8 +41,12 @@ module.exports = {
         notNull: true,
       },
     },
+    isFolder: {
+      type: 'boolean',
+    },
     metadata: {
-      type: 'string',
+      type: 'text',
+      textType: 'mediumText',
     },
   },
   primaryKey: {

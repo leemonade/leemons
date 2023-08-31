@@ -1,30 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import { NumberInput, Select, Stack, InputWrapper, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { get } from 'lodash';
 import { prefixPN } from '../../../helpers/prefixPN';
 
+export function useTimeUnitsInputLocalizations() {
+  // key is string
+  const key = prefixPN('assignment_form.timeUnits');
+  const [, translations] = useTranslateLoader(key);
+
+  return useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+
+      const data = get(res, key, {});
+      return {
+        hours: data.hours,
+        minutes: data.minutes,
+        days: data.days,
+      };
+    }
+
+    return {};
+  });
+}
+
 export default function TimeUnitsInput({ onChange, value: userValue, min, max, ...props }) {
-  const [, translations] = useTranslateLoader(prefixPN('assignment_form.timeUnits'));
-  const [labels, setLabels] = useState({});
+  const labels = useTimeUnitsInputLocalizations();
 
   const [value, setValue] = useState(0);
   const [units, setUnits] = useState('minutes');
   const [time, setTime] = useState(`${value} ${units}`);
-
-  useEffect(() => {
-    if (translations) {
-      const res = unflatten(translations.items);
-      const data = res.plugins.tasks.assignment_form.timeUnits;
-
-      setLabels({
-        hours: data.hours,
-        minutes: data.minutes,
-        days: data.days,
-      });
-    }
-  }, [translations]);
 
   useEffect(() => {
     if (typeof onChange === 'function') {

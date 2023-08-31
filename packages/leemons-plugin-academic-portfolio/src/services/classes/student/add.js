@@ -4,6 +4,7 @@ const {
   addPermissionsBetweenStudentsAndTeachers,
 } = require('../addPermissionsBetweenStudentsAndTeachers');
 const { getClassProgram } = require('../getClassProgram');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function add(_class, student, { transacting } = {}) {
   const roomService = leemons.getPlugin('comunica').services.room;
@@ -16,10 +17,21 @@ async function add(_class, student, { transacting } = {}) {
     }),
   ]);
 
+  const { student: studentProfileId } = await getProfiles({ transacting });
+
   await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
     student,
     {
       permissionName: `plugins.academic-portfolio.class.${_class}`,
+      actionNames: ['view'],
+    },
+    { transacting }
+  );
+
+  await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+    student,
+    {
+      permissionName: `plugins.academic-portfolio.class-profile.${_class}.${studentProfileId}`,
       actionNames: ['view'],
     },
     { transacting }
@@ -30,6 +42,19 @@ async function add(_class, student, { transacting } = {}) {
       student,
       {
         permissionName: `plugins.academic-portfolio.program.inside.${program.id}`,
+        actionNames: ['view'],
+      },
+      { transacting }
+    );
+  } catch (e) {
+    // Nothing
+  }
+
+  try {
+    await leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+      student,
+      {
+        permissionName: `plugins.academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
         actionNames: ['view'],
       },
       { transacting }

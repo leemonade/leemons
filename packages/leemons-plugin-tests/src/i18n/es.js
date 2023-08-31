@@ -104,7 +104,7 @@ module.exports = {
     numberingStyle2: 'Estilo de numeración 2 (A, B, C, ...)',
   },
   testsList: {
-    pageTitle: 'Librería de tests',
+    pageTitle: 'Biblioteca de tests',
     nameHeader: 'Nombre',
     nQuestionsHeader: 'Preguntas',
     levelHeader: 'Nivel',
@@ -366,7 +366,7 @@ module.exports = {
     undefined: 'No definido',
     question: 'Pregunta',
     result: 'Resultado',
-    showInTests: 'Ver en el test',
+    showInTests: 'Ver en el tests',
     feedbackForStudent: 'Comentario para el estudiante',
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',

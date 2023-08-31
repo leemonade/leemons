@@ -1,44 +1,43 @@
-import React from 'react';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { useLocale, useStore } from '@common';
-import { useHistory, useParams, Link } from 'react-router-dom';
-import { addErrorAlert } from '@layout/alert';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
-import { forEach, isString } from 'lodash';
-import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import getClassData from '@assignables/helpers/getClassData';
+import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
+import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import getAssignation from '@assignables/requests/assignations/getAssignation';
 import {
   Box,
   Button,
-  COLORS,
   Modal,
   Paragraph,
   Stack,
   Text,
   VerticalStepper,
 } from '@bubbles-ui/components';
+import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { ActivityContainer } from '@bubbles-ui/leemons';
+import { useLocale, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import getClassData from '@assignables/helpers/getClassData';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@tests/helpers/prefixPN';
 import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
-import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
-import { StudentInstanceStyles } from './StudentInstance.style';
-import Resume from './components/Resume';
-import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
-import Development from './components/Development';
-import { TestStyles } from './TestStyles.style';
+import { forEach, intersectionBy, isString } from 'lodash';
+import React from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
   setInstanceTimestampRequest,
   setQuestionResponseRequest,
 } from '../../../../request';
-import { calculeInfoValues } from './helpers/calculeInfoValues';
+import { StudentInstanceStyles } from './StudentInstance.style';
+import { TestStyles } from './TestStyles.style';
+import Development from './components/Development';
 import QuestionList from './components/QuestionList';
+import Resume from './components/Resume';
+import { calculeInfoValues } from './helpers/calculeInfoValues';
 import { getConfigByInstance } from './helpers/getConfigByInstance';
+import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
 
 function StudentInstance() {
   const locale = useLocale();
@@ -112,7 +111,7 @@ function StudentInstance() {
 
       const [{ evaluationSystem }, classe, { questions }, { responses }, { timestamps }] =
         await Promise.all([
-          getProgramEvaluationSystemRequest(store.instance.assignable.subjects[0].program),
+          getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
           getClassData(store.instance.classes, {
             multiSubject: t('multiSubject'),
             groupName: store.instance?.metadata?.groupName,
@@ -226,10 +225,10 @@ function StudentInstance() {
         color: store.class.color,
         image: store.instance.assignable.asset.cover
           ? getFileUrl(
-            isString(store.instance.assignable.asset.cover)
-              ? store.instance.assignable.asset.cover
-              : store.instance.assignable.asset.cover.id
-          )
+              isString(store.instance.assignable.asset.cover)
+                ? store.instance.assignable.asset.cover
+                : store.instance.assignable.asset.cover.id
+            )
           : null,
         /*
         styles: {
@@ -250,8 +249,9 @@ function StudentInstance() {
     if (store.instance) {
       const commonProps = { styles, classes, t, store, render, cx, prevStep, nextStep, goToStep };
       const steps = [];
+
       const curriculumValues = getIfCurriculumSubjectsHaveValues(
-        store.instance.assignable.subjects
+        intersectionBy(store.instance.assignable.subjects, store.instance.subjects, 'subject')
       );
       if (
         // store.instance?.assignable?.asset?.description ||
@@ -316,7 +316,8 @@ function StudentInstance() {
   };
 
   const goToResults = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank');
+    if (openInNewTab)
+      window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank', 'noopener');
     else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
   };
 
@@ -348,8 +349,8 @@ function StudentInstance() {
             <Box className={classes.pagesContent}>
               {verticalStepperProps.data[store.currentStep]
                 ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                  isFirstStep: !store.currentStep,
-                })
+                    isFirstStep: !store.currentStep,
+                  })
                 : null}
             </Box>
           </Box>
@@ -357,7 +358,7 @@ function StudentInstance() {
         <Modal
           title={t('finishTestModalTitle')}
           opened={store.showFinishModal}
-          onClose={() => { }}
+          onClose={() => {}}
           centerTitle
           centered
           withCloseButton={false}

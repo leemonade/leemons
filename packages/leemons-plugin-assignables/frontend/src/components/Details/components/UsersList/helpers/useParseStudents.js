@@ -1,17 +1,17 @@
-import React, { useMemo } from 'react';
-import _ from 'lodash';
-import { LocaleDate, LocaleDuration, unflatten, useStore } from '@common';
-import dayjs from 'dayjs';
-import { getUserAgentsInfoRequest } from '@users/request';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { UserDisplayItem } from '@bubbles-ui/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { useQuery } from '@tanstack/react-query';
-import UnreadMessages from '@comunica/components/UnreadMessages';
-import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
+import { UserDisplayItem } from '@bubbles-ui/components';
+import { LocaleDate, LocaleDuration, unflatten, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import UnreadMessages from '@comunica/components/UnreadMessages';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useQuery } from '@tanstack/react-query';
+import { getUserAgentsInfoRequest } from '@users/request';
+import dayjs from 'dayjs';
+import _ from 'lodash';
+import React, { useMemo } from 'react';
 import prefixPN from '../../../../../helpers/prefixPN';
 import getActions from './getActions';
 import getStatus from './getStatus';
@@ -42,6 +42,7 @@ function useStudentData(students) {
       return {
         ...student,
         userInfo: userAgent?.user,
+        userAgentIsDisabled: userAgent.disabled,
       };
     });
 
@@ -117,6 +118,7 @@ export default function useParseStudents(instance, statusLabels) {
 
     return students?.map((student) => ({
       id: student.user,
+      userAgentIsDisabled: student.userAgentIsDisabled,
       student: <UserDisplayItem {...student.userInfo} />,
       status: statusLabels[getStatus(student, instance)],
       unreadMessages: <UnreadMessages rooms={student.chatKeys} />,

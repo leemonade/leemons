@@ -51,7 +51,10 @@ async function validateAddAsset(data) {
 const setPermissionsSchema = {
   type: 'object',
   properties: {
-    asset: stringSchema,
+    assets: {
+      type: 'array',
+      items: stringSchema,
+    },
     isPublic: booleanSchema,
     canAccess: {
       type: 'array',
@@ -64,24 +67,22 @@ const setPermissionsSchema = {
         required: ['userAgent', 'role'],
       },
     },
-    classesCanAccess: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          class: stringSchema,
-          role: stringSchema,
+    permissions: {
+      type: 'object',
+      properties: {
+        viewer: {
+          type: 'array',
+          items: stringSchema,
         },
-        required: ['class', 'role'],
+        editor: {
+          type: 'array',
+          items: stringSchema,
+        },
       },
     },
   },
-  required: ['asset'],
-  anyOf: [
-    { required: ['canAccess'] },
-    { required: ['classesCanAccess'] },
-    { required: ['isPublic'] },
-  ],
+  required: ['assets'],
+  anyOf: [{ required: ['canAccess'] }, { required: ['permissions'] }, { required: ['isPublic'] }],
   additionalProperties: true,
 };
 

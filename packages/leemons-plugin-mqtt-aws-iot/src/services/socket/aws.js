@@ -1,4 +1,3 @@
-/* eslint-disable no-async-promise-executor */
 /* eslint-disable no-use-before-define */
 const _ = require('lodash');
 const { tables } = require('../tables');
@@ -53,9 +52,10 @@ async function getRegion({ transacting } = {}) {
 }
 
 async function getAccount() {
-  return new Promise(async (resolve, reject) => {
-    const sts = await getSts();
-    if (account) resolve(account);
+  const sts = await getSts();
+  if (account) return account;
+
+  return new Promise((resolve, reject) => {
     sts.getCallerIdentity({}, (err, data) => {
       if (err) {
         reject(err);
@@ -69,8 +69,9 @@ async function getAccount() {
 
 async function getFederationToken(policy, { transacting } = {}) {
   if (!policy) throw new Error('Policy is required');
-  return new Promise(async (resolve, reject) => {
-    const sts = await getSts({ transacting });
+  const sts = await getSts({ transacting });
+
+  return new Promise((resolve, reject) => {
     sts.getFederationToken(
       {
         Name: global.utils.randomString(32),

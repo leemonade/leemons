@@ -56,7 +56,7 @@ const menuItems = [
       url: '/private/curriculum/list',
       label: {
         en: 'Library',
-        es: 'Libreria',
+        es: 'Biblioteca',
       },
     },
     permissions: [

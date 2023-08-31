@@ -1,31 +1,31 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { flatten, map } from 'lodash';
+import prefixPN from '@admin/helpers/prefixPN';
+import {
+  getMailProvidersRequest,
+  getPlatformEmailRequest,
+  savePlatformEmailRequest,
+} from '@admin/request/mails';
 import {
   Alert,
   Box,
   Button,
   ContextContainer,
-  createStyles,
   Loader,
   Paragraph,
   Stack,
   Text,
   TextInput,
   Title,
+  createStyles,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
-import {
-  getMailProvidersRequest,
-  getPlatformEmailRequest,
-  savePlatformEmailRequest,
-} from '@admin/request/mails';
-import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert } from '@layout/alert';
 import loadable from '@loadable/component';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { flatten, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Styles = createStyles((theme) => ({
   providerButton: {
@@ -190,7 +190,9 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
               <Box>
                 <Button
                   variant="link"
-                  onClick={() => window.open('https://github.com/leemonade/leemons')}
+                  onClick={() =>
+                    window.open('https://github.com/leemonade/leemons', 'Github', 'noopener')
+                  }
                 >
                   {t('github')}
                 </Button>

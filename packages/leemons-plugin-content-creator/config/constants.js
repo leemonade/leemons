@@ -18,6 +18,7 @@ const permissions = [
 const menuItems = [
   // Main
   {
+    removed: true,
     item: {
       key: 'content-creator',
       order: 302,
@@ -37,6 +38,7 @@ const menuItems = [
   },
   // List
   {
+    removed: true,
     item: {
       key: 'content-creator-library',
       order: 2,
@@ -44,7 +46,7 @@ const menuItems = [
       url: '/private/content-creator',
       label: {
         en: 'Documents library',
-        es: 'Librería de documentos',
+        es: 'Biblioteca de documentos',
       },
     },
     permissions: [
@@ -56,6 +58,7 @@ const menuItems = [
   },
   // New
   {
+    removed: true,
     item: {
       key: 'content-creator-new',
       order: 3,
@@ -80,10 +83,11 @@ const assignableRoles = [
     role: 'content-creator',
     options: {
       teacherDetailUrl: '/private/content-creator/detail/:id',
-      studentDetailUrl: '/private/content-creator/view/:id',
-      evaluationDetailUrl: '/private/content-creator/result/:id/:user',
-      dashboardUrl: '/private/content-creator/result/:id',
+      studentDetailUrl: '/private/content-creator/view/:id/:user',
+      evaluationDetailUrl: '/private/content-creator/view/:id/:user',
+      dashboardUrl: '/private/content-creator/view/:id',
       creatable: true,
+      order: 1,
       createUrl: '/private/content-creator/new',
       canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
       pluralName: { en: 'contents', es: 'contenidos' },

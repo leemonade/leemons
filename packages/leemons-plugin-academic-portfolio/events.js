@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const _ = require('lodash');
 const { permissions, menuItems } = require('./config/constants');
 const addMenuItems = require('./src/services/menu-builder/add');
@@ -16,12 +17,24 @@ async function initMenuBuilder() {
 }
 
 async function events(isInstalled) {
+  leemons.events.once('plugins.academic-portfolio:pluginDidLoad', async () => {
+    const {
+      syncProgramProfilePermissionsIfNeed,
+    } = require('./src/services/classes/__update__/syncProgramProfilePermissionsIfNeed');
+
+    await syncProgramProfilePermissionsIfNeed(isInstalled);
+  });
+
   leemons.events.once('plugins.multilanguage:pluginDidLoad', async () => {
     await addLocales(['es', 'en']);
   });
 
   leemons.events.on('plugins.multilanguage:newLocale', async (event, locale) => {
     await addLocales(locale.code);
+  });
+  leemons.events.on('plugins.users:before-disable-user-agents', async (event, data) => {
+    const { onDisableUserAgents } = require('./src/services/events/onDisableUserAgents');
+    await onDisableUserAgents(data);
   });
 
   leemons.events.once('plugins.dashboard:init-widget-zones', async () => {

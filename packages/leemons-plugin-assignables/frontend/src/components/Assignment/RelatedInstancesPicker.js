@@ -73,14 +73,11 @@ function useData({ labels }) {
               klass = classes?.[instance.classes[0]];
             }
           }
-
           return {
             value: instance.id,
             instance,
             class: klass,
-            label: `${instance?.assignable?.asset?.name} (${
-              instance.metadata?.groupName ?? klass?.name
-            })`,
+            label: `${instance?.assignable?.asset?.name} (${klass?.name})`,
           };
         }),
       [activities, classes]
@@ -165,7 +162,7 @@ function ActivityItem({ instance, class: klass, ...props }) {
           </Box>
         </Box>
 
-        <Text color="secondary">{instance.metadata?.groupName ?? klass.name}</Text>
+        <Text color="secondary">{klass.name}</Text>
       </Box>
     </Box>
   );

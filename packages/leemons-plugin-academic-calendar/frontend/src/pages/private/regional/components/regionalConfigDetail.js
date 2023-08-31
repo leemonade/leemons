@@ -1,12 +1,9 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import ColorBall from '@academic-calendar/components/ColorBall';
+import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
 import {
   Box,
   Button,
   ContextContainer,
-  createStyles,
   DatePicker,
   Paragraph,
   Select,
@@ -14,17 +11,20 @@ import {
   TableInput,
   TextInput,
   Title,
+  createStyles,
 } from '@bubbles-ui/components';
-import ColorBall from '@academic-calendar/components/ColorBall';
+import { useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLocale, useStore } from '@common';
-import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 const useStyle = createStyles((theme) => ({
   root: {
     padding: theme.spacing[5],
-    maxWidth: 700,
+    // maxWidth: 700,
     width: '100%',
   },
 }));

@@ -1,11 +1,11 @@
-import React from 'react';
-import dayjs from 'dayjs';
-import PropTypes from 'prop-types';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
 import { Box, HtmlText, Title } from '@bubbles-ui/components';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
+import dayjs from 'dayjs';
 import { isEmpty, map } from 'lodash';
-import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { ButtonNavigation } from './ButtonNavigation';
 
 export default function Resume(props) {
@@ -21,12 +21,13 @@ export default function Resume(props) {
     }
   }
 
-  const [
-    {
-      curriculum: { curriculum },
-    },
-  ] = useCurriculumVisibleValues({ assignation: store.assignation });
+  const curriculumValues = useCurriculumVisibleValues({ assignation: store.assignation });
   const subjects = useClassesSubjects(store.instance.classes);
+
+  let curriculum = null;
+  if (curriculumValues.length && curriculumValues[0]?.curriculum?.curriculum) {
+    curriculum = curriculumValues[0].curriculum.curriculum;
+  }
 
   const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
 
@@ -41,7 +42,7 @@ export default function Resume(props) {
         </>
       ) : null}
 
-      {!isEmpty(store.instance?.assignable?.subjects?.[0].curriculum) ? (
+      {!isEmpty(store.instance?.assignable?.subjects?.[0]?.curriculum) ? (
         <>
           {/* <Tabs>
           <TabPanel label={subjects?.[0]?.name}>
@@ -62,7 +63,7 @@ export default function Resume(props) {
               </Box>
             ) : null}
             {!!store.instance.assignable.subjects[0].curriculum.objectives &&
-            !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
+              !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
               <Box sx={tabPanelStyle}>
                 <Box>
                   <Title color="primary" order={5}>

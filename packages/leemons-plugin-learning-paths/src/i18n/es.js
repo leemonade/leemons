@@ -1,7 +1,7 @@
 module.exports = {
   libraryPage: {
     header: {
-      title: 'Librería de módulos',
+      title: 'Biblioteca de módulos',
       buttons: {
         new: 'Nuevo',
       },
@@ -38,9 +38,6 @@ module.exports = {
     steps: {
       basicData: {
         errors: {
-          tagline: {
-            required: 'Subtítulo es necesario',
-          },
           program: {
             required: 'Programa es necesario',
           },
@@ -56,7 +53,7 @@ module.exports = {
         emptyState: {
           title: '¡Empecemos a crear!',
           description:
-            'Añade recursos de la librería y ordénalos según desees que le aparezcan al estudiante.',
+            'Añade recursos de la biblioteca y ordénalos según desees que le aparezcan al estudiante.',
         },
         moduleComposer: {
           columns: {
@@ -78,7 +75,7 @@ module.exports = {
         emptyState: {
           title: '¡Empecemos a crear!',
           description:
-            'Añade actvidades a la librería y ordénalas según desees que le aparezcan al estudiante.',
+            'Añade actividades a la biblioteca y ordénalas según desees que le aparezcan al estudiante.',
         },
         moduleComposer: {
           columns: {
@@ -106,10 +103,14 @@ module.exports = {
   },
   libraryCard: {
     menuItems: {
+      toggle: 'Cerrar',
+      open: 'Abrir',
+      view: 'Ver',
       edit: 'Editar',
       assign: 'Asignar',
       duplicate: 'Duplicar',
       delete: 'Eliminar',
+      share: 'Compartir',
     },
     duplicate: {
       title: 'Duplicar módulo',
@@ -148,6 +149,7 @@ module.exports = {
       review: 'Revisar',
       start: 'Comenzar',
       continue: 'Continuar',
+      preview: 'Visualizar',
     },
     resources: 'Recursos',
   },

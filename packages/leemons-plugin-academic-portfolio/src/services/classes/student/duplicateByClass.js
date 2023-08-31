@@ -3,6 +3,7 @@ const { table } = require('../../tables');
 const {
   addPermissionsBetweenStudentsAndTeachers,
 } = require('../addPermissionsBetweenStudentsAndTeachers');
+const { getProfiles } = require('../../settings/getProfiles');
 
 async function duplicateByClass(
   classIds,
@@ -49,6 +50,25 @@ async function duplicateByClass(
                   ? duplications.classes[item.class].id
                   : item.class
               }`,
+              actionNames: ['view'],
+            },
+            { transacting }
+          )
+        )
+      );
+
+      const { student: studentProfileId } = await getProfiles({ transacting });
+
+      await Promise.all(
+        _.map(classStudents, ({ student, ...item }) =>
+          leemons.getPlugin('users').services.permissions.addCustomPermissionToUserAgent(
+            student,
+            {
+              permissionName: `plugins.academic-portfolio.class-profile.${
+                duplications.classes && duplications.classes[item.class]
+                  ? duplications.classes[item.class].id
+                  : item.class
+              }.${studentProfileId}`,
               actionNames: ['view'],
             },
             { transacting }

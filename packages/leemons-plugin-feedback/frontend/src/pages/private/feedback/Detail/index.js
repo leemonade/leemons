@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   LoadingOverlay,
@@ -6,18 +5,19 @@ import {
   useDebouncedCallback,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import prefixPN from '@feedback/helpers/prefixPN';
 import { getFeedbackRequest, saveFeedbackRequest } from '@feedback/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import React from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
-import { useForm } from 'react-hook-form';
 import DetailBasic from '@feedback/pages/private/feedback/Detail/components/DetailBasic';
 import DetailQuestions from '@feedback/pages/private/feedback/Detail/components/DetailQuestions';
+import { useForm } from 'react-hook-form';
 
 export default function Index() {
   const [t] = useTranslateLoader(prefixPN('feedbackDetail'));
@@ -44,7 +44,7 @@ export default function Index() {
       render();
       await saveFeedbackRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/feedback');
+      history.push('/private/feedback/draft');
     } catch (error) {
       addErrorAlert(error);
     }

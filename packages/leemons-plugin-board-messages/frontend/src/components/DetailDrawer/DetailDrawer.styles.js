@@ -1,7 +1,7 @@
 import { createStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
-export const DetailDrawerStyles = createStyles((theme, {}) => {
+export const DetailDrawerStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
   return {
     root: {

@@ -75,22 +75,59 @@ export default function Login() {
           const { profile, center } = await getRememberLoginRequest(response.jwtToken);
 
           if (profile && center) {
-            // ES: Si lo tiene sacamos el token para dicho centro y perfil
-            // EN: If has, get the token for that center and profile
-            const { jwtToken } = await getUserCenterProfileTokenRequest(
-              center.id,
-              profile.id,
-              response.jwtToken
-            );
+            try {
+              if (profile.sysName === 'admin') {
+                const { jwtToken } = await getUserProfileTokenRequest(
+                  profile.id,
+                  response.jwtToken
+                );
 
-            await hooks.fireEvent('user:change:profile', profile);
-            response.jwtToken = jwtToken;
+                response.jwtToken = { ...jwtToken, profile };
+              } else {
+                // ES: Si lo tiene sacamos el token para dicho centro y perfil
+                // EN: If has, get the token for that center and profile
+                const { jwtToken } = await getUserCenterProfileTokenRequest(
+                  center.id,
+                  profile.id,
+                  response.jwtToken
+                );
+
+                await hooks.fireEvent('user:change:profile', profile);
+                response.jwtToken = jwtToken;
+              }
+            } catch (er) {
+              // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
+              // EN: If not has, get all the profiles that has access to do login
+              const { centers } = await getUserCentersRequest(response.jwtToken);
+              // Si solo tiene un perfil hacemos login automaticamente con ese
+              if (centers.length === 1 && centers[0].profiles.length === 1) {
+                const { jwtToken } = await getUserCenterProfileTokenRequest(
+                  centers[0].id,
+                  centers[0].profiles[0].id,
+                  response.jwtToken
+                );
+
+                await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
+                response.jwtToken = jwtToken;
+              }
+            }
           } else {
             // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
             // EN: If not has, get all the profiles that has access to do login
-            const { centers } = await getUserCentersRequest(response.jwtToken);
-            // Si solo tiene un perfil hacemos login automaticamente con ese
-            if (centers.length === 1 && centers[0].profiles.length === 1) {
+            const [{ centers }, { profiles }] = await Promise.all([
+              getUserCentersRequest(response.jwtToken),
+              getUserProfilesRequest(response.jwtToken),
+            ]);
+            // Si solo tiene un perfil (aun que este en muchos centros) y este es el de admin entramos como todos los centros a la vez
+            if (profiles.length === 1 && profiles[0].sysName === 'admin') {
+              const { jwtToken } = await getUserProfileTokenRequest(
+                profiles[0].id,
+                response.jwtToken
+              );
+
+              response.jwtToken = { ...jwtToken, profile: profiles[0] };
+            } else if (centers.length === 1 && centers[0].profiles.length === 1) {
+              // Si solo tiene un perfil hacemos login automaticamente con ese
               const { jwtToken } = await getUserCenterProfileTokenRequest(
                 centers[0].id,
                 centers[0].profiles[0].id,

@@ -4,7 +4,10 @@ const { find: findAssets } = require('../find');
 const { find: findBookmarks } = require('../../bookmarks/find');
 const { tables } = require('../../tables');
 
-async function getByFile(fileId, { checkPermissions = true, userSession, transacting } = {}) {
+async function getByFile(
+  fileId,
+  { checkPermissions = true, onlyPublic, userSession, transacting } = {}
+) {
   try {
     const promises = [
       // ES: Buscamos en las relaciones entre archivos y assets
@@ -29,6 +32,13 @@ async function getByFile(fileId, { checkPermissions = true, userSession, transac
     );
 
     const assetId = assetsIds[0];
+
+    if (onlyPublic) {
+      const [asset] = await findAssets({ id: assetId }, { transacting });
+      if (!asset?.public) {
+        return null;
+      }
+    }
 
     if (checkPermissions) {
       // EN: Get the user permissions

@@ -1,20 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Box, Button, createStyles, Modal, Paragraph, Stack, Text } from '@bubbles-ui/components';
+import { ArrowLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
 import HeaderProgressBar from '@feedback/pages/private/feedback/StudentInstance/components/questions/HeaderProgressBar';
-import { Box, Button, createStyles, Modal, Paragraph, Stack, Text } from '@bubbles-ui/components';
-import { useStore } from '@common';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
 import { setQuestionResponseRequest } from '@feedback/request';
-import { ArrowLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import { useHistory, Link } from 'react-router-dom';
 import { setInstanceTimestamp } from '@feedback/request/feedback';
-import OpenResponse from './OpenResponse';
+import { Link, useHistory } from 'react-router-dom';
 import LikertResponse from './LikertResponse';
 import NetPromoterScoreResponse from './NetPromoterScoreResponse';
+import OpenResponse from './OpenResponse';
 
 export const Styles = createStyles((theme, { viewMode }) => ({
   container: {
@@ -70,7 +70,7 @@ function QuestionsCard({
     values: defaultValues || {},
   });
 
-  const moduleId = instance.metadata?.module?.id;
+  const moduleId = instance?.metadata?.module?.id;
   const isModule = !!moduleId;
   const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
 
@@ -84,17 +84,18 @@ function QuestionsCard({
   );
 
   const goToOnGoing = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open('/private/assignables/ongoing');
+    if (openInNewTab) window.open('/private/assignables/ongoing', 'AssignablesOngoing', 'noopener');
     history.push('/private/assignables/ongoing');
   };
 
   const gotToModuleDashboard = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(moduleDashboardUrl);
+    if (openInNewTab) window.open(moduleDashboardUrl, 'Dashboard', 'noopener');
     history.push(moduleDashboardUrl);
   };
 
   const goToResults = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(`/private/feedback/result/${instanceId}`);
+    if (openInNewTab)
+      window.open(`/private/feedback/result/${instanceId}`, 'FeedbackResult', 'noopener');
     if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
   };
 
@@ -177,7 +178,7 @@ function QuestionsCard({
       <Modal
         title={t('finishModal')}
         opened={store.showFinishModal}
-        onClose={() => { }}
+        onClose={() => {}}
         centerTitle
         centered
         withCloseButton={false}
@@ -263,6 +264,7 @@ function QuestionsCard({
 
 QuestionsCard.propTypes = {
   feedback: PropTypes.any,
+  instance: PropTypes.any,
   instanceId: PropTypes.string,
   defaultValues: PropTypes.any,
   userId: PropTypes.string,

@@ -1,5 +1,3 @@
-import React, { useMemo } from 'react';
-import { clone, cloneDeep, find, forIn, groupBy, map } from 'lodash';
 import {
   Box,
   Col,
@@ -10,11 +8,20 @@ import {
   Tree,
 } from '@bubbles-ui/components';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
-import { SelectCenter } from '@users/components/SelectCenter';
 import { useStore } from '@common/useStore';
+import prefixPN from '@grades/helpers/prefixPN';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { clone, cloneDeep, find, forIn, groupBy, map } from 'lodash';
+import React, { useMemo } from 'react';
+import {
+  EVALUATION_DETAIL_FORM_ERROR_MESSAGES,
+  EVALUATION_DETAIL_FORM_MESSAGES,
+  EvaluationDetail,
+} from '../../../components/EvaluationDetail';
+import { TreeItem } from '../../../components/TreeItem/TreeItem';
+import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 import {
   addGradeRequest,
   addGradeScaleRequest,
@@ -28,16 +35,9 @@ import {
   updateGradeScaleRequest,
   updateGradeTagRequest,
 } from '../../../request';
-import {
-  EVALUATION_DETAIL_FORM_ERROR_MESSAGES,
-  EVALUATION_DETAIL_FORM_MESSAGES,
-  EvaluationDetail,
-} from '../../../components/EvaluationDetail';
-import { TreeItem } from '../../../components/TreeItem/TreeItem';
-import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 
 export default function EvaluationList() {
-  const [t, translations] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('evaluationsPage'));
 
   const [store, render] = useStore();
 
@@ -151,10 +151,11 @@ export default function EvaluationList() {
         const newTagIds = map(e.tags, 'id');
         const newScaleIds = map(e.scales, 'id');
 
-        e.scales = map(e.scales, (scale) => {
+        e.scales = map(e.scales, (scale, index) => {
           const item = {
             description: scale.description,
             number: scale.number,
+            order: index,
           };
           if (scale.id) item.id = scale.id;
           if (scale.letter) item.letter = scale.letter;
@@ -290,9 +291,10 @@ export default function EvaluationList() {
               <Col span={4}>
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
-                    {translations && (
+                    {!tLoading && (
                       <Box>
                         <SelectCenter
+                          firstSelected
                           value={store.center}
                           label={t('selectCenter')}
                           onChange={onSelectCenter}
@@ -317,6 +319,12 @@ export default function EvaluationList() {
                 {store.selectedGrade && (
                   <Paper fullWidth padding={5}>
                     <EvaluationDetail
+                      selectData={{
+                        type: [
+                          { label: t('detail.numeric'), value: 'numeric' },
+                          { label: t('detail.letter'), value: 'letter' },
+                        ],
+                      }}
                       messages={messages}
                       errorMessages={errorMessages}
                       defaultValues={store.selectedGrade}

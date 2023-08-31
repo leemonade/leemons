@@ -7,6 +7,8 @@ import {
   DeleteBinIcon,
   DuplicateIcon,
   PluginLearningPathsIcon,
+  ShareIcon,
+  ViewOnIcon,
 } from '@bubbles-ui/icons/outline';
 import { LibraryCard } from '@bubbles-ui/leemons';
 
@@ -41,15 +43,15 @@ export function useListCardLocalizations() {
   }, [translations]);
 }
 
-function useListCardMenuItems({ asset, localizations, onRefresh }) {
+function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
-  const { editable, duplicable, deleteable, assignable, name } = asset;
-
-  // const assignable = false; // Disabled until next implementation
+  const { editable, duplicable, deleteable, name, role } = asset;
+  const isOwner = role === 'owner';
+  const canDuplicate = !!duplicable && isOwner;
 
   const { id, published } = asset.providerData || {};
   const history = useHistory();
@@ -60,18 +62,28 @@ function useListCardMenuItems({ asset, localizations, onRefresh }) {
         !!editable && {
           icon: <EditWriteIcon />,
           children: localizations?.menuItems?.edit,
-          onClick: () => {
+          onClick: (e) => {
+            e.stopPropagation();
             history.push(`/private/learning-paths/modules/${id}/edit`);
           },
         },
-        !!assignable && {
+        {
+          icon: <ViewOnIcon />,
+          children: localizations?.menuItems?.view,
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/learning-paths/modules/${id}/view`);
+          },
+        },
+        {
           icon: <AssignIcon />,
           children: localizations?.menuItems?.assign,
-          onClick: () => {
+          onClick: (e) => {
+            e.stopPropagation();
             history.push(`/private/learning-paths/modules/${id}/assign`);
           },
         },
-        !!duplicable && {
+        canDuplicate && {
           icon: <DuplicateIcon />,
           children: localizations?.menuItems?.duplicate,
           onClick: () => {
@@ -123,8 +135,16 @@ function useListCardMenuItems({ asset, localizations, onRefresh }) {
             })();
           },
         },
+        !!isOwner && {
+          icon: <ShareIcon />,
+          children: localizations?.menuItems?.share,
+          onClick: () => {
+            onShare(asset);
+          },
+        },
       ].filter(Boolean),
     [
+      history,
       localizations,
       openConfirmationModal,
       openDeleteConfirmationModal,
@@ -132,7 +152,6 @@ function useListCardMenuItems({ asset, localizations, onRefresh }) {
       id,
       editable,
       duplicable,
-      assignable,
       deleteable,
       name,
     ]
@@ -145,10 +164,10 @@ const useListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-function ListCard({ asset, single, onRefresh = () => { }, ...props }) {
+function ListCard({ asset, single, onRefresh = () => { }, onShare = () => { }, ...props }) {
   const localizations = useListCardLocalizations();
 
-  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh });
+  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh, onShare });
 
   const { classes } = useListCardStyles({ single });
 

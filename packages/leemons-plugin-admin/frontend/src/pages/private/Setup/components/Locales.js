@@ -103,7 +103,7 @@ const Locales = ({ configured, onNextLabel, onNext = () => {} }) => {
 
           <Box style={{ maxWidth: 400 }}>
             <TableInput
-              showHeaders={false}
+              showHeaders
               sortable={false}
               columns={[
                 {

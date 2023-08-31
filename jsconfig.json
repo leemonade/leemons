@@ -108,6 +108,9 @@
       "@scores/*": [
         "./packages/leemons-plugin-scores/frontend/src/*"
       ],
+      "@scorm/*": [
+        "./packages/leemons-plugin-scorm/frontend/src/*"
+      ],
       "@tasks/*": [
         "./packages/leemons-plugin-tasks/frontend/src/*"
       ],

@@ -1,6 +1,13 @@
 const _ = require('lodash');
 
-async function getAdminDashboard(config, { transacting } = {}) {
+async function getAdminDashboard(config, { userSession, transacting } = {}) {
+  if (config.center && config.center !== 'undefined') {
+    return {
+      academicPortfolio: await leemons
+        .getPlugin('academic-portfolio')
+        .services.common.adminDashboard(config, { userSession, transacting }),
+    };
+  }
   const [
     academicPortfolio,
     instances,
@@ -13,10 +20,12 @@ async function getAdminDashboard(config, { transacting } = {}) {
     networkInterfaces,
     networkInterfaceDefault,
   ] = await Promise.all([
-    leemons.getPlugin('academic-portfolio').services.common.adminDashboard(config, { transacting }),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.common.adminDashboard(config, { userSession, transacting }),
     leemons
       .getPlugin('assignables')
-      .services.assignableInstances.adminDashboard(config, { transacting }),
+      .services.assignableInstances.adminDashboard(config, { userSession, transacting }),
     global.utils.systeminformation.cpu(),
     global.utils.systeminformation.mem(),
     global.utils.systeminformation.memLayout(),

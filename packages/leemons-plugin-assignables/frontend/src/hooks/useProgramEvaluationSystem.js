@@ -1,12 +1,21 @@
-import _ from 'lodash';
+import { get, isString } from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import { useQuery } from '@tanstack/react-query';
 
+function getProgram(instance) {
+  if (isString(instance)) {
+    return instance;
+  }
+
+  return get(
+    instance,
+    'subjects[0].program',
+    get(instance, 'assignable.subjects[0].program', null)
+  );
+}
+
 export default function useProgramEvaluationSystem(instance, { enabled } = {}) {
-  const program =
-    typeof instance === 'string'
-      ? instance
-      : _.get(instance, 'assignable.subjects[0].program', null);
+  const program = getProgram(instance);
 
   const { data } = useQuery(
     ['programEvaluationSystem', { program }],
@@ -16,7 +25,7 @@ export default function useProgramEvaluationSystem(instance, { enabled } = {}) {
       return response.evaluationSystem;
     },
     {
-      enabled,
+      enabled: !!program && (enabled === undefined ? true : enabled),
     }
   );
 

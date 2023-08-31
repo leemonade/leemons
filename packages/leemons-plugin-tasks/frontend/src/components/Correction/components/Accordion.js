@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -16,20 +16,26 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ChatButton from '@comunica/components/ChatButton';
 import { useStore } from '@common';
+import { findNearestFloorScore } from '@assignables/widgets/dashboard/nya/components/EvaluationCard/components/ScoreFeedback';
 
 function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {
+  const formKey = `${user}.${subject}.score`;
+
+  const score = useWatch({ control, name: formKey });
+  const scale = useMemo(() => findNearestFloorScore(score, evaluationSystem.scales), [score]);
+
   return (
     <Box className={classes.accordionPanel}>
       {evaluationSystem && scoreInputProps && (
         <Controller
-          key={`${user}.${subject}.score`}
+          key={formKey}
           control={control}
-          name={`${user}.${subject}.score`}
+          name={formKey}
           render={({ field }) => (
             <ScoreInput
               {...scoreInputProps}
               tags={[]}
-              state={{ score: field?.value }}
+              value={scale ? { score: scale.number, letter: scale.letter } : undefined}
               decimalPrecision={2}
               decimalSeparator=","
               direction="ltr"
@@ -144,15 +150,6 @@ export default function Accordion({
         }}
         room={`plugins.assignables.subject|${subject}.assignation|${assignationId}.userAgent|${user}`}
       />
-      {store.room ? (
-        <ChatButton
-          room={store.room}
-          onClick={() => {
-            store.chatOpened = true;
-            render();
-          }}
-        />
-      ) : null}
     </>
   );
 

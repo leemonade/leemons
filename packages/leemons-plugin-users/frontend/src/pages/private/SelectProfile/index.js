@@ -8,7 +8,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import HeroBgLayout from '@users/layout/heroBgLayout';
 import Cookies from 'js-cookie';
 import hooks from 'leemons-hooks';
-import { find, isArray } from 'lodash';
+import _, { find, isArray } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useContext, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -16,6 +16,7 @@ import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
   getUserCentersRequest,
+  getUserProfileTokenRequest,
   removeRememberLoginRequest,
   setRememberLoginRequest,
 } from '../../../request';
@@ -74,22 +75,39 @@ export default function SelectProfile({ session }) {
     try {
       store.loading = true;
       render();
-      const center = find(store.centers, { id: data.center });
-      const profile = find(center.profiles, { id: data.profile });
+      const _pro = [];
+      _.forEach(store.centers, (cen) => {
+        _.forEach(cen.profiles, (pro) => {
+          _pro.push({ ...pro, centerId: cen.id });
+        });
+      });
+
+      const profiles = _.uniqBy(_pro, 'id');
+      const profile = find(profiles, { id: data.profile });
+
       if (data.remember) {
         await setRememberLoginRequest({
-          center: data.center,
-          profile: data.profile,
+          center: profile.centerId,
+          profile: profile.id,
         });
       } else {
         await removeRememberLoginRequest();
       }
-      const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
-      await hooks.fireEvent('user:change:profile', profile);
-      const newToken = { ...jwtToken, profile: data.profile };
-      Cookies.set('token', newToken);
-      hooks.fireEvent('user:cookie:session:change');
-      history.push(`/private/dashboard`);
+      if (profile.sysName === 'admin') {
+        const { jwtToken } = await getUserProfileTokenRequest(profile.id);
+        await hooks.fireEvent('user:change:profile', profile);
+        const newToken = { ...jwtToken, profile: data.profile };
+        Cookies.set('token', newToken);
+        hooks.fireEvent('user:cookie:session:change');
+        history.push(`/private/dashboard`);
+      } else {
+        const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
+        await hooks.fireEvent('user:change:profile', profile);
+        const newToken = { ...jwtToken, profile: data.profile };
+        Cookies.set('token', newToken);
+        hooks.fireEvent('user:cookie:session:change');
+        history.push(`/private/dashboard`);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -104,7 +122,7 @@ export default function SelectProfile({ session }) {
       description:
         store.centers?.length > 1
           ? t('several_centers')
-          : t('number_of_profiles', { profiles: store.centers?.[0].profiles?.length }),
+          : t('number_of_profiles', { profiles: store.centers?.[0]?.profiles?.length }),
       remember: t('use_always_profile'),
       help: t('change_easy'),
       login: t('log_in'),

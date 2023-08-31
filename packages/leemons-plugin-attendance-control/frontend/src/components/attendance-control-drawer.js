@@ -13,7 +13,6 @@ import {
   Box,
   Button,
   ContextContainer,
-  createStyles,
   Drawer,
   InputLabel,
   Loader,
@@ -24,6 +23,7 @@ import {
   Textarea,
   Title,
   UserDisplayItem,
+  createStyles,
 } from '@bubbles-ui/components';
 
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
@@ -213,7 +213,7 @@ export function AttendanceControlDrawer({
           {_session ? (
             <Title order={5}>{t('sessionN', { index: _session.index + 1 })}</Title>
           ) : (
-            <Box class={classes.selectContainer}>
+            <Box className={classes.selectContainer}>
               <InputLabel label={t('session')} />
               <Select
                 style={{ width: '100%' }}
@@ -229,7 +229,7 @@ export function AttendanceControlDrawer({
           )}
 
           <Box>
-            <Box class={classes.header}>
+            <Box className={classes.header}>
               <Switch
                 checked={allAttend}
                 label={t('allAttend')}
@@ -241,7 +241,7 @@ export function AttendanceControlDrawer({
                 }}
               />
 
-              <Box class={classes.headerIcons}>
+              <Box className={classes.headerIcons}>
                 <Box sx={(theme) => ({ color: theme.colors.fatic02 })}>
                   <CheckCircleIcon />
                 </Box>
@@ -256,11 +256,11 @@ export function AttendanceControlDrawer({
                 </Box>
               </Box>
             </Box>
-            <Box class={classes.usersContainer}>
+            <Box className={classes.usersContainer}>
               {store.classe?.students.map((student) => (
-                <Box class={classes.userItem} key={student.id}>
+                <Box className={classes.userItem} key={student.id}>
                   <UserDisplayItem {...student.user} variant="inline" noBreak={true} />
-                  <Box class={classes.userItemRadios}>
+                  <Box className={classes.userItemRadios}>
                     <Radio
                       checked={store.attendance[student.id] === 'on-time'}
                       onChange={(e) => {
@@ -305,7 +305,7 @@ export function AttendanceControlDrawer({
                           value={store.comments[student.id]}
                           label={t('comment')}
                           onChange={(e) => {
-                            if (e) store.comments[student.id] = e;
+                            store.comments[student.id] = e;
                             render();
                           }}
                         />
@@ -319,7 +319,7 @@ export function AttendanceControlDrawer({
         </ContextContainer>
       )}
       {!store.loading ? (
-        <Box class={classes.buttonActions}>
+        <Box className={classes.buttonActions}>
           <Button
             disabled={!store.selectedSession && !_session}
             loading={store.saving}

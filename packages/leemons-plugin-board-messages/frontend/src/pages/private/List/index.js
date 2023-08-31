@@ -7,7 +7,7 @@ import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
 import { DetailDrawer, MessagesTable } from '@board-messages/components';
 
 // eslint-disable-next-line no-unused-vars, no-empty-pattern
-const IndexStyles = createStyles((theme, {}) => ({ panelList: { backgroundColor: 'white' } }));
+const IndexStyles = createStyles(() => ({ panelList: { backgroundColor: 'white' } }));
 
 export default function Index() {
   const labels = useTranslateObjectLoader(prefixPN('list'));

@@ -1,22 +1,22 @@
-import React from 'react';
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import {
   Box,
   createStyles,
   DatePicker,
-  ImageLoader,
   Select,
   Text,
   TextClamp,
   Title,
+  BulletSubject,
 } from '@bubbles-ui/components';
-import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
-import _ from 'lodash';
 import { unflatten, useCache } from '@common';
-import { useForm, Controller, useWatch } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
+import _ from 'lodash';
+import React from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useAcademicCalendarPeriods } from './useAcademicCalendarPeriods';
 
 function ClassItem({ class: klass, dropdown = false, ...props }) {
@@ -30,31 +30,12 @@ function ClassItem({ class: klass, dropdown = false, ...props }) {
           alignItems: 'center',
         })}
       >
-        <Box
-          sx={() => ({
-            position: dropdown ? 'static' : 'absolute',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 26,
-            minHeight: 26,
-            maxWidth: 26,
-            maxHeight: 26,
-            borderRadius: '50%',
-            backgroundColor: klass?.color,
-          })}
-        >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={getClassIcon(klass)}
-          />
-        </Box>
+        <BulletSubject
+          color={klass?.color}
+          icon={getClassIcon(klass)}
+          size={'lg'}
+          altText={klass?.subject.name}
+        />
         <Box
           sx={(theme) => ({
             marginLeft: dropdown ? 0 : 26 + theme.spacing[2],
@@ -249,8 +230,9 @@ function usePeriods({ selectedClass, classes }) {
 
   const periods = React.useMemo(() => {
     const allPeriods = [
-      ...adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })),
-      ...academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })),
+      ...(adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })) || []),
+      ...(academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })) ||
+        []),
     ];
 
     if (!allPeriods.length) {
@@ -407,11 +389,11 @@ export function Filters({ onChange }) {
             name="period"
             render={({ field }) => {
               const data = [
-                ...periods?.map((period) => ({
+                ...(periods?.map((period) => ({
                   value: period.id,
                   label: period.name,
                   group: period.group,
-                })),
+                })) || []),
                 {
                   value: 'custom',
                   label: localizations?.period?.custom,

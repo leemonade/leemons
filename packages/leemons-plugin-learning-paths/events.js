@@ -23,24 +23,17 @@ function initPermissions(isInstalled) {
   }
 }
 
-function initMenuBuilder(isInstalled) {
-  if (!isInstalled) {
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
-      async () => {
-        const [mainItem, ...items] = menuItems;
-        await addMenuItems(mainItem);
-        leemons.events.emit('init-menu');
-        await addMenuItems(items);
-        leemons.events.emit('init-submenu');
-      }
-    );
-  } else {
-    leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
+function initMenuBuilder() {
+  leemons.events.once(
+    ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
+    async () => {
+      const [mainItem, ...items] = menuItems;
+      await addMenuItems(mainItem);
       leemons.events.emit('init-menu');
+      await addMenuItems(items);
       leemons.events.emit('init-submenu');
-    });
-  }
+    }
+  );
 }
 
 function initMultilanguage() {
@@ -66,9 +59,11 @@ function setupAssignables(isInstalled) {
     // ES: Registrar el rol asignable
     await assignableServices.registerRole('learningpaths.module', {
       // Not used yet
-      teacherDetailUrl: '/',
-      studentDetailUrl: '/private/learning-paths/modules/assignation/:id/:user',
-      evaluationDetailUrl: '/private/learning-paths/modules/assignation/:id/:user/correction',
+      dashboardUrl: '/private/learning-paths/modules/dashboard/:id',
+      teacherDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      studentDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      evaluationDetailUrl: '/private/learning-paths/modules/dashboard/:id',
+      previewUrl: '/private/learning-paths/modules/:id/view',
       creatable: true,
       createUrl: '/private/learning-paths/modules/new',
       canUse: [], // Usable by the plugin owner and assignables plugin
@@ -128,7 +123,7 @@ function initWidgets(isInstalled) {
 
 async function events(isInstalled) {
   initPermissions(isInstalled);
-  initMenuBuilder(isInstalled);
+  initMenuBuilder();
   initMultilanguage();
   setupAssignables(isInstalled);
   initWidgets(isInstalled);

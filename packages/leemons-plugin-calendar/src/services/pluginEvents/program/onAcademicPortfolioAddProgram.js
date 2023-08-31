@@ -1,55 +1,50 @@
 const randomColor = require('randomcolor');
 const _ = require('lodash');
 
-function onAcademicPortfolioAddProgram(
+async function onAcademicPortfolioAddProgram(
   data,
   { program: { id, name, color, icon }, userSession, transacting }
 ) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      // eslint-disable-next-line global-require,no-shadow
-      const { table } = require('../../tables');
-      const config = {
-        name,
-        section: leemons.plugin.prefixPN('programs'),
-        bgColor: color || randomColor({ luminosity: 'light' }),
-      };
+  try {
+    // eslint-disable-next-line global-require,no-shadow
+    const { table } = require('../../tables');
+    const config = {
+      name,
+      section: leemons.plugin.prefixPN('programs'),
+      bgColor: color || randomColor({ luminosity: 'light' }),
+    };
 
-      if (icon) config.icon = icon;
+    if (icon) config.icon = icon;
 
-      const calendar = await leemons.plugin.services.calendar.add(
-        leemons.plugin.prefixPN(`program.${id}`),
-        config,
-        { transacting }
-      );
+    const calendar = await leemons.plugin.services.calendar.add(
+      leemons.plugin.prefixPN(`program.${id}`),
+      config,
+      { transacting }
+    );
 
-      if (userSession) {
-        try {
-          await leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(
-            leemons.plugin.prefixPN(`program.${id}`),
-            _.map(userSession.userAgents, 'id'),
-            'owner',
-            { transacting }
-          );
-        } catch (e) {
-          console.error(e);
-        }
+    if (userSession) {
+      try {
+        await leemons.plugin.services.calendar.grantAccessUserAgentToCalendar(
+          leemons.plugin.prefixPN(`program.${id}`),
+          _.map(userSession.userAgents, 'id'),
+          'owner',
+          { transacting }
+        );
+      } catch (e) {
+        console.error(e);
       }
-
-      await table.programCalendar.create(
-        {
-          program: id,
-          calendar: calendar.id,
-        },
-        { transacting }
-      );
-
-      resolve();
-    } catch (e) {
-      console.error(e);
     }
-  });
+
+    await table.programCalendar.create(
+      {
+        program: id,
+        calendar: calendar.id,
+      },
+      { transacting }
+    );
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = { onAcademicPortfolioAddProgram };

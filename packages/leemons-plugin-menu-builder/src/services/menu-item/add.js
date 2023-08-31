@@ -52,6 +52,7 @@ async function add(
   disabled = undefined;
 
   validateKeyPrefix(key, this.calledFrom);
+
   validateAddMenuItem({
     menuKey,
     key,
@@ -70,6 +71,7 @@ async function add(
     description,
     disabled,
   });
+
   const locales = translations();
 
   return withTransaction(
@@ -167,8 +169,6 @@ async function add(
       }
 
       const [menuItem] = await Promise.all(promises);
-
-      leemons.log.info(`Added menu item "${key}" to menu "${menuKey}"`);
 
       return menuItem;
     },

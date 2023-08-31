@@ -1,6 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { groupBy, map, uniqBy } from 'lodash';
+import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import {
   Box,
   Button,
@@ -10,10 +8,12 @@ import {
   Select,
   Stack,
 } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
-import { useStore } from '@common';
-import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
+import { groupBy, map, uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller } from 'react-hook-form';
 
 export default function DetailConfig({ form, t, onNext, onPrev }) {
   const [isDirty, setIsDirty] = React.useState(false);
@@ -59,10 +59,10 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
         <Controller
           control={form.control}
           name="program"
-          rules={{ required: t('programRequired') }}
+          // rules={{ required: t('programRequired') }}
           render={({ field }) => (
             <Select
-              required
+              // required
               error={isDirty ? form.formState.errors.program : null}
               label={t('programLabel')}
               data={store.programsData || []}
@@ -75,10 +75,10 @@ export default function DetailConfig({ form, t, onNext, onPrev }) {
         <Controller
           control={form.control}
           name="subjects"
-          rules={{ required: t('subjectRequired') }}
+          // rules={{ required: t('subjectRequired') }}
           render={({ field }) => (
             <MultiSelect
-              required
+              // required
               error={isDirty ? form.formState.errors.subjects : null}
               label={t('subjectLabel')}
               disabled={!program}

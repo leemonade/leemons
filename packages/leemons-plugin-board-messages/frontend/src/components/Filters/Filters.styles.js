@@ -1,7 +1,7 @@
 import { createStyles } from '@bubbles-ui/components';
 
 // eslint-disable-next-line import/prefer-default-export
-export const FilterStyles = createStyles((theme, {}) => ({
+export const FilterStyles = createStyles(() => ({
   root: {
     display: 'flex',
     gap: 24,

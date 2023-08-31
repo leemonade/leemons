@@ -84,8 +84,16 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       }
     ),
   ];
+  promises.push(
+    leemons.getPlugin('users').services.users.getUserAgentsInfo([userSession.userAgents[0].id], {
+      withProfile: true,
+      withCenter: true,
+      transacting,
+    })
+  );
+
   if (center) promises.push(getByCenterId(center.id, { transacting }));
-  const [items, ownerItems, calendarConfig] = await Promise.all(promises);
+  const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
   // ES: Separamos los calendarios de los eventos
   // EN: We separate the calendars from the events
@@ -114,6 +122,9 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       }
     ),
     table.classCalendar.find({ calendar_$in: calendarIds }, { transacting }),
+    leemons
+      .getPlugin('academic-portfolio')
+      .services.programs.listPrograms(0, 9999, userAgent.center.id, { userSession, transacting }),
   ];
 
   if (calendarConfig)
@@ -123,11 +134,45 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
         transacting,
       })
     );
-  const [calendars, eventsCalendars, events, classCalendars, configCalendars] = await Promise.all(
-    promises
-  );
+  const [
+    _calendars,
+    eventsCalendars,
+    _events,
+    classCalendars,
+    { items: programs },
+    configCalendars,
+  ] = await Promise.all(promises);
 
-  const eventsFromCalendars = _.flatten(eventsCalendars);
+  const _eventsFromCalendars = _.flatten(eventsCalendars);
+
+  let eventsFromCalendars = [];
+  let events = [];
+  let calendars = [];
+  if (userAgent.profile.sysName === 'admin') {
+    const programIds = _.map(programs, (program) => `plugins.calendar.program.${program.id}`);
+    _.forEach(_calendars, (calendar) => {
+      if (calendar.section === 'plugins.calendar.programs') {
+        if (programIds.includes(calendar.key)) {
+          calendars.push(calendar);
+        }
+      } else if (calendar.key.startsWith('plugins.users.calendar.agent.')) {
+        if (calendar.key.includes(userAgent.id)) {
+          calendars.push(calendar);
+        }
+      } else {
+        calendars.push(calendar);
+      }
+    });
+    const _calendarIds = _.map(calendars, 'id');
+    events = _.filter(_events, (ev) => _calendarIds.includes(ev.calendar));
+    eventsFromCalendars = _.filter(_eventsFromCalendars, (ev) =>
+      _calendarIds.includes(ev.calendar)
+    );
+  } else {
+    eventsFromCalendars = _eventsFromCalendars;
+    calendars = _calendars;
+    events = _events;
+  }
 
   // ES: Buscamos si el user agent tiene calendario
   // EN: We check if the user agent has a calendar

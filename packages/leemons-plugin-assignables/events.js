@@ -1,5 +1,6 @@
 const userWeekly = require('./emails/userWeekly');
 const newActivity = require('./emails/userCreateAssignation');
+const rememberActivity = require('./emails/userAssignationRemember');
 const rememberActivityTimeout = require('./emails/userRememberAssignationTimeout');
 const { addLocales } = require('./src/services/locales/addLocales');
 const addMenuItems = require('./src/services/menu-builder/add');
@@ -29,6 +30,25 @@ async function initEmails() {
       leemons.getPlugin('emails').services.email.types.active
     );
   leemons.events.emit('init-email-recover-password');
+
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-assignation-remember',
+      'es',
+      'Recordatorio de actividad',
+      rememberActivity.es,
+      leemons.getPlugin('emails').services.email.types.active
+    );
+  await leemons
+    .getPlugin('emails')
+    .services.email.addIfNotExist(
+      'user-assignation-remember',
+      'en',
+      'Activity reminder',
+      rememberActivity.en,
+      leemons.getPlugin('emails').services.email.types.active
+    );
 
   await leemons
     .getPlugin('emails')
@@ -71,23 +91,16 @@ async function initEmails() {
 }
 
 function initMenuBuilder(isInstalled) {
-  if (!isInstalled) {
-    leemons.events.once(
-      ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
-      async () => {
-        const [mainItem, ...items] = menuItems;
-        await addMenuItems(mainItem);
-        leemons.events.emit('init-menu');
-        await addMenuItems(items);
-        leemons.events.emit('init-submenu');
-      }
-    );
-  } else {
-    leemons.events.once(`${pluginName}:pluginDidInit`, async () => {
+  leemons.events.once(
+    ['plugins.menu-builder:init-main-menu', `${pluginName}:init-permissions`],
+    async () => {
+      const [mainItem, ...items] = menuItems;
+      await addMenuItems(mainItem);
       leemons.events.emit('init-menu');
+      await addMenuItems(items);
       leemons.events.emit('init-submenu');
-    });
-  }
+    }
+  );
 }
 
 function initPermissions(isInstalled) {

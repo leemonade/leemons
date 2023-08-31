@@ -215,7 +215,7 @@ function TaskSetup() {
 
       history.push(
         redirectTo === 'library'
-          ? '/private/tasks/library'
+          ? '/private/leebrary/assignables.task/list?activeTab=draft'
           : `/private/tasks/library/edit/${fullId}${isCreating ? '?fromNew' : ''}`
       );
 
@@ -360,7 +360,7 @@ function TaskSetup() {
       try {
         if (event === 'publishTaskAndLibrary') {
           await handleOnPublishTask();
-          history.push(`/private/tasks/library`);
+          history.push(`/private/leebrary/assignables.task/list?activeTab=published`);
         } else if (event === 'publishTaskAndAssign') {
           await handleOnPublishTask();
           history.push(`/private/tasks/library/assign/${store.currentTask.id}`);

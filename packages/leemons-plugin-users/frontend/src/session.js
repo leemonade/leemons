@@ -64,6 +64,7 @@ function getUserToken(data) {
 
 export function getCookieToken(onlyCookie) {
   let token = Cookies.get('token');
+
   try {
     token = JSON.parse(token);
   } catch (e) {
@@ -103,7 +104,7 @@ export function getAuthorizationTokenForAllCenters() {
   return centers ? JSON.stringify(_.map(centers, 'token')) : null;
 }
 
-function getContextToken() {
+function useContextToken() {
   return getUserToken(useContext(SessionContext));
 }
 
@@ -114,7 +115,7 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
   let hasUser = null;
   let effect = false;
 
-  const context = getContextToken();
+  const context = useContextToken();
   if (context) {
     effect = true;
     hasUser = Boolean(context);

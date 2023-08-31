@@ -1,9 +1,9 @@
-import React from 'react';
-import { Box, ContextContainer, FileIcon, Anchor, Text } from '@bubbles-ui/components';
+import { Box, Text } from '@bubbles-ui/components';
 import { LibraryItem } from '@bubbles-ui/leemons';
-import { getAssetsByIdsRequest } from '@leebrary/request';
 import { useApi } from '@common';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
+import { getAssetsByIdsRequest } from '@leebrary/request';
+import React from 'react';
 import { sidebarStyles } from './Sidebar.style';
 
 async function getResources(ids) {
@@ -27,7 +27,7 @@ export default function Sidebar({ assignation, show = true, labels }) {
             <Box className={classes.resourceContainer}>
               {resources?.map((resource) => (
                 <Box
-                  onClick={() => window.open(resource.url || resource.cover, '_blank')}
+                  onClick={() => window.open(resource.url || resource.cover, '_blank', 'noopener')}
                   key={resource?.id}
                   sx={{ cursor: 'pointer' }}
                 >

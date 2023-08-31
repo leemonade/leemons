@@ -5,13 +5,13 @@ import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
 
-import prefixPN from '@tests/helpers/prefixPN';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import { prefixPN } from '@tasks/helpers';
 
 const Detail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
-  const [t] = useTranslateLoader(prefixPN('testsCard'));
+  const [t] = useTranslateLoader(prefixPN('cardMenu'));
   const {
     openDeleteConfirmationModal,
     openConfirmationModal,
@@ -42,6 +42,8 @@ const Detail = ({ asset, onRefresh, ...props }) => {
   // HANDLERS
 
   if (asset?.id) {
+    toolbarItems.view = t('view');
+
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
@@ -55,6 +57,10 @@ const Detail = ({ asset, onRefresh, ...props }) => {
       toolbarItems.duplicate = t('duplicate');
     }
   }
+
+  const handleView = () => {
+    history.push(`/private/tasks/library/view/${asset.providerData.id}`);
+  };
 
   const handleEdit = () => {
     history.push(`/private/tasks/library/edit/${asset.providerData.id}`);
@@ -113,6 +119,7 @@ const Detail = ({ asset, onRefresh, ...props }) => {
       variantIcon={<PluginAssignmentsIcon />}
       variantTitle={t('task')}
       toolbarItems={toolbarItems}
+      onView={handleView}
       onDelete={handleDelete}
       onEdit={handleEdit}
       onDuplicate={handleDuplicate}

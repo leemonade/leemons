@@ -332,6 +332,7 @@ module.exports = {
     label: 'Task & Activities',
   },
   cardMenu: {
+    view: 'View',
     edit: 'Edit',
     assign: 'Assign',
     delete: 'Delete',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { HorizontalStepper, Box } from '@bubbles-ui/components';

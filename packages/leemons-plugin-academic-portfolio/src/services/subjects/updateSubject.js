@@ -10,6 +10,40 @@ const { setToAllClassesWithSubject } = require('../classes/course/setToAllClasse
 const { classByIds } = require('../classes/classByIds');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 
+async function processRoom({
+  subject,
+  color,
+  transacting,
+  assetImage,
+  roomService,
+  classe,
+  assetIcon,
+}) {
+  const roomKey = leemons.plugin.prefixPN(`room.class.${classe.id}`);
+  const roomExists = await roomService.exists(roomKey, { transacting });
+
+  const roomData = {
+    name: subject.name,
+    bgColor: color,
+    image: null,
+    icon: null,
+    transacting,
+  };
+  if (assetImage.cover) {
+    roomData.image = assetImage.id;
+  }
+  if (classe.image?.cover) {
+    roomData.image = classe.image.id;
+  }
+  if (assetIcon.cover) {
+    roomData.icon = assetIcon.id;
+  }
+  if (roomExists) {
+    return roomService.update(roomKey, roomData);
+  }
+  return roomService.add(roomKey, roomData);
+}
+
 async function updateSubject(data, { userSession, transacting: _transacting } = {}) {
   return global.utils.withTransaction(
     async (transacting) => {
@@ -74,26 +108,18 @@ async function updateSubject(data, { userSession, transacting: _transacting } = 
       );
       const classes = await classByIds(_.map(classesWithSubject, 'id'), { transacting });
       const roomService = leemons.getPlugin('comunica').services.room;
-      await Promise.all(
-        _.map(classes, (classe) => {
-          const roomData = {
-            name: subject.name,
-            bgColor: color,
-            image: null,
-            icon: null,
+      await Promise.allSettled(
+        _.map(classes, (classe) =>
+          processRoom({
+            subject,
+            color,
             transacting,
-          };
-          if (assetImage.cover) {
-            roomData.image = assetImage.id;
-          }
-          if (classe.image?.cover) {
-            roomData.image = classe.image.id;
-          }
-          if (assetIcon.cover) {
-            roomData.icon = assetIcon.id;
-          }
-          return roomService.update(leemons.plugin.prefixPN(`room.class.${classe.id}`), roomData);
-        })
+            assetImage,
+            roomService,
+            classe,
+            assetIcon,
+          })
+        )
       );
 
       if (!course) {

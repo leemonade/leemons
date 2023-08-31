@@ -518,6 +518,18 @@ async function sendWelcomeEmailToUser(ctx) {
   }
 }
 
+async function disableUserAgent(ctx) {
+  await userAgentsService.disable(ctx.request.body.userAgent);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
+async function activeUserAgent(ctx) {
+  await userAgentsService.active(ctx.request.body.userAgent);
+  ctx.status = 200;
+  ctx.body = { status: 200 };
+}
+
 module.exports = {
   list,
   reset,
@@ -546,6 +558,8 @@ module.exports = {
   centerProfileToken,
   updateUserAvatar,
   deleteUserAgent,
+  disableUserAgent,
+  activeUserAgent,
   canRegisterPassword,
   sendWelcomeEmailToUser,
   getDataForUserAgentDatasets,

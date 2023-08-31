@@ -1,28 +1,29 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
+import prefixPN from '@admin/helpers/prefixPN';
+import { getOrganizationRequest, updateOrganizationRequest } from '@admin/request/organization';
 import {
   Box,
   Button,
   ColorInput,
   ContextContainer,
-  createStyles,
+  NumberInput,
   Paragraph,
   PasswordInput,
   Stack,
+  Switch,
   TextInput,
   Title,
-  Switch,
+  createStyles,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import { Controller, useForm } from 'react-hook-form';
 import { addErrorAlert } from '@layout/alert';
-import { getOrganizationRequest, updateOrganizationRequest } from '@admin/request/organization';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import hooks from 'leemons-hooks';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { EMAIL_REGEX } from '../../../../constants';
 
 const Styles = createStyles((theme) => ({}));
@@ -54,6 +55,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
   } = useForm({
     defaultValues: {
       hostname: new URL(window.location.href).origin,
+      hostnameApi: new URL(window.location.href).origin,
     },
   });
 
@@ -134,6 +136,26 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                   <TextInput label={t('hostname')} error={errors.hostname} required {...field} />
                 )}
               />
+              <Controller
+                name="hostnameApi"
+                control={control}
+                rules={{
+                  required: t('hostnameRequired'),
+                  pattern: {
+                    // Pattern check if start by http or https
+                    value: /^(http|https):\/\//,
+                    message: t('hostnameInvalid'),
+                  },
+                }}
+                render={({ field }) => (
+                  <TextInput
+                    label={t('hostnameApi')}
+                    error={errors.hostnameApi}
+                    required
+                    {...field}
+                  />
+                )}
+              />
             </ContextContainer>
             <ContextContainer
               subtitle={t('lookAndFeel')}
@@ -167,7 +189,43 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                         },
                       }}
                       render={({ field }) => (
-                        <TextInput error={errors.logoUrl} label={t('squareLogoUrl')} {...field} />
+                        <TextInput
+                          error={errors.squareLogoUrl}
+                          label={t('squareLogoUrl')}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Box>
+                  <Box mt={20}>
+                    <Controller
+                      name="emailLogoUrl"
+                      control={control}
+                      rules={{
+                        pattern: {
+                          value: /^(http|https):\/\//,
+                          message: t('logoUrlInvalid'),
+                        },
+                      }}
+                      render={({ field }) => (
+                        <TextInput
+                          error={errors.emailLogoUrl}
+                          label={t('emailLogoUrl')}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </Box>
+                  <Box mt={20}>
+                    <Controller
+                      name="emailWidthLogo"
+                      control={control}
+                      render={({ field }) => (
+                        <NumberInput
+                          error={errors.emailWidthLogo}
+                          label={t('emailWidthLogo')}
+                          {...field}
+                        />
                       )}
                     />
                   </Box>

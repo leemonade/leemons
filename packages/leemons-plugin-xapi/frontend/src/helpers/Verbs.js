@@ -16,91 +16,91 @@ class Verbs {
   }
 
   static INITIALIZED = {
-    id: 'http://adlnet.gov/expapi/verbs/initialized',
+    id: 'https://adlnet.gov/expapi/verbs/initialized',
     display: {
       'en-US': 'initialized',
     },
   };
 
   static TERMINATED = {
-    id: 'http://adlnet.gov/expapi/verbs/terminated',
+    id: 'https://adlnet.gov/expapi/verbs/terminated',
     display: {
       'en-US': 'terminated',
     },
   };
 
   static SUSPENDED = {
-    id: 'http://adlnet.gov/expapi/verbs/suspended',
+    id: 'https://adlnet.gov/expapi/verbs/suspended',
     display: {
       'en-US': 'suspended',
     },
   };
 
   static RESUMED = {
-    id: 'http://adlnet.gov/expapi/verbs/resumed',
+    id: 'https://adlnet.gov/expapi/verbs/resumed',
     display: {
       'en-US': 'resumed',
     },
   };
 
   static PASSED = {
-    id: 'http://adlnet.gov/expapi/verbs/passed',
+    id: 'https://adlnet.gov/expapi/verbs/passed',
     display: {
       'en-US': 'passed',
     },
   };
 
   static FAILED = {
-    id: 'http://adlnet.gov/expapi/verbs/failed',
+    id: 'https://adlnet.gov/expapi/verbs/failed',
     display: {
       'en-US': 'failed',
     },
   };
 
   static SCORED = {
-    id: 'http://adlnet.gov/expapi/verbs/scored',
+    id: 'https://adlnet.gov/expapi/verbs/scored',
     display: {
       'en-US': 'scored',
     },
   };
 
   static COMPLETED = {
-    id: 'http://adlnet.gov/expapi/verbs/completed',
+    id: 'https://adlnet.gov/expapi/verbs/completed',
     display: {
       'en-US': 'completed',
     },
   };
 
   static RESPONDED = {
-    id: 'http://adlnet.gov/expapi/verbs/responded',
+    id: 'https://adlnet.gov/expapi/verbs/responded',
     display: {
       'en-US': 'responded',
     },
   };
 
   static COMMENTED = {
-    id: 'http://adlnet.gov/expapi/verbs/commented',
+    id: 'https://adlnet.gov/expapi/verbs/commented',
     display: {
       'en-US': 'commented',
     },
   };
 
   static VOIDED = {
-    id: 'http://adlnet.gov/expapi/verbs/voided',
+    id: 'https://adlnet.gov/expapi/verbs/voided',
     display: {
       'en-US': 'voided',
     },
   };
 
   static PROGRESSED = {
-    id: 'http://adlnet.gov/expapi/verbs/progressed',
+    id: 'https://adlnet.gov/expapi/verbs/progressed',
     display: {
       'en-US': 'progressed',
     },
   };
 
   static ANSWERED = {
-    id: 'http://adlnet.gov/expapi/verbs/answered',
+    id: 'https://adlnet.gov/expapi/verbs/answered',
     display: {
       'en-US': 'answered',
     },

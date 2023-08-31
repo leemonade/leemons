@@ -5,7 +5,9 @@ async function sendEmail({
   userSession,
   ctx,
   hostname,
+  hostnameApi,
   ignoreUserConfig,
+  isReminder,
 }) {
   try {
     const emailServices = leemons.getPlugin('emails').services;
@@ -50,7 +52,7 @@ async function sendEmail({
       emailServices.email
         .sendAsEducationalCenter(
           userAgent.user.email,
-          'user-create-assignation',
+          isReminder ? 'user-assignation-remember' : 'user-create-assignation',
           userAgent.user.locale,
           {
             instance: {
@@ -61,7 +63,7 @@ async function sendEmail({
                   ...instance.assignable.asset,
                   color: instance.assignable.asset.color || '#D9DCE0',
                   url:
-                    (hostname || ctx.request.header.origin) +
+                    (hostnameApi || hostname || ctx.request.header.origin) +
                     leemons
                       .getPlugin('leebrary')
                       .services.assets.getCoverUrl(instance.assignable.asset.id),
@@ -75,7 +77,9 @@ async function sendEmail({
             taskDate: date,
             userSession: {
               ...userSession,
-              avatarUrl: (hostname || ctx.request.header.origin) + userSession.avatar,
+              avatarUrl: userSession.avatar
+                ? (hostnameApi || hostname || ctx.request.header.origin) + userSession.avatar
+                : null,
             },
           },
           userAgent.center.id

@@ -62,7 +62,7 @@ export function useSelectedCurriculumValues({ assignable }) {
         }
 
         return { subject: subject.subject, hasCustomObjectives, values };
-      }),
+      }) ?? [],
     [assignable]
   );
 
@@ -143,8 +143,8 @@ export function useSelectedCurriculumProperties({
   return usedProperties;
 }
 
-export function useAssignableCurriculum({ assignable }) {
-  const program = assignable?.program ?? assignable?.subjects?.[0]?.program;
+export function useInstanceCurriculum({ instance }) {
+  const program = instance?.subjects?.[0]?.program;
 
   const { data: curriculumsList } = useListCurriculumsByProgram(program, { enabled: !!program });
 
@@ -159,7 +159,7 @@ export function useCurriculumVisibleValues({ assignation }) {
   const { instance } = assignation;
   const { assignable, curriculum: visibleCategories } = instance;
 
-  const curriculum = useAssignableCurriculum({ assignable });
+  const curriculum = useInstanceCurriculum({ instance });
   const curriculumNodes = useCurriculumNodes({ curriculum });
   const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
 
@@ -189,7 +189,7 @@ export function useCurriculumVisibleValues({ assignation }) {
       ?.filter((value) => !!value.visible)
       .map((value) => value.original);
 
-    return assignable.subjects.map((subject, i) => ({
+    return assignable.subjects?.map((subject, i) => ({
       ...subject,
       curriculum: {
         curriculum: intersection(subject.curriculum.curriculum, includedIds),
@@ -202,7 +202,7 @@ export function useCurriculumVisibleValues({ assignation }) {
 }
 
 export function useCurriculumFields({ assignable }) {
-  const curriculum = useAssignableCurriculum({ assignable });
+  const curriculum = useInstanceCurriculum({ assignable });
   const curriculumNodes = useCurriculumNodes({ curriculum });
   const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
 

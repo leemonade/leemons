@@ -1,6 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { map } from 'lodash';
 import {
   ActionButton,
   Alert,
@@ -13,14 +10,17 @@ import {
   Textarea,
   Title,
 } from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
-import { useLayout } from '@layout/context';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
-import { Controller } from 'react-hook-form';
 import QuestionForm from '@feedback/pages/private/feedback/Detail/components/QuestionForm';
+import { useLayout } from '@layout/context';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Controller } from 'react-hook-form';
 
 export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
   const [qStore, qRender] = useStore({

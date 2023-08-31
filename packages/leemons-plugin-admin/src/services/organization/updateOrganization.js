@@ -14,6 +14,7 @@ async function updateOrganization(body, { userSession }) {
   const promises = [
     platform.setName(body.name),
     platform.setHostname(body.hostname),
+    platform.setHostnameApi(body.hostnameApi),
     platform.setContactName(body.contactName),
     platform.setContactPhone(body.contactPhone),
     platform.setContactEmail(body.contactEmail),
@@ -24,6 +25,8 @@ async function updateOrganization(body, { userSession }) {
     platform.setAppearanceMenuDrawerColor(body.menuDrawerColor),
     platform.setLandscapeLogo(body.logoUrl),
     platform.setSquareLogo(body.squareLogoUrl),
+    platform.setEmailLogo(body.emailLogoUrl),
+    platform.setEmailWidthLogo(body.emailWidthLogo),
     users.updateEmail(userSession.id, body.email),
   ];
   if (body.password) {

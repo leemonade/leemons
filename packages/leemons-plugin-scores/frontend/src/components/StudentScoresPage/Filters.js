@@ -1,13 +1,13 @@
-import React from 'react';
+import { useProgramDetail } from '@academic-portfolio/hooks';
+import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { Box, createStyles, DatePicker, Select } from '@bubbles-ui/components';
-import _ from 'lodash';
 import { unflatten } from '@common';
-import { useForm, Controller, useWatch } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { getSessionConfig } from '@users/session';
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { useProgramDetail } from '@academic-portfolio/hooks';
+import _ from 'lodash';
+import React from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
 
 const useFiltersStyles = createStyles((theme) => ({
@@ -241,7 +241,7 @@ export function Filters({ onChange, setKlasses }) {
             name="period"
             render={({ field }) => {
               const data = [
-                ...periods?.map((period) => ({
+                ...periods.map((period) => ({
                   value: period.id,
                   label: period.name,
                   group: period.group,

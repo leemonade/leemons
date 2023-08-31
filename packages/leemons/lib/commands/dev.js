@@ -150,18 +150,16 @@ async function setupBack(leemons) {
      * connection and load back again
      */
     handler: async () =>
-      new Promise(async (resolve) => {
+      new Promise((resolve, reject) => {
         if (leemons.canReloadBackend) {
           if (leemons.events) {
             leemons.events.once('appWillReload', async () => {
-              await handler();
-              resolve();
+              handler().then(resolve).catch(reject);
             });
 
             leemons.events.emit('appWillReload');
           } else {
-            await handler();
-            resolve();
+            handler().then(resolve).catch(reject);
           }
         }
       }),

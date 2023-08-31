@@ -9,16 +9,15 @@ async function remove(classId, student, { transacting }) {
   );
 }
 
-function onAcademicPortfolioRemoveStudentFromClass(data, { classId, studentId, transacting }) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      await remove(classId, studentId, { transacting });
-      resolve();
-    } catch (e) {
-      console.error(e);
-    }
-  });
+async function onAcademicPortfolioRemoveStudentFromClass(
+  data,
+  { classId, studentId, transacting }
+) {
+  try {
+    await remove(classId, studentId, { transacting });
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = { onAcademicPortfolioRemoveStudentFromClass };

@@ -5,6 +5,7 @@ RUN apk update && apk --no-cache --virtual build-dependencies add \
     g++
 WORKDIR /leemons
 COPY ./package.json ./package.json
+COPY ./yarn.lock ./yarn.lock
 COPY ./packages ./packages
 COPY ./examples/docker ./app
 RUN yarn install --production \

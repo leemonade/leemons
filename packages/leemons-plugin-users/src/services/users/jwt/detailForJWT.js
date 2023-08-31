@@ -18,6 +18,7 @@ async function detailForJWT(jwtToken, forceOnlyUser, forceOnlyUserAgent) {
   let result;
   if (payload.userAgent) {
     const userAgent = await table.userAgent.findOne({ id: payload.userAgent });
+    if (userAgent.disabled) throw new Error('User agent is disabled');
     if (!userAgent) throw new Error('No user auth found for the id provided');
     if (forceOnlyUserAgent) return userAgent;
     const user = await table.users.findOne({ id: userAgent.user });

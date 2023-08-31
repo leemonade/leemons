@@ -14,11 +14,16 @@ const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
 const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
 const { addUserAvatar } = require('./addUserAvatar');
 const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
-const { checkIfCanCreateNUserAgentsInRoleProfiles } = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
+const {
+  checkIfCanCreateNUserAgentsInRoleProfiles,
+} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
+const {
+  addCenterProfilePermissionToUserAgents,
+} = require('../user-agents/addCenterProfilePermissionToUserAgents');
 
 async function addUserBulk(
   role,
-  { id, tags, password, birthdate, avatar, created_at, dataset, ...userData },
+  { id, tags, password, birthdate, avatar, created_at, active, dataset, ...userData },
   ctx,
   { profile, transacting, userSession } = {}
 ) {
@@ -61,7 +66,7 @@ async function addUserBulk(
 
   let userAgent = await table.userAgent.findOne(
     {
-      deleted_$null: false,
+      $or: [{ deleted_$null: false }, { deleted_$ne: false }],
       user: user.id,
       role,
     },
@@ -77,15 +82,15 @@ async function addUserBulk(
       },
       { transacting }
     );
+    await addCenterProfilePermissionToUserAgents(userAgent.id, { transacting });
     // ES: Si no tenia el perfil y no es nuevo usuario, le mandamos el email
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser(user, profile, ctx, { transacting });
     }
   } else if (userAgent.deleted) {
-    console.log('vamos a actualizar el user agent', role, user.id);
     userAgent = await table.userAgent.update(
       {
-        deleted_$null: false,
+        $or: [{ deleted_$null: false }, { deleted_$ne: false }],
         role,
         user: user.id,
       },
