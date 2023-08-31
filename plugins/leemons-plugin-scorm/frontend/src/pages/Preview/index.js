@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, LoadingOverlay } from '@bubbles-ui/components';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+// TODO: import from @feedback plugin maybe?
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scorm/helpers';
 import { useLocale } from '@common';

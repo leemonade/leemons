@@ -11,7 +11,8 @@ import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+// TODO: import from @feedback plugin ???
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import useClassData from '@assignables/hooks/useClassDataQuery';

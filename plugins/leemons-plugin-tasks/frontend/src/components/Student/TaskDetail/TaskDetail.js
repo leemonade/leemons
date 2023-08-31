@@ -6,7 +6,8 @@ import { unflatten, useLocale } from '@common';
 import _, { map } from 'lodash';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { Loader } from '@bubbles-ui/components';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+// TODO: import from @feedback plugin maybe?
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
@@ -18,14 +19,14 @@ import Steps from './components/Steps';
 function useTaskDetailLocalizations() {
   const [, translations] = useTranslateLoader([
     prefixPN('task_realization'),
-    'assignables.multiSubject',
+    'plugins.assignables.multiSubject',
   ]);
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = _.get(res, prefixPN('task_realization'));
-      data.multiSubject = _.get(res, 'assignables.multiSubject');
+      data.multiSubject = _.get(res, 'plugins.assignables.multiSubject');
 
       return data;
     }

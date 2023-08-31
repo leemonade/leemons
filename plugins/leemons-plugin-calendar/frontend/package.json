@@ -3,10 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
   "dependencies": {
+    "@asseinfo/react-kanban": "^2.2.0",
     "@bubbles-ui/calendars": "1.1.0",
     "@bubbles-ui/leemons": "dev",
-    "@asseinfo/react-kanban": "^2.2.0",
     "clsx": "^1.1.1",
     "country-region-data": "^1.11.0",
     "dom-helpers": "^5.2.1",
@@ -15,5 +23,19 @@
     "react-big-calendar": "^0.36.1",
     "rrule": "^2.6.8"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@babel/preset-env": "^7.22.10",
+    "@babel/preset-react": "^7.22.5",
+    "@storybook/addon-essentials": "^7.3.2",
+    "@storybook/addon-interactions": "^7.3.2",
+    "@storybook/addon-links": "^7.3.2",
+    "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/blocks": "^7.3.2",
+    "@storybook/react": "^7.3.2",
+    "@storybook/react-webpack5": "^7.3.2",
+    "@storybook/testing-library": "^0.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.3.2"
+  }
 }

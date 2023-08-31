@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@bubbles-ui/components';
-import { ScoresBasicTable } from '@bubbles-ui/leemons';
+import { ScoresBasicTable } from '../../../Tables/ScoresBasicTable';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';

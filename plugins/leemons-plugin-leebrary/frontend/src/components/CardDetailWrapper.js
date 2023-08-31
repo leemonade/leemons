@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isNil } from 'lodash';
-import { LibraryDetail } from '@bubbles-ui/leemons';
+import { LibraryDetail } from '@leebrary/components/LibraryDetail';
 import loadable from '@loadable/component';
 
 import { getShare, useBeforeUnload, useStore } from '@common';

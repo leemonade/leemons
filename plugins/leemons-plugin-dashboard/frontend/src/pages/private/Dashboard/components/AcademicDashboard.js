@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { Box, ContextContainer, PageContainer, createStyles } from '@bubbles-ui/components';
+//TODO: HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';

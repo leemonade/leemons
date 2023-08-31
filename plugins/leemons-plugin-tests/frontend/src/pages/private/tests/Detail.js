@@ -10,6 +10,7 @@ import {
   ImageLoader,
   PageContainer,
 } from '@bubbles-ui/components';
+// TODO: import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';

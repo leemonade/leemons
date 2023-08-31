@@ -3,7 +3,10 @@
 /* eslint-disable no-param-reassign */
 
 import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
-import { CALENDAR_EVENT_MODAL_DEFAULT_PROPS, CalendarEventModal } from '@bubbles-ui/leemons';
+import {
+  CALENDAR_EVENT_MODAL_DEFAULT_PROPS,
+  CalendarEventModal,
+} from '@calendar/components/CalendarEventModal';
 import { getCalendarsToFrontendRequest } from '@calendar/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import loadable from '@loadable/component';

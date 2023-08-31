@@ -1,5 +1,5 @@
 import { Workbook } from 'exceljs';
-import { uuidv4 } from '@bubbles-ui/leemons';
+import { uuidv4 } from 'uuid';
 
 /**
  *
