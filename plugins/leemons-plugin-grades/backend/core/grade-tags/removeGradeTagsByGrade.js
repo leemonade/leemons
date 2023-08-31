@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 async function removeGradeTagsByGrade({ grade, ctx }) {
   const gradeTags = await ctx.tx.db.GradeTags.find({
@@ -10,7 +9,7 @@ async function removeGradeTagsByGrade({ grade, ctx }) {
 
   await ctx.tx.emit('before-remove-grade-tags', { gradeTags });
 
-  await table.gradeTags.deleteMany({ id: gradeTagIds });
+  await ctx.tx.db.GradeTags.deleteMany({ id: gradeTagIds });
 
   await ctx.tx.emit('after-remove-grade-tags', { gradeTags });
 
