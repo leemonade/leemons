@@ -12,36 +12,10 @@ const { handleUserSessionData } = require('./handleUserSessionData');
 const { handleCategoryData } = require('./handleCategoryData');
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
 const { handleFileUpload } = require('./handleFileUpload');
+const { handleVersion } = require('./handleVersion');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * This function handles the creation of a new asset version.
- * It generates a new ID if not provided and returns it.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {string} params.newId - The new ID for the asset. If not provided, a new ID will be generated.
- * @param {string} params.categoryId - The ID of the category. This is used to prefix the new ID.
- * @param {boolean} params.published - Whether the asset is published. This is used in the version control registration.
- * @param {Object} params.transacting - The transaction object. This is used in the version control registration.
- * @returns {Promise<string>} The new ID of the asset.
- */
-async function handleVersion({ newId, categoryId, published, transacting }) {
-  if (isNil(newId) || isEmpty(newId)) {
-    // ES: Añadimos el control de versiones
-    // EN: Add version control
-    const { versionControl } = leemons.getPlugin('common').services;
-    const { fullId } = await versionControl.register(leemons.plugin.prefixPN(categoryId), {
-      published,
-      transacting,
-    });
-
-    newId = fullId;
-  }
-  return newId;
-}
 
 /**
  * This function creates a new asset in the database.
@@ -270,96 +244,90 @@ async function add({
     file,
     cover,
     assetName: assetData.name,
-    ctx
+    ctx,
   });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const promises = [];
+  const promises = [];
 
-      // ··········································································
-      // CREATE ASSET
+  // ··········································································
+  // CREATE ASSET
+// ! Paola: aquí voy
+  newId = await handleVersion({
+    newId,
+    categoryId: category.id,
+    published,
+    ctx,
+  });
 
-      newId = await handleVersion({
-        newId,
-        categoryId: category.id,
-        published,
+  // Set indexable as TRUE by default
+  assetData.indexable = isNil(assetData.indexable) ? true : assetData.indexable;
+
+  // EN: Firstly create the asset in the database to get the id
+  // ES: Primero creamos el archivo en la base de datos para obtener el id
+  const newAsset = await createAssetInDB({
+    newId,
+    categoryId: category.id,
+    coverId: coverFile?.id,
+    assetData,
+    transacting,
+  });
+
+  // ··········································································
+  // HANDLE SUBJECTS
+
+  if (subjects && subjects.length) {
+    await handleSubjects({ subjects, assetId: newAsset.id, transacting });
+  }
+
+  // ··········································································
+  // ADD PERMISSIONS
+
+  await handlePermissions({
+    permissions: pPermissions,
+    canAccess,
+    asset: newAsset,
+    category,
+    userSession,
+    transacting,
+  });
+
+  // ··········································································
+  // ADD FILES
+
+  // EN: Assign the file to the asset
+  // ES: Asignar el archivo al asset
+
+  await handleFiles({ newFile, assetId: newAsset.id, userSession, transacting });
+
+  // ··········································································
+  // CREATE BOOKMARK
+
+  if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
+    promises.push(
+      addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
         transacting,
-      });
+      })
+    );
+  }
 
-      // Set indexable as TRUE by default
-      assetData.indexable = isNil(assetData.indexable) ? true : assetData.indexable;
+  // ··········································································
+  // ADD TAGS
 
-      // EN: Firstly create the asset in the database to get the id
-      // ES: Primero creamos el archivo en la base de datos para obtener el id
-      const newAsset = await createAssetInDB({
-        newId,
-        categoryId: category.id,
-        coverId: coverFile?.id,
-        assetData,
+  if (tags?.length > 0) {
+    const tagsService = leemons.getPlugin('common').services.tags;
+    promises.push(
+      tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
         transacting,
-      });
+      })
+    );
+  }
 
-      // ··········································································
-      // HANDLE SUBJECTS
+  // ··········································································
+  // FINALLY
 
-      if (subjects && subjects.length) {
-        await handleSubjects({ subjects, assetId: newAsset.id, transacting });
-      }
+  await Promise.all(promises);
 
-      // ··········································································
-      // ADD PERMISSIONS
-
-      await handlePermissions({
-        permissions: pPermissions,
-        canAccess,
-        asset: newAsset,
-        category,
-        userSession,
-        transacting,
-      });
-
-      // ··········································································
-      // ADD FILES
-
-      // EN: Assign the file to the asset
-      // ES: Asignar el archivo al asset
-
-      await handleFiles({ newFile, assetId: newAsset.id, userSession, transacting });
-
-      // ··········································································
-      // CREATE BOOKMARK
-
-      if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
-        promises.push(
-          addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
-            transacting,
-          })
-        );
-      }
-
-      // ··········································································
-      // ADD TAGS
-
-      if (tags?.length > 0) {
-        const tagsService = leemons.getPlugin('common').services.tags;
-        promises.push(
-          tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
-            transacting,
-          })
-        );
-      }
-
-      // ··········································································
-      // FINALLY
-
-      await Promise.all(promises);
-
-      return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
-    },
-    tables.assets,
-    t
-  );
+  return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
 }
 
 module.exports = { add };
