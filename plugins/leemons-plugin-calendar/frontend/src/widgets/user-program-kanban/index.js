@@ -12,7 +12,7 @@ import {
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
 import { AddIcon as PlusIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
-import { KanbanTaskCard } from '@bubbles-ui/leemons';
+import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

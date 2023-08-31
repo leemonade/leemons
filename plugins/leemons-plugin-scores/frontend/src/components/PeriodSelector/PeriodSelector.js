@@ -11,7 +11,7 @@ import {
 } from '@bubbles-ui/components';
 
 import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';
-import { ScoresPeriodForm } from '@bubbles-ui/leemons';
+import { ScoresPeriodForm } from '../ScoresPeriodForm';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import { getCentersWithToken } from '@users/session';

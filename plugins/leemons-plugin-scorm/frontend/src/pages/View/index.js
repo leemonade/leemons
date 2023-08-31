@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Box, LoadingOverlay, Button, createStyles, HtmlText } from '@bubbles-ui/components';
-import { ActivityContainer } from '@bubbles-ui/leemons';
+// TODO: import from @feedback plugin maybe?
+import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@scorm/helpers';

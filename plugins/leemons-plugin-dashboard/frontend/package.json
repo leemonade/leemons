@@ -8,7 +8,8 @@
     "@bubbles-ui/leemons": "dev",
     "@bubbles-ui/components": "dev",
     "prop-types": "^15.7.2",
-    "react-hook-form": "^7.8.5"
+    "react-hook-form": "^7.8.5",
+    "react-content-loader": "^6.2.0"
   },
   "devDependencies": {}
 }

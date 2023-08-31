@@ -8,6 +8,8 @@ import {
   TabPanel,
   Tabs,
 } from '@bubbles-ui/components';
+// TODO: import from @common plugin
+
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

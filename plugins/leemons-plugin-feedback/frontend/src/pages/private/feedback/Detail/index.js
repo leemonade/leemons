@@ -6,6 +6,7 @@ import {
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
+// TODO: fix this import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
