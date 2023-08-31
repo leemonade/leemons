@@ -8,7 +8,7 @@ import {
   useViewportSize,
 } from '@bubbles-ui/components';
 // TODO: import from @library plugin
-import { LibraryCardEmbed } from '@bubbles-ui/leemons';
+import { LibraryCardEmbed } from '@leebrary/components';
 import { AssetListDrawer } from '@leebrary/components';
 import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';

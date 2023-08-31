@@ -10,8 +10,7 @@ import {
   InputWrapper,
 } from '@bubbles-ui/components';
 // TODO: import from @library plugin
-import { LibraryCardEmbed } from '@bubbles-ui/leemons';
-import { AssetListDrawer } from '@leebrary/components';
+import { LibraryCardEmbed, AssetListDrawer } from '@leebrary/components';
 import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';

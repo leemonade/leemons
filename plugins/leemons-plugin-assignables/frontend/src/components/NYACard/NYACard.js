@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
-// TODO: import from plugin @leebrary/components/LibraryCard
-import { LibraryCard } from '@bubbles-ui/leemons';
+import { LibraryCard } from '@leebrary/components/LibraryCard';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _, { get } from 'lodash';

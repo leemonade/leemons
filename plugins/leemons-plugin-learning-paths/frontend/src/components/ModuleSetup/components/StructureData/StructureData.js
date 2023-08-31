@@ -11,12 +11,9 @@ import {
   useViewportSize,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-// TODO: import from @common plugin
-import { uuidv4 } from '@bubbles-ui/leemons';
-
+import { uuidv4 } from 'uuid';
 import { fireEvent } from 'leemons-hooks';
 import { cloneDeep, get, set, without } from 'lodash';
-
 import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
 import { addErrorAlert } from '@layout/alert';
 import addAction from '@learning-paths/components/ModuleSetup/helpers/addAction';

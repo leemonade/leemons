@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, ContextContainer, Box, Loader, Anchor } from '@bubbles-ui/components';
 // TODO: import from @library plugin
-import { LibraryCardEmbed } from '@bubbles-ui/leemons';
+import { LibraryCardEmbed } from '@leebrary/components';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 

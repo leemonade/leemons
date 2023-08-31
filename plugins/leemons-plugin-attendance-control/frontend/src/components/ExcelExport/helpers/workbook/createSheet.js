@@ -1,6 +1,5 @@
 import { Workbook } from 'exceljs';
-// TODO: install in this plugin uuid library maybe?
-import { uuidv4 } from '@bubbles-ui/leemons';
+import { uuidv4 } from 'uuid';
 
 /**
  *

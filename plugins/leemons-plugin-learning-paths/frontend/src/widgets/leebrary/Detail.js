@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { PluginLearningPathsIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @library plugin
-import { LibraryDetail } from '@bubbles-ui/leemons';
+import { LibraryDetail } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';
 import { useHistory } from 'react-router-dom';

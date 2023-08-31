@@ -10,9 +10,8 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-// TODO: import from @common plugin
-
-import { ajv as Ajv, transformErrorsFromAjv } from '@bubbles-ui/leemons';
+import { transformErrorsFromAjv } from './helpers/transformErrorsFromAjv';
+import { ajv as Ajv } from 'ajv';
 import { EMAIL_REGEX } from '@users/components/LoginForm';
 import { useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
