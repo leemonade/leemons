@@ -1,0 +1,16 @@
+{
+  "plugins": ["sentence-case"],
+  "packages": {
+    ".": {
+      "include-component-in-tag": false,
+      "include-v-in-tag": false,
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "draft": false,
+      "prerelease": false
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
