@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getGradeScalesByGrade(grade, { transacting } = {}) {
-  return table.gradeScales.find({ grade_$in: _.isArray(grade) ? grade : [grade] }, { transacting });
+async function getGradeScalesByGrade({ grade, ctx }) {
+  return ctx.tx.db.GradeScales.find({ grade: _.isArray(grade) ? grade : [grade] }).lean();
 }
 
 module.exports = { getGradeScalesByGrade };

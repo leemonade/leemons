@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../services/tables');
-
-const { LeemonsValidator } = global.utils;
 const { stringSchema, numberSchema } = require('./types');
+const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsError } = require('leemons-error');
 
 const addGradeSchema = {
   type: 'object',
@@ -67,7 +66,7 @@ const addGradeLetterSchema = {
   additionalProperties: false,
 };
 
-function validateAddGrade(data, disableRequired) {
+function validateAddGrade({ data, disableRequired }) {
   const schema = addGradeSchema;
   if (disableRequired) {
     schema.required = ['name', 'type', 'center'];
@@ -104,7 +103,7 @@ const updateGradeSchema = {
   additionalProperties: false,
 };
 
-function validateUpdateGrade(data, { transacting } = {}) {
+async function validateUpdateGrade({ data, ctx }) {
   const validator = new LeemonsValidator(updateGradeSchema);
 
   if (!validator.validate(data)) {
@@ -113,14 +112,14 @@ function validateUpdateGrade(data, { transacting } = {}) {
 
   // ES: Comprobar que el id existe
   // EN: Check if the id exists
-  const grade = table.grades.count({ id: data.id }, { transacting });
-  if (!grade) throw new Error('Grade not found');
+  const grade = await ctx.tx.db.Grades.countDocuments({ id: data.id });
+  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
 
   if (data.minScaleToPromote) {
     // ES: Comprobamos que el scale existe
     // EN: Check if the scale exists
-    const scale = table.gradeScales.count({ id: data.minScaleToPromote }, { transacting });
-    if (!scale) throw new Error('Scale not found');
+    const scale = ctx.tx.db.GradeScales.countDocuments({ id: data.minScaleToPromote });
+    if (!scale) throw new LeemonsError(ctx, { message });
   }
 }
 
@@ -142,19 +141,21 @@ const addGradeScaleSchema = {
   additionalProperties: false,
 };
 
-async function validateAddGradeScale(data, { transacting } = {}) {
+async function validateAddGradeScale({ data, ctx }) {
   const validator = new LeemonsValidator(addGradeScaleSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const grade = await table.grades.findOne({ id: data.grade }, { transacting });
-  if (!grade) throw new Error('Grade not found');
+  const grade = await ctx.tx.db.Grades.findOne({ id: data.grade })
+    .select(['type', 'letter'])
+    .lean();
+  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
 
   if (grade.type === 'numeric') {
     if (data.letter) {
-      throw new Error('Letter not allowed in grade type numeric');
+      throw new LeemonsError(ctx, { message: 'Letter not allowed in grade type numeric' });
     }
   }
 }
@@ -177,25 +178,24 @@ const updateGradeScaleSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateGradeScale(data, { transacting } = {}) {
+async function validateUpdateGradeScale({ data, ctx }) {
   const validator = new LeemonsValidator(updateGradeScaleSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const scale = await table.gradeScales.findOne(
-    { id: data.id },
-    { columns: ['id', 'grade'], transacting }
-  );
-  if (!scale) throw new Error('Scale not found');
+  const scale = await ctx.tx.db.GradeScales.findOne({ id: data.id }).select(['id', 'grade']).lean();
+  if (!scale) throw new LeemonsError(ctx, { message: 'Scale not found' });
 
-  const grade = await table.grades.findOne({ id: scale.grade }, { transacting });
-  if (!grade) throw new Error('Grade not found');
+  const grade = await ctx.tx.db.Grades.findOne({ id: scale.grade })
+    .select(['type', 'letter'])
+    .lean();
+  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
 
   if (grade.type === 'numeric') {
     if (data.letter) {
-      throw new Error('Letter not allowed in grade type numeric');
+      throw new LeemonsError(ctx, { message: 'Letter not allowed in grade type numeric' });
     }
   }
 }
@@ -212,7 +212,7 @@ const addGradeTagSchema = {
   additionalProperties: false,
 };
 
-async function validateAddGradeTag(data, { transacting } = {}) {
+async function validateAddGradeTag({ data, ctx }) {
   const validator = new LeemonsValidator(addGradeTagSchema);
 
   if (!validator.validate(data)) {
@@ -221,13 +221,13 @@ async function validateAddGradeTag(data, { transacting } = {}) {
 
   // ES: Comprobamos si existe el grado
   // EN: Check if the grade exists
-  const grade = await table.grades.count({ id: data.grade }, { transacting });
-  if (!grade) throw new Error('Grade not found');
+  const grade = await ctx.tx.db.Grades.countDocuments({ id: data.grade });
+  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
 
   // ES: Comprobamos si existe la escala
   // EN: Check if the scale exists
-  const scale = await table.gradeScales.count({ id: data.scale }, { transacting });
-  if (!scale) throw new Error('Scale not found');
+  const scale = await ctx.tx.db.GradeScales.countDocuments({ id: data.scale });
+  if (!scale) throw new LeemonsError(ctx, { message: 'Scale not found' });
 }
 
 const updateGradeTagSchema = {
@@ -242,7 +242,7 @@ const updateGradeTagSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateGradeTag(data, { transacting } = {}) {
+async function validateUpdateGradeTag({ data, ctx }) {
   const validator = new LeemonsValidator(updateGradeTagSchema);
 
   if (!validator.validate(data)) {
@@ -251,13 +251,13 @@ async function validateUpdateGradeTag(data, { transacting } = {}) {
 
   // ES: Comprobamos si existe el tag de grado
   // EN: Check if the grade tag exists
-  const gradeTag = await table.gradeTags.count({ id: data.id }, { transacting });
-  if (!gradeTag) throw new Error('Grade tag not found');
+  const gradeTag = await ctx.tx.db.GradeTags.countDocuments({ id: data.id });
+  if (!gradeTag) throw new LeemonsError(ctx, { message: 'Grade tag not found' });
 
   // ES: Comprobamos si existe la escala
   // EN: Check if the scale exists
-  const scale = await table.gradeScales.count({ id: data.scale }, { transacting });
-  if (!scale) throw new Error('Scale not found');
+  const scale = await ctx.tx.db.GradeScales.countDocuments({ id: data.scale });
+  if (!scale) throw new LeemonsError(ctx, { message: 'Scale not found' });
 }
 
 const conditionSchema = {
@@ -323,7 +323,7 @@ const addRuleSchema = {
   additionalProperties: false,
 };
 
-function validateAddRule(data, isDependency) {
+function validateAddRule({ data, isDependency }) {
   const rules = _.cloneDeep(addRuleSchema);
   if (isDependency) {
     rules.properties.subject = stringSchema;
@@ -350,7 +350,7 @@ const updateRuleSchema = {
   additionalProperties: false,
 };
 
-function validateUpdateRule(data, isDependency) {
+function validateUpdateRule({ data, isDependency }) {
   const rules = _.cloneDeep(updateRuleSchema);
   if (isDependency) {
     rules.properties.subject = stringSchema;
@@ -380,7 +380,7 @@ const addConditionGroupSchema = {
   additionalProperties: false,
 };
 
-function validateAddConditionGroup(data) {
+function validateAddConditionGroup({ data }) {
   const validator = new LeemonsValidator(addConditionGroupSchema);
 
   if (!validator.validate(data)) {

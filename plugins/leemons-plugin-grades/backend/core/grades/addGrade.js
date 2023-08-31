@@ -1,42 +1,33 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateAddGrade } = require('../../validations/forms');
 const { addGradeScale } = require('../grade-scales');
 const { gradeByIds } = require('./gradeByIds');
-const enableMenuItemService = require('../menu-builder/enableItem');
+const { LeemonsError } = require('leemons-error');
 
-async function addGrade(data, { fromFrontend, transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateAddGrade(data, fromFrontend);
+async function addGrade({ data, fromFrontend, ctx }) {
+  await validateAddGrade({ data, disableRequired: fromFrontend });
 
-      const { scales, minScaleToPromote, ..._data } = data;
+  const { scales, minScaleToPromote, ..._data } = data;
 
-      const grade = await table.grades.create(_data, { transacting });
+  let grade = await ctx.tx.db.Grades.create(_data);
+  grade = grade.toObject();
 
-      if (!fromFrontend) {
-        const newScales = await Promise.all(
-          _.map(scales, (scale) => addGradeScale({ ...scale, grade: grade.id }, { transacting }))
-        );
+  if (!fromFrontend) {
+    const newScales = await Promise.all(
+      _.map(scales, (scale) => addGradeScale({ data: { ...scale, grade: grade.id }, ctx }))
+    );
 
-        const minScale = _.find(newScales, { number: minScaleToPromote });
-        if (!minScale) throw new Error('minScaleToPromote not found inside scales');
+    const minScale = _.find(newScales, { number: minScaleToPromote });
+    if (!minScale)
+      throw new LeemonsError(ctx, { message: 'minScaleToPromote not found inside scales' });
 
-        await table.grades.update(
-          { id: grade.id },
-          { minScaleToPromote: minScale.id },
-          { transacting }
-        );
-      }
-      await Promise.all([
-        enableMenuItemService('evaluations'),
-        enableMenuItemService('promotions'),
-      ]);
-      return (await gradeByIds(grade.id, { transacting }))[0];
-    },
-    table.grades,
-    _transacting
-  );
+    await ctx.tx.db.Grades.updateOne({ id: grade.id }, { minScaleToPromote: minScale.id });
+  }
+  await Promise.all([
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('evaluations') }),
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('promotions') }),
+  ]);
+  return (await gradeByIds({ ids: grade.id, ctx }))[0];
 }
 
 module.exports = { addGrade };

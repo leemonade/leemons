@@ -14,10 +14,11 @@ async function add({ user, profile, ctx }) {
   if (await exist({ user, profile, ctx }))
     throw new LeemonsError(ctx, { message: 'The user profile already exists' });
 
-  const userProfile = await ctx.tx.db.UserProfile.create({
+  let userProfile = await ctx.tx.db.UserProfile.create({
     user,
     profile,
   });
+  userProfile = userProfile.toObject();
 
   const role = await ctx.tx.call('users.roles.add', {
     name: `user-profile:${userProfile.id}:role`,

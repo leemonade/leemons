@@ -1,5 +1,4 @@
-const { translations } = require('../translations');
-
+const { localeRegexString } = require('leemons-validator');
 const textSchema = {
   type: 'string',
   minLength: 1,
@@ -59,7 +58,7 @@ const numberSchema = {
 const localeObjectSchema = () => ({
   type: 'object',
   patternProperties: {
-    [translations().functions.localeRegexString]: {
+    [localeRegexString]: {
       type: 'string',
     },
   },

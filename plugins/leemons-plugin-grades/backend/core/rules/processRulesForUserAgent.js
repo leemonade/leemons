@@ -1,37 +1,38 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getRuleConditionsByRuleIds } = require('./getRuleConditionsByRuleIds');
 const { gradeByIds: getGradeByIds } = require('../grades/gradeByIds');
-const { RuleProcess } = require('../../classes/rule-process');
+const { RuleProcess } = require('../classes/rule-process');
 const { getUserAgentNotesForSubjects } = require('./getUserAgentNotesForSubjects');
 
-async function processRulesForUserAgent(ruleIds, userAgent, { transacting } = {}) {
+async function processRulesForUserAgent({ ruleIds, userAgent, ctx }) {
   const [rules, ruleConditions] = await Promise.all([
-    table.rules.find({ id_$in: _.isArray(ruleIds) ? ruleIds : [ruleIds] }, { transacting }),
-    getRuleConditionsByRuleIds(ruleIds, { transacting }),
+    ctx.tx.db.Rules.find({ id: _.isArray(ruleIds) ? ruleIds : [ruleIds] }).lean(),
+    getRuleConditionsByRuleIds({ ids: ruleIds, ctx }),
   ]);
 
   const [grades, programsClasses] = await Promise.all([
-    getGradeByIds(_.map(rules, 'grade'), { transacting }),
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.classes.getBasicClassesByProgram(_.map(rules, 'program'), { transacting }),
+    getGradeByIds({ ids: _.map(rules, 'grade'), ctx }),
+    ctx.tx.call('academic-portfolio.classes.getBasicClassesByProgram', {
+      program: _.map(rules, 'program'),
+    }),
   ]);
 
   const [userNotes, subjectCredits, userAgentClasses] = await Promise.all([
-    getUserAgentNotesForSubjects(userAgent, _.map(programsClasses, 'subject'), { transacting }),
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.subjects.getSubjectCredits(
-        _.map(programsClasses, 'subject'),
-        _.map(rules, 'program'),
-        { transacting }
-      ),
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.classes.student.getByClassAndUserAgent(_.map(programsClasses, 'id'), userAgent, {
-        transacting,
-      }),
+    getUserAgentNotesForSubjects({
+      userAgentId: userAgent,
+      subjectIds: _.map(programsClasses, 'subject'),
+      ctx,
+    }),
+
+    ctx.tx.call('academic-portfolio.subjects.getSubjectCredits', {
+      subject: _.map(programsClasses, 'subject'),
+      program: _.map(rules, 'program'),
+    }),
+
+    ctx.tx.call('academic-portfolio.classes.studentGetByClassAndUserAgent', {
+      class: _.map(programsClasses, 'id'),
+      userAgent,
+    }),
   ]);
 
   const gradeByIds = _.keyBy(grades, 'id');

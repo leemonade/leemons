@@ -90,17 +90,17 @@ module.exports = {
         return getClassesUnderProgramCourse({ ...ctx.params, ctx });
       },
     },
-    'student.getByClassAndUserAgent': {
+    studentGetByClassAndUserAgent: {
       handler(ctx) {
         return getByClassAndUserAgent({ ...ctx.params, ctx });
       },
     },
-    'student.getByClass': {
+    studentGetByClass: {
       handler(ctx) {
         return getByClass({ ...ctx.params, ctx });
       },
     },
-    'teacher.getByClass': {
+    teacherGetByClass: {
       handler(ctx) {
         return getTeachersByClass({ ...ctx.params, ctx });
       },
