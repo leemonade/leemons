@@ -2,7 +2,6 @@
 const { map, isEmpty, isNil, isString, isArray, forEach } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { tables } = require('../tables');
-const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
@@ -12,38 +11,10 @@ const { handleBookmarkData } = require('./handleBookmarkData');
 const { handleUserSessionData } = require('./handleUserSessionData');
 const { handleCategoryData } = require('./handleCategoryData');
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
+const { handleFileUpload } = require('./handleFileUpload');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * Handles file and cover upload.
- * If file is an image, it's set as cover. If no cover is provided, it's uploaded from source.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {string} params.file - The file to upload.
- * @param {string} params.cover - The cover of the asset.
- * @param {string} params.assetName - The name of the asset.
- * @param {Object} params.transacting - The transaction object.
- * @returns {Promise<Object>} The uploaded file and cover.
- */
-async function handleFileUpload({ file, cover, assetName, transacting }) {
-  let newFile = null;
-  let coverFile = null;
-  if (!isEmpty(file)) {
-    newFile = await uploadFromSource(file, { name: assetName }, { transacting });
-
-    if (newFile?.type?.indexOf('image') === 0) {
-      coverFile = newFile;
-    }
-  }
-
-  if (!coverFile && !isEmpty(cover)) {
-    coverFile = await uploadFromSource(cover, { name: assetName }, { transacting });
-  }
-  return { newFile, coverFile };
-}
 
 /**
  * This function handles the creation of a new asset version.
@@ -299,7 +270,7 @@ async function add({
     file,
     cover,
     assetName: assetData.name,
-    transacting: t,
+    ctx
   });
 
   return global.utils.withTransaction(

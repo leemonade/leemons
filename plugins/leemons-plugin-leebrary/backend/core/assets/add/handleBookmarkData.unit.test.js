@@ -90,5 +90,3 @@ it('Logs an error message when an error is catched and handles unexpected values
     expect.any(Error)
   );
 });
-
-// TODO paola@skJohan: So, where are fields like data.name validated? What if data.name = ['surprise']

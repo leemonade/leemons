@@ -1,5 +1,5 @@
 const { isNil } = require('lodash');
-const { tables } = require('../tables');
+
 const { findOne } = require('./findOne');
 
 /**

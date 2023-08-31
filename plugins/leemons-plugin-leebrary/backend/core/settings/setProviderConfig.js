@@ -1,4 +1,4 @@
-const { tables } = require('../tables');
+
 const { setActiveProvider } = require('./setActiveProvider');
 
 async function setProviderConfig(providerName, config, { transacting: _transacting } = {}) {
