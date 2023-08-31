@@ -13,28 +13,10 @@ const { handleCategoryData } = require('./handleCategoryData');
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
 const { handleFileUpload } = require('./handleFileUpload');
 const { handleVersion } = require('./handleVersion');
+const { createAssetInDB } = require('./createAssetInDb')
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * This function creates a new asset in the database.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {string} params.newId - The new ID for the asset. This is a unique identifier for the asset.
- * @param {string} params.categoryId - The ID of the category to which the asset belongs.
- * @param {string} params.coverId - The ID of the cover image for the asset.
- * @param {Object} params.assetData - An object containing the data for the asset. This includes information such as the asset's name, description, etc.
- * @param {Object} params.transacting - The transaction object. This is used to handle the database transaction for the creation of the asset.
- * @returns {Promise<Object>} A promise that resolves with the created asset object.
- */
-async function createAssetInDB({ newId, categoryId, coverId, assetData, transacting }) {
-  return tables.assets.create(
-    { ...assetData, id: newId, category: categoryId, cover: coverId },
-    { transacting }
-  );
-}
 
 /**
  * Handle the subjects of the asset.
@@ -251,7 +233,6 @@ async function add({
 
   // ··········································································
   // CREATE ASSET
-// ! Paola: aquí voy
   newId = await handleVersion({
     newId,
     categoryId: category.id,
@@ -269,7 +250,7 @@ async function add({
     categoryId: category.id,
     coverId: coverFile?.id,
     assetData,
-    transacting,
+    ctx
   });
 
   // ··········································································
