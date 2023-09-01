@@ -1,33 +1,30 @@
-const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
-const validateDay = require('../../helpers/dayjs/validateDay');
+const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
+const validateDay = require('../helpers/dayjs/validateDay');
 const count = require('./count');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 
-module.exports = async function create(
-  { class: classId, day, start, duration, dayWeek },
-  { transacting } = {}
-) {
+module.exports = async function create({ class: classId, day, start, duration, dayWeek, ctx }) {
   // TODO: check if class exists
 
   // Validate start time
   const startTime = timeToDayjs(start);
   if (!startTime) {
-    throw new Error('Invalid start time');
+    throw new LeemonsError(ctx, { message: 'Invalid start time' });
   }
 
   // The duration must be an integer
   if (duration % 1 !== 0) {
-    throw new Error('Duration must be an integer');
+    throw new LeemonsError(ctx, { message: 'Duration must be an integer' });
   }
 
   // The duration must be greater than 0
   if (duration <= 0) {
-    throw new Error('Duration must be greater than 0');
+    throw new LeemonsError(ctx, { message: 'Duration must be greater than 0' });
   }
 
   // The day must be a valid day
   if (!validateDay(day)) {
-    throw new Error('Invalid day');
+    throw new LeemonsError(ctx, { message: 'Invalid day' });
   }
 
   const endTime = startTime.add(duration, 'minute');
@@ -35,16 +32,17 @@ module.exports = async function create(
 
   if (
     // Check if exists a timetable for this class which:
-    (await count(classId, {
+    (await count({
+      classId,
       // Starts before this timetable ends
       startBetween: ['00:00', end],
       // And ends after this timetable starts (add 1 minute to ignore classes ending at the same time)
       endBetween: [startTime.add(1, 'minute').format('HH:mm'), '24:00'],
       days: [day],
-      transacting,
+      ctx,
     })) > 0
   ) {
-    throw new Error('This class timetable overlaps with a previous one');
+    throw new LeemonsError(ctx, { message: 'This class timetable overlaps with a previous one' });
   }
 
   const data = {
@@ -56,7 +54,7 @@ module.exports = async function create(
     dayWeek,
   };
 
-  const timetable = await table.timetable.create(data, { transacting });
+  const timetable = await ctx.tx.db.Timetable.create(data);
 
-  return timetable;
+  return timetable.toObject();
 };

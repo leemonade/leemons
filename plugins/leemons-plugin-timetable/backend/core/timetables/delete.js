@@ -1,7 +1,5 @@
-const { table } = require('../tables');
+module.exports = async function deleteTimetable({ timetableId, ctx }) {
+  const { deletedCount } = await ctx.tx.db.Timetable.deleteMany({ id: timetableId });
 
-module.exports = async function deleteTimetable(timetableId, { transacting } = {}) {
-  const { count } = await table.timetable.deleteMany({ id: timetableId }, { transacting });
-
-  return count > 0;
+  return deletedCount > 0;
 };

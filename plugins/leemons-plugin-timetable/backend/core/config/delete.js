@@ -3,24 +3,18 @@ const get = require('./get');
 
 const configTable = leemons.query('plugins_timetable::config');
 
-module.exports = async function deleteConfig(entitiesObj, { transacting: t } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      // Get the config object
-      const config = await get(entitiesObj, { transacting });
+module.exports = async function deleteConfig({ entitiesObj, ctx }) {
+  // Get the config object
+  const config = await get({ entitiesObj, ctx });
 
-      if (!config) {
-        return false;
-      }
+  if (!config) {
+    return false;
+  }
 
-      // Delete related breaks
-      await deleteBreaks({ configId: config.id }, { transacting });
+  // Delete related breaks
+  await deleteBreaks({ configId: config.id, ctx });
 
-      // Delete config
-      await configTable.delete({ id: config.id }, { transacting });
-      return true;
-    },
-    t,
-    configTable
-  );
+  // Delete config
+  await ctx.tx.db.Config.deleteOne({ id: config.id });
+  return true;
 };
