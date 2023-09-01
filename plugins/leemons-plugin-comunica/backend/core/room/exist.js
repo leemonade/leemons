@@ -1,5 +1,3 @@
-const {table} = require('../tables');
-
 /**
  * Check if the room key already exists
  * @public
@@ -8,9 +6,9 @@ const {table} = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function exist(key, {transacting} = {}) {
-  const count = await table.room.count({key}, {transacting});
+async function exist({ key, ctx }) {
+  const count = await ctx.tx.db.Room.countDocuments({ key });
   return !!count;
 }
 
-module.exports = {exist};
+module.exports = { exist };
