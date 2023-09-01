@@ -1,6 +1,6 @@
 const { isEmpty, isNil, isString, trim } = require('lodash');
 const got = require('got');
-const metascraper = require('../../shared/metascraper');
+const { metascraper } = require('../../shared');
 
 /**
  * Handles bookmark data.

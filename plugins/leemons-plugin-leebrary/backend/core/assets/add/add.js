@@ -2,8 +2,8 @@
 const { isNil } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 const { validateAddAsset } = require('../../validations/forms');
-const { add: addBookmark } = require('../bookmarks/add');
-const { normalizeItemsArray } = require('../shared');
+const { add: addBookmark } = require('../../bookmarks/add');
+const { normalizeItemsArray } = require('../../shared');
 const { handleBookmarkData } = require('./handleBookmarkData');
 const { handleUserSessionData } = require('./handleUserSessionData');
 const { handleCategoryData } = require('./handleCategoryData');

@@ -16,4 +16,4 @@ const metascraper = require('metascraper')([
   require('metascraper-iframe')(),
 ]);
 
-module.exports = metascraper;
+module.exports = { metascraper };
