@@ -1,8 +1,6 @@
 const deleteBreaks = require('./breakes/delete');
 const get = require('./get');
 
-const configTable = leemons.query('plugins_timetable::config');
-
 module.exports = async function deleteConfig({ entitiesObj, ctx }) {
   // Get the config object
   const config = await get({ entitiesObj, ctx });
