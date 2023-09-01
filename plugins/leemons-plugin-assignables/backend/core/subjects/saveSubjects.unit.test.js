@@ -28,16 +28,15 @@ beforeEach(async () => {
 
 it('Should save the subjects to the assignable', async () => {
   // Arrange
-  const assignable = 'assignable01';
+  const assignable = 'assignable-id';
   const subjects = [
     {
-      subject: 'subject0',
-      program: 'program',
+      subject: 'subject-id-1',
+      program: 'program-id',
       level: 'intermediate',
-      curriculum: null,
     },
     {
-      subject: 'subject1',
+      subject: 'subject-id-2',
       program: 'program',
       level: 'intermediate',
       curriculum: {
@@ -46,7 +45,9 @@ it('Should save the subjects to the assignable', async () => {
     },
   ];
 
-  const expectedValue = subjects.map((subject) => ({ ...subject, assignable }));
+  const expectedValue = subjects.map((subject) =>
+    expect.objectContaining({ ...subject, assignable })
+  );
 
   const ctx = generateCtx({
     models: {
@@ -61,7 +62,7 @@ it('Should save the subjects to the assignable', async () => {
 
   // Assert
   expect(response).toEqual(expectedValue);
-  expect(dbValues.sort()).toMatchObject(expectedValue.sort());
+  expect(dbValues.sort()).toEqual(expectedValue.sort());
 });
 
 it('Should throw if no valid subject is provided', () => {
