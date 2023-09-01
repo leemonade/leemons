@@ -47,7 +47,7 @@ it('Should throw if the caller is not authorized', () => {
   expect(responseAuthorizedPlugin).toEqual([...expectedValue, authorizedPlugin]);
 });
 
-it('Should handle unexpected values and throw unauthorization error', () => {
+it('Should handle unexpected values and throw unauthorization errors', () => {
   // Arrange
   const categoryWithWrongCanUseValue = { ...categoryObject, canUse: '"[]"' };
   const ctx = generateCtx({});

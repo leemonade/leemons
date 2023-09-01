@@ -32,6 +32,7 @@ it('Should correctly create an asset and return it as a plain object', async () 
   // Arrange
   const {
     assetModel: { id: assetId, category: assetCategory, cover: assetCover, ...assetData },
+    bookmarkAsset: { subjects, tags},
     assetDataExtraProps,
   } = getAssets();
 
@@ -46,7 +47,7 @@ it('Should correctly create an asset and return it as a plain object', async () 
     newId: assetId,
     categoryId: assetCategory,
     coverId: assetCover.id,
-    assetData: { ...assetData, assetDataExtraProps },
+    assetData: { ...assetData, subjects, tags, assetDataExtraProps },
     ctx,
   });
   const foundAsset = await ctx.tx.db.Assets.findOne({ fromUser: assetData.fromUser }).lean();

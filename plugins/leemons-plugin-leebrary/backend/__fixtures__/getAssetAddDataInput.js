@@ -34,4 +34,3 @@ module.exports = function getAssetAddDataInput() {
   };
 };
 
-// TODO Paola, cambiar el nombre del archivo y función a getAssetAddDataInput

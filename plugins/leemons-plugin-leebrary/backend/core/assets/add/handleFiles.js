@@ -5,7 +5,7 @@ const { add: addFiles } = require('../files/add');
  *
  * @async
  * @param {Object} params - The parameters object.
- * @param {string} params.newFile - The new file of the asset.
+ * @param {Object} params.newFile - The new file of the asset.
  * @param {string} params.assetId - The ID of the asset.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
 

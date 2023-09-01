@@ -9,7 +9,7 @@ const { LeemonsError } = require('leemons-error');
  * it throws an error.
  *
  * @param {Object} params - The parameters object.
- * @param {Object} params.ctx - The Moleculer context object. It should have a `prefixPN` function.
+ * @param {MoleculerContext} params.ctx - The Moleculer context object.
  * @param {string} params.calledFrom - The plugin or user that called this function.
  * @param {Object} params.category - The category object.
  * @returns {Array<string>} An array of users or plugins who are authorized to use the asset category.

@@ -20,13 +20,14 @@ const { handleFiles } = require('./handleFiles');
  * The function handles the entire process of asset creation including file upload, version handling, permission assignment, and more.
  *
  * @async
- * @param {Object} assetData - The data of the asset to add. This includes information such as the asset's name, description, etc.
- * @param {Object} options - Additional options for adding the asset.
- * @param {string} options.newId - The new ID for the asset. If not provided, a new ID will be generated.
- * @param {boolean} options.published - Whether the asset is published. Defaults to true.
- * @param {Array} options.permissions - The permissions for the asset. Each permission is an object that contains the permission's data.
- * @param {Object} options.transacting - The transaction object. This is used to handle the database transaction for the creation of the asset.
- * @param {boolean} options.duplicating - Whether the asset is a duplicate. Defaults to false.
+ * @param {Object} params - The main parameter object.
+ * @param {Object} params.assetData - The data of the asset to add. This includes information such as the asset's name, description, related url, etc.
+ * @param {Object} params.options - Additional options for adding the asset.
+ * @param {string} [params.options.newId] - The new ID for the asset. If not provided, a new ID will be generated.
+ * @param {boolean} [params.options.published=true] - Whether the asset is published.
+ * @param {Array} [params.options.permissions] - The permissions for the asset. Each permission is an object that contains the permission's data.
+ * @param {boolean} [params.options.duplicating=false] - Whether the asset is a duplicate.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} A promise that resolves with the added asset object.
  */
 async function add({
@@ -128,7 +129,6 @@ async function add({
 
   // EN: Assign the file to the asset
   // ES: Asignar el archivo al asset
-
   await handleFiles({ newFile, assetId: newAsset.id, ctx });
 
   // ··········································································
@@ -136,9 +136,7 @@ async function add({
 
   if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
     promises.push(
-      addBookmark({ url: assetData.url, iconUrl: assetData.icon }, newAsset, {
-        transacting,
-      })
+      addBookmark({ url: assetData.url, iconUrl: assetData.icon, asset: newAsset, ctx })
     );
   }
 
@@ -146,17 +144,17 @@ async function add({
   // ADD TAGS
 
   if (tags?.length > 0) {
-    const tagsService = leemons.getPlugin('common').services.tags;
     promises.push(
-      tagsService.setTagsToValues(leemons.plugin.prefixPN(''), tags, newAsset.id, {
-        transacting,
+      ctx.tx.call('common.tags.setTagsToValues', {
+        type: ctx.prefixPN(''),
+        tags,
+        values: newAsset.id,
       })
     );
   }
 
   // ··········································································
   // FINALLY
-
   await Promise.all(promises);
 
   return { ...newAsset, subjects, file: newFile, cover: coverFile, tags };
