@@ -2,8 +2,6 @@ module.exports = function getAssets() {
   const assetDataExtraProps = {
     url: 'https://leemons.io',
     icon: 'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
-    // subjects: null,
-    // tags: ['Leemons'],
     canAccess: [
       {
         id: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
@@ -31,7 +29,7 @@ module.exports = function getAssets() {
     fromUser: "5738414e-3c5e-40a4-9b89-e5d27adc3719",
     fromUserAgent: "17d5407b-d043-483f-a9fd-61eb9ffe3dae",
     indexable: 1,
-    category: "13ce91bb-9135-49d9-9030-9d2559c74198",
+    category: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
     cover: {
       id: "ed9bcda9-0d1d-48df-9f91-bf794cc02fbf",
       provider: "leebrary-aws-s3",
@@ -120,10 +118,10 @@ module.exports = function getAssets() {
     fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
     fromUserAgent: 'a1c917f3-8771-4f92-8e2d-18657b3ec709',
     public: null,
-    category: '0d144de4-023d-49f6-a959-5f163dd47cbd',
+    category: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
     indexable: true,
     center: null,
-    program: null,
+    program: "edabdea5-d16f-4681-8753-f6740caaf342",
     updated_at: '2023-08-29T10:44:12.000Z', //db property
     created_at: '2023-08-29T10:44:12.000Z', //db property
     deleted: 0, // db property
@@ -173,7 +171,7 @@ module.exports = function getAssets() {
       fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
       fromUserAgent: 'a1c917f3-8771-4f92-8e2d-18657b3ec709',
       public: null,
-      category: '0d144de4-023d-49f6-a959-5f163dd47cbd',
+      category: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
       indexable: true,
       center: null,
       program: null,

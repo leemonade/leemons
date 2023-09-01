@@ -71,17 +71,6 @@ it('Should survive', async () => {
     ctx,
   });
 
-  // TODO paola@skJohan: Que otros unhappy paths vale la pena revisar? Se me ocurría el de abajo, pero si
-  // TODO esto pasara realmente no llegaríamos hasta aquí, ya tendría que haber petado... De hecho en el
-  // TODO controller, getCategory() estas deben ser quienes validan el input. correcto?
-  // getCategoryById.mockImplementation(() => { throw new Error("DB error because of wrong query")})
-  // const response = await handleCategoryData({
-  //   category: undefined,
-  //   categoryId: [null],
-  //   categoryKey: undefined,
-  //   ctx,
-  // });
-
   // Assert
   expect(getCategoryById).not.toHaveBeenCalled();
   expect(getCategoryByKey).toHaveBeenCalledWith({ id: notStandardUUID, ctx });

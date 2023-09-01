@@ -2,11 +2,12 @@ module.exports = function getAssetAddDataInput() {
   return {
     dataInput: {
       name: 'Tecnología de aprendizaje colaborativo para pedagogías activas',
+      tagline: 'Leemons website',
       description:
         'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
       color: '#993333',
       url: 'https://www.leemons.io/',
-      program: null,
+      program: "edabdea5-d16f-4681-8753-f6740caaf342",
       subjects: [
         {
           subject: 'db172925-237a-44a1-9dcf-4e4ceb7976cb',
@@ -14,7 +15,7 @@ module.exports = function getAssetAddDataInput() {
         },
       ],
       icon: 'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
-      categoryId: '0d144de4-023d-49f6-a959-5f163dd47cbd',
+      categoryId: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
       tags: ['Leemons'],
       categoryKey: 'bookmarks',
     },
@@ -25,7 +26,7 @@ module.exports = function getAssetAddDataInput() {
       program: null,
       subjects: null,
       icon: null,
-      categoryId: '0d144de4-023d-49f6-a959-5f163dd47cbd',
+      categoryId: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
       tags: ['Leemons'],
       categoryKey: 'bookmarks',
     },

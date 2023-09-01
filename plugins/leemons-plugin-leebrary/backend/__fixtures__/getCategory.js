@@ -3,7 +3,7 @@ module.exports = function getCategory() {
     bookmarkKey: 'bookmark',
     mediaFileKey: 'mediaFile',
     categoryObject: {
-      id: '0d144de4-023d-49f6-a959-5f163dd47cbd',
+      id: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
       key: 'bookmarks',
       pluginOwner: 'leebrary',
       creatable: 1,
@@ -18,9 +18,9 @@ module.exports = function getCategory() {
       order: 2,
       deleted: 0,
     },
-    categoryId: '0d144de4-023d-49f6-a959-5f163dd47cbd',
+    categoryId: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
     mediaFileCategoryObject: {
-      id: "13ce91bb-9135-49d9-9030-9d2559c74198",
+      id: "lrn:segment1:segment2:segment3:segment4:segment5:tnemges6",
       key: "media-files",
       pluginOwner: "leebrary",
       creatable: 1,

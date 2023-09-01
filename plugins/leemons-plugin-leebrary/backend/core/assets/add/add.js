@@ -49,7 +49,6 @@ async function add({
   if (data.categoryKey === CATEGORIES.BOOKMARKS) {
     [data, cover] = await handleBookmarkData({ data, cover, ctx });
   }
-
   // ··········································
   // DATA INTEGRITY VALIDATION
   await validateAddAsset(data);
@@ -72,6 +71,7 @@ async function add({
 
   // ··········································································
   // UPLOAD FILE
+  console.log('antes de handleFileUpload');
 
   // EN: Upload the file to the provider
   // ES: Subir el archivo al proveedor
@@ -81,6 +81,7 @@ async function add({
     assetName: assetData.name,
     ctx,
   });
+  console.log('después de handleFileUpload');
 
   const promises = [];
 

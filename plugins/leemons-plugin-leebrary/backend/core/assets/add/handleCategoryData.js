@@ -1,4 +1,5 @@
 const { isEmpty, isString } = require('lodash');
+const { isLRN } = require('leemons-lrn');
 const { getById: getCategoryById } = require('../../categories/getById');
 const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
 
@@ -27,10 +28,7 @@ async function handleCategoryData({ category, categoryId, categoryKey, ctx }) {
       category = await getCategoryByKey({ id: categoryKey, ctx });
     }
   } else if (isString(category)) {
-    if (
-      // TODO Paola: Pedir a Jaime que exporte una función para verifcar que esto es un id válido, id semántico
-      category.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-    ) {
+    if (isLRN(category)) {
       category = await getCategoryById({ id: category, ctx });
     } else {
       category = await getCategoryByKey({ id: category, ctx });
