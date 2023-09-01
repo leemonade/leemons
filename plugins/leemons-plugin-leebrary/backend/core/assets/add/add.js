@@ -1,11 +1,8 @@
 /* eslint-disable no-param-reassign */
-const { map, isEmpty, isNil, isString, isArray, forEach } = require('lodash');
+const { isNil } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
-const { tables } = require('../tables');
-const { add: addFiles } = require('./files/add');
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../bookmarks/add');
-const getAssetPermissionName = require('../permissions/helpers/getAssetPermissionName');
 const { normalizeItemsArray } = require('../shared');
 const { handleBookmarkData } = require('./handleBookmarkData');
 const { handleUserSessionData } = require('./handleUserSessionData');
@@ -13,153 +10,10 @@ const { handleCategoryData } = require('./handleCategoryData');
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
 const { handleFileUpload } = require('./handleFileUpload');
 const { handleVersion } = require('./handleVersion');
-const { createAssetInDB } = require('./createAssetInDb')
-
-// -----------------------------------------------------------------------------
-// PRIVATE METHODS
-
-/**
- * Handle the subjects of the asset.
- * It creates a new entry in the assetsSubjects table for each subject associated with the asset.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {Array} params.subjects - An array of subjects associated with the asset. Each subject is an object that contains the subject's data.
- * @param {string} params.assetId - The unique identifier of the asset. This is used to link the subjects to the asset in the assetsSubjects table.
- * @param {Object} params.transacting - The transaction object. This is used to handle the database transaction for the creation of the asset's subjects.
- */
-async function handleSubjects({ subjects, assetId, transacting }) {
-  return Promise.all(
-    map(subjects, (item) =>
-      tables.assetsSubjects.create({ asset: assetId, ...item }, { transacting })
-    )
-  );
-}
-
-/**
- * Handles the permissions of the asset.
- * This function adds permissions to the asset and assigns these permissions to users.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {Array} params.permissions - An array of permissions to be added to the asset. Each permission is an object that contains the permission's data.
- * @param {Array} params.canAccess - An array of users who can access the asset. Each user is represented by an object that contains the user's data.
- * @param {Object} params.asset - The asset to which the permissions are to be added. This is an object that contains the asset's data.
- * @param {Object} params.category - The category to which the asset belongs. This is an object that contains the category's data.
- * @param {Object} params.userSession - The user session. This is an object that contains the user's session data.
- * @param {Object} params.transacting - The transaction object. This is used to handle the database transaction for the creation of the asset's permissions.
- */
-async function handlePermissions({
-  permissions,
-  canAccess,
-  asset,
-  category,
-  userSession,
-  transacting,
-}) {
-  const { services: userService } = leemons.getPlugin('users');
-  const permissionName = getAssetPermissionName(asset.id);
-
-  // ES: Primero, añadimos permisos al archivo
-  // EN: First, add permission to the asset
-  const permissionsPromises = [
-    userService.permissions.addItem(
-      asset.id,
-      leemons.plugin.prefixPN(category.id),
-      {
-        permissionName,
-        actionNames: leemons.plugin.config.constants.assetRoles,
-      },
-      { isCustomPermission: true, transacting }
-    ),
-  ];
-
-  if (permissions && permissions.length) {
-    forEach(permissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
-      let permission = 'can-view';
-      if (canEdit) {
-        permission = 'can-edit';
-      } else if (canAssign) {
-        permission = 'can-assign';
-      }
-      permissionsPromises.push(
-        userService.permissions.addItem(
-          asset.id,
-          leemons.plugin.prefixPN(`asset.${permission}`),
-          per,
-          { isCustomPermission, transacting }
-        )
-      );
-    });
-  }
-  await Promise.all(permissionsPromises);
-  // ES: Luego, añade los permisos a los usuarios
-  // EN: Then, add the permissions to the users
-  const permissionsToAdd = [];
-  let hasOwner = false;
-
-  if (canAccess && !isEmpty(canAccess)) {
-    for (let i = 0, len = canAccess.length; i < len; i++) {
-      const { userAgent, role } = canAccess[i];
-      hasOwner = hasOwner || role === 'owner';
-
-      permissionsToAdd.push(
-        userService.permissions.addCustomPermissionToUserAgent(
-          userAgent,
-          {
-            permissionName,
-            actionNames: [role],
-            target: category.id,
-          },
-          { transacting }
-        )
-      );
-    }
-  }
-
-  if (!hasOwner) {
-    permissionsToAdd.push(
-      userService.permissions.addCustomPermissionToUserAgent(
-        map(userSession.userAgents, 'id'),
-        {
-          permissionName,
-          actionNames: ['owner'],
-          target: category.id,
-        },
-        { transacting }
-      )
-    );
-  }
-
-  await Promise.all(permissionsToAdd);
-}
-
-/**
- * Handles the files of the asset.
- *
- * @async
- * @param {Object} params - The parameters object.
- * @param {string} params.newFile - The new file of the asset.
- * @param {string} params.assetId - The ID of the asset.
- * @param {Object} params.userSession - The user session.
- * @param {Object} params.transacting - The transaction object.
- */
-async function handleFiles({ newFile, assetId, userSession, transacting }) {
-  if (isString(newFile?.id)) {
-    try {
-      await addFiles(newFile.id, assetId, {
-        skipPermissions: true,
-        userSession,
-        transacting,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-}
-
-// -----------------------------------------------------------------------------
-// PUBLIC METHODS
+const { createAssetInDB } = require('./createAssetInDB');
+const { handleSubjects } = require('./handleSubjects');
+const { handlePermissions } = require('./handlePermissions');
+const { handleFiles } = require('./handleFiles');
 
 /**
  * This function is responsible for adding a new asset to the database.
@@ -170,18 +24,16 @@ async function handleFiles({ newFile, assetId, userSession, transacting }) {
  * @param {Object} options - Additional options for adding the asset.
  * @param {string} options.newId - The new ID for the asset. If not provided, a new ID will be generated.
  * @param {boolean} options.published - Whether the asset is published. Defaults to true.
- * @param {Object} options.userSession - The user session. This includes information about the user's session.
  * @param {Array} options.permissions - The permissions for the asset. Each permission is an object that contains the permission's data.
  * @param {Object} options.transacting - The transaction object. This is used to handle the database transaction for the creation of the asset.
  * @param {boolean} options.duplicating - Whether the asset is a duplicate. Defaults to false.
  * @returns {Promise<Object>} A promise that resolves with the added asset object.
  */
 async function add({
-  asset: { file, cover, category, canAccess, ...data },
+  assetData: { file, cover, category, canAccess, ...data },
   options: { newId, published = true, permissions, duplicating = false } = {},
   ctx,
 }) {
-  const { userSession } = ctx.meta;
   const pPermissions = normalizeItemsArray(permissions);
 
   // ··········································
@@ -207,8 +59,8 @@ async function add({
   // eslint-disable-next-line prefer-const
   let { categoryId, categoryKey, tags, subjects, ...assetData } = data;
 
-  if (userSession) {
-    assetData = handleUserSessionData({ assetData, userSession, ctx });
+  if (ctx.meta.userSession) {
+    assetData = handleUserSessionData({ assetData, ctx });
   }
 
   // ··········································
@@ -250,14 +102,14 @@ async function add({
     categoryId: category.id,
     coverId: coverFile?.id,
     assetData,
-    ctx
+    ctx,
   });
 
   // ··········································································
   // HANDLE SUBJECTS
 
   if (subjects && subjects.length) {
-    await handleSubjects({ subjects, assetId: newAsset.id, transacting });
+    await handleSubjects({ subjects, assetId: newAsset.id, ctx });
   }
 
   // ··········································································
@@ -268,8 +120,7 @@ async function add({
     canAccess,
     asset: newAsset,
     category,
-    userSession,
-    transacting,
+    ctx,
   });
 
   // ··········································································
@@ -278,7 +129,7 @@ async function add({
   // EN: Assign the file to the asset
   // ES: Asignar el archivo al asset
 
-  await handleFiles({ newFile, assetId: newAsset.id, userSession, transacting });
+  await handleFiles({ newFile, assetId: newAsset.id, ctx });
 
   // ··········································································
   // CREATE BOOKMARK

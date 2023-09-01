@@ -7,8 +7,10 @@
  * @param {MoleculerContext} params.ctx Moleculer context
  * @returns {Object} The handled asset data.
  */
-function handleUserSessionData({ assetData, userSession, ctx }) {
-  if (!Object.keys(userSession).length) ctx.logger.warn("Empty userSession passed to handleUserSessionData");
+function handleUserSessionData({ assetData, ctx }) {
+  const { userSession } = ctx.meta;
+  if (!Object.keys(userSession).length)
+    ctx.logger.warn('Empty userSession passed to handleUserSessionData');
   assetData.fromUser = userSession.id;
   assetData.fromUserAgent =
     userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;

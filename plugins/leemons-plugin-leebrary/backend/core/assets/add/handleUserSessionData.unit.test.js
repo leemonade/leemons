@@ -19,6 +19,7 @@ it('should correctly use userSession data to modify and return assetData', () =>
   };
 
   const ctx = generateCtx({});
+  ctx.meta.userSession = { ...mockedUserSession };
 
   const expectedResult = {
     name: simpleAssetData.name,
@@ -34,13 +35,12 @@ it('should correctly use userSession data to modify and return assetData', () =>
   // Act
   const result = handleUserSessionData({
     assetData: { ...simpleAssetData },
-    userSession: { ...mockedUserSession },
     ctx,
   });
 
+  ctx.meta.userSession.userAgents = null;
   const resultNoUserAgents = handleUserSessionData({
     assetData: { ...simpleAssetData },
-    userSession: { ...mockedUserSession, userAgents: null },
     ctx,
   });
 
@@ -59,24 +59,30 @@ it('should handle unexpected arguments without trhowing ', () => {
   };
 
   const ctx = generateCtx({});
+  ctx.meta.userSession = {};
   const spyLogger = spyOn(ctx.logger, 'warn');
 
   // Act
   const testFnWithWrongArgs = () =>
     handleUserSessionData({
       assetData: { ...simpleAssetData },
-      userSession: {},
-      ctx,
-    });
-  const testFnWithUnexpectedArgs = () =>
-    handleUserSessionData({
-      assetData: { ...simpleAssetData },
-      userSession: { ...mockedUserSession, userAgents: 'wrong value with length' },
       ctx,
     });
 
+  const responseWithUnexpectedArgs = (() => {
+    const modifiedCtx = {
+      ...ctx,
+      meta: { userSession: { ...mockedUserSession, userAgents: { id: 'wrong' } } },
+    };
+    const res = handleUserSessionData({
+      assetData: { ...simpleAssetData },
+      ctx: modifiedCtx,
+    });
+    return res;
+  })();
+
   // Assert
   expect(testFnWithWrongArgs).not.toThrow();
-  expect(testFnWithUnexpectedArgs).not.toThrow();
   expect(spyLogger).toBeCalledTimes(1);
+  expect(responseWithUnexpectedArgs.fromUserAgent).toBe(null)
 });

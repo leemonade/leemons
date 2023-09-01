@@ -11,11 +11,11 @@ jest.mock('got');
 const { handleBookmarkData } = require('./handleBookmarkData');
 const got = require('got');
 const metascraper = require('../../shared/metascraper');
-const getBookmarkData = require('../../../__fixtures__/getBookmarkData');
+const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
 
 it('Should process bookmark data and cover correctly, only when data.url is passed and data.icon is missing', async () => {
   // Arrange
-  const { dataInput, dataInputWithEmptyFields, cover } = getBookmarkData();
+  const { dataInput, dataInputWithEmptyFields, cover } = getAssetAddDataInput();
   const inputWithoutUrl = {
     data: { ...dataInput, url: undefined },
     cover: null,
@@ -71,7 +71,7 @@ it('Should process bookmark data and cover correctly, only when data.url is pass
 
 it('Logs an error message when an error is catched and handles unexpected values without throwing', async () => {
   // Arrange
-  const { dataInputWithEmptyFields, cover } = getBookmarkData();
+  const { dataInputWithEmptyFields, cover } = getAssetAddDataInput();
 
   const ctx = generateCtx({});
   const spyLogger = spyOn(ctx.logger, 'error');

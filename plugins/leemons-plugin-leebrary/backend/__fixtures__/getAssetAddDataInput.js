@@ -1,12 +1,18 @@
-module.exports = function getBookmarkData() {
+module.exports = function getAssetAddDataInput() {
   return {
-  dataInput: {
+    dataInput: {
       name: 'Tecnología de aprendizaje colaborativo para pedagogías activas',
-      description: 'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
+      description:
+        'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
       color: '#993333',
       url: 'https://www.leemons.io/',
       program: null,
-      subjects: null,
+      subjects: [
+        {
+          subject: 'db172925-237a-44a1-9dcf-4e4ceb7976cb',
+          level: 'beginner',
+        },
+      ],
       icon: 'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
       categoryId: '0d144de4-023d-49f6-a959-5f163dd47cbd',
       tags: ['Leemons'],
@@ -23,6 +29,9 @@ module.exports = function getBookmarkData() {
       tags: ['Leemons'],
       categoryKey: 'bookmarks',
     },
-    cover: 'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
+    cover:
+      'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
   };
-}
+};
+
+// TODO Paola, cambiar el nombre del archivo y función a getAssetAddDataInput

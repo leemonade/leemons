@@ -3,7 +3,7 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const _ = require('lodash');
 
-const { createAssetInDB } = require('./createAssetInDb');
+const { createAssetInDB } = require('./createAssetInDB')
 const { assetsSchema } = require('../../../models/assets');
 const getAssets = require('../../../__fixtures__/getAssets');
 
