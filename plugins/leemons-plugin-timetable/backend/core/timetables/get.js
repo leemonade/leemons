@@ -1,10 +1,6 @@
-const timeFiltersQuery = require('../../helpers/timetable/timeFiltersQuery');
-const { table } = require('../tables');
+const timeFiltersQuery = require('../helpers/timetable/timeFiltersQuery');
 
-module.exports = async function get(
-  classId,
-  { start, startBetween, end, endBetween, transacting } = {}
-) {
+module.exports = async function get({ classId, start, startBetween, end, endBetween, ctx }) {
   const query = {
     class: classId,
   };
@@ -16,14 +12,9 @@ module.exports = async function get(
     endBetween,
   });
 
-  const timetables = await table.timetable.find(
-    {
-      ...query,
-      ...startQuery,
-      ...endQuery,
-    },
-    { transacting }
-  );
-
-  return timetables;
+  return ctx.tx.db.Timetable.find({
+    ...query,
+    ...startQuery,
+    ...endQuery,
+  }).lean();
 };

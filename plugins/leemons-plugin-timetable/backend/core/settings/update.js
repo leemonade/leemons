@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const findOne = require('./findOne');
 
 /**
@@ -7,24 +6,19 @@ const findOne = require('./findOne');
  * @static
  * @return {Promise<any>}
  * */
-async function update(settings, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      let currentSettings = await findOne({ transacting });
-      if (_.isNil(currentSettings)) {
-        currentSettings = await table.settings.create(
-          { hideWelcome: false, configured: false },
-          { transacting }
-        );
-      }
-      const newSettings = { ...currentSettings, ...settings };
-      delete newSettings.id;
+async function update({ settings, ctx }) {
+  let currentSettings = await findOne({ ctx });
+  if (_.isNil(currentSettings)) {
+    currentSettings = await ctx.tx.db.Settings.create({ hideWelcome: false, configured: false });
+    currentSettings = currentSettings.toObject();
+  }
+  const newSettings = { ...currentSettings, ...settings };
+  delete newSettings.id;
 
-      return table.settings.update({ id: currentSettings.id }, newSettings, { transacting });
-    },
-    table.settings,
-    _transacting
-  );
+  return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
+    lean: true,
+    new: true,
+  });
 }
 
 module.exports = update;

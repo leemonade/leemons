@@ -50,6 +50,21 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          // -- Timetable (Finish) --
+          'POST timetable/config': 'v1.timetable.config.createRest',
+          'GET timetable/config': 'v1.timetable.config.getRest',
+          'GET timetable/config/has': 'v1.timetable.config.hasRest',
+          'PUT timetable/config': 'v1.timetable.config.updateRest',
+          'DELETE timetable/config': 'v1.timetable.config.deleteRest',
+          'POST timetable/timetable': 'v1.timetable.timetable.createRest',
+          'GET timetable/timetable/:id': 'v1.timetable.timetable.getRest',
+          'GET timetable/timetable/count/:id': 'v1.timetable.timetable.countRest',
+          'PUT timetable/timetable/:id': 'v1.timetable.timetable.updateRest',
+          'DELETE timetable/timetable/:id': 'v1.timetable.timetable.deleteRest',
+          'GET timetable/settings': 'v1.timetable.settings.findOneRest',
+          'POST timetable/settings': 'v1.timetable.settings.updateRest',
+          'POST timetable/settings/enable-menu-item': 'v1.timetable.settings.enableMenuItemRest',
+
           // -- Multilanguage (Finish) --
           'POST multilanguage/common': 'v1.multilanguage.common.getRest',
           'POST multilanguage/common/logged': 'v1.multilanguage.common.getLoggedRest',
