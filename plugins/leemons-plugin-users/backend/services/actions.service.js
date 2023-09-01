@@ -10,6 +10,8 @@ const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/actions.rest');
 const { add, exist, addMany } = require('../core/actions');
+const { createWriteStream } = require('fs');
+const { Readable } = require('stream');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -26,6 +28,14 @@ module.exports = {
 
   actions: {
     ...restActions,
+    test: {
+      async handler(ctx) {
+        console.log('estamos en users', ctx.params.image);
+        new Readable();
+        var writeStream = createWriteStream('./gatitos.png');
+        ctx.params.image.pipe(writeStream);
+      },
+    },
     add: {
       async handler(ctx) {
         return add({ ...ctx.params, ctx });

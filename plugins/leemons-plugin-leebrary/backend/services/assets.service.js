@@ -30,6 +30,11 @@ module.exports = {
         return { id: 'test' };
       },
     },
+    update: {
+      handler() {
+        return { id: 'test' };
+      },
+    },
     getByIds: {
       handler(ctx) {
         return getByIds({ ...ctx.params, ctx });

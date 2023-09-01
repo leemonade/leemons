@@ -99,7 +99,7 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         const item = await ctx.tx.call('menu-builder.menuItem.enable', {
-          key: ctx.params.key,
+          key: ctx.prefixPN(ctx.params.key),
         });
         return { status: 200, item };
       }

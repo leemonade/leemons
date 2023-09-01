@@ -12,66 +12,60 @@ async function listSubjects({ page, size, program, course }) {
 }
 
 async function createSubject(body) {
-  const form = new FormData();
+  let toSend = body;
   if ((body.image && !isString(body.image)) || (body.icon && !isString(body.icon))) {
     const { image, icon, ...data } = body;
     if (body.image) {
       if (body.image.id) {
         data.image = body.image.cover?.id;
       } else {
-        form.append('image', body.image, body.image.name);
+        alert('MIGRACION: image no puede ser un js File');
+        throw new Error('MIGRACION: image no puede ser un js File');
       }
     }
     if (body.icon) {
       if (body.icon.id) {
         data.icon = body.icon.cover?.id;
       } else {
-        form.append('icon', body.icon, body.icon.name);
+        alert('MIGRACION: icon no puede ser un js File');
+        throw new Error('MIGRACION: icon no puede ser un js File');
       }
     }
-    form.append('data', JSON.stringify(data));
-  } else {
-    form.append('data', JSON.stringify(body));
+    toSend = data;
   }
   return leemons.api('academic-portfolio/subject', {
     allAgents: true,
     method: 'POST',
-    headers: {
-      'content-type': 'none',
-    },
-    body: form,
+    body: toSend,
   });
 }
 
 async function updateSubject(body) {
-  const form = new FormData();
+  let toSend = body;
   if ((body.image && !isString(body.image)) || (body.icon && !isString(body.icon))) {
     const { image, icon, ...data } = body;
     if (body.image) {
       if (body.image.id) {
         data.image = body.image.cover?.id;
       } else {
-        form.append('image', body.image, body.image.name);
+        alert('MIGRACION: image no puede ser un js File');
+        throw new Error('MIGRACION: image no puede ser un js File');
       }
     }
     if (body.icon) {
       if (body.icon.id) {
         data.icon = body.icon.cover?.id;
       } else {
-        form.append('icon', body.icon, body.icon.name);
+        alert('MIGRACION: icon no puede ser un js File');
+        throw new Error('MIGRACION: icon no puede ser un js File');
       }
     }
-    form.append('data', JSON.stringify(data));
-  } else {
-    form.append('data', JSON.stringify(body));
+    toSend = data;
   }
   return leemons.api('academic-portfolio/subject', {
     allAgents: true,
     method: 'PUT',
-    headers: {
-      'content-type': 'none',
-    },
-    body: form,
+    body: toSend,
   });
 }
 

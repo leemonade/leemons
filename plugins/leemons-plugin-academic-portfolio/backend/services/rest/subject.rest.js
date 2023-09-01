@@ -47,11 +47,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
-      });
-      const subject = await addSubject({ data, ctx });
+      const subject = await addSubject({ data: ctx.params, ctx });
       return { status: 200, subject };
     },
   },
@@ -71,11 +67,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
-      });
-      const subject = await updateSubject({ data, ctx });
+      const subject = await updateSubject({ data: ctx.params, ctx });
       return { status: 200, subject };
     },
   },
