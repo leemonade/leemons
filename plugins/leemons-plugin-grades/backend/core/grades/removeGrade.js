@@ -1,38 +1,33 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { rulesInGrade } = require('../rules/rulesInGrade');
 const { removeGradeTagsByGrade } = require('../grade-tags/removeGradeTagsByGrade');
 const { removeGradeScaleByGrade } = require('../grade-scales/removeGradeScaleByGrade');
+const { LeemonsError } = require('leemons-error');
 
-async function removeGrade(id, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const nRulesInGrade = await rulesInGrade(id, { transacting });
-      if (nRulesInGrade)
-        throw new global.utils.HttpErrorWithCustomCode(400, 6001, 'Cannot remove grade with rules');
+async function removeGrade({ id, ctx }) {
+  const nRulesInGrade = await rulesInGrade({ grade: id, ctx });
+  if (nRulesInGrade)
+    throw new LeemonsError(ctx, {
+      message: 'Cannot remove grade with rules',
+      httpStatusCode: 400,
+      customCode: 6001,
+    });
 
-      const grades = await table.grades.find(
-        { id_$in: _.isArray(id) ? id : [id] },
-        { transacting }
-      );
-      const gradeIds = _.map(grades, 'id');
+  const grades = await ctx.tx.db.Grades.find({ id: _.isArray(id) ? id : [id] }).lean();
+  const gradeIds = _.map(grades, 'id');
 
-      await leemons.events.emit('before-remove-grades', { grades, transacting });
+  await ctx.tx.emit('before-remove-grades', { grades });
 
-      await table.grades.update({ id_$in: gradeIds }, { minScaleToPromote: null }, { transacting });
+  await ctx.tx.db.Grades.updateMany({ id: gradeIds }, { minScaleToPromote: null });
 
-      await removeGradeTagsByGrade(gradeIds, { transacting });
-      await removeGradeScaleByGrade(gradeIds, { transacting });
+  await removeGradeTagsByGrade({ grade: gradeIds, ctx });
+  await removeGradeScaleByGrade({ grade: gradeIds, ctx });
 
-      await table.grades.delete({ id_$in: gradeIds }, { transacting });
+  await ctx.tx.db.Grades.deleteMany({ id: gradeIds });
 
-      await leemons.events.emit('after-remove-grades', { grades, transacting });
+  await ctx.tx.emit('after-remove-grades', { grades });
 
-      return true;
-    },
-    table.grades,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { removeGrade };

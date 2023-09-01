@@ -1,11 +1,10 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getRuleConditionsByRuleIds } = require('./getRuleConditionsByRuleIds');
 
-async function ruleByIds(ids, { transacting } = {}) {
+async function ruleByIds({ ids, ctx }) {
   const [rules, ruleConditions] = await Promise.all([
-    table.rules.find({ id_$in: _.isArray(ids) ? ids : [ids] }, { transacting }),
-    getRuleConditionsByRuleIds(ids, { transacting }),
+    ctx.tx.db.Rules.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
+    getRuleConditionsByRuleIds({ ids, ctx }),
   ]);
 
   return _.map(rules, (rule) => ({

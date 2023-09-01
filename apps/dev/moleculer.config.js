@@ -30,7 +30,7 @@ module.exports = {
   // Namespace of nodes to segment your nodes on the same network.
   namespace: '',
   // Unique node identifier. Must be unique in a namespace.
-  nodeID: 'leemons-users',
+  nodeID: 'leemons',
   // Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
   metadata: {},
 

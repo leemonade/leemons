@@ -1,19 +1,17 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function removeGradeTagsByGrade(grade, { transacting } = {}) {
-  const gradeTags = await table.gradeTags.find(
-    { grade_$in: _.isArray(grade) ? grade : [grade] },
-    { transacting }
-  );
+async function removeGradeTagsByGrade({ grade, ctx }) {
+  const gradeTags = await ctx.tx.db.GradeTags.find({
+    grade: _.isArray(grade) ? grade : [grade],
+  }).lean();
 
   const gradeTagIds = _.map(gradeTags, 'id');
 
-  await leemons.events.emit('before-remove-grade-tags', { gradeTags, transacting });
+  await ctx.tx.emit('before-remove-grade-tags', { gradeTags });
 
-  await table.gradeTags.deleteMany({ id_$in: gradeTagIds }, { transacting });
+  await ctx.tx.db.GradeTags.deleteMany({ id: gradeTagIds });
 
-  await leemons.events.emit('after-remove-grade-tags', { gradeTags, transacting });
+  await ctx.tx.emit('after-remove-grade-tags', { gradeTags });
 
   return true;
 }

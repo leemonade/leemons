@@ -8,12 +8,11 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/assets.rest');
-const { getByIds } = require('../core/assets/getByIds');
+const restActions = require('./rest/dependency.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'leebrary.assets',
+  name: 'grades.dependency',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -25,27 +24,6 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    add: {
-      handler() {
-        return { id: 'test' };
-      },
-    },
-    update: {
-      handler() {
-        return { id: 'test' };
-      },
-    },
-    getByIds: {
-      handler(ctx) {
-        return getByIds({ ...ctx.params, ctx });
-      },
-    },
-    getCoverUrl: {
-      handler(ctx) {
-        // TODO: Esto deberia de hacerse en un paquete de leebrary para gastar menos recursos
-        return `/api/leebrary/img/${ctx.params.assetId}`;
-      },
-    },
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);

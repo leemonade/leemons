@@ -61,7 +61,7 @@ async function searchUserAgents({
       center: _.isArray(center) ? center : [center],
     })
       .select(['role'])
-      .feat();
+      .lean();
     centerRoles = _.map(centerRoles, 'role');
   }
 
@@ -90,6 +90,8 @@ async function searchUserAgents({
       fromUserAgent: _.map(userSession.userAgents, 'id'),
       ctx,
     });
+
+    console.log('userAgentContacts', userAgentContacts);
 
     finalQuery.id = userAgentContacts; // _.map(userAgentContacts, 'toUserAgent');
   }

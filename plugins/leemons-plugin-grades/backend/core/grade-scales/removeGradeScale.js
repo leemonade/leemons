@@ -1,33 +1,20 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const { conditionsInGradeScale } = require('../conditions/conditionsInGradeScale');
-const { gradeTagsInGradeScale } = require('../grade-tags/gradeTagsInGradeScale');
-const { gradesInGradeScale } = require('../grades/gradesInGradeScale');
 const { canRemoveGradeScale } = require('./canRemoveGradeScale');
 
-async function removeGradeScale(id, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const gradeScales = await table.gradeScales.find(
-        { id_$in: _.isArray(id) ? id : [id] },
-        { transacting }
-      );
+async function removeGradeScale({ id, ctx }) {
+  const gradeScales = await ctx.tx.db.GradeScales.find({ id: _.isArray(id) ? id : [id] }).lean();
 
-      const gradeScaleIds = _.map(gradeScales, 'id');
+  const gradeScaleIds = _.map(gradeScales, 'id');
 
-      await canRemoveGradeScale(gradeScaleIds, { transacting });
+  await canRemoveGradeScale({ id: gradeScaleIds, ctx });
 
-      await leemons.events.emit('before-remove-grade-scales', { gradeScales, transacting });
+  await ctx.tx.emit('before-remove-grade-scales', { gradeScales });
 
-      await table.gradeScales.delete({ id_$in: gradeScaleIds }, { transacting });
+  await ctx.tx.db.GradeScales.deleteMany({ id: gradeScaleIds });
 
-      await leemons.events.emit('after-remove-grade-scales', { gradeScales, transacting });
+  await ctx.tx.emit('after-remove-grade-scales', { gradeScales });
 
-      return true;
-    },
-    table.grades,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { removeGradeScale };
