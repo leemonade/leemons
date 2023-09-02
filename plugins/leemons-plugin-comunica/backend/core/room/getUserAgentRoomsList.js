@@ -1,26 +1,24 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getUserAgentRoomsList(userAgent, { transacting } = {}) {
-  const uair = await table.userAgentInRoom.find({ userAgent }, { transacting });
+async function getUserAgentRoomsList({ userAgent, ctx }) {
+  const uair = await ctx.tx.db.UserAgentInRoom.find({ userAgent }).lean();
   const roomKeys = _.map(uair, 'room');
   const [rooms, unreadMessages, userAgents] = await Promise.all([
-    table.room.find({ key_$in: roomKeys }, { transacting }),
-    table.roomMessagesUnRead.find(
-      {
-        room_$in: roomKeys,
-        userAgent,
-      },
-      { transacting }
-    ),
-    table.userAgentInRoom.find({ room_$in: roomKeys, deleted_$null: false }, { transacting }),
+    ctx.tx.db.Room.find({ key: roomKeys }).lean(),
+    ctx.tx.db.RoomMessagesUnRead.find({
+      room: roomKeys,
+      userAgent,
+    }).lean(),
+    ctx.tx.db.UserAgentInRoom.find({ room: roomKeys, deleted: { $ne: null } }).lean(),
   ]);
 
   const userAgentsByRoom = _.groupBy(userAgents, 'room');
 
-  const userAgen = await leemons
-    .getPlugin('users')
-    .services.users.getUserAgentsInfo(_.map(userAgents, 'userAgent'), { withProfile: true });
+  const userAgen = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds: _.map(userAgents, 'userAgent'),
+    withProfile: true,
+  });
+
   const userAgentsById = _.keyBy(userAgen, 'id');
 
   const result = [];

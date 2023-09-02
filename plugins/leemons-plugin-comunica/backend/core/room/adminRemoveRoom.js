@@ -7,7 +7,7 @@ const {
 const { remove } = require('./remove');
 const { LeemonsError } = require('leemons-error');
 
-async function adminRemoveRoom({ key, userAgents, userAgentAdmin, ctx }) {
+async function adminRemoveRoom({ key, userAgentAdmin, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistRoomKey({ key, ctx });
   await validateNotExistUserAgentInRoomKey({ key, userAgent: userAgentAdmin, ctx });
