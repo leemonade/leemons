@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
 
 async function update({

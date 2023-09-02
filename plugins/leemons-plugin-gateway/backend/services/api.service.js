@@ -50,6 +50,31 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          // -- Comunica (Finish) --
+          'GET comunica/config/general': 'v1.comunica.config.getGeneralConfigRest',
+          'GET comunica/config/center/:center': 'v1.comunica.config.getCenterConfigRest',
+          'GET comunica/config/program/:program': 'v1.comunica.config.getProgramConfigRest',
+          'GET comunica/config': 'v1.comunica.config.getRest',
+          'POST comunica/config': 'v1.comunica.config.saveRest',
+          'GET comunica/admin/config/:center': 'v1.comunica.config.getAdminConfigRest',
+          'POST comunica/admin/config/:center': 'v1.comunica.config.saveAdminConfigRest',
+          'GET comunica/room/list': 'v1.comunica.room.getRoomListRest',
+          'GET comunica/room/:key/messages': 'v1.comunica.room.getMessagesRest',
+          'POST comunica/room/:key/messages': 'v1.comunica.room.sendMessageRest',
+          'POST comunica/room/:key/messages/read': 'v1.comunica.room.markMessagesAsReadRest',
+          'GET comunica/room/:key': 'v1.comunica.room.getRoomRest',
+          'POST comunica/room/:key/mute': 'v1.comunica.room.toggleMutedRoomRest',
+          'POST comunica/room/:key/admin/mute': 'v1.comunica.room.toggleAdminMutedRoomRest',
+          'POST comunica/room/:key/admin/disable': 'v1.comunica.room.toggleAdminDisableRoomRest',
+          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/name': 'v1.comunica.room.adminUpdateRoomNameRest',
+          'POST comunica/room/:key/admin/users': 'v1.comunica.room.adminAddUsersToRoomRest',
+          'POST comunica/room/create': 'v1.comunica.room.createRoomRest',
+          'POST comunica/room/:key/admin/image': 'v1.comunica.room.adminChangeRoomImageRest',
+          'POST comunica/room/:key/attach': 'v1.comunica.room.toggleAttachedRoomRest',
+          'POST comunica/room/messages/unread': 'v1.comunica.room.getUnreadMessagesRest',
+          'POST comunica/room/messages/count': 'v1.comunica.room.getRoomsMessageCountRest',
+
           // -- Timetable (Finish) --
           'POST timetable/config': 'v1.timetable.config.createRest',
           'GET timetable/config': 'v1.timetable.config.getRest',
