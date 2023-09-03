@@ -355,10 +355,7 @@ module.exports = {
     ],
     async handler(ctx) {
       const data = await addStudentsToClassesUnderNodeTree({
-        program: ctx.params.program,
-        nodetype: ctx.params.nodeType,
-        nodeId: ctx.params.nodeId,
-        students: ctx.params.students,
+        ...ctx.params,
         ctx,
       });
       return { status: 200, data };

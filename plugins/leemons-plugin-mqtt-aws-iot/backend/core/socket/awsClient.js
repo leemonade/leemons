@@ -1,4 +1,5 @@
 const { createCredentials } = require('./createCredentials');
+const awsIotDeviceSdk = require('aws-iot-device-sdk');
 
 /* eslint-disable no-use-before-define */
 let client;
@@ -37,7 +38,7 @@ function waitAndResolveOrReject(resolve, reject) {
 
 function createClient(credentials) {
   // eslint-disable-next-line new-cap
-  return new global.utils.awsIotDeviceSdk.device(credentials);
+  return new awsIotDeviceSdk.device(credentials);
 }
 
 function clearClient() {

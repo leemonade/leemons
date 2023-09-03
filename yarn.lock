@@ -8649,7 +8649,7 @@ aws-iot-device-sdk-v2@^1.9.5:
 
 aws-iot-device-sdk@^2.2.12:
   version "2.2.12"
-  resolved "https://registry.npmjs.org/aws-iot-device-sdk/-/aws-iot-device-sdk-2.2.12.tgz"
+  resolved "https://registry.yarnpkg.com/aws-iot-device-sdk/-/aws-iot-device-sdk-2.2.12.tgz#94e66eb260c59a009690af805bcce14063e7d186"
   integrity sha512-OcUI6Hq1N3PhAMgceWV3nFhDNkOFmSYPuv1CCqZhQAcWQ7UOhPmA5QSE4aiQcVN3wSIzTEO0UU4sh6ubjMOjPA==
   dependencies:
     crypto-js "4.0.0"
@@ -8657,10 +8657,10 @@ aws-iot-device-sdk@^2.2.12:
     mqtt "4.2.8"
     websocket-stream "^5.5.2"
 
-aws-sdk@^2.1319.0:
-  version "2.1434.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1434.0.tgz"
-  integrity sha512-8Y4RsmmKe99mpk9nFDX9kdmXqpe089OiJcxwPzZ+rB/IErF96/yUQwY7Lboeh78r2bp59AMMMhsxIKgoOfwIzQ==
+aws-sdk@^2.1438.0:
+  version "2.1438.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1438.0.tgz"
+  integrity sha512-xessrWtoMD2icLPnm4KlTl3tiudJlYh3RtqBx+BggBc3ie9l98za1tSB4NunabTEbBUj4YMmzN1lpMsNEZ0NGw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -8673,10 +8673,10 @@ aws-sdk@^2.1319.0:
     uuid "8.0.0"
     xml2js "0.5.0"
 
-aws-sdk@^2.1438.0:
-  version "2.1438.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1438.0.tgz"
-  integrity sha512-xessrWtoMD2icLPnm4KlTl3tiudJlYh3RtqBx+BggBc3ie9l98za1tSB4NunabTEbBUj4YMmzN1lpMsNEZ0NGw==
+aws-sdk@^2.1450.0:
+  version "2.1450.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1450.0.tgz#d54a0bfc6d54391b3d39ff73c0398f435082c14c"
+  integrity sha512-EfZLImJ0XNuIdlx5McHX0rJbOiQHz+vEjnpGV08gXSzaq2cN3vSjE+L2Dju7KmaIh85FTYvLOf2REUuCLDpSRg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
