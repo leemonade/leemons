@@ -220,10 +220,10 @@ async function getCalendarsToFrontend({ ctx }) {
   const calendarFunc = (calendar) => ({
     ...calendar,
     isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
-    isUserCalendar: calendar.id === userCalendar.id,
-    image: calendar.id === userCalendar.id ? userSession.avatar : null,
+    isUserCalendar: calendar.id === userCalendar?.id,
+    image: calendar.id === userCalendar?.id ? userSession.avatar : null,
     metadata: calendar.metadata ? JSON.parse(calendar.metadata) : calendar.metadata,
-    fullName: calendar.id === userCalendar.id ? getUserFullName({ userSession }) : calendar.name,
+    fullName: calendar.id === userCalendar?.id ? getUserFullName({ userSession }) : calendar.name,
   });
 
   // ES: Resultados con todos los eventos y calendarios a los que tiene acceso el usuario
@@ -232,18 +232,18 @@ async function getCalendarsToFrontend({ ctx }) {
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met?.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
-        return id === userCalendar.id ? 0 : 1;
+        return id === userCalendar?.id ? 0 : 1;
       }
     }),
     configCalendars,
     calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met?.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
-        return id === userCalendar.id ? 0 : 1;
+        return id === userCalendar?.id ? 0 : 1;
       }
     }),
     events: _.uniqBy(

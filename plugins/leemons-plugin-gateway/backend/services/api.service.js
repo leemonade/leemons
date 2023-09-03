@@ -50,6 +50,32 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          'POST package-manager/info': 'deployment-manager.infoRest',
+          // -- Comunica (Finish) --
+          'POST calendar/calendar': 'v1.calendar.calendar.getCalendarRest',
+          'POST calendar/schedule': 'v1.calendar.calendar.getScheduleRest',
+          'GET calendar/event-types': 'v1.calendar.calendar.getEventTypesRest',
+          'POST calendar/add/event': 'v1.calendar.calendar.addEventRest',
+          'POST calendar/update/event': 'v1.calendar.calendar.updateEventRest',
+          'POST calendar/update/event-subtask': 'v1.calendar.calendar.updateEventSubTasksRest',
+          'POST calendar/remove/event': 'v1.calendar.calendar.removeEventRest',
+          'GET calendar/kanban/list/columns': 'v1.calendar.calendar.listKanbanColumnsRest',
+          'GET calendar/kanban/list/event/orders': 'v1.calendar.calendar.listKanbanEventOrdersRest',
+          'POST calendar/kanban/save/event/orders':
+            'v1.calendar.calendar.saveKanbanEventOrdersRest',
+          'POST calendar/configs/add': 'v1.calendar.calendar.addCalendarConfigRest',
+          'POST calendar/configs/update/:id': 'v1.calendar.calendar.updateCalendarConfigRest',
+          'GET calendar/configs/list': 'v1.calendar.calendar.listCalendarConfigRest',
+          'GET calendar/configs/detail/:id': 'v1.calendar.calendar.detailCalendarConfigRest',
+          'DELETE calendar/configs/remove/:id': 'v1.calendar.calendar.removeCalendarConfigRest',
+          'GET calendar/configs/centers-with-out-assign':
+            'v1.calendar.calendar.getCentersWithOutAssignRest',
+          'GET calendar/configs/calendars/:id':
+            'v1.calendar.calendar.getCalendarConfigCalendarsRest',
+          'POST calendar/configs/event/add': 'v1.calendar.calendar.addConfigEventRest',
+          'POST calendar/configs/event/update': 'v1.calendar.calendar.updateConfigEventRest',
+          'POST calendar/configs/event/remove': 'v1.calendar.calendar.removeConfigEventRest',
+
           // -- Comunica (Finish) --
           'GET comunica/config/general': 'v1.comunica.config.getGeneralConfigRest',
           'GET comunica/config/center/:center': 'v1.comunica.config.getCenterConfigRest',

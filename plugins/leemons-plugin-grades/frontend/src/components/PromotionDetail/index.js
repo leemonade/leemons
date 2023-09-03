@@ -9,6 +9,7 @@ import { Name } from './components/Name';
 import { Program } from './components/Program';
 import { Conditions } from './components/Conditions';
 import { Subject } from './components/Subject';
+import { Grades } from './components/Grades';
 
 export const PROMOTION_DETAIL_FORM_MESSAGES = {
   nameLabel: 'Promotion name',
@@ -99,7 +100,7 @@ const PromotionDetail = ({
                 form={form}
               />
             </Col>
-            {/*
+
             <Col span={50}>
               <Grades
                 messages={messages}
@@ -108,7 +109,6 @@ const PromotionDetail = ({
                 form={form}
               />
             </Col>
-            */}
           </Grid>
         </Box>
 

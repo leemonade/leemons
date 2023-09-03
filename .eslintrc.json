@@ -73,6 +73,7 @@
           "@mqtt-socket-io",
           "@multilanguage",
           "@onboarding",
+          "@package-manager",
           "@scores",
           "@scorm",
           "@tasks",

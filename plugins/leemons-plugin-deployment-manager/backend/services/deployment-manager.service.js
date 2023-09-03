@@ -21,6 +21,7 @@ const {
 const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe');
 const { emit } = require('../core/events/emit');
 const { isInstalled } = require('../core/deployment-plugins/isInstalled');
+const restActions = require('./rest/deployment-manager.rest');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -38,6 +39,7 @@ module.exports = () => ({
   ],
 
   actions: {
+    ...restActions,
     pluginIsInstalled: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
