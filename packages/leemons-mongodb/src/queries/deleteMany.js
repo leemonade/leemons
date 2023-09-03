@@ -18,7 +18,15 @@ function deleteMany({
 }) {
   return async function (_conditions = {}, options = {}) {
     if (options?.soft) {
-      return updateMany(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
+      return updateMany({
+        model,
+        modelKey,
+        autoDeploymentID,
+        autoTransaction,
+        autoRollback,
+        ignoreTransaction,
+        ctx,
+      })(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
     }
     await createTransactionIDIfNeed({
       ignoreTransaction,

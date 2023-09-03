@@ -29,31 +29,29 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
   }
 
   return (
-    <Box>
-      <RuleGroup
-        program={{ value: program }}
-        gradeSystem={program} // Antes se pasaba grade pero como ya no hay que seleccionarlo le paso programa para que la logica interna siga funcionando igual
-        grades={selectData.gradeScales || []}
-        sources={selectData.sources || []}
-        courses={selectData.courses || []}
-        knowledges={selectData.knowledges || []}
-        subjects={selectData.subjects || []}
-        subjectTypes={selectData.subjectTypes || []}
-        subjectGroups={selectData.groups || []}
-        dataTypes={selectData.dataTypes || []}
-        operators={selectData.operators || []}
-        group={group}
-        data={group}
-        setData={onChange}
-        edited={edited}
-        setEdited={setEdited}
-        error={error}
-        setError={setError}
-        errorMessage={errorMessages.conditionErrorMessage}
-        labels={messages.conditions.labels}
-        placeholders={messages.conditions.placeholders}
-      />
-    </Box>
+    <RuleGroup
+      program={{ value: program }}
+      gradeSystem={program} // Antes se pasaba grade pero como ya no hay que seleccionarlo le paso programa para que la logica interna siga funcionando igual
+      grades={selectData.gradeScales || []}
+      sources={selectData.sources || []}
+      courses={selectData.courses || []}
+      knowledges={selectData.knowledges || []}
+      subjects={selectData.subjects || []}
+      subjectTypes={selectData.subjectTypes || []}
+      subjectGroups={selectData.groups || []}
+      dataTypes={selectData.dataTypes || []}
+      operators={selectData.operators || []}
+      group={group}
+      data={group}
+      setData={onChange}
+      edited={edited}
+      setEdited={setEdited}
+      error={error}
+      setError={setError}
+      errorMessage={errorMessages.conditionErrorMessage}
+      labels={messages.conditions.labels}
+      placeholders={messages.conditions.placeholders}
+    />
   );
 };
 

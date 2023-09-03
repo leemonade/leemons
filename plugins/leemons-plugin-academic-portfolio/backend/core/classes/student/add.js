@@ -60,7 +60,7 @@ async function add({ class: _class, student, ctx }) {
   }
 
   if (!program.hideStudentsToStudents) {
-    addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
+    await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
   }
   await ctx.tx.emit('after-add-class-student', { class: _class, student });
   return classStudent;

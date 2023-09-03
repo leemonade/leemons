@@ -24,11 +24,15 @@ async function updateProgram({ data, ctx }) {
     published: true,
   });
 
-  program = await ctx.tx.db.Programs.update(
+  program = await ctx.tx.db.Programs.findOneAndUpdate(
     { id: program.id },
     {
       image: assetImage.id,
       imageUrl: await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assetImage.id }),
+    },
+    {
+      new: true,
+      lean: true,
     }
   );
 

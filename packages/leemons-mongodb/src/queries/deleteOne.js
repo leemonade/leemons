@@ -18,7 +18,15 @@ function deleteOne({
 }) {
   return async function (_conditions = {}, options = {}) {
     if (options?.soft) {
-      return updateOne(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
+      return updateOne({
+        model,
+        modelKey,
+        autoDeploymentID,
+        autoTransaction,
+        autoRollback,
+        ignoreTransaction,
+        ctx,
+      })(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
     }
     await createTransactionIDIfNeed({
       ignoreTransaction,

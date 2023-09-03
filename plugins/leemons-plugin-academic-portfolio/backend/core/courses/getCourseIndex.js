@@ -1,6 +1,5 @@
 async function getCourseIndex({ course, ctx }) {
-  const { index } = await ctx.tx.db.Table.groups
-    .findOne({ id: course, type: 'course' })
+  const { index } = await ctx.tx.db.Groups.findOne({ id: course, type: 'course' })
     .select(['id', 'index'])
     .lean();
   return index;
