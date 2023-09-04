@@ -8,7 +8,11 @@
   "globals": {
     "leemons": true
   },
-  "extends": ["plugin:react/recommended", "airbnb-base", "prettier"],
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb-base",
+    "prettier"
+  ],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
@@ -17,7 +21,11 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react", "import", "prettier"],
+  "plugins": [
+    "react",
+    "import",
+    "prettier"
+  ],
   "rules": {
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
