@@ -88,9 +88,13 @@ it('Should correctly add a new bookmark', async () => {
     assetData: { ...bookMarkDataInput, cover, categoryKey: undefined },
     ctx,
   });
-  // console.log('bookmarkResponse', bookmarkResponse);
 
   // Assert
+  expect(validateAddAsset).toBeCalledWith({
+    ...bookMarkDataInput,
+    category: undefined,
+    categoryKey: 'media-files',
+  });
   expect(handleUserSessionData).toBeCalledWith({
     assetData: {
       name: bookMarkDataInput.name,
@@ -161,8 +165,42 @@ it('Should correctly add a new bookmark', async () => {
     tags: bookMarkDataInput.tags,
     values: assetAfterDB.id,
   });
-  expect(bookmarkResponse).toEqual(newBookmarkExpectedResponse)
+  expect(bookmarkResponse).toEqual(newBookmarkExpectedResponse);
 });
 
-// ! se rompe: si no puede destructurar handleBookmarkData response
-// ! se rompe: si no puede destructurar handleFileUpload response
+it('Should handle bookmark data correctly', async () => {
+  // Arrange
+  const dataInput = {
+    ...bookMarkDataInput,
+    categoryKey: 'bookmarks',
+  };
+  const setTagsToValuesMock = fn();
+
+  const ctx = generateCtx({
+    actions: {
+      'common.tags.setTagsToValues': setTagsToValuesMock,
+    },
+    caller: 'leebrary',
+  });
+  ctx.meta.userSession = { ...userSession };
+
+  // Act
+  const response = async () =>
+    add({
+      assetData: { ...dataInput, cover },
+      ctx,
+    });
+
+  try {
+    await response();
+  } catch (error) {
+    // null
+  }
+
+  // Assert
+  expect(handleBookmarkData).toBeCalledWith({
+    data: { ...dataInput, category: undefined },
+    cover,
+    ctx,
+  });
+});

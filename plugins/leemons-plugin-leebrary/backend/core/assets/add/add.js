@@ -15,6 +15,18 @@ const { handleSubjects } = require('./handleSubjects');
 const { handlePermissions } = require('./handlePermissions');
 const { handleFiles } = require('./handleFiles');
 
+/*
+* permissions example
+* [
+    {
+      canEdit: true,
+      isCustomPermission: true,
+      permissionName: 'calendar.calendar.idcalendario',
+      actionNames: ['view', 'delete', 'admin', 'owner'],
+    },
+  ]
+* */
+
 /**
  * This function is responsible for adding a new asset to the database.
  * The function handles the entire process of asset creation including file upload, version handling, permission assignment, and more.
@@ -80,7 +92,6 @@ async function add({
     assetName: assetData.name,
     ctx,
   });
-
 
   const promises = [];
 

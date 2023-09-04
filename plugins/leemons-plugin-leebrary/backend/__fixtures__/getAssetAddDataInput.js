@@ -32,8 +32,6 @@ module.exports = function getAssetAddDataInput() {
         deleted: 0,
       },
       categoryId: "lrn:segment1:segment2:segment3:segment4:segment5:segment6", // TODO Paola@categoryId Realmente llega del frontend como uuid, o llegará así?
-      // categoryKey: 'bookmarks',
-      // files: undefined
       tags: ['Leemons'],
     },
     dataInputWithEmptyFields: {

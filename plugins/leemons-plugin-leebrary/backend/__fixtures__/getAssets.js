@@ -123,7 +123,7 @@ module.exports = function getAssets() {
     updated_at: '2023-08-29T10:44:12.000Z', //db property
     created_at: '2023-08-29T10:44:12.000Z', //db property
     deleted: 0, // db property
-    deleted_at: null, // db property}
+    deleted_at: null, // db property
     subjects: [
       {
         subject: 'db172925-237a-44a1-9dcf-4e4ceb7976cb',
