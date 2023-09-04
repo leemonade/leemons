@@ -50,6 +50,57 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          'POST package-manager/info': 'deployment-manager.infoRest',
+          // -- Comunica (Finish) --
+          'POST calendar/calendar': 'v1.calendar.calendar.getCalendarRest',
+          'POST calendar/schedule': 'v1.calendar.calendar.getScheduleRest',
+          'GET calendar/event-types': 'v1.calendar.calendar.getEventTypesRest',
+          'POST calendar/add/event': 'v1.calendar.calendar.addEventRest',
+          'POST calendar/update/event': 'v1.calendar.calendar.updateEventRest',
+          'POST calendar/update/event-subtask': 'v1.calendar.calendar.updateEventSubTasksRest',
+          'POST calendar/remove/event': 'v1.calendar.calendar.removeEventRest',
+          'GET calendar/kanban/list/columns': 'v1.calendar.calendar.listKanbanColumnsRest',
+          'GET calendar/kanban/list/event/orders': 'v1.calendar.calendar.listKanbanEventOrdersRest',
+          'POST calendar/kanban/save/event/orders':
+            'v1.calendar.calendar.saveKanbanEventOrdersRest',
+          'POST calendar/configs/add': 'v1.calendar.calendar.addCalendarConfigRest',
+          'POST calendar/configs/update/:id': 'v1.calendar.calendar.updateCalendarConfigRest',
+          'GET calendar/configs/list': 'v1.calendar.calendar.listCalendarConfigRest',
+          'GET calendar/configs/detail/:id': 'v1.calendar.calendar.detailCalendarConfigRest',
+          'DELETE calendar/configs/remove/:id': 'v1.calendar.calendar.removeCalendarConfigRest',
+          'GET calendar/configs/centers-with-out-assign':
+            'v1.calendar.calendar.getCentersWithOutAssignRest',
+          'GET calendar/configs/calendars/:id':
+            'v1.calendar.calendar.getCalendarConfigCalendarsRest',
+          'POST calendar/configs/event/add': 'v1.calendar.calendar.addConfigEventRest',
+          'POST calendar/configs/event/update': 'v1.calendar.calendar.updateConfigEventRest',
+          'POST calendar/configs/event/remove': 'v1.calendar.calendar.removeConfigEventRest',
+
+          // -- Comunica (Finish) --
+          'GET comunica/config/general': 'v1.comunica.config.getGeneralConfigRest',
+          'GET comunica/config/center/:center': 'v1.comunica.config.getCenterConfigRest',
+          'GET comunica/config/program/:program': 'v1.comunica.config.getProgramConfigRest',
+          'GET comunica/config': 'v1.comunica.config.getRest',
+          'POST comunica/config': 'v1.comunica.config.saveRest',
+          'GET comunica/admin/config/:center': 'v1.comunica.config.getAdminConfigRest',
+          'POST comunica/admin/config/:center': 'v1.comunica.config.saveAdminConfigRest',
+          'GET comunica/room/list': 'v1.comunica.room.getRoomListRest',
+          'GET comunica/room/:key/messages': 'v1.comunica.room.getMessagesRest',
+          'POST comunica/room/:key/messages': 'v1.comunica.room.sendMessageRest',
+          'POST comunica/room/:key/messages/read': 'v1.comunica.room.markMessagesAsReadRest',
+          'GET comunica/room/:key': 'v1.comunica.room.getRoomRest',
+          'POST comunica/room/:key/mute': 'v1.comunica.room.toggleMutedRoomRest',
+          'POST comunica/room/:key/admin/mute': 'v1.comunica.room.toggleAdminMutedRoomRest',
+          'POST comunica/room/:key/admin/disable': 'v1.comunica.room.toggleAdminDisableRoomRest',
+          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/name': 'v1.comunica.room.adminUpdateRoomNameRest',
+          'POST comunica/room/:key/admin/users': 'v1.comunica.room.adminAddUsersToRoomRest',
+          'POST comunica/room/create': 'v1.comunica.room.createRoomRest',
+          'POST comunica/room/:key/admin/image': 'v1.comunica.room.adminChangeRoomImageRest',
+          'POST comunica/room/:key/attach': 'v1.comunica.room.toggleAttachedRoomRest',
+          'POST comunica/room/messages/unread': 'v1.comunica.room.getUnreadMessagesRest',
+          'POST comunica/room/messages/count': 'v1.comunica.room.getRoomsMessageCountRest',
+
           // -- Timetable (Finish) --
           'POST timetable/config': 'v1.timetable.config.createRest',
           'GET timetable/config': 'v1.timetable.config.getRest',

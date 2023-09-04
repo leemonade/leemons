@@ -86,11 +86,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
-      });
-      const _class = await updateClass({ data, ctx });
+      const _class = await updateClass({ data: ctx.params, ctx });
       return { status: 200, class: _class };
     },
   },

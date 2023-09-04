@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import {
   DATASET_ITEM_DRAWER_DEFAULT_PROPS,
   DatasetItemDrawer as DatasetItemDrawerBubbles,
-} from '@dataset/components/DatasetItemDrawer';
+} from '@bubbles-ui/leemons';
 import formWithTheme from '@common/formWithTheme';
 import prefixPN from '../helpers/prefixPN';
 import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';

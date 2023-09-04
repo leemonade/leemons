@@ -1,18 +1,14 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { validateKeyPrefix } = require('../../validations/exists');
-const { table } = require('../tables');
 
-async function getUnreadMessages(keys, userAgent, { transacting } = {}) {
-  validateKeyPrefix(keys, this.calledFrom);
+async function getUnreadMessages({ keys, userAgent, ctx }) {
+  validateKeyPrefix({ key: keys, calledFrom: ctx.callerPlugin, ctx });
 
-  const messages = await table.roomMessagesUnRead.find(
-    {
-      room_$in: _.isArray(keys) ? keys : [keys],
-      userAgent,
-    },
-    { transacting }
-  );
+  const messages = await ctx.tx.db.RoomMessagesUnRead.find({
+    room: _.isArray(keys) ? keys : [keys],
+    userAgent,
+  });
 
   let count = 0;
 

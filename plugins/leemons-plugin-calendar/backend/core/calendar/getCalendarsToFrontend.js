@@ -66,18 +66,22 @@ async function getCalendarsToFrontend({ ctx }) {
 
   // ES: Calendarios/Eventos a los que tiene acceso de lectura
   // EN: Calendars/Events with view access
+  const params1 = {
+    $or: queryPermissions,
+    type: [permissionConfigCalendar.type, permissionConfigEvent.type],
+  };
+  const params2 = {
+    $or: ownerPermissions,
+    type: [permissionConfigCalendar.type],
+  };
+  if (!params1.$or.length) delete params1.$or;
+  if (!params2.$or.length) delete params2.$or;
   let promises = [
     ctx.tx.call('users.permissions.findItems', {
-      params: {
-        $or: queryPermissions,
-        type: [permissionConfigCalendar.type, permissionConfigEvent.type],
-      },
+      params: params1,
     }),
     ctx.tx.call('users.permissions.findItems', {
-      params: {
-        $or: ownerPermissions,
-        type: [permissionConfigCalendar.type],
-      },
+      params: params2,
     }),
   ];
   promises.push(
@@ -88,6 +92,7 @@ async function getCalendarsToFrontend({ ctx }) {
     })
   );
 
+  console.log('Hola 1', queryPermissions, ownerPermissions);
   if (center) promises.push(getByCenterId({ center: center.id, ctx }));
   const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
@@ -220,10 +225,10 @@ async function getCalendarsToFrontend({ ctx }) {
   const calendarFunc = (calendar) => ({
     ...calendar,
     isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
-    isUserCalendar: calendar.id === userCalendar.id,
-    image: calendar.id === userCalendar.id ? userSession.avatar : null,
+    isUserCalendar: calendar.id === userCalendar?.id,
+    image: calendar.id === userCalendar?.id ? userSession.avatar : null,
     metadata: calendar.metadata ? JSON.parse(calendar.metadata) : calendar.metadata,
-    fullName: calendar.id === userCalendar.id ? getUserFullName({ userSession }) : calendar.name,
+    fullName: calendar.id === userCalendar?.id ? getUserFullName({ userSession }) : calendar.name,
   });
 
   // ES: Resultados con todos los eventos y calendarios a los que tiene acceso el usuario
@@ -232,18 +237,18 @@ async function getCalendarsToFrontend({ ctx }) {
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met?.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
-        return id === userCalendar.id ? 0 : 1;
+        return id === userCalendar?.id ? 0 : 1;
       }
     }),
     configCalendars,
     calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met?.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
-        return id === userCalendar.id ? 0 : 1;
+        return id === userCalendar?.id ? 0 : 1;
       }
     }),
     events: _.uniqBy(

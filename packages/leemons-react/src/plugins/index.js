@@ -7,8 +7,8 @@ module.exports = async function getPlugins({ app }) {
   const paths = await checkPaths({ plugin: plugins });
 
   const forceOrder = {
-    common: 0,
-    layout: 1,
+    'common-frontend-react': 0,
+    'layout-frontend-react': 1,
   };
 
   return paths.sort((pluginA, pluginB) => {

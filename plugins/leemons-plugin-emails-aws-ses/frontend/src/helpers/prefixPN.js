@@ -11,5 +11,5 @@
  * @return {string} str with plugin name prefix
  * */
 export default function prefixPN(str) {
-  return `providers.emails-aws-ses.${str}`;
+  return `emails-aws-ses.${str}`;
 }

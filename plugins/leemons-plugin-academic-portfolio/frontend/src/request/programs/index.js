@@ -36,7 +36,8 @@ async function getUserPrograms() {
   });
 }
 
-async function createProgram(body) {
+async function createProgram(_body) {
+  const body = _.cloneDeep(_body);
   if (body.image && !isString(body.image)) {
     if (body.image) {
       if (body.image.id) {
@@ -56,28 +57,25 @@ async function createProgram(body) {
   });
 }
 
-async function updateProgram(body) {
-  const form = new FormData();
+async function updateProgram(_body) {
+  const body = _.cloneDeep(_body);
   if (body.image && !isString(body.image)) {
     const { image, ...data } = body;
     if (body.image) {
       if (body.image.id) {
-        data.image = body.image.cover?.id;
+        body.image = body.image.cover?.id;
       } else {
-        form.append('image', body.image, body.image.name);
+        alert('MIGRACION: Se tiene que pasar un file en el campo image o la id del cover');
+        throw new Error(
+          'MIGRACION: Se tiene que pasar un file en el campo image o la id del cover'
+        );
       }
     }
-    form.append('data', JSON.stringify(data));
-  } else {
-    form.append('data', JSON.stringify(body));
   }
   return leemons.api('academic-portfolio/program', {
     allAgents: true,
     method: 'PUT',
-    headers: {
-      'content-type': 'none',
-    },
-    body: form,
+    body,
   });
 }
 

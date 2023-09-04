@@ -1,16 +1,14 @@
-const { table } = require('../tables');
-
-async function saveCenter(center, config, { transacting } = {}) {
-  await table.config.set(
+async function saveCenter({ center, config, ctx }) {
+  await ctx.tx.db.Config.updateOne(
     { type: 'center', typeId: center },
     {
       type: 'center',
       typeId: center,
       config: JSON.stringify(config),
     },
-    { transacting }
+    { upsert: true }
   );
-  leemons.socket.emitToAll(`COMUNICA:CONFIG:CENTER`, { center, config });
+  ctx.socket.emitToAll(`COMUNICA:CONFIG:CENTER`, { center, config });
 
   return config;
 }

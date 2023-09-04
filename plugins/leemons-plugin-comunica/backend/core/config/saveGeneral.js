@@ -1,16 +1,15 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function saveGeneral(config, { transacting } = {}) {
-  await table.config.set(
+async function saveGeneral({ config, ctx }) {
+  await ctx.tx.db.Config.updateOne(
     { type: 'general' },
     {
       type: 'general',
       config: JSON.stringify(config),
     },
-    { transacting }
+    { upsert: true }
   );
-  leemons.socket.emitToAll(`COMUNICA:CONFIG:GENERAL`, config);
+  ctx.socket.emitToAll(`COMUNICA:CONFIG:GENERAL`, config);
 
   return config;
 }
