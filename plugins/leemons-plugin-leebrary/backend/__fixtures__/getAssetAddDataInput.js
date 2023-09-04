@@ -15,11 +15,8 @@ module.exports = function getAssetAddDataInput() {
         },
       ],
       icon: 'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
-      categoryId: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
-      tags: ['Leemons'],
-      categoryKey: 'bookmarks',
       category: {
-        id: "lrn:segment1:segment2:segment3:segment4:segment5:segment6",
+        id: "lrn:segment1:segment2:segment3:segment4:segment5:segment6", // TODO Paola@categoryId Realmente llega del frontend como uuid, o llegará así?
         key: 'bookmarks',
         pluginOwner: 'leebrary',
         creatable: 1,
@@ -34,6 +31,10 @@ module.exports = function getAssetAddDataInput() {
         order: 2,
         deleted: 0,
       },
+      categoryId: "lrn:segment1:segment2:segment3:segment4:segment5:segment6", // TODO Paola@categoryId Realmente llega del frontend como uuid, o llegará así?
+      // categoryKey: 'bookmarks',
+      // files: undefined
+      tags: ['Leemons'],
     },
     dataInputWithEmptyFields: {
       name: null,

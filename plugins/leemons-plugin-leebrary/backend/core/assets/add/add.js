@@ -10,7 +10,7 @@ const { handleCategoryData } = require('./handleCategoryData');
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
 const { handleFileUpload } = require('./handleFileUpload');
 const { handleVersion } = require('./handleVersion');
-const { createAssetInDB } = require('./createAssetInDB');
+const { createAssetInDB } = require('./createAssetInDb');
 const { handleSubjects } = require('./handleSubjects');
 const { handlePermissions } = require('./handlePermissions');
 const { handleFiles } = require('./handleFiles');
@@ -71,7 +71,6 @@ async function add({
 
   // ··········································································
   // UPLOAD FILE
-  console.log('antes de handleFileUpload');
 
   // EN: Upload the file to the provider
   // ES: Subir el archivo al proveedor
@@ -81,7 +80,7 @@ async function add({
     assetName: assetData.name,
     ctx,
   });
-  console.log('después de handleFileUpload');
+
 
   const promises = [];
 
