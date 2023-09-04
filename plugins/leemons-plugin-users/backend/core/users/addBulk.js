@@ -41,6 +41,7 @@ async function addUserBulk({
     user = await ctx.tx.db.Users.findOne({ email: userData.email }).lean();
   }
   let isNewUser = false;
+  console.log('user', user);
   if (!user) {
     user = await ctx.tx.db.Users.create({
       ...userData,
@@ -62,11 +63,18 @@ async function addUserBulk({
   }
   if (dataset) await setUserDatasetInfo({ userId: user.id, value: dataset, ctx });
 
-  let userAgent = await ctx.tx.db.UserAgent.findOne({
-    deleted: { $ne: null },
+  let userAgent = await ctx.tx.db.UserAgent.findOne(
+    {
+      user: user.id,
+      role,
+    },
+    undefined,
+    { excludeDeleted: false }
+  ).lean();
+  console.log('userAgent', userAgent, {
     user: user.id,
     role,
-  }).lean();
+  });
   if (!userAgent) {
     await checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx });
     userAgent = await ctx.tx.db.UserAgent.create({
@@ -80,16 +88,15 @@ async function addUserBulk({
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser({ user, profile, ctx });
     }
-  } else if (userAgent.deleted) {
+  } else if (userAgent.isDeleted) {
     userAgent = await ctx.tx.db.UserAgent.findOneAndUpdate(
       {
-        deleted: { $ne: null },
         role,
         user: user.id,
       },
       {
-        deleted: false,
-        deleted_at: null,
+        isDeleted: false,
+        deletedAt: null,
       },
       { new: true, lean: true }
     );
@@ -111,6 +118,7 @@ async function addUserBulk({
   const calendarPluginExists = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
     pluginName: 'calendar',
   });
+
   if (calendarPluginExists) {
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }

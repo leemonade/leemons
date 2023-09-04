@@ -23,7 +23,7 @@ async function getMessages({ key, userAgent, ctx }) {
     if (!hasPermission) throw error;
   }
   const [userAgentsInRoom, messages] = await Promise.all([
-    ctx.tx.db.UserAgentInRoom.find({ room: key, deleted: { $ne: null } }).lean(),
+    ctx.tx.db.UserAgentInRoom.find({ room: key }, undefined, { excludeDeleted: false }).lean(),
     ctx.tx.db.Message.find({ room: key }).sort({ createdAt: 1 }).lean(),
   ]);
 

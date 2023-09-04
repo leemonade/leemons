@@ -179,8 +179,6 @@ function Calendar({ session }) {
         map(store.centers, (center) => getCalendarsForCenter(center))
       );
 
-      console.log('centersData', centersData);
-
       store.academicCalendarInstalled = await PackageManagerService.isPluginInstalled(
         'leemons-plugin-academic-calendar'
       );
@@ -443,6 +441,7 @@ function Calendar({ session }) {
               store.centersDataById[store.center.id].data.calendars = flatten(
                 map(event, 'calendars')
               );
+
               store.centersDataById[store.center.id].events = getFilteredEvents(
                 store.centersDataById[store.center.id].data
               );

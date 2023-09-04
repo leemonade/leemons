@@ -28,8 +28,6 @@ async function grantAccessUserAgentToCalendar({ key, userAgentId, actionName, ct
     },
   });
 
-  console.log('warnings', warnings);
-
   if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
   return true;
 }

@@ -99,6 +99,7 @@ const updateEventSchema = {
 };
 
 function validateUpdateEvent(data) {
+  console.log('data', data);
   const validator = new LeemonsValidator(updateEventSchema);
 
   if (!validator.validate(data)) {

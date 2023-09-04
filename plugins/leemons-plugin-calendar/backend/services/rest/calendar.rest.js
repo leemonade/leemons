@@ -93,8 +93,22 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { calendarName, userAgents, owners, image, disableDrag, ...body } = ctx.params;
-      const event = await updateFromUser({ ...body, ctx });
+      const {
+        calendarName,
+        userAgents,
+        owners,
+        image,
+        disableDrag,
+        isDeleted,
+        createdAt,
+        updatedAt,
+        deploymentID,
+        deletedAt,
+        _id,
+        __v,
+        ...body
+      } = ctx.params.event;
+      const event = await updateFromUser({ id: ctx.params.id, data: body, ctx });
       return { status: 200, event };
     },
   },

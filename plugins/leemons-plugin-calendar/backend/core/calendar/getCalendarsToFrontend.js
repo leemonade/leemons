@@ -92,7 +92,6 @@ async function getCalendarsToFrontend({ ctx }) {
     })
   );
 
-  console.log('Hola 1', queryPermissions, ownerPermissions);
   if (center) promises.push(getByCenterId({ center: center.id, ctx }));
   const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
