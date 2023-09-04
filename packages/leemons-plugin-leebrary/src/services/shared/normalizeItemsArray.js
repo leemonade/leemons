@@ -1,7 +1,8 @@
 const { isArray, compact, uniq } = require('lodash');
 
 /**
- * Normalize the input to ensures it is always an array
+ * Normalize the input to ensures it is always an array of uniq values
+ * 
  * @param {Array|any} items - The items
  * @returns {Array} - Returns an array of items
  */

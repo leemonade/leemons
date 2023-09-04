@@ -1,6 +1,7 @@
 const { isEmpty } = require('lodash');
 const { tables } = require('../tables');
 const { normalizeItemsArray } = require('../shared');
+const { parseMetadata } = require('./helpers/parseMetadata');
 
 /**
  * Fetches and returns files from the database using provided file IDs.
@@ -30,15 +31,7 @@ async function getByIds(fileIds, { type, parsed = true, columns, transacting } =
     return items;
   }
 
-  const parsedItems = items.map((item) => {
-    const file = { ...item };
-    if (file.metadata) {
-      file.metadata = JSON.parse(file.metadata);
-    }
-    return file;
-  });
-
-  return parsedItems;
+  return items.map(parseMetadata);
 }
 
 module.exports = { getByIds };

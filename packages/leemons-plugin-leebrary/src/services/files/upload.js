@@ -27,10 +27,12 @@ const ADMITTED_METADATA = [
   // 'channels',
 ];
 
+// This mediainfo variable is set globally because we want to instanciate it
+// and not create a new instance everytime the "analyzeFile" function is called
 let mediainfo;
 
 // -----------------------------------------------------------------------------
-// HELPERS
+// PRIVATE METHODS
 
 function getOptimizedImage(path, extension) {
   let imageStream = global.utils.sharp();
