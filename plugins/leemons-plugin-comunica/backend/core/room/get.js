@@ -21,7 +21,7 @@ async function get({ key, userAgent, returnUserAgents = true, ctx }) {
   }
   const [room, userAgents, nMessages, messagesUnread] = await Promise.all([
     ctx.tx.db.Room.findOne({ key }).lean(),
-    ctx.tx.db.UserAgentInRoom.find({ room: key, deleted: { $ne: null } }).lean(),
+    ctx.tx.db.UserAgentInRoom.find({ room: key }, undefined, { excludeDeleted: false }).lean(),
     ctx.tx.db.Message.countDocuments({ room: key }),
     ctx.tx.db.RoomMessagesUnRead.findOne({
       room: key,
@@ -31,7 +31,11 @@ async function get({ key, userAgent, returnUserAgents = true, ctx }) {
 
   room.unreadMessages = messagesUnread ? messagesUnread.count : 0;
   room.messages = nMessages;
-  room.userAgents = _.map(userAgents, (a) => ({ userAgent: a.userAgent, deleted: a.deleted }));
+  room.userAgents = _.map(userAgents, (a) => ({
+    userAgent: a.userAgent,
+    deleted: a.isDeleted,
+    isDeleted: a.isDeleted,
+  }));
 
   if (returnUserAgents) {
     const userAgen = await ctx.tx.call('users.users.getUserAgentsInfo', {
@@ -44,7 +48,8 @@ async function get({ key, userAgent, returnUserAgents = true, ctx }) {
       userAgent: userAgentsById[a.userAgent],
       adminMuted: a.adminMuted,
       isAdmin: a.isAdmin,
-      deleted: a.deleted,
+      deleted: a.isDeleted,
+      isDeleted: a.isDeleted,
     }));
   }
 

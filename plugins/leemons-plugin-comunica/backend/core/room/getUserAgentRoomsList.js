@@ -9,7 +9,7 @@ async function getUserAgentRoomsList({ userAgent, ctx }) {
       room: roomKeys,
       userAgent,
     }).lean(),
-    ctx.tx.db.UserAgentInRoom.find({ room: roomKeys, deleted: { $ne: null } }).lean(),
+    ctx.tx.db.UserAgentInRoom.find({ room: roomKeys }, { excludeDeleted: false }).lean(),
   ]);
 
   const userAgentsByRoom = _.groupBy(userAgents, 'room');
@@ -38,7 +38,8 @@ async function getUserAgentRoomsList({ userAgent, ctx }) {
         userAgent: userAgentsById[a.userAgent],
         adminMuted: a.adminMuted,
         isAdmin: a.isAdmin,
-        deleted: a.deleted,
+        deleted: a.isDeleted,
+        isDeleted: a.isDeleted,
       })),
     });
   });

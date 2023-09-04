@@ -3,26 +3,28 @@ const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validation
 const { randomString } = require('leemons-utils');
 
 async function add({ room, userAgent, isAdmin, ctx }) {
-  const response = await ctx.tx.db.UserAgentInRoom.findOne({
-    deleted: { $ne: null },
-    room,
-    userAgent,
-  }).lean();
+  const response = await ctx.tx.db.UserAgentInRoom.findOne(
+    {
+      room,
+      userAgent,
+    },
+    undefined,
+    { excludeDeleted: false }
+  ).lean();
   if (response) {
     // Si la existe el usuario en la sala, pero borrado se le reactiva
-    if (response.deleted) {
+    if (response.isDeleted) {
       const result = await ctx.tx.db.UserAgentInRoom.findOneAndUpdate(
         {
-          deleted: { $ne: null },
           room,
           userAgent,
         },
         {
           isAdmin,
-          deleted: false,
-          deleted_at: null,
+          isDeleted: false,
+          deletedAt: null,
         },
-        { lean: true, new: true }
+        { lean: true, new: true, excludeDeleted: false }
       );
       return {
         added: true,
@@ -39,10 +41,10 @@ async function add({ room, userAgent, isAdmin, ctx }) {
         },
         {
           isAdmin,
-          deleted: false,
-          deleted_at: null,
+          isDeleted: false,
+          deletedAt: null,
         },
-        { new: true, lean: true }
+        { new: true, lean: true, excludeDeleted: false }
       );
       return {
         added: true,
@@ -101,7 +103,8 @@ async function addUserAgents({ key, userAgents: _userAgents, isAdmin, ignoreCall
     userAgent: userAgentsById[a.userAgent],
     adminMuted: a.result.adminMuted,
     isAdmin: a.result.isAdmin,
-    deleted: a.result.deleted,
+    deleted: a.result.isDeleted,
+    isDeleted: a.result.isDeleted,
   }));
 
   _.forEach(userAgentsAddedGood, (data) => {

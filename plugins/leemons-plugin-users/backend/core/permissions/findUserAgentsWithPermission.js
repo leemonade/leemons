@@ -8,7 +8,7 @@ const _ = require('lodash');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<string[]>}
  * */
-async function findUserAgentsWithPermission({ permissions, returnUserAgents, ctx }) {
+async function findUserAgentsWithPermission({ permissions, returnUserAgents = true, ctx }) {
   const _permissions = _.isArray(permissions) ? permissions : [permissions];
   const query = {
     $or: [],

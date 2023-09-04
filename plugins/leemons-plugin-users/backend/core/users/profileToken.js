@@ -71,7 +71,10 @@ async function profileToken({ user, profile, ctx }) {
     profilesTokens = await Promise.all(
       profiles.map((item) =>
         generateJWTToken({
-          userAgent: userAgentsByRole[item.role].id,
+          payload: {
+            userAgent: userAgentsByRole[item.role].id,
+          },
+          ctx,
         })
       )
     );

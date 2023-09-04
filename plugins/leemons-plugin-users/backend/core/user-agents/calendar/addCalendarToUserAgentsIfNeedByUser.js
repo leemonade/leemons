@@ -54,7 +54,7 @@ async function addCalendarToUserAgentsIfNeedByUser({ user, ctx }) {
   const exists = await Promise.all(
     _.map(userAgents, ({ id }) =>
       ctx.tx.call('calendar.calendar.existByKey', {
-        key: id,
+        key: getUserAgentCalendarKey({ userAgent: id }),
       })
     )
   );

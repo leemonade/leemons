@@ -91,8 +91,6 @@ async function searchUserAgents({
       ctx,
     });
 
-    console.log('userAgentContacts', userAgentContacts);
-
     finalQuery.id = userAgentContacts; // _.map(userAgentContacts, 'toUserAgent');
   }
 
