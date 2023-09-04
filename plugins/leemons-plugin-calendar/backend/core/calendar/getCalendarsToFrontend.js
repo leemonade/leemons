@@ -66,18 +66,22 @@ async function getCalendarsToFrontend({ ctx }) {
 
   // ES: Calendarios/Eventos a los que tiene acceso de lectura
   // EN: Calendars/Events with view access
+  const params1 = {
+    $or: queryPermissions,
+    type: [permissionConfigCalendar.type, permissionConfigEvent.type],
+  };
+  const params2 = {
+    $or: ownerPermissions,
+    type: [permissionConfigCalendar.type],
+  };
+  if (!params1.$or.length) delete params1.$or;
+  if (!params2.$or.length) delete params2.$or;
   let promises = [
     ctx.tx.call('users.permissions.findItems', {
-      params: {
-        $or: queryPermissions,
-        type: [permissionConfigCalendar.type, permissionConfigEvent.type],
-      },
+      params: params1,
     }),
     ctx.tx.call('users.permissions.findItems', {
-      params: {
-        $or: ownerPermissions,
-        type: [permissionConfigCalendar.type],
-      },
+      params: params2,
     }),
   ];
   promises.push(
@@ -88,6 +92,7 @@ async function getCalendarsToFrontend({ ctx }) {
     })
   );
 
+  console.log('Hola 1', queryPermissions, ownerPermissions);
   if (center) promises.push(getByCenterId({ center: center.id, ctx }));
   const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
