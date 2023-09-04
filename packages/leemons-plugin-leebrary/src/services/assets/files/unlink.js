@@ -6,7 +6,7 @@ const { remove } = require('./remove');
 
 /**
  * Checks if the user has permissions to delete the asset.
- * 
+ *
  * @param {Object} params - The parameters object.
  * @param {string} params.assetId - The ID of the asset.
  * @param {Object} params.userSession - The user session object.
@@ -29,7 +29,7 @@ async function checkUserPermissions({ assetId, userSession, transacting }) {
 /**
  * Unlinks files from an asset.
  * This function checks if the user has permissions to delete the asset, and if so, it removes the files from the asset.
- * 
+ *
  * @param {Array|string} fileIds - The IDs of the files to be unlinked.
  * @param {string} assetId - The ID of the asset from which files are to be unlinked.
  * @param {Object} options - The options object.

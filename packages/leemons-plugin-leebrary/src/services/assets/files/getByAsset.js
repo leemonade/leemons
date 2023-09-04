@@ -6,7 +6,7 @@ const { tables } = require('../../tables');
 
 /**
  * Check if the user has permissions to view the asset
- * 
+ *
  * @param {object} options - The params object
  * @param {string} params.assetId - The ID of the asset to check
  * @param {object} params.userSession - The user's session object
@@ -28,7 +28,7 @@ async function checkUserPermissions({ assetId, userSession, transacting }) {
 
 /**
  * Get the files associated with an asset if the user has view permissions
- * 
+ *
  * @param {string} assetId - The ID of the asset to check
  * @param {object} options - The options object
  * @param {object} options.userSession - The user's session object
@@ -39,7 +39,7 @@ async function checkUserPermissions({ assetId, userSession, transacting }) {
 async function getByAsset(assetId, { userSession, checkPermissions = true, transacting } = {}) {
   try {
     if (checkPermissions) {
-      const hasPermissions = await checkUserPermissions(assetId, userSession, transacting);
+      const hasPermissions = await checkUserPermissions({ assetId, userSession, transacting });
       if (!hasPermissions) {
         return [];
       }

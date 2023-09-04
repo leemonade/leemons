@@ -8,8 +8,8 @@ const { dataForReturnFile } = require('./dataForReturnFile');
 // PRIVATE METHODS
 
 /**
- * Clones the file using the provider's clone service. 
- * 
+ * Clones the file using the provider's clone service.
+ *
  * @param {Object} params - The parameters object.
  * @param {Object} params.fromFile - The original file object.
  * @param {String} params.providerName - The name of the provider.
@@ -38,7 +38,7 @@ async function handleCloneFile({ fromFile, providerName, transacting }) {
 
 /**
  * Duplicates a file by creating a new file with the same content.
- * 
+ *
  * @param {Object} file - The file object to duplicate.
  * @param {Object} options - The options object.
  * @param {Object} options.transacting - The transaction object.

@@ -34,24 +34,47 @@ let mediainfo;
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
 
-function getOptimizedImage(path, extension) {
-  let imageStream = global.utils.sharp();
+/**
+ * Optimizes an image by resizing it and changing its format and quality.
+ *
+ * @param {Object} params - The params object.
+ * @param {string} params.path - The path of the image.
+ * @param {string} params.extension - The extension of the image.
+ * @returns {Object} The optimized image stream.
+ */
+function getOptimizedImage({ path, extension }) {
+  const defaultExtension = 'jpeg';
+  const defaultQuality = 70;
+  const resizeOptions = { fit: 'inside', withoutEnlargement: true };
+  const resizeDimensions = { width: 1024, height: 1024 };
 
-  if (path && !isEmpty(path)) {
-    imageStream = global.utils.sharp(path);
-  }
+  const imageStream = path && !isEmpty(path) ? global.utils.sharp(path) : global.utils.sharp();
 
   return imageStream
-    .resize(1024, 1024, { fit: 'inside', withoutEnlargement: true })
-    .toFormat(extension || 'jpeg', { quality: 70 });
+    .resize(resizeDimensions, resizeOptions)
+    .toFormat(extension || defaultExtension, { quality: defaultQuality });
 }
 
-function getReadableDuration(milliseconds, padStart) {
-  function pad(num) {
-    return `${num}`.padStart(2, '0');
-  }
+/**
+ * Pads a number with leading zeros.
+ *
+ * @param {number} num - The number to pad.
+ * @returns {string} The padded number as a string.
+ */
+function pad(num) {
+  return `${num}`.padStart(2, '0');
+}
 
-  const asSeconds = milliseconds / 1000;
+/**
+ * Converts milliseconds to a readable duration format (HH:MM:SS or MM:SS).
+ *
+ * @param {Object} params - The params object
+ * @param {number} params.duration - The duration in milliseconds.
+ * @param {boolean} params.padStart - Whether to pad the hours with leading zeros.
+ * @returns {string} The duration in a readable format.
+ */
+function getReadableDuration({ duration, padStart }) {
+  const asSeconds = duration / 1000;
 
   let hours;
   let minutes = Math.floor(asSeconds / 60);
@@ -67,29 +90,46 @@ function getReadableDuration(milliseconds, padStart) {
     : `${padStart ? pad(minutes) : minutes}:${pad(seconds)}`;
 }
 
+/**
+ * Converts bitrate to a readable format (kbps, Mbps, Gbps, etc.).
+ *
+ * @param {number} bitrate - The bitrate in bps.
+ * @returns {string} The bitrate in a readable format.
+ */
 function getReadableBitrate(bitrate) {
   let i = -1;
-  const byteUnits = [' kbps', ' Mbps', ' Gbps', ' Tbps', 'Pbps', 'Ebps', 'Zbps', 'Ybps'];
+  const byteUnits = ['kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps', 'Zbps', 'Ybps'];
   do {
     bitrate /= 1000;
     i++;
   } while (bitrate > 1000);
 
-  return Math.max(bitrate, 0.1).toFixed(1) + byteUnits[i];
+  return `${Math.max(bitrate, 0.1).toFixed(1)} ${byteUnits[i]}`;
 }
 
-function getReadableFileSize(b) {
-  let u = 0;
-  const s = 1024;
-  while (b >= s || -b >= s) {
-    // eslint-disable-next-line no-param-reassign
-    b /= s;
-    u++;
-  }
-  return `${(u ? `${b.toFixed(1)} ` : b) + ' KMGTPEZY'[u]}B`;
+/**
+ * Converts file size to a readable format (KB, MB, GB, etc.).
+ *
+ * @param {number} size - The file size in bytes.
+ * @returns {string} The file size in a readable format.
+ */
+function getReadableFileSize(size) {
+  const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  return `${(size / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
 }
 
-function getMetaProps(data, result = {}) {
+/**
+ * Extracts metadata from the provided data object and merges it into the result object.
+ * Only metadata keys that are included in the ADMITTED_METADATA array are considered.
+ * If a key already exists in the result object, it will not be overwritten.
+ *
+ * @param {Object} data - The data object containing metadata.
+ * @param {Object} [result={}] - The result object to merge the metadata into.
+ * @returns {Object} The result object with the merged metadata.
+ */
+function getMetaProps({ data, result = {} }) {
   Object.keys(data).forEach((key) => {
     const current = toLower(key);
     // Prevent next track to overwrite previous value
@@ -101,6 +141,12 @@ function getMetaProps(data, result = {}) {
   return result;
 }
 
+/**
+ * Fetches the content type of a remote file.
+ *
+ * @param {string} url - The URL of the remote file.
+ * @returns {Promise<string>} The content type of the remote file.
+ */
 function getRemoteContentType(url) {
   return new Promise((resolve, reject) => {
     try {
@@ -117,7 +163,15 @@ function getRemoteContentType(url) {
   });
 }
 
-function download(url, compress) {
+/**
+ * Downloads a file from a given URL and optionally compresses it if it's an image.
+ *
+ * @param {object} params - The params object.
+ * @param {string} params.url - The URL of the file to download.
+ * @param {boolean} params.compress - Whether to compress the file if it's an image.
+ * @returns {Promise<Object>} A promise that resolves with an object containing the downloaded file's stream, path, and content type.
+ */
+function download({ url, compress }) {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
@@ -138,7 +192,7 @@ function download(url, compress) {
           });
 
         if (compress && fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
-          downloadStream.pipe(getOptimizedImage(null, extension)).pipe(fileWriterStream);
+          downloadStream.pipe(getOptimizedImage({ path: null, extension })).pipe(fileWriterStream);
         } else {
           downloadStream.pipe(fileWriterStream);
         }
@@ -149,6 +203,12 @@ function download(url, compress) {
   });
 }
 
+/**
+ * Checks if the provided object is a readable stream.
+ *
+ * @param {Object} obj - The object to check.
+ * @returns {boolean} True if the object is a readable stream, false otherwise.
+ */
 function isReadableStream(obj) {
   return (
     obj instanceof stream.Stream &&
@@ -157,6 +217,12 @@ function isReadableStream(obj) {
   );
 }
 
+/**
+ * Converts a readable stream into a buffer.
+ *
+ * @param {stream.Readable} readStream - The readable stream to convert.
+ * @returns {Promise<Buffer>} A promise that resolves with the buffer.
+ */
 function streamToBuffer(readStream) {
   return new Promise((resolve, reject) => {
     const data = [];
@@ -175,7 +241,15 @@ function streamToBuffer(readStream) {
   });
 }
 
-function createTemp(readStream, contentType) {
+/**
+ * Creates a temporary file from a readable stream or a buffer.
+ *
+ * @param {object} params - The params object.
+ * @param {stream.Readable|Buffer} params.readStream - The readable stream or buffer.
+ * @param {string} params.contentType - The content type of the file.
+ * @returns {Promise<Object>} A promise that resolves with an object containing the path and content type of the temporary file.
+ */
+function createTemp({ readStream, contentType }) {
   return new Promise((resolve, reject) => {
     leemons.fs.openTemp('leebrary', async (err, info) => {
       if (err) {
@@ -204,28 +278,37 @@ function createTemp(readStream, contentType) {
   });
 }
 
-// -----------------------------------------------------------------------------
-// MAIN FUNCTIONS
-
-async function upload(file, { name }, { transacting } = {}) {
-  const { path, type } = file;
-  const extension = mime.extension(type);
-
-  const fileHandle = await fsPromises.open(path, 'r');
+/**
+ * Handles the metadata of a file.
+ *
+ * @param {Object} params - The parameters object.
+ * @param {Object} params.fileHandle - The file handle.
+ * @param {string} params.path - The path of the file.
+ * @returns {Promise<Object>} The metadata and size of the file.
+ */
+async function handleMetadata({ fileHandle, path }) {
   const stats = await fileHandle.stat(path);
   const fileSize = stats.size;
-
-  let metadata = {};
+  const metadata = {};
 
   if (fileSize) {
     metadata.size = getReadableFileSize(fileSize);
   }
 
-  const [fileType] = type.split('/');
+  return { metadata, fileSize };
+}
 
-  // ·········································································
-  // MEDIAINFO
-
+/**
+ * Analyzes the file and extracts metadata if it's an image, audio, or video file.
+ *
+ * @param {Object} params - The params object
+ * @param {Object} params.metadata - The metadata of the file.
+ * @param {Object} params.fileHandle - The file handle.
+ * @param {string} params.fileType - The type of the file.
+ * @param {number} params.fileSize - The size of the file.
+ * @returns {Promise<Object>} The metadata of the file.
+ */
+async function handleMediaInfo({ metadata = {}, fileHandle, fileType, fileSize }) {
   if (['image', 'audio', 'video'].includes(fileType)) {
     const readChunk = async (size, offset) => {
       const buffer = Buffer.alloc(size);
@@ -239,12 +322,10 @@ async function upload(file, { name }, { transacting } = {}) {
         mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
       }
 
-      // console.log('Antes');
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
-      // console.log('Despues');
       const { track: tracks } = JSON.parse(metainfo)?.media || { track: [] };
       tracks.forEach((track) => {
-        metadata = getMetaProps(track, metadata);
+        metadata = getMetaProps({ data: track, result: metadata });
       });
 
       if (metadata.bitrate) {
@@ -252,7 +333,7 @@ async function upload(file, { name }, { transacting } = {}) {
       }
 
       if (metadata.duration) {
-        metadata.duration = getReadableDuration(Number(metadata.duration) * 1000);
+        metadata.duration = getReadableDuration({ duration: Number(metadata.duration) * 1000 });
       }
     } catch (err) {
       console.error('-- ERROR: obtaining metadata --');
@@ -263,41 +344,20 @@ async function upload(file, { name }, { transacting } = {}) {
     if (mediainfo) await mediainfo.close();
   }
 
-  // ·········································································
-  // DOCUMENT INFO
+  return metadata;
+}
 
-  if (['docx', 'docm', 'pptx', 'pptm', 'xlsx', 'xlsm'].includes(extension)) {
-    const props = await global.utils.documentInfo.fromFilePath(path);
-    metadata = getMetaProps(props, metadata);
-  }
-
-  // ·········································································
-
-  const fileData = {
-    provider: 'sys',
-    name,
-    type,
-    extension,
-    uri: '',
-    size: fileSize,
-    metadata: JSON.stringify(metadata),
-  };
-
-  /*
-  if (userSession) {
-    fileData.fromUser = userSession.id;
-    fileData.fromUserAgent =
-      userSession.userAgents && userSession.userAgents.length ? userSession.userAgents[0].id : null;
-  }
-  */
-
-  // EN: Firstly save the file to the database and get the id
-  // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
-  let newFile = await tables.files.create(fileData, { transacting });
-
-  // EN: Use active provider
-  // ES: Usar el proveedor activo
-  const settings = await getSettings({ transacting });
+/**
+ * Handles the file provider for file upload.
+ *
+ * @param {Object} params - The parameters for the file provider.
+ * @param {Object} params.newFile - The new file to be uploaded.
+ * @param {Object} params.settings - The settings for the file provider.
+ * @param {string} params.path - The path of the file.
+ * @param {Object} params.transacting - The transaction object.
+ * @returns {Promise<Object>} The URL data of the uploaded file.
+ */
+async function handleFileProvider({ newFile, settings, path, transacting }) {
   const urlData = {};
 
   if (settings?.providerName) {
@@ -328,6 +388,84 @@ async function upload(file, { name }, { transacting } = {}) {
     await fsPromises.writeFile(urlData.uri, buffer);
   }
 
+  return urlData;
+}
+
+/**
+ * Handles the document information and extracts metadata if it's a docx, docm, pptx, pptm, xlsx, or xlsm file.
+ *
+ * @param {Object} params - The params object.
+ * @param {Object} params.metadata - The metadata of the file.
+ * @param {string} params.path - The path of the file.
+ * @param {string} params.extension - The extension of the file.
+ * @returns {Promise<Object>} The metadata of the file.
+ */
+async function handleDocumentInfo({ metadata, path, extension }) {
+  if (['docx', 'docm', 'pptx', 'pptm', 'xlsx', 'xlsm'].includes(extension)) {
+    const props = await global.utils.documentInfo.fromFilePath(path);
+    metadata = getMetaProps({ data: props, result: metadata });
+  }
+
+  return metadata;
+}
+
+// -----------------------------------------------------------------------------
+// PUBLIC METHODS
+
+/**
+ * Uploads a file.
+ *
+ * @param {Object} file - The file to upload.
+ * @param {Object} data - The data for the upload.
+ * @param {string} data.name - The name of the file.
+ * @param {Object} options - The options for the upload.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Object>} The uploaded file.
+ */
+async function upload(file, { name }, { transacting } = {}) {
+  const { path, type } = file;
+  const extension = mime.extension(type);
+  const fileHandle = await fsPromises.open(path, 'r');
+  const [fileType] = type.split('/');
+
+  // eslint-disable-next-line prefer-const
+  let { metadata, fileSize } = await handleMetadata({ fileHandle, path });
+
+  // ·········································································
+  // MEDIAINFO
+
+  metadata = await handleMediaInfo({ metadata, fileHandle, fileType, fileSize });
+
+  // ·········································································
+  // DOCUMENT INFO
+
+  metadata = await handleDocumentInfo({ metadata, path, extension });
+
+  // ·········································································
+  // CREATE NEW FILE IN DB
+
+  const fileData = {
+    provider: 'sys',
+    name,
+    type,
+    extension,
+    uri: '',
+    size: fileSize,
+    metadata: JSON.stringify(metadata),
+  };
+
+  // EN: Firstly save the file to the database and get the id
+  // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
+  let newFile = await tables.files.create(fileData, { transacting });
+
+  // ·········································································
+  // UPLOAD THE FILE
+
+  // EN: Use active provider
+  // ES: Usar el proveedor activo
+  const settings = await getSettings({ transacting });
+  const urlData = await handleFileProvider({ newFile, settings, path, transacting });
+
   // EN: Update the asset with the new URI and provider
   // ES: Actualizamos el archivo con la nueva URI y proveedor
   newFile = await tables.files.update({ id: newFile.id }, urlData, { transacting });
@@ -335,45 +473,77 @@ async function upload(file, { name }, { transacting } = {}) {
   return { ...newFile, metadata };
 }
 
-function uploadImage(path, extension) {
-  return new Promise((resolve, reject) => {
+/**
+ * Creates a temporary file from an image and optimizes it.
+ *
+ * @param {Object} params - The params object
+ * @param {string} params.path - The path of the image.
+ * @param {string} params.extension - The extension of the image.
+ * @returns {Promise<Object>} A promise that resolves with an object containing the path of the temporary file.
+ */
+async function prepareImage({ path, extension }) {
+  try {
     const fileWriterStream = leemons.fs.createTempWriteStream();
 
-    fileWriterStream
-      .on('error', (error) => reject(error))
-      .on('finish', () => {
-        fileWriterStream.end();
-        resolve({ path: fileWriterStream.path });
-      });
+    await new Promise((resolve, reject) => {
+      fileWriterStream.on('error', reject).on('finish', resolve);
 
-    getOptimizedImage(path, extension).pipe(fileWriterStream);
-  });
+      getOptimizedImage({ path, extension }).pipe(fileWriterStream);
+    });
+
+    return { path: fileWriterStream.path };
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
 }
 
+/**
+ * Uploads a file from a given file stream.
+ *
+ * @param {Object} file - The file stream to upload.
+ * @param {Object} params - The parameters for the upload.
+ * @param {string} params.name - The name of the file.
+ * @param {Object} options - The options for the upload.
+ * @param {Object} options.userSession - The user session object.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Object>} A promise that resolves with the uploaded file.
+ */
 async function uploadFromFileStream(file, { name }, { userSession, transacting } = {}) {
   const { readStream, contentType } = file;
-
-  const { path } = await createTemp(readStream, contentType);
+  const { path } = await createTemp({ readStream, contentType });
 
   return upload({ path, type: contentType }, { name }, { userSession, transacting });
 }
 
+/**
+ * Uploads a file from a given URL.
+ *
+ * @param {string} url - The URL of the file to upload.
+ * @param {Object} params - The parameters for the upload.
+ * @param {string} params.name - The name of the file.
+ * @param {Object} options - The options for the upload.
+ * @param {Object} options.userSession - The user session object.
+ * @param {Object} options.transacting - The transaction object.
+ * @returns {Promise<Object>} A promise that resolves with the uploaded file.
+ */
 async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   // ES: Primero comprobamos que la URL no sea un FILE_ID
   // EN: First check if the URL is a FILE_ID
   const file = await getById(url);
 
-  if (file?.id) {
-    if (file.isFolder) {
-      return file;
-    }
-    const fileStream = await dataForReturnFile(file.id);
-    return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
-  }
   try {
-    const { path, contentType } = await download(url, true);
+    if (file?.id) {
+      if (file.isFolder) {
+        return file;
+      }
 
-    return await upload({ path, type: contentType }, { name }, { userSession, transacting });
+      const fileStream = await dataForReturnFile(file.id);
+      return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
+    }
+
+    const { path, contentType } = await download({ url, compress: true });
+    return upload({ path, type: contentType }, { name }, { userSession, transacting });
   } catch (err) {
     console.error('ERROR: downloading file:', url);
     console.dir(url, { depth: null });
@@ -381,4 +551,4 @@ async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
   }
 }
 
-module.exports = { upload, uploadFromUrl, uploadFromFileStream, uploadImage };
+module.exports = { upload, prepareImage, uploadFromFileStream, uploadFromUrl };

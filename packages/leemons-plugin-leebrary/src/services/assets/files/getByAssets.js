@@ -3,7 +3,7 @@ const { tables } = require('../../tables');
 
 /**
  * Get the files associated with multiple assets
- * 
+ *
  * @param {Array|string} assetIds - The IDs of the assets
  * @param {object} options - The options object
  * @param {object} options.transacting - The transaction object

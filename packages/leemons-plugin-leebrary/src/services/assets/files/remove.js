@@ -3,7 +3,7 @@ const { normalizeItemsArray } = require('../../shared');
 
 /**
  * Removes files and associated assets from the database.
- * 
+ *
  * @param {Array|string} fileIds - The IDs of the files to be removed.
  * @param {string} assetId - The ID of the associated asset.
  * @param {object} options - The options object.

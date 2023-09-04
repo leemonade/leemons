@@ -12,7 +12,7 @@ const { findOne: getSettings } = require('../settings');
 
 /**
  * Creates a new file with the provided data and paths information.
- * 
+ *
  * @param {Object} params - The parameters for creating a file.
  * @param {Object} params.fileData - The data for the new file.
  * @param {Object} params.pathsInfo - The paths information for the new file.
@@ -28,7 +28,7 @@ async function createFile({ fileData, pathsInfo, transacting }) {
       metadata: JSON.stringify({ pathsInfo }),
     },
     { transacting }
-  )
+  );
 }
 
 /**
@@ -84,7 +84,7 @@ async function handleFileSystem({ file, filePaths }) {
 
 /**
  * Creates a new multipart file with the provided file information and transaction details.
- * 
+ *
  * @param {Object} fileData - The file information.
  * @param {string} fileData.name - The name of the file.
  * @param {string} fileData.type - The type of the file.
@@ -107,11 +107,11 @@ async function newMultipart(
     extension,
     size,
     isFolder,
-  }
+  };
   // eslint-disable-next-line prefer-const
   let [file, settings] = await Promise.all([
     createFile({ fileData, pathsInfo, transacting }),
-    getSettings({ transacting })
+    getSettings({ transacting }),
   ]);
 
   if (settings?.providerName) {

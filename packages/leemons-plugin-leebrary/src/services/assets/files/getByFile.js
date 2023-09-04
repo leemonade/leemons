@@ -9,7 +9,7 @@ const { tables } = require('../../tables');
 
 /**
  * Fetches the assets and bookmarks related to a file.
- * 
+ *
  * @param {object} params - The params object.
  * @param {string} params.fileId - The ID of the file.
  * @param {object} params.transacting - The transaction object.
@@ -31,7 +31,8 @@ async function getRelatedAssets({ fileId, transacting }) {
   const result = await Promise.all(promises);
   return compact(
     uniq(
-      result[0].map((item) => item.asset)
+      result[0]
+        .map((item) => item.asset)
         .concat(result[1].map((item) => item.id))
         .concat(result[2].map((item) => item.asset))
     )
@@ -40,7 +41,7 @@ async function getRelatedAssets({ fileId, transacting }) {
 
 /**
  * Checks if the asset is public.
- * 
+ *
  * @param {object} params - The params object.
  * @param {string} params.assetId - The ID of the asset.
  * @param {object} params.transacting - The transaction object.
@@ -53,7 +54,7 @@ async function checkIsPublic({ assetId, transacting }) {
 
 /**
  * Checks if the user has permissions to view the asset.
- * 
+ *
  * @param {object} params - The options object.
  * @param {string} params.assetId - The ID of the asset.
  * @param {object} params.userSession - The user session object.
@@ -75,7 +76,7 @@ async function checkUserPermissions({ assetId, userSession, transacting }) {
 
 /**
  * Fetches the asset related to a file by its ID.
- * 
+ *
  * @param {string} fileId - The ID of the file.
  * @param {object} options - The options object.
  * @param {boolean} options.checkPermissions - Whether to check permissions. Default is true.

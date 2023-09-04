@@ -3,7 +3,7 @@ const { tables } = require('../tables');
 
 /**
  * Handles the upload of a multipart chunk.
- * 
+ *
  * @param {Object} params - The parameters for the upload.
  * @param {string} params.fileId - The ID of the file.
  * @param {number} params.partNumber - The part number of the chunk.
@@ -17,8 +17,8 @@ async function uploadMultipartChunk({ fileId, partNumber, chunk, path }, { trans
   const file = await tables.files.findOne({ id: fileId }, { transacting });
   if (!file) throw new Error('No field found');
 
-  // Reads the chunk data from the provided path and stores it in a buffer. 
-  // Then, depending on the file provider, it either uploads the chunk using the provider's service 
+  // Reads the chunk data from the provided path and stores it in a buffer.
+  // Then, depending on the file provider, it either uploads the chunk using the provider's service
   // or appends the chunk data to the file or folder in the system.
   const buffer = await fsPromises.readFile(chunk.path);
   if (file.provider !== 'sys') {

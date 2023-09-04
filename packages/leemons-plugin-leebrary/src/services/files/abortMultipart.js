@@ -7,7 +7,7 @@ const { tables } = require('../tables');
 
 /**
  * Handles the aborting of a multipart upload.
- * 
+ *
  * @param {Object} params - The params object.
  * @param {Object} params.file - The file object.
  * @param {Object} params.transacting - The transaction object.
@@ -30,7 +30,7 @@ async function handleAbortMultipart({ file, transacting }) {
 
 /**
  * Aborts a multipart upload.
- * 
+ *
  * @param {Object} params - The parameters for the abort.
  * @param {string} params.fileId - The ID of the file.
  * @param {Object} options - The options for the abort.

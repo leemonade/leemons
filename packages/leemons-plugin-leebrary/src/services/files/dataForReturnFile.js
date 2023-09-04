@@ -8,7 +8,7 @@ const { getById } = require('./getById');
 
 /**
  * Get the file size from metadata if available
- * 
+ *
  * @param {Object} params - The params object
  * @param {Object} params.file - The file object
  * @param {string} params.path - The path of the file
@@ -24,7 +24,7 @@ function prepareFileSizeFromMetadata({ file, path }) {
 
 /**
  * Get the read parameters for the file
- * 
+ *
  * @param {Object} params - The params object
  * @param {Object} params.file - The file object
  * @param {number} params.start - The start byte
@@ -54,7 +54,7 @@ function getReadParams({ file, start, end }) {
 
 /**
  * Get the common file details
- * 
+ *
  * @param {Object} params - The params object
  * @param {Object} params.file - The file object
  * @param {string} params.path - The path of the file
@@ -70,7 +70,7 @@ function getCommonFileDetails({ file, path }) {
 
 /**
  * Get the read stream for the file
- * 
+ *
  * @param {Object} params - The params object
  * @param {Object} params.file - The file object
  * @param {string} params.path - The path of the file
@@ -81,7 +81,15 @@ function getCommonFileDetails({ file, path }) {
  * @param {boolean} params.forceStream - The force stream flag
  * @returns {Promise<Object>} The read stream
  */
-async function getReadStream({ file, path, readParams, transacting, bytesStart, bytesEnd, forceStream }) {
+async function getReadStream({
+  file,
+  path,
+  readParams,
+  transacting,
+  bytesStart,
+  bytesEnd,
+  forceStream,
+}) {
   let readStream;
 
   // Default provider
@@ -100,7 +108,7 @@ async function getReadStream({ file, path, readParams, transacting, bytesStart, 
         end: bytesEnd,
         forceStream,
       }
-    )
+    );
   }
 
   return readStream;
@@ -109,11 +117,11 @@ async function getReadStream({ file, path, readParams, transacting, bytesStart, 
 // PUBLIC METHODS
 
 /**
- * Prepares the necessary data for returning a file. 
+ * Prepares the necessary data for returning a file.
  * It fetches the file by its ID, prepares the file size from metadata, gets common file details, and read parameters.
  * It then gets the read stream for the file. If the read stream is not found, it throws an error.
  * Otherwise, it returns an object containing common file details and the read stream.
- * 
+ *
  * @async
  * @param {string} id - The id of the file
  * @param {Object} options - The options for the file, including path, transacting, start, end, and forceStream
@@ -133,13 +141,21 @@ async function dataForReturnFile(
 
   const common = getCommonFileDetails({ file, path });
   const { bytesStart, bytesEnd, readParams } = getReadParams({ file, start, end });
-  const readStream = await getReadStream({ file, path, readParams, transacting, bytesStart, bytesEnd, forceStream });
+  const readStream = await getReadStream({
+    file,
+    path,
+    readParams,
+    transacting,
+    bytesStart,
+    bytesEnd,
+    forceStream,
+  });
 
   if (!readStream) {
     throw new global.utils.HttpError(400, `Provider "${file.provider}" not found`);
   }
 
-  return { ...common, readStream }
+  return { ...common, readStream };
 }
 
 module.exports = { dataForReturnFile };
