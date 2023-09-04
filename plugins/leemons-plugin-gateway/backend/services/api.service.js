@@ -51,6 +51,15 @@ module.exports = {
 
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
+
+          // -- Academic calendar (Finish) --
+          'GET academic-calendar/config/:programId': 'v1.academic-calendar.config.getRest',
+          'POST academic-calendar/config': 'v1.academic-calendar.config.saveRest',
+          'GET academic-calendar/regional-config/list/:center':
+            'v1.academic-calendar.regionalConfig.listRest',
+          'POST academic-calendar/regional-config/save':
+            'v1.academic-calendar.regionalConfig.saveRest',
+
           // -- Comunica (Finish) --
           'POST calendar/calendar': 'v1.calendar.calendar.getCalendarRest',
           'POST calendar/schedule': 'v1.calendar.calendar.getScheduleRest',

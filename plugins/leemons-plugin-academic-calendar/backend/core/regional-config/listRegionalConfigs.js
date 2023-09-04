@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function listRegionalConfigs(center, { transacting } = {}) {
-  const regionalConfigs = await table.regionalConfig.find({ center }, { transacting });
+async function listRegionalConfigs({ center, ctx }) {
+  const regionalConfigs = await ctx.tx.db.RegionalConfig.find({ center }).lean();
   return _.map(regionalConfigs, (regionalConfig) => ({
     ...regionalConfig,
     regionalEvents: JSON.parse(regionalConfig.regionalEvents),
