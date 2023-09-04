@@ -1,33 +1,18 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { getByAsset: getBookmark } = require('../bookmarks/getByAsset');
-const { add } = require('./add');
-const { checkDuplicable: checkCategoryDuplicable } = require('../categories/checkDuplicable');
-const { duplicate: duplicateFile } = require('../files/duplicate');
-const { tables } = require('../tables');
-const { add: addFiles } = require('./files/add');
-const { normalizeItemsArray, isTruthy } = require('../shared');
-const { getByIds: getFiles } = require('../files/getByIds');
+const { getByAsset: getBookmark } = require('../../bookmarks/getByAsset');
+const { add } = require('../add');
+const { checkDuplicable: checkCategoryDuplicable } = require('../../categories/checkDuplicable');
+const { duplicate: duplicateFile } = require('../../files/duplicate');
+const { add: addFiles } = require('../files/add');
+const { normalizeItemsArray, isTruthy } = require('../../shared');
+const { getByIds: getFiles } = require('../../files/getByIds');
 const { CATEGORIES } = require('../../../config/constants');
-const { checkDuplicatePermissions } = require('./checkDuplicatePermissions')
+const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
+const { getAndCheckAsset } = require('./getAndCheckAsset');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * Retrieves an asset by its ID from the database.
- *
- * @param {object} params - The parameters object
- * @param {string} params.assetId - The ID of the asset
- * @param {object} params.transacting - The transaction object
- * @returns {object} - Returns the asset object
- * @throws {HttpError} - Throws an HTTP error if the asset is not found
- */
-async function getAndCheckAsset({ assetId, transacting }) {
-  const asset = await tables.assets.findOne({ id: assetId }, { transacting });
-  if (!asset) throw new global.utils.HttpError(422, 'Asset not found');
-  return asset;
-}
 
 /**
  * Retrieves file IDs associated with a given asset.
@@ -296,9 +281,9 @@ async function duplicate({
   const { userSession } = ctx.meta;
   const pPermissions = normalizeItemsArray(permissions);
 
-  await checkDuplicatePermissions({ assetId, userSession, transacting });
+  await checkDuplicatePermissions({ assetId, ctx });
 
-  const asset = await getAndCheckAsset({ assetId, transacting });
+  const asset = await getAndCheckAsset({ assetId, ctx });
   const category = await checkCategoryDuplicable({ categoryId: asset.category, transacting });
 
   // EN: Store the IDs of files associated with the asset in order to track them

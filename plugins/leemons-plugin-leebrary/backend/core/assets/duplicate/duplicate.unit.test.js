@@ -6,6 +6,12 @@ const getAssets = require('../../../__fixtures__/getAssets');
 const getAssetsAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
 const getUserSession = require('../../../__fixtures__/getUserSession');
 
+// MOCKS
+jest.mock('./checkDuplicatePermissions');
+jest.mock('./getAndCheckAsset.js');
+const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
+const { getAndCheckAsset } = require('./getAndCheckAsset');
+
 const inputBookmark = {
   assetId: 'fullId@1.0.0', // the asset's full id
   indexable: undefined,
@@ -22,7 +28,7 @@ it('Should correctly duplicate a bookmark asset', () => {
   const expectedResponse = {
     ...bookmarkAsset,
     fileType: 'bookmark',
-    icon,
+    icon: addDataInput.icon,
     id: 'nuevoId@1.0.0',
     metadata: [],
     url: addDataInput.url,
@@ -35,10 +41,16 @@ it('Should correctly duplicate a bookmark asset', () => {
   });
   ctx.meta.userSession = getUserSession();
 
+  getAndCheckAsset.mockResolvedValue({ ...bookmarkAsset });
 
   // Act
-  // const response = duplicate({ ctx });
+  // const response = duplicate({ assetId: bookmarkAsset.id, ctx });
 
   // Assert
+  // expect(checkDuplicatePermissions).toBeCalledWith({
+  //   assetId: bookmarkAsset.id,
+  //   ctx,
+  // });
+  // expect(getAndCheckAsset).toBeCalledWith({ assetId: bookmarkAsset.id, ctx });
   // expect(response).toBe(expectedResponse);
 });

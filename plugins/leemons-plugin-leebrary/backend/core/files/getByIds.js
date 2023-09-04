@@ -1,5 +1,4 @@
 const { isArray, isEmpty } = require('lodash');
-const { tables } = require('../tables');
 
 /**
  * @public

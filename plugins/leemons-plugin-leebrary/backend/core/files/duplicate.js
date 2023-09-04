@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-const { tables } = require('../tables');
 const { findOne: getSettings } = require('../settings');
 const { uploadFromSource } = require('./helpers/uploadFromSource');
 const { dataForReturnFile } = require('./dataForReturnFile');
