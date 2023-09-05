@@ -2,22 +2,20 @@
 const _ = require('lodash');
 const { validateSaveRegionalConfig } = require('../../validations/forms');
 
-async function saveRegionalConfig(
-  {
-    created_at,
-    updated_at,
-    deleted_at,
-    deleted,
-    createdAt,
-    updatedAt,
-    deletedAt,
-    isDeleted,
-    _id,
-    __v,
-    ...data,
-      ctx
-  },
-) {
+async function saveRegionalConfig({
+  created_at,
+  updated_at,
+  deleted_at,
+  deleted,
+  createdAt,
+  updatedAt,
+  deletedAt,
+  isDeleted,
+  _id,
+  __v,
+  ctx,
+  ...data
+}) {
   validateSaveRegionalConfig(data);
   let config;
 
