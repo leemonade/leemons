@@ -22,7 +22,7 @@ jest.mock('./getConfig', () => ({
 
 afterEach(() => jest.resetAllMocks());
 
-describe('getS3AndConfig', () => {
+describe('Get AWS S3 instance and config', () => {
   it('should return an object with s3 and config if config exists', async () => {
     // Arrange
     const ctx = {};

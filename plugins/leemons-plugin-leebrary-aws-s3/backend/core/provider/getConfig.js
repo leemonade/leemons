@@ -6,7 +6,7 @@
  * @param {MoleculerContext} params.ctx - The Moleculer context, used to interact with the database.
  * @returns {Object|null} The first configuration object from the database, or null if no configurations are found.
  */
-async function getConfig({ ctx }) {
+async function getConfig({ ctx } = {}) {
   const configs = await ctx.tx.db.Config.find({}).lean();
   if (configs.length > 0) return configs[0];
   return null;
