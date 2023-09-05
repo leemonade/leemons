@@ -249,3 +249,52 @@ export const menuData = [
     customChildren: [],
   },
 ];
+
+export const session = {
+  name: 'Elvis',
+  surnames: 'Costello',
+  avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
+}
+
+
+export const sessionMenu = {
+  id: 'menu-0',
+  label: 'label',
+  children: [
+
+    {
+      id: 'menu-3',
+      label: 'Cuenta de usuario',
+      order: 2,
+      url: '/private/users/language',
+      window: 'SELF',
+      disabled: null,
+    },
+    {
+      id: 'menu-4',
+      label: 'Configuración',
+      order: 3,
+      url: '/private/emails/preference',
+      window: 'SELF',
+      disabled: null,
+    },
+    {
+      id: 'menu-5',
+      label: 'Cerrar sesión',
+      order: 4,
+      url: '/private/users/logout',
+      window: 'SELF',
+      disabled: null,
+      openIcon: true
+    },
+    {
+      id: 'menu-6',
+      label: 'Cambiar perfil',
+      order: 4,
+      url: '/private/users/logout',
+      window: 'SELF',
+      disabled: null,
+      openIcon: true
+    },
+  ],
+}

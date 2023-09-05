@@ -15,13 +15,15 @@ import {
   mainNavVariants,
   navTitleVariants
 } from './MainNavBar.constants';
-import { find, isArray, isFunction, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Logo } from './components/Logo';
 import { MainNavBarStyles } from './MainNavBar.styles';
 import { SpotLightButton } from './components/SpotLightButton';
 import { NavItem } from './components/NavItem';
-import { menuData } from './mock/menuData';
+import { UserButton } from './components/UserButton';
+import { menuData as mockedMenuData, session as mockedSession, sessionMenu as mockedSessionMenu } from './mock/menuData';
 import { motion, AnimatePresence } from "framer-motion"
+import { getUserFullName } from '../../helpers/getUserFullName';
 
 const MainNavBar = ({
   logoUrl,
@@ -29,6 +31,9 @@ const MainNavBar = ({
   lightMode,
   mainColor,
   navTitle,
+  // session,
+  // sessionMenu,
+  // menuData
 }) => {
   const { classes } = MainNavBarStyles(
     { itemWidth: MAIN_NAV_WIDTH_EXPANDED, subNavWidth, lightMode, mainColor },
@@ -48,7 +53,7 @@ const MainNavBar = ({
 
   const hasLogo = !isEmpty(logoUrl);
 
-  const navBarItems = menuData.map((item, index) => {
+  const navBarItems = mockedMenuData.map((item, index) => {
     return (
       <NavItem
         {...item}
@@ -60,7 +65,6 @@ const MainNavBar = ({
       />
     )
   });
-
 
   return (
     <>
@@ -111,9 +115,22 @@ const MainNavBar = ({
                   <SpotLightButton onClick={() => openSpotlight()} isCollapsed={isCollapsed} />
                 </Navbar.Section>
                 {/* ITEMS */}
-                <Navbar.Section grow className={classes.links} component={ScrollArea} sx={() => ({ overflow: 'hidden' })}>
-                  <div className={classes.linksInner}>{navBarItems}</div>
+                <Navbar.Section grow className={classes.navItems}  >
+                  <Box className={classes.linksInner}>{navBarItems}</Box>
+                  <Navbar.Section >
+                    <Box>
+                      <UserButton
+                        name={getUserFullName(mockedSession)}
+                        isCollapsed={isCollapsed}
+                        session={mockedSession}
+                        sessionMenu={mockedSessionMenu}
+                        onOpen={() => handleItemClick(mockedSessionMenu)}
+                        expandedItem={expandedItem}
+                      />
+                    </Box>
+                  </Navbar.Section>
                 </Navbar.Section>
+
               </Box>
             </Box>
           </Navbar>

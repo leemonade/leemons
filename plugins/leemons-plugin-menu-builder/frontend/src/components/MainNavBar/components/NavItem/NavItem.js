@@ -55,7 +55,6 @@ export const NavItem = ({
   }, [expandedItem, setOpened]);
 
   useEffect(() => {
-
     isCollapsed && setOpened(false);
     !isCollapsed && expandedItem === id && setOpened(true);
   }, [isCollapsed]);
@@ -68,42 +67,40 @@ export const NavItem = ({
 
 
   return (
-    <>
-      <AnimatePresence>
-        <Wrapper useRouter={useRouter} url={url} id={id}>
-          <UnstyledButton onClick={() => handleOpenChildren(id)} className={classes.control}>
-            <Group className={classes.itemWrapper}>
-              <Box >
-                <ImageLoader
-                  className={classes.icon}
-                  src={active && item.activeIconSvg ? activeIconSvg : iconSvg}
-                  alt={iconAlt}
-                  strokeCurrent
-                  ignoreFill={!active && handleSvgProps}
-                />
-                <motion.div
-                  initial={{ opacity: '0' }}
-                  animate={isCollapsed ? "closed" : "open"}
-                  variants={navTitleVariants}
-                >
-                  <Box ml="md">{label}</Box>
-                </motion.div>
-              </Box>
-            </Group>
-            <Box className={classes.chevronContainer}>
-              {hasChildren && (
-                <ChevDownIcon
-                  className={classes.chevron}
-                  style={{
-                    transform: opened ? `rotate(${theme.dir === 'rtl' ? -90 : 180}deg)` : 'none',
-                  }}
-                />
-              )}
+    <AnimatePresence>
+      <Wrapper useRouter={useRouter} url={url} id={id}>
+        <UnstyledButton onClick={() => handleOpenChildren(id)} className={classes.control}>
+          <Group className={classes.itemWrapper}>
+            <Box >
+              <ImageLoader
+                className={classes.icon}
+                src={active && item.activeIconSvg ? activeIconSvg : iconSvg}
+                alt={iconAlt}
+                strokeCurrent
+                ignoreFill={!active && handleSvgProps}
+              />
+              <motion.div
+                initial={{ opacity: '0' }}
+                animate={isCollapsed ? "closed" : "open"}
+                variants={navTitleVariants}
+              >
+                <Box ml="md">{label}</Box>
+              </motion.div>
             </Box>
-          </UnstyledButton>
-        </Wrapper>
-        {hasChildren ? <Collapse in={opened}>{items}</Collapse> : null}
-      </AnimatePresence>
-    </>
+          </Group>
+          <Box className={classes.chevronContainer}>
+            {hasChildren && (
+              <ChevDownIcon
+                className={classes.chevron}
+                style={{
+                  transform: opened ? `rotate(${theme.dir === 'rtl' ? -90 : 180}deg)` : 'none',
+                }}
+              />
+            )}
+          </Box>
+        </UnstyledButton>
+      </Wrapper>
+      {hasChildren ? <Collapse in={opened}>{items}</Collapse> : null}
+    </AnimatePresence>
   );
 };

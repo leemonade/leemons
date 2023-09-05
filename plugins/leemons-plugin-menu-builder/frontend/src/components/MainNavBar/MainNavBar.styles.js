@@ -20,6 +20,15 @@ export const MainNavBarStyles = createStyles(
         zIndex: 30,
         overflow: 'hidden',
       },
+      navItems: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        height: '100%',
+      },
+      linksInner: {
+        overflow: 'scroll'
+      },
       navWrapperBorder: {
         position: 'absolute',
         top: 0,
@@ -45,8 +54,6 @@ export const MainNavBarStyles = createStyles(
       },
       logo: {
         width: pxToRem(31),
-        // marginLeft: 'auto',
-        // marginRight: 'auto',
       },
       logoContainer: {
         margin: 'auto',
@@ -57,7 +64,6 @@ export const MainNavBarStyles = createStyles(
         justifyContent: 'flex-start',
       },
       navItems: {
-        // height: 300,
         flexGrow: 1,
         height: 1,
       },
@@ -76,6 +82,9 @@ export const MainNavBarStyles = createStyles(
         left: itemWidth,
         zIndex: 40,
       },
+      footer: {
+        // overflow: 'hidden'
+      }
     };
   }
 );
