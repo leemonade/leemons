@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const { LeemonsValidator } = require('leemons-validator');
 
 // TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
-function validateDataForJsonSchema(jsonSchema, data) {
+function validateDataForJsonSchema({ jsonSchema, data }) {
   const schema = {
     type: 'object',
     additionalProperties: false,
@@ -57,7 +58,7 @@ function validateDataForJsonSchema(jsonSchema, data) {
     }
   });
 
-  const validator = new global.utils.LeemonsValidator(schema, { strict: false });
+  const validator = new LeemonsValidator(schema, { strict: false });
   if (!validator.validate(data)) throw validator.error;
 }
 

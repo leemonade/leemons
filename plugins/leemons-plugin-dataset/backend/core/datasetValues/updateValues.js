@@ -1,10 +1,9 @@
 const _ = require('lodash');
-const getSchema = require('../dataset-schema/getSchema');
+const getSchema = require('../datasetSchema/getSchema');
 const deleteValues = require('./deleteValues');
 const getKeysCanAction = require('./getKeysCanAction');
 const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
-const { table } = require('../tables');
 const { getValuesForSave } = require('./getValuesForSave');
 const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
 
@@ -29,56 +28,53 @@ const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<any>} Passed formData
  *  */
-async function updateValues(
+async function updateValues({
   locationName,
   pluginName,
-  _formData,
+  formData: _formData,
   userAgent,
-  { target, transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      validatePluginName(pluginName, this.calledFrom);
-      await validateNotExistValues(locationName, pluginName, target, { transacting });
+  target,
+  ctx,
+}) {
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistValues({ locationName, pluginName, target, ctx });
 
-      const { jsonSchema } = await getSchema.call(this, locationName, pluginName, {
-        transacting: _transacting,
-      });
+  const { jsonSchema } = await getSchema({ locationName, pluginName, ctx });
 
-      // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
-      // EN: We take only the fields to which the user has permission to edit.
-      const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit', {
-        transacting,
-      });
+  // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
+  // EN: We take only the fields to which the user has permission to edit.
+  const goodKeys = await getKeysCanAction({
+    locationName,
+    pluginName,
+    userAgent,
+    actions: 'edit',
+    ctx,
+  });
 
-      const formData = {};
-      _.forEach(goodKeys, (k) => {
-        formData[k] = _formData[k];
-      });
-      // EN: Remove id ajv not support name if for a field
-      _.forIn(jsonSchema.properties, (p) => {
-        delete p.id;
-      });
+  const formData = {};
+  _.forEach(goodKeys, (k) => {
+    formData[k] = _formData[k];
+  });
+  // EN: Remove id ajv not support name if for a field
+  _.forIn(jsonSchema.properties, (p) => {
+    delete p.id;
+  });
 
-      validateDataForJsonSchema(jsonSchema, formData);
+  validateDataForJsonSchema({ jsonSchema, data: formData });
 
-      const toSave = [];
-      _.forIn(formData, (value, key) => {
-        const data = { locationName, pluginName, key };
-        if (target) data.target = target;
-        _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
-          toSave.push({ ...data, ...val });
-        });
-      });
+  const toSave = [];
+  _.forIn(formData, (value, key) => {
+    const data = { locationName, pluginName, key };
+    if (target) data.target = target;
+    _.forEach(getValuesForSave({ jsonSchema, key, value }), (val) => {
+      toSave.push({ ...data, ...val });
+    });
+  });
 
-      await deleteValues.call(this, locationName, pluginName, { target, transacting });
-      await table.datasetValues.createMany(toSave, { transacting });
+  await deleteValues({ locationName, pluginName, target, ctx });
+  await ctx.tx.db.DatasetValues.insertMany(toSave);
 
-      return formData;
-    },
-    table.datasetValues,
-    _transacting
-  );
+  return formData;
 }
 
 module.exports = updateValues;
