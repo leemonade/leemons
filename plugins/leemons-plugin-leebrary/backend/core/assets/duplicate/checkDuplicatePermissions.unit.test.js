@@ -4,6 +4,7 @@ const { LeemonsError } = require('leemons-error');
 
 const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
 
+// MOCKS
 jest.mock('../../permissions/getByAsset');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 

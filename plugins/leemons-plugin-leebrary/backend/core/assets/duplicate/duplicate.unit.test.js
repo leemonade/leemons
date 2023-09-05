@@ -5,12 +5,16 @@ const { duplicate } = require('./duplicate');
 const getAssets = require('../../../__fixtures__/getAssets');
 const getAssetsAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
 const getUserSession = require('../../../__fixtures__/getUserSession');
+const getCategory = require('../../../__fixtures__/getCategory');
 
 // MOCKS
 jest.mock('./checkDuplicatePermissions');
 jest.mock('./getAndCheckAsset.js');
+jest.mock('../../categories/checkDuplicable');
 const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
 const { getAndCheckAsset } = require('./getAndCheckAsset');
+const { checkDuplicable: checkCategoryDuplicable } = require('../../categories/checkDuplicable');
+const { getFileIds } = require('./getFileIds');
 
 const inputBookmark = {
   assetId: 'fullId@1.0.0', // the asset's full id
@@ -22,9 +26,11 @@ const inputBookmark = {
 
 const { bookmarkAsset } = getAssets();
 const { dataInput: addDataInput } = getAssetsAddDataInput();
+const { categoryObject } = getCategory();
 
 it('Should correctly duplicate a bookmark asset', () => {
   // Arrange
+  const asset = { ...bookmarkAsset, cover: bookmarkAsset.cover.id };
   const expectedResponse = {
     ...bookmarkAsset,
     fileType: 'bookmark',
@@ -41,7 +47,9 @@ it('Should correctly duplicate a bookmark asset', () => {
   });
   ctx.meta.userSession = getUserSession();
 
-  getAndCheckAsset.mockResolvedValue({ ...bookmarkAsset });
+  getAndCheckAsset.mockResolvedValue({ ...asset });
+  checkCategoryDuplicable.mockResolvedValue({ ...categoryObject });
+  getFileIds.mockResolvedValue([asset.cover]); // empty array for a bookmark
 
   // Act
   // const response = duplicate({ assetId: bookmarkAsset.id, ctx });
@@ -52,5 +60,11 @@ it('Should correctly duplicate a bookmark asset', () => {
   //   ctx,
   // });
   // expect(getAndCheckAsset).toBeCalledWith({ assetId: bookmarkAsset.id, ctx });
+  // expect(checkCategoryDuplicable).toBeCalledWith({
+  //   categoryId: bookmarkAsset.category,
+  //   ctx,
+  // });
+  // expect(getFileIds).toBeCalledWith({ asset: { ...asset }, ctx });
+
   // expect(response).toBe(expectedResponse);
 });

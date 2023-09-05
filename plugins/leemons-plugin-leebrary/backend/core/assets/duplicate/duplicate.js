@@ -15,30 +15,6 @@ const { getAndCheckAsset } = require('./getAndCheckAsset');
 // PRIVATE METHODS
 
 /**
- * Retrieves file IDs associated with a given asset.
- * It first checks if the asset has a cover and if so, adds the cover to the file IDs array.
- * Then, it fetches all asset files associated with the asset from the database and adds their IDs to the file IDs array.
- *
- * @summary Fetches file IDs associated with a given asset.
- * @param {Object} params - An object containing the parameters
- * @param {Object} params.asset - The asset object
- * @param {Object} params.transacting - The transaction object
- * @returns {Promise<Array>} - Returns a promise with an array of file IDs
- */
-async function getFileIds({ asset, transacting }) {
-  const fileIds = [];
-
-  if (asset.cover) {
-    fileIds.push(asset.cover);
-  }
-
-  const assetFiles = await tables.assetsFiles.find({ asset: asset.id }, { transacting });
-  fileIds.push(..._.map(assetFiles, 'file'));
-
-  return _.compact(_.uniq(fileIds));
-}
-
-/**
  * Handles files and cover associated with an asset.
  * It retrieves the files using their IDs and finds the cover file among them.
  *
@@ -284,7 +260,7 @@ async function duplicate({
   await checkDuplicatePermissions({ assetId, ctx });
 
   const asset = await getAndCheckAsset({ assetId, ctx });
-  const category = await checkCategoryDuplicable({ categoryId: asset.category, transacting });
+  const category = await checkCategoryDuplicable({ categoryId: asset.category, ctx });
 
   // EN: Store the IDs of files associated with the asset in order to track them
   const filesIds = await getFileIds({ asset, transacting });
