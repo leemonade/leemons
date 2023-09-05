@@ -26,10 +26,14 @@ async function addClassStudents({ data, ctx }) {
         throw new LeemonsError(ctx, {
           message: 'No seats in class',
           httpStatusCode: 400,
-          code: 5001,
+          customCode: 5001,
         });
       if (seats <= _class.students.length + _class.parentStudents.length + nAddStudents)
-        throw new LeemonsError(ctx, { message: 'Class is full', httpStatusCode: 400, code: 5002 });
+        throw new LeemonsError(ctx, {
+          message: 'Class is full',
+          httpStatusCode: 400,
+          customCode: 5002,
+        });
 
       nAddStudents++;
       promises.push(addStudent({ class: data.class, student, ctx }));

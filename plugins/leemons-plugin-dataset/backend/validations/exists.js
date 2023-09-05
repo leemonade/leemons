@@ -25,7 +25,7 @@ async function validateNotExistSchema({ locationName, pluginName, ctx }) {
     throw new LeemonsError(ctx, {
       message: `No schema for '${locationName}' dataset location`,
       httpStatusCode: 400,
-      code: 4001,
+      customCode: 4001,
     });
 }
 
@@ -41,7 +41,7 @@ async function validateNotExistSchemaLocale({ locationName, pluginName, locale, 
     throw new LeemonsError(ctx, {
       message: `"${locale}" language data for "${locationName}" localization not exists.`,
       httpStatusCode: 400,
-      code: 4002,
+      customCode: 4002,
     });
 }
 
