@@ -43,16 +43,15 @@ let mediainfo;
  * @returns {Object} The optimized image stream.
  */
 function getOptimizedImage({ path, extension }) {
-  const defaultExtension = 'jpeg';
-  const defaultQuality = 70;
-  const resizeOptions = { fit: 'inside', withoutEnlargement: true };
-  const resizeDimensions = { width: 1024, height: 1024 };
+  let imageStream = global.utils.sharp();
 
-  const imageStream = path && !isEmpty(path) ? global.utils.sharp(path) : global.utils.sharp();
+  if (path && !isEmpty(path)) {
+    imageStream = global.utils.sharp(path);
+  }
 
   return imageStream
-    .resize(resizeDimensions, resizeOptions)
-    .toFormat(extension || defaultExtension, { quality: defaultQuality });
+    .resize(1024, 1024, { fit: 'inside', withoutEnlargement: true })
+    .toFormat(extension || 'jpeg', { quality: 70 });
 }
 
 /**
