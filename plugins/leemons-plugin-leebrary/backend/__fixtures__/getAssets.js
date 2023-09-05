@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 module.exports = function getAssets() {
   const assetDataExtraProps = {
     url: 'https://leemons.io',
@@ -120,8 +121,8 @@ module.exports = function getAssets() {
     indexable: true,
     center: null,
     program: 'edabdea5-d16f-4681-8753-f6740caaf342',
-    updated_at: '2023-08-29T10:44:12.000Z', //db property
-    created_at: '2023-08-29T10:44:12.000Z', //db property
+    updated_at: '2023-08-29T10:44:12.000Z', // db property
+    created_at: '2023-08-29T10:44:12.000Z', // db property
     deleted: 0, // db property
     deleted_at: null, // db property
     subjects: [
@@ -161,7 +162,8 @@ module.exports = function getAssets() {
         updated_at: '2023-08-29T10:44:12.000Z',
         deleted_at: null,
       },
-      description: 'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
+      description:
+        'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
       fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
       fromUserAgent: 'a1c917f3-8771-4f92-8e2d-18657b3ec709',
       id: '88e36023-4a4a-48d9-b996-20e8b74e0d9c@1.0.0',
@@ -172,8 +174,8 @@ module.exports = function getAssets() {
       tagline: 'Leemons website',
     },
     assetDBExtraProps: {
-      updated_at: '2023-08-29T10:44:12.000Z', //db property
-      created_at: '2023-08-29T10:44:12.000Z', //db property
+      updated_at: '2023-08-29T10:44:12.000Z',
+      created_at: '2023-08-29T10:44:12.000Z',
       deleted: 0, // db property
       deleted_at: null, // db property}
     },

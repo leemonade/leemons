@@ -8,6 +8,8 @@ const { getAndCheckAsset } = require('./getAndCheckAsset');
 const { assetsSchema } = require('../../../models/assets');
 
 const getAssets = require('../../../__fixtures__/getAssets');
+
+// MOCKS
 const { assetModel } = getAssets();
 
 let mongooseConnection;

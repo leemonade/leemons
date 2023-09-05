@@ -3,7 +3,7 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const _ = require('lodash');
 
-const { createAssetInDB } = require('./createAssetInDb')
+const { createAssetInDB } = require('./createAssetInDb');
 const { assetsSchema } = require('../../../models/assets');
 const getAssets = require('../../../__fixtures__/getAssets');
 
@@ -32,7 +32,7 @@ it('Should correctly create an asset and return it as a plain object', async () 
   // Arrange
   const {
     assetModel: { id: assetId, category: assetCategory, cover: assetCover, ...assetData },
-    bookmarkAsset: { subjects, tags},
+    bookmarkAsset: { subjects, tags },
     assetDataExtraProps,
   } = getAssets();
 
@@ -55,7 +55,6 @@ it('Should correctly create an asset and return it as a plain object', async () 
   // Assert
   expect(response.id).toEqual(foundAsset.id);
   expect(foundAsset.cover).toEqual(assetCover.id);
-  expect(foundAsset.tagline).toEqual(assetData.tagline)
+  expect(foundAsset.tagline).toEqual(assetData.tagline);
   expect(_.isPlainObject(response)).toBe(true);
 });
-

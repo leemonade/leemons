@@ -3,11 +3,10 @@ const {
   expect,
   jest: { spyOn },
 } = require('@jest/globals');
-const _ = require('lodash');
+const { generateCtx } = require('leemons-testing');
 
 const { handleUserSessionData } = require('./handleUserSessionData');
 const getUserSession = require('../../../__fixtures__/getUserSession');
-const { generateCtx } = require('leemons-testing');
 
 it('should correctly use userSession data to modify and return assetData', () => {
   // Arrange
@@ -74,15 +73,14 @@ it('should handle unexpected arguments without trhowing ', () => {
       ...ctx,
       meta: { userSession: { ...mockedUserSession, userAgents: { id: 'wrong' } } },
     };
-    const res = handleUserSessionData({
+    return handleUserSessionData({
       assetData: { ...simpleAssetData },
       ctx: modifiedCtx,
     });
-    return res;
   })();
 
   // Assert
   expect(testFnWithWrongArgs).not.toThrow();
   expect(spyLogger).toBeCalledTimes(1);
-  expect(responseWithUnexpectedArgs.fromUserAgent).toBe(null)
+  expect(responseWithUnexpectedArgs.fromUserAgent).toBe(null);
 });

@@ -1,3 +1,5 @@
+const add = require('./add');
+
 module.exports = {
-  ...require('./add'),
+  ...add,
 };

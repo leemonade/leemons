@@ -7,10 +7,10 @@ const { generateCtx } = require('leemons-testing');
 
 jest.mock('../../shared/metascraper');
 jest.mock('got');
+const got = require('got');
+const { metascraper } = require('../../shared');
 
 const { handleBookmarkData } = require('./handleBookmarkData');
-const got = require('got');
-const {metascraper} = require('../../shared');
 const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
 
 it('Should process bookmark data and cover correctly, only when data.url is passed and data.icon is missing', async () => {

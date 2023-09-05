@@ -6,7 +6,6 @@ const {
 const { generateCtx } = require('leemons-testing');
 
 const { add } = require('./add');
-const { CATEGORIES } = require('../../../config/constants');
 const getAssets = require('../../../__fixtures__/getAssets');
 const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
 const getUserSession = require('../../../__fixtures__/getUserSession');
@@ -25,6 +24,7 @@ jest.mock('./createAssetInDB');
 jest.mock('./handleSubjects');
 jest.mock('./handlePermissions');
 jest.mock('./handleFiles');
+
 const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../../bookmarks/add');
 const { handleBookmarkData } = require('./handleBookmarkData');
@@ -39,9 +39,9 @@ const { handlePermissions } = require('./handlePermissions');
 const { handleFiles } = require('./handleFiles');
 
 const { dataInput: bookMarkDataInput, cover } = getAssetAddDataInput();
-const { mediaFileAsset, bookmarkAsset } = getAssets();
+const { bookmarkAsset } = getAssets();
 const userSession = getUserSession();
-const { imageFile, audioFile } = getMediaFileData();
+const { imageFile } = getMediaFileData();
 
 it('Should correctly add a new bookmark', async () => {
   // Arrange

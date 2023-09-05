@@ -38,7 +38,7 @@ class Email {
    * Return array of installed providers for email
    * @public
    * @static
-   * @return {any[]}
+   * @return {Promise<any[]>}
    * */
   static async providers({ ctx }) {
     const providers = [];

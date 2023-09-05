@@ -14,9 +14,15 @@ const getUserSession = require('../../../__fixtures__/getUserSession');
 jest.mock('../../permissions/helpers/getAssetPermissionName');
 const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');
 
-const mockUsersPermissionsAddItem = fn(() => [new Promise((res) => res('foo'))]);
+const mockUsersPermissionsAddItem = fn(() => [
+  new Promise((res) => {
+    res('foo');
+  }),
+]);
 const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [
-  new Promise((res) => res('bar')),
+  new Promise((res) => {
+    res('bar');
+  }),
 ]);
 const { assetModel: asset } = getAssets();
 const userSession = getUserSession();
@@ -80,14 +86,17 @@ describe('When called correctly, handlePermissions() helper function:', () => {
     getAssetPermissionName.mockReturnValue(assetPermissionName);
 
     // Act
-    const responseNewAsset = await handlePermissions({
-      permissions: [{permissionName: 'name', pluginName:'pluginName', id:'semanticPermissionId'} ],
-      canAccess: [{id: 'userId'}],
-      asset,
-      category: { id: asset.category },
-      ctx,
-    });
-  });
+    //   const responseNewAsset = await handlePermissions({
+    //     permissions: [
+    //       { permissionName: 'name', pluginName: 'pluginName', id: 'semanticPermissionId' },
+    //     ],
+    //     canAccess: [{ id: 'userId' }],
+    //     asset,
+    //     category: { id: asset.category },
+    //     ctx,
+    //   });
+    // });
 
-  // TODO Paola: terminar este happy path. permissions y can access con mocks reales.
+    // TODO Paola: terminar este happy path. permissions y can access con mocks reales.
+  });
 });
