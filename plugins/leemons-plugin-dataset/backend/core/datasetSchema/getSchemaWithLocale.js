@@ -1,13 +1,21 @@
 const _ = require('lodash');
 const getSchema = require('./getSchema');
-const getSchemaLocale = require('../dataset-schema-locale/getSchemaLocale');
+const getSchemaLocale = require('../datasetSchemaLocale/getSchemaLocale');
 const {
   validateNotExistSchemaLocale,
   validateNotExistLocation,
   validateNotExistSchema,
 } = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
-const getKeysCanAction = require('../dataset-values/getKeysCanAction');
+const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
+const getKeysCanAction = require('../datasetValues/getKeysCanAction');
+const { getObjectArrayKeys } = require('leemons-utils');
+const squirrelly = require('squirrelly');
+squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
+  const it = params[0];
+  const prop = params[1];
+  const value = _.get(it, prop, '');
+  return _.isArray(value) || _.isObject(value) ? `-*-*-${JSON.stringify(value)}-*-*-` : value;
+});
 
 /** *
  *  ES:
@@ -27,20 +35,23 @@ const getKeysCanAction = require('../dataset-values/getKeysCanAction');
  *  @param {boolean=} useDefaultLocaleCallback - Define is use the default locale callback
  *  @return {Promise<Action>} The new dataset location
  *  */
-async function getSchemaWithLocale(
+async function getSchemaWithLocale({
   locationName,
   pluginName,
   locale,
-  { defaultWithEmptyValues, useDefaultLocaleCallback = true, userSession, transacting } = {}
-) {
+  defaultWithEmptyValues,
+  useDefaultLocaleCallback = true,
+  ctx,
+}) {
+  const { userSession } = ctx.meta;
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateNotExistSchema({ locationName, pluginName, ctx });
 
-  const defaultLocale = await leemons.getPlugin('users').services.platform.getDefaultLocale();
+  const defaultLocale = await ctx.tx.call('users.platform.getDefaultLocale');
 
   try {
-    await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
+    await validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx });
   } catch (err) {
     if (userSession) {
       locale = defaultLocale;
@@ -50,12 +61,12 @@ async function getSchemaWithLocale(
   }
 
   const promises = [
-    getSchema.call(this, locationName, pluginName),
-    getSchemaLocale.call(this, locationName, pluginName, locale),
+    getSchema({ locationName, pluginName, ctx }),
+    getSchemaLocale({ locationName, pluginName, locale, ctx }),
   ];
 
   if (useDefaultLocaleCallback) {
-    promises.push(getSchemaLocale.call(this, locationName, pluginName, defaultLocale));
+    promises.push(getSchemaLocale({ locationName, pluginName, locale: defaultLocale, ctx }));
   }
 
   // eslint-disable-next-line prefer-const
@@ -66,10 +77,10 @@ async function getSchemaWithLocale(
   }
 
   if (defaultWithEmptyValues) {
-    _.forEach(global.utils.getObjectArrayKeys(defaultSchemaLocale.schemaData), (key) => {
+    _.forEach(getObjectArrayKeys(defaultSchemaLocale.schemaData), (key) => {
       _.set(defaultSchemaLocale.schemaData, key, '');
     });
-    _.forEach(global.utils.getObjectArrayKeys(defaultSchemaLocale.uiData), (key) => {
+    _.forEach(getObjectArrayKeys(defaultSchemaLocale.uiData), (key) => {
       _.set(defaultSchemaLocale.uiData, key, '');
     });
   }
@@ -77,14 +88,11 @@ async function getSchemaWithLocale(
   schema.schemaData = _.merge(defaultSchemaLocale.schemaData, schemaLocale.schemaData);
   schema.uiData = _.merge(defaultSchemaLocale.uiData, schemaLocale.uiData);
 
-  schema.compileJsonSchema = global.utils.squirrelly.render(
+  schema.compileJsonSchema = squirrelly.render(
     JSON.stringify(schema.jsonSchema),
     schema.schemaData
   );
-  schema.compileJsonUI = global.utils.squirrelly.render(
-    JSON.stringify(schema.jsonUI),
-    schema.uiData
-  );
+  schema.compileJsonUI = squirrelly.render(JSON.stringify(schema.jsonUI), schema.uiData);
 
   schema.compileJsonSchema = JSON.parse(
     schema.compileJsonSchema
@@ -102,18 +110,20 @@ async function getSchemaWithLocale(
   );
 
   if (userSession) {
-    const goodKeys = await getKeysCanAction(
+    const goodKeys = await getKeysCanAction({
       locationName,
       pluginName,
-      userSession.userAgents,
-      'view'
-    );
-    const editKeys = await getKeysCanAction(
+      userAgent: userSession.userAgents,
+      actions: 'view',
+      ctx,
+    });
+    const editKeys = await getKeysCanAction({
       locationName,
       pluginName,
-      userSession.userAgents,
-      'edit'
-    );
+      userAgent: userSession.userAgents,
+      actions: 'edit',
+      ctx,
+    });
 
     // TODO Sacar los centros de los useragents y borrar todas las propiedades donde sus centro no esten entre los de los userAgents (El campo que tenga de entro el * siempre saldra)
     _.forInRight(schema.compileJsonSchema.properties, (value, key) => {

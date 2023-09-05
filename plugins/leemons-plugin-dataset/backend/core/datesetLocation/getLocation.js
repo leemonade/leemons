@@ -1,7 +1,6 @@
-const { translations, getTranslationKey } = require('../translations');
 const { validateNotExistLocation } = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
-const { table } = require('../tables');
+const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -18,44 +17,36 @@ const { table } = require('../tables');
  *  @param {string=} locale - Locale to return name and description
  *  @return {Promise<DatasetLocation>} The new dataset location
  *  */
-async function getLocation(locationName, pluginName, { locale, transacting } = {}) {
+async function getLocation({ locationName, pluginName, locale, ctx }) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, false);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
 
-  const promises = [table.dataset.findOne({ locationName, pluginName }, { transacting })];
+  const promises = [ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean()];
 
-  if (translations()) {
-    if (locale) {
-      promises.push(
-        translations().contents.getValue(
-          getTranslationKey(locationName, pluginName, 'name'),
-          locale,
-          {
-            transacting,
-          }
-        )
-      );
-      promises.push(
-        translations().contents.getValue(
-          getTranslationKey(locationName, pluginName, 'description'),
-          locale,
-          { transacting }
-        )
-      );
-    } else {
-      promises.push(
-        translations().contents.getLocaleValueWithKey(
-          getTranslationKey(locationName, pluginName, 'name'),
-          { transacting }
-        )
-      );
-      promises.push(
-        translations().contents.getLocaleValueWithKey(
-          getTranslationKey(locationName, pluginName, 'description'),
-          { transacting }
-        )
-      );
-    }
+  if (locale) {
+    promises.push(
+      ctx.tx.call('multilanguage.contents.getValue', {
+        key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+        locale,
+      })
+    );
+    promises.push(
+      ctx.tx.call('multilanguage.contents.getValue', {
+        key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+        locale,
+      })
+    );
+  } else {
+    promises.push(
+      ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
+        key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+      })
+    );
+    promises.push(
+      ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
+        key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+      })
+    );
   }
 
   const [dataset, name, description] = await Promise.all(promises);

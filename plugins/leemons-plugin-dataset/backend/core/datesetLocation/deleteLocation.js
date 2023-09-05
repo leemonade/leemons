@@ -1,8 +1,7 @@
 const { validatePluginName, validateNotExistLocation } = require('../../validations/exists');
-const { translations, getTranslationKey } = require('../translations');
-const { validateLocationAndPlugin } = require('../../validations/dataset-location');
-const { table } = require('../tables');
-const deleteSchema = require('../dataset-schema/deleteSchema');
+const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
+const deleteSchema = require('../datasetSchema/deleteSchema');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -18,51 +17,35 @@ const deleteSchema = require('../dataset-schema/deleteSchema');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<boolean>} The new dataset location
  *  */
-async function deleteLocation(
-  locationName,
-  pluginName,
-  { deleteValues, transacting: _transacting } = {}
-) {
+async function deleteLocation({ locationName, pluginName, deleteValues, ctx }) {
   validateLocationAndPlugin(locationName, pluginName);
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await deleteSchema.call(this, locationName, pluginName, { deleteValues, transacting });
-      const promises = [table.dataset.delete({ locationName, pluginName }, { transacting })];
-      if (translations()) {
-        promises.push(
-          translations().contents.deleteAll(
-            { key: getTranslationKey(locationName, pluginName, 'name') },
-            { transacting }
-          )
-        );
-        promises.push(
-          translations().contents.deleteAll(
-            { key: getTranslationKey(locationName, pluginName, 'description') },
-            { transacting }
-          )
-        );
-        promises.push(
-          translations().contents.deleteAll(
-            { key: getTranslationKey(locationName, pluginName, 'jsonSchema') },
-            { transacting }
-          )
-        );
-        promises.push(
-          translations().contents.deleteAll(
-            { key: getTranslationKey(locationName, pluginName, 'jsonUI') },
-            { transacting }
-          )
-        );
-      }
-      await Promise.all(promises);
-      return true;
-    },
-    table.dataset,
-    _transacting
+  await deleteSchema({ locationName, pluginName, deleteValues, ctx });
+  const promises = [ctx.tx.db.Dataset.deleteOne({ locationName, pluginName })];
+  promises.push(
+    ctx.tx.call('multilanguage.contents.deleteAll', {
+      key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+    })
   );
+  promises.push(
+    ctx.tx.call('multilanguage.contents.deleteAll', {
+      key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+    })
+  );
+  promises.push(
+    ctx.tx.call('multilanguage.contents.deleteAll', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    })
+  );
+  promises.push(
+    ctx.tx.call('multilanguage.contents.deleteAll', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    })
+  );
+  await Promise.all(promises);
+  return true;
 }
 
 module.exports = deleteLocation;

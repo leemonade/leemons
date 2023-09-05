@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const saveField = require('./saveField');
 
 /** *
@@ -14,30 +13,19 @@ const saveField = require('./saveField');
  *  @param {any=} _transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function saveMultipleFields(
-  locationName,
-  pluginName,
-  fields,
-  { transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      let response = null;
-      for (let i = 0, l = fields.length; i < l; i++) {
-        // ES: Como saveField devuelve el dataset solo necesitamos el ultimo guardado
-        response = await saveField(
-          locationName,
-          pluginName,
-          fields[i].schemaConfig,
-          fields[i].schemaLocales,
-          { transacting }
-        );
-      }
-      return response;
-    },
-    table.dataset,
-    _transacting
-  );
+async function saveMultipleFields({ locationName, pluginName, fields, ctx }) {
+  let response = null;
+  for (let i = 0, l = fields.length; i < l; i++) {
+    // ES: Como saveField devuelve el dataset solo necesitamos el ultimo guardado
+    response = await saveField({
+      locationName,
+      pluginName,
+      schemaConfig: fields[i].schemaConfig,
+      schemaLocales: fields[i].schemaLocale,
+      ctx,
+    });
+  }
+  return response;
 }
 
 module.exports = saveMultipleFields;

@@ -1,7 +1,6 @@
 const { validatePluginName, validateNotExistLocation } = require('../../validations/exists');
-const { translations, getTranslationKey } = require('../translations');
-const { validateAddLocation } = require('../../validations/dataset-location');
-const { table } = require('../tables');
+const { validateAddLocation } = require('../../validations/datasetLocation');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -20,45 +19,34 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<DatasetLocation>} The new dataset location
  *  */
-async function updateLocation(
-  { name, description, locationName, pluginName },
-  { transacting: _transacting } = {}
-) {
+async function updateLocation({ name, description, locationName, pluginName, ctx }) {
   validateAddLocation({ name, description, locationName, pluginName });
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const promises = [table.dataset.update({ locationName, pluginName }, {}, { transacting })];
-      if (translations()) {
-        if (name) {
-          promises.push(
-            translations().contents.setKey(
-              getTranslationKey(locationName, pluginName, 'name'),
-              name,
-              { transacting }
-            )
-          );
-        }
-        if (description) {
-          promises.push(
-            translations().contents.setKey(
-              getTranslationKey(locationName, pluginName, 'description'),
-              description,
-              { transacting }
-            )
-          );
-        }
-      }
-      const response = await Promise.all(promises);
-      if (response[1] && !response[1].warnings) response[0].name = name;
-      if (response[2] && !response[2].warnings) response[0].description = description;
-      return response[0];
-    },
-    table.dataset,
-    _transacting
-  );
+  const promises = [
+    ctx.tx.db.Dataset.findOneAndUpdate({ locationName, pluginName }, {}, { lean: true, new: true }),
+  ];
+  if (name) {
+    promises.push(
+      ctx.tx.call('multilanguage.contents.setKey', {
+        key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+        data: name,
+      })
+    );
+  }
+  if (description) {
+    promises.push(
+      ctx.tx.call('multilanguage.contents.setKey', {
+        key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+        data: description,
+      })
+    );
+  }
+  const response = await Promise.all(promises);
+  if (response[1] && !response[1].warnings) response[0].name = name;
+  if (response[2] && !response[2].warnings) response[0].description = description;
+  return response[0];
 }
 
 module.exports = updateLocation;

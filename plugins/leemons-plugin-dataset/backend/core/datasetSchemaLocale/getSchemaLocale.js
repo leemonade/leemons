@@ -4,8 +4,8 @@ const {
   validateNotExistLocation,
   validatePluginName,
 } = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
-const { translations, getTranslationKey } = require('../translations');
+const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -22,28 +22,22 @@ const { translations, getTranslationKey } = require('../translations');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<{schemaData, uiData}>} The json data
  *  */
-async function getSchemaLocale(locationName, pluginName, locale, { transacting } = {}) {
+async function getSchemaLocale({ locationName, pluginName, locale, ctx }) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting });
-  await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateNotExistSchema({ locationName, pluginName, ctx });
+  await validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx });
 
   const [schemaData, uiData] = await Promise.all([
-    translations().contents.getValue(
-      getTranslationKey(locationName, pluginName, 'jsonSchema'),
+    ctx.tx.call('multilanguage.contents.getValue', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
       locale,
-      {
-        transacting,
-      }
-    ),
-    translations().contents.getValue(
-      getTranslationKey(locationName, pluginName, 'jsonUI'),
+    }),
+    ctx.tx.call('multilanguage.contents.getValue', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
       locale,
-      {
-        transacting,
-      }
-    ),
+    }),
   ]);
 
   return {

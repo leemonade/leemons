@@ -12,10 +12,10 @@ const {
   validateNotExistLocation,
   validateNotExistSchema,
 } = require('../../validations/exists');
-const { getTranslationKey, translations } = require('../translations');
-const { validateLocationAndPlugin } = require('../../validations/dataset-location');
-const { table } = require('../tables');
-const deleteValues = require('../dataset-values/deleteValues');
+const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
+
+const deleteValues = require('../datasetValues/deleteValues');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -31,95 +31,74 @@ const deleteValues = require('../dataset-values/deleteValues');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<boolean>} Return true if delete is ok
  *  */
-async function deleteSchema(
-  locationName,
-  pluginName,
-  { deleteValues: _deleteValues, transacting: _transacting } = {}
-) {
+async function deleteSchema({ locationName, pluginName, deleteValues: _deleteValues, ctx }) {
   validateLocationAndPlugin(locationName, pluginName);
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting: _transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting: _transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateNotExistSchema({ locationName, pluginName, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      // ES: Pillamos los permisos por perfil para el jsonSchema
-      // EN: We set the permissions per profile for jsonSchema
-      const { jsonSchema } = await table.dataset.findOne(
-        { locationName, pluginName },
-        { transacting }
-      );
+  // ES: Pillamos los permisos por perfil para el jsonSchema
+  // EN: We set the permissions per profile for jsonSchema
+  const { jsonSchema } = await ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean();
 
-      const { profiles: profilePermissions, roles: rolesPermissions } =
-        transformPermissionKeysToObjectsByType(
-          jsonSchema,
-          getJsonSchemaProfilePermissionsKeysByType(jsonSchema),
-          `${locationName}.${pluginName}`
-        );
+  const { profiles: profilePermissions, roles: rolesPermissions } =
+    transformPermissionKeysToObjectsByType({
+      jsonSchema,
+      keysByType: getJsonSchemaProfilePermissionsKeysByType({ jsonSchema }),
+      prefix: `${locationName}.${pluginName}`,
+      ctx,
+    });
 
-      if (_deleteValues) {
-        await deleteValues.call(this, locationName, pluginName, { transacting });
+  if (_deleteValues) {
+    await deleteValues({ locationName, pluginName, ctx });
+  }
+
+  const promises = [
+    ctx.tx.db.Dataset.updateOne(
+      { locationName, pluginName },
+      {
+        jsonSchema: null,
+        jsonUI: null,
       }
+    ),
+  ];
 
-      const promises = [
-        table.dataset.update(
-          { locationName, pluginName },
-          {
-            jsonSchema: null,
-            jsonUI: null,
-          },
-          { transacting }
-        ),
-      ];
+  // ES: Borramos todos los permisos que se añadieron al perfil para este dataset
+  // EN: Delete all permissions that were added to the profile for this dataset
+  _.forIn(profilePermissions, (permissions, profileId) => {
+    promises.push(
+      ctx.tx.call('users.profiles.removeCustomPermissionsByName', {
+        profileId,
+        permissions: _.map(permissions, 'permissionName'),
+      })
+    );
+  });
+  _.forIn(rolesPermissions, (permissions, roleId) => {
+    promises.push(
+      ctx.tx.call('users.roles.removePermissionsByName', {
+        roleId,
+        permissionNames: _.map(permissions, 'permissionName'),
+        removeCustomPermissions: true,
+      })
+    );
+  });
 
-      // ES: Borramos todos los permisos que se añadieron al perfil para este dataset
-      // EN: Delete all permissions that were added to the profile for this dataset
-      _.forIn(profilePermissions, (permissions, profileId) => {
-        promises.push(
-          leemons
-            .getPlugin('users')
-            .services.profiles.removeCustomPermissionsByName(
-              profileId,
-              _.map(permissions, 'permissionName'),
-              { transacting }
-            )
-        );
-      });
-      _.forIn(rolesPermissions, (permissions, roleId) => {
-        promises.push(
-          leemons
-            .getPlugin('users')
-            .services.roles.removePermissionsByName(roleId, _.map(permissions, 'permissionName'), {
-              removeCustomPermissions: true,
-              transacting,
-            })
-        );
-      });
-
-      // ES: Borramos traducciones
-      // EN: We delete translations
-      if (translations()) {
-        promises.push(
-          translations().contents.deleteAll(
-            { key: getTranslationKey(locationName, pluginName, 'jsonSchema') },
-            { transacting }
-          )
-        );
-        promises.push(
-          translations().contents.deleteAll(
-            { key: getTranslationKey(locationName, pluginName, 'jsonUI') },
-            { transacting }
-          )
-        );
-      }
-
-      await Promise.all(promises);
-
-      return true;
-    },
-    table.dataset,
-    _transacting
+  // ES: Borramos traducciones
+  // EN: We delete translations
+  promises.push(
+    ctx.tx.call('multilanguage.contents.deleteAll', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    })
   );
+  promises.push(
+    ctx.tx.call('multilanguage.contents.deleteAll', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    })
+  );
+
+  await Promise.all(promises);
+
+  return true;
 }
 
 module.exports = deleteSchema;

@@ -1,50 +1,54 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistLocation } = require('../../validations/exists');
 const getSchema = require('./getSchema');
 const addSchema = require('./addSchema');
 const { transformJsonSchema, transformUiSchema } = require('./transformJsonOrUiSchema');
-const addSchemaLocale = require('../dataset-schema-locale/addSchemaLocale');
-const existSchemaLocale = require('../dataset-schema-locale/existSchemaLocale');
-const updateSchemaLocale = require('../dataset-schema-locale/updateSchemaLocale');
+const addSchemaLocale = require('../datasetSchemaLocale/addSchemaLocale');
+const existSchemaLocale = require('../datasetSchemaLocale/existSchemaLocale');
+const updateSchemaLocale = require('../datasetSchemaLocale/updateSchemaLocale');
 const updateSchema = require('./updateSchema');
 const getSchemaWithLocale = require('./getSchemaWithLocale');
 const recalculeEnumNames = require('./recalculeEnumNames');
+const { randomString } = require('leemons-utils');
 
-async function saveLocale(
+async function saveLocale({
   locale,
-  { schema, ui },
+  value: { schema, ui },
   locationName,
   pluginName,
   id,
-  { transacting, useDefaultLocaleCallback = true } = {}
-) {
-  if (await existSchemaLocale(locationName, pluginName, locale, { transacting })) {
-    const { compileJsonSchema, compileJsonUI } = await getSchemaWithLocale.call(
-      { calledFrom: pluginName },
+  useDefaultLocaleCallback = true,
+  ctx,
+}) {
+  if (await existSchemaLocale({ locationName, pluginName, locale, ctx })) {
+    const { compileJsonSchema, compileJsonUI } = await getSchemaWithLocale({
       locationName,
       pluginName,
       locale,
-      { transacting, useDefaultLocaleCallback }
-    );
+      useDefaultLocaleCallback,
+      ctx: {
+        ...ctx,
+        callerPlugin: pluginName,
+      },
+    });
 
     compileJsonSchema.properties[id] = schema;
     compileJsonUI[id] = ui;
 
-    const _schema = transformJsonSchema(compileJsonSchema);
+    const _schema = transformJsonSchema({ jsonSchema: compileJsonSchema });
     const _ui = transformUiSchema(compileJsonUI);
 
-    return updateSchemaLocale.call(
-      { calledFrom: pluginName },
-      {
-        schemaData: _schema.values,
-        uiData: _ui.values,
-        locationName,
-        locale,
-        pluginName,
+    return updateSchemaLocale({
+      schemaData: _schema.values,
+      uiData: _ui.values,
+      locationName,
+      locale,
+      pluginName,
+      ctx: {
+        ...ctx,
+        callerPlugin: pluginName,
       },
-      { transacting }
-    );
+    });
   }
   const jsonSchema = {
     type: 'object',
@@ -56,19 +60,19 @@ async function saveLocale(
   const jsonUI = {
     [id]: ui,
   };
-  const _schema = transformJsonSchema(jsonSchema);
+  const _schema = transformJsonSchema({ jsonSchema });
   const _ui = transformUiSchema(jsonUI);
-  return addSchemaLocale.call(
-    { calledFrom: pluginName },
-    {
-      schemaData: _schema.values,
-      uiData: _ui.values,
-      locationName,
-      locale,
-      pluginName,
+  return addSchemaLocale({
+    schemaData: _schema.values,
+    uiData: _ui.values,
+    locationName,
+    locale,
+    pluginName,
+    ctx: {
+      ...ctx,
+      callerPlugin: pluginName,
     },
-    { transacting }
-  );
+  });
 }
 
 /** *
@@ -83,116 +87,115 @@ async function saveLocale(
  *  @param {any=} _transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function saveField(
+async function saveField({
   locationName,
   pluginName,
   schemaConfig,
   schemaLocales,
-  { useDefaultLocaleCallback = true, transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistLocation(locationName, pluginName, { transacting });
+  useDefaultLocaleCallback = true,
+  ctx,
+}) {
+  await validateNotExistLocation({ locationName, pluginName, ctx });
 
-      let id;
-      let dataset = null;
-      try {
-        dataset = await getSchema(locationName, pluginName, { transacting });
+  let id;
+  let dataset = null;
+  try {
+    dataset = await getSchema({ locationName, pluginName, ctx });
 
-        id = schemaConfig.schema.id ? schemaConfig.schema.id : global.utils.randomString();
+    id = schemaConfig.schema.id ? schemaConfig.schema.id : randomString();
 
-        dataset.jsonSchema.properties[id] = {
-          ...schemaConfig.schema,
-          id,
-        };
-        dataset.jsonUI[id] = schemaConfig.ui;
+    dataset.jsonSchema.properties[id] = {
+      ...schemaConfig.schema,
+      id,
+    };
+    dataset.jsonUI[id] = schemaConfig.ui;
 
-        dataset.jsonSchema.required = [];
+    dataset.jsonSchema.required = [];
 
-        _.forIn(dataset.jsonSchema.properties, (value, key) => {
-          if (value.frontConfig.required) {
-            dataset.jsonSchema.required.push(key);
-          }
-        });
-
-        dataset.jsonSchema = transformJsonSchema(dataset.jsonSchema).json;
-        dataset.jsonUI = transformUiSchema(dataset.jsonUI).json;
-
-        dataset = await updateSchema.call(
-          { calledFrom: pluginName },
-          {
-            locationName,
-            pluginName,
-            jsonSchema: dataset.jsonSchema,
-            jsonUI: dataset.jsonUI,
-          },
-          { transacting }
-        );
-      } catch (e) {
-        if (e.code === 4001) {
-          // ES: Creamos el schema por que aun no existe
-          id = global.utils.randomString();
-          let jsonSchema = {
-            type: 'object',
-            properties: {
-              [id]: schemaConfig.schema,
-            },
-            required: [],
-          };
-          schemaConfig.schema.id = id;
-          if (schemaConfig.schema.frontConfig.required) {
-            jsonSchema.required.push(id);
-          }
-          // ES: Creamos el ui por que aun no existe
-          let jsonUI = {
-            [id]: schemaConfig.ui,
-          };
-
-          // ES: Transforma los json finales a lo que necesitamos almacenar
-          jsonSchema = transformJsonSchema(jsonSchema).json;
-          jsonUI = transformUiSchema(jsonUI).json;
-
-          dataset = await addSchema.call(
-            { calledFrom: pluginName },
-            {
-              locationName,
-              pluginName,
-              jsonSchema,
-              jsonUI,
-            },
-            { transacting }
-          );
-        } else {
-          throw e;
-        }
+    _.forIn(dataset.jsonSchema.properties, (value, key) => {
+      if (value.frontConfig.required) {
+        dataset.jsonSchema.required.push(key);
       }
+    });
 
-      // ES: Traducciones
-      const promises = [];
-      _.forIn(schemaLocales, (value, locale) => {
-        promises.push(
-          saveLocale(locale, value, locationName, pluginName, id, {
-            transacting,
-            useDefaultLocaleCallback,
-          })
-        );
-      });
-      await Promise.all(promises);
+    dataset.jsonSchema = transformJsonSchema({ jsonSchema: dataset.jsonSchema }).json;
+    dataset.jsonUI = transformUiSchema(dataset.jsonUI).json;
 
-      // Vamos coger el schema tocho, que tiene que tener los checkboxs guays y recorrernos todas las traducciones calculando el enumNames
-      await recalculeEnumNames(locationName, pluginName, { transacting });
+    dataset = await updateSchema({
+      locationName,
+      pluginName,
+      jsonSchema: dataset.jsonSchema,
+      jsonUI: dataset.jsonUI,
+      ctx: {
+        ...ctx,
+        callerPlugin: pluginName,
+      },
+    });
+  } catch (e) {
+    if (e.code === 4001) {
+      // ES: Creamos el schema por que aun no existe
+      id = randomString();
+      let jsonSchema = {
+        type: 'object',
+        properties: {
+          [id]: schemaConfig.schema,
+        },
+        required: [],
+      };
+      schemaConfig.schema.id = id;
+      if (schemaConfig.schema.frontConfig.required) {
+        jsonSchema.required.push(id);
+      }
+      // ES: Creamos el ui por que aun no existe
+      let jsonUI = {
+        [id]: schemaConfig.ui,
+      };
 
-      await leemons.events.emit('save-field', {
+      // ES: Transforma los json finales a lo que necesitamos almacenar
+      jsonSchema = transformJsonSchema({ jsonSchema }).json;
+      jsonUI = transformUiSchema(jsonUI).json;
+
+      dataset = await addSchema({
         locationName,
         pluginName,
-        transacting,
+        jsonSchema,
+        jsonUI,
+        ctx: {
+          ...ctx,
+          callerPlugin: pluginName,
+        },
       });
+    } else {
+      throw e;
+    }
+  }
 
-      return dataset;
-    },
-    table.dataset,
-    _transacting
-  );
+  // ES: Traducciones
+  const promises = [];
+  _.forIn(schemaLocales, (value, locale) => {
+    promises.push(
+      saveLocale({
+        locale,
+        value,
+        locationName,
+        pluginName,
+        id,
+        useDefaultLocaleCallback,
+        ctx,
+      })
+    );
+  });
+  await Promise.all(promises);
+
+  // Vamos coger el schema tocho, que tiene que tener los checkboxs guays y recorrernos todas las traducciones calculando el enumNames
+  await recalculeEnumNames({ locationName, pluginName, ctx });
+
+  await ctx.emit('save-field', {
+    locationName,
+    pluginName,
+  });
+
+  return dataset;
 }
 
 module.exports = saveField;

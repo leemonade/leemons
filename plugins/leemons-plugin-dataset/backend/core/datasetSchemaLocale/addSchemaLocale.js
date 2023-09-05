@@ -4,9 +4,8 @@ const {
   validateNotExistLocation,
   validatePluginName,
 } = require('../../validations/exists');
-const { validateAddSchemaLocale } = require('../../validations/dataset-schema-locale');
-const { getTranslationKey, translations } = require('../translations');
-const { table } = require('../tables');
+const { validateAddSchemaLocale } = require('../../validations/datasetSchemaLocale');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -21,43 +20,32 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<{schemaData, uiData}>} The json data passed
  *  */
-async function addSchemaLocale(
-  { locationName, pluginName, schemaData, uiData, locale },
-  { transacting } = {}
-) {
+async function addSchemaLocale({ locationName, pluginName, schemaData, uiData, locale, ctx }) {
   validateAddSchemaLocale({ locationName, pluginName, schemaData, uiData, locale });
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting });
-  await validateExistSchemaLocale(locationName, pluginName, locale, { transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateNotExistSchema({ locationName, pluginName, ctx });
+  await validateExistSchemaLocale({ locationName, pluginName, locale, ctx });
 
-  return global.utils.withTransaction(
-    async (_transacting) => {
-      await Promise.all([
-        translations().contents.add(
-          getTranslationKey(locationName, pluginName, 'jsonSchema'),
-          locale,
-          JSON.stringify(schemaData),
-          { transacting: _transacting }
-        ),
-        translations().contents.add(
-          getTranslationKey(locationName, pluginName, 'jsonUI'),
-          locale,
-          JSON.stringify(uiData),
-          { transacting: _transacting }
-        ),
-      ]);
-      return {
-        locationName,
-        pluginName,
-        schemaData,
-        uiData,
-        locale,
-      };
-    },
-    table.dataset,
-    transacting
-  );
+  await Promise.all([
+    ctx.tx.call('multilanguage.contents.add', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+      locale,
+      value: JSON.stringify(schemaData),
+    }),
+    ctx.tx.call('multilanguage.contents.add', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+      locale,
+      value: JSON.stringify(uiData),
+    }),
+  ]);
+  return {
+    locationName,
+    pluginName,
+    schemaData,
+    uiData,
+    locale,
+  };
 }
 
 module.exports = addSchemaLocale;

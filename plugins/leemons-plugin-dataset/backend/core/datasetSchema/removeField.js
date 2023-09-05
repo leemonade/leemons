@@ -1,10 +1,9 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateNotExistLocation } = require('../../validations/exists');
 const getSchema = require('./getSchema');
 const { transformJsonSchema, transformUiSchema } = require('./transformJsonOrUiSchema');
 const updateSchema = require('./updateSchema');
-const { translations, getTranslationKey } = require('../translations');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -21,81 +20,68 @@ const { translations, getTranslationKey } = require('../translations');
  *  @param {any=} _transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function removeField(locationName, pluginName, item, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistLocation(locationName, pluginName, { transacting });
-      let dataset = await getSchema(locationName, pluginName, { transacting });
-      delete dataset.jsonSchema.properties[item];
-      delete dataset.jsonUI[item];
-      const index = dataset.jsonSchema.required.indexOf(item);
-      if (index >= 0) dataset.jsonSchema.required.splice(index, 1);
-      dataset.jsonSchema = transformJsonSchema(dataset.jsonSchema).json;
-      dataset.jsonUI = transformUiSchema(dataset.jsonUI).json;
+async function removeField({ locationName, pluginName, item, ctx }) {
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  let dataset = await getSchema({ locationName, pluginName, ctx });
+  delete dataset.jsonSchema.properties[item];
+  delete dataset.jsonUI[item];
+  const index = dataset.jsonSchema.required.indexOf(item);
+  if (index >= 0) dataset.jsonSchema.required.splice(index, 1);
+  dataset.jsonSchema = transformJsonSchema({ jsonSchema: dataset.jsonSchema }).json;
+  dataset.jsonUI = transformUiSchema(dataset.jsonUI).json;
 
-      dataset = await updateSchema.call(
-        { calledFrom: pluginName },
-        {
-          locationName,
-          pluginName,
-          jsonSchema: dataset.jsonSchema,
-          jsonUI: dataset.jsonUI,
-        },
-        { transacting }
-      );
+  dataset = await updateSchema({
+    locationName,
+    pluginName,
+    jsonSchema: dataset.jsonSchema,
+    jsonUI: dataset.jsonUI,
+    ctx: { ...ctx, callerPlugin: pluginName },
+  });
 
-      const promises = [];
-      promises.push(
-        translations().contents.getLocaleValueWithKey(
-          getTranslationKey(locationName, pluginName, 'jsonSchema'),
-          { transacting }
-        )
-      );
-      promises.push(
-        translations().contents.getLocaleValueWithKey(
-          getTranslationKey(locationName, pluginName, 'jsonUI'),
-          { transacting }
-        )
-      );
-
-      const [schema, ui] = await Promise.all(promises);
-
-      const savePromises = [];
-      _.forIn(schema, (value, locale) => {
-        const jsonValue = JSON.parse(value);
-        if (jsonValue && jsonValue.properties && jsonValue.properties[item]) {
-          delete jsonValue.properties[item];
-          savePromises.push(
-            translations().contents.setValue(
-              getTranslationKey(locationName, pluginName, 'jsonSchema'),
-              locale,
-              JSON.stringify(jsonValue),
-              { transacting }
-            )
-          );
-        }
-      });
-
-      _.forIn(ui, (value, locale) => {
-        const jsonValue = JSON.parse(value);
-        delete jsonValue[item];
-        savePromises.push(
-          translations().contents.setValue(
-            getTranslationKey(locationName, pluginName, 'jsonUI'),
-            locale,
-            JSON.stringify(jsonValue),
-            { transacting }
-          )
-        );
-      });
-
-      await Promise.all(savePromises);
-
-      return dataset;
-    },
-    table.dataset,
-    _transacting
+  const promises = [];
+  promises.push(
+    ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    })
   );
+  promises.push(
+    ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    })
+  );
+
+  const [schema, ui] = await Promise.all(promises);
+
+  const savePromises = [];
+  _.forIn(schema, (value, locale) => {
+    const jsonValue = JSON.parse(value);
+    if (jsonValue && jsonValue.properties && jsonValue.properties[item]) {
+      delete jsonValue.properties[item];
+      savePromises.push(
+        ctx.tx.call('multilanguage.contents.setValue', {
+          key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+          locale,
+          value: JSON.stringify(jsonValue),
+        })
+      );
+    }
+  });
+
+  _.forIn(ui, (value, locale) => {
+    const jsonValue = JSON.parse(value);
+    delete jsonValue[item];
+    savePromises.push(
+      ctx.tx.call('multilanguage.contents.setValue', {
+        key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+        locale,
+        value: JSON.stringify(jsonValue),
+      })
+    );
+  });
+
+  await Promise.all(savePromises);
+
+  return dataset;
 }
 
 module.exports = removeField;

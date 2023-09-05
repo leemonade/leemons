@@ -1,12 +1,11 @@
-const { getTranslationKey, translations } = require('../translations');
 const {
   validateNotExistSchemaLocale,
   validateNotExistSchema,
   validateNotExistLocation,
   validatePluginName,
 } = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/dataset-location');
-const { table } = require('../tables');
+const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
+const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:
@@ -21,33 +20,25 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<boolean>} Return true if delete is ok
  *  */
-async function deleteSchemaLocale({ locationName, pluginName, locale }, { transacting } = {}) {
+async function deleteSchemaLocale({ locationName, pluginName, locale, ctx }) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting });
-  await validateNotExistSchemaLocale(locationName, pluginName, locale, { transacting });
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateNotExistSchema({ locationName, pluginName, ctx });
+  await validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx });
 
-  return global.utils.withTransaction(
-    async (_transacting) => {
-      await Promise.all([
-        translations().contents.delete(
-          getTranslationKey(locationName, pluginName, 'jsonSchema'),
-          locale,
-          { transacting: _transacting }
-        ),
-        translations().contents.delete(
-          getTranslationKey(locationName, pluginName, 'jsonUI'),
-          locale,
-          { transacting: _transacting }
-        ),
-      ]);
+  await Promise.all([
+    ctx.tx.call('multilanguage.contents.delete', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+      locale,
+    }),
+    ctx.tx.call('multilanguage.contents.delete', {
+      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+      locale,
+    }),
+  ]);
 
-      return true;
-    },
-    table.dataset,
-    transacting
-  );
+  return true;
 }
 
 module.exports = deleteSchemaLocale;

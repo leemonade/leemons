@@ -52,6 +52,14 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Dataset (Finish) --
+          'POST dataset/get-schema': 'v1.dataset.dataset.getSchemaRest',
+          'POST dataset/get-schema-locale': 'v1.dataset.dataset.getSchemaLocaleRest',
+          'POST dataset/get-schema-field-locale': 'v1.dataset.dataset.getSchemaFieldLocaleRest',
+          'POST dataset/save-field': 'v1.dataset.dataset.saveFieldRest',
+          'POST dataset/save-multiple-fields': 'v1.dataset.dataset.saveMultipleFieldsRest',
+          'POST dataset/remove-field': 'v1.dataset.dataset.removeFieldRest',
+
           // -- Academic calendar (Finish) --
           'GET academic-calendar/config/:programId': 'v1.academic-calendar.config.getRest',
           'POST academic-calendar/config': 'v1.academic-calendar.config.saveRest',
