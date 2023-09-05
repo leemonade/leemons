@@ -2,6 +2,7 @@ const { modifyCTX } = require('leemons-mongodb/src/mixin');
 
 function generateCtx({
   actions,
+  events,
   models,
   pluginName = 'leemons-testing',
   caller,
@@ -15,10 +16,19 @@ function generateCtx({
     throw new Error(`The action ${actionName} was not mocked yet`);
   };
 
+  const eventsHandler = (eventName, props) => {
+    if (events.hasOwnProperty(eventName)) {
+      return events[eventName](props);
+    }
+    throw new Error(`The event ${eventName} was not mocked yet`);
+  };
+
   const ctx = {
     call: actionHandler,
+    emit: eventsHandler,
     tx: {
       call: actionHandler,
+      emit: eventsHandler,
     },
     service: {
       name: pluginName,
