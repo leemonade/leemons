@@ -92,17 +92,18 @@ it('Should handle files with cover', async () => {
   );
 });
 
-it("Should not throw if unexpected values are returned from the inner functions", async () => {
+it('Should not throw if unexpected values are returned from the inner functions', async () => {
   uploadFromSource.mockResolvedValue(undefined);
   const ctx = generateCtx({});
 
   // Act
-  const testFn = async () => handleFileUpload({
-    file: imageFileInput.file,
-    cover: imageFileInput.cover,
-    assetName: imageFileInput.assetName,
-    ctx,
-  });
+  const testFn = async () =>
+    handleFileUpload({
+      file: imageFileInput.file,
+      cover: imageFileInput.cover,
+      assetName: imageFileInput.assetName,
+      ctx,
+    });
 
   expect(testFn).not.toThrow();
-})
+});

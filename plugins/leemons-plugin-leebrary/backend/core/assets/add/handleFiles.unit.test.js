@@ -1,4 +1,8 @@
-const { it, expect, jest: { spyOn } } = require('@jest/globals');
+const {
+  it,
+  expect,
+  jest: { spyOn },
+} = require('@jest/globals');
 const { generateCtx } = require('leemons-testing');
 
 const { handleFiles } = require('./handleFiles');
@@ -36,7 +40,7 @@ it('Should not throw, instead it returns false and uses ctx.logger to log addFil
   const wrongFileId = { id: ['88'] };
 
   const ctx = generateCtx({});
-  const spyCtxLogger = spyOn(ctx.logger, 'error')
+  const spyCtxLogger = spyOn(ctx.logger, 'error');
 
   // Act
   const responseWithWrongId = await handleFiles({ newFile: wrongFileId, assetId: asset.id, ctx });
@@ -50,6 +54,6 @@ it('Should not throw, instead it returns false and uses ctx.logger to log addFil
   // Assert
   expect(responseWithWrongId).toBe(false);
   expect(testWithWrongId).not.toThrow();
-  expect(spyCtxLogger).toHaveBeenCalledWith(new Error('Boom!'))
-  expect(responseWithError).toBe(false)
+  expect(spyCtxLogger).toHaveBeenCalledWith(new Error('Boom!'));
+  expect(responseWithError).toBe(false);
 });

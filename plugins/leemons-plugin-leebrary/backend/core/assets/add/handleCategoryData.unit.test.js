@@ -4,7 +4,7 @@ const { generateCtx } = require('leemons-testing');
 const { handleCategoryData } = require('./handleCategoryData');
 const getCategory = require('../../../__fixtures__/getCategory');
 
-//mocks
+// Mocks
 jest.mock('../../categories/getById');
 jest.mock('../../categories/getByKey');
 const { getById: getCategoryById } = require('../../categories/getById');
@@ -30,7 +30,7 @@ it('Should return a category Object by correctly calling inner functions or retu
   });
   const responseWithCategoryId = await handleCategoryData({
     category: {},
-    categoryId: categoryId,
+    categoryId,
     categoryKey: bookmarkKey,
     ctx,
   });
