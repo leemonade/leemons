@@ -1,130 +1,21 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { getByAsset: getBookmark } = require('../../bookmarks/getByAsset');
-const { add } = require('../add');
 const { checkDuplicable: checkCategoryDuplicable } = require('../../categories/checkDuplicable');
 const { duplicate: duplicateFile } = require('../../files/duplicate');
 const { add: addFiles } = require('../files/add');
-const { normalizeItemsArray, isTruthy } = require('../../shared');
-const { getByIds: getFiles } = require('../../files/getByIds');
+const { normalizeItemsArray } = require('../../shared');
 const { CATEGORIES } = require('../../../config/constants');
 const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
 const { getAndCheckAsset } = require('./getAndCheckAsset');
+const { getFileIds } = require('./getFileIds');
+const { getFilesToDuplicate } = require('./getFilesToDuplicate');
+const { handleTags } = require('./handleTags');
+const { handleAssetDuplication } = require('./handleAssetDuplication');
+const { handleCoverDuplication } = require('./handleCoverDuplication');
 
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
-
-/**
- * Handles files and cover associated with an asset.
- * It retrieves the files using their IDs and finds the cover file among them.
- *
- * @param {Object} params - An object containing the parameters
- * @param {Array} params.filesIds - An array of file IDs
- * @param {string} params.coverId - The ID of the cover file
- * @param {Object} params.transacting - The transaction object
- * @returns {Promise<Object>} - Returns a promise with an object containing the files and the cover
- */
-async function getFilesToDuplicate({ filesIds, coverId, transacting }) {
-  const filesToDuplicate = await getFiles(filesIds, { parsed: false, transacting });
-  const cover = _.find(filesToDuplicate, { id: coverId });
-
-  return { filesToDuplicate, cover };
-}
-
-/**
- * Retrieves tags associated with a given asset.
- *
- * @param {Object} params - An object containing the parameters
- * @param {string} params.assetId - The ID of the asset
- * @param {Object} params.transacting - The transaction object
- * @returns {Promise<Array>} - Returns a promise with an array of tags
- */
-async function handleTags({ assetId, transacting }) {
-  const tagsService = leemons.getPlugin('common').services.tags;
-  const [tags] = await tagsService.getValuesTags(assetId, {
-    type: leemons.plugin.prefixPN(''),
-    transacting,
-  });
-
-  return tags;
-}
-
-/**
- * Handles the creation of a new asset during the duplication process.
- * It prepares the asset data, determines the indexable and public status, and calls the add function to create the new asset.
- *
- * @summary Creates a new asset during the duplication process.
- * @param {Object} params - An object containing the parameters
- * @param {Object} params.asset - The original asset object
- * @param {Array} params.tags - An array of tags associated with the asset
- * @param {string} params.newId - The ID for the new asset
- * @param {boolean} params.preserveName - A flag indicating whether to preserve the original asset name
- * @param {Array} params.permissions - An array of permissions associated with the asset
- * @param {boolean} params.isIndexable - A flag indicating whether the asset is indexable
- * @param {boolean} params.isPublic - A flag indicating whether the asset is public
- * @param {Object} params.userSession - The user session object
- * @param {Object} params.transacting - The transaction object
- * @returns {Promise<Object>} - Returns a promise with the newly created asset
- */
-async function handleAssetDuplication({
-  asset,
-  tags,
-  newId,
-  preserveName,
-  permissions,
-  isIndexable,
-  isPublic,
-  calledFrom,
-  userSession,
-  transacting,
-}) {
-  const assetData = _.omit(asset, [
-    'id',
-    'file',
-    'cover',
-    'icon',
-    'category',
-    'fromUser',
-    'fromUserAgent',
-    'created_at',
-    'updated_at',
-  ]);
-  const _isIndexable = isIndexable === undefined ? asset.indexable : isTruthy(isIndexable);
-  const _isPublic = isPublic === undefined ? asset.public : isTruthy(isPublic);
-  const newAsset = await add.call(
-    { calledFrom },
-    {
-      ...assetData,
-      tags,
-      name: isTruthy(preserveName) ? asset.name : `${asset.name} (1)`,
-      categoryId: asset.category,
-      permissions,
-      indexable: _isIndexable,
-      public: _isPublic,
-    },
-    { newId, userSession, transacting, duplicating: true }
-  );
-  return newAsset;
-}
-
-/**
- * Handles the duplication of the cover associated with a given asset.
- * It duplicates the cover file and updates the new asset with the duplicated cover.
- *
- * @param {Object} params - An object containing the parameters
- * @param {Object} params.newAsset - The new asset object
- * @param {Object} params.cover - The cover file object
- * @param {Object} params.transacting - The transaction object
- * @returns {Promise<Object>} - Returns a promise with the updated asset
- */
-async function handleCoverDuplication({ newAsset, cover, transacting }) {
-  const newCover = await duplicateFile(cover, { transacting });
-  if (newCover) {
-    await tables.assets.update({ id: newAsset.id }, { cover: newCover.id }, { transacting });
-    newAsset.cover = newCover;
-  }
-  return newAsset;
-}
 
 /**
  * Handles the duplication of the bookmark associated with a given asset.
@@ -263,7 +154,7 @@ async function duplicate({
   const category = await checkCategoryDuplicable({ categoryId: asset.category, ctx });
 
   // EN: Store the IDs of files associated with the asset in order to track them
-  const filesIds = await getFileIds({ asset, transacting });
+  const filesIds = await getFileIds({ asset, ctx });
 
   // ·········································································
   // HANDLE BOOKMARK
@@ -271,7 +162,7 @@ async function duplicate({
   // ES: En caso de que el asset sea un Bookmark, entonces recuperamos los datos
   // EN: In case the asset is a Bookmark, then we recover the data
 
-  const bookmark = await getBookmark(assetId, { transacting });
+  const bookmark = await getBookmark({ assetId, ctx });
 
   if (bookmark) {
     asset.fileType = 'bookmark';
@@ -289,13 +180,13 @@ async function duplicate({
   let { filesToDuplicate, cover } = await getFilesToDuplicate({
     filesIds,
     coverId: asset.cover,
-    transacting,
+    ctx,
   });
 
   // ·········································································
   // TAGS
 
-  const tags = await handleTags({ assetId, transacting });
+  const tags = await handleTags({ assetId, ctx });
 
   // ·········································································
   // ASSET DUPLICATION
@@ -306,18 +197,16 @@ async function duplicate({
     newId,
     preserveName,
     permissions: pPermissions,
-    indexable,
+    isIndexable: indexable,
     isPublic,
-    calledFrom: this.calledFrom,
-    userSession,
-    transacting,
+    ctx,
   });
 
   // ·········································································
   // POST DUPLICATION
 
   if (cover) {
-    newAsset = await handleCoverDuplication({ newAsset, cover, transacting });
+    newAsset = await handleCoverDuplication({ newAsset, cover, ctx });
     // Remove the old cover from files to be duplicated
     filesToDuplicate = filesToDuplicate.filter((file) => file.id !== cover.id);
   }

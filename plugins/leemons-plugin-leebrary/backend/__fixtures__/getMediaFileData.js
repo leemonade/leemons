@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 module.exports = function getMediaFileData() {
   const handleFileUploadInputs = {
     imageFileInput: {
@@ -14,7 +15,7 @@ module.exports = function getMediaFileData() {
 
   handleFileUploadInputs.audioFileInput.cover = handleFileUploadInputs.imageFileInput.file;
 
-  const data = {
+  return {
     handleFileUploadInputs,
     imageFile: {
       created_at: '2023-08-31T08:27:07.000Z',
@@ -57,6 +58,4 @@ module.exports = function getMediaFileData() {
       deleted_at: null,
     },
   };
-
-  return data;
 };

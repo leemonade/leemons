@@ -5,10 +5,10 @@ const _ = require('lodash');
  * Then, it fetches all asset files associated with the asset from the database and adds their IDs to the file IDs array.
  *
  * @summary Fetches file IDs associated with a given asset.
- * @param {Object} params - An object containing the parameters
- * @param {Object} params.asset - The asset object
- * @param {Object} params.transacting - The transaction object
- * @returns {Promise<Array>} - Returns a promise with an array of file IDs
+ * @param {Object} params - An object containing the parameters.
+ * @param {Object} params.asset - The asset object.
+ * @param {Moleculer.Context} params.ctx - The Moleculer context containing the transaction and other context data.
+ * @returns {Promise<Array<string>>} - Returns a promise with an array of file IDs.
  */
 async function getFileIds({ asset, ctx }) {
   const fileIds = [];
@@ -16,7 +16,6 @@ async function getFileIds({ asset, ctx }) {
   if (asset.cover) {
     fileIds.push(asset.cover);
   }
-
   const assetFiles = await ctx.tx.db.AssetsFiles.find({ asset: asset.id }).lean();
   fileIds.push(..._.map(assetFiles, 'file'));
 
