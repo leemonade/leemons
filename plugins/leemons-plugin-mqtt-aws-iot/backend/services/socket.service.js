@@ -6,26 +6,39 @@
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/config.rest');
-const { getConfig } = require('../core/config');
+const restActions = require('./rest/socket.rest');
+const { setConfig, emit, emitToAll } = require('../core/socket');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-calendar.config',
+  name: 'mqtt-aws-iot.socket',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
+      autoDeploymentID: false,
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
     ...restActions,
-    getConfig: {
+    setConfig: {
       handler(ctx) {
-        return getConfig({ ...ctx.params, ctx });
+        return setConfig({ data: ctx.params, ctx });
+      },
+    },
+    emit: {
+      handler(ctx) {
+        return emit({ ...ctx.params, ctx });
+      },
+    },
+    emitToAll: {
+      handler(ctx) {
+        return emitToAll({ ...ctx.params, ctx });
       },
     },
   },

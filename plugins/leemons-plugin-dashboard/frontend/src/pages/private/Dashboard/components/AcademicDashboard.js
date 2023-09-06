@@ -107,7 +107,7 @@ export default function AcademicDashboard({ session }) {
 
   if (store.loading) return null;
 
-  const programImage = !isNil(store.selectedProgram?.image.cover)
+  const programImage = !isNil(store.selectedProgram?.image?.cover)
     ? store.selectedProgram?.imageUrl
     : undefined;
   const headerProps = {};

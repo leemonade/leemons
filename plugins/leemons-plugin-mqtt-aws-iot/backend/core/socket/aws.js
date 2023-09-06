@@ -1,7 +1,9 @@
 /* eslint-disable no-async-promise-executor */
 /* eslint-disable no-use-before-define */
 const _ = require('lodash');
-const { tables } = require('../tables');
+const { LeemonsError } = require('leemons-error');
+const aws = require('aws-sdk');
+const { randomString } = require('leemons-utils');
 
 let config = null;
 let account = null;
@@ -13,48 +15,48 @@ function configChanged() {
   configDateEnd = null;
 }
 
-async function getConfig({ transacting } = {}) {
+async function getConfig({ ctx }) {
   const now = new Date();
   if (configDateEnd && configDateEnd > now) {
     config = null;
     account = null;
   }
   if (!config) {
-    config = await tables.config.findOne({}, { transacting });
+    config = await ctx.tx.db.Config.findOne({}).lean();
     // Cacheamos la config durante 15 minutos, por si el token a cambiado.
     configDateEnd = new Date();
     configDateEnd = new Date(configDateEnd.getTime() + 15 * 60000);
   }
-  if (!config) throw new Error('Please config your aws iot credentials');
+  if (!config) throw new LeemonsError(ctx, { message: 'Please config your aws iot credentials' });
   return config;
 }
 
-async function getIot({ transacting } = {}) {
-  await getConfig({ transacting });
-  return new global.utils.aws.Iot({
+async function getIot({ ctx }) {
+  await getConfig({ ctx });
+  return new aws.Iot({
     region: config.region,
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
   });
 }
 
-async function getSts({ transacting } = {}) {
-  await getConfig({ transacting });
-  return new global.utils.aws.STS({
+async function getSts({ ctx }) {
+  await getConfig({ ctx });
+  return new aws.STS({
     region: config.region,
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
   });
 }
 
-async function getRegion({ transacting } = {}) {
-  await getConfig({ transacting });
+async function getRegion({ ctx }) {
+  await getConfig({ ctx });
   return config.region;
 }
 
-async function getAccount() {
+async function getAccount({ ctx }) {
   return new Promise(async (resolve, reject) => {
-    const sts = await getSts();
+    const sts = await getSts({ ctx });
     if (account) resolve(account);
     sts.getCallerIdentity({}, (err, data) => {
       if (err) {
@@ -67,13 +69,13 @@ async function getAccount() {
   });
 }
 
-async function getFederationToken(policy, { transacting } = {}) {
-  if (!policy) throw new Error('Policy is required');
+async function getFederationToken({ policy, ctx }) {
+  if (!policy) throw new LeemonsError(ctx, { message: 'Policy is required' });
   return new Promise(async (resolve, reject) => {
-    const sts = await getSts({ transacting });
+    const sts = await getSts({ ctx });
     sts.getFederationToken(
       {
-        Name: global.utils.randomString(32),
+        Name: randomString(32),
         DurationSeconds: 129600,
         Policy: _.isString(policy) ? policy : JSON.stringify(policy),
       },

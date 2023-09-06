@@ -72,7 +72,7 @@ module.exports = {
     async handler(ctx) {
       await sendMessage({
         ...ctx.params,
-        userAgent: ctx.meta.userSession.userAgents[0].id,
+        userAgent: ctx.meta.userSession.userAgents[0],
         ctx,
       });
       return { status: 200 };

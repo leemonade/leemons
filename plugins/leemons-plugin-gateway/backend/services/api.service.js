@@ -52,6 +52,11 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- MQTT AWS IOT (Finish) --
+          'GET mqtt-aws-iot/credentials': 'v1.mqtt-aws-iot.socket.getCredentialsRest',
+          'POST mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.setConfigRest',
+          'GET mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.getConfigRest',
+
           // -- Dataset (Finish) --
           'POST dataset/get-schema': 'v1.dataset.dataset.getSchemaRest',
           'POST dataset/get-schema-locale': 'v1.dataset.dataset.getSchemaLocaleRest',
@@ -144,7 +149,7 @@ module.exports = {
           'GET users/init/today-quote': 'v1.users.init.todayQuoteRest',
           'GET users/config/system-data-fields': 'v1.users.config.getSystemDataFieldsConfigRest',
           'POST users/config/system-data-fields': 'v1.users.config.saveSystemDataFieldsConfigRest',
-          'GET users/user/session/config': 'v1.users.users.updateSessionConfigRest',
+          'POST users/user/session/config': 'v1.users.users.updateSessionConfigRest',
           'POST users/user/login': 'v1.users.users.loginRest',
           'POST users/user/recover': 'v1.users.users.recoverRest',
           'POST users/user/reset': 'v1.users.users.resetRest',

@@ -1,12 +1,14 @@
 const _ = require('lodash');
 const { getRegion, getAccount } = require('./aws');
 const { createCredentials } = require('./createCredentials');
+const { LeemonsError } = require('leemons-error');
 
-async function createCredentialsForUserSession(userSession) {
+async function createCredentialsForUserSession({ ctx }) {
+  let { userSession } = ctx.meta;
   try {
-    if (!userSession) throw new Error('userSession is required');
-    const region = await getRegion();
-    const account = await getAccount();
+    if (!userSession) throw new LeemonsError(ctx, { message: 'userSession is required' });
+    const region = await getRegion({ ctx });
+    const account = await getAccount({ ctx });
 
     const policy = {
       Version: '2012-10-17',
@@ -20,10 +22,10 @@ async function createCredentialsForUserSession(userSession) {
           Effect: 'Allow',
           Action: ['iot:Subscribe', 'iot:Receive'],
           Resource: [
-            `arn:aws:iot:${region}:${account}:topic/leemons-general`,
-            `arn:aws:iot:${region}:${account}:topicfilter/leemons-general`,
-            `arn:aws:iot:${region}:${account}:topic/leemons-${userSession.id}`,
-            `arn:aws:iot:${region}:${account}:topicfilter/leemons-${userSession.id}`,
+            `arn:aws:iot:${region}:${account}:topic/${userSession.deploymentID}-leemons-general`,
+            `arn:aws:iot:${region}:${account}:topicfilter/${userSession.deploymentID}-leemons-general`,
+            `arn:aws:iot:${region}:${account}:topic/${userSession.deploymentID}-leemons-${userSession.id}`,
+            `arn:aws:iot:${region}:${account}:topicfilter/${userSession.deploymentID}-leemons-${userSession.id}`,
           ],
         },
       ],
@@ -31,14 +33,14 @@ async function createCredentialsForUserSession(userSession) {
 
     _.forEach(userSession.userAgents, (userAgent) => {
       policy.Statement[1].Resource.push(
-        `arn:aws:iot:${region}:${account}:topic/leemons-${userAgent.id}`
+        `arn:aws:iot:${region}:${account}:topic/${userSession.deploymentID}-leemons-${userAgent.id}`
       );
       policy.Statement[1].Resource.push(
-        `arn:aws:iot:${region}:${account}:topicfilter/leemons-${userAgent.id}`
+        `arn:aws:iot:${region}:${account}:topicfilter/${userSession.deploymentID}-leemons-${userAgent.id}`
       );
     });
 
-    const credentials = await createCredentials(policy);
+    const credentials = await createCredentials({ policy, ctx });
     credentials.topics = _.uniq(
       _.map(policy.Statement[1].Resource, (r) =>
         r

@@ -3,7 +3,7 @@ const { getIot } = require('./aws');
 let endpoint = null;
 let endpointDateEnd = null;
 
-async function getEndpointData() {
+async function getEndpointData({ ctx }) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     try {
@@ -12,7 +12,7 @@ async function getEndpointData() {
         endpoint = null;
       }
       if (endpoint) return resolve(endpoint);
-      const iot = await getIot();
+      const iot = await getIot({ ctx });
       iot.describeEndpoint({ endpointType: 'iot:Data-ATS' }, (err, data) => {
         if (!err) {
           endpoint = data.endpointAddress;

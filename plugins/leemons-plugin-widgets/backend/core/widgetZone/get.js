@@ -12,8 +12,7 @@ async function get({ key, ctx }) {
   if (userSession) {
     const [userAgents, itemProfiles] = await Promise.all([
       ctx.tx.call('users.users.getUserAgentsInfo', {
-        userAgentIds: _.map(userSession.userAgents),
-        userColumns: ['id'],
+        userAgentIds: _.map(userSession.userAgents, 'id'),
         withProfile: true,
       }),
       ctx.tx.db.WidgetItemProfiles.find({

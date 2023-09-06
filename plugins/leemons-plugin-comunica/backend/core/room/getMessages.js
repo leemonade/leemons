@@ -29,6 +29,8 @@ async function getMessages({ key, userAgent, ctx }) {
 
   const userAgentsById = _.keyBy(userAgentsInRoom, 'userAgent');
 
+  console.log('messages', messages);
+
   _.forEach(messages, (message) => {
     message.message = JSON.parse(message.message);
     if (message.isEncrypt) {

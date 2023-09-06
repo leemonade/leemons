@@ -33,6 +33,7 @@ export const SocketIoService = {
     const ref = useRef({ callback });
     ref.current.callback = callback;
     const onEvent = ({ args: [{ event, data }] }) => {
+      console.log('useOnAny', event, data);
       ref.current.callback(event, data);
     };
     useEffect(() => {

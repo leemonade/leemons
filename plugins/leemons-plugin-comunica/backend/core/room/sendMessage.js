@@ -46,7 +46,7 @@ async function sendMessage({ key, userAgent: _userAgent, message: _message, ctx 
   ]);
 
   const userAgentsWithPermissions = await ctx.tx.call(
-    'users,permissions.getUserAgentsWithPermissionsForItem',
+    'users.permissions.getUserAgentsWithPermissionsForItem',
     { item: key, type: 'comunica.room.view' }
   );
 
@@ -58,9 +58,7 @@ async function sendMessage({ key, userAgent: _userAgent, message: _message, ctx 
   const message = _message;
   if (message.type === 'text') {
     const center = await ctx.tx.call('users.users.getUserAgentCenter', { userAgent: _userAgent });
-
     const centerConfig = await getCenter({ center: center.id, ctx });
-
     if (centerConfig.enableSecureWords) {
       const words = _.map(centerConfig.secureWords.split(','), (word) => word.trim());
       const filter = new Filter({ list: words });

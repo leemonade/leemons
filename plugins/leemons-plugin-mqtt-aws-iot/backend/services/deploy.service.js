@@ -21,6 +21,7 @@ module.exports = () => ({
   mixins: [
     LeemonsMultiEventsMixin(),
     LeemonsMongoDBMixin({
+      autoDeploymentID: false,
       models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),

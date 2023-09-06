@@ -1,12 +1,15 @@
 const { getEndpointData } = require('./getEndpointData');
 const { getRegion, getFederationToken } = require('./aws');
+const { LeemonsError } = require('leemons-error');
 
-async function createCredentials(policy) {
+async function createCredentials({ policy, ctx }) {
   try {
-    if (!policy) throw new Error('Policy is required');
-    const host = await getEndpointData();
-    const region = await getRegion();
-    const data = await getFederationToken(policy);
+    if (!policy) throw new LeemonsError(ctx, { message: 'Policy is required' });
+    const [host, region, data] = await Promise.all([
+      getEndpointData({ ctx }),
+      getRegion({ ctx }),
+      getFederationToken({ policy, ctx }),
+    ]);
 
     return {
       sessionExpiration: data.Credentials.Expiration,

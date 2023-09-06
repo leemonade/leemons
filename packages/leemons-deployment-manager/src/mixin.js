@@ -15,11 +15,6 @@ function modifyCTX(ctx) {
 
   ctx.logger = console;
 
-  ctx.socket = {
-    emit: () => {},
-    emitAll: () => {},
-  };
-
   ctx.prefixPN = function (string) {
     return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
   };
