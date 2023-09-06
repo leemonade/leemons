@@ -1,8 +1,19 @@
 const { mongoose, newModel } = require('leemons-mongodb');
 const { pluginName } = require('../config/constants');
 
-const schema = new mongoose.Schema(
+const multipartEtagSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
     fileId: {
       type: String,
       required: true,
@@ -24,6 +35,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const multipartEtagModel = newModel(mongoose.connection, `v1::${pluginName}_MultipartEtag`, schema);
+const multipartEtagModel = newModel(
+  mongoose.connection,
+  `v1::${pluginName}_MultipartEtag`,
+  multipartEtagSchema
+);
 
-module.exports = { multipartEtagModel };
+module.exports = { multipartEtagSchema, multipartEtagModel };

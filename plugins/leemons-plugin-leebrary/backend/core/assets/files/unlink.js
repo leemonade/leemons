@@ -1,5 +1,4 @@
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { tables } = require('../../tables');
 
 async function unlink(fileIds, assetId, { userSession, soft, transacting } = {}) {
   try {

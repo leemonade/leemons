@@ -1,5 +1,4 @@
 const { isEmpty } = require('lodash');
-const { tables } = require('../tables');
 const { getByAsset } = require('./getByAsset');
 const { remove: removeFiles } = require('../files/remove');
 

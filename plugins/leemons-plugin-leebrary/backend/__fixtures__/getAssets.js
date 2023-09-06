@@ -143,6 +143,10 @@ module.exports = function getAssets() {
       center: null,
       color: '#993333',
       cover: '10debe3f-232d-41d5-9c42-9da4ebe0c937',
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/microservices/library
       description:
         'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
       fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',

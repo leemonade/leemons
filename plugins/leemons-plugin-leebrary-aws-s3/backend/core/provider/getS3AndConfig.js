@@ -8,11 +8,12 @@ const { getConfig } = require('./getConfig');
  * @param {MoleculerContext} params.ctx - The Moleculer context, used to interact with the database.
  * @returns {Object|null} An object containing the initialized S3 instance and the configuration, or null if no configuration was found.
  */
-async function getS3AndConfig({ ctx }) {
+async function getS3AndConfig({ ctx } = {}) {
   const config = await getConfig({ ctx });
   if (config) {
     return {
       s3: new aws.S3({
+        apiVersion: '2010-12-01',
         accessKeyId: config.accessKey.trim(),
         secretAccessKey: config.secretAccessKey.trim(),
         region: config.region.trim(),

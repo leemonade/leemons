@@ -27,7 +27,11 @@ async function recover({ email, ctx }) {
   if (!user.active) {
     await setUserForRegisterPassword({ userId: user.id, ctx });
     await sendWelcomeEmailToUser({ user, ctx });
-    throw new LeemonsError(ctx, { message: 'User not active', httpStatusCode: 400, code: 1001 });
+    throw new LeemonsError(ctx, {
+      message: 'User not active',
+      httpStatusCode: 400,
+      customCode: 1001,
+    });
   }
   let recovery = await ctx.tx.db.UserRecoverPassword.findOne({ user: user.id }).lean();
   if (recovery) {
