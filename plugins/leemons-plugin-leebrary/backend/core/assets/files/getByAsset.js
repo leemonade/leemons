@@ -1,5 +1,4 @@
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { tables } = require('../../tables');
 
 async function getByAsset(assetId, { userSession, checkPermissions = true, transacting } = {}) {
   try {

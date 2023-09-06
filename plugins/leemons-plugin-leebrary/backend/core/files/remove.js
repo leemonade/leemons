@@ -1,7 +1,6 @@
 const { isArray } = require('lodash');
 const fs = require('fs/promises');
 const { unlink: unlinkFiles } = require('../assets/files/unlink');
-const { tables } = require('../tables');
 
 async function remove(fileIds, assetId, { soft, userSession, transacting } = {}) {
   const files = await tables.files.find({ id_$in: isArray(fileIds) ? fileIds : [fileIds] });
