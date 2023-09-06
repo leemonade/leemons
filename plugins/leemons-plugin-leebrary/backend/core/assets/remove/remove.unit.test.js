@@ -1,6 +1,7 @@
 const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
+const { LeemonsError } = require('leemons-error');
 
 const { remove } = require('./remove');
 
@@ -38,12 +39,41 @@ const files = ['f1fb124b-b7d4-4a81-81d1-e7f179f6e96'];
 
 let mongooseConnection;
 let disconnectMongoose;
+let ctx;
+let removeAllTagsForValues;
+let beforeRemoveAsset;
+let removeCustomPermissionFormAllUserAgents;
+let removePermissions;
+let afterRemoveAsset;
 
 beforeAll(async () => {
   const { mongoose, disconnect } = await createMongooseConnection();
 
   mongooseConnection = mongoose;
   disconnectMongoose = disconnect;
+
+  removeAllTagsForValues = jest.fn();
+  beforeRemoveAsset = jest.fn();
+  removeCustomPermissionFormAllUserAgents = jest.fn();
+  removePermissions = jest.fn();
+  afterRemoveAsset = jest.fn();
+
+  ctx = generateCtx({
+    actions: {
+      'common.tags.removeAllTagsForValues': removeAllTagsForValues,
+      'users.permissions.removeCustomPermissionForAllUserAgents':
+        removeCustomPermissionFormAllUserAgents,
+      'users.permissions.removeItems': removePermissions,
+    },
+    events: {
+      'before-remove-asset': beforeRemoveAsset,
+      'after-remove-asset': afterRemoveAsset,
+    },
+
+    models: {
+      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+    },
+  });
 });
 
 afterAll(async () => {
@@ -66,38 +96,15 @@ it('Should remove an Bookmark Asset correctly', async () => {
   const permissionName = `leebrary.(ASSET_ID)${asset.id}`;
   const soft = undefined;
 
-  const removeAllTagsForValues = jest.fn();
-  const beforeRemoveAsset = jest.fn();
-  const removeCustomPermissionFormAllUserAgents = jest.fn();
-  const removePermissions = jest.fn();
-  const afterRemoveAsset = jest.fn();
-
   getByIds.mockResolvedValue([asset]);
   getPermissions.mockResolvedValue({
     permissions,
   });
-  getFilesByAsset.mockResolvedValue([]); //! Es un Marcador no tiene archivos
+  getFilesByAsset.mockResolvedValue([]);
   getCategoryById.mockResolvedValue({ key: CATEGORIES.BOOKMARKS });
   removeBookmark.mockResolvedValue();
   removeFiles.mockResolvedValue();
   getAssetPermissionName.mockReturnValue(permissionName);
-
-  const ctx = generateCtx({
-    actions: {
-      'common.tags.removeAllTagsForValues': removeAllTagsForValues,
-      'users.permissions.removeCustomPermissionForAllUserAgents':
-        removeCustomPermissionFormAllUserAgents,
-      'users.permissions.removeItems': removePermissions,
-    },
-    events: {
-      'before-remove-asset': beforeRemoveAsset,
-      'after-remove-asset': afterRemoveAsset,
-    },
-
-    models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
-    },
-  });
 
   await ctx.tx.db.Assets.create({ ...asset });
 
@@ -136,12 +143,6 @@ it('Should remove a Asset different than a Bookmark correctly', async () => {
   const permissionName = `leebrary.(ASSET_ID)${asset.id}`;
   const soft = undefined;
 
-  const removeAllTagsForValues = jest.fn();
-  const beforeRemoveAsset = jest.fn();
-  const removeCustomPermissionFormAllUserAgents = jest.fn();
-  const removePermissions = jest.fn();
-  const afterRemoveAsset = jest.fn();
-
   getByIds.mockResolvedValue([asset]);
   getPermissions.mockResolvedValue({
     permissions: {
@@ -160,23 +161,6 @@ it('Should remove a Asset different than a Bookmark correctly', async () => {
   removeBookmark.mockResolvedValue();
   removeFiles.mockResolvedValue();
   getAssetPermissionName.mockReturnValue(permissionName);
-
-  const ctx = generateCtx({
-    actions: {
-      'common.tags.removeAllTagsForValues': removeAllTagsForValues,
-      'users.permissions.removeCustomPermissionForAllUserAgents':
-        removeCustomPermissionFormAllUserAgents,
-      'users.permissions.removeItems': removePermissions,
-    },
-    events: {
-      'before-remove-asset': beforeRemoveAsset,
-      'after-remove-asset': afterRemoveAsset,
-    },
-
-    models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
-    },
-  });
 
   await ctx.tx.db.Assets.create({ ...asset });
 
@@ -208,14 +192,46 @@ it('Should remove a Asset different than a Bookmark correctly', async () => {
   expect(findAsset).toEqual(null);
 });
 
-// !!! hacer los no happy path
-// ! Por ejemplo cuando no existe el asset
-// const testFunctionError = async () => {
-//   await remove({ id: 'sdfsdf', ctx });
-// };
-// await expect(testFunctionError).rejects.toThrowError(
-//   new LeemonsError(ctx, {
-//     message: `Asset with ${id} does not exists`,
-//     httpStatusCode: 500,
-//   })
-// );
+it('Should throw if asset ID is not valid', async () => {
+  // Arrange
+  const {
+    bookmarkAsset: { id },
+  } = getAssets();
+  getByIds.mockResolvedValue([]);
+
+  // Act
+  const testInvalidID = async () => remove({ id, ctx });
+
+  // Assert
+  await expect(testInvalidID).rejects.toThrowError(
+    new LeemonsError(ctx, {
+      message: `Asset with ${id} does not exists`,
+      httpStatusCode: 500,
+    })
+  );
+  expect(getByIds).toBeCalledWith({ ids: id, ctx });
+});
+
+it('Should throw if no delete permission', async () => {
+  // Arrange
+  const { bookmarkAsset: asset } = getAssets();
+  asset.cover = asset.cover.id;
+
+  getByIds.mockResolvedValue([asset]);
+  getPermissions.mockResolvedValue({
+    permissions: { ...permissions, delete: false },
+  });
+
+  // Act
+  const testInvalidID = async () => remove({ id: asset.id, ctx });
+
+  // Assert
+  await expect(testInvalidID).rejects.toThrowError(
+    new LeemonsError(ctx, {
+      message: "You don't have permission to remove this asset",
+      httpStatusCode: 401,
+    })
+  );
+  expect(getByIds).toBeCalledWith({ ids: asset.id, ctx });
+  expect(getPermissions).toBeCalledWith({ assetId: asset.id, ctx });
+});

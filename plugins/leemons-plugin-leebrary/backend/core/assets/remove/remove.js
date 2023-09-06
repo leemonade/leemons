@@ -122,33 +122,9 @@ async function remove({ id, soft, ctx }) {
       }),
     ]);
 
-    //! Este código antes de la migración era así:
-    /*
-         await Promise.all([
-          // ES: Borramos a todos los agentes el permiso del evento ya que este dejara de existir
-          await userService.permissions.removeCustomPermissionForAllUserAgents(permissionQuery, {
-            soft,
-            transacting,
-          }),
-          // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
-          await userService.permissions.removeItems(
-            {
-              type: leemons.plugin.prefixPN(asset.category),
-              item: id,
-            },
-            {
-              soft,
-              transacting,
-            }
-          ),
-        ]);
-    */
-    //! no sobrarían los awaits dentro del array de promesas ????
-
     await ctx.tx.emit('after-remove-asset', { assetId: id, soft });
     return true;
   } catch (e) {
-    console.log('ERROR', e);
     throw new LeemonsError(ctx, {
       message: `Failed to remove asset: ${e.message}`,
       httpStatusCode: 500,
