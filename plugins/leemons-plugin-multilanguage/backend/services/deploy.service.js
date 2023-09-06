@@ -10,6 +10,7 @@ const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -22,6 +23,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   events: {

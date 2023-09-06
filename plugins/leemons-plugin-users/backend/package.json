@@ -31,6 +31,7 @@
     "leemons-middlewares": "1.0.0",
     "leemons-mongodb": "1.0.0",
     "leemons-mongodb-helpers": "1.0.0",
+    "leemons-mqtt": "1.0.0",
     "leemons-multi-events": "1.0.0",
     "leemons-multilanguage": "1.0.0",
     "leemons-permissions": "1.0.0",

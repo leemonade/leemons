@@ -53,6 +53,7 @@ const {
 } = require('../core/pluginEvents/program/onAcademicPortfolioRemovePrograms');
 
 const { add: addEventTypes } = require('../core/event-types/add');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 async function addEventType({ ctx }) {
   if (!(await hasKey(ctx.tx.db.KeyValue, 'kanban-columns'))) {
@@ -100,6 +101,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   multiEvents: [

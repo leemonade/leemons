@@ -7,6 +7,8 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const {
   add,
   update,
@@ -46,7 +48,6 @@ const {
   removeCustomPermissionToUserProfile,
 } = require('../core/user-profile');
 const restActions = require('./rest/permissions.rest');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -58,6 +59,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

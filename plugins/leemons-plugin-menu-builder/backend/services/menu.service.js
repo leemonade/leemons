@@ -7,6 +7,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { LeemonsCacheMixin } = require('leemons-cache');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 const { add, exist, remove, getIfHasPermission } = require('../core/menu');
 const restActions = require('./rest/menu.rest');
@@ -21,6 +22,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

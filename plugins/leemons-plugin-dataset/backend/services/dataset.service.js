@@ -41,6 +41,7 @@ const {
   setValues,
 } = require('../core/datasetValues');
 const restActions = require('./rest/dataset.rest');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'dataset.dataset',
@@ -50,6 +51,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

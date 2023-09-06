@@ -16,6 +16,7 @@ const eventTypes = require('../core/event-types');
 const { validateKeyPrefix } = require('../validations/exists');
 const restActions = require('./rest/calendar.rest');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -27,6 +28,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

@@ -8,6 +8,7 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 // TODO: Implement cron job for sending emails
 
@@ -20,6 +21,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   multiEvents: [

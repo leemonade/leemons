@@ -28,6 +28,7 @@ const { getUsersInProgram } = require('../core/programs/getUsersInProgram');
 const { isUserInsideProgram } = require('../core/programs/isUserInsideProgram');
 // getProgramEvaluationSystem,
 const { getProgramEvaluationSystem } = require('../core/programs/getProgramEvaluationSystem');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -39,6 +40,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

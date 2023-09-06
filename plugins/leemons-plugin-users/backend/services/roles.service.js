@@ -6,6 +6,9 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const _ = require('lodash');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const {
   add,
   update,
@@ -15,8 +18,6 @@ const {
 } = require('../core/roles');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/roles.rest');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
-const _ = require('lodash');
 const { validatePermissionName } = require('../validations/exists');
 
 /** @type {ServiceSchema} */
@@ -29,6 +30,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

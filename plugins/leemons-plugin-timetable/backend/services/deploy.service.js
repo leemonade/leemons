@@ -11,6 +11,7 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 // const { addMenuItemsDeploy } = require('leemons-menu-builder');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -23,6 +24,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   //! Comentado porque aparecía comentado en el "viejo" events.js
