@@ -25,6 +25,20 @@ module.exports = () => ({
       await ctx.tx.call('leebrary.provider.register', {
         name: 'Amazon S3',
         image: 'https://cdn.worldvectorlogo.com/logos/aws-glacier.svg',
+        supportedMethods: {
+          uploadMultipartChunk: true,
+          finishMultipart: true,
+          abortMultipart: true,
+          getS3AndConfig: true,
+          getReadStream: true,
+          removeConfig: true,
+          newMultipart: true,
+          getConfig: true,
+          setConfig: true,
+          upload: true,
+          remove: true,
+          clone: true,
+        },
       });
       // Locales
       await addLocalesDeploy({

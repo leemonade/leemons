@@ -6,6 +6,7 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getProvidersActions } = require('leemons-providers');
 const { getServiceModels } = require('../models');
+const { listProviders } = require('../core/providers/list');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -19,6 +20,16 @@ module.exports = () => ({
   ],
   actions: {
     ...getProvidersActions(),
+    list: {
+      rest: {
+        method: 'GET',
+        path: '/list',
+      },
+      async handler(ctx) {
+        const providers = await listProviders({ ctx });
+        return { status: 200, providers };
+      },
+    },
   },
   created() {
     mongoose.connect(process.env.MONGO_URI);
