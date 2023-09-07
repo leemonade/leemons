@@ -22,7 +22,7 @@ const { validateExistSchemaLocaleData } = require('../../validations/datasetSche
 async function _existSchemaLocale({ locationName, pluginName, key, locale, ctx }) {
   validateExistSchemaLocaleData({ locationName, pluginName, key, locale });
   return ctx.tx.call('multilanguage.contents.has', {
-    key: getTranslationKey({ locationName, pluginName, key }),
+    key: getTranslationKey({ locationName, pluginName, key, ctx }),
     locale,
   });
 }
