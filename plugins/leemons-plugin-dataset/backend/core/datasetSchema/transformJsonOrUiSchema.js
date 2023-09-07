@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const { getObjectArrayKeys } = require('leemons-utils');
 
 function arrKeys(object) {
-  return global.utils.getObjectArrayKeys(object);
+  return getObjectArrayKeys(object);
 }
 
 function removeArrayPropFromString(string) {

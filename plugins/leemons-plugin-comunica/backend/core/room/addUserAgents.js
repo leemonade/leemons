@@ -1,31 +1,30 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
+const { randomString } = require('leemons-utils');
 
-async function add(room, userAgent, { isAdmin, transacting }) {
-  const response = await table.userAgentInRoom.findOne(
+async function add({ room, userAgent, isAdmin, ctx }) {
+  const response = await ctx.tx.db.UserAgentInRoom.findOne(
     {
-      deleted_$null: false,
       room,
       userAgent,
     },
-    { transacting }
-  );
+    undefined,
+    { excludeDeleted: false }
+  ).lean();
   if (response) {
     // Si la existe el usuario en la sala, pero borrado se le reactiva
-    if (response.deleted) {
-      const result = await table.userAgentInRoom.update(
+    if (response.isDeleted) {
+      const result = await ctx.tx.db.UserAgentInRoom.findOneAndUpdate(
         {
-          deleted_$null: false,
           room,
           userAgent,
         },
         {
           isAdmin,
-          deleted: false,
-          deleted_at: null,
+          isDeleted: false,
+          deletedAt: null,
         },
-        { transacting }
+        { lean: true, new: true, excludeDeleted: false }
       );
       return {
         added: true,
@@ -35,17 +34,17 @@ async function add(room, userAgent, { isAdmin, transacting }) {
     }
     // Si el usuario existe pero el isAdmin es distinto lo actualizamos
     if (!!response.isAdmin !== !!isAdmin) {
-      const result = await table.userAgentInRoom.update(
+      const result = await ctx.tx.db.UserAgentInRoom.findOneAndUpdate(
         {
           room,
           userAgent,
         },
         {
           isAdmin,
-          deleted: false,
-          deleted_at: null,
+          isDeleted: false,
+          deletedAt: null,
         },
-        { transacting }
+        { new: true, lean: true, excludeDeleted: false }
       );
       return {
         added: true,
@@ -60,15 +59,13 @@ async function add(room, userAgent, { isAdmin, transacting }) {
     };
   }
   // Si el usuario no esta en la sala le añadimos
-  const result = await table.userAgentInRoom.create(
-    {
-      room,
-      userAgent,
-      isAdmin,
-      encryptKey: global.utils.randomString(16),
-    },
-    { transacting }
-  );
+  let result = await ctx.tx.db.UserAgentInRoom.create({
+    room,
+    userAgent,
+    isAdmin,
+    encryptKey: randomString(16),
+  });
+  result = result.toObject();
   return {
     added: true,
     userAgent,
@@ -76,70 +73,53 @@ async function add(room, userAgent, { isAdmin, transacting }) {
   };
 }
 
-async function addUserAgents(
-  key,
-  _userAgents,
-  { isAdmin, ignoreCalledFrom, transacting: _transacting } = {}
-) {
-  if (!ignoreCalledFrom) validateKeyPrefix(key, this.calledFrom);
+async function addUserAgents({ key, userAgents: _userAgents, isAdmin, ignoreCalledFrom, ctx }) {
+  if (!ignoreCalledFrom) validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
   const userAgents = _.isArray(_userAgents) ? _userAgents : [_userAgents];
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistRoomKey(key, { transacting });
+  await validateNotExistRoomKey({ key, ctx });
 
-      const currentUserAgentsInRoom = await table.userAgentInRoom.find(
-        { room: key },
-        { transacting }
-      );
+  const currentUserAgentsInRoom = await ctx.tx.db.UserAgentInRoom.find({ room: key }).lean();
 
-      const results = await Promise.all(
-        _.map(userAgents, (userAgent) => add(key, userAgent, { isAdmin, transacting }))
-      );
-
-      const responsesAdded = _.filter(results, { added: true });
-
-      // Informamos a los usuarios añadidos de que han sido añadidos
-      leemons.socket.emit(_.map(responsesAdded, 'userAgent'), `COMUNICA:ROOM:ADDED`, {
-        room: key,
-      });
-
-      // Vamos a sacar los usuarios añadidos para enviarle a todas los usuarios de antes los nuevos usuarios
-      const userAgen = await leemons
-        .getPlugin('users')
-        .services.users.getUserAgentsInfo(_.map(responsesAdded, 'userAgent'), {
-          withProfile: true,
-        });
-      const userAgentsById = _.keyBy(userAgen, 'id');
-      const userAgentsAddedGood = _.map(responsesAdded, (a) => ({
-        userAgent: userAgentsById[a.userAgent],
-        adminMuted: a.result.adminMuted,
-        isAdmin: a.result.isAdmin,
-        deleted: a.result.deleted,
-      }));
-
-      _.forEach(userAgentsAddedGood, (data) => {
-        leemons.socket.emit(
-          _.map(currentUserAgentsInRoom, 'userAgent'),
-          `COMUNICA:ROOM:USER_ADDED`,
-          {
-            key,
-            userAgent: data,
-          }
-        );
-      });
-
-      const responses = _.map(results, 'result');
-      _.forEach(responses, (response) => {
-        delete response.encryptKey;
-      });
-
-      return _.isArray(_userAgents) ? responses : responses[0];
-    },
-    table.room,
-    _transacting
+  const results = await Promise.all(
+    _.map(userAgents, (userAgent) => add({ room: key, userAgent, isAdmin, ctx }))
   );
+
+  const responsesAdded = _.filter(results, { added: true });
+
+  // Informamos a los usuarios añadidos de que han sido añadidos
+  ctx.socket.emit(_.map(responsesAdded, 'userAgent'), `COMUNICA:ROOM:ADDED`, {
+    room: key,
+  });
+
+  // Vamos a sacar los usuarios añadidos para enviarle a todas los usuarios de antes los nuevos usuarios
+  const userAgen = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds: _.map(responsesAdded, 'userAgent'),
+    withProfile: true,
+  });
+  const userAgentsById = _.keyBy(userAgen, 'id');
+  const userAgentsAddedGood = _.map(responsesAdded, (a) => ({
+    userAgent: userAgentsById[a.userAgent],
+    adminMuted: a.result.adminMuted,
+    isAdmin: a.result.isAdmin,
+    deleted: a.result.isDeleted,
+    isDeleted: a.result.isDeleted,
+  }));
+
+  _.forEach(userAgentsAddedGood, (data) => {
+    ctx.socket.emit(_.map(currentUserAgentsInRoom, 'userAgent'), `COMUNICA:ROOM:USER_ADDED`, {
+      key,
+      userAgent: data,
+    });
+  });
+
+  const responses = _.map(results, 'result');
+  _.forEach(responses, (response) => {
+    delete response.encryptKey;
+  });
+
+  return _.isArray(_userAgents) ? responses : responses[0];
 }
 
 module.exports = { addUserAgents };

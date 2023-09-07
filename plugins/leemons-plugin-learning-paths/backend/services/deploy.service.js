@@ -13,6 +13,7 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetItemsDeploy } = require('leemons-widgets');
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { permissions, menuItems, widgets, assignableRoles } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -25,6 +26,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   multiEvents: [

@@ -1,19 +1,16 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { ruleByIds } = require('./ruleByIds');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
-async function listRules(page, size, center, { isDependency = false, transacting } = {}) {
-  const results = await global.utils.paginate(
-    table.rules,
+async function listRules({ page, size, center, isDependency = false, ctx }) {
+  const results = await mongoDBPaginate({
+    model: ctx.tx.db.Rules,
     page,
     size,
-    { center, isDependency },
-    {
-      transacting,
-    }
-  );
+    query: { center, isDependency },
+  });
 
-  results.items = await ruleByIds(_.map(results.items, 'id'), { transacting });
+  results.items = await ruleByIds({ ids: _.map(results.items, 'id'), ctx });
 
   return results;
 }

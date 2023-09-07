@@ -8,7 +8,40 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const addLocation = require('../core/datesetLocation/addLocation');
 const { getServiceModels } = require('../models');
-
+const {
+  getLocation,
+  updateLocation,
+  deleteLocation,
+  existLocation,
+} = require('../core/datesetLocation');
+const {
+  getSchema,
+  addSchema,
+  updateSchema,
+  deleteSchema,
+  existSchema,
+  getSchemaWithLocale,
+  transformJsonSchema,
+  transformUiSchema,
+} = require('../core/datasetSchema');
+const {
+  getSchemaLocale,
+  addSchemaLocale,
+  updateSchemaLocale,
+  deleteSchemaLocale,
+  existSchemaLocale,
+} = require('../core/datasetSchemaLocale');
+const {
+  validateDataForJsonSchema,
+  existValues,
+  deleteValues,
+  updateValues,
+  addValues,
+  getValues,
+  setValues,
+} = require('../core/datasetValues');
+const restActions = require('./rest/dataset.rest');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'dataset.dataset',
@@ -18,44 +51,143 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     // LOCATION
-    // getLocation,
-    // addLocation,
+    getLocation: {
+      handler(ctx) {
+        return getLocation({ ...ctx.params, ctx });
+      },
+    },
     addLocation: {
       handler(ctx) {
         return addLocation({ ...ctx.params, ctx });
       },
     },
+    updateLocation: {
+      handler(ctx) {
+        return updateLocation({ ...ctx.params, ctx });
+      },
+    },
+    deleteLocation: {
+      handler(ctx) {
+        return deleteLocation({ ...ctx.params, ctx });
+      },
+    },
+    existLocation: {
+      handler(ctx) {
+        return existLocation({ ...ctx.params, ctx });
+      },
+    },
 
-    // updateLocation,
-    // deleteLocation,
-    // existLocation,
     // SCHEMA
-    // getSchema,
-    // addSchema,
-    // updateSchema,
-    // deleteSchema,
-    // existSchema,
-    // getSchemaWithLocale,
-    // transformJsonSchema,
-    // transformUiSchema,
+    getSchema: {
+      handler(ctx) {
+        return getSchema({ ...ctx.params, ctx });
+      },
+    },
+    addSchema: {
+      handler(ctx) {
+        return addSchema({ ...ctx.params, ctx });
+      },
+    },
+    updateSchema: {
+      handler(ctx) {
+        return updateSchema({ ...ctx.params, ctx });
+      },
+    },
+    deleteSchema: {
+      handler(ctx) {
+        return deleteSchema({ ...ctx.params, ctx });
+      },
+    },
+    existSchema: {
+      handler(ctx) {
+        return existSchema({ ...ctx.params, ctx });
+      },
+    },
+    getSchemaWithLocale: {
+      handler(ctx) {
+        return getSchemaWithLocale({ ...ctx.params, ctx });
+      },
+    },
+    transformJsonSchema: {
+      handler(ctx) {
+        return transformJsonSchema({ ...ctx.params, ctx });
+      },
+    },
+    transformUiSchema: {
+      handler(ctx) {
+        return transformUiSchema({ ...ctx.params, ctx });
+      },
+    },
+
     // LOCALE
-    // getSchemaLocale,
-    // addSchemaLocale,
-    // updateSchemaLocale,
-    // deleteSchemaLocale,
-    // existSchemaLocale,
+    getSchemaLocale: {
+      handler(ctx) {
+        return getSchemaLocale({ ...ctx.params, ctx });
+      },
+    },
+    addSchemaLocale: {
+      handler(ctx) {
+        return addSchemaLocale({ ...ctx.params, ctx });
+      },
+    },
+    updateSchemaLocale: {
+      handler(ctx) {
+        return updateSchemaLocale({ ...ctx.params, ctx });
+      },
+    },
+    deleteSchemaLocale: {
+      handler(ctx) {
+        return deleteSchemaLocale({ ...ctx.params, ctx });
+      },
+    },
+    existSchemaLocale: {
+      handler(ctx) {
+        return existSchemaLocale({ ...ctx.params, ctx });
+      },
+    },
+
     // VALUES
-    // setValues,
-    // getValues,
-    // addValues,
-    // updateValues,
-    // deleteValues,
-    // existValues,
-    // validateDataForJsonSchema,
+    setValues: {
+      handler(ctx) {
+        return setValues({ ...ctx.params, ctx });
+      },
+    },
+    getValues: {
+      handler(ctx) {
+        return getValues({ ...ctx.params, ctx });
+      },
+    },
+    addValues: {
+      handler(ctx) {
+        return addValues({ ...ctx.params, ctx });
+      },
+    },
+    updateValues: {
+      handler(ctx) {
+        return updateValues({ ...ctx.params, ctx });
+      },
+    },
+    deleteValues: {
+      handler(ctx) {
+        return deleteValues({ ...ctx.params, ctx });
+      },
+    },
+    existValues: {
+      handler(ctx) {
+        return existValues({ ...ctx.params, ctx });
+      },
+    },
+    validateDataForJsonSchema: {
+      handler(ctx) {
+        return validateDataForJsonSchema({ ...ctx.params, ctx });
+      },
+    },
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);

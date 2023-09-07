@@ -1,6 +1,5 @@
 const { validateNotExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
-const { table } = require('../tables');
 
 /** *
  *  ES:
@@ -17,14 +16,14 @@ const { table } = require('../tables');
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<boolean>}
  *  */
-async function deleteValues(locationName, pluginName, { target, transacting } = {}) {
-  validatePluginName(pluginName, this.calledFrom);
-  await validateNotExistValues(locationName, pluginName, target, { transacting });
+async function deleteValues({ locationName, pluginName, target, ctx }) {
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistValues({ locationName, pluginName, target, ctx });
 
   const query = { locationName, pluginName };
   if (target) query.target = target;
 
-  await table.datasetValues.deleteMany(query, { transacting });
+  await ctx.tx.db.DatasetValues.deleteMany(query);
 
   return true;
 }

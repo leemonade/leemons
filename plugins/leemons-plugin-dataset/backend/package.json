@@ -32,11 +32,13 @@
     "leemons-middlewares": "1.0.0",
     "leemons-mongodb": "1.0.0",
     "leemons-mongodb-helpers": "1.0.0",
+    "leemons-mqtt": "1.0.0",
     "leemons-multilanguage": "1.0.0",
     "leemons-permissions": "1.0.0",
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
-    "moleculer": "^0.14.26"
+    "moleculer": "^0.14.26",
+    "squirrelly": "^9.0.0"
   },
   "engines": {
     "node": ">= 16.x.x"

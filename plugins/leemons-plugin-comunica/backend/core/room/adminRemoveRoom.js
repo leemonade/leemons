@@ -1,27 +1,25 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 const { remove } = require('./remove');
+const { LeemonsError } = require('leemons-error');
 
-async function adminRemoveRoom(key, userAgents, userAgentAdmin, { transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
-  await validateNotExistRoomKey(key, { transacting });
-  await validateNotExistUserAgentInRoomKey(key, userAgentAdmin, { transacting });
-  const admin = await table.userAgentInRoom.findOne(
-    {
-      room: key,
-      userAgent: userAgentAdmin,
-    },
-    { transacting }
-  );
+async function adminRemoveRoom({ key, userAgentAdmin, ctx }) {
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistRoomKey({ key, ctx });
+  await validateNotExistUserAgentInRoomKey({ key, userAgent: userAgentAdmin, ctx });
+  const admin = await ctx.tx.db.UserAgentInRoom.findOne({
+    room: key,
+    userAgent: userAgentAdmin,
+  }).lean();
 
-  if (!admin.isAdmin) throw new Error('You don`t have permissions for remove this room');
+  if (!admin.isAdmin)
+    throw new LeemonsError(ctx, { message: 'You don`t have permissions for remove this room' });
 
-  return remove(key, { ignoreCalledFrom: true, transacting });
+  return remove({ key, ignoreCalledFrom: true, ctx });
 }
 
 module.exports = { adminRemoveRoom };

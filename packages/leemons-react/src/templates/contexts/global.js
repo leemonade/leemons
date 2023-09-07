@@ -64,7 +64,7 @@ class LeemonsApi {
     };
   }
 
-  api = async (url, options) => {
+  api = async (url, options = {}) => {
     const ctx = { url, options, middlewares: [] };
     let waitKey = null;
     try {

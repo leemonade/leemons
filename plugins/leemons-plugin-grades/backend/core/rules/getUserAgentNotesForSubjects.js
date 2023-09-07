@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-async function getUserAgentNotesForSubjects(userAgentId, subjectIds, { transacting } = {}) {
+async function getUserAgentNotesForSubjects({ userAgentId, subjectIds, ctx }) {
   // TODO Integrar con el plugin que devuelva las notas
   // ES: Simulamos la devolucion de notas
   const result = {};

@@ -1,46 +1,40 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
+const { LeemonsError } = require('leemons-error');
 
-async function adminUpdateRoomName(key, userAgent, name, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
+async function adminUpdateRoomName({ key, userAgent, name, ctx }) {
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistRoomKey(key, { transacting });
-      await validateNotExistUserAgentInRoomKey(key, userAgent, { transacting });
+  await validateNotExistRoomKey({ key, ctx });
+  await validateNotExistUserAgentInRoomKey({ key, userAgent, ctx });
 
-      const userAgentInRoom = await table.userAgentInRoom.findOne(
-        {
-          room: key,
-          userAgent,
-        },
-        { transacting }
-      );
+  const userAgentInRoom = await ctx.tx.db.UserAgentInRoom.findOne({
+    room: key,
+    userAgent,
+  })
+    .select(['isAdmin'])
+    .lean();
 
-      if (!userAgentInRoom.isAdmin)
-        throw new Error('You don`t have permissions for change the name of this room');
+  if (!userAgentInRoom.isAdmin)
+    throw new LeemonsError(ctx, {
+      message: 'You don`t have permissions for change the name of this room',
+    });
 
-      const room = await table.room.update({ key }, { name }, { transacting });
+  const room = await ctx.tx.db.Room.findOneAndUpdate({ key }, { name }, { new: true, lean: true });
 
-      const userAgentsInRoom = await table.userAgentInRoom.find(
-        {
-          room: key,
-        },
-        { columns: ['userAgent'], transacting }
-      );
+  const userAgentsInRoom = await ctx.tx.db.UserAgentInRoom.find({
+    room: key,
+  })
+    .select(['userAgent'])
+    .lean();
 
-      leemons.socket.emit(_.map(userAgentsInRoom, 'userAgent'), `COMUNICA:ROOM:UPDATE:NAME`, room);
+  ctx.socket.emit(_.map(userAgentsInRoom, 'userAgent'), `COMUNICA:ROOM:UPDATE:NAME`, room);
 
-      return room;
-    },
-    table.room,
-    _transacting
-  );
+  return room;
 }
 
 module.exports = { adminUpdateRoomName };

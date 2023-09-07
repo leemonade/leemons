@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-function getValuesForSave(jsonSchema, key, value) {
+function getValuesForSave({ jsonSchema, key, value }) {
   if (!value)
     return [
       {

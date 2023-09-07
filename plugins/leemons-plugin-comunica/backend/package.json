@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
+    "bad-words": "^3.0.4",
     "colord": "^2.9.3",
+    "jsonwebtoken": "^9.0.2",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
     "leemons-error": "1.0.0",
@@ -34,6 +36,7 @@
     "leemons-middlewares": "1.0.0",
     "leemons-mongodb": "1.0.0",
     "leemons-mongodb-helpers": "1.0.0",
+    "leemons-mqtt": "1.0.0",
     "leemons-multi-events": "1.0.0",
     "leemons-multilanguage": "1.0.0",
     "leemons-permissions": "1.0.0",

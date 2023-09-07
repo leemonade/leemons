@@ -1,4 +1,5 @@
 const { createCredentials } = require('./createCredentials');
+const awsIotDeviceSdk = require('aws-iot-device-sdk');
 
 /* eslint-disable no-use-before-define */
 let client;
@@ -37,7 +38,7 @@ function waitAndResolveOrReject(resolve, reject) {
 
 function createClient(credentials) {
   // eslint-disable-next-line new-cap
-  return new global.utils.awsIotDeviceSdk.device(credentials);
+  return new awsIotDeviceSdk.device(credentials);
 }
 
 function clearClient() {
@@ -87,7 +88,7 @@ function clientOnConnect() {
   if (onConnectResolve) onConnectResolve(client);
 }
 
-async function getClientCached() {
+async function getClientCached({ ctx }) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     try {
@@ -104,14 +105,17 @@ async function getClientCached() {
 
           // Sacamos los credenciales necesarios
           const credentials = await createCredentials({
-            Version: '2012-10-17',
-            Statement: [
-              {
-                Effect: 'Allow',
-                Action: ['iot:*'],
-                Resource: '*',
-              },
-            ],
+            policy: {
+              Version: '2012-10-17',
+              Statement: [
+                {
+                  Effect: 'Allow',
+                  Action: ['iot:*'],
+                  Resource: '*',
+                },
+              ],
+            },
+            ctx,
           });
 
           clientExpirationDate = new Date(credentials.sessionExpiration);
@@ -139,7 +143,7 @@ async function getClientCached() {
         const now = new Date();
         if (now > clientExpirationDate) {
           clearClient();
-          getClientCached().then(resolve).catch(reject);
+          getClientCached({ ctx }).then(resolve).catch(reject);
         } else {
           resolve(client);
         }

@@ -6,7 +6,7 @@ async function isInstalled({ pluginName, ctx }) {
     deploymentID: ctx.meta.deploymentID,
     pluginName: pluginNames,
   });
-  return result === pluginName.length;
+  return result === pluginNames.length;
 }
 
 module.exports = { isInstalled };

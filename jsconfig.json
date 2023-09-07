@@ -4,7 +4,6 @@
     "moduleResolution": "Node",
     "target": "ES2020",
     "jsx": "react",
-    "baseUrl": ".",
     "paths": {
       "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
@@ -95,6 +94,9 @@
       ],
       "@onboarding/*": [
         "./plugins/leemons-plugin-onboarding/frontend/src/*"
+      ],
+      "@package-manager/*": [
+        "./plugins/leemons-plugin-package-manager/frontend/src/*"
       ],
       "@scores/*": [
         "./plugins/leemons-plugin-scores/frontend/src/*"

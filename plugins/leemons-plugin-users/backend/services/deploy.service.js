@@ -14,6 +14,7 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { addWidgetZonesDeploy } = require('leemons-widgets');
 const { getEmailTypes } = require('leemons-emails');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const {
   updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
 } = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
@@ -125,6 +126,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   events: {
@@ -137,7 +139,6 @@ module.exports = {
       ctx.tx.emit('init-actions');
 
       // Permissions
-      console.log('Vamos a añadir los permisos');
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: defaultPermissions,

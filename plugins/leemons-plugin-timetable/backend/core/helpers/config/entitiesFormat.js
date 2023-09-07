@@ -1,4 +1,5 @@
-module.exports = function entitiesFormat(entitiesObj) {
+const { LeemonsError } = require('leemons-error');
+module.exports = function entitiesFormat({ entitiesObj, ctx }) {
   try {
     // Validate entities
     let [entityTypes, entities] = Object.entries(entitiesObj)
@@ -6,12 +7,12 @@ module.exports = function entitiesFormat(entitiesObj) {
         const uuidRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/gi;
         // Validate entityType is a string
         if (typeof entityType !== 'string' || entityType.length === 0) {
-          throw new Error('EntityType must be a string');
+          throw new LeemonsError(ctx, { message: 'EntityType must be a string' });
         }
 
         // Validate entity is a uuid v4
         if (!uuidRegex.test(entity)) {
-          throw new Error('Entity must be a uuid');
+          throw new LeemonsError(ctx, { message: 'Entity must be a uuid' });
         }
 
         return { entity, entityType };
@@ -31,7 +32,7 @@ module.exports = function entitiesFormat(entitiesObj) {
 
     // Verify that entities exists
     if (entityTypes.length === 0) {
-      throw new Error('No entities');
+      throw new LeemonsError(ctx, { message: 'No entities' });
     }
 
     // Stringify entityTypes and entities

@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getCenter(center, { transacting } = {}) {
-  const item = await table.config.findOne({ type: 'center', typeId: center }, { transacting });
+async function getCenter({ center, ctx }) {
+  const item = await ctx.tx.db.Config.findOne({ type: 'center', typeId: center }).lean();
   let config = {
     studentsCanAddTeachersToGroups: true,
   };

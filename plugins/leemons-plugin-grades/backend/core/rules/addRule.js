@@ -1,32 +1,26 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateAddRule } = require('../../validations/forms');
 const { addConditionGroup } = require('../condition-groups/addConditionGroup');
 const { ruleByIds } = require('./ruleByIds');
-const enableMenuItemService = require('../menu-builder/enableItem');
 
-async function addRule(data, { isDependency = false, transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateAddRule(data, isDependency);
+async function addRule({ data, isDependency = false, ctx }) {
+  await validateAddRule({ data, isDependency });
 
-      const { group, ..._data } = data;
+  const { group, ..._data } = data;
 
-      const rule = await table.rules.create({ ..._data, isDependency }, { transacting });
+  let rule = await ctx.tx.db.Rules.create({ ..._data, isDependency });
+  rule = rule.toObject();
 
-      const _group = await addConditionGroup({ ...group, rule: rule.id }, { transacting });
+  const _group = await addConditionGroup({ data: { ...group, rule: rule.id }, ctx });
 
-      await table.rules.update({ id: rule.id }, { group: _group.id }, { transacting });
+  await ctx.tx.db.Rules.updateOne({ id: rule.id }, { group: _group.id });
 
-      await Promise.all([
-        enableMenuItemService('promotions'),
-        enableMenuItemService('dependencies'),
-      ]);
-      return (await ruleByIds(rule.id, { transacting }))[0];
-    },
-    table.grades,
-    _transacting
-  );
+  await Promise.all([
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('promotions') }),
+    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('dependencies') }),
+  ]);
+
+  return (await ruleByIds({ ids: rule.id, ctx }))[0];
 }
 
 module.exports = { addRule };

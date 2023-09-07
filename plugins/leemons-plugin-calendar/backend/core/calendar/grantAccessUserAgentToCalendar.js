@@ -20,7 +20,6 @@ async function grantAccessUserAgentToCalendar({ key, userAgentId, actionName, ct
   const actionNames = _.isArray(actionName) ? actionName : [actionName];
   const permissionConfig = getPermissionConfig(key);
 
-  console.log('anets de add customperm');
   const { warnings } = await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: userAgentIds,
     data: {
@@ -28,8 +27,6 @@ async function grantAccessUserAgentToCalendar({ key, userAgentId, actionName, ct
       actionNames,
     },
   });
-
-  console.log('warnings', warnings);
 
   if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
   return true;

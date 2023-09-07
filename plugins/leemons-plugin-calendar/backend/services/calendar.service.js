@@ -14,19 +14,25 @@ const calendar = require('../core/calendar');
 const events = require('../core/events');
 const eventTypes = require('../core/event-types');
 const { validateKeyPrefix } = require('../validations/exists');
+const restActions = require('./rest/calendar.rest');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'calendar.calendar',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     add: {
       handler(ctx) {
         return calendar.add({ ...ctx.params, ctx });

@@ -5,7 +5,6 @@ function countDocuments({ model, autoDeploymentID, ctx }) {
   return function (_conditions = {}, options, ...args) {
     let conditions = _conditions;
     if (autoDeploymentID) conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
-
     return excludeDeleteIfNeedToQuery(model.countDocuments(conditions, options, ...args), options);
   };
 }

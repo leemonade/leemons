@@ -205,6 +205,7 @@ async function addClass({ data, ctx }) {
       classes: [classe],
       ctx,
     });
+
     await ctx.tx.emit('after-add-class', { class: classe });
 
     if (teachers) {

@@ -1,56 +1,41 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
+const { LeemonsError } = require('leemons-error');
 
-async function toggleDisableRoom(key, userAgent, { transacting: _transacting } = {}) {
-  validateKeyPrefix(key, this.calledFrom);
+async function toggleDisableRoom({ key, userAgent, ctx }) {
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistRoomKey(key, { transacting });
-      await validateNotExistUserAgentInRoomKey(key, userAgent, { transacting });
+  await validateNotExistRoomKey({ key, ctx });
+  await validateNotExistUserAgentInRoomKey({ key, userAgent, ctx });
 
-      const userAgentRoom = await table.userAgentInRoom.findOne(
-        {
-          room: key,
-          userAgent,
-        },
-        { transacting }
-      );
+  const userAgentRoom = await ctx.tx.db.UserAgentInRoom.findOne({
+    room: key,
+    userAgent,
+  }).lean();
 
-      if (!userAgentRoom.isAdmin)
-        throw new Error('You don`t have permissions for disable this room');
+  if (!userAgentRoom.isAdmin)
+    throw new LeemonsError(ctx, { message: 'You don`t have permissions for disable this room' });
 
-      const room = await table.room.findOne({ key }, { transacting });
+  const room = await ctx.tx.db.Room.findOne({ key }).select(['adminDisableMessages']).lean();
 
-      await table.room.update(
-        { key },
-        { adminDisableMessages: !room.adminDisableMessages },
-        { transacting }
-      );
+  await ctx.tx.db.Room.updateOne({ key }, { adminDisableMessages: !room.adminDisableMessages });
 
-      const adminUserAgents = await table.userAgentInRoom.find(
-        {
-          room: key,
-        },
-        { columns: ['userAgent'], transacting }
-      );
+  const adminUserAgents = await ctx.tx.db.UserAgentInRoom.find({
+    room: key,
+  })
+    .select(['userAgent'])
+    .lean();
 
-      leemons.socket.emit(
-        _.map(adminUserAgents, 'userAgent'),
-        `COMUNICA:ROOM:ADMIN_DISABLE_MESSAGES`,
-        { room: key, adminDisableMessages: !room.adminDisableMessages }
-      );
+  ctx.socket.emit(_.map(adminUserAgents, 'userAgent'), `COMUNICA:ROOM:ADMIN_DISABLE_MESSAGES`, {
+    room: key,
+    adminDisableMessages: !room.adminDisableMessages,
+  });
 
-      return !room.adminDisableMessages;
-    },
-    table.room,
-    _transacting
-  );
+  return !room.adminDisableMessages;
 }
 
 module.exports = { toggleDisableRoom };

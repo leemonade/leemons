@@ -1,14 +1,12 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getConfig(program, { transacting } = {}) {
-  const config = await table.config.findOne({ program }, { transacting });
+async function getConfig({ program, ctx }) {
+  const config = await ctx.tx.db.Config.findOne({ program }).lean();
   if (config) {
     if (config.regionalConfig) {
-      config.regionalConfig = await table.regionalConfig.findOne(
-        { id: config.regionalConfig },
-        { transacting }
-      );
+      config.regionalConfig = await ctx.tx.db.RegionalConfig.findOne({
+        id: config.regionalConfig,
+      }).lean();
       config.regionalConfig = {
         ...config.regionalConfig,
         regionalEvents: JSON.parse(config.regionalConfig.regionalEvents),

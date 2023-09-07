@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getProgram(program, { transacting } = {}) {
-  const item = await table.config.findOne({ type: 'program', typeId: program }, { transacting });
+async function getProgram({ program, ctx }) {
+  const item = await ctx.tx.db.Config.findOne({ type: 'program', typeId: program }).lean();
   let config = {
     enableSubjectsRoom: true,
     teachersCanDisableSubjectsRooms: true,

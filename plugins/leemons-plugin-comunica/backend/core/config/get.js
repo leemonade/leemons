@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function get(userAgent, { transacting } = {}) {
-  const config = await table.userAgentConfig.findOne({ userAgent }, { transacting });
+async function get({ userAgent, ctx }) {
+  const config = await ctx.tx.db.UserAgentConfig.findOne({ userAgent }).lean();
   return {
     muted: config?.muted ? !!config.muted : false,
   };

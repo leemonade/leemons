@@ -11,15 +11,19 @@ const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { getServiceModels } = require('../models');
 const { defaultPermissions } = require('../config/constants');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { LeemonsCacheMixin } = require('leemons-cache');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
   name: 'dataset.deploy',
   version: 1,
   mixins: [
+    LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   events: {

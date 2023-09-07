@@ -50,6 +50,94 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          'POST package-manager/info': 'deployment-manager.infoRest',
+
+          // -- MQTT AWS IOT (Finish) --
+          'GET mqtt-aws-iot/credentials': 'v1.mqtt-aws-iot.socket.getCredentialsRest',
+          'POST mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.setConfigRest',
+          'GET mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.getConfigRest',
+
+          // -- Dataset (Finish) --
+          'POST dataset/get-schema': 'v1.dataset.dataset.getSchemaRest',
+          'POST dataset/get-schema-locale': 'v1.dataset.dataset.getSchemaLocaleRest',
+          'POST dataset/get-schema-field-locale': 'v1.dataset.dataset.getSchemaFieldLocaleRest',
+          'POST dataset/save-field': 'v1.dataset.dataset.saveFieldRest',
+          'POST dataset/save-multiple-fields': 'v1.dataset.dataset.saveMultipleFieldsRest',
+          'POST dataset/remove-field': 'v1.dataset.dataset.removeFieldRest',
+
+          // -- Academic calendar (Finish) --
+          'GET academic-calendar/config/:programId': 'v1.academic-calendar.config.getRest',
+          'POST academic-calendar/config': 'v1.academic-calendar.config.saveRest',
+          'GET academic-calendar/regional-config/list/:center':
+            'v1.academic-calendar.regionalConfig.listRest',
+          'POST academic-calendar/regional-config/save':
+            'v1.academic-calendar.regionalConfig.saveRest',
+
+          // -- Comunica (Finish) --
+          'POST calendar/calendar': 'v1.calendar.calendar.getCalendarRest',
+          'POST calendar/schedule': 'v1.calendar.calendar.getScheduleRest',
+          'GET calendar/event-types': 'v1.calendar.calendar.getEventTypesRest',
+          'POST calendar/add/event': 'v1.calendar.calendar.addEventRest',
+          'POST calendar/update/event': 'v1.calendar.calendar.updateEventRest',
+          'POST calendar/update/event-subtask': 'v1.calendar.calendar.updateEventSubTasksRest',
+          'POST calendar/remove/event': 'v1.calendar.calendar.removeEventRest',
+          'GET calendar/kanban/list/columns': 'v1.calendar.calendar.listKanbanColumnsRest',
+          'GET calendar/kanban/list/event/orders': 'v1.calendar.calendar.listKanbanEventOrdersRest',
+          'POST calendar/kanban/save/event/orders':
+            'v1.calendar.calendar.saveKanbanEventOrdersRest',
+          'POST calendar/configs/add': 'v1.calendar.calendar.addCalendarConfigRest',
+          'POST calendar/configs/update/:id': 'v1.calendar.calendar.updateCalendarConfigRest',
+          'GET calendar/configs/list': 'v1.calendar.calendar.listCalendarConfigRest',
+          'GET calendar/configs/detail/:id': 'v1.calendar.calendar.detailCalendarConfigRest',
+          'DELETE calendar/configs/remove/:id': 'v1.calendar.calendar.removeCalendarConfigRest',
+          'GET calendar/configs/centers-with-out-assign':
+            'v1.calendar.calendar.getCentersWithOutAssignRest',
+          'GET calendar/configs/calendars/:id':
+            'v1.calendar.calendar.getCalendarConfigCalendarsRest',
+          'POST calendar/configs/event/add': 'v1.calendar.calendar.addConfigEventRest',
+          'POST calendar/configs/event/update': 'v1.calendar.calendar.updateConfigEventRest',
+          'POST calendar/configs/event/remove': 'v1.calendar.calendar.removeConfigEventRest',
+
+          // -- Comunica (Finish) --
+          'GET comunica/config/general': 'v1.comunica.config.getGeneralConfigRest',
+          'GET comunica/config/center/:center': 'v1.comunica.config.getCenterConfigRest',
+          'GET comunica/config/program/:program': 'v1.comunica.config.getProgramConfigRest',
+          'GET comunica/config': 'v1.comunica.config.getRest',
+          'POST comunica/config': 'v1.comunica.config.saveRest',
+          'GET comunica/admin/config/:center': 'v1.comunica.config.getAdminConfigRest',
+          'POST comunica/admin/config/:center': 'v1.comunica.config.saveAdminConfigRest',
+          'GET comunica/room/list': 'v1.comunica.room.getRoomListRest',
+          'GET comunica/room/:key/messages': 'v1.comunica.room.getMessagesRest',
+          'POST comunica/room/:key/messages': 'v1.comunica.room.sendMessageRest',
+          'POST comunica/room/:key/messages/read': 'v1.comunica.room.markMessagesAsReadRest',
+          'GET comunica/room/:key': 'v1.comunica.room.getRoomRest',
+          'POST comunica/room/:key/mute': 'v1.comunica.room.toggleMutedRoomRest',
+          'POST comunica/room/:key/admin/mute': 'v1.comunica.room.toggleAdminMutedRoomRest',
+          'POST comunica/room/:key/admin/disable': 'v1.comunica.room.toggleAdminDisableRoomRest',
+          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/name': 'v1.comunica.room.adminUpdateRoomNameRest',
+          'POST comunica/room/:key/admin/users': 'v1.comunica.room.adminAddUsersToRoomRest',
+          'POST comunica/room/create': 'v1.comunica.room.createRoomRest',
+          'POST comunica/room/:key/admin/image': 'v1.comunica.room.adminChangeRoomImageRest',
+          'POST comunica/room/:key/attach': 'v1.comunica.room.toggleAttachedRoomRest',
+          'POST comunica/room/messages/unread': 'v1.comunica.room.getUnreadMessagesRest',
+          'POST comunica/room/messages/count': 'v1.comunica.room.getRoomsMessageCountRest',
+
+          // -- Timetable (Finish) --
+          'POST timetable/config': 'v1.timetable.config.createRest',
+          'GET timetable/config': 'v1.timetable.config.getRest',
+          'GET timetable/config/has': 'v1.timetable.config.hasRest',
+          'PUT timetable/config': 'v1.timetable.config.updateRest',
+          'DELETE timetable/config': 'v1.timetable.config.deleteRest',
+          'POST timetable/timetable': 'v1.timetable.timetable.createRest',
+          'GET timetable/timetable/:id': 'v1.timetable.timetable.getRest',
+          'GET timetable/timetable/count/:id': 'v1.timetable.timetable.countRest',
+          'PUT timetable/timetable/:id': 'v1.timetable.timetable.updateRest',
+          'DELETE timetable/timetable/:id': 'v1.timetable.timetable.deleteRest',
+          'GET timetable/settings': 'v1.timetable.settings.findOneRest',
+          'POST timetable/settings': 'v1.timetable.settings.updateRest',
+          'POST timetable/settings/enable-menu-item': 'v1.timetable.settings.enableMenuItemRest',
+
           // -- Multilanguage (Finish) --
           'POST multilanguage/common': 'v1.multilanguage.common.getRest',
           'POST multilanguage/common/logged': 'v1.multilanguage.common.getLoggedRest',
@@ -61,7 +149,7 @@ module.exports = {
           'GET users/init/today-quote': 'v1.users.init.todayQuoteRest',
           'GET users/config/system-data-fields': 'v1.users.config.getSystemDataFieldsConfigRest',
           'POST users/config/system-data-fields': 'v1.users.config.saveSystemDataFieldsConfigRest',
-          'GET users/user/session/config': 'v1.users.users.updateSessionConfigRest',
+          'POST users/user/session/config': 'v1.users.users.updateSessionConfigRest',
           'POST users/user/login': 'v1.users.users.loginRest',
           'POST users/user/recover': 'v1.users.users.recoverRest',
           'POST users/user/reset': 'v1.users.users.resetRest',
@@ -270,6 +358,34 @@ module.exports = {
             'v1.academic-portfolio.settings.getProfilesRest',
           'PUT academic-portfolio/settings/profiles':
             'v1.academic-portfolio.settings.setProfilesRest',
+
+          // -- Grades (Finish) --
+          'GET grades/grades': 'v1.grades.grades.listGradesRest',
+          'POST grades/grades': 'v1.grades.grades.postGradeRest',
+          'PUT grades/grades': 'v1.grades.grades.putGradeRest',
+          'GET grades/grades/have': 'v1.grades.grades.haveGradesRest',
+          'GET grades/grades/:id': 'v1.grades.grades.getGradeRest',
+          'DELETE grades/grades/:id': 'v1.grades.grades.removeGradeRest',
+          'POST grades/grade-scales': 'v1.grades.gradeScales.postGradeScaleRest',
+          'PUT grades/grade-scales': 'v1.grades.gradeScales.putGradeScaleRest',
+          'DELETE grades/grade-scales/:id': 'v1.grades.gradeScales.removeGradeScaleRest',
+          'DELETE grades/grade-scales/can/:id': 'v1.grades.gradeScales.canRemoveGradeScaleRest',
+          'POST grades/grade-tags': 'v1.grades.gradeTags.postGradeTagRest',
+          'PUT grades/grade-tags': 'v1.grades.gradeTags.putGradeTagRest',
+          'DELETE grades/grade-tags/:id': 'v1.grades.gradeTags.removeGradeTagRest',
+          'GET grades/rules': 'v1.grades.rules.listRulesRest',
+          'GET grades/rules/have': 'v1.grades.rules.haveRulesRest',
+          'POST grades/rules': 'v1.grades.rules.postRuleRest',
+          'PUT grades/rules': 'v1.grades.rules.putRuleRest',
+          'DELETE grades/rules/:id': 'v1.grades.rules.deleteRuleRest',
+          'POST grades/rules/process': 'v1.grades.rules.postRuleProcessRest',
+          'GET grades/dependencies': 'v1.grades.dependency.listDependenciesRest',
+          'POST grades/dependencies': 'v1.grades.dependency.postDependencyRest',
+          'PUT grades/dependencies': 'v1.grades.dependency.putDependencyRest',
+          'DELETE grades/dependencies/:id': 'v1.grades.dependency.deleteDependencyRest',
+          'GET grades/settings': 'v1.grades.settings.findOneRest',
+          'POST grades/settings': 'v1.grades.settings.updateRest',
+          'POST grades/settings/enable-menu-item': 'v1.grades.settings.enableMenuItemRest',
         },
 
         /**

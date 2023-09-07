@@ -4,6 +4,7 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getServiceModels } = require('../models');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 module.exports = {
   name: 'assignables.roles',
@@ -13,6 +14,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {},

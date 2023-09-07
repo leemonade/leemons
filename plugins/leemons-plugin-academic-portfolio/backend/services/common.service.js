@@ -11,6 +11,7 @@ const { getServiceModels } = require('../models');
 const restActions = require('./rest/common.rest');
 const { getTreeNodes } = require('../core/common/getTreeNodes');
 const { adminDashboard } = require('../core/common/adminDashboard');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -22,6 +23,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

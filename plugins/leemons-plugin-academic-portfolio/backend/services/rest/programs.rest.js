@@ -88,11 +88,11 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
+      const program = await addProgram({
+        data: ctx.params,
+        userSession: ctx.meta.userSession,
+        ctx,
       });
-      const program = await addProgram({ data, userSession: ctx.state.userSession, ctx });
       return { status: 200, program };
     },
   },
@@ -112,11 +112,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
-      });
-      const program = await updateProgram({ data, ctx });
+      const program = await updateProgram({ data: ctx.params, ctx });
       return { status: 200, program };
     },
   },
@@ -355,10 +351,7 @@ module.exports = {
     ],
     async handler(ctx) {
       const data = await addStudentsToClassesUnderNodeTree({
-        program: ctx.params.program,
-        nodetype: ctx.params.nodeType,
-        nodeId: ctx.params.nodeId,
-        students: ctx.params.students,
+        ...ctx.params,
         ctx,
       });
       return { status: 200, data };

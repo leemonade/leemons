@@ -1,29 +1,27 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
+const { LeemonsError } = require('leemons-error');
 
-async function adminChangeRoomImage(key, userSession, avatar, { transacting } = {}) {
+async function adminChangeRoomImage({ key, avatar, ctx }) {
+  const { userSession } = ctx.meta;
   const userAgent = userSession.userAgents[0].id;
-  validateKeyPrefix(key, this.calledFrom);
-  await validateNotExistRoomKey(key, { transacting });
-  await validateNotExistUserAgentInRoomKey(key, userAgent, { transacting });
-  const admin = await table.userAgentInRoom.findOne(
-    {
-      room: key,
-      userAgent,
-    },
-    { transacting }
-  );
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+  await validateNotExistRoomKey({ key, ctx });
+  await validateNotExistUserAgentInRoomKey({ key, userAgent, ctx });
+  const admin = await ctx.tx.db.UserAgentInRoom.findOne({
+    room: key,
+    userAgent,
+  }).lean();
 
-  if (!admin.isAdmin) throw new Error('You don`t have permissions for update room image');
+  if (!admin.isAdmin)
+    throw new LeemonsError(ctx, { message: 'You don`t have permissions for update room image' });
 
-  const room = await table.room.findOne({ key }, { transacting });
+  const room = await ctx.tx.db.Room.findOne({ key }).lean();
 
-  const assetService = leemons.getPlugin('leebrary').services.assets;
   const assetData = {
     indexable: false,
     public: true,
@@ -32,33 +30,22 @@ async function adminChangeRoomImage(key, userSession, avatar, { transacting } = 
   if (avatar) assetData.cover = avatar;
   let asset;
   if (room.image) {
-    asset = await assetService.update(
-      { ...assetData, id: room.image },
-      {
-        published: true,
-        userSession,
-        transacting,
-      }
-    );
-  } else {
-    asset = await assetService.add(assetData, {
+    asset = await ctx.tx.call('leebrary.assets.update', {
+      data: { ...assetData, id: room.image },
       published: true,
-      userSession,
-      transacting,
+    });
+  } else {
+    asset = await ctx.tx.call('leebrary.assets.add', {
+      asset: assetData,
+      options: {
+        published: true,
+      },
     });
   }
-  await table.room.update(
-    { id: room.id },
-    {
-      image: asset.id,
-    },
-    {
-      transacting,
-    }
-  );
+  await ctx.tx.db.Room.updateOne({ id: room.id }, { image: asset.id });
 
-  const userAgents = await table.userAgentInRoom.find({ room: key }, { transacting });
-  leemons.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
+  const userAgents = await ctx.tx.db.UserAgentInRoom.find({ room: key }).lean();
+  ctx.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
     key,
     image: asset.id,
   });

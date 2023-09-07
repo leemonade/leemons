@@ -24,6 +24,7 @@ const { getByClassAndUserAgent } = require('../core/classes/student/getByClassAn
 const { getByClass } = require('../core/classes/student/getByClass');
 const { add: addTeacher } = require('../core/classes/teacher/add');
 const { removeByClass: removeTeachersByClass } = require('../core/classes/teacher/removeByClass');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -35,6 +36,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -90,17 +92,17 @@ module.exports = {
         return getClassesUnderProgramCourse({ ...ctx.params, ctx });
       },
     },
-    'student.getByClassAndUserAgent': {
+    studentGetByClassAndUserAgent: {
       handler(ctx) {
         return getByClassAndUserAgent({ ...ctx.params, ctx });
       },
     },
-    'student.getByClass': {
+    studentGetByClass: {
       handler(ctx) {
         return getByClass({ ...ctx.params, ctx });
       },
     },
-    'teacher.getByClass': {
+    teacherGetByClass: {
       handler(ctx) {
         return getTeachersByClass({ ...ctx.params, ctx });
       },

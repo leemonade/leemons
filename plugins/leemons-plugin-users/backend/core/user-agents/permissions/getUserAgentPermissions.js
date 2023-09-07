@@ -41,8 +41,19 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
 
   const group = _.groupBy(
     results,
-    ({ actionName, id, userAgent: _ua, created_at, updated_at, createdAt, updatedAt, ...rest }) =>
-      JSON.stringify(rest)
+    ({
+      actionName,
+      id,
+      _id,
+      userAgent: _ua,
+      created_at,
+      updated_at,
+      createdAt,
+      updatedAt,
+      ...rest
+    }) => {
+      return JSON.stringify(rest);
+    }
   );
 
   const responses = [];
@@ -70,6 +81,9 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
     delete response.userAgent;
     delete response.created_at;
     delete response.updated_at;
+    delete response.createdAt;
+    delete response.updatedAt;
+    delete response._id;
   });
 
   await Promise.all(

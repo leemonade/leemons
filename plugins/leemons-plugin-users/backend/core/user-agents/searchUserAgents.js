@@ -61,7 +61,7 @@ async function searchUserAgents({
       center: _.isArray(center) ? center : [center],
     })
       .select(['role'])
-      .feat();
+      .lean();
     centerRoles = _.map(centerRoles, 'role');
   }
 

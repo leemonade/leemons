@@ -1,13 +1,12 @@
-const { table } = require('../tables');
 const { get } = require('./get');
 
-async function save(userAgent, config, { transacting } = {}) {
-  const result = await table.userAgentConfig.set(
+async function save({ userAgent, config, ctx }) {
+  const result = await ctx.tx.db.UserAgentConfig.findOneAndUpdate(
     { userAgent },
     { userAgent, ...config },
-    { transacting }
+    { lean: true, new: true, upsert: true }
   );
-  leemons.socket.emit(userAgent, `COMUNICA:CONFIG`, await get(userAgent, { transacting }));
+  ctx.socket.emit(userAgent, `COMUNICA:CONFIG`, await get({ userAgent, ctx }));
   return result;
 }
 

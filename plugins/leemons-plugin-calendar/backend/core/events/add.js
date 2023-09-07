@@ -27,7 +27,7 @@ async function add({ key, data, ignoreType, ctx }) {
 
   if (!ignoreType) await validateNotExistEventTypeKey({ key: data.type, ctx });
 
-  let event = await ctx.tx.db.events.create({
+  let event = await ctx.tx.db.Events.create({
     ...data,
     data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
   });

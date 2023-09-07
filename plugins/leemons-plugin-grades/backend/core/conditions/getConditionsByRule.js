@@ -1,11 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getConditionsByRule(ids, { transacting } = {}) {
-  const results = await table.conditions.find(
-    { rule_$in: _.isArray(ids) ? ids : [ids] },
-    { transacting }
-  );
+async function getConditionsByRule({ ids, ctx }) {
+  const results = await ctx.tx.db.Conditions.find({ rule: _.isArray(ids) ? ids : [ids] }).lean();
   return _.map(results, (result) => ({
     ...result,
     sourceIds: JSON.parse(result.sourceIds),

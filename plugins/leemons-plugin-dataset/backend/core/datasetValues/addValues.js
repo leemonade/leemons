@@ -1,9 +1,8 @@
 const _ = require('lodash');
-const getSchema = require('../dataset-schema/getSchema');
+const getSchema = require('../datasetSchema/getSchema');
 const getKeysCanAction = require('./getKeysCanAction');
 const { validateExistValues } = require('../../validations/exists');
 const { validatePluginName } = require('../../validations/exists');
-const { table } = require('../tables');
 const { getValuesForSave } = require('./getValuesForSave');
 const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
 
@@ -28,22 +27,27 @@ const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
  *  @param {UserAgent} userAgent - User auth
  *  @return {Promise<any>} Passed formData
  *  */
-async function addValues(
+async function addValues({
   locationName,
   pluginName,
-  _formData,
+  formData: _formData,
   userAgent,
-  { target, transacting } = {}
-) {
-  validatePluginName(pluginName, this.calledFrom);
-  await validateExistValues(locationName, pluginName, target, { transacting });
+  target,
+  ctx,
+}) {
+  validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+  await validateExistValues({ locationName, pluginName, target, ctx });
 
-  const { jsonSchema } = await getSchema.call(this, locationName, pluginName, { transacting });
+  const { jsonSchema } = await getSchema({ locationName, pluginName, ctx });
 
   // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
   // EN: We take only the fields to which the user has permission to edit.
-  const goodKeys = await getKeysCanAction(locationName, pluginName, userAgent, 'edit', {
-    transacting,
+  const goodKeys = await getKeysCanAction({
+    locationName,
+    pluginName,
+    userAgent,
+    actions: 'edit',
+    ctx,
   });
 
   const formData = {};
@@ -58,18 +62,18 @@ async function addValues(
 
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
-  validateDataForJsonSchema(jsonSchema, formData);
+  validateDataForJsonSchema({ jsonSchema, data: formData });
 
   const toSave = [];
   _.forIn(formData, (value, key) => {
     const data = { locationName, pluginName, key };
     if (target) data.target = target;
-    _.forEach(getValuesForSave(jsonSchema, key, value), (val) => {
+    _.forEach(getValuesForSave({ jsonSchema, key, value }), (val) => {
       toSave.push({ ...data, ...val });
     });
   });
 
-  await table.datasetValues.createMany(toSave, { transacting });
+  await ctx.tx.db.DatasetValues.insertMany(toSave);
 
   return formData;
 }

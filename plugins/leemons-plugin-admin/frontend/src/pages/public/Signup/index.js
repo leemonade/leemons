@@ -35,7 +35,7 @@ const Signup = () => {
     }
 
     const items = unflatten(translations?.items);
-    return items?.plugins?.admin || empty;
+    return items?.admin || empty;
   }, [translations]);
 
   // ·····················································
