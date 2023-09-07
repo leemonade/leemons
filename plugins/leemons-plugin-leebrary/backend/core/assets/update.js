@@ -17,7 +17,7 @@ const { duplicate } = require('./duplicate');
 const { CATEGORIES } = require('../../config/constants');
 const { getById: getCategory } = require('../categories/getById');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
-const { add: addFiles } = require('./files/add');
+const { add: addFiles } = require('./files/add/add');
 
 // -----------------------------------------------------------------------------
 // HELPERS

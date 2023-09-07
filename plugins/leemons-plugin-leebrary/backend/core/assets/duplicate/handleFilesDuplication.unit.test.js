@@ -9,7 +9,7 @@ const getCategory = require('../../../__fixtures__/getCategory');
 // MOCKS
 jest.mock('../files/add');
 jest.mock('../../files/duplicate');
-const { add: addFiles } = require('../files/add');
+const { add: addFiles } = require('../files/add/add');
 const { duplicate: duplicateFile } = require('../../files/duplicate');
 
 beforeEach(() => jest.resetAllMocks());

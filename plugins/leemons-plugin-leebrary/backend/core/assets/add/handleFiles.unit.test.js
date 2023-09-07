@@ -11,7 +11,7 @@ const getAssets = require('../../../__fixtures__/getAssets');
 
 // mocks:
 jest.mock('../files/add');
-const { add: addFiles } = require('../files/add');
+const { add: addFiles } = require('../files/add/add');
 
 it('Should call the addFiles function with the correct arguments and return true when a correct file id is passed', async () => {
   // Arrange
