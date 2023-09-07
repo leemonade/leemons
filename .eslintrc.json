@@ -8,7 +8,12 @@
   "globals": {
     "leemons": true
   },
-  "extends": ["plugin:react/recommended", "plugin:sonarjs/recommended", "airbnb-base", "prettier"],
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:sonarjs/recommended",
+    "airbnb-base",
+    "prettier"
+  ],
   "settings": {
     "react": {
       "version": "detect"
@@ -20,15 +25,24 @@
     "babelOptions": {
       "babelrc": false,
       "configFile": false,
-      "presets": ["@babel/preset-env"],
-      "plugins": ["@babel/plugin-syntax-jsx"]
+      "presets": [
+        "@babel/preset-env"
+      ],
+      "plugins": [
+        "@babel/plugin-syntax-jsx"
+      ]
     },
     "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "plugins": ["react", "sonarjs", "import", "prettier"],
+  "plugins": [
+    "react",
+    "sonarjs",
+    "import",
+    "prettier"
+  ],
   "rules": {
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
@@ -88,6 +102,6 @@
         ]
       }
     ],
-      "import/no-names-as-default": "off"
+    "import/no-names-as-default": "off"
   }
 }

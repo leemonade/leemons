@@ -1,64 +1,56 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { numberToEncodedLetter } = require('leemons-utils');
 const { nodesTreeByCurriculum } = require('./nodesTreeByCurriculum');
 const { nodeLevelsByCurriculum } = require('../nodeLevels/nodeLevelsByCurriculum');
 
-function reload(parent, childrens, nodeLevelsById, { transacting } = {}) {
+function reload({ parent, childrens, nodeLevelsById, ctx }) {
   const promises = [];
   const listType =
     parent && nodeLevelsById[parent.nodeLevel] ? nodeLevelsById[parent.nodeLevel].listType : null;
   _.forEach(_.sortBy(childrens, 'nodeOrder'), (children, index) => {
     if (!listType) {
-      promises.push(
-        table.nodes.update({ id: children.id }, { fullName: children.name }, { transacting })
-      );
+      promises.push(ctx.tx.db.Nodes.updateOne({ id: children.id }, { fullName: children.name }));
     } else {
       switch (listType) {
         case 'style-1':
           promises.push(
-            table.nodes.update(
+            ctx.tx.db.Nodes.updateOne(
               { id: children.id },
-              { fullName: `${index + 1}. ${children.name}` },
-              { transacting }
+              { fullName: `${index + 1}. ${children.name}` }
             )
           );
           break;
         case 'style-2':
           promises.push(
-            table.nodes.update(
+            ctx.tx.db.Nodes.updateOne(
               { id: children.id },
-              { fullName: `${global.utils.numberToEncodedLetter(index + 1)}. ${children.name}` },
-              { transacting }
+              { fullName: `${numberToEncodedLetter(index + 1)}. ${children.name}` }
             )
           );
           break;
         default:
           promises.push(
-            table.nodes.update({ id: children.id }, { fullName: children.name }, { transacting })
+            ctx.tx.db.Nodes.updateOne({ id: children.id }, { fullName: children.name })
           );
           break;
       }
     }
 
     if (children.childrens) {
-      promises.push(reload(children, children.childrens, nodeLevelsById, { transacting }));
+      promises.push(
+        reload({ parent: children, childrens: children.childrens, nodeLevelsById, ctx })
+      );
     }
   });
   return Promise.all(promises);
 }
 
-async function reloadNodeFullNamesForCurriculum(id, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const [tree, nodeLevels] = await Promise.all([
-        nodesTreeByCurriculum(id, { transacting }),
-        nodeLevelsByCurriculum(id, { transacting }),
-      ]);
-      await reload({}, tree, _.keyBy(nodeLevels, 'id'), { transacting });
-    },
-    table.nodes,
-    _transacting
-  );
+async function reloadNodeFullNamesForCurriculum({ id, ctx }) {
+  const [tree, nodeLevels] = await Promise.all([
+    nodesTreeByCurriculum({ id, ctx }),
+    nodeLevelsByCurriculum({ ids: id, ctx }),
+  ]);
+  await reload({ parent: {}, childrens: tree, nodeLevelsById: _.keyBy(nodeLevels, 'id'), ctx });
 }
 
 module.exports = { reloadNodeFullNamesForCurriculum };
