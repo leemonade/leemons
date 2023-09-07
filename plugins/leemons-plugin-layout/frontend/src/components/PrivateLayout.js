@@ -19,7 +19,7 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
     position: 'relative',
   },
   sideNav: {
-    width,
+    width: '52px',
     height: '100%',
     overflowX: 'visible',
     transition: 'width 0ms ease-out',

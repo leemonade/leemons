@@ -13,16 +13,16 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, lightMode }) =
       lineHeight: '24px',
       fontSize: leemonsStyles.core.font.size['500'],
       color: lightMode
-        ? leemonsStyles.core.color.neutral['50']
-        : leemonsStyles.menu.content.color.main['default--dark'],
+        ? leemonsStyles.menu.content.color.main['default--dark']
+        : leemonsStyles.menu.content.color.main.default,
     },
     navWrapper: {
       position: 'relative',
       height: '100vh',
       width: pxToRem(itemWidth),
       backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main['default--dark']
-        : leemonsStyles.menu.background.color.main.default,
+        ? leemonsStyles.menu.background.color.main.default
+        : leemonsStyles.menu.background.color.main['default--dark'],
       zIndex: 30,
       overflow: 'hidden',
     },

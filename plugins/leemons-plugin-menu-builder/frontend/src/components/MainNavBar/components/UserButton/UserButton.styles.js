@@ -20,12 +20,12 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
       fontSize: theme.fontSizes.sm,
       borderTop: `1px solid ${leemonsStyles.menu.background.color.main.default}`,
       backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main[defaultDark]
-        : leemonsStyles.menu.background.color.main.default,
+        ? leemonsStyles.menu.background.color.main.default
+        : leemonsStyles.menu.background.color.main[defaultDark],
       '&:hover': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main['hover--dark']
-          : leemonsStyles.core.color.neutral['50'],
+          ? leemonsStyles.menu.background.color.main.hover
+          : leemonsStyles.menu.background.color.main['hover--dark'],
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
       },
     },
@@ -42,15 +42,15 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
     chevron: {
       transition: 'transform 200ms ease',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        ? leemonsStyles.menu.background.color.main[defaultDark]
+        : leemonsStyles.menu.content.color.main.default,
     },
     nameContainer: {
       ...leemonsStyles.menu.content.typo.md,
       maxWidth: 140,
       color: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        ? leemonsStyles.menu.background.color.main[defaultDark]
+        : leemonsStyles.menu.content.color.main.default,
       lineHeight: '24px',
     },
     menuItemsContainer: {
@@ -70,8 +70,8 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
       textDecoration: 'none',
       cursor: 'pointer',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        ? leemonsStyles.menu.background.color.main[defaultDark]
+        : leemonsStyles.menu.content.color.main.default,
     },
     childrenContainer: {
       display: 'flex',
@@ -79,21 +79,21 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
       alignItems: 'center',
       padding: '12px 16px',
       backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main[defaultDark]
-        : leemonsStyles.menu.background.color.main.default,
-      color: lightMode
         ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        : leemonsStyles.menu.background.color.main[defaultDark],
+      color: lightMode
+        ? leemonsStyles.menu.background.color.main[defaultDark]
+        : leemonsStyles.menu.content.color.main.default,
       '&:hover': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main['hover--dark']
-          : leemonsStyles.menu.background.color.main.hover,
+          ? leemonsStyles.menu.background.color.main.hover
+          : leemonsStyles.menu.background.color.main['hover--dark'],
         width: '100%',
       },
       '&:active': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main[activeDark]
-          : leemonsStyles.menu.background.color.main.active,
+          ? leemonsStyles.menu.background.color.main.active
+          : leemonsStyles.menu.background.color.main[activeDark],
       },
     },
     childrenContainerActive: {
@@ -102,12 +102,12 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
       alignItems: 'center',
       padding: '12px 16px',
       backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main[activeDark]
-        : leemonsStyles.menu.background.color.main.active,
+        ? leemonsStyles.menu.background.color.main.active
+        : leemonsStyles.menu.background.color.main[activeDark],
       '&:active': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main[activeDark]
-          : leemonsStyles.menu.background.color.main.active,
+          ? leemonsStyles.menu.background.color.main.active
+          : leemonsStyles.menu.background.color.main[activeDark],
       },
     },
     openIcon: {

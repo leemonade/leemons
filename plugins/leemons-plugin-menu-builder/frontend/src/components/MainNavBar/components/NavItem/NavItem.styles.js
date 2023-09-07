@@ -1,14 +1,14 @@
 import { createStyles } from '@bubbles-ui/components';
 
 export const NavItemStyles = createStyles((theme, { lightMode }) => {
-  console.log(theme);
+  // console.log(theme);
   const leemonsStyles = theme.other;
   const defaultDark = 'default--dark';
   const hoverDark = 'hover--dark';
   const activeDark = 'active--dark';
   const borderLeftLink = lightMode
-    ? leemonsStyles.menu.border.color.sub['default--dark']
-    : leemonsStyles.menu.border.color.sub.default;
+    ? leemonsStyles.menu.border.color.sub.default
+    : leemonsStyles.menu.border.color.sub[defaultDark];
   return {
     control: {
       fontWeight: 500,
@@ -17,18 +17,18 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       width: '100%',
       padding: 16,
       color: lightMode
-        ? leemonsStyles.menu.background.color.main[hoverDark]
-        : leemonsStyles.menu.background.color.main.hover,
+        ? leemonsStyles.menu.background.color.main.hover
+        : leemonsStyles.menu.background.color.main[hoverDark],
       fontSize: theme.fontSizes.sm,
       '&:active': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main[activeDark]
-          : leemonsStyles.menu.background.color.main.active,
+          ? leemonsStyles.menu.background.color.main.active
+          : leemonsStyles.menu.background.color.main[activeDark],
       },
       '&:hover': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main[hoverDark]
-          : leemonsStyles.menu.background.color.main.hover,
+          ? leemonsStyles.menu.background.color.main.hover
+          : leemonsStyles.menu.background.color.main[hoverDark],
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
       },
     },
@@ -41,8 +41,8 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
       fontSize: theme.fontSizes.sm,
       backgroundColor: lightMode
-        ? leemonsStyles.core.color.neutral['50']
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        ? leemonsStyles.menu.content.color.main[defaultDark]
+        : leemonsStyles.menu.content.color.main.default,
       borderLeft: `2px solid ${borderLeftLink}`,
     },
     itemWrapper: {
@@ -63,8 +63,8 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       ...leemonsStyles.menu.content.typo.md,
       lineHeight: '24px',
       color: lightMode
-        ? leemonsStyles.core.color.neutral['50']
-        : leemonsStyles.menu.content.color.main.default[defaultDark],
+        ? leemonsStyles.menu.content.color.default
+        : leemonsStyles.menu.content.color.main[defaultDark],
     },
     link: {
       ...leemonsStyles.menu.content.typo.md,
@@ -76,18 +76,18 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       cursor: 'pointer',
       backgroundColor: 'transparent',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        ? leemonsStyles.menu.background.color.main[defaultDark]
+        : leemonsStyles.menu.content.color.main.default,
       borderLeft: `1px solid ${borderLeftLink}`,
       '&:active': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main[activeDark]
-          : leemonsStyles.menu.background.color.main.active,
+          ? leemonsStyles.menu.background.color.main.active
+          : leemonsStyles.menu.background.color.main[activeDark],
       },
       '&:hover': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main[hoverDark]
-          : leemonsStyles.menu.background.color.main.hover,
+          ? leemonsStyles.menu.background.color.main.hover
+          : leemonsStyles.menu.background.color.main[hoverDark],
       },
     },
     linkActive: {
@@ -100,12 +100,12 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       fontSize: theme.fontSizes.sm,
       cursor: 'pointer',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.background.color.main[defaultDark],
+        ? leemonsStyles.menu.background.color.main[defaultDark]
+        : leemonsStyles.menu.background.color.main.default,
       borderLeft: `1px solid ${leemonsStyles.menu.border.color.sub.active}`,
       backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main[activeDark]
-        : leemonsStyles.menu.background.color.main.active,
+        ? leemonsStyles.menu.background.color.main.active
+        : leemonsStyles.menu.background.color.main[activeDark],
       '&:active': {
         backgroundColor: '#DEF2F0',
       },
@@ -113,8 +113,8 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
     chevron: {
       transition: 'transform 200ms ease',
       color: lightMode
-        ? leemonsStyles.core.color.neutral['50']
-        : leemonsStyles.menu.content.color.main.default,
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultDark],
     },
     chevronContainer: {
       width: 'auto',
@@ -125,8 +125,8 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       width: '18px',
       height: '18px',
       color: lightMode
-        ? leemonsStyles.core.color.neutral['50']
-        : leemonsStyles.menu.content.color.main.default,
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultDark],
     },
   };
 });

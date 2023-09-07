@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Spotlight } from '@bubbles-ui/components';
 import { MainNavBar } from './MainNavBar';
-import { menuData } from './mock/menuData';
+import { menuData, session, sessionMenu } from './mock/menuData';
 
 export default {
   title: 'leemons/MainNavBar',
@@ -33,6 +33,8 @@ export const Playground = Template.bind({});
 Playground.args = {
   lightMode: false,
   menuData,
+  sessionMenu,
+  session,
   //   showDescription: true,
   //   showAction: false,
   //   showAssigment: true,

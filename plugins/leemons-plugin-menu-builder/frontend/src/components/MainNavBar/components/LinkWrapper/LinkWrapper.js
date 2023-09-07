@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { LINK_WRAPPER_DEFAULT_PROPS, LINK_WRAPPER_PROP_TYPES } from './LinkWrapper.constants';
 
 const LinkWrapper = ({ useRouter, url, id, children }) => {
+  console.log('LinkWrapper');
+  console.log({ useRouter, url, id, children });
   if (url) {
     if (useRouter) {
       return (

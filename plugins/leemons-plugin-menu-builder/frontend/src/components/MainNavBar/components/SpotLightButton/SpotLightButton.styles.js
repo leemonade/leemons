@@ -12,8 +12,8 @@ export const SpotLightButtonStyles = createStyles((theme, { lightMode }) => {
       cursor: 'pointer',
       '&:hover': {
         backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main['hover--dark']
-          : leemonsStyles.core.color.neutral['50'],
+          ? leemonsStyles.menu.background.color.main.hover
+          : leemonsStyles.menu.background.color.main['hover--dark'],
       },
       '&:active': {
         backgroundColor: '#DEF2F0',
@@ -23,15 +23,15 @@ export const SpotLightButtonStyles = createStyles((theme, { lightMode }) => {
       width: '18px',
       height: '18px',
       color: lightMode
-        ? leemonsStyles.core.color.neutral['50']
+        ? leemonsStyles.menu.content.color.main['default--dark']
         : leemonsStyles.menu.content.color.main.default,
     },
     text: {
       ...leemonsStyles.menu.content.typo.md,
       lineHeight: '24px',
       color: lightMode
-        ? leemonsStyles.core.color.neutral['50']
-        : leemonsStyles.menu.content.color.main.default['default--dark'],
+        ? leemonsStyles.menu.content.color.main['default--dark']
+        : leemonsStyles.menu.content.color.main.default,
     },
   };
 });
