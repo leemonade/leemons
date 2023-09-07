@@ -82,13 +82,7 @@ it('Shoud not thow if the system cannot duplicate the cover file, instead it sho
     id: 'newAssetId',
     subjects: undefined,
   };
-
-  const newCover = {
-    ...imageFile,
-    id: 'newCoverId',
-    uri: 'leemons/leebrary/newCoverId.png',
-  };
-  duplicateFile.mockResolvedValue(newCover);
+  duplicateFile.mockResolvedValue(undefined);
 
   const ctx = generateCtx({
     models: {

@@ -7,7 +7,7 @@ const { duplicate: duplicateFile } = require('../../files/duplicate');
  * @param {Object} params - An object containing the parameters
  * @param {Object} params.newAsset - The new asset object
  * @param {Object} params.cover - The cover file object
- * @param {Object} params.transacting - The transaction object
+ * @param {MoleculerContext} params.ctx - The moleculer context
  * @returns {Promise<Object>} - Returns a promise with the updated asset
  */
 async function handleCoverDuplication({ newAsset, cover, ctx }) {

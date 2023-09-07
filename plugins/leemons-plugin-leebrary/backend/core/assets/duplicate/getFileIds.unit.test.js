@@ -33,10 +33,11 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should correctly return an array containing the cover id for a bookmark asset', async () => {
+it('Should correctly return an array containing the cover id of an asset if any', async () => {
   // Arrange
   const asset = { ...bookmarkAsset, id: 'wrongId', cover: bookmarkAsset.cover.id };
   const expectedResponse = [asset.cover];
+  const expectedResponseNoCover = [];
   ctx = generateCtx({
     models: {
       AssetsFiles: newModel(mongooseConnection, 'AssetsFiles', assetsFilesSchema),
@@ -45,9 +46,11 @@ it('Should correctly return an array containing the cover id for a bookmark asse
   await ctx.tx.db.AssetsFiles.create({ asset: bookmarkAsset.id, file: null });
   // Act
   const response = await getFileIds({ asset: { ...asset }, ctx });
+  const responseNoCoverNoFiles = await getFileIds({ asset: { ...asset, cover: null }, ctx });
 
   // Assert
   expect(response).toEqual(expectedResponse);
+  expect(responseNoCoverNoFiles).toEqual(expectedResponseNoCover);
 });
 
 it('Should retrive files associated to an asset with no repetitions', async () => {
