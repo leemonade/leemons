@@ -8,7 +8,7 @@
  * @param {string} params.coverId - The ID of the cover image for the asset.
  * @param {Object} params.assetData - An object containing the data for the asset. This includes information such as the asset's name, description, etc.
  * @param {MoleculerContext} params.ctx - The moleculer context.
- * @returns {Promise<Object>} A promise that resolves with the created asset object.
+ * @returns {Promise<LibraryAsset>} A promise that resolves with the created asset object.
  */
 async function createAssetInDB({ newId, categoryId, coverId, assetData, ctx }) {
   const assetDoc = await ctx.tx.db.Assets.create({

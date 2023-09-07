@@ -28,3 +28,39 @@
  * @property {string} uri - URI of the file
  * @property {string} metadata - Metadata of the file
  */
+
+/**
+ * @typedef LibraryAsset
+ * @property {string} id - Unique identifier for the asset
+ * @property {string} deploymentID - Identifier for the deployment
+ * @property {string} name - Name of the asset
+ * @property {string} tagline - Tagline of the asset
+ * @property {string} description - Description of the asset
+ * @property {string} color - Color of the asset
+ * @property {string} cover - Cover of the asset
+ * @property {string} fromUser - User who created the asset
+ * @property {string} fromUserAgent - User agent of the creator
+ * @property {boolean} public - Whether the asset is public or not
+ * @property {string} category - Category of the asset
+ * @property {boolean} indexable - Whether the asset is indexable or not
+ * @property {string} center - Center of the asset
+ * @property {string} program - Program of the asset
+ */
+
+/**
+ * @typedef LibraryCategory
+ * @property {string} id - Unique identifier for the category
+ * @property {string} deploymentID - Identifier for the deployment
+ * @property {string} key - Key of the category
+ * @property {string} pluginOwner - Plugin owner of the category
+ * @property {boolean} creatable - Whether the category is creatable or not
+ * @property {string} createUrl - URL for creating the category
+ * @property {boolean} duplicable - Whether the category is duplicable or not
+ * @property {string} provider - Provider of the category
+ * @property {string} componentOwner - Component owner of the category
+ * @property {string} listCardComponent - List card component of the category
+ * @property {string} listItemComponent - List item component of the category
+ * @property {string} detailComponent - Detail component of the category
+ * @property {string} canUse - Can use property of the category
+ * @property {number} order - Order of the category
+ */

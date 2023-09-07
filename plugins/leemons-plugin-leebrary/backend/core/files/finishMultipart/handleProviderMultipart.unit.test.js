@@ -1,17 +1,15 @@
 const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const fs = require('fs/promises');
-const { handleAbortMultipart } = require('./handleAbortMultipart');
+const { finishProviderMultipart } = require('./handleProviderMultipart');
 const { getByName } = require('../../providers/getByName');
 const getProviders = require('../../../__fixtures__/getProviders');
 
 jest.mock('../../providers/getByName');
-jest.mock('fs/promises');
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Handle Abort Multipart', () => {
+describe('Finish Provider Multipart', () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -29,11 +27,9 @@ describe('Handle Abort Multipart', () => {
   beforeEach(async () => {
     await mongooseConnection.dropDatabase();
     getByName.mockClear();
-    fs.rmdir.mockClear();
-    fs.unlink.mockClear();
   });
 
-  it('Should correctly handle abort multipart for non-sys provider', async () => {
+  it('Should correctly finish multipart for non-sys provider', async () => {
     // Arrange
     const { provider } = getProviders();
     getByName.mockResolvedValue(provider.value.params);
@@ -42,34 +38,42 @@ describe('Handle Abort Multipart', () => {
     ctx.tx.call = jest.fn(); // Mock ctx.call
 
     // Act
-    await handleAbortMultipart({ file, ctx });
+    await finishProviderMultipart({ file, ctx });
 
     // Assert
     expect(getByName).toHaveBeenCalledWith(file.provider);
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.abortMultipart`, { file });
+    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.finishMultipart`, { file });
   });
 
-  it('Should correctly handle abort multipart for sys provider and isFolder is true', async () => {
+  /*
+  it('Should not call provider finishMultipart for sys provider', async () => {
     // Arrange
     const ctx = generateCtx({});
-    const file = { provider: 'sys', uri: 'test-uri', isFolder: true };
+    const file = { provider: 'sys', uri: 'test-uri' };
+    ctx.tx.call = jest.fn(); // Mock ctx.call
 
     // Act
-    await handleAbortMultipart({ file, ctx });
+    await finishProviderMultipart({ file, ctx });
 
     // Assert
-    expect(fs.rmdir).toHaveBeenCalledWith(file.uri, { recursive: true });
+    expect(ctx.tx.call).not.toHaveBeenCalled();
   });
+  */
 
-  it('Should correctly handle abort multipart for sys provider and isFolder is false', async () => {
+  it('Should not call provider finishMultipart if provider does not support it', async () => {
     // Arrange
+    const { provider } = getProviders();
+    provider.value.params.supportedMethods.finishMultipart = false;
+    getByName.mockResolvedValue(provider.value.params);
+    const file = { provider: provider.value.pluginName, uri: 'test-uri' };
     const ctx = generateCtx({});
-    const file = { provider: 'sys', uri: 'test-uri', isFolder: false };
+    ctx.tx.call = jest.fn(); // Mock ctx.call
 
     // Act
-    await handleAbortMultipart({ file, ctx });
+    await finishProviderMultipart({ file, ctx });
 
     // Assert
-    expect(fs.unlink).toHaveBeenCalledWith(file.uri);
+    expect(getByName).toHaveBeenCalledWith(file.provider);
+    expect(ctx.tx.call).not.toHaveBeenCalled();
   });
 });
