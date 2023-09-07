@@ -37,7 +37,6 @@
   },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
-    "husky": "^8.0.3",
     "start-server-and-test": "^2.0.0",
     "turbo": "^1.9.3",
     "@babel/core": "^7.22.15",
@@ -51,6 +50,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-sonarjs": "^0.21.0",
+    "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1"
   }

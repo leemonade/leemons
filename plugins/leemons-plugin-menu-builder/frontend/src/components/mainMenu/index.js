@@ -9,6 +9,7 @@ import { useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
@@ -103,7 +104,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
       nothingFoundMessage={ts('nothingFoundMessage')}
       limit={10}
     >
-      <MainNav
+      {/* <MainNav */}
+      <MainNavBar
         {...props}
         menuData={menuData}
         isLoading={store.isLoading}
@@ -126,28 +128,28 @@ export default function MainMenu({ subNavWidth, ...props }) {
             ...(session.isSuperAdmin
               ? []
               : [
-                  {
-                    id: 'menu-1',
-                    label: t('accountInfo'),
-                    order: 0,
-                    url: '/private/users/detail',
-                    window: 'SELF',
-                    disabled: null,
-                  },
-                ].concat(
-                  store.onlyOneProfile
-                    ? []
-                    : [
-                        {
-                          id: 'menu-2',
-                          label: t('switchProfile'),
-                          order: 1,
-                          url: '/private/users/select-profile',
-                          window: 'SELF',
-                          disabled: null,
-                        },
-                      ]
-                )),
+                {
+                  id: 'menu-1',
+                  label: t('accountInfo'),
+                  order: 0,
+                  url: '/private/users/detail',
+                  window: 'SELF',
+                  disabled: null,
+                },
+              ].concat(
+                store.onlyOneProfile
+                  ? []
+                  : [
+                    {
+                      id: 'menu-2',
+                      label: t('switchProfile'),
+                      order: 1,
+                      url: '/private/users/select-profile',
+                      window: 'SELF',
+                      disabled: null,
+                    },
+                  ]
+              )),
             {
               id: 'menu-3',
               label: t('changeLanguage'),

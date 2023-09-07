@@ -248,20 +248,63 @@ export const menuData = [
     children: [],
     customChildren: [],
   },
+  {
+    id: 'kjhasd987234',
+    menuKey: 'plugins.menu-builder.main',
+    key: 'plugins.academic-portfolio',
+    parentKey: null,
+    pluginName: 'plugins.academic-portfolio',
+    order: null,
+    fixed: 0,
+    iconName: null,
+    activeIconName: null,
+    iconSvg: '/icons/aws-iot.svg',
+    activeIconSvg: '/icons/aws-iot_active.svg',
+    iconAlt: null,
+    url: null,
+    window: 'SELF',
+    disabled: null,
+    created_at: '2021-11-08T09:48:02.000Z',
+    updated_at: '2021-11-08T09:48:02.000Z',
+    label: 'Academic Portfolio',
+    children: [],
+    customChildren: [],
+  },
+  {
+    id: 'kjhasd987234',
+    menuKey: 'plugins.menu-builder.main',
+    key: 'plugins.academic-portfolio',
+    parentKey: null,
+    pluginName: 'plugins.academic-portfolio',
+    order: null,
+    fixed: 0,
+    iconName: null,
+    activeIconName: null,
+    iconSvg: '/icons/aws-iot.svg',
+    activeIconSvg: '/icons/aws-iot_active.svg',
+    iconAlt: null,
+    url: null,
+    window: 'SELF',
+    disabled: null,
+    created_at: '2021-11-08T09:48:02.000Z',
+    updated_at: '2021-11-08T09:48:02.000Z',
+    label: 'Academic Portfolio',
+    children: [],
+    customChildren: [],
+  },
 ];
 
 export const session = {
-  name: 'Elvis',
-  surnames: 'Costello',
-  avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
-}
-
+  name: 'John',
+  surnames: 'Doe de todos los santos',
+  avatar:
+    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
+};
 
 export const sessionMenu = {
   id: 'menu-0',
   label: 'label',
   children: [
-
     {
       id: 'menu-3',
       label: 'Cuenta de usuario',
@@ -285,16 +328,17 @@ export const sessionMenu = {
       url: '/private/users/logout',
       window: 'SELF',
       disabled: null,
-      openIcon: true
+      openIcon: true,
     },
     {
       id: 'menu-6',
-      label: 'Cambiar perfil',
+      label:
+        'Cambiar perfil con texto largo o muy largo largo o muy largo largo o muy largo largo o muy largo',
       order: 4,
       url: '/private/users/logout',
       window: 'SELF',
       disabled: null,
-      openIcon: true
+      openIcon: true,
     },
   ],
-}
+};

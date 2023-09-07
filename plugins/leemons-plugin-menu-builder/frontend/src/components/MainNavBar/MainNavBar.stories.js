@@ -1,7 +1,6 @@
 import React from 'react';
-import { Box } from '@bubbles-ui/components';
+import { Box, Spotlight } from '@bubbles-ui/components';
 import { MainNavBar } from './MainNavBar';
-import { Spotlight } from '@bubbles-ui/components';
 import { menuData } from './mock/menuData';
 
 export default {
@@ -14,29 +13,26 @@ export default {
     },
   },
   argTypes: {
-    // showImage: { control: 'boolean' },
+    lightMode: { control: 'boolean' },
     // variant: { control: { type: 'select' }, options: LIBRARYCARD_VARIANTS },
     // role: { control: { type: 'select' }, options: LIBRARYCARD_ASSIGMENT_ROLES },
     // onAction: { action: 'onAction' },
   },
 };
 
-const Template = ({ ...props }) => {
-  return (
-    <Box style={{ margin: '-1rem' }}>
-      <Spotlight data={props.menuData}>
-        <MainNavBar />
-      </Spotlight>
-    </Box>
-
-  );
-};
+const Template = ({ ...props }) => (
+  <Box style={{ margin: '-1rem' }}>
+    <Spotlight>
+      <MainNavBar {...props} />
+    </Spotlight>
+  </Box>
+);
 
 export const Playground = Template.bind({});
 
 Playground.args = {
+  lightMode: false,
   menuData,
-  //   showImage: true,
   //   showDescription: true,
   //   showAction: false,
   //   showAssigment: true,

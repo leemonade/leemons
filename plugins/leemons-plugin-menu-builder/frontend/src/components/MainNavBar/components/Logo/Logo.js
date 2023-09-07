@@ -6,7 +6,7 @@ export const LOGO_VARIANTS = ['positive', 'negative'];
 
 export const Logo = ({ variant = LOGO_VARIANTS[0], isotype, className }) => {
   const width = isotype ? '32' : '200';
-  const { classes, cx } = LogoStyles({});
+  const { classes, cx } = LogoStyles();
 
   return (
     <svg

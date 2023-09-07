@@ -44,6 +44,7 @@
     "prettier"
   ],
   "rules": {
+    "import/prefer-default-export": "off",
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
     "import/no-extraneous-dependencies": "off",

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { forEach } from 'lodash';
 
 export const getActiveItem = (menuData) => {
@@ -6,6 +7,8 @@ export const getActiveItem = (menuData) => {
 
   if (window && window.location) {
     const url = window.location.pathname;
+    // const url = '/private/users/user-data';
+    // const url = '/private/users/language';
 
     forEach(menuData, (item) => {
       if (item.url === url) {
@@ -29,7 +32,6 @@ export const getActiveItem = (menuData) => {
     if (!activeItem) {
       forEach(menuData, (item) => {
         if (item.url) {
-          const itemUrl = item.url.replace(/([\/][^\/]+$)/g, '');
           const match = url.indexOf(item.url);
 
           if (match > -1 && match < 4) {
@@ -40,7 +42,6 @@ export const getActiveItem = (menuData) => {
 
         forEach(item.children, (subItem) => {
           if (subItem.url) {
-            const subItemUrl = subItem.url.replace(/([\/][^\/]+$)/g, '');
             const matchUrl = url.indexOf(subItem.url);
             if (matchUrl > -1 && matchUrl < 4) {
               activeItem = item;
