@@ -1,11 +1,9 @@
 const _ = require('lodash');
 
-async function updateUserAgentPermissionsByUserSession(userSession, { transacting } = {}) {
-  return leemons
-    .getPlugin('users')
-    .services.users.updateUserAgentPermissions(_.map(userSession.userAgents, 'id'), {
-      transacting,
-    });
+async function updateUserAgentPermissionsByUserSession({ ctx }) {
+  return ctx.tx.call('users.users.updateUserAgentPermissions', {
+    userAgentIds: _.map(ctx.meta.userSession.userAgents, 'id'),
+  });
 }
 
 module.exports = { updateUserAgentPermissionsByUserSession };

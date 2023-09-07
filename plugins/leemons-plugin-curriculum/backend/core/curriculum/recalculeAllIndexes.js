@@ -2,7 +2,7 @@
 /* eslint-disable no-cond-assign */
 
 const _ = require('lodash');
-const { table } = require('../tables');
+const { numberToEncodedLetter } = require('leemons-utils');
 const { curriculumByIds } = require('./curriculumByIds');
 const { setDatasetValues } = require('../nodes/setDatasetValues');
 const { updateNodeLevelFormPermissions } = require('../nodeLevels/updateNodeLevelFormPermissions');
@@ -63,15 +63,8 @@ function compileTagifyText(text, config, nodeLevel, field) {
   return finalText;
 }
 
-async function recalculeItem(
-  nodeLevelByIds,
-  node,
-  nodeIndex,
-  userSession,
-  parents,
-  config,
-  { transacting } = {}
-) {
+async function recalculeItem({ nodeLevelByIds, node, nodeIndex, parents, config, ctx }) {
+  const { userSession } = ctx.meta;
   const nodeLevel = nodeLevelByIds[node.nodeLevel];
   const nodeLevelSchema = nodeLevel.schema ? nodeLevel.schema.jsonSchema : null;
 
@@ -80,9 +73,7 @@ async function recalculeItem(
     case 'style-2':
       // eslint-disable-next-line no-param-reassign
       node.nameOrder =
-        nodeLevel.listType === 'style-2'
-          ? global.utils.numberToEncodedLetter(nodeIndex + 1)
-          : nodeIndex + 1;
+        nodeLevel.listType === 'style-2' ? numberToEncodedLetter(nodeIndex + 1) : nodeIndex + 1;
       // eslint-disable-next-line no-param-reassign
       node.fullName = `${node.nameOrder}. ${node.name}`;
       config.indexes[`${nodeLevel.id}:numbering`] = node.nameOrder;
@@ -95,7 +86,7 @@ async function recalculeItem(
       break;
   }
 
-  await table.nodes.update({ id: node.id }, node, { transacting });
+  await ctx.tx.db.Nodes.updateOne({ id: node.id }, node);
 
   if (node.formValues && nodeLevelSchema) {
     _.forIn(node.formValues, (value, key) => {
@@ -117,8 +108,7 @@ async function recalculeItem(
             case 'style-1':
             case 'style-2':
               node.formValues[key] = _.map(value, (val, inx) => {
-                const index =
-                  ordered === 'style-2' ? global.utils.numberToEncodedLetter(inx + 1) : inx + 1;
+                const index = ordered === 'style-2' ? numberToEncodedLetter(inx + 1) : inx + 1;
                 return {
                   id: val.id,
                   value: val.value,
@@ -171,50 +161,49 @@ async function recalculeItem(
       processResetIndexes(config);
     });
 
-    await setDatasetValues(node, userSession, node.formValues, { transacting });
+    await setDatasetValues({ node, userSession, values: node.formValues, ctx });
   }
 
   if (node.childrens) {
     for (let i = 0, l = node.childrens.length; i < l; i++) {
       // eslint-disable-next-line no-await-in-loop
-      await recalculeItem(
+      await recalculeItem({
         nodeLevelByIds,
-        node.childrens[i],
-        i,
-        userSession,
-        parents.concat([node]),
+        node: node.childrens[i],
+        nodeIndex: i,
+        parents: parents.concat([node]),
         config,
-        { transacting }
-      );
+        ctx,
+      });
     }
   }
 }
 
-async function recalculeAllIndexes(curriculumId, userSession, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const [curriculum] = await curriculumByIds([curriculumId], { userSession, transacting });
+async function recalculeAllIndexes({ curriculumId, ctx }) {
+  const { userSession } = ctx.meta;
+  const [curriculum] = await curriculumByIds({ ids: [curriculumId], ctx });
 
-      await Promise.all(
-        _.map(curriculum.nodeLevels, ({ id }) =>
-          updateNodeLevelFormPermissions(id, { transacting })
-        )
-      );
-
-      await updateUserAgentPermissionsByUserSession(userSession, { transacting });
-
-      const nodeLevelByIds = _.keyBy(curriculum.nodeLevels, 'id');
-      const config = { indexes: {}, resetIndexesOnFinishCurrentLoop: [] };
-      for (let i = 0, l = curriculum.nodes.length; i < l; i++) {
-        // eslint-disable-next-line no-await-in-loop
-        await recalculeItem(nodeLevelByIds, curriculum.nodes[i], i, userSession, [], config, {
-          transacting,
-        });
-      }
-    },
-    table.curriculums,
-    _transacting
+  await Promise.all(
+    _.map(curriculum.nodeLevels, ({ id }) =>
+      updateNodeLevelFormPermissions({ nodeLevelId: id, ctx })
+    )
   );
+
+  await updateUserAgentPermissionsByUserSession({ ctx });
+
+  const nodeLevelByIds = _.keyBy(curriculum.nodeLevels, 'id');
+  const config = { indexes: {}, resetIndexesOnFinishCurrentLoop: [] };
+  for (let i = 0, l = curriculum.nodes.length; i < l; i++) {
+    // eslint-disable-next-line no-await-in-loop
+    await recalculeItem({
+      nodeLevelByIds,
+      node: curriculum.nodes[i],
+      nodeIndex: i,
+      parents: [],
+      config,
+      ctx,
+    });
+  }
 }
 
 module.exports = { recalculeAllIndexes };

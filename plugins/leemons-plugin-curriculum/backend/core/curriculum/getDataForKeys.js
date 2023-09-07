@@ -1,12 +1,12 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const {
   getCurriculumSelectedContentValueByKey,
 } = require('./getCurriculumSelectedContentValueByKey');
 const { getNodeLevelSchema } = require('../nodeLevels/getNodeLevelSchema');
 const { getNodeValues } = require('../nodes/nodesTreeByCurriculum');
 
-async function getDataForKeys(keys, userSession, { transacting } = {}) {
+async function getDataForKeys({ keys, ctx }) {
+  const { userSession } = ctx.meta;
   const values = _.map(keys, (key) => getCurriculumSelectedContentValueByKey(key));
   const curriculumIds = _.uniq(_.map(values, 'curriculum'));
   const nodeLevelIds = _.uniq(_.map(values, 'nodeLevel'));
@@ -14,33 +14,28 @@ async function getDataForKeys(keys, userSession, { transacting } = {}) {
   const valuesByNodeLevel = _.keyBy(values, 'nodeLevel');
   const valuesByNode = _.keyBy(values, 'node');
 
-  const curriculumns = await table.curriculums.find(
-    { id_$in: curriculumIds },
+  const curriculumns = await ctx.tx.db.Curriculums.find(
+    { id: curriculumIds },
     {
       columns: ['id', 'locale'],
-      transacting,
     }
-  );
+  ).lean();
   const curriculumsById = _.keyBy(curriculumns, 'id');
 
   const [_nodes, schemas, nodeValues] = await Promise.all([
-    table.nodes.find({ id_$in: nodeIds }, { transacting }),
+    ctx.tx.db.Nodes.find({ id: nodeIds }).lean(),
     Promise.all(
       _.map(nodeLevelIds, (nodeLevelId) =>
-        getNodeLevelSchema(
+        getNodeLevelSchema({
           nodeLevelId,
-          curriculumsById[valuesByNodeLevel[nodeLevelId].curriculum].locale,
-          {
-            transacting,
-          }
-        )
+          locale: curriculumsById[valuesByNodeLevel[nodeLevelId].curriculum].locale,
+          ctx,
+        })
       )
     ),
     Promise.all(
       _.map(nodeIds, (nodeId) =>
-        getNodeValues({ id: nodeId, nodeLevel: valuesByNode[nodeId].nodeLevel }, userSession, {
-          transacting,
-        })
+        getNodeValues({ node: { id: nodeId, nodeLevel: valuesByNode[nodeId].nodeLevel }, ctx })
       )
     ),
   ]);

@@ -1,51 +1,39 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateAddNodeLevels } = require('../../validations/forms');
 const { nodeLevelsByCurriculum } = require('./nodeLevelsByCurriculum');
 
-async function addNodeLevels(data, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateAddNodeLevels(data, { transacting });
+async function addNodeLevels({ data, ctx }) {
+  await validateAddNodeLevels({ data, ctx });
 
-      const curriculum = await table.curriculums.findOne(
-        { id: data.curriculum },
-        {
-          columns: ['step'],
-          transacting,
-        }
-      );
+  const curriculum = await ctx.tx.db.Curriculums.findOne({ id: data.curriculum })
+    .select(['step'])
+    .lean();
 
-      if (curriculum.step === 1) {
-        await table.curriculums.update({ id: data.curriculum }, { step: 2 }, { transacting });
-      }
+  if (curriculum.step === 1) {
+    await ctx.tx.db.Curriculums.updateOne({ id: data.curriculum }, { step: 2 });
+  }
 
-      const nodeLevels = await Promise.all(
-        _.map(data.nodeLevels, (nodeLevel) =>
-          table.nodeLevels.create({ curriculum: data.curriculum, ...nodeLevel }, { transacting })
-        )
-      );
-
-      await Promise.all(
-        _.map(nodeLevels, (nodeLevel) =>
-          leemons.getPlugin('dataset').services.dataset.addLocation(
-            {
-              name: {
-                en: `node-level-${nodeLevel.id}`,
-              },
-              locationName: `node-level-${nodeLevel.id}`,
-              pluginName: 'curriculum',
-            },
-            { transacting }
-          )
-        )
-      );
-
-      return nodeLevelsByCurriculum(data.curriculum, { transacting });
-    },
-    table.nodeLevels,
-    _transacting
+  const nodeLevels = await Promise.all(
+    _.map(data.nodeLevels, (nodeLevel) =>
+      ctx.tx.db.NodeLevels.create({ curriculum: data.curriculum, ...nodeLevel }).then((r) =>
+        r.toObject()
+      )
+    )
   );
+
+  await Promise.all(
+    _.map(nodeLevels, (nodeLevel) =>
+      ctx.tx.call('dataset.dataset.addLocation', {
+        name: {
+          en: `node-level-${nodeLevel.id}`,
+        },
+        locationName: `node-level-${nodeLevel.id}`,
+        pluginName: 'curriculum',
+      })
+    )
+  );
+
+  return nodeLevelsByCurriculum({ ids: data.curriculum, ctx });
 }
 
 module.exports = { addNodeLevels };

@@ -1,19 +1,15 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
-async function listCurriculums(
-  page,
-  size,
-  { canListUnpublished, userSession, query = {}, transacting } = {}
-) {
-  console.log('_.map(userSession.userAgents, )', _.map(userSession.userAgents, 'id'));
-  const userServices = leemons.getPlugin('users').services;
+async function listCurriculums({ page, size, canListUnpublished, query = {}, ctx }) {
+  const { userSession } = ctx.meta;
   const [[{ actionNames }], centers] = await Promise.all([
-    userServices.permissions.getUserAgentPermissions(userSession.userAgents, {
+    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+      userAgent: userSession.userAgents,
       query: { permissionName: 'curriculum.curriculum' },
     }),
-    userServices.users.getUserAgentCenter(userSession.userAgents),
+    ctx.tx.call('users.users.getUserAgentCenter', { userAgent: userSession.userAgents }),
   ]);
 
   query.published = true;
@@ -23,10 +19,13 @@ async function listCurriculums(
     delete query.published;
   }
 
-  query.center_$in = _.map(centers, 'id');
+  query.center = _.map(centers, 'id');
 
-  return global.utils.paginate(table.curriculums, page, size, query, {
-    transacting,
+  return mongoDBPaginate({
+    model: ctx.tx.db.Curriculums,
+    page,
+    size,
+    query,
   });
 }
 

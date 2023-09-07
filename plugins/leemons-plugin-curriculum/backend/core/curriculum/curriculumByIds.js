@@ -1,22 +1,18 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { nodeLevelsByCurriculum } = require('../nodeLevels/nodeLevelsByCurriculum');
 const { nodesTreeByCurriculum } = require('../nodes/nodesTreeByCurriculum');
 
-async function curriculumByIds(ids, { userSession, withProgram, transacting } = {}) {
-  const curriculums = await table.curriculums.find(
-    { id_$in: _.isArray(ids) ? ids : [ids] },
-    { transacting }
-  );
+async function curriculumByIds({ ids, withProgram, ctx }) {
+  const curriculums = await ctx.tx.db.Curriculums.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
   const promises = [
-    nodeLevelsByCurriculum(_.map(curriculums, 'id'), { transacting }),
-    nodesTreeByCurriculum(_.map(curriculums, 'id'), { userSession, transacting }),
+    nodeLevelsByCurriculum({ ids: _.map(curriculums, 'id'), ctx }),
+    nodesTreeByCurriculum({ id: _.map(curriculums, 'id'), ctx }),
   ];
   if (withProgram) {
     promises.push(
-      leemons
-        .getPlugin('academic-portfolio')
-        .services.programs.programsByIds(_.map(curriculums, 'program'), { transacting })
+      ctx.tx.call('academic-portfolio.programs.programsByIds', {
+        ids: _.map(curriculums, 'program'),
+      })
     );
   }
 

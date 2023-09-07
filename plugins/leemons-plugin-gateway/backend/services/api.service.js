@@ -52,6 +52,21 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Curriculum (Finish) --
+          'POST curriculum/data-for-keys': 'v1.curriculum.curriculum.getDataForKeysRest',
+          'POST curriculum/curriculum': 'v1.curriculum.curriculum.postCurriculumRest',
+          'GET curriculum/curriculum': 'v1.curriculum.curriculum.listCurriculumRest',
+          'POST curriculum/curriculum/:id/generate':
+            'v1.curriculum.curriculum.generateCurriculumRest',
+          'POST curriculum/curriculum/:id/publish':
+            'v1.curriculum.curriculum.publishCurriculumRest',
+          'DELETE curriculum/curriculum/:id': 'v1.curriculum.curriculum.deleteCurriculumRest',
+          'POST curriculum/curriculum/:id': 'v1.curriculum.curriculum.getCurriculumRest',
+          'POST curriculum/node-levels': 'v1.curriculum.nodeLevels.postNodeLevelsRest',
+          'PUT curriculum/node-levels': 'v1.curriculum.nodeLevels.putNodeLevelRest',
+          'POST curriculum/node': 'v1.curriculum.node.postNodeRest',
+          'PUT curriculum/node': 'v1.curriculum.node.saveNodeRest',
+
           // -- MQTT AWS IOT (Finish) --
           'GET mqtt-aws-iot/credentials': 'v1.mqtt-aws-iot.socket.getCredentialsRest',
           'POST mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.setConfigRest',

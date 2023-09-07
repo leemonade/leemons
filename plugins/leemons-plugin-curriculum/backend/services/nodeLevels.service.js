@@ -8,14 +8,12 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
 const { LeemonsMQTTMixin } = require('leemons-mqtt');
-const { getCourseName } = require('leemons-academic-portfolio');
 const { getServiceModels } = require('../models');
-const restActions = require('./rest/course.rest');
-const { addCourse } = require('../core/courses/addCourse');
+const restActions = require('./rest/nodeLevels.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.courses',
+  name: 'curriculum.nodeLevels',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -28,17 +26,6 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    addCourse: {
-      handler(ctx) {
-        return addCourse({ ...ctx.params, ctx });
-      },
-    },
-    getCourseName: {
-      handler(ctx) {
-        const { item } = ctx.params;
-        return getCourseName(item);
-      },
-    },
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);
