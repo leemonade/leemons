@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { isEmpty, isString } = require('lodash');
 const { isLRN } = require('leemons-lrn');
 const { getById: getCategoryById } = require('../../categories/getById');
@@ -18,7 +19,7 @@ const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
  * @param {string} [params.categoryId] - The ID of the category. Must be a UUID in standard representation. Optional.
  * @param {string} [params.categoryKey] - The key of the category. Optional.
  * @param {MoleculerContext} params.ctx Moleculer context
- * @returns {Promise<Object>} The retrieved or provided category data.
+ * @returns {Promise<LibraryCategory>} The retrieved or provided category data.
  */
 async function handleCategoryData({ category, categoryId, categoryKey, ctx }) {
   if (isEmpty(category)) {

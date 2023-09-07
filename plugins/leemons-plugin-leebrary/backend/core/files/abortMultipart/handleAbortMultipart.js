@@ -12,7 +12,7 @@ async function handleAbortMultipart({ file, ctx }) {
   if (file.provider !== 'sys') {
     const provider = await getProviderByName(file.provider);
     if (provider?.supportedMethods?.abortMultipart) {
-      await ctx.call(`${file.provider}.provider.abortMultipart`, { file });
+      await ctx.tx.call(`${file.provider}.provider.abortMultipart`, { file });
     }
   } else if (file.isFolder) {
     await fs.rmdir(file.uri, { recursive: true });
