@@ -1,6 +1,6 @@
 const { mongoose, newModel } = require('leemons-mongodb');
 
-const schema = new mongoose.Schema(
+const bookmarksSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -30,6 +30,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const bookmarksModel = newModel(mongoose.connection, 'v1::leebrary_Bookmarks', schema);
+const bookmarksModel = newModel(mongoose.connection, 'v1::leebrary_Bookmarks', bookmarksSchema);
 
-module.exports = { bookmarksModel };
+module.exports = { bookmarksModel, bookmarksSchema };

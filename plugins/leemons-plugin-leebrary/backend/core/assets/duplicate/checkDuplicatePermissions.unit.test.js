@@ -21,7 +21,7 @@ const mockedPermissions = {
 
 afterEach(() => jest.resetAllMocks());
 
-it('calls getPermissions correctly and throws a LeemonsError if the user it not allowed to duplicate the asset', async () => {
+it('calls getPermissions correctly and throws a LeemonsError if the user is not allowed to duplicate the asset', async () => {
   // Arrange
   const assetId = 'anAssetId@1.0.0';
   getPermissions.mockResolvedValue({ permissions: { duplicate: false } });

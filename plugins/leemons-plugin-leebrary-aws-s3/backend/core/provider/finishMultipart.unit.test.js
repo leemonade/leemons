@@ -40,7 +40,7 @@ describe('Finish S3 Multipart upload', () => {
   });
 
   beforeEach(async () => {
-    // await mongooseConnection.dropDatabase();
+    await mongooseConnection.dropDatabase();
   });
 
   it('Should correctly finish multipart upload and return true', async () => {

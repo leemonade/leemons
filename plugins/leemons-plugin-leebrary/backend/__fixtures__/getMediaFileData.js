@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 module.exports = function getMediaFileData() {
   const handleFileUploadInputs = {
     imageFileInput: {
@@ -7,14 +8,14 @@ module.exports = function getMediaFileData() {
     },
     audioFileInput: {
       file: 'e1c7f210-da13-42a0-ac64-5d5bc16242bf',
-      assetName: 'test audio',
+      assetName: 'Audio test',
       cover: '',
     },
   };
 
   handleFileUploadInputs.audioFileInput.cover = handleFileUploadInputs.imageFileInput.file;
 
-  const data = {
+  return {
     handleFileUploadInputs,
     imageFile: {
       created_at: '2023-08-31T08:27:07.000Z',
@@ -42,21 +43,19 @@ module.exports = function getMediaFileData() {
       type: 'audio/mpeg',
       extension: 'mpga',
       name: handleFileUploadInputs.audioFileInput.assetName,
-      size: 2988,
+      size: 48136,
       uri: `leemons/leebrary/${handleFileUploadInputs.audioFileInput.file}.mpga`,
       isFolder: null,
       metadata: {
-        size: '2.9 KB',
-        format: 'MPEG audio',
-        duration: '3:45',
+        size: '47.0 KB',
+        format: 'MPEG Audio',
+        duration: '0:01',
         bitrate: '320.0 kbps',
       },
       deleted: 0,
-      created_at: '2023-08-31T08:27:07.000Z',
-      updated_at: '2023-08-31T08:27:07.000Z',
+      created_at: '2023-09-01T14:33:03.000Z',
+      updated_at: '2023-09-01T14:33:04.000Z',
       deleted_at: null,
     },
   };
-
-  return data;
 };

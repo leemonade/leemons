@@ -22,9 +22,9 @@ module.exports = function getAssets() {
   };
 
   const mediaFileAsset = {
-    name: 'Returned asset value for an audio',
-    tagline: 'a returned asset value for an audio',
-    description: 'a returned asset value for an audio description',
+    name: 'Audio test',
+    tagline: 'An audio test',
+    description: 'An audio test description',
     color: '#993333',
     program: 'edabdea5-d16f-4681-8753-f6740caaf342',
     fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
@@ -36,7 +36,7 @@ module.exports = function getAssets() {
       provider: 'leebrary-aws-s3',
       type: 'image/jpeg',
       extension: 'jpeg',
-      name: 'Returned asset value for an audio',
+      name: 'Audio test',
       size: 45824,
       uri: 'leemons/leebrary/ed9bcda9-0d1d-48df-9f91-bf794cc02fbf.jpeg',
       isFolder: null,
@@ -65,13 +65,13 @@ module.exports = function getAssets() {
       },
     ],
     file: {
-      id: '5d249635-99e8-499c-9659-0d584cafd20f',
+      id: 'e1c7f210-da13-42a0-ac64-5d5bc16242bf',
       provider: 'leebrary-aws-s3',
       type: 'audio/mpeg',
       extension: 'mpga',
-      name: 'Returned asset value for an audio',
+      name: 'Audio test',
       size: 48136,
-      uri: 'leemons/leebrary/5d249635-99e8-499c-9659-0d584cafd20f.mpga',
+      uri: 'leemons/leebrary/e1c7f210-da13-42a0-ac64-5d5bc16242bf.mpga',
       isFolder: null,
       metadata: {
         size: '47.0 KB',
@@ -143,7 +143,6 @@ module.exports = function getAssets() {
       center: null,
       color: '#993333',
       cover: '10debe3f-232d-41d5-9c42-9da4ebe0c937',
-
       description:
         'La única herramienta que da soporte a las metodologías de enseñanza más exitosas: Aprendizaje por proyectos, Role Playing, Cooperativo, Flipped Classroom, Design Thinking…',
       fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',

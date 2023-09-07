@@ -62,6 +62,7 @@
     "leemons-plugin-learning-paths": "1.0.0",
     "leemons-plugin-learning-paths-frontend-react": "1.0.0",
     "leemons-plugin-leebrary": "1.0.0",
+    "leemons-plugin-leebrary-aws-s3": "1.0.0",
     "leemons-plugin-leebrary-frontend-react": "1.0.0",
     "leemons-plugin-menu-builder": "1.0.0",
     "leemons-plugin-menu-builder-frontend-react": "1.0.0",
