@@ -1,3 +1,3 @@
 const duplicate = require('./duplicate');
 
-module.exports = { duplicate };
+module.exports = { ...duplicate };

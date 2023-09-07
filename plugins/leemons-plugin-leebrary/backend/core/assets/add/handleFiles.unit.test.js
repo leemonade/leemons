@@ -10,7 +10,7 @@ const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
 const getAssets = require('../../../__fixtures__/getAssets');
 
 // mocks:
-jest.mock('../files/add');
+jest.mock('../files/add/add.js');
 const { add: addFiles } = require('../files/add/add');
 
 it('Should call the addFiles function with the correct arguments and return true when a correct file id is passed', async () => {

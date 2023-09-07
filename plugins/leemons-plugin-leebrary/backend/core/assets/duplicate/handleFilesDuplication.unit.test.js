@@ -7,7 +7,7 @@ const getAssets = require('../../../__fixtures__/getAssets');
 const getCategory = require('../../../__fixtures__/getCategory');
 
 // MOCKS
-jest.mock('../files/add');
+jest.mock('../files/add/add');
 jest.mock('../../files/duplicate');
 const { add: addFiles } = require('../files/add/add');
 const { duplicate: duplicateFile } = require('../../files/duplicate');

@@ -4,8 +4,8 @@ const { newModel } = require('leemons-mongodb');
 const { LeemonsError } = require('leemons-error');
 
 // MOCKS
-const handlePermissions = require('./handlePermissions');
-const handleExistence = require('./handleExistence');
+const { handlePermissions } = require('./handlePermissions');
+const { handleExistence } = require('./handleExistence');
 
 jest.mock('./handlePermissions');
 jest.mock('./handleExistence');
@@ -81,34 +81,43 @@ it('should throw an error when handlePermissions fails', async () => {
     },
   });
   const error = new LeemonsError(ctx, {
-    message: 'Failed to add file: Permission denied',
+    message: 'Permission denied',
     httpStatusCode: 500,
   });
-  handlePermissions.mockResolvedValue(true);
+  handlePermissions.mockRejectedValue(error);
 
   // Act
   const action = add({ fileId, assetId, skipPermissions, ctx });
 
   // Assert
-  await expect(action).rejects.toThrow(error);
+  await expect(action).rejects.toThrow({
+    ...error,
+    message: `Failed to add file: ${error.message}`,
+  });
 });
 
-// it('should throw an error when handleExistence fails', async () => {
-//   // Arrange
-//   const fileId = 'fileId';
-//   const assetId = 'assetId';
-//   const skipPermissions = false;
-//   const ctx = generateCtx({
-//     models: {
-//       AssetsFiles: newModel(mongooseConnection, 'AssetsFiles', assetsFilesSchema),
-//     },
-//   });
-//   const error = new LeemonsError(ctx, {
-//     message: 'Failed to add file: File does not exist',
-//     httpStatusCode: 500,
-//   });
-//   handleExistence.mockRejectedValue(error);
+it('should throw an error when handleExistence fails', async () => {
+  // Arrange
+  const fileId = 'fileId';
+  const assetId = 'assetId';
+  const skipPermissions = false;
+  const ctx = generateCtx({
+    models: {
+      AssetsFiles: newModel(mongooseConnection, 'AssetsFiles', assetsFilesSchema),
+    },
+  });
+  const error = new LeemonsError(ctx, {
+    message: 'File does not exist',
+    httpStatusCode: 500,
+  });
+  handleExistence.mockRejectedValue(error);
 
-//   // Act and Assert
-//   await expect(add({ fileId, assetId, skipPermissions, ctx })).rejects.toThrow(error);
-// });
+  // Act
+  const action = add({ fileId, assetId, skipPermissions, ctx });
+
+  // Assert
+  await expect(action).rejects.toThrow({
+    ...error,
+    message: `Failed to add file: ${error.message}`,
+  });
+});
