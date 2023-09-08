@@ -10,8 +10,8 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('leemons-middlewares');
-const { createCredentialsForUserSession, setConfig, getConfig } = require('../../core/socket');
 const { LeemonsError } = require('leemons-error');
+const { createCredentialsForUserSession, setConfig, getConfig } = require('../../core/socket');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -22,6 +22,10 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      if (process.env.DISABLE_AUTO_INIT === 'true')
+        throw new LeemonsError(ctx, {
+          message: 'We are in leemons sass mode, you can`t get this data',
+        });
       const credentials = await createCredentialsForUserSession({ ctx });
       return { status: 200, credentials };
     },
@@ -43,12 +47,11 @@ module.exports = {
       if (isSuperAdmin) {
         const config = await setConfig({ data: ctx.params, ctx });
         return { status: 200, config };
-      } else {
-        return {
-          status: 400,
-          message: 'Only can super admin',
-        };
       }
+      return {
+        status: 400,
+        message: 'Only can super admin',
+      };
     },
   },
   getConfigRest: {
@@ -68,12 +71,11 @@ module.exports = {
       if (isSuperAdmin) {
         const config = await getConfig({ ctx });
         return { status: 200, config };
-      } else {
-        return {
-          status: 400,
-          message: 'Only can super admin',
-        };
       }
+      return {
+        status: 400,
+        message: 'Only can super admin',
+      };
     },
   },
 };

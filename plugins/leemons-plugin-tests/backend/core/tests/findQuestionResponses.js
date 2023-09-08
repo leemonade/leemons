@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function findQuestionResponses(query, { columns, transacting } = {}) {
-  const responses = await table.userAgentAssignableInstanceResponses.find(query, {
-    columns,
-    transacting,
-  });
+async function findQuestionResponses({ query, columns, ctx }) {
+  let responses = ctx.tx.db.UserAgentAssignableInstanceResponses.find(query);
+  if (columns && columns.length) {
+    responses = responses.select(columns);
+  }
+  responses = await responses.lean();
   return _.map(responses, (response) => {
     response.properties = JSON.parse(response.properties);
     return response;
