@@ -1,14 +1,15 @@
 const { isArray } = require('lodash');
-const { tables } = require('../../tables');
 
-async function getByFiles(fileIds, { transacting } = {}) {
+/**
+ * Get the files associated with multiple files
+ *
+ * @param {Array|string} fileIds - The IDs of the files
+ * @param {ContextType} ctx - The Moleculer context
+ * @returns {Promise<Array>} - Returns a promise that resolves to an array of files
+ */
+async function getByFiles({ fileIds, ctx }) {
   const ids = isArray(fileIds) ? fileIds : [fileIds];
-  return tables.assetsFiles.find(
-    {
-      file_$in: ids,
-    },
-    { transacting }
-  );
+  return ctx.tx.db.AssetsFiles.find({ file: ids }).lean();
 }
 
 module.exports = { getByFiles };
