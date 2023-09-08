@@ -1,5 +1,5 @@
 const { isString } = require('lodash');
-const { add: addFiles } = require('../files/add');
+const { add: addFiles } = require('../files/add/add');
 /**
  * Handles the files of the asset.
  *
