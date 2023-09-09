@@ -1,4 +1,9 @@
 const { mongoose, newModel } = require('leemons-mongodb');
+const { isString } = require('lodash');
+
+function requiredWhenNotString() {
+  return !isString(this.uri);
+}
 
 const filesSchema = new mongoose.Schema(
   {
@@ -36,7 +41,7 @@ const filesSchema = new mongoose.Schema(
     },
     uri: {
       type: String,
-      required: true,
+      required: requiredWhenNotString,
     },
     metadata: {
       type: String,
