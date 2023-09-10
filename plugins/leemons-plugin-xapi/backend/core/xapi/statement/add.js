@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { tables } = require('../../tables');
+const { LeemonsError } = require('leemons-error');
 const { validateAddStatement } = require('../../../validations/forms');
 
 function getUserAgentActor(userAgent, hostname) {
@@ -32,29 +32,38 @@ function getUserAgentActor(userAgent, hostname) {
  * @param {object} userSession - Leemons user session
  * @return {Promise<Permission>} Created permission
  * */
-async function add(
-  { actor, verb, object, context, result, attachments, type = 'learning' },
-  { ip, userSession }
-) {
-  const { services: userService } = leemons.getPlugin('users');
+async function add({
+  actor,
+  verb,
+  object,
+  context,
+  result,
+  attachments,
+  type = 'learning',
+  ip,
+  ctx,
+}) {
+  const { userSession } = ctx.meta;
 
   await validateAddStatement({ actor, verb, object });
 
   const isMultipleActors = _.isArray(actor);
 
   const promises = [
-    userService.users.getUserAgentsInfo(isMultipleActors ? actor : [actor]),
-    userService.platform.getHostname(),
+    ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: isMultipleActors ? actor : [actor],
+    }),
+    ctx.tx.call('users.platform.getHostname'),
   ];
 
   if (!_.isEmpty(userSession?.userAgents)) {
-    promises.push(userService.users.detail(userSession.id));
+    promises.push(ctx.tx.call('users.users.detail', { userId: userSession.id }));
   }
 
   const [userAgents, hostname, authority] = await Promise.all(promises);
 
   if (!userAgents.length) {
-    throw new global.utils.HttpError(400, 'User not found');
+    throw new LeemonsError(ctx, { httpStatusCode: 400, message: 'User not found' });
   }
 
   let actorStatement = {};
@@ -109,7 +118,7 @@ async function add(
     };
   }
 
-  return tables.statement.create({ statement, type });
+  return ctx.tx.db.Statement.create({ statement, type });
 }
 
 module.exports = { add };

@@ -52,6 +52,9 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- XApi (Finish) --
+          'POST xapi/add/statement': 'v1.xapi.xapi.addStatementRest',
+
           // -- Tests (Finish) --
           'POST tests/tags/list': 'v1.tests.tags.listTagsRest',
           'POST tests/question-bank/list': 'v1.tests.questionsBanks.listQuestionBanksRest',
