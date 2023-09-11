@@ -52,6 +52,11 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Fundae (Finish) --
+          'POST fundae/report/add': 'v1.fundae.report.generateRest',
+          'POST fundae/report/retry': 'v1.fundae.report.retryRest',
+          'POST fundae/report/list': 'v1.fundae.report.listRest',
+
           // -- Feedback (Finish) --
           'POST feedback/tags/list': 'v1.feedback.tags.listTagsRest',
           'POST feedback/feedback': 'v1.feedback.feedback.saveFeedbackRest',
