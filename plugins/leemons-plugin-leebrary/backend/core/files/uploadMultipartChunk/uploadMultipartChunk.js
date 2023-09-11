@@ -8,8 +8,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @param {number} params.partNumber - The part number of the chunk.
  * @param {Object} params.chunk - The chunk data.
  * @param {string} params.path - The path of the chunk.
- * @param {Object} options - The options for the upload.
- * @param {Object} options.transacting - The transaction object.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<boolean>} - Returns true if the upload was successful.
  */
 async function uploadMultipartChunk({ fileId, partNumber, chunk, path, ctx } = {}) {
