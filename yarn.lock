@@ -16413,6 +16413,11 @@ promise-retry@^2.0.1:
     err-code "^2.0.2"
     retry "^0.12.0"
 
+promise-sequential@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/promise-sequential/-/promise-sequential-1.1.1.tgz#f79e8950ef86e7a7a85bf320452643592f6d2fb2"
+  integrity sha512-gpziThEJPnPEeaHNqjy9f4PE1JwXb07fX3dz+41nhALpIAaEI9VZU8Q89eyBBAa2xAhnz0KgUTDtCA7FZYbZQQ==
+
 prompts@^2.0.1, prompts@^2.4.0:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/prompts/-/prompts-2.4.2.tgz#7b57e73b3a48029ad10ebd44f74b01722a4cb069"

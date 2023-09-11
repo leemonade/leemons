@@ -11,7 +11,7 @@ const { CATEGORIES } = require('../../../config/constants');
 
 jest.mock('../getByIds');
 jest.mock('../../permissions/getByAsset');
-jest.mock('../files/getByAsset');
+jest.mock('../files/getByAsset/getByAsset');
 jest.mock('../../categories/getById');
 jest.mock('../../bookmarks/remove');
 jest.mock('../files/remove');
@@ -19,7 +19,7 @@ jest.mock('../../permissions/helpers/getAssetPermissionName');
 
 const { getByIds } = require('../getByIds');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { getByAsset: getFilesByAsset } = require('../files/getByAsset');
+const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');
 const { getById: getCategoryById } = require('../../categories/getById');
 const { remove: removeBookmark } = require('../../bookmarks/remove');
 const { remove: removeFiles } = require('../files/remove');

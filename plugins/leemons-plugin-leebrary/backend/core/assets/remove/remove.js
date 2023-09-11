@@ -2,7 +2,7 @@ const { isEmpty } = require('lodash');
 const { LeemonsError } = require('leemons-error');
 
 const { remove: removeFiles } = require('../files/remove');
-const { getByAsset: getFilesByAsset } = require('../files/getByAsset');
+const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');
 const { getById: getCategoryById } = require('../../categories/getById');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');

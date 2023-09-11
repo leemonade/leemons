@@ -36,6 +36,8 @@
     "import/no-extraneous-dependencies": "off",
     "react/react-in-jsx-scope": "off",
     "no-underscore-dangle": "off",
+    "no-await-in-loop": "warn",
+    "no-param-reassign": "warn",
     "prettier/prettier": [
       2,
       {},
