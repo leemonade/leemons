@@ -19,13 +19,12 @@ const { handleFilesRemoval } = require('./handleFilesRemoval');
  *
  * @async
  * @function update
- * @param {object} data - The data to update the asset with.
- * @param {object} options - An object containing various options.
- * @param {boolean} options.upgrade - A flag indicating whether to upgrade the asset.
- * @param {string} options.scale - The scale of the upgrade (default is 'major').
- * @param {boolean} options.published - A flag indicating whether the asset is published (default is true).
- * @param {object} options.userSession - The user's session object.
- * @param {object} options.transacting - The transaction object.
+ * @param {Object} params - The main parameter object.
+ * @param {object} params.data - The data to update the asset with.
+ * @param {boolean} params.upgrade - A flag indicating whether to upgrade the asset.
+ * @param {string} params.scale - The scale of the upgrade (default is 'major').
+ * @param {boolean} params.published - A flag indicating whether the asset is published (default is true).
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<object>} The updated asset.
  * @throws {Error} If no changes are detected or if the user doesn't have permissions to update the asset.
  */

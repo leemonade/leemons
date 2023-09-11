@@ -7,7 +7,7 @@ const { duplicate } = require('../duplicate');
  * @param {string} params.assetId - The ID of the asset.
  * @param {string} params.scale - The scale of the upgrade.
  * @param {boolean} params.published - A flag indicating whether the asset is published.
- * @param {object} params.ctx - The context object containing transaction and user session information.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<object>} The duplicated asset.
  */
 async function handleAssetUpgrade({ assetId, scale, published, ctx }) {
