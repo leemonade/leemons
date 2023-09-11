@@ -41,6 +41,8 @@
     "leemons-utils": "1.0.0",
     "leemons-validator": "1.0.0",
     "leemons-widgets": "1.0.0",
+    "leemons-xapi": "1.0.0",
+    "luxon": "^3.4.3",
     "moleculer": "^0.14.26"
   },
   "engines": {

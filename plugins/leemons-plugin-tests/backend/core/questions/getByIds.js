@@ -1,14 +1,8 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getByIds(id, { options, userSession, transacting } = {}) {
-  const tagsService = leemons.getPlugin('common').services.tags;
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const questions = await table.questions.find(
-    { id_$in: _.isArray(id) ? id : [id] },
-    { transacting }
-  );
+async function getByIds({ id, options, ctx }) {
+  const questions = await ctx.tx.db.Questions.find({ id: _.isArray(id) ? id : [id] }).lean();
   const assetIds = [];
   _.forEach(questions, (question) => {
     question.properties = JSON.parse(question.properties);
@@ -26,14 +20,13 @@ async function getByIds(id, { options, userSession, transacting } = {}) {
   });
 
   const [questionAssets, questionsTags] = await Promise.all([
-    assetService.getByIds(assetIds, {
+    ctx.tx.call('leebrary.assets.getByIds', {
+      assetsIds: assetIds,
       withFiles: true,
-      userSession,
-      transacting,
     }),
-    tagsService.getValuesTags(_.map(questions, 'id'), {
+    ctx.tx.call('common.tags.getValuesTags', {
       type: 'tests.questions',
-      transacting,
+      values: _.map(questions, 'id'),
     }),
   ]);
 
@@ -60,10 +53,7 @@ async function getByIds(id, { options, userSession, transacting } = {}) {
 
   if (options?.categories) {
     const categoryIds = _.map(questions, 'category');
-    const categories = await table.questionBankCategories.find(
-      { id_$in: categoryIds },
-      { transacting }
-    );
+    const categories = await ctx.tx.db.QuestionBankCategories.find({ id: categoryIds }).lean();
     const categoriesById = _.keyBy(categories, 'id');
     _.forEach(questions, (question) => {
       question.category = categoriesById[question.category];

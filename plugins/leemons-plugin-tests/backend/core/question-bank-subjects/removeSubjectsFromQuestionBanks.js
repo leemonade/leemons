@@ -1,16 +1,9 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function removeSubjectsFromQuestionBanks(questionBank, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) =>
-      table.questionBankSubjects.deleteMany(
-        { questionBank_$in: _.isArray(questionBank) ? questionBank : [questionBank] },
-        { transacting }
-      ),
-    table.tests,
-    _transacting
-  );
+async function removeSubjectsFromQuestionBanks({ questionBank, ctx }) {
+  return ctx.tx.db.QuestionBankSubjects.deleteMany({
+    questionBank: _.isArray(questionBank) ? questionBank : [questionBank],
+  });
 }
 
 module.exports = { removeSubjectsFromQuestionBanks };

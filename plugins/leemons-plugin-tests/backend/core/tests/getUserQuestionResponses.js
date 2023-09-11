@@ -6,21 +6,21 @@ const { findQuestionResponses } = require('./findQuestionResponses');
 
 dayjs.extend(duration);
 
-async function getUserQuestionResponses(instance, userAgent, { userSession, transacting } = {}) {
-  const { assignations: assignationsService } = leemons.getPlugin('assignables').services;
-
-  await assignationsService.getAssignation(instance, userAgent, {
-    userSession,
-    transacting,
+async function getUserQuestionResponses({ instance, userAgent, ctx }) {
+  // TODO: We need this¿?
+  await ctx.tx.call('assignables.assignations.getAssignation', {
+    assignableInstanceId: instance,
+    user: userAgent,
   });
 
-  const responses = await findQuestionResponses(
-    {
+  const responses = await findQuestionResponses({
+    query: {
       instance,
       userAgent,
     },
-    { columns: ['question', 'clues', 'properties', 'status', 'points'], transacting }
-  );
+    columns: ['question', 'clues', 'properties', 'status', 'points'],
+    ctx,
+  });
 
   const result = {};
   _.forEach(responses, ({ question, ...response }) => {

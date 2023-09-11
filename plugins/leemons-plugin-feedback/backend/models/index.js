@@ -12,9 +12,9 @@ module.exports = {
   ...models,
   getServiceModels() {
     return {
-      FeedbackDatesModel: models.feedbackDatesModel,
+      FeedbackDates: models.feedbackDatesModel,
       FeedbackQuestions: models.feedbackQuestionsModel,
-      FeedbackResponses: models.feedbackResponsesModel,
+      FeedbackResponse: models.feedbackResponsesModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::feedback_KeyValue' }),
     };
   },

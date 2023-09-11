@@ -1,49 +1,44 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { getByIds } = require('../questions');
 
-async function getQuestionsBanksDetails(id, { userSession, transacting, getAssets = true } = {}) {
+async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
+  const { userSession } = ctx.meta;
   // Check is userSession is provided
   if (getAssets && !userSession)
-    throw new Error('User session is required (getQuestionsBanksDetails)');
+    throw new LeemonsError(ctx, { message: 'User session is required (getQuestionsBanksDetails)' });
 
-  const tagsService = leemons.getPlugin('common').services.tags;
   const ids = _.isArray(id) ? id : [id];
-  const questionsBanks = await table.questionsBanks.find(
-    { $or: [{ id_$in: ids }, { asset_$in: ids }], deleted_$null: false },
-    { transacting }
+  const questionsBanks = await ctx.tx.db.QuestionsBanks.find(
+    { $or: [{ id: ids }, { asset: ids }] },
+    undefined,
+    { excludeDeleted: false }
   );
 
   const questionBankIds = _.map(questionsBanks, 'id');
-  const questionIds = await table.questions.find(
-    { questionBank_$in: questionBankIds },
-    {
-      columns: ['id'],
-      transacting,
-    }
-  );
+  const questionIds = await ctx.tx.db.Questions.find({ questionBank: questionBankIds })
+    .select(['id'])
+    .lean();
   const [questions, questionBankSubjects, questionBankCategories] = await Promise.all([
-    getByIds(_.map(questionIds, 'id'), { userSession, transacting }),
-    table.questionBankSubjects.find({ questionBank_$in: questionBankIds }, { transacting }),
-    table.questionBankCategories.find({ questionBank_$in: questionBankIds }, { transacting }),
+    getByIds({ id: _.map(questionIds, 'id'), ctx }),
+    ctx.tx.db.QuestionBankSubjects.find({ questionBank: questionBankIds }).lean(),
+    ctx.tx.db.QuestionBankCategories.find({ questionBank: questionBankIds }).lean(),
   ]);
 
   const promises = [];
   if (questionsBanks.length) {
     promises.push(
-      tagsService.getValuesTags(_.map(questionsBanks, 'id'), {
+      ctx.tx.call('common.tags.getValuesTags', {
         type: 'tests.questionBanks',
-        transacting,
+        values: _.map(questionsBanks, 'id'),
       })
     );
     if (getAssets) {
-      const assetService = leemons.getPlugin('leebrary').services.assets;
       promises.push(
-        assetService.getByIds(_.map(questionsBanks, 'asset'), {
+        ctx.tx.call('leebrary.assets.getByIds', {
+          assetsIds: _.map(questionsBanks, 'asset'),
           withFiles: true,
-          userSession,
-          transacting,
         })
       );
     } else {
@@ -72,7 +67,8 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
   const questionBankCategoriesByQuestionBank = _.groupBy(questionBankCategories, 'questionBank');
   const questionBankSubjectsByQuestionBank = _.groupBy(questionBankSubjects, 'questionBank');
   const questionsByQuestionBank = _.groupBy(questions, 'questionBank');
-  const result = _.map(questionsBanks, (questionBank) => {
+
+  return _.map(questionsBanks, (questionBank) => {
     const categories = _.orderBy(questionBankCategoriesByQuestionBank[questionBank.id], ['order']);
     const questionCategories = {};
     _.forEach(categories, (category, index) => {
@@ -90,8 +86,6 @@ async function getQuestionsBanksDetails(id, { userSession, transacting, getAsset
       })),
     };
   });
-  // console.log(result);
-  return result;
 }
 
 module.exports = { getQuestionsBanksDetails };

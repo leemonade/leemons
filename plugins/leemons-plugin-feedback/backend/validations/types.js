@@ -1,4 +1,4 @@
-const { translations } = require('../translations');
+const { localeRegexString } = require('leemons-validator');
 
 const textSchema = {
   type: 'string',
@@ -63,10 +63,15 @@ const integerSchemaNullable = {
   nullable: true,
 };
 
+const booleanSchemaNullable = {
+  type: 'boolean',
+  nullable: true,
+};
+
 const localeObjectSchema = () => ({
   type: 'object',
   patternProperties: {
-    [translations().functions.localeRegexString]: {
+    [localeRegexString]: {
       type: 'string',
     },
   },
@@ -80,6 +85,7 @@ module.exports = {
   booleanSchema,
   integerSchema,
   arrayStringSchema,
+  booleanSchemaNullable,
   textSchemaNullable,
   localeObjectSchema,
   stringSchemaNullable,

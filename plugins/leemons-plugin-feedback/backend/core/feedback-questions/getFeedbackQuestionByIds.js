@@ -1,13 +1,10 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getFeedbackQuestionByIds(id, { userSession, transacting } = {}) {
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-  const questions = await table.feedbackQuestions.find(
-    { id_$in: _.isArray(id) ? id : [id] },
-    { transacting }
-  );
+async function getFeedbackQuestionByIds({ id, ctx }) {
+  const questions = await ctx.tx.db.FeedbackQuestions.find({
+    id: _.isArray(id) ? id : [id],
+  }).lean();
   const assetIds = [];
   _.forEach(questions, (question) => {
     question.properties = JSON.parse(question.properties);
@@ -18,10 +15,9 @@ async function getFeedbackQuestionByIds(id, { userSession, transacting } = {}) {
     }
   });
 
-  const questionAssets = await assetService.getByIds(assetIds, {
+  const questionAssets = await ctx.tx.call('leebrary.assets.getByIds', {
+    assetIds,
     withFiles: true,
-    userSession,
-    transacting,
   });
 
   const questionAssetsById = _.keyBy(questionAssets, 'id');

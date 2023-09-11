@@ -51,13 +51,18 @@ function modifyCTX(ctx) {
         `CALL from "${ctx.action?.name || ctx.event?.name}" to "${manager.actionToCall}"`
       );
 
-    return ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, {
-      ...opts,
-      meta: {
-        ...(opts?.meta || {}),
-        relationshipID: manager.relationshipID,
-      },
-    });
+    try {
+      return await ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, {
+        ...opts,
+        meta: {
+          ...(opts?.meta || {}),
+          relationshipID: manager.relationshipID,
+        },
+      });
+    } catch (e) {
+      delete ctx.meta.$statusCode;
+      throw e;
+    }
   };
 }
 

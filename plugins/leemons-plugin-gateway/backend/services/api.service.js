@@ -52,6 +52,78 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Scores (Finish) --
+          'POST scores/periods': 'v1.scores.periods.addRest',
+          'GET scores/periods': 'v1.scores.periods.listRest',
+          'DELETE scores/periods/:id': 'v1.scores.periods.removeRest',
+          'GET scores/scores': 'v1.scores.scores.getRest',
+          'PATCH scores/scores': 'v1.scores.scores.setRest',
+          'DELETE scores/scores': 'v1.scores.scores.removeRest',
+
+          // -- Fundae (Finish) --
+          'POST fundae/report/add': 'v1.fundae.report.generateRest',
+          'POST fundae/report/retry': 'v1.fundae.report.retryRest',
+          'POST fundae/report/list': 'v1.fundae.report.listRest',
+
+          // -- Feedback (Finish) --
+          'POST feedback/tags/list': 'v1.feedback.tags.listTagsRest',
+          'POST feedback/feedback': 'v1.feedback.feedback.saveFeedbackRest',
+          'GET feedback/feedback/:id': 'v1.feedback.feedback.getFeedbackRest',
+          'DELETE feedback/feedback/:id': 'v1.feedback.feedback.deleteFeedbackRest',
+          'POST feedback/feedback/duplicate': 'v1.feedback.feedback.duplicateFeedbackRest',
+          'POST feedback/feedback/assign': 'v1.feedback.feedback.assignFeedbackRest',
+          'POST feedback/feedback/instance/timestamp':
+            'v1.feedback.feedback.setInstanceTimestampRest',
+          'POST feedback/feedback/instance/question/response':
+            'v1.feedback.feedback.setQuestionResponseRest',
+          'GET feedback/feedback/instance/responses/:id':
+            'v1.feedback.feedback.getUserAssignableResponsesRest',
+          'GET feedback/feedback/results/:id': 'v1.feedback.feedback.getFeedbackResultsRest',
+          'GET feedback/feedback/results/time/:id':
+            'v1.feedback.feedback.getFeedbackResultsWithTimeRest',
+
+          // -- XApi (Finish) --
+          'POST xapi/add/statement': 'v1.xapi.xapi.addStatementRest',
+
+          // -- Tests (Finish) --
+          'POST tests/tags/list': 'v1.tests.tags.listTagsRest',
+          'POST tests/question-bank/list': 'v1.tests.questionsBanks.listQuestionBanksRest',
+          'GET tests/question-bank/:id': 'v1.tests.questionsBanks.getQuestionBankDetailRest',
+          'DELETE tests/question-bank/:id': 'v1.tests.questionsBanks.deleteQuestionBankRest',
+          'POST tests/question-bank': 'v1.tests.questionsBanks.saveQuestionBanksRest',
+          'GET tests/tests': 'v1.tests.tests.listTestsRest',
+          'GET tests/tests/:id': 'v1.tests.tests.getTestRest',
+          'DELETE tests/tests/:id': 'v1.tests.tests.deleteTestRest',
+          'POST tests/tests': 'v1.tests.tests.saveTestRest',
+          'GET tests/tests/assign/configs': 'v1.tests.tests.getAssignConfigsRest',
+          'POST tests/tests/assign': 'v1.tests.tests.assignTestRest',
+          'POST tests/tests/duplicate': 'v1.tests.tests.duplicateRest',
+          'POST tests/questions/details': 'v1.tests.questions.getDetailsRest',
+          'GET tests/tests/instance/:id/feedback/:user': 'v1.tests.tests.getInstanceFeedbackRest',
+          'POST tests/tests/instance/feedback': 'v1.tests.tests.setInstanceFeedbackRest',
+          'POST tests/tests/instance/timestamp': 'v1.tests.tests.setInstanceTimestampRest',
+          'POST tests/tests/instance/question/response': 'v1.tests.tests.setQuestionResponseRest',
+          'GET tests/tests/instance/:id/question/response':
+            'v1.tests.tests.getUserQuestionResponsesRest',
+
+          // -- Board messages (Finish) --
+          'POST board-messages/list': 'v1.board-messages.messages.listRest',
+          'POST board-messages/save': 'v1.board-messages.messages.saveRest',
+          'POST board-messages/overlaps': 'v1.board-messages.messages.getOverlapsRest',
+          'POST board-messages/active': 'v1.board-messages.messages.getActiveRest',
+          'POST board-messages/click': 'v1.board-messages.messages.addClickRest',
+          'POST board-messages/view': 'v1.board-messages.messages.addViewRest',
+
+          // -- Attendance control (Finish) --
+          'POST attendance-control/assistance/roll-call':
+            'v1.attendance-control.assistance.rollCallRest',
+          'GET attendance-control/session/temporal/:class':
+            'v1.attendance-control.session.rollCallRest',
+          'POST attendance-control/class/sessions':
+            'v1.attendance-control.session.getClassSessionsRest',
+          'GET attendance-control/session/detail/:id': 'v1.attendance-control.session.detailRest',
+          'POST attendance-control/session/save': 'v1.attendance-control.session.saveRest',
+
           // -- Curriculum (Finish) --
           'POST curriculum/data-for-keys': 'v1.curriculum.curriculum.getDataForKeysRest',
           'POST curriculum/curriculum': 'v1.curriculum.curriculum.postCurriculumRest',

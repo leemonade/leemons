@@ -28,7 +28,7 @@ async function remove({ classId, studentId, soft, ctx }) {
     soft,
   });
 
-  await ctx.tx.db.ClassStudent.delete({ id: classStudent.id }, { soft });
+  await ctx.tx.db.ClassStudent.deleteOne({ id: classStudent.id }, { soft });
 
   const promises = [];
   promises.push(

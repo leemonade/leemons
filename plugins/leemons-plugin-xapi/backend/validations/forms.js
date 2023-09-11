@@ -1,4 +1,4 @@
-const { LeemonsValidator } = global.utils;
+const { LeemonsValidator } = require('leemons-validator');
 const { stringSchema, arrayStringRequiredSchema } = require('./types');
 
 const addStatementSchema = {

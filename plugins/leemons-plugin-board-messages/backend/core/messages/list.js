@@ -1,31 +1,34 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 const { byIds } = require('./byIds');
 const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
 
-async function list(page, size, { userSession, filters, transacting } = {}) {
+async function list({ page, size, filters, ctx }) {
   const query = {};
   if (filters) {
-    const ids = await getMessageIdsByFilters(filters, { transacting });
+    const ids = await getMessageIdsByFilters({ item: filters, ctx });
     if (ids !== null) {
-      query.id_$in = _.uniq(ids);
+      query.id = _.uniq(ids);
     }
     if (filters.zone) {
-      query.zone_$in = _.isArray(filters.zone) ? filters.zone : [filters.zone];
+      query.zone = _.isArray(filters.zone) ? filters.zone : [filters.zone];
     }
     if (filters.status) {
-      query.status_$in = _.isArray(filters.status) ? filters.status : [filters.status];
+      query.status = _.isArray(filters.status) ? filters.status : [filters.status];
     }
     if (filters.internalName) {
-      query.internalName_$contains = filters.internalName;
+      query.internalName = { $regex: filters.internalName, $options: 'i' };
     }
   }
-  const results = await global.utils.paginate(table.messageConfig, page, size, query, {
-    transacting,
+  const results = await mongoDBPaginate({
+    model: ctx.tx.db.MessageConfig,
+    page,
+    size,
     columns: ['id'],
+    query,
   });
 
-  results.items = await byIds(_.map(results.items, 'id'), { userSession, transacting });
+  results.items = await byIds({ ids: _.map(results.items, 'id'), ctx });
   return results;
 }
 
