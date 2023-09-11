@@ -6,7 +6,7 @@ const { map } = require('lodash');
  * @param {string} params.assetId - The ID of the asset.
  * @param {Array} params.subjects - The subjects of the asset.
  * @param {Array} params.diff - The object with differences.
- * @param {object} params.ctx - The context object containing transaction and user session information.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<void>} Resolves when the subjects are handled.
  */
 async function handleSubjectsUpdates({ assetId, subjects, diff, ctx }) {

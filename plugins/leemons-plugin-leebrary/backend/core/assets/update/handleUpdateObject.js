@@ -10,7 +10,7 @@ const { getDiff } = require('./getDiff');
  * @param {Object} params - The params object.
  * @param {Object} params.currentAsset - The current asset object.
  * @param {Object} params.assetData - The new asset data object.
- * @param {object} params.ctx - The context object containing transaction and user session information.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} An object containing the updated properties, new data, and the differences.
  */
 async function handleUpdateObject({ currentAsset, assetData, ctx }) {

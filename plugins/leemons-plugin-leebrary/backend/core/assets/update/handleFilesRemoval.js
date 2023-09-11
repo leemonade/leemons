@@ -12,7 +12,7 @@ const { remove: removeFilesById } = require('../files/remove');
  * @param {Array} params.filesToRemove - The files that need to be removed.
  * @param {boolean} params.fileNeedsUpdate - A flag indicating whether the file needs to be updated.
  * @param {boolean} params.coverNeedsUpdate - A flag indicating whether the cover needs to be updated.
- * @param {Object} params.ctx - The context object.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<void>} Resolves when the files are removed.
  * @throws {Error} If the removal of the files fails.
  */

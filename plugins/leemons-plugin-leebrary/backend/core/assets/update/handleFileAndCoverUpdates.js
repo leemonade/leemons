@@ -11,7 +11,7 @@ const { add: addFiles } = require('../files/add');
  * @param {Array} params.diff - The object with differences.
  * @param {Object} params.updateObject - The update object.
  * @param {Object} params.currentAsset - The current asset object.
- * @param {object} params.ctx - The context object containing transaction and user session information.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} The updated file and cover objects.
  */
 async function handleFileAndCoverUpdates({
