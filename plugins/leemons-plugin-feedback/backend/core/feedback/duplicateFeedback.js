@@ -1,17 +1,14 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 const getQuestionsByFeedbackIds = require('../feedback-questions/getQuestionsByFeedbackIds');
 
-async function duplicateFeedback(id, { published, userSession, transacting: _transacting } = {}) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
-  const { assets: assetsService } = leemons.getPlugin('leebrary').services;
-  const newAssignable = await assignableService.duplicateAssignable(id, {
+async function duplicateFeedback({ id, published, ctx }) {
+  const newAssignable = await ctx.tx.call('assignables.assignables.duplicateAssignable', {
+    assignableId: id,
     published,
-    userSession,
-    transacting,
   });
-  const questions = await getQuestionsByFeedbackIds(id);
+
+  const questions = await getQuestionsByFeedbackIds({ id, ctx });
 
   const assetIds = [];
   _.forEach(questions, (question) => {
@@ -28,10 +25,9 @@ async function duplicateFeedback(id, { published, userSession, transacting: _tra
   const promises = [];
   _.forEach(assetIds, (assetId) => {
     promises.push(
-      assetsService.duplicate(assetId, {
+      ctx.tx.call('leebrary.assets.duplicate', {
+        assetId,
         preserveName: true,
-        userSession,
-        transacting,
       })
     );
   });
@@ -52,19 +48,16 @@ async function duplicateFeedback(id, { published, userSession, transacting: _tra
     return question;
   });
 
-  await table.feedbackQuestions.createMany(newQuestions, { transacting });
+  await ctx.tx.db.FeedbackQuestions.insertMany(newQuestions);
 
   if (newAssignable.metadata.featuredImage) {
-    const newFeaturedImage = await assetsService.duplicate(newAssignable.metadata.featuredImage, {
+    const newFeaturedImage = await ctx.tx.call('leebrary.assets.duplicate', {
+      assetId: newAssignable.metadata.featuredImage,
       preserveName: true,
-      userSession,
-      transacting,
     });
     newAssignable.metadata.featuredImage = newFeaturedImage.id;
-    await assignableService.updateAssignable(newAssignable, {
-      userSession,
-      transacting,
-      published,
+    await ctx.tx.call('assignables.assignables.updateAssignable', {
+      assignable: newAssignable,
     });
   }
 

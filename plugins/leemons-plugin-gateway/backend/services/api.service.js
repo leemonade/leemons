@@ -52,6 +52,14 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Scores (Finish) --
+          'POST scores/periods': 'v1.scores.periods.addRest',
+          'GET scores/periods': 'v1.scores.periods.listRest',
+          'DELETE scores/periods/:id': 'v1.scores.periods.removeRest',
+          'GET scores/scores': 'v1.scores.scores.getRest',
+          'PATCH scores/scores': 'v1.scores.scores.setRest',
+          'DELETE scores/scores': 'v1.scores.scores.removeRest',
+
           // -- Fundae (Finish) --
           'POST fundae/report/add': 'v1.fundae.report.generateRest',
           'POST fundae/report/retry': 'v1.fundae.report.retryRest',

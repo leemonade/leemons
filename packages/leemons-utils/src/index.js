@@ -2,6 +2,7 @@
 
 module.exports = {
   ...require('./env'),
+  ...require('./sqlDatetime'),
   ...require('./randomString'),
   ...require('./getObjectArrayKeys'),
   ...require('./numberToEncodedLetter'),
