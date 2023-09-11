@@ -15,6 +15,7 @@ import { getUserFullName } from '../../../../helpers/getUserFullName';
 import { UserButttonStyles } from './UserButton.styles';
 import { navTitleVariants } from '../../MainNavBar.constants';
 import { USER_BUTTON_PROP_TYPES, USER_BUTTON_DEFAULT_PROPS } from './UserButton.constants';
+import { LinkWrapper } from '../LinkWrapper';
 
 export function UserButton({
   name,
@@ -25,24 +26,31 @@ export function UserButton({
   expandedItem,
   subItemActive,
   lightMode,
+  useRouter,
 }) {
   const [opened, setOpened] = useState(false);
   const { classes, theme } = UserButttonStyles({ opened, lightMode });
   const hasChildren = sessionMenu?.children.length > 0;
   const items = (hasChildren ? sessionMenu.children : []).map((child, index) => {
     const isChildrenActive = child.id === subItemActive?.id;
+    const hasOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
+
     return (
-      <Box
-        className={isChildrenActive ? classes.childrenContainerActive : classes.childrenContainer}
+      <LinkWrapper
+        useRouter={useRouter}
+        url={child.url}
+        id={child.id}
         key={`user-nav-child--${child.label}--${index}`}
       >
-        <TextClamp lines={1}>
-          <Text className={classes.link} onClick={(event) => event.preventDefault()}>
-            {child.label}
-          </Text>
-        </TextClamp>
-        {child?.openIcon && <OpenIcon className={classes.openIcon} />}
-      </Box>
+        <Box
+          className={isChildrenActive ? classes.childrenContainerActive : classes.childrenContainer}
+        >
+          <TextClamp lines={1}>
+            <Text className={classes.link}>{child.label}</Text>
+          </TextClamp>
+          {hasOpenIcon && <OpenIcon className={classes.openIcon} />}
+        </Box>
+      </LinkWrapper>
     );
   });
 

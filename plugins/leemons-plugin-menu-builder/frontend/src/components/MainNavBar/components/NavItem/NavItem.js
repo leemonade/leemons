@@ -9,7 +9,7 @@ import {
   TextClamp,
   // Badge,
 } from '@bubbles-ui/components';
-import { ChevDownIcon } from '@bubbles-ui/icons/outline';
+import { ChevDownIcon, OpenIcon } from '@bubbles-ui/icons/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 import { navTitleVariants } from '../../MainNavBar.constants';
 import { NAV_ITEM_DEFAULT_PROPS, NAV_ITEM_PROP_TYPES } from './NavItem.constants';
@@ -32,24 +32,12 @@ export const NavItem = ({
   isActive,
   subItemActive,
   lightMode,
+  window,
 }) => {
   const { classes, theme } = NavItemStyles({ lightMode });
   const hasChildren = Array.isArray(children) && children.length > 0;
   const [opened, setOpened] = useState(false);
   const handleSvgProps = !activeIconSvg || (!!activeIconSvg && activeIconSvg === iconSvg);
-  const items = (hasChildren ? children : []).map((child, index) => {
-    const isChildrenActive = child.id === subItemActive?.id;
-    return (
-      <TextClamp lines={2} key={`nav-child--${child.label}--${index}`}>
-        <Text
-          className={isChildrenActive ? classes.linkActive : classes.link}
-          onClick={(event) => event.preventDefault()}
-        >
-          {child.label}
-        </Text>
-      </TextClamp>
-    );
-  });
 
   useEffect(() => {
     setOpened(expandedItem === id);
@@ -61,9 +49,36 @@ export const NavItem = ({
   }, [isCollapsed]);
 
   const handleOpenChildren = (childrenId) => {
-    setOpened((o) => !o);
-    onOpen(childrenId);
+    if (children.length === 0) {
+      onOpen(childrenId);
+    } else {
+      setOpened((o) => !o);
+      onOpen(childrenId);
+    }
   };
+  const hasOpenIcon = window === 'BLANK' || window === 'NEW';
+
+  const items = (hasChildren ? children : []).map((child, index) => {
+    const isChildrenActive = child.id === subItemActive?.id;
+    const hasChildOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
+    return (
+      <LinkWrapper
+        useRouter={useRouter}
+        url={child.url}
+        id={child.id}
+        key={`nav-child--${child.id}--${index}`}
+      >
+        <Box className={classes.itemContainer}>
+          <TextClamp lines={2}>
+            <Text className={isChildrenActive ? classes.linkActive : classes.link}>
+              {child.label}
+              {hasChildOpenIcon && <OpenIcon className={classes.childOpenIcon} />}
+            </Text>
+          </TextClamp>
+        </Box>
+      </LinkWrapper>
+    );
+  });
 
   return (
     <AnimatePresence>
@@ -98,6 +113,7 @@ export const NavItem = ({
             </Box>
           </Group>
           <Box className={classes.chevronContainer}>
+            {hasOpenIcon && <OpenIcon className={classes.openIcon} />}
             {hasChildren && (
               <ChevDownIcon
                 className={classes.chevron}

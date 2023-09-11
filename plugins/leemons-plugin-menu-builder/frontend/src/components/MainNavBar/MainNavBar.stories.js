@@ -1,7 +1,11 @@
 import React from 'react';
 import { Box, Spotlight } from '@bubbles-ui/components';
+import { BrowserRouter } from 'react-router-dom';
+import { within, userEvent } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 import { MainNavBar } from './MainNavBar';
 import { menuData, session, sessionMenu } from './mock/menuData';
+import { MAIN_NAV_BAR_DEFAULT_PROPS } from './MainNavBar.constants';
 
 export default {
   title: 'leemons/MainNavBar',
@@ -9,21 +13,33 @@ export default {
     component: MainNavBar,
     design: {
       type: 'figma',
-      //   url: 'https://www.figma.com/file/c3MWm2gVHU4JfYlVfr5VvB/🍋💧-Bubbles-SD-v2',
+      url: 'https://www.figma.com/file/OMMWWv7my6KCmpVwmZ6QcW/Bubbles---Components-(Copy)?node-id=1330%3A19227&mode=dev',
     },
   },
   argTypes: {
     lightMode: { control: 'boolean' },
-    // variant: { control: { type: 'select' }, options: LIBRARYCARD_VARIANTS },
-    // role: { control: { type: 'select' }, options: LIBRARYCARD_ASSIGMENT_ROLES },
-    // onAction: { action: 'onAction' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.hover(canvas.getAllByRole('button')[0]);
+    await userEvent.click(canvas.getAllByRole('button')[1]);
+    await expect(canvas.getByText('Usuarios')).toBeInTheDocument();
+    await expect(canvas.getByText('Perfiles')).toBeInTheDocument();
+    await userEvent.click(canvas.getAllByRole('button')[1]);
+
+    await userEvent.click(canvas.getByText('John Doe de todos los santos'));
+    await expect(canvas.getByText('Cuenta de usuario')).toBeInTheDocument();
+    await userEvent.click(canvas.getByText('John Doe de todos los santos'));
+    userEvent.unhover(canvas.getAllByRole('button')[0]);
   },
 };
 
 const Template = ({ ...props }) => (
   <Box style={{ margin: '-1rem' }}>
     <Spotlight>
-      <MainNavBar {...props} />
+      <BrowserRouter>
+        <MainNavBar {...props} />
+      </BrowserRouter>
     </Spotlight>
   </Box>
 );
@@ -31,60 +47,9 @@ const Template = ({ ...props }) => (
 export const Playground = Template.bind({});
 
 Playground.args = {
+  ...MAIN_NAV_BAR_DEFAULT_PROPS,
   lightMode: false,
   menuData,
   sessionMenu,
   session,
-  //   showDescription: true,
-  //   showAction: false,
-  //   showAssigment: true,
-  //   showSubject: true,
-  //   variant: 'media',
-  //   action: 'View feedback',
-  //   badge: '',
-  //   ...LIBRARY_CARD_DEFAULT_PROPS,
-  //   asset: AUDIO_ASSET,
-  //   assigment: {
-  //     completed: 0.3,
-  //     submission: 15,
-  //     total: 24,
-  //     subject: {
-  //       name: 'Maths - 1025 - GB',
-  //     },
-  //     avgTime: 933,
-  //     avgAttempts: 3,
-  //     activityType: 'Tarea/Test',
-  //     grade: 8.5,
-  //   },
-  //   deadlineProps: {
-  //     icon: <ArchiveIcon width={16} height={16} />,
-  //     deadline: new Date('2022-02-20'),
-  //     locale: 'es',
-  //     labels: {
-  //       new: 'New',
-  //       deadline: 'Deadline',
-  //     },
-  //   },
-  //   subject: {
-  //     name: 'Bases para el análisis y el tratamiento de',
-  //     color: '#FABADA',
-  //     icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
-  //   },
-  //   menuItems: [
-  //     {
-  //       icon: <StarIcon />,
-  //       children: 'Item 1',
-  //       onClick: () => alert('Item 1 clicked'),
-  //     },
-  //     {
-  //       icon: <DeleteBinIcon />,
-  //       children: 'Item 2',
-  //       onClick: () => alert('Item 1 clicked'),
-  //     },
-  //     {
-  //       icon: <FlagIcon />,
-  //       children: 'Item 3',
-  //       onClick: () => alert('Item 3 clicked'),
-  //     },
-  //   ],
 };

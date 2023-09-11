@@ -9,7 +9,7 @@ import {
   SPOTLIGHT_BUTTON_PROP_TYPES,
 } from './SpotLightButton.constants';
 
-export const SpotLightButton = ({ onClick, isCollapsed, lightMode }) => {
+export const SpotLightButton = ({ onClick, isCollapsed, lightMode, spotlightLabel }) => {
   const { classes } = SpotLightButtonStyles({ lightMode });
   return (
     <Box>
@@ -20,7 +20,7 @@ export const SpotLightButton = ({ onClick, isCollapsed, lightMode }) => {
           animate={isCollapsed ? 'closed' : 'open'}
           variants={navTitleVariants}
         >
-          <Text className={classes.text}>Buscar en el menú</Text>
+          <Text className={classes.text}>{spotlightLabel}</Text>
         </motion.div>
       </Box>
     </Box>

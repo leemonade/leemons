@@ -11,7 +11,7 @@ import AlertStack from './AlertStack';
 
 const NAV_OPEN_WIDTH = 280;
 
-const PrivateLayoutStyles = createStyles((theme, { width }) => ({
+const PrivateLayoutStyles = createStyles(() => ({
   root: {
     display: 'flex',
     height: '100vh',
@@ -19,16 +19,18 @@ const PrivateLayoutStyles = createStyles((theme, { width }) => ({
     position: 'relative',
   },
   sideNav: {
-    width: '52px',
+    width: '56px',
     height: '100%',
     overflowX: 'visible',
     transition: 'width 0ms ease-out',
+    zIndex: 10,
   },
   content: {
     flex: 1,
     height: '100vh',
     overflowY: 'auto',
     position: 'relative',
+    zIndex: 9,
   },
 }));
 
@@ -84,9 +86,9 @@ const PrivateLayout = ({ children }) => {
     if (layoutState.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
   }, [layoutState]);
 
-  const onOpenMenu = useCallback(() => {
-    if (layoutState.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
-  }, [layoutState]);
+  // const onOpenMenu = useCallback(() => {
+  //   if (layoutState.menuWidth !== NAV_OPEN_WIDTH) setState({ menuWidth: NAV_OPEN_WIDTH });
+  // }, [layoutState]);
 
   const onPinMenu = useCallback(
     (pinned) => {

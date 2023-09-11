@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-export const MainNavBarStyles = createStyles((theme, { itemWidth, lightMode }) => {
+export const MainNavBarStyles = createStyles((theme, { itemWidth, lightMode, isCollapsed }) => {
   const leemonsStyles = theme.other;
   return {
     root: {
@@ -8,13 +8,19 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, lightMode }) =
       width: '100%',
       position: 'relative',
     },
+    navBar: {
+      borderRight: `1px solid ${leemonsStyles.menu.border.color.main.default}`,
+      boxShadow: isCollapsed
+        ? 'none'
+        : '0px 10px 36px 0px rgba(26, 32, 43, 0.08), 0px 2px 0px 0px rgba(221, 225, 230, 0.08)',
+    },
     navTitle: {
       ...leemonsStyles.menu.content.typo.md,
       lineHeight: '24px',
       fontSize: leemonsStyles.core.font.size['500'],
       color: lightMode
-        ? leemonsStyles.menu.content.color.main['default--dark']
-        : leemonsStyles.menu.content.color.main.default,
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main['default--reverse'],
     },
     navWrapper: {
       position: 'relative',
@@ -35,6 +41,7 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, lightMode }) =
     linksInner: {
       overflow: 'scroll',
       marginBottom: '180px',
+      textDecoration: 'none',
     },
     navWrapperBorder: {
       position: 'absolute',
@@ -54,7 +61,8 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, lightMode }) =
       justifyContent: 'space-between',
     },
     logoUrl: {
-      width: pxToRem(itemWidth),
+      maxHeight: 40,
+      maxWidth: 32,
       marginLeft: 'auto',
       marginRight: 'auto',
     },

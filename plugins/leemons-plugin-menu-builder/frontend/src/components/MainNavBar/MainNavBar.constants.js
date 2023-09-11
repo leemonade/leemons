@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 
 export const MAIN_NAV_BAR_DEFAULT_PROPS = {
-  useRouter: false,
+  useRouter: true,
   lightMode: true,
   mainColor: 'red',
   logoUrl: '',
   useSpotlight: true,
-  navTitle: 'leemons',
-  isLoading: true,
+  navTitle: 'leemons for devs',
+  isLoading: false,
   menuData: [],
+  spotlightLabel: '',
 };
 
 export const MAIN_NAV_BAR_PROP_TYPES = {
@@ -22,6 +23,7 @@ export const MAIN_NAV_BAR_PROP_TYPES = {
   spotlightTooltip: PropTypes.string,
   isLoading: PropTypes.bool,
   menuData: PropTypes.array,
+  spotlightLabel: PropTypes.string,
 };
 
 export const MAIN_NAV_WIDTH_EXPANDED = 250;

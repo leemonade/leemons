@@ -1,24 +1,23 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { createStyles } from '@bubbles-ui/components';
 
 export const NavItemStyles = createStyles((theme, { lightMode }) => {
-  // console.log(theme);
   const leemonsStyles = theme.other;
-  const defaultDark = 'default--dark';
   const hoverDark = 'hover--dark';
   const activeDark = 'active--dark';
-  const borderLeftLink = lightMode
-    ? leemonsStyles.menu.border.color.sub.default
-    : leemonsStyles.menu.border.color.sub[defaultDark];
+  const defaultReverse = 'default--reverse';
+  const borderLeftLink = leemonsStyles.menu.border.color.main.active;
+
   return {
     control: {
       fontWeight: 500,
       display: 'flex',
       alignItems: 'center',
       width: '100%',
-      padding: 16,
+      padding: '12px 16px 12px 18px',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main.hover
-        : leemonsStyles.menu.background.color.main[hoverDark],
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
       fontSize: theme.fontSizes.sm,
       '&:active': {
         backgroundColor: lightMode
@@ -37,13 +36,15 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       display: 'flex',
       alignItems: 'center',
       width: '100%',
-      padding: 16,
-      color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+      padding: '12px 16px 12px 18px',
       fontSize: theme.fontSizes.sm,
-      backgroundColor: lightMode
-        ? leemonsStyles.menu.content.color.main[defaultDark]
-        : leemonsStyles.menu.content.color.main.default,
+      color: lightMode
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
       borderLeft: `2px solid ${borderLeftLink}`,
+      backgroundColor: lightMode
+        ? leemonsStyles.menu.background.color.main.active
+        : leemonsStyles.menu.background.color.main[activeDark],
     },
     itemWrapper: {
       paddingLeft: 16,
@@ -63,10 +64,31 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       ...leemonsStyles.menu.content.typo.md,
       lineHeight: '24px',
       color: lightMode
-        ? leemonsStyles.menu.content.color.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
+    },
+    openIcon: {
+      width: '12px',
+      height: '12px',
+      color: lightMode
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
+    },
+
+    childOpenIcon: {
+      width: '12px',
+      height: '12px',
+      marginTop: 4,
+      marginRight: 6,
+      color: lightMode
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
     },
     link: {
+      display: 'flex !important',
+      justifyContent: 'space-between',
+      alingItems: 'baseline !important',
+      width: '100%',
       ...leemonsStyles.menu.content.typo.md,
       lineHeight: '24px',
       padding: 8,
@@ -76,8 +98,8 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       cursor: 'pointer',
       backgroundColor: 'transparent',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main[defaultDark]
-        : leemonsStyles.menu.content.color.main.default,
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
       borderLeft: `1px solid ${borderLeftLink}`,
       '&:active': {
         backgroundColor: lightMode
@@ -99,22 +121,28 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       maxHeight: '42px',
       fontSize: theme.fontSizes.sm,
       cursor: 'pointer',
+      // textDecoration: 'none !important',
       color: lightMode
-        ? leemonsStyles.menu.background.color.main[defaultDark]
-        : leemonsStyles.menu.background.color.main.default,
+        ? leemonsStyles.menu.content.color.main.default
+        : leemonsStyles.menu.content.color.main[defaultReverse],
       borderLeft: `1px solid ${leemonsStyles.menu.border.color.sub.active}`,
       backgroundColor: lightMode
         ? leemonsStyles.menu.background.color.main.active
         : leemonsStyles.menu.background.color.main[activeDark],
       '&:active': {
-        backgroundColor: '#DEF2F0',
+        backgroundColor: lightMode
+          ? leemonsStyles.menu.background.color.main.active
+          : leemonsStyles.menu.background.color.main[activeDark],
       },
+    },
+    itemContainer: {
+      display: 'flex',
     },
     chevron: {
       transition: 'transform 200ms ease',
       color: lightMode
         ? leemonsStyles.menu.content.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        : leemonsStyles.menu.content.color.main[defaultReverse],
     },
     chevronContainer: {
       width: 'auto',
@@ -124,9 +152,10 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
     icon: {
       width: '18px',
       height: '18px',
+      marginTop: 3,
       color: lightMode
         ? leemonsStyles.menu.content.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultDark],
+        : leemonsStyles.menu.content.color.main[defaultReverse],
     },
   };
 });

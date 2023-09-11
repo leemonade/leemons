@@ -27,17 +27,17 @@ const MainNavBar = ({
   session,
   sessionMenu,
   menuData,
+  useRouter,
+  spotlightLabel,
 }) => {
-  const { classes } = MainNavBarStyles(
-    { itemWidth: MAIN_NAV_WIDTH_EXPANDED, lightMode },
-    { name: 'MainNav' }
-  );
-
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [expandedItem, setExpandedItem] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
   const [activeSubItem, setActiveSubItem] = useState(null);
-
+  const { classes } = MainNavBarStyles(
+    { itemWidth: MAIN_NAV_WIDTH_EXPANDED, lightMode, isCollapsed },
+    { name: 'MainNav' }
+  );
   const handleItemClick = (item) => {
     if (item.id === expandedItem) {
       setExpandedItem(null);
@@ -77,7 +77,6 @@ const MainNavBar = ({
 
   try {
     const location = useLocation();
-
     useEffect(() => {
       if (!isLoading && isArray(menuData) && menuData.length) {
         handleRouteChange();
@@ -94,6 +93,9 @@ const MainNavBar = ({
       item.children.length > 0
         ? item.children.find((child) => child?.id === activeSubItem?.id)
         : false;
+    const isActive = isCollapsed
+      ? activeItem?.id === item.id
+      : item.id === activeItem?.id && !isSubItemActive;
     return (
       <NavItem
         {...item}
@@ -102,9 +104,10 @@ const MainNavBar = ({
         id={item.id}
         onOpen={() => handleItemClick(item)}
         expandedItem={expandedItem}
-        isActive={activeItem?.id === item.id && !isSubItemActive}
+        isActive={isActive}
         subItemActive={isSubItemActive}
         lightMode={lightMode}
+        useRouter={useRouter}
       />
     );
   });
@@ -124,6 +127,7 @@ const MainNavBar = ({
             onMouseEnter={() => setIsCollapsed(false)}
             onMouseLeave={() => setIsCollapsed(true)}
             sx={() => ({ overflow: 'hidden' })}
+            className={classes.navBar}
           >
             <Box className={classes.navWrapper}>
               {/* LOGO */}
@@ -167,24 +171,23 @@ const MainNavBar = ({
                     onClick={() => openSpotlight()}
                     isCollapsed={isCollapsed}
                     lightMode={lightMode}
+                    spotlightLabel={spotlightLabel}
                   />
                 </Box>
                 {/* ITEMS */}
                 <Box className={classes.navItems}>
                   <Box className={classes.linksInner}>{navBarItems}</Box>
                   <Box>
-                    <Box>
-                      <UserButton
-                        name={getUserFullName(session)}
-                        isCollapsed={isCollapsed}
-                        session={session}
-                        sessionMenu={sessionMenu}
-                        onOpen={() => handleItemClick(sessionMenu)}
-                        expandedItem={expandedItem}
-                        subItemActive={activeSubItem}
-                        lightMode={lightMode}
-                      />
-                    </Box>
+                    <UserButton
+                      name={getUserFullName(session)}
+                      isCollapsed={isCollapsed}
+                      session={session}
+                      sessionMenu={sessionMenu}
+                      onOpen={() => handleItemClick(sessionMenu)}
+                      expandedItem={expandedItem}
+                      subItemActive={activeSubItem}
+                      lightMode={lightMode}
+                    />
                   </Box>
                 </Box>
               </Box>
