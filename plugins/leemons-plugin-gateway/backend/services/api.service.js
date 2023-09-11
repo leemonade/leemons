@@ -52,6 +52,23 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Feedback (Finish) --
+          'POST feedback/tags/list': 'v1.feedback.tags.listTagsRest',
+          'POST feedback/feedback': 'v1.feedback.feedback.saveFeedbackRest',
+          'GET feedback/feedback/:id': 'v1.feedback.feedback.getFeedbackRest',
+          'DELETE feedback/feedback/:id': 'v1.feedback.feedback.deleteFeedbackRest',
+          'POST feedback/feedback/duplicate': 'v1.feedback.feedback.duplicateFeedbackRest',
+          'POST feedback/feedback/assign': 'v1.feedback.feedback.assignFeedbackRest',
+          'POST feedback/feedback/instance/timestamp':
+            'v1.feedback.feedback.setInstanceTimestampRest',
+          'POST feedback/feedback/instance/question/response':
+            'v1.feedback.feedback.setQuestionResponseRest',
+          'GET feedback/feedback/instance/responses/:id':
+            'v1.feedback.feedback.getUserAssignableResponsesRest',
+          'GET feedback/feedback/results/:id': 'v1.feedback.feedback.getFeedbackResultsRest',
+          'GET feedback/feedback/results/time/:id':
+            'v1.feedback.feedback.getFeedbackResultsWithTimeRest',
+
           // -- XApi (Finish) --
           'POST xapi/add/statement': 'v1.xapi.xapi.addStatementRest',
 
