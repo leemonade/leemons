@@ -81,7 +81,7 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   // ·········································································
   // DUPLICATE ASSET
 
-  const currentVersion = ctx.tx.call('common.versionControl.getVersion', {
+  const currentVersion = await ctx.tx.call('common.versionControl.getVersion', {
     ids: assetId,
   });
 
