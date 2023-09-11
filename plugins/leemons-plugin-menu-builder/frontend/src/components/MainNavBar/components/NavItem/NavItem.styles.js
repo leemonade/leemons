@@ -113,6 +113,10 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       },
     },
     linkActive: {
+      display: 'flex !important',
+      justifyContent: 'space-between',
+      alingItems: 'baseline !important',
+      width: '100%',
       ...leemonsStyles.menu.content.typo.md,
       lineHeight: '24px',
       padding: 8,
