@@ -27,12 +27,15 @@ jobs:
         run: yarn add @changesets/cli -W
 
       - name: 🔧 Init changeset
+        working-directory: ./packages/leemons-error/
         run: yarn changeset init
 
       - name: 🔧 Version bump
+        working-directory: ./packages/leemons-error/
         run: yarn changeset version
 
       - name: 🚀 Publish to NPM
+        working-directory: ./packages/leemons-error/
         run: yarn changeset publish --tag dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
