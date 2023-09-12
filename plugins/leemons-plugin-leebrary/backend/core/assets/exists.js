@@ -1,8 +1,9 @@
 /**
  * Check if an asset exists by its ID
  *
- * @param {string} assetId - The ID of the asset
- * @param {object} transacting - The transaction object
+ * @param {object} params - The params object
+ * @param {string} params.assetId - The ID of the asset
+ * @param {MoleculerContext} params.ctx - The Moleculer context
  * @returns {Promise<boolean>} - Returns true if the asset exists, false otherwise
  */
 
