@@ -43,6 +43,9 @@ const filesSchema = new mongoose.Schema(
       type: String,
       required: requiredWhenNotString,
     },
+    isFolder: {
+      type: Boolean,
+    },
     metadata: {
       type: String,
     },

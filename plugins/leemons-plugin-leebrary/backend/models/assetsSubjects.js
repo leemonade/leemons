@@ -31,6 +31,10 @@ const assetsSubjectsSchema = new mongoose.Schema(
   }
 );
 
-const assetsSubjectsModel = newModel(mongoose.connection, 'v1::leebrary_AssetsSubjects', assetsSubjectsSchema);
+const assetsSubjectsModel = newModel(
+  mongoose.connection,
+  'v1::leebrary_AssetsSubjects',
+  assetsSubjectsSchema
+);
 
 module.exports = { assetsSubjectsModel, assetsSubjectsSchema };
