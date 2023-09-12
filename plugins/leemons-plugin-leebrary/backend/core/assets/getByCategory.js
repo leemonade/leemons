@@ -1,11 +1,25 @@
 const { isEmpty } = require('lodash');
-const { tables } = require('../tables');
+const { LeemonsError } = require('leemons-error');
 const { getByIds } = require('./getByIds');
 
-async function getByCategory(
+/**
+ * Fetch assets by category
+ *
+ * @param {string} categoryId - The category ID
+ * @param {object} options - The options object
+ * @param {boolean} [options.details] - The details flag
+ * @param {boolean} [options.indexable] - The indexable flag
+ * @param {Array<string>} [options.assets] - The asset IDs
+ * @param {object} options.transacting - The transaction object
+ * @returns {Array} - Returns an array of assets or asset IDs
+ */
+async function getByCategory({
   categoryId,
-  { details = false, indexable = true, assets: assetIds, transacting } = {}
-) {
+  details = false,
+  indexable = true,
+  assets: assetIds,
+  ctx,
+}) {
   try {
     const query = {
       category: categoryId,
@@ -13,20 +27,23 @@ async function getByCategory(
     };
 
     if (!isEmpty(assetIds)) {
-      query.id_$in = assetIds;
+      query.id = assetIds;
     }
 
-    const assets = await tables.assets.find(query, { transacting });
+    const assets = await ctx.tx.db.Assets.find(query).lean();
 
     if (details) {
-      return getByIds(
-        assets.map(({ id }) => id),
-        { transacting }
-      );
+      return getByIds({
+        assetsIds: assets.map(({ id }) => id),
+        ctx,
+      });
     }
     return assets;
   } catch (e) {
-    throw new global.utils.HttpError(500, `Failed to get category assets: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Failed to get category assets: ${e.message}`,
+      httpStatusCode: 500,
+    });
   }
 }
 
