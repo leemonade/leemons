@@ -1,8 +1,8 @@
-name: [DEV] Upload plugins dockers
+name: DEV Upload plugins dockers
 on:
   workflow_run:
     workflows:
-      - [DEV] Publish packages to NPM
+      - DEV Publish packages to NPM
     types:
       - completed
 

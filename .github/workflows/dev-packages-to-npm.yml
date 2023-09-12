@@ -1,4 +1,4 @@
-name: [DEV] Publish packages to NPM
+name: DEV Publish packages to NPM
 on:
   push:
     tags:
