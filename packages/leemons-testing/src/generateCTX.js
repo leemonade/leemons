@@ -41,6 +41,7 @@ function generateCtx({
       info: (...args) => null,
       warn: (...args) => null,
       error: (...args) => null,
+      log: (...args) => null,
     },
   };
 
