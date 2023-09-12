@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { settledResponseToManyResponse } = require('leemons-utils');
 const { existUserAgent } = require('../existUserAgent');
 const { validatePermissionName } = require('../../../validations/exists');

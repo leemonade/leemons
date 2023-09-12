@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { classByIds } = require('./classByIds');
 const { listSessionClasses } = require('./listSessionClasses');
 

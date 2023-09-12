@@ -1,8 +1,8 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { rulesInGrade } = require('../rules/rulesInGrade');
 const { removeGradeTagsByGrade } = require('../grade-tags/removeGradeTagsByGrade');
 const { removeGradeScaleByGrade } = require('../grade-scales/removeGradeScaleByGrade');
-const { LeemonsError } = require('leemons-error');
 
 async function removeGrade({ id, ctx }) {
   const nRulesInGrade = await rulesInGrade({ grade: id, ctx });

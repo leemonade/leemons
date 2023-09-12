@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { stringSchema, numberSchema } = require('./types');
 const { LeemonsValidator } = require('leemons-validator');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
+const { stringSchema, numberSchema } = require('./types');
 
 const addGradeSchema = {
   type: 'object',

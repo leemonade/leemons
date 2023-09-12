@@ -1,6 +1,6 @@
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 dayjs.extend(duration);
 

@@ -1,5 +1,5 @@
 const { isEmpty, isString } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const findOne = require('./findOne');
 const update = require('./update');
 

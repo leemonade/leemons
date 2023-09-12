@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const slugify = require('slugify');
 const existByName = require('./existByName');
 const { validateRoleType } = require('../../validations/exists');

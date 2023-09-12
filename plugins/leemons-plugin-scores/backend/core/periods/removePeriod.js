@@ -1,5 +1,5 @@
 const { map } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 module.exports = async function removePeriod({ periodId, ctx }) {
   try {

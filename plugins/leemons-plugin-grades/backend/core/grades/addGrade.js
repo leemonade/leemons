@@ -1,8 +1,8 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { validateAddGrade } = require('../../validations/forms');
 const { addGradeScale } = require('../grade-scales');
 const { gradeByIds } = require('./gradeByIds');
-const { LeemonsError } = require('leemons-error');
 
 async function addGrade({ data, fromFrontend, ctx }) {
   await validateAddGrade({ data, disableRequired: fromFrontend });

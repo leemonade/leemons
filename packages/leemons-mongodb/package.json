@@ -18,7 +18,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "leemons-error": "dev",
+    "@leemons/error": "dev",
     "leemons-lrn": "1.0.0",
     "leemons-service-name-parser": "1.0.0",
     "leemons-transactions": "1.0.0",

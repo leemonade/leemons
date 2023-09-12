@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getFeedbackQuestionByIds } = require('../feedback-questions');
 
 async function getFeedback({ id, getAssets = true, ctx }) {

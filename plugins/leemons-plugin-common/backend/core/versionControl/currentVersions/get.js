@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const verifyOwnership = require('../helpers/type/verifyOwnership');
 
 async function getMany({ uuids, ctx }) {

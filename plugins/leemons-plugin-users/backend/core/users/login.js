@@ -7,7 +7,7 @@
  * @return {Promise<User>} Created / Updated role
  * */
 
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { comparePassword } = require('./bcrypt/comparePassword');
 

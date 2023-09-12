@@ -18,7 +18,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "leemons-error": "dev",
+    "@leemons/error": "dev",
     "lodash": "^4.17.21"
   }
 }

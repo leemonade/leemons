@@ -1,5 +1,5 @@
 const slugify = require('slugify');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 /**
  * Create new group if name and type not in use

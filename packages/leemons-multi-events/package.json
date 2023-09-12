@@ -18,7 +18,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "leemons-error": "dev",
+    "@leemons/error": "dev",
     "leemons-mongodb-helpers": "1.0.0",
     "leemons-utils": "1.0.0",
     "lodash": "^4.17.21"

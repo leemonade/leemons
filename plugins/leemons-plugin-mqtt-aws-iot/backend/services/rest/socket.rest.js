@@ -10,7 +10,7 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('leemons-middlewares');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { createCredentialsForUserSession, setConfig, getConfig } = require('../../core/socket');
 
 /** @type {ServiceSchema} */

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getClassProgram } = require('../getClassProgram');
 const { getProfiles } = require('../../settings/getProfiles');
 const { removeCustomPermissions } = require('./removeCustomPermissions');

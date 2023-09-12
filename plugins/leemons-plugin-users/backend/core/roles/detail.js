@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function detail({ id, ctx }) {
   const role = await ctx.tx.db.Roles.findOne({ id }).lean();

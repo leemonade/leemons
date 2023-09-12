@@ -11,6 +11,7 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('leemons-middlewares');
 const { randomString } = require('leemons-utils');
+const { LeemonsError } = require('@leemons/error');
 const {
   getUserAgentRoomsList,
   getMessages,
@@ -30,7 +31,6 @@ const {
   getUnreadMessages,
   getRoomsMessageCount,
 } = require('../../core/room');
-const { LeemonsError } = require('leemons-error');
 
 /** @type {ServiceSchema} */
 module.exports = {

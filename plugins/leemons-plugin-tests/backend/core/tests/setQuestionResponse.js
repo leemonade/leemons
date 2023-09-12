@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { findQuestionResponses } = require('./findQuestionResponses');
 const { calculeUserAgentInstanceNote } = require('./calculeUserAgentInstanceNote');
 
