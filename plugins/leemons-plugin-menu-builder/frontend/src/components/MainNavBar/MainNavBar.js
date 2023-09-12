@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Box, Text, TextClamp, openSpotlight, ImageLoader } from '@bubbles-ui/components';
 import { isEmpty, isArray, find } from 'lodash';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import {
   MAIN_NAV_BAR_DEFAULT_PROPS,
   MAIN_NAV_BAR_PROP_TYPES,
@@ -73,6 +74,13 @@ const MainNavBar = ({
       setActiveItem(find(menu, { id: activeItem.id }));
     }
   }, [menuData, sessionMenu, isLoading]);
+
+  const location = useLocation();
+  useEffect(() => {
+    if (!isLoading && isArray(menuData) && menuData.length) {
+      handleRouteChange();
+    }
+  }, [location]);
 
   const hasLogo = !isEmpty(logoUrl);
 

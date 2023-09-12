@@ -1,4 +1,4 @@
-// import React from 'react';
+import React from 'react';
 import { axe } from 'jest-axe';
 import { render } from '@testing-library/react';
 import { MainNavBar } from './MainNavBar';
@@ -30,5 +30,9 @@ describe('MainNavBar', () => {
         }}
       />
     );
+  });
+  it('testing jest', () => {
+    render(<div>Hello</div>);
+    expect(1).toBe(1);
   });
 });
