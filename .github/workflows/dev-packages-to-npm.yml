@@ -9,6 +9,14 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: 🔧 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
 
       - name: 🔧 Create changeset file
         working-directory: ./.changeset
