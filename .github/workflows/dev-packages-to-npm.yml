@@ -24,7 +24,7 @@ jobs:
           EOF
 
       - name: 🔧 Install changeset
-        run: yarn add @changesets/cli
+        run: yarn add @changesets/cli -W
 
       - name: 🔧 Init changeset
         run: yarn changeset init
