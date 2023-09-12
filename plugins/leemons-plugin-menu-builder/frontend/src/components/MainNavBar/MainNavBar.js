@@ -117,11 +117,11 @@ const MainNavBar = ({
           amimate={isCollapsed ? 'closed' : 'open'}
           variants={mainNavVariants}
           whileHover={{ width: MAIN_NAV_WIDTH_EXPANDED }}
-          transition={{ type: 'tween' }}
+          transition={{ type: 'tween', delay: isCollapsed ? 0 : 0.5 }}
         >
           <Navbar
             onMouseEnter={() => setIsCollapsed(false)}
-            onMouseLeave={() => setIsCollapsed(true)}
+            onMouseLeave={() => setTimeout(() => setIsCollapsed(true), 500)}
             sx={() => ({ overflow: 'hidden' })}
             className={classes.navBar}
           >

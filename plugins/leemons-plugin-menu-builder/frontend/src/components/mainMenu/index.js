@@ -95,50 +95,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
     };
   }, [loadMenu]);
 
-  const sessionMenuItems = [
-    {
-      id: 'menu-1',
-      label: t('accountInfo'),
-      order: 0,
-      url: '/private/users/detail',
-      window: 'SELF',
-      disabled: null,
-      condition: !session?.isSuperAdmin,
-    },
-    {
-      id: 'menu-2',
-      label: t('switchProfile'),
-      order: 1,
-      url: '/private/users/select-profile',
-      window: 'BLANK',
-      disabled: null,
-      condition: !store.onlyOneProfile,
-    },
-    {
-      id: 'menu-3',
-      label: t('changeLanguage'),
-      order: 2,
-      url: '/private/users/language',
-      window: 'SELF',
-      disabled: null,
-    },
-    {
-      id: 'menu-4',
-      label: t('emailPreference'),
-      order: 3,
-      url: '/private/emails/preference',
-      window: 'SELF',
-      disabled: null,
-    },
-    {
-      id: 'menu-5',
-      label: t('logout'),
-      order: 4,
-      url: '/private/users/logout',
-      window: 'BLANK',
-      disabled: null,
-    },
-  ];
   const navTitle = session?.isSuperAdmin ? 'Leemons' : store.centerName;
 
   if (!session) return null;
@@ -171,7 +127,57 @@ export default function MainMenu({ subNavWidth, ...props }) {
         sessionMenu={{
           id: 'menu-0',
           label: t('label'),
-          children: sessionMenuItems.filter((item) => !item.condition),
+          children: [
+            ...(session.isSuperAdmin
+              ? []
+              : [
+                {
+                  id: 'menu-1',
+                  label: t('accountInfo'),
+                  order: 0,
+                  url: '/private/users/detail',
+                  window: 'SELF',
+                  disabled: null,
+                },
+              ].concat(
+                store.onlyOneProfile
+                  ? []
+                  : [
+                    {
+                      id: 'menu-2',
+                      label: t('switchProfile'),
+                      order: 1,
+                      url: '/private/users/select-profile',
+                      window: 'BLANK',
+                      disabled: null,
+                    },
+                  ]
+              )),
+            {
+              id: 'menu-3',
+              label: t('changeLanguage'),
+              order: 2,
+              url: '/private/users/language',
+              window: 'SELF',
+              disabled: null,
+            },
+            {
+              id: 'menu-4',
+              label: t('emailPreference'),
+              order: 3,
+              url: '/private/emails/preference',
+              window: 'SELF',
+              disabled: null,
+            },
+            {
+              id: 'menu-5',
+              label: t('logout'),
+              order: 4,
+              url: '/private/users/logout',
+              window: 'BLANK',
+              disabled: null,
+            },
+          ],
         }}
       />
     </Spotlight>
