@@ -1,5 +1,5 @@
 const { map, uniq } = require('lodash');
-const { normalizeItemsArray } = require('../shared');
+const { normalizeItemsArray } = require('../../shared');
 
 /**
  * Get assets by subject

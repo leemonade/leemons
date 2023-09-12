@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash');
 const { LeemonsError } = require('leemons-error');
-const { getByIds } = require('./getByIds');
+const { getByIds } = require('../getByIds');
 
 /**
  * Fetch assets by category
@@ -11,7 +11,8 @@ const { getByIds } = require('./getByIds');
  * @param {boolean} [options.indexable] - The indexable flag
  * @param {Array<string>} [options.assets] - The asset IDs
  * @param {object} options.transacting - The transaction object
- * @returns {Array} - Returns an array of assets or asset IDs
+ * @returns {Promise<Array<LibraryAsset|string>>} - Returns an array of assets or asset IDs
+ * @throws {LeemonsError} - Throws an error if unable to fetch assets by category
  */
 async function getByCategory({
   categoryId,
@@ -30,7 +31,7 @@ async function getByCategory({
       query.id = assetIds;
     }
 
-    const assets = await ctx.tx.db.Assets.find(query).lean();
+    const assets = await ctx.tx.db.Assets.find(query).sort({ id: 'asc' }).lean();
 
     if (details) {
       return getByIds({

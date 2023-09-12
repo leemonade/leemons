@@ -4,7 +4,7 @@ const { newModel } = require('leemons-mongodb');
 const _ = require('lodash');
 
 const { find } = require('./find');
-const { assetsSchema } = require('../../models/assets');
+const { assetsSchema } = require('../../../models/assets');
 
 let mongooseConnection;
 let disconnectMongoose;
