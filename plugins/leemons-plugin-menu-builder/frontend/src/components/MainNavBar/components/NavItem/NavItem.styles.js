@@ -76,10 +76,11 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
     },
 
     childOpenIcon: {
-      width: '12px',
-      height: '12px',
+      minWidth: '12px',
+      minHeight: '12px',
       marginTop: 4,
       marginRight: 6,
+      marginLeft: 6,
       color: lightMode
         ? leemonsStyles.menu.content.color.main.default
         : leemonsStyles.menu.content.color.main[defaultReverse],
@@ -90,7 +91,7 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       alingItems: 'baseline !important',
       width: '100%',
       ...leemonsStyles.menu.content.typo.md,
-      lineHeight: '24px',
+      lineHeight: '16px',
       padding: 8,
       paddingLeft: 30,
       marginLeft: 25,
@@ -118,7 +119,7 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       alingItems: 'baseline !important',
       width: '100%',
       ...leemonsStyles.menu.content.typo.md,
-      lineHeight: '24px',
+      lineHeight: '16px',
       padding: 8,
       paddingLeft: 30,
       marginLeft: 25,
