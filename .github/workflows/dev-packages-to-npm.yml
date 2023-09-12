@@ -12,12 +12,6 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: 🔧 Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
-
       - name: 🔧 Create changeset file
         working-directory: ./.changeset
         run: |
@@ -28,6 +22,12 @@ jobs:
 
           Versions bump
           EOF
+
+      - name: 🔧 Install changeset
+        run: yarn add @changesets/cli
+
+      - name: 🔧 Init changeset
+        run: yarn changeset init
 
       - name: 🔧 Version bump
         run: yarn changeset version
