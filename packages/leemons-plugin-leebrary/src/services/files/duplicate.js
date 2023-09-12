@@ -23,7 +23,7 @@ async function handleCloneFile({ fromFile, providerName, transacting }) {
   if (provider?.services?.provider?.clone) {
     // EN: Firstly save the file to the database and get the id
     // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
-    newFile = await tables.files.create(fromFile, { transacting });
+    newFile = await tables.files.create({ ...fromFile, id: undefined }, { transacting });
     urlData.provider = providerName;
     urlData.uri = await provider.services.provider.clone(fromFile, newFile, {
       transacting,
