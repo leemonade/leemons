@@ -9,34 +9,9 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
-
-      - name: 🔧 Create changeset file
-        working-directory: ./.changeset
-        run: |
-          cat << EOF > "changes.md"
-          ---
-          '@leemons/error': patch
-          ---
-
-          Versions bump
-          EOF
 
       - name: 🔧 Install changeset
-        run: yarn add @changesets/cli -W
-
-      - name: 🔧 Init changeset
-        working-directory: ./packages/leemons-error/
-        run: yarn changeset init
-
-      - name: 🔧 Version bump
-        working-directory: ./packages/leemons-error/
-        run: yarn changeset version
-
-      - name: 🚀 Publish to NPM
-        working-directory: ./packages/leemons-error/
-        run: yarn changeset publish --tag dev
+        run: sh patch_publish.sh ./packages/leemons-error dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
