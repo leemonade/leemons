@@ -3548,7 +3548,7 @@
     lodash "^4.17.21"
 
 "@leemons/error@file:/Users/cerberupo/Sites/leemons/packages/leemons-error":
-  version "0.0.5"
+  version "0.0.2"
   resolved "file:packages/leemons-error"
   dependencies:
     leemons-service-name-parser "1.0.0"
