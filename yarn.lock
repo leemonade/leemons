@@ -3291,24 +3291,24 @@
     react-is "^16.9.0"
 
 "@leemons/academic-portfolio@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/academic-portfolio/-/academic-portfolio-0.0.3.tgz"
-  integrity sha512-TWAz7U7rSE5Bo92VjzekYfEJ9pxAGfGGUAfVBpG4hH3yKNBbx6sO8gwQmAztJRRQvmAsv17yLa/+LxfX5LbNvA==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/academic-portfolio/-/academic-portfolio-0.0.4.tgz"
+  integrity sha512-sfM/pxiV+ar2P7L1MkrbCSUx+gQ1oFYrZ7gCnWUD4rmVfDc7VazQc4pQc4O1eVOctu0+FYZprvldOQNHlVdm7Q==
   dependencies:
     "@leemons/mongodb-helpers" dev
     lodash "^4.17.21"
 
 "@leemons/academic-portfolio@file:/home/runner/work/leemons/leemons/packages/leemons-academic-portfolio":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-academic-portfolio"
   dependencies:
     "@leemons/mongodb-helpers" dev
     lodash "^4.17.21"
 
 "@leemons/cache@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/cache/-/cache-0.0.3.tgz"
-  integrity sha512-tL+CBlzRizbeUz+UQAqM0bwP7fOOQ70ffor/62EI5HctjeYw9VAwTe1JUoShE5O+gSa+d5OaBVa8bxseai7fDg==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/cache/-/cache-0.0.4.tgz"
+  integrity sha512-A56KOLfPuPqa0t1yLKQx52NrqZBZV6PtmSWa/BaIR3fQAKGJ2FWWQd0CGXfKxFN2uS7MgGpqqjSnHltcEwjfyg==
   dependencies:
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
@@ -3316,7 +3316,7 @@
     redis "^4.6.7"
 
 "@leemons/cache@file:/home/runner/work/leemons/leemons/packages/leemons-cache":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-cache"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3325,9 +3325,9 @@
     redis "^4.6.7"
 
 "@leemons/common@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/common/-/common-0.0.3.tgz"
-  integrity sha512-4LcaG05aByWBthsnPTUYuwLLjrhRAYd3vRZsUlvP2TgwjL2yfRcb+Xg/qQGT7hqVOCxCN3DUZz1LBQKgbaRnIQ==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/common/-/common-0.0.4.tgz"
+  integrity sha512-ZipPcYG4PCzL//BfFSSJvrIjVuepzh5GusQGEmkUnysjzoSswbc3G58p1ipIQh03/q1kupWDHUSMtwv6IJyR3g==
   dependencies:
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
@@ -3335,7 +3335,7 @@
     redis "^4.6.7"
 
 "@leemons/common@file:/home/runner/work/leemons/leemons/packages/leemons-common":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-common"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3344,16 +3344,16 @@
     redis "^4.6.7"
 
 "@leemons/deployment-manager@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/deployment-manager/-/deployment-manager-0.0.3.tgz"
-  integrity sha512-y/8y38FAnh4n1WDqH7U0Q/VzCC44yv+BpaydAaxCiaHDOkY/ntX0DTo3b7JlOlJZpdhzCP+QhQqLwv0rxF/RrQ==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/deployment-manager/-/deployment-manager-0.0.4.tgz"
+  integrity sha512-XwXBAnz0BQiEZ8UCOeb6x749neDLt2VCCCwMX0sPLw1syv/rdO9TA0KeWTPgyEKdostnsqCf2dUdVmA9scoPOg==
   dependencies:
     "@leemons/error" dev
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
 
 "@leemons/deployment-manager@file:/home/runner/work/leemons/leemons/packages/leemons-deployment-manager":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-deployment-manager"
   dependencies:
     "@leemons/error" dev
@@ -3361,49 +3361,49 @@
     lodash "^4.17.21"
 
 "@leemons/emails@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/emails/-/emails-0.0.3.tgz"
-  integrity sha512-Z1ICWco37rg9GU1ussqh0zsRIFbZYeLgpyqkSenUQke2dMUMRmM261dxyb6dQN+m6IhiKnP0s6SiEoS6yu3WQw==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/emails/-/emails-0.0.4.tgz"
+  integrity sha512-8CGkRmGFwakZ/yR36cxb3vt6T0mjfzgHPXUUsJspHfqrV1l36qYmti3/qR4rOgCfT3KB8r9w6iCOifXgNtmefA==
 
 "@leemons/emails@file:/home/runner/work/leemons/leemons/packages/leemons-emails":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-emails"
 
 "@leemons/error@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/error/-/error-0.0.3.tgz"
-  integrity sha512-WHYVhLcrPrrwA36LgQGttYG8mj+VWwJfhGHUFfX2hlAhI9gDc4h5R68+4TMD1HOhD/qc0VfP/jxZk+IzpTMZFg==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/error/-/error-0.0.4.tgz"
+  integrity sha512-41CLZA7WtQ+jCVs54apST4EdmF3QVhiUmnq66gVS4Lq4n92XVjrtR/DlvsSEYvla6WV9L1zdVUawWPcqtsKVww==
   dependencies:
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
 
 "@leemons/error@file:/home/runner/work/leemons/leemons/packages/leemons-error":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-error"
   dependencies:
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
 
 "@leemons/lrn@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/lrn/-/lrn-0.0.3.tgz"
-  integrity sha512-7UQMa2h2khY6hQViMXyaqTWjHmeki3edK5VGL/RPQ8fvBpTQzIMffn4RO4lejCRyxSd/wQ1D5akcDFhHxVtRJQ==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/lrn/-/lrn-0.0.4.tgz"
+  integrity sha512-eh3FDDLHON8lFpQAdadsW1Bc63f5uAlIbetDbpItn6S2EaNvC9GDSbHn1BYQlf8wYw581YZnJuUvogr+N5lLeQ==
 
 "@leemons/lrn@file:/home/runner/work/leemons/leemons/packages/leemons-lrn":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-lrn"
 
 "@leemons/menu-builder@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/menu-builder/-/menu-builder-0.0.3.tgz"
-  integrity sha512-6F0RD519RJFu1WUdp0eTz7LeGIjHsIbJ8S7NGQzClWK+6I65YdLmAJRlh3DaZqGXydX+Tu6M4uJjXc8aSPUbAQ==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/menu-builder/-/menu-builder-0.0.4.tgz"
+  integrity sha512-todjYokB7445Bq2bpFEVmeiEFMZEHZhk4J4/GjOzq5fPRPasdgHqxE2ksWyrvrHrTkxssIJQLx0DHt2VxPZIWQ==
   dependencies:
     "@leemons/mongodb-helpers" dev
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
 
 "@leemons/menu-builder@file:/home/runner/work/leemons/leemons/packages/leemons-menu-builder":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-menu-builder"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3411,16 +3411,16 @@
     lodash "^4.17.21"
 
 "@leemons/middlewares@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/middlewares/-/middlewares-0.0.3.tgz"
-  integrity sha512-XctLMtd78+SyxBy1W/0Buu/hxdjCcRXlziEcoWMx7bEWbXKxceuArz86c13zUlXHcMLjmqvJhhGPtTVdtloT5g==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/middlewares/-/middlewares-0.0.4.tgz"
+  integrity sha512-6GJKvd0tfZMXAc0RanFTG2XWAQaZ2yG0j1aVgjZPu6NJcqr6tkgccbPOPPo5RE9jIFmR4WrG76PU0XseTPLG3Q==
   dependencies:
     "@leemons/error" dev
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
 
 "@leemons/middlewares@file:/home/runner/work/leemons/leemons/packages/leemons-middlewares":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-middlewares"
   dependencies:
     "@leemons/error" dev
@@ -3428,22 +3428,22 @@
     lodash "^4.17.21"
 
 "@leemons/mongodb-helpers@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.3.tgz"
-  integrity sha512-bBPh4AQt6A3idU0FzLhxC8Kgk2Dy2CnsX4t+Mv3BlRKXENGYLrG3R92vVuc3TpctgY4HYvuOd1hR0Y46kZ+O9w==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.4.tgz"
+  integrity sha512-MmBSpoR0CupRBM5919phRqK3ExDX4M/+3jseYrQcEZPBrq9Igc15Z0DSh/f5wT74i7kfmZI18VfQZpZlLEO5Nw==
   dependencies:
     "@leemons/mongodb" dev
 
 "@leemons/mongodb-helpers@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb-helpers":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-mongodb-helpers"
   dependencies:
     "@leemons/mongodb" dev
 
 "@leemons/mongodb@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/mongodb/-/mongodb-0.0.3.tgz"
-  integrity sha512-66ePP349GTaz0zBKKIn7Du1l/eU7ODsFfzSiChQMOONUuVWlPMPhuY9H/4JqkyczF/7tKFjgE50JSyJsTOiJAA==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/mongodb/-/mongodb-0.0.4.tgz"
+  integrity sha512-h+vytLLpLKrk80bZhi1s5Za4k8MdJw6gPPInWdCBRnQ7QpYpo22HJL9yXijXrhA6ax9oaxbteZkXEuSZJboV8w==
   dependencies:
     "@leemons/error" dev
     "@leemons/lrn" dev
@@ -3453,7 +3453,7 @@
     mongoose "^7.1.1"
 
 "@leemons/mongodb@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-mongodb"
   dependencies:
     "@leemons/error" dev
@@ -3464,9 +3464,9 @@
     mongoose "^7.1.1"
 
 "@leemons/mqtt@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/mqtt/-/mqtt-0.0.3.tgz"
-  integrity sha512-nFQ8rK7mjxZe4b4P6QbVBacdagSsEsYZktMP1CT+KqEPcqdKKrBxv1A1mJIEGzCHA4Hdbf6TD7gfTcWWaemTng==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/mqtt/-/mqtt-0.0.4.tgz"
+  integrity sha512-9T34l1PdYWJcp477yOeN8w9POVL6l8yJI3jmIGBIF9Q/1l6AIw1zCcs4xawrM9JHpOkEBQ5Gmj65BoNesgMpmw==
   dependencies:
     "@leemons/error" dev
     "@leemons/lrn" dev
@@ -3476,7 +3476,7 @@
     mongoose "^7.1.1"
 
 "@leemons/mqtt@file:/home/runner/work/leemons/leemons/packages/leemons-mqtt":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-mqtt"
   dependencies:
     "@leemons/error" dev
@@ -3487,9 +3487,9 @@
     mongoose "^7.1.1"
 
 "@leemons/multi-events@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/multi-events/-/multi-events-0.0.3.tgz"
-  integrity sha512-eVWGlJ8tLHr/+EM3hmF92s7LZLlgUzZYQRbQrE6YFcEEowr3kQS6MqrpT+tD4VNdrBkck9bdv+TDomoBU65YGw==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/multi-events/-/multi-events-0.0.4.tgz"
+  integrity sha512-Cxk2BkZpBtKCyziMQaXtGFGT9nNyafbV9fpujJWJR5AcxO5BYW4lbqgEUky67V/UMJfvUAydfy1u6bxOrjLr3A==
   dependencies:
     "@leemons/error" dev
     "@leemons/mongodb-helpers" dev
@@ -3497,7 +3497,7 @@
     lodash "^4.17.21"
 
 "@leemons/multi-events@file:/home/runner/work/leemons/leemons/packages/leemons-multi-events":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-multi-events"
   dependencies:
     "@leemons/error" dev
@@ -3506,16 +3506,16 @@
     lodash "^4.17.21"
 
 "@leemons/multilanguage@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/multilanguage/-/multilanguage-0.0.3.tgz"
-  integrity sha512-SUncekOhuSV4L52iV8vqz+NIdHy+vcJmlswGx1LTemLcDC8rN+BQLJBlWkJMtwTVuQtQpxL3F94JOA6KgfqYYg==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/multilanguage/-/multilanguage-0.0.4.tgz"
+  integrity sha512-QGhdbXt+NZOzg685J2zEUfj42S9OBcIHG+tF9xUhkAAn8PWgtc675tqC4/wIGAJfSPXdZjR6Cxg8eSvO5fLMQw==
   dependencies:
     "@leemons/mongodb-helpers" dev
     "@leemons/service-name-parser" dev
     lodash "^4.17.21"
 
 "@leemons/multilanguage@file:/home/runner/work/leemons/leemons/packages/leemons-multilanguage":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-multilanguage"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3523,37 +3523,37 @@
     lodash "^4.17.21"
 
 "@leemons/permissions@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/permissions/-/permissions-0.0.3.tgz"
-  integrity sha512-yehevjDorFZXaPeEZ4BZTmdXA4IwGxvBZgYYVx8n+8MgjqNN1eOXR/oddXTAGutSVAF7ZAR6y4XsfOra8dMuDw==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/permissions/-/permissions-0.0.4.tgz"
+  integrity sha512-POrG0fpV53Szt6B8PN4v9M+iYlXhENafi3ON+doIceb66g2NkRtuN8SoFY5mOR6qBjx2y18DJonZail7/+UTpA==
   dependencies:
     "@leemons/mongodb-helpers" dev
     lodash "^4.17.21"
 
 "@leemons/permissions@file:/home/runner/work/leemons/leemons/packages/leemons-permissions":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-permissions"
   dependencies:
     "@leemons/mongodb-helpers" dev
     lodash "^4.17.21"
 
 "@leemons/providers@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/providers/-/providers-0.0.3.tgz"
-  integrity sha512-bqs24eOaqkGX873hF6yoIPAXIPjhzfgAWs+sDvrNi58OsRanhvhFNQ6KV3W2XsYmli7HjvpP/8uelPp2eEY0vQ==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/providers/-/providers-0.0.4.tgz"
+  integrity sha512-2jmWrxImHu3M8z8EeOa52ZMGXCovs2LsGtazbeVNX8uvJmrHZpCyDRJQIRyAxdjz3caS1/1QutDb/XsaEtdh8g==
   dependencies:
     "@leemons/error" dev
     lodash "^4.17.21"
 
 "@leemons/providers@file:/home/runner/work/leemons/leemons/packages/leemons-providers":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-providers"
   dependencies:
     "@leemons/error" dev
     lodash "^4.17.21"
 
 "@leemons/react@file:/home/runner/work/leemons/leemons/packages/leemons-react":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-react"
   dependencies:
     "@loadable/component" "^5.0.0"
@@ -3575,9 +3575,9 @@
     react-router-dom "^5.3.3"
 
 "@leemons/runner@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/runner/-/runner-0.0.3.tgz"
-  integrity sha512-wYxsrqClce+bi9fr1dniI8C9x0862NO86SLYPWmOX8gmtXyjc3F//kKfD+OzdBYD6LoqCc5/WG7WRMItiG0CqA==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/runner/-/runner-0.0.4.tgz"
+  integrity sha512-QZ5nUjAO8JE+R1M9akvQ//xvMsRzr3bNErkP4rg0M2IvfoM9QGW3rR4tCvjD1MPTBar8QagcIxq4Tb/KdHkYdQ==
   dependencies:
     args "^5.0.3"
     dotenv "^16.0.3"
@@ -3587,7 +3587,7 @@
     moleculer "^0.14.26"
 
 "@leemons/runner@file:/home/runner/work/leemons/leemons/packages/leemons-runner":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-runner"
   dependencies:
     args "^5.0.3"
@@ -3598,62 +3598,62 @@
     moleculer "^0.14.26"
 
 "@leemons/service-name-parser@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/service-name-parser/-/service-name-parser-0.0.3.tgz"
-  integrity sha512-palqtELwDAima4oWpBwcfH2hXBP1pf6YE4+sh4Pi+/nMVrpHZ3/NTWfxQGwTD/vbPfSwKnNLOtY2XAU0XpQJ2A==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/service-name-parser/-/service-name-parser-0.0.4.tgz"
+  integrity sha512-vXnUUYl+IafGLYoF4/hqaEr+i+XXrF05cmebukKog6MwDCS31kX/cokcoSdIjV16TP2OYmWk8Hr86hIvZ5h3Fg==
 
 "@leemons/service-name-parser@file:/home/runner/work/leemons/leemons/packages/leemons-service-name-parser":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-service-name-parser"
 
 "@leemons/testing@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/testing/-/testing-0.0.3.tgz"
-  integrity sha512-L0zHu2gY5WnvG4WxoHYJwGzXrVLHws8qPrOgySugRX48cgTjo4+PBa0BmL0hhBiv7Ml6bBrYANf1es4wyV36XQ==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/testing/-/testing-0.0.4.tgz"
+  integrity sha512-C/gSLYkDGhpDWBiMgFRUXr9X1JDDZKSvVKZVRIBtPa5poVHN5XerQ10oA1uQxGyypftieyc+T4MDr/MQXZ+m+w==
   dependencies:
     "@leemons/mongodb" dev
     mongodb-memory-server-core "^8.15.0"
 
 "@leemons/testing@file:/home/runner/work/leemons/leemons/packages/leemons-testing":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-testing"
   dependencies:
     "@leemons/mongodb" dev
     mongodb-memory-server-core "^8.15.0"
 
 "@leemons/transactions@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/transactions/-/transactions-0.0.3.tgz"
-  integrity sha512-46L1S0TNhYPsxk1vNR/2bqBE9gqkDrZy8J1n8GTg69QrtJlxVI0FlaPKmDC6lBXSIfYVK25nOHsWA+SwPo0IHA==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/transactions/-/transactions-0.0.4.tgz"
+  integrity sha512-l4ymdgsq61ipAPzLv3eCQNEOTfFmYAuc7siOJWPi8J3v/LeTlw6k0PgWUttnFdkE5Tbk/QrBF0zTBdfjP3dFXA==
 
 "@leemons/transactions@file:/home/runner/work/leemons/leemons/packages/leemons-transactions":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-transactions"
 
 "@leemons/users@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/users/-/users-0.0.3.tgz"
-  integrity sha512-wbn39tPdIYpzYAhPeQFklrBpARoR88W2+QAWYf2iulHWwU42XjNAxG6u3GdIjrZyvilTh/ZgjWFbOZ7YLVlbTw==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/users/-/users-0.0.4.tgz"
+  integrity sha512-TiJFrO+0r5HnHZe0p7F75pXsdc94l8tpaI9Zl65Z08LPio+x2NQqNcoTRPiwyicG76IJO12ufVOk6lyR0Xu7ug==
   dependencies:
     lodash "^4.17.21"
 
 "@leemons/users@file:/home/runner/work/leemons/leemons/packages/leemons-users":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-users"
   dependencies:
     lodash "^4.17.21"
 
 "@leemons/utils@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/utils/-/utils-0.0.3.tgz"
-  integrity sha512-/3Y0D/CZfKbwwM1JLp3Y9xGcN5WG4ucA8E5DFSD4ZpKnb4JsEFIwdDDwOHCbC1uP0+hc1CMIPkUQNM4vxWuFSA==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/utils/-/utils-0.0.4.tgz"
+  integrity sha512-dJ0tYwu6tDbsGpqR/vHXXCh0mNt04UzhanyMd5nR9/UYwouoCOzMLD5dkK6sCuM0LNktJGyDXsyxN/0eH6niKw==
   dependencies:
     "@leemons/service-name-parser" dev
     crypto "^1.0.1"
     lodash "^4.17.21"
 
 "@leemons/utils@file:/home/runner/work/leemons/leemons/packages/leemons-utils":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-utils"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3661,9 +3661,9 @@
     lodash "^4.17.21"
 
 "@leemons/validator@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/validator/-/validator-0.0.3.tgz"
-  integrity sha512-sIIdAmvnAgqQrS5xCLuMl92zKTz78+Fi/vckuVnmTvMFVTo7WE2YfEGHJ6feph+Urc8MFleiiF9+lCKH2GY5tA==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/validator/-/validator-0.0.4.tgz"
+  integrity sha512-GRj1L4XqBeR+SrWF0IpxxeK5FLExu9n3sQJidlDjGPRuOaygdz1ocCOLPXMg7OfMURFzAQsagTiNickHJR0Ipg==
   dependencies:
     ajv "^8.12.0"
     ajv-formats "^2.1.1"
@@ -3671,7 +3671,7 @@
     lodash "^4.17.21"
 
 "@leemons/validator@file:/home/runner/work/leemons/leemons/packages/leemons-validator":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-validator"
   dependencies:
     ajv "^8.12.0"
@@ -3680,27 +3680,27 @@
     lodash "^4.17.21"
 
 "@leemons/widgets@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/widgets/-/widgets-0.0.3.tgz"
-  integrity sha512-a4JKxIIMBygM3Izs5ZshXKKceOTNe84LKHiEbuMXluJScbfxd3YoUmuQbX8bGXlIhRaltPlGOp2z7POBYxs3rg==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/widgets/-/widgets-0.0.4.tgz"
+  integrity sha512-USaG6mZMOS5WIPhTINMHcJLoWoChDdAFhXn1efJeNyUlTIDxIKyFm1dXNx+HG4CdPDx7krtNFkHSu5/AZ3Wyhg==
   dependencies:
     "@leemons/mongodb-helpers" dev
     lodash "^4.17.21"
 
 "@leemons/widgets@file:/home/runner/work/leemons/leemons/packages/leemons-widgets":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-widgets"
   dependencies:
     "@leemons/mongodb-helpers" dev
     lodash "^4.17.21"
 
 "@leemons/xapi@dev":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@leemons/xapi/-/xapi-0.0.3.tgz"
-  integrity sha512-vQcilbs6NkCebwT1M9q9vDDrc5orSTBP3TnImSkxizz1V7Ki6hT3M9zRxJwJ6QSlSF34Tcxjq20ZB2Iy6zs3Vw==
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@leemons/xapi/-/xapi-0.0.4.tgz"
+  integrity sha512-/o5XUpIXaafNFtIb1LYezJ2ZQcN8xBXgtX0mlsPGAeglNT1RX0gXHsOcyR1j2uD/TnLaO8T42aWvEBfn1U+xrA==
 
 "@leemons/xapi@file:/home/runner/work/leemons/leemons/packages/leemons-xapi":
-  version "0.0.4"
+  version "0.0.5"
   resolved "file:packages/leemons-xapi"
 
 "@leichtgewicht/ip-codec@^2.0.1":
