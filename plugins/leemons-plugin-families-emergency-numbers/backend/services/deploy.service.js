@@ -3,17 +3,17 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const _ = require('lodash');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 const path = require('path');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { permissions, datasetLocations } = require('../config/constants');
 const { getServiceModels } = require('../models');
 

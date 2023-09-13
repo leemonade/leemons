@@ -1,4 +1,4 @@
-const { getTranslationKey } = require('leemons-multilanguage');
+const { getTranslationKey } = require('@leemons/multilanguage');
 const { validatePluginName, validateExistLocation } = require('../../validations/exists');
 const { validateAddLocation } = require('../../validations/datasetLocation');
 

@@ -27,15 +27,15 @@
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
     "@leemons/cache": "dev",
-    "leemons-deployment-manager": "1.0.0",
+    "@leemons/deployment-manager": "dev",
     "@leemons/error": "dev",
-    "leemons-middlewares": "1.0.0",
-    "leemons-mongodb": "1.0.0",
-    "leemons-mongodb-helpers": "1.0.0",
-    "leemons-mqtt": "1.0.0",
-    "leemons-multilanguage": "1.0.0",
-    "leemons-utils": "1.0.0",
-    "leemons-validator": "1.0.0",
+    "@leemons/middlewares": "dev",
+    "@leemons/mongodb": "dev",
+    "@leemons/mongodb-helpers": "dev",
+    "@leemons/mqtt": "dev",
+    "@leemons/multilanguage": "dev",
+    "@leemons/utils": "dev",
+    "@leemons/validator": "dev",
     "moleculer": "^0.14.26"
   },
   "engines": {

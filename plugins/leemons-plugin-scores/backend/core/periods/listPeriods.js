@@ -1,6 +1,6 @@
 const { map } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 module.exports = async function listPeriods({ sort, page, size, ctx, ...query }) {
   const { userSession } = ctx.params;

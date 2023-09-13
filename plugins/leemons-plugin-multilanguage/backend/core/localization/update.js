@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { getObjectArrayKeys } = require('leemons-utils');
+const { getObjectArrayKeys } = require('@leemons/utils');
 const { Validator } = require('../../validations/localization');
 const {
   getLocalizationModelFromCTXAndIsPrivate,

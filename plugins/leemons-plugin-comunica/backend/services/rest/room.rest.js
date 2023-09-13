@@ -5,12 +5,12 @@
  */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
-const { randomString } = require('leemons-utils');
+} = require('@leemons/middlewares');
+const { randomString } = require('@leemons/utils');
 const { LeemonsError } = require('@leemons/error');
 const {
   getUserAgentRoomsList,

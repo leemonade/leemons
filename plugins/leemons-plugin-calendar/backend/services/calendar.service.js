@@ -5,12 +5,12 @@
 
 const _ = require('lodash');
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const mongoose = require('mongoose');
 const { LeemonsError } = require('@leemons/error');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const calendar = require('../core/calendar');
 const events = require('../core/events');

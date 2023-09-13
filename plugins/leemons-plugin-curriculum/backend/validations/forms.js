@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
 const { stringSchema, numberSchema, stringSchemaNullable } = require('./types');
 

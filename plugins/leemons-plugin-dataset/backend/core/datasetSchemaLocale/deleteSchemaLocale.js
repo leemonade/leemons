@@ -1,3 +1,4 @@
+const { getTranslationKey } = require('@leemons/multilanguage');
 const {
   validateNotExistSchemaLocale,
   validateNotExistSchema,
@@ -5,7 +6,6 @@ const {
   validatePluginName,
 } = require('../../validations/exists');
 const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
-const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:

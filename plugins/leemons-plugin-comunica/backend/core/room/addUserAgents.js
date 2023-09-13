@@ -1,6 +1,6 @@
 const _ = require('lodash');
+const { randomString } = require('@leemons/utils');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
-const { randomString } = require('leemons-utils');
 
 async function add({ room, userAgent, isAdmin, ctx }) {
   const response = await ctx.tx.db.UserAgentInRoom.findOne(

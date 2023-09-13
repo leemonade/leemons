@@ -1,4 +1,4 @@
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 
 async function addPermissionsDeploy({ keyValueModel, permissions, ctx }) {
   if (!(await hasKey(keyValueModel, `permissions`))) {

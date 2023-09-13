@@ -4,9 +4,9 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const addLocation = require('../core/datesetLocation/addLocation');
 const { getServiceModels } = require('../models');
 const {

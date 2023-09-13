@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 const moment = require('moment');
 const constants = require('../../config/constants');
 

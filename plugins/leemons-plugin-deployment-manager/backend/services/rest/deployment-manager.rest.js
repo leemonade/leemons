@@ -7,8 +7,8 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
-const { LeemonsValidator } = require('leemons-validator');
+} = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
 
 /** @type {ServiceSchema} */
 module.exports = {

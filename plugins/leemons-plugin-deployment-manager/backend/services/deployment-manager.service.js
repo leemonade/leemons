@@ -4,10 +4,10 @@
  */
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const { LeemonsMongoDBMixin } = require('leemons-mongodb');
-const { randomString } = require('leemons-utils');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { randomString } = require('@leemons/utils');
 const { LeemonsError } = require('@leemons/error');
-const { newTransaction } = require('leemons-transactions');
+const { newTransaction } = require('@leemons/transactions');
 const { deploymentPluginsModel } = require('../models/deployment-plugins');
 const { deploymentPluginsRelationshipModel } = require('../models/deployment-plugins-relationship');
 const { savePluginsToDeployment } = require('../core/deployment-plugins/savePluginsToDeployment');

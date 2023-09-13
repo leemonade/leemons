@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
-const { getObjectArrayKeys } = require('leemons-utils');
+const { getObjectArrayKeys } = require('@leemons/utils');
 const localesFunctions = require('../locale');
 const { Validator } = require('../../validations/localization');
 const { has } = require('./has');

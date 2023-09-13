@@ -1,5 +1,5 @@
 const ApiGateway = require('moleculer-web');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema

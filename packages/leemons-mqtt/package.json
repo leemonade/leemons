@@ -1,6 +1,6 @@
 {
-  "name": "leemons-mqtt",
-  "version": "1.0.0",
+  "name": "@leemons/mqtt",
+  "version": "0.0.2",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -23,9 +23,9 @@
   "license": "MIT",
   "dependencies": {
     "@leemons/error": "dev",
-    "leemons-lrn": "1.0.0",
-    "leemons-service-name-parser": "1.0.0",
-    "leemons-transactions": "1.0.0",
+    "@leemons/lrn": "dev",
+    "@leemons/service-name-parser": "dev",
+    "@leemons/transactions": "dev",
     "lodash": "^4.17.21",
     "mongoose": "^7.1.1"
   }

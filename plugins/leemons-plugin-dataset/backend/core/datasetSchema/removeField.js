@@ -1,9 +1,9 @@
 const _ = require('lodash');
+const { getTranslationKey } = require('@leemons/multilanguage');
 const { validateNotExistLocation } = require('../../validations/exists');
 const getSchema = require('./getSchema');
 const { transformJsonSchema, transformUiSchema } = require('./transformJsonOrUiSchema');
 const updateSchema = require('./updateSchema');
-const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:

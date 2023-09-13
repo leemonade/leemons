@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { addTransactionState } = require('leemons-transactions');
+const { addTransactionState } = require('@leemons/transactions');
 const { ObjectId } = require('mongodb');
-const { generateLRN } = require('leemons-lrn');
+const { generateLRN } = require('@leemons/lrn');
 const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
 const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {

@@ -1,4 +1,4 @@
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 
 async function generateJWTPrivateKey({ ctx }) {
   const config = await ctx.tx.db.Config.findOne({ key: 'jwt-private-key' }).lean();

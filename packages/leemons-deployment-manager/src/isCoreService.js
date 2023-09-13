@@ -1,4 +1,4 @@
-// const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+// const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 
 // TODO [!!!] Investigar si nos pueden llegar a llamar usando $node pasandose la seguridad
 const ignoreNames = ['$node']; // 'deployment-manager', 'gateway'

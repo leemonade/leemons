@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { LeemonsError } = require('@leemons/error');
 const { getUserProgramIds } = require('./getUserProgramIds');
 

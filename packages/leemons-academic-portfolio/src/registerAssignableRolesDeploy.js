@@ -1,4 +1,4 @@
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 const _ = require('lodash');
 
 async function registerAssignableRolesDeploy({ keyValueModel, assignableRoles, ctx }) {

@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const { DateTime } = require('luxon');
 const { forEach, orderBy } = require('lodash');
-const { XAPIVerbs } = require('leemons-xapi');
+const { XAPIVerbs } = require('@leemons/xapi');
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

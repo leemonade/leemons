@@ -1,4 +1,4 @@
-const { LeemonsValidator, localeRegex, localeRegexString } = require('leemons-validator');
+const { LeemonsValidator, localeRegex, localeRegexString } = require('@leemons/validator');
 
 /**
  * String with format localeCode (xx or xx-yy)

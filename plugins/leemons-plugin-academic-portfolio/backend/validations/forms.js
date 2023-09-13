@@ -1,4 +1,4 @@
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { isArray } = require('lodash');

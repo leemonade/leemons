@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 const { addLocales } = require('./addLocales');
 
 async function exec({ keyValueModel, locale, i18nPath, ctx }) {

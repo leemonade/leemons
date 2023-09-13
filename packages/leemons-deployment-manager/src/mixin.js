@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 

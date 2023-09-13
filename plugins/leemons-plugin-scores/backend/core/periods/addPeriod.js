@@ -1,5 +1,5 @@
 const { pick, isString } = require('lodash');
-const { sqlDatetime } = require('leemons-utils');
+const { sqlDatetime } = require('@leemons/utils');
 const { validatePeriod } = require('../../validation/validatePeriod');
 
 module.exports = async function addPeriod({ period, ctx }) {

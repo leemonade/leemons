@@ -10,16 +10,16 @@
   "dependencies": {
     "jest": "^29.6.2",
     "@leemons/cache": "dev",
-    "leemons-deployment-manager": "1.0.0",
-    "leemons-menu-builder": "1.0.0",
-    "leemons-mongodb": "1.0.0",
-    "leemons-mqtt": "1.0.0",
-    "leemons-multi-events": "1.0.0",
-    "leemons-multilanguage": "1.0.0",
-    "leemons-permissions": "1.0.0",
+    "@leemons/deployment-manager": "dev",
+    "@leemons/menu-builder": "dev",
+    "@leemons/mongodb": "dev",
+    "@leemons/mqtt": "dev",
+    "@leemons/multi-events": "dev",
+    "@leemons/multilanguage": "dev",
+    "@leemons/permissions": "dev",
     "leemons-testing": "1.0.0",
-    "leemons-validator": "1.0.0",
-    "leemons-widgets": "1.0.0",
+    "@leemons/validator": "dev",
+    "@leemons/widgets": "dev",
     "lodash": "^4.17.21"
   }
 }

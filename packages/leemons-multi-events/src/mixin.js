@@ -2,8 +2,8 @@
 const _ = require('lodash');
 const { setTimeout } = require('timers/promises');
 const { LeemonsError } = require('@leemons/error');
-const { setKey, hasKeys, hasKey, getKey } = require('leemons-mongodb-helpers');
-const { randomString } = require('leemons-utils');
+const { setKey, hasKeys, hasKey, getKey } = require('@leemons/mongodb-helpers');
+const { randomString } = require('@leemons/utils');
 
 function getEventKey(str) {
   return `multi-events-${str}`;
