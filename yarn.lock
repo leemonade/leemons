@@ -3299,7 +3299,7 @@
     lodash "^4.17.21"
 
 "@leemons/academic-portfolio@file:/home/runner/work/leemons/leemons/packages/leemons-academic-portfolio":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-academic-portfolio"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3316,7 +3316,7 @@
     redis "^4.6.7"
 
 "@leemons/cache@file:/home/runner/work/leemons/leemons/packages/leemons-cache":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-cache"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3335,7 +3335,7 @@
     redis "^4.6.7"
 
 "@leemons/common@file:/home/runner/work/leemons/leemons/packages/leemons-common":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-common"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3353,7 +3353,7 @@
     lodash "^4.17.21"
 
 "@leemons/deployment-manager@file:/home/runner/work/leemons/leemons/packages/leemons-deployment-manager":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-deployment-manager"
   dependencies:
     "@leemons/error" dev
@@ -3366,7 +3366,7 @@
   integrity sha512-Z1ICWco37rg9GU1ussqh0zsRIFbZYeLgpyqkSenUQke2dMUMRmM261dxyb6dQN+m6IhiKnP0s6SiEoS6yu3WQw==
 
 "@leemons/emails@file:/home/runner/work/leemons/leemons/packages/leemons-emails":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-emails"
 
 "@leemons/error@dev":
@@ -3378,7 +3378,7 @@
     lodash "^4.17.21"
 
 "@leemons/error@file:/home/runner/work/leemons/leemons/packages/leemons-error":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-error"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3390,7 +3390,7 @@
   integrity sha512-7UQMa2h2khY6hQViMXyaqTWjHmeki3edK5VGL/RPQ8fvBpTQzIMffn4RO4lejCRyxSd/wQ1D5akcDFhHxVtRJQ==
 
 "@leemons/lrn@file:/home/runner/work/leemons/leemons/packages/leemons-lrn":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-lrn"
 
 "@leemons/menu-builder@dev":
@@ -3403,7 +3403,7 @@
     lodash "^4.17.21"
 
 "@leemons/menu-builder@file:/home/runner/work/leemons/leemons/packages/leemons-menu-builder":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-menu-builder"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3420,7 +3420,7 @@
     lodash "^4.17.21"
 
 "@leemons/middlewares@file:/home/runner/work/leemons/leemons/packages/leemons-middlewares":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-middlewares"
   dependencies:
     "@leemons/error" dev
@@ -3435,7 +3435,7 @@
     "@leemons/mongodb" dev
 
 "@leemons/mongodb-helpers@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb-helpers":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-mongodb-helpers"
   dependencies:
     "@leemons/mongodb" dev
@@ -3453,7 +3453,7 @@
     mongoose "^7.1.1"
 
 "@leemons/mongodb@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-mongodb"
   dependencies:
     "@leemons/error" dev
@@ -3476,7 +3476,7 @@
     mongoose "^7.1.1"
 
 "@leemons/mqtt@file:/home/runner/work/leemons/leemons/packages/leemons-mqtt":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-mqtt"
   dependencies:
     "@leemons/error" dev
@@ -3497,7 +3497,7 @@
     lodash "^4.17.21"
 
 "@leemons/multi-events@file:/home/runner/work/leemons/leemons/packages/leemons-multi-events":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-multi-events"
   dependencies:
     "@leemons/error" dev
@@ -3515,7 +3515,7 @@
     lodash "^4.17.21"
 
 "@leemons/multilanguage@file:/home/runner/work/leemons/leemons/packages/leemons-multilanguage":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-multilanguage"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3531,7 +3531,7 @@
     lodash "^4.17.21"
 
 "@leemons/permissions@file:/home/runner/work/leemons/leemons/packages/leemons-permissions":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-permissions"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3546,14 +3546,14 @@
     lodash "^4.17.21"
 
 "@leemons/providers@file:/home/runner/work/leemons/leemons/packages/leemons-providers":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-providers"
   dependencies:
     "@leemons/error" dev
     lodash "^4.17.21"
 
 "@leemons/react@file:/home/runner/work/leemons/leemons/packages/leemons-react":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-react"
   dependencies:
     "@loadable/component" "^5.0.0"
@@ -3587,7 +3587,7 @@
     moleculer "^0.14.26"
 
 "@leemons/runner@file:/home/runner/work/leemons/leemons/packages/leemons-runner":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-runner"
   dependencies:
     args "^5.0.3"
@@ -3603,7 +3603,7 @@
   integrity sha512-palqtELwDAima4oWpBwcfH2hXBP1pf6YE4+sh4Pi+/nMVrpHZ3/NTWfxQGwTD/vbPfSwKnNLOtY2XAU0XpQJ2A==
 
 "@leemons/service-name-parser@file:/home/runner/work/leemons/leemons/packages/leemons-service-name-parser":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-service-name-parser"
 
 "@leemons/testing@dev":
@@ -3615,7 +3615,7 @@
     mongodb-memory-server-core "^8.15.0"
 
 "@leemons/testing@file:/home/runner/work/leemons/leemons/packages/leemons-testing":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-testing"
   dependencies:
     "@leemons/mongodb" dev
@@ -3627,7 +3627,7 @@
   integrity sha512-46L1S0TNhYPsxk1vNR/2bqBE9gqkDrZy8J1n8GTg69QrtJlxVI0FlaPKmDC6lBXSIfYVK25nOHsWA+SwPo0IHA==
 
 "@leemons/transactions@file:/home/runner/work/leemons/leemons/packages/leemons-transactions":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-transactions"
 
 "@leemons/users@dev":
@@ -3638,7 +3638,7 @@
     lodash "^4.17.21"
 
 "@leemons/users@file:/home/runner/work/leemons/leemons/packages/leemons-users":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-users"
   dependencies:
     lodash "^4.17.21"
@@ -3653,7 +3653,7 @@
     lodash "^4.17.21"
 
 "@leemons/utils@file:/home/runner/work/leemons/leemons/packages/leemons-utils":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-utils"
   dependencies:
     "@leemons/service-name-parser" dev
@@ -3671,7 +3671,7 @@
     lodash "^4.17.21"
 
 "@leemons/validator@file:/home/runner/work/leemons/leemons/packages/leemons-validator":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-validator"
   dependencies:
     ajv "^8.12.0"
@@ -3688,7 +3688,7 @@
     lodash "^4.17.21"
 
 "@leemons/widgets@file:/home/runner/work/leemons/leemons/packages/leemons-widgets":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-widgets"
   dependencies:
     "@leemons/mongodb-helpers" dev
@@ -3700,7 +3700,7 @@
   integrity sha512-vQcilbs6NkCebwT1M9q9vDDrc5orSTBP3TnImSkxizz1V7Ki6hT3M9zRxJwJ6QSlSF34Tcxjq20ZB2Iy6zs3Vw==
 
 "@leemons/xapi@file:/home/runner/work/leemons/leemons/packages/leemons-xapi":
-  version "0.0.3"
+  version "0.0.4"
   resolved "file:packages/leemons-xapi"
 
 "@leichtgewicht/ip-codec@^2.0.1":
