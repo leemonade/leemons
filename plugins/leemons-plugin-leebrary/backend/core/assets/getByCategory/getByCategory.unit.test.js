@@ -9,7 +9,7 @@ const { assetsSchema } = require('../../../models/assets');
 const getAssets = require('../../../__fixtures__/getAssets');
 
 // MOCKS
-jest.mock('./getByIds');
+jest.mock('../getByIds/getByIds');
 const { getByIds } = require('../getByIds/getByIds');
 
 let mongooseConnection;
@@ -50,7 +50,7 @@ it('Should return assets by category as an array of asset Ids when details flag 
   await ctx.db.Assets.create(initialValues);
 
   // Act
-  const response = await getByCategory({ categoryId, ctx });
+  const response = _.orderBy(await getByCategory({ categoryId, ctx }), 'id', 'asc');
 
   // Assert
   expect(response).toHaveLength(2);

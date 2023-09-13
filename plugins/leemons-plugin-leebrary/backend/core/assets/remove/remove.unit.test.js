@@ -9,7 +9,7 @@ const { assetsSchema } = require('../../../models/assets');
 const getAssets = require('../../../__fixtures__/getAssets');
 const { CATEGORIES } = require('../../../config/constants');
 
-jest.mock('../getByIds');
+jest.mock('../getByIds/getByIds');
 jest.mock('../../permissions/getByAsset');
 jest.mock('../files/getByAsset/getByAsset');
 jest.mock('../../categories/getById');

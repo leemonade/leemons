@@ -3,8 +3,8 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const _ = require('lodash');
 
-const { getIndexables } = require('./getIndexables');
-const { assetsSchema } = require('../../models/assets');
+const { find } = require('./find');
+const { assetsSchema } = require('../../../models/assets');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -29,7 +29,7 @@ beforeEach(async () => {
 
 it('Should correctly query the db and return the desired fields', async () => {
   // Arrange
-  const assetIds = ['asset1', 'asset3'];
+  const query = { public: true };
   const columns = ['id', 'indexable'];
 
   const ctx = generateCtx({
@@ -39,9 +39,9 @@ it('Should correctly query the db and return the desired fields', async () => {
   });
 
   const initialValues = [
-    { id: 'asset1', indexable: true },
-    { id: 'asset2', indexable: true },
-    { id: 'asset3', indexable: false },
+    { public: true, id: 'asset1', indexable: true },
+    { public: false, id: 'asset2', indexable: true },
+    { public: true, id: 'asset3', indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
   const expectedResponse = [
@@ -50,21 +50,22 @@ it('Should correctly query the db and return the desired fields', async () => {
   ];
 
   // Act
-  let response = await getIndexables({ assetIds, columns, ctx });
+  let response = await find({ query, columns, ctx });
   response = response.sort((a, b) => a.id.localeCompare(b.id));
 
   // Assert
   response.forEach((obj, i) => {
     expect(obj.id).toEqual(expectedResponse[i].id);
     expect(obj.indexable).toEqual(expectedResponse[i].indexable);
+    expect(obj.public).toBe(undefined);
     expect(_.isPlainObject(obj)).toBe(true);
   });
 });
 
-it('Should return empty array if no matching assetIds are found', async () => {
+it('Should accept emtpy object as query and columns', async () => {
   // Arrange
-  const assetIds = ['asset4', 'asset5'];
-  const columns = ['id', 'indexable'];
+  const query = {};
+  const columns = {};
 
   const ctx = generateCtx({
     models: {
@@ -73,20 +74,25 @@ it('Should return empty array if no matching assetIds are found', async () => {
   });
 
   const initialValues = [
-    { id: 'asset1', indexable: true },
-    { id: 'asset2', indexable: true },
-    { id: 'asset3', indexable: false },
+    { public: true, id: 'asset1', indexable: true },
+    { public: false, id: 'asset2', indexable: true },
+    { public: true, id: 'asset3', indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
 
   // Act
-  const response = await getIndexables({ assetIds, columns, ctx });
+  const response = await find({ query, columns, ctx });
 
   // Assert
-  expect(response).toEqual([]);
+  expect(response.length).toBe(initialValues.length);
+  response.forEach((obj) => {
+    expect(obj).toHaveProperty(['id']);
+    expect(obj).toHaveProperty(['public']);
+    expect(obj).toHaveProperty(['indexable']);
+  });
 });
 
-it('Should not throw if assetsIds is not passed', async () => {
+it('Should not catch db errors provoked by wrong query or columns values', async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
@@ -94,14 +100,10 @@ it('Should not throw if assetsIds is not passed', async () => {
     },
   });
 
-  const initialValues = [
-    { id: 'asset1', indexable: true },
-    { id: 'asset2', indexable: true },
-    { id: 'asset3', indexable: false },
-  ];
-  await ctx.db.Assets.create(initialValues);
-  const response = await getIndexables({ ctx });
+  const responseWrongQuery = async () => find({ query: 123, ctx });
+  const responseWrongColumns = async () => find({ query: {}, columns: 123, ctx });
 
   // Act and Assert
-  expect(response).toEqual([]);
+  await expect(responseWrongQuery).rejects.toThrow();
+  await expect(responseWrongColumns).rejects.toThrow();
 });

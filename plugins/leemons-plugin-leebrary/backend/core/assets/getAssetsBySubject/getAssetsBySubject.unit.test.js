@@ -3,7 +3,7 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 
 const { getAssetsBySubject } = require('./getAssetsBySubject');
-const { assetsSubjectsSchema } = require('../../models/assetsSubjects');
+const { assetsSubjectsSchema } = require('../../../models/assetsSubjects');
 
 let mongooseConnection;
 let disconnectMongoose;

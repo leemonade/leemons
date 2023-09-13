@@ -9,11 +9,10 @@ const { assetsSchema } = require('../../../models/assets');
 const { update } = require('./update');
 
 jest.mock('../../validations/forms');
-
 jest.mock('../../permissions/getByAsset');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 
-jest.mock('../getByIds');
+jest.mock('../getByIds/getByIds');
 const { getByIds } = require('../getByIds/getByIds');
 
 jest.mock('./handleUpdateObject');
