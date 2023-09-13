@@ -30,7 +30,7 @@
     "@moleculer/channels": "^0.1.6",
     "aws-iot-device-sdk": "^2.2.12",
     "aws-sdk": "^2.1450.0",
-    "leemons-cache": "1.0.0",
+    "@leemons/cache": "dev",
     "leemons-deployment-manager": "1.0.0",
     "@leemons/error": "dev",
     "leemons-menu-builder": "1.0.0",

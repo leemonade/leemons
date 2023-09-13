@@ -12,7 +12,7 @@ const { addPermissionsDeploy } = require('leemons-permissions');
 
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
 const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { registerAssignableRolesDeploy } = require('leemons-assignables');
+const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
 const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { permissions, assignableRoles, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');

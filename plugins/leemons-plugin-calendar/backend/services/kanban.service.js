@@ -4,14 +4,14 @@
  */
 
 const _ = require('lodash');
-const { LeemonsCacheMixin } = require('leemons-cache');
+const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const mongoose = require('mongoose');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 const kanbanColumns = require('../core/kanban-columns');
 const kanbanEventOrders = require('../core/kanban-event-orders');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {

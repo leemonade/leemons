@@ -24,7 +24,7 @@
     "@moleculer/channels": "^0.1.6",
     "bcrypt": "^5.0.1",
     "jsonwebtoken": "^9.0.0",
-    "leemons-cache": "1.0.0",
+    "@leemons/cache": "dev",
     "leemons-deployment-manager": "1.0.0",
     "leemons-emails": "1.0.0",
     "leemons-menu-builder": "1.0.0",

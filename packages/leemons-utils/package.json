@@ -9,6 +9,10 @@
     "name": "Leemons Edtech Solutions",
     "url": "https://www.leemons.io"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "maintainers": [
     {
       "email": "hi@leemons.io",

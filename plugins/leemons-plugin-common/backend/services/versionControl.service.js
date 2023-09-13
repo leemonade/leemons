@@ -3,10 +3,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
+const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 const { getVersion, publishVersion } = require('../core/versionControl/versions');
 const { create, remove, get, update } = require('../core/versionControl/currentVersions');
@@ -24,7 +25,6 @@ const {
   parseVersion,
   stringifyVersion,
 } = require('../core/versionControl/helpers');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {

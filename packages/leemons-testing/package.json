@@ -6,6 +6,10 @@
   "scripts": {
     "build": "turbo build"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "dependencies": {
     "leemons-mongodb": "1.0.0",
     "mongodb-memory-server-core": "^8.15.0"

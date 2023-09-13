@@ -17,7 +17,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: 🔧 Patch and publish to NPM
-        run:  NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} bash patch_publish.sh ./packages/leemons-error dev
+        run:  NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} bash patch_publish.sh ./packages/leemons-error ./packages/leemons-academic-portfolio ./packages/leemons-cache dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -33,4 +33,4 @@ jobs:
           git config user.email "<>"
           git add .
           git commit -m 'chore: version bump'
-          git push origin microservices/dev
+          git push origin /microservices/dev

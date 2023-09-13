@@ -11,7 +11,7 @@ const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 
 const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { registerAssignableRolesDeploy } = require('leemons-assignables');
+const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
 const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { permissions, assignableRoles } = require('../config/constants');
 const { getServiceModels } = require('../models');

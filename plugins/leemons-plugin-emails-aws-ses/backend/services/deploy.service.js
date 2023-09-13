@@ -7,7 +7,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
-const { LeemonsCacheMixin } = require('leemons-cache');
+const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 

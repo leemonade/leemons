@@ -7,7 +7,7 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 
 const path = require('path');
 
-const { registerAssignableRolesDeploy } = require('leemons-assignables');
+const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { addWidgetItemsDeploy } = require('leemons-widgets');

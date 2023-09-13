@@ -5,7 +5,7 @@
 const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getProvidersActions } = require('leemons-providers');
-const { LeemonsCacheMixin } = require('leemons-cache');
+const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 

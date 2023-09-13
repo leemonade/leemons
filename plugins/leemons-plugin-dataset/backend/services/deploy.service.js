@@ -9,10 +9,10 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const path = require('path');
 const { addLocalesDeploy } = require('leemons-multilanguage');
 const { addPermissionsDeploy } = require('leemons-permissions');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { LeemonsCacheMixin } = require('@leemons/cache');
 const { getServiceModels } = require('../models');
 const { defaultPermissions } = require('../config/constants');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
-const { LeemonsCacheMixin } = require('leemons-cache');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
