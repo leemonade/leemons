@@ -17,7 +17,7 @@
     "@leemons/multi-events": "dev",
     "@leemons/multilanguage": "dev",
     "@leemons/permissions": "dev",
-    "leemons-testing": "1.0.0",
+    "leemons-testing": "dev",
     "@leemons/validator": "dev",
     "@leemons/widgets": "dev",
     "lodash": "^4.17.21"

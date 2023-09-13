@@ -59,6 +59,7 @@ jobs:
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
+          git checkout microservices/dev
           git add .
           git commit -m 'chore: version bump'
-          git push origin /microservices/dev
+          git push origin microservices/dev
