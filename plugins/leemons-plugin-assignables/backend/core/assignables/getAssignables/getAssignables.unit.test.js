@@ -11,19 +11,19 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const { pick, omit } = require('lodash');
 
-globalJest.mock('../permissions/users/getUserPermissions');
-globalJest.mock('../roles');
-globalJest.mock('../subjects');
-globalJest.mock('../leebrary/assets/getAsset');
+globalJest.mock('../../permissions/users/getUserPermissions');
+globalJest.mock('../../roles');
+globalJest.mock('../../subjects');
+globalJest.mock('../../leebrary/assets');
 
 const { getAssignables } = require('./getAssignables');
-const { assignablesSchema } = require('../../models/assignables');
-const getAssignableObject = require('../../__fixtures__/getAssignableObject');
+const { assignablesSchema } = require('../../../models/assignables');
+const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
 
-const { getRoles } = require('../roles');
-const { getSubjects } = require('../subjects');
-const { getAsset } = require('../leebrary/assets/getAsset');
-const { getUserPermissions } = require('../permissions/users/getUserPermissions');
+const { getRoles } = require('../../roles');
+const { getSubjects } = require('../../subjects');
+const { getAsset } = require('../../leebrary/assets');
+const { getUserPermissions } = require('../../permissions/users/getUserPermissions');
 
 let mongooseConnection;
 let disconnectMongoose;

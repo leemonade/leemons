@@ -3,10 +3,10 @@ const { LeemonsError } = require('leemons-error');
 const {
   validateAssignable,
   validAssignableProperties,
-} = require('../../validations/validateAssignable');
-const { updateAsset } = require('../leebrary/assets/updateAsset');
-const { getUserPermission } = require('../permissions/users/getUserPermission');
-const { getAssignable } = require('./getAssignable');
+} = require('../../../validations/validateAssignable');
+const { updateAsset } = require('../../leebrary/assets');
+const { getUserPermission } = require('../../permissions/users/getUserPermission');
+const { getAssignable } = require('../getAssignable');
 
 function validateAssignableForPublish({ assignable, ctx }) {
   if (assignable.isDeleted) {

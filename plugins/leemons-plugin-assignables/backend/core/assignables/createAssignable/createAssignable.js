@@ -1,10 +1,10 @@
 const { pick } = require('lodash');
-const { validateAssignable } = require('../../validations/validateAssignable');
-const { duplicateAsset } = require('../leebrary/assets/duplicateAsset');
-const { registerAssignablePermission } = require('../permissions/assignables');
-const { addPermissionToUser } = require('../permissions/users/addPermissionToUser');
-const { saveSubjects } = require('../subjects/saveSubjects');
-const { publishAssignable } = require('./publishAssignable');
+const { validateAssignable } = require('../../../validations/validateAssignable');
+const { duplicateAsset } = require('../../leebrary/assets/duplicateAsset');
+const { registerAssignablePermission } = require('../../permissions/assignables');
+const { addPermissionToUser } = require('../../permissions/users/addPermissionToUser');
+const { saveSubjects } = require('../../subjects/saveSubjects');
+const { publishAssignable } = require('../publishAssignable');
 
 async function createAsset({ asset, role, subjects, published, ctx }) {
   const assetProgram = subjects?.length ? subjects[0].program : null;
@@ -162,7 +162,7 @@ async function createAssignable({
 
     return assignableCreated;
   } catch (e) {
-    e.messsage = `Failed to create assignable: ${e.message}`;
+    e.message = `Failed to create assignable: ${e.message}`;
     throw e;
   }
 }

@@ -1,5 +1,5 @@
 const { LeemonsError } = require('leemons-error');
-const { getAssignables } = require('./getAssignables');
+const { getAssignables } = require('../getAssignables');
 
 async function getAssignable({ id, columns = ['asset'], withFiles, showDeleted = true, ctx }) {
   try {

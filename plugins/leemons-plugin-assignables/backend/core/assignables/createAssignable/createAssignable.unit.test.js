@@ -3,18 +3,18 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const { omit } = require('lodash');
 
-jest.mock('../subjects/saveSubjects');
-jest.mock('../permissions/assignables');
-jest.mock('../permissions/users/addPermissionToUser');
-jest.mock('./publishAssignable.js');
+jest.mock('../../subjects/saveSubjects');
+jest.mock('../../permissions/assignables');
+jest.mock('../../permissions/users/addPermissionToUser');
+jest.mock('../publishAssignable');
 
 const { createAssignable } = require('./createAssignable');
-const { assignablesSchema } = require('../../models/assignables');
-const getAssignableObject = require('../../__fixtures__/getAssignableObject');
+const { assignablesSchema } = require('../../../models/assignables');
+const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
 
-const { saveSubjects } = require('../subjects/saveSubjects');
-const { publishAssignable } = require('./publishAssignable');
-const { addPermissionToUser } = require('../permissions/users/addPermissionToUser');
+const { saveSubjects } = require('../../subjects');
+const { publishAssignable } = require('../publishAssignable');
+const { addPermissionToUser } = require('../../permissions/users/addPermissionToUser');
 
 let mongooseConnection;
 let disconnectMongoose;

@@ -1,11 +1,11 @@
 const { it, expect, jest: globalJest } = require('@jest/globals');
 const { generateCtx } = require('leemons-testing');
 
-globalJest.mock('./getAssignables');
+globalJest.mock('../getAssignables');
 
 const { getAssignable } = require('./getAssignable');
 
-const { getAssignables } = require('./getAssignables');
+const { getAssignables } = require('../getAssignables');
 
 it('Calls getAssignables and returns the first item', async () => {
   // Arrange

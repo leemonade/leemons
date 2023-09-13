@@ -1,9 +1,9 @@
 const { map, difference, omit } = require('lodash');
 const { LeemonsError } = require('leemons-error');
-const { getRoles } = require('../roles');
-const { getSubjects } = require('../subjects');
-const { getAsset } = require('../leebrary/assets/getAsset');
-const { getUserPermissions } = require('../permissions/users/getUserPermissions');
+const { getRoles } = require('../../roles');
+const { getSubjects } = require('../../subjects');
+const { getAsset } = require('../../leebrary/assets');
+const { getUserPermissions } = require('../../permissions/users/getUserPermissions');
 
 async function fetchAssignables({ ids, showDeleted, ctx }) {
   const query = {
