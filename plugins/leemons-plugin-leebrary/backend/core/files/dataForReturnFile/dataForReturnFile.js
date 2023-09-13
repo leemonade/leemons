@@ -19,6 +19,7 @@ const { handleReadStream } = require('./handleReadStream');
  * @param {boolean} [params.forceStream=true] - Whether to force the use of a stream even if the file could be loaded into memory.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} The data for returning the file, including common file details and the read stream.
+ * @throws {LeemonsError} If the read stream is not found or the file with the given id does not exist.
  */
 async function dataForReturnFile({
   id,
