@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Verifica si se proporcionó NODE_AUTH_TOKEN como argumento
+if [ -z "$NODE_AUTH_TOKEN" ]; then
+  echo "Por favor, proporciona la variable de entorno NODE_AUTH_TOKEN."
+  exit 1
+fi
+
 # Verifica que se haya proporcionado al menos una ruta como argumento
 if [ $# -lt 1 ]; then
   echo "Uso: $0 [rutas] [tag (opcional)]"
@@ -28,6 +34,9 @@ do
 
     # Ejecuta el comando npm version
     npm version patch --legacy-peer-deps
+
+    # Configura la variable de entorno NODE_AUTH_TOKEN
+    export NODE_AUTH_TOKEN="$NODE_AUTH_TOKEN"
 
     # Publica el paquete
     npm publish --tag "$tag"
