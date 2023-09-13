@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
 
       - name: 🔧 Setup node
         uses: actions/setup-node@v3
@@ -59,6 +61,7 @@ jobs:
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
+          git fetch origin microservices/dev
           git checkout microservices/dev
           git add .
           git commit -m 'chore: version bump'
