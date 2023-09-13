@@ -4,6 +4,7 @@ const { duplicateAsset } = require('../leebrary/assets/duplicateAsset');
 const { registerAssignablePermission } = require('../permissions/assignables');
 const { addPermissionToUser } = require('../permissions/users/addPermissionToUser');
 const { saveSubjects } = require('../subjects/saveSubjects');
+const { publishAssignable } = require('./publishAssignable');
 
 async function createAsset({ asset, role, subjects, published, ctx }) {
   const assetProgram = subjects?.length ? subjects[0].program : null;
@@ -11,23 +12,18 @@ async function createAsset({ asset, role, subjects, published, ctx }) {
     ? subjects.map(({ subject, level }) => ({ subject, level }))
     : null;
 
-  try {
-    const savedAsset = await ctx.tx.call('leebrary.assets.add', {
-      asset: {
-        ...pick(asset, ['cover', 'color', 'name', 'tagline', 'description', 'tags', 'indexable']),
-        program: assetProgram,
-        subjects: assetSubjects,
-        category: `assignables.${role}`,
-        public: true,
-      },
-      published,
-    });
+  const savedAsset = await ctx.tx.call('leebrary.assets.add', {
+    asset: {
+      ...pick(asset, ['cover', 'color', 'name', 'tagline', 'description', 'tags', 'indexable']),
+      program: assetProgram,
+      subjects: assetSubjects,
+      category: `assignables.${role}`,
+      public: true,
+    },
+    published,
+  });
 
-    return savedAsset;
-  } catch (e) {
-    e.message = `Error creating the asset: ${e.message}`;
-    throw e;
-  }
+  return savedAsset;
 }
 
 async function saveResources({ resources, leebraryResources, ctx }) {
@@ -68,7 +64,7 @@ async function saveResources({ resources, leebraryResources, ctx }) {
 
 async function registerVersionIfNoId({ id, ctx }) {
   if (!id) {
-    const version = await ctx.tx.call('common.versions.register');
+    const version = await ctx.tx.call('common.versionControl.register', { type: 'assignable' });
 
     return version.fullId;
   }
@@ -97,7 +93,9 @@ async function createAssignable({
       Validate entities
     */
 
-    validateAssignable(assignable);
+    validateAssignable(assignable, { useRequired: true });
+
+    // Throw error if role does not exists
     await ctx.tx.call('assignables.roles.get', { role: assignable.role });
 
     /*
@@ -130,10 +128,11 @@ async function createAssignable({
             leebrary: leebraryResources,
           }
         : metadata,
-      resources: resourcesToSave,
+      resources: resourcesToSave ?? [],
     };
 
-    const assignableCreated = await ctx.tx.db.Assignables.create(assignableToCreate);
+    let assignableCreated = await ctx.tx.db.Assignables.create(assignableToCreate);
+    assignableCreated = assignableCreated.toObject();
 
     await saveSubjects({
       assignableId: assignableCreated.id,
@@ -156,6 +155,10 @@ async function createAssignable({
       role: 'owner',
       ctx,
     });
+
+    if (published) {
+      await publishAssignable({ id: assignableCreated.id, ctx });
+    }
 
     return assignableCreated;
   } catch (e) {

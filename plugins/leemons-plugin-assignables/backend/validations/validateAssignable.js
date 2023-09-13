@@ -71,11 +71,6 @@ const assignableValidationObject = {
       nullable: true,
     },
     subjects: subjectsValidationObject,
-    // methodology: {
-    //   type: 'string',
-    //   maxLength: 255,
-    //   nullable: true,
-    // },
     statement: {
       type: 'string',
       maxLength: 16777215,
@@ -86,24 +81,6 @@ const assignableValidationObject = {
       maxLength: 16777215,
       nullable: true,
     },
-    // relatedAssignables: {
-    //   type: 'object',
-    //   properties: {
-    //     before: {
-    //       type: 'array',
-    //       items: {
-    //         type: 'object',
-    //       },
-    //     },
-    //     after: {
-    //       type: 'array',
-    //       items: {
-    //         type: 'object',
-    //       },
-    //     },
-    //   },
-    //   nullable: true,
-    // },
     duration: {
       type: 'string',
       maxLength: 255,
