@@ -18,7 +18,6 @@ const { getPublic } = require('./getPublic');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets } = require('./getByAssets');
 const { byProvider: getByProvider } = require('../search/byProvider');
-const { tables } = require('../tables');
 const { getAssetsByProgram } = require('../assets/getAssetsByProgram');
 const { getAssetsBySubject } = require('../assets/getAssetsBySubject');
 

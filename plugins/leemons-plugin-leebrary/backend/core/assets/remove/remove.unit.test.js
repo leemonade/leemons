@@ -17,7 +17,7 @@ jest.mock('../../bookmarks/remove');
 jest.mock('../files/remove');
 jest.mock('../../permissions/helpers/getAssetPermissionName');
 
-const { getByIds } = require('../getByIds');
+const { getByIds } = require('../getByIds/getByIds');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');
 const { getById: getCategoryById } = require('../../categories/getById');

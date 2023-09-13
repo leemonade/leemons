@@ -5,12 +5,12 @@ const { LeemonsError } = require('leemons-error');
 const _ = require('lodash');
 
 const { getByCategory } = require('./getByCategory');
-const { assetsSchema } = require('../../models/assets');
-const getAssets = require('../../__fixtures__/getAssets');
+const { assetsSchema } = require('../../../models/assets');
+const getAssets = require('../../../__fixtures__/getAssets');
 
 // MOCKS
 jest.mock('./getByIds');
-const { getByIds } = require('./getByIds');
+const { getByIds } = require('../getByIds/getByIds');
 
 let mongooseConnection;
 let disconnectMongoose;

@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash');
 const { LeemonsError } = require('leemons-error');
-const { getByIds } = require('./getByIds');
+const { getByIds } = require('./getByIds/getByIds');
 
 /**
  * Fetch assets by category

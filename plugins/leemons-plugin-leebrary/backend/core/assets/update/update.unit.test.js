@@ -14,7 +14,7 @@ jest.mock('../../permissions/getByAsset');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 
 jest.mock('../getByIds');
-const { getByIds } = require('../getByIds');
+const { getByIds } = require('../getByIds/getByIds');
 
 jest.mock('./handleUpdateObject');
 const { handleUpdateObject } = require('./handleUpdateObject');
