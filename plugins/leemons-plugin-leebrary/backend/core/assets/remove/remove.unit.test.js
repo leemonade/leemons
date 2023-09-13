@@ -9,7 +9,7 @@ const { assetsSchema } = require('../../../models/assets');
 const getAssets = require('../../../__fixtures__/getAssets');
 const { CATEGORIES } = require('../../../config/constants');
 
-jest.mock('../getByIds');
+jest.mock('../getByIds/getByIds');
 jest.mock('../../permissions/getByAsset');
 jest.mock('../files/getByAsset/getByAsset');
 jest.mock('../../categories/getById');
@@ -17,7 +17,7 @@ jest.mock('../../bookmarks/remove');
 jest.mock('../files/remove');
 jest.mock('../../permissions/helpers/getAssetPermissionName');
 
-const { getByIds } = require('../getByIds');
+const { getByIds } = require('../getByIds/getByIds');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');
 const { getById: getCategoryById } = require('../../categories/getById');

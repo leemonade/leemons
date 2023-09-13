@@ -6,7 +6,7 @@ const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset'
 const { getById: getCategoryById } = require('../../categories/getById');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');
-const { getByIds } = require('../getByIds');
+const { getByIds } = require('../getByIds/getByIds');
 const { remove: removeBookmark } = require('../../bookmarks/remove');
 const { CATEGORIES } = require('../../../config/constants');
 

@@ -1,5 +1,5 @@
 const { tables } = require('../tables');
-const { getByIds: getAssets } = require('./getByIds');
+const { getByIds: getAssets } = require('./getByIds/getByIds');
 const { getByCategory: getByPermissions } = require('../permissions/getByCategory');
 
 async function getByUserAndCategory(

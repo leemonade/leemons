@@ -9,8 +9,8 @@ const { assetsSchema } = require('../../../models/assets');
 const getAssets = require('../../../__fixtures__/getAssets');
 
 // MOCKS
-jest.mock('../getByIds');
-const { getByIds } = require('../getByIds');
+jest.mock('../getByIds/getByIds');
+const { getByIds } = require('../getByIds/getByIds');
 
 let mongooseConnection;
 let disconnectMongoose;
