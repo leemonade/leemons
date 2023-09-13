@@ -38,6 +38,13 @@ let disconnectMongoose;
 let ctx;
 let getVersion;
 let publishVersion;
+
+const VERSION_MOCK = {
+  uuid: 'd5c4e1ac-18dc-414a-9be7-c7776c524674',
+  version: '1.0.0',
+  fullId: 'd5c4e1ac-18dc-414a-9be7-c7776c524674@1.0.0',
+};
+
 describe('update', () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
@@ -122,9 +129,7 @@ describe('update', () => {
     getPermissions.mockResolvedValue({ permissions: { edit: true } });
     getByIds.mockResolvedValue([currentAsset]);
     getVersion.mockResolvedValue({
-      uuid: 'd5c4e1ac-18dc-414a-9be7-c7776c524674',
-      version: '1.0.0',
-      fullId: 'd5c4e1ac-18dc-414a-9be7-c7776c524674@1.0.0',
+      ...VERSION_MOCK,
       published: false,
     });
     handleUpdateObject.mockResolvedValue(handleUpdateObjectReturn);
@@ -196,9 +201,7 @@ describe('update', () => {
     getPermissions.mockResolvedValue({ permissions: { edit: true } });
     getByIds.mockResolvedValue([currentAsset]);
     getVersion.mockResolvedValue({
-      uuid: 'd5c4e1ac-18dc-414a-9be7-c7776c524674',
-      version: '1.0.0',
-      fullId: 'd5c4e1ac-18dc-414a-9be7-c7776c524674@1.0.0',
+      ...VERSION_MOCK,
       published: false,
     });
     handleUpdateObject.mockResolvedValue({ ...handleUpdateObjectReturn, diff: [] });
@@ -254,9 +257,7 @@ describe('update', () => {
     getPermissions.mockResolvedValue({ permissions: { edit: true } });
     getByIds.mockResolvedValue([currentAsset]);
     getVersion.mockResolvedValue({
-      uuid: 'd5c4e1ac-18dc-414a-9be7-c7776c524674',
-      version: '1.0.0',
-      fullId: 'd5c4e1ac-18dc-414a-9be7-c7776c524674@1.0.0',
+      ...VERSION_MOCK,
       published: true,
     });
     handleUpdateObject.mockResolvedValue(handleUpdateObjectReturn);
