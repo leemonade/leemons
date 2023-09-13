@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { STATUS, profileSettings } = require('../../config/constants');
 const findOne = require('./findOne');
 const update = require('./update');

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { getTree } = require('./getTree');
 

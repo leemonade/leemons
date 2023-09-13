@@ -1,0 +1,17 @@
+name: DEV Upload plugins dockers
+on:
+  workflow_run:
+    workflows:
+      - DEV Publish packages to NPM
+    types:
+      - completed
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+

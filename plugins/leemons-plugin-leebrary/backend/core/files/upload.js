@@ -11,7 +11,7 @@ const document = require('office-document-properties');
 const got = require('got');
 const sharp = require('sharp');
 
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { findOne: getSettings } = require('../settings');
 const { getById } = require('./getById');
 const { dataForReturnFile } = require('./dataForReturnFile');

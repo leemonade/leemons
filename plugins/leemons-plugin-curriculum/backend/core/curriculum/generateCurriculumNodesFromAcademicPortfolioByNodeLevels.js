@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getCourseName } = require('leemons-academic-portfolio');
 const { nodeLevelsByCurriculum } = require('../nodeLevels/nodeLevelsByCurriculum');
 const { curriculumByIds } = require('./curriculumByIds');

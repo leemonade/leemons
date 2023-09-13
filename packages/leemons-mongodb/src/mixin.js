@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { rollbackTransaction } = require('leemons-transactions');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { ObjectId } = require('mongoose').Types;
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');

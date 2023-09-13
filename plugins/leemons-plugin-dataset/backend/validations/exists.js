@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const existLocation = require('../core/datesetLocation/existLocation');
 const existSchema = require('../core/datasetSchema/existSchema');
 const existSchemaLocale = require('../core/datasetSchemaLocale/existSchemaLocale');

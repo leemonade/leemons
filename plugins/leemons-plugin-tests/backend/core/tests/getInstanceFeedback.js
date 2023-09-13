@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getInstanceFeedback({ instanceId, userAgent, ctx }) {
   const permissions = await ctx.tx.call('assignables.assignableInstances.getUserPermission', {

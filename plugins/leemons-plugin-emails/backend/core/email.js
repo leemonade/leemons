@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Sqrl = require('squirrelly');
 
 const { getPluginProviders, getPluginProvider } = require('leemons-providers');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getEmailTypes } = require('leemons-emails');
 const nodemailer = require('nodemailer');
 const testTemplate = require('../emails/test');

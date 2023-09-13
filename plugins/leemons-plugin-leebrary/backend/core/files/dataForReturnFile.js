@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { getById } = require('./getById');
 

@@ -1,0 +1,30 @@
+name: DEV Publish packages to NPM
+on:
+  push:
+    tags:
+      - '*.*.*-mdev'
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+
+      - name: 🔧 Install changeset
+        run: bash patch_publish.sh ./packages/leemons-error dev
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🔧 Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)
+
+      - name: 🚀 Git push
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git add .
+          git commit -m 'chore: version bump'
+          git push origin microservices/dev

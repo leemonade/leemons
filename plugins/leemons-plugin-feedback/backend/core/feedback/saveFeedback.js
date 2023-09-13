@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateSaveFeedback } = require('../../validations/forms');
 const { updateFeedbackQuestion } = require('../feedback-questions/updateFeedbackQuestion');
 const { createFeedbackQuestion } = require('../feedback-questions/createFeedbackQuestion');

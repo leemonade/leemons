@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { transformArrayToObject } = require('../permissions/transformArrayToObject');
 const { detail: roleDetail } = require('../roles/detail');
 const { getUserAgentsInfo } = require('../user-agents');

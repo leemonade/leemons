@@ -1,10 +1,10 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
-const { LeemonsError } = require('leemons-error');
 
 async function adminChangeRoomImage({ key, avatar, ctx }) {
   const { userSession } = ctx.meta;

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateAddClassStudents } = require('../../validations/forms');
 const { classByIds } = require('./classByIds');
 const { add: addStudent } = require('./student/add');

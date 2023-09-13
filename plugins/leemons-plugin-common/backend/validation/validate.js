@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 function validateTypePrefix({ type, calledFrom, ctx }) {
   if (!type.startsWith(calledFrom))

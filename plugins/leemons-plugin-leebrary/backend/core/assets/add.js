@@ -4,7 +4,7 @@ const { map, isEmpty, isNil, isString, isArray, trim, forEach } = require('lodas
 const got = require('got');
 const metascraper = require('metascraper');
 
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { CATEGORIES, assetRoles } = require('../../config/constants');
 const { uploadFromSource } = require('../files/helpers/uploadFromSource');
 const { add: addFiles } = require('./files/add');

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const {
   map,
   isArray,

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const existManyRoles = require('../roles/existMany');
 const { encryptPassword } = require('./bcrypt/encryptPassword');

@@ -8,15 +8,15 @@ const { LeemonsCacheMixin } = require('leemons-cache');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const mongoose = require('mongoose');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
+const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsMQTTMixin } = require('leemons-mqtt');
 const { getServiceModels } = require('../models');
 const calendar = require('../core/calendar');
 const events = require('../core/events');
 const eventTypes = require('../core/event-types');
 const { validateKeyPrefix } = require('../validations/exists');
 const restActions = require('./rest/calendar.rest');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
 
 /** @type {ServiceSchema} */
 module.exports = {

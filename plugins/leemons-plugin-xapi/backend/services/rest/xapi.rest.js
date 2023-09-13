@@ -5,7 +5,7 @@
 /** @type {ServiceSchema} */
 const { LeemonsValidator } = require('leemons-validator');
 const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { add } = require('../../core/xapi/statement');
 

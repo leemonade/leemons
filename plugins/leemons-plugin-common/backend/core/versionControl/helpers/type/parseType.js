@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 module.exports = function parseType({ type, ctx }) {
   if (typeof type === 'string') {

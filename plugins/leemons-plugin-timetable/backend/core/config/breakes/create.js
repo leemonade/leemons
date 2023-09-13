@@ -1,5 +1,5 @@
+const { LeemonsError } = require('@leemons/error');
 const timeToDayjs = require('../../helpers/dayjs/timeToDayjs');
-const { LeemonsError } = require('leemons-error');
 
 module.exports = async function create({ config, breaks, ctx }) {
   // Validate

@@ -6,7 +6,7 @@
 
 const _ = require('lodash');
 const { LeemonsValidator } = require('leemons-validator');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
