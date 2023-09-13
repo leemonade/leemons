@@ -75,7 +75,6 @@ export const CalendarSubNavFiltersStyles = createStyles((theme, { mainColor, lig
       top: 4,
       left: 4,
       boxShadow: 'none',
-      width: '131px !important',
     },
     segmentControl: {
       border: 'none!important',
