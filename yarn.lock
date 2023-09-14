@@ -3290,270 +3290,138 @@
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-"@leemons/academic-portfolio@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/academic-portfolio/-/academic-portfolio-0.0.8.tgz"
-  integrity sha512-byv3I2r28MnkxoHTkCFAl6bNyU5y3Gsq4JHW/6lxoaZr8q+o82D/p/UELALNFi/9FqQ2UIdh6x6+8mZXkyu8mA==
-  dependencies:
-    "@leemons/mongodb-helpers" dev
-    lodash "^4.17.21"
-
-"@leemons/academic-portfolio@file:/home/runner/work/leemons/leemons/packages/leemons-academic-portfolio":
-  version "0.0.9"
+"@leemons/academic-portfolio@0.0.10", "@leemons/academic-portfolio@file:/home/runner/work/leemons/leemons/packages/leemons-academic-portfolio":
+  version "0.0.10"
   resolved "file:packages/leemons-academic-portfolio"
   dependencies:
-    "@leemons/mongodb-helpers" dev
+    "@leemons/mongodb-helpers" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/cache@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/cache/-/cache-0.0.8.tgz"
-  integrity sha512-inBh5lTephmzv1CVUQa+amO+sTVlceXdlO2lY0HjIX8D6xKnp98JBulT/9TmC9Y5jDZ8v586E49UsuvFWEim/w==
-  dependencies:
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-    node-cache "^5.1.2"
-    redis "^4.6.7"
-
-"@leemons/cache@file:/home/runner/work/leemons/leemons/packages/leemons-cache":
-  version "0.0.9"
+"@leemons/cache@0.0.10", "@leemons/cache@file:/home/runner/work/leemons/leemons/packages/leemons-cache":
+  version "0.0.10"
   resolved "file:packages/leemons-cache"
   dependencies:
-    "@leemons/service-name-parser" dev
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
     node-cache "^5.1.2"
     redis "^4.6.7"
 
-"@leemons/common@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/common/-/common-0.0.8.tgz"
-  integrity sha512-hZMHeHcokBYtDIWM2HQ7MtceUCNRLLcUFVAs2HQ4UwYMi2VqSxtvpZgPz2oYiPM7YAklMnE/pivq1LAn45vGpw==
-  dependencies:
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-    node-cache "^5.1.2"
-    redis "^4.6.7"
-
-"@leemons/common@file:/home/runner/work/leemons/leemons/packages/leemons-common":
-  version "0.0.9"
+"@leemons/common@0.0.10", "@leemons/common@file:/home/runner/work/leemons/leemons/packages/leemons-common":
+  version "0.0.10"
   resolved "file:packages/leemons-common"
   dependencies:
-    "@leemons/service-name-parser" dev
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
     node-cache "^5.1.2"
     redis "^4.6.7"
 
-"@leemons/deployment-manager@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/deployment-manager/-/deployment-manager-0.0.8.tgz"
-  integrity sha512-IFSovA3vk8tq1Dqc5VePFf6P7Az1ksU9XRK6gvKBgMflhJonCV05SeHpUbKe4yqKI4998s3/86Gmgmer1F2GLw==
-  dependencies:
-    "@leemons/error" dev
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-
-"@leemons/deployment-manager@file:/home/runner/work/leemons/leemons/packages/leemons-deployment-manager":
-  version "0.0.9"
+"@leemons/deployment-manager@0.0.10", "@leemons/deployment-manager@file:/home/runner/work/leemons/leemons/packages/leemons-deployment-manager":
+  version "0.0.10"
   resolved "file:packages/leemons-deployment-manager"
   dependencies:
-    "@leemons/error" dev
-    "@leemons/service-name-parser" dev
+    "@leemons/error" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/emails@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/emails/-/emails-0.0.8.tgz"
-  integrity sha512-qmjaBnwitAsiso5iu27xsFfSgh6t30RzWtAWBbqrnbIajMUYfAuoWjROXrWcakpGRR0W19ZO0xh/9lPlpAjlbg==
-
-"@leemons/emails@file:/home/runner/work/leemons/leemons/packages/leemons-emails":
-  version "0.0.9"
+"@leemons/emails@0.0.10", "@leemons/emails@file:/home/runner/work/leemons/leemons/packages/leemons-emails":
+  version "0.0.10"
   resolved "file:packages/leemons-emails"
 
-"@leemons/error@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/error/-/error-0.0.8.tgz"
-  integrity sha512-tQgNGSCVkudavv8xM9xg1x6KEhSDN70PBPwf0XONrWRLmpuGRwhro8p5phP9OiBXH5j55eu1CFxgIWTxfDx+Sg==
-  dependencies:
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-
-"@leemons/error@file:/home/runner/work/leemons/leemons/packages/leemons-error":
-  version "0.0.9"
+"@leemons/error@0.0.10", "@leemons/error@file:/home/runner/work/leemons/leemons/packages/leemons-error":
+  version "0.0.10"
   resolved "file:packages/leemons-error"
   dependencies:
-    "@leemons/service-name-parser" dev
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/lrn@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/lrn/-/lrn-0.0.8.tgz"
-  integrity sha512-rGbIO9EDAEebYBPcSNBl/1gqwp4f98nw/Q/08W94uMA4KvuMvJgJ2aTdC+y1qfeGRvUv1ZEIrciy8ztGc2h5Ig==
-
-"@leemons/lrn@file:/home/runner/work/leemons/leemons/packages/leemons-lrn":
-  version "0.0.9"
+"@leemons/lrn@0.0.10", "@leemons/lrn@file:/home/runner/work/leemons/leemons/packages/leemons-lrn":
+  version "0.0.10"
   resolved "file:packages/leemons-lrn"
 
-"@leemons/menu-builder@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/menu-builder/-/menu-builder-0.0.8.tgz"
-  integrity sha512-RRJEa3EtG/Sy0WbZRjjri79UDGrlYqoyKyTiyjrnQB5Mv6iLNytgTL+hu+/eiEEg3BGHS2oMC6g1T8yV4hFQsQ==
-  dependencies:
-    "@leemons/mongodb-helpers" dev
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-
-"@leemons/menu-builder@file:/home/runner/work/leemons/leemons/packages/leemons-menu-builder":
-  version "0.0.9"
+"@leemons/menu-builder@0.0.10", "@leemons/menu-builder@file:/home/runner/work/leemons/leemons/packages/leemons-menu-builder":
+  version "0.0.10"
   resolved "file:packages/leemons-menu-builder"
   dependencies:
-    "@leemons/mongodb-helpers" dev
-    "@leemons/service-name-parser" dev
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/middlewares@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/middlewares/-/middlewares-0.0.8.tgz"
-  integrity sha512-8l5RQj5VmCUoNh30MkLjo/d/cwgX1JEN7T4FVtEcGTfxGF4B4fHGbkChRKvv/kJ5OHBueXrVPTnmwqnqHUSRkg==
-  dependencies:
-    "@leemons/error" dev
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-
-"@leemons/middlewares@file:/home/runner/work/leemons/leemons/packages/leemons-middlewares":
-  version "0.0.9"
+"@leemons/middlewares@0.0.10", "@leemons/middlewares@file:/home/runner/work/leemons/leemons/packages/leemons-middlewares":
+  version "0.0.10"
   resolved "file:packages/leemons-middlewares"
   dependencies:
-    "@leemons/error" dev
-    "@leemons/service-name-parser" dev
+    "@leemons/error" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/mongodb-helpers@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.8.tgz"
-  integrity sha512-C7gIWIkrmFE+4VGX/AYzHYH84PKsWr3pNvIh3NUV9zKXJnqkuHHjFz878oltOcbllnkcxZUWhMBHS9hxbb78wA==
-  dependencies:
-    "@leemons/mongodb" dev
-
-"@leemons/mongodb-helpers@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb-helpers":
-  version "0.0.9"
+"@leemons/mongodb-helpers@0.0.10", "@leemons/mongodb-helpers@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb-helpers":
+  version "0.0.10"
   resolved "file:packages/leemons-mongodb-helpers"
   dependencies:
-    "@leemons/mongodb" dev
+    "@leemons/mongodb" "0.0.10"
 
-"@leemons/mongodb@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/mongodb/-/mongodb-0.0.8.tgz"
-  integrity sha512-68oopV9oasabK/Wnn9+8eU1c+dS8DgsQLfcZCofctGfEtutHquQ4B4FylgDtygRL4EON0ayIJLwUh1RErw8yfQ==
+"@leemons/mongodb-helpers@dev":
+  version "0.0.10"
+  resolved "https://registry.npmjs.org/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.10.tgz"
+  integrity sha512-PKLZcU4+ZI/gLhDM89op88a6QGmRpPQWWkmzs/6jmiOPrakmGFiTlhNl5f99LTAKWCjw6OzdClkYyHvgbNg6Ag==
   dependencies:
-    "@leemons/error" dev
-    "@leemons/lrn" dev
-    "@leemons/service-name-parser" dev
-    "@leemons/transactions" dev
-    lodash "^4.17.21"
-    mongoose "^7.1.1"
+    "@leemons/mongodb" "0.0.10"
 
-"@leemons/mongodb@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb":
-  version "0.0.9"
+"@leemons/mongodb@0.0.10", "@leemons/mongodb@file:/home/runner/work/leemons/leemons/packages/leemons-mongodb":
+  version "0.0.10"
   resolved "file:packages/leemons-mongodb"
   dependencies:
-    "@leemons/error" dev
-    "@leemons/lrn" dev
-    "@leemons/service-name-parser" dev
-    "@leemons/transactions" dev
+    "@leemons/error" "0.0.10"
+    "@leemons/lrn" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
+    "@leemons/transactions" "0.0.10"
     lodash "^4.17.21"
     mongoose "^7.1.1"
 
-"@leemons/mqtt@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/mqtt/-/mqtt-0.0.8.tgz"
-  integrity sha512-syEa4M7frXlJnEHqVHcRgGZAa8Wg5ErXmeVqkXgGKBljedORFl2i+QBgWNAqZrAUQ0IveeYYiruA3MnpkoDV4A==
-  dependencies:
-    "@leemons/error" dev
-    "@leemons/lrn" dev
-    "@leemons/service-name-parser" dev
-    "@leemons/transactions" dev
-    lodash "^4.17.21"
-    mongoose "^7.1.1"
-
-"@leemons/mqtt@file:/home/runner/work/leemons/leemons/packages/leemons-mqtt":
-  version "0.0.9"
+"@leemons/mqtt@0.0.10", "@leemons/mqtt@file:/home/runner/work/leemons/leemons/packages/leemons-mqtt":
+  version "0.0.10"
   resolved "file:packages/leemons-mqtt"
   dependencies:
-    "@leemons/error" dev
-    "@leemons/lrn" dev
-    "@leemons/service-name-parser" dev
-    "@leemons/transactions" dev
+    "@leemons/error" "0.0.10"
+    "@leemons/lrn" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
+    "@leemons/transactions" "0.0.10"
     lodash "^4.17.21"
     mongoose "^7.1.1"
 
-"@leemons/multi-events@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/multi-events/-/multi-events-0.0.8.tgz"
-  integrity sha512-o6cFPfLkjFL18U4Y2UjMn+vLPSbN/gG14ceSdZisp5spvErZI5Cpe1xSom5JLwXmg4QyG1zAmz9GPMwHn5Kueg==
-  dependencies:
-    "@leemons/error" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/utils" dev
-    lodash "^4.17.21"
-
-"@leemons/multi-events@file:/home/runner/work/leemons/leemons/packages/leemons-multi-events":
-  version "0.0.9"
+"@leemons/multi-events@0.0.10", "@leemons/multi-events@file:/home/runner/work/leemons/leemons/packages/leemons-multi-events":
+  version "0.0.10"
   resolved "file:packages/leemons-multi-events"
   dependencies:
-    "@leemons/error" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/utils" dev
+    "@leemons/error" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/utils" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/multilanguage@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/multilanguage/-/multilanguage-0.0.8.tgz"
-  integrity sha512-23Qc0Vvj3NSKKH4cK6YzPpDLKF9ycUgWQvY5fN5IgzI0/Xi+Rg7X8O8Nbja665Y2uIewnyZ4YGMD+0H++M7yrg==
-  dependencies:
-    "@leemons/mongodb-helpers" dev
-    "@leemons/service-name-parser" dev
-    lodash "^4.17.21"
-
-"@leemons/multilanguage@file:/home/runner/work/leemons/leemons/packages/leemons-multilanguage":
-  version "0.0.9"
+"@leemons/multilanguage@0.0.10", "@leemons/multilanguage@file:/home/runner/work/leemons/leemons/packages/leemons-multilanguage":
+  version "0.0.10"
   resolved "file:packages/leemons-multilanguage"
   dependencies:
-    "@leemons/mongodb-helpers" dev
-    "@leemons/service-name-parser" dev
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/permissions@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/permissions/-/permissions-0.0.8.tgz"
-  integrity sha512-5AGzZya+xTYCQ67l+JtohDVRsusDyqyqCf949IaK+bknRN1pIdIDBVnUtW5mo85Jc0UUlduwYLsY2y5V97vpDg==
-  dependencies:
-    "@leemons/mongodb-helpers" dev
-    lodash "^4.17.21"
-
-"@leemons/permissions@file:/home/runner/work/leemons/leemons/packages/leemons-permissions":
-  version "0.0.9"
+"@leemons/permissions@0.0.10", "@leemons/permissions@file:/home/runner/work/leemons/leemons/packages/leemons-permissions":
+  version "0.0.10"
   resolved "file:packages/leemons-permissions"
   dependencies:
-    "@leemons/mongodb-helpers" dev
+    "@leemons/mongodb-helpers" "0.0.10"
     lodash "^4.17.21"
 
-"@leemons/providers@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/providers/-/providers-0.0.8.tgz"
-  integrity sha512-DFQY7QQAlxEGO8ndilLpuAQUlVKP7kiKoQQ0g18LtIlZROz2MUqeBTC57tDq+a1/Ztx/evczPJ1YTvhxyqUkHw==
-  dependencies:
-    "@leemons/error" dev
-    lodash "^4.17.21"
-
-"@leemons/providers@file:/home/runner/work/leemons/leemons/packages/leemons-providers":
-  version "0.0.9"
+"@leemons/providers@0.0.10", "@leemons/providers@file:/home/runner/work/leemons/leemons/packages/leemons-providers":
+  version "0.0.10"
   resolved "file:packages/leemons-providers"
   dependencies:
-    "@leemons/error" dev
+    "@leemons/error" "0.0.10"
     lodash "^4.17.21"
 
 "@leemons/react@file:/home/runner/work/leemons/leemons/packages/leemons-react":
-  version "0.0.9"
+  version "0.0.10"
   resolved "file:packages/leemons-react"
   dependencies:
     "@loadable/component" "^5.0.0"
@@ -3574,20 +3442,8 @@
     react-refresh "^0.14.0"
     react-router-dom "^5.3.3"
 
-"@leemons/runner@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/runner/-/runner-0.0.8.tgz"
-  integrity sha512-YMHFa3PbzKMrF5c7tj5KM7ieURYFiApQ/ZaoFa1GjJOU5CMeKwu3/mlCNxzuQ012uH7s9ZWgBHR6ajn1gI+mAA==
-  dependencies:
-    args "^5.0.3"
-    dotenv "^16.0.3"
-    glob "^10.2.4"
-    kleur "^4.1.5"
-    lodash "^4.17.21"
-    moleculer "^0.14.26"
-
-"@leemons/runner@file:/home/runner/work/leemons/leemons/packages/leemons-runner":
-  version "0.0.9"
+"@leemons/runner@0.0.10", "@leemons/runner@file:/home/runner/work/leemons/leemons/packages/leemons-runner":
+  version "0.0.10"
   resolved "file:packages/leemons-runner"
   dependencies:
     args "^5.0.3"
@@ -3597,81 +3453,47 @@
     lodash "^4.17.21"
     moleculer "^0.14.26"
 
-"@leemons/service-name-parser@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/service-name-parser/-/service-name-parser-0.0.8.tgz"
-  integrity sha512-zV5zwqlm80pdyNwfM3yyB/tin41l/p1y+mpWwEperUFsXzAMX6xAEjUXS4f/bS4/dPYmeVqO8rifiy8t5kOa2g==
-
-"@leemons/service-name-parser@file:/home/runner/work/leemons/leemons/packages/leemons-service-name-parser":
-  version "0.0.9"
+"@leemons/service-name-parser@0.0.10", "@leemons/service-name-parser@file:/home/runner/work/leemons/leemons/packages/leemons-service-name-parser":
+  version "0.0.10"
   resolved "file:packages/leemons-service-name-parser"
 
-"@leemons/testing@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/testing/-/testing-0.0.8.tgz"
-  integrity sha512-Od45UuEn4vZhX/EWzsbIGtescIdRyChDfh11UtvC91TUdhxWElMg6//Qx5ti7rjHVOdROh0cJASNsQrMHMd2mA==
-  dependencies:
-    "@leemons/mongodb" dev
-    mongodb-memory-server-core "^8.15.0"
+"@leemons/service-name-parser@dev":
+  version "0.0.10"
+  resolved "https://registry.npmjs.org/@leemons/service-name-parser/-/service-name-parser-0.0.10.tgz"
+  integrity sha512-5FjEbhSfDagqrdB/T+x09ALSlQ+hU6+RW+uU7gypEYzleRs4y0IBTKKJzZ//JLykuQs6TZPw8RS91AVjWlP2qA==
 
-"@leemons/testing@file:/home/runner/work/leemons/leemons/packages/leemons-testing":
-  version "0.0.9"
+"@leemons/testing@0.0.10", "@leemons/testing@file:/home/runner/work/leemons/leemons/packages/leemons-testing":
+  version "0.0.10"
   resolved "file:packages/leemons-testing"
   dependencies:
-    "@leemons/mongodb" dev
+    "@leemons/mongodb" "0.0.10"
     mongodb-memory-server-core "^8.15.0"
 
-"@leemons/transactions@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/transactions/-/transactions-0.0.8.tgz"
-  integrity sha512-FBs1pHeqeBQl+Ztk6brPbaTBcD+iB5KgQuf5cSWbCd++AoO8WZks2MH0M6qkUb/ysO4DCH05D0UnUHNf5RPr9w==
-
-"@leemons/transactions@file:/home/runner/work/leemons/leemons/packages/leemons-transactions":
-  version "0.0.9"
+"@leemons/transactions@0.0.10", "@leemons/transactions@file:/home/runner/work/leemons/leemons/packages/leemons-transactions":
+  version "0.0.10"
   resolved "file:packages/leemons-transactions"
 
-"@leemons/users@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/users/-/users-0.0.8.tgz"
-  integrity sha512-BKgHyDb4tG96ztoTShjF69vgJf6p2gEq0rBhdlhmr3S+Io6DOUnxdWs4Vzd5N8RlAWR4j07hMLqVEhyURO76KQ==
-  dependencies:
-    lodash "^4.17.21"
-
-"@leemons/users@file:/home/runner/work/leemons/leemons/packages/leemons-users":
+"@leemons/transactions@dev":
   version "0.0.9"
+  resolved "https://registry.npmjs.org/@leemons/transactions/-/transactions-0.0.9.tgz"
+  integrity sha512-WgtYZm7F5lONGxdOXXl8Ej65/Cv1Q0Dl4SooVqsu6/kkLJf6YgXmwUI+rPHbmiaMIcvPiY7V0a6k4uTTxiAFaA==
+
+"@leemons/users@0.0.10", "@leemons/users@file:/home/runner/work/leemons/leemons/packages/leemons-users":
+  version "0.0.10"
   resolved "file:packages/leemons-users"
   dependencies:
     lodash "^4.17.21"
 
-"@leemons/utils@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/utils/-/utils-0.0.8.tgz"
-  integrity sha512-37EeYJKFQWWC/SzscIbldQyXX6YIHlPC4zDZEsGIwCq1JXHHF1QbWSeQw74Eq1wY5gnQWD9shL7T86YUfkBC6g==
-  dependencies:
-    "@leemons/service-name-parser" dev
-    crypto "^1.0.1"
-    lodash "^4.17.21"
-
-"@leemons/utils@file:/home/runner/work/leemons/leemons/packages/leemons-utils":
-  version "0.0.9"
+"@leemons/utils@0.0.10", "@leemons/utils@file:/home/runner/work/leemons/leemons/packages/leemons-utils":
+  version "0.0.10"
   resolved "file:packages/leemons-utils"
   dependencies:
-    "@leemons/service-name-parser" dev
+    "@leemons/service-name-parser" "0.0.10"
     crypto "^1.0.1"
     lodash "^4.17.21"
 
-"@leemons/validator@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/validator/-/validator-0.0.8.tgz"
-  integrity sha512-CsjphMkmmfZt0/R5Uvo1RhGCJigiweHw8wh+YN7I/R6KvTIUnSrn2V/WivOkgTpLepxX8KBK+ZNgqLkXkZncUQ==
-  dependencies:
-    ajv "^8.12.0"
-    ajv-formats "^2.1.1"
-    ajv-keywords "^5.1.0"
-    lodash "^4.17.21"
-
-"@leemons/validator@file:/home/runner/work/leemons/leemons/packages/leemons-validator":
-  version "0.0.9"
+"@leemons/validator@0.0.10", "@leemons/validator@file:/home/runner/work/leemons/leemons/packages/leemons-validator":
+  version "0.0.10"
   resolved "file:packages/leemons-validator"
   dependencies:
     ajv "^8.12.0"
@@ -3679,28 +3501,20 @@
     ajv-keywords "^5.1.0"
     lodash "^4.17.21"
 
-"@leemons/widgets@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/widgets/-/widgets-0.0.8.tgz"
-  integrity sha512-PdY8iM5vDOyIkNcP7EViVXjSonUhZeBDHzQONauhVYayMvFHLyOnqk/0NpDKhArin3fj2W71WcJXGaAj0NsZkQ==
-  dependencies:
-    "@leemons/mongodb-helpers" dev
-    lodash "^4.17.21"
-
-"@leemons/widgets@file:/home/runner/work/leemons/leemons/packages/leemons-widgets":
-  version "0.0.9"
+"@leemons/widgets@0.0.10", "@leemons/widgets@file:/home/runner/work/leemons/leemons/packages/leemons-widgets":
+  version "0.0.10"
   resolved "file:packages/leemons-widgets"
   dependencies:
-    "@leemons/mongodb-helpers" dev
+    "@leemons/mongodb-helpers" "0.0.10"
     lodash "^4.17.21"
 
 "@leemons/xapi@dev":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@leemons/xapi/-/xapi-0.0.8.tgz"
-  integrity sha512-9oyM64ZFTD47I4it2OtOIBRM9EXY6Glj7xtMPoIQGlMG6JAiRGB53GaC7P85jN4iggRUAP5pAHgK6aRaVpj8+g==
+  version "0.0.9"
+  resolved "https://registry.npmjs.org/@leemons/xapi/-/xapi-0.0.9.tgz"
+  integrity sha512-FSLgCNzukdqpsfjeXGK6bYITrK6tFRbBMmuxyEKclUJvfUC6Qr20VLAX1sllMwK2Bvc67bdWRbmv8M7q0YJ+Ig==
 
 "@leemons/xapi@file:/home/runner/work/leemons/leemons/packages/leemons-xapi":
-  version "0.0.9"
+  version "0.0.10"
   resolved "file:packages/leemons-xapi"
 
 "@leichtgewicht/ip-codec@^2.0.1":
@@ -14488,7 +14302,7 @@ lazystream@^1.0.0:
   version "0.0.1"
   resolved "file:apps/dev"
   dependencies:
-    "@leemons/runner" dev
+    "@leemons/runner" "0.0.10"
     colord "^2.9.3"
     dotenv "^16.0.3"
     leemons-plugin-academic-calendar "1.0.0"
@@ -14593,17 +14407,17 @@ leemons-plugin-academic-calendar@1.0.0, "leemons-plugin-academic-calendar@file:/
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-academic-calendar/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14623,18 +14437,18 @@ leemons-plugin-academic-portfolio@1.0.0, "leemons-plugin-academic-portfolio@file
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-academic-portfolio/backend"
   dependencies:
-    "@leemons/academic-portfolio" dev
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/academic-portfolio" "0.0.10"
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14656,19 +14470,19 @@ leemons-plugin-admin@1.0.0, "leemons-plugin-admin@file:/home/runner/work/leemons
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-admin/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14690,16 +14504,16 @@ leemons-plugin-assignables@1.0.0, "leemons-plugin-assignables@file:/home/runner/
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-assignables/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/menu-builder" dev
-    "@leemons/mongodb" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/testing" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/testing" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     jest "^29.6.2"
     lodash "^4.17.21"
@@ -14717,17 +14531,17 @@ leemons-plugin-attendance-control@1.0.0, "leemons-plugin-attendance-control@file
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-attendance-control/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14745,17 +14559,17 @@ leemons-plugin-board-messages@1.0.0, "leemons-plugin-board-messages@file:/home/r
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-board-messages/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14765,18 +14579,18 @@ leemons-plugin-board-messages@1.0.0, "leemons-plugin-board-messages@file:/home/r
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-bulk-template/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14801,19 +14615,19 @@ leemons-plugin-calendar@1.0.0, "leemons-plugin-calendar@file:/home/runner/work/l
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-calendar/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
@@ -14835,17 +14649,17 @@ leemons-plugin-common@1.0.0, "leemons-plugin-common@file:/home/runner/work/leemo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-common/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
@@ -14861,19 +14675,19 @@ leemons-plugin-comunica@1.0.0, "leemons-plugin-comunica@file:/home/runner/work/l
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-comunica/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     bad-words "^3.0.4"
@@ -14893,19 +14707,19 @@ leemons-plugin-content-creator@1.0.0, "leemons-plugin-content-creator@file:/home
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-content-creator/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14925,18 +14739,18 @@ leemons-plugin-curriculum@1.0.0, "leemons-plugin-curriculum@file:/home/runner/wo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-curriculum/backend"
   dependencies:
-    "@leemons/academic-portfolio" dev
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/academic-portfolio" "0.0.10"
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14956,19 +14770,19 @@ leemons-plugin-dashboard@1.0.0, "leemons-plugin-dashboard@file:/home/runner/work
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-dashboard/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -14990,17 +14804,17 @@ leemons-plugin-dataset@1.0.0, "leemons-plugin-dataset@file:/home/runner/work/lee
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-dataset/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
     squirrelly "^9.0.0"
@@ -15009,12 +14823,12 @@ leemons-plugin-deployment-manager@1.0.0, "leemons-plugin-deployment-manager@file
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-deployment-manager/backend"
   dependencies:
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/mongodb" dev
-    "@leemons/mqtt" dev
-    "@leemons/service-name-parser" dev
-    "@leemons/utils" dev
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/service-name-parser" "0.0.10"
+    "@leemons/utils" "0.0.10"
     lodash "^4.17.21"
     moleculer "^0.14.26"
     mongoose "^7.1.1"
@@ -15030,17 +14844,17 @@ leemons-plugin-emails-aws-ses@1.0.0, "leemons-plugin-emails-aws-ses@file:/home/r
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-emails-aws-ses/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/emails" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/emails" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     aws-sdk "^2.1438.0"
     lodash "^4.17.21"
@@ -15068,17 +14882,17 @@ leemons-plugin-emails-smtp@1.0.0, "leemons-plugin-emails-smtp@file:/home/runner/
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-emails-smtp/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/emails" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/emails" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -15090,15 +14904,15 @@ leemons-plugin-emails@1.0.0, "leemons-plugin-emails@file:/home/runner/work/leemo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-emails/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/providers" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/providers" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
 
@@ -15112,19 +14926,19 @@ leemons-plugin-families-emergency-numbers@1.0.0, "leemons-plugin-families-emerge
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-families-emergency-numbers/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15143,19 +14957,19 @@ leemons-plugin-families@1.0.0, "leemons-plugin-families@file:/home/runner/work/l
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-families/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15174,18 +14988,18 @@ leemons-plugin-feedback@1.0.0, "leemons-plugin-feedback@file:/home/runner/work/l
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-feedback/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/common" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/common" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15204,19 +15018,19 @@ leemons-plugin-fundae@1.0.0, "leemons-plugin-fundae@file:/home/runner/work/leemo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-fundae/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@leemons/xapi" dev
     "@moleculer/channels" "^0.1.6"
@@ -15228,7 +15042,7 @@ leemons-plugin-gateway@1.0.0, "leemons-plugin-gateway@file:/home/runner/work/lee
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-gateway/backend"
   dependencies:
-    "@leemons/mongodb" dev
+    "@leemons/mongodb" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     ioredis "^5.3.2"
     moleculer "^0.14.26"
@@ -15246,17 +15060,17 @@ leemons-plugin-grades@1.0.0, "leemons-plugin-grades@file:/home/runner/work/leemo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-grades/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15275,14 +15089,14 @@ leemons-plugin-layout@1.0.0, "leemons-plugin-layout@file:/home/runner/work/leemo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-layout/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
     moleculer "^0.14.26"
@@ -15306,8 +15120,8 @@ leemons-plugin-learning-paths@1.0.0, "leemons-plugin-learning-paths@file:/home/r
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-learning-paths/backend"
   dependencies:
-    "@leemons/mongodb" dev
-    "@leemons/mqtt" dev
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     ioredis "^5.3.2"
     moleculer "^0.14.26"
@@ -15332,16 +15146,16 @@ leemons-plugin-leebrary@1.0.0, "leemons-plugin-leebrary@file:/home/runner/work/l
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-leebrary/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     got "^13.0.0"
@@ -15363,18 +15177,18 @@ leemons-plugin-menu-builder@1.0.0, "leemons-plugin-menu-builder@file:/home/runne
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-menu-builder/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
@@ -15389,18 +15203,18 @@ leemons-plugin-mqtt-aws-iot@1.0.0, "leemons-plugin-mqtt-aws-iot@file:/home/runne
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-mqtt-aws-iot/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     aws-iot-device-sdk "^2.2.12"
@@ -15429,15 +15243,15 @@ leemons-plugin-multilanguage@1.0.0, "leemons-plugin-multilanguage@file:/home/run
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-multilanguage/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
 
@@ -15475,19 +15289,19 @@ leemons-plugin-scores@1.0.0, "leemons-plugin-scores@file:/home/runner/work/leemo
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-scores/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15511,20 +15325,20 @@ leemons-plugin-scorm@1.0.0, "leemons-plugin-scorm@file:/home/runner/work/leemons
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-scorm/backend"
   dependencies:
-    "@leemons/academic-portfolio" dev
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/academic-portfolio" "0.0.10"
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15548,19 +15362,19 @@ leemons-plugin-tasks@1.0.0, "leemons-plugin-tasks@file:/home/runner/work/leemons
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-tasks/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@leemons/widgets" dev
     "@moleculer/channels" "^0.1.6"
     colord "^2.9.3"
@@ -15578,18 +15392,18 @@ leemons-plugin-tests@1.0.0, "leemons-plugin-tests@file:/home/runner/work/leemons
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-tests/backend"
   dependencies:
-    "@leemons/academic-portfolio" dev
-    "@leemons/cache" dev
-    "@leemons/common" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/academic-portfolio" "0.0.10"
+    "@leemons/cache" "0.0.10"
+    "@leemons/common" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
 
@@ -15606,17 +15420,17 @@ leemons-plugin-timetable@1.0.0, "leemons-plugin-timetable@file:/home/runner/work
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-timetable/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     dayjs "^1.11.9"
     moleculer "^0.14.26"
@@ -15625,7 +15439,7 @@ leemons-plugin-transactions@1.0.0, "leemons-plugin-transactions@file:/home/runne
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-transactions/backend"
   dependencies:
-    "@leemons/utils" dev
+    "@leemons/utils" "0.0.10"
     lodash "^4.17.21"
     moleculer "^0.14.26"
     mongoose "^7.1.1"
@@ -15648,21 +15462,21 @@ leemons-plugin-users@1.0.0, "leemons-plugin-users@file:/home/runner/work/leemons
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-users/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/common" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/emails" dev
-    "@leemons/menu-builder" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multi-events" dev
-    "@leemons/multilanguage" dev
-    "@leemons/permissions" dev
-    "@leemons/users" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/common" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/emails" "0.0.10"
+    "@leemons/menu-builder" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multi-events" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/permissions" "0.0.10"
+    "@leemons/users" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     bcrypt "^5.0.1"
     jsonwebtoken "^9.0.0"
@@ -15679,16 +15493,16 @@ leemons-plugin-widgets@1.0.0, "leemons-plugin-widgets@file:/home/runner/work/lee
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-widgets/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
 
@@ -15705,16 +15519,16 @@ leemons-plugin-xapi@1.0.0, "leemons-plugin-xapi@file:/home/runner/work/leemons/l
   version "1.0.0"
   resolved "file:plugins/leemons-plugin-xapi/backend"
   dependencies:
-    "@leemons/cache" dev
-    "@leemons/deployment-manager" dev
-    "@leemons/error" dev
-    "@leemons/middlewares" dev
-    "@leemons/mongodb" dev
-    "@leemons/mongodb-helpers" dev
-    "@leemons/mqtt" dev
-    "@leemons/multilanguage" dev
-    "@leemons/utils" dev
-    "@leemons/validator" dev
+    "@leemons/cache" "0.0.10"
+    "@leemons/deployment-manager" "0.0.10"
+    "@leemons/error" "0.0.10"
+    "@leemons/middlewares" "0.0.10"
+    "@leemons/mongodb" "0.0.10"
+    "@leemons/mongodb-helpers" "0.0.10"
+    "@leemons/mqtt" "0.0.10"
+    "@leemons/multilanguage" "0.0.10"
+    "@leemons/utils" "0.0.10"
+    "@leemons/validator" "0.0.10"
     "@moleculer/channels" "^0.1.6"
     moleculer "^0.14.26"
 

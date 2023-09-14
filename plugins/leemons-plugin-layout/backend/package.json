@@ -27,14 +27,14 @@
   "dependencies": {
     "@moleculer/channels": "^0.1.6",
     "colord": "^2.9.3",
-    "@leemons/cache": "dev",
-    "@leemons/deployment-manager": "dev",
-    "@leemons/error": "dev",
-    "@leemons/middlewares": "dev",
-    "@leemons/mongodb": "dev",
-    "@leemons/mongodb-helpers": "dev",
-    "@leemons/multilanguage": "dev",
-    "@leemons/utils": "dev",
+    "@leemons/cache": "0.0.10",
+    "@leemons/deployment-manager": "0.0.10",
+    "@leemons/error": "0.0.10",
+    "@leemons/middlewares": "0.0.10",
+    "@leemons/mongodb": "0.0.10",
+    "@leemons/mongodb-helpers": "0.0.10",
+    "@leemons/multilanguage": "0.0.10",
+    "@leemons/utils": "0.0.10",
     "moleculer": "^0.14.26"
   },
   "engines": {

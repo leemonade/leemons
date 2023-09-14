@@ -9,17 +9,17 @@
   },
   "dependencies": {
     "jest": "^29.6.2",
-    "@leemons/cache": "dev",
-    "@leemons/deployment-manager": "dev",
-    "@leemons/menu-builder": "dev",
-    "@leemons/mongodb": "dev",
-    "@leemons/mqtt": "dev",
-    "@leemons/multi-events": "dev",
-    "@leemons/multilanguage": "dev",
-    "@leemons/permissions": "dev",
-    "@leemons/testing": "dev",
-    "@leemons/validator": "dev",
-    "@leemons/widgets": "dev",
+    "@leemons/cache": "0.0.10",
+    "@leemons/deployment-manager": "0.0.10",
+    "@leemons/menu-builder": "0.0.10",
+    "@leemons/mongodb": "0.0.10",
+    "@leemons/mqtt": "0.0.10",
+    "@leemons/multi-events": "0.0.10",
+    "@leemons/multilanguage": "0.0.10",
+    "@leemons/permissions": "0.0.10",
+    "@leemons/testing": "0.0.10",
+    "@leemons/validator": "0.0.10",
+    "@leemons/widgets": "0.0.10",
     "lodash": "^4.17.21"
   }
 }

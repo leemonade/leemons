@@ -21,12 +21,12 @@
     "turbo": "^1.9.6"
   },
   "dependencies": {
-    "@leemons/deployment-manager": "dev",
-    "@leemons/error": "dev",
-    "@leemons/mongodb": "dev",
-    "@leemons/mqtt": "dev",
-    "@leemons/service-name-parser": "dev",
-    "@leemons/utils": "dev",
+    "@leemons/deployment-manager": "0.0.10",
+    "@leemons/error": "0.0.10",
+    "@leemons/mongodb": "0.0.10",
+    "@leemons/mqtt": "0.0.10",
+    "@leemons/service-name-parser": "0.0.10",
+    "@leemons/utils": "0.0.10",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
     "mongoose": "^7.1.1"

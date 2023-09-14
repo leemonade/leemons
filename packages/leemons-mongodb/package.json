@@ -1,6 +1,6 @@
 {
   "name": "@leemons/mongodb",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -22,10 +22,10 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@leemons/error": "dev",
-    "@leemons/lrn": "dev",
-    "@leemons/service-name-parser": "dev",
-    "@leemons/transactions": "dev",
+    "@leemons/error": "0.0.10",
+    "@leemons/lrn": "0.0.10",
+    "@leemons/service-name-parser": "0.0.10",
+    "@leemons/transactions": "0.0.10",
     "lodash": "^4.17.21",
     "mongoose": "^7.1.1"
   }
