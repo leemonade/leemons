@@ -65,3 +65,12 @@
  * @property {string} canUse - Can use property of the category
  * @property {number} order - Order of the category
  */
+
+/**
+ * @typedef {Object} Pin
+ * @property {string} id - The unique identifier of the pin.
+ * @property {string} deploymentID - The identifier of the deployment.
+ * @property {Object} asset - The asset associated with the pin.
+ * @property {string} asset.specificType - The specific type of the asset.
+ * @property {string} userAgent - The user agent string of the user who created the pin.
+ */
