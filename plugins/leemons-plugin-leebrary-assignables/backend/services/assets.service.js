@@ -11,7 +11,7 @@ const { getByAssetIds, search } = require('../core/provider');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: `${pluginName}.provider`,
+  name: `${pluginName}.assets`,
   version: 1,
   mixins: [LeemonsMiddlewaresMixin(), LeemonsCacheMixin(), LeemonsDeploymentManagerMixin()],
   actions: {

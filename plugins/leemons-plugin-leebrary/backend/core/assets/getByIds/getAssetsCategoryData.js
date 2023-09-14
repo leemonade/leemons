@@ -18,7 +18,7 @@ async function getAssetsCategoryData({ assets, ctx }) {
   const providersNames = uniq(categories.map((category) => category.provider)).filter(
     (provider) => provider !== 'leebrary'
   );
-  const providers = await getProviderByNames(compact(providersNames));
+  const providers = await getProviderByNames({ names: compact(providersNames), ctx });
 
   // Fetch asset data for each category using the providers
   const providersResults = await Promise.all(
@@ -33,7 +33,7 @@ async function getAssetsCategoryData({ assets, ctx }) {
         const categoryAssets = assets.filter((item) => item.category === category.id);
 
         // Call the 'getByIds' method on the provider to fetch asset data
-        return ctx.tx.call(`${category.provider}.provider.getByIds`, {
+        return ctx.tx.call(`${category.provider}.assets.getByIds`, {
           assetIds: categoryAssets.map((item) => item.id),
         });
       }

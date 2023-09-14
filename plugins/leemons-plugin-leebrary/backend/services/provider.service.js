@@ -6,11 +6,12 @@ const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
 const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 const { getProvidersActions } = require('leemons-providers');
 const { getServiceModels } = require('../models');
+const { pluginName } = require('../config/constants');
 const { listProviders } = require('../core/providers/list');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'leebrary.provider',
+  name: `${pluginName}.provider`,
   version: 1,
   mixins: [
     LeemonsMongoDBMixin({
