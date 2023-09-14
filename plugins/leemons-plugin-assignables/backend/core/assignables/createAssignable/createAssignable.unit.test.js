@@ -53,7 +53,7 @@ const actions = {
       id: `${uuid}@1.0.0`,
     };
   },
-  'leebrary.assets.duplicate': ({ id }) => ({ id: `duplicated-asset-from-${id}` }),
+  'leebrary.assets.duplicate': ({ assetId: id }) => ({ id: `duplicated-asset-from-${id}` }),
   'leebrary.assets.update': ({ asset }) => ({ id: `updated-asset-from-${asset.id}` }),
 };
 
@@ -69,15 +69,15 @@ it('Should register the new assignable', async () => {
       ...assignable.metadata,
       leebrary: {
         other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({ id: assignable.metadata.leebrary.other }).id
+          actions['leebrary.assets.duplicate']({ assetId: assignable.metadata.leebrary.other }).id
         ),
         test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(actions['leebrary.assets.duplicate']({ id: asset }).id)
+          expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
         ),
       },
     },
     resources: assignable.resources.map((resource) =>
-      expect.stringContaining(actions['leebrary.assets.duplicate']({ id: resource }).id)
+      expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
     ),
   };
 
@@ -116,15 +116,15 @@ it('Should register the new agnostic assignable (no subjects)', async () => {
       ...assignable.metadata,
       leebrary: {
         other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({ id: assignable.metadata.leebrary.other }).id
+          actions['leebrary.assets.duplicate']({ assetId: assignable.metadata.leebrary.other }).id
         ),
         test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(actions['leebrary.assets.duplicate']({ id: asset }).id)
+          expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
         ),
       },
     },
     resources: assignable.resources.map((resource) =>
-      expect.stringContaining(actions['leebrary.assets.duplicate']({ id: resource }).id)
+      expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
     ),
   };
 
@@ -159,15 +159,15 @@ it('Should register the new assignable in published format', async () => {
       ...assignable.metadata,
       leebrary: {
         other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({ id: assignable.metadata.leebrary.other }).id
+          actions['leebrary.assets.duplicate']({ assetId: assignable.metadata.leebrary.other }).id
         ),
         test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(actions['leebrary.assets.duplicate']({ id: asset }).id)
+          expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
         ),
       },
     },
     resources: assignable.resources.map((resource) =>
-      expect.stringContaining(actions['leebrary.assets.duplicate']({ id: resource }).id)
+      expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
     ),
   };
 
