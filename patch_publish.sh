@@ -45,17 +45,10 @@ do
     pkg_name=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
     pkg_version=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
 
-    echo "-------------------------"
-    echo pkg_name
-    echo pkg_version
-    echo "-------------------------"
     # Vuelve al directorio original
     cd -
 
     # Busca y reemplaza la versión en todos los archivos package.json donde el nombre del paquete aparece como una dependencia
-    #find . -name package.json -exec sed -i "s/\"$pkg_name\": \"[^\"]*\"/\"$pkg_name\": \"$pkg_version\"/g" {} \;
-    #find . -name package.json -exec sed -i "s#\"$pkg_name\": \"[^\"]*\"#\"$pkg_name\": \"$pkg_version\"#g" {} \;
-    #find . -name package.json -exec sed -i "s|\"$pkg_name\": \"[^\"]*\"|\"$pkg_name\": \"$pkg_version\"|g" {} \;
     find . -name 'node_modules' -prune -o -name 'package.json' -exec sed -i "s|\"$pkg_name\": \"[^\"]*\"|\"$pkg_name\": \"$pkg_version\"|g" {} \;
 
   else

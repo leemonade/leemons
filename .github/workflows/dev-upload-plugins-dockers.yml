@@ -1,10 +1,8 @@
 name: DEV Upload plugins dockers
 on:
-  workflow_run:
-    workflows:
-      - DEV Publish packages to NPM
-    types:
-      - completed
+  push:
+    tags:
+      - '*.*.*-mdevdockers'
 
 jobs:
   upload:
@@ -15,3 +13,5 @@ jobs:
         with:
           fetch-depth: '0'
 
+      - name: Mostrar Tag
+        run: echo "El tag es ${{ github.ref_name }}"
