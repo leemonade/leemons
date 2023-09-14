@@ -8,8 +8,8 @@ const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
 const getAssets = require('../../../__fixtures__/getAssets');
 
 // MOCKS
-jest.mock('../../files/duplicate.js');
-const { duplicate: duplicateFile } = require('../../files/duplicate');
+jest.mock('../../files/duplicate/duplicate');
+const { duplicate: duplicateFile } = require('../../files/duplicate/duplicate');
 
 let mongooseConnection;
 let disconnectMongoose;

@@ -3,7 +3,7 @@ module.exports = function getPermissionsMocks() {
   return {
     itemPermission: {
       id: 'itemPermissionIdOne',
-      permissionName: 'testing(ASSET_ID)assetOneId',
+      permissionName: 'testing.(ASSET_ID)assetOneId',
       actionName: 'owner', // view, viewer, editor, delete, assigner, assign, update, commentor
       target: null,
       type: 'testing.13ce91bb-9135-49d9-9030-9d2559c74198',

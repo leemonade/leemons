@@ -51,6 +51,7 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
       );
     });
   }
+
   await Promise.all(permissionsPromises);
   // ES: Luego, añade los permisos a los usuarios
   // EN: Then, add the permissions to the users
