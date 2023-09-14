@@ -16,7 +16,7 @@ const { getByNames: getProviderByNames } = require('../../providers/getByNames')
 
 const { categoryObject } = getCategory();
 
-it('Should call getAssetsCategoryData correctly', async () => {
+it('Should correctly fetch category data associated with each asset passed', async () => {
   // Arrange
   const assets = [
     { id: 'assetOneId', category: 'categoryOne' },
@@ -29,8 +29,8 @@ it('Should call getAssetsCategoryData correctly', async () => {
     { ...categoryObject, id: assets[2].category, provider: 'providerTwo' },
   ];
   const providers = [
-    { pluginName: 'Provider One', supportedMethods: { getByIds: true }, image: null },
-    { pluginName: 'Provider Two', supportedMethods: { getByIds: false }, image: null },
+    { pluginName: 'providerOne', supportedMethods: { getByIds: true }, image: null },
+    { pluginName: 'providerTwo', supportedMethods: { getByIds: false }, image: null },
   ];
   const providerAction = fn(() => ['result']);
   const ctx = generateCtx({
@@ -42,7 +42,7 @@ it('Should call getAssetsCategoryData correctly', async () => {
   getCategories.mockResolvedValue(categories);
   getProviderByNames.mockResolvedValue(providers);
 
-  const expectedResult = [categories, ['result']];
+  const expectedResult = [categories, [null, 'result', null]];
 
   // Act
   const response = await getAssetsCategoryData({ assets, ctx });

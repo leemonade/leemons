@@ -16,14 +16,14 @@ const { processFinalAsset } = require('./processFinalAsset');
  * @async
  * @param {Array} ids - The IDs of the assets to fetch
  * @param {object} params - The options object
- * @param {boolean} params.withFiles - Flag to include files in the response
- * @param {boolean} params.withSubjects - Flag to include subjects in the response (default: true)
- * @param {boolean} params.withTags - Flag to include tags in the response (default: true)
- * @param {boolean} params.withCategory - Flag to include category in the response (default: true)
- * @param {boolean} params.checkPins - Flag to check pins (default: true)
- * @param {boolean} params.checkPermissions - Flag to check permissions
- * @param {boolean} params.indexable - Flag to check if assets are indexable
- * @param {boolean} params.showPublic - Flag to show public assets
+ * @param {boolean} [params.withFiles] - Flag to include files in the response
+ * @param {boolean} [params.withSubjects] - Flag to include subjects in the response (default: true)
+ * @param {boolean} [params.withTags] - Flag to include tags in the response (default: true)
+ * @param {boolean} [params.withCategory] - Flag to include category in the response (default: true)
+ * @param {boolean} [params.checkPins] - Flag to check pins (default: true)
+ * @param {boolean} [params.checkPermissions] - Flag to check permissions
+ * @param {boolean} [params.indexable]- Flag to check if assets are indexable
+ * @param {boolean} [params.showPublic] - Flag to show public assets
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Array<LibraryAsset>>} - Returns an array of assets
  */
@@ -141,7 +141,7 @@ async function getByIds({
 
 module.exports = { getByIds };
 /*
-// return value:
+ real return value example:
 [
   {
     id: '2739f390-efc5-44d7-97b3-10cd5f1abe93@1.0.0',
