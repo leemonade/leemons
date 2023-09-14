@@ -1,6 +1,7 @@
 const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
+const { LeemonsError } = require('leemons-error');
 
 const { remove } = require('./remove');
 const { bookmarksSchema } = require('../../../models/bookmarks');
@@ -110,11 +111,17 @@ it('Should throw an error when the bookmark is not found', async () => {
 it('Should throw an error when deletion fails', async () => {
   // Arrange
   getByAsset.mockResolvedValue(bookmark);
+  const errorMessage = 'An error message';
   removeFiles.mockImplementation(() => {
-    throw new Error();
+    throw new Error(errorMessage);
   });
   const testFunc = async () => remove({ assetId: bookmark.asset, ctx });
 
   // Act and Assert
-  await expect(testFunc()).rejects.toThrow(`Failed to remove bookmark`);
+  await expect(testFunc()).rejects.toThrow(
+    new LeemonsError(ctx, {
+      message: `Failed to remove bookmark: ${errorMessage}`,
+      httpStatusCode: 500,
+    })
+  );
 });
