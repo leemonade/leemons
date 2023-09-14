@@ -1,0 +1,38 @@
+{
+  "name": "leemons-plugin-leebrary-assignables",
+  "version": "1.0.0",
+  "description": "Leemons Library Assignables plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "test": "jest --watch --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer",
+    "leemons"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1",
+    "turbo": "^1.9.6"
+  },
+  "dependencies": {
+    "@moleculer/channels": "^0.1.6",
+    "leemons-cache": "1.0.0",
+    "leemons-deployment-manager": "1.0.0",
+    "leemons-error": "1.0.0",
+    "leemons-middlewares": "1.0.0",
+    "leemons-testing": "1.0.0",
+    "leemons-utils": "1.0.0",
+    "leemons-validator": "1.0.0",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.26"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  }
+}

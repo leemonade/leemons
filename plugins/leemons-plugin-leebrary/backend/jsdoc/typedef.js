@@ -1,6 +1,7 @@
 /**
  * @typedef LibraryProvider
- * @property {string} name - Name of the service
+ * @property {string} pluginName - Name of the plugin
+ * @property {string} name - Human readable name of the service
  * @property {string} image - URL of the service logo
  * @property {Object} supportedMethods - Object containing supported methods
  * @property {boolean} supportedMethods.uploadMultipartChunk - Supports uploading multipart chunks

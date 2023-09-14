@@ -11,7 +11,7 @@ const { list: listProviders } = require('./list');
 async function getByName({ name, ctx }) {
   const providers = (await listProviders({ ctx })) ?? [];
   const provider = providers.find((item) => item.pluginName === name);
-  return provider?.params ?? null;
+  return provider ? { pluginName: provider.pluginName, ...provider.params } : null;
 }
 
 module.exports = { getByName };

@@ -15,18 +15,17 @@ const { processFinalAsset } = require('./processFinalAsset');
  * Fetch assets by their IDs
  * @async
  * @param {Array} ids - The IDs of the assets to fetch
- * @param {object} options - The options object
- * @param {boolean} options.withFiles - Flag to include files in the response
- * @param {boolean} options.withSubjects - Flag to include subjects in the response (default: true)
- * @param {boolean} options.withTags - Flag to include tags in the response (default: true)
- * @param {boolean} options.withCategory - Flag to include category in the response (default: true)
- * @param {boolean} options.checkPins - Flag to check pins (default: true)
- * @param {boolean} options.checkPermissions - Flag to check permissions
- * @param {boolean} options.indexable - Flag to check if assets are indexable
- * @param {object} options.userSession - The user session object
- * @param {boolean} options.showPublic - Flag to show public assets
- * @param {object} options.transacting - The transaction object
- * @returns {Promise<Array>} - Returns an array of assets
+ * @param {object} params - The options object
+ * @param {boolean} params.withFiles - Flag to include files in the response
+ * @param {boolean} params.withSubjects - Flag to include subjects in the response (default: true)
+ * @param {boolean} params.withTags - Flag to include tags in the response (default: true)
+ * @param {boolean} params.withCategory - Flag to include category in the response (default: true)
+ * @param {boolean} params.checkPins - Flag to check pins (default: true)
+ * @param {boolean} params.checkPermissions - Flag to check permissions
+ * @param {boolean} params.indexable - Flag to check if assets are indexable
+ * @param {boolean} params.showPublic - Flag to show public assets
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<Array<LibraryAsset>>} - Returns an array of assets
  */
 async function getByIds({
   ids,
@@ -102,14 +101,14 @@ async function getByIds({
   let pins = [];
 
   if (checkPins) {
-    pins = await getPins(assetsIds, { userSession, transacting });
+    pins = await getPins({ assetsIds, ctx });
   }
 
   // ·········································································
   // FINALLY
 
   const programsById = await getAssetsProgramsAggregatedById({ assets, ctx });
-  const userAgents = userSession?.userAgents.map(({ id }) => id) || [];
+  const userAgents = ctx.meta.userSession?.userAgents?.map(({ id }) => id) || [];
 
   const finalAssets = assets.map((asset, index) =>
     processFinalAsset({
