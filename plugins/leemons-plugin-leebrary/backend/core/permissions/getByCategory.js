@@ -14,7 +14,7 @@ const {
 const semver = require('semver');
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetIdFromPermissionName = require('./helpers/getAssetIdFromPermissionName');
-const { getPublic } = require('./getPublic');
+const { getPublic } = require('./getPublic/getPublic');
 const { getByIds } = require('../assets/getByIds');
 const { getByAssets } = require('./getByAssets');
 const { byProvider: getByProvider } = require('../search/byProvider');

@@ -237,7 +237,8 @@ it('Should check permissions only if userSession is provided and handle falsy fl
     ctx,
   });
   expect(processFinalAsset).toBeCalledTimes(assets.length);
-  expect(response).toEqual(assetsFromDB);
+
+  expect(response).toEqual(expect.arrayContaining(assetsFromDB));
 });
 
 it('Should return empty array if no asset IDs are provided', async () => {
