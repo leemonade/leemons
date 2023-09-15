@@ -5,7 +5,7 @@
  * @param {string[]} params.assetIds - The asset IDs.
  * @param {string[]} params.columns - The columns to select.
  * @param {Context} params.ctx - The Moleculer context object.
- * @returns {Promise<Pin[]>} A promise that resolves with the found pin documents.
+ * @returns {Promise<LibraryPin[]>} A promise that resolves with the found pin documents.
  */
 const { flattenDeep } = require('lodash');
 

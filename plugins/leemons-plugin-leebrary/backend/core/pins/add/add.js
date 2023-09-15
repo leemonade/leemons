@@ -9,7 +9,7 @@ const { getByAsset: getPinByAsset } = require('../getByAsset');
  * @param {Object} params - The parameters object.
  * @param {string} params.assetId - The ID of the asset.
  * @param {Context} params.ctx - The Moleculer context object.
- * @returns {Promise<Pin>} A promise that resolves with the created pin document.
+ * @returns {Promise<LibraryPin>} A promise that resolves with the created pin document.
  * @throws {LeemonsError} If the asset ID is missing, the asset does not exist, or the asset is already pinned.
  */
 async function add({ assetId, ctx }) {

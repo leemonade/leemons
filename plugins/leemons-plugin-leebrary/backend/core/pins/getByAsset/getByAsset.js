@@ -5,7 +5,7 @@
  * @param {string} params.assetId - The ID of the asset.
  * @param {string[]} params.columns - The columns to select.
  * @param {Context} params.ctx - The Moleculer context object.
- * @returns {Promise<Pin>} A promise that resolves with the found pin document.
+ * @returns {Promise<LibraryPin>} A promise that resolves with the found pin document.
  */
 async function getByAsset({ assetId, columns, ctx }) {
   const query = { asset: assetId };

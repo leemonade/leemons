@@ -67,7 +67,7 @@
  */
 
 /**
- * @typedef {Object} Pin
+ * @typedef {Object} LibraryPin
  * @property {string} id - The unique identifier of the pin.
  * @property {string} deploymentID - The identifier of the deployment.
  * @property {Object} asset - The asset associated with the pin.
