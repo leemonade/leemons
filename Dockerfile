@@ -11,7 +11,7 @@ RUN npm install --production
 
 COPY ${PLUGIN_PATH}/ ./
 
-RUN yarn add @leemons/runner --production
+RUN yarn add @leemons/runner@latest --production
 RUN yarn add nats --production
 
 EXPOSE 3000
