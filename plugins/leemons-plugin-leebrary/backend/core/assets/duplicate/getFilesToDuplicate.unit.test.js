@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getFilesToDuplicate } = require('./getFilesToDuplicate');
 const getBookmarkFromDB = require('../../../__fixtures__/getBookmarkFromDB');

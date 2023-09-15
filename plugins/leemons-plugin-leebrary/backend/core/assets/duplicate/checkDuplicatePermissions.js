@@ -1,5 +1,5 @@
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 /**
  * Checks if the user has permissions to duplicate the asset. If the user doesn't have permissions, it throws a LeemonsError.
  *

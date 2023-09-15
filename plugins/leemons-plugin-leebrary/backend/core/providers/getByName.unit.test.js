@@ -1,7 +1,7 @@
 const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
-const { keyValueSchema } = require('leemons-mongodb-helpers');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
+const { keyValueSchema } = require('@leemons/mongodb-helpers');
 const { getByName } = require('./getByName');
 const getProviders = require('../../__fixtures__/getProviders');
 const { list: listProviders } = require('./list');

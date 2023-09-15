@@ -3,7 +3,7 @@ const {
   expect,
   jest: { spyOn },
 } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { handleUserSessionData } = require('./handleUserSessionData');
 const getUserSession = require('../../../__fixtures__/getUserSession');

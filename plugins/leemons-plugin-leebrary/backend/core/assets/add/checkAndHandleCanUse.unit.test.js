@@ -1,6 +1,6 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
-const { LeemonsError } = require('leemons-error');
+const { generateCtx } = require('@leemons/testing');
+const { LeemonsError } = require('@leemons/error');
 
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
 const getCategory = require('../../../__fixtures__/getCategory');

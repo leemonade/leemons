@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getByAsset: getPermissions } = require('../../../permissions/getByAsset');
 /**
  * Validates the user's permissions to update the asset

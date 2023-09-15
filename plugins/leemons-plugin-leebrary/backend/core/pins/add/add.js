@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { exists: checkAssetExists } = require('../../assets/exists');
 const { getByAsset: getPinByAsset } = require('../getByAsset');

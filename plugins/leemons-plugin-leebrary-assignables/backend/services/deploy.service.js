@@ -2,7 +2,7 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { pluginName } = require('../config/constants');
 
 /** @type {ServiceSchema} */

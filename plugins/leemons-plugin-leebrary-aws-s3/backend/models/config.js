@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
 const { pluginName } = require('../config/constants');
 
 const configSchema = new mongoose.Schema(

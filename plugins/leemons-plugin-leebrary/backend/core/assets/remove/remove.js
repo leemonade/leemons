@@ -1,5 +1,5 @@
 const { isEmpty } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { remove: removeFiles } = require('../files/remove');
 const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');

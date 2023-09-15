@@ -1,5 +1,5 @@
 const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { finishProviderMultipart } = require('./handleProviderMultipart');
 const { getByName } = require('../../providers/getByName');
 const getProviders = require('../../../__fixtures__/getProviders');

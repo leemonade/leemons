@@ -1,5 +1,5 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { handleFilesDuplication } = require('./handleFilesDuplication');
 const getMediaFileData = require('../../../__fixtures__/getMediaFileData');

@@ -1,7 +1,7 @@
 const { afterAll, beforeAll, beforeEach, describe, expect, it } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { LeemonsError } = require('leemons-error');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { LeemonsError } = require('@leemons/error');
+const { newModel } = require('@leemons/mongodb');
 
 const getAssetAddDataInput = require('../../../__fixtures__/getAssetUpdateDataInput');
 

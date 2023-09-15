@@ -13,7 +13,7 @@
  */
 const { isEmpty } = require('lodash');
 
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { exists } = require('../exists');
 const { categoriesMenu } = require('../../../config/constants');

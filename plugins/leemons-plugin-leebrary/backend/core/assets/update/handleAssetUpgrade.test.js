@@ -1,5 +1,5 @@
 const { describe, expect, it } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { handleAssetUpgrade } = require('./handleAssetUpgrade');
 

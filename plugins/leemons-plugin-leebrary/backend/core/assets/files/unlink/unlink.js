@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { remove } = require('../remove');
 const { handleUserPermissions } = require('./handleUserPermissions');
 

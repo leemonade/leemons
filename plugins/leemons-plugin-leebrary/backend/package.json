@@ -21,10 +21,9 @@
     "turbo": "^1.9.6"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.6",
-    "got": "^13.0.0",
     "@leemons/cache": "0.0.11",
     "@leemons/deployment-manager": "0.0.11",
+    "@leemons/error": "0.0.11",
     "@leemons/middlewares": "0.0.11",
     "@leemons/mongodb": "0.0.11",
     "@leemons/mongodb-helpers": "0.0.11",
@@ -34,6 +33,8 @@
     "@leemons/utils": "0.0.11",
     "@leemons/validator": "0.0.11",
     "@leemons/widgets": "0.0.11",
+    "@moleculer/channels": "^0.1.6",
+    "got": "11.8.5",
     "mediainfo.js": "^0.2.0",
     "metascraper": "^5.34.10",
     "metascraper-audio": "^5.26.0",

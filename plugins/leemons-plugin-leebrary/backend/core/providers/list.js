@@ -1,4 +1,4 @@
-const { getPluginProviders } = require('leemons-providers');
+const { getPluginProviders } = require('@leemons/providers');
 
 /**
  * This function lists all the providers available in the plugin.

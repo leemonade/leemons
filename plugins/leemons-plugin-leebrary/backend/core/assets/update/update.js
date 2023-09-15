@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const { isEmpty } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { validateAddAsset } = require('../../validations/forms');
 const { prepareAssetData } = require('./prepareAssetData');

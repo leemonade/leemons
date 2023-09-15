@@ -1,6 +1,6 @@
 const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { uploadMultipartChunk } = require('./uploadMultipartChunk');
 const { multipartEtagSchema } = require('../../models/multipart-etag');
 const { multipartUploadsSchema } = require('../../models/multipart-uploads');

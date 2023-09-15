@@ -3,8 +3,8 @@ const {
   expect,
   jest: { fn },
 } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
-const { LeemonsError } = require('leemons-error');
+const { generateCtx } = require('@leemons/testing');
+const { LeemonsError } = require('@leemons/error');
 
 const { getUsersByAsset } = require('./getUsersByAsset');
 const { permissionSeparator } = require('../../../config/constants');

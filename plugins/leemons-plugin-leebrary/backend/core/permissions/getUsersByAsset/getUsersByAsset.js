@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getByAsset } = require('../getByAsset');
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 

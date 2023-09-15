@@ -1,5 +1,5 @@
 const { it, expect, afterEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { handleCategoryData } = require('./handleCategoryData');
 const getCategory = require('../../../__fixtures__/getCategory');

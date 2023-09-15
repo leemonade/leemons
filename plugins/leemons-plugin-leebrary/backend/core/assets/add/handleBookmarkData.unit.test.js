@@ -3,7 +3,7 @@ const {
   expect,
   jest: { spyOn },
 } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 jest.mock('../../shared/metascraper');
 jest.mock('got');
