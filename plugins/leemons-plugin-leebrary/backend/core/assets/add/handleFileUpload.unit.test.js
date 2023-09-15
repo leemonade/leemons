@@ -1,5 +1,5 @@
 const { it, expect, afterEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { handleFileUpload } = require('./handleFileUpload');
 
 // mocks

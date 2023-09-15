@@ -81,6 +81,7 @@ async function tryConnect() {
       creating = true;
 
       window.mqttAwsIotCredentials = await getCredentials();
+      console.log('window.mqttAwsIotCredentials', window.mqttAwsIotCredentials);
 
       if (window.mqttAwsIotDevice) endDevice();
       await connectWebsocket(window.mqttAwsIotCredentials);

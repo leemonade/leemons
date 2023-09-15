@@ -4,7 +4,7 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { getConfig } = require('../../core/provider');
 
 module.exports = {

@@ -1,4 +1,4 @@
-const { modifyCTX } = require('leemons-mongodb/src/mixin');
+const { modifyCTX } = require('@leemons/mongodb/src/mixin');
 
 function generateCtx({
   actions,

@@ -1,35 +1,28 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function deleteQuestions(questionId, { userSession, transacting: _transacting } = {}) {
+async function deleteQuestions({ questionId, ctx }) {
   const questionIds = _.isArray(questionId) ? questionId : [questionId];
-  const tagsService = leemons.getPlugin('common').services.tags;
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const questions = await table.questions.find({ id_$in: questionIds }, { transacting });
+  const questions = await ctx.tx.db.Questions.find({ id_$in: questionIds }).lean();
 
-      const assetIds = [];
-      _.forEach(questions, (question) => {
-        // eslint-disable-next-line no-param-reassign
-        question.properties = JSON.parse(question.properties);
-        if (question.properties?.image) {
-          assetIds.push(question.properties.image);
-        }
-      });
+  const assetIds = [];
+  _.forEach(questions, (question) => {
+    // eslint-disable-next-line no-param-reassign
+    question.properties = JSON.parse(question.properties);
+    if (question.properties?.image) {
+      assetIds.push(question.properties.image);
+    }
+  });
 
-      // TODO: Añadir borrado de assets
-      await Promise.all([
-        table.questions.deleteMany({ id_$in: questionIds }, { transacting }),
-        tagsService.removeAllTagsForValues('tests.questionBanks', questionIds, {
-          transacting,
-        }),
-      ]);
+  // TODO: Añadir borrado de assets
+  await Promise.all([
+    ctx.tx.db.Questions.deleteMany({ id_$in: questionIds }),
+    ctx.tx.call('common.tags.removeAllTagsForValues', {
+      type: 'tests.questionBanks',
+      values: questionIds,
+    }),
+  ]);
 
-      return true;
-    },
-    table.questions,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { deleteQuestions };

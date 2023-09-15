@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const { DateTime } = require('luxon');
 const { forEach, orderBy } = require('lodash');
-const { tables } = require('../tables');
+const { XAPIVerbs } = require('@leemons/xapi');
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -30,8 +30,8 @@ function getNoteAsText(grade, evaluationSystem) {
   return scale?.letter;
 }
 
-async function updateReportPer(report, percentageCompleted, dataToSocket) {
-  await tables.report.update(
+async function updateReportPer({ report, percentageCompleted, dataToSocket, ctx }) {
+  await ctx.tx.db.Report.updateOne(
     { id: report.id },
     {
       percentageCompleted,
@@ -44,24 +44,20 @@ async function updateReportPer(report, percentageCompleted, dataToSocket) {
   });
 }
 
-async function startGeneration(report, dataToSocket) {
+async function startGeneration({ report, dataToSocket, ctx }) {
   try {
     const toSave = {};
-    const xapiServices = leemons.getPlugin('xapi').services;
-    const userServices = leemons.getPlugin('users').services;
-    const comunicaServices = leemons.getPlugin('comunica').services;
-    const assignableServices = leemons.getPlugin('assignables').services;
-    const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
-    const academicCalendarServices = leemons.getPlugin('academic-calendar').services;
 
-    const [program] = await academicPortfolioServices.programs.programsByIds(report.program);
+    const [program] = await ctx.tx.call('academic-portfolio.programs.programsByIds', {
+      ids: [report.program],
+    });
     const course = report.course
       ? _.find(program.courses, { id: report.course })
       : program.courses[0];
     const coursesLength = program.courses.length;
     const courseIsAlone = coursesLength === 1 ? program.courses[0].isAlone : false;
 
-    const center = await userServices.centers.detail(program.centers[0]);
+    const center = await ctx.tx.call('users.centers.detail', { id: program.centers[0] });
 
     toSave.centerId = center.id;
     toSave.centerName = center.name;
@@ -72,8 +68,8 @@ async function startGeneration(report, dataToSocket) {
     toSave.programNCourses = courseIsAlone ? 0 : coursesLength;
 
     const [calendarConfig] = await Promise.all([
-      academicCalendarServices.config.getConfig(program.id),
-      updateReportPer(report, 5, dataToSocket),
+      ctx.tx.call('academic-calendar.config.getConfig', { program: program.id }),
+      updateReportPer({ report, percentageCompleted: 5, dataToSocket, ctx }),
     ]);
 
     if (!courseIsAlone) {
@@ -95,8 +91,10 @@ async function startGeneration(report, dataToSocket) {
     const courseDates = course ? _.find(toSave.courses, { id: course.id }) : toSave.courses[0];
 
     const [[userAgentInfo]] = await Promise.all([
-      userServices.users.getUserAgentsInfo([report.userAgent]),
-      updateReportPer(report, 10, dataToSocket),
+      ctx.tx.call('users.users.getUserAgentsInfo', {
+        userAgentsIds: [report.userAgent],
+      }),
+      updateReportPer({ report, percentageCompleted: 10, dataToSocket, ctx }),
     ]);
 
     toSave.userAgentId = userAgentInfo.id;
@@ -110,28 +108,31 @@ async function startGeneration(report, dataToSocket) {
       .join(' ');
 
     const [usersInProgram] = await Promise.all([
-      academicPortfolioServices.programs.getUsersInProgram(program.id, {
+      ctx.tx.call('academic-portfolio.programs.getUsersInProgram', {
+        program: program.id,
         course: report.course || program.courses[0].id,
         onlyStudents: true,
       }),
-      updateReportPer(report, 15, dataToSocket),
+      updateReportPer({ report, percentageCompleted: 15, dataToSocket, ctx }),
     ]);
 
     toSave.usersInProgram = usersInProgram.length;
 
     let classesPromise = null;
     if (course) {
-      classesPromise = academicPortfolioServices.classes.getClassesUnderProgramCourse(
-        program.id,
-        course.id
-      );
+      classesPromise = ctx.tx.call('academic-portfolio.classes.getClassesUnderProgramCourse', {
+        program: program.id,
+        course: course.id,
+      });
     } else {
-      classesPromise = academicPortfolioServices.classes.getClassesUnderProgram(program.id);
+      classesPromise = ctx.tx.call('academic-portfolio.classes.getClassesUnderProgram', {
+        program: program.id,
+      });
     }
 
     const [classesIds] = await Promise.all([
       classesPromise,
-      updateReportPer(report, 25, dataToSocket),
+      updateReportPer({ report, percentageCompleted: 25, dataToSocket, ctx }),
     ]);
 
     toSave.classVideoN = 0;
@@ -151,7 +152,9 @@ async function startGeneration(report, dataToSocket) {
     }
 
     if (courseDates?.startDate && courseDates?.endDate) {
-      const classes = await academicPortfolioServices.classes.classByIds(classesIds);
+      const classes = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+        ids: classesIds,
+      });
       _.forEach(classes, (classe) => {
         _.forEach(classe.schedule, ({ dayWeek }) => {
           toSave.classVideoN += getDaysBetweenDates(
@@ -164,28 +167,34 @@ async function startGeneration(report, dataToSocket) {
     }
 
     const [xapiVirtualClass, xapiProgramViewDates, xapiLeebraryMediaFiles] = await Promise.all([
-      xapiServices.xapi.find({
-        type: 'log',
-        $sort: 'created_at:asc',
-        'statement.actor.account.name': report.userAgent.toString(),
-        'statement.object.definition.extensions.id_$in': classesIds,
-        'statement.object.id_$endsWith': '/api/open/virtual-classroom',
+      ctx.tx.call('xapi.xapi.find', {
+        query: {
+          type: 'log',
+          'statement.actor.account.name': report.userAgent.toString(),
+          'statement.object.definition.extensions.id_$in': classesIds,
+          'statement.object.id_$endsWith': '/api/open/virtual-classroom',
+        },
+        sort: { createdAt: 1 },
       }),
-      xapiServices.xapi.find({
-        type: 'log',
-        $sort: 'created_at:asc',
-        'statement.actor.account.name': report.userAgent.toString(),
-        'statement.object.definition.extensions.id': program.id.toString(),
-        'statement.object.id_$endsWith': '/api/view/program',
+      ctx.tx.call('xapi.xapi.find', {
+        query: {
+          type: 'log',
+          'statement.actor.account.name': report.userAgent.toString(),
+          'statement.object.definition.extensions.id': program.id.toString(),
+          'statement.object.id_$endsWith': '/api/view/program',
+        },
+        sort: { createdAt: 1 },
       }),
-      xapiServices.xapi.find({
-        type: 'log',
-        $sort: 'created_at:asc',
-        'statement.actor.account.name': report.userAgent.toString(),
-        'statement.object.definition.extensions.program': program.id.toString(),
-        'statement.object.id_$endsWith': '/api/view/leebrary/media-files',
+      ctx.tx.call('xapi.xapi.find', {
+        query: {
+          type: 'log',
+          'statement.actor.account.name': report.userAgent.toString(),
+          'statement.object.definition.extensions.program': program.id.toString(),
+          'statement.object.id_$endsWith': '/api/view/leebrary/media-files',
+        },
+        sort: { createdAt: 1 },
       }),
-      updateReportPer(report, 40, dataToSocket),
+      updateReportPer({ report, percentageCompleted: 40, dataToSocket, ctx }),
     ]);
 
     toSave.mediaFiles = [];
@@ -224,13 +233,13 @@ async function startGeneration(report, dataToSocket) {
     _.forEach(xapiProgramViewDates, (item, index) => {
       if (!indexsUsed.includes(index)) {
         indexsUsed.push(index);
-        if (item.statement.verb.id === xapiServices.xapi.Verbs.INITIALIZED.id) {
+        if (item.statement.verb.id === XAPIVerbs.INITIALIZED.id) {
           con.start = item.created_at;
           con.ip = item.statement.object.definition.extensions.ip;
           const nextItem = xapiProgramViewDates[index + 1];
           if (nextItem) {
             // Si hay siguiente item tenemos que comprobar que sea de terminar si no lo es generamos nostros el terinar 15 minutos despues (Algo peto y no se registro)
-            if (nextItem.statement.verb.id === xapiServices.xapi.Verbs.TERMINATED.id) {
+            if (nextItem.statement.verb.id === XAPIVerbs.TERMINATED.id) {
               con.end = nextItem.created_at;
               indexsUsed.push(index + 1);
             } else {
@@ -273,15 +282,18 @@ async function startGeneration(report, dataToSocket) {
     toSave.totalHoursConnected = (toSave.totalHoursConnected / 3600).toFixed(2);
 
     const [assignablesData] = await Promise.all([
-      assignableServices.assignations.getUserDataForFundae(report.userAgent, classesIds),
-      updateReportPer(report, 55, dataToSocket),
+      ctx.tx.call('assignables.assignations.getUserDataForFundae', {
+        userAgent: report.userAgent,
+        classes: classesIds,
+      }),
+      updateReportPer({ report, percentageCompleted: 55, dataToSocket, ctx }),
     ]);
 
     let evaluationSystem = null;
     try {
-      evaluationSystem = await academicPortfolioServices.programs.getProgramEvaluationSystem(
-        program.id
-      );
+      evaluationSystem = await ctx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
+        id: program.id,
+      });
     } catch (e) {}
 
     toSave.exams = {};
@@ -328,31 +340,45 @@ async function startGeneration(report, dataToSocket) {
     })`;
 
     const [teachersInClasses] = await Promise.all([
-      academicPortfolioServices.classes.teacher.getByClass(classesIds, {
+      ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
+        classe: classesIds,
         type: 'main-teacher',
         returnIds: true,
       }),
-      updateReportPer(report, 65, dataToSocket),
+      updateReportPer({ report, percentageCompleted: 65, dataToSocket, ctx }),
     ]);
 
     toSave.nTeachers = teachersInClasses.length;
 
     const [userAgentRooms] = await Promise.all([
-      comunicaServices.room.getUserAgentRooms(report.userAgent),
-      updateReportPer(report, 70, dataToSocket),
+      ctx.tx.call('comunica.room.getUserAgentRooms', {
+        userAgent: report.userAgent,
+      }),
+      updateReportPer({ report, percentageCompleted: 70, dataToSocket, ctx }),
     ]);
 
     const promises1 = [];
     const promises2 = [];
     _.forEach(userAgentRooms, (room) => {
-      promises1.push(comunicaServices.room.get(room, report.userAgent, { returnUserAgents: true }));
-      promises2.push(comunicaServices.room.getMessages(room, report.userAgent));
+      promises1.push(
+        ctx.tx.call('comunica.room.get', {
+          key: room,
+          userAgent: report.userAgent,
+          returnUserAgents: true,
+        })
+      );
+      promises2.push(
+        ctx.tx.call('comunica.room.getMessages', {
+          key: room,
+          userAgent: report.userAgent,
+        })
+      );
     });
 
     const [rooms, roomMessages] = await Promise.all([
       Promise.all(promises1),
       Promise.all(promises2),
-      updateReportPer(report, 90, dataToSocket),
+      updateReportPer({ report, percentageCompleted: 90, dataToSocket, ctx }),
     ]);
 
     toSave.privateChats = [];
@@ -386,61 +412,77 @@ async function startGeneration(report, dataToSocket) {
       }
     });
 
-    await tables.report.update(
+    await ctx.tx.db.Report.updateOne(
       { id: report.id },
       {
         report: toSave,
       }
     );
 
-    await updateReportPer(report, 100, { ...dataToSocket, report: toSave });
+    await updateReportPer({
+      report,
+      percentageCompleted: 100,
+      dataToSocket: { ...dataToSocket, report: toSave },
+      ctx,
+    });
 
     // console.log(toSave);
   } catch (e) {
     console.error(e);
-    updateReportPer(report, 0, dataToSocket);
+    await updateReportPer({ report, percentageCompleted: 0, dataToSocket, ctx });
   }
 }
 
-async function retry(id) {
-  const report = await tables.report.findOne({ id });
-  const userServices = leemons.getPlugin('users').services;
-  const [userAgentInfo] = await userServices.users.getUserAgentsInfo([report.userAgent]);
-  startGeneration(report, {
-    name: [userAgentInfo.user.name, userAgentInfo.user.surnames, userAgentInfo.user.secondSurname]
-      .filter((item) => !_.isEmpty(item))
-      .join(' '),
+async function retry({ id, ctx }) {
+  const report = await ctx.tx.db.Report.findOne({ id }).lean();
+  const [userAgentInfo] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds: [report.userAgent],
+  });
+  startGeneration({
+    report,
+    dataToSocket: {
+      name: [userAgentInfo.user.name, userAgentInfo.user.surnames, userAgentInfo.user.secondSurname]
+        .filter((item) => !_.isEmpty(item))
+        .join(' '),
+    },
+    ctx,
   });
 }
 
-async function generate(userAgent, program, { course, userSession, transacting } = {}) {
+async function generate({ userAgent, program, course, ctx }) {
+  const { userSession } = ctx.meta;
   if (_.isArray(userAgent)) {
     return Promise.all(
       _.map(userAgent, (e) =>
-        generate(e, program, {
+        generate({
+          userAgent: e,
+          program,
           course,
           userSession,
-          transacting,
+          ctx,
         })
       )
     );
   }
-  const report = await tables.report.create(
-    {
-      program,
-      course,
-      userAgent,
-      creator: userSession.userAgents[0].id,
-      percentageCompleted: 1,
+  let report = await ctx.tx.db.Report.create({
+    program,
+    course,
+    userAgent,
+    creator: userSession.userAgents[0].id,
+    percentageCompleted: 1,
+  });
+  report = report.toObject();
+  const [userAgentInfo] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds: [report.userAgent],
+  });
+  startGeneration({
+    report,
+    dataToSocket: {
+      name: [userAgentInfo.user.name, userAgentInfo.user.surnames, userAgentInfo.user.secondSurname]
+        .filter((item) => !_.isEmpty(item))
+        .join(' '),
     },
-    { transacting }
-  );
-  const userServices = leemons.getPlugin('users').services;
-  const [userAgentInfo] = await userServices.users.getUserAgentsInfo([report.userAgent]);
-  startGeneration(report, {
-    name: [userAgentInfo.user.name, userAgentInfo.user.surnames, userAgentInfo.user.secondSurname]
-      .filter((item) => !_.isEmpty(item))
-      .join(' '),
+    ctx,
   });
   return report;
 }

@@ -1,4 +1,4 @@
-const { getPluginNameFromCTX } = require('leemons-service-name-parser');
+const { getPluginNameFromCTX } = require('@leemons/service-name-parser');
 
 /**
  * Return the key for translation

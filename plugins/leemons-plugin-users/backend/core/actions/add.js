@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 /**
  * Create the action only if the actionName does not already exist, if it does, the existing one is returned.

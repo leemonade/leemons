@@ -2,8 +2,8 @@ const _ = require('lodash');
 const {
   getAutoDeploymentIDIfCanIFNotThrowError,
   isCoreService,
-} = require('leemons-deployment-manager');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+} = require('@leemons/deployment-manager');
+const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 
 async function autoInit(broker) {
   // This function return a default deploymentID if not DISABLE_AUTO_INIT

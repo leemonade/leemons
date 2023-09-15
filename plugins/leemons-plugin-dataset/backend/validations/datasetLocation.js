@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const { localeSchema, localeObjectSchema, stringSchema } = require('./types');
 

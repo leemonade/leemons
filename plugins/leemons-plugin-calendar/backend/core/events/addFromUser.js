@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getPermissionConfig } = require('../calendar/getPermissionConfig');
 const { add } = require('./add');
 const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');

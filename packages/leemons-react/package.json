@@ -1,10 +1,26 @@
 {
-  "name": "leemons-react",
-  "version": "0.0.1",
+  "name": "@leemons/react",
+  "version": "0.0.11",
   "bin": {
     "leemonsFront": "bin/leemonsFront.js"
   },
   "main": "index.js",
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
   "license": "MIT",
   "scripts": {
     "leemonsFront": "leemonsFront"

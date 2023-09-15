@@ -1,4 +1,4 @@
-const { scores: scoresTable } = require('../tables');
+const { sqlDatetime } = require('@leemons/utils');
 const removeScores = require('./removeScores');
 
 function removeScoresQuery(scores) {
@@ -18,16 +18,15 @@ function removeScoresQuery(scores) {
   );
 }
 
-module.exports = async function setScores(scores, { userSession, transacting } = {}) {
-  await removeScores(removeScoresQuery(scores), { userSession, transacting });
+module.exports = async function setScores({ scores, ctx }) {
+  await removeScores({ ...removeScoresQuery(scores), ctx });
   // TODO: Verify userSession is allowed to save scores (already published or not)
-  await scoresTable.createMany(
+  await ctx.tx.db.Scores.insertMany(
     scores.map((score) => ({
       ...score,
       period: `${score.period}`,
-      gradedAt: global.utils.sqlDatetime(new Date()),
-    })),
-    { transacting }
+      gradedAt: sqlDatetime(new Date()),
+    }))
   );
 
   return true;

@@ -1,6 +1,6 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
-const { LeemonsError } = require('leemons-error');
+const { generateCtx } = require('@leemons/testing');
+const { LeemonsError } = require('@leemons/error');
 
 const { unlink } = require('./unlink');
 

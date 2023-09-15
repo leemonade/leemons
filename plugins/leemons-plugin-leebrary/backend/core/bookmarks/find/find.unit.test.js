@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { find } = require('./find');
 

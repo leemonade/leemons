@@ -4,9 +4,9 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
-const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { getManyWithLocale, getKeyStartsWith } = require('../../core/localization');
 const { resolveLocales } = require('../../core/locale');
 

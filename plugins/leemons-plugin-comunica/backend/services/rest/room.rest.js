@@ -5,12 +5,13 @@
  */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
-const { randomString } = require('leemons-utils');
+} = require('@leemons/middlewares');
+const { randomString } = require('@leemons/utils');
+const { LeemonsError } = require('@leemons/error');
 const {
   getUserAgentRoomsList,
   getMessages,
@@ -30,7 +31,6 @@ const {
   getUnreadMessages,
   getRoomsMessageCount,
 } = require('../../core/room');
-const { LeemonsError } = require('leemons-error');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -72,7 +72,7 @@ module.exports = {
     async handler(ctx) {
       await sendMessage({
         ...ctx.params,
-        userAgent: ctx.meta.userSession.userAgents[0].id,
+        userAgent: ctx.meta.userSession.userAgents[0],
         ctx,
       });
       return { status: 200 };

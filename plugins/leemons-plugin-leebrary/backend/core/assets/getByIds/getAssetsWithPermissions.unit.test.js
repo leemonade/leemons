@@ -4,7 +4,7 @@ const {
   expect,
   jest: { fn },
 } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
 const getUserSession = require('../../../__fixtures__/getUserSession');

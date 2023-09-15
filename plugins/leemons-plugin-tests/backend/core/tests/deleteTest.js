@@ -1,6 +1,8 @@
-async function deleteTest(id, { userSession, transacting } = {}) {
-  const { assignables } = leemons.getPlugin('assignables').services;
-  return assignables.removeAssignable(id, { userSession, transacting, removeAll: 1 });
+async function deleteTest({ id, ctx }) {
+  return ctx.tx.call('assignables.assignables.removeAssignable', {
+    assignable: id,
+    removeAll: 1,
+  });
 }
 
 module.exports = { deleteTest };

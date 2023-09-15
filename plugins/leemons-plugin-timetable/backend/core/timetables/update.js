@@ -1,6 +1,6 @@
+const { LeemonsError } = require('@leemons/error');
 const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
 const validateDay = require('../helpers/dayjs/validateDay');
-const { LeemonsError } = require('leemons-error');
 
 module.exports = async function updateTimetable({
   timetableId,

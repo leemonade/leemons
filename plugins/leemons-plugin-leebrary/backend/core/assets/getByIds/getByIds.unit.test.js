@@ -8,8 +8,8 @@ const {
   afterEach,
   jest: { spyOn },
 } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getByIds } = require('./getByIds');
 const { assetsSchema } = require('../../../models/assets');

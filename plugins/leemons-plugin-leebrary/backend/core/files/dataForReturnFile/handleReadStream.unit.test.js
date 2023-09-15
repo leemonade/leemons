@@ -7,7 +7,7 @@ const {
   beforeEach,
   afterEach,
 } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const fs = require('fs');
 const { handleReadStream } = require('./handleReadStream');
 const { getByName } = require('../../providers/getByName');

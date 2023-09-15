@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const getSchema = require('../dataset-schema/getSchema');
+const getSchema = require('../datasetSchema/getSchema');
 
 /** *
  *  ES:
@@ -19,23 +19,17 @@ const getSchema = require('../dataset-schema/getSchema');
  *  @return {any} Keys with permits
  *  */
 
-async function getKeysCanAction(
-  locationName,
-  pluginName,
-  userAgent,
-  _actions,
-  { transacting } = {}
-) {
+async function getKeysCanAction({ locationName, pluginName, userAgent, actions: _actions, ctx }) {
   const actions = _.isArray(_actions) ? _actions : [_actions];
-  const promises = [getSchema.call(this, locationName, pluginName, { transacting })];
+  const promises = [getSchema({ locationName, pluginName, ctx })];
 
   if (userAgent) {
     promises.push(
-      leemons.getPlugin('users').services.permissions.getUserAgentPermissions(userAgent, {
+      ctx.tx.call('users.permissions.getUserAgentPermissions', {
+        userAgent,
         query: {
-          permissionName_$startssWith: leemons.plugin.prefixPN(`${locationName}.${pluginName}`),
+          permissionName: { $regex: `^${ctx.prefixPN(`${locationName}.${pluginName}`)}` },
         },
-        transacting,
       })
     );
   }

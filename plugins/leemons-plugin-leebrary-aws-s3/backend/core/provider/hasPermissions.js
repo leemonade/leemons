@@ -1,4 +1,4 @@
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 
 /**
  * Checks if the provided S3 bucket has the necessary permissions.

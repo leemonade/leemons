@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash');
 
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { getByKey } = require('../getByKey');
 

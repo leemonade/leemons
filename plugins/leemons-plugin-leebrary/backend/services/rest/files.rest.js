@@ -4,7 +4,7 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { newMultipart } = require('../../core/files/newMultipart');
 const { abortMultipart } = require('../../core/files/abortMultipart');
 const { finishMultipart } = require('../../core/files/finishMultipart');

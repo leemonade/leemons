@@ -1,3 +1,5 @@
+const { LeemonsValidator } = require('@leemons/validator');
+
 const periodValidationObject = {
   type: 'object',
   properties: {
@@ -54,7 +56,7 @@ const periodValidationObject = {
 };
 
 function validatePeriod(period) {
-  const validator = new global.utils.LeemonsValidator(periodValidationObject);
+  const validator = new LeemonsValidator(periodValidationObject);
 
   if (!validator.validate(period)) {
     throw validator.error;

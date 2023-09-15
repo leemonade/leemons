@@ -2,9 +2,9 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { getProvidersActions } = require('leemons-providers');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { getProvidersActions } = require('@leemons/providers');
 const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
 const { listProviders } = require('../core/providers/list');

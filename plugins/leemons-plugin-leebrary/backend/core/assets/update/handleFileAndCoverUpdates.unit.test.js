@@ -1,5 +1,5 @@
 const { describe, afterEach, beforeEach, it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { handleFileAndCoverUpdates } = require('./handleFileAndCoverUpdates');
 const { uploadFromSource } = require('../../files/helpers/uploadFromSource');

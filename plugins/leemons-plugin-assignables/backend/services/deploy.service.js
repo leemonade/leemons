@@ -1,11 +1,12 @@
 const path = require('path');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { LeemonsMongoDBMixin } = require('leemons-mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -20,6 +21,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   multiEvents: [

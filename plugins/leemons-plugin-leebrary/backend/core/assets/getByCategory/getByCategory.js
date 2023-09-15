@@ -1,5 +1,5 @@
 const { isEmpty } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getByIds } = require('../getByIds/getByIds');
 
 /**

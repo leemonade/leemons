@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getTagsValues({ tags, type, ctx }) {
   const _tags = _.isArray(tags) ? tags : [tags];
@@ -17,11 +17,9 @@ async function getTagsValues({ tags, type, ctx }) {
 
   const valuesByTag = _.groupBy(values, 'tag');
 
-  const result = _.map(_tags, (value) =>
+  return _.map(_tags, (value) =>
     valuesByTag[value] ? _.map(valuesByTag[value], (v) => JSON.parse(v.value)) : []
   );
-
-  return result;
 }
 
 module.exports = { getTagsValues };

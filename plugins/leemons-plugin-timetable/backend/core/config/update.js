@@ -1,11 +1,11 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const entitiesFormat = require('../helpers/config/entitiesFormat');
 const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
 const weekDays = require('../helpers/dayjs/weekDays');
 const createBreaks = require('./breakes/create');
 const deleteBreaks = require('./breakes/delete');
 const get = require('./get');
-const { LeemonsError } = require('leemons-error');
 
 module.exports = async function update({
   entities: entitiesObj,

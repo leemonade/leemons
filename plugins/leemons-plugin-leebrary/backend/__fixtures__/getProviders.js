@@ -6,6 +6,7 @@ module.exports = function getProviders() {
       pluginName: 'leebrary-aws-s3',
       params: {
         name: 'Amazon S3',
+        pluginName: 'leebrary-aws-s3',
         supportedMethods: {
           uploadMultipartChunk: true,
           finishMultipart: true,

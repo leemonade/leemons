@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { getUserAgentCalendarKey, getUserFullName } = require('leemons-users');
+const { getUserAgentCalendarKey, getUserFullName } = require('@leemons/users');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { getByCenterId } = require('../calendar-configs');

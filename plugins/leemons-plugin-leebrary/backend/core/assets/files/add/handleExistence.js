@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { exists: fileExists } = require('../../../files/exists');
 const { exists: assetExists } = require('../../exists');
 /**

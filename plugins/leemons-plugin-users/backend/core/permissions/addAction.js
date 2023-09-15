@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { exist: actionExist } = require('../actions');
 const { exist: permissionExist } = require('./exist');
 const { hasAction: permissionHasAction } = require('./hasAction');

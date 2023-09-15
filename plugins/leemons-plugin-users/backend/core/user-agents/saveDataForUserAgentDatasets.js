@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function saveData({ value, ctx }) {
   const response = await ctx.tx.call('dataset.dataset.setValues', {

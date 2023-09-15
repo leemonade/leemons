@@ -1,9 +1,9 @@
+const { LeemonsError } = require('@leemons/error');
 const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
 const weekDays = require('../helpers/dayjs/weekDays');
 const has = require('./has');
 const createBreaks = require('./breakes/create');
 const entitiesFormat = require('../helpers/config/entitiesFormat');
-const { LeemonsError } = require('leemons-error');
 
 module.exports = async function create({
   entities: entitiesObj,

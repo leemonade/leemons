@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getById } = require('../getById/getById');
 const { handleCommonFileDetails } = require('./handleCommonFileDetails');
 const { handleReadParams } = require('./handleReadParams');

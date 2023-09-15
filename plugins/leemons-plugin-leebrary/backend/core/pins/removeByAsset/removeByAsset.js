@@ -1,7 +1,16 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { getByAsset } = require('../getByAsset');
 
+/**
+ * Removes a pin by asset ID.
+ *
+ * @param {Object} params - The parameters object.
+ * @param {string} params.assetId - The ID of the asset.
+ * @param {boolean} params.soft - Determines if the deletion should be soft.
+ * @param {Context} params.ctx - The Moleculer context object.
+ * @returns {Promise<LibraryPin>} A promise that resolves with the removed pin document.
+ */
 async function removeByAsset({ assetId, soft, ctx }) {
   const pin = await getByAsset({ assetId, ctx });
 

@@ -6,8 +6,8 @@ const {
   beforeEach,
   jest: { fn, spyOn },
 } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const fs = require('fs/promises');
 
 const { deleteFile } = require('./deleteFile');

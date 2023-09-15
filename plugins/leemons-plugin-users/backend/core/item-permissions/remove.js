@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateTypePrefix } = require('../../validations/exists');
 const { removeAllItemsCache } = require('./removeAllItemsCache');
 

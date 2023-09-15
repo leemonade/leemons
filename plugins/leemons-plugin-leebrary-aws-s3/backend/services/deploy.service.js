@@ -3,9 +3,9 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const path = require('path');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { addLocalesDeploy } = require('leemons-multilanguage');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
 const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
 

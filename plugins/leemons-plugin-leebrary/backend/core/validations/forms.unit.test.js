@@ -1,5 +1,5 @@
 const { it, expect, describe } = require('@jest/globals');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const { validateAddAsset, validateSetPermissions, validateAddBookmark } = require('./forms');
 
 describe('Form Validations', () => {

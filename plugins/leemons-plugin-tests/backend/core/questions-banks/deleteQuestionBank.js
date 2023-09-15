@@ -1,38 +1,26 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getQuestionsBanksDetails } = require('./getQuestionsBanksDetails');
 
-async function deleteQuestionBank(_id, { userSession, transacting } = {}) {
-  const { versionControl } = leemons.getPlugin('common').services;
-  const assetService = leemons.getPlugin('leebrary').services.assets;
-
-  const version = await versionControl.getVersion(_id, { transacting });
+async function deleteQuestionBank({ id: _id, ctx }) {
+  const version = await ctx.tx.call('common.versionControl.getVersion', { id: _id });
   const versions = (
-    await versionControl.listVersions(_id, {
+    await ctx.tx.call('common.versionControl.listVersions', {
+      id: _id,
       published: version.published,
-      transacting,
     })
   ).map((v) => v.fullId);
 
-  const questionBanks = await getQuestionsBanksDetails(versions, {
-    userSession,
-    getAssets: true,
-    transacting,
-  });
+  const questionBanks = await getQuestionsBanksDetails({ id: versions, getAssets: true, ctx });
 
   const promises = [];
 
   _.forEach(questionBanks, ({ id, asset }) => {
-    promises.push(table.questionsBanks.delete({ id }, { soft: true, transacting }));
+    promises.push(ctx.tx.db.QuestionsBanks.deleteOne({ id }, { soft: true }));
     promises.push(
-      assetService.update(
-        { id: asset.id, name: asset.name, category: asset.category, indexable: false },
-        {
-          userSession,
-          transacting,
-        }
-      )
+      ctx.tx.call('leebrary.assets.update', {
+        data: { id: asset.id, name: asset.name, category: asset.category, indexable: false },
+      })
     );
   });
 

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getRoleForRelationshipProfileCenter({ profileId, centerId, ctx }) {
   const profileRoles = await ctx.tx.db.ProfileRole.find({ profile: profileId }).lean();

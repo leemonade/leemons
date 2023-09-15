@@ -2,18 +2,19 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 const path = require('path');
 const _ = require('lodash');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
-const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const { permissions, widgets, menuItems, kanbanColumns } = require('../config/constants');
 const { add: addKanbanColumn } = require('../core/kanban-columns/add');
@@ -100,6 +101,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   multiEvents: [

@@ -1,18 +1,15 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getNodeValues(node, userSession, { transacting } = {}) {
+async function getNodeValues({ node, ctx }) {
   try {
     return {
       id: node.id,
-      values: await leemons
-        .getPlugin('dataset')
-        .services.dataset.getValues(
-          `node-level-${node.nodeLevel}`,
-          'curriculum',
-          userSession?.userAgents,
-          { target: node.id, transacting }
-        ),
+      values: await ctx.tx.call('dataset.dataset.getValues', {
+        locationName: `node-level-${node.nodeLevel}`,
+        pluginName: 'curriculum',
+        userAgent: ctx.meta.userSession?.userAgents,
+        target: node.id,
+      }),
     };
   } catch (e) {
     return {
@@ -55,9 +52,9 @@ async function nodesTreeByCurriculum(id, { userSession, transacting } = {}) {
 
  */
 
-async function nodesTreeByCurriculum(id, { transacting } = {}) {
+async function nodesTreeByCurriculum({ id, ctx }) {
   const ids = _.isArray(id) ? id : [id];
-  const nodes = await table.nodes.find({ curriculum_$in: ids }, { transacting });
+  const nodes = await ctx.tx.db.Nodes.find({ curriculum: ids }).lean();
 
   _.forEach(nodes, (node) => {
     // eslint-disable-next-line no-param-reassign

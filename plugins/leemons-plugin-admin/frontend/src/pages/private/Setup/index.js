@@ -50,6 +50,7 @@ function Setup({ session }) {
         getZoneRequest('admin.admin-page'),
         getSettingsRequest(),
       ]);
+      console.log('zone', zone);
       const keys = [];
       _.forEach(zone.widgetItems, (item) => {
         if (item.properties?.card?.title) {
@@ -70,6 +71,7 @@ function Setup({ session }) {
       render();
     } catch (e) {
       // Error
+      console.error(e);
     }
     store.loading = false;
     render();

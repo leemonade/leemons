@@ -1,6 +1,6 @@
 const { it, expect, afterEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
-const { LeemonsError } = require('leemons-error');
+const { generateCtx } = require('@leemons/testing');
+const { LeemonsError } = require('@leemons/error');
 
 const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
 

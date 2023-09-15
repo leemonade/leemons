@@ -1,6 +1,6 @@
 const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { handleCloneFile } = require('./handleCloneFile');
 const { filesSchema } = require('../../../models');
 const { getByName } = require('../../providers/getByName');

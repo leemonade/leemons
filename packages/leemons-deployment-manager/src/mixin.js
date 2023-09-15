@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+const { LeemonsError } = require('@leemons/error');
+const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
@@ -14,11 +14,6 @@ function modifyCTX(ctx) {
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
 
   ctx.logger = console;
-
-  ctx.socket = {
-    emit: () => {},
-    emitAll: () => {},
-  };
 
   ctx.prefixPN = function (string) {
     return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
@@ -56,13 +51,18 @@ function modifyCTX(ctx) {
         `CALL from "${ctx.action?.name || ctx.event?.name}" to "${manager.actionToCall}"`
       );
 
-    return ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, {
-      ...opts,
-      meta: {
-        ...(opts?.meta || {}),
-        relationshipID: manager.relationshipID,
-      },
-    });
+    try {
+      return await ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, {
+        ...opts,
+        meta: {
+          ...(opts?.meta || {}),
+          relationshipID: manager.relationshipID,
+        },
+      });
+    } catch (e) {
+      delete ctx.meta.$statusCode;
+      throw e;
+    }
   };
 }
 

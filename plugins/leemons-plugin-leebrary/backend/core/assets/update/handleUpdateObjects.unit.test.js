@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 const { describe, expect, it, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { handleUpdateObject } = require('./handleUpdateObject');
 const { getById: getCategory } = require('../../categories/getById');

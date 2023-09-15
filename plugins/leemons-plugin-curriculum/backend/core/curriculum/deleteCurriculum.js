@@ -1,49 +1,35 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function deleteCurriculum(curriculumId, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await leemons.events.emit('before-remove-curriculum', {
-        curriculum: curriculumId,
-        transacting,
-      });
+async function deleteCurriculum({ curriculumId, ctx }) {
+  await ctx.tx.emit('before-remove-curriculum', {
+    curriculum: curriculumId,
+  });
 
-      const nodeLevels = await table.nodeLevels.find(
-        { curriculum: curriculumId },
-        {
-          columns: ['id'],
-          transacting,
-        }
-      );
+  const nodeLevels = await ctx.tx.db.NodeLevels.find({ curriculum: curriculumId })
+    .select(['id'])
+    .lean();
 
-      const promises = [];
-      _.forEach(nodeLevels, (nodeLevel) => {
-        promises.push(
-          leemons
-            .getPlugin('dataset')
-            .services.dataset.deleteLocation(`node-level-${nodeLevel.id}`, 'curriculum', {
-              deleteValues: true,
-              transacting,
-            })
-        );
-      });
+  const promises = [];
+  _.forEach(nodeLevels, (nodeLevel) => {
+    promises.push(
+      ctx.tx.call('dataset.dataset.deleteLocation', {
+        locationName: `node-level-${nodeLevel.id}`,
+        pluginName: 'curriculum',
+        deleteValues: true,
+      })
+    );
+  });
 
-      await Promise.allSettled(promises);
-      await Promise.all([
-        table.nodes.deleteMany({ curriculum: curriculumId }, { transacting }),
-        table.nodeLevels.deleteMany({ curriculum: curriculumId }, { transacting }),
-        table.curriculums.delete({ id: curriculumId }, { transacting }),
-      ]);
+  await Promise.allSettled(promises);
+  await Promise.all([
+    ctx.tx.db.Nodes.deleteMany({ curriculum: curriculumId }),
+    ctx.tx.db.NodeLevels.deleteMany({ curriculum: curriculumId }),
+    ctx.tx.db.Curriculums.deleteOne({ id: curriculumId }),
+  ]);
 
-      await leemons.events.emit('after-remove-curriculum', {
-        curriculum: curriculumId,
-        transacting,
-      });
-    },
-    table.curriculums,
-    _transacting
-  );
+  await ctx.tx.emit('after-remove-curriculum', {
+    curriculum: curriculumId,
+  });
 }
 
 module.exports = { deleteCurriculum };
