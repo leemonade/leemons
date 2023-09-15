@@ -1,3 +1,4 @@
+const { LeemonsError } = require('leemons-error');
 const { handleProviderMultipart } = require('./handleProviderMultipart');
 
 /**
@@ -11,7 +12,7 @@ const { handleProviderMultipart } = require('./handleProviderMultipart');
  */
 async function finishMultipart({ fileId, path, ctx }) {
   const file = await ctx.tx.db.Files.findOne({ id: fileId }).lean();
-  if (!file) throw new Error('No file found');
+  if (!file) throw new LeemonsError(ctx, { message: 'No file found' });
 
   if (file.provider !== 'sys') {
     await handleProviderMultipart({ file, path, ctx });

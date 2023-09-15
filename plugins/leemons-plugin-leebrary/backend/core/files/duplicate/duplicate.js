@@ -6,9 +6,9 @@ const { handleCloneFile } = require('./handleCloneFile');
 /**
  * Duplicates a file by creating a new file with the same content.
  *
- * @param {Object} file - The file object to duplicate.
- * @param {Object} options - The options object.
- * @param {Object} options.transacting - The transaction object.
+ * @param {Object} params - The options object.
+ * @param {Object} params.file - The file object to duplicate.
+ * @param {MoleculerContext} params.ctx - The moleculer context object.
  * @returns {Promise<Object>} The duplicated file object.
  */
 async function duplicate({ file, ctx } = {}) {

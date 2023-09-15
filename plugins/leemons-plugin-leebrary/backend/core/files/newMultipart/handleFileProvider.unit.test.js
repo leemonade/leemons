@@ -43,7 +43,7 @@ describe('Handle File Provider', () => {
 
     // Assert
     expect(getByName).toHaveBeenCalledWith(file.provider);
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.newMultipart`, { file });
+    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.newMultipart`, { file });
   });
 
   it('Should not call provider newMultipart if provider does not support it', async () => {

@@ -1,5 +1,5 @@
 const { getByFiles: getAssetsByFiles } = require('../../assets/files/getByFiles');
-const { getByType } = require('../getByType');
+const { getByType } = require('../getByType/getByType');
 /**
  * Fetches the asset files by type.
  *

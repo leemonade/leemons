@@ -22,7 +22,7 @@ async function uploadMultipartChunk({ fileId, partNumber, chunk, path, ctx } = {
   if (file.provider !== 'sys') {
     const provider = await getProviderByName(file.provider);
     if (provider?.supportedMethods?.uploadMultipartChunk) {
-      await ctx.tx.call(`${file.provider}.provider.uploadMultipartChunk`, {
+      await ctx.tx.call(`${file.provider}.files.uploadMultipartChunk`, {
         file,
         partNumber,
         buffer,

@@ -59,7 +59,7 @@ describe('Handle Clone File', () => {
     // Assert
     expect(getByName).toHaveBeenCalledWith(fromFile.provider);
     expect(ctx.tx.call).toHaveBeenCalledWith(
-      `${fromFile.provider}.provider.clone`,
+      `${fromFile.provider}.files.clone`,
       expect.objectContaining({
         fromFile,
         newFile: expect.objectContaining({

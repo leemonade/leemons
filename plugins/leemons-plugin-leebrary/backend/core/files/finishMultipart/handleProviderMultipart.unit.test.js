@@ -42,7 +42,7 @@ describe('Finish Provider Multipart', () => {
 
     // Assert
     expect(getByName).toHaveBeenCalledWith(file.provider);
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.finishMultipart`, { file });
+    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.finishMultipart`, { file });
   });
 
   /*

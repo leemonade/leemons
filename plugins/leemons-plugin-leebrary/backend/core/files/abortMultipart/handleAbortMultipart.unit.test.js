@@ -46,7 +46,7 @@ describe('Handle Abort Multipart', () => {
 
     // Assert
     expect(getByName).toHaveBeenCalledWith(file.provider);
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.abortMultipart`, { file });
+    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.abortMultipart`, { file });
   });
 
   it('Should correctly handle abort multipart for sys provider and isFolder is true', async () => {

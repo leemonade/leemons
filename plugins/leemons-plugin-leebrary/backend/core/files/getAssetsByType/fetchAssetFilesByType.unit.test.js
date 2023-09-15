@@ -5,8 +5,8 @@ const { fetchAssetFilesByType } = require('./fetchAssetFilesByType');
 
 // MOCKS
 jest.mock('../../assets/files/getByFiles');
-jest.mock('../getByType');
-const { getByType } = require('../getByType');
+jest.mock('../getByType/getByType.js');
+const { getByType } = require('../getByType/getByType');
 const { getByFiles: getAssetsByFiles } = require('../../assets/files/getByFiles');
 
 beforeEach(() => jest.resetAllMocks());

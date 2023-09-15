@@ -66,7 +66,7 @@ describe('Upload Multipart Chunk', () => {
 
     // Assert
     expect(getByName).toHaveBeenCalledWith(file.provider);
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.uploadMultipartChunk`, {
+    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.uploadMultipartChunk`, {
       file: newFile,
       partNumber,
       buffer,

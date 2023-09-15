@@ -18,7 +18,7 @@ async function handleCloneFile({ fromFile, providerName, ctx }) {
     // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
     newFile = await ctx.tx.db.Files.create({ ...fromFile, id: undefined, _id: undefined });
     urlData.provider = providerName;
-    urlData.uri = await ctx.tx.call(`${providerName}.provider.clone`, { fromFile, newFile });
+    urlData.uri = await ctx.tx.call(`${providerName}.files.clone`, { fromFile, newFile });
     newFile = await ctx.tx.db.Files.updateOne({ id: newFile.id }, urlData);
   }
   return newFile;

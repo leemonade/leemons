@@ -82,7 +82,7 @@ describe('Handle Read Stream', () => {
 
     // Assert
     expect(getByName).toHaveBeenCalledWith(file.provider);
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.provider.getReadStream`, {
+    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.getReadStream`, {
       key: `${file.uri}/${path}`,
       start: undefined,
       end: undefined,
