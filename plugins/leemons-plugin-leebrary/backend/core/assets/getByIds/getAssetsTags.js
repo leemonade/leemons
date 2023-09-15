@@ -3,7 +3,7 @@
  * @async
  * @param {Object} params - The params object
  * @param {Array} params.assets - The assets to fetch tags for
- * @param {object} params.transacting - The transaction object
+ * @param {MoleculerContext} params.ctx - The Moleculer context
  * @returns {Promise<Array>} - Returns an array of tags associated with each asset
  */
 async function getAssetsTags({ assets, ctx }) {

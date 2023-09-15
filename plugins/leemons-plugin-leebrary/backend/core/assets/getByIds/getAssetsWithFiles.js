@@ -7,7 +7,7 @@ const { find: findBookmarks } = require('../../bookmarks/find');
  * @param {Object} params - The params object
  * @param {Array} params.assets - The assets to fetch files for
  * @param {Array} params.assetsIds - The IDs of the assets
- * @param {object} params.transacting - The transaction object
+ * @param {MoleculerContext} params.ctx - The moleculer context
  * @returns {Promise<Array>} - Returns an array of assets with files and bookmarks
  */
 async function getAssetsWithFiles({ assets, assetsIds, ctx }) {

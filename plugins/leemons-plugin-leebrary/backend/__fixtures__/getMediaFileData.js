@@ -18,9 +18,6 @@ module.exports = function getMediaFileData() {
   return {
     handleFileUploadInputs,
     imageFile: {
-      created_at: '2023-08-31T08:27:07.000Z',
-      deleted: 0,
-      deleted_at: null,
       extension: 'png',
       id: handleFileUploadInputs.imageFileInput.file,
       isFolder: null,
@@ -34,7 +31,6 @@ module.exports = function getMediaFileData() {
       provider: 'leebrary-aws-s3',
       size: 90101,
       type: 'image/png',
-      updated_at: '2023-08-31T08:27:07.000Z',
       uri: `leemons/leebrary/${handleFileUploadInputs.imageFileInput.file}.png`,
     },
     audioFile: {
@@ -52,10 +48,6 @@ module.exports = function getMediaFileData() {
         duration: '0:01',
         bitrate: '320.0 kbps',
       },
-      deleted: 0,
-      created_at: '2023-09-01T14:33:03.000Z',
-      updated_at: '2023-09-01T14:33:04.000Z',
-      deleted_at: null,
     },
   };
 };

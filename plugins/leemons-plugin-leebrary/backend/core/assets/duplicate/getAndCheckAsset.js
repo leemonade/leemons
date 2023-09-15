@@ -3,11 +3,11 @@ const { LeemonsError } = require('@leemons/error');
 /**
  * Retrieves an asset by its ID from the database.
  *
- * @param {object} params - The parameters object
- * @param {string} params.assetId - The ID of the asset
- * @param {object} params.transacting - The transaction object
- * @returns {object} - Returns the asset object
- * @throws {HttpError} - Throws an HTTP error if the asset is not found
+ * @param {Object} params - The parameters object.
+ * @param {string} params.assetId - The ID of the asset.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Object} - Returns the asset object.
+ * @throws {LeemonsError} - Throws a LeemonsError if the asset is not found.
  */
 async function getAndCheckAsset({ assetId, ctx }) {
   const asset = await ctx.tx.db.Assets.findOne({ id: assetId }).lean();

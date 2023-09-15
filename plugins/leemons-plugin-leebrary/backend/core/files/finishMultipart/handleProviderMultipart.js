@@ -11,7 +11,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
 async function finishProviderMultipart({ file, path, ctx }) {
   const provider = await getProviderByName(file.provider);
   if (provider?.supportedMethods?.finishMultipart) {
-    await ctx.tx.call(`${file.provider}.provider.finishMultipart`, { file, path });
+    await ctx.tx.call(`${file.provider}.files.finishMultipart`, { file, path });
   }
 }
 

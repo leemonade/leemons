@@ -17,7 +17,7 @@ async function handleFileProvider({ file, filePaths, settings, ctx }) {
   file.provider = settings.providerName;
 
   if (provider?.supportedMethods?.newMultipart) {
-    file.uri = await ctx.tx.call(`${file.provider}.provider.newMultipart`, { file, filePaths });
+    file.uri = await ctx.tx.call(`${file.provider}.files.newMultipart`, { file, filePaths });
   }
 
   return file;

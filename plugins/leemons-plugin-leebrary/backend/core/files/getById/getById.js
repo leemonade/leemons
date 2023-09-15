@@ -5,7 +5,7 @@
  * @function getById
  * @param {Object} options - Input options.
  * @param {string} options.id - The ID of the file to retrieve.
- * @param {import("moleculer").Context} options.ctx - The Moleculer request context.
+ * @param {MoleculerContext} options.ctx - The Moleculer context.
  * @returns {Promise<Object|null>} The file data object or null if not found.
  */
 async function getById({ id, ctx }) {

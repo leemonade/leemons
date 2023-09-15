@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getByIds: getFiles } = require('../../files/getByIds');
+const { getByIds: getFiles } = require('../../files/getByIds/getByIds');
 /**
  * Handles files and cover associated with an asset.
  * It retrieves the files using their IDs and finds the cover file among them.

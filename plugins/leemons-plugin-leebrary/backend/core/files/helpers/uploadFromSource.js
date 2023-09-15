@@ -5,7 +5,7 @@ const {
   uploadFromUrl: uploadFileFromUrl,
   uploadFromFileStream: uploadFileFromStream,
   uploadImage,
-} = require('../upload');
+} = require('../upload/upload');
 
 /**
  * Uploads a file from various sources (URL, readable stream, or file object) and returns the uploaded file details.

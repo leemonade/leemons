@@ -2,7 +2,7 @@ const { isEmpty } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 const { getByAsset } = require('../getByAsset');
-const { remove: removeFiles } = require('../../files/remove');
+const { remove: removeFiles } = require('../../files/remove/remove');
 
 /**
  * Removes a bookmark from the database.

@@ -14,8 +14,8 @@ let bookmark;
 jest.mock('../getByAsset');
 const { getByAsset } = require('../getByAsset');
 
-jest.mock('../../files/remove');
-const { remove: removeFiles } = require('../../files/remove');
+jest.mock('../../files/remove/remove');
+const { remove: removeFiles } = require('../../files/remove/remove');
 
 beforeAll(async () => {
   const { mongoose, disconnect } = await createMongooseConnection();
