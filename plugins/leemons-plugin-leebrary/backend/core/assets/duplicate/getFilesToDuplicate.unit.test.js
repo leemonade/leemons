@@ -6,8 +6,8 @@ const getBookmarkFromDB = require('../../../__fixtures__/getBookmarkFromDB');
 const getAssets = require('../../../__fixtures__/getAssets');
 
 // Mocks
-jest.mock('../../files/getByIds');
-const { getByIds: getFiles } = require('../../files/getByIds');
+jest.mock('../../files/getByIds/getByIds.js');
+const { getByIds: getFiles } = require('../../files/getByIds/getByIds');
 
 const { bookmarkAsset } = getAssets();
 const bookmark = getBookmarkFromDB();
