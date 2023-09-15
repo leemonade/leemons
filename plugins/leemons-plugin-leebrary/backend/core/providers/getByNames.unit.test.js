@@ -45,7 +45,7 @@ describe('Get Plugin Provider By Names', () => {
     const response = await getByNames({ names: [provider.value.pluginName], ctx });
 
     // Assert
-    expect(response).toEqual([{ pluginName: provider.value.pluginName, ...provider.value.params }]);
+    expect(response).toEqual([provider.value.params]);
     expect(listProviders).toHaveBeenCalledWith({ ctx });
   });
 
