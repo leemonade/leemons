@@ -8,29 +8,30 @@ fi
 
 # Paso2. Verifica que se haya proporcionado al menos una ruta como argumento
 if [ $# -lt 1 ]; then
-  echo "Uso: $0 [rutas] [tag (opcional)]"
+  echo "Uso: $0 [carpeta]"
   exit 1
 fi
 
-# Paso 3. Obtiene el último argumento como la etiqueta (tag) o usa "latest" si no se proporciona
-tag="${!#}"
-if [ -z "$tag" ]; then
-  tag="latest"
-fi
-
-# Paso4. Verifica si la etiqueta es válida
-if [[ ! "$tag" =~ ^[0-9a-zA-Z-]+$ ]]; then
-  echo "La etiqueta debe consistir solo en caracteres alfanuméricos y guiones."
+# Paso 3. Verifica si se proporcionó NPM_TAG como argumento
+if [ -z "$NPM_TAG" ]; then
+  echo "Por favor, proporciona la variable de entorno NPM_TAG."
   exit 1
 fi
 
-# Paso5. Itera sobre las rutas proporcionadas, excluyendo la etiqueta
-for ruta in "${@:1:$#-1}"
+# Paso4. Verifica si NPM_TAG es válida
+if [[ ! "$NPM_TAG" =~ ^[0-9a-zA-Z-]+$ ]]; then
+  echo "NPM_TAG debe consistir solo en caracteres alfanuméricos y guiones."
+  exit 1
+fi
+
+# Iterar sobre las carpetas dentro de la carpeta proporcionada
+for carpeta in "$1"/*/
 do
-  # Verifica si la ruta es un directorio
-  if [ -d "$ruta" ]; then
+  # Verifica si la carpeta es un directorio
+  if [ -d "$carpeta" ]; then
     # Cambia al directorio
-    cd "$ruta"
+    cd "$carpeta"
+
 
     # Ejecuta el comando npm version
     npm version patch --legacy-peer-deps
@@ -39,7 +40,7 @@ do
     export NODE_AUTH_TOKEN="$NODE_AUTH_TOKEN"
 
     # Publica el paquete
-    npm publish --tag "$tag"
+    npm publish --tag "$NPM_TAG"
 
     # Obtiene el nombre y la versión del paquete
     pkg_name=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
@@ -50,8 +51,7 @@ do
 
     # Busca y reemplaza la versión en todos los archivos package.json donde el nombre del paquete aparece como una dependencia
     find . -name 'node_modules' -prune -o -name 'package.json' -exec sed -i "s|\"$pkg_name\": \"[^\"]*\"|\"$pkg_name\": \"$pkg_version\"|g" {} \;
-
   else
-    echo "La ruta '$ruta' no es un directorio válido."
+    echo "La carpeta '$carpeta' no es un directorio válido."
   fi
 done

@@ -341,6 +341,17 @@ class LeemonsRunner {
     const packageJsonPath = path.join(svcDir, 'package.json');
     const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
     const packageJson = JSON.parse(packageJsonContent);
+
+    // We are executed inside a plugin
+    if (packageJson.name.indexOf('leemons-plugin-') === 0) {
+      return [
+        {
+          name: packageJson.name,
+          path: './',
+        },
+      ];
+    }
+
     const dependencies = Object.keys(packageJson.dependencies);
 
     const result = [];
@@ -356,6 +367,8 @@ class LeemonsRunner {
         logger.error(`No se pudo resolver la dependencia "${dependency}": ${error}`);
       }
     });
+
+    console.log(result);
 
     return result;
   }

@@ -7,6 +7,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
         with:
@@ -19,35 +20,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: 🔧 Patch and publish to NPM
-        run: >
-          NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} bash patch_publish.sh
-          ./packages/leemons-academic-portfolio
-          ./packages/leemons-cache
-          ./packages/leemons-common
-          ./packages/leemons-deployment-manager
-          ./packages/leemons-emails
-          ./packages/leemons-error
-          ./packages/leemons-lrn
-          ./packages/leemons-menu-builder
-          ./packages/leemons-middlewares
-          ./packages/leemons-mongodb
-          ./packages/leemons-mongodb-helpers
-          ./packages/leemons-mqtt
-          ./packages/leemons-multi-events
-          ./packages/leemons-multilanguage
-          ./packages/leemons-permissions
-          ./packages/leemons-providers
-          ./packages/leemons-react
-          ./packages/leemons-runner
-          ./packages/leemons-service-name-parser
-          ./packages/leemons-testing
-          ./packages/leemons-transactions
-          ./packages/leemons-users
-          ./packages/leemons-utils
-          ./packages/leemons-validator
-          ./packages/leemons-widgets
-          ./packages/leemons-xapi
-          dev
+        run: NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} NPM_TAG=dev bash scripts/patch_publish.sh ./packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -66,3 +39,7 @@ jobs:
           git add .
           git commit -m 'chore: version bump'
           git push origin microservices/dev
+
+      - name: 🚀 Add finish tag
+        if: steps.git-check.outputs.modified == 'true'
+        run: git tag -a ${{ github.ref_name }}finish -m 'Version bump finish'
