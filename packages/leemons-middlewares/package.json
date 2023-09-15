@@ -1,6 +1,6 @@
 {
-  "name": "leemons-middlewares",
-  "version": "1.0.0",
+  "name": "@leemons/middlewares",
+  "version": "0.0.11",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -8,6 +8,10 @@
     "email": "hi@leemons.io",
     "name": "Leemons Edtech Solutions",
     "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "maintainers": [
     {
@@ -18,8 +22,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "leemons-error": "1.0.0",
-    "leemons-service-name-parser": "1.0.0",
+    "@leemons/error": "0.0.11",
+    "@leemons/service-name-parser": "0.0.11",
     "lodash": "^4.17.21"
   }
 }

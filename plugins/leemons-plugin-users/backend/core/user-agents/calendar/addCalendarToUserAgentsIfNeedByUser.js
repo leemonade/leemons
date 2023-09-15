@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getUserAgentCalendarKey } = require('leemons-users');
+const { getUserAgentCalendarKey } = require('@leemons/users');
 
 /**
  * Adds a calendar to the specified user agent.

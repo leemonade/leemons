@@ -7,6 +7,7 @@ const { getTagsValues } = require('./getTagsValues');
 const { getValuesTags } = require('./getValuesTags');
 const { listTags } = require('./listTags');
 const { getTags } = require('./getTags');
+const { getTagsValueByPartialTags } = require('./getTagsValueByPartialTags');
 
 module.exports = {
   removeAllValuesForTags,
@@ -18,4 +19,5 @@ module.exports = {
   getValuesTags,
   listTags,
   getTags,
+  getTagsValueByPartialTags,
 };

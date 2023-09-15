@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const validateRole = require('./validateRole');
 const { rolesPermissions } = require('../../../config/constants');
 

@@ -1,7 +1,7 @@
+const { LeemonsError } = require('@leemons/error');
 const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
 const validateDay = require('../helpers/dayjs/validateDay');
 const count = require('./count');
-const { LeemonsError } = require('leemons-error');
 
 module.exports = async function create({ class: classId, day, start, duration, dayWeek, ctx }) {
   // TODO: check if class exists

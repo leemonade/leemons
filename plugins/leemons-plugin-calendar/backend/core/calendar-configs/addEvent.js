@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
 const { getCalendars } = require('./getCalendars');
 const { add: addEventE } = require('../events');

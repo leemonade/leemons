@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { createAssignable } = require('./createAssignable');
 const getAssignableObject = require('../../__fixtures__/getAssignableObject');
 

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 function getModel({ ctxKeyValueModelName, ctx }) {
   const model = ctx.tx.db[ctxKeyValueModelName];

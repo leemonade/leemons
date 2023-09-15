@@ -21,6 +21,10 @@ async function findUserAgentsWithPermission({ permissions, returnUserAgents = tr
     query.$or.push(q);
   });
 
+  if (!query.$or.length) {
+    delete query.$or;
+  }
+
   const response = await ctx.tx.db.UserAgentPermission.find(query).lean();
   return returnUserAgents ? _.uniq(_.map(response, 'userAgent')) : response;
 }

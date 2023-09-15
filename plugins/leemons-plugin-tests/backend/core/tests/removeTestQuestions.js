@@ -1,11 +1,5 @@
-const { table } = require('../tables');
-
-async function removeTestQuestions(testId, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => table.questionsTests.deleteMany({ test: testId }, { transacting }),
-    table.tests,
-    _transacting
-  );
+async function removeTestQuestions({ testId, ctx }) {
+  return ctx.tx.db.QuestionsTests.deleteMany({ test: testId });
 }
 
 module.exports = { removeTestQuestions };

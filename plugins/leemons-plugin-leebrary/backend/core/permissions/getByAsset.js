@@ -1,5 +1,5 @@
 const { find, isEmpty } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const getRolePermissions = require('./helpers/getRolePermissions');
 const getAssetPermissionName = require('./helpers/getAssetPermissionName');

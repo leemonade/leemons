@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getTreeNodes } = require('../common/getTreeNodes');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 

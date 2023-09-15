@@ -1,16 +1,13 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getQuestionsBanksDetails } = require('../questions-banks/getQuestionsBanksDetails');
 
-async function getTestsDetails(id, { userSession, withQuestionBank, transacting } = {}) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+async function getTestsDetails({ id, withQuestionBank, ctx }) {
   const ids = _.isArray(id) ? id : [id];
 
-  const assignables = await assignableService.getAssignables(ids, {
+  const assignables = await ctx.tx.call('assignables.assignables.getAssignables', {
+    ids,
     withFiles: true,
-    userSession,
-    transacting,
   });
 
   const questionBankIds = [];
@@ -27,8 +24,8 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   });
 
   const [questions, questionBanks] = await Promise.all([
-    table.questions.find({ id_$in: _.uniq(questionIds) }, { transacting }),
-    getQuestionsBanksDetails(questionBankIds, { userSession, transacting }),
+    ctx.tx.db.Questions.find({ id: _.uniq(questionIds) }).lean(),
+    getQuestionsBanksDetails({ id: questionBankIds, ctx }),
   ]);
 
   const questionBankById = _.keyBy(questionBanks, 'id');
@@ -78,7 +75,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   if (tests.length) {
     promises.push(
       tagsService.getValuesTags(_.map(tests, 'id'), {
-        type: 'tests.tests',
+        type: 'plugins.tests.tests',
         transacting,
       })
     );
@@ -89,7 +86,7 @@ async function getTestsDetails(id, { userSession, withQuestionBank, transacting 
   if (questions.length) {
     promises.push(
       tagsService.getValuesTags(_.map(questions, 'id'), {
-        type: 'tests.questions',
+        type: 'plugins.tests.questions',
         transacting,
       })
     );

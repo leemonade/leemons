@@ -1,27 +1,20 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function byIds(_ids, { userSession, transacting } = {}) {
+async function byIds({ ids: _ids, ctx }) {
   const ids = _.isArray(_ids) ? _ids : [_ids];
   const query = {};
   const query2 = {};
   if (ids[0] !== '*') {
-    query.id_$in = ids;
-    query2.messageConfig_$in = ids;
+    query.id = ids;
+    query2.messageConfig = ids;
   }
 
   const [configs, centers, classes, profiles, programs] = await Promise.all([
-    table.messageConfig.find(query, { transacting }),
-    table.messageConfigCenters.find(query2, { columns: ['messageConfig', 'center'], transacting }),
-    table.messageConfigClasses.find(query2, { columns: ['messageConfig', 'class'], transacting }),
-    table.messageConfigProfiles.find(query2, {
-      columns: ['messageConfig', 'profile'],
-      transacting,
-    }),
-    table.messageConfigPrograms.find(query2, {
-      columns: ['messageConfig', 'program'],
-      transacting,
-    }),
+    ctx.tx.db.MessageConfig.find(query).lean(),
+    ctx.tx.db.MessageConfigCenters.find(query2).select(['messageConfig', 'center']).lean(),
+    ctx.tx.db.MessageConfigClasses.find(query2).select(['messageConfig', 'class']).lean(),
+    ctx.tx.db.MessageConfigProfiles.find(query2).select(['messageConfig', 'profile']).lean(),
+    ctx.tx.db.MessageConfigPrograms.find(query2).select(['messageConfig', 'program']).lean(),
   ]);
 
   const updateToCompletePromises = [];
@@ -30,7 +23,7 @@ async function byIds(_ids, { userSession, transacting } = {}) {
     if (config.status === 'published' && now > config.endDate) {
       configs[index].status = 'completed';
       updateToCompletePromises.push(
-        table.messageConfig.update({ id: config.id }, { status: 'completed' }, { transacting })
+        ctx.tx.db.MessageConfig.updateOne({ id: config.id }, { status: 'completed' })
       );
     }
   });
@@ -43,14 +36,8 @@ async function byIds(_ids, { userSession, transacting } = {}) {
   const assetIds = _.uniq(_.map(configs, 'asset'));
 
   const [owners, assets] = await Promise.all([
-    leemons.getPlugin('users').services.users.getUserAgentsInfo(ownerIds, {
-      transacting,
-    }),
-    leemons.getPlugin('leebrary').services.assets.getByIds(assetIds, {
-      withFiles: true,
-      userSession,
-      transacting,
-    }),
+    ctx.tx.call('users.users.getUserAgentsInfo', { userAgentIds: ownerIds }),
+    ctx.tx.call('leebrary.assets.getByIds', { assetsIds: assetIds, withFiles: true }),
   ]);
 
   const assetsById = _.keyBy(assets, 'id');

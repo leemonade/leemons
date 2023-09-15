@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getPluginNameFromCTX } = require('leemons-service-name-parser');
+const { getPluginNameFromCTX } = require('@leemons/service-name-parser');
 
 function errorMessage(message) {
   return `[LeemonsError] - ${message}`;

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getClassProgram } = require('../getClassProgram');
 const { getProfiles } = require('../../settings/getProfiles');
 const { removeCustomPermissions } = require('./removeCustomPermissions');
@@ -28,7 +28,7 @@ async function remove({ classId, studentId, soft, ctx }) {
     soft,
   });
 
-  await ctx.tx.db.ClassStudent.delete({ id: classStudent.id }, { soft });
+  await ctx.tx.db.ClassStudent.deleteOne({ id: classStudent.id }, { soft });
 
   const promises = [];
   promises.push(

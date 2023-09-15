@@ -6,8 +6,8 @@ const {
   beforeEach,
   jest: { fn },
 } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getRoleObject } = require('../../__fixtures__/getRoleObject');
 const { registerRole } = require('./registerRole');

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const { codeSchema } = require('./locale');
 
 LeemonsValidator.ajv.addFormat('localizationKey', {
@@ -272,7 +272,6 @@ class Validator {
     const _key = typeof key === 'string' ? key : null;
 
     const validator = new LeemonsValidator(this.keySchema(usePrefix));
-
 
     // Throw validation error
     if (!validator.validate(_key)) {

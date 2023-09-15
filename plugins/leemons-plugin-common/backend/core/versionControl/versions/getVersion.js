@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const get = require('../currentVersions/get');
 const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../helpers');
 

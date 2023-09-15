@@ -1,15 +1,15 @@
 const _ = require('lodash');
 
-const { table } = require('../tables');
 const getFeedbackQuestionByIds = require('./getFeedbackQuestionByIds');
 
-async function getQuestionsByFeedbackIds(id, { userSession, transacting } = {}) {
-  const questions = await table.feedbackQuestions.find(
-    { assignable_$in: _.isArray(id) ? id : [id] },
-    { transacting, columns: ['id'] }
-  );
+async function getQuestionsByFeedbackIds({ id, ctx }) {
+  const questions = await ctx.tx.db.FeedbackQuestions.find({
+    assignable: _.isArray(id) ? id : [id],
+  })
+    .select(['id'])
+    .lean();
 
-  return getFeedbackQuestionByIds(_.map(questions, 'id'), { userSession, transacting });
+  return getFeedbackQuestionByIds({ id: _.map(questions, 'id'), ctx });
 }
 
 module.exports = getQuestionsByFeedbackIds;

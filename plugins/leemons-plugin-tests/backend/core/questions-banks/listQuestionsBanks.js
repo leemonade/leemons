@@ -1,45 +1,28 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function listQuestionsBanks(
-  page,
-  size,
-  { subjects, published, query = {}, transacting } = {}
-) {
-  const versionControlService = leemons.getPlugin('common').services.versionControl;
-  const versions = await versionControlService.listVersionsOfType('question-bank', {
+async function listQuestionsBanks({ page, size, subjects, published, query = {}, ctx }) {
+  const versions = await ctx.tx.call('common.versionControl.listVersionsOfType', {
+    type: 'question-bank',
     published,
-    transacting,
   });
   let ids = _.map(versions, 'fullId');
   if (subjects && subjects.length) {
-    const questionBankSubjects = await table.questionBankSubjects.find(
-      {
-        subject_$in: subjects,
-        questionBank_$in: ids,
-      },
-      {
-        transacting,
-      }
-    );
+    const questionBankSubjects = await ctx.tx.db.QuestionBankSubjects.find({
+      subject: subjects,
+      questionBank: ids,
+    }).lean();
     ids = _.uniq(_.map(questionBankSubjects, 'questionBank'));
   }
-  const paginate = await global.utils.paginate(
-    table.questionsBanks,
+  const paginate = await mongoDBPaginate({
+    model: ctx.tx.db.QuestionsBanks,
     page,
     size,
-    {
-      ...query,
-      id_$in: ids,
-    },
-    {
-      transacting,
-    }
-  );
-  const questions = await table.questions.find(
-    { questionBank_$in: _.map(paginate.items, 'id') },
-    { columns: ['id', 'questionBank'], transacting }
-  );
+    query: { ...query, id: ids },
+  });
+  const questions = await ctx.tx.db.Questions.find({ questionBank: _.map(paginate.items, 'id') })
+    .select(['id', 'questionBank'])
+    .lean();
   const questionsByBank = _.groupBy(questions, 'questionBank');
   return {
     ...paginate,

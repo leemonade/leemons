@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 /**
  * ES: Los plugins que ya existan los actualiza los que no los añade
  */

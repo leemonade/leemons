@@ -6,7 +6,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const { getSystemDataFieldsConfig, saveSystemDataFieldsConfig } = require('../../core/config');
 
 module.exports = {

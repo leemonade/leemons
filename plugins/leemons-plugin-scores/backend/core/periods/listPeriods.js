@@ -1,35 +1,28 @@
-const { map, isEmpty, isString } = require('lodash');
-const { periods } = require('../tables');
+const { map } = require('lodash');
+const { LeemonsError } = require('@leemons/error');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-module.exports = async function listPeriods(
-  { sort, page, size, ...query },
-  { transacting, userSession }
-) {
+module.exports = async function listPeriods({ sort, page, size, ctx, ...query }) {
+  const { userSession } = ctx.params;
   const q = {
-    $where: [query],
+    ...query,
   };
 
-  if (!isEmpty(sort) && isString(sort)) {
-    q.$sort = sort;
-  }
-
   if (q.public === false) {
-    q.$where.push({
-      createdBy_$in: map(userSession.userAgents, 'id'),
-    });
+    q.createdBy = map(userSession.userAgents, 'id');
   } else {
-    q.$where.push({
-      $or: [{ public: true }, { createdBy_$in: map(userSession.userAgents, 'id') }],
-    });
+    q.$or = [{ public: true }, { createdBy_$in: map(userSession.userAgents, 'id') }];
   }
 
   try {
-    return await global.utils.paginate(periods, page, size, q, {
-      columns: '*',
-      forceColumnsOnCount: true,
-      transacting,
+    return await mongoDBPaginate({
+      model: ctx.tx.db.Periods,
+      page,
+      size,
+      query: q,
+      sort,
     });
   } catch (e) {
-    throw new Error(`Error listing periods ${e.message}`);
+    throw new LeemonsError(ctx, { message: `Error listing periods ${e.message}` });
   }
 };

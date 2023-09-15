@@ -1,16 +1,20 @@
 const _ = require('lodash');
 
-async function setDatasetValues(node, userSession, values, { transacting } = {}) {
+async function setDatasetValues({ node, userSession, values, ctx }) {
   const locationName = `node-level-${node.nodeLevel}`;
   const pluginName = 'curriculum';
-  const { dataset } = leemons.getPlugin('dataset').services;
   let functionName = 'addValues';
-  if (await dataset.existValues(locationName, pluginName, { target: node.id, transacting })) {
+  if (
+    await ctx.tx.call('dataset.dataset.existValues', { locationName, pluginName, target: node.id })
+  ) {
     functionName = 'updateValues';
   }
-  return dataset[functionName](locationName, pluginName, values, userSession.userAgents, {
+  return ctx.tx.call(`dataset.dataset.${functionName}`, {
+    locationName,
+    pluginName,
+    formData: values,
+    userAgent: userSession.userAgents,
     target: node.id,
-    transacting,
   });
 }
 

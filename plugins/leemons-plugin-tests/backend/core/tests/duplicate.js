@@ -1,11 +1,8 @@
-async function duplicate(taskId, { published, userSession, transacting } = {}) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
-
+async function duplicate({ taskId, published, ctx }) {
   try {
-    return assignableService.duplicateAssignable(taskId, {
+    return ctx.tx.call('assignables.assignables.duplicateAssignable', {
+      assignableId: taskId,
       published,
-      userSession,
-      transacting,
     });
   } catch (e) {
     throw new Error(`Error duplicating test: ${e.message}`);

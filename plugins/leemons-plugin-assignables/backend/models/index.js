@@ -1,4 +1,4 @@
-const { getKeyValueModel } = require('leemons-mongodb-helpers');
+const { getKeyValueModel } = require('@leemons/mongodb-helpers');
 
 const assignablesModels = require('./assignables');
 const rolesModels = require('./roles');

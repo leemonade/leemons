@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { classByIds } = require('./classByIds');
 
 async function listSubjectClasses({ page, size, subject, query, ctx }) {

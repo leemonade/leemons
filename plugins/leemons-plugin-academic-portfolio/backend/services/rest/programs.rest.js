@@ -5,13 +5,13 @@
  */
 
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsError } = require('@leemons/error');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const {
   LeemonsMiddlewareNecessaryPermits,
   LeemonsMiddlewareAuthenticated,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 
 const {
   getProgramTree,

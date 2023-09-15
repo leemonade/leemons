@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateAddInstanceClass } = require('../../validations/forms');
 const { add: addCourse } = require('./course/add');
 const { add: addGroup } = require('./group/add');

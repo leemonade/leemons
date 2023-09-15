@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
-const { LeemonsError } = require('leemons-error');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const { LeemonsError } = require('@leemons/error');
 const { getUserProgramIds } = require('./getUserProgramIds');
 
 async function listPrograms({ page, size, center, ctx }) {

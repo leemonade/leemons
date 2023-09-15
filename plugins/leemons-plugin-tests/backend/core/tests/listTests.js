@@ -1,27 +1,20 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function listTests(page, size, { published, transacting } = {}) {
-  const versionControlService = leemons.getPlugin('common').services.versionControl;
-  const versions = await versionControlService.listVersionsOfType('test', {
+async function listTests({ page, size, published, ctx }) {
+  const versions = await ctx.tx.call('common.versionControl.listVersionsOfType', {
+    type: 'test',
     published,
-    transacting,
   });
-  const paginate = await global.utils.paginate(
-    table.tests,
+  const paginate = await mongoDBPaginate({
+    model: ctx.tx.db.Tests,
     page,
     size,
-    {
-      id_$in: _.map(versions, 'fullId'),
-    },
-    {
-      transacting,
-    }
-  );
-  const questions = await table.questionsTests.find(
-    { test_$in: _.map(paginate.items, 'id') },
-    { columns: ['id', 'test'], transacting }
-  );
+    query: { id_$in: _.map(versions, 'fullId') },
+  });
+  const questions = await ctx.tx.db.QuestionsTests.find({ test: _.map(paginate.items, 'id') })
+    .select(['id', 'test'])
+    .lean();
   const questionsByTest = _.groupBy(questions, 'test');
   return {
     ...paginate,

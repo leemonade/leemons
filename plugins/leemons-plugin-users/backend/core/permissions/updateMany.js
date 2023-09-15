@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { settledResponseToManyResponse } = require('leemons-utils');
+const { settledResponseToManyResponse } = require('@leemons/utils');
 const { update } = require('./update');
 
 /**

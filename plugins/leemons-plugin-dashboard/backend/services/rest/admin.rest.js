@@ -4,13 +4,13 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsValidator } = require('leemons-validator');
-const { getAdminDashboard } = require('../../core/dashboard/getAdminDashboard');
-const { getAdminDashboardRealtime } = require('../../core/dashboard/getAdminDashboardRealtime');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
+const { getAdminDashboard } = require('../../core/dashboard/getAdminDashboard');
+const { getAdminDashboardRealtime } = require('../../core/dashboard/getAdminDashboardRealtime');
 
 module.exports = {
   adminRest: {
@@ -33,9 +33,8 @@ module.exports = {
       if (validator.validate(ctx.params)) {
         const data = await getAdminDashboard({ config: ctx.params, ctx });
         return { status: 200, data };
-      } else {
-        throw validator.error;
       }
+      throw validator.error;
     },
   },
   adminRealtimeRest: {

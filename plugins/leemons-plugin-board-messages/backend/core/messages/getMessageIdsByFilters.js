@@ -1,50 +1,37 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getMessageIdsByFilters(item, { transacting } = {}) {
+async function getMessageIdsByFilters({ item, ctx }) {
   let ids = null;
   if (item.centers && item.centers.length) {
-    const q = { center_$in: [...item.centers, '*'] };
+    const q = { center: [...item.centers, '*'] };
     if (ids !== null) {
       q.messageConfig_$in = ids;
     }
-    const items = await table.messageConfigCenters.find(q, {
-      columns: ['messageConfig'],
-      transacting,
-    });
+    const items = await ctx.tx.db.MessageConfigCenters.find(q).select(['messageConfig']).lean();
     ids = _.map(items, 'messageConfig');
   }
   if (item.programs && item.programs.length) {
-    const q = { program_$in: [...item.programs, '*'] };
+    const q = { program: [...item.programs, '*'] };
     if (ids !== null) {
-      q.messageConfig_$in = ids;
+      q.messageConfig = ids;
     }
-    const items = await table.messageConfigPrograms.find(q, {
-      columns: ['messageConfig'],
-      transacting,
-    });
+    const items = await ctx.tx.db.MessageConfigPrograms.find(q).select(['messageConfig']).lean();
     ids = _.map(items, 'messageConfig');
   }
   if (item.profiles && item.profiles.length) {
-    const q = { profile_$in: [...item.profiles, '*'] };
+    const q = { profile: [...item.profiles, '*'] };
     if (ids !== null) {
-      q.messageConfig_$in = ids;
+      q.messageConfig = ids;
     }
-    const items = await table.messageConfigProfiles.find(q, {
-      columns: ['messageConfig'],
-      transacting,
-    });
+    const items = await ctx.tx.db.MessageConfigProfiles.find(q).select(['messageConfig']).lean();
     ids = _.map(items, 'messageConfig');
   }
   if (item.classes && item.classes.length) {
-    const q = { class_$in: [...item.classes, '*'] };
+    const q = { class: [...item.classes, '*'] };
     if (ids !== null) {
-      q.messageConfig_$in = ids;
+      q.messageConfig = ids;
     }
-    const items = await table.messageConfigClasses.find(q, {
-      columns: ['messageConfig'],
-      transacting,
-    });
+    const items = await ctx.tx.db.MessageConfigClasses.find(q).select(['messageConfig']).lean();
     ids = _.map(items, 'messageConfig');
   }
   return ids;

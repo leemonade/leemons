@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
-const { randomString } = require('leemons-utils');
+const { LeemonsError } = require('@leemons/error');
+const { randomString } = require('@leemons/utils');
 const moment = require('moment');
 const constants = require('../../config/constants');
 const { generateJWTToken } = require('./jwt/generateJWTToken');

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validatePrefix } = require('../validation/validate');
 
 async function update({ zoneKey, key, url, name, description, properties, profiles, ctx }) {

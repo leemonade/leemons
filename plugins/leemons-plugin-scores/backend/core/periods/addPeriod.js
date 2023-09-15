@@ -1,8 +1,8 @@
 const { pick, isString } = require('lodash');
-const { validatePeriod } = require('../validation/validatePeriod');
-const { periods } = require('../tables');
+const { sqlDatetime } = require('@leemons/utils');
+const { validatePeriod } = require('../../validation/validatePeriod');
 
-module.exports = async function addPeriod(period, { transacting, userSession }) {
+module.exports = async function addPeriod({ period, ctx }) {
   validatePeriod(period);
 
   const periodToSave = pick(period, [
@@ -15,19 +15,12 @@ module.exports = async function addPeriod(period, { transacting, userSession }) 
     'public',
   ]);
 
-  periodToSave.createdBy = userSession.userAgents[0].id;
+  periodToSave.createdBy = ctx.meta.userSession.userAgents[0].id;
 
-  const savedPeriod = periods.create(
-    {
-      ...periodToSave,
-      startDate: global.utils.sqlDatetime(periodToSave.startDate),
-      endDate: global.utils.sqlDatetime(periodToSave.endDate),
-      public: isString(periodToSave.public) ? periodToSave.public === 'true' : periodToSave.public,
-    },
-    {
-      transacting,
-    }
-  );
-
-  return savedPeriod;
+  return ctx.tx.db.Periods.create({
+    ...periodToSave,
+    startDate: sqlDatetime(periodToSave.startDate),
+    endDate: sqlDatetime(periodToSave.endDate),
+    public: isString(periodToSave.public) ? periodToSave.public === 'true' : periodToSave.public,
+  }).then((r) => r.toObject());
 };
