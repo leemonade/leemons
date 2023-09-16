@@ -16,24 +16,23 @@
   "author": "",
   "devDependencies": {
     "eslint": "^8.25.0",
-    "jest": "^27.5.1",
-    "jest-cli": "^27.5.1",
-    "turbo": "^1.9.6"
+    "jest": "29.7.0",
+    "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.6",
-    "dayjs": "^1.11.9",
-    "@leemons/cache": "0.0.11",
-    "@leemons/deployment-manager": "0.0.11",
-    "@leemons/error": "0.0.11",
-    "@leemons/middlewares": "0.0.11",
-    "@leemons/mongodb": "0.0.11",
+    "@leemons/cache": "0.0.12",
+    "@leemons/deployment-manager": "0.0.12",
+    "@leemons/error": "0.0.12",
+    "@leemons/middlewares": "0.0.12",
+    "@leemons/mongodb": "0.0.12",
     "@leemons/mongodb-helpers": "0.0.12",
     "@leemons/mqtt": "0.0.12",
-    "@leemons/multilanguage": "0.0.11",
+    "@leemons/multi-events": "^0.0.12",
+    "@leemons/multilanguage": "0.0.12",
     "@leemons/permissions": "0.0.12",
-    "@leemons/utils": "0.0.12",
     "@leemons/validator": "0.0.12",
+    "dayjs": "^1.11.9",
+    "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },
   "engines": {

@@ -69,7 +69,7 @@ async function check(folder) {
 
 (async () => {
   const basePath = path.join(__dirname, '..');
-  console.log('Checking packages:', fs);
+  console.log('Checking packages:');
   const packages = await getFolders(basePath + '/packages');
   for (let folder of packages) {
     await check(`${basePath}/packages/${folder}`);

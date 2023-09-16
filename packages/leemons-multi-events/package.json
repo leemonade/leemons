@@ -1,7 +1,7 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/error": "0.0.11",
+    "@leemons/error": "0.0.12",
     "@leemons/mongodb-helpers": "0.0.12",
     "@leemons/utils": "0.0.12",
     "lodash": "^4.17.21"

@@ -16,12 +16,11 @@
   "author": "",
   "devDependencies": {
     "eslint": "^8.25.0",
-    "jest": "^27.5.1",
-    "jest-cli": "^27.5.1",
-    "turbo": "^1.9.6"
+    "jest": "29.7.0",
+    "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.6",
+    "@moleculer/channels": "^0.1.8",
     "moleculer": "^0.14.26"
   },
   "engines": {

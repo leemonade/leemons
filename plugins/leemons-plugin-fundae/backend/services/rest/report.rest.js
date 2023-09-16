@@ -10,7 +10,6 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const settingsService = require('leemons-plugin-admin/core/settings');
 const { generate, retry, listReports } = require('../../core/report');
 
 /** @type {ServiceSchema} */
