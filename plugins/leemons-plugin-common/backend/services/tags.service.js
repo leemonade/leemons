@@ -20,6 +20,7 @@ const {
   addTagsToValues,
   getTagsValues,
   listTags,
+  getTagsValueByPartialTags,
 } = require('../core/tags');
 
 /** @type {ServiceSchema} */
@@ -80,6 +81,11 @@ module.exports = {
     setTagsToValues: {
       handler(ctx) {
         return setTagsToValues({ ...ctx.params, ctx });
+      },
+    },
+    getTagsValueByPartialTags: {
+      handler(ctx) {
+        return getTagsValueByPartialTags({ ...ctx.params, ctx });
       },
     },
   },
