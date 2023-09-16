@@ -1,4 +1,8 @@
 {
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/mongodb": "0.0.11"
+  },
   "name": "@leemons/mongodb-helpers",
   "version": "0.0.11",
   "description": "",
@@ -20,8 +24,5 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
-  "dependencies": {
-    "@leemons/mongodb": "0.0.11"
-  }
+  "license": "MIT"
 }

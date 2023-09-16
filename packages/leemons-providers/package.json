@@ -1,4 +1,9 @@
 {
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/error": "0.0.11",
+    "lodash": "^4.17.21"
+  },
   "name": "@leemons/providers",
   "version": "0.0.11",
   "description": "",
@@ -20,9 +25,5 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
-  "dependencies": {
-    "@leemons/error": "0.0.11",
-    "lodash": "^4.17.21"
-  }
+  "license": "MIT"
 }

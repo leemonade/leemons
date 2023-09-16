@@ -1,4 +1,11 @@
 {
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/error": "0.0.11",
+    "@leemons/mongodb-helpers": "0.0.11",
+    "@leemons/utils": "0.0.11",
+    "lodash": "^4.17.21"
+  },
   "name": "@leemons/multi-events",
   "version": "0.0.11",
   "description": "",
@@ -20,11 +27,5 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
-  "dependencies": {
-    "@leemons/error": "0.0.11",
-    "@leemons/mongodb-helpers": "0.0.11",
-    "@leemons/utils": "0.0.11",
-    "lodash": "^4.17.21"
-  }
+  "license": "MIT"
 }

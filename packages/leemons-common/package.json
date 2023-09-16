@@ -1,4 +1,8 @@
 {
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/validator": "0.0.11"
+  },
   "name": "@leemons/common",
   "version": "0.0.11",
   "description": "",
@@ -20,11 +24,5 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
-  "dependencies": {
-    "@leemons/service-name-parser": "0.0.11",
-    "lodash": "^4.17.21",
-    "node-cache": "^5.1.2",
-    "redis": "^4.6.7"
-  }
+  "license": "MIT"
 }

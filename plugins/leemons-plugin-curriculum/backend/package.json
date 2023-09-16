@@ -25,8 +25,6 @@
     "turbo": "^1.9.6"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.6",
-    "colord": "^2.9.3",
     "@leemons/academic-portfolio": "0.0.11",
     "@leemons/cache": "0.0.11",
     "@leemons/deployment-manager": "0.0.11",
@@ -40,6 +38,9 @@
     "@leemons/utils": "0.0.11",
     "@leemons/validator": "0.0.11",
     "@leemons/widgets": "0.0.11",
+    "@moleculer/channels": "^0.1.6",
+    "colord": "^2.9.3",
+    "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },
   "engines": {
