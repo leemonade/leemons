@@ -4,7 +4,7 @@
     "@leemons/mongodb": "0.0.11"
   },
   "name": "@leemons/mongodb-helpers",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "",
   "main": "src/index.js",
   "keywords": [],

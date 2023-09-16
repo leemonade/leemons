@@ -24,9 +24,9 @@
     "@leemons/deployment-manager": "0.0.11",
     "@leemons/error": "0.0.11",
     "@leemons/mongodb": "0.0.11",
-    "@leemons/mqtt": "0.0.11",
-    "@leemons/service-name-parser": "0.0.11",
-    "@leemons/utils": "0.0.11",
+    "@leemons/mqtt": "0.0.12",
+    "@leemons/service-name-parser": "0.0.12",
+    "@leemons/utils": "0.0.12",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
     "mongoose": "^7.1.1"

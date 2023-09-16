@@ -1,6 +1,6 @@
 {
   "name": "@leemons/react",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "bin": {
     "leemonsFront": "bin/leemonsFront.js"
   },
@@ -26,7 +26,7 @@
     "leemonsFront": "leemonsFront"
   },
   "dependencies": {
-    "@leemons/utils": "^0.0.1",
+    "@leemons/utils": "0.0.12",
     "@loadable/component": "^5.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@tanstack/react-query": "^4.16.1",

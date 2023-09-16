@@ -24,7 +24,7 @@
     "@moleculer/channels": "^0.1.6",
     "ioredis": "^5.3.2",
     "@leemons/mongodb": "0.0.11",
-    "@leemons/mqtt": "0.0.11",
+    "@leemons/mqtt": "0.0.12",
     "moleculer": "^0.14.26",
     "moleculer-web": "^0.10.5"
   },

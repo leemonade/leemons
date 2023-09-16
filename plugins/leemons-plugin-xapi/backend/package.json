@@ -31,11 +31,11 @@
     "@leemons/error": "0.0.11",
     "@leemons/middlewares": "0.0.11",
     "@leemons/mongodb": "0.0.11",
-    "@leemons/mongodb-helpers": "0.0.11",
-    "@leemons/mqtt": "0.0.11",
+    "@leemons/mongodb-helpers": "0.0.12",
+    "@leemons/mqtt": "0.0.12",
     "@leemons/multilanguage": "0.0.11",
-    "@leemons/utils": "0.0.11",
-    "@leemons/validator": "0.0.11",
+    "@leemons/utils": "0.0.12",
+    "@leemons/validator": "0.0.12",
     "moleculer": "^0.14.26"
   },
   "engines": {
