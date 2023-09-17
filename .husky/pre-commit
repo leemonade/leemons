@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# node ./.husky/npm_check.js
+node ./.husky/npm_check.js
 yarn run check
