@@ -6,9 +6,14 @@ on:
 
 jobs:
   publish_packages_to_npm:
+    name: DEV - Bump packages to NPM
     uses: ./.github/workflows/dev-packages-to-npm.yml
     secrets: inherit
+    with:
+      NPM_TAG: dev
+      GIT_BRANCH: microservices/dev
   build_and_publish_dockers:
+    name: DEV - Build and publish dockers
     needs: publish_packages_to_npm
     uses: ./.github/workflows/dev-upload-plugins-dockers.yml
     secrets: inherit
