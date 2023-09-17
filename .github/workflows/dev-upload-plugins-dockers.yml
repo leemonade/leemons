@@ -35,7 +35,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: 🔧 Compile all dockers
-        run: bash scripts/build_dockers_by_uri.sh ./plugins/leemons-plugin-academic-calendar/backend
+        run: bash scripts/build_dockers_by_folder.sh ./plugins
 
       - name: 🔧 Upload all dockers to ECR
         run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} IMAGE_TAG=${{ inputs.IMAGE_TAG }} bash scripts/push_dockers_to_aws_by_folder.sh ./plugins
