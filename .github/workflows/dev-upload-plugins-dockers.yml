@@ -2,10 +2,15 @@ name: DEV Upload plugins dockers
 on:
   workflow_call:
     inputs:
+      IMAGE_TAG:
+        required: true
+        type: string
       AWS_REGION:
         required: true
         type: string
     secrets:
+      AWS_ACCOUNT_ID:
+        required: true
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
@@ -14,7 +19,6 @@ on:
 jobs:
   upload:
     runs-on: ubuntu-latest
-    environment: dev
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
@@ -31,8 +35,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: 🔧 Compile all dockers
-        run: bash scripts/build_dockers_by_folder.sh ./plugins
+        run: bash scripts/build_dockers_by_uri.sh ./plugins/leemons-plugin-academic-calendar/backend
 
       - name: 🔧 Upload all dockers to ECR
-        run: bash scripts/push_dockers_to_aws_by_folder.sh ./plugins
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} IMAGE_TAG=${{ inputs.IMAGE_TAG }} bash scripts/push_dockers_to_aws_by_folder.sh ./plugins
 

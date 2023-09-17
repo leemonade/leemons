@@ -16,7 +16,11 @@ jobs:
     name: DEV - Build and publish dockers
     needs: publish_packages_to_npm
     uses: ./.github/workflows/dev-upload-plugins-dockers.yml
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
     with:
       AWS_REGION: eu-west-1
+      IMAGE_TAG: dev
 
