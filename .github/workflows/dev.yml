@@ -1,0 +1,13 @@
+name: DEV Publish packages & publish dockers
+on:
+  push:
+    tags:
+      - '*.*.*-mdev'
+
+jobs:
+  publish_packages_to_npm:
+    uses: ./.github/workflows/dev-packages-to-npm.yml
+  build_and_publish_dockers:
+    needs: publish_packages_to_npm
+    uses: ./.github/workflows/dev-upload-plugins-dockers.yml
+

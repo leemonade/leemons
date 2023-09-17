@@ -1,8 +1,7 @@
 name: DEV Publish packages to NPM
 on:
-  push:
-    tags:
-      - '*.*.*-mdev'
+  workflow_call
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -40,6 +39,6 @@ jobs:
           git commit -m 'chore: version bump'
           git push origin microservices/dev
 
-      - name: 🚀 Add finish tag
-        if: steps.git-check.outputs.modified == 'true'
-        run: git tag -a ${{ github.ref_name }}finish -m 'Version bump finish'
+      # - name: 🚀 Add finish tag
+      #   if: steps.git-check.outputs.modified == 'true'
+      #   run: git tag -a ${{ github.ref_name }}finish -m 'Version bump finish'

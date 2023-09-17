@@ -1,8 +1,6 @@
 name: DEV Upload plugins dockers
 on:
-  push:
-    tags:
-      - '*.*.*-mdevfinish'
+  workflow_call
 
 jobs:
   upload:
