@@ -1,6 +1,9 @@
 name: DEV Publish packages to NPM
 on:
-  workflow_call
+  workflow_call:
+    secrets:
+      NPM_TOKEN:
+        required: true
 
 jobs:
   publish:
@@ -19,9 +22,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: 🔧 Patch and publish to NPM
-        run: NODE_AUTH_TOKEN=${{ inputs.NPM_TOKEN }} NPM_TAG=dev bash scripts/patch_publish.sh ./packages
+        run: NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} NPM_TAG=dev bash scripts/patch_publish.sh ./packages
         env:
-          NODE_AUTH_TOKEN: ${{ inputs.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 🔧 Check for modified files
         id: git-check

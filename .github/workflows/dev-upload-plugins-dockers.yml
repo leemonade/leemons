@@ -1,6 +1,15 @@
 name: DEV Upload plugins dockers
 on:
-  workflow_call
+  workflow_call:
+    inputs:
+      AWS_DEFAULT_REGION:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
 
 jobs:
   upload:
@@ -8,7 +17,7 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      AWS_DEFAULT_REGION: ${{ inputs.AWS_DEFAULT_REGION }}
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
@@ -18,7 +27,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
+          aws-region: ${{ inputs.AWS_DEFAULT_REGION }}
 
       - name: 🔧 Set up AWS ECR
         id: login-ecr

@@ -7,9 +7,11 @@ on:
 jobs:
   publish_packages_to_npm:
     uses: ./.github/workflows/dev-packages-to-npm.yml
-    with:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    secrets: inherit
   build_and_publish_dockers:
     needs: publish_packages_to_npm
     uses: ./.github/workflows/dev-upload-plugins-dockers.yml
+    secrets: inherit
+    with:
+      AWS_DEFAULT_REGION: ${{vars.AWS_DEFAULT_REGION}}
 
