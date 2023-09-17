@@ -2,7 +2,7 @@ name: DEV Upload plugins dockers
 on:
   workflow_call:
     inputs:
-      AWS_DEFAULT_REGION:
+      AWS_REGION:
         required: true
         type: string
     secrets:
@@ -27,7 +27,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.AWS_DEFAULT_REGION }}
+          aws-region: ${{ inputs.AWS_REGION }}
 
       - name: 🔧 Set up AWS ECR
         id: login-ecr
