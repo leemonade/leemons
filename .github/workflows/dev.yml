@@ -7,6 +7,8 @@ on:
 jobs:
   publish_packages_to_npm:
     uses: ./.github/workflows/dev-packages-to-npm.yml
+    with:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   build_and_publish_dockers:
     needs: publish_packages_to_npm
     uses: ./.github/workflows/dev-upload-plugins-dockers.yml
