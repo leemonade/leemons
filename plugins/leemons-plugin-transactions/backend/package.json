@@ -20,7 +20,7 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/utils": "0.0.13",
+    "@leemons/utils": "0.0.14",
     "@moleculer/channels": "^0.1.8",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
