@@ -56,15 +56,42 @@ describe('removeByAsset pin', () => {
       // Act
       const result = await removeByAsset({ assetId, ctx });
 
-      const afterRemovePins = await ctx.tx.db.Pins.find({ assetId });
+      const afterRemovePins = await ctx.tx.db.Pins.find(
+        {
+          asset: assetId,
+          userAgent: userSession.userAgents[0].id,
+        },
+        {},
+        { excludeDeleted: false }
+      );
 
       // Assert
       expect(getPinByAsset).toBeCalledWith({ assetId, ctx });
       expect(result).toEqual({ acknowledged: true, deletedCount: 1 });
 
-      for (let i = 0; i < afterRemovePins.length; i++) {
-        expect(afterRemovePins[i].userAgent).not.toEqual(userSession.userAgents[0].id);
-      }
+      expect(afterRemovePins).toHaveLength(0);
+    });
+
+    it('should SOFT remove a pin', async () => {
+      // Arrange
+      getPinByAsset.mockResolvedValue(pins[0]);
+
+      // Act
+
+      const result = await removeByAsset({ assetId, soft: true, ctx });
+
+      const afterRemovePins = await ctx.tx.db.Pins.find(
+        { asset: assetId, userAgent: userSession.userAgents[0].id },
+        {},
+        { excludeDeleted: false }
+      );
+
+      // Assert
+      expect(getPinByAsset).toBeCalledWith({ assetId, ctx });
+      expect(result.modifiedCount).toBe(1);
+
+      expect(afterRemovePins).toHaveLength(1);
+      expect(afterRemovePins[0].isDeleted).toBe(true);
     });
   });
 
