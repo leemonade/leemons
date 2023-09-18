@@ -1,4 +1,5 @@
 const { isEmpty } = require('lodash');
+const sharp = require('sharp');
 /**
  * Optimizes an image by resizing it and changing its format and quality.
  *
@@ -8,10 +9,10 @@ const { isEmpty } = require('lodash');
  * @returns {Object} The optimized image stream.
  */
 function getOptimizedImage({ path, extension }) {
-  let imageStream = global.utils.sharp();
+  let imageStream = sharp();
 
   if (path && !isEmpty(path)) {
-    imageStream = global.utils.sharp(path);
+    imageStream = sharp(path);
   }
 
   return imageStream

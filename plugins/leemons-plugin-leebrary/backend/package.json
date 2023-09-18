@@ -54,7 +54,8 @@
     "mime-types": "^2.1.35",
     "moleculer": "^0.14.26",
     "office-document-properties": "^1.1.0",
-    "sharp": "^0.32.4"
+    "sharp": "^0.32.4",
+    "temp": "^0.9.4"
   },
   "engines": {
     "node": ">= 16.x.x"
