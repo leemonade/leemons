@@ -34,7 +34,7 @@
     "@leemons/widgets": "0.0.13",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
-    "systeminformation": "^5.21.1"
+    "systeminformation": "^5.21.6"
   },
   "engines": {
     "node": ">= 16.x.x"

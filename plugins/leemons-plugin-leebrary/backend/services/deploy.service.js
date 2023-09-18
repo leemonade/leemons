@@ -33,7 +33,7 @@ module.exports = () => ({
       events: [
         'menu-builder.init-main-menu',
         // 'leebrary.library.pluginDidLoadServices', // ? Es necesario este evento todavía?
-        'leebrary.library.init-permissions',
+        'leebrary.init-permissions',
       ],
       handler: async (ctx) => {
         await addMenuItemsDeploy({

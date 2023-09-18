@@ -23,7 +23,7 @@ module.exports = {
         if (ctx.meta.userSession.userAgents.length > 1) {
           actor = _.map(ctx.meta.userSession.userAgents, 'id');
         }
-        await add({ ...ctx.params, actor, ip: ctx.request.ip, ctx });
+        await add({ ...ctx.params, actor, ip: ctx.meta.clientIP, ctx });
         return { status: 200 };
       }
       throw new LeemonsError(ctx, { message: 'Only type (learning | log) are available' });

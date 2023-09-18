@@ -500,6 +500,14 @@ module.exports = {
 					return doSomething(ctx, res, data);
 				}, */
 
+        onBeforeCall(ctx, route, req) {
+          ctx.meta.clientIP =
+            req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress;
+        },
+
         onError(req, res, err) {
           const response = { ...err, message: err.message };
           res.setHeader('Content-Type', 'application/json');
