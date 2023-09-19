@@ -2,7 +2,7 @@
 /* eslint-disable no-cond-assign */
 
 const _ = require('lodash');
-const { numberToEncodedLetter } = require('leemons-utils');
+const { numberToEncodedLetter } = require('@leemons/utils');
 const { curriculumByIds } = require('./curriculumByIds');
 const { setDatasetValues } = require('../nodes/setDatasetValues');
 const { updateNodeLevelFormPermissions } = require('../nodeLevels/updateNodeLevelFormPermissions');

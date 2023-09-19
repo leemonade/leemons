@@ -4,13 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
-const settingsService = require('leemons-plugin-admin/core/settings');
+} = require('@leemons/middlewares');
 const { generate, retry, listReports } = require('../../core/report');
 
 /** @type {ServiceSchema} */

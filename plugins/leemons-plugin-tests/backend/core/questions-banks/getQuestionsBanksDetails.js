@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getByIds } = require('../questions');
 
 async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {

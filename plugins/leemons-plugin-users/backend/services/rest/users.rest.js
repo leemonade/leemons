@@ -5,12 +5,12 @@
 /** @type {ServiceSchema} */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const usersService = require('../../core/users');
 const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
 const {

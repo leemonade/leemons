@@ -1,4 +1,5 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
+
 module.exports = function entitiesFormat({ entitiesObj, ctx }) {
   try {
     // Validate entities

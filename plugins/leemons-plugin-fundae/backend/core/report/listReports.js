@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 async function listReports({ page, size, filters = {}, ctx }) {
   const response = await mongoDBPaginate({

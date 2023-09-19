@@ -1,5 +1,5 @@
 const ApiGateway = require('moleculer-web');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
@@ -499,6 +499,14 @@ module.exports = {
 					// Async function which return with Promise
 					return doSomething(ctx, res, data);
 				}, */
+
+        onBeforeCall(ctx, route, req) {
+          ctx.meta.clientIP =
+            req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress;
+        },
 
         onError(req, res, err) {
           const response = { ...err, message: err.message };

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 async function listTests({ page, size, published, ctx }) {
   const versions = await ctx.tx.call('common.versionControl.listVersionsOfType', {

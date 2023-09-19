@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const constants = require('../../config/constants');
 const getHostname = require('../platform/getHostname');

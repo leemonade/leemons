@@ -1,6 +1,6 @@
+const { LeemonsError } = require('@leemons/error');
 const { getEndpointData } = require('./getEndpointData');
 const { getRegion, getFederationToken } = require('./aws');
-const { LeemonsError } = require('leemons-error');
 
 async function createCredentials({ policy, ctx }) {
   try {

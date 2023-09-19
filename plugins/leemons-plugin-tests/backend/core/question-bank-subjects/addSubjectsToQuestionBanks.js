@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function addSubjectsToQuestionBanks({ subject, questionBank, ctx }) {
   // Check if test is empty

@@ -1,9 +1,9 @@
 /* eslint-disable no-async-promise-executor */
 /* eslint-disable no-use-before-define */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const aws = require('aws-sdk');
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 
 let config = null;
 let account = null;

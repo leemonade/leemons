@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const moment = require('moment');
 const { verifyJWTToken } = require('./jwt/verifyJWTToken');
 const constants = require('../../config/constants');

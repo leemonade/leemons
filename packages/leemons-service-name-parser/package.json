@@ -1,6 +1,6 @@
 {
-  "name": "leemons-service-name-parser",
-  "version": "1.0.0",
+  "name": "@leemons/service-name-parser",
+  "version": "0.0.16",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -8,6 +8,10 @@
     "email": "hi@leemons.io",
     "name": "Leemons Edtech Solutions",
     "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "maintainers": [
     {

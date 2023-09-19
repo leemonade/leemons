@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 async function listCurriculums({ page, size, canListUnpublished, query = {}, ctx }) {
   const { userSession } = ctx.meta;

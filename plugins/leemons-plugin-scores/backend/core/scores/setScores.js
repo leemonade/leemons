@@ -1,4 +1,4 @@
-const { sqlDatetime } = require('leemons-utils');
+const { sqlDatetime } = require('@leemons/utils');
 const removeScores = require('./removeScores');
 
 function removeScoresQuery(scores) {

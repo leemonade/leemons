@@ -1,12 +1,12 @@
 const _ = require('lodash');
-const { getPluginNameFromCTX } = require('leemons-service-name-parser');
+const { getPluginNameFromCTX } = require('@leemons/service-name-parser');
 
 function errorMessage(message) {
   return `[LeemonsError] - ${message}`;
 }
 
 class LeemonsError extends Error {
-  constructor(ctx, { message, httpStatusCode, customCode, ...rest }) {
+  constructor(ctx, { message, httpStatusCode, customCode, allowedPermissions, ...rest }) {
     if (!ctx) throw new Error(errorMessage('ctx field is required'));
     if (!ctx.service || !ctx.service.name)
       throw new Error(errorMessage('ctx must be a valid moleculer context'));
@@ -21,6 +21,7 @@ class LeemonsError extends Error {
     this.pluginName = getPluginNameFromCTX(ctx);
     this.pluginVersion = ctx.service.version;
     this.httpStatusCode = httpStatusCode;
+    this.allowedPermissions = allowedPermissions;
     this.code = customCode;
   }
 }

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 /**
  * Create/Update the family dataset values
  * @public
@@ -10,17 +8,22 @@ const _ = require('lodash');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setDatasetValues(family, userSession, values, { transacting } = {}) {
+async function setDatasetValues({ family, values, ctx }) {
   const locationName = 'families-data';
   const pluginName = 'families';
-  const dataset = leemons.getPlugin('dataset').services.dataset;
   let functionName = 'addValues';
-  if (await dataset.existValues(locationName, pluginName, { target: family, transacting })) {
+
+  if (
+    await ctx.tx.call('dataset.dataset.existValues', { locationName, pluginName, target: family })
+  ) {
     functionName = 'updateValues';
   }
-  return dataset[functionName](locationName, pluginName, values, userSession.userAgents, {
+  return ctx.tx.call(`dataset.dataset.${functionName}`, {
+    locationName,
+    pluginName,
+    formData: values,
+    userAgent: ctx.meta.userSession.userAgents,
     target: family,
-    transacting,
   });
 }
 

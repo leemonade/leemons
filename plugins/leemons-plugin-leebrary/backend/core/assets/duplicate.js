@@ -5,7 +5,7 @@
  * existing asset.
  */
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getByAsset: getPermissions } = require('../permissions/getByAsset');
 const { getByAsset: getBookmark } = require('../bookmarks/getByAsset');
 const { add } = require('./add');

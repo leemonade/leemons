@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { isArray, map } = require('lodash');
 const { validateAddClass } = require('../../validations/forms');

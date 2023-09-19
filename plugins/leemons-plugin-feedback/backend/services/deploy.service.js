@@ -2,18 +2,18 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 const path = require('path');
 
-const { registerAssignableRolesDeploy } = require('leemons-assignables');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { assignableRoles, permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 

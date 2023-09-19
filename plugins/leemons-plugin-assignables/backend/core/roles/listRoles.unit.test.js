@@ -1,5 +1,5 @@
 // const { it, expect } = require('@jest/globals');
-// const { generateCtx } = require('leemons-testing');
+// const { generateCtx } = require('@leemons/testing');
 // const { getExpectedRole } = require('../../__fixtures__/getExpectedRole');
 // const { listRoles } = require('./listRoles');
 
@@ -34,8 +34,8 @@
 // });
 
 const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { listRoles } = require('./listRoles');
 const { rolesSchema } = require('../../models/roles');

@@ -1,4 +1,4 @@
-const { LeemonsValidator, validateSchema } = require('leemons-validator');
+const { LeemonsValidator, validateSchema } = require('@leemons/validator');
 
 const addUsersBulkSchema = {
   type: 'object',

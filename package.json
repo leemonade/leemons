@@ -49,6 +49,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-sonarjs": "^0.21.0",
     "husky": "^8.0.3",
+    "npm-check": "^6.0.1",
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1",
     "start-server-and-test": "^2.0.0",

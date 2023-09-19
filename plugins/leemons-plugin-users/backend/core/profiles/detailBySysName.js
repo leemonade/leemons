@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { transformArrayToObject } = require('../permissions/transformArrayToObject');
 const { detail: roleDetail } = require('../roles/detail');
 

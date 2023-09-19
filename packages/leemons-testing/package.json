@@ -1,13 +1,18 @@
 {
-  "name": "leemons-testing",
-  "version": "1.0.0",
-  "private": true,
+  "name": "@leemons/testing",
+  "version": "0.0.16",
+  "private": false,
   "main": "src/index.js",
   "scripts": {
     "build": "turbo build"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "dependencies": {
-    "leemons-mongodb": "1.0.0",
-    "mongodb-memory-server-core": "^8.15.0"
+    "@leemons/mongodb": "0.0.12",
+    "mongodb-memory-server-core": "^8.15.0",
+    "mongoose": "^7.5.2"
   }
 }

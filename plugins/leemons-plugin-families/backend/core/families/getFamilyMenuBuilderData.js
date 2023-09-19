@@ -1,9 +1,7 @@
-async function getFamilyMenuBuilderData(family, familyName, { transacting } = {}) {
-  const locale = await leemons
-    .getPlugin('users')
-    .services.platform.getDefaultLocale({ transacting });
+async function getFamilyMenuBuilderData({ family, familyName, ctx }) {
+  const locale = await ctx.tx.call('users.platform.getDefaultLocale');
   return {
-    config: {
+    item: {
       key: `family-${family}`,
       pluginName: leemons.plugin.prefixPN(),
       parentKey: leemons.plugin.prefixPN('user-families'),
@@ -18,6 +16,7 @@ async function getFamilyMenuBuilderData(family, familyName, { transacting } = {}
         actionNames: ['view', 'admin'],
       },
     ],
+    isCustomPermission: true,
   };
 }
 

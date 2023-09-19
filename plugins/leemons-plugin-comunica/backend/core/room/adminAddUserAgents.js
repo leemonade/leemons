@@ -1,11 +1,11 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
 } = require('../../validations/exists');
 const { addUserAgents } = require('./addUserAgents');
-const { LeemonsError } = require('leemons-error');
 
 async function adminAddUserAgents({ key, userAgents, userAgentAdmin, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });

@@ -6,8 +6,8 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
-const { LeemonsValidator } = require('leemons-validator');
+} = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
 const { list, add, remove } = require('../../core/centers');
 
 module.exports = {

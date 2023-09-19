@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 function modifyCTX(ctx, { forceLeemonsDeploymentManagerMixinNeedToBeImported }) {
   if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
@@ -10,12 +10,10 @@ function modifyCTX(ctx, { forceLeemonsDeploymentManagerMixinNeedToBeImported }) 
     }
   }
   ctx.socket = {
-    emit: (ids, eventName, eventData) => {
-      return ctx.call('mqtt-aws-iot.socket.emit', { ids, eventName, eventData });
-    },
-    emitAll: (eventName, eventData) => {
-      return ctx.call('mqtt-aws-iot.socket.emitAll', { eventName, eventData });
-    },
+    emit: (ids, eventName, eventData) =>
+      ctx.call('mqtt-aws-iot.socket.emit', { ids, eventName, eventData }),
+    emitAll: (eventName, eventData) =>
+      ctx.call('mqtt-aws-iot.socket.emitAll', { eventName, eventData }),
   };
 }
 

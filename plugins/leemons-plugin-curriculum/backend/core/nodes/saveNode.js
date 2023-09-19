@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 
 /*
 const { setDatasetValues } = require('./setDatasetValues');

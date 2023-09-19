@@ -1,10 +1,10 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { getRegion, getAccount } = require('./aws');
 const { createCredentials } = require('./createCredentials');
-const { LeemonsError } = require('leemons-error');
 
 async function createCredentialsForUserSession({ ctx }) {
-  let { userSession } = ctx.meta;
+  const { userSession } = ctx.meta;
   try {
     if (!userSession) throw new LeemonsError(ctx, { message: 'userSession is required' });
     const region = await getRegion({ ctx });

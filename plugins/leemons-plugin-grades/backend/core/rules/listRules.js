@@ -1,6 +1,6 @@
 const _ = require('lodash');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { ruleByIds } = require('./ruleByIds');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
 async function listRules({ page, size, center, isDependency = false, ctx }) {
   const results = await mongoDBPaginate({

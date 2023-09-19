@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getObjectArrayKeys } = require('leemons-utils');
+const { getObjectArrayKeys } = require('@leemons/utils');
 
 function arrKeys(object) {
   return getObjectArrayKeys(object);

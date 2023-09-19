@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Return family members
@@ -9,11 +8,9 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getMembers(familyId, { transacting } = {}) {
-  const members = await table.familyMembers.find({ family: familyId }, { transacting });
-  const users = await leemons
-    .getPlugin('users')
-    .services.users.detail(_.map(members, 'user'), { transacting });
+async function getMembers({ familyId, ctx }) {
+  const members = await ctx.tx.db.FamilyMembers.find({ family: familyId });
+  const users = await ctx.tx.call('users.users.detail', { userId: _.map(members, 'user') });
   const usersById = _.keyBy(users, 'id');
   const guardians = [];
   const students = [];

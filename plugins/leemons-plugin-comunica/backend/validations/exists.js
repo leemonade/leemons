@@ -1,7 +1,7 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { exist: existRoom } = require('../core/room/exist');
 const { existUserAgent } = require('../core/room/existUserAgent');
-const { LeemonsError } = require('leemons-error');
 
 function validateKeyPrefix({ key: _key, calledFrom, ctx }) {
   if (calledFrom && calledFrom !== 'gateway') {

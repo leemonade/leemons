@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-
 /**
  * Add family member
  * @public
@@ -10,8 +8,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function existMember(family, user, { transacting } = {}) {
-  const count = await table.familyMembers.count({ family, user }, { transacting });
+async function existMember({ family, user, ctx }) {
+  const count = await ctx.tx.db.FamilyMembers.countDocuments({ family, user });
   return !!count;
 }
 

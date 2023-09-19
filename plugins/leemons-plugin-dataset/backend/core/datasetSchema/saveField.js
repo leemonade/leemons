@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { randomString } = require('@leemons/utils');
 const { validateNotExistLocation } = require('../../validations/exists');
 const getSchema = require('./getSchema');
 const addSchema = require('./addSchema');
@@ -9,7 +10,6 @@ const updateSchemaLocale = require('../datasetSchemaLocale/updateSchemaLocale');
 const updateSchema = require('./updateSchema');
 const getSchemaWithLocale = require('./getSchemaWithLocale');
 const recalculeEnumNames = require('./recalculeEnumNames');
-const { randomString } = require('leemons-utils');
 
 async function saveLocale({
   locale,

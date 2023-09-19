@@ -7,7 +7,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const { getConfig, saveConfig } = require('../../core/config');
 
 /** @type {ServiceSchema} */

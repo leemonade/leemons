@@ -1,4 +1,4 @@
-const { localeRegexString } = require('leemons-validator');
+const { localeRegexString } = require('@leemons/validator');
 
 const textSchema = {
   type: 'string',

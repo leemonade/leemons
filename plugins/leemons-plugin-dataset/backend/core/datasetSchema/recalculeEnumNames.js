@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+const { getTranslationKey } = require('@leemons/multilanguage');
 const getSchema = require('./getSchema');
-const { getTranslationKey } = require('leemons-multilanguage');
 
 /** *
  *  ES:

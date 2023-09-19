@@ -7,7 +7,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 
 /** @type {ServiceSchema} */
 module.exports = {

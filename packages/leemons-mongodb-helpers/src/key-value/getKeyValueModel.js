@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
 
 function getKeyValueModel({ modelName }) {
   const schema = new mongoose.Schema(

@@ -1,6 +1,6 @@
 const _ = require('lodash');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { gradeByIds } = require('./gradeByIds');
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
 
 async function listGrades({ page, size, center, ctx }) {
   const results = await mongoDBPaginate({

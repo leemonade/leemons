@@ -2,16 +2,16 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 const path = require('path');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
-const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { widgets, permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -33,7 +33,7 @@ module.exports = () => ({
       events: [
         'menu-builder.init-main-menu',
         // 'leebrary.library.pluginDidLoadServices', // ? Es necesario este evento todavía?
-        'leebrary.library.init-permissions',
+        'leebrary.init-permissions',
       ],
       handler: async (ctx) => {
         await addMenuItemsDeploy({

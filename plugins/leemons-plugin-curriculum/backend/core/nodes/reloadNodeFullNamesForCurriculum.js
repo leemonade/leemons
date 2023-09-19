@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { numberToEncodedLetter } = require('leemons-utils');
+const { numberToEncodedLetter } = require('@leemons/utils');
 const { nodesTreeByCurriculum } = require('./nodesTreeByCurriculum');
 const { nodeLevelsByCurriculum } = require('../nodeLevels/nodeLevelsByCurriculum');
 

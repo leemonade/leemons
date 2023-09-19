@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+const { LeemonsError } = require('@leemons/error');
+const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 const { emitToRelationship } = require('./emitToRelationship');
 
 async function emit(ctx) {

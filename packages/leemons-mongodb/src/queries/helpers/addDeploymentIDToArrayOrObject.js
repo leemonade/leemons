@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getDeploymentIDFromCTX } = require('leemons-deployment-manager');
+const { getDeploymentIDFromCTX } = require('@leemons/deployment-manager');
 
 function addDeploymentIDToArrayOrObject({ items: _items, ctx }) {
   const items = _.cloneDeep(_items);

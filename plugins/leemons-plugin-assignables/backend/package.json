@@ -8,18 +8,22 @@
     "test": "jest"
   },
   "dependencies": {
+    "@leemons/cache": "0.0.12",
+    "@leemons/deployment-manager": "0.0.12",
+    "@leemons/menu-builder": "0.0.16",
+    "@leemons/mongodb": "0.0.12",
+    "@leemons/mongodb-helpers": "0.0.16",
+    "@leemons/mqtt": "0.0.16",
+    "@leemons/multi-events": "0.0.16",
+    "@leemons/multilanguage": "0.0.12",
+    "@leemons/permissions": "0.0.16",
+    "@leemons/testing": "0.0.16",
+    "@leemons/validator": "0.0.16",
+    "@leemons/widgets": "0.0.16",
     "jest": "^29.6.2",
-    "leemons-cache": "1.0.0",
-    "leemons-deployment-manager": "1.0.0",
-    "leemons-menu-builder": "1.0.0",
-    "leemons-mongodb": "1.0.0",
-    "leemons-mqtt": "1.0.0",
-    "leemons-multi-events": "1.0.0",
-    "leemons-multilanguage": "1.0.0",
-    "leemons-permissions": "1.0.0",
-    "leemons-testing": "1.0.0",
-    "leemons-validator": "1.0.0",
-    "leemons-widgets": "1.0.0",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0"
   }
 }

@@ -5,16 +5,16 @@
 
 const path = require('path');
 const _ = require('lodash');
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { hasKey, setKey } = require('leemons-mongodb-helpers');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { addWidgetZonesDeploy } = require('leemons-widgets');
-const { getEmailTypes } = require('leemons-emails');
-const { LeemonsMQTTMixin } = require('leemons-mqtt');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { addWidgetZonesDeploy } = require('@leemons/widgets');
+const { getEmailTypes } = require('@leemons/emails');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const {
   updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
 } = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');

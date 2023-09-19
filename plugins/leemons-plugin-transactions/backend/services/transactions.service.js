@@ -5,7 +5,7 @@
 const _ = require('lodash');
 const { setTimeout } = require('timers/promises');
 const mongoose = require('mongoose');
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 const { Transaction } = require('../models/transaction');
 const { TransactionState } = require('../models/transaction-state');
 

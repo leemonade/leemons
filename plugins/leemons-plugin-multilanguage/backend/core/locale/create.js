@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateLocale, validateLocalesArray } = require('../../validations/locale');
 const { has, hasMany } = require('./has');
 

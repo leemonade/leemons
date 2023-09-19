@@ -1,4 +1,4 @@
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const { ajvSchema, stringSchema, localeSchema } = require('./types');
 
 const addSchemaLocaleSchema = {
