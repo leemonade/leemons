@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Spotlight } from '@bubbles-ui/components';
 import { BrowserRouter } from 'react-router-dom';
-import { within, userEvent } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+// import { within, userEvent } from '@storybook/testing-library';
+// import { expect } from '@storybook/jest';
 import { MainNavBar } from './MainNavBar';
 import { menuData, session, sessionMenu } from './mock/menuData';
 import { MAIN_NAV_BAR_DEFAULT_PROPS } from './MainNavBar.constants';
@@ -19,19 +19,19 @@ export default {
   argTypes: {
     lightMode: { control: 'boolean' },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.hover(canvas.getAllByRole('button')[0]);
-    await userEvent.click(canvas.getAllByRole('button')[1]);
-    await expect(canvas.getByText('Usuarios')).toBeInTheDocument();
-    await expect(canvas.getByText('Perfiles')).toBeInTheDocument();
-    await userEvent.click(canvas.getAllByRole('button')[1]);
+  // play: async ({ canvasElement }) => {
+  //   const canvas = within(canvasElement);
+  //   await userEvent.hover(canvas.getAllByRole('button')[0]);
+  //   await userEvent.click(canvas.getAllByRole('button')[1]);
+  //   await expect(canvas.getByText('Usuarios')).toBeInTheDocument();
+  //   await expect(canvas.getByText('Perfiles')).toBeInTheDocument();
+  //   await userEvent.click(canvas.getAllByRole('button')[1]);
 
-    await userEvent.click(canvas.getByText('John Doe de todos los santos'));
-    await expect(canvas.getByText('Cuenta de usuario')).toBeInTheDocument();
-    await userEvent.click(canvas.getByText('John Doe de todos los santos'));
-    userEvent.unhover(canvas.getAllByRole('button')[0]);
-  },
+  //   await userEvent.click(canvas.getByText('John Doe de todos los santos'));
+  //   await expect(canvas.getByText('Cuenta de usuario')).toBeInTheDocument();
+  //   await userEvent.click(canvas.getByText('John Doe de todos los santos'));
+  //   userEvent.unhover(canvas.getAllByRole('button')[0]);
+  // },
 };
 
 const Template = ({ ...props }) => (

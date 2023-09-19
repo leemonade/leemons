@@ -126,7 +126,6 @@ const MainNavBar = ({
             className={classes.navBar}
           >
             <Box className={classes.navWrapper}>
-              {/* LOGO */}
               <Box>
                 <Box className={classes.logoContainer}>
                   {hasLogo ? (
@@ -162,7 +161,6 @@ const MainNavBar = ({
               </Box>
               <Box className={classes.navItemsWrapper}>
                 <Box>
-                  {/* SPOTLIGHT */}
                   <SpotLightButton
                     onClick={() => openSpotlight()}
                     isCollapsed={isCollapsed}
@@ -170,7 +168,6 @@ const MainNavBar = ({
                     spotlightLabel={spotlightLabel}
                   />
                 </Box>
-                {/* ITEMS */}
                 <Box className={classes.navItems}>
                   <Box className={classes.linksInner}>{navBarItems}</Box>
                   <Box>

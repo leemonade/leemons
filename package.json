@@ -37,8 +37,6 @@
   },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
-    "start-server-and-test": "^2.0.0",
-    "turbo": "^1.9.3",
     "@babel/core": "^7.22.15",
     "@babel/eslint-parser": "^7.22.15",
     "@babel/plugin-syntax-jsx": "^7.22.5",
@@ -52,6 +50,8 @@
     "eslint-plugin-sonarjs": "^0.21.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
-    "prettier-eslint": "^15.0.1"
+    "prettier-eslint": "^15.0.1",
+    "start-server-and-test": "^2.0.0",
+    "turbo": "^1.9.3"
   }
 }
