@@ -22,7 +22,9 @@ async function check(folder) {
       );
       try {
         await exec(`yarn add ${missinKeys[i]}`);
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
       const pjson = JSON.parse(await fs.readFile(`${folder}/package.json`, 'utf8'));
       if (pjson.dependencies.hasOwnProperty(missinKeys[i])) {
         console.log(`Installed successfully.`);
@@ -42,7 +44,9 @@ async function check(folder) {
       );
       try {
         await exec(`yarn remove ${package.moduleName}`);
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
       const pjson = JSON.parse(await fs.readFile(`${folder}/package.json`, 'utf8'));
       if (pjson.dependencies.hasOwnProperty(package.moduleName)) {
         console.error('Uninstalled failed.');

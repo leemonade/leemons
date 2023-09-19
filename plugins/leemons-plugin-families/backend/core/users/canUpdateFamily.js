@@ -10,18 +10,16 @@ const { isFamilyMember } = require('./isFamilyMember');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function canUpdateFamily(familyId, userSession, { transacting } = {}) {
+async function canUpdateFamily({ familyId, ctx }) {
   // TODO Añadir que devuelva true a aquellas personas que tengan el permiso de ver esta familia en la tabla de users:item-permissions
-  if (await isFamilyMember(familyId, userSession, { transacting })) return true;
-  const permissions = await leemons
-    .getPlugin('users')
-    .services.permissions.getUserAgentPermissions(userSession.userAgents, {
-      transacting,
-      query: {
-        permissionName: 'families.families',
-        actionName_$in: ['update', 'admin'],
-      },
-    });
+  if (await isFamilyMember({ familyId, ctx })) return true;
+  const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
+    userAgent: ctx.meta.userSession.userAgents,
+    query: {
+      permissionName: 'families.families',
+      actionName: ['update', 'admin'],
+    },
+  });
   return !!permissions.length;
 }
 
