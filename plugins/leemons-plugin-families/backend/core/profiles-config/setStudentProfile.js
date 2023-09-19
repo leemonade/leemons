@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * It says that the platform profile corresponds to a student
  * @public
@@ -8,14 +6,14 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setStudentProfile(profile, { transacting } = {}) {
-  return await table.profilesConfig.set(
+async function setStudentProfile({ profile, ctx }) {
+  return ctx.tx.db.ProfilesConfig.findOneAndUpdate(
     { type: 'student' },
     {
       type: 'student',
       profile,
     },
-    { transacting }
+    { upsert: true, new: true, lean: true }
   );
 }
 
