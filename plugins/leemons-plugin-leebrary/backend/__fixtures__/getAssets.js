@@ -131,6 +131,33 @@ module.exports = function getAssets() {
     tags: ['Leemons'],
   };
 
+  const assetsVersion = [
+    {
+      uuid: 'asset1',
+      version: '1.0.0',
+      fullId: 'asset1@1.0.0',
+      published: true,
+    },
+    {
+      uuid: 'asset1',
+      version: '2.0.0',
+      fullId: 'asset1@2.0.0',
+      published: false,
+    },
+    {
+      uuid: 'asset2',
+      version: '1.0.0',
+      fullId: 'asset2@1.0.0',
+      published: false,
+    },
+    {
+      uuid: 'asset2',
+      version: '2.0.0',
+      fullId: 'asset2@2.0.0',
+      published: true,
+    },
+  ];
+
   return {
     mediaFileAsset,
     bookmarkAsset,
@@ -157,5 +184,6 @@ module.exports = function getAssets() {
       deleted_at: null, // db property}
     },
     assetDataExtraProps,
+    assetsVersion,
   };
 };

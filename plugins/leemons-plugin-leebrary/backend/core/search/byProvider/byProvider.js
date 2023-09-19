@@ -4,6 +4,22 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 const { getById: getCategoryById } = require('../../categories/getById');
 const { getByName: getProviderByName } = require('../../providers/getByName');
 
+/**
+ * @function byProvider
+ * @description This function searches for assets by provider.
+ * @param {Object} params - The parameters for the search.
+ * @param {string} params.categoryId - The ID of the category.
+ * @param {Object} params.criteria - The criteria for the search.
+ * @param {string} params.query - The query for the search.
+ * @param {boolean} [params.details=false] - Whether to return detailed results.
+ * @param {Array} params.assets - The IDs of the assets.
+ * @param {Object} params.category - The category of the assets.
+ * @param {boolean} params.published - Whether the assets are published.
+ * @param {boolean} params.preferCurrent - Whether to prefer current assets.
+ * @param {Object} params.ctx - The context for the search.
+ * @returns {Promise<Array>} The found assets.
+ * @throws {LeemonsError} If the category is not provided or if the search fails.
+ */
 async function byProvider({
   categoryId,
   criteria,
@@ -25,37 +41,12 @@ async function byProvider({
   }
 
   try {
-    //    const provider = leemons.getProvider(category.provider) || leemons.getPlugin(category.provider);
-    // * Esta linea busca el proveedor por su nombre 'category.provider'
-    // * si no lo encuentra la busca como plugin (entiendo que es para cuando category.provider === 'leebrary')
-
-    //! Ahora buscaría el provider así
     const provider = await getProviderByName({ name: category.provider, ctx });
 
-    // if (typeof provider?.services?.assets?.search !== 'function') {
-    //   return null;
-    // }
-    // * En esta linea veo si existe la función assets.search
-    // * en el caso de que sea leebrary esa función no existe... así que no hace nada (devuelve null)
-
-    //! si el método no existe o no existe el provider se sale devolviendo null
-    //! si category.provider === 'leemons' no va a existir provider, por lo que también se sale devolviendo null
     if (!provider?.supportedMethods?.search) {
       return null;
     }
 
-    // * Se hacía la búsqueda en el servicio del provider
-    // const assets = await provider.services.assets.search(criteria, {
-    //   query,
-    //   category,
-    //   assets: assetsIds,
-    //   published,
-    //   preferCurrent,
-    //   userSession,
-    //   transacting,
-    // });
-
-    //! Ahora lo haríamos igual pero usando el ctx.tx.call
     const assets = await ctx.tx.call(`${category.provider}.assets.search`, {
       criteria,
       query,
@@ -69,7 +60,7 @@ async function byProvider({
       return getAssetsByIds({ ids: assets, ctx });
     }
 
-    return assets;
+    return await assets;
   } catch (e) {
     ctx.logger.error(e);
     throw new LeemonsError(ctx, {

@@ -24,7 +24,7 @@ async function byName({ name, details = false, indexable = true, assets: assetsI
 
     return assets;
   } catch (e) {
-    throw LeemonsError(ctx, {
+    throw new LeemonsError(ctx, {
       message: `Failed to find asset with name: ${e.message}`,
       httpStatusCode: 500,
     });

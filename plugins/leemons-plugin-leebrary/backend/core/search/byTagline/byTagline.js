@@ -4,24 +4,19 @@ const { LeemonsError } = require('@leemons/error');
 
 const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 
-async function byTagline({
-  tagline,
-  details = false,
-  indexable = true,
-  assets: assetsIds,
-  ctx,
-} = {}) {
+async function byTagline({ tagline, details = false, indexable = true, assets: assetsIds, ctx }) {
   try {
     const query = {
-      tagline_$contains: tagline,
+      tagline: { $regex: tagline },
       indexable,
     };
 
     if (!isEmpty(assetsIds)) {
-      query.id_$in = assetsIds;
+      query.id = assetsIds;
     }
 
     let assets = await ctx.tx.db.Assets.find(query).select('id').lean();
+
     assets = assets.map((entry) => entry.id);
 
     if (details) {
