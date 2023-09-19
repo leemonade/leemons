@@ -1,5 +1,3 @@
-const ChannelsMiddleware = require('@moleculer/channels').Middleware;
-
 /**
  * Moleculer ServiceBroker configuration file
  *
@@ -192,11 +190,7 @@ module.exports = {
   },
 
   // Register custom middlewares
-  middlewares: [
-    ChannelsMiddleware({
-      adapter: process.env.REDIS_URI,
-    }),
-  ],
+  middlewares: [],
 
   // Register custom REPL commands.
   replCommands: null,

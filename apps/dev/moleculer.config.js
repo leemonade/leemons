@@ -196,14 +196,7 @@ module.exports = {
   },
 
   // Register custom middlewares
-  middlewares: [
-    /*
-    ChannelsMiddleware({
-      adapter:
-        "redis://",
-    }),
-    */
-  ],
+  middlewares: [],
 
   // Register custom REPL commands.
   replCommands: null,
