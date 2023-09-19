@@ -10,7 +10,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  */
 async function handleAbortMultipart({ file, ctx }) {
   if (file.provider !== 'sys') {
-    const provider = await getProviderByName(file.provider);
+    const provider = await getProviderByName({ name: file.provider, ctx });
     if (provider?.supportedMethods?.abortMultipart) {
       await ctx.tx.call(`${file.provider}.files.abortMultipart`, { file });
     }

@@ -4,8 +4,8 @@ const {
   upload: uploadFile,
   uploadFromUrl: uploadFileFromUrl,
   uploadFromFileStream: uploadFileFromStream,
-  uploadImage,
-} = require('../upload/upload');
+  prepareImage,
+} = require('../upload');
 
 /**
  * Uploads a file from various sources (URL, readable stream, or file object) and returns the uploaded file details.
@@ -34,11 +34,11 @@ async function uploadFromSource({ source, name, ctx }) {
     const [fileType] = contentType.split('/');
     const extension = mime.extension(contentType);
     if (fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
-      const imageFile = await uploadImage(source.path, extension);
+      const imageFile = await prepareImage({ path: source.path, extension, ctx });
       // resultFile = await uploadFile({ ...imageFile, type: contentType }, { name }, { transacting });
       resultFile = await uploadFile({ ...imageFile, type: contentType, name, ctx });
     } else {
-      resultFile = await uploadFile(...source, name, ctx);
+      resultFile = await uploadFile({ file: { ...source }, name, ctx });
     }
   }
 

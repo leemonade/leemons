@@ -1,37 +1,39 @@
+const { LeemonsError } = require('@leemons/error');
 const { getById } = require('../getById');
 const { dataForReturnFile } = require('../dataForReturnFile');
+const { uploadFromFileStream } = require('./uploadFromFileStream');
+const { download } = require('./download');
+const { upload } = require('./upload');
 /**
  * Uploads a file from a given URL.
  *
- * @param {string} url - The URL of the file to upload.
- * @param {Object} params - The parameters for the upload.
+ * @param {Object} params - The parames object.
+ * @param {string} params.url - The URL of the file to upload.
  * @param {string} params.name - The name of the file.
- * @param {Object} options - The options for the upload.
- * @param {Object} options.userSession - The user session object.
- * @param {Object} options.transacting - The transaction object.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} A promise that resolves with the uploaded file.
  */
-async function uploadFromUrl(url, { name }, { userSession, transacting } = {}) {
+async function uploadFromUrl({ url, name, ctx }) {
   // ES: Primero comprobamos que la URL no sea un FILE_ID
   // EN: First check if the URL is a FILE_ID
-  const file = await getById(url);
+  const file = await getById({ id: url, ctx });
 
   try {
     if (file?.id) {
       if (file.isFolder) {
         return file;
       }
-
-      const fileStream = await dataForReturnFile(file.id);
-      return uploadFromFileStream(fileStream, { name }, { userSession, transacting });
+      const fileStream = await dataForReturnFile({ id: file.id });
+      return uploadFromFileStream({ file: fileStream, name, ctx });
     }
 
     const { path, contentType } = await download({ url, compress: true });
-    return upload({ path, type: contentType }, { name }, { userSession, transacting });
+    return upload({ file: { path, type: contentType }, name, ctx });
   } catch (err) {
-    console.error('ERROR: downloading file:', url);
+    ctx.logger.error('ERROR: downloading file:', url);
+    // eslint-disable-next-line no-console
     console.dir(url, { depth: null });
-    throw new Error(`-- ERROR: downloading file ${url} --`);
+    throw new LeemonsError(ctx, { message: `-- ERROR: downloading file ${url} --` });
   }
 }
 
