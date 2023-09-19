@@ -2625,6 +2625,16 @@
   resolved "https://registry.npmjs.org/@leemons/transactions/-/transactions-0.0.11.tgz"
   integrity sha512-6ktaTxJp6zFBqkSwzF8StIjatINyrU8vhJCBl3PLOSTqAa8rwuKgdwHUVta4l21byS+O3ND5qVvSj9ROAbIn3A==
 
+"@leemons/validator@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@leemons/validator/-/validator-0.0.12.tgz#df02302ea1eb037910e2fc31dc5df42c8750727c"
+  integrity sha512-H4+llErQHi8DSBBiCe276dUF6rUq/63Cdn0I2osD85hw6AngFJHUOfLT0dGV+rezd/KhCbZHQC8NCwod/xyc0A==
+  dependencies:
+    ajv "^8.12.0"
+    ajv-formats "^2.1.1"
+    ajv-keywords "^5.1.0"
+    lodash "^4.17.21"
+
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.npmjs.org/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz"
@@ -2779,14 +2789,6 @@
     tldts "~6.0.12"
     url-regex-safe "~4.0.0"
     video-extensions "~1.2.0"
-
-"@moleculer/channels@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.npmjs.org/@moleculer/channels/-/channels-0.1.8.tgz"
-  integrity sha512-nCWzYCjvrV2IaHAwKCZQPUYu4IV1067Q9wByd+dVRiXB44auy9dv8Whyl1oBTGzk78CcZNejfBG9Dw0UbRtkXA==
-  dependencies:
-    lodash "^4.17.21"
-    semver "^7.5.4"
 
 "@mongodb-js/saslprep@^1.1.0":
   version "1.1.0"
@@ -8332,10 +8334,15 @@ date-arithmetic@^4.1.0:
   resolved "https://registry.npmjs.org/date-arithmetic/-/date-arithmetic-4.1.0.tgz"
   integrity sha512-QWxYLR5P/6GStZcdem+V1xoto6DMadYWpMXU82ES3/RfR3Wdwr3D0+be7mgOJ+Ov0G9D5Dmb9T17sNLQYj9XOg==
 
-dayjs@^1.10.0, dayjs@^1.10.7, dayjs@^1.11.2, dayjs@^1.11.7, dayjs@^1.11.9, dayjs@^1.8.34:
+dayjs@^1.10.0, dayjs@^1.10.7, dayjs@^1.8.34:
   version "1.11.9"
   resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.9.tgz"
   integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
+
+dayjs@^1.11.10:
+  version "1.11.10"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.10.tgz#68acea85317a6e164457d6d6947564029a6a16a0"
+  integrity sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==
 
 debug@2.6.9, debug@^2.5.2, debug@^2.6.9:
   version "2.6.9"

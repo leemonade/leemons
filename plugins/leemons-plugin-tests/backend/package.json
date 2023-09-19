@@ -34,7 +34,7 @@
     "@leemons/multilanguage": "0.0.12",
     "@leemons/permissions": "0.0.14",
     "@leemons/validator": "0.0.14",
-    "dayjs": "^1.11.9",
+    "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },
