@@ -1,6 +1,3 @@
-// 'use strict';
-// const ChannelsMiddleware = require('@moleculer/channels').Middleware;
-
 /**
  * Moleculer ServiceBroker configuration file
  *

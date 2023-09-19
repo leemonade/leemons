@@ -30,7 +30,6 @@
     "@leemons/multilanguage": "0.0.12",
     "@leemons/utils": "0.0.14",
     "@leemons/validator": "0.0.14",
-    "@moleculer/channels": "^0.1.8",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },

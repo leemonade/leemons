@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@leemons/utils": "0.0.14",
-    "@moleculer/channels": "^0.1.8",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
     "mongoose": "^7.1.1"

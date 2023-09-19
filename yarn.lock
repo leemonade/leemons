@@ -6727,10 +6727,10 @@ aws-iot-device-sdk@^2.2.12:
     mqtt "4.2.8"
     websocket-stream "^5.5.2"
 
-aws-sdk@^2.1438.0, aws-sdk@^2.1450.0:
-  version "2.1459.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1459.0.tgz"
-  integrity sha512-My45PgQYhRTh6fOeZ94ELUoXzza/6gTy0J22aK4iy0DEA+uE5gjr1VthnIwbLYNMeEqn8xwJZuNJqvi/WaUUcQ==
+aws-sdk@^2.1460.0:
+  version "2.1460.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1460.0.tgz#0e6ec1ddee7dfe19ed4d54c9949801b45559050a"
+  integrity sha512-7K+aTMKtCAyR3cWxyGFd9YP1U4go4IaRsiFO8JLNpy2fSqlGC5XENGyLhmIQQOBwqb2WOwz5e1BftaKycmreWw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"

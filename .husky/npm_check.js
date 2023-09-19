@@ -20,7 +20,9 @@ async function check(folder) {
       console.log(
         `Missing dependency from package.json (${missinKeys[i]}), installing latest version in ${folder}`
       );
-      await exec(`yarn add ${missinKeys[i]}`);
+      try {
+        await exec(`yarn add ${missinKeys[i]}`);
+      } catch (e) {}
       const pjson = JSON.parse(await fs.readFile(`${folder}/package.json`, 'utf8'));
       if (pjson.dependencies.hasOwnProperty(missinKeys[i])) {
         console.log(`Installed successfully.`);
@@ -38,7 +40,9 @@ async function check(folder) {
       console.log(
         `Unused dependency from package.json (${package.moduleName}), uninstalling in ${folder}`
       );
-      await exec(`yarn remove ${package.moduleName}`);
+      try {
+        await exec(`yarn remove ${package.moduleName}`);
+      } catch (e) {}
       const pjson = JSON.parse(await fs.readFile(`${folder}/package.json`, 'utf8'));
       if (pjson.dependencies.hasOwnProperty(package.moduleName)) {
         console.error('Uninstalled failed.');

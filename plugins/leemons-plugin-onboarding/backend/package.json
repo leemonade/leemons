@@ -20,7 +20,6 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.8",
     "moleculer": "^0.14.26"
   },
   "engines": {

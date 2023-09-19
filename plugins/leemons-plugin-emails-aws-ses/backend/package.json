@@ -27,7 +27,7 @@
     "@leemons/mongodb-helpers": "0.0.14",
     "@leemons/mqtt": "0.0.14",
     "@leemons/multilanguage": "0.0.12",
-    "aws-sdk": "^2.1438.0",
+    "aws-sdk": "^2.1460.0",
     "moleculer": "^0.14.26",
     "nodemailer": "^6.9.4",
     "nodemailer-html-to-text": "^3.2.0",
