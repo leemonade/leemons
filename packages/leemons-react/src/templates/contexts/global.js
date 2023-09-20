@@ -33,7 +33,7 @@ class LeemonsApi {
       new Promise((resolve, reject) => {
         this.apiWaitToFinish[waitKey].waiting++;
         const check = () => {
-          if (this.apiWaitToFinish[waitKey].finish) {
+          if (this.apiWaitToFinish[waitKey]?.finish) {
             const { isError } = this.apiWaitToFinish[waitKey];
             const response = _.cloneDeep(this.apiWaitToFinish[waitKey].response);
             this.apiWaitToFinish[waitKey].waiting--;
@@ -51,7 +51,7 @@ class LeemonsApi {
     this.removeWhenNoWaits = (waitKey) => {
       let times = 0;
       const check = () => {
-        if (this.apiWaitToFinish[waitKey].finish && !this.apiWaitToFinish[waitKey].waiting) {
+        if (this.apiWaitToFinish[waitKey]?.finish && !this.apiWaitToFinish[waitKey]?.waiting) {
           delete this.apiWaitToFinish[waitKey];
         } else if (times < 60) {
           times++;
@@ -160,8 +160,8 @@ class LeemonsApi {
       ctx.middlewares[i] = true;
       const next = middlewares[i + 1]
         ? () => this.#callMiddleware(middlewares, i + 1, ctx)
-        : () => {};
-      const middleware = middlewares[i] ? middlewares[i] : () => {};
+        : () => { };
+      const middleware = middlewares[i] ? middlewares[i] : () => { };
       await middleware(ctx, next);
       await next();
     }

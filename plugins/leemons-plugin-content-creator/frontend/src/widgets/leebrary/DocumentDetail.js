@@ -1,5 +1,5 @@
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { LibraryDetail } from 'assignables/components';
+import { LibraryDetail } from '@assignables/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
@@ -101,9 +101,9 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-              icon: <ViewOnIcon height={16} width={16} />,
-              onClick: handleView,
-            }
+            icon: <ViewOnIcon height={16} width={16} />,
+            onClick: handleView,
+          }
           : null
       }
       onEdit={handleEdit}

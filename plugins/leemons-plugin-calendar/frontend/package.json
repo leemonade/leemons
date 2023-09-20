@@ -7,21 +7,33 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
-  "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
-  },
   "dependencies": {
-    "@asseinfo/react-kanban": "^2.2.0",
-    "@bubbles-ui/calendars": "1.1.0",
+    "@bubbles-ui/calendars": "dev",
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/icons": "dev",
     "@bubbles-ui/leemons": "dev",
+    "@loadable/component": "^5.15.2",
     "clsx": "^1.1.1",
-    "country-region-data": "^1.11.0",
+    "colord": "^2.9.3",
+    "date-arithmetic": "^4.1.0",
+    "dayjs": "^1.11.2",
     "dom-helpers": "^5.2.1",
+    "invariant": "^2.2.4",
+    "leemons-hooks": "^0.0.3",
     "lodash": "^4.17.21",
     "memoize-one": "^5.2.1",
+    "moment": "^2.29.4",
+    "p-min-delay": "^4.0.2",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
     "react-big-calendar": "^0.36.1",
-    "rrule": "^2.6.8"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1",
+    "react-overlays": "^5.2.1",
+    "react-router-dom": "^5.3.3",
+    "react-to-print": "^2.14.13",
+    "rrule": "^2.6.8",
+    "uncontrollable": "^8.0.4"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.10",
@@ -34,8 +46,6 @@
     "@storybook/react": "^7.3.2",
     "@storybook/react-webpack5": "^7.3.2",
     "@storybook/testing-library": "^0.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "storybook": "^7.3.2"
   }
 }

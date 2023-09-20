@@ -4,13 +4,20 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@bubbles-ui/components": "dev",
     "@bubbles-ui/leemons": "dev",
+    "@bubbles-ui/editors": "dev",
+    "@bubbles-ui/icons": "dev",
     "@loadable/component": "^5.15.2",
     "@tanstack/react-query": "^4.16.1",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
-    "react-router": "^6.3.0",
-    "react-router-dom": "^5"
+    "prop-types": "^15.8.1",
+    "p-min-delay": "^4.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1",
+    "react-router-dom": "^5.3.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.10",
@@ -23,8 +30,6 @@
     "@storybook/react": "^7.3.2",
     "@storybook/react-webpack5": "^7.3.2",
     "@storybook/testing-library": "^0.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "storybook": "^7.3.2"
   },
   "scripts": {
