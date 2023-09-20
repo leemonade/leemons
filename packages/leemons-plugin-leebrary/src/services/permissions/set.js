@@ -1,6 +1,6 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable no-await-in-loop */
-const { map, uniq, filter, forEach, isArray } = require('lodash');
+const { map, uniq } = require('lodash');
 const _ = require('lodash');
 const { validateSetPermissions } = require('../../validations/forms');
 const { getByIds } = require('../assets/getByIds');
@@ -17,6 +17,8 @@ const rolePermissionType = {
   editor: leemons.plugin.prefixPN(`asset.can-edit`),
   assigner: leemons.plugin.prefixPN(`asset.can-assign`),
 };
+
+// PRIVATE METHODS ---------------------------------------------->
 
 function checkIfRolesExists(canAccess, permissions) {
   const roles = [];
@@ -327,6 +329,124 @@ async function removeMissingPermissions({
   await Promise.all(promises);
 }
 
+// PRIVATE METHODS: HELPERS ---------------------------------------------->
+
+// ! Refactor: handleAddPermissionsToUserAgent - async
+// * input: { canAccess, assetIds, assetsDataById, assetsRoleById, ctx}
+// * output: undefined - irrelevant
+// * sideEffects: calls addPermissionsToUserAgent - Adds permissions to user agents if necesary
+async function handleAddPermissionsToUserAgent({
+  canAccess,
+  assetIds,
+  assetsDataById,
+  assetsRoleById,
+  transacting,
+  userSession,
+  userService,
+}) {
+  const currentUserAgentIds = _.map(userSession.userAgents, 'id');
+
+  const userPromises = [];
+  _.forEach(assetIds, (id) => {
+    const categoryId = assetsDataById[id]?.category;
+    const assignerRole = assetsRoleById[id];
+    const permissionName = getAssetPermissionName(id); // helper function to require
+    _.forEach(canAccess, ({ userAgent, role }) => {
+      if (!currentUserAgentIds.includes(userAgent)) {
+        userPromises.push(
+          addPermissionsToUserAgent({
+            // private function to require
+            id,
+            role,
+            userAgent,
+            categoryId,
+            transacting,
+            userSession,
+            userService,
+            assignerRole,
+            permissionName,
+          })
+        );
+      }
+    });
+  });
+
+  if (userPromises.length) await Promise.all(userPromises);
+}
+
+// ! Refactor: handleAddPermissionsToAsset - async
+// * input: { permissions, assetIds, assetsDataById, assetsRoleById, ctx}
+// * output: undefined - irrelevant
+// * sideEffects: calls addPermissionsToAsset - Adds permissions assets, (items), if neccesary
+async function handleAddPermissionsToAsset({
+  permissions,
+  assetIds,
+  assetsDataById,
+  assetsRoleById,
+  userService,
+  transacting,
+}) {
+  const assetPromises = [];
+  _.forEach(assetIds, (id) => {
+    const categoryId = assetsDataById[id]?.category;
+    const assignerRole = assetsRoleById[id];
+    assetPromises.push(
+      addPermissionsToAsset({
+        // private function to require
+        id,
+        categoryId,
+        permissions,
+        userService,
+        transacting,
+        assignerRole,
+      })
+    );
+  });
+
+  if (assetPromises.length) await Promise.all(assetPromises);
+}
+
+// ! Refactor: handleRemoveMissingPermissions - async
+// * input: { deleteMissing, canAccess, permissions, assetIds, assetsRoleById, ctx}
+// * output: undefined - irrelevant
+// * sideEffects: calls removeMissingUserAgents and removeMissingPermissions - Removes missing permissions if necesary
+async function handleRemoveMissingPermissions({
+  canAccess,
+  permissions,
+  assetIds,
+  assetsRoleById,
+  userSession,
+  transacting,
+  userService,
+}) {
+  const currentUserAgentIds = _.map(userSession.userAgents, 'id');
+  const toUpdate = map(canAccess, 'userAgent');
+
+  const missingPromises = [];
+  _.forEach(assetIds, (id) => {
+    const assignerRole = assetsRoleById[id];
+    const permissionName = getAssetPermissionName(id); // helper function to require
+    missingPromises.push(
+      removeMissingUserAgents({
+        // private function to require
+        id,
+        toUpdate,
+        transacting,
+        userService,
+        assignerRole,
+        permissionName,
+        currentUserAgentIds,
+      })
+    );
+    missingPromises.push(
+      removeMissingPermissions({ id, permissions, userService, assignerRole, transacting })
+    );
+  });
+  if (missingPromises.length) await Promise.all(missingPromises);
+}
+
+// PUBLIC METHODS ---------------------------------------------->
+
 /**
  * Set userAgents permissions / roles in order to access to the specified assetID
  * @public
@@ -384,79 +504,38 @@ async function set(
     }
 
     if (canAccess?.length) {
-      const currentUserAgentIds = _.map(userSession.userAgents, 'id');
-
-      const userPromises = [];
-      _.forEach(assetIds, (id) => {
-        const categoryId = assetsDataById[id]?.category;
-        const assignerRole = assetsRoleById[id];
-        const permissionName = getAssetPermissionName(id);
-        _.forEach(canAccess, ({ userAgent, role }) => {
-          if (!currentUserAgentIds.includes(userAgent)) {
-            userPromises.push(
-              addPermissionsToUserAgent({
-                id,
-                role,
-                userAgent,
-                categoryId,
-                transacting,
-                userSession,
-                userService,
-                assignerRole,
-                permissionName,
-              })
-            );
-          }
-        });
+      await handleAddPermissionsToUserAgent({
+        canAccess,
+        assetIds,
+        assetsDataById,
+        assetsRoleById,
+        transacting,
+        userSession,
+        userService,
       });
-
-      if (userPromises.length) await Promise.all(userPromises);
     }
 
     if (permissions) {
-      const assetPromises = [];
-      _.forEach(assetIds, (id) => {
-        const categoryId = assetsDataById[id]?.category;
-        const assignerRole = assetsRoleById[id];
-        assetPromises.push(
-          addPermissionsToAsset({
-            id,
-            categoryId,
-            permissions,
-            userService,
-            transacting,
-            assignerRole,
-          })
-        );
+      await handleAddPermissionsToAsset({
+        permissions,
+        assetIds,
+        assetsDataById,
+        assetsRoleById,
+        userService,
+        transacting,
       });
-
-      if (assetPromises.length) await Promise.all(assetPromises);
     }
 
     if (deleteMissing) {
-      const currentUserAgentIds = _.map(userSession.userAgents, 'id');
-      const toUpdate = map(canAccess, 'userAgent');
-
-      const missingPromises = [];
-      _.forEach(assetIds, (id) => {
-        const assignerRole = assetsRoleById[id];
-        const permissionName = getAssetPermissionName(id);
-        missingPromises.push(
-          removeMissingUserAgents({
-            id,
-            toUpdate,
-            transacting,
-            userService,
-            assignerRole,
-            permissionName,
-            currentUserAgentIds,
-          })
-        );
-        missingPromises.push(
-          removeMissingPermissions({ id, permissions, userService, assignerRole, transacting })
-        );
+      handleRemoveMissingPermissions({
+        canAccess,
+        permissions,
+        assetIds,
+        assetsRoleById,
+        userSession,
+        transacting,
+        userService,
       });
-      if (missingPromises.length) await Promise.all(missingPromises);
     }
 
     return true;
