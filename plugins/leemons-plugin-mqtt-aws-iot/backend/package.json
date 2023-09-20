@@ -35,7 +35,7 @@
     "@leemons/validator": "0.0.16",
     "@leemons/widgets": "0.0.16",
     "aws-iot-device-sdk": "^2.2.12",
-    "aws-sdk": "^2.1460.0",
+    "aws-sdk": "^2.1461.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },

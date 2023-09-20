@@ -2544,6 +2544,14 @@
     "@leemons/service-name-parser" "0.0.11"
     lodash "^4.17.21"
 
+"@leemons/error@0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.14.tgz#4a6d5cb6ddb5b52e7035120151397bf8c50f195f"
+  integrity sha512-Iw5pNoHNa0L99+wIhm3+6so8bXiQWKJIQudReJSVmx4UtuJMFqrF7oLU8wrd+XD9hcu88pmbSesnF/EJDK+Rug==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.13"
+    lodash "^4.17.21"
+
 "@leemons/lrn@0.0.11":
   version "0.0.11"
   resolved "https://registry.npmjs.org/@leemons/lrn/-/lrn-0.0.11.tgz"
@@ -2614,6 +2622,11 @@
   version "0.0.11"
   resolved "https://registry.npmjs.org/@leemons/service-name-parser/-/service-name-parser-0.0.11.tgz"
   integrity sha512-7T/slMi7PZFCURWI/hL2IZum++9fgTWNaiuxXvn2o+1Eqy53Pt71AoSeqRS0x5dG7osjtwPgpcTwSU9QwSTUpA==
+
+"@leemons/service-name-parser@0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.13.tgz#a335aa5ea2509c53274b7ce2356062a5712d59be"
+  integrity sha512-+l1NlRzWX5nNNEoyulg6mCBqj+b+juNN+l0/XSJ+HKXfNQQdIpPfhlcfEg6gEL3SvyeYzX6dPO6o/yGdHAemsw==
 
 "@leemons/transactions@0.0.10":
   version "0.0.10"
@@ -3406,6 +3419,15 @@
   resolved "https://registry.npmjs.org/@redis/bloom/-/bloom-1.2.0.tgz"
   integrity sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==
 
+"@redis/client@1.5.10":
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/@redis/client/-/client-1.5.10.tgz#7857c2fa09f64b63c154f49b7fddfb1c7f794c21"
+  integrity sha512-JqhVeW6ojVL0Jp6MVISPrGRAx6OUZBaYTIMukkiGYvs5gxI8lEKgjSmu+6UvV+Mi/hXzlOAJXTjseeQu0ARnaA==
+  dependencies:
+    cluster-key-slot "1.1.2"
+    generic-pool "3.9.0"
+    yallist "4.0.0"
+
 "@redis/client@1.5.9":
   version "1.5.9"
   resolved "https://registry.npmjs.org/@redis/client/-/client-1.5.9.tgz"
@@ -3425,10 +3447,20 @@
   resolved "https://registry.npmjs.org/@redis/json/-/json-1.0.4.tgz"
   integrity sha512-LUZE2Gdrhg0Rx7AN+cZkb1e6HjoSKaeeW8rYnt89Tly13GBI5eP4CwDVr+MY8BAYfCg4/N15OUrtLoona9uSgw==
 
+"@redis/json@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@redis/json/-/json-1.0.5.tgz#cd3f0881f9a370000c7a5f1042d98f12b7968217"
+  integrity sha512-/YIpOkrPYOHlJch396KLZs1R7gXMzQGi1mJ6rfFYLwb0aGU/Ygn4M+m7urrEfvgrE2zUJX/puxZlNojYjsoV6A==
+
 "@redis/search@1.1.3":
   version "1.1.3"
   resolved "https://registry.npmjs.org/@redis/search/-/search-1.1.3.tgz"
   integrity sha512-4Dg1JjvCevdiCBTZqjhKkGoC5/BcB7k9j99kdMnaXFXg8x4eyOIVg9487CMv7/BUVkFLZCaIh8ead9mU15DNng==
+
+"@redis/search@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@redis/search/-/search-1.1.4.tgz#f2c482589857b84fcb2cadf727766c096b4dfa61"
+  integrity sha512-6tgvT2d1QfgZaoOylNRHteGlFGCDBlBNivOoLWL83X+YKA4ucX2k4KxL8vFQbEigT1jHCqnmMrSFnWLFXNnSHA==
 
 "@redis/time-series@1.0.5":
   version "1.0.5"
@@ -6729,10 +6761,10 @@ aws-iot-device-sdk@^2.2.12:
     mqtt "4.2.8"
     websocket-stream "^5.5.2"
 
-aws-sdk@^2.1460.0:
-  version "2.1460.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1460.0.tgz#0e6ec1ddee7dfe19ed4d54c9949801b45559050a"
-  integrity sha512-7K+aTMKtCAyR3cWxyGFd9YP1U4go4IaRsiFO8JLNpy2fSqlGC5XENGyLhmIQQOBwqb2WOwz5e1BftaKycmreWw==
+aws-sdk@^2.1461.0:
+  version "2.1461.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1461.0.tgz#9c4f6fd79bf94aada84aefd2c1cf2414d3e909ab"
+  integrity sha512-oRZqsSEx5jkXq8Xq4Nkhhwupnjzw0UuFyEKGLsEDFjiFGOzdJoYspGg/Oa4RfTpa8ITLGHIRkYeik/7fN8ccng==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -15410,6 +15442,18 @@ redis@^4.6.7:
     "@redis/search" "1.1.3"
     "@redis/time-series" "1.0.5"
 
+redis@^4.6.8:
+  version "4.6.9"
+  resolved "https://registry.yarnpkg.com/redis/-/redis-4.6.9.tgz#461e942d9853f9ee928a7641f101a330b9b421c4"
+  integrity sha512-upWaKM5V+BnHflcTaaKAiErpqpIQSgTDMYCCthS+vyKBQV2HqaJTfAoNsuB+3/m9rdMjmbZobjqRSPum9lz4ew==
+  dependencies:
+    "@redis/bloom" "1.2.0"
+    "@redis/client" "1.5.10"
+    "@redis/graph" "1.1.0"
+    "@redis/json" "1.0.5"
+    "@redis/search" "1.1.4"
+    "@redis/time-series" "1.0.5"
+
 redux@^4.0.0, redux@^4.0.4, redux@^4.1.1:
   version "4.2.1"
   resolved "https://registry.npmjs.org/redux/-/redux-4.2.1.tgz"
@@ -16766,10 +16810,10 @@ synchronous-promise@^2.0.15:
   resolved "https://registry.npmjs.org/synchronous-promise/-/synchronous-promise-2.0.17.tgz"
   integrity sha512-AsS729u2RHUfEra9xJrE39peJcc2stq2+poBXX8bcM08Y6g9j/i/PUzwNQqkaJde7Ntg1TO7bSREbR5sdosQ+g==
 
-systeminformation@^5.21.6:
-  version "5.21.6"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.6.tgz#ebb7e315ea1ca83bccffa5634c179124a7147f2d"
-  integrity sha512-wMf5w8ZtNCHhkSNVD/aEbg/5V4ke7XuCqTn+d9GcfZIce8VbeYtb8sQCz/L9LcK3O2QRPHxqWJnKyaAvGfsn2Q==
+systeminformation@^5.21.8:
+  version "5.21.8"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.8.tgz#18395187e5983698619ed07ca8640ae48ec232b2"
+  integrity sha512-Xf1KDMUTQHLOT9Z7MjpSpsbaICOHcm4OZ9c9qqpkCoXuxq5MoyDrgu5GIQYpoiralXNPrqxDz3ND8MdllpXeQA==
 
 tapable@^2.0.0, tapable@^2.1.1, tapable@^2.2.0, tapable@^2.2.1:
   version "2.2.1"
