@@ -1,12 +1,16 @@
+/* eslint-disable import/prefer-default-export */
 import { createStyles, getFontExpressive, pxToRem } from '@bubbles-ui/components';
 
+const spaceBetween = 'space-between';
+
 export const LibraryCardCoverStyles = createStyles(
-  (theme, { color, height, blur, parentHovered, subjectColor }) => {
+  (theme, { color, height, blur, parentHovered, subjectColor, isFav }) => {
+    const isParentHovered = parentHovered ? 'visible' : 'hidden';
     return {
       root: {
         ...getFontExpressive(theme.fontSizes['2']),
         position: 'relative',
-        height: height,
+        height,
         width: '100%',
         borderRadius: '4px 2px 0 0',
       },
@@ -17,26 +21,45 @@ export const LibraryCardCoverStyles = createStyles(
         fontWeight: 600,
         lineHeight: pxToRem(20),
       },
-      blurryBox: {
+      overlayTransparent: {
         display: 'flex',
         flexDirection: 'column',
-        width: '50%',
+        width: '100%',
         height: '100%',
         position: 'absolute',
         zIndex: 1,
-        background: parentHovered ? 'rgba(247, 248, 250, 0.95)' : 'rgba(247, 248, 250, 0.8)',
-        backdropFilter: `blur(${blur}px)`,
-        justifyContent: 'space-between',
+        justifyContent: spaceBetween,
+        borderRadius: '4px 0 0 0',
+      },
+      overlayGradient: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        zIndex: 1,
+        background:
+          'linear-gradient(180deg, #000 -65%, rgba(0, 0, 0, 0.00) 65%), transparent 50% / cover no-repeat',
+        justifyContent: spaceBetween,
         borderRadius: '4px 0 0 0',
       },
       iconRow: {
-        display: parentHovered ? 'flex' : 'none',
+        display: 'flex',
+        visibility: isParentHovered,
         alignItems: 'center',
+        justifyContent: spaceBetween,
         paddingTop: pxToRem(2),
         paddingInline: pxToRem(4),
       },
       menuIcon: {
-        color: theme.colors.text05,
+        color: '#FFFFFF',
+      },
+      menuButton: {
+        backgroundColor: 'transparent !important',
+      },
+      favButton: {
+        paddingRight: pxToRem(4),
+        visibility: isFav ? 'visible' : isParentHovered,
       },
       deadline: {
         position: 'absolute',
@@ -47,7 +70,7 @@ export const LibraryCardCoverStyles = createStyles(
       },
       color: {
         width: '100%',
-        height: pxToRem(8),
+        height: pxToRem(4),
         backgroundColor: color || theme.colors.ui01,
         transition: 'all 0.2s ease-out',
         borderRadius: '2px 0 0 0',

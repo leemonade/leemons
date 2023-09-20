@@ -54,8 +54,8 @@ const Template = ({
           isCurriculum
             ? CURRICULUM_ASSET
             : isBookmark
-            ? { ...URL_ASSET, ...assetToRender }
-            : { ...asset, ...assetToRender, cover: null }
+              ? { ...URL_ASSET, ...assetToRender }
+              : { ...asset, ...assetToRender }
         }
         deadlineProps={isCurriculum ? null : deadlineProps}
         assigment={!isCurriculum && showAssigment ? assigment : null}

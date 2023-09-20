@@ -15,8 +15,7 @@ export const AUDIO_ASSET = {
     { label: 'Transcript', value: 'Not available' },
   ],
   tags: ['Fantasy', 'Adventure', 'Fiction'],
-  cover:
-    'https://images.unsplash.com/photo-1627552245715-77d79bbf6fe2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=640&q=80',
+  cover: 'https://uh.gsstatic.es/sfAttachPlugin/1029293.jpg',
   url: 'https://storage.googleapis.com/media-session/elephants-dream/the-wires.mp3',
 };
 

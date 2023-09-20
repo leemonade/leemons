@@ -95,6 +95,7 @@ const LibraryCard = ({
         locale={locale || deadlineProps?.locale}
         direction={variant === 'assigment' ? 'vertical' : null}
         parentHovered={isHovered}
+        // parentHovered={true}
         menuItems={menuItems}
         dashboard={dashboard}
         isNew={isNew}

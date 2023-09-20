@@ -9,10 +9,11 @@ import {
   Menu,
   Text,
   TextClamp,
-  Title,
+  // Title,
+  FavButton,
 } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
-import { LibraryCardDeadline } from '../LibraryCardDeadline';
+// import { LibraryCardDeadline } from '../LibraryCardDeadline';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
 import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
@@ -20,28 +21,33 @@ import {
 } from './LibraryCardCover.constants';
 
 const LibraryCardCover = ({
-  name,
+  // name,
   height,
   cover,
   color,
   blur,
   fileIcon,
-  deadlineProps,
+  // deadlineProps,
   parentHovered,
   menuItems,
   dashboard,
   subject,
-  isNew,
-  role,
+  // isNew,
+  // role,
   badge,
   hideDashboardIcons,
-  ...props
+  // ...props
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [isFav, setIsFav] = useState(false);
   const { classes, cx } = LibraryCardCoverStyles(
-    { color, height, blur, parentHovered, subjectColor: subject?.color },
+    { color, height, blur, parentHovered, subjectColor: subject?.color, isFav },
     { name: 'LibraryCardCover' }
   );
+
+  const handleIsFav = () => {
+    setIsFav(!isFav);
+  };
 
   const icon = useMemo(
     () =>
@@ -57,20 +63,20 @@ const LibraryCardCover = ({
     }
   }, [parentHovered, showMenu]);
 
-  const renderDeadline = () => {
-    if (!deadlineProps) return;
-    return (
-      <Box className={classes.deadline}>
-        <LibraryCardDeadline
-          {...deadlineProps}
-          locale={deadlineProps.locale}
-          parentHovered={parentHovered}
-          isNew={isNew}
-          role={role}
-        />
-      </Box>
-    );
-  };
+  // const renderDeadline = () => {
+  //   if (!deadlineProps) return;
+  //   return (
+  //     <Box className={classes.deadline}>
+  //       <LibraryCardDeadline
+  //         {...deadlineProps}
+  //         locale={deadlineProps.locale}
+  //         parentHovered={parentHovered}
+  //         isNew={isNew}
+  //         role={role}
+  //       />
+  //     </Box>
+  //   );
+  // };
 
   const renderSubjectAndBadge = () => {
     const components = [];
@@ -111,65 +117,71 @@ const LibraryCardCover = ({
 
   const iconRow = (
     <Box className={classes.iconRow}>
-      {!isEmpty(menuItems) && (
-        <Box style={{ flex: 1 }}>
-          <Menu
-            opened={showMenu && parentHovered}
-            onOpen={() => setShowMenu(true)}
-            onClose={() => setShowMenu(false)}
-            items={menuItems.map((item) => ({
-              ...item,
-              className: cx(classes.menuItem, item.className),
-            }))}
-            position="bottom-start"
-            withinPortal={true}
-            control={
-              <IconButton
-                icon={
-                  <SettingMenuVerticalIcon width={16} height={16} className={classes.menuIcon} />
-                }
-                variant={'transparent'}
-                size="xs"
-                onClick={preventPropagation}
-              />
-            }
-          />
-        </Box>
-      )}
-      {dashboard && !hideDashboardIcons && (
-        <>
-          <IconButton
-            icon={<DeleteBinIcon width={16} height={16} className={classes.menuIcon} />}
-            variant={'transparent'}
-            size="xs"
-          />
-          <IconButton
-            icon={<BookmarksIcon width={16} height={16} className={classes.menuIcon} />}
-            variant={'transparent'}
-            size="xs"
-          />
-        </>
-      )}
+      <Box>
+        {!isEmpty(menuItems) && (
+          <Box>
+            <Menu
+              opened={showMenu && parentHovered}
+              onOpen={() => setShowMenu(true)}
+              onClose={() => setShowMenu(false)}
+              items={menuItems.map((item) => ({
+                ...item,
+                className: cx(classes.menuItem, item.className),
+              }))}
+              position="bottom-start"
+              withinPortal={true}
+              control={
+                <IconButton
+                  icon={
+                    <SettingMenuVerticalIcon width={26} height={26} className={classes.menuIcon} />
+                  }
+                  variant={'transparent'}
+                  size="xs"
+                  onClick={preventPropagation}
+                  className={classes.menuButton}
+                />
+              }
+            />
+          </Box>
+        )}
+        {dashboard && !hideDashboardIcons && (
+          <>
+            <IconButton
+              icon={<DeleteBinIcon width={16} height={16} className={classes.menuIcon} />}
+              variant={'transparent'}
+              size="xs"
+            />
+            <IconButton
+              icon={<BookmarksIcon width={16} height={16} className={classes.menuIcon} />}
+              variant={'transparent'}
+              size="xs"
+            />
+          </>
+        )}
+      </Box>
+      <Box onClick={() => handleIsFav()} className={classes.favButton}>
+        <FavButton isActive={isFav} isParentHovered={parentHovered} />
+      </Box>
     </Box>
   );
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.blurryBox}>
+      <Box className={parentHovered ? classes.overlayGradient : classes.overlayTransparent}>
         <Box>
           <Box className={classes.color} />
           {iconRow}
         </Box>
         <Box className={classes.titleWrapper}>
           {renderSubjectAndBadge()}
-          <TextClamp lines={4}>
-            <Title order={5} className={classes.title}>
-              {name}
-            </Title>
-          </TextClamp>
+          {/* <TextClamp lines={4}>
+          <Title order={5} className={classes.title}>
+            {name}
+          </Title>
+        </TextClamp> */}
         </Box>
       </Box>
-      {renderDeadline()}
+      {/* {renderDeadline()} */}
       {cover ? (
         <ImageLoader src={cover} height={height} width={'100%'} forceImage />
       ) : (
