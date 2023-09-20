@@ -52,6 +52,16 @@ module.exports = {
         aliases: {
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Families (Finish) --
+          'POST families/search-users': 'v1.families.families.searchUsersRest',
+          'GET families/dataset-form': 'v1.families.families.getDatasetFormRest',
+          'POST families/add': 'v1.families.families.addRest',
+          'POST families/update': 'v1.families.families.updateRest',
+          'GET families/detail/:id': 'v1.families.families.detailRest',
+          'DELETE families/remove/:id': 'v1.families.families.removeRest',
+          'POST families/list': 'v1.families.families.listRest',
+          'GET families/list/detail/page/:user': 'v1.families.families.listDetailPageRest',
+
           // -- Scores (Finish) --
           'POST scores/periods': 'v1.scores.periods.addRest',
           'GET scores/periods': 'v1.scores.periods.listRest',
