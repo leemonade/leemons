@@ -14,7 +14,6 @@ const { getRemoteContentType } = require('./getRemoteContentType');
  */
 
 function download({ url, compress }) {
-  temp.track();
   return new Promise((resolve, reject) => {
     (async () => {
       try {

@@ -36,7 +36,6 @@ async function handleFilesDuplication({ filesToDuplicate, cover, newAsset, categ
     newFiles.push(cover);
   }
 
-  // TODO Paola: Comprobar esta llamada una vez hecho el refactor de core/assets/file/add
   // EN: Now, let's create the relation between the file and Asset
   const addFileToAssetPromises = [];
   _.forEach(newFiles, (file) => {

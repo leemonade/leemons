@@ -19,6 +19,7 @@ let mediainfo;
  * @param {number} params.fileSize - The size of the file.
  * @returns {Promise<Object>} The metadata of the file.
  */
+
 async function handleMediaInfo({ metadata = {}, fileHandle, fileType, fileSize, ctx }) {
   if (['image', 'audio', 'video'].includes(fileType)) {
     const readChunk = async (size, offset) => {

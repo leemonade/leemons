@@ -10,7 +10,6 @@ const { getOptimizedImage } = require('./getOptimizedImage');
  * @returns {Promise<Object>} A promise that resolves with an object containing the path of the temporary file.
  */
 async function prepareImage({ path, extension, ctx }) {
-  temp.track();
   try {
     const fileWriterStream = temp.createWriteStream();
 
