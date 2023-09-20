@@ -13,10 +13,11 @@ let mediainfo;
  * Analyzes the file and extracts metadata if it's an image, audio, or video file.
  *
  * @param {Object} params - The params object
- * @param {Object} params.metadata - The metadata of the file.
+ * @param {Object} [params.metadata] - The metadata of the file.
  * @param {Object} params.fileHandle - The file handle.
  * @param {string} params.fileType - The type of the file.
  * @param {number} params.fileSize - The size of the file.
+ * @param {MoleculerContext} params.ctx - The moleculer context.
  * @returns {Promise<Object>} The metadata of the file.
  */
 

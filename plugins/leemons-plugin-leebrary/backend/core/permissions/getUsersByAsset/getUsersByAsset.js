@@ -2,6 +2,14 @@ const { LeemonsError } = require('@leemons/error');
 const { getByAsset } = require('../getByAsset');
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 
+/**
+ * Gets users by asset.
+ * @param {Object} params - The params object.
+ * @param {string} params.assetId - The ID of the asset.
+ * @param {MoleculerContext} params.ctx - The moleculer context.
+ * @throws {LeemonsError} If the user does not have view permission at least or if there is a failure in getting permissions.
+ * @returns {Promise<Object>} The users with permissions.
+ */
 async function getUsersByAsset({ assetId, ctx }) {
   try {
     const { permissions } = await getByAsset({ assetId, ctx });
