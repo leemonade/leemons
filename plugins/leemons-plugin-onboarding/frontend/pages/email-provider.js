@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import Router from 'next/router';
+import { useHistory } from 'react-router-dom';
 
 export default function EmailProvider() {
   const [providers, setProviders] = useState([]);
+  const history = useHistory();
 
   async function getProviders() {
     try {
@@ -14,7 +15,7 @@ export default function EmailProvider() {
   }
 
   async function selectProvider(provider) {
-    Router.push(`/onboarding/email-provider/${provider.providerName}`);
+    history.push(`/onboarding/email-provider/${provider.providerName}`);
   }
 
   useEffect(() => {

@@ -1,11 +1,13 @@
+/* eslint-disable camelcase */
+/* eslint-disable max-classes-per-file */
 /* eslint-disable default-case */
 
-import { CMIArray } from "./cmi/common";
-import { ValidationError } from "./exceptions";
-import ErrorCodes from "./constants/error_codes";
-import APIConstants from "./constants/api_constants";
-import { unflatten } from "./utilities";
-import debounce from "lodash.debounce";
+import { debounce } from 'lodash';
+import { CMIArray } from './cmi/common';
+import { ValidationError } from './exceptions';
+import ErrorCodes from './constants/error_codes';
+import APIConstants from './constants/api_constants';
+import { unflatten } from './utilities';
 
 const global_constants = APIConstants.global;
 const scorm12_error_codes = ErrorCodes.scorm12;
@@ -16,15 +18,17 @@ const scorm12_error_codes = ErrorCodes.scorm12;
  */
 export default class BaseAPI {
   #timeout;
+
   #error_codes;
+
   #settings = {
     autocommit: false,
     autocommitSeconds: 10,
     asyncCommit: false,
     sendBeaconCommit: false,
     lmsCommitUrl: false,
-    dataCommitFormat: "json", // valid formats are 'json' or 'flattened', 'params'
-    commitRequestDataType: "application/json;charset=UTF-8",
+    dataCommitFormat: 'json', // valid formats are 'json' or 'flattened', 'params'
+    commitRequestDataType: 'application/json;charset=UTF-8',
     autoProgress: false,
     logLevel: global_constants.LOG_LEVEL_ERROR,
     selfReportSessionTime: false,
@@ -32,11 +36,11 @@ export default class BaseAPI {
     strict_errors: true,
     xhrHeaders: {},
     xhrWithCredentials: false,
-    responseHandler: function (xhr) {
+    responseHandler(xhr) {
       let result;
-      if (typeof xhr !== "undefined") {
+      if (typeof xhr !== 'undefined') {
         result = JSON.parse(xhr.responseText);
-        if (result === null || !{}.hasOwnProperty.call(result, "result")) {
+        if (result === null || !{}.hasOwnProperty.call(result, 'result')) {
           result = {};
           if (xhr.status === 200) {
             result.result = global_constants.SCORM_TRUE;
@@ -49,10 +53,10 @@ export default class BaseAPI {
       }
       return result;
     },
-    requestHandler: function (commitObject) {
+    requestHandler(commitObject) {
       return commitObject;
     },
-    onLogMessage: function (messageLevel, logMessage) {
+    onLogMessage(messageLevel, logMessage) {
       switch (messageLevel) {
         case global_constants.LOG_LEVEL_ERROR:
           console.error(logMessage);
@@ -73,7 +77,9 @@ export default class BaseAPI {
       }
     },
   };
+
   cmi;
+
   startingData = {};
 
   /**
@@ -84,7 +90,7 @@ export default class BaseAPI {
    */
   constructor(error_codes, settings) {
     if (new.target === BaseAPI) {
-      throw new TypeError("Cannot construct BaseAPI instances directly");
+      throw new TypeError('Cannot construct BaseAPI instances directly');
     }
     this.currentState = global_constants.STATE_NOT_INITIALIZED;
     this.lastErrorCode = 0;
@@ -123,12 +129,7 @@ export default class BaseAPI {
       this.processListeners(callbackName);
     }
 
-    this.apiLog(
-      callbackName,
-      null,
-      "returned: " + returnValue,
-      global_constants.LOG_LEVEL_INFO
-    );
+    this.apiLog(callbackName, null, `returned: ${returnValue}`, global_constants.LOG_LEVEL_INFO);
     this.clearSCORMError(returnValue);
 
     return returnValue;
@@ -180,13 +181,13 @@ export default class BaseAPI {
       if (
         !this.settings.sendBeaconCommit &&
         !this.settings.asyncCommit &&
-        typeof result.errorCode !== "undefined" &&
+        typeof result.errorCode !== 'undefined' &&
         result.errorCode > 0
       ) {
         this.throwSCORMError(result.errorCode);
       }
       returnValue =
-        typeof result !== "undefined" && result.result
+        typeof result !== 'undefined' && result.result
           ? result.result
           : global_constants.SCORM_FALSE;
 
@@ -196,12 +197,7 @@ export default class BaseAPI {
       this.processListeners(callbackName);
     }
 
-    this.apiLog(
-      callbackName,
-      null,
-      "returned: " + returnValue,
-      global_constants.LOG_LEVEL_INFO
-    );
+    this.apiLog(callbackName, null, `returned: ${returnValue}`, global_constants.LOG_LEVEL_INFO);
     this.clearSCORMError(returnValue);
 
     return returnValue;
@@ -247,7 +243,7 @@ export default class BaseAPI {
     this.apiLog(
       callbackName,
       CMIElement,
-      ": returned: " + returnValue,
+      `: returned: ${returnValue}`,
       global_constants.LOG_LEVEL_INFO
     );
     this.clearSCORMError(returnValue);
@@ -303,19 +299,16 @@ export default class BaseAPI {
 
     // If we didn't have any errors while setting the data, go ahead and
     // schedule a commit, if autocommit is turned on
-    if (String(this.lastErrorCode) === "0") {
+    if (String(this.lastErrorCode) === '0') {
       if (this.settings.autocommit && !this.#timeout) {
-        this.scheduleCommit(
-          this.settings.autocommitSeconds * 1000,
-          commitCallback
-        );
+        this.scheduleCommit(this.settings.autocommitSeconds * 1000, commitCallback);
       }
     }
 
     this.apiLog(
       callbackName,
       CMIElement,
-      ": " + value + ": result: " + returnValue,
+      `: ${value}: result: ${returnValue}`,
       global_constants.LOG_LEVEL_INFO
     );
     this.clearSCORMError(returnValue);
@@ -351,14 +344,14 @@ export default class BaseAPI {
         this.throwSCORMError(result.errorCode);
       }
       returnValue =
-        typeof result !== "undefined" && result.result
+        typeof result !== 'undefined' && result.result
           ? result.result
           : global_constants.SCORM_FALSE;
 
       this.apiLog(
         callbackName,
-        "HttpRequest",
-        " Result: " + returnValue,
+        'HttpRequest',
+        ` Result: ${returnValue}`,
         global_constants.LOG_LEVEL_DEBUG
       );
 
@@ -367,12 +360,7 @@ export default class BaseAPI {
       this.processListeners(callbackName);
     }
 
-    this.apiLog(
-      callbackName,
-      null,
-      "returned: " + returnValue,
-      global_constants.LOG_LEVEL_INFO
-    );
+    this.apiLog(callbackName, null, `returned: ${returnValue}`, global_constants.LOG_LEVEL_INFO);
     this.clearSCORMError(returnValue);
 
     return returnValue;
@@ -388,12 +376,7 @@ export default class BaseAPI {
 
     this.processListeners(callbackName);
 
-    this.apiLog(
-      callbackName,
-      null,
-      "returned: " + returnValue,
-      global_constants.LOG_LEVEL_INFO
-    );
+    this.apiLog(callbackName, null, `returned: ${returnValue}`, global_constants.LOG_LEVEL_INFO);
 
     return returnValue;
   }
@@ -406,19 +389,14 @@ export default class BaseAPI {
    * @return {string}
    */
   getErrorString(callbackName, CMIErrorCode) {
-    let returnValue = "";
+    let returnValue = '';
 
-    if (CMIErrorCode !== null && CMIErrorCode !== "") {
+    if (CMIErrorCode !== null && CMIErrorCode !== '') {
       returnValue = this.getLmsErrorMessageDetails(CMIErrorCode);
       this.processListeners(callbackName);
     }
 
-    this.apiLog(
-      callbackName,
-      null,
-      "returned: " + returnValue,
-      global_constants.LOG_LEVEL_INFO
-    );
+    this.apiLog(callbackName, null, `returned: ${returnValue}`, global_constants.LOG_LEVEL_INFO);
 
     return returnValue;
   }
@@ -431,19 +409,14 @@ export default class BaseAPI {
    * @return {string}
    */
   getDiagnostic(callbackName, CMIErrorCode) {
-    let returnValue = "";
+    let returnValue = '';
 
-    if (CMIErrorCode !== null && CMIErrorCode !== "") {
+    if (CMIErrorCode !== null && CMIErrorCode !== '') {
       returnValue = this.getLmsErrorMessageDetails(CMIErrorCode, true);
       this.processListeners(callbackName);
     }
 
-    this.apiLog(
-      callbackName,
-      null,
-      "returned: " + returnValue,
-      global_constants.LOG_LEVEL_INFO
-    );
+    this.apiLog(callbackName, null, `returned: ${returnValue}`, global_constants.LOG_LEVEL_INFO);
 
     return returnValue;
   }
@@ -460,7 +433,8 @@ export default class BaseAPI {
     if (this.isNotInitialized()) {
       this.throwSCORMError(beforeInitError);
       return false;
-    } else if (checkTerminated && this.isTerminated()) {
+    }
+    if (checkTerminated && this.isTerminated()) {
       this.throwSCORMError(afterTermError);
       return false;
     }
@@ -494,17 +468,17 @@ export default class BaseAPI {
    */
   formatMessage(functionName, CMIElement, message) {
     const baseLength = 20;
-    let messageString = "";
+    let messageString = '';
 
     messageString += functionName;
 
     let fillChars = baseLength - messageString.length;
 
     for (let i = 0; i < fillChars; i++) {
-      messageString += " ";
+      messageString += ' ';
     }
 
-    messageString += ": ";
+    messageString += ': ';
 
     if (CMIElement) {
       const CMIElementBaseLength = 70;
@@ -514,7 +488,7 @@ export default class BaseAPI {
       fillChars = CMIElementBaseLength - messageString.length;
 
       for (let j = 0; j < fillChars; j++) {
-        messageString += " ";
+        messageString += ' ';
       }
     }
 
@@ -546,10 +520,7 @@ export default class BaseAPI {
   _checkObjectHasProperty(refObject, attribute) {
     return (
       Object.hasOwnProperty.call(refObject, attribute) ||
-      Object.getOwnPropertyDescriptor(
-        Object.getPrototypeOf(refObject),
-        attribute
-      ) ||
+      Object.getOwnPropertyDescriptor(Object.getPrototypeOf(refObject), attribute) ||
       attribute in refObject
     );
   }
@@ -564,9 +535,7 @@ export default class BaseAPI {
    * @abstract
    */
   getLmsErrorMessageDetails(_errorNumber, _detail) {
-    throw new Error(
-      "The getLmsErrorMessageDetails method has not been implemented"
-    );
+    throw new Error('The getLmsErrorMessageDetails method has not been implemented');
   }
 
   /**
@@ -578,7 +547,7 @@ export default class BaseAPI {
    * @abstract
    */
   getCMIValue(_CMIElement) {
-    throw new Error("The getCMIValue method has not been implemented");
+    throw new Error('The getCMIValue method has not been implemented');
   }
 
   /**
@@ -591,7 +560,7 @@ export default class BaseAPI {
    * @abstract
    */
   setCMIValue(_CMIElement, _value) {
-    throw new Error("The setCMIValue method has not been implemented");
+    throw new Error('The setCMIValue method has not been implemented');
   }
 
   /**
@@ -604,11 +573,11 @@ export default class BaseAPI {
    * @return {string}
    */
   _commonSetCMIValue(methodName, scorm2004, CMIElement, value) {
-    if (!CMIElement || CMIElement === "") {
+    if (!CMIElement || CMIElement === '') {
       return global_constants.SCORM_FALSE;
     }
 
-    const structure = CMIElement.split(".");
+    const structure = CMIElement.split('.');
     let refObject = this;
     let returnValue = global_constants.SCORM_FALSE;
     let foundFirstIndex = false;
@@ -624,8 +593,8 @@ export default class BaseAPI {
       if (i === structure.length - 1) {
         if (
           scorm2004 &&
-          attribute.substr(0, 8) === "{target=" &&
-          typeof refObject._isTargetValid == "function"
+          attribute.substr(0, 8) === '{target=' &&
+          typeof refObject._isTargetValid === 'function'
         ) {
           this.throwSCORMError(this.#error_codes.READ_ONLY_ELEMENT);
         } else if (!this._checkObjectHasProperty(refObject, attribute)) {
@@ -633,7 +602,7 @@ export default class BaseAPI {
         } else {
           if (
             this.isInitialized() &&
-            this.stringMatches(CMIElement, "\\.correct_responses\\.\\d+")
+            this.stringMatches(CMIElement, '\\.correct_responses\\.\\d+')
           ) {
             this.validateCorrectResponse(CMIElement, value);
           }
@@ -661,11 +630,7 @@ export default class BaseAPI {
               refObject = item;
               foundFirstIndex = true;
             } else {
-              const newChild = this.getChildElement(
-                CMIElement,
-                value,
-                foundFirstIndex
-              );
+              const newChild = this.getChildElement(CMIElement, value, foundFirstIndex);
               foundFirstIndex = true;
 
               if (!newChild) {
@@ -718,7 +683,7 @@ export default class BaseAPI {
    * @abstract
    */
   getChildElement(_CMIElement, _value, _foundFirstIndex) {
-    throw new Error("The getChildElement method has not been implemented");
+    throw new Error('The getChildElement method has not been implemented');
   }
 
   /**
@@ -730,11 +695,11 @@ export default class BaseAPI {
    * @return {*}
    */
   _commonGetCMIValue(methodName, scorm2004, CMIElement) {
-    if (!CMIElement || CMIElement === "") {
-      return "";
+    if (!CMIElement || CMIElement === '') {
+      return '';
     }
 
-    const structure = CMIElement.split(".");
+    const structure = CMIElement.split('.');
     let refObject = this;
     let attribute = null;
 
@@ -756,15 +721,13 @@ export default class BaseAPI {
         }
       } else {
         if (
-          String(attribute).substr(0, 8) === "{target=" &&
-          typeof refObject._isTargetValid == "function"
+          String(attribute).substr(0, 8) === '{target=' &&
+          typeof refObject._isTargetValid === 'function'
         ) {
-          const target = String(attribute).substr(
-            8,
-            String(attribute).length - 9
-          );
+          const target = String(attribute).substr(8, String(attribute).length - 9);
           return refObject._isTargetValid(target);
-        } else if (!this._checkObjectHasProperty(refObject, attribute)) {
+        }
+        if (!this._checkObjectHasProperty(refObject, attribute)) {
           this.throwSCORMError(invalidErrorCode, invalidErrorMessage);
           return;
         }
@@ -801,9 +764,9 @@ export default class BaseAPI {
 
     if (refObject === null || refObject === undefined) {
       if (!scorm2004) {
-        if (attribute === "_children") {
+        if (attribute === '_children') {
           this.throwSCORMError(scorm12_error_codes.CHILDREN_ERROR);
-        } else if (attribute === "_count") {
+        } else if (attribute === '_count') {
           this.throwSCORMError(scorm12_error_codes.COUNT_ERROR);
         }
       }
@@ -848,26 +811,26 @@ export default class BaseAPI {
   on(listenerName, callback) {
     if (!callback) return;
 
-    const listenerFunctions = listenerName.split(" ");
+    const listenerFunctions = listenerName.split(' ');
     for (let i = 0; i < listenerFunctions.length; i++) {
-      const listenerSplit = listenerFunctions[i].split(".");
+      const listenerSplit = listenerFunctions[i].split('.');
       if (listenerSplit.length === 0) return;
 
       const functionName = listenerSplit[0];
 
       let CMIElement = null;
       if (listenerSplit.length > 1) {
-        CMIElement = listenerName.replace(functionName + ".", "");
+        CMIElement = listenerName.replace(`${functionName}.`, '');
       }
 
       this.listenerArray.push({
-        functionName: functionName,
-        CMIElement: CMIElement,
-        callback: callback,
+        functionName,
+        CMIElement,
+        callback,
       });
 
       this.apiLog(
-        "on",
+        'on',
         functionName,
         `Added event listener: ${this.listenerArray.length}`,
         global_constants.LOG_LEVEL_INFO
@@ -884,16 +847,16 @@ export default class BaseAPI {
   off(listenerName, callback) {
     if (!callback) return;
 
-    const listenerFunctions = listenerName.split(" ");
+    const listenerFunctions = listenerName.split(' ');
     for (let i = 0; i < listenerFunctions.length; i++) {
-      const listenerSplit = listenerFunctions[i].split(".");
+      const listenerSplit = listenerFunctions[i].split('.');
       if (listenerSplit.length === 0) return;
 
       const functionName = listenerSplit[0];
 
       let CMIElement = null;
       if (listenerSplit.length > 1) {
-        CMIElement = listenerName.replace(functionName + ".", "");
+        CMIElement = listenerName.replace(`${functionName}.`, '');
       }
 
       const removeIndex = this.listenerArray.findIndex(
@@ -905,7 +868,7 @@ export default class BaseAPI {
       if (removeIndex !== -1) {
         this.listenerArray.splice(removeIndex, 1);
         this.apiLog(
-          "off",
+          'off',
           functionName,
           `Removed event listener: ${this.listenerArray.length}`,
           global_constants.LOG_LEVEL_INFO
@@ -920,21 +883,20 @@ export default class BaseAPI {
    * @param {string} listenerName
    */
   clear(listenerName) {
-    const listenerFunctions = listenerName.split(" ");
+    const listenerFunctions = listenerName.split(' ');
     for (let i = 0; i < listenerFunctions.length; i++) {
-      const listenerSplit = listenerFunctions[i].split(".");
+      const listenerSplit = listenerFunctions[i].split('.');
       if (listenerSplit.length === 0) return;
 
       const functionName = listenerSplit[0];
 
       let CMIElement = null;
       if (listenerSplit.length > 1) {
-        CMIElement = listenerName.replace(functionName + ".", "");
+        CMIElement = listenerName.replace(`${functionName}.`, '');
       }
 
       this.listenerArray = this.listenerArray.filter(
-        (obj) =>
-          obj.functionName !== functionName && obj.CMIElement !== CMIElement
+        (obj) => obj.functionName !== functionName && obj.CMIElement !== CMIElement
       );
     }
   }
@@ -956,12 +918,11 @@ export default class BaseAPI {
       if (
         CMIElement &&
         listener.CMIElement &&
-        listener.CMIElement.substring(listener.CMIElement.length - 1) === "*"
+        listener.CMIElement.substring(listener.CMIElement.length - 1) === '*'
       ) {
         CMIElementsMatch =
-          CMIElement.indexOf(
-            listener.CMIElement.substring(0, listener.CMIElement.length - 1)
-          ) === 0;
+          CMIElement.indexOf(listener.CMIElement.substring(0, listener.CMIElement.length - 1)) ===
+          0;
       } else {
         CMIElementsMatch = listener.CMIElement === CMIElement;
       }
@@ -984,9 +945,9 @@ export default class BaseAPI {
     }
 
     this.apiLog(
-      "throwSCORMError",
+      'throwSCORMError',
       null,
-      errorNumber + ": " + message,
+      `${errorNumber}: ${message}`,
       global_constants.LOG_LEVEL_ERROR
     );
 
@@ -1013,7 +974,7 @@ export default class BaseAPI {
    * @abstract
    */
   storeData(_calculateTotalTime) {
-    throw new Error("The storeData method has not been implemented");
+    throw new Error('The storeData method has not been implemented');
   }
 
   /**
@@ -1023,9 +984,7 @@ export default class BaseAPI {
    */
   loadFromFlattenedJSON(json, CMIElement) {
     if (!this.isNotInitialized()) {
-      console.error(
-        "loadFromFlattenedJSON can only be called before the call to lmsInitialize."
-      );
+      console.error('loadFromFlattenedJSON can only be called before the call to lmsInitialize.');
       return;
     }
 
@@ -1045,17 +1004,16 @@ export default class BaseAPI {
         const a_num = Number(a_match[2]);
         const c_num = Number(c_match[2]);
         if (a_num === c_num) {
-          if (a_match[3] === "id") {
+          if (a_match[3] === 'id') {
             return -1;
-          } else if (a_match[3] === "type") {
-            if (c_match[3] === "id") {
-              return 1;
-            } else {
-              return -1;
-            }
-          } else {
-            return 1;
           }
+          if (a_match[3] === 'type') {
+            if (c_match[3] === 'id') {
+              return 1;
+            }
+            return -1;
+          }
+          return 1;
         }
         return a_num - c_num;
       }
@@ -1066,12 +1024,10 @@ export default class BaseAPI {
     const int_pattern = /^(cmi\.interactions\.)(\d+)\.(.*)$/;
     const obj_pattern = /^(cmi\.objectives\.)(\d+)\.(.*)$/;
 
-    const result = Object.keys(json).map(function (key) {
-      return [String(key), json[key]];
-    });
+    const result = Object.keys(json).map((key) => [String(key), json[key]]);
 
     // CMI interactions need to have id and type loaded before any other fields
-    result.sort(function ([a, b], [c, d]) {
+    result.sort(([a, b], [c, d]) => {
       let test;
       if ((test = testPattern(a, c, int_pattern)) !== null) {
         return test;
@@ -1105,28 +1061,23 @@ export default class BaseAPI {
    */
   loadFromJSON(json, CMIElement) {
     if (!this.isNotInitialized()) {
-      console.error(
-        "loadFromJSON can only be called before the call to lmsInitialize."
-      );
+      console.error('loadFromJSON can only be called before the call to lmsInitialize.');
       return;
     }
 
-    CMIElement = CMIElement !== undefined ? CMIElement : "cmi";
+    CMIElement = CMIElement !== undefined ? CMIElement : 'cmi';
 
     this.startingData = json;
 
     // could this be refactored down to flatten(json) then setCMIValue on each?
     for (const key in json) {
       if ({}.hasOwnProperty.call(json, key) && json[key]) {
-        const currentCMIElement = (CMIElement ? CMIElement + "." : "") + key;
+        const currentCMIElement = (CMIElement ? `${CMIElement}.` : '') + key;
         const value = json[key];
 
-        if (value["childArray"]) {
-          for (let i = 0; i < value["childArray"].length; i++) {
-            this.loadFromJSON(
-              value["childArray"][i],
-              currentCMIElement + "." + i
-            );
+        if (value.childArray) {
+          for (let i = 0; i < value.childArray.length; i++) {
+            this.loadFromJSON(value.childArray[i], `${currentCMIElement}.${i}`);
           }
         } else if (value.constructor === Object) {
           this.loadFromJSON(value, currentCMIElement);
@@ -1143,7 +1094,7 @@ export default class BaseAPI {
    * @return {string}
    */
   renderCMIToJSONString() {
-    const cmi = this.cmi;
+    const { cmi } = this;
     // Do we want/need to return fields that have no set value?
     // return JSON.stringify({ cmi }, (k, v) => v === undefined ? null : v, 2);
     return JSON.stringify({ cmi });
@@ -1168,7 +1119,7 @@ export default class BaseAPI {
    * @abstract
    */
   renderCommitCMI(_terminateCommit) {
-    throw new Error("The storeData method has not been implemented");
+    throw new Error('The storeData method has not been implemented');
   }
 
   /**
@@ -1189,7 +1140,7 @@ export default class BaseAPI {
       let result;
       if (!settings.sendBeaconCommit) {
         const httpReq = new XMLHttpRequest();
-        httpReq.open("POST", url, settings.asyncCommit);
+        httpReq.open('POST', url, settings.asyncCommit);
 
         if (Object.keys(settings.xhrHeaders).length) {
           Object.keys(settings.xhrHeaders).forEach((header) => {
@@ -1201,7 +1152,7 @@ export default class BaseAPI {
 
         if (settings.asyncCommit) {
           httpReq.onload = function (e) {
-            if (typeof settings.responseHandler === "function") {
+            if (typeof settings.responseHandler === 'function') {
               result = settings.responseHandler(httpReq);
             } else {
               result = JSON.parse(httpReq.responseText);
@@ -1211,21 +1162,15 @@ export default class BaseAPI {
         try {
           params = settings.requestHandler(params);
           if (params instanceof Array) {
-            httpReq.setRequestHeader(
-              "Content-Type",
-              "application/x-www-form-urlencoded"
-            );
-            httpReq.send(params.join("&"));
+            httpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            httpReq.send(params.join('&'));
           } else {
-            httpReq.setRequestHeader(
-              "Content-Type",
-              settings.commitRequestDataType
-            );
+            httpReq.setRequestHeader('Content-Type', settings.commitRequestDataType);
             httpReq.send(JSON.stringify(params));
           }
 
           if (!settings.asyncCommit) {
-            if (typeof settings.responseHandler === "function") {
+            if (typeof settings.responseHandler === 'function') {
               result = settings.responseHandler(httpReq);
             } else {
               result = JSON.parse(httpReq.responseText);
@@ -1234,28 +1179,25 @@ export default class BaseAPI {
             result = {};
             result.result = global_constants.SCORM_TRUE;
             result.errorCode = 0;
-            api.processListeners("CommitSuccess");
+            api.processListeners('CommitSuccess');
             return result;
           }
         } catch (e) {
           console.error(e);
-          api.processListeners("CommitError");
+          api.processListeners('CommitError');
           return genericError;
         }
       } else {
         try {
           params = settings.requestHandler(params);
           fetch(url, {
-            method: "POST",
-            body:
-              params instanceof Array
-                ? params.join("&")
-                : JSON.stringify(params),
+            method: 'POST',
+            body: params instanceof Array ? params.join('&') : JSON.stringify(params),
             headers: {
               ...settings.xhrHeaders,
-              "Content-Type": settings.commitRequestDataType,
+              'Content-Type': settings.commitRequestDataType,
             },
-            credentials: settings.xhrWithCredentials ? "include" : undefined,
+            credentials: settings.xhrWithCredentials ? 'include' : undefined,
             keepalive: true,
           });
           result = {};
@@ -1263,29 +1205,26 @@ export default class BaseAPI {
           result.errorCode = 0;
         } catch (e) {
           console.error(e);
-          api.processListeners("CommitError");
+          api.processListeners('CommitError');
           return genericError;
         }
       }
 
-      if (typeof result === "undefined") {
-        api.processListeners("CommitError");
+      if (typeof result === 'undefined') {
+        api.processListeners('CommitError');
         return genericError;
       }
 
-      if (
-        result.result === true ||
-        result.result === global_constants.SCORM_TRUE
-      ) {
-        api.processListeners("CommitSuccess");
+      if (result.result === true || result.result === global_constants.SCORM_TRUE) {
+        api.processListeners('CommitSuccess');
       } else {
-        api.processListeners("CommitError");
+        api.processListeners('CommitError');
       }
 
       return result;
     };
 
-    if (typeof debounce !== "undefined") {
+    if (typeof debounce !== 'undefined') {
       const debounced = debounce(process, 500);
       debounced(url, params, this.settings, this.error_codes);
 
@@ -1298,9 +1237,8 @@ export default class BaseAPI {
         result: global_constants.SCORM_TRUE,
         errorCode: 0,
       };
-    } else {
-      return process(url, params, this.settings, this.error_codes);
     }
+    return process(url, params, this.settings, this.error_codes);
   }
 
   /**
@@ -1311,12 +1249,7 @@ export default class BaseAPI {
    */
   scheduleCommit(when, callback) {
     this.#timeout = new ScheduledCommit(this, when, callback);
-    this.apiLog(
-      "scheduleCommit",
-      "",
-      "scheduled",
-      global_constants.LOG_LEVEL_DEBUG
-    );
+    this.apiLog('scheduleCommit', '', 'scheduled', global_constants.LOG_LEVEL_DEBUG);
   }
 
   /**
@@ -1326,12 +1259,7 @@ export default class BaseAPI {
     if (this.#timeout) {
       this.#timeout.cancel();
       this.#timeout = null;
-      this.apiLog(
-        "clearScheduledCommit",
-        "",
-        "cleared",
-        global_constants.LOG_LEVEL_DEBUG
-      );
+      this.apiLog('clearScheduledCommit', '', 'cleared', global_constants.LOG_LEVEL_DEBUG);
     }
   }
 }
@@ -1341,8 +1269,11 @@ export default class BaseAPI {
  */
 class ScheduledCommit {
   #API;
+
   #cancelled = false;
+
   #timeout;
+
   #callback;
 
   /**

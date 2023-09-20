@@ -4,12 +4,17 @@
   "main": "Public.js",
   "license": "MIT",
   "dependencies": {
-    "react-content-loader": "^6.2.0",
     "@bubbles-ui/leemons": "dev",
     "@bubbles-ui/components": "dev",
-    "prop-types": "^15.7.2",
-    "react-hook-form": "^7.8.5",
-    "react-content-loader": "^6.2.0"
+    "@bubbles-ui/icons": "dev",
+    "react-content-loader": "^6.2.0",
+    "@loadable/component": "^5.15.2",
+    "lodash": "^4.17.21",
+    "p-min-delay": "^4.0.2",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.3"
   },
   "devDependencies": {}
 }

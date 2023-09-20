@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.21",
-    "react": "^17.0.2",
-    "react-hook-form": "^7.8.5"
+    "@bubbles-ui/components": "dev",
+    "react": "^18.2.0",
+    "react-router-dom": "^5.3.3"
   }
 }
