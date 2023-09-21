@@ -12861,7 +12861,7 @@ mongodb@5.8.1:
   optionalDependencies:
     "@mongodb-js/saslprep" "^1.1.0"
 
-mongodb@6.1.0:
+mongodb@6.1.0, mongodb@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-6.1.0.tgz#5144bee74d50746f7b0ed68dbb974f31e1b40900"
   integrity sha512-AvzNY0zMkpothZ5mJAaIo2bGDjlJQqqAbn9fvtVgwIIUPEfdrqGxqNjjbuKyrgQxg2EvCmfWdjq+4uj96c0YPw==
