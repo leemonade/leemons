@@ -6,6 +6,18 @@ const { addPermissionToUser } = require('../../permissions/users/addPermissionTo
 const { saveSubjects } = require('../../subjects/saveSubjects');
 const { publishAssignable } = require('../publishAssignable');
 
+/**
+ * Create an asset
+ * @async
+ * @function createAsset
+ * @param {Object} params - The main parameter object.
+ * @param {Object} params.asset - The asset to create.
+ * @param {string} params.role - The role of the asset.
+ * @param {Array<Object>} params.subjects - The subjects of the asset.
+ * @param {boolean} params.published - Flag to publish the asset.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<Object>} The created asset.
+ */
 async function createAsset({ asset, role, subjects, published, ctx }) {
   const assetProgram = subjects?.length ? subjects[0].program : null;
   const assetSubjects = subjects?.length
@@ -26,6 +38,16 @@ async function createAsset({ asset, role, subjects, published, ctx }) {
   return savedAsset;
 }
 
+/**
+ * Save resources
+ * @async
+ * @function saveResources
+ * @param {Object} params - The main parameter object.
+ * @param {Array<string>} params.resources - The resources to save.
+ * @param {Object} params.leebraryResources - The leebrary resources to save.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<Object>} The saved resources.
+ */
 async function saveResources({ resources, leebraryResources, ctx }) {
   let duplicatedResources;
   let duplicatedLeebraryResources;
@@ -62,6 +84,15 @@ async function saveResources({ resources, leebraryResources, ctx }) {
   };
 }
 
+/**
+ * Register version if no id
+ * @async
+ * @function registerVersionIfNoId
+ * @param {Object} params - The main parameter object.
+ * @param {string} params.id - The id to register.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<string>} The registered id.
+ */
 async function registerVersionIfNoId({ id, ctx }) {
   if (!id) {
     const version = await ctx.tx.call('common.versionControl.register', { type: 'assignable' });
@@ -72,6 +103,17 @@ async function registerVersionIfNoId({ id, ctx }) {
   return id;
 }
 
+/**
+ * Create an assignable
+ * @async
+ * @function createAssignable
+ * @param {Object} params - The main parameter object.
+ * @param {AssignablesAssignable} params.assignable - The assignable to create.
+ * @param {boolean} params.published - Flag to publish the assignable.
+ * @param {string} params.id - The id of the assignable.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<AssignablesAssignable>} The created assignable.
+ */
 async function createAssignable({
   assignable,
   published,

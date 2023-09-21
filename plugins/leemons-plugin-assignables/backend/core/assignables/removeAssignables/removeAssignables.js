@@ -2,6 +2,18 @@ const { uniq } = require('lodash');
 const { updateAsset, getAsset } = require('../../leebrary/assets');
 const { getAssignables } = require('../getAssignables');
 
+/**
+ * Removes assignables based on provided ids.
+ * It fetches the assignables, maps their asset ids and resource ids,
+ * and removes their index-ability to allow soft-delete without track.
+ *
+ * @async
+ * @function removeAssignables
+ * @param {Object} params - The main parameter object.
+ * @param {Array<string>} params.ids - The ids of the assignables to remove.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<number>} The count of modified assignables.
+ */
 async function removeAssignables({ ids, ctx }) {
   const assignables = getAssignables({ ids });
 

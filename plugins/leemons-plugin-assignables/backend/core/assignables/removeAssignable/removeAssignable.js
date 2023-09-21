@@ -4,13 +4,16 @@ const { removeAssignables } = require('../removeAssignables');
 /**
  * Removes an assignable object based on the provided parameters.
  *
+ * @async
+ * @function removeAssignable
  * @param {Object} params - The parameters for removing the assignable.
- * @param {Object} params.assignable - The assignable object to remove.
+ * @param {AssignablesAssignable} params.assignable - The assignable object to remove.
  * @param {number} params.removeAll - Defines the scope of the removal:
  *   0: Only remove the provided version.
  *   1: Remove the versions in the same publish state.
  *   2: Remove all the versions.
- * @param {Object} params.ctx - The context object.
+ * @param {MoleculerContext} params.ctx - The context object.
+ * @returns {Promise<Object>} The result of the removal operation, including the count of removed assignables and their versions.
  *
  * @example
  * // Only remove the provided version

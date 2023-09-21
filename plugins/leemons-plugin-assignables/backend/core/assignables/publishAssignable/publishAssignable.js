@@ -8,6 +8,18 @@ const { updateAsset } = require('../../leebrary/assets');
 const { getUserPermission } = require('../../permissions/users/getUserPermission');
 const { getAssignable } = require('../getAssignable');
 
+/**
+ * Validates an assignable for publishing.
+ * It checks if the assignable is deleted and throws a LeemonsError if it is.
+ * It also validates the assignable with the validAssignableProperties.
+ *
+ * @function validateAssignableForPublish
+ * @param {Object} params - The main parameter object.
+ * @param {AssignablesAssignable} params.assignable - The assignable to validate.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @throws {LeemonsError} If the assignable is deleted, a LeemonsError is thrown.
+ */
+
 function validateAssignableForPublish({ assignable, ctx }) {
   if (assignable.isDeleted) {
     throw new LeemonsError(ctx, { message: 'The assignable is deleted', httpStatusCode: 404 });
