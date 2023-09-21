@@ -1,6 +1,6 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 
-const deploymentPluginsSchema = new mongoose.Schema(
+const deploymentSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -20,12 +20,10 @@ const deploymentPluginsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1 }, { unique: true });
-
-const deploymentPluginsModel = newModel(
+const deploymentModel = newModel(
   mongoose.connection,
-  'package-manager_DeploymentPlugins',
-  deploymentPluginsSchema
+  'package-manager_Deployment',
+  deploymentSchema
 );
 
-module.exports = { deploymentPluginsModel };
+module.exports = { deploymentModel };

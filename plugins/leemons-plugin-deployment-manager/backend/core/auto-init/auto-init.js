@@ -51,7 +51,7 @@ async function autoInit(broker) {
     relationship[index].events = _.uniq(rel.events);
   });
   // We simulate that the store adds the plugins that are installed for this deploymentID
-  console.log('- Auto init - Pre SavePlugins', relationship);
+  console.log('- Auto init - Pre SavePlugins');
   await broker.call(
     'deployment-manager.savePlugins',
     _.map(_.uniq(pluginNames), (pluginName) => ({

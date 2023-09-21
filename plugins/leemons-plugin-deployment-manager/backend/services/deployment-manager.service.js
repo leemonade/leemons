@@ -22,6 +22,7 @@ const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe
 const { emit } = require('../core/events/emit');
 const { isInstalled } = require('../core/deployment-plugins/isInstalled');
 const restActions = require('./rest/deployment-manager.rest');
+const { deploymentModel } = require('../models/deployment');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -32,6 +33,7 @@ module.exports = () => ({
       // Como deployment-manager ya se gestiona el mismo y no hace falta comprobar si el resto de plugins tienen acceso a llamarle no usamos el mixin
       forceLeemonsDeploymentManagerMixinNeedToBeImported: false,
       models: {
+        Deployment: deploymentModel,
         DeploymentPlugins: deploymentPluginsModel,
         DeploymentPluginsRelationship: deploymentPluginsRelationshipModel,
       },
@@ -40,6 +42,15 @@ module.exports = () => ({
 
   actions: {
     ...restActions,
+    getDeploymentIDByDomain: {
+      async handler(ctx) {
+        if (!ctx.meta.hostname) {
+          throw new LeemonsError(ctx, { message: 'hostname not found' });
+        }
+        const deployment = await ctx.tx.db.findOne({ domain: ctx.meta.hostname }).lean();
+        return deployment ? deployment.id : null;
+      },
+    },
     pluginIsInstalled: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {

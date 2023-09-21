@@ -70,8 +70,6 @@
     "leemons-plugin-mqtt-socket-io-frontend-react": "1.0.0",
     "leemons-plugin-multilanguage": "1.0.0",
     "leemons-plugin-multilanguage-frontend-react": "1.0.0",
-    "leemons-plugin-onboarding": "1.0.0",
-    "leemons-plugin-onboarding-frontend-react": "1.0.0",
     "leemons-plugin-package-manager-frontend-react": "1.0.0",
     "leemons-plugin-scores": "1.0.0",
     "leemons-plugin-scores-frontend-react": "1.0.0",

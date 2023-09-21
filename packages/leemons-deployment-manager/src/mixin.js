@@ -4,12 +4,19 @@ const { getPluginNameFromServiceName } = require('@leemons/service-name-parser')
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
-function modifyCTX(ctx) {
+async function modifyCTX(ctx) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
   if (ctx.service.name !== 'gateway' || ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
-  ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
+  try {
+    ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
+  } catch (e) {
+    // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
+    ctx.meta.deploymentID = await ctx.call('deployment-manager.getDeploymentIDByDomain');
+    if (!ctx.meta.deploymentID)
+      throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
+  }
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
 
@@ -85,7 +92,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
       before: {
         '*': [
           async function (ctx) {
-            modifyCTX(ctx);
+            await modifyCTX(ctx);
 
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
@@ -132,7 +139,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
           // -- Finish moleculer core code --
 
-          modifyCTX(ctx);
+          await modifyCTX(ctx);
 
           try {
             if (_.isFunction(afterModifyCTX)) {

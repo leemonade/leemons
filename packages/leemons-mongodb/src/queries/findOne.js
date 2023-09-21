@@ -7,7 +7,8 @@ function findOne({ model, autoDeploymentID, ctx }) {
       model.findOne(conditions, projection, options),
       options
     );
-    if (autoDeploymentID) return addDeploymentIDWhereToQuery({ query, ctx });
+    if (autoDeploymentID && !options?.disableAutoDeploy)
+      return addDeploymentIDWhereToQuery({ query, ctx });
     return query;
   };
 }

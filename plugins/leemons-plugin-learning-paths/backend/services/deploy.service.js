@@ -19,7 +19,7 @@ const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'learning-path.deploy',
+  name: 'learning-paths.deploy',
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),

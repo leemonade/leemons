@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { rollbackTransaction } = require('@leemons/transactions');
 const { LeemonsError } = require('@leemons/error');
 const { ObjectId } = require('mongoose').Types;
+const { getActionNameFromCTX } = require('@leemons/service-name-parser');
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');
 const { findById } = require('./queries/findById');
@@ -385,7 +386,12 @@ const mixin = ({
             forceLeemonsDeploymentManagerMixinNeedToBeImported,
             models,
           });
-          await createTransactionIDIfNeed({ autoTransaction, ctx });
+          let createTransaction = true;
+          if (ctx.action?.name) {
+            const action = this.originalSchema.actions?.[getActionNameFromCTX(ctx)];
+            if (action?.dontCreateTransactionOnCallThisFunction) createTransaction = false;
+          }
+          if (createTransaction) await createTransactionIDIfNeed({ autoTransaction, ctx });
         },
       ],
     },

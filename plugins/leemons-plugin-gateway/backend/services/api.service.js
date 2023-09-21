@@ -1,6 +1,5 @@
 const ApiGateway = require('moleculer-web');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-
+const { parse } = require('url');
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -11,7 +10,7 @@ const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager')
 // ad
 module.exports = {
   name: 'gateway',
-  mixins: [ApiGateway, LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false })],
+  mixins: [ApiGateway],
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
@@ -50,6 +49,8 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          'POST deployment-manager/add-manual-deployment':
+            'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
 
           // -- Families (Finish) --
@@ -516,6 +517,9 @@ module.exports = {
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress;
+          ctx.meta.hostname = parse(
+            req.headers.referer || req.headers.referrer || req.headers.host
+          ).hostname;
         },
 
         onError(req, res, err) {
