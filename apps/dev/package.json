@@ -7,7 +7,7 @@
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
     "front:dev": "PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
-    "front:build": "leemonsFront build"
+    "front:build:dev": "API_URL=https://api.leemons.dev/ NODE_OPTIONS=\"--max-old-space-size=8192\" leemonsFront build"
   },
   "leemons": {},
   "dependencies": {

@@ -5,6 +5,8 @@ import { AssetListDrawer } from './AssetListDrawer';
 import { UploadingFileModal } from './UploadingFileModal';
 import { LibraryCardEmbed } from './LibraryCardEmbed';
 import { LibraryCard } from './LibraryCard';
+import { LibraryDetail } from './LibraryDetail';
+import { LibraryItem } from './LibraryItem';
 
 export * from './LibraryTool';
 export {
@@ -15,4 +17,6 @@ export {
   UploadingFileModal,
   LibraryCardEmbed,
   LibraryCard,
+  LibraryDetail,
+  LibraryItem,
 };

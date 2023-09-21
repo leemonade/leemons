@@ -1,5 +1,5 @@
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { LibraryDetail } from '@assignables/components';
+import { LibraryDetail } from '@leebrary/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
