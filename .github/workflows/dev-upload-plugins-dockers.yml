@@ -34,6 +34,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: 🔧 Set up docker caching layer
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+
       - name: 🔧 Compile all dockers
         run: bash scripts/build_dockers_by_folder.sh ./plugins
 
