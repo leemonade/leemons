@@ -7,7 +7,7 @@
     "@bubbles-ui/components": "dev",
     "@loadable/component": "^5.15.2",
     "lodash": "^4.17.21",
-    "leemons-hooks": "^0.0.3",
+    "leemons-hooks": "0.0.9",
     "p-min-delay": "^4.0.2",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
