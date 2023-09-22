@@ -21,6 +21,13 @@ export const AUDIO_ASSET = {
   tags: ['Fantasy', 'Adventure', 'Fiction'],
   cover: 'https://uh.gsstatic.es/sfAttachPlugin/1029293.jpg',
   url: 'https://storage.googleapis.com/media-session/elephants-dream/the-wires.mp3',
+  canAccess: [
+    { fullName: 'John Doe', permissions: ['owner'] },
+    { fullName: 'Mary Jane' },
+    { fullName: 'Peter Parker' },
+    { fullName: 'Will Teacher' },
+    { fullName: 'Tony Stark' },
+  ],
 };
 
 export const YOUTUBE_ASSET = {
