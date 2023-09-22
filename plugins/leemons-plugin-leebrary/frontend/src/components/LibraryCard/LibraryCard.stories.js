@@ -20,6 +20,7 @@ export default {
     variant: { control: { type: 'select' }, options: LIBRARYCARD_VARIANTS },
     role: { control: { type: 'select' }, options: LIBRARYCARD_ASSIGMENT_ROLES },
     onAction: { action: 'onAction' },
+    isDraft: { control: 'boolean' },
   },
 };
 
@@ -75,6 +76,7 @@ const Template = ({
 export const Playground = Template.bind({});
 
 Playground.args = {
+  isDraft: true,
   showImage: true,
   showDescription: true,
   showAction: false,

@@ -87,20 +87,20 @@ const LibraryCardCover = ({
         </Box>
       );
     }
-    if (dashboard && subject) {
-      components.push(
-        <Box key={'2'} className={classes.subject}>
-          <Box className={classes.subjectIcon}>
-            <ImageLoader forceImage height={12} imageStyles={{ width: 12 }} src={subject.icon} />
-          </Box>
-          <TextClamp lines={1}>
-            <Text color="primary" role="productive" size="xs">
-              {subject.name}
-            </Text>
-          </TextClamp>
-        </Box>
-      );
-    }
+    // if (dashboard && subject) {
+    //   components.push(
+    //     <Box key={'2'} className={classes.subject}>
+    //       <Box className={classes.subjectIcon}>
+    //         <ImageLoader forceImage height={12} imageStyles={{ width: 12 }} src={subject.icon} />
+    //       </Box>
+    //       <TextClamp lines={1}>
+    //         <Text color="primary" role="productive" size="xs">
+    //           {subject.name}
+    //         </Text>
+    //       </TextClamp>
+    //     </Box>
+    //   );
+    // }
 
     if (!components?.length) {
       return null;
@@ -117,7 +117,7 @@ const LibraryCardCover = ({
 
   const iconRow = (
     <Box className={classes.iconRow}>
-      <Box>
+      <Box className={classes.leftContainer}>
         {!isEmpty(menuItems) && (
           <Box>
             <Menu

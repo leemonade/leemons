@@ -36,8 +36,7 @@ Playground.args = {
   fileIcon: <FileIcon fileType={'audio'} size={64} color={COLORS.text06} />,
   color: '#DC5571',
   name: 'El ritmo de la guerra',
-  cover:
-    'https://unsplash.com/es/fotos/un-grupo-de-personas-de-pie-alrededor-de-un-ramo-de-flores-A1VgRnA0nfI',
+  cover: 'https://uh.gsstatic.es/sfAttachPlugin/1029293.jpg',
   deadlineProps: {
     icon: <ArchiveIcon width={16} height={16} />,
     deadline: new Date('2022-02-20'),

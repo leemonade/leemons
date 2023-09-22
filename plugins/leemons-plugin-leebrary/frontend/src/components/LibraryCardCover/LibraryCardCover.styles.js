@@ -43,6 +43,9 @@ export const LibraryCardCoverStyles = createStyles(
         justifyContent: spaceBetween,
         borderRadius: '4px 0 0 0',
       },
+      leftContainer: {
+        display: 'flex',
+      },
       iconRow: {
         display: 'flex',
         visibility: isParentHovered,

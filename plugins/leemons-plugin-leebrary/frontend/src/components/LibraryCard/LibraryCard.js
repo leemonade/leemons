@@ -12,6 +12,7 @@ import { LibraryCardContent } from '../LibraryCardContent';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
+import { LibraryCardBody } from '../LibraryCardBody';
 
 const LibraryCard = ({
   asset,
@@ -95,7 +96,6 @@ const LibraryCard = ({
         locale={locale || deadlineProps?.locale}
         direction={variant === 'assigment' ? 'vertical' : null}
         parentHovered={isHovered}
-        // parentHovered={true}
         menuItems={menuItems}
         dashboard={dashboard}
         isNew={isNew}
@@ -103,7 +103,7 @@ const LibraryCard = ({
         badge={badge}
         subject={subject}
       />
-      <LibraryCardContent
+      {/* <LibraryCardContent
         {...asset}
         metadata={(Array.isArray(asset.metadata) ? asset.metadata : []).filter(
           (item) => !excludeMetadatas.map((e) => e.toLowerCase()).includes(item.label.toLowerCase())
@@ -113,6 +113,18 @@ const LibraryCard = ({
         assigment={assigment}
         fullHeight={fullHeight}
         role={role}
+      /> */}
+      <LibraryCardBody
+        {...asset}
+        metadata={(Array.isArray(asset.metadata) ? asset.metadata : []).filter(
+          (item) => !excludeMetadatas.map((e) => e.toLowerCase()).includes(item.label.toLowerCase())
+        )}
+        locale={locale}
+        variant={variant}
+        assigment={assigment}
+        fullHeight={fullHeight}
+        role={role}
+        subject={subject}
       />
       <LibraryCardFooter
         {...asset}

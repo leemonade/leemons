@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@bubbles-ui/components';
 import { LibraryCardFooter } from './LibraryCardFooter';
 import { LIBRARY_CARD_FOOTER_DEFAULT_PROPS } from './LibraryCardFooter.constants';
 
@@ -16,9 +17,11 @@ export default {
   },
 };
 
-const Template = ({ children, ...props }) => {
-  return <LibraryCardFooter {...props}>{children}</LibraryCardFooter>;
-};
+const Template = ({ children, ...props }) => (
+  <Box style={{ width: 322, height: 100 }}>
+    <LibraryCardFooter {...props}>{children}</LibraryCardFooter>
+  </Box>
+);
 
 export const Playground = Template.bind({});
 
@@ -26,5 +29,12 @@ Playground.args = {
   ...LIBRARY_CARD_FOOTER_DEFAULT_PROPS,
   fileType: 'audio',
   created: '2022-02-04T16:26:31.485Z',
-  action: 'View feedback',
+  // action: 'View feedback',
+  canAccess: [
+    { fullName: 'John Doe', permissions: ['owner'] },
+    { fullName: 'Mary Jane' },
+    { fullName: 'Peter Parker' },
+    { fullName: 'Will Teacher' },
+    { fullName: 'Tony Stark' },
+  ],
 };

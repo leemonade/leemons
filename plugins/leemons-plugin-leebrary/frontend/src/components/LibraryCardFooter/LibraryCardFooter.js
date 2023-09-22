@@ -1,3 +1,6 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable no-unsafe-optional-chaining */
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import { capitalize, isFunction } from 'lodash';
 import { AvatarsGroup, Box, Button, FileIcon, Text } from '@bubbles-ui/components';
@@ -28,13 +31,13 @@ const LibraryCardFooter = ({
     { name: 'LibraryCardFooter' }
   );
 
-  const formatDate = () => {
-    try {
-      return new Date(created).toLocaleDateString(locale);
-    } catch (e) {
-      return new Date(2010, 8, 21).toLocaleDateString(locale);
-    }
-  };
+  // const formatDate = () => {
+  //   try {
+  //     return new Date(created).toLocaleDateString(locale);
+  //   } catch (e) {
+  //     return new Date(2010, 8, 21).toLocaleDateString(locale);
+  //   }
+  // };
 
   const handleOnAction = () => {
     isFunction(onAction) && onAction();
@@ -103,7 +106,7 @@ const LibraryCardFooter = ({
             hideExtension
           />
 
-          {created ? (
+          {/* {created ? (
             <Text role="productive" className={classes.date}>
               {formatDate()}
             </Text>
@@ -120,7 +123,21 @@ const LibraryCardFooter = ({
                 limit={3}
               />
             </Box>
-          )}
+          )} */}
+
+          {/* <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}> */}
+          <Box>
+            <AvatarsGroup
+              size="sm"
+              data={canAccess}
+              moreThanUsersAsMulti={2}
+              classesData={classesCanAccess}
+              zIndexInverted
+              numberFromClassesAndData
+              customAvatarMargin={4}
+              limit={3}
+            />
+          </Box>
         </>
       )}
     </Box>

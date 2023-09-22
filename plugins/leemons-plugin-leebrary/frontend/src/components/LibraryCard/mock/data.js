@@ -2,12 +2,16 @@ import pdf from './google-apps-for-work-datasheet-es.pdf';
 
 export const AUDIO_ASSET = {
   color: '#DC5571',
-  name: 'El ritmo de la guerra',
+  name: 'El ritmo de la guerra y título más largo para ver desbordamiento por ellipsis',
   fileType: 'audio',
   created: '2022-02-04T16:26:31.485Z',
   description:
     'This is a very large description of the book Rythim of War, the fourth book in The Stormlight Archive.',
   tagline: '',
+  providerData: {
+    published: false,
+  },
+  programName: 'ESO',
   metadata: [
     { label: 'Quality', value: '128kb' },
     { label: 'Format', value: 'mp3' },
@@ -86,7 +90,7 @@ export const URL_ASSET = {
   cover:
     'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/Logo_1200x620_B_bc44bfa5fe.png',
   canAccess: [
-    { fullName: 'John Doe' },
+    { fullName: 'John Doe', permissions: ['owner'] },
     { fullName: 'Mary Jane' },
     { fullName: 'Peter Parker' },
     { fullName: 'Will Teacher' },
