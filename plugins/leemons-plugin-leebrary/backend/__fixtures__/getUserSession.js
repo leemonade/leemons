@@ -1,4 +1,4 @@
-module.exports = function getUserSession () {
+module.exports = function getUserSession() {
   return {
     id: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
     name: 'Willy',

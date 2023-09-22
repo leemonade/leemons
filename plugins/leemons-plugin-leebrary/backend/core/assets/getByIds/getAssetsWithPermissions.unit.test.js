@@ -19,22 +19,22 @@ const { getByAssets: getPermissions } = require('../../permissions/getByAssets')
 const canUnassignRole = require('../../permissions/helpers/canUnassignRole');
 
 const userSession = getUserSession();
-const { userAgentPermissionAsset } = getPermissionsMocks();
+const { userAgentPermissionForAnAsset } = getPermissionsMocks();
 const assets = [{ id: 'assetOne' }, { id: 'assetTwo' }, { id: 'assetThree' }];
 const assetsIds = assets.map((asset) => asset.id);
 
 it('Should correctly call external services', async () => {
   const findUsersWithPermissions = fn(() => [
-    { ...userAgentPermissionAsset },
+    { ...userAgentPermissionForAnAsset },
     {
-      ...userAgentPermissionAsset,
+      ...userAgentPermissionForAnAsset,
       id: 'userAgentPermissionTwo',
       userAgent: 'userAgentId2',
       permissionName: 'leemons-testing.(ASSET_ID)assetTwo',
       actionName: 'viewer',
     },
     {
-      ...userAgentPermissionAsset,
+      ...userAgentPermissionForAnAsset,
       id: 'userAgentPermissionThree',
       userAgent: 'userAgentId3',
       permissionName: 'leemons-testing.(ASSET_ID)assetTwo',
@@ -43,7 +43,7 @@ it('Should correctly call external services', async () => {
   ]);
   const getUserAgentsInfoAction = fn(() => [
     {
-      id: userAgentPermissionAsset.userAgent,
+      id: userAgentPermissionForAnAsset.userAgent,
       user: {
         id: 'userId1',
         email: 'user1@example.com',
@@ -168,8 +168,8 @@ it('Should correctly call external services', async () => {
           birthdate: '1990-01-01',
           avatar: 'avatar1.png',
           gender: 'male',
-          userAgentIds: [userAgentPermissionAsset.userAgent],
-          permissions: [userAgentPermissionAsset.actionName],
+          userAgentIds: [userAgentPermissionForAnAsset.userAgent],
+          permissions: [userAgentPermissionForAnAsset.actionName],
           editable: true,
         },
       ],
@@ -178,21 +178,6 @@ it('Should correctly call external services', async () => {
       ...assets[1],
       isPrivate: false,
       classesCanAccess: [],
-      // canAccess: [
-      //   {
-      //     id: 'userId2',
-      //     email: 'user2@example.com',
-      //     name: 'User2',
-      //     surnames: 'Surname2',
-      //     secondSurname: 'SecondSurname2',
-      //     birthdate: '1992-01-01',
-      //     avatar: 'avatar2.png',
-      //     gender: 'female',
-      //     permissions: ['editor'],
-      //     userAgentIds: ['userAgentId2'],
-      //     editable: true,
-      //   },
-      // ],
       canAccess: null,
     },
   ];
@@ -221,14 +206,11 @@ it('Should correctly call external services', async () => {
   expect(result).toEqual(expectedResult);
 });
 
-// it('Should correctly return assets with permissions', async () => {});
-// it('No permissions by asset are found')
-
 it('Should correctly handle owner permissions', async () => {
   const findUsersWithPermissions = fn(() => [
-    { ...userAgentPermissionAsset },
+    { ...userAgentPermissionForAnAsset },
     {
-      ...userAgentPermissionAsset,
+      ...userAgentPermissionForAnAsset,
       id: 'userAgentPermissionTwo',
       userAgent: 'userAgentId2',
       permissionName: 'leemons-testing.(ASSET_ID)assetTwo',
@@ -237,7 +219,7 @@ it('Should correctly handle owner permissions', async () => {
   ]);
   const getUserAgentsInfoAction = fn(() => [
     {
-      id: userAgentPermissionAsset.userAgent,
+      id: userAgentPermissionForAnAsset.userAgent,
       user: {
         id: 'userId1',
         email: 'user1@example.com',

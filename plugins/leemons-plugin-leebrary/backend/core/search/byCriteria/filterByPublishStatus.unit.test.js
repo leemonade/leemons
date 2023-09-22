@@ -8,7 +8,7 @@ const getAssets = require('../../../__fixtures__/getAssets');
 const getVersionHandle = jest.fn();
 
 describe('filterByPublishStatus', () => {
-  const asset = getPermissionsMock().permissionByAssetOne;
+  const asset = getPermissionsMock().permissionByAsset;
 
   let ctx;
   let assets;

@@ -2,23 +2,23 @@
 module.exports = function getPermissionsMocks() {
   return {
     itemPermission: {
-      id: 'itemPermissionIdOne',
-      permissionName: 'testing.(ASSET_ID)assetOneId',
-      actionName: 'owner', // view, viewer, editor, delete, assigner, assign, update, commentor
-      target: null,
-      type: 'testing.13ce91bb-9135-49d9-9030-9d2559c74198',
-      item: 'assetOneId',
+      actionName: 'owner',
       center: null,
+      id: 'itemPermissionIdOne',
+      item: 'assetOneId',
+      permissionName: 'testing.(ASSET_ID)assetOneId',
+      target: null,
+      type: 'testing.13ce91bb-9135-49d9-9030-9d2559c74198', // in this case the uuid is an category id (old format)
       deleted: 0,
       created_at: '2023-07-25 09:27:28',
       updated_at: '2023-07-25 09:27:28',
       deleted_at: null,
     },
     userAgentPermission: {
-      id: 'userAgentIdOne',
+      id: 'userAgenPermissionOne',
       userAgent: 'userAgentOne',
       perissionName: 'calendar.calendar.event.eventOneId',
-      action: 'owner',
+      actionName: 'owner',
       target: null,
       role: 'roleOneId',
       center: null,
@@ -27,12 +27,12 @@ module.exports = function getPermissionsMocks() {
       updated_at: '2023-07-25 09:27:28',
       deleted_at: null,
     },
-    userAgentPermissionAsset: {
+    userAgentPermissionForAnAsset: {
       id: 'userAgentPermissionOne',
       userAgent: 'userAgentId1',
       permissionName: 'leemons-testing.(ASSET_ID)assetOne',
-      actionName: 'owner', // ? actionName? isn't it action?
-      target: 'uuidTarget',
+      actionName: 'owner',
+      target: 'target',
       role: null,
       center: null,
       deleted: 0,
@@ -40,7 +40,7 @@ module.exports = function getPermissionsMocks() {
       updated_at: '2023-07-25 09:27:28',
       deleted_at: null,
     },
-    permissionByAssetOne: {
+    permissionByAsset: {
       asset: 'privateAssetOne',
       role: 'owner',
       permissions: {
@@ -52,6 +52,37 @@ module.exports = function getPermissionsMocks() {
         comment: true,
         canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
         canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+      },
+    },
+    payloadToSetPermissionsByUser: {
+      // writes in user-agent-permission
+      canAccess: [{ userAgent: 'userAgentIdOne', role: 'viewer' }],
+      isPublic: false,
+      permissions: {
+        viewer: [],
+        editor: [],
+        assigner: [],
+      },
+      deleteMissing: false,
+    },
+    payloadToSetPermissionsByClass: {
+      // writes in item-permissions
+      canAccess: [],
+      isPublic: false,
+      permissions: {
+        viewer: [], // This will be the permissionName in item-permissions
+        editor: ['academic-portfolio.class.classOneId'],
+        assigner: [],
+      },
+    },
+    payloadToRemoveAllPermissions: {
+      canAccess: [],
+      isPublic: false,
+      deleteMissing: true,
+      permissions: {
+        viewer: [],
+        editor: [],
+        assigner: [],
       },
     },
   };
