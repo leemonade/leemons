@@ -8,6 +8,9 @@ on:
       AWS_REGION:
         required: true
         type: string
+      GIT_BRANCH:
+        required: true
+        type: string
     secrets:
       AWS_ACCOUNT_ID:
         required: true
@@ -22,6 +25,12 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
+
+      - name: 🔧 Download latest commit
+        run: |
+          git fetch origin ${{ inputs.GIT_BRANCH }}
+          git checkout ${{ inputs.GIT_BRANCH }}
+          git pull origin ${{ inputs.GIT_BRANCH }}
 
       - name: 🔧 Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
