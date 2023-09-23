@@ -53,6 +53,15 @@ module.exports = {
             'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Learning Paths (Finish) --
+          'POST learning-paths/tags/list': 'v1.learning-paths.tags.listTagsRest',
+          'POST learning-paths/modules': 'v1.learning-paths.modules.createRest',
+          'PUT learning-paths/modules/:id': 'v1.learning-paths.modules.updateRest',
+          'POST learning-paths/modules/:id/duplicate': 'v1.learning-paths.modules.duplicateRest',
+          'DELETE learning-paths/modules/:id': 'v1.learning-paths.modules.removeRest',
+          'POST learning-paths/modules/:id/publish': 'v1.learning-paths.modules.publishRest',
+          'POST learning-paths/modules/:id/assign': 'v1.learning-paths.modules.assignRest',
+
           // -- Families Emergency numbers (Finish) --
           'GET families-emergency-numbers/dataset-form':
             'v1.families-emergency-numbers.emergencyPhones.getDatasetFormRest',
