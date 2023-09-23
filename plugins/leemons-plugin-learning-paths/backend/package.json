@@ -21,8 +21,11 @@
   },
   "dependencies": {
     "@leemons/academic-portfolio": "0.0.21",
+    "@leemons/cache": "^0.0.21",
+    "@leemons/common": "^0.0.21",
     "@leemons/deployment-manager": "0.0.21",
     "@leemons/menu-builder": "0.0.21",
+    "@leemons/middlewares": "^0.0.21",
     "@leemons/mongodb": "0.0.21",
     "@leemons/mongodb-helpers": "0.0.21",
     "@leemons/mqtt": "0.0.21",
