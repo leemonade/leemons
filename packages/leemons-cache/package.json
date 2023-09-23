@@ -4,7 +4,7 @@
     "@leemons/service-name-parser": "0.0.21",
     "lodash": "^4.17.21",
     "node-cache": "^5.1.2",
-    "redis": "^4.6.8"
+    "redis": "^4.6.10"
   },
   "name": "@leemons/cache",
   "version": "0.0.21",

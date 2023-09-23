@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { removePhone } = require('./removePhone');
 
 /**
@@ -11,23 +10,17 @@ const { removePhone } = require('./removePhone');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeFamilyPhones(family, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const alreadyPhones = await table.emergencyPhones.find({ family }, { transacting });
+async function removeFamilyPhones({ family, ctx }) {
+  const alreadyPhones = await ctx.tx.db.EmergencyPhones.find({ family }).lean();
 
-      const promises = [];
-      _.forEach(alreadyPhones, (phone) => {
-        promises.push(removePhone({ ...phone }, { transacting }));
-      });
+  const promises = [];
+  _.forEach(alreadyPhones, (phone) => {
+    promises.push(removePhone({ id: phone.id, ctx }));
+  });
 
-      await Promise.all(promises);
+  await Promise.all(promises);
 
-      return true;
-    },
-    table.emergencyPhones,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { removeFamilyPhones };

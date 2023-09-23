@@ -15,11 +15,12 @@
   ],
   "author": "",
   "devDependencies": {
-    "eslint": "^8.25.0",
+    "eslint": "^8.50.0",
     "jest": "29.7.0",
     "jest-cli": "29.7.0"
   },
   "dependencies": {
+
     "@leemons/cache": "0.0.21",
     "@leemons/deployment-manager": "0.0.21",
     "@leemons/mongodb": "0.0.21",
@@ -28,6 +29,7 @@
     "@leemons/multi-events": "0.0.21",
     "@leemons/multilanguage": "0.0.21",
     "@leemons/permissions": "0.0.21",
+    "@leemons/middlewares": "^0.0.12",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },

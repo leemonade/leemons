@@ -15,7 +15,7 @@ async function removeDatasetValues({ family, ctx, tx = true }) {
   const call = tx ? ctx.tx.call : ctx.call;
 
   if (await call('dataset.dataset.existValues', { locationName, pluginName, target: family })) {
-    return call('dataset.dataset.deleteValues', { locationName, pluginName, target: family, ctx });
+    return call('dataset.dataset.deleteValues', { locationName, pluginName, target: family });
   }
   return null;
 }

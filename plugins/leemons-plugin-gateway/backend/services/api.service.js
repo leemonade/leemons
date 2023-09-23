@@ -53,6 +53,10 @@ module.exports = {
             'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Families Emergency numbers (Finish) --
+          'GET families-emergency-numbers/dataset-form':
+            'v1.families-emergency-numbers.emergencyPhones.getDatasetFormRest',
+
           // -- Families (Finish) --
           'POST families/search-users': 'v1.families.families.searchUsersRest',
           'GET families/dataset-form': 'v1.families.families.getDatasetFormRest',
