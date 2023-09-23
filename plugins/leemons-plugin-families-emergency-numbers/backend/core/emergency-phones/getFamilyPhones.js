@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
-const { removePhone } = require('./removePhone');
 const {
   getSessionEmergencyPhoneNumbersPermissions,
 } = require('./getSessionEmergencyPhoneNumbersPermissions');
@@ -16,29 +14,20 @@ const { getPhoneDataset } = require('./getPhoneDataset');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getFamilyPhones(family, userSession, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const permissions = await getSessionEmergencyPhoneNumbersPermissions(userSession, {
-        transacting,
-      });
-      if (permissions.phoneNumbersInfo.view) {
-        const alreadyPhones = await table.emergencyPhones.find({ family }, { transacting });
-        const promises = [];
-        _.forEach(alreadyPhones, ({ id }) =>
-          promises.push(getPhoneDataset(id, userSession, { transacting }))
-        );
-        const datasetValues = await Promise.all(promises);
-        return _.map(alreadyPhones, (phone, index) => {
-          phone.dataset = datasetValues[index];
-          return phone;
-        });
-      }
-      return [];
-    },
-    table.emergencyPhones,
-    _transacting
-  );
+async function getFamilyPhones({ family, ctx }) {
+  const permissions = await getSessionEmergencyPhoneNumbersPermissions({ ctx });
+  if (permissions.phoneNumbersInfo.view) {
+    const alreadyPhones = await ctx.tx.db.EmergencyPhones.find({ family }).lean();
+    const promises = [];
+    _.forEach(alreadyPhones, ({ id }) => promises.push(getPhoneDataset({ phone: id, ctx })));
+    const datasetValues = await Promise.all(promises);
+    return _.map(alreadyPhones, (phone, index) => {
+      // eslint-disable-next-line no-param-reassign
+      phone.dataset = datasetValues[index];
+      return phone;
+    });
+  }
+  return [];
 }
 
 module.exports = { getFamilyPhones };

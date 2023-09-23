@@ -9,5 +9,6 @@
   "fs-extra",
   "commander",
   "boxen",
-  "webpack-dev-server"
+  "webpack-dev-server",
+  "address"
 ]
