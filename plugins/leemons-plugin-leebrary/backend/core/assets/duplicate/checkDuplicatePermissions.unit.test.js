@@ -8,17 +8,6 @@ const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
 jest.mock('../../permissions/getByAsset');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 
-const mockedPermissions = {
-  view: true,
-  assign: true,
-  comment: true,
-  edit: true,
-  delete: true,
-  duplicate: true,
-  canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-  canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
-};
-
 afterEach(() => jest.resetAllMocks());
 
 it('calls getPermissions correctly and throws a LeemonsError if the user is not allowed to duplicate the asset', async () => {

@@ -3,7 +3,7 @@ const { generateCtx } = require('@leemons/testing');
 
 const { handleUserPermissions } = require('./handleUserPermissions');
 // MOCKS
-jest.mock('../../../permissions/getByAsset.js');
+jest.mock('../../../permissions/getByAsset');
 const { getByAsset: getPermissions } = require('../../../permissions/getByAsset');
 
 it('Should call getPermissions correctly to determine if the user has permission to delete', async () => {
