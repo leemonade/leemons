@@ -18,7 +18,13 @@ async function getDeploymentID(ctx) {
   }
 }
 
-async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
+async function modifyCTX(
+  ctx,
+  {
+    getDeploymentIdInCall = false,
+    dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+  } = {}
+) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
   if (ctx.service.name !== 'gateway' || ctx.caller)
@@ -52,13 +58,15 @@ async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
   };
 
   ctx.call = async function (_actionName, params, opts) {
-    if (getDeploymentIdInCall) {
-      await getDeploymentID(ctx);
-    }
     let actionName = _actionName;
     if (_.isObject(actionName)) {
       actionName = actionName.action.name;
     }
+
+    if (getDeploymentIdInCall && !dontGetDeploymentIDOnActionCall.includes(actionName)) {
+      await getDeploymentID(ctx);
+    }
+
     if (actionName.startsWith('deployment-manager.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
@@ -90,7 +98,11 @@ async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
   };
 }
 
-module.exports = function ({ checkIfCanCallMe = true, getDeploymentIdInCall = false } = {}) {
+module.exports = function ({
+  checkIfCanCallMe = true,
+  getDeploymentIdInCall = false,
+  dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+} = {}) {
   return {
     name: '',
     actions: {
@@ -109,7 +121,7 @@ module.exports = function ({ checkIfCanCallMe = true, getDeploymentIdInCall = fa
       before: {
         '*': [
           async function (ctx) {
-            await modifyCTX(ctx, { getDeploymentIdInCall });
+            await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
@@ -156,7 +168,7 @@ module.exports = function ({ checkIfCanCallMe = true, getDeploymentIdInCall = fa
 
           // -- Finish moleculer core code --
 
-          await modifyCTX(ctx, { getDeploymentIdInCall });
+          await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
           try {
             if (_.isFunction(afterModifyCTX)) {
