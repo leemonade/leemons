@@ -10,7 +10,6 @@ async function modifyCTX(ctx) {
   if (ctx.service.name !== 'gateway' || ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
   try {
-    console.log('getDeploymentIDFromCTX');
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   } catch (e) {
     console.log(
