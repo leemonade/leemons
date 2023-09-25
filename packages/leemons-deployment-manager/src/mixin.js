@@ -10,10 +10,16 @@ async function modifyCTX(ctx) {
   if (ctx.service.name !== 'gateway' || ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
   try {
+    console.log('getDeploymentIDFromCTX');
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   } catch (e) {
+    console.log(
+      'ha petado getDeploymentIDFromCTX vamos a buscar por el dominio',
+      ctx.meta.hostname
+    );
     // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
     ctx.meta.deploymentID = await ctx.call('deployment-manager.getDeploymentIDByDomain');
+    console.log('ctx.meta.deploymentID', ctx.meta.deploymentID);
     if (!ctx.meta.deploymentID)
       throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
   }

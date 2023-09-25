@@ -18,7 +18,7 @@
       # Vuelve al directorio original
       cd -
       # Construye la imagen de Docker usando el Dockerfile generico
-      docker build --build-arg PLUGIN_NAME=$image_and_ecr_name -t $image_and_ecr_name .
+      docker build --platform=linux/amd64 --build-arg PLUGIN_NAME=$image_and_ecr_name -t $image_and_ecr_name .
     fi
 
   else

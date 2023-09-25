@@ -75,10 +75,13 @@ module.exports = {
         if (ctx.params.password === process.env.MANUAL_PASSWORD) {
           const domains = _.map(ctx.params.domains, (domain) => new URL(domain).hostname);
 
+          console.time('$node.services');
           const servicesRaw = await this.broker.call('$node.services', {
             withActions: true,
             withEvents: true,
           });
+          console.timeEnd('$node.services');
+          console.time('process');
           const servicesByVersionAndName = {};
           _.forEach(servicesRaw, (serviceRaw) => {
             const serviceNameWithVersionIfHave = getPluginNameWithVersionIfHaveFromServiceName(
@@ -125,6 +128,9 @@ module.exports = {
             });
           });
 
+          console.timeEnd('process');
+
+          console.time('Deployment.findOne');
           const domainAlreadyUsed = await ctx.db.Deployment.findOne(
             {
               domains: { $in: domains },
@@ -137,6 +143,9 @@ module.exports = {
           if (domainAlreadyUsed)
             throw new LeemonsError(ctx, { message: 'One of this domains already in use' });
 
+          console.timeEnd('Deployment.findOne');
+          console.time('Deployment.create');
+
           let [deployment] = await ctx.db.Deployment.create(
             [
               {
@@ -147,11 +156,15 @@ module.exports = {
             ],
             { disableAutoDeploy: true, disableAutoLRN: true }
           );
+          console.timeEnd('Deployment.create');
           deployment = deployment.toObject();
 
+          console.time('newTransaction');
           ctx.meta.deploymentID = deployment.id;
           ctx.meta.transactionID = await newTransaction(ctx);
+          console.timeEnd('newTransaction');
 
+          console.time('addTransactionState');
           await addTransactionState(ctx, {
             action: 'leemonsMongoDBRollback',
             payload: {
@@ -160,7 +173,9 @@ module.exports = {
               data: [deployment.id],
             },
           });
+          console.timeEnd('addTransactionState');
 
+          console.time('deployment-manager.savePlugins');
           await ctx.tx.call(
             'deployment-manager.savePlugins',
             _.map(_.uniq(pluginNames), (pluginName) => ({
@@ -168,10 +183,15 @@ module.exports = {
               pluginVersion: getPluginVersionFromServiceName(pluginName) || 1,
             }))
           );
+          console.timeEnd('deployment-manager.savePlugins');
           // We simulate that the store adds the permissions between the actions of the
+          console.time('deployment-manager.savePluginsRelationships');
           await ctx.tx.call('deployment-manager.savePluginsRelationships', relationship);
+          console.timeEnd('deployment-manager.savePluginsRelationships');
           // We simulate that the store tells us to start this deploymentID.
+          console.time('deployment-manager.initDeployment');
           await ctx.tx.call('deployment-manager.initDeployment', relationship);
+          console.timeEnd('deployment-manager.initDeployment');
           return { deployment };
         }
         throw new LeemonsError(ctx, {

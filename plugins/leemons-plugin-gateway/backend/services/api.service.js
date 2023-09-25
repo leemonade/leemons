@@ -530,9 +530,12 @@ module.exports = {
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress;
-          ctx.meta.hostname = parse(
+          const parseResult = parse(
             req.headers.referer || req.headers.referrer || req.headers.host
-          ).hostname;
+          );
+          ctx.meta.hostname =
+            parseResult.hostname || parseResult.host || parseResult.pathname || parseResult.path;
+          console.log('ctx.meta.hostname', ctx.meta.hostname);
         },
 
         onError(req, res, err) {

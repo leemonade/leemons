@@ -43,11 +43,12 @@ module.exports = () => ({
   actions: {
     ...restActions,
     getDeploymentIDByDomain: {
+      dontCreateTransactionOnCallThisFunction: true,
       async handler(ctx) {
         if (!ctx.meta.hostname) {
           throw new LeemonsError(ctx, { message: 'hostname not found' });
         }
-        const deployment = await ctx.tx.db.findOne({ domain: ctx.meta.hostname }).lean();
+        const deployment = await ctx.db.Deployment.findOne({ domain: ctx.meta.hostname }).lean();
         return deployment ? deployment.id : null;
       },
     },
