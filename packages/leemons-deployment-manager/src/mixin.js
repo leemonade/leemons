@@ -6,21 +6,11 @@ const { isCoreService } = require('./isCoreService');
 
 async function getDeploymentID(ctx) {
   try {
-    console.log('Before getdeploymentIdFromCTX');
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
-    console.log('After (it should not be rendered) getdeploymentIdFromCTX');
   } catch (e) {
-    console.log(
-      '(into catch) ha petado getDeploymentIDFromCTX vamos a buscar por el dominio',
-      ctx.meta.hostname
-    );
     // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
-    console.log('Before getDeploymentIdBydomain');
     ctx.meta.deploymentID = await ctx.call('deployment-manager.getDeploymentIDByDomain');
-    console.log('after getDeploymentIdBydomain');
-    console.log('ctx.meta.deploymentID', ctx.meta.deploymentID);
     if (!ctx.meta.deploymentID) {
-      console.log('Throw due to no deploymentID found');
       throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
     }
   }
