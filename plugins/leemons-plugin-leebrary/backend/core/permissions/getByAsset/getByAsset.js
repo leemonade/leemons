@@ -1,41 +1,43 @@
 const { find, isEmpty } = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const getRolePermissions = require('../helpers/getRolePermissions');
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 
-async function getByAsset(assetId, { userSession, transacting } = {}) {
+async function getByAsset({ assetId, ctx }) {
   try {
-    const { services: userService } = leemons.getPlugin('users');
-
+    const { userSession } = ctx.meta;
+    const getAllItemsForTheUserAgentHasPermissionsByType =
+      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType';
     const [permissions, canView, canEdit, canAssign] = await Promise.all([
-      userService.permissions.getUserAgentPermissions(userSession.userAgents, {
-        query: { permissionName: getAssetPermissionName(assetId) },
-        transacting,
+      ctx.tx.call('users.permissions.getUserAgentPermissions', {
+        userAgent: userSession.userAgents,
+        query: { permissionName: getAssetPermissionName({ assetId, ctx }) },
       }),
-      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-view'),
-        { ignoreOriginalTarget: true, item: assetId, transacting }
-      ),
-      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-edit'),
-        { ignoreOriginalTarget: true, item: assetId, transacting }
-      ),
-      userService.permissions.getAllItemsForTheUserAgentHasPermissionsByType(
-        userSession.userAgents,
-        leemons.plugin.prefixPN('asset.can-assign'),
-        { ignoreOriginalTarget: true, item: assetId, transacting }
-      ),
+      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+        userAgentId: userSession.userAgents,
+        type: ctx.prefixPN('asset.can-view'),
+        ignoreOriginalTarget: true,
+        item: assetId,
+      }),
+      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+        userAgentId: userSession.userAgents,
+        type: ctx.prefixPN('asset.can-edit'),
+        ignoreOriginalTarget: true,
+        item: assetId,
+      }),
+      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+        userAgentId: userSession.userAgents,
+        type: ctx.prefixPN('asset.can-assign'),
+        ignoreOriginalTarget: true,
+        item: assetId,
+      }),
     ]);
 
     let role = null;
 
     if (isEmpty(permissions)) {
-      const asset = await tables.assets.find(
-        { id: assetId },
-        { columns: ['id', 'public'], transacting }
-      );
-      if (asset[0]?.public) {
+      const asset = await ctx.tx.db.Assets.findOne({ id: assetId }).select(['id', 'public']).lean();
+      if (asset?.public) {
         role = 'public';
       }
     }
@@ -49,19 +51,26 @@ async function getByAsset(assetId, { userSession, transacting } = {}) {
 
     const canAccessRole = role;
 
-    if (canView.length && !role) {
+    if (canView?.length && !role) {
       role = 'viewer';
     }
-    if (canAssign.length && (!role || role !== 'owner')) {
+    if (canAssign?.length && (!role || role !== 'owner')) {
       role = 'assigner';
     }
-    if (canEdit.length && (!role || role !== 'owner')) {
+    if (canEdit?.length && (!role || role !== 'owner')) {
       role = 'editor';
     }
 
-    return { role, permissions: getRolePermissions(role), canAccessRole: canAccessRole || role };
+    return {
+      role,
+      permissions: getRolePermissions({ role, ctx }),
+      canAccessRole: canAccessRole || role,
+    };
   } catch (e) {
-    throw new global.utils.HttpError(500, `Failed to get permissions: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Failed to get permissions: ${e.message}`,
+      httpStatusCode: 500,
+    });
   }
 }
 

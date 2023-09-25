@@ -17,7 +17,7 @@ module.exports = function getPermissionsMocks() {
     userAgentPermission: {
       id: 'userAgenPermissionOne',
       userAgent: 'userAgentOne',
-      perissionName: 'calendar.calendar.event.eventOneId',
+      permissionName: 'calendar.calendar.event.eventOneId',
       actionName: 'owner',
       target: null,
       role: 'roleOneId',
