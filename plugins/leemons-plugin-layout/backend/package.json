@@ -20,10 +20,10 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.24",
-    "@leemons/mongodb": "0.0.24",
-    "@leemons/mongodb-helpers": "0.0.24",
-    "@leemons/multilanguage": "0.0.24",
+    "@leemons/deployment-manager": "0.0.25",
+    "@leemons/mongodb": "0.0.25",
+    "@leemons/mongodb-helpers": "0.0.25",
+    "@leemons/multilanguage": "0.0.25",
     "moleculer": "^0.14.26"
   },
   "engines": {
