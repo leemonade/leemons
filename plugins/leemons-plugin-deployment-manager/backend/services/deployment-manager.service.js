@@ -48,7 +48,11 @@ module.exports = () => ({
         if (!ctx.meta.hostname) {
           throw new LeemonsError(ctx, { message: 'hostname not found' });
         }
-        const deployment = await ctx.db.Deployment.findOne({ domain: ctx.meta.hostname }).lean();
+        const deployment = await ctx.db.Deployment.findOne(
+          { domains: ctx.meta.hostname },
+          undefined,
+          { disableAutoDeploy: true }
+        ).lean();
         return deployment ? deployment.id : null;
       },
     },

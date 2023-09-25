@@ -22,7 +22,8 @@
   "dependencies": {
     "ioredis": "^5.3.2",
     "moleculer": "^0.14.26",
-    "moleculer-web": "^0.10.5"
+    "moleculer-web": "^0.10.5",
+    "@leemons/deployment-manager": "0.0.23"
   },
   "engines": {
     "node": ">= 16.x.x"

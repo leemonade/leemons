@@ -4,11 +4,7 @@ const { getPluginNameFromServiceName } = require('@leemons/service-name-parser')
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
-async function modifyCTX(ctx) {
-  // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
-  // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
-  if (ctx.service.name !== 'gateway' || ctx.caller)
-    ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
+async function getDeploymentID(ctx) {
   try {
     console.log('Before getdeploymentIdFromCTX');
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
@@ -28,6 +24,17 @@ async function modifyCTX(ctx) {
       throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
     }
   }
+}
+
+async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
+  // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
+  // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
+  if (ctx.service.name !== 'gateway' || ctx.caller)
+    ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
+  if (!getDeploymentIdInCall) {
+    await getDeploymentID(ctx);
+  }
+
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
 
@@ -37,7 +44,10 @@ async function modifyCTX(ctx) {
     return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
   };
 
-  ctx.emit = function (event, params, opts) {
+  ctx.emit = async function (event, params, opts) {
+    if (getDeploymentIdInCall) {
+      await getDeploymentID(ctx);
+    }
     return ctx.__leemonsDeploymentManagerCall(
       'deployment-manager.emit',
       {
@@ -49,6 +59,9 @@ async function modifyCTX(ctx) {
   };
 
   ctx.call = async function (_actionName, params, opts) {
+    if (getDeploymentIdInCall) {
+      await getDeploymentID(ctx);
+    }
     let actionName = _actionName;
     if (_.isObject(actionName)) {
       actionName = actionName.action.name;
