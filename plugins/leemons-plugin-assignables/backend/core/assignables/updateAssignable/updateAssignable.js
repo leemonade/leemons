@@ -35,6 +35,17 @@ const updatableFields = [
   'metadata',
 ];
 
+/**
+ * Update an assignable
+ * @async
+ * @function updateAssignable
+ * @param {Object} params - The main parameter object.
+ * @param {AssignablesAssignable} params.assignable - The assignable to update.
+ * @param {boolean} params.published - Flag to publish the assignable.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<AssignablesAssignable>} The updated assignable.
+ */
+
 async function updateAssignable({ assignable, published = false, ctx }) {
   try {
     const { id, file, ...assignableObjectReceived } = assignable;
@@ -269,6 +280,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
                   id: currentAssignable.metadata?.leebrary?.[key],
                   ctx,
                 });
+
                 _.set(updateObject, `metadata.leebrary.${key}`, null);
               }
 

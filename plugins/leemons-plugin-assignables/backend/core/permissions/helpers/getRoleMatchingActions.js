@@ -1,3 +1,10 @@
+/**
+ * Get role matching actions
+ * @function getRoleMatchingActions
+ * @param {Object} params - The main parameter object.
+ * @param {Array<string>} params.actions - The actions to match.
+ * @returns {string|null} The name of the role that matches the actions, or null if no match is found.
+ */
 const { isEqual } = require('lodash');
 const { assignableRolesObject } = require('../../../config/constants');
 

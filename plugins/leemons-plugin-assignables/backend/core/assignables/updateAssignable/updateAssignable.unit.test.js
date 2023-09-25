@@ -1,3 +1,5 @@
+// TODO Add tests for else branches (main flow is covered)
+
 const { describe, it, expect, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
@@ -295,6 +297,7 @@ describe('updateAssignable function', () => {
       indexable: 0,
       ctx,
     });
+    expect(removeAsset).toBeCalledWith({ id: '550e8400-e29b-41d4-a716-446655440000@2.0.0', ctx });
 
     expect(response).toEqual({
       ...updatedAssignable,
@@ -304,88 +307,6 @@ describe('updateAssignable function', () => {
     expect(resultAssignable.resources.length).toBe(2);
     expect(resultAssignable.submission).toBeDefined();
   });
-  /* //! Continuar con este para cubrir el 100% (solo actualizar metadata) (luego ver como compartir todo lo posible entre los test)
-  it('update the assignable metadata correctly', async () => {
-    // Arrange
-
-    const assignable = getAssignableObject();
-    assignable.asset = { ...assignable.asset, id: 'assetId', file: 'fileId' };
-    assignable.id = 'assignableId';
-    assignable.file = 'fileId';
-
-    const updatedAssignable = {
-      ...assignable,
-      metadata,
-      resources,
-      subjects,
-      submission: { id: 'submissionId' },
-    };
-
-    const ctx = generateCtx({
-      actions: {
-        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
-        'common.versionControl.upgradeVersion': jest
-          .fn()
-          .mockReturnValue({ fullId: 'assetId@2.0.0' }),
-      },
-      models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
-      },
-    });
-
-    await ctx.tx.db.Assignables.create({ ...assignable, asset: 'assetId1' });
-
-    getAssignable.mockReturnValue(assignable);
-    getUserPermission.mockReturnValue({ actions: ['edit'] });
-    updateAsset.mockReturnValue({ id: 'assetId' });
-    createAssignable.mockReturnValue(updatedAssignable);
-    listAssignableUserAgents.mockReturnValue([
-      { id: 'agent1', role: 'role1' },
-      { id: 'agent2', role: 'role2' },
-    ]);
-    updateSubjects.mockReturnValue(subjects);
-    duplicateAsset.mockReturnValue({ id: '550e8400-e29b-41d4-a716-446655440000@2.0.1' });
-
-    // Act
-    const response = await updateAssignable({
-      assignable: updatedAssignable,
-      published: true,
-      ctx,
-    });
-    const resultAssignable = await ctx.tx.db.Assignables.findOne({
-      id: updatedAssignable.id,
-    }).lean();
-
-    // Assert
-    expect(getAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-    expect(getUserPermission).toBeCalledWith({ assignableId: assignable.id, ctx });
-    expect(updateAsset).toBeCalledWith({
-      asset: { ...updatedAssignable.asset, file: updatedAssignable.file },
-      upgrade: true,
-      published: false,
-      scale: 'major',
-      ctx,
-    });
-    expect(publishAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-
-    expect(duplicateAsset).toBeCalledWith({
-      id: '550e8400-e29b-41d4-a716-446655440000@2.0.1',
-      preserveName: true,
-      public: 1,
-      indexable: 0,
-      ctx,
-    });
-
-    expect(response).toEqual({
-      ...updatedAssignable,
-      metadata: expect.objectContaining({ leebrary: expect.any(Object) }),
-      published: true,
-    });
-    expect(resultAssignable.metadata).toBeDefined();
-    expect(resultAssignable.resources.length).toBe(2);
-    expect(resultAssignable.submission).toBeDefined();
-  });
-*/
 
   it('correctly updates the resources in the metadata', async () => {
     // Arrange
@@ -453,6 +374,10 @@ describe('updateAssignable function', () => {
       preserveName: true,
       public: 1,
       indexable: 0,
+      ctx,
+    });
+    expect(removeAsset).toBeCalledWith({
+      id: 'resource1',
       ctx,
     });
     expect(response).toEqual({
@@ -530,6 +455,11 @@ describe('updateAssignable function', () => {
       indexable: 0,
       ctx,
     });
+    expect(removeAsset).toBeCalledWith({
+      id: 'resource1',
+      ctx,
+    });
+
     expect(response).toEqual({
       ...updatedAssignable,
       metadata: expect.objectContaining({ leebrary: expect.any(Object) }),
@@ -583,6 +513,7 @@ describe('updateAssignable function', () => {
     const testFn = () => updateAssignable({ assignable, ctx });
 
     // Assert
+
     await expect(testFn()).rejects.toThrow(
       new LeemonsError(ctx, { message: 'Failed to update assignable: The assignable is deleted' })
     );
