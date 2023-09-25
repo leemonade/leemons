@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, TextClamp, openSpotlight, ImageLoader } from '@bubbles-ui/components';
+import { Navbar, Box, Text, TextClamp, openSpotlight, ImageLoader } from '@bubbles-ui/components';
 import { isEmpty, isArray, find } from 'lodash';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -117,11 +117,11 @@ const MainNavBar = ({
           amimate={isCollapsed ? 'closed' : 'open'}
           variants={mainNavVariants}
           whileHover={{ width: MAIN_NAV_WIDTH_EXPANDED }}
-          transition={{ type: 'tween', delay: isCollapsed ? 0 : 0.5 }}
+          transition={{ type: 'tween' }}
         >
           <Navbar
             onMouseEnter={() => setIsCollapsed(false)}
-            onMouseLeave={() => setTimeout(() => setIsCollapsed(true), 500)}
+            onMouseLeave={() => setIsCollapsed(true)}
             sx={() => ({ overflow: 'hidden' })}
             className={classes.navBar}
           >

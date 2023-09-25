@@ -1,28 +1,27 @@
 import PropTypes from 'prop-types';
 
 export const MAIN_NAV_BAR_DEFAULT_PROPS = {
-  useRouter: true,
   lightMode: true,
-  mainColor: 'red',
-  logoUrl: '',
-  useSpotlight: true,
-  navTitle: 'leemons for devs',
   isLoading: false,
+  useSpotlight: true,
+  logoUrl: '',
+  navTitle: 'leemons for devs',
+  spotlightLabel: 'Search',
+  session: null,
+  sessionMenu: null,
   menuData: [],
-  spotlightLabel: '',
+  useRouter: true
 };
 
 export const MAIN_NAV_BAR_PROP_TYPES = {
-  hideSubNavOnClose: PropTypes.bool,
-  useRouter: PropTypes.bool,
-  lightMode: PropTypes.bool,
-  mainColor: PropTypes.string,
-  drawerColor: PropTypes.string,
   logoUrl: PropTypes.string,
-  useSpotlight: PropTypes.bool,
-  spotlightTooltip: PropTypes.string,
+  lightMode: PropTypes.bool,
+  navTitle: PropTypes.string,
   isLoading: PropTypes.bool,
+  session: PropTypes.any,
+  sessionMenu: PropTypes.any,
   menuData: PropTypes.array,
+  useRouter: PropTypes.bool,
   spotlightLabel: PropTypes.string,
 };
 
