@@ -6,37 +6,36 @@ const { isCoreService } = require('./isCoreService');
 
 async function getDeploymentID(ctx) {
   try {
-    console.log('Before getdeploymentIdFromCTX');
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
-    console.log('After (it should not be rendered) getdeploymentIdFromCTX');
   } catch (e) {
-    console.log(
-      '(into catch) ha petado getDeploymentIDFromCTX vamos a buscar por el dominio',
-      ctx.meta.hostname
-    );
     // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
-    console.log('Before getDeploymentIdBydomain');
-    ctx.meta.deploymentID = await ctx.call('deployment-manager.getDeploymentIDByDomain');
-    console.log('after getDeploymentIdBydomain');
-    console.log('ctx.meta.deploymentID', ctx.meta.deploymentID);
+    ctx.meta.deploymentID = await ctx.__leemonsDeploymentManagerCall(
+      'deployment-manager.getDeploymentIDByDomain'
+    );
     if (!ctx.meta.deploymentID) {
-      console.log('Throw due to no deploymentID found');
       throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
     }
   }
 }
 
-async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
+async function modifyCTX(
+  ctx,
+  {
+    getDeploymentIdInCall = false,
+    dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+  } = {}
+) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
   if (ctx.service.name !== 'gateway' || ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
-  if (!getDeploymentIdInCall) {
-    await getDeploymentID(ctx);
-  }
 
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
+
+  if (!getDeploymentIdInCall) {
+    await getDeploymentID(ctx);
+  }
 
   ctx.logger = console;
 
@@ -59,13 +58,15 @@ async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
   };
 
   ctx.call = async function (_actionName, params, opts) {
-    if (getDeploymentIdInCall) {
-      await getDeploymentID(ctx);
-    }
     let actionName = _actionName;
     if (_.isObject(actionName)) {
       actionName = actionName.action.name;
     }
+
+    if (getDeploymentIdInCall && !dontGetDeploymentIDOnActionCall.includes(actionName)) {
+      await getDeploymentID(ctx);
+    }
+
     if (actionName.startsWith('deployment-manager.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
@@ -97,7 +98,11 @@ async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
   };
 }
 
-module.exports = function ({ checkIfCanCallMe = true } = {}) {
+module.exports = function ({
+  checkIfCanCallMe = true,
+  getDeploymentIdInCall = false,
+  dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+} = {}) {
   return {
     name: '',
     actions: {
@@ -116,7 +121,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
       before: {
         '*': [
           async function (ctx) {
-            await modifyCTX(ctx);
+            await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
@@ -163,7 +168,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
           // -- Finish moleculer core code --
 
-          await modifyCTX(ctx);
+          await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
           try {
             if (_.isFunction(afterModifyCTX)) {
