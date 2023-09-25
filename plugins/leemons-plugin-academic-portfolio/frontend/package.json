@@ -19,7 +19,7 @@
     "@tanstack/react-query": "^4.35.3",
     "dayjs": "^1.11.2",
     "lodash": "^4.17.21",
-    "leemons-hooks": "0.0.12",
+    "leemons-hooks": "0.0.13",
     "p-min-delay": "^4.0.2",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
