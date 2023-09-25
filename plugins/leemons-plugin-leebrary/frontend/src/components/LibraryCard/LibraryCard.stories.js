@@ -47,17 +47,18 @@ const Template = ({
     description: showDescription ? asset.description : undefined,
   };
 
+  const assetChecker = {
+    [`${isCurriculum}`]: { CURRICULUM_ASSET },
+    [`${isBookmark}`]: { ...URL_ASSET, ...assetToRender },
+    [`${!isBookmark && !isCurriculum}`]: { ...asset, ...assetToRender },
+  };
+
   return (
     <Paper color="solid" style={{ width: 322, height: 600 }}>
       <LibraryCard
         {...props}
-        asset={
-          isCurriculum
-            ? CURRICULUM_ASSET
-            : isBookmark
-              ? { ...URL_ASSET, ...assetToRender }
-              : { ...asset, ...assetToRender }
-        }
+        // eslint-disable-next-line dot-notation
+        asset={assetChecker['true']}
         deadlineProps={isCurriculum ? null : deadlineProps}
         assigment={!isCurriculum && showAssigment ? assigment : null}
         variant="document"
@@ -76,17 +77,16 @@ const Template = ({
 export const Playground = Template.bind({});
 
 Playground.args = {
-  isDraft: true,
   showImage: true,
   showDescription: true,
-  showAction: false,
+  showAction: true,
   showAssigment: true,
   showSubject: true,
   variant: 'media',
   action: 'View feedback',
   badge: '',
   ...LIBRARY_CARD_DEFAULT_PROPS,
-  asset: AUDIO_ASSET,
+  asset: { ...AUDIO_ASSET, providerData: { published: false } },
   assigment: {
     completed: 0.3,
     submission: 15,

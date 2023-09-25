@@ -40,7 +40,8 @@ const LibraryCardFooter = ({
   // };
 
   const handleOnAction = () => {
-    isFunction(onAction) && onAction();
+    if (isFunction(onAction)) return onAction();
+    return null;
   };
 
   // let component;
@@ -132,9 +133,9 @@ const LibraryCardFooter = ({
               data={canAccess}
               moreThanUsersAsMulti={2}
               classesData={classesCanAccess}
-              zIndexInverted
+              // zIndexInverted
               numberFromClassesAndData
-              customAvatarMargin={4}
+              customAvatarMargin={16}
               limit={3}
             />
           </Box>

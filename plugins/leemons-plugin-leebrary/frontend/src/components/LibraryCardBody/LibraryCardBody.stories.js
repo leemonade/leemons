@@ -56,6 +56,9 @@ Playground.args = {
     { label: 'Transcript', value: 'Not available' },
   ],
   tags: ['Fantasy', 'Adventure', 'Fiction'],
+  providerData: {
+    published: true,
+  },
   assigment: {
     completed: 0.3,
     submission: 15,
