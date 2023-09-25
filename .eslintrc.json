@@ -1,35 +1,31 @@
-// .eslintrc
 {
   "env": {
     "browser": true,
-    "commonjs": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "globals": {
     "leemons": true
   },
-  "extends": ["plugin:react/recommended", "plugin:sonarjs/recommended", "airbnb-base", "prettier"],
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
-  "parser": "@babel/eslint-parser",
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb-base",
+    "prettier"
+  ],
+  "parser": "babel-eslint",
   "parserOptions": {
-    "requireConfigFile": false,
-    "babelOptions": {
-      "babelrc": false,
-      "configFile": false,
-      "presets": ["@babel/preset-env"],
-      "plugins": ["@babel/plugin-syntax-jsx"]
-    },
-    "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
-  "plugins": ["react", "sonarjs", "import", "prettier"],
+  "plugins": [
+    "react",
+    "import",
+    "prettier"
+  ],
   "rules": {
     "no-plusplus": "off",
     "import/no-dynamic-requires": "off",
@@ -76,7 +72,6 @@
           "@mqtt-aws-iot",
           "@mqtt-socket-io",
           "@multilanguage",
-          "@onboarding",
           "@package-manager",
           "@scores",
           "@scorm",

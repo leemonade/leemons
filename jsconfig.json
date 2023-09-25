@@ -92,9 +92,6 @@
       "@multilanguage/*": [
         "./plugins/leemons-plugin-multilanguage/frontend/src/*"
       ],
-      "@onboarding/*": [
-        "./plugins/leemons-plugin-onboarding/frontend/src/*"
-      ],
       "@package-manager/*": [
         "./plugins/leemons-plugin-package-manager/frontend/src/*"
       ],

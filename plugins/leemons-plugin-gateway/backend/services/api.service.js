@@ -1,5 +1,6 @@
 const ApiGateway = require('moleculer-web');
 const { parse } = require('url');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -10,7 +11,10 @@ const { parse } = require('url');
 // ad
 module.exports = {
   name: 'gateway',
-  mixins: [ApiGateway],
+  mixins: [
+    ApiGateway,
+    LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false, getDeploymentIdInCall: true }),
+  ],
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
