@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leemons Storybooks</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100;300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Albert Sans", sans-serif;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      margin: 10px;
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+  <script>
+    var jsonData = [{"name":"Menu Builder","description":"The Menu Builder is a plugin that provides functionality for creating and managing menus within the Leemons platform. It allows for the addition, removal, and modification of menu items, as well as the ability to set permissions for each item. It also supports multilingual menus.","url":"leemons-plugin-menu-builder"}];
+  </script>
+
+  <h1>Leemons plugins:</h1>
+  <div id="cardContainer">
+    <!-- Cards will be inserted here -->
+  </div>
+
+  <script>
+    var container = document.getElementById('cardContainer');
+
+    jsonData.forEach(function (item) {
+      var card = document.createElement('div');
+      card.className = 'card';
+
+      var name = document.createElement('a');
+      name.href = item.url;
+      name.textContent = item.name;
+      card.appendChild(name);
+
+      var description = document.createElement('p');
+      description.textContent = item.description;
+      card.appendChild(description);
+
+      container.appendChild(card);
+    });
+  </script>
+</body>
+
+</html>
