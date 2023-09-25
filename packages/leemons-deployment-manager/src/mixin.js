@@ -9,7 +9,9 @@ async function getDeploymentID(ctx) {
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   } catch (e) {
     // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
-    ctx.meta.deploymentID = await ctx.call('deployment-manager.getDeploymentIDByDomain');
+    ctx.meta.deploymentID = await ctx.__leemonsDeploymentManagerCall(
+      'deployment-manager.getDeploymentIDByDomain'
+    );
     if (!ctx.meta.deploymentID) {
       throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
     }
@@ -21,12 +23,13 @@ async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
   if (ctx.service.name !== 'gateway' || ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
-  if (!getDeploymentIdInCall) {
-    await getDeploymentID(ctx);
-  }
 
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
+
+  if (!getDeploymentIdInCall) {
+    await getDeploymentID(ctx);
+  }
 
   ctx.logger = console;
 
@@ -87,7 +90,7 @@ async function modifyCTX(ctx, { getDeploymentIdInCall = false } = {}) {
   };
 }
 
-module.exports = function ({ checkIfCanCallMe = true } = {}) {
+module.exports = function ({ checkIfCanCallMe = true, getDeploymentIdInCall = false } = {}) {
   return {
     name: '',
     actions: {
@@ -106,7 +109,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
       before: {
         '*': [
           async function (ctx) {
-            await modifyCTX(ctx);
+            await modifyCTX(ctx, { getDeploymentIdInCall });
 
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
@@ -153,7 +156,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
           // -- Finish moleculer core code --
 
-          await modifyCTX(ctx);
+          await modifyCTX(ctx, { getDeploymentIdInCall });
 
           try {
             if (_.isFunction(afterModifyCTX)) {
