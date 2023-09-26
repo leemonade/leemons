@@ -31,3 +31,22 @@ export const LIBRARY_CARD_COVER_PROP_TYPES = {
   role: PropTypes.oneOf(LIBRARYCARD_ASSIGMENT_ROLES),
   badge: PropTypes.string,
 };
+
+export const overlayVariants = {
+  hidden: {
+    display: 'none',
+    opacity: 0,
+    transition: {
+      duration: 0.2,
+      type: 'tween',
+    },
+  },
+  visible: {
+    display: 'block',
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+      type: 'tween',
+    },
+  },
+};

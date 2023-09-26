@@ -8,7 +8,7 @@ import {
   PluginCurriculumIcon,
 } from '@bubbles-ui/icons/solid';
 import { LibraryCardCover } from '../LibraryCardCover';
-import { LibraryCardContent } from '../LibraryCardContent';
+// import { LibraryCardContent } from '../LibraryCardContent';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';

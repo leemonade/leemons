@@ -37,7 +37,7 @@ export const LibraryCardCoverStyles = createStyles(
         width: '100%',
         height: '100%',
         position: 'absolute',
-        zIndex: 1,
+        zIndex: 0,
         background:
           'linear-gradient(180deg, #000 -65%, rgba(0, 0, 0, 0.00) 65%), transparent 50% / cover no-repeat',
         justifyContent: spaceBetween,
@@ -47,6 +47,7 @@ export const LibraryCardCoverStyles = createStyles(
         display: 'flex',
       },
       iconRow: {
+        zIndex: 3,
         display: 'flex',
         visibility: isParentHovered,
         alignItems: 'center',
@@ -61,6 +62,8 @@ export const LibraryCardCoverStyles = createStyles(
         backgroundColor: 'transparent !important',
       },
       favButton: {
+        zIndex: 3,
+
         paddingRight: pxToRem(4),
         visibility: isFav ? 'visible' : isParentHovered,
       },
