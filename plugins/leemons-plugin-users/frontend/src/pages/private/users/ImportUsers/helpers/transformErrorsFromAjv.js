@@ -1,6 +1,6 @@
 import { isArray } from 'lodash';
 
-export function transformAjvErrors(errors) {
+const transformErrorsFromAjv = (errors) => {
   if (!isArray(errors)) {
     return [];
   }
@@ -19,4 +19,7 @@ export function transformAjvErrors(errors) {
       schemaPath,
     };
   });
-}
+};
+
+export default transformErrorsFromAjv;
+export { transformErrorsFromAjv };

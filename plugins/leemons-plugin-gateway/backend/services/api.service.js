@@ -1,6 +1,6 @@
 const ApiGateway = require('moleculer-web');
+const { parse } = require('url');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -11,7 +11,10 @@ const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager')
 // ad
 module.exports = {
   name: 'gateway',
-  mixins: [ApiGateway, LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false })],
+  mixins: [
+    ApiGateway,
+    LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false, getDeploymentIdInCall: true }),
+  ],
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
@@ -50,7 +53,32 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          'POST deployment-manager/add-manual-deployment':
+            'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
+
+          // -- Learning Paths (Finish) --
+          'POST learning-paths/tags/list': 'v1.learning-paths.tags.listTagsRest',
+          'POST learning-paths/modules': 'v1.learning-paths.modules.createRest',
+          'PUT learning-paths/modules/:id': 'v1.learning-paths.modules.updateRest',
+          'POST learning-paths/modules/:id/duplicate': 'v1.learning-paths.modules.duplicateRest',
+          'DELETE learning-paths/modules/:id': 'v1.learning-paths.modules.removeRest',
+          'POST learning-paths/modules/:id/publish': 'v1.learning-paths.modules.publishRest',
+          'POST learning-paths/modules/:id/assign': 'v1.learning-paths.modules.assignRest',
+
+          // -- Families Emergency numbers (Finish) --
+          'GET families-emergency-numbers/dataset-form':
+            'v1.families-emergency-numbers.emergencyPhones.getDatasetFormRest',
+
+          // -- Families (Finish) --
+          'POST families/search-users': 'v1.families.families.searchUsersRest',
+          'GET families/dataset-form': 'v1.families.families.getDatasetFormRest',
+          'POST families/add': 'v1.families.families.addRest',
+          'POST families/update': 'v1.families.families.updateRest',
+          'GET families/detail/:id': 'v1.families.families.detailRest',
+          'DELETE families/remove/:id': 'v1.families.families.removeRest',
+          'POST families/list': 'v1.families.families.listRest',
+          'GET families/list/detail/page/:user': 'v1.families.families.listDetailPageRest',
 
           // -- Scores (Finish) --
           'POST scores/periods': 'v1.scores.periods.addRest',
@@ -499,6 +527,20 @@ module.exports = {
 					// Async function which return with Promise
 					return doSomething(ctx, res, data);
 				}, */
+
+        onBeforeCall(ctx, route, req) {
+          ctx.meta.clientIP =
+            req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress;
+          const parseResult = parse(
+            req.headers.referer || req.headers.referrer || req.headers.host
+          );
+          ctx.meta.hostname =
+            parseResult.hostname || parseResult.host || parseResult.pathname || parseResult.path;
+          console.log('ctx.meta.hostname', ctx.meta.hostname);
+        },
 
         onError(req, res, err) {
           const response = { ...err, message: err.message };

@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-shadow */
+import React from 'react';
 import {
   Alert,
   Box,
@@ -10,7 +11,6 @@ import {
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { transformErrorsFromAjv } from './helpers/transformErrorsFromAjv';
 import { ajv as Ajv } from 'ajv';
 import { EMAIL_REGEX } from '@users/components/LoginForm';
 import { useLocale, useStore } from '@common';
@@ -19,7 +19,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { transformErrorsFromAjv } from '../helpers/transformErrorsFromAjv';
 import { addUsersBulkRequest } from '../../../../../request';
 
 const datasetArraySplitKey = '|';
@@ -123,7 +123,7 @@ export function XlsxTable({
   fileIsTemplate,
   generalDataset,
   headerSelects,
-  onSave = () => {},
+  onSave = () => { },
 }) {
   const [store, render] = useStore();
   const [tForm, tFormTrans] = useTranslateLoader('multilanguage.formWithTheme');

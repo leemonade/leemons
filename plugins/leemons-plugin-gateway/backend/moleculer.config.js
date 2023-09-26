@@ -1,7 +1,3 @@
-'use strict';
-
-const ChannelsMiddleware = require('@moleculer/channels').Middleware;
-
 /**
  * Moleculer ServiceBroker configuration file
  *
@@ -62,7 +58,7 @@ module.exports = {
   // More info: https://moleculer.services/docs/0.14/networking.html
   // Note: During the development, you don't need to define it because all services will be loaded locally.
   // In production you can set it via `TRANSPORTER=nats://localhost:4222` environment variable.
-  transporter: null, //"NATS"
+  transporter: null, // "NATS"
 
   // Define a cacher.
   // More info: https://moleculer.services/docs/0.14/caching.html
@@ -74,7 +70,7 @@ module.exports = {
   serializer: 'JSON',
 
   // Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
-  requestTimeout: 10 * 1000,
+  requestTimeout: 2 * 60 * 1000,
 
   // Retry policy settings. More info: https://moleculer.services/docs/0.14/fault-tolerance.html#Retry
   retryPolicy: {
@@ -194,12 +190,7 @@ module.exports = {
   },
 
   // Register custom middlewares
-  middlewares: [
-    ChannelsMiddleware({
-      adapter:
-        'redis://default:T0RdSJ3U0swVOOamapdFldw1Coor55Vb@redis-11816.c55.eu-central-1-1.ec2.cloud.redislabs.com:11816',
-    }),
-  ],
+  middlewares: [],
 
   // Register custom REPL commands.
   replCommands: null,

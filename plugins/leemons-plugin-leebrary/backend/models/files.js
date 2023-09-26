@@ -1,7 +1,6 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 const { isString } = require('lodash');
 
-
 function requiredWhenNotString() {
   return !isString(this.uri);
 }

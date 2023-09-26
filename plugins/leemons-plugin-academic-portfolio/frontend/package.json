@@ -8,15 +8,24 @@
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
     "@bubbles-ui/components": "dev",
     "@bubbles-ui/icons": "dev",
-    "@storybook/addon-a11y": "^7.3.2",
+    "@bubbles-ui/leemons": "dev",
+    "@loadable/component": "^5.15.2",
+    "@tanstack/react-query": "^4.35.3",
+    "dayjs": "^1.11.2",
     "lodash": "^4.17.21",
-    "storybook-addon-designs": "^6.3.1"
+    "leemons-hooks": "0.0.18",
+    "p-min-delay": "^4.0.2",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1",
+    "react-router-dom": "^5.3.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.10",

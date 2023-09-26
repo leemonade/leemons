@@ -1,11 +1,11 @@
 {
-  "name": "leemons-hooks",
-  "version": "0.0.2",
-  "main": "lib/index.js",
-  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
     "chalk": "^4.1.0",
     "lodash": "^4.17.21"
-  }
+  },
+  "name": "leemons-hooks",
+  "version": "0.0.18",
+  "main": "lib/index.js",
+  "license": "MIT"
 }

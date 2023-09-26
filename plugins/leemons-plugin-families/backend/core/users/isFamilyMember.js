@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Return true if the specific user session is family member of the specific family
@@ -10,14 +9,11 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function isFamilyMember(familyId, userSession, { transacting } = {}) {
-  const count = await table.familyMembers.count(
-    {
-      family: familyId,
-      user: _.isString(userSession) ? userSession : userSession.id,
-    },
-    { transacting }
-  );
+async function isFamilyMember({ familyId, ctx }) {
+  const count = await ctx.tx.db.FamilyMembers.countDocuments({
+    family: familyId,
+    user: _.isString(ctx.meta.userSession) ? ctx.meta.userSession : ctx.meta.userSession.id,
+  });
   return !!count;
 }
 

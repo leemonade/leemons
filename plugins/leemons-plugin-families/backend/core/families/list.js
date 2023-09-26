@@ -1,12 +1,13 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function list(page, size, { query, transacting } = {}) {
-  const results = await global.utils.paginate(table.families, page, size, query, {
-    transacting,
+async function list({ page, size, query, ctx }) {
+  return mongoDBPaginate({
+    model: ctx.tx.db.Families,
+    page,
+    size,
+    query,
   });
-
-  return results;
 }
 
 module.exports = { list };

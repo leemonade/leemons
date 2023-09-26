@@ -1,10 +1,11 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
 const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
-const { table } = require('../tables');
+
 const { addMember } = require('../family-members/addMember');
 const { setDatasetValues } = require('./setDatasetValues');
 const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
-const { add: addMenuItem } = require('../menu-builder/add');
 const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
 
 /**
@@ -19,87 +20,95 @@ const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function add(
-  { name, guardians = [], students = [], datasetValues, maritalStatus, emergencyPhoneNumbers = [] },
-  userSession,
-  { fromBulk, transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      // ES: Primero sacamos los permisos para comprobar a que tiene acceso y a que no
-      // EN: First we pull the permissions to check what you have access to and what you do not have access to.
-      let permissions;
-      if (!fromBulk) {
-        permissions = await getSessionFamilyPermissions(userSession, { transacting });
-        if (!permissions.basicInfo.update)
-          throw new global.utils.HttpErrorPermissions(401, [
-            {
-              permissionName: permissions.permissionsNames.basicInfo,
-              actions: ['update'],
-            },
-          ]);
-      }
-
-      // Creating the family
-      const familyData = { name };
-
-      if (fromBulk || (permissions.guardiansInfo.update && maritalStatus)) {
-        familyData.maritalStatus = maritalStatus;
-      }
-
-      const family = await table.families.create(familyData, { transacting });
-
-      const menuItemConfig = await getFamilyMenuBuilderData(family.id, family.name, {
-        transacting,
+async function add({
+  name,
+  guardians = [],
+  students = [],
+  datasetValues,
+  maritalStatus,
+  emergencyPhoneNumbers = [],
+  fromBulk,
+  ctx,
+}) {
+  // ES: Primero sacamos los permisos para comprobar a que tiene acceso y a que no
+  // EN: First we pull the permissions to check what you have access to and what you do not have access to.
+  let permissions;
+  if (!fromBulk) {
+    permissions = await getSessionFamilyPermissions({ ctx });
+    if (!permissions.basicInfo.update)
+      throw new LeemonsError(ctx, {
+        httpStatusCode: 401,
+        message: "You don't have the necessary permissions.",
+        allowedPermissions: {
+          permissionName: permissions.permissionsNames.basicInfo,
+          actions: ['update'],
+        },
       });
+  }
 
-      const promises = [];
+  // Creating the family
+  const familyData = { name };
 
-      // Add the family menu item
-      promises.push(
-        addMenuItem(menuItemConfig.config, menuItemConfig.permissions, true, { transacting })
-      );
+  if (fromBulk || (permissions.guardiansInfo.update && maritalStatus)) {
+    familyData.maritalStatus = maritalStatus;
+  }
 
-      // Add guardians if have permission
-      if (fromBulk || permissions.guardiansInfo.update) {
-        _.forEach(guardians, ({ user, memberType }) => {
-          promises.push(addMember({ user, memberType, family: family.id }, { transacting }));
-        });
-      }
-      // Add students if have permission
-      if (fromBulk || permissions.studentsInfo.update) {
-        _.forEach(students, ({ user }) => {
-          promises.push(
-            addMember({ user, memberType: 'student', family: family.id }, { transacting })
-          );
-        });
-      }
-      // Add datasetvalues if have permission and have data
-      if ((fromBulk && datasetValues) || (permissions?.customInfo.update && datasetValues)) {
-        promises.push(setDatasetValues(family.id, userSession, datasetValues, { transacting }));
-      }
+  let family = await ctx.tx.db.Families.create(familyData);
+  family = family.toObject();
 
-      // Add phone numbers if plugin installed
-      // The plugin validate if user have access to save phones
-      const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
-      if (emergencyPhoneNumbers && familyEmergencyNumbers) {
-        promises.push(
-          familyEmergencyNumbers.services.emergencyPhones.saveFamilyPhones(
-            family.id,
-            emergencyPhoneNumbers,
-            userSession,
-            { fromBulk, transacting }
-          )
-        );
-      }
+  const menuItemConfig = await getFamilyMenuBuilderData({
+    family: family.id,
+    familyName: family.name,
+    ctx,
+  });
 
-      await Promise.all(promises);
-      await recalculeNumberOfMembers(family.id, { transacting });
-      return family;
-    },
-    table.families,
-    _transacting
+  const promises = [];
+
+  // Add the family menu item
+  promises.push(
+    addMenuItemsDeploy({
+      keyValueModel: ctx.tx.db.KeyValue,
+      item: menuItemConfig,
+      ctx,
+    })
   );
+
+  // Add guardians if have permission
+  if (fromBulk || permissions.guardiansInfo.update) {
+    _.forEach(guardians, ({ user, memberType }) => {
+      promises.push(addMember({ user, memberType, family: family.id, ctx }));
+    });
+  }
+  // Add students if have permission
+  if (fromBulk || permissions.studentsInfo.update) {
+    _.forEach(students, ({ user }) => {
+      promises.push(addMember({ user, memberType: 'student', family: family.id, ctx }));
+    });
+  }
+  // Add datasetvalues if have permission and have data
+  if ((fromBulk && datasetValues) || (permissions?.customInfo.update && datasetValues)) {
+    promises.push(setDatasetValues({ family: family.id, values: datasetValues, ctx }));
+  }
+
+  // Add phone numbers if plugin installed
+  // The plugin validate if user have access to save phones
+  const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
+    'deployment-manager.pluginIsInstalled',
+    { pluginName: 'families-emergency-numbers' }
+  );
+  if (emergencyPhoneNumbers && isFamilyEmergencyNumbersInstalled) {
+    promises.push(
+      ctx.tx.call('families-emergency-numbers.emergencyPhones.saveFamilyPhones', {
+        family: family.id,
+        phones: emergencyPhoneNumbers,
+        fromBulk,
+      })
+    );
+  }
+
+  await Promise.all(promises);
+  await recalculeNumberOfMembers({ family: family.id, ctx });
+  return family;
 }
 
 module.exports = { add };

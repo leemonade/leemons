@@ -43,8 +43,8 @@ do
     npm publish --tag "$NPM_TAG"
 
     # Obtiene el nombre y la versión del paquete
-    pkg_name=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-    pkg_version=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+    pkg_name=$(cat package.json | grep '"name":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+    pkg_version=$(cat package.json | grep '"version":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
 
     # Vuelve al directorio original
     cd -

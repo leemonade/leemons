@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable import/prefer-default-export */
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Box,
   ImageLoader,
@@ -9,35 +9,13 @@ import {
   SubNav,
   Text,
 } from '@bubbles-ui/components';
-import { CalendarSubNavFiltersStyles } from './CalendarSubNavFilters.styles';
+import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { forEach } from 'lodash';
-
-export const CALENDAR_SUB_NAV_FILTERS_DEFAULT_PROPS = {
-  messages: {
-    title: 'Calendar',
-    centers: 'Centers',
-    closeTooltip: 'Close',
-  },
-  pages: [
-    { label: 'Calendar', value: 'calendar' },
-    { label: 'Schedule', value: 'schedule' },
-  ],
-  centers: [],
-  onChange: () => {},
-  centerOnChange: () => {},
-  pageOnChange: () => {},
-  onClose: () => {},
-  showPageControl: false,
-  mainColor: '#212B3D',
-  drawerColor: '#333F56',
-  lightMode: false,
-};
-export const CALENDAR_SUB_NAV_FILTERS_PROP_TYPES = {
-  showPageControl: PropTypes.bool,
-  mainColor: PropTypes.string,
-  drawerColor: PropTypes.string,
-  lightMode: PropTypes.bool,
-};
+import {
+  CALENDAR_SUB_NAV_FILTERS_DEFAULT_PROPS,
+  CALENDAR_SUB_NAV_FILTERS_PROP_TYPES,
+} from './CalendarSubNavFilters.constants';
+import { CalendarSubNavFiltersStyles } from './CalendarSubNavFilters.styles';
 
 const CalendarSubNavFilters = ({
   messages,
@@ -54,9 +32,8 @@ const CalendarSubNavFilters = ({
   mainColor,
   drawerColor,
   lightMode,
-  style,
 }) => {
-  const { classes, cx } = CalendarSubNavFiltersStyles(
+  const { classes } = CalendarSubNavFiltersStyles(
     { mainColor, lightMode },
     { name: 'SubnavFilters' }
   );
@@ -65,8 +42,9 @@ const CalendarSubNavFilters = ({
   const ref = useRef({});
 
   function _onChange(sectionIndex, calendarIndex, checked) {
-    value[sectionIndex].calendars[calendarIndex].showEvents = checked;
-    onChange(value);
+    const newValue = [...value];
+    newValue[sectionIndex].calendars[calendarIndex].showEvents = checked;
+    onChange(newValue);
   }
 
   async function checkIcons() {
@@ -82,7 +60,7 @@ const CalendarSubNavFilters = ({
                 ref.current[calendar.icon] = true;
                 setR(new Date().getTime() + Math.floor(Math.random() * 10000) + 1);
               })
-              .catch((err) => {
+              .catch(() => {
                 ref.current[calendar.icon] = false;
                 setR(new Date().getTime() + Math.floor(Math.random() * 10000) + 1);
               });
@@ -92,7 +70,7 @@ const CalendarSubNavFilters = ({
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     checkIcons();
   }, [JSON.stringify(value)]);
 
@@ -100,8 +78,8 @@ const CalendarSubNavFilters = ({
     <>
       <SubNav
         hideHeaderActions={true}
-        item={{ label: messages.title }}
-        style={{ position: 'static' }}
+        item={{ label: '' }}
+        style={{ position: 'static', boxShadow: 'none' }}
         className={classes.subNav}
         subItems={[]}
         width={'100%'}
@@ -111,6 +89,10 @@ const CalendarSubNavFilters = ({
         drawerColor={drawerColor}
         lightMode={lightMode}
       >
+        <Box className={classes.titleContainer}>
+          <PluginCalendarIcon className={classes.calendarIcon} />
+          <Text className={classes.title}>{messages.title}</Text>
+        </Box>
         <Box
           sx={(theme) => ({
             margin: theme.spacing[5],
@@ -122,9 +104,9 @@ const CalendarSubNavFilters = ({
               data={pages}
               value={pageValue}
               onChange={pageOnChange}
-              orientation={pages.length > 2 ? 'vertical' : 'horizontal'}
+              orientation={'vertical'}
               classNames={{
-                root: pages.length > 2 ? classes.segmentRoot2 : classes.segmentRoot,
+                root: classes.segmentRoot,
                 label: classes.segmentLabel,
                 active: classes.segmentActive,
                 labelActive: classes.segmentLabelActive,

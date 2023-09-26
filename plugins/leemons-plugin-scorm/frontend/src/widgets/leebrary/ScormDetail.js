@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 // TODO: import from @library plugin maybe?
-import { LibraryDetail } from '@library/components/LibraryDetail';
+import { LibraryDetail } from '@leebrary/components/LibraryDetail';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
@@ -104,9 +104,9 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-              icon: <ViewOnIcon height={16} width={16} />,
-              onClick: handleView,
-            }
+            icon: <ViewOnIcon height={16} width={16} />,
+            onClick: handleView,
+          }
           : null
       }
       onView={handleView}

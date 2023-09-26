@@ -1,4 +1,4 @@
-const permissionsPrefix = 'plugins.leebrary';
+const permissionsPrefix = 'leebrary';
 
 const permissionNames = {
   library: `${permissionsPrefix}.library`,
@@ -205,7 +205,7 @@ const widgets = {
   zones: [{ key: `${permissionsPrefix}.admin.config-providers` }],
   items: [
     {
-      zoneKey: `plugins.admin.admin-page`,
+      zoneKey: `admin.admin-page`,
       key: `${permissionsPrefix}.admin.config`,
       url: 'admin-config/index',
       properties: {
