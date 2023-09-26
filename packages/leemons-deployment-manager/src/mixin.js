@@ -111,6 +111,7 @@ module.exports = function ({
           if (!ctx.params?.event) throw new LeemonsError(ctx, { message: 'event param required' });
           if (this.events && this.events[ctx.params.event]) {
             // Llamamos al evento el cual a sido machado por el nuestro en el created()
+            console.log('Nos llaman al evento:' + ctx.params.event);
             return this.events[ctx.params.event](ctx.params.params, { parentCtx: ctx });
           }
           return null;
