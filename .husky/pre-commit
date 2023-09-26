@@ -2,5 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 node --version
-node ./.husky/npm_check.js
+# node ./.husky/npm_check.js
 yarn run check

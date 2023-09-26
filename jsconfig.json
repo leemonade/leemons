@@ -127,6 +127,7 @@
   ],
   "include": [
     "./packages/**/*",
-    "./plugins/**/*"
+    "./plugins/**/*",
+    "plugins/leemons-plugin-menu-builder/frontend/.babelrc.js"
   ]
 }

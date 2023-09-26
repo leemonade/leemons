@@ -1,4 +1,4 @@
-import { MainNav, Spotlight } from '@bubbles-ui/components';
+import { Spotlight } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getMenu } from '@menu-builder/helpers';
 import prefixPN from '@menu-builder/helpers/prefixPN';
@@ -9,6 +9,7 @@ import { useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
@@ -33,6 +34,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     const { centers } = await getUserCentersRequest();
     if (centers.length === 1 && centers[0].profiles.length === 1) {
       store.onlyOneProfile = true;
+      store.centerName = centers[0].name;
       render();
     }
   }
@@ -93,6 +95,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
     };
   }, [loadMenu]);
 
+  const navTitle = session?.isSuperAdmin ? 'Leemons' : store.centerName;
+
   if (!session) return null;
 
   return (
@@ -103,7 +107,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
       nothingFoundMessage={ts('nothingFoundMessage')}
       limit={10}
     >
-      <MainNav
+      <MainNavBar
         {...props}
         menuData={menuData}
         isLoading={store.isLoading}
@@ -111,7 +115,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
         hideSubNavOnClose={false}
         useRouter
         useSpotlight
-        spotlightTooltip={ts('tooltip')}
+        spotlightLabel={ts('tooltip')}
+        navTitle={navTitle}
         session={{
           ...session,
           ...(session.isSuperAdmin
@@ -126,28 +131,28 @@ export default function MainMenu({ subNavWidth, ...props }) {
             ...(session.isSuperAdmin
               ? []
               : [
-                  {
-                    id: 'menu-1',
-                    label: t('accountInfo'),
-                    order: 0,
-                    url: '/private/users/detail',
-                    window: 'SELF',
-                    disabled: null,
-                  },
-                ].concat(
-                  store.onlyOneProfile
-                    ? []
-                    : [
-                        {
-                          id: 'menu-2',
-                          label: t('switchProfile'),
-                          order: 1,
-                          url: '/private/users/select-profile',
-                          window: 'SELF',
-                          disabled: null,
-                        },
-                      ]
-                )),
+                {
+                  id: 'menu-1',
+                  label: t('accountInfo'),
+                  order: 0,
+                  url: '/private/users/detail',
+                  window: 'SELF',
+                  disabled: null,
+                },
+              ].concat(
+                store.onlyOneProfile
+                  ? []
+                  : [
+                    {
+                      id: 'menu-2',
+                      label: t('switchProfile'),
+                      order: 1,
+                      url: '/private/users/select-profile',
+                      window: 'BLANK',
+                      disabled: null,
+                    },
+                  ]
+              )),
             {
               id: 'menu-3',
               label: t('changeLanguage'),
@@ -169,7 +174,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
               label: t('logout'),
               order: 4,
               url: '/private/users/logout',
-              window: 'SELF',
+              window: 'BLANK',
               disabled: null,
             },
           ],
