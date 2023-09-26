@@ -16,7 +16,9 @@ async function remove(assetId, assigneeAgent, { userSession, transacting } = {})
 
     // EN: Check if assigner can remove role from assignee
     // ES: Comprobar si el asignador puede eliminar el rol del asignado
-    if (!canUnassignRole(assignerRole, assigneeRole, null)) {
+    if (
+      !canUnassignRole({ userRole: assignerRole, assignedUserCurrentRole: assigneeRole, ctx: null })
+    ) {
       throw new global.utils.HttpError(401, "You don't have permission to remove this role");
     }
 
