@@ -1,23 +1,11 @@
 const { omit } = require('lodash');
 
-module.exports = async function updateModule(
-  id,
-  module,
-  { published, userSession, transacting } = {}
-) {
-  const assignablesServices = leemons.getPlugin('assignables').services.assignables;
-
-  const updatedModule = await assignablesServices.updateAssignable(
-    {
+module.exports = async function updateModule({ id, module, published, ctx }) {
+  return ctx.tx.call('assignables.assignables.updateAssignable', {
+    assignable: {
       ...omit(module, ['published', 'role']),
       id,
     },
-    {
-      published,
-      userSession,
-      transacting,
-    }
-  );
-
-  return updatedModule;
+    published,
+  });
 };

@@ -18,7 +18,7 @@ function create({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (toAdd, ...args) {
+  return async function (toAdd, options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,
@@ -27,9 +27,17 @@ function create({
     await increaseTransactionPendingIfNeed({ ignoreTransaction, ctx });
     try {
       let toCreate = toAdd;
-      if (autoDeploymentID) toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
-      if (autoLRN) toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx });
-      const items = await model.create(toCreate, ...args);
+      if (autoDeploymentID && !options?.disableAutoDeploy)
+        toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx });
+      if (autoLRN && !options?.disableAutoLRN)
+        toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx });
+
+      const { disableAutoDeploy, disableAutoLRN, ..._options } = options || {};
+
+      const items = await model.create(
+        toCreate,
+        Object.keys(_options).length ? _options : undefined
+      );
 
       if (!ignoreTransaction && ctx.meta.transactionID) {
         await addTransactionState(ctx, {

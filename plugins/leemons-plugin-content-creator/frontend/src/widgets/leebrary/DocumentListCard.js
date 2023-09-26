@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from 'assignables/components';
+import { LibraryCard } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import {

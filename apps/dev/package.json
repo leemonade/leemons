@@ -7,7 +7,7 @@
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
     "front:dev": "PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
-    "front:build": "leemonsFront build"
+    "front:build:dev": "API_URL=https://api.leemons.dev NODE_OPTIONS=\"--max-old-space-size=8192\" leemonsFront build"
   },
   "leemons": {},
   "dependencies": {
@@ -70,8 +70,6 @@
     "leemons-plugin-mqtt-socket-io-frontend-react": "1.0.0",
     "leemons-plugin-multilanguage": "1.0.0",
     "leemons-plugin-multilanguage-frontend-react": "1.0.0",
-    "leemons-plugin-onboarding": "1.0.0",
-    "leemons-plugin-onboarding-frontend-react": "1.0.0",
     "leemons-plugin-package-manager-frontend-react": "1.0.0",
     "leemons-plugin-scores": "1.0.0",
     "leemons-plugin-scores-frontend-react": "1.0.0",
@@ -90,7 +88,7 @@
     "leemons-plugin-widgets-frontend-react": "1.0.0",
     "leemons-plugin-xapi": "1.0.0",
     "leemons-plugin-xapi-frontend-react": "1.0.0",
-    "@leemons/runner": "0.0.15",
+    "@leemons/runner": "0.0.27",
     "moment": "^2.29.4",
     "nats": "^2.16.0",
     "squirrelly": "^9.0.0"

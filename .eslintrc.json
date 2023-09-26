@@ -1,45 +1,28 @@
 {
   "env": {
     "browser": true,
-    "commonjs": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "globals": {
     "leemons": true
   },
   "extends": [
     "plugin:react/recommended",
-    "plugin:sonarjs/recommended",
     "airbnb-base",
     "prettier"
   ],
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
-  "parser": "@babel/eslint-parser",
+  "parser": "babel-eslint",
   "parserOptions": {
-    "requireConfigFile": false,
-    "babelOptions": {
-      "babelrc": false,
-      "configFile": false,
-      "presets": [
-        "@babel/preset-env"
-      ],
-      "plugins": [
-        "@babel/plugin-syntax-jsx"
-      ]
-    },
-    "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
   "plugins": [
     "react",
-    "sonarjs",
     "import",
     "prettier"
   ],
@@ -56,6 +39,7 @@
         "usePrettierrc": true
       }
     ],
+    "import/no-names-as-default": "off",
     "import/no-unresolved": [
       2,
       {
@@ -88,7 +72,6 @@
           "@mqtt-aws-iot",
           "@mqtt-socket-io",
           "@multilanguage",
-          "@onboarding",
           "@package-manager",
           "@scores",
           "@scorm",
@@ -101,7 +84,6 @@
           "@bubbles-ui"
         ]
       }
-    ],
-    "import/no-names-as-default": "off"
+    ]
   }
 }

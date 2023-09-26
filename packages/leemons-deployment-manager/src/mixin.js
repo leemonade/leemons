@@ -4,14 +4,38 @@ const { getPluginNameFromServiceName } = require('@leemons/service-name-parser')
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
-function modifyCTX(ctx) {
+async function getDeploymentID(ctx) {
+  try {
+    ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
+  } catch (e) {
+    // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
+    ctx.meta.deploymentID = await ctx.__leemonsDeploymentManagerCall(
+      'deployment-manager.getDeploymentIDByDomain'
+    );
+    if (!ctx.meta.deploymentID) {
+      throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
+    }
+  }
+}
+
+async function modifyCTX(
+  ctx,
+  {
+    getDeploymentIdInCall = false,
+    dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+  } = {}
+) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
   if (ctx.service.name !== 'gateway' || ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
-  ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
+
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
+
+  if (!getDeploymentIdInCall) {
+    await getDeploymentID(ctx);
+  }
 
   ctx.logger = console;
 
@@ -19,7 +43,10 @@ function modifyCTX(ctx) {
     return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
   };
 
-  ctx.emit = function (event, params, opts) {
+  ctx.emit = async function (event, params, opts) {
+    if (getDeploymentIdInCall) {
+      await getDeploymentID(ctx);
+    }
     return ctx.__leemonsDeploymentManagerCall(
       'deployment-manager.emit',
       {
@@ -35,6 +62,11 @@ function modifyCTX(ctx) {
     if (_.isObject(actionName)) {
       actionName = actionName.action.name;
     }
+
+    if (getDeploymentIdInCall && !dontGetDeploymentIDOnActionCall.includes(actionName)) {
+      await getDeploymentID(ctx);
+    }
+
     if (actionName.startsWith('deployment-manager.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
@@ -66,7 +98,11 @@ function modifyCTX(ctx) {
   };
 }
 
-module.exports = function ({ checkIfCanCallMe = true } = {}) {
+module.exports = function ({
+  checkIfCanCallMe = true,
+  getDeploymentIdInCall = false,
+  dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+} = {}) {
   return {
     name: '',
     actions: {
@@ -75,6 +111,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
           if (!ctx.params?.event) throw new LeemonsError(ctx, { message: 'event param required' });
           if (this.events && this.events[ctx.params.event]) {
             // Llamamos al evento el cual a sido machado por el nuestro en el created()
+            console.log('Nos llaman al evento:' + ctx.params.event);
             return this.events[ctx.params.event](ctx.params.params, { parentCtx: ctx });
           }
           return null;
@@ -85,7 +122,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
       before: {
         '*': [
           async function (ctx) {
-            modifyCTX(ctx);
+            await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
@@ -132,7 +169,7 @@ module.exports = function ({ checkIfCanCallMe = true } = {}) {
 
           // -- Finish moleculer core code --
 
-          modifyCTX(ctx);
+          await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
           try {
             if (_.isFunction(afterModifyCTX)) {

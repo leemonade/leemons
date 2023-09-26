@@ -24,7 +24,7 @@ const permissions = [
 const menuItems = [
   {
     item: {
-      key: 'learningPaths',
+      key: 'learning-paths',
       order: 301,
       iconSvg: '/public/learning-paths/menu-icon.svg',
       activeIconSvg: '/public/learning-paths/menu-icon.svg',
@@ -43,7 +43,7 @@ const menuItems = [
   // Modules
   {
     item: {
-      key: 'learningPaths.modules.new',
+      key: 'learning-paths.modules.new',
       order: 1,
       parentKey: `${pluginName}.learning-paths`,
       url: '/private/learning-paths/modules/new',
@@ -61,7 +61,7 @@ const menuItems = [
   },
   {
     item: {
-      key: 'learningPaths.modules.library',
+      key: 'learning-paths.modules.library',
       order: 2,
       parentKey: `${pluginName}.learning-paths`,
       url: '/private/learning-paths/modules/library',

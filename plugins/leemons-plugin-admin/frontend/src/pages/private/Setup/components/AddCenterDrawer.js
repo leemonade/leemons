@@ -18,7 +18,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addCenterRequest, listProfilesRequest, listRolesRequest } from '@users/request';
-import countryList from 'country-region-data';
+import { allCountries } from 'country-region-data';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -96,7 +96,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       { label: t('saturday'), value: 6 },
       { label: t('sunday'), value: 0 },
     ];
-    store.countries = map(countryList, (item) => ({
+    store.countries = map(allCountries, (item) => ({
       value: item.countryShortCode,
       label: item.countryName,
     }));

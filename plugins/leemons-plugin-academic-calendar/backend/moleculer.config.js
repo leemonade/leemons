@@ -29,7 +29,7 @@ module.exports = {
   // Namespace of nodes to segment your nodes on the same network.
   namespace: '',
   // Unique node identifier. Must be unique in a namespace.
-  nodeID: 'leemons-academic-calendar',
+  nodeID: null,
   // Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
   metadata: {},
 
@@ -70,7 +70,7 @@ module.exports = {
   serializer: 'JSON',
 
   // Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
-  requestTimeout: 10 * 1000,
+  requestTimeout: 2 * 60 * 1000,
 
   // Retry policy settings. More info: https://moleculer.services/docs/0.14/fault-tolerance.html#Retry
   retryPolicy: {

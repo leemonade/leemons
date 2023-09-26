@@ -14,7 +14,7 @@ import { useStore } from '@common';
 import prefixPN from '@curriculum/helpers/prefixPN';
 import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
-import countryList from 'country-region-data';
+import { allCountries } from 'country-region-data';
 import { addCurriculumRequest, listCurriculumRequest } from '../../../request';
 
 const useStyle = createStyles((theme) => ({
@@ -55,7 +55,7 @@ function AddCurriculumStep0({ onNext }) {
       ]);
 
       store.selectData = {
-        country: map(countryList, (item) => ({
+        country: map(allCountries, (item) => ({
           value: item.countryShortCode,
           label: item.countryName,
         })),

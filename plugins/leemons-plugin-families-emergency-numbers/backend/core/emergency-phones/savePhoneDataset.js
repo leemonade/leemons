@@ -1,16 +1,18 @@
-const _ = require('lodash');
-
-async function savePhoneDataset(phone, values, userSession, { transacting } = {}) {
+async function savePhoneDataset({ phone, values, ctx }) {
   const locationName = 'families-emergency-numbers-data';
   const pluginName = 'families-emergency-numbers';
-  const dataset = leemons.getPlugin('dataset').services.dataset;
   let functionName = 'addValues';
-  if (await dataset.existValues(locationName, pluginName, { target: phone, transacting })) {
+  if (
+    await ctx.tx.call('dataset.dataset.existValues', { locationName, pluginName, target: phone })
+  ) {
     functionName = 'updateValues';
   }
-  return dataset[functionName](locationName, pluginName, values, userSession.userAgents, {
+  return ctx.tx.call(`dataset.dataset.${functionName}`, {
+    locationName,
+    pluginName,
+    formData: values,
+    userAgent: ctx.meta.userSession.userAgents,
     target: phone,
-    transacting,
   });
 }
 

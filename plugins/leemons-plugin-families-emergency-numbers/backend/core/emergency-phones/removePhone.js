@@ -1,11 +1,10 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { removePhoneDataset } = require('./removePhoneDataset');
 
-async function removePhone({ id }, { transacting } = {}) {
-  return await Promise.all([
-    table.emergencyPhones.delete({ id }, { transacting }),
-    removePhoneDataset(id, { transacting }),
+async function removePhone({ id, ctx }) {
+  return Promise.all([
+    ctx.tx.db.EmergencyPhones.deleteOne({ id }),
+    removePhoneDataset({ phone: id, ctx }),
   ]);
 }
 

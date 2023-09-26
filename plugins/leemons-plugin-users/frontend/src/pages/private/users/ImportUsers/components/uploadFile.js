@@ -5,7 +5,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getDataForUserAgentDatasetsRequest } from '../../../../../request';
+import { getDataForUserAgentDatasetsRequest } from '@users/request';
 import {
   downloadTemplate,
   getTemplateIndexs,

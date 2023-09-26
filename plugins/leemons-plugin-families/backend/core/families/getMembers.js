@@ -9,7 +9,7 @@ const _ = require('lodash');
  * @return {Promise<any>}
  * */
 async function getMembers({ familyId, ctx }) {
-  const members = await ctx.tx.db.FamilyMembers.find({ family: familyId });
+  const members = await ctx.tx.db.FamilyMembers.find({ family: familyId }).lean();
   const users = await ctx.tx.call('users.users.detail', { userId: _.map(members, 'user') });
   const usersById = _.keyBy(users, 'id');
   const guardians = [];

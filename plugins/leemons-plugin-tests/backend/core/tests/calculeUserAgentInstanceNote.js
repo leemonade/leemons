@@ -5,12 +5,8 @@ const duration = require('dayjs/plugin/duration');
 const { keyBy, forEach } = require('lodash');
 const { getUserQuestionResponses } = require('./getUserQuestionResponses');
 const { getByIds } = require('../questions/getByIds');
-const {
-  getQuestionClues,
-} = require('../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues');
-const {
-  getConfigByInstance,
-} = require('../../../frontend/src/pages/private/tests/StudentInstance/helpers/getConfigByInstance');
+const { getQuestionClues } = require('./helpers/getQuestionClues');
+const { getConfigByInstance } = require('./helpers/getConfigByInstance');
 
 dayjs.extend(duration);
 
