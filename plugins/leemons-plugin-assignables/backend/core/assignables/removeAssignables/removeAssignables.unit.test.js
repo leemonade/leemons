@@ -9,7 +9,7 @@ const { pick } = require('lodash');
 const { removeAssignables } = require('./removeAssignables');
 const { assignablesSchema } = require('../../../models/assignables');
 
-const { updateAsset, getAsset } = require('../../leebrary/assets');
+const { getAsset } = require('../../leebrary/assets');
 const { getAssignables } = require('../getAssignables');
 const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
 
@@ -87,7 +87,7 @@ it('Removes all the requested assignables', async () => {
     }))
   );
 
-  getAsset.mockImplementation(({ id: ids }) => ids.map((id) => ({ id, indexable: true })));
+  getAsset.mockImplementation(({ id: el }) => el.map((id) => ({ id, indexable: true })));
 
   // Act
   const response = await removeAssignables({ ids, ctx });

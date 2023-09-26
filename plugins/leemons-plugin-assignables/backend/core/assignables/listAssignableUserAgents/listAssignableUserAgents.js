@@ -1,6 +1,15 @@
 const { getAssignable } = require('../getAssignable');
 const { getPermissionName } = require('../../permissions/helpers/getPermissionName');
 const { getUserPermission } = require('../../permissions/users/getUserPermission');
+/**
+ * List assignable user agents
+ * @async
+ * @function listAssignableUserAgents
+ * @param {Object} params - The main parameter object.
+ * @param {string} params.assignableId - The id of the assignable.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<Array<Object>>} The list of user agents.
+ */
 
 async function listAssignableUserAgents({ assignableId, ctx }) {
   await getAssignable({ id: assignableId, ctx });
