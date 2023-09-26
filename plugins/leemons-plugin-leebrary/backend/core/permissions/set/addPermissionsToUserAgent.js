@@ -35,7 +35,14 @@ async function addPermissionsToUserAgent({
 
   // EN: Check if assigner can assign role to assignee
   // ES: Comprobar si el asignador puede asignar el rol al asignado
-  if (!canAssignRole(assignerRole, assigneeRole, role)) {
+  if (
+    !canAssignRole({
+      userRole: assignerRole,
+      assignedUserCurrentRole: assigneeRole,
+      newRole: role,
+      ctx,
+    })
+  ) {
     throw new LeemonsError(ctx, {
       message: "You don't have permission to assign this role",
       httpStatusCode: 401,

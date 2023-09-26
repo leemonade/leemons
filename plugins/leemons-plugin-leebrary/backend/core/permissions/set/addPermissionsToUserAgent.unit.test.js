@@ -182,7 +182,12 @@ it('Should throw if the user cannot asign roles', async () => {
     await addPermissionsToUserAgent({ ...params, ctx });
   } catch (error) {
     // Assert
-    expect(canAssignRole).toBeCalledWith(params.assignerRole, undefined, params.role);
+    expect(canAssignRole).toBeCalledWith({
+      userRole: params.assignerRole,
+      assignedUserCurrentRole: undefined,
+      newRole: params.role,
+      ctx,
+    });
     expect(error).toBeInstanceOf(LeemonsError);
     expect(error.httpStatusCode).toBe(401);
   }

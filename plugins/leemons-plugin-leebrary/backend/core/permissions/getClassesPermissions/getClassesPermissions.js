@@ -6,10 +6,8 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   const permissions = await ctx.tx.call('users.permissions.findItems', {
     params: {
       item: ids,
-      // permissionName_$startsWith: 'academic-portfolio.class.',
-      permissionName: /^academic-portfolio.class/i,
-      // type_$startsWith: leemons.plugin.prefixPN('asset'),
-      type: `/^${ctx.prefixPN('asset')}/i`,
+      permissionName: { $regex: '^academic-portfolio.class.', $options: 'i' },
+      type: { $regex: `^${ctx.prefixPN('asset')}`, $options: 'i' },
     },
   });
 
@@ -45,11 +43,19 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   return ids.map(
     (id) =>
       permissionsByAsset[id]?.map((permission) => {
+        let role = 'viewer';
+        if (permission.type === ctx.prefixPN('asset.can-edit')) {
+          role = 'editor';
+        }
+
+        if (permission.type === ctx.prefixPN('asset.can-assign')) {
+          role = 'assigner';
+        }
         const classId = permission.permissionName.replace(`academic-portfolio.class.`, '');
         return {
           ...classesData[classId],
           class: classId,
-          role: permission.type === ctx.prefixPN('asset.can-edit') ? 'editor' : 'viewer',
+          role,
         };
       }) ?? []
   );

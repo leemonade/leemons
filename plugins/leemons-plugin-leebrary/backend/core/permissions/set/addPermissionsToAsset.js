@@ -47,7 +47,14 @@ async function addPermissionsToAsset({ id, categoryId, permissions, assignerRole
       } else if (currPerm?.type.includes('can-assign')) {
         oldRole = 'assigner';
       }
-      if (!canAssignRole(assignerRole, oldRole, role)) {
+      if (
+        !canAssignRole({
+          userRole: assignerRole,
+          assignedUserCurrentRole: oldRole,
+          newRole: role,
+          ctx,
+        })
+      ) {
         throw new LeemonsError(ctx, {
           message: `You don't have permission to assign the permission "${permission}" with role "${role}"`,
           httpStatusCode: 401,

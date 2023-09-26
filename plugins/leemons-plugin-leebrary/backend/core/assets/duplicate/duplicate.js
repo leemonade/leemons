@@ -12,9 +12,6 @@ const { handleCoverDuplication } = require('./handleCoverDuplication');
 const { handleBookmarkDuplication } = require('./handleBookmarkDuplication');
 const { handleFilesDuplication } = require('./handleFilesDuplication');
 
-// ------------------------------------------------------------------------------------
-// PUBLIC METHODS
-
 /**
  * Duplicates an asset by creating a new asset with the same properties and associated files, cover, and bookmark.
  * The function takes an asset ID and an options object as parameters, and returns a promise that resolves to the duplicated asset.

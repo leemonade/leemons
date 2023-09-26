@@ -1,4 +1,3 @@
-const { tables } = require('../tables');
 const { getByAsset } = require('./getByAsset');
 
 async function removeAllUsers(assetId, { userSession, transacting } = {}) {

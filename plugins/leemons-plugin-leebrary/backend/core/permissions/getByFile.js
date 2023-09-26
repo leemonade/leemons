@@ -1,7 +1,7 @@
+/*
 const { find, isEmpty, last } = require('lodash');
 const { tables } = require('../tables');
 const getRolePermissions = require('./helpers/getRolePermissions');
-/*
 async function getByFile(fileId, { userSession, transacting } = {}) {
   try {
     const { services: userService } = leemons.getPlugin('users');

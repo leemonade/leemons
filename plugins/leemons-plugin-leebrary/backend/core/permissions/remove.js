@@ -1,4 +1,3 @@
-const { tables } = require('../tables');
 const canUnassignRole = require('./helpers/canUnassignRole');
 const getAssignerAndAssigneeRoles = require('./helpers/getAssignerAndAssigneeRoles');
 // const isAssetOwner = require('./helpers/isAssetOwner');
