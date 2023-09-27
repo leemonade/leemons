@@ -11,12 +11,12 @@ const { getAssignableObject } = require('../../../__fixtures__/getAssignableObje
 jest.mock('./buildQuery');
 jest.mock('./filterByPublished');
 jest.mock('./filterByPreferCurrent');
-jest.mock('../../permissions/users/getUserPermissions');
+jest.mock('../../permissions/users/assignables/getUserPermissions');
 
 const { buildQuery } = require('./buildQuery');
 const { filterByPublished } = require('./filterByPublished');
 const { filterByPreferCurrent } = require('./filterByPreferCurrent');
-const { getUserPermissions } = require('../../permissions/users/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/users/assignables/getUserPermissions');
 
 describe('searchAssignables', () => {
   let mongooseConnection;

@@ -1,4 +1,4 @@
-const { listAssignableClasses } = require('../../classes/listAssignableClasses');
+const { listAssignableClasses } = require('../../../classes/listAssignableClasses');
 
 async function getTeacherPermission({ assignableId, ctx }) {
   const classes = await listAssignableClasses({ id: assignableId, ctx });

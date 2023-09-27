@@ -9,8 +9,8 @@
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} The user agents, role and actions.
  */
-const { assignableRolesObject } = require('../../../config/constants');
-const { getPermissionName } = require('../assignables/helpers/getPermissionName');
+const { assignableRolesObject } = require('../../../../config/constants');
+const { getPermissionName } = require('../../assignables/helpers/getPermissionName');
 
 async function addPermissionToUser({ id, userAgents, role, ctx }) {
   const { actions } = assignableRolesObject[role];

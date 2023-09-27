@@ -5,7 +5,7 @@ const { omit } = require('lodash');
 
 jest.mock('../../subjects/saveSubjects');
 jest.mock('../../permissions/assignables');
-jest.mock('../../permissions/users/addPermissionToUser');
+jest.mock('../../permissions/users/assignables/addPermissionToUser');
 jest.mock('../publishAssignable');
 
 const { createAssignable } = require('./createAssignable');
@@ -14,7 +14,7 @@ const { getAssignableObject } = require('../../../__fixtures__/getAssignableObje
 
 const { saveSubjects } = require('../../subjects');
 const { publishAssignable } = require('../publishAssignable');
-const { addPermissionToUser } = require('../../permissions/users/addPermissionToUser');
+const { addPermissionToUser } = require('../../permissions/users/assignables/addPermissionToUser');
 
 let mongooseConnection;
 let disconnectMongoose;

@@ -2,8 +2,8 @@ const { LeemonsError } = require('leemons-error');
 
 const { assignableRolesObject } = require('../../../config/constants');
 const { getAssignable } = require('../getAssignable');
-const { addPermissionToUser } = require('../../permissions/users/addPermissionToUser');
-const { getUserPermission } = require('../../permissions/users/getUserPermission');
+const { addPermissionToUser } = require('../../permissions/users/assignables/addPermissionToUser');
+const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
 
 /**
  * @async

@@ -3,12 +3,12 @@ const { generateCtx } = require('leemons-testing');
 
 const { addUserToAssignable } = require('./addUserToAssignable');
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/users/getUserPermission');
-const { addPermissionToUser } = require('../../permissions/users/addPermissionToUser');
+const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+const { addPermissionToUser } = require('../../permissions/users/assignables/addPermissionToUser');
 
 jest.mock('../getAssignable');
-jest.mock('../../permissions/users/getUserPermission');
-jest.mock('../../permissions/users/addPermissionToUser');
+jest.mock('../../permissions/users/assignables/getUserPermission');
+jest.mock('../../permissions/users/assignables/addPermissionToUser');
 
 it('Should add user to assignable', async () => {
   // Arrange

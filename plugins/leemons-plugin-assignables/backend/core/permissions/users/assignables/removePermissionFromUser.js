@@ -1,4 +1,4 @@
-const { getPermissionName } = require('../helpers/getPermissionName');
+const { getPermissionName } = require('../../helpers/getPermissionName');
 const { getUserPermission } = require('./getUserPermission');
 
 async function removePermissionFromUser({ assignable, userAgent, ctx }) {
