@@ -17,7 +17,7 @@
     "framer-motion": "^10.16.4",
     "dayjs": "^1.11.2",
     "lodash": "^4.17.21",
-    "leemons-hooks": "0.0.19",
+    "leemons-hooks": "0.0.20",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
