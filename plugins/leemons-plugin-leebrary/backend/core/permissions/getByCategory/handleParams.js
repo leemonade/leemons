@@ -11,7 +11,7 @@
  * @param {Object} params.providerQuery - The query object from the provider.
  * @returns {Array} - Returns an array containing the programs, subjects, and the providerQuery.
  */
-function handleParams({ programs, subjects, providerQuery }) {
+function handleParams({ programs, subjects, providerQuery = {} }) {
   if (!programs && providerQuery?.program) {
     programs = [providerQuery.program];
   }

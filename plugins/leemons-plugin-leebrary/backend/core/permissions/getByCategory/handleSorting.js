@@ -12,8 +12,8 @@ const { getByAssets } = require('../getByAssets/getByAssets');
  * @param {Object} params.userSession - An object representing the user's session.
  * @param {String} params.sortingBy - A string indicating the property to sort the assets by.
  * @param {String} params.sortDirection - A string indicating the direction of the sort ('asc' or 'desc').
- * @param {MoleculerContext} params.ctx - An object representing the context of the request.
- * @returns {Promise<Array>} - Returns an array of sorted assets.
+ * @param {MoleculerContext} params.ctx - The moleculer context.
+ * @returns {Promise<Array>} - Returns an array of sorted asset accessibles.
  */
 async function handleSorting({
   assetIds,

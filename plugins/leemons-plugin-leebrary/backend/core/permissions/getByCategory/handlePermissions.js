@@ -3,7 +3,6 @@
  * It makes three different calls to fetch permissions related to the user and the category.
  *
  * @param {Object} params - The parameters for the function.
- * @param {Object} params.userSession - The user session object.
  * @param {string} params.categoryId - The ID of the category for which permissions are to be fetched.
  * @param {MoleculerContext} params.ctx - The context object.
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of permissions.
@@ -13,7 +12,7 @@ async function handlePermissions({ userSession, categoryId, ctx }) {
     ctx.tx.call('users.permissions.getUserAgentPermissions', {
       userAgent: userSession.userAgents,
       query: {
-        permissionName_$startsWith: ctx.prefixPN(''),
+        permissionName: { $regex: `^${ctx.prefixPN('')}` },
         target: categoryId,
       },
     }),

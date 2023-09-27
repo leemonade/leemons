@@ -70,7 +70,7 @@ module.exports = function getPermissionsMocks() {
       canAccess: [],
       isPublic: false,
       permissions: {
-        viewer: [], // This will be the permissionName in item-permissions
+        viewer: [],
         editor: ['academic-portfolio.class.classOneId'],
         assigner: [],
       },

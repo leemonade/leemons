@@ -101,7 +101,7 @@ async function getByCategory({
     }
 
     if (subjects) {
-      assetIds = await getAssetsBySubject({ subject: subjects, assets: assetIds });
+      assetIds = await getAssetsBySubject({ subject: subjects, assets: assetIds, ctx });
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
@@ -138,7 +138,7 @@ async function getByCategory({
     );
 
     if (preferCurrent) {
-      results = await handlePreferCurrent({ preferCurrent, results, ctx });
+      results = await handlePreferCurrent({ results, ctx });
     }
 
     return uniqBy(results, 'asset');

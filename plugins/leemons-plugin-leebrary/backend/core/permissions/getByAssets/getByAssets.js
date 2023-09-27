@@ -13,7 +13,6 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
   let assetsIds = flattenDeep([assetIds]);
 
   try {
-    // const { services: userService } = leemons.getPlugin('users');
     let permissions = [];
     let viewItems = [];
     let editItems = [];

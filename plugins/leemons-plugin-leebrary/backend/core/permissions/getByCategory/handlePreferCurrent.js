@@ -12,13 +12,13 @@ const semver = require('semver');
  */
 async function handlePreferCurrent({ results, ctx }) {
   results = await Promise.all(
-    results.map(async (asset) => ({
+    results.map(async (item) => ({
       ...(await ctx.tx.call('common.versionControl.parseId', {
-        id: asset,
+        id: item.asset,
         verifyVersion: false,
         ignoreMissing: true,
       })),
-      ...asset,
+      ...item,
     }))
   );
 

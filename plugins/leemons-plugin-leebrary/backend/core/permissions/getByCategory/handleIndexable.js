@@ -10,7 +10,7 @@ const { map } = require('lodash');
  */
 async function handleIndexable({ results, ctx }) {
   const indexableAssetsIds = await ctx.tx.db.Assets.find({
-    id_$in: map(results, 'asset'),
+    id: map(results, 'asset'),
     indexable: true,
   })
     .select(['id'])
