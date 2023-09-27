@@ -8,7 +8,7 @@ const { LeemonsError } = require('leemons-error');
 const { updateAssignable } = require('./updateAssignable');
 const { assignablesSchema } = require('../../../models/assignables');
 
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 jest.mock('../getAssignable');
 const { getAssignable } = require('../getAssignable');

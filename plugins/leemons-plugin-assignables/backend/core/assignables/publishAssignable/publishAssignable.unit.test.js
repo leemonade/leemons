@@ -5,7 +5,7 @@ globalJest.mock('../../leebrary/assets/updateAsset');
 globalJest.mock('../../permissions/users/getUserPermission');
 globalJest.mock('../getAssignable');
 
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 const { publishAssignable } = require('./publishAssignable');
 
 const { getUserPermission } = require('../../permissions/users/getUserPermission');

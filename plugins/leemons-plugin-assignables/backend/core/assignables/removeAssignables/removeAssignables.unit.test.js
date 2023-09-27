@@ -11,7 +11,7 @@ const { assignablesSchema } = require('../../../models/assignables');
 
 const { getAsset } = require('../../leebrary/assets');
 const { getAssignables } = require('../getAssignables');
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 let mongooseConnection;
 let disconnectMongoose;

@@ -10,7 +10,7 @@ jest.mock('../publishAssignable');
 
 const { createAssignable } = require('./createAssignable');
 const { assignablesSchema } = require('../../../models/assignables');
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 const { saveSubjects } = require('../../subjects');
 const { publishAssignable } = require('../publishAssignable');

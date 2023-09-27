@@ -6,7 +6,7 @@ const { newModel } = require('leemons-mongodb');
 
 const { assignablesSchema } = require('../../../models/assignables');
 const { searchAssignables } = require('./searchAssignables');
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 jest.mock('./buildQuery');
 jest.mock('./filterByPublished');

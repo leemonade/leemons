@@ -5,7 +5,7 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 
 const { getAssignablesAssets } = require('./getAssignablesAssets');
 const { assignablesSchema } = require('../../../models/assignables');
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 describe('getAssignablesAssets', () => {
   let mongooseConnection;

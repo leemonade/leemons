@@ -18,7 +18,7 @@ globalJest.mock('../../leebrary/assets');
 
 const { getAssignables } = require('./getAssignables');
 const { assignablesSchema } = require('../../../models/assignables');
-const getAssignableObject = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 const { getRoles } = require('../../roles');
 const { getSubjects } = require('../../subjects');
