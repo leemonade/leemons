@@ -16,7 +16,11 @@ async function handleCloneFile({ fromFile, providerName, ctx }) {
   if (provider?.supportedMethods?.clone) {
     // EN: Firstly save the file to the database and get the id
     // ES: Primero guardamos el archivo en la base de datos y obtenemos el id
-    newFile = await ctx.tx.db.Files.create({ ...fromFile, id: undefined, _id: undefined });
+    const toCreate = { ...fromFile, id: undefined, _id: undefined };
+    delete toCreate.id;
+    delete toCreate._id;
+
+    newFile = await ctx.tx.db.Files.create(toCreate);
     urlData.provider = providerName;
     urlData.uri = await ctx.tx.call(`${providerName}.files.clone`, { fromFile, newFile });
     newFile = await ctx.tx.db.Files.updateOne({ id: newFile.id }, urlData);
