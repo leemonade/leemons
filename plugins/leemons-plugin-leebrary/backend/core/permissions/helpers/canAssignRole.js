@@ -1,6 +1,16 @@
 const getRolePermissions = require('./getRolePermissions');
 
-module.exports = function canAssignRole({ userRole, assignedUserCurrentRole, newRole, ctx }) {
+/**
+ * Determines if a user can assign a new role to another user.
+ *
+ * @param {Object} params - The parameters for the function.
+ * @param {string} params.userRole - The role of the user trying to assign the new role.
+ * @param {string} params.assignedUserCurrentRole - The current role of the user to whom the new role is being assigned.
+ * @param {string} params.newRole - The new role to be assigned.
+ * @param {MoleculerContext} params.ctx - The context object.
+ * @returns {boolean} - Returns true if the user can assign the new role, false otherwise.
+ */
+function canAssignRole({ userRole, assignedUserCurrentRole, newRole, ctx }) {
   const userPermissions = getRolePermissions({ role: userRole, ctx });
 
   // EN: Check is the user has the permission to assign the new role
@@ -16,4 +26,6 @@ module.exports = function canAssignRole({ userRole, assignedUserCurrentRole, new
     assignedUserCurrentRole !== newRole &&
     !userPermissions.canUnassign.includes(assignedUserCurrentRole)
   );
-};
+}
+
+module.exports = canAssignRole;
