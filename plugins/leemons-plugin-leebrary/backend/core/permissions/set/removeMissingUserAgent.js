@@ -30,7 +30,7 @@ async function removeMissingUserAgent({ id, userAgent, assignerRole, permissionN
   // EN: Check if assigner can assign role to assignee
   // ES: Comprobar si el asignador puede asignar el rol al asignado
   if (assigneeRole !== 'owner') {
-    if (!canUnassignRole(assignerRole, assigneeRole)) {
+    if (!canUnassignRole({ userRole: assignerRole, assignedUserCurrentRole: assigneeRole, ctx })) {
       throw new LeemonsError(ctx, {
         message: "You don't have permission to unassign this role",
         httpStatusCode: 401,
