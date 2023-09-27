@@ -14,8 +14,6 @@ const {
   finishMultipart,
   newMultipart,
   getReadStream,
-  removeConfig,
-  setConfig,
   upload,
   remove,
   clone,
@@ -72,18 +70,6 @@ module.exports = {
         payload.key = payload.key ?? payload.Key;
 
         return getReadStream(payload);
-      },
-    },
-    removeConfig: {
-      handler(ctx) {
-        const payload = { ...ctx.params, ctx };
-        return removeConfig(payload);
-      },
-    },
-    setConfig: {
-      handler(ctx) {
-        const payload = { ...ctx.params, ctx };
-        return setConfig(payload);
       },
     },
     upload: {

@@ -10,6 +10,7 @@ const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/config.rest');
 const { pluginName } = require('../config/constants');
+const { removeConfig, setConfig } = require('../core/provider');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -25,6 +26,19 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    removeConfig: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return removeConfig(payload);
+      },
+    },
+    setConfig: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        payload.config = payload.config ?? payload.newConfig;
+        return setConfig(payload);
+      },
+    },
   },
   async created() {
     mongoose.connect(process.env.MONGO_URI);

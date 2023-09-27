@@ -1,9 +1,5 @@
 const { LeemonsValidator } = require('@leemons/validator');
-const {
-  stringSchema,
-  booleanSchema,
-  stringSchemaNullable,
-} = require('./types');
+const { stringSchema, booleanSchema, stringSchemaNullable } = require('./types');
 
 const addAssetSchema = {
   type: 'object',
