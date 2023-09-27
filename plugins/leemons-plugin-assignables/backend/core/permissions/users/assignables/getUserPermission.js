@@ -1,5 +1,5 @@
 const { getPermissionName } = require('../../assignables/helpers/getPermissionName');
-const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
+const { getRoleMatchingActions } = require('../../assignables/helpers/getRoleMatchingActions');
 const { getTeacherPermission } = require('./getTeacherPermission');
 
 async function getUserPermission({ assignableId, ctx }) {

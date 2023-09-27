@@ -6,7 +6,7 @@
  * @returns {string|null} The name of the role that matches the actions, or null if no match is found.
  */
 const { isEqual } = require('lodash');
-const { assignableRolesObject } = require('../../../config/constants');
+const { assignableRolesObject } = require('../../../../config/constants');
 
 function getRoleMatchingActions({ actions }) {
   const assignableRolesEntries = Object.entries(assignableRolesObject);

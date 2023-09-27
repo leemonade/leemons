@@ -1,5 +1,5 @@
 const { uniq, map, groupBy, uniqBy, pick, difference } = require('lodash');
-const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
+const { getRoleMatchingActions } = require('../../assignables/helpers/getRoleMatchingActions');
 const { getPermissionName } = require('../../assignables/helpers/getPermissionName');
 const { getTeacherPermissions } = require('./getTeacherPermissions');
 
