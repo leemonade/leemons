@@ -1,11 +1,11 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/service-name-parser": "0.0.28",
+    "@leemons/service-name-parser": "0.0.29",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/error",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "",
   "main": "src/index.js",
   "keywords": [],

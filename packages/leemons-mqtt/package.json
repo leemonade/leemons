@@ -1,11 +1,11 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/error": "0.0.28",
+    "@leemons/error": "0.0.29",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/mqtt",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
