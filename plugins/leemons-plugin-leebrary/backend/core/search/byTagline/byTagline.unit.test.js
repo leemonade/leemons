@@ -68,6 +68,17 @@ describe('byTagline', () => {
     expect(result).toEqual(['assetId1']);
   });
 
+  it('should return assets with the given tagline (no sensitive search)', async () => {
+    // Arrange
+    const tagline = 'first';
+
+    // Act
+    const result = await byTagline({ tagline, ctx });
+
+    // Assert
+    expect(result).toEqual(['assetId1']);
+  });
+
   it('should return detailed assets with the given tagline and details true params', async () => {
     // Arrange
     const tagline = 'First';

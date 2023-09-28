@@ -73,6 +73,21 @@ describe('byDescription', () => {
       expect(getAssetsByIds).toBeCalledWith({ ids: [assets[0].id], ctx });
       expect(result).toEqual([assets[0]]);
     });
+    it('should return assets by description with no case sensitive search', async () => {
+      // Arrange
+      const description = 'first';
+      getAssetsByIds.mockResolvedValue([assets[0]]);
+      // Act
+      const result = await byDescription({
+        description,
+        ctx,
+        details: true,
+        assets: assets.map((el) => el.id),
+      });
+      // Assert
+      expect(getAssetsByIds).toBeCalledWith({ ids: [assets[0].id], ctx });
+      expect(result).toEqual([assets[0]]);
+    });
   });
 
   describe('Limit use cases', () => {

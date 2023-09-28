@@ -76,6 +76,33 @@ describe('getProviderAssets', () => {
         indexable: true,
         ctx,
       });
+
+      // Assert
+      expect(getByProvider).toBeCalledWith({
+        categoryId: assets[0].category,
+        criteria,
+        assets: assets.map((el) => el.id),
+        ctx,
+      });
+      expect(result.assets).toEqual([assets[0].id]);
+      expect(result.nothingFound).toEqual(false);
+    });
+
+    it('should return assets by provider with no case sensitive search', async () => {
+      // Arrange
+      const criteria = 'first';
+      getByProvider.mockResolvedValue([assets[0].id]);
+      getTagsValueByPartialTags.mockResolvedValue([assets[0].id]);
+      // Act
+      const result = await getProviderAssets({
+        categoryId: assets[0].category,
+        criteria,
+        searchInProvider: true,
+        assets: assets.map((el) => el.id),
+        indexable: true,
+        ctx,
+      });
+
       // Assert
       expect(getByProvider).toBeCalledWith({
         categoryId: assets[0].category,
