@@ -49,7 +49,7 @@ module.exports = {
       },
     },
   },
-  async created() {
+  created() {
     mongoose.connect(process.env.MONGO_URI);
   },
 };

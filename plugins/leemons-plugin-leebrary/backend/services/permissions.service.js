@@ -2,37 +2,38 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
+
+const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { getProvidersActions } = require('@leemons/providers');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
-const { pluginName } = require('../config/constants');
-const { list: listProviders } = require('../core/providers/list');
+const restActions = require('./rest/permissions.rest');
+const { set } = require('../core/permissions/set');
 
 /** @type {ServiceSchema} */
-module.exports = () => ({
-  name: `${pluginName}.provider`,
+module.exports = {
+  name: 'leebrary.permissions',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
+    LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
-    ...getProvidersActions(),
-    list: {
-      rest: {
-        method: 'GET',
-        path: '/list',
-      },
-      async handler(ctx) {
-        const providers = await listProviders({ ctx });
-        return { status: 200, providers };
+    ...restActions,
+    set: {
+      handler(ctx) {
+        return set({ ...ctx.params, ctx });
       },
     },
   },
   created() {
     mongoose.connect(process.env.MONGO_URI);
   },
-});
+};
