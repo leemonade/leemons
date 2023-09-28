@@ -7,13 +7,16 @@ const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { pluginName } = require('../config/constants');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/files.rest');
+const { uploadFromSource } = require('../core/files/helpers/uploadFromSource');
+const { getByIds } = require('../core/files/getByIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: `${pluginName}.file`,
+  name: `${pluginName}.files`,
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -21,12 +24,23 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
     ...restActions,
+    upload: {
+      handler(ctx) {
+        return uploadFromSource({ ...ctx.params, ctx });
+      },
+    },
+    getByIds: {
+      handler(ctx) {
+        return getByIds({ ...ctx.params, ctx });
+      },
+    },
   },
-  async created() {
+  created() {
     mongoose.connect(process.env.MONGO_URI);
   },
 };

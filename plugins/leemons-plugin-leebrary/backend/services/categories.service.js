@@ -10,12 +10,13 @@ const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
-const restActions = require('./rest/permissions.rest');
-const { set } = require('../core/permissions/set');
+const restActions = require('./rest/categories.rest');
+const { add } = require('../core/categories/add');
+const { removeByKey } = require('../core/categories/removeByKey');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: `${pluginName}.permissions`,
+  name: `${pluginName}.categories`,
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -28,9 +29,14 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    set: {
+    add: {
       handler(ctx) {
-        return set({ ...ctx.params, ctx });
+        return add({ ...ctx.params, ctx });
+      },
+    },
+    removeByKey: {
+      handler(ctx) {
+        return removeByKey({ ...ctx.params, ctx });
       },
     },
   },
