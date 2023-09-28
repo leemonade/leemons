@@ -7,7 +7,7 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 async function byName({ name, details = false, indexable = true, assets: assetsIds, ctx }) {
   try {
     const query = {
-      name: { $regex: name },
+      name: { $regex: name, $options: 'i' },
       indexable,
     };
 

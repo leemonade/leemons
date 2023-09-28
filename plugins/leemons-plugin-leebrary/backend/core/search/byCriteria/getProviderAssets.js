@@ -68,9 +68,9 @@ async function getProviderAssets({
 
   if (criteria) {
     query.$or = [
-      { name: { $regex: criteria } },
-      { tagline: { $regex: criteria } },
-      { description: { $regex: criteria } },
+      { name: { $regex: criteria, $options: 'i' } },
+      { tagline: { $regex: criteria, $options: 'i' } },
+      { description: { $regex: criteria, $options: 'i' } },
     ];
   }
 

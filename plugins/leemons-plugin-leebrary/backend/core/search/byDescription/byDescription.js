@@ -13,7 +13,7 @@ async function byDescription({
 }) {
   try {
     const query = {
-      description: { $regex: description },
+      description: { $regex: description, $options: 'i' },
       indexable,
     };
 

@@ -7,7 +7,7 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 async function byTagline({ tagline, details = false, indexable = true, assets: assetsIds, ctx }) {
   try {
     const query = {
-      tagline: { $regex: tagline },
+      tagline: { $regex: tagline, $options: 'i' },
       indexable,
     };
 
