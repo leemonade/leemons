@@ -1,3 +1,5 @@
+const { LeemonsValidator } = require('leemons-validator');
+
 const _ = require('lodash');
 
 const assignableInstanceValidationObject = {
@@ -95,14 +97,14 @@ const assignableInstanceRequiredProperties = [
   'allowFeedback',
 ];
 
-function validateAssignableInstance(assignable, { useRequired = false } = {}) {
+function validateAssignableInstance({ assignable, useRequired = false }) {
   const obj = _.clone(assignableInstanceValidationObject);
 
   if (useRequired) {
     obj.required = assignableInstanceRequiredProperties;
   }
 
-  const validator = new global.utils.LeemonsValidator(obj);
+  const validator = new LeemonsValidator(obj);
 
   if (!validator.validate(assignable)) {
     throw validator.error;

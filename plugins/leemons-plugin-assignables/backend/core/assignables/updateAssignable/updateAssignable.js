@@ -7,16 +7,16 @@ const {
 } = require('../../helpers/validators/assignable');
 const { getDiff } = require('../../helpers/getDiff');
 
-const { updateAsset } = require('../../leebrary/assets/updateAsset');
-const { updateSubjects } = require('../../subjects/updateSubjects');
+const { updateAsset } = require('../../leebrary/assets');
+const { updateSubjects } = require('../../subjects');
 const { addUserToAssignable } = require('../addUserToAssignable');
 const { createAssignable } = require('../createAssignable');
 const { getAssignable } = require('../getAssignable');
 const { listAssignableUserAgents } = require('../listAssignableUserAgents');
 const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
 const { publishAssignable } = require('../publishAssignable');
-const { duplicateAsset } = require('../../leebrary/assets/duplicateAsset');
-const { removeAsset } = require('../../leebrary/assets/removeAsset');
+const { duplicateAsset } = require('../../leebrary/assets');
+const { removeAsset } = require('../../leebrary/assets');
 
 const updatableFields = [
   'asset',

@@ -11,8 +11,7 @@ const { assignableRolesObject } = require('../../../../config/constants');
 function getRoleMatchingActions({ actions }) {
   const assignableRolesEntries = Object.entries(assignableRolesObject);
 
-  const { length } = assignableRolesObject;
-
+  const { length } = assignableRolesEntries;
   for (let i = 0; i < length; i++) {
     const [name, role] = assignableRolesEntries[i];
 

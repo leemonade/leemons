@@ -5,13 +5,9 @@ const { getAssignable } = require('../getAssignable');
 const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
 
 // Mocking the external function calls
-jest.mock('../getAssignable', () => ({
-  getAssignable: jest.fn(),
-}));
+jest.mock('../getAssignable');
 
-jest.mock('../../permissions/users/assignables/getUserPermission', () => ({
-  getUserPermission: jest.fn(),
-}));
+jest.mock('../../permissions/users/assignables/getUserPermission');
 
 const findUserAgentsWithPermissionHandler = jest.fn();
 const getUserAgentsInfoHandler = jest.fn();

@@ -65,6 +65,6 @@ it('Should handle adminDashboard correctly', async () => {
 
   // Assert
   expect(response).toEqual({
-    instances: [{ roleName: `plugins.assignables.roles.${role.name}`, instances: 1 }],
+    instances: [{ roleName: `assignables.roles.${role.name}`, instances: 1 }],
   });
 });

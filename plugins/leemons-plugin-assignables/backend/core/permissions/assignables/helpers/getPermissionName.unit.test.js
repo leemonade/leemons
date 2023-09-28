@@ -1,4 +1,5 @@
 const { it, expect } = require('@jest/globals');
+
 const { generateCtx } = require('leemons-testing');
 
 const { getPermissionName } = require('./getPermissionName');

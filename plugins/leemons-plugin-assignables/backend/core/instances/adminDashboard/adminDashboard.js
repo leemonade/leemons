@@ -24,7 +24,7 @@ async function adminDashboard({ config, ctx }) {
 
   _.forEach(roles, (role) => {
     const inst = {
-      roleName: `plugins.assignables.roles.${role.name}`,
+      roleName: `assignables.roles.${role.name}`,
       instances: [],
     };
 
