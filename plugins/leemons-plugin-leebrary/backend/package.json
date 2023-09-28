@@ -34,6 +34,7 @@
     "@leemons/validator": "0.0.28",
     "@leemons/widgets": "0.0.28",
     "got": "^13.0.0",
+    "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "mediainfo.js": "^0.2.0",
     "metascraper": "^5.34.10",

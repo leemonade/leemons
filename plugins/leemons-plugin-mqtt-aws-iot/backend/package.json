@@ -36,6 +36,7 @@
     "@leemons/widgets": "0.0.28",
     "aws-iot-device-sdk": "^2.2.12",
     "aws-sdk": "^2.1463.0",
+    "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },

@@ -28,6 +28,7 @@
     "@leemons/mqtt": "0.0.28",
     "@leemons/multilanguage": "0.0.28",
     "aws-sdk": "^2.1463.0",
+    "jaeger-client": "^3.19.0",
     "moleculer": "^0.14.26",
     "nodemailer": "^6.9.4",
     "nodemailer-html-to-text": "^3.2.0",

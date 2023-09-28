@@ -158,7 +158,7 @@ module.exports = {
       options: {
         port: 3030,
         path: '/metrics',
-        metricNamePrefix: 'admin.',
+        metricNamePrefix: 'assignables.',
         defaultLabels: (registry) => ({
           namespace: registry.broker.namespace,
           nodeID: registry.broker.nodeID,

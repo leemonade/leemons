@@ -31,6 +31,7 @@
     "@leemons/multilanguage": "0.0.28",
     "@leemons/permissions": "0.0.28",
     "@leemons/validator": "0.0.28",
+    "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },

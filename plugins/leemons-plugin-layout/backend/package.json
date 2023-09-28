@@ -24,6 +24,7 @@
     "@leemons/mongodb": "0.0.28",
     "@leemons/mongodb-helpers": "0.0.28",
     "@leemons/multilanguage": "0.0.28",
+    "jaeger-client": "^3.19.0",
     "moleculer": "^0.14.26"
   },
   "engines": {

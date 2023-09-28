@@ -34,6 +34,7 @@
     "@leemons/utils": "0.0.28",
     "@leemons/validator": "0.0.28",
     "bad-words": "^3.0.4",
+    "jaeger-client": "^3.19.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"

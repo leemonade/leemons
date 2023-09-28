@@ -34,6 +34,7 @@
     "@leemons/validator": "0.0.28",
     "@leemons/widgets": "0.0.28",
     "colord": "^2.9.3",
+    "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },
