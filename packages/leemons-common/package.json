@@ -1,10 +1,10 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/validator": "0.0.29"
+    "@leemons/validator": "0.0.30"
   },
   "name": "@leemons/common",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
