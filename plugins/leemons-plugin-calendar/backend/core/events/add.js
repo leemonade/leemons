@@ -43,7 +43,6 @@ async function add({ key, data, ignoreType, ctx }) {
     type: permissionConfig.type,
     data: permissionConfig.all,
     isCustomPermission: true,
-    ctx,
   });
   await addNexts({ eventId: event.id, ctx });
   return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };

@@ -102,14 +102,12 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
   // ES: Añadimos de nuevo los permisos despues que borraramos los antiguos
   // EN: We add the permissions again after deleting the old ones.
   _.forIn(newProfilePermissions, (permissions, profileId) => {
-    promises.push(
-      ctx.tx.call('users.profiles.addCustomPermissions', { profileId, permissions, ctx })
-    );
+    promises.push(ctx.tx.call('users.profiles.addCustomPermissions', { profileId, permissions }));
   });
 
   _.forIn(newRolesPermissions, (permissions, roleId) => {
     promises.push(
-      ctx.tx.call('users.roles.addPermissionMany', { roleId, permissions, isCustom: true, ctx })
+      ctx.tx.call('users.roles.addPermissionMany', { roleId, permissions, isCustom: true })
     );
   });
 

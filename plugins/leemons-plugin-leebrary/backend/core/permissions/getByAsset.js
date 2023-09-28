@@ -27,7 +27,6 @@ async function getByAsset({ assetId, ctx }) {
       ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent: userSession.userAgents,
         query: { permissionName: getAssetPermissionName({ assetId, ctx }) },
-        ctx,
       }),
       ctx.tx.call('users.permissions.getAllItemsForTheUserAgentHasPermissionsByType', {
         userAgentId: userSession.userAgents,
