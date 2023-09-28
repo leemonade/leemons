@@ -2463,6 +2463,318 @@
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
+"@leemons/academic-portfolio@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/academic-portfolio/-/academic-portfolio-0.0.28.tgz#3416dfa64a32ce5d51df4822fd2aa2097f1cfa60"
+  integrity sha512-DfzEMgPxzjemNxIXuKTx8bemtFqtvMe/P2Rzmrx9zMQZpVT5b2btjcMVlDt2/Qba5myjA/SnDHwbhPuHzKFjIA==
+  dependencies:
+    "@leemons/mongodb-helpers" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/cache@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/cache/-/cache-0.0.28.tgz#2708a196048d620a49d6effaedf3ceb0448033ed"
+  integrity sha512-srwYQizG2tN3+tiKq7ZRTTiiJ5sBQqetLUiZ+ujN1OqSRh91QEWtV2IEds95ElilV4i5/Rjr1wdF3EAF3Zg8Jw==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.27"
+    lodash "^4.17.21"
+    node-cache "^5.1.2"
+    redis "^4.6.10"
+
+"@leemons/deployment-manager@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@leemons/deployment-manager/-/deployment-manager-0.0.26.tgz#7b2651dd162026e812067d22b117049f816e98f4"
+  integrity sha512-7KqmxWS1tlANnT53ztGOyJwFVonk7dnf3nxBYQb0lCGESge3NKZatizq9uceKZFBapkdSnm33Qiv77OUdtg7hA==
+  dependencies:
+    "@leemons/error" "0.0.25"
+    "@leemons/service-name-parser" "0.0.25"
+    lodash "^4.17.21"
+
+"@leemons/deployment-manager@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/deployment-manager/-/deployment-manager-0.0.27.tgz#e69ee64de5491e8ea9eafdddc6f378b9ad30cbfc"
+  integrity sha512-iDE8p4KI/NhkIHd8t7ly23vPQwX6ulyMf2IeiLvPx0IHNaebumOYh7iKF6p2Sl6F41XTvGgfAoeKELdSJZad5Q==
+  dependencies:
+    "@leemons/error" "0.0.26"
+    "@leemons/service-name-parser" "0.0.26"
+    lodash "^4.17.21"
+
+"@leemons/deployment-manager@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/deployment-manager/-/deployment-manager-0.0.28.tgz#8eca999cc42da6e4ab4b442bf0c679221e91e27a"
+  integrity sha512-n/TTwJ4ZqtP4MrfyVHgyvDRNXjLrTKsQ4PGHcr+LyPasrGEf37sBfdTMtrEG486CQ2Sif6LeqkhmKtGwlabSQQ==
+  dependencies:
+    "@leemons/error" "0.0.27"
+    "@leemons/service-name-parser" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/emails@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/emails/-/emails-0.0.28.tgz#2904640a9b8cfcdd45df577740b8cc3287e69d7b"
+  integrity sha512-Ntl+JXD70fV11vym2IAz9mo6gtBBpc4HhnokUdWiRPWoNyqNHnyyCQ6+6BJxHEnbMX/PS9Rv6uS0Faf+nBwrVg==
+
+"@leemons/error@0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.25.tgz#4f0d10c607f497ded9ec82a31f353a493149c969"
+  integrity sha512-+q5ah35ZihDuFbl9MAK+16QGscg9i3SI9BF0q+mEjcuvYMtccyvTbwaupFYyH2hM9hwo2fwVMOFm5SPdOvh8MQ==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.24"
+    lodash "^4.17.21"
+
+"@leemons/error@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.26.tgz#f1b5d7ce9ca397ab525ae5f52c5fef3af2de7285"
+  integrity sha512-UxFd9CDRPbnqMWX7L9hjUK0lguC3loFWXFSJJcj93z0sMnfjoq7x6F1+I19W4cHIV3sq6MmRBtCRUcWzFR2U3g==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.25"
+    lodash "^4.17.21"
+
+"@leemons/error@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.27.tgz#e1c6415b9ad94412a90444af860b3c1664e7d23b"
+  integrity sha512-aSQ+BAyRrt0HOleEL+zYbo1sGJMsSn5DS4GhZv/AX1QiforIifNlbOQaexYwQP7/iFrtXc2CvPY4F4MNTLD49A==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.26"
+    lodash "^4.17.21"
+
+"@leemons/error@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.28.tgz#ee9cd41d1981d03c2dac67b5cbd152af967b6181"
+  integrity sha512-75aYiu0RIPS1rXuYNDKBEY3x1KmeCS+CCmkGJTZB7Ag9X/h21ZgV9ssTInZn1iUZl8ubI9/6keAms1MRmO0WNg==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/lrn@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@leemons/lrn/-/lrn-0.0.26.tgz#7933dc1d1360dede5bb446867f753a9f355b4d4d"
+  integrity sha512-MQnAmPyapPa3l80iEa2pG5WY9K34uC/9a/vFRIBG9psdQEJ41m5Fn1L6PJzhqahTUerTKR6kUmEasijuQlhwlg==
+
+"@leemons/lrn@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/lrn/-/lrn-0.0.27.tgz#761bd2de203f5b1bbfe5cd35b90fb9da6ef0cf64"
+  integrity sha512-24w0KHjU0VIW430AVy9OmfEevHvWPT/kpIarCLagiG5cjKxlW8QPwpx8xszADPYnhk9aMf0JyLcV12+6h18RfA==
+
+"@leemons/lrn@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/lrn/-/lrn-0.0.28.tgz#b67d059f65fd45bdfa5fbc71b6387997f978fb1a"
+  integrity sha512-jwozyKt/xtsoELAuw11B+t+2lIDx0pPIaqA3X3u2tgJ/SLdbyBR8ZKTVJA4lfwHcDEivYWTNn4Vd6CjyKASePQ==
+
+"@leemons/menu-builder@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/menu-builder/-/menu-builder-0.0.28.tgz#275b0bcf006e9818bd708d3cef21cbfde4161564"
+  integrity sha512-DjpKiRzKfhW5Y2j1o4V9iFaPXKfocJCi79o1bjxhW2KFXKri3CorYsUDGFbGCjOmRvo2lEn8cEoQQ8j01IIFbQ==
+  dependencies:
+    "@leemons/mongodb-helpers" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/middlewares@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/middlewares/-/middlewares-0.0.28.tgz#56a9cb8c8b9687fc5327ecace3996981a5c09a8f"
+  integrity sha512-5EUQeCb3h89UdWonaFrErfkTJajQwpRBcSk+Lm4m+oTMjT65Fe+Z0CGU/YVnIZ8vyiOgsvvVTOEYQcP91CA8zg==
+  dependencies:
+    "@leemons/error" "0.0.28"
+    "@leemons/service-name-parser" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/mongodb-helpers@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.27.tgz#c1aad53e8d4fb2be5c2012e13ed95847296a406b"
+  integrity sha512-5EgShTib5IldNOtpn8apu60lo/gjTKxQgSNpmpZIZI1SUcJIqhw6pC8EueHW4oB2nKtdmqPkpBZz5CKGLYe8FQ==
+  dependencies:
+    "@leemons/mongodb" "0.0.26"
+
+"@leemons/mongodb-helpers@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.28.tgz#a3d6a0f5867d48938d2c6d1f9109d9c388a8c9bc"
+  integrity sha512-tR7HPFz9N6G0nWbCSD1Jzp7pyu0uJR9CyhF0ETQfWoTm1HMdQ+wmNi+MScGMgx522wzyFSvR5FuuSfUPeEb1sA==
+  dependencies:
+    "@leemons/mongodb" "0.0.27"
+
+"@leemons/mongodb@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@leemons/mongodb/-/mongodb-0.0.26.tgz#1780127b2c12f7571906f464c5eb34732b591f69"
+  integrity sha512-lAThHL9pvgaSTdynLgrcjcSoxG1Y0GJuLRWsErXOvMF5StOmawJlsc3sQ5Y3vjj2Fj7cLYA4dShoAntkJWj3xg==
+  dependencies:
+    "@leemons/deployment-manager" "0.0.26"
+    "@leemons/error" "0.0.26"
+    "@leemons/lrn" "0.0.26"
+    "@leemons/service-name-parser" "0.0.25"
+    "@leemons/transactions" "0.0.25"
+    lodash "^4.17.21"
+    mongodb "6.1.0"
+    mongoose "7.5.2"
+
+"@leemons/mongodb@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/mongodb/-/mongodb-0.0.27.tgz#a799a9f04ad195c2c8b239ec1cb67a78b31e8d64"
+  integrity sha512-9NB+xHR5vfvblyHj36A+MZuFw8j3hVDUmGmKs1Uamj9jcL3oJgBeDvgoSQ1DaLwuZlG8t8KBXXonKahJeTxYAw==
+  dependencies:
+    "@leemons/deployment-manager" "0.0.27"
+    "@leemons/error" "0.0.27"
+    "@leemons/lrn" "0.0.27"
+    "@leemons/service-name-parser" "0.0.26"
+    "@leemons/transactions" "0.0.26"
+    lodash "^4.17.21"
+    mongodb "6.1.0"
+    mongoose "7.5.2"
+
+"@leemons/mongodb@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/mongodb/-/mongodb-0.0.28.tgz#d2054c5680225caf46cc4239503ffa05b89eae6a"
+  integrity sha512-fenmzHaRhPRl1HeoTM0oZM8YgAT0Ve63dt6gTs6iPBKCKC++Q5CrqerrCfapbj7mnZ4dMre9+MbtdA+R/lI+Cg==
+  dependencies:
+    "@leemons/deployment-manager" "0.0.28"
+    "@leemons/error" "0.0.28"
+    "@leemons/lrn" "0.0.28"
+    "@leemons/service-name-parser" "0.0.27"
+    "@leemons/transactions" "0.0.27"
+    lodash "^4.17.21"
+    mongodb "6.1.0"
+    mongoose "7.5.2"
+
+"@leemons/mqtt@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/mqtt/-/mqtt-0.0.28.tgz#70ce3bd24fda351c0c3eb910cc63d386e8ee7063"
+  integrity sha512-dhbgNPhbmF0kPG28qXCrxRNhOWcIs9yMytqdWOZkCliwdnOsDoL5B/pjHtpHDL/iZp4zcj0OM3BvofjzAun5pA==
+  dependencies:
+    "@leemons/error" "0.0.28"
+    lodash "^4.17.21"
+
+"@leemons/multi-events@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/multi-events/-/multi-events-0.0.28.tgz#796e1bc10d7afcde184c3e1d323227d67416a254"
+  integrity sha512-Zv2ONoPuH/xdC+yQJe1rD+f+3okCbg1YHKzHj7TZpHQdbxIn1iPW7hgoJknjfeyB3LbPYmf7ZAERpbz2suLyCQ==
+  dependencies:
+    "@leemons/error" "0.0.28"
+    "@leemons/mongodb-helpers" "0.0.28"
+    "@leemons/utils" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/multilanguage@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/multilanguage/-/multilanguage-0.0.28.tgz#65a86236006dfc5de23ce4993101e01c5c5b3e41"
+  integrity sha512-Q5h1c/g4w8ttuNoTW/FIonqko02vxd9tSVTo+VePPQN55v0DkmW8KacOx3+TxjsS6hru9owYRCrdhfYq5p9YFQ==
+  dependencies:
+    "@leemons/mongodb-helpers" "0.0.28"
+    "@leemons/service-name-parser" "0.0.27"
+    lodash "^4.17.21"
+
+"@leemons/permissions@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/permissions/-/permissions-0.0.28.tgz#3931bbab2d05b7c3125b5941d67dfdba9275a024"
+  integrity sha512-IcNUkZ434+ihCMR5/LQLEOo8pdpn11QaErpYlQIy38K0ZqaVmaBQ+0q8cYRmtyV/MnJD9znpF+9wINoGJwvi3A==
+  dependencies:
+    "@leemons/mongodb-helpers" "0.0.28"
+
+"@leemons/providers@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/providers/-/providers-0.0.28.tgz#1c9306aae2bf31ac192e375d98f3754539392a54"
+  integrity sha512-h7dS7Uw2k7tVOz9uAtZj95DMnB+8p8P815tjOxCUsgHJedem/0vpWfLKFFdmJMCvOTOUZLXBN8OCdfpDWLgHeQ==
+  dependencies:
+    "@leemons/error" "0.0.28"
+    lodash "^4.17.21"
+
+"@leemons/service-name-parser@0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.24.tgz#62f24ea02dfb79be2ead1f66c6ce461d4d0f8e00"
+  integrity sha512-YTdxQxPuQzicH/lLSzXI0h4fWvITyOgE75pYb16tD7cYkYNEvC3ziucwicSTRSisuP42JciYQ7aKTU6WCVbWgg==
+
+"@leemons/service-name-parser@0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.25.tgz#2984c13dc39f749e3c305d000154daaefaeb62c7"
+  integrity sha512-O66cjPKPvixfffK0OfUbk/EW36RgoWKipnPv8klvOvt0OirpGZ7BbZZBPNpFXfK5BIdzuj+6bV4avdpZWp5kLA==
+
+"@leemons/service-name-parser@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.26.tgz#f357b9e252e87658bbe48febd916c15db7cd3b92"
+  integrity sha512-aXczUxbkxWO8TvnXj4QWTZRfrD0FtpJCst0SlJp/W4/8C7ojDzkHx2jkKNvwSpv3Pbp1CzCzBO//0to4HUgx9Q==
+
+"@leemons/service-name-parser@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.27.tgz#eac729add5e8d6343a44a027996ae47d7895715c"
+  integrity sha512-VRtjUnR3HZCHHlAtP+4S16Ys2vZ3zRkr0n+LHv6irDNpFS6lSloExh6Wdkf2Xqlla8QAHpktSiA2mukWcvzl4g==
+
+"@leemons/service-name-parser@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.28.tgz#8a92be3d957c3755258da21fa7e73667738ea8c7"
+  integrity sha512-wMkZ4BWOpUDZk7px2kZjLg32kXWSAkPlepFMtY9/DfqxnBzDr3jMZNk3ITD1CB0YRi+Tot1cRfTxSjPNeQPNHg==
+
+"@leemons/testing@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/testing/-/testing-0.0.28.tgz#89b3505c1e6418e7bd70ec08a7a380c1b88f1a70"
+  integrity sha512-r6A/IxPyDbH+obrp4nDEmVC8spuEjQywxEc/j97CT76ozCZysafp/vAlE8WrCfXrvAIGBEuA7WYyi5HBGQxtRQ==
+  dependencies:
+    "@leemons/mongodb" "0.0.28"
+    mongodb-memory-server-core "^8.15.0"
+    mongoose "^7.5.2"
+
+"@leemons/transactions@0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@leemons/transactions/-/transactions-0.0.25.tgz#68a6be9a765abeb084998b4e3b5f1890bef91b52"
+  integrity sha512-zxggwyrmhkGh7RUoUL7SCgCy6CR7aD1s2M3rwkBPeKxSLdUoBd6bgGXMutejG3aQormCNIxl5CWi3XxS0+7bwA==
+
+"@leemons/transactions@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@leemons/transactions/-/transactions-0.0.26.tgz#8046e9fdab92f0a321f370b17870f9fad1882e68"
+  integrity sha512-6i84lh3/Mat3b5LbO6Um5k6hT3NUFgjS4SJHkBoLmJ5zBeyo9AMvgZUM4eGE5mHeP9J1JBbii2JKzpfIHuEixw==
+
+"@leemons/transactions@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/transactions/-/transactions-0.0.27.tgz#8ee4634e77e7be294b16bc3d42a0b060baf5b862"
+  integrity sha512-CbBkD7Hh1RRiGoLZ4oqu0Q9kjWJWIh0Q2aE7hs0fBbwYIjMp8773vSiImHa+t+5CYEZwZ+lsrShTMtpaYXsNOQ==
+
+"@leemons/transactions@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/transactions/-/transactions-0.0.28.tgz#e2c0609ed8ff5375af406f6430445892e8720950"
+  integrity sha512-CHm3XGSnPSMPPVm9WvRLFwjvbQkSq60F7m2BDPLxvuzHVYIrxY7Bc2A3mT+zhg3dsrzdezMSpBPT/XLRjxSpiw==
+
+"@leemons/users@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/users/-/users-0.0.28.tgz#808dd3bc57b82e2db946800a637e5ed2103b739e"
+  integrity sha512-2BRjtfBQif9DbEJfAHjGjawJZKcAyjZPM3t0T8WBMcV2kYKRzaf5WEE+bAefPO2fhffjXZYAvyuBihPJ39b12Q==
+
+"@leemons/utils@0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@leemons/utils/-/utils-0.0.27.tgz#727e305787c855d490591d39cf1ebba44fab2082"
+  integrity sha512-WyNTbJ95JggU2HStbnfI0hKtapq9OjyBN3YPz9FlV7YfpXWLL+1lbgMOi3bfxdJ13CfnahkCUTXo7pnPMbwpqA==
+  dependencies:
+    dotenv "^16.3.1"
+    fs-extra "^11.1.1"
+    lodash "^4.17.21"
+
+"@leemons/utils@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/utils/-/utils-0.0.28.tgz#c20f1a946eccf8506d81efd855bffd1ce60ed411"
+  integrity sha512-J+AeFlIZUPQhk0QWiy9nouCx5VzShsxu0BYVRiXWd2tbDLQcQAzMp4/a0siHP6bFTbYClYVxLGYQrUiHa5nJyw==
+  dependencies:
+    dotenv "^16.3.1"
+    fs-extra "^11.1.1"
+    lodash "^4.17.21"
+
+"@leemons/validator@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/validator/-/validator-0.0.28.tgz#037bad99f7b2fc9f03af55146cc80b713686d17f"
+  integrity sha512-5tg7910Gj5HK0ZsJyANzt/7wwmZcipmBvuCy7g5UwR+XPwUb7qQZa//JXrejY0LicaCRhDn48Q4jpo3jEn0cvg==
+  dependencies:
+    ajv "^8.12.0"
+    ajv-formats "^2.1.1"
+    ajv-keywords "^5.1.0"
+    lodash "^4.17.21"
+
+"@leemons/widgets@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/widgets/-/widgets-0.0.28.tgz#80bfcb066c63d1a1fc83c7e34272a41963f29bd8"
+  integrity sha512-9xxnFSaE9Z4oZP1KW18aS4RxxiyS1sLGisZa3nRnxUPJ8VWOuczkZWhx+/PX22UCRM7+FJO325VpbLUFHNsalQ==
+  dependencies:
+    "@leemons/mongodb-helpers" "0.0.28"
+    lodash "^4.17.21"
+
+"@leemons/xapi@0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@leemons/xapi/-/xapi-0.0.28.tgz#d1f7848ebee88591cb0d19ed0238f7976cc8f8b9"
+  integrity sha512-o6KgwyhuRjh3GhIxq+r+8yeD42qSRtjUkXSkb4rFtD6n4N0CGhJLtA/I7PAPWxt90Qb8vMD6UHtLDqvqBrPcBw==
+
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.npmjs.org/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz"

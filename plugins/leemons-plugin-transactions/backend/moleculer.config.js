@@ -174,8 +174,8 @@ module.exports = {
       type: 'Jaeger',
       options: {
         endpoint: null,
-        host: '127.0.0.1',
-        port: 6832,
+        host: process.env.JAEGER_HOST,
+        port: process.env.JAEGER_PORT,
         sampler: {
           type: 'Const',
           options: {},
