@@ -9,7 +9,6 @@ const { LeemonsError } = require('@leemons/error');
 
 const { removeMissingPermissions } = require('./removeMissingPermissions');
 const getPermissionsMocks = require('../../../__fixtures__/getPermissionsMocks');
-const { pluginName } = require('../../../config/constants');
 
 // MOCKS
 jest.mock('../helpers/canUnassignRole');
@@ -18,10 +17,11 @@ const canUnassignRole = require('../helpers/canUnassignRole');
 beforeEach(() => jest.resetAllMocks());
 
 const rolePermissionType = {
-  editor: `${pluginName}asset.can-edit`,
-  viewer: `${pluginName}asset.can-view`,
-  assigner: `${pluginName}asset.can-assign`,
+  editor: 'asset.can-edit',
+  viewer: 'asset.can-view',
+  assigner: 'asset.can-assign',
 };
+const pluginName = 'testing';
 
 const { payloadToRemoveAllPermissions: payload, itemPermission } = getPermissionsMocks();
 
@@ -34,14 +34,14 @@ it('Should call removeMissingPermissions correctly', async () => {
       ...itemPermission,
       actionNames: [previousRoles[0]],
       item: asset.id,
-      type: rolePermissionType.editor,
+      type: `${pluginName}.${rolePermissionType.editor}`,
       target: 'categoryIdWhichServesAsType',
     },
     {
       ...itemPermission,
       actionNames: [previousRoles[1]],
       item: asset.id,
-      type: rolePermissionType.assigner,
+      type: `${pluginName}.${rolePermissionType.assigner}`,
       target: 'categoryIdWhichServesAsType',
     },
   ];
@@ -54,6 +54,7 @@ it('Should call removeMissingPermissions correctly', async () => {
       'users.permissions.findItems': findItemsAction,
       'users.permissions.removeItems': removeItemsAction,
     },
+    pluginName,
   });
 
   canUnassignRole.mockReturnValue(true);
@@ -89,7 +90,7 @@ it('Should call removeMissingPermissions correctly', async () => {
       query: {
         item: asset.id,
         permissionName: { $nin: payload.permissions[role] },
-        type: rolePermissionType[role],
+        type: ctx.prefixPN(rolePermissionType[role]),
       },
     });
   });
@@ -104,14 +105,14 @@ it('Should throw LeemonsError when unassigning role is not allowed', async () =>
       ...itemPermission,
       actionNames: [previousRoles[0]],
       item: asset.id,
-      type: rolePermissionType.editor,
+      type: `${pluginName}.${rolePermissionType.editor}`,
       target: 'categoryIdWhichServesAsType',
     },
     {
       ...itemPermission,
       actionNames: [previousRoles[1]],
       item: asset.id,
-      type: rolePermissionType.assigner,
+      type: `${pluginName}.${rolePermissionType.assigner}`,
       target: 'categoryIdWhichServesAsType',
     },
   ];
@@ -123,6 +124,7 @@ it('Should throw LeemonsError when unassigning role is not allowed', async () =>
       'users.permissions.findItems': findItemsAction,
       'users.permissions.removeItems': removeItemsAction,
     },
+    pluginName,
   });
 
   canUnassignRole.mockReturnValue(false);

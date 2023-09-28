@@ -1,12 +1,11 @@
 const { uniq, forEach } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const canUnassignRole = require('../helpers/canUnassignRole');
-const { pluginName } = require('../../../config/constants');
 
 const rolePermissionType = {
-  editor: `${pluginName}asset.can-edit`,
-  viewer: `${pluginName}asset.can-view`,
-  assigner: `${pluginName}asset.can-assign`,
+  editor: 'asset.can-edit',
+  viewer: 'asset.can-view',
+  assigner: 'asset.can-assign',
 };
 
 /**
@@ -42,10 +41,10 @@ async function removeMissingPermissions({ id, permissions, assignerRole, ctx }) 
   const roles = uniq(
     oldPermissions.map((permission) => {
       let role = 'viewer';
-      if (permission.type === `${pluginName}asset.can-edit`) {
+      if (permission.type === ctx.prefixPN('asset.can-edit')) {
         role = 'editor';
       }
-      if (permission.type === `${pluginName}asset.can-assign`) {
+      if (permission.type === ctx.prefixPN('asset.can-assign')) {
         role = 'assigner';
       }
 
@@ -70,7 +69,7 @@ async function removeMissingPermissions({ id, permissions, assignerRole, ctx }) 
         query: {
           item: id,
           permissionName: { $nin: permissions[role] },
-          type: rolePermissionType[role],
+          type: ctx.prefixPN(rolePermissionType[role]),
         },
       })
     );

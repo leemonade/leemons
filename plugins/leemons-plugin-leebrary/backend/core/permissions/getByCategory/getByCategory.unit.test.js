@@ -74,12 +74,10 @@ it('Should call getByCategory correctly', async () => {
   handleAssetIds.mockResolvedValue(allAssetsIds);
   handleSorting.mockResolvedValue(expectedSortedResponse);
   handlePermissionsRoles.mockReturnValue(mockAccessiblesByAsset);
-  handleViewerRole.mockReturnValue(mockAccessiblesByAsset);
-  handleEditorRole.mockReturnValue(mockAccessiblesByAsset);
   handleIndexable.mockResolvedValue(mockAccessiblesByAsset);
 
   // Act
-  const response = await getByCategory({ categoryId, ctx });
+  const response = await getByCategory({ categoryId, roles: ['assigner'], ctx });
   const sortBy = 'id';
   const sortedResponse = await getByCategory({
     categoryId,
@@ -122,10 +120,12 @@ it('Should call getByCategory correctly', async () => {
   expect(sortedResponse).toEqual(expectedSortedResponse);
   expect(handlePermissionsRoles).toBeCalledWith({
     permissions,
-    roles: undefined,
+    roles: ['assigner'],
     assetIds: allAssetsIds,
     ctx,
   });
+  expect(handleViewerRole).not.toBeCalled();
+  expect(handleEditorRole).not.toBeCalled();
   expect(handleIndexable).toBeCalledWith({
     results: expect.any(Array),
     ctx,
@@ -178,6 +178,7 @@ it('Should correctly include public assets if needed', async () => {
     indexable: true,
     ctx,
   });
+  expect();
   expect(response).toEqual(expectedResults);
 });
 
@@ -200,6 +201,7 @@ it('Should filter by programs and subjects and shape the result accordingly to i
   getAssetsBySubject.mockResolvedValue(viewItems.slice(-1));
   handlePermissionsRoles.mockReturnValue(mockAccessiblesByAsset);
   handleViewerRole.mockReturnValue(mockAccessiblesByAsset);
+  handleEditorRole.mockReturnValue(mockAccessiblesByAsset);
   handlePreferCurrent.mockResolvedValue(expectedResult);
 
   // Act
@@ -209,7 +211,7 @@ it('Should filter by programs and subjects and shape the result accordingly to i
     subjects,
     categoryId,
     preferCurrent: true,
-    roles: ['viewer'],
+    roles: ['editor'],
     ctx,
   });
 
@@ -226,7 +228,7 @@ it('Should filter by programs and subjects and shape the result accordingly to i
   });
   expect(handlePermissionsRoles).toBeCalledWith({
     permissions: [],
-    roles: ['viewer'],
+    roles: ['editor'],
     assetIds: viewItems.slice(-1),
     ctx,
   });
@@ -292,7 +294,7 @@ it('Should search in provider if needed and catch any related error that could b
   expect(spyLogger).toBeCalledWith(expect.stringContaining('Boom!'));
 });
 
-it('Should search in provider if needed and catch any related error that could be thrown', async () => {
+it('Should throw a leemons error if something goes wrong', async () => {
   // Arrange
   const categoryId = 'categoryOne';
   const ctx = generateCtx({});

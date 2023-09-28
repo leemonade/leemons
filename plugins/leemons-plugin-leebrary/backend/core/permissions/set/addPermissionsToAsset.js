@@ -1,12 +1,11 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@Leemons/error');
 const canAssignRole = require('../helpers/canAssignRole');
-const { pluginName } = require('../../../config/constants');
 
 const rolePermissionType = {
-  viewer: `${pluginName}.asset.can-view`,
-  editor: `${pluginName}.asset.can-edit`,
-  assigner: `${pluginName}.asset.can-assign`,
+  editor: 'asset.can-edit',
+  viewer: 'asset.can-view',
+  assigner: 'asset.can-assign',
 };
 
 /**
@@ -68,9 +67,9 @@ async function addPermissionsToAsset({ id, categoryId, permissions, assignerRole
   await ctx.tx.call('users.permissions.removeItems', {
     query: {
       type: [
-        ctx.prefixPN('asset.can-edit'),
-        ctx.prefixPN('asset.can-view'),
-        ctx.prefixPN('asset.can-assign'),
+        ctx.prefixPN(rolePermissionType.editor),
+        ctx.prefixPN(rolePermissionType.viewer),
+        ctx.prefixPN(rolePermissionType.assigner),
       ],
       item: id,
       permissionName: allPermissions,
@@ -86,7 +85,7 @@ async function addPermissionsToAsset({ id, categoryId, permissions, assignerRole
       // permissionsPromises.push(
       ctx.tx.call('users.permissions.addItem', {
         item: id,
-        type: rolePermissionType[role],
+        type: ctx.prefixPN(rolePermissionType[role]),
         data: _.map(permissions[role], (permissionName) => ({
           actionNames: ['view'],
           target: categoryId,

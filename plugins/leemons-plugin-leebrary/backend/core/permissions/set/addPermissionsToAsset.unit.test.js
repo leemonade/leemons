@@ -8,7 +8,6 @@ const { generateCtx } = require('@leemons/testing');
 const { LeemonsError } = require('@leemons/error');
 
 const { addPermissionsToAsset } = require('./addPermissionsToAsset');
-const { pluginName } = require('../../../config/constants');
 const getPermissionsMocks = require('../../../__fixtures__/getPermissionsMocks');
 
 // MOCKS
@@ -18,10 +17,11 @@ const canAssignRole = require('../helpers/canAssignRole');
 beforeEach(() => jest.resetAllMocks());
 
 const rolePermissionType = {
-  viewer: `${pluginName}.asset.can-view`,
-  editor: `${pluginName}.asset.can-edit`,
-  assigner: `${pluginName}.asset.can-assign`,
+  editor: 'asset.can-edit',
+  viewer: 'asset.can-view',
+  assigner: 'asset.can-assign',
 };
+const pluginName = 'testing';
 
 const {
   payloadToSetPermissionsByUser: payloadByUser,
@@ -45,6 +45,7 @@ it('Should correctly add permissions to assets', async () => {
       'users.permissions.removeItems': removeItemsAction,
       'users.permissions.addItem': addItemAction,
     },
+    pluginName,
   });
   const roles = Object.keys(params.permissions);
   const allPermissionsMock = [];
@@ -69,9 +70,9 @@ it('Should correctly add permissions to assets', async () => {
   expect(removeItemsAction).toBeCalledWith({
     query: {
       type: [
-        ctx.prefixPN('asset.can-edit'),
-        ctx.prefixPN('asset.can-view'),
-        ctx.prefixPN('asset.can-assign'),
+        ctx.prefixPN(rolePermissionType.editor),
+        ctx.prefixPN(rolePermissionType.viewer),
+        ctx.prefixPN(rolePermissionType.assigner),
       ],
       item: params.id,
       permissionName: allPermissionsMock,
@@ -81,7 +82,7 @@ it('Should correctly add permissions to assets', async () => {
     if (role === 'destroyer') return;
     expect(addItemAction).toBeCalledWith({
       item: params.id,
-      type: rolePermissionType[role],
+      type: ctx.prefixPN(rolePermissionType[role]),
       data: params.permissions[role].length
         ? [
             {
@@ -131,9 +132,9 @@ it('Should set permissions correctly when none are passed', async () => {
   expect(removeItemsAction).toBeCalledWith({
     query: {
       type: [
-        ctx.prefixPN('asset.can-edit'),
-        ctx.prefixPN('asset.can-view'),
-        ctx.prefixPN('asset.can-assign'),
+        ctx.prefixPN(rolePermissionType.editor),
+        ctx.prefixPN(rolePermissionType.viewer),
+        ctx.prefixPN(rolePermissionType.assigner),
       ],
       item: params.id,
       permissionName: [],
@@ -169,7 +170,7 @@ it('Should throw when the user is not allowed to assign all the current permissi
       permissionName: payloadWithTwoPermissions.permissions.viewer[0],
       actionNames: ['view'],
       target: params.categoryId,
-      type: rolePermissionType.viewer,
+      type: `${pluginName}.${rolePermissionType.viewer}`,
       item: params.id,
       center: null,
     },
@@ -177,7 +178,7 @@ it('Should throw when the user is not allowed to assign all the current permissi
       permissionName: payloadWithTwoPermissions.permissions.editor[0],
       actionNames: ['view'],
       target: params.categoryId,
-      type: rolePermissionType.editor,
+      type: `${pluginName}.${rolePermissionType.editor}`,
       item: params.id,
       center: null,
     },
@@ -185,7 +186,7 @@ it('Should throw when the user is not allowed to assign all the current permissi
       permissionName: payloadWithTwoPermissions.permissions.assigner[0],
       actionNames: ['view'],
       target: params.categoryId,
-      type: rolePermissionType.assigner,
+      type: `${pluginName}.${rolePermissionType.assigner}`,
       item: params.id,
       center: null,
     },
