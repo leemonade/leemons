@@ -2,8 +2,6 @@ const { LeemonsError } = require('@leemons/error');
 const { handlePermissions } = require('./handlePermissions');
 const { handleExistence } = require('./handleExistence');
 
-// -----------------------------------------------------------------------------
-// PUBLIC METHODS
 /**
  * Add a file to an asset
  *

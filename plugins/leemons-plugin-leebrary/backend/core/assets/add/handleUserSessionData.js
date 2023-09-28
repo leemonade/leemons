@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /**
  * Handles the user session data and logs warnings if necessary.
  *

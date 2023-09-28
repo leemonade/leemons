@@ -1,4 +1,4 @@
-const { map, forEach } = require('lodash');
+const { map, forEach, isNil, some, negate } = require('lodash');
 const { removeMissingPermissions } = require('./removeMissingPermissions');
 const { removeMissingUserAgents } = require('./removeMissingUserAgents');
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
@@ -40,7 +40,7 @@ async function handleRemoveMissingPermissions({
     );
     missingPromises.push(removeMissingPermissions({ id, permissions, assignerRole, ctx }));
   });
-  if (missingPromises.length) await Promise.all(missingPromises);
+  if (some(missingPromises, negate(isNil))) await Promise.all(missingPromises);
 }
 
 module.exports = { handleRemoveMissingPermissions };

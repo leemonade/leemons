@@ -2,9 +2,6 @@ const { unlink: unlinkFiles } = require('../../assets/files/unlink');
 const { normalizeItemsArray } = require('../../shared');
 const { deleteFile } = require('./deleteFile');
 
-// -----------------------------------------------------------------------------
-// PUBLIC METHODS
-
 /**
  * Remove files from the system
  *

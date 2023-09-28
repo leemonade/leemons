@@ -2,9 +2,6 @@ const { LeemonsError } = require('@leemons/error');
 const { remove } = require('../remove');
 const { handleUserPermissions } = require('./handleUserPermissions');
 
-// -----------------------------------------------------------------------------
-// PUBLIC METHODS
-
 /**
  * Unlinks files from an asset.
  * This function checks if the user has permissions to delete the asset, and if so, it removes the files from the asset.

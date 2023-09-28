@@ -18,11 +18,11 @@ async function handleVersion({ newId, categoryId, published, ctx }) {
     const { fullId } = await ctx.tx.call('common.versionControl.register', {
       type: ctx.prefixPN(categoryId),
       published,
-    })
+    });
+    // eslint-disable-next-line no-param-reassign
     newId = fullId;
   }
   return newId;
 }
 
 module.exports = { handleVersion };
-

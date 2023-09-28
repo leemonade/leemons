@@ -19,7 +19,7 @@ const { CATEGORIES } = require('../../../config/constants');
  * @param {boolean} soft - A flag indicating whether to perform a soft delete.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<boolean>} - Returns a promise that resolves to true if the asset was successfully removed.
- * @throws {HttpError} - Throws an HttpError if the asset does not exist or the user does not have permission to remove the asset.
+ * @throws {Leemons} - Throws an LeemonsError if the asset does not exist or the user does not have permission to remove the asset.
  */
 async function remove({ id, soft, ctx }) {
   // ··········································································

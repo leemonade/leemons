@@ -4,7 +4,7 @@ const { isArray } = require('lodash');
  * Get the files associated with multiple files
  *
  * @param {Array|string} fileIds - The IDs of the files
- * @param {ContextType} ctx - The Moleculer context
+ * @param {MoleculerContext} ctx - The Moleculer context
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of files
  */
 async function getByFiles({ fileIds, ctx }) {

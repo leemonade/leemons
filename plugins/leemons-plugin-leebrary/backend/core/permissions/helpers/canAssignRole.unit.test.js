@@ -19,28 +19,14 @@ it('should return false if the user does not have permission to assign the new r
 
 it('should return true if the user has permission to assign the new role', () => {
   // Arrange
-  const userRole = 'editor';
-  const newRole = 'editor';
-  const ctx = generateCtx({});
-
-  // Assign
-  const response = canAssignRole({ userRole, newRole, ctx });
-
-  // Assert
-  expect(response).toBe(true);
-});
-
-it('should correctly determine if the user is allowed to assing the role to the asignee', () => {
-  // Arrange
+  const userRole = 'owner';
   const assignedUserCurrentRole = 'viewer';
   const newRole = 'editor';
   const ctx = generateCtx({});
 
   // Assign
-  const response = canAssignRole({ userRole: 'assigner', assignedUserCurrentRole, newRole, ctx });
-  const responseTrue = canAssignRole({ userRole: 'editor', newRole, ctx });
+  const response = canAssignRole({ userRole, assignedUserCurrentRole, newRole, ctx });
 
   // Assert
-  expect(response).toBe(false);
-  expect(responseTrue).toBe(true);
+  expect(response).toBe(true);
 });

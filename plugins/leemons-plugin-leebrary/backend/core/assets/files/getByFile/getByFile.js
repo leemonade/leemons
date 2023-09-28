@@ -3,9 +3,6 @@ const { getRelatedAssets } = require('./getRelatedAssets');
 const { handleIsPublic } = require('./handleIsPublic');
 const { handleUserPermissions } = require('./handleUserPermissions');
 
-// -----------------------------------------------------------------------------
-// PUBLIC METHODS
-
 /**
  * Fetches the asset related to a file by its ID.
  *

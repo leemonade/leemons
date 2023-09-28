@@ -35,3 +35,13 @@ it('Should throw if an invalid role is passed', () => {
     expect(error.message).toEqual(expect.stringContaining(role));
   }
 });
+
+it('Should set noPermission as the default role when not passed', () => {
+  const ctx = generateCtx({});
+
+  // Act
+  const response = getRolePermissions({ ctx });
+
+  // Assert
+  expect(response).toBe(rolesPermissions.noPermission);
+});

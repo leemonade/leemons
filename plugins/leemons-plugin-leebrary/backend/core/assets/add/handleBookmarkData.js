@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { isEmpty, isNil, isString, trim } = require('lodash');
 const got = require('got');
 const { metascraper } = require('../../shared');

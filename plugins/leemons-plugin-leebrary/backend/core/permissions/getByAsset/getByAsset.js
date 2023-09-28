@@ -3,6 +3,15 @@ const { LeemonsError } = require('@leemons/error');
 const getRolePermissions = require('../helpers/getRolePermissions');
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 
+/**
+ * Retrieves permissions by asset.
+ *
+ * @param {Object} params - The parameters for the function.
+ * @param {string} params.assetId - The ID of the asset.
+ * @param {MoleculerContext} params.ctx - The moleculer context.
+ * @returns {Promise} A promise that resolves with the permissions.
+ */
+
 async function getByAsset({ assetId, ctx }) {
   try {
     const { userSession } = ctx.meta;

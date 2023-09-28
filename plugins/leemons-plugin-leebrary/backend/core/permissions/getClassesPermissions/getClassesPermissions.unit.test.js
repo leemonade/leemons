@@ -86,8 +86,8 @@ it('Should correctly retreive a class permissions and the class info', async () 
   expect(findItems).toBeCalledWith({
     params: {
       item: assetsIds,
-      permissionName: { $regex: '^academic-portfolio.class.', $options: 'i' },
-      type: { $regex: `^${ctx.prefixPN('asset')}`, $options: 'i' },
+      permissionName: { $regex: '^academic-portfolio.class.' },
+      type: { $regex: `^${ctx.prefixPN('asset')}` },
     },
   });
   expect(classByIds).toBeCalledWith({ ids: ['classOne', 'classTwo'] });
@@ -179,4 +179,34 @@ it('Should return an empty value if a class does not have any permissions', asyn
   // Assert
   expect(classByIds).not.toBeCalled();
   expect(response).toEqual([[]]);
+});
+
+it('Should not call classByIds if no classes have permissions', async () => {
+  // Arrange
+  const assetsIds = ['assetOne'];
+  const findItems = fn().mockResolvedValue([]);
+  const classByIds = fn();
+
+  const ctx = generateCtx({
+    actions: {
+      'users.permissions.findItems': findItems,
+      'academic-portfolio.classes.classByIds': classByIds,
+    },
+  });
+
+  const expectedResponse = [[]];
+
+  // Act
+  const response = await getClassesPermissions({ assetsIds, withInfo: true, ctx });
+
+  // Assert
+  expect(findItems).toBeCalledWith({
+    params: {
+      item: assetsIds,
+      permissionName: { $regex: '^academic-portfolio.class.' },
+      type: { $regex: `^${ctx.prefixPN('asset')}` },
+    },
+  });
+  expect(classByIds).not.toBeCalled();
+  expect(response).toEqual(expectedResponse);
 });

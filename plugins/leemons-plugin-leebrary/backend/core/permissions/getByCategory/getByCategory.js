@@ -51,7 +51,7 @@ async function getByCategory({
   programs: _programs,
   subjects: _subjects,
   ctx,
-} = {}) {
+}) {
   try {
     const { userSession } = ctx.meta;
     const [programs, subjects, providerQuery] = handleParams({

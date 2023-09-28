@@ -1,9 +1,6 @@
 const { parseMetadata } = require('../helpers/parseMetadata');
 const { prepareQuery } = require('./prepareQuery');
 
-// -----------------------------------------------------------------------------
-// PUBLIC METHODS
-
 /**
  * Get files by type.
  *

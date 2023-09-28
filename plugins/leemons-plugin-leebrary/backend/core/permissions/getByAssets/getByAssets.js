@@ -7,6 +7,17 @@ const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissio
 const { handleOnlyShared } = require('./handleOnlyShared');
 const { handleItemPermissions } = require('./handleItemPermissions');
 
+/**
+ * Retrieves permissions by assets.
+ *
+ * @param {Object} params - The parameters for the function.
+ * @param {Array<string>} params.assetIds - The IDs of the assets which permissions we want to retrieve.
+ * @param {boolean} params.showPublic - Whether to show public assets.
+ * @param {boolean} params.onlyShared - Whether to only show shared assets.
+ * @param {MoleculerContext} params.ctx - The moleculer context.
+ * @returns {Promise} A promise that resolves with the permissions.
+ */
+
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
   const { userSession } = ctx.meta;

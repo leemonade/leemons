@@ -1,6 +1,7 @@
 const {
   it,
   expect,
+  beforeEach,
   jest: { spyOn },
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
@@ -17,6 +18,8 @@ jest.mock('./removeMissingUserAgents');
 const { removeMissingPermissions } = require('./removeMissingPermissions');
 const { removeMissingUserAgents } = require('./removeMissingUserAgents');
 
+beforeEach(() => jest.resetAllMocks());
+
 const { payloadToRemoveAllPermissions: payload } = getPermissionsMocks();
 const userSession = getUserSession();
 
@@ -27,6 +30,14 @@ it('Should be called correctly', async () => {
   ctx.meta.userSession = { ...userSession };
   const expectedPermissionName = ctx.prefixPN(permissionSeparator + asset.id);
   const spyPromises = spyOn(Promise, 'all');
+
+  removeMissingUserAgents.mockImplementation(
+    () =>
+      new Promise((res) => {
+        res(undefined);
+      })
+  );
+  removeMissingPermissions.mockImplementation(() => undefined);
 
   // Act
   await handleRemoveMissingPermissions({
@@ -53,4 +64,24 @@ it('Should be called correctly', async () => {
     ctx,
   });
   expect(spyPromises).toHaveBeenCalled();
+});
+
+it('Should await for promises only if necessary', async () => {
+  // Arrange
+  const asset = { id: 'assetOne', category: 'categoryId' };
+  const ctx = generateCtx({});
+  ctx.meta.userSession = { ...userSession };
+  const spyPromises = spyOn(Promise, 'all');
+
+  // Act
+  await handleRemoveMissingPermissions({
+    canAccess: payload.canAccess,
+    permissions: payload.permissions,
+    assetIds: [asset.id],
+    assetsRoleById: { [asset.id]: 'owner' },
+    ctx,
+  });
+
+  // Assert
+  expect(spyPromises).not.toHaveBeenCalled();
 });
