@@ -5,7 +5,7 @@ const { getPermissionName } = require('../../instances/helpers/getPermissionName
 
 // TODO: Impelement item permissions for teachers
 
-module.exports = async function getUserPermissions({ instancesIds, ctx }) {
+async function getUserPermissions({ instancesIds, ctx }) {
   const { userSession } = ctx.meta;
 
   if (!userSession?.userAgents?.length || !instancesIds?.length) {
@@ -74,4 +74,6 @@ module.exports = async function getUserPermissions({ instancesIds, ctx }) {
       ];
     })
   );
-};
+}
+
+module.exports = { getUserPermissions };

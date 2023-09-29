@@ -12,7 +12,7 @@ const { getUserPermission } = require('../../permissions/users/assignables/getUs
  * @param {string} params.assignableId - The id of the assignable
  * @param {Array<string>} params.userAgents - The user agents to be added
  * @param {string} params.role - The role of the user
- * @param {Object} params.ctx - The context
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} The result of adding user to assignable
  * @throws {LeemonsError} When the assignable does not exist or the user does not have access to it
  * @throws {LeemonsError} When the user cannot assign to assignable with the given role
