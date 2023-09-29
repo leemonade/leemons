@@ -5,7 +5,7 @@ const {
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
 
-jest.mock('../../shared/metascraper');
+jest.mock('../../shared');
 jest.mock('got');
 const got = require('got');
 const { metascraper } = require('../../shared');

@@ -21,16 +21,4 @@ module.exports = {
       return { status: 200, permissions };
     },
   },
-  test: {
-    rest: {
-      method: 'GET',
-      path: '/test/:asset',
-    },
-    async handler(ctx) {
-      const { asset, ...body } = ctx.params;
-      console.log('asset', asset);
-      console.log('body', body);
-      return { status: 200, ...body };
-    },
-  },
 };

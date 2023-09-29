@@ -122,10 +122,6 @@ it('Should fetch assets by their IDs', async () => {
   });
 
   // Assert
-  // expect(spyBuildQuery).toBeCalledWith({
-  //   assetsIds,
-  //   indexable: undefined,
-  // });
   expect(getUserPermissionsByAsset).toBeCalledWith({
     assets: assetsFromDB,
     ctx,

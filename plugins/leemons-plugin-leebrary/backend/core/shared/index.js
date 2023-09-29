@@ -1,5 +1,9 @@
+const normalizeItemsArray = require('./normalizeItemsArray');
+const isTruthy = require('./isTruthy');
+const metascraper = require('./metascraper');
+
 module.exports = {
-  ...require('./normalizeItemsArray'),
-  ...require('./isTruthy'),
-  ...require('./metascraper'),
-}
+  ...normalizeItemsArray,
+  ...isTruthy,
+  ...metascraper,
+};
