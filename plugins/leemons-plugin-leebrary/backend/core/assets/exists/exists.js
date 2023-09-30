@@ -7,7 +7,7 @@
  * @returns {Promise<boolean>} - Returns true if the asset exists, false otherwise
  */
 
-async function exists({ assetId, ctx } = {}) {
+async function exists({ assetId, ctx }) {
   if (!assetId?.length) return false;
   const count = await ctx.tx.db.Assets.countDocuments({ id: assetId });
   return count > 0;

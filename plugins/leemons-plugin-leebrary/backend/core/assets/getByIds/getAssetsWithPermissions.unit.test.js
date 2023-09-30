@@ -2,6 +2,7 @@
 const {
   it,
   expect,
+  beforeEach,
   jest: { fn },
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
@@ -9,6 +10,7 @@ const { generateCtx } = require('@leemons/testing');
 const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
 const getUserSession = require('../../../__fixtures__/getUserSession');
 const getPermissionsMocks = require('../../../__fixtures__/getPermissionsMocks');
+const { rolesPermissions } = require('../../../config/constants');
 
 // MOCKS
 jest.mock('../../permissions/getClassesPermissions');
@@ -17,6 +19,8 @@ jest.mock('../../permissions/helpers/canUnassignRole');
 const { getClassesPermissions } = require('../../permissions/getClassesPermissions');
 const { getByAssets: getPermissions } = require('../../permissions/getByAssets');
 const canUnassignRole = require('../../permissions/helpers/canUnassignRole');
+
+beforeEach(() => jest.resetAllMocks());
 
 const userSession = getUserSession();
 const { userAgentPermissionForAnAsset } = getPermissionsMocks();
@@ -317,4 +321,99 @@ it('Should correctly handle owner permissions', async () => {
   const result = await getAssetsWithPermissions({ assets, assetsIds, ctx });
 
   expect(result).toEqual(expectedResult);
+});
+
+it('Should return an empty array when no user is found and the showPublic flag is falsy', async () => {
+  const findUsersWithPermissions = fn();
+  const getUserAgentsInfoAction = fn();
+
+  const ctx = generateCtx({
+    actions: {
+      'users.permissions.findUsersWithPermissions': findUsersWithPermissions,
+      'users.users.getUserAgentsInfo': getUserAgentsInfoAction,
+    },
+  });
+
+  getClassesPermissions.mockResolvedValue([]);
+  canUnassignRole.mockReturnValue(false);
+
+  const expectedResult = [];
+
+  const result = await getAssetsWithPermissions({ assets, assetsIds, ctx });
+
+  expect(getPermissions).not.toBeCalled();
+  expect(result).toEqual(expectedResult);
+});
+
+it('Should correctly return public assets', async () => {
+  // Arrange
+  const findUsersWithPermissions = fn().mockResolvedValue([
+    {
+      ...userAgentPermissionForAnAsset,
+      id: 'userAgentOne',
+      userAgent: 'userAgentOne',
+      permissionName: 'leemons-testing.(ASSET_ID)assetOne',
+      actionName: 'viewer',
+    },
+  ]);
+  const getUserAgentsInfoAction = fn().mockResolvedValue([
+    {
+      id: 'userAgentOne',
+      user: {
+        id: 'userId1',
+        email: 'user1@example.com',
+        name: 'User1',
+        surnames: 'Surname1',
+        secondSurname: 'SecondSurname1',
+        birthdate: '1990-01-01',
+        avatar: 'avatar1.png',
+        gender: 'male',
+      },
+      role: 'role1',
+      disabled: null,
+    },
+  ]);
+  const assetOne = { id: 'publicAssetOne' };
+  const assetTwo = { id: 'publicAssetTwo' };
+  const classesWithPermission = [[{ id: 'classOne' }], [{ id: 'classOne' }, { id: 'classTwo' }]];
+  const ctx = generateCtx({
+    actions: {
+      'users.permissions.findUsersWithPermissions': findUsersWithPermissions,
+      'users.users.getUserAgentsInfo': getUserAgentsInfoAction,
+    },
+  });
+  // const assetPermissions = [
+  //   {
+  //     ...userAgentPermissionForAnAsset.user,
+  //     userAgentIds: ['userAgentOne'],
+  //     permissions: ['viewer'],
+  //     editable: false,
+  //   },
+  // ];
+  const expectedAssetsResponse = [
+    { ...assetOne, isPrivate: false, classesCanAccess: classesWithPermission[0], canAccess: null },
+    { ...assetTwo, isPrivate: false, classesCanAccess: classesWithPermission[1] },
+  ];
+
+  getPermissions.mockResolvedValue([
+    { asset: assetOne.id, role: 'public', permissions: rolesPermissions.public },
+    { asset: assetTwo.id, role: 'public', permissions: {} },
+  ]);
+  getClassesPermissions.mockResolvedValue(classesWithPermission);
+  canUnassignRole.mockReturnValue(false);
+
+  // Act
+  const result = await getAssetsWithPermissions({
+    assets: [...assets, assetOne, assetTwo],
+    assetsIds,
+    showPublic: true,
+    ctx,
+  });
+  console.log('result', result);
+
+  // Assert
+  expect(findUsersWithPermissions).toBeCalledTimes(1);
+  expect(getUserAgentsInfoAction).toBeCalledTimes(1);
+  expect(result).toEqual(expect.arrayContaining(expectedAssetsResponse));
+  expect(result.length).toBe(expectedAssetsResponse.length);
 });

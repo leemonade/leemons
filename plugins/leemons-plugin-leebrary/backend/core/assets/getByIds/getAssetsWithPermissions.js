@@ -14,6 +14,7 @@ const canUnassignRole = require('../../permissions/helpers/canUnassignRole');
  * @param {MoleculerContext} params.ctx - The moleculer context
  * @returns {Promise<Array>} - Returns an array of assets with permissions
  */
+// eslint-disable-next-line sonarjs/cognitive-complexity
 async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) {
   const classesPermissionsPerAsset = await getClassesPermissions({
     assetsIds: map(assets, 'id'),
@@ -48,7 +49,7 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
       // }
     }
   }
-  // [assetone, assetTwo] asset ids
+
   if (getUsersAssetIds.length) {
     const permissionNames = map(getUsersAssetIds, (permit) =>
       getAssetPermissionName({ assetId: permit, ctx })
@@ -64,7 +65,6 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
       userAgentIds,
     });
     const userAgentsById = keyBy(userAgents, 'id');
-    // {userAgentId1: { user, role, disabled}, userAgentId2: {...}}
 
     for (let i = 0, l = assets.length; i < l; i++) {
       const asset = assets[i];
@@ -72,7 +72,6 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
         const permission = permissions.find((item) => item.asset === asset.id);
         const assetPermissionName = getAssetPermissionName({ assetId: asset.id, ctx });
         const { role: userRole } = permission;
-        // userRole: 1st owner, 2nd editor
         const rawPerm = filter(
           rawUserAgents,
           ({ permissionName }) => permissionName === assetPermissionName
@@ -81,19 +80,18 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
         // userAgent1, luego userAgent2
 
         let assetPermissions = [];
-        // { ...user, userAgentIds: [userAgent.id], permissions: ['owner'], editable: true}
-        // { ...user, userAgentIds: [userAgent.id], permissions: ['editor'], editable: true}
+
         forEach(assetUserAgents, (raw) => {
           const userAgent = userAgentsById[raw.userAgent];
           const perm = find(assetPermissions, { id: userAgent.user.id });
           if (perm) {
             perm.userAgentIds.push(userAgent.id);
-            perm.permissions.push(raw.actionName); // ? actionName? isn't it action?
+            perm.permissions.push(raw.actionName);
           } else {
             assetPermissions.push({
               ...userAgent.user,
               userAgentIds: [userAgent.id],
-              permissions: [raw.actionName], // ? actionName? isn't it action?
+              permissions: [raw.actionName],
             });
           }
         });

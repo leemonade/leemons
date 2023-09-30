@@ -38,7 +38,7 @@ const { bookmarkAsset, mediaFileAsset } = getAssets();
 const { categoryObject, mediaFileCategoryObject } = getCategory();
 const { imageFile, audioFile } = getMediaFileData();
 
-it('Should correctly duplicate a bookmark asset by calling the appropriate dependencies and returning the expected result', async () => {
+it('Should correctly duplicate a bookmark asset', async () => {
   // Arrange
   const assetFromDB = { ...bookmarkAsset, cover: bookmarkAsset.cover.id };
   delete assetFromDB.subjects;
@@ -160,7 +160,7 @@ it('Should correctly duplicate a bookmark asset by calling the appropriate depen
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should correctly duplicate a mediaFile asset by calling the appropriate dependencies and returning the expected result', async () => {
+it('Should correctly duplicate a mediaFile asset', async () => {
   // Arrange
   const ctx = generateCtx({});
   ctx.meta.userSession = getUserSession();

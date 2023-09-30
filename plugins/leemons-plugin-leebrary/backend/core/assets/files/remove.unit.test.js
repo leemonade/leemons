@@ -61,10 +61,9 @@ it('Should return false when no files are found to remove', async () => {
   });
 
   const fileIds = ['file3'];
-  const assetId = 'asset1';
 
   // Act
-  const response = await remove({ fileIds, assetId, ctx });
+  const response = await remove({ fileIds, ctx });
 
   // Assert
   expect(response).toBe(false);

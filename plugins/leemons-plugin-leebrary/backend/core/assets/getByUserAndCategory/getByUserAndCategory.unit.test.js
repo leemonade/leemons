@@ -20,11 +20,11 @@ it('should call getByPermissions, getAssets and getPublicAssets with correct arg
     includePublic: true,
     indexable: true,
   };
-  const mockByPermissions = [{ id: 'byPermissionOne' }];
+  const mockByPermissions = [{ asset: 'byPermissionOne' }];
   const mockPublicAssets = [{ id: 'publicAssetOne' }];
   const mockAssets = [
-    { ...mockByPermissions[0], name: 'Soy un Asset' },
-    { ...mockPublicAssets[0], name: 'Soy un Public Asset' },
+    { ...mockByPermissions[0], otherProp: 'value' },
+    { ...mockPublicAssets[0], otherProp: 'value for public asset' },
   ];
 
   getByPermissions.mockResolvedValue(mockByPermissions);
@@ -47,11 +47,11 @@ it('should call getByPermissions, getAssets and getPublicAssets with correct arg
     ctx,
   });
   expect(getAssets).toHaveBeenCalledWith({
-    ids: mockAssets.map((item) => item.id),
+    ids: mockAssets.map((item) => item.id || item.asset),
     ctx,
   });
   expect(result).toEqual(mockAssets);
-  result.forEach((asset) => expect(asset).toHaveProperty('name'));
+  result.forEach((asset) => expect(asset).toHaveProperty('otherProp'));
 });
 
 it('should return only asset ids when details flag is false', async () => {
@@ -59,16 +59,13 @@ it('should return only asset ids when details flag is false', async () => {
   const ctx = generateCtx({});
   const params = {
     categoryId: 'testCategoryId',
-    details: false,
     includePublic: true,
     indexable: true,
+    details: false,
   };
-  const mockByPermissions = [{ id: 'byPermissionOne' }];
+  const mockByPermissions = [{ asset: 'byPermissionOne' }];
   const mockPublicAssets = [{ id: 'publicAssetOne' }];
-  const mockAssets = [
-    { ...mockByPermissions[0], name: 'Soy un Asset' },
-    { ...mockPublicAssets[0], name: 'Soy un Public Asset' },
-  ];
+  const mockAssets = [{ ...mockByPermissions[0] }, { ...mockPublicAssets[0] }];
 
   getByPermissions.mockResolvedValue(mockByPermissions);
   getAssets.mockResolvedValue(mockAssets);
@@ -78,17 +75,14 @@ it('should return only asset ids when details flag is false', async () => {
   const result = await getByUserAndCategory({ ...params, ctx });
 
   // Assert
-  expect(result).toEqual(mockAssets.map((asset) => asset.id));
+  expect(result).toEqual(mockAssets.map((item) => item.id || item.asset));
 });
 
-it('should throw an error when getByPermissions fails', async () => {
+it('should not throw by missing optional values but it should when inner functions fail', async () => {
   // Arrange
   const ctx = generateCtx({});
   const params = {
     categoryId: 'testCategoryId',
-    details: true,
-    includePublic: true,
-    indexable: true,
   };
 
   getByPermissions.mockRejectedValue(new Error('Test Error'));
